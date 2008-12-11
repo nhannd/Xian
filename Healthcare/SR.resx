@@ -195,17 +195,17 @@
   <data name="EmergencyCancelledWorklistDescription" xml:space="preserve">
     <value>List procedures that have been cancelled.</value>
   </data>
-  <data name="EmergencyCompletedWorklist" xml:space="preserve">
-    <value>Completed</value>
-  </data>
-  <data name="EmergencyCompletedWorklistDescription" xml:space="preserve">
-    <value>Lists procedures that have been completed.</value>
-  </data>
   <data name="EmergencyInProgressWorklist" xml:space="preserve">
     <value>In Progress</value>
   </data>
   <data name="EmergencyInProgressWorklistDescription" xml:space="preserve">
     <value>Lists procedures that are in progress.</value>
+  </data>
+  <data name="EmergencyPerformedWorklist" xml:space="preserve">
+    <value>Performed</value>
+  </data>
+  <data name="EmergencyPerformedWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that have been peformed.</value>
   </data>
   <data name="EmergencyScheduledWorklist" xml:space="preserve">
     <value>Scheduled</value>
@@ -282,12 +282,6 @@
   <data name="PerformingCheckedInWorklistDescription" xml:space="preserve">
     <value>Lists modality procedure steps where the patient has checked in.</value>
   </data>
-  <data name="PerformingCompletedWorklist" xml:space="preserve">
-    <value>Completed</value>
-  </data>
-  <data name="PerformingCompletedWorklistDescription" xml:space="preserve">
-    <value>Lists modality procedure steps that have been completed.</value>
-  </data>
   <data name="PerformingGroup" xml:space="preserve">
     <value>Performing Group</value>
   </data>
@@ -296,6 +290,12 @@
   </data>
   <data name="PerformingInProgressWorklistDescription" xml:space="preserve">
     <value>Lists modality procedure steps that are in progress.</value>
+  </data>
+  <data name="PerformingPerformedWorklist" xml:space="preserve">
+    <value>Performed</value>
+  </data>
+  <data name="PerformingPerformedWorklistDescription" xml:space="preserve">
+    <value>Lists modality procedure steps that have been completed.</value>
   </data>
   <data name="PerformingScheduledWorklist" xml:space="preserve">
     <value>Scheduled</value>
@@ -351,12 +351,6 @@
   <data name="RegistrationCompletedProtocolWorklistDescription" xml:space="preserve">
     <value>Lists procedures that have been protocoled but not scheduled.</value>
   </data>
-  <data name="RegistrationCompletedWorklist" xml:space="preserve">
-    <value>Completed</value>
-  </data>
-  <data name="RegistrationCompletedWorklistDescription" xml:space="preserve">
-    <value>Lists procedures where the exam has been completed.</value>
-  </data>
   <data name="RegistrationInProgressWorklist" xml:space="preserve">
     <value>In Progress</value>
   </data>
@@ -368,6 +362,12 @@
   </data>
   <data name="RegistrationPendingProtocolWorklistDescription" xml:space="preserve">
     <value>Lists procedures that need to be protocoled.</value>
+  </data>
+  <data name="RegistrationPerformedWorklist" xml:space="preserve">
+    <value>Performed</value>
+  </data>
+  <data name="RegistrationPerformedWorklistDescription" xml:space="preserve">
+    <value>Lists procedures that have been performed.</value>
   </data>
   <data name="RegistrationRejectedProtocolWorklist" xml:space="preserve">
     <value>Rejected Protocol</value>

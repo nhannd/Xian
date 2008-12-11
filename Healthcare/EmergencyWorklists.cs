@@ -35,13 +35,13 @@ namespace ClearCanvas.Healthcare
 	}
 
 	/// <summary>
-	/// EmergencyCompletedWorklist entity
+	/// EmergencyPerformedWorklist entity
 	/// </summary>
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
 	[WorklistSupportsTimeFilter(true)]
 	[WorklistCategory("WorklistCategoryEmergency")]
-	[WorklistClassDescription("EmergencyCompletedWorklistDescription")]
-	public class EmergencyCompletedWorklist : RegistrationCompletedWorklist
+	[WorklistClassDescription("EmergencyPerformedWorklistDescription")]
+	public class EmergencyPerformedWorklist : RegistrationPerformedWorklist
 	{
 	}
 

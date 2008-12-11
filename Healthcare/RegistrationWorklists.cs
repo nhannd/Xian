@@ -132,12 +132,12 @@ namespace ClearCanvas.Healthcare
     }
 
     /// <summary>
-    /// RegistrationCompletedWorklist entity
+	/// RegistrationPerformedWorklist entity
     /// </summary>
     [ExtensionOf(typeof(WorklistExtensionPoint))]
     [WorklistSupportsTimeFilter(true)]
-    [WorklistClassDescription("RegistrationCompletedWorklistDescription")]
-    public class RegistrationCompletedWorklist : RegistrationWorklist
+    [WorklistClassDescription("RegistrationPerformedWorklistDescription")]
+    public class RegistrationPerformedWorklist : RegistrationWorklist
     {
         protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
         {

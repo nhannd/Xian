@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string RegistrationCancelledWorklist = "RegistrationCancelledWorklist";
 
 		[WorklistClassName]
-		public const string RegistrationCompletedWorklist = "RegistrationCompletedWorklist";
+		public const string RegistrationPerformedWorklist = "RegistrationPerformedWorklist";
 
 		[WorklistClassName]
 		public const string RegistrationInProgressWorklist = "RegistrationInProgressWorklist";
@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string PerformingCancelledWorklist = "PerformingCancelledWorklist";
 
 		[WorklistClassName]
-		public const string PerformingCompletedWorklist = "PerformingCompletedWorklist";
+		public const string PerformingPerformedWorklist = "PerformingPerformedWorklist";
 
 		[WorklistClassName]
 		public const string PerformingInProgressWorklist = "PerformingInProgressWorklist";
@@ -160,7 +160,7 @@ namespace ClearCanvas.Ris.Application.Common
 		public const string EmergencyInProgressWorklist = "EmergencyInProgressWorklist";
 
 		[WorklistClassName]
-		public const string EmergencyCompletedWorklist = "EmergencyCompletedWorklist";
+		public const string EmergencyPerformedWorklist = "EmergencyPerformedWorklist";
 
 		[WorklistClassName]
 		public const string EmergencyCancelledWorklist = "EmergencyCancelledWorklist";

@@ -195,9 +195,9 @@ Preview.ProceduresTableHelper = function () {
 			if (status.Code == 'SC' && checkInTime)
 				return "Checked-In";
 			
-			if ((status.Code == 'IP' || status.Code == 'CM') && checkOutTime)
-				return "Completed";
-
+			if (status.Code == 'IP' && checkOutTime)
+				return "Performed";
+				
 			return status.Value; 
 		},
 

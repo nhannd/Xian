@@ -9,6 +9,6 @@
   <subclass name="PerformingCheckedInWorklist" extends="PerformingWorklist" discriminator-value="PERFORMING_CHECKEDIN"/>
   <subclass name="PerformingInProgressWorklist" extends="PerformingWorklist" discriminator-value="PERFORMING_INPROGRESS"/>
   <subclass name="PerformingCancelledWorklist" extends="PerformingWorklist" discriminator-value="PERFORMING_CANCELLED"/>
-  <subclass name="PerformingCompletedWorklist" extends="PerformingWorklist" discriminator-value="PERFORMING_COMPLETED"/>
+  <subclass name="PerformingPerformedWorklist" extends="PerformingWorklist" discriminator-value="PERFORMING_PERFORMED"/>
   <subclass name="PerformingUndocumentedWorklist" extends="PerformingWorklist" discriminator-value="PERFORMING_UNDOCUMENTED"/>
 </hibernate-mapping>

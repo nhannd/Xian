@@ -10,7 +10,7 @@
   <subclass name="RegistrationCheckedInWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_CHECKEDIN"/>
   <subclass name="RegistrationInProgressWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_INPROGRESS"/>
   <subclass name="RegistrationCancelledWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_CANCELLED"/>
-  <subclass name="RegistrationCompletedWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_COMPLETED"/>
+  <subclass name="RegistrationPerformedWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_PERFORMED"/>
   <subclass name="RegistrationToBeScheduledWorklist" extends="RegistrationWorklist" discriminator-value="REGISTRATION_UNSCHEDULED"/>
   <subclass name="RegistrationCompletedProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REGISTRATION_PROTOCOL_COMPLETED"/>
   <subclass name="RegistrationRejectedProtocolWorklist" extends="RegistrationProtocolWorklist" discriminator-value="REGISTRATION_PROTOCOL_REJECTED"/>

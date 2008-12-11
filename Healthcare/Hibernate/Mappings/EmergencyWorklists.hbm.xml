@@ -5,5 +5,5 @@
   <subclass name="EmergencyScheduledWorklist" extends="RegistrationWorklist" discriminator-value="EMERGENCY_SCHEDULED"/>
   <subclass name="EmergencyInProgressWorklist" extends="RegistrationInProgressWorklist" discriminator-value="EMERGENCY_INPROGRESS"/>
   <subclass name="EmergencyCancelledWorklist" extends="RegistrationCancelledWorklist" discriminator-value="EMERGENCY_CANCELLED"/>
-  <subclass name="EmergencyCompletedWorklist" extends="RegistrationCompletedWorklist" discriminator-value="EMERGENCY_COMPLETED"/>
+  <subclass name="EmergencyPerformedWorklist" extends="RegistrationPerformedWorklist" discriminator-value="EMERGENCY_PERFORMED"/>
 </hibernate-mapping>
