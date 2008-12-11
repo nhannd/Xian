@@ -30,44 +30,37 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.Workflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="LinkedInterpretationComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="LinkProceduresComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(LinkedInterpretationComponentViewExtensionPoint))]
-    public class LinkedInterpretationComponentView : WinFormsView, IApplicationComponentView
+    public partial class LinkProceduresComponentControl : ApplicationComponentUserControl
     {
-        private LinkedInterpretationComponent _component;
-        private LinkedInterpretationComponentControl _control;
+        private readonly LinkProceduresComponent _component;
 
-
-        #region IApplicationComponentView Members
-
-        public void SetComponent(IApplicationComponent component)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public LinkProceduresComponentControl(LinkProceduresComponent component)
+            : base(component)
         {
-            _component = (LinkedInterpretationComponent)component;
+            InitializeComponent();
+
+            _component = component;
+            _sourceWorklistItem.Table = _component.SourceTable;
+            _worklistItemTableView.Table = _component.CandidateTable;
+
+            _instructionsLabel.Text = _component.Instructions;
+            _heading.Text = _component.Heading;
         }
 
-        #endregion
-
-        public override object GuiElement
+        private void _okButton_Click(object sender, EventArgs e)
         {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new LinkedInterpretationComponentControl(_component);
-                }
-                return _control;
-            }
+            _component.Accept();
         }
     }
 }

@@ -40,18 +40,18 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 namespace ClearCanvas.Ris.Client.Workflow
 {
 	/// <summary>
-	/// Extension point for views onto <see cref="LinkedInterpretationComponent"/>
+	/// Extension point for views onto <see cref="LinkProceduresComponent"/>
 	/// </summary>
 	[ExtensionPoint]
-	public class LinkedInterpretationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public class LinkProceduresComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
 	/// <summary>
-	/// LinkedInterpretationComponent class
+	/// LinkProceduresComponent class
 	/// </summary>
-	[AssociateView(typeof(LinkedInterpretationComponentViewExtensionPoint))]
-	public class LinkedInterpretationComponent : ApplicationComponent
+	[AssociateView(typeof(LinkProceduresComponentViewExtensionPoint))]
+	public class LinkProceduresComponent : ApplicationComponent
 	{
 		private Table<Checkable<ReportingWorklistItem>> _candidateTable;
 		private readonly List<ReportingWorklistItem> _candidates;
@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public LinkedInterpretationComponent(ReportingWorklistItem sourceItem, List<ReportingWorklistItem> candidateItems, string instructions, string heading)
+		public LinkProceduresComponent(ReportingWorklistItem sourceItem, List<ReportingWorklistItem> candidateItems, string instructions, string heading)
 		{
 			_candidates = candidateItems;
 			_sourceItem = sourceItem;
@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_heading = heading;
 		}
 
-		public LinkedInterpretationComponent(ReportingWorklistItem sourceItem, List<ReportingWorklistItem> candidateItems)
+		public LinkProceduresComponent(ReportingWorklistItem sourceItem, List<ReportingWorklistItem> candidateItems)
 			: this(sourceItem, candidateItems, SR.TextLinkReportInstructions, SR.TextLinkReportlHeading)
 		{
 		}
@@ -87,11 +87,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnProcedure,
 				delegate(Checkable<ReportingWorklistItem> item) { return item.Item.ProcedureName; }, 2.75f));
 			_candidateTable.Columns.Add(new TableColumn<Checkable<ReportingWorklistItem>, string>(SR.ColumnTime,
-				delegate(Checkable<ReportingWorklistItem> item) { return Format.Time(item.Item.Time); }, 0.5f));
+				delegate(Checkable<ReportingWorklistItem> item) { return Format.DateTime(item.Item.Time); }, 0.5f));
 
 			foreach (ReportingWorklistItem item in _candidates)
 			{
-				_candidateTable.Items.Add(new Checkable<ReportingWorklistItem>(item));
+				_candidateTable.Items.Add(new Checkable<ReportingWorklistItem>(item, true));
 			}
 
 			_sourceTable = new ReportingWorklistTable();

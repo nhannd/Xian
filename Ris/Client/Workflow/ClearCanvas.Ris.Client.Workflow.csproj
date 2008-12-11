@@ -97,7 +97,7 @@
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />
     <Compile Include="Folders\PerformingWorkflowFolders.cs" />
     <Compile Include="IPerformingDocumentationPage.cs" />
-    <Compile Include="LinkedInterpretationComponent.cs" />
+    <Compile Include="LinkProceduresComponent.cs" />
     <Compile Include="ModifyOrderTool.cs" />
     <Compile Include="NewOrderTool.cs" />
     <Compile Include="PatientAddTool.cs" />

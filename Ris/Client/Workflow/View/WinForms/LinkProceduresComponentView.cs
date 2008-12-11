@@ -30,36 +30,45 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.Workflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="LinkedInterpretationComponent"/>
+    /// Provides a Windows Forms view onto <see cref="LinkProceduresComponent"/>
     /// </summary>
-    public partial class LinkedInterpretationComponentControl : ApplicationComponentUserControl
+    [ExtensionOf(typeof(LinkProceduresComponentViewExtensionPoint))]
+    public class LinkProceduresComponentView : WinFormsView, IApplicationComponentView
     {
-        private readonly LinkedInterpretationComponent _component;
+        private LinkProceduresComponent _component;
+        private LinkProceduresComponentControl _control;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public LinkedInterpretationComponentControl(LinkedInterpretationComponent component)
-            : base(component)
+
+        #region IApplicationComponentView Members
+
+        public void SetComponent(IApplicationComponent component)
         {
-            InitializeComponent();
-
-            _component = component;
-            _sourceWorklistItem.Table = _component.SourceTable;
-            _worklistItemTableView.Table = _component.CandidateTable;
-
-            _instructionsLabel.Text = _component.Instructions;
-            _heading.Text = _component.Heading;
+            _component = (LinkProceduresComponent)component;
         }
 
-        private void _okButton_Click(object sender, EventArgs e)
+        #endregion
+
+        public override object GuiElement
         {
-            _component.Accept();
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new LinkProceduresComponentControl(_component);
+                }
+                return _control;
+            }
         }
     }
 }

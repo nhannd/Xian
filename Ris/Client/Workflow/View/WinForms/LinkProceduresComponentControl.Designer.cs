@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
-    partial class LinkedInterpretationComponentControl
+    partial class LinkProceduresComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -46,6 +46,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._worklistItemTableView.ShowToolbar = false;
 			this._worklistItemTableView.Size = new System.Drawing.Size(725, 315);
 			this._worklistItemTableView.TabIndex = 1;
+			this._worklistItemTableView.TabStop = false;
 			// 
 			// _okButton
 			// 
@@ -88,9 +89,11 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._sourceWorklistItem.ShowToolbar = false;
 			this._sourceWorklistItem.Size = new System.Drawing.Size(725, 71);
 			this._sourceWorklistItem.TabIndex = 4;
+			this._sourceWorklistItem.TabStop = false;
 			// 
-			// LinkedInterpretationComponentControl
+			// LinkProceduresComponentControl
 			// 
+			this.AcceptButton = this._okButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._sourceWorklistItem);
@@ -98,7 +101,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.Controls.Add(this._instructionsLabel);
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this._worklistItemTableView);
-			this.Name = "LinkedInterpretationComponentControl";
+			this.Name = "LinkProceduresComponentControl";
 			this.Size = new System.Drawing.Size(754, 501);
 			this.ResumeLayout(false);
 			this.PerformLayout();
