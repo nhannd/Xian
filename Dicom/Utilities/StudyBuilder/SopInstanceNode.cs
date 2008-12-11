@@ -27,6 +27,10 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		public SopInstanceNode(DicomMessageBase sourceDicomFile)
 		{
 			_dicomFile = new DicomFile("", sourceDicomFile.MetaInfo.Copy(true), sourceDicomFile.DataSet.Copy(true));
+
+			// FIXME: Remove this next line when #3163 is fixed
+			_dicomFile.MetaInfo[DicomTags.TransferSyntaxUid].Values = sourceDicomFile.MetaInfo[DicomTags.TransferSyntaxUid].Values;
+
 			_instanceUid = sourceDicomFile.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
 			if (_instanceUid == "")
 				_instanceUid = StudyBuilder.NewUid();
@@ -36,9 +40,13 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// Copy constructor
 		/// </summary>
 		/// <param name="source"></param>
-		private SopInstanceNode(SopInstanceNode source) {
+		private SopInstanceNode(SopInstanceNode source)
+		{
 			_instanceUid = StudyBuilder.NewUid();
 			_dicomFile = new DicomFile("", source._dicomFile.MetaInfo.Copy(true), source._dicomFile.DataSet.Copy(true));
+
+			// FIXME: Remove this next line when #3163 is fixed
+			_dicomFile.MetaInfo[DicomTags.TransferSyntaxUid].SetStringValue(source._dicomFile.TransferSyntaxUid);
 		}
 
 		#region Data Properties
@@ -71,7 +79,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// </summary>
 		/// <param name="dataSet">The data set to write data into.</param>
 		/// <param name="writeUid"></param>
-		internal void Update(DicomAttributeCollection dataSet, bool writeUid) 
+		internal void Update(DicomAttributeCollection dataSet, bool writeUid)
 		{
 			int imageNumber = 0;
 			if (this.Parent != null)
@@ -91,7 +99,8 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// Creates a new <see cref="SopInstanceNode"/> with the same node data, nulling all references to other nodes.
 		/// </summary>
 		/// <returns>A copy of the node.</returns>
-		public SopInstanceNode Copy() {
+		public SopInstanceNode Copy()
+		{
 			return this.Copy(false);
 		}
 
@@ -100,7 +109,8 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// </summary>
 		/// <param name="keepExtLinks">Specifies that references to nodes outside of the copy scope should be kept. If False, all references are nulled.</param>
 		/// <returns>A copy of the node.</returns>
-		public SopInstanceNode Copy(bool keepExtLinks) {
+		public SopInstanceNode Copy(bool keepExtLinks)
+		{
 			return new SopInstanceNode(this);
 		}
 
@@ -145,6 +155,5 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		}
 
 		#endregion
-
 	}
 }
