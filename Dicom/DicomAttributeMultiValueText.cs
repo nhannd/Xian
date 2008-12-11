@@ -69,7 +69,7 @@ namespace ClearCanvas.Dicom
     {
         #region Private Members
 
-        protected String[] _values = new string[0];
+        protected string[] _values = new string[0];
 
         /// <summary>
         /// Value validator to be used to verify a string can be set to the attribute.
@@ -80,7 +80,7 @@ namespace ClearCanvas.Dicom
         {
             get { return null; }
         }
- 
+
 
         #endregion
 
@@ -101,12 +101,12 @@ namespace ClearCanvas.Dicom
         internal DicomAttributeMultiValueText(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
-            String valueArray;
+            string valueArray;
 
             valueArray = item.GetString();
 
             // store the length before removing pad chars
-            StreamLength = (uint) valueArray.Length;
+            this.StreamLength = (uint) valueArray.Length;
 
             // Saw some Osirix images that had padding on SH attributes with a null character, just
             // pull them out here.
@@ -115,35 +115,34 @@ namespace ClearCanvas.Dicom
             if (valueArray.Length == 0)
             {
                 _values = new string[0];
-                Count = 1;
-                StreamLength = 0;
+                this.Count = 1;
+                this.StreamLength = 0;
             }
             else
             {
                 _values = valueArray.Split(new char[] {'\\'});
 
-                Count = (long) _values.Length;
-
-                StreamLength = (uint) valueArray.Length;
+                this.Count = (long) _values.Length;
+                this.StreamLength = (uint) valueArray.Length;
             }
         }
 
         internal DicomAttributeMultiValueText(DicomAttributeMultiValueText attrib)
             : base(attrib)
         {
-            String[] values = (String[])attrib.Values;
+            string[] values = (string[])attrib.Values;
 
-            _values = new String[values.Length];
+            _values = new string[values.Length];
 
             for (int i = 0; i < values.Length; i++)
-                _values[i] = String.Copy(values[i]);
+                _values[i] = string.Copy(values[i]);
         }
 
         #endregion
 
         #region Operators
 
-        public String this[int val]
+        public string this[int val]
         {
             get
             {
@@ -186,7 +185,7 @@ namespace ClearCanvas.Dicom
 								return;
 								
 							throw new DicomDataException(
-								String.Format("Invalid value length ({0}) for tag {1} of VR {2} of max size {3}", subVal, Tag, Tag.VR, Tag.VR.MaximumLength));
+								string.Format("Invalid value length ({0}) for tag {1} of VR {2} of max size {3}", subVal, Tag, Tag.VR, Tag.VR.MaximumLength));
 						}
                     }
                 }
@@ -198,14 +197,25 @@ namespace ClearCanvas.Dicom
             }
         }
 
-        public override void SetNullValue()
+        public sealed override void SetNullValue()
         {
             _values = new string[0];
             base.StreamLength = 0;
             base.Count = 1;
         }
 
-        public override uint StreamLength
+    	/// <summary>
+    	/// The number of values assigned to the attribute.
+    	/// </summary>
+    	public sealed override long Count {
+			get { return base.Count; }
+			protected set { base.Count = value; }
+		}
+
+    	/// <summary>
+    	/// The length in bytes if the attribute was placed in a DICOM stream.
+    	/// </summary>
+    	public sealed override uint StreamLength
         {
             get
             {
@@ -221,6 +231,7 @@ namespace ClearCanvas.Dicom
                 }
                 return base.StreamLength;
             }
+			protected set { base.StreamLength = value; }
         }
 
         public override string ToString()
@@ -228,10 +239,10 @@ namespace ClearCanvas.Dicom
             if (_values == null)
                 return "";
 
-            // could use: return string.Join("\\", _values);
+            //TODO: verify that the following is the same as (and replace if so): return string.Join("\\", _values);
             StringBuilder value = null;
 
-            foreach (String val in _values)
+            foreach (string val in _values)
             {
                 if (value == null)
                     value = new StringBuilder(val);
@@ -276,33 +287,33 @@ namespace ClearCanvas.Dicom
             return _values.GetHashCode();
         }
 
-        public override Type GetValueType()
+        public sealed override Type GetValueType()
         {
-            return typeof(String);
+            return typeof(string);
         }
 
-        public override bool IsNull
+        public sealed override bool IsNull
         {
             get
             {
-                if ((Count == 1) && (_values != null) && (_values.Length == 0))
+                if ((this.Count == 1) && (_values != null) && (_values.Length == 0))
                     return true;
                 return false;
             }
         }
 
-        public override bool IsEmpty
+        public sealed override bool IsEmpty
         {
             get
             {
-                if ((Count == 0) && (_values == null || _values.Length == 0))
+                if ((this.Count == 0) && (_values == null || _values.Length == 0))
                     return true;
                 return false;
             }
         }
 
 
-        public override Object Values
+        public override object Values
         {
             get { return _values; }
             set
@@ -311,8 +322,8 @@ namespace ClearCanvas.Dicom
                 {
                     _values = (string[])value;
                     // If the values array length is 0, then it is technically an empty string and we want Count to be 1
-                    Count = _values.Length == 0 ? 1 : _values.Length;
-                    StreamLength = (uint)ToString().Length;
+                    this.Count = _values.Length == 0 ? 1 : _values.Length;
+                    this.StreamLength = (uint)ToString().Length;
                 }
                 else if (value is string)
                 {
@@ -328,7 +339,7 @@ namespace ClearCanvas.Dicom
         public abstract override DicomAttribute Copy();
         internal abstract override DicomAttribute Copy(bool copyBinary);
 
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, string specificCharacterSet)
         {
             ByteBuffer bb = new ByteBuffer(syntax.Endian);
 
@@ -348,11 +359,11 @@ namespace ClearCanvas.Dicom
         /// <param name="i">zero-based index of the value to retrieve</param>
         /// <param name="value">reference to the value retrieved</param>
         /// <returns><i>true</i> if the value can be retrieved. <i>false</i> if the element is not present (</returns>
-        public override bool TryGetString(int i, out String value)
+        public override bool TryGetString(int i, out string value)
         {
             if (_values == null || _values.Length <= i)
             {
-                value = String.Empty;
+                value = string.Empty;
                 return false;
             }
 
@@ -371,13 +382,13 @@ namespace ClearCanvas.Dicom
         /// 
         /// </example>
         ///
-        public override void SetStringValue(String stringValue)
+        public override void SetStringValue(string stringValue)
         {            
             if (stringValue == null || stringValue.Length == 0)
             {
-                Count = 1;
-                StreamLength = 0;
-                _values = new String[0];
+                this.Count = 1;
+                this.StreamLength = 0;
+                _values = new string[0];
                 return;
             }
 
@@ -385,9 +396,9 @@ namespace ClearCanvas.Dicom
 
             _values = stringValue.Split(new char[] { '\\' });
 
-            Count = _values.Length;
+            this.Count = _values.Length;
 
-            StreamLength = (uint)stringValue.Length;
+            this.StreamLength = (uint)stringValue.Length;
         }
 
         /// <summary>
@@ -416,7 +427,7 @@ namespace ClearCanvas.Dicom
             else
             {
                 _values[index] = value;
-            }
+			}
         }
 
         /// <summary>
@@ -438,6 +449,8 @@ namespace ClearCanvas.Dicom
         {
             ValidateString(stringValue);
 
+			//TODO: optimize the following code... there are a lot of redudant computations
+
             int newArrayLength = 1;
             int oldArrayLength = 0;
 
@@ -445,14 +458,14 @@ namespace ClearCanvas.Dicom
             {
                 newArrayLength = _values.Length + 1;
                 oldArrayLength = _values.Length;
-            }
+        }
 
             string[] newArray = new string[newArrayLength];
             if (oldArrayLength > 0)
                 _values.CopyTo(newArray, 0);
             newArray[newArrayLength - 1] = stringValue;
             _values = newArray;
-
+        
             StreamLength = (uint)this.ToString().Length;
 
             Count = newArray.Length;
@@ -685,7 +698,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetDateTime(int i, out DateTime value)
         {
-            if (i<0 || i>Count)
+            if (i<0 || i>this.Count)
             {
                 value = new DateTime();
                 return false;
@@ -709,14 +722,14 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetDateTime(int index, DateTime value)
         {
-            if (index == Count)
+            if (index == _values.Length)
             {
                 AppendDateTime(value);
             }
             else
             {
                 _values[index] = value.ToString(DateParser.DicomDateFormat);
-                StreamLength = (uint) ToString().Length;
+                this.StreamLength = (uint) ToString().Length;
 
             }
         }
@@ -728,7 +741,7 @@ namespace ClearCanvas.Dicom
         /// <param name="value"></param>
         public override void AppendDateTime(DateTime value)
         {
-            string[] temp = new string[Count + 1];
+			string[] temp = new string[_values.Length + 1];
 
             if (_values != null && _values.Length > 0)
             {
@@ -736,8 +749,9 @@ namespace ClearCanvas.Dicom
             }
 
             _values = temp;
-            _values[Count++] = value.ToString(DateParser.DicomDateFormat);
-            StreamLength = (uint) ToString().Length;
+			_values[_values.Length-1] = value.ToString(DateParser.DicomDateFormat);
+        	this.Count = _values.Length;
+            this.StreamLength = (uint) ToString().Length;
 
         }
 
@@ -853,14 +867,14 @@ namespace ClearCanvas.Dicom
         public override void SetInt64(int index, Int64 value)
         {
 
-			if (index == Count || IsNull)
+			if (index == _values.Length)
             {
                 AppendInt64(value);
             }
             else
             {
                 _values[index] = value.ToString();
-                StreamLength = (uint)ToString().Length;
+                this.StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -902,14 +916,14 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetUInt64(int index, UInt64 value)
         {
-			if (index == Count || IsNull)
+			if (index == _values.Length)
             {
                 AppendUInt64(value);
             }
             else
             {
                 _values[index] = value.ToString();
-                StreamLength = (uint)ToString().Length;
+                this.StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -938,14 +952,14 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetFloat64(int index, double value)
         {
-			if (index == Count || IsNull)
+			if (index == _values.Length)
             {
                 AppendFloat64(value);
             }
             else
             {
                 _values[index] = value.ToString("G12");
-                StreamLength = (uint)ToString().Length;
+                this.StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -961,7 +975,7 @@ namespace ClearCanvas.Dicom
         {
             // DO NOT CALL AppendFloat64. Precision loss will occur when converting float to double
 
-            string[] temp = new string[Count + 1];
+			string[] temp = new string[_values.Length + 1];
             if (_values != null && _values.Length >= 1)
                 Array.Copy(_values, temp, _values.Length);
 
@@ -970,9 +984,9 @@ namespace ClearCanvas.Dicom
 
 			// Originallly had R here, but ran into problems with the attribute value being too large
 			// for a DS tag (16 bytes)
-			_values[Count] = value.ToString("G12"); 
-            StreamLength = (uint)ToString().Length;
-            Count++;
+			_values[_values.Length - 1] = value.ToString("G12"); 
+            this.StreamLength = (uint)ToString().Length;
+			this.Count = _values.Length;
         }
 
         /// <summary>
@@ -985,7 +999,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void AppendFloat64(double value)
         {
-            string[] temp = new string[Count + 1];
+			string[] temp = new string[_values.Length + 1];
             if (_values != null && _values.Length >= 1)
                 Array.Copy(_values, temp, _values.Length);
 
@@ -994,9 +1008,9 @@ namespace ClearCanvas.Dicom
 
 			// Originallly had R here, but ran into problems with the attribute value being too large
 			// for a DS tag (16 bytes)
-            _values[Count] = value.ToString("G12"); 
-            StreamLength = (uint)ToString().Length;
-            Count++;
+			_values[_values.Length - 1] = value.ToString("G12"); 
+            this.StreamLength = (uint)ToString().Length;
+			this.Count = _values.Length;
         }
 
         /// <summary>
@@ -1029,16 +1043,16 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void AppendInt64(long value)
         {
-            string[] temp = new string[Count + 1];
+			string[] temp = new string[_values.Length + 1];
 
             if (_values != null && _values.Length >= 1)
                 Array.Copy(_values, temp, _values.Length);
 
             _values = temp;
 
-            _values[Count] = value.ToString();
-            StreamLength = (uint)ToString().Length;
-            Count++;
+			_values[_values.Length - 1] = value.ToString();
+            this.StreamLength = (uint)ToString().Length;
+			this.Count = _values.Length;
 
         }
 
@@ -1072,16 +1086,16 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void AppendUInt64(ulong value)
         {
-            string[] temp = new string[Count + 1];
+			string[] temp = new string[_values.Length + 1];
 
             if (_values!=null && _values.Length>=1)
                 Array.Copy(_values, temp, _values.Length);
 
             _values = temp;
 
-            _values[Count] = value.ToString();
-            StreamLength = (uint)ToString().Length;
-            Count++;
+			_values[_values.Length - 1] = value.ToString();
+            this.StreamLength = (uint)ToString().Length;
+			this.Count = _values.Length;
 
         }
 
@@ -1432,7 +1446,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetDateTime(int i, out DateTime value)
         {
-            if (i < 0 || i > Count)
+            if (i < 0 || i > this.Count)
             {
                 value = new DateTime();
                 return false;
@@ -1454,12 +1468,12 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetDateTime(int index, DateTime value)
         {
-            if (index == Count)
+			if (index == _values.Length)
                 AppendDateTime(value);
             else
             {
                 _values[index] = DateTimeParser.ToDicomString(value, UseTimeZone);
-                StreamLength = (uint)ToString().Length;
+                this.StreamLength = (uint)ToString().Length;
             }
         }
         /// <summary>
@@ -1470,15 +1484,16 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void AppendDateTime(DateTime value)
         {
-            string[] temp = new string[Count + 1];
+			string[] temp = new string[_values.Length + 1];
             if (_values != null && _values.Length > 0)
             {
                 Array.Copy(_values, temp, _values.Length);
             }
 
             _values = temp;
-            _values[Count++] = DateTimeParser.ToDicomString(value, UseTimeZone);
-            StreamLength = (uint)ToString().Length;
+			_values[_values.Length - 1] = DateTimeParser.ToDicomString(value, UseTimeZone);
+        	this.Count = _values.Length;
+            this.StreamLength = (uint)ToString().Length;
         }
 
         
@@ -1799,13 +1814,14 @@ namespace ClearCanvas.Dicom
         /// 
         public override void SetInt64(int index, long value)
         {
-            if (index == Count)
-                AppendInt64(value);
-            else
-            {
-                _values[index] = value.ToString();
-                StreamLength = (uint)ToString().Length;
-            }
+			if (index == _values.Length)
+			{
+				AppendInt64(value);
+			}
+			else {
+				_values[index] = value.ToString();
+				this.StreamLength = (uint)ToString().Length;
+			}
         }
 
         /// <summary>
@@ -1848,12 +1864,14 @@ namespace ClearCanvas.Dicom
         /// 
         public override void SetUInt64(int index, ulong value)
         {
-            if (index == Count)
-                AppendUInt64(value);
+			if (index == _values.Length)
+			{
+				AppendUInt64(value);
+			}
             else
             {
                 _values[index] = value.ToString();
-                StreamLength = (uint)ToString().Length;
+                this.StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -1888,13 +1906,14 @@ namespace ClearCanvas.Dicom
         /// 
         public override void AppendInt64(long intValue)
         {
-            string[] newArray = new string[Count + 1];
+			string[] newArray = new string[_values.Length + 1];
             if (_values != null && _values.Length > 0)
                 _values.CopyTo(newArray, 0);
             _values = newArray;
 
-            _values[Count++] = intValue.ToString();
-            StreamLength = (uint)ToString().Length;
+			_values[_values.Length - 1] = intValue.ToString();
+            this.StreamLength = (uint)ToString().Length;
+        	this.Count = _values.Length;
         }
 
         /// <summary>
@@ -1928,13 +1947,14 @@ namespace ClearCanvas.Dicom
         /// 
         public override void AppendUInt64(ulong value)
         {
-            
-            string[] temp = new string[Count + 1];
+
+			string[] temp = new string[_values.Length + 1];
             if (_values != null && _values.Length > 0)
                 Array.Copy(_values, temp, _values.Length);
             _values = temp;
-            _values[Count++] = value.ToString();
-            StreamLength = (uint)ToString().Length;
+			_values[_values.Length - 1] = value.ToString();
+            this.StreamLength = (uint)ToString().Length;
+        	this.Count = _values.Length;
         }        
     }
     #endregion
@@ -2164,7 +2184,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override bool TryGetDateTime(int i, out DateTime value)
         {
-            if (i < 0 || i > Count)
+            if (i < 0 || i > this.Count)
             {
                 value = new DateTime();
                 return false;
@@ -2188,12 +2208,14 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetDateTime(int index, DateTime value)
         {
-            if (index == Count)
-                AppendDateTime(value);
+			if (index == _values.Length)
+			{
+				AppendDateTime(value);
+			}
             else
             {
                 _values[index] = value.ToString(TimeParser.DicomFullTimeFormat);
-                StreamLength = (uint)ToString().Length;
+                this.StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -2205,13 +2227,14 @@ namespace ClearCanvas.Dicom
         /// 
         public override void AppendDateTime(DateTime value)
         {
-            string[] temp = new string[Count + 1];
+			string[] temp = new string[_values.Length + 1];
             if (_values != null && _values.Length > 0)
                 _values.CopyTo(temp, 0);
 
             _values = temp;
-            _values[Count++] = value.ToString(TimeParser.DicomFullTimeFormat);
-            StreamLength = (uint)ToString().Length;
+			_values[_values.Length-1] = value.ToString(TimeParser.DicomFullTimeFormat);
+        	this.Count = _values.Length;
+            this.StreamLength = (uint)ToString().Length;
         }
 
     }
@@ -2252,7 +2275,7 @@ namespace ClearCanvas.Dicom
 
         #endregion
 
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, string specificCharacterSet)
         {
             ByteBuffer bb = new ByteBuffer(syntax.Endian);
 
@@ -2291,7 +2314,7 @@ namespace ClearCanvas.Dicom
         public override bool TryGetUid(int i, out DicomUid value)
         {
 
-            if (i < 0 || i >= Count || _values.Length == 0)
+            if (i < 0 || i >= this.Count || _values.Length == 0)
             {
                 value = null;
                 return false;
@@ -2333,12 +2356,14 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         public override void SetUid(int index, DicomUid value)
         {
-            if (index == Count)
-                AppendUid(value);
+			if (index == _values.Length)
+			{
+				AppendUid(value);
+			}
             else
             {
                 _values[index] = value.UID;
-                StreamLength = (uint)ToString().Length;
+                this.StreamLength = (uint)ToString().Length;
             }
         }
 
@@ -2349,13 +2374,14 @@ namespace ClearCanvas.Dicom
         /// <param name="value"></param>
         public override void AppendUid(DicomUid uid)
         {
-            string[] temp = new string[Count + 1];
+			string[] temp = new string[_values.Length + 1];
             if (_values != null && _values.Length > 0)
                 _values.CopyTo(temp, 0);
 
             _values = temp;
-            _values[Count++] = uid.UID;
-            StreamLength = (uint)ToString().Length;
+			_values[_values.Length - 1] = uid.UID;
+            this.StreamLength = (uint)ToString().Length;
+        	this.Count = _values.Length;
         }
        
         
