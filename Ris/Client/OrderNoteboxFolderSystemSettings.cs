@@ -52,19 +52,19 @@ namespace ClearCanvas.Ris.Client
 			/// </summary>
 			public GroupFoldersData()
 			{
-				StaffGroupRefs = new List<EntityRef>();
+				StaffGroupNames = new List<string>();
 			}
 
-			public GroupFoldersData(List<EntityRef> staffGroupRefs)
+			public GroupFoldersData(List<string> staffGroupNames)
 			{
-				StaffGroupRefs = staffGroupRefs;
+				StaffGroupNames = staffGroupNames;
 			}
 
 			/// <summary>
 			/// List of staff groups for which folders are visible.
 			/// </summary>
 			[DataMember]
-			public List<EntityRef> StaffGroupRefs;
+			public List<string> StaffGroupNames;
 		}
 
 

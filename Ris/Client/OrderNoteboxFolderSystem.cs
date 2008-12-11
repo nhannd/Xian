@@ -153,7 +153,7 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
 				{
-					List<EntityRef> visibleGroups = OrderNoteboxFolderSystemSettings.Default.GroupFolders.StaffGroupRefs;
+					List<string> visibleGroups = OrderNoteboxFolderSystemSettings.Default.GroupFolders.StaffGroupNames;
 					ListStaffGroupsResponse response = service.ListStaffGroups(new ListStaffGroupsRequest());
 
 					// select those groups that are marked as visible
@@ -161,7 +161,7 @@ namespace ClearCanvas.Ris.Client
 						delegate(StaffGroupSummary g)
 						{
 							return CollectionUtils.Contains(visibleGroups,
-								delegate(EntityRef groupRef) { return groupRef.Equals(g.StaffGroupRef, true); });
+								delegate(string groupName) { return groupName == g.Name; });
 						});
 				});
 

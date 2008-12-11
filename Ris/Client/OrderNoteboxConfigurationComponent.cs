@@ -127,14 +127,14 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
 				{
-					List<EntityRef> visibleGroups = OrderNoteboxFolderSystemSettings.Default.GroupFolders.StaffGroupRefs;
+					List<string> visibleGroups = OrderNoteboxFolderSystemSettings.Default.GroupFolders.StaffGroupNames;
 					List<StaffGroupSummary> groups = service.ListStaffGroups(new ListStaffGroupsRequest()).StaffGroups;
 					_staffGroupTable.Items.AddRange(
 						CollectionUtils.Map<StaffGroupSummary, TableItem>(groups,
 							delegate(StaffGroupSummary g)
 							{
 								bool visible = CollectionUtils.Contains(visibleGroups,
-									delegate (EntityRef groupRef) { return g.StaffGroupRef.Equals(groupRef, true);});
+									delegate (string groupName) { return g.Name == groupName;});
 								 return new TableItem(g, visible, false);
 							}));
 				});
@@ -235,8 +235,8 @@ namespace ClearCanvas.Ris.Client
 
 				OrderNoteboxFolderSystemSettings.Default.GroupFolders = 
 					new OrderNoteboxFolderSystemSettings.GroupFoldersData(
-						CollectionUtils.Map<TableItem, EntityRef>(visibleItems,
-							delegate(TableItem item) { return item.Item.StaffGroupRef; }));
+						CollectionUtils.Map<TableItem, string>(visibleItems,
+							delegate(TableItem item) { return item.Item.Name; }));
 
 				OrderNoteboxFolderSystemSettings.Default.Save();
 
