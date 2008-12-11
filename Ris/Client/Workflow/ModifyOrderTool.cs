@@ -153,8 +153,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override void InvalidateFolders()
 		{
-			DocumentManager.InvalidateFolder(typeof(Folders.Performing.ScheduledPerformingWorkflowFolder));
-			DocumentManager.InvalidateFolder(typeof(Folders.Performing.CheckedInPerformingWorkflowFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.Performing.ScheduledFolder));
+			DocumentManager.InvalidateFolder(typeof(Folders.Performing.CheckedInFolder));
 		}
 	}
 }

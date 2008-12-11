@@ -35,47 +35,47 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Folders
 {
-	public abstract class Performing
+	public class Performing
 	{
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingScheduledWorklist)]
 		[FolderPath("Scheduled")]
-		public class ScheduledPerformingWorkflowFolder : PerformingWorkflowFolder
+		public class ScheduledFolder : PerformingWorkflowFolder
 		{
 		}
 
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingCheckedInWorklist)]
 		[FolderPath("Checked In", true)]
-		public class CheckedInPerformingWorkflowFolder : PerformingWorkflowFolder
+		public class CheckedInFolder : PerformingWorkflowFolder
 		{
 		}
 
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingInProgressWorklist)]
 		[FolderPath("In Progress")]
-		public class InProgressPerformingWorkflowFolder : PerformingWorkflowFolder
+		public class InProgressFolder : PerformingWorkflowFolder
 		{
 		}
 
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingCompletedWorklist)]
-		[FolderPath("Completed")]
-		public class CompletedPerformingWorkflowFolder : PerformingWorkflowFolder
+		[FolderPath("Performed")]
+		public class PerformedFolder : PerformingWorkflowFolder
 		{
 		}
 
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingUndocumentedWorklist)]
 		[FolderPath("Incomplete Documentation")]
-		public class UndocumentedPerformingWorkflowFolder : PerformingWorkflowFolder
+		public class UndocumentedFolder : PerformingWorkflowFolder
 		{
 		}
 
 		[ExtensionOf(typeof(PerformingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.PerformingCancelledWorklist)]
 		[FolderPath("Cancelled")]
-		public class CancelledPerformingWorkflowFolder : PerformingWorkflowFolder
+		public class CancelledFolder : PerformingWorkflowFolder
 		{
 		}
 

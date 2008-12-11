@@ -292,9 +292,9 @@ namespace ClearCanvas.Ris.Client.Workflow
             {
                 if (Save(false))
                 {
-                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.InProgressPerformingWorkflowFolder));
-                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.UndocumentedPerformingWorkflowFolder));
-                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.CancelledPerformingWorkflowFolder));
+                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.InProgressFolder));
+                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.UndocumentedFolder));
+                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.CancelledFolder));
                     this.Exit(ApplicationComponentExitCode.Accepted);
                 }
             }
@@ -322,8 +322,8 @@ namespace ClearCanvas.Ris.Client.Workflow
                 // validate first
                 if (Save(true))
                 {
-                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.CancelledPerformingWorkflowFolder));
-                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.CompletedPerformingWorkflowFolder));
+                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.CancelledFolder));
+                    DocumentManager.InvalidateFolder(typeof(Folders.Performing.PerformedFolder));
                     this.Exit(ApplicationComponentExitCode.Accepted);
                 }
             }

@@ -35,7 +35,7 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Folders
 {
-	public abstract class Reporting
+	public class Reporting
 	{
 		[ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.ReportingToBeReportedWorklist)]

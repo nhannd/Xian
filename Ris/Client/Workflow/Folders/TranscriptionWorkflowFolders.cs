@@ -5,7 +5,7 @@ using ClearCanvas.Ris.Application.Common.TranscriptionWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow.Folders
 {
-	public abstract class Transcription
+	public class Transcription
 	{
 		[ExtensionOf(typeof(TranscriptionWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.TranscriptionToBeTranscribedWorklist)]

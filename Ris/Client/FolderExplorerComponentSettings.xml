@@ -1,19 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <folder-systems>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.PerformingWorkflowFolderSystem">
-    <folder id="CheckedInPerformingWorkflowFolder" />	
-    <folder id="InProgressPerformingWorkflowFolder" />
-  <folder id="UndocumentedPerformingWorkflowFolder" />
-    <folder id="CompletedPerformingWorkflowFolder" />
-    <folder id="ScheduledPerformingWorkflowFolder" />
-  <folder id="CancelledPerformingWorkflowFolder" />    
-    <folder id="PerformingSearchFolder" />
+    <folder id="CheckedInFolder" />	
+    <folder id="InProgressFolder" />
+    <folder id="UndocumentedFolder" />
+    <folder id="PerformedFolder" />
+    <folder id="ScheduledFolder" />
+    <folder id="CancelledFolder" />    
+    <folder id="SearchFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.RegistrationWorkflowFolderSystem">
     <folder id="ScheduledFolder" />
     <folder id="CheckedInFolder" />
     <folder id="InProgressFolder" />
-    <folder id="CompletedFolder" />
+    <folder id="PerformedFolder" />
     <folder id="CancelledFolder" />
     <folder id="RegistrationSearchFolder" />
   </folder-system>
@@ -54,10 +54,10 @@
     <folder id="IncomingSpamFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.EmergencyWorkflowFolderSystem">
-    <folder id="EmergencyScheduledFolder" />
-    <folder id="EmergencyInProgressFolder" />
-    <folder id="EmergencyCompletedFolder" />
-    <folder id="EmergencyCancelledFolder" />
+    <folder id="ScheduledFolder" />
+    <folder id="InProgressFolder" />
+    <folder id="PerformedFolder" />
+    <folder id="CancelledFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.OrderNoteboxFolderSystem">
     <folder id="PersonalInboxFolder" />

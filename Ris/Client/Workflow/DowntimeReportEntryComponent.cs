@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return this.Context.SelectedItems.Count == 1
 					// this is a blatant HACK!  we only want this tool enabled from Completed, and there is no
 					// easy way to do this (cannot use server-side enablement because operation is on the reporting workflow service)
-					 && this.Context.SelectedFolder is Folders.Performing.CompletedPerformingWorkflowFolder
+					 && this.Context.SelectedFolder is Folders.Performing.PerformedFolder
 					   && CollectionUtils.FirstElement(this.Context.SelectedItems).ProcedureRef != null;
 			}
 		}
@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
-					DocumentManager.InvalidateFolder(typeof(Folders.Performing.CompletedPerformingWorkflowFolder));
+					DocumentManager.InvalidateFolder(typeof(Folders.Performing.PerformedFolder));
 				}
 
 			}

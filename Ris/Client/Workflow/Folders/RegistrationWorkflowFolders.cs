@@ -60,8 +60,8 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 
 		[ExtensionOf(typeof(RegistrationWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationCompletedWorklist)]
-		[FolderPath("Completed")]
-		public class CompletedFolder : RegistrationWorkflowFolder
+		[FolderPath("Performed")]
+		public class PerformedFolder : RegistrationWorkflowFolder
 		{
 		}
 
