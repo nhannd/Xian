@@ -34,6 +34,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -50,12 +51,12 @@ namespace ClearCanvas.Ris.Client
 
         #region Public Properties
 
-        public ProcedureDetail rpDetail
+        public ProcedureDetail Procedure
         {
             get { return _rpDetail; }
         }
 
-        public ProcedureStepDetail mpsDetail
+        public ProcedureStepDetail ModalityProcedureStep
         {
             get { return _mpsDetail; }
         }
@@ -98,43 +99,74 @@ namespace ClearCanvas.Ris.Client
 
             this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
                                  SR.ColumnModality,
-                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.mpsDetail.Modality.Name; },
+                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.ModalityProcedureStep.Modality.Name; },
                                  0.5f));
 
-			TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string> sortColumn = 
+			TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string> scheduledStartTimeColumn = 
                 new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
-				     SR.ColumnScheduledStartTime,
-				     delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return Format.DateTime(checkable.Item.mpsDetail.ScheduledStartTime); },
+				     SR.ColumnScheduledTime,
+				     delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return Format.DateTime(checkable.Item.ModalityProcedureStep.ScheduledStartTime); },
 				     0.5f);
 
-			sortColumn.Comparison = delegate(Checkable<ProcedurePlanSummaryTableItem> x, Checkable<ProcedurePlanSummaryTableItem> y)
-                { return Nullable.Compare(x.Item.mpsDetail.ScheduledStartTime, y.Item.mpsDetail.ScheduledStartTime); };
+			scheduledStartTimeColumn.Comparison = 
+				delegate(Checkable<ProcedurePlanSummaryTableItem> x, Checkable<ProcedurePlanSummaryTableItem> y)
+				{
+					return Nullable.Compare(x.Item.ModalityProcedureStep.ScheduledStartTime, y.Item.ModalityProcedureStep.ScheduledStartTime);
+				};
 
-			this.Columns.Add(sortColumn);
+			this.Columns.Add(scheduledStartTimeColumn);
+
+			this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
+								 SR.ColumnCheckInTime,
+								 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return Format.DateTime(checkable.Item.Procedure.CheckInTime); },
+								 0.5f));
+
+			this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
+								 SR.ColumnStartTime,
+								 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return Format.DateTime(checkable.Item.ModalityProcedureStep.StartTime); },
+								 0.5f));
+
 
             this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(SR.ColumnProcedureDescription,
                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable)
-                                    {
-                                        return string.Format("{0} - {1}", 
-                                            checkable.Item.mpsDetail.ProcedureStepName, 
-                                            checkable.Item.rpDetail.CheckInTime == null 
-                                                ? SR.FormatNotCheckedIn
-                                                : string.Format(SR.FormatCheckedInTime, Format.DateTime(checkable.Item.rpDetail.CheckInTime)));
-                                    },
+                                {
+									// if MPS description is identical to procedure type name, don't put redundant text
+									if(checkable.Item.ModalityProcedureStep.ProcedureStepName == checkable.Item.Procedure.Type.Name)
+									{
+										return ProcedureFormat.Format(checkable.Item.Procedure);
+									}
+									else
+									{
+										// MPS desc is different, so append it
+										return string.Format("{0} - {1}",
+											ProcedureFormat.Format(checkable.Item.Procedure),
+											checkable.Item.ModalityProcedureStep.ProcedureStepName);
+									}
+                                },
                                 0.5f,
                                 ProcedureDescriptionRow));
 
-            this.Sort(new TableSortParams(sortColumn, true));
+            this.Sort(new TableSortParams(scheduledStartTimeColumn, true));
         }
 
     	private static string FormatStatus(ProcedurePlanSummaryTableItem item)
     	{
-			if(item.mpsDetail.State.Code == "SC")
-				return item.rpDetail.CheckInTime.HasValue
-                    ? string.Format(SR.FormatStatusCheckedIn, item.mpsDetail.State.Value)
-					: item.mpsDetail.State.Value;
-			else
-	    		return item.mpsDetail.State.Value;
+			if (item.ModalityProcedureStep.State.Code == "SC")
+			{
+				return item.Procedure.CheckInTime.HasValue
+				       	? string.Format(SR.FormatStatusCheckedIn, item.ModalityProcedureStep.State.Value)
+				       	: item.ModalityProcedureStep.State.Value;
+			}
+
+			if(item.ModalityProcedureStep.State.Code == "CM")
+			{
+				// bug #3336 : apparently having this say Completed was confusing people into
+				// thinking the procedure was completed, when in fact it is just the MPS
+				// however, hardcoding this is dumb!!! this should probably be re-visited in future (JR)
+				return "Peformed";
+			}
+
+    		return item.ModalityProcedureStep.State.Value;
     	}
 
     	public event EventHandler CheckedRowsChanged

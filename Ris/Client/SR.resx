@@ -144,6 +144,9 @@
   <data name="ColumnCategory" xml:space="preserve">
     <value>Category</value>
   </data>
+  <data name="ColumnCheckInTime" xml:space="preserve">
+    <value>Check-in Time</value>
+  </data>
   <data name="ColumnComments" xml:space="preserve">
     <value>Comments</value>
   </data>
@@ -296,9 +299,6 @@
   </data>
   <data name="ColumnRole" xml:space="preserve">
     <value>Role</value>
-  </data>
-  <data name="ColumnScheduledStartTime" xml:space="preserve">
-    <value>Scheduled Start Time</value>
   </data>
   <data name="ColumnScheduledStep" xml:space="preserve">
     <value>Scheduled Step</value>

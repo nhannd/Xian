@@ -356,7 +356,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             {
                 List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef, List<EntityRef>>(
                     ListCheckedSummmaryTableItems(),
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.ProcedureStepRef; });
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.ProcedureStepRef; });
 
                 if (checkedMpsRefs.Count > 0)
                 {
@@ -393,7 +393,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             {
                 List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ProcedurePlanSummaryTableItem, EntityRef, List<EntityRef>>(
                     ListCheckedSummmaryTableItems(),
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.ProcedureStepRef; });
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.ProcedureStepRef; });
 
                 if (checkedMpsRefs.Count > 0)
                 {
@@ -587,10 +587,10 @@ namespace ClearCanvas.Ris.Client.Workflow
             else
             {
                 _startAction.Enabled = CollectionUtils.TrueForAll(checkedSummaryTableItems,
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.State.Code == "SC"; });
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.State.Code == "SC"; });
 
                 _discontinueAction.Enabled = CollectionUtils.TrueForAll(checkedSummaryTableItems,
-                    delegate(ProcedurePlanSummaryTableItem item) { return item.mpsDetail.State.Code == "SC"; });
+                    delegate(ProcedurePlanSummaryTableItem item) { return item.ModalityProcedureStep.State.Code == "SC"; });
             }
         }
 
