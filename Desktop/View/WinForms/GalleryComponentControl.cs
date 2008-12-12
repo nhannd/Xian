@@ -94,6 +94,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			this.DataSource = _component.DataSource;
 			_component.DataSourceChanged += OnDataSourceChanged;
+			_component.SelectionChanged += OnDataSourceSelectionChanged;
 		}
 
 		private void InitializeContextMenu()
@@ -268,6 +269,22 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		#region Selection and Activation Business
 
+		private void OnDataSourceSelectionChanged(object sender, EventArgs e) {
+			return;
+			_selectionEventsEnabled = false;
+			foreach(ListViewItem lvi in _listView.Items)
+			{
+				if(_component.Selection.Contains(lvi.Tag ))
+				{
+					lvi.Selected = true;
+				} else
+				{
+					lvi.Selected = false;
+				}
+			}
+			_selectionEventsEnabled = true;
+		}
+
 		private void OnSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
 		{
 			if (!_selectionEventsEnabled)
@@ -308,12 +325,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnListViewResize(object sender, EventArgs e)
 		{
-			// force tile sizing to fit within the control without horizontal scrolling
-			const int tileSpacing = 4;
-			_listView.TileSize = new Size(
-				Math.Max(3 * _listView.LargeImageList.ImageSize.Width + tileSpacing, _listView.ClientSize.Width - 2 * tileSpacing),
-				             _listView.LargeImageList.ImageSize.Height + tileSpacing
-			);
+			if (_listView.LargeImageList != null)
+			{
+				// force tile sizing to fit within the control without horizontal scrolling
+				const int tileSpacing = 4;
+				_listView.TileSize = new Size(
+					Math.Max(3*_listView.LargeImageList.ImageSize.Width + tileSpacing, _listView.ClientSize.Width - 2*tileSpacing),
+					_listView.LargeImageList.ImageSize.Height + tileSpacing
+					);
+			}
 		}
 
 		private void OnAfterLabelEdit(object sender, LabelEditEventArgs e)

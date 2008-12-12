@@ -205,8 +205,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		public Size ImageSize
 		{
-			get { return _listView.LargeImageList.ImageSize; }
-			set { _listView.LargeImageList.ImageSize = value; }
+			get
+			{
+				if (_listView.LargeImageList == null)
+					return new Size();
+				return _listView.LargeImageList.ImageSize;
+			}
+			set
+			{
+				if (_listView.LargeImageList != null)
+					_listView.LargeImageList.ImageSize = value;
+			}
 		}
 
 		public bool AllowRenaming
@@ -347,9 +356,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// force tile sizing to fit within the control without horizontal scrolling
 			const int tileSpacing = 4;
 			_listView.TileSize = new Size(
-				Math.Max(3 * this.ImageSize.Width + tileSpacing, _listView.ClientSize.Width - 2 * tileSpacing),
-						     this.ImageSize.Height + tileSpacing
-			);
+				Math.Max(3*this.ImageSize.Width + tileSpacing, _listView.ClientSize.Width - 2*tileSpacing),
+				this.ImageSize.Height + tileSpacing
+				);
 		}
 
 		private void OnItemDrag(object sender, ItemDragEventArgs e)

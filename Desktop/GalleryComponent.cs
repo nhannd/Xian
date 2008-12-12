@@ -306,7 +306,7 @@ namespace ClearCanvas.Desktop
 			foreach (IGalleryItem item in selection)
 			{
 				if (!_dataSource.Contains(item))
-					throw new ArgumentException(_msgItemsNotInDataSource, "selection");
+					continue; // throw new ArgumentException(_msgItemsNotInDataSource, "selection");
 				list.Add(item);
 				data.Add(item.Item);
 			}
@@ -331,7 +331,7 @@ namespace ClearCanvas.Desktop
 			if (_dataSource == null)
 				throw new InvalidOperationException(_msgNullDataSource);
 			if (!_dataSource.Contains(item))
-				throw new ArgumentException(_msgItemNotInDataSource, "item");
+				return; // throw new ArgumentException(_msgItemNotInDataSource, "item");
 
 			_selection = new Selection(item);
 			_dataSelection = new Selection(item.Item);
