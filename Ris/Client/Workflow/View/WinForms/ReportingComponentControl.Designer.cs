@@ -259,7 +259,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._reportNextItem.Name = "_reportNextItem";
 			this._reportNextItem.Size = new System.Drawing.Size(112, 23);
 			this._reportNextItem.TabIndex = 8;
-			this._reportNextItem.Text = "Report Next Order";
+			this._reportNextItem.Text = "Go To Next Item";
 			this._reportNextItem.UseVisualStyleBackColor = true;
 			// 
 			// _reportedProcedures

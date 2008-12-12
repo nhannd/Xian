@@ -223,7 +223,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._protocolNextItem.Name = "_protocolNextItem";
 			this._protocolNextItem.Size = new System.Drawing.Size(119, 17);
 			this._protocolNextItem.TabIndex = 6;
-			this._protocolNextItem.Text = "Protocol Next Order";
+			this._protocolNextItem.Text = "Go To Next Item";
 			this._protocolNextItem.UseVisualStyleBackColor = true;
 			// 
 			// flowLayoutPanel3
