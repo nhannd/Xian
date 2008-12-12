@@ -1163,7 +1163,10 @@ Preview.BannerSection = function() {
 			Field.setValue($("line2"), line2);
 
 			var alertHtml = "";
-			alerts.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
+			if(alerts)
+			{
+				alerts.each(function(item) { alertHtml += Preview.getAlertHtml(item, patientName); });
+			}
 			$("alerts").innerHTML = alertHtml;
 		}
 	};
