@@ -39,6 +39,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -56,6 +57,21 @@ namespace ClearCanvas.Ris.Client.Workflow
 	/// </summary>
 	public interface IPerformedStepEditorContext
 	{
+		/// <summary>
+		/// Gets a reference to the order.
+		/// </summary>
+		EntityRef OrderRef { get; }
+
+		/// <summary>
+		/// Gets a reference to the patient.
+		/// </summary>
+		EntityRef PatientRef { get; }
+
+		/// <summary>
+		/// Gets a reference to the patient profile.
+		/// </summary>
+		EntityRef PatientProfileRef { get; }
+
 		/// <summary>
 		/// Gets the currently selected performed procedure step.
 		/// </summary>
@@ -108,11 +124,26 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		class EditorContext : IPerformedStepEditorContext
 		{
-			private PerformedProcedureComponent _owner;
+			private readonly PerformedProcedureComponent _owner;
 
 			public EditorContext(PerformedProcedureComponent owner)
 			{
 				_owner = owner;
+			}
+
+			public EntityRef OrderRef
+			{
+				get { return _owner._worklistItem.OrderRef; }
+			}
+
+			public EntityRef PatientRef
+			{
+				get { return _owner._worklistItem.PatientRef; }
+			}
+
+			public EntityRef PatientProfileRef
+			{
+				get { return _owner._worklistItem.PatientProfileRef; }
 			}
 
 			public event EventHandler SelectedPerformedStepChanged
@@ -138,7 +169,46 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		class MppsDetailsComponent : DHtmlComponent, IPerformedStepEditorPage
 		{
-			private IPerformedStepEditorContext _context;
+			#region HealthcareContext
+
+			[DataContract]
+			class HealthcareContext : DataContractBase
+			{
+				private readonly MppsDetailsComponent _owner;
+
+				public HealthcareContext(MppsDetailsComponent owner)
+				{
+					_owner = owner;
+				}
+
+				[DataMember]
+				public EntityRef OrderRef
+				{
+					get { return _owner._context.OrderRef; }
+				}
+
+				[DataMember]
+				public EntityRef PatientRef
+				{
+					get { return _owner._context.PatientRef; }
+				}
+
+				[DataMember]
+				public EntityRef PatientProfileRef
+				{
+					get { return _owner._context.PatientProfileRef; }
+				}
+
+				[DataMember]
+				public ModalityPerformedProcedureStepDetail ModalityPerformedProcedureStep
+				{
+					get { return _owner._context.SelectedPerformedStep; }
+				}
+			}
+
+			#endregion
+
+			private readonly IPerformedStepEditorContext _context;
 
 			public MppsDetailsComponent(IPerformedStepEditorContext context)
 			{
@@ -158,8 +228,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			protected override DataContractBase GetHealthcareContext()
 			{
-				// use the selected performed step as a healthcare context for the DHTML page
-				return _context.SelectedPerformedStep;
+				return new HealthcareContext(this);
 			}
 
 			protected override IDictionary<string, string> TagData
@@ -190,6 +259,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		#endregion
 
 		private EntityRef _orderRef;
+		private WorklistItemSummaryBase _worklistItem;
+
 		private readonly PerformingDocumentationMppsSummaryTable _mppsTable = new PerformingDocumentationMppsSummaryTable();
 		private ModalityPerformedProcedureStepDetail _selectedMpps;
 		private event EventHandler _selectedMppsChanged;
@@ -200,18 +271,22 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private ChildComponentHost _detailsPagesHost;
 
-		private List<IPerformedStepEditorPage> _editorPages = new List<IPerformedStepEditorPage>();
+		private readonly List<IPerformedStepEditorPage> _editorPages = new List<IPerformedStepEditorPage>();
 
-		private PerformingDocumentationComponent _owner;
+		private readonly PerformingDocumentationComponent _owner;
 
 		private event EventHandler<ProcedurePlanChangedEventArgs> _procedurePlanChanged;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public PerformedProcedureComponent(EntityRef orderRef, PerformingDocumentationComponent owner)
+		public PerformedProcedureComponent(WorklistItemSummaryBase worklistItem, PerformingDocumentationComponent owner)
 		{
-			_orderRef = orderRef;
+			Platform.CheckForNullReference(worklistItem, "worklistItem");
+			Platform.CheckForNullReference(owner, "owner");
+
+			_worklistItem = worklistItem;
+			_orderRef = worklistItem.OrderRef;
 			_owner = owner;
 		}
 

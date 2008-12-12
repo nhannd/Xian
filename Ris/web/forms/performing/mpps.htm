@@ -21,7 +21,7 @@
 					// (this provides a form of versioning, whereby data is always displayed by the same page that captured it in the first place)
 					var data = JSML.parse(Ris.getTag("Documentation")) || {};
 
-					var mpps = Ris.getHealthcareContext();
+					var mpps = Ris.getHealthcareContext().ModalityPerformedProcedureStep;
 
 					// redirect to appropriate page on every load (bug: #2629, to avoid long-term errors in page loading)
 					window.location = mpps ? selectPage(mpps) : "about:blank";

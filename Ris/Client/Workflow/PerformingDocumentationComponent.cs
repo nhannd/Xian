@@ -533,7 +533,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             _orderDetailsComponent = new PerformingDocumentationOrderDetailsComponent(context, _worklistItem);
             _documentationTabContainer.Pages.Add(new TabPage("Order", _orderDetailsComponent));
 
-            _ppsComponent = new PerformedProcedureComponent(_procedurePlan.OrderRef, this);
+            _ppsComponent = new PerformedProcedureComponent(_worklistItem, this);
             _ppsComponent.ProcedurePlanChanged += delegate(object sender, ProcedurePlanChangedEventArgs e) { RefreshProcedurePlanSummary(e.ProcedurePlanDetail); };
             _documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
 
