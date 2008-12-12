@@ -202,7 +202,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				ViewImagesHelper.Open(accession);
 			}
-			catch (Exception e)
+			catch (Exception)
 			{
 				desktopWindow.ShowMessageBox("Images cannot be opened.", MessageBoxActions.Ok);
 			}
