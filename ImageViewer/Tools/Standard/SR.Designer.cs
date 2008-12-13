@@ -286,15 +286,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The input presentation image is not supported..
-        /// </summary>
-        internal static string ExceptionInputPresentationImageNotSupported {
-            get {
-                return ResourceManager.GetString("ExceptionInputPresentationImageNotSupported", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The input value does not match an existing Modality..
         /// </summary>
         internal static string ExceptionInputValueDoesntMatchExistingModality {
@@ -450,11 +441,29 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to W:{0} L:{1} (Auto).
+        ///   Looks up a localized string similar to {0} (Data).
+        /// </summary>
+        internal static string FormatAutoVoiLutDataDescription {
+            get {
+                return ResourceManager.GetString("FormatAutoVoiLutDataDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W:{0} L:{1} ({2}).
         /// </summary>
         internal static string FormatDescriptionAutoLinearLut {
             get {
                 return ResourceManager.GetString("FormatDescriptionAutoLinearLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W:{0} L:{1} (Auto).
+        /// </summary>
+        internal static string FormatDescriptionAutoLinearLutNoExplanation {
+            get {
+                return ResourceManager.GetString("FormatDescriptionAutoLinearLutNoExplanation", resourceCulture);
             }
         }
         

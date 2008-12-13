@@ -51,14 +51,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 
 			public override int MinOutputValue{
-				get { throw new MemberAccessException("A color map cannot have a minimum output value."); }
-				protected set { throw new MemberAccessException("A color map cannot have a minimum output value."); }
+				get { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
+				protected set { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
 			}
 
 			public override int MaxOutputValue
 			{
-				get { throw new MemberAccessException("A color map cannot have a maximum output value."); }
-				protected set { throw new MemberAccessException("A color map cannot have a maximum output value."); }
+				get { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
+				protected set { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
 			}
 		}
 		
@@ -152,14 +152,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			public override int MinOutputValue
 			{
-				get { throw new MemberAccessException("A color map cannot have a minimum output value."); }
-				protected set { throw new MemberAccessException("A color map cannot have a minimum output value."); }
+				get { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
+				protected set { throw new InvalidOperationException("A color map cannot have a minimum output value."); }
 			}
 
 			public override int MaxOutputValue
 			{
-				get { throw new MemberAccessException("A color map cannot have a maximum output value."); }
-				protected set { throw new MemberAccessException("A color map cannot have a maximum output value."); }
+				get { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
+				protected set { throw new InvalidOperationException("A color map cannot have a maximum output value."); }
 			}
 
 			public override int this[int index]
@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				}
 				protected set
 				{
-					throw new MemberAccessException("The color map data cannot be altered.");
+					throw new InvalidOperationException("The color map data cannot be altered.");
 				}
 			}
 
@@ -253,7 +253,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			public override int this[int index]
 			{
 				get { return _realLut[index]; }
-				protected set { throw new MemberAccessException("The modality lut data cannot be altered."); }
+				protected set { throw new InvalidOperationException("The modality lut data cannot be altered."); }
 			}
 
 			public override string GetKey()

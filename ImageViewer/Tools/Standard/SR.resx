@@ -383,9 +383,6 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="ExceptionFormatWindowWidthInvalid" xml:space="preserve">
     <value>The value '{0}' is invalid for Window Width.</value>
   </data>
-  <data name="ExceptionInputPresentationImageNotSupported" xml:space="preserve">
-    <value>The input presentation image is not supported.</value>
-  </data>
   <data name="ExceptionInputValueDoesntMatchExistingModality" xml:space="preserve">
     <value>The input value does not match an existing Modality.</value>
   </data>
@@ -401,7 +398,7 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="ExceptionWindowCenterInvalid" xml:space="preserve">
     <value>The Window Center value is invalid.</value>
   </data>
-  <data name="FormatDescriptionAutoLinearLut" xml:space="preserve">
+  <data name="FormatDescriptionAutoLinearLutNoExplanation" xml:space="preserve">
     <value>W:{0} L:{1} (Auto)</value>
   </data>
   <data name="FormatDescriptionLinearPreset" xml:space="preserve">
@@ -581,5 +578,11 @@ Please check the log for more details.</value>
   </data>
   <data name="CommandSortImages" xml:space="preserve">
     <value>Sort Images</value>
+  </data>
+  <data name="FormatDescriptionAutoLinearLut" xml:space="preserve">
+    <value>W:{0} L:{1} ({2})</value>
+  </data>
+  <data name="FormatAutoVoiLutDataDescription" xml:space="preserve">
+    <value>{0} (Data)</value>
   </data>
 </root>

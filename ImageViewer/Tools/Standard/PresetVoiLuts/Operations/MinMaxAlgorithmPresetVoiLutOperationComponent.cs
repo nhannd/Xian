@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 		public override void Apply(IPresentationImage presentationImage)
 		{
 			if (!AppliesTo(presentationImage))
-				throw new InvalidOperationException(SR.ExceptionInputPresentationImageNotSupported);
+				throw new InvalidOperationException("The input presentation image is not supported.");
 
 			IVoiLutManager manager = ((IVoiLutProvider)presentationImage).VoiLutManager;
 			IComposableLut currentLut = manager.GetLut();

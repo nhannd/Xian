@@ -35,7 +35,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
-	internal sealed class PresetVoiLutCollectionSortByKeyStrokeSortByName : IComparer<PresetVoiLut>
+	internal sealed class PresetVoiLutComparer : IComparer<PresetVoiLut>
 	{
 		#region IComparer<PresetVoiLutCollection> Members
 

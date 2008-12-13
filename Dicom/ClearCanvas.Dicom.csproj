@@ -40,7 +40,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>bin\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile />
@@ -178,6 +178,7 @@
     <Compile Include="Codec\DicomCodecFactoryExtensionPoint.cs" />
     <Compile Include="Codec\DicomCodecRegistry.cs" />
     <Compile Include="Codec\IDicomCodec.cs" />
+    <Compile Include="Delegates.cs" />
     <Compile Include="DicomAttributeMultiValueText.cs" />
     <Compile Include="DicomDataException.cs" />
     <Compile Include="DicomDirectoryWriter.cs" />
@@ -190,6 +191,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DicomSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Iod\DataLut.cs" />
     <Compile Include="Iod\IodBase.cs" />
     <Compile Include="Iod\Iods\ImageIod.cs" />
     <Compile Include="Iod\Iods\ImageQueryIod.cs" />
@@ -204,6 +206,7 @@
     <Compile Include="Iod\Macros\ImageSopInstanceReferenceMacro.cs" />
     <Compile Include="Iod\Macros\PersonIdentificationMacro.cs" />
     <Compile Include="Iod\Macros\SeriesAndInstanceReferenceMacro.cs" />
+    <Compile Include="Iod\ModalityDataLut.cs" />
     <Compile Include="Iod\Modules\BasicFilmBoxModuleIod.cs" />
     <Compile Include="Iod\Modules\BasicFilmSessionModuleIod.cs" />
     <Compile Include="Iod\Modules\BillingAndMaterialManagementCodesModuleIod.cs" />
@@ -238,6 +241,7 @@
     <Compile Include="Iod\Sequences\ScheduledProcedureStepSequenceIod.cs" />
     <Compile Include="Iod\Sequences\ScheduledStepAttributesSequenceIod.cs" />
     <Compile Include="Iod\Sequences\ViewCodeSequenceIod.cs" />
+    <Compile Include="Iod\VoiDataLut.cs" />
     <Compile Include="Network\NetworkSettings.cs" />
     <Compile Include="Network\NetworkSettings.Designer.cs">
       <AutoGen>True</AutoGen>

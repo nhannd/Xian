@@ -134,6 +134,7 @@
     <Compile Include="Graphics\RemoveGraphicUndoableCommand.cs" />
     <Compile Include="Graphics\SpatialTransformValidationPolicy.cs" />
     <Compile Include="Graphics\Tests\InvariantArcPrimitiveTest.cs" />
+    <Compile Include="Imaging\AdjustableDataLut.cs" />
     <Compile Include="Imaging\DataLut.cs" />
     <Compile Include="Imaging\PaletteColorMap.cs" />
     <Compile Include="Imaging\SimpleDataLut.cs" />

@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			PresetVoiLutOperationComponentType component = new PresetVoiLutOperationComponentType();
 			component.SourceFactory = this;
-			SimpleSerializer.Serialize(component, dictionary);
+			SimpleSerializer.Serialize<PresetVoiLutConfigurationAttribute>(component, dictionary);
 			component.Validate();
 			return component;
 		}
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 				ValidateFactoryName(configuration);
 				Dictionary<string, string> dictionary = new Dictionary<string, string>();
 				configuration.CopyTo(dictionary);
-				SimpleSerializer.Serialize(component, dictionary);
+				SimpleSerializer.Serialize<PresetVoiLutConfigurationAttribute>(component, dictionary);
 			}
 
 			return component;

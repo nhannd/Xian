@@ -35,10 +35,19 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
+	public class PresetVoiLutConfigurationAttribute : Attribute
+	{
+		public PresetVoiLutConfigurationAttribute()
+		{
+		}
+	}
+
 	[Serializable]
 	public sealed class PresetVoiLutOperationValidationException : Exception
 	{
@@ -109,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			Validate();
 
 			PresetVoiLutConfiguration configuration = PresetVoiLutConfiguration.FromFactory(_sourceFactory);
-			foreach (KeyValuePair<string, string> pair in SimpleSerializer.Deserialize(this))
+			foreach (KeyValuePair<string, string> pair in SimpleSerializer.Deserialize<PresetVoiLutConfigurationAttribute>(this))
 				configuration[pair.Key] = pair.Value;
 
 			return configuration;
@@ -159,9 +168,34 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			NotifyPropertyChanged(propertyName);
 		}
 
+		#region Helper Methods
+
 		protected static PresetVoiLutOperationValidationException CreateValidationException(string message)
 		{
 			return new PresetVoiLutOperationValidationException(message);
 		}
+
+		protected static bool IsModalityLutProvider(IPresentationImage presentationImage)
+		{
+			return presentationImage is IModalityLutProvider;
+		}
+
+		protected static bool IsVoiLutProvider(IPresentationImage presentationImage)
+		{
+			return presentationImage is IVoiLutProvider;
+		}
+
+		protected static bool IsImageSopProvider(IPresentationImage presentationImage)
+		{
+			return presentationImage is IImageSopProvider;
+		}
+
+		protected static bool IsGrayScaleImage(IPresentationImage presentationImage)
+		{
+			IImageGraphicProvider graphicProvider = presentationImage as IImageGraphicProvider;
+			return graphicProvider != null && graphicProvider.ImageGraphic.PixelData is GrayscalePixelData;
+		}
+
+		#endregion
 	}
 }

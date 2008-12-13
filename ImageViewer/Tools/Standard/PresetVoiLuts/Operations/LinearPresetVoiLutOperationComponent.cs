@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			get { return String.Format(SR.FormatDescriptionLinearPreset, this.WindowWidth, this.WindowCenter); }
 		}
 		
-		[SimpleSerialized]
+		[PresetVoiLutConfiguration]
 		public string PresetName
 		{
 			get { return _name; }
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			}
 		}
 
-		[SimpleSerialized]
+		[PresetVoiLutConfiguration]
 		public double WindowWidth
 		{
 			get { return _windowWidth; }
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			}
 		}
 
-		[SimpleSerialized]
+		[PresetVoiLutConfiguration]
 		public double WindowCenter
 		{
 			get { return _windowCenter; }

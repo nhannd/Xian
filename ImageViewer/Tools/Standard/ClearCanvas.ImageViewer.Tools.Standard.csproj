@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="CineApplicationComponent.cs" />
     <Compile Include="CineTool.cs" />
+    <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />
     <Compile Include="ToolSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -125,7 +126,6 @@
     <Compile Include="LocateOnDiskTool.cs" />
     <Compile Include="PresetVoiLuts\Operations\LinearPresetVoiLutOperationComponent.cs" />
     <Compile Include="PresetVoiLuts\Operations\AutoPresetVoiLutOperationFactory.cs" />
-    <Compile Include="PresetVoiLuts\Operations\AutoPresetVoiLutOperationHelper.cs" />
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutLinear.cs" />
     <Compile Include="PresetVoiLuts\AvailablePresetVoiLutKeyStrokeSettings.cs" />
     <Compile Include="PresetVoiLuts\AvailablePresetVoiLutKeyStrokeSettings.Designer.cs">

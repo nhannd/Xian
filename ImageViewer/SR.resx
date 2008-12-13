@@ -261,6 +261,9 @@
   <data name="ExceptionStatefulGraphicMustBeIMemorable" xml:space="preserve">
     <value>For undo support, your StatefulGraphic subclass must implement IMemorable.</value>
   </data>
+  <data name="FormatAdjustableDataLutDescription" xml:space="preserve">
+    <value>{0} [C:{1:F2}% B:{2:F2}%]</value>
+  </data>
   <data name="FormatDescriptionBasicLinearLut" xml:space="preserve">
     <value>W:{0} L:{1}</value>
   </data>

@@ -493,6 +493,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} [C:{1:F2}% B:{2:F2}%].
+        /// </summary>
+        public static string FormatAdjustableDataLutDescription {
+            get {
+                return ResourceManager.GetString("FormatAdjustableDataLutDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W:{0} L:{1}.
         /// </summary>
         public static string FormatDescriptionBasicLinearLut {

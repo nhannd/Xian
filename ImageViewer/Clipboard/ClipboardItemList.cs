@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			}
 			set
 			{
-				throw new MemberAccessException("Cannot set items via the indexer.");
+				throw new InvalidOperationException("Cannot set items via the indexer.");
 			}
 		}
 

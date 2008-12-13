@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			// However, right now we don't want to add new functionality to 1.0, so the 'Initial Lut Provider' and the
 			// 'Auto Lut Operation' do basically the same thing.
 
-			return AutoPresetVoiLutOperationHelper.GetInitialLut(presentationImage);
+			return AutoPresetVoiLutOperationComponent.GetInitialLut(presentationImage);
 		}
 
 		#endregion

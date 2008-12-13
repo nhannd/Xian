@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 			protected set
 			{
-				throw new MemberAccessException(SR.ExceptionLinearLutDataCannotBeSet);
+				throw new InvalidOperationException(SR.ExceptionLinearLutDataCannotBeSet);
 			}
 		}
 
@@ -167,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public sealed override int MinOutputValue
 		{
 			get { return _minInputValue; }
-			protected set { throw new MemberAccessException(SR.ExceptionMinimumOutputValueIsNotSettable); }
+			protected set { throw new InvalidOperationException(SR.ExceptionMinimumOutputValueIsNotSettable); }
 		}
 
 		/// <summary>
@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public sealed override int MaxOutputValue
 		{
 			get { return _maxInputValue; }
-			protected set { throw new MemberAccessException(SR.ExceptionMaximumOutputValueIsNotSettable); }
+			protected set { throw new InvalidOperationException(SR.ExceptionMaximumOutputValueIsNotSettable); }
 		}
 
 		#endregion

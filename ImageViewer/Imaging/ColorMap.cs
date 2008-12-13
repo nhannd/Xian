@@ -53,32 +53,32 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Not applicable.
 		/// </summary>
-		/// <exception cref="MemberAccessException">Thrown always.</exception>
+		/// <exception cref="InvalidOperationException">Thrown always.</exception>
 		public sealed override int MinOutputValue
 		{
 			get
 			{
-				throw new MemberAccessException("A color map cannot have a minimum output value.");
+				throw new InvalidOperationException("A color map cannot have a minimum output value.");
 			}
 			protected set
 			{
-				throw new MemberAccessException("A color map cannot have a minimum output value.");
+				throw new InvalidOperationException("A color map cannot have a minimum output value.");
 			}
 		}
 
 		/// <summary>
 		/// Not applicable.
 		/// </summary>
-		/// <exception cref="MemberAccessException">Thrown always.</exception>
+		/// <exception cref="InvalidOperationException">Thrown always.</exception>
 		public sealed override int MaxOutputValue
 		{
 			get
 			{
-				throw new MemberAccessException("A color map cannot have a maximum output value.");
+				throw new InvalidOperationException("A color map cannot have a maximum output value.");
 			}
 			protected set
 			{
-				throw new MemberAccessException("A color map cannot have a maximum output value.");
+				throw new InvalidOperationException("A color map cannot have a maximum output value.");
 			}
 		}
 

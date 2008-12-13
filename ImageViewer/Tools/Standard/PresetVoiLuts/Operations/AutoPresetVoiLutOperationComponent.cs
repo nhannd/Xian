@@ -29,10 +29,157 @@
 
 #endregion
 
+using System;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts;
+
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 {
 	public sealed class AutoPresetVoiLutOperationComponent : DefaultPresetVoiLutOperationComponent
 	{
+		#region Lut Application
+
+		private class LutApplicator
+		{
+			private readonly IPresentationImage _image;
+
+			public LutApplicator(IPresentationImage image)
+			{
+				_image = image;
+			}
+
+			private Frame Frame
+			{
+				get
+				{
+					if (_image is IImageSopProvider)
+						return ((IImageSopProvider)_image).Frame;
+
+					return null;
+				}
+			}
+
+			private GrayscalePixelData PixelData
+			{
+				get { return (GrayscalePixelData)((IImageGraphicProvider)_image).ImageGraphic.PixelData; }
+			}
+
+			private IVoiLutManager VoiLutManager
+			{
+				get { return ((IVoiLutProvider)_image).VoiLutManager; }
+			}
+
+			private IComposableLut CurrentLut
+			{
+				get { return VoiLutManager.GetLut(); }
+			}
+
+			private AutoVoiLutData GetDataLut()
+			{
+				Frame frame = Frame;
+				if (frame == null)
+					return null;
+
+				return AutoVoiLutData.CreateFrom(frame);
+			}
+
+			private AutoVoiLutLinear GetLinearLut()
+			{
+				Frame frame = Frame;
+				if (frame == null)
+					return null;
+
+				return AutoVoiLutLinear.CreateFrom(Frame);
+			}
+
+			private MinMaxPixelCalculatedLinearLut GetMinMaxLut()
+			{
+				if (IsModalityLutProvider(_image))
+					return new MinMaxPixelCalculatedLinearLut(PixelData, ((IModalityLutProvider)_image).ModalityLut);
+				else
+					return new MinMaxPixelCalculatedLinearLut(PixelData);
+			}
+
+			public IComposableLut GetInitialLut()
+			{
+				IComposableLut lut = GetDataLut();
+				if (lut != null)
+					lut = new AdjustableDataLut((AutoVoiLutData)lut);
+
+				if (lut == null)
+					lut = GetLinearLut();
+
+				if (lut == null)
+					lut = GetMinMaxLut();
+
+				return lut;
+			}
+
+			public void ApplyInitialLut()
+			{
+				VoiLutManager.InstallLut(GetInitialLut());
+			}
+
+			public void ApplyNextLut()
+			{
+				IComposableLut currentLut = CurrentLut;
+				Frame frame = Frame;
+
+				AdjustableDataLut adjustableDataLut = currentLut as AdjustableDataLut;
+				if (adjustableDataLut != null && !(adjustableDataLut.DataLut is AutoVoiLutData))
+					adjustableDataLut = null;
+
+				AutoVoiLutLinear linearLut = currentLut as AutoVoiLutLinear;
+
+				if (adjustableDataLut != null)
+				{
+					AutoVoiLutData dataLut = (AutoVoiLutData) adjustableDataLut.DataLut;
+					if (dataLut.IsLast && AutoVoiLutLinear.CanCreateFrom(frame))
+					{
+						VoiLutManager.InstallLut(AutoVoiLutLinear.CreateFrom(frame));
+					}
+					else
+					{
+						dataLut.ApplyNext();
+						adjustableDataLut.Reset();
+					}
+				}
+				else if (linearLut != null)
+				{
+					if (linearLut.IsLast && AutoVoiLutData.CanCreateFrom(frame))
+						VoiLutManager.InstallLut(new AdjustableDataLut(AutoVoiLutData.CreateFrom(frame)));
+					else
+						linearLut.ApplyNext();
+				}
+				else
+				{
+					ApplyInitialLut();
+				}
+			}
+
+			public static bool CanCreateFrom(IPresentationImage presentationImage)
+			{
+				if (!IsVoiLutProvider(presentationImage))
+					return false;
+
+				if (!IsGrayScaleImage(presentationImage))
+					return false;
+
+				if (IsImageSopProvider(presentationImage))
+				{
+					Frame frame = ((IImageSopProvider)presentationImage).Frame;
+					if (AutoVoiLutLinear.CanCreateFrom(frame) || AutoVoiLutData.CanCreateFrom(frame))
+						return true;
+				}
+
+				return false;
+			}
+		}
+
+		#endregion
+
 		public AutoPresetVoiLutOperationComponent()
 		{
 		}
@@ -49,7 +196,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 		public override bool AppliesTo(IPresentationImage presentationImage)
 		{
-			return base.AppliesTo(presentationImage) && AutoPresetVoiLutOperationHelper.AppliesTo(presentationImage);
+			return LutApplicator.CanCreateFrom(presentationImage);
 		}
 
 		public override void Apply(IPresentationImage presentationImage)
@@ -57,7 +204,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			// TODO: Later, when we've enabled all the factories, we need to change this functionality so it 
 			// is purely 'auto'; no min/max algorithm, as it is currently.
 
-			AutoPresetVoiLutOperationHelper.AutoApplyLut(presentationImage);
+			if (!AppliesTo(presentationImage))
+				throw new InvalidOperationException("The input presentation image is not supported.");
+				
+			new LutApplicator(presentationImage).ApplyNextLut();
+		}
+
+		internal static IComposableLut GetInitialLut(IPresentationImage presentationImage)
+		{
+			if (!LutApplicator.CanCreateFrom(presentationImage))
+				return null;
+
+			return new LutApplicator(presentationImage).GetInitialLut();
 		}
 	}
 }

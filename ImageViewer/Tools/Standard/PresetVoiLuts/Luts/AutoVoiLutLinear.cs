@@ -32,27 +32,23 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Imaging;
+using System.Collections.Generic;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 {
-	public interface IAutoVoiLutLinear : IVoiLutLinear
-	{
-		void ApplyNext();
-	}
-
 	[Cloneable(true)]
-	internal sealed class AutoVoiLutLinear : CalculatedVoiLutLinear, IAutoVoiLutLinear
+	internal sealed class AutoVoiLutLinear : CalculatedVoiLutLinear
 	{
+		#region Memento
+
 		private class AutoVoiLutLinearMemento : IEquatable<AutoVoiLutLinearMemento>
 		{
-			public readonly uint Index;
+			public readonly int Index;
 
-			public AutoVoiLutLinearMemento(uint index)
+			public AutoVoiLutLinearMemento(int index)
 			{
 				this.Index = index;
 			}
@@ -86,13 +82,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			#endregion
 		}
 
-		[CloneCopyReference]
-		private readonly Frame _frame;
-		private uint _index;
+		#endregion
 
-		public AutoVoiLutLinear(Frame frame)
+		#region Private Fields
+
+		[CloneCopyReference]
+		private readonly IList<Window> _windows;
+		[CloneCopyReference]
+		private readonly IList<string> _explanations;
+		private int _index;
+
+		#endregion
+
+		#region Constructor
+
+		private AutoVoiLutLinear(IList<Window> windows, IList<string> explanations)
 		{
-			_frame = frame;
+			_windows = windows;
+			_explanations = explanations;
 			_index = 0;
 		}
 
@@ -100,54 +107,81 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		{
 		}
 
-		#region Private Properties/Methods
+		#endregion
 
-		private Window[] WindowCenterAndWidth
-		{
-			get { return _frame.WindowCenterAndWidth; }
-		}
+		#region Private Methods
 
-		private void SetIndex(uint newIndex)
+		private void SetIndex(int newIndex)
 		{
-			uint lastIndex = _index;
+			int lastIndex = _index;
 			_index = newIndex;
-			if (_index >= this.WindowCenterAndWidth.Length)
+			if (_index >= _windows.Count)
 				_index = 0;
 
 			if (lastIndex != _index)
 				base.OnLutChanged();
 		}
 
+		private static Window[] GetWindowCenterAndWidth(Frame frame)
+		{
+			Window[] windowCenterAndWidth = frame.WindowCenterAndWidth;
+			if (windowCenterAndWidth == null || windowCenterAndWidth.Length == 0)
+				return null;
+
+			return windowCenterAndWidth;
+		}
+
 		#endregion
 
-		#region IVoiLutLinear Members
+		#region Public Properties/Methods
 
 		public override double WindowWidth
 		{
-			get { return this.WindowCenterAndWidth[_index].Width; }
+			get { return _windows[_index].Width; }
 		}
 
 		public override double WindowCenter
 		{
-			get { return this.WindowCenterAndWidth[_index].Center; }
+			get { return _windows[_index].Center; }
+		}
+
+		public bool IsLast
+		{
+			get { return _index >= _windows.Count - 1; }
+		}
+
+		#region Statics
+		
+		public static bool CanCreateFrom(Frame frame)
+		{
+			return GetWindowCenterAndWidth(frame) != null;
+		}
+
+		public static AutoVoiLutLinear CreateFrom(Frame frame)
+		{
+			Window[] windowCenterAndWidth = GetWindowCenterAndWidth(frame);
+			if (windowCenterAndWidth == null)
+				return null;
+
+			string[] explanations = frame.WindowCenterAndWidthExplanation;
+			if (explanations == null || explanations.Length != windowCenterAndWidth.Length)
+				return new AutoVoiLutLinear(new List<Window>(windowCenterAndWidth), null);
+			else
+				return new AutoVoiLutLinear(new List<Window>(windowCenterAndWidth), explanations);
 		}
 
 		#endregion
-
-		#region Public Methods
-
-		#region IAutoVoiLut Members
-
 		public void ApplyNext()
 		{
 			SetIndex(_index + 1);
 		}
-
-		#endregion
-
+		
 		public override string GetDescription()
 		{
-			return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter);
+			if (_explanations == null)
+				return String.Format(SR.FormatDescriptionAutoLinearLutNoExplanation, WindowWidth, WindowCenter);
+			else 
+				return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter, _explanations[_index]);
 		}
 
 		public override object CreateMemento()

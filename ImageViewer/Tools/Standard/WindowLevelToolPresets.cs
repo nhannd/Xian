@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				}
 
 				int i = 0;
-				presets.Sort(new PresetVoiLutCollectionSortByKeyStrokeSortByName());
+				presets.Sort(new PresetVoiLutComparer());
 
 				foreach (PresetVoiLut preset in presets)
 					actions.Add(new PresetVoiLutActionContainer(this, actionPathPrefix, preset, ++i).Action);
