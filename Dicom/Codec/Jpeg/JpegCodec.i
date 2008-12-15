@@ -233,7 +233,7 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 		}
 		
 		if (oldPixelData->IsSigned) {
-			if (oldPixelData->HasModalityLut)
+			if (oldPixelData->HasDataModalityLut)
 				throw gcnew DicomCodecUnsupportedSopException("JPEG compression not supported when modality LUT exists for pixel data");
 			if (!oldPixelData->SopSupportsModalityLut)
 			{

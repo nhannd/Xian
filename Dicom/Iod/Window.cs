@@ -30,6 +30,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace ClearCanvas.Dicom.Iod
 {
@@ -54,14 +56,65 @@ namespace ClearCanvas.Dicom.Iod
 			_center = center;
 		}
 
-		/// <summary>
+		public Window(Window window)
+			: this(window.Width, window.Center)
+		{
+		}
+
+    	/// <summary>
 		/// Protected constructor.
 		/// </summary>
 		protected Window()
 		{
 		}
 
-		#region Public Properties
+		public static List<Window> GetWindowCenterAndWidth(DicomAttributeCollection collection)
+		{
+			List<Window> windowValues = new List<Window>();
+			DicomAttribute windowWidthAttribute;
+			DicomAttribute windowCenterAttribute;
+			
+			if (!collection.TryGetAttribute(DicomTags.WindowCenter, out windowCenterAttribute))
+				return windowValues;
+
+			if (windowCenterAttribute.IsEmpty || windowCenterAttribute.IsNull)
+				return windowValues;
+				
+			if (!collection.TryGetAttribute(DicomTags.WindowWidth, out windowWidthAttribute))
+				throw new DicomDataException("Window Center exists without Window Width.");	
+
+			if (windowWidthAttribute.Count != windowCenterAttribute.Count)
+				throw new DicomDataException("Number of Window Center and Width entries differ.");
+
+			for (int i = 0; i < windowCenterAttribute.Count; i++)
+				windowValues.Add(new Window(windowWidthAttribute.GetFloat64(i, 0), windowCenterAttribute.GetFloat64(i, 0)));
+			
+			return windowValues;
+		}
+
+		public static void SetWindowCenterAndWidth(DicomAttributeCollection collection, IEnumerable<Window> windowValues)
+		{
+			StringBuilder widthValues = new StringBuilder();
+			StringBuilder centerValues = new StringBuilder();
+
+			foreach (Window value in windowValues)
+			{
+				if (widthValues.Length > 0)
+					widthValues.Append("\\");
+
+				widthValues.AppendFormat("{0:G12}", value.Width);
+
+				if (centerValues.Length > 0)
+					centerValues.Append("\\");
+
+				centerValues.AppendFormat("{0:G12}", value.Center);
+			}
+		
+			collection[DicomTags.WindowCenter].SetStringValue(centerValues.ToString());
+			collection[DicomTags.WindowWidth].SetStringValue(widthValues.ToString());
+		}
+
+    	#region Public Properties
 
 		/// <summary>
 		/// Gets the window width.

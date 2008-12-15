@@ -1008,8 +1008,6 @@
     <Content Include="Controls\SectionPanel.ascx" />
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
-    <Content Include="Helpers\DialogHelper.cs" />
-    <Content Include="Helpers\ScriptHelper.cs" />
     <Content Include="Images\ImageServerLogo.png" />
     <Content Include="Pages\Admin\Alerts\AlertsGridPanel.ascx" />
     <Content Include="Pages\Admin\Alerts\AlertsPanel.ascx" />
