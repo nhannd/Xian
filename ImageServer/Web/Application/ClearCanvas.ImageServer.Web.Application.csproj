@@ -1193,8 +1193,6 @@
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
     </None>
     <Content Include="PersistantImage.ashx" />
-    <None Include="Scripts\.svn\entries" />
-    <None Include="Scripts\.svn\format" />
     <None Include="Service References\FilesystemServiceProxy.map" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <Content Include="Services\FilesystemInfoService.asmx" />
@@ -1254,12 +1252,6 @@
     <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\tmp\props\" />
     <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\tmp\text-base\" />
     <Folder Include="plugins\" />
-    <Folder Include="Scripts\.svn\prop-base\" />
-    <Folder Include="Scripts\.svn\props\" />
-    <Folder Include="Scripts\.svn\text-base\" />
-    <Folder Include="Scripts\.svn\tmp\prop-base\" />
-    <Folder Include="Scripts\.svn\tmp\props\" />
-    <Folder Include="Scripts\.svn\tmp\text-base\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v8.0\WebApplications\Microsoft.WebApplication.targets" />

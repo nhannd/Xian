@@ -62,7 +62,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>bin\Release\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <BaseAddress>285212672</BaseAddress>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
     <ConfigurationOverrideFile />
@@ -177,6 +177,7 @@
     <Compile Include="Codec\DicomCodecException.cs" />
     <Compile Include="Codec\DicomCodecFactoryExtensionPoint.cs" />
     <Compile Include="Codec\DicomCodecRegistry.cs" />
+    <Compile Include="Codec\DicomCodecUnsupportedSopException.cs" />
     <Compile Include="Codec\IDicomCodec.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="DicomAttributeMultiValueText.cs" />

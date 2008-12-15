@@ -103,9 +103,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
         /// <param name="engine">The rules engine to use when processing the study.</param>
         private void ProcessStudy(StudyStorageLocation location, ServerRulesEngine engine)
         {
-            if (!location.AcquireLock())
+            if (!location.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle) || !location.AcquireLock())
             {
-                Platform.Log(LogLevel.Error, "Unable to lock study {0}. The study may be being processed.", location.StudyInstanceUid); 
+                Platform.Log(LogLevel.Error, "Unable to lock study {0}. The study is being processed. (Queue State: {1})", location.StudyInstanceUid,location.QueueStudyStateEnum.Description); 
             }
             else
             {

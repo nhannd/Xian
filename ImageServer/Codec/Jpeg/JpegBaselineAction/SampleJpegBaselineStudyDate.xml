@@ -6,6 +6,7 @@ on 8-bit US and RF studies after the study is 1 year old.
   <condition expressionLanguage="dicom">
 	<and>
 	  <equal test="$BitsAllocated" refValue="8" />
+	  <not-equal test="$PhotometricInterpretation" refValue="PALETTE COLOR" />
 	  <or>
 		<equal test="$Modality" refValue="US" />
 		<equal test="$Modality" refValue="RF" />

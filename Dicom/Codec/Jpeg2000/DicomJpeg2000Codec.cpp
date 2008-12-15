@@ -121,7 +121,7 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 	if ((oldPixelData->PhotometricInterpretation == "YBR_FULL_422")    ||
 		(oldPixelData->PhotometricInterpretation == "YBR_PARTIAL_422") ||
 		(oldPixelData->PhotometricInterpretation == "YBR_PARTIAL_420"))
-		throw gcnew DicomCodecException(String::Format("Photometric Interpretation '{0}' not supported by JPEG 2000 encoder",
+		throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by JPEG 2000 encoder",
 														oldPixelData->PhotometricInterpretation));
 
 	DicomJpeg2000Parameters^ jparams = (DicomJpeg2000Parameters^)parameters;
@@ -288,7 +288,7 @@ void DicomJpeg2000Codec::Encode(DicomUncompressedPixelData^ oldPixelData, DicomC
 					}
 				}
 				else
-					throw gcnew DicomCodecException("JPEG 2000 codec only supports Bits Allocated == 8 or 16");
+					throw gcnew DicomCodecUnsupportedSopException("JPEG 2000 codec only supports Bits Allocated == 8 or 16");
 			}
 
 			opj_setup_encoder(cinfo, &eparams, image);
@@ -443,7 +443,7 @@ void DicomJpeg2000Codec::DecodeFrame(int frame, DicomCompressedPixelData^ oldPix
 				}
 			}
 			else
-				throw gcnew DicomCodecException("JPEG 2000 module only supports Bytes Allocated == 8 or 16!");
+				throw gcnew DicomCodecUnsupportedSopException("JPEG 2000 module only supports Bytes Allocated == 8 or 16!");
 		}
 
 		newPixelData->AppendFrame(destArray);

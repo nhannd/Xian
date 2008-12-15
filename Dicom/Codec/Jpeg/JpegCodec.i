@@ -208,9 +208,13 @@ namespace IJGVERS {
 }
 
 void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressedPixelData^ newPixelData, DicomJpegParameters^ params, int frame) {
-	if ((oldPixelData->PhotometricInterpretation == "YBR_ICT")         ||
+	if ((oldPixelData->PhotometricInterpretation == "YBR_ICT")      ||
 		(oldPixelData->PhotometricInterpretation == "YBR_RCT"))
-		throw gcnew DicomCodecException(String::Format("Photometric Interpretation '{0}' not supported by JPEG encoder!",
+		throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by JPEG encoder!",
+														oldPixelData->PhotometricInterpretation));
+	if ((oldPixelData->PhotometricInterpretation == "PALETTE COLOR") 
+	    && Mode != JpegMode::Lossless)
+		throw gcnew DicomCodecUnsupportedSopException(String::Format("Photometric Interpretation '{0}' not supported by lossy JPEG encoder!",
 														oldPixelData->PhotometricInterpretation));
 	array<unsigned char>^ frameData = oldPixelData->GetFrame(frame);
 	pin_ptr<unsigned char> framePin = &frameData[0];
@@ -220,13 +224,47 @@ void JPEGCODEC::Encode(DicomUncompressedPixelData^ oldPixelData, DicomCompressed
 	DataBuffer = gcnew array<unsigned char>(IJGE_BLOCKSIZE);
 	pin_ptr<unsigned char> DataPin = &DataBuffer[0];
 	DataPtr = DataPin;
-
+	
 	try {
 		if (oldPixelData->IsPlanar && oldPixelData->SamplesPerPixel > 1) {
 			newPixelData->PlanarConfiguration = 0;
 			DicomUncompressedPixelData::TogglePlanarConfiguration(frameData, frameData->Length / oldPixelData->BytesAllocated, 
 				oldPixelData->BitsAllocated, oldPixelData->SamplesPerPixel, 1);
 		}
+		
+		if (oldPixelData->IsSigned) {
+			if (oldPixelData->HasModalityLut)
+				throw gcnew DicomCodecUnsupportedSopException("JPEG compression not supported when modality LUT exists for pixel data");
+			if (!oldPixelData->SopSupportsModalityLut)
+			{
+
+			    if (oldPixelData->SopClass->Uid->Equals(Dicom::SopClass::MrImageStorageUid)
+			        && !oldPixelData->HasDataVoiLuts)
+				{
+					DicomUncompressedPixelData::TogglePixelRepresentation(frameData, oldPixelData->BitsStored, oldPixelData->BitsAllocated);
+					newPixelData->PixelRepresentation = 0;
+					if (oldPixelData->HasLinearVoiLuts)
+					{
+					    int offset = (int)Math::Pow(2,(newPixelData->BitsStored - 1));
+					    for (int i = 0; i < newPixelData->LinearVoiLuts->Count; i++ )
+    					{
+    						Window old = newPixelData->LinearVoiLuts[i];
+							newPixelData->LinearVoiLuts[i] = gcnew Window(old.Width, old.Center + offset);
+    					}
+					}
+
+				}
+				else
+					throw gcnew DicomCodecUnsupportedSopException(String::Format("JPEG compression not supported for SOP {0} with signed pixel data", newPixelData->SopClass->Name));
+			}
+			else
+			{		
+				DicomUncompressedPixelData::TogglePixelRepresentation(frameData, oldPixelData->BitsStored, oldPixelData->BitsAllocated);
+				newPixelData->DecimalRescaleIntercept -= (int)Math::Pow(2,(newPixelData->BitsStored - 1));
+				newPixelData->PixelRepresentation = 0;
+			}
+		}
+		
 
 		struct jpeg_compress_struct cinfo;
 		struct IJGVERS::ErrorStruct jerr;

@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLosslessCompres
 			DateTime scheduledTime = Platform.Time.AddMinutes(delayMinutes);
 			if (_studiesInserted == 0)
 				Platform.Log(LogLevel.Info,
-				             "No eligable candidates to lossless compress from filesystem '{0}'.  Next scheduled filesystem check {1}",
+				             "No eligible candidates to lossless compress from filesystem '{0}'.  Next scheduled filesystem check {1}",
 				             fs.Filesystem.Description, scheduledTime);
 			else
 				Platform.Log(LogLevel.Info,

@@ -79,6 +79,8 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.IO;
+using ClearCanvas.Dicom.Iod;
+using System.Globalization;
 
 namespace ClearCanvas.Dicom
 {
@@ -93,10 +95,13 @@ namespace ClearCanvas.Dicom
     /// </remarks>
     public abstract class DicomPixelData
     {
-        #region Private Members
+		#region Private Members
 
         private int _frames = 1;
-        private ushort _width;
+
+		#region Image Pixel Macro
+		
+		private ushort _width;
         private ushort _height;
         private ushort _highBit;
         private ushort _bitsStored;
@@ -105,17 +110,37 @@ namespace ClearCanvas.Dicom
         private ushort _pixelRepresentation;
         private ushort _planarConfiguration;
         private string _photometricInterpretation;
-        private TransferSyntax _transferSyntax = TransferSyntax.ExplicitVrLittleEndian;
-        private string _lossyImageCompression = "";
+		
+		#endregion
+
+		private TransferSyntax _transferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+		private SopClass _sopClass = null;
+
+		#region General Image Module
+
+		private string _lossyImageCompression = "";
         private string _lossyImageCompressionMethod = "";
         private float _compressionRatio;
-        private string _derivationDescription = "";
+		private string _derivationDescription = "";
 
-        #endregion
+		#endregion
+		#region Modality Lut
 
-        #region Public Static Methods
+		private Decimal _rescaleSlope = 1;
+    	private Decimal _rescapeIntercept = 0;
+    	private readonly bool _hasDataModalityLut = false;
 
-        /// <summary>
+		#endregion
+		#region Voi Lut
+
+		private List<Window> _linearVoiLuts = new List<Window>();
+    	private readonly bool _hasDataVoiLuts = false;
+		#endregion
+		#endregion
+
+		#region Public Static Methods
+
+		/// <summary>
         /// Creates an instance of <see cref="DicomPixelData"/> from specified image path
         /// </summary>
         /// <param name="path"></param>
@@ -149,29 +174,19 @@ namespace ClearCanvas.Dicom
         #region Constructors
 
         public DicomPixelData(DicomMessageBase message)
+			: this(message.DataSet)
         {
             _transferSyntax = message.TransferSyntax;
-
-            message.DataSet.LoadDicomFields(this);
-            if (message.DataSet.Contains(DicomTags.NumberOfFrames))
-                NumberOfFrames = message.DataSet[DicomTags.NumberOfFrames].GetInt32(0, 1);
-            if (message.DataSet.Contains(DicomTags.PlanarConfiguration))
-                PlanarConfiguration = message.DataSet[DicomTags.PlanarConfiguration].GetUInt16(0, 1);
-            if (message.DataSet.Contains(DicomTags.LossyImageCompression))
-                LossyImageCompression = message.DataSet[DicomTags.LossyImageCompression].GetString(0, "");
-            if (message.DataSet.Contains(DicomTags.LossyImageCompressionRatio))
-                LossyImageCompressionRatio = message.DataSet[DicomTags.LossyImageCompressionRatio].GetFloat32(0, 1.0f);
-            if (message.DataSet.Contains(DicomTags.LossyImageCompressionMethod))
-                LossyImageCompressionMethod = message.DataSet[DicomTags.LossyImageCompressionMethod].GetString(0, "");
-            if (message.DataSet.Contains(DicomTags.DerivationDescription))
-                DerivationDescription = message.DataSet[DicomTags.DerivationDescription].GetString(0, "");
-        }
+		}
 
 
         public DicomPixelData(DicomAttributeCollection collection)
         {
             collection.LoadDicomFields(this);
-            if (collection.Contains(DicomTags.NumberOfFrames))
+
+        	SopClass = SopClass.GetSopClass(collection[DicomTags.SopClassUid].GetString(0, ""));
+
+			if (collection.Contains(DicomTags.NumberOfFrames))
                 NumberOfFrames = collection[DicomTags.NumberOfFrames].GetInt32(0, 1);
             if (collection.Contains(DicomTags.PlanarConfiguration))
                 PlanarConfiguration = collection[DicomTags.PlanarConfiguration].GetUInt16(0, 1);
@@ -183,24 +198,51 @@ namespace ClearCanvas.Dicom
                 LossyImageCompressionMethod = collection[DicomTags.LossyImageCompressionMethod].GetString(0, "");
             if (collection.Contains(DicomTags.DerivationDescription))
                 DerivationDescription = collection[DicomTags.DerivationDescription].GetString(0, "");
-        }
+			if (collection.Contains(DicomTags.RescaleSlope))
+				RescaleSlope =collection[DicomTags.RescaleSlope].ToString();
+			if (collection.Contains(DicomTags.RescaleIntercept))
+				RescaleIntercept = collection[DicomTags.RescaleIntercept].ToString();
+			if (collection.Contains(DicomTags.ModalityLutSequence))
+			{
+				DicomAttribute attrib = collection[DicomTags.ModalityLutSequence];
+				_hasDataModalityLut = !attrib.IsEmpty && !attrib.IsNull;
+			}
+
+        	_linearVoiLuts = Window.GetWindowCenterAndWidth(collection);
+			if (collection.Contains(DicomTags.VoiLutSequence))
+			{
+				DicomAttribute attrib = collection[DicomTags.VoiLutSequence];
+				_hasDataVoiLuts = !attrib.IsEmpty && !attrib.IsNull;
+			}
+
+		}
 
         internal DicomPixelData(DicomPixelData attrib)
         {
-            this.NumberOfFrames = attrib.NumberOfFrames;
-            this.ImageWidth = attrib.ImageWidth;
-            this.ImageHeight = attrib.ImageHeight;
-            this.HighBit = attrib.HighBit;
-            this.BitsStored = attrib.BitsStored;
-            this.BitsAllocated = attrib.BitsAllocated;
-            this.SamplesPerPixel = attrib.SamplesPerPixel;
-            this.PixelRepresentation = attrib.PixelRepresentation;
-            this.PlanarConfiguration = attrib.PlanarConfiguration;
-            this.PhotometricInterpretation = attrib.PhotometricInterpretation;
-            this.LossyImageCompression = attrib.LossyImageCompression;
-            this.DerivationDescription = attrib.DerivationDescription;
-            this.LossyImageCompressionRatio = attrib.LossyImageCompressionRatio;
-            this.LossyImageCompressionMethod = attrib.LossyImageCompressionMethod;
+        	SopClass = attrib.SopClass;
+
+            NumberOfFrames = attrib.NumberOfFrames;
+            ImageWidth = attrib.ImageWidth;
+            ImageHeight = attrib.ImageHeight;
+            HighBit = attrib.HighBit;
+            BitsStored = attrib.BitsStored;
+            BitsAllocated = attrib.BitsAllocated;
+            SamplesPerPixel = attrib.SamplesPerPixel;
+            PixelRepresentation = attrib.PixelRepresentation;
+            PlanarConfiguration = attrib.PlanarConfiguration;
+            PhotometricInterpretation = attrib.PhotometricInterpretation;
+            LossyImageCompression = attrib.LossyImageCompression;
+            DerivationDescription = attrib.DerivationDescription;
+            LossyImageCompressionRatio = attrib.LossyImageCompressionRatio;
+            LossyImageCompressionMethod = attrib.LossyImageCompressionMethod;
+			DecimalRescaleSlope = attrib.DecimalRescaleSlope;
+			DecimalRescaleIntercept = attrib.DecimalRescaleIntercept;
+
+        	_hasDataModalityLut = attrib.HasDataModalityLut;
+        	_hasDataVoiLuts = attrib.HasDataVoiLuts;
+
+        	foreach (Window window in attrib.LinearVoiLuts)
+				_linearVoiLuts.Add(new Window(window));
         }
 
         #endregion
@@ -246,9 +288,11 @@ namespace ClearCanvas.Dicom
         {
             get { return _frames; }
             set { _frames = value; }
-        }
+		}
 
-        [DicomField(DicomTags.Columns, DefaultValue = DicomFieldDefault.Default)]
+		#region Image Pixel Macro
+
+		[DicomField(DicomTags.Columns, DefaultValue = DicomFieldDefault.Default)]
         public ushort ImageWidth
         {
             get { return _width; }
@@ -283,16 +327,16 @@ namespace ClearCanvas.Dicom
             set { _bitsAllocated = value; }
         }
 
-        public int BytesAllocated
-        {
-            get
-            {
-                int bytes = BitsAllocated/8;
-                if ((BitsAllocated%8) > 0)
-                    bytes++;
-                return bytes;
-            }
-        }
+		public int BytesAllocated
+		{
+			get
+			{
+				int bytes = BitsAllocated / 8;
+				if ((BitsAllocated % 8) > 0)
+					bytes++;
+				return bytes;
+			}
+		}
 
         [DicomField(DicomTags.SamplesPerPixel, DefaultValue = DicomFieldDefault.Default)]
         public ushort SamplesPerPixel
@@ -306,34 +350,98 @@ namespace ClearCanvas.Dicom
         {
             get { return _pixelRepresentation; }
             set { _pixelRepresentation = value; }
-        }
+		}
 
-        public bool IsSigned
-        {
-            get { return _pixelRepresentation != 0; }
-        }
+		public bool IsSigned
+		{
+			get { return _pixelRepresentation != 0; }
+		}
 
-        // Not always in images, so don't make it an attribute and manually update it if needed
-        public ushort PlanarConfiguration
-        {
-            get { return _planarConfiguration; }
-            set { _planarConfiguration = value; }
-        }
+		// Not always in images, so don't make it an attribute and manually update it if needed
+		public ushort PlanarConfiguration
+		{
+			get { return _planarConfiguration; }
+			set { _planarConfiguration = value; }
+		}
 
-        public bool IsPlanar
-        {
-            get { return _planarConfiguration != 0; }
-        }
+		public bool IsPlanar
+		{
+			get { return _planarConfiguration != 0; }
+		}
 
-        /// <summary>
-        /// Photometric Interpretation (0028,0004)
-        /// </summary>
-        [DicomField(DicomTags.PhotometricInterpretation, DefaultValue = DicomFieldDefault.Null)]
-        public string PhotometricInterpretation
-        {
-            get { return _photometricInterpretation; }
-            set { _photometricInterpretation = value; }
-        }
+		/// <summary>
+		/// Photometric Interpretation (0028,0004)
+		/// </summary>
+		[DicomField(DicomTags.PhotometricInterpretation, DefaultValue = DicomFieldDefault.Null)]
+		public string PhotometricInterpretation
+		{
+			get { return _photometricInterpretation; }
+			set { _photometricInterpretation = value; }
+		}
+
+		#endregion
+
+		#region Modality Lut
+
+		public string RescaleSlope
+		{
+			get { return _rescaleSlope.ToString(); }
+			set
+			{
+				decimal rescaleSlope;
+				if (decimal.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out rescaleSlope))
+					_rescaleSlope = rescaleSlope;
+			}
+		}
+
+		public string RescaleIntercept
+		{
+			get { return _rescapeIntercept.ToString(); }
+			set
+			{
+				decimal rescapeIntercept;
+				if (decimal.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out rescapeIntercept))
+					_rescapeIntercept = rescapeIntercept;
+			}
+		}
+
+		public decimal DecimalRescaleSlope
+		{
+			get { return _rescaleSlope; }
+			set { _rescaleSlope = value; }
+		}
+		public decimal DecimalRescaleIntercept
+		{
+			get { return _rescapeIntercept; }
+			set { _rescapeIntercept = value; }
+		}
+
+    	public bool HasDataModalityLut
+    	{
+			get { return _hasDataModalityLut; }
+		}
+
+		#endregion
+
+		#region Voi Lut
+
+		public List<Window> LinearVoiLuts
+    	{
+			get { return _linearVoiLuts; }
+			set { _linearVoiLuts = value ?? new List<Window>(); }
+		}
+
+    	public bool HasLinearVoiLuts
+    	{
+			get { return _linearVoiLuts.Count > 0; }	
+    	}
+
+		public bool HasDataVoiLuts
+		{
+			get { return _hasDataVoiLuts; }
+		}
+
+		#endregion
 
         /// <summary>
         /// The frame size of an uncompressed frame.
@@ -348,15 +456,48 @@ namespace ClearCanvas.Dicom
 
                 return ImageWidth*ImageHeight*BytesAllocated*SamplesPerPixel;
             }
-        }
+		}
 
-        public TransferSyntax TransferSyntax
+		public TransferSyntax TransferSyntax
         {
             get { return _transferSyntax; }
             set { _transferSyntax = value; }
         }
 
-        // Not always in an image, do a manual update.        
+    	public SopClass SopClass
+    	{
+			get { return _sopClass; }
+			set { _sopClass = value; }
+		}
+
+    	public bool SopSupportsModalityLut
+    	{
+			get
+			{
+				if (_sopClass == null) return false;
+
+				if (_sopClass.Uid.Equals(Dicom.SopClass.CtImageStorageUid)
+				    || _sopClass.Uid.Equals(Dicom.SopClass.ComputedRadiographyImageStorageUid)
+				    || _sopClass.Uid.Equals(Dicom.SopClass.SecondaryCaptureImageStorageUid)
+				    || _sopClass.Uid.Equals(Dicom.SopClass.XRayAngiographicImageStorageUid)
+				    || _sopClass.Uid.Equals(Dicom.SopClass.XRayRadiofluoroscopicImageStorageUid)
+				    || _sopClass.Uid.Equals(Dicom.SopClass.XRayAngiographicBiPlaneImageStorageRetiredUid)
+				    || _sopClass.Uid.Equals(Dicom.SopClass.RtImageStorageUid)
+				    || _sopClass.Uid.Equals(Dicom.SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid)
+				    || _sopClass.Uid.Equals(Dicom.SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid)
+				    || _sopClass.Uid.Equals(Dicom.SopClass.MultiFrameSingleBitSecondaryCaptureImageStorageUid)
+				    || _sopClass.Uid.Equals(Dicom.SopClass.MultiFrameTrueColorSecondaryCaptureImageStorageUid))
+// PET IOD has a note in the IOD that Rescale Intercept is also 0, so we say its not supported here
+//				    || _sopClass.Uid.Equals(Dicom.SopClass.PositronEmissionTomographyImageStorageUid))
+					return true;
+
+				return false;
+			}
+    	}
+
+		#region General Image Module
+
+		// Not always in an image, do a manual update.        
         public string LossyImageCompression
         {
             get { return _lossyImageCompression; }
@@ -379,10 +520,11 @@ namespace ClearCanvas.Dicom
         {
             get { return _lossyImageCompressionMethod; }
             set { _lossyImageCompressionMethod = value; }
-        }
+		}
 
-        #endregion
-    }
+		#endregion
+		#endregion
+	}
 
 
     /// <summary>
@@ -425,7 +567,7 @@ namespace ClearCanvas.Dicom
         /// <param name="pd"></param>
         public DicomUncompressedPixelData(DicomCompressedPixelData pd) : base(pd)
         {
-            if (this.BitsAllocated > 8)
+            if (BitsAllocated > 8)
                 _pd = new DicomAttributeOW(DicomTags.PixelData);
             else
             {
@@ -468,14 +610,24 @@ namespace ClearCanvas.Dicom
         public override void UpdateAttributeCollection(DicomAttributeCollection dataset)
         {
             dataset.SaveDicomFields(this);
-            if (dataset.Contains(DicomTags.NumberOfFrames) || this.NumberOfFrames > 1)
+
+            if (dataset.Contains(DicomTags.NumberOfFrames) || NumberOfFrames > 1)
                 dataset[DicomTags.NumberOfFrames].SetInt32(0, NumberOfFrames);
             if (dataset.Contains(DicomTags.PlanarConfiguration))
                 dataset[DicomTags.PlanarConfiguration].SetInt32(0, PlanarConfiguration);
             if (dataset.Contains(DicomTags.LossyImageCompressionRatio))
-                dataset[DicomTags.LossyImageCompressionRatio].SetFloat32(0, this.LossyImageCompressionRatio);
+                dataset[DicomTags.LossyImageCompressionRatio].SetFloat32(0, LossyImageCompressionRatio);
+			if (dataset.Contains(DicomTags.LossyImageCompressionMethod))
+				dataset[DicomTags.LossyImageCompressionMethod].SetString(0, LossyImageCompressionMethod);
+			if (dataset.Contains(DicomTags.RescaleSlope) || DecimalRescaleSlope != 1.0M || DecimalRescaleIntercept != 0.0M)
+				dataset[DicomTags.RescaleSlope].SetString(0, RescaleSlope);
+			if (dataset.Contains(DicomTags.RescaleIntercept) || DecimalRescaleSlope != 1.0M || DecimalRescaleIntercept != 0.0M)
+				dataset[DicomTags.RescaleIntercept].SetString(0, RescaleIntercept);
 
-            dataset[DicomTags.PixelData] = _pd;
+			if (dataset.Contains(DicomTags.WindowCenter) || LinearVoiLuts.Count > 0)
+				Window.SetWindowCenterAndWidth(dataset, LinearVoiLuts);
+
+			dataset[DicomTags.PixelData] = _pd;
 
             if (_ms != null)
             {
@@ -668,12 +820,76 @@ namespace ClearCanvas.Dicom
             }
             else if (bytesAllocated == 2)
             {
-                throw new DicomCodecException(String.Format("BitsAllocated={0} is not supported!", bitsAllocated));
+				throw new DicomCodecUnsupportedSopException(String.Format("BitsAllocated={0} is not supported!", bitsAllocated));
             }
             else
-                throw new DicomCodecException(String.Format("BitsAllocated={0} is not supported!", bitsAllocated));
+				throw new DicomCodecUnsupportedSopException(String.Format("BitsAllocated={0} is not supported!", bitsAllocated));
         }
-        #endregion
+
+		public unsafe static void TogglePixelRepresentation(byte[] frameData, int bitsStored, int bitsAllocated)
+		{
+			if (bitsAllocated > 16 || bitsStored > bitsAllocated)
+				throw new DicomCodecUnsupportedSopException("Invalid bits allocated/stored value(s).");
+
+
+			int bytesAllocated = bitsAllocated/8;
+
+			int numValues = frameData.Length/bytesAllocated;
+			int signShift = bitsAllocated - bitsStored;
+
+			int rescale = (int) Math.Pow(2, (bitsStored - 1));
+
+			if (bitsStored < 8 && bitsAllocated <= 8)
+			{
+				fixed (byte* pFrameData = frameData)
+				{
+					byte* pixelData = pFrameData;
+					for (int p = 0; p < numValues; p++, pixelData++)
+					{
+						int pixel = ((sbyte) (*pixelData << signShift)) >> signShift;
+						*pixelData = (byte) (pixel + rescale);
+					}
+				}
+			}
+			else if (bitsStored == 8 && bitsAllocated <= 8)
+			{
+				fixed (byte* pFrameData = frameData)
+				{
+					byte* pixelData = pFrameData;
+					for (int p = 0; p < numValues; p++, pixelData++)
+					{
+						int pixel = (sbyte) (*pixelData);
+						*pixelData = (byte) (pixel + rescale);
+					}
+				}
+			}
+			else if (bitsStored < 16)
+			{
+				fixed (byte* pFrameData = frameData)
+				{
+					ushort* pixelData = (ushort*) pFrameData;
+					for (int p = 0; p < numValues; p++, pixelData++)
+					{
+						int pixel = ((short) (*pixelData << signShift)) >> signShift;
+						*pixelData = (ushort) (pixel + rescale);
+					}
+				}
+			}
+			else
+			{
+				fixed (byte* pFrameData = frameData)
+				{
+					ushort* pixelData = (ushort*) pFrameData;
+					for (int p = 0; p < numValues; p++, pixelData++)
+					{
+						int pixel = (short) (*pixelData);
+						*pixelData = (ushort) (pixel + rescale);
+					}
+				}
+			}
+		}
+
+    	#endregion
     }
 
 
@@ -738,7 +954,7 @@ namespace ClearCanvas.Dicom
         /// <param name="dataset">The collection to update.</param>
         public override void UpdateAttributeCollection(DicomAttributeCollection dataset)
         {
-            if (dataset.Contains(DicomTags.NumberOfFrames) || this.NumberOfFrames > 1)
+            if (dataset.Contains(DicomTags.NumberOfFrames) || NumberOfFrames > 1)
                 dataset[DicomTags.NumberOfFrames].SetInt32(0, NumberOfFrames);
             if (dataset.Contains(DicomTags.PlanarConfiguration))
                 dataset[DicomTags.PlanarConfiguration].SetInt32(0, PlanarConfiguration);
@@ -750,8 +966,15 @@ namespace ClearCanvas.Dicom
                 dataset[DicomTags.LossyImageCompressionMethod].SetString(0, LossyImageCompressionMethod);
             if (dataset.Contains(DicomTags.DerivationDescription) || DerivationDescription.Length > 0)
 				dataset[DicomTags.DerivationDescription].SetStringValue(DerivationDescription);
+			if (dataset.Contains(DicomTags.RescaleSlope) || DecimalRescaleSlope != 1.0M || DecimalRescaleIntercept != 0.0M)
+				dataset[DicomTags.RescaleSlope].SetString(0, RescaleSlope);
+			if (dataset.Contains(DicomTags.RescaleIntercept) || DecimalRescaleSlope != 1.0M || DecimalRescaleIntercept != 0.0M)
+				dataset[DicomTags.RescaleIntercept].SetString(0, RescaleIntercept);
 
-            dataset.SaveDicomFields(this);
+			if (dataset.Contains(DicomTags.WindowCenter) || LinearVoiLuts.Count > 0)
+				Window.SetWindowCenterAndWidth(dataset, LinearVoiLuts);
+			
+			dataset.SaveDicomFields(this);
             dataset[DicomTags.PixelData] = _sq;
         }
         /// <summary>

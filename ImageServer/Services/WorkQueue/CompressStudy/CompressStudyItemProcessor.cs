@@ -78,6 +78,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			}
 			catch (Exception e)
 			{
+				if (e.InnerException != null && e.InnerException is DicomCodecUnsupportedSopException)
+				{
+					Platform.Log(LogLevel.Warn, e, "Instance not supported for compressor: {0}.  Deleting WorkQueue entry for SOP {1}", e.Message, sop.SopInstanceUid);
+
+					if (e.InnerException != null)
+						item.FailureDescription = e.InnerException.Message;
+					else
+						item.FailureDescription = e.Message;
+
+					// Delete it out of the queue
+					DeleteWorkQueueUid(sop);
+
+					return false;
+				}
 				Platform.Log(LogLevel.Error, e, "Unexpected exception when compressing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
 				if (e.InnerException != null)
 					item.FailureDescription = e.InnerException.Message;
@@ -106,6 +120,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
             PerformSanityCheck(studyXml);
 
             int successfulProcessCount = 0;
+			int totalCount = WorkQueueUidList.Count;
 			foreach (WorkQueueUid sop in WorkQueueUidList)
 			{
 				if (sop.Failed)
@@ -119,9 +134,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				Platform.Log(LogLevel.Info,"Completed compression of study {0}. {1} instances successfully processed.",
                     StorageLocation.StudyInstanceUid, successfulProcessCount);
 
-			//TODO: Should we return true only if ALL uids have been processed instead?
-			return successfulProcessCount > 0;
-
+				return successfulProcessCount > 0 && totalCount == successfulProcessCount;
 		}
 
 		protected void ProcessFile(Model.WorkQueue item, WorkQueueUid sop, string path, StudyXml studyXml, IDicomCodecFactory theCodecFactory)
@@ -192,7 +205,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                             _instanceStats.CompressTime.Add(compressCommand.CompressTime);
                             Platform.Log(LogLevel.Error, "Failure compressing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
                             Platform.Log(LogLevel.Error, "Compression file that failed: {0}", file.Filename);
-                            throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
+                            throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid,processor.FailureException);
                         }
                         else
                         {
@@ -209,7 +222,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                                  processor.Description);
                     processor.Rollback();
 
-                    throw new ApplicationException("Unexpected exception when compressing file.", e);
+                	throw;
                 }
                 finally
                 {

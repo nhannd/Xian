@@ -27,6 +27,7 @@ using namespace System::IO;
 using namespace System::Runtime::InteropServices;
 
 using namespace ClearCanvas::Dicom;
+using namespace ClearCanvas::Dicom::Iod;
 
 #include "JpegCodec.h"
 

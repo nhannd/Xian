@@ -51,7 +51,7 @@
                                             </table>
                                         </td>
                                          <td align="right" valign="bottom">
-                                            <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel"  >
+                                            <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel" DisplayAfter="50">
                                                 <ProgressTemplate>
                                                     <asp:Image ID="Image1" runat="server" SkinID="Searching" />
                                                 </ProgressTemplate>

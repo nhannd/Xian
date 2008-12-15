@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         private void ProcessStudyDeleteCandidates(IList<FilesystemQueue> candidateList)
         {
 			if (candidateList.Count > 0)
-				Platform.Log(LogLevel.Debug, "Scheduling delete study for {0} eligable studies...", candidateList.Count);
+				Platform.Log(LogLevel.Debug, "Scheduling delete study for {0} eligible studies...", candidateList.Count);
 			
 			foreach (FilesystemQueue queueItem in candidateList)
             {
@@ -232,7 +232,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 		private void ProcessStudyPurgeCandidates(IList<FilesystemQueue> candidateList)
 		{
 			if (candidateList.Count > 0)
-				Platform.Log(LogLevel.Debug, "Scheduling purge study for {0} eligable studies...", candidateList.Count);
+				Platform.Log(LogLevel.Debug, "Scheduling purge study for {0} eligible studies...", candidateList.Count);
 
 			foreach (FilesystemQueue queueItem in candidateList)
 			{
@@ -299,7 +299,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         	Platform.CheckForNullReference(candidateList, "candidateList");
 
         	if (candidateList.Count > 0)
-        		Platform.Log(LogLevel.Debug, "Scheduling tier-migration for {0} eligable studies...", candidateList.Count);
+        		Platform.Log(LogLevel.Debug, "Scheduling tier-migration for {0} eligible studies...", candidateList.Count);
 
         	foreach (FilesystemQueue queueItem in candidateList)
         	{

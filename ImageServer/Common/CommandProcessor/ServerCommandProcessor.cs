@@ -70,6 +70,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private readonly List<IServerCommand> _list = new List<IServerCommand>(); 
         private string _failureReason;
 		private IUpdateContext _updateContext = null;
+		private Exception _exception;
+
 		#endregion
 
 		#region Constructors
@@ -94,6 +96,12 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		public string FailureReason
 		{
 			get { return _failureReason; }
+		}
+
+		public Exception FailureException
+		{
+			get { return _exception; }
+			protected set { _exception = value; }
 		}
 
 		/// <summary>
@@ -155,6 +163,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 						_failureReason = String.Format("{0}: {1}", e.GetType().Name, e.Message);
 						Platform.Log(LogLevel.Error, e, "Unexpected error when executing command: {0}", command.Description);
 						Rollback();
+						FailureException = e;
 						return false;
 					}
 					else

@@ -64,7 +64,7 @@ public:
 		if (bits <= 8)
 			return gcnew Jpeg8Codec(JpegMode::Baseline, 0, 0);
 		else
-			throw gcnew DicomCodecException(String::Format("Unable to create JPEG Baseline codec for bits stored == {0}", bits));
+			throw gcnew DicomCodecUnsupportedSopException(String::Format("Unable to create JPEG Baseline codec for bits stored == {0}", bits));
 	}
 };
 
@@ -77,10 +77,10 @@ public:
 		// JPEG Extended only supports 12 bit or less images.
 		if (bits <= 8)
 			return gcnew Jpeg8Codec(JpegMode::Sequential, 0, 0);
-		else if (bits <= 12)
+		else if (bits == 12)
 			return gcnew Jpeg12Codec(JpegMode::Sequential, 0, 0);
 		else
-			throw gcnew DicomCodecException(String::Format("Unable to create JPEG Extended codec for bits stored == {0}", bits));
+			throw gcnew DicomCodecUnsupportedSopException(String::Format("Unable to create JPEG Extended codec for bits stored == {0}", bits));
 	}
 };
 
@@ -97,7 +97,7 @@ public:
 		else if (bits <= 16)
 			return gcnew Jpeg16Codec(JpegMode::Lossless, jparams->Predictor, jparams->PointTransform);
 		else
-			throw gcnew DicomCodecException(String::Format("Unable to create JPEG codec for bits stored == {0}", bits));
+			throw gcnew DicomCodecUnsupportedSopException(String::Format("Unable to create JPEG codec for bits stored == {0}", bits));
 	}
 };
 
@@ -114,7 +114,7 @@ public:
 		if (bits <= 16)
 			return gcnew Jpeg16Codec(JpegMode::Lossless, 1, jparams->PointTransform);
 		else
-			throw gcnew DicomCodecException(String::Format("Unable to create JPEG codec for bits stored == {0}", bits));
+			throw gcnew DicomCodecUnsupportedSopException(String::Format("Unable to create JPEG codec for bits stored == {0}", bits));
 	}
 };
 
