@@ -22,6 +22,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         #region Private Members
         private ServerEntityKey _alertItemKey;
         private Model.Alert _alert;
+        private bool _deleteAll;
         #endregion Private Members
 
         #region Events
@@ -52,6 +53,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             set { _alertItemKey = value; }
         }
 
+        /// <summary>
+        /// Sets / Gets a boolean indicating whether a single item will be deleted, or all items.
+        /// </summary>
+        public bool DeleteAll
+        {
+            get { return Boolean.Parse(ViewState[ClientID + "_DeleteAll"].ToString()); }
+            set { ViewState[ClientID + "_DeleteAll"] = value; }
+        }
+
         #endregion Public Properties
 
         #region Protected Methods
@@ -69,57 +79,88 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
         void PreDeleteConfirmDialog_Confirmed(object data)
         {
-            ServerEntityKey key = data as ServerEntityKey;
-
-            if (key != null)
+            if (DeleteAll)
             {
-                AlertAdaptor adaptor = new AlertAdaptor();
-                Model.Alert item = adaptor.Get(key);
-                if (item == null)
+                AlertController controller = new AlertController();
+                bool successful = controller.DeleteAllAlerts();
+
+                if (successful)
                 {
-                    MessageBox.Message = App_GlobalResources.ErrorMessages.AlertNotAvailable;
+                    Platform.Log(LogLevel.Info, "All Alert items deleted by user.");
+                }
+                else
+                {
+                    Platform.Log(LogLevel.Error,
+                                 "PreResetConfirmDialog_Confirmed: Unable to delete all Alert items.");
+
+                    MessageBox.Message = App_GlobalResources.ErrorMessages.AlertDeleteFailed;
                     MessageBox.MessageType =
                         MessageBox.MessageTypeEnum.ERROR;
                     MessageBox.Show();
                 }
-                else
+                
+            }
+            else
+            {
+                ServerEntityKey key = data as ServerEntityKey;
+
+                if (key != null)
                 {
-                    try
+                    AlertAdaptor adaptor = new AlertAdaptor();
+                    Model.Alert item = adaptor.Get(key);
+                    if (item == null)
                     {
-                        bool successful = false;
-                        AlertController controller = new AlertController();
-                        List<Model.Alert> items = new List<Model.Alert>();
-                        items.Add(item);
-
-                        successful = controller.DeleteAlertItems(items);
-                        if (successful)
+                        MessageBox.Message = App_GlobalResources.ErrorMessages.AlertNotAvailable;
+                        MessageBox.MessageType =
+                            MessageBox.MessageTypeEnum.ERROR;
+                        MessageBox.Show();
+                    }
+                    else
+                    {
+                        try
                         {
-                            Platform.Log(LogLevel.Info, "Alert item deleted by user : Alert Key={0}", item.GetKey().Key);
+                            bool successful = false;
+                            AlertController controller = new AlertController();
+                            List<Model.Alert> items = new List<Model.Alert>();
+                            items.Add(item);
 
-                            if (AlertItemDeleted != null)
-                                AlertItemDeleted(item);
+                            successful = controller.DeleteAlertItems(items);
+                            if (successful)
+                            {
+                                Platform.Log(LogLevel.Info, "Alert item deleted by user : Alert Key={0}",
+                                             item.GetKey().Key);
+
+                                if (AlertItemDeleted != null)
+                                    AlertItemDeleted(item);
+                            }
+                            else
+                            {
+                                Platform.Log(LogLevel.Error,
+                                             "PreResetConfirmDialog_Confirmed: Unable to delete Alert item. GUID={0}",
+                                             item.GetKey().Key);
+
+                                MessageBox.Message = App_GlobalResources.ErrorMessages.AlertDeleteFailed;
+                                MessageBox.MessageType =
+                                    MessageBox.MessageTypeEnum.ERROR;
+                                MessageBox.Show();
+                            }
                         }
-                        else
+                        catch (Exception e)
                         {
                             Platform.Log(LogLevel.Error,
-                                         "PreResetConfirmDialog_Confirmed: Unable to delete Alert item. GUID={0}", item.GetKey().Key);
+                                         "PreResetConfirmDialog_Confirmed: Unable to delete Alert item. GUID={0} : {1}",
+                                         item.GetKey().Key, e.StackTrace);
 
-                            MessageBox.Message = App_GlobalResources.ErrorMessages.AlertDeleteFailed;
+                            MessageBox.Message =
+                                String.Format(App_GlobalResources.ErrorMessages.AlertDeleteFailed_WithException,
+                                              e.Message);
                             MessageBox.MessageType =
                                 MessageBox.MessageTypeEnum.ERROR;
                             MessageBox.Show();
                         }
                     }
-                    catch (Exception e)
-                    {
-                        Platform.Log(LogLevel.Error,
-                                         "PreResetConfirmDialog_Confirmed: Unable to delete Alert item. GUID={0} : {1}", item.GetKey().Key, e.StackTrace);
 
-                        MessageBox.Message = String.Format(App_GlobalResources.ErrorMessages.AlertDeleteFailed_WithException, e.Message);
-                        MessageBox.MessageType =
-                            MessageBox.MessageTypeEnum.ERROR;
-                        MessageBox.Show();
-                    }
+                    ((Default) Page).UpdateUI();
                 }
             }
         }
@@ -145,17 +186,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         /// <remarks>
         /// The <see cref="AlertItemKey"/> to be deleted must be set prior to calling <see cref="Show"/>.
         /// </remarks>
-        public void Show()
+        public void Show(bool deleteAll)
         {
+            this.DeleteAll = deleteAll;
+            
             DataBind();
-
-            if (_alert != null)
+            
+            if(deleteAll)
             {
-                PreDeleteConfirmDialog.Data = AlertItemKey;
                 PreDeleteConfirmDialog.MessageType =
                     MessageBox.MessageTypeEnum.YESNO;
-                PreDeleteConfirmDialog.Message = App_GlobalResources.SR.AlertDeleteConfirm;
-                PreDeleteConfirmDialog.Show();
+                PreDeleteConfirmDialog.Message = App_GlobalResources.SR.AlertDeleteAllConfirm;
+                PreDeleteConfirmDialog.Show();       
+            }
+            else
+            {
+                if (_alert != null)
+                {
+                    PreDeleteConfirmDialog.Data = AlertItemKey;
+                    PreDeleteConfirmDialog.MessageType =
+                        MessageBox.MessageTypeEnum.YESNO;
+                    PreDeleteConfirmDialog.Message = App_GlobalResources.SR.AlertDeleteConfirm;
+                    PreDeleteConfirmDialog.Show();
+                }                
             }
         }
 

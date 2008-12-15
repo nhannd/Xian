@@ -363,4 +363,7 @@
   <data name="GridPagerAlertSingleItemFound" xml:space="preserve">
     <value>Alert Found</value>
   </data>
+  <data name="AlertDeleteAllConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete all Alert items from the queue?</value>
+  </data>
 </root>

@@ -38,7 +38,10 @@ using System.Web.Caching;
 using System.Xml;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
 {
@@ -50,13 +53,24 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
     {
         #region IAlertServiceExtension Members
 
+        private bool _databaseEnabled = true;
+
+        public bool DatabaseEnabled
+        {
+            get { return _databaseEnabled; }
+            set { _databaseEnabled = value; }
+        }
+
         public void OnAlert(ImageServer.Common.Alert alert)
         {
             AlertFilter filter = new AlertFilter(AlertCache.Instance);
             if (!filter.Filter(alert))
             {
                 AlertCache.Instance.Add(alert);
-                WriteToLog(alert);
+                if (DatabaseEnabled)
+                    WriteToDatabase(alert);
+                else
+                    WriteToLog(alert);
             }
 
         }
@@ -64,37 +78,44 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
         #endregion
 
         #region Private Methods
-        private static void WriteToLog(ImageServer.Common.Alert alert)
+
+        private static XmlDocument CreateXmlContent(Object content)
         {
             XmlDocument doc = new XmlDocument();
 
-            if (alert.Data is string)
+            if (content is string)
             {
-                XmlNode content = doc.CreateElement("Message");
-                XmlNode msg = doc.CreateTextNode(alert.Data.ToString());
-                content.AppendChild(msg);
-                doc.AppendChild(content);
-
+                XmlNode node = doc.CreateElement("Message");
+                XmlNode msg = doc.CreateTextNode(content.ToString());
+                node.AppendChild(msg);
+                doc.AppendChild(node);
             }
             else
             {
                 MemoryStream ms = new MemoryStream();
-                XmlSerializer serializer = new XmlSerializer(alert.Data.GetType());
+                XmlSerializer serializer = new XmlSerializer(content.GetType());
                 try
                 {
-                    serializer.Serialize(ms, alert.Data);
+                    serializer.Serialize(ms, content);
                     ms.Seek(0, SeekOrigin.Begin);
                     doc.Load(ms);
                 }
                 catch (Exception)
                 {
                     // cannot be serialized as xml. Resort to string instead.
-                    XmlNode content = doc.CreateElement("Message");
-                    XmlNode msg = doc.CreateTextNode(alert.Data.ToString());
-                    content.AppendChild(msg);
-                    doc.AppendChild(content);
+                    XmlNode node = doc.CreateElement("Message");
+                    XmlNode msg = doc.CreateTextNode(content.ToString());
+                    node.AppendChild(msg);
+                    doc.AppendChild(node);
                 }
             }
+
+            return doc;
+        }
+
+        private static void WriteToLog(ImageServer.Common.Alert alert)
+        {
+            XmlDocument doc = CreateXmlContent(alert.Data);
 
             using (StringWriter sw = new StringWriter())
             {
@@ -130,9 +151,31 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
 
         }
 
+        private static void WriteToDatabase(ImageServer.Common.Alert alert)
+        {
+            XmlDocument doc = CreateXmlContent(alert.Data);
+
+            AlertUpdateColumns columns = new AlertUpdateColumns();
+
+            columns.AlertCategoryEnum = AlertCategoryEnum.GetEnum(alert.Category.ToString());
+            columns.AlertLevelEnum = AlertLevelEnum.GetEnum(alert.Level.ToString());
+            columns.Component = alert.Source.Name;
+            columns.Content = doc;
+            columns.InsertTime = DateTime.Now;
+            columns.Source = alert.Source.Host;
+            columns.TypeCode = alert.Code;
+
+            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+            using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IAlertEntityBroker alertBroker = ctx.GetBroker<IAlertEntityBroker>();
+                alertBroker.Insert(columns);
+                ctx.Commit();
+            }
+        }
         #endregion
     }
-    
+
     /// <summary>
     /// Represent an alert cache
     /// </summary>
@@ -141,7 +184,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
         #region Private members
         private readonly Cache _cache = HttpRuntime.Cache;
         private readonly List<ImageServer.Common.Alert> _listAlerts = new List<ImageServer.Common.Alert>();
-		private readonly object _syncLock = new object();
+        private readonly object _syncLock = new object();
         #endregion
 
         #region Private Static Members
@@ -149,7 +192,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
         #endregion
 
         #region Public Static Properties
-        
+
         /// <summary>
         /// Gets an instance of <see cref="AlertCache"/>
         /// </summary>
@@ -194,21 +237,21 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
         /// <param name="alert"></param>
         public void Add(ImageServer.Common.Alert alert)
         {
-			lock (_syncLock)
-			{
-				_listAlerts.Add(alert);
-			}
-        	_cache.Add(ResolveKey(alert), alert, null, alert.ExpirationTime, Cache.NoSlidingExpiration, CacheItemPriority.Normal,
+            lock (_syncLock)
+            {
+                _listAlerts.Add(alert);
+            }
+            _cache.Add(ResolveKey(alert), alert, null, alert.ExpirationTime, Cache.NoSlidingExpiration, CacheItemPriority.Normal,
                     delegate(string key, Object value, CacheItemRemovedReason reason)
+                    {
+                        // Discovered an exception here when debugging that may have caused the service to 
+                        // crash. This delegate was called, however, the alert was not in the cache
+                        lock (_syncLock)
                         {
-							// Discovered an exception here when debugging that may have caused the service to 
-							// crash. This delegate was called, however, the alert was not in the cache
-							lock (_syncLock)
-							{
-								if (_listAlerts.Contains((ImageServer.Common.Alert) value))
-									_listAlerts.Remove((ImageServer.Common.Alert) value);
-							}
-                        });
+                            if (_listAlerts.Contains((ImageServer.Common.Alert)value))
+                                _listAlerts.Remove((ImageServer.Common.Alert)value);
+                        }
+                    });
         }
 
         /// <summary>
@@ -218,8 +261,8 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
         /// <returns></returns>
         public bool Contains(ImageServer.Common.Alert alert)
         {
-			lock(_syncLock)
-	            return _listAlerts.Contains(alert);
+            lock (_syncLock)
+                return _listAlerts.Contains(alert);
         }
 
         #endregion

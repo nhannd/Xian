@@ -25,13 +25,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             if (itemKey != null)
             {
                 DeleteAlertDialog.AlertItemKey = itemKey;
-                DeleteAlertDialog.Show();
+                DeleteAlertDialog.Show(false);
             }
         }
 
         public void DeleteAllAlerts()
         {
-            DeleteAllAlertsDialog.Show();
+            DeleteAllAlertsDialog.Show(true);
+        }
+
+        public void UpdateUI()
+        {
+            AlertsPanel.UpdateUI();
         }
     }
 }

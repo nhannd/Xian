@@ -53,7 +53,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
         #region Private members
         // list of studies to display
-        private IList<AlertSummary> _alertItems;
         private AlertItemCollection _alertCollection;
         private Unit _height;
         private AlertDataSource _dataSource;
@@ -71,7 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
                     _dataSource.AlertFoundSet += delegate(IList<AlertSummary> newlist)
                                             {
-                                                AlertItems = newlist;
+                                                AlertItems = new AlertItemCollection(newlist);
                                             };
                     if (DataSourceCreated != null)
                         DataSourceCreated(_dataSource);
@@ -110,7 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                 if (rows == null || rows.Length == 0)
                     return null;
 
-                IList<Model.Alert> queueItems = new List<Model.Alert>();
+                IList<Alert> queueItems = new List<Model.Alert>();
                 for (int i = 0; i < rows.Length; i++)
                 {
                     if (rows[i] < AlertItems.Count)
@@ -126,7 +125,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         /// <summary>
         /// Gets/Sets the list of devices rendered on the screen.
         /// </summary>
-        public IList<AlertSummary> AlertItems
+/*        public IList<AlertSummary> AlertItems
         {
             get
             {
@@ -136,12 +135,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             {
                 _alertItems = value;
             }
-        }
+        }*/
 
         /// <summary>
-        /// Gets/Sets the list of devices rendered on the screen.
+        /// Gets/Sets the list of Alert Items
         /// </summary>
-        public AlertItemCollection AlertCollection
+        public AlertItemCollection AlertItems
         {
             get
             {
@@ -180,9 +179,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         {
             get
             {
-                if (SelectedAlertKey != null && AlertCollection.ContainsKey(SelectedAlertKey))
+                if (SelectedAlertKey != null && AlertItems.ContainsKey(SelectedAlertKey))
                 {
-                    return AlertCollection[SelectedAlertKey];
+                    return AlertItems[SelectedAlertKey];
                 }
                 else
                     return null;
@@ -190,7 +189,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             set
             {
                 SelectedAlertKey = value.Key;
-                AlertGridView.SelectedIndex = AlertCollection.RowIndexOf(SelectedAlertKey, AlertGridView);
+                AlertGridView.SelectedIndex = AlertItems.RowIndexOf(SelectedAlertKey, AlertGridView);
             }
         }
 
@@ -230,7 +229,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             // reselect the row based on the new order
             if (SelectedAlertKey != null)
             {
-                AlertGridView.SelectedIndex = AlertCollection.RowIndexOf(SelectedAlertKey, AlertGridView);
+                AlertGridView.SelectedIndex = AlertItems.RowIndexOf(SelectedAlertKey, AlertGridView);
             }
         }
 
@@ -294,7 +293,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
                 _dataSource.AlertFoundSet += delegate(IList<AlertSummary> newlist)
                                         {
-                                            AlertItems = newlist;
+                                            AlertItems = new AlertItemCollection(newlist);
                                         };
             }
 

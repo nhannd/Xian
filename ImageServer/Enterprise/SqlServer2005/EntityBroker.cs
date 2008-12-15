@@ -1317,9 +1317,18 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 if (update != null)
                     command.Transaction = update.Transaction;
 
-                command.CommandText = String.Format("DELETE FROM {0} WHERE {1}", _entityName, GetDeleteWhereClause(_entityName, command, criteria, null));
+                string deleteWhereClause = GetDeleteWhereClause(_entityName, command, criteria, null);
+                    
+                if(String.IsNullOrEmpty(deleteWhereClause)) {
+                    command.CommandText = String.Format("DELETE FROM {0}", _entityName);
+                }
+                else
+                {
+                    command.CommandText =
+                        String.Format("DELETE FROM {0} WHERE {1}", _entityName, deleteWhereClause);
+                }
 
-				Platform.Log(LogLevel.Debug, command.CommandText);
+                Platform.Log(LogLevel.Debug, command.CommandText);
 
                 int rows = command.ExecuteNonQuery();
 

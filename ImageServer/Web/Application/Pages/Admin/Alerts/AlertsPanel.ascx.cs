@@ -59,12 +59,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             set { _theController = value; }
         }
 
-        public Default EnclosingPage
-        {
-            get { return _enclosingPage; }
-            set { _enclosingPage = value; }
-        }
-
         #endregion Public Properties
 
         #region Protected Methods
@@ -143,12 +137,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                             };
         }
 
-        public override void DataBind()
-        {
-            base.DataBind();
-        }
-
-
         protected void Clear()
         {
             ComponentFilter.Text = string.Empty;
@@ -162,13 +150,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             Alert alert = AlertsGridPanel.SelectedAlert.TheAlertItem;
             if (alert != null)
             {
-                EnclosingPage.DeleteAlert(alert.Key);
+                ((Default)Page).DeleteAlert(alert.Key);
             }
         }
         
         protected void DeleteAllAlertsButton_Click(object sender, ImageClickEventArgs e)
         {
-            EnclosingPage.DeleteAllAlerts();
+            ((Default)Page).DeleteAllAlerts();
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
@@ -189,7 +177,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
         public void UpdateUI()
         {
+            AlertsGridPanel.DataBind();   
             UpdatePanel1.Update();
+
         }
 
         #endregion Public methods
