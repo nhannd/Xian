@@ -222,4 +222,19 @@
   <data name="DeleteStudyConfirmDialogTitle" xml:space="preserve">
     <value>Delete Study Confirmation</value>
   </data>
+  <data name="Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="Audit" xml:space="preserve">
+    <value>Audit</value>
+  </data>
+  <data name="DeletedStudies" xml:space="preserve">
+    <value>Deleted Studies</value>
+  </data>
+  <data name="Alerts" xml:space="preserve">
+    <value>Alerts</value>
+  </data>
+  <data name="AlertsPageTitle" xml:space="preserve">
+    <value>Alert | Admin | ClearCanvas ImageServer</value>
+  </data>
 </root>

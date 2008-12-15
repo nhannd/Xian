@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this item from the queue?.
+        /// </summary>
+        internal static string AlertDeleteConfirm {
+            get {
+                return ResourceManager.GetString("AlertDeleteConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All.
         /// </summary>
         internal static string All {
@@ -237,6 +246,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string Enabled {
             get {
                 return ResourceManager.GetString("Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alerts Found.
+        /// </summary>
+        internal static string GridPagerAlertMultipleItemsFound {
+            get {
+                return ResourceManager.GetString("GridPagerAlertMultipleItemsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alert Found.
+        /// </summary>
+        internal static string GridPagerAlertSingleItemFound {
+            get {
+                return ResourceManager.GetString("GridPagerAlertSingleItemFound", resourceCulture);
             }
         }
         

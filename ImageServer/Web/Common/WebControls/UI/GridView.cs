@@ -116,7 +116,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 if (ViewState["MouseHoverRowHighlightEnabled"] != null)
                     return (bool)ViewState["MouseHoverRowHighlightEnabled"];
                 else
-                    return false;
+                    return true;
             }
             set { ViewState["MouseHoverRowHighlightEnabled"] = value; }
         }
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 else
                 {
                     // default color
-                    return Color.Yellow;
+                    return Color.FromArgb(238,238,238);
                 }
             }
 

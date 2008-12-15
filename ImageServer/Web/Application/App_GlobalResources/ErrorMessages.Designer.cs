@@ -70,6 +70,33 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to delete this alert item..
+        /// </summary>
+        internal static string AlertDeleteFailed {
+            get {
+                return ResourceManager.GetString("AlertDeleteFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to delete this alert item.&lt;br&gt;Error: {0}.
+        /// </summary>
+        internal static string AlertDeleteFailed_WithException {
+            get {
+                return ResourceManager.GetString("AlertDeleteFailed_WithException", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This alert item is no longer available in the system..
+        /// </summary>
+        internal static string AlertNotAvailable {
+            get {
+                return ResourceManager.GetString("AlertNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to delete the study. See server log for more details..
         /// </summary>
         internal static string DeleteStudyError {

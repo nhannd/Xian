@@ -78,13 +78,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Titles.resx</DependentUpon>
     </Compile>
-    <Compile Include="CodeMirror.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-      <DependentUpon>CodeMirror.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="CodeMirror.aspx.designer.cs">
-      <DependentUpon>CodeMirror.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Controls\CheckJavascript.ascx.cs">
       <DependentUpon>CheckJavascript.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -175,6 +168,35 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\Alerts\AlertItemCollection.cs" />
+    <Compile Include="Pages\Admin\Alerts\AlertsGridPanel.ascx.cs">
+      <DependentUpon>AlertsGridPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Alerts\AlertsGridPanel.ascx.designer.cs">
+      <DependentUpon>AlertsGridPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Alerts\AlertsPanel.ascx.cs">
+      <DependentUpon>AlertsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Alerts\AlertsPanel.ascx.designer.cs">
+      <DependentUpon>AlertsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Alerts\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Alerts\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Alerts\DeleteAlertDialog.ascx.cs">
+      <DependentUpon>DeleteAlertDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Alerts\DeleteAlertDialog.ascx.designer.cs">
+      <DependentUpon>DeleteAlertDialog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\Audit\DeletedStudies.aspx.cs">
       <DependentUpon>DeletedStudies.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -238,177 +260,177 @@
     <Compile Include="Pages\Common\MainContentSection.Master.designer.cs">
       <DependentUpon>MainContentSection.Master</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\PartitionArchive\AddEditPartitionDialog.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\PartitionArchive\AddEditPartitionDialog.ascx.cs">
       <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\PartitionArchive\AddEditPartitionDialog.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\PartitionArchive\AddEditPartitionDialog.ascx.designer.cs">
       <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\PartitionArchive\Default.aspx.cs">
+    <Compile Include="Pages\Admin\Configure\PartitionArchive\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\PartitionArchive\Default.aspx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\PartitionArchive\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\PartitionArchive\PartitionArchivePanel.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\PartitionArchive\PartitionArchivePanel.ascx.cs">
       <DependentUpon>PartitionArchivePanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\PartitionArchive\PartitionArchivePanel.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\PartitionArchive\PartitionArchivePanel.ascx.designer.cs">
       <DependentUpon>PartitionArchivePanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\PartitionArchive\PartitionArchiveGridPanel.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\PartitionArchive\PartitionArchiveGridPanel.ascx.cs">
       <DependentUpon>PartitionArchiveGridPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\PartitionArchive\PartitionArchiveGridPanel.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\PartitionArchive\PartitionArchiveGridPanel.ascx.designer.cs">
       <DependentUpon>PartitionArchiveGridPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\Devices\AddEditDeviceDialog.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\Devices\AddEditDeviceDialog.ascx.cs">
       <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\Devices\AddEditDeviceDialog.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\Devices\AddEditDeviceDialog.ascx.designer.cs">
       <DependentUpon>AddEditDeviceDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\Devices\DeviceGridView.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\Devices\DeviceGridView.ascx.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\Devices\DeviceGridView.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\Devices\DeviceGridView.ascx.designer.cs">
       <DependentUpon>DeviceGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\Devices\Default.aspx.cs">
+    <Compile Include="Pages\Admin\Configure\Devices\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\Devices\Default.aspx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\Devices\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\Devices\DevicePanel.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\Devices\DevicePanel.ascx.cs">
       <DependentUpon>DevicePanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\Devices\DevicePanel.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\Devices\DevicePanel.ascx.designer.cs">
       <DependentUpon>DevicePanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\FileSystems\AddEditFileSystemDialog.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\FileSystems\AddEditFileSystemDialog.ascx.cs">
       <DependentUpon>AddEditFileSystemDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\FileSystems\AddEditFileSystemDialog.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\FileSystems\AddEditFileSystemDialog.ascx.designer.cs">
       <DependentUpon>AddEditFileSystemDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\FileSystems\FileSystemsGridView.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\FileSystems\FileSystemsGridView.ascx.cs">
       <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\FileSystems\FileSystemsGridView.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\FileSystems\FileSystemsGridView.ascx.designer.cs">
       <DependentUpon>FileSystemsGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\FileSystems\Default.aspx.cs">
+    <Compile Include="Pages\Admin\Configure\FileSystems\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\FileSystems\Default.aspx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\FileSystems\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\FileSystems\FileSystemsPanel.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\FileSystems\FileSystemsPanel.ascx.cs">
       <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\FileSystems\FileSystemsPanel.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\FileSystems\FileSystemsPanel.ascx.designer.cs">
       <DependentUpon>FileSystemsPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServerPartitions\AddEditPartitionDialog.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\AddEditPartitionDialog.ascx.cs">
       <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServerPartitions\AddEditPartitionDialog.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\AddEditPartitionDialog.ascx.designer.cs">
       <DependentUpon>AddEditPartitionDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionGridPanel.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\ServerPartitionGridPanel.ascx.cs">
       <DependentUpon>ServerPartitionGridPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionGridPanel.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\ServerPartitionGridPanel.ascx.designer.cs">
       <DependentUpon>ServerPartitionGridPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServerPartitions\Default.aspx.cs">
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServerPartitions\Default.aspx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionPanel.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\ServerPartitionPanel.ascx.cs">
       <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServerPartitions\ServerPartitionPanel.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServerPartitions\ServerPartitionPanel.ascx.designer.cs">
       <DependentUpon>ServerPartitionPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServerRules\AddEditServerRuleDialog.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\ServerRules\AddEditServerRuleDialog.ascx.cs">
       <DependentUpon>AddEditServerRuleDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServerRules\AddEditServerRuleDialog.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServerRules\AddEditServerRuleDialog.ascx.designer.cs">
       <DependentUpon>AddEditServerRuleDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServerRules\ServerRuleGridView.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\ServerRules\ServerRuleGridView.ascx.cs">
       <DependentUpon>ServerRuleGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServerRules\ServerRuleGridView.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServerRules\ServerRuleGridView.ascx.designer.cs">
       <DependentUpon>ServerRuleGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServerRules\Default.aspx.cs">
+    <Compile Include="Pages\Admin\Configure\ServerRules\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServerRules\Default.aspx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServerRules\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServerRules\ServerRulePanel.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\ServerRules\ServerRulePanel.ascx.cs">
       <DependentUpon>ServerRulePanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServerRules\ServerRulePanel.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServerRules\ServerRulePanel.ascx.designer.cs">
       <DependentUpon>ServerRulePanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServerRules\ServerRuleSamples.asmx.cs">
+    <Compile Include="Pages\Admin\Configure\ServerRules\ServerRuleSamples.asmx.cs">
       <DependentUpon>ServerRuleSamples.asmx</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServiceLocks\EditServiceLockDialog.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\ServiceLocks\EditServiceLockDialog.ascx.cs">
       <DependentUpon>EditServiceLockDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServiceLocks\EditServiceLockDialog.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServiceLocks\EditServiceLockDialog.ascx.designer.cs">
       <DependentUpon>EditServiceLockDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockCollection.cs" />
-    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockGridView.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\ServiceLocks\ServiceLockCollection.cs" />
+    <Compile Include="Pages\Admin\Configure\ServiceLocks\ServiceLockGridView.ascx.cs">
       <DependentUpon>ServiceLockGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockGridView.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServiceLocks\ServiceLockGridView.ascx.designer.cs">
       <DependentUpon>ServiceLockGridView.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServiceLocks\Default.aspx.cs">
+    <Compile Include="Pages\Admin\Configure\ServiceLocks\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServiceLocks\Default.aspx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServiceLocks\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx.cs">
+    <Compile Include="Pages\Admin\Configure\ServiceLocks\ServiceLockPanel.ascx.cs">
       <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Configure\ServiceLocks\ServiceLockPanel.ascx.designer.cs">
       <DependentUpon>ServiceLockPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Error\JavascriptRequired.aspx.cs">
@@ -856,6 +878,8 @@
     <Content Include="App_Themes\Default\images\Buttons\CancelDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\CancelEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ClearButtonBackground.png" />
+    <Content Include="App_Themes\Default\images\Buttons\DeleteAllDisabled.png" />
+    <Content Include="App_Themes\Default\images\Buttons\DeleteAllEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\DeleteDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\DeleteEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\DoneDisabled.png" />
@@ -973,7 +997,6 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-right.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG.png" />
     <Content Include="App_Themes\Default\StyleSheets\WorkQueue.css" />
-    <Content Include="CodeMirror.aspx" />
     <Content Include="Controls\CheckJavascript.ascx" />
     <Content Include="Controls\EmptySearchResultsMessage.ascx" />
     <Content Include="Controls\MessageBox.ascx" />
@@ -988,6 +1011,10 @@
     <Content Include="Helpers\DialogHelper.cs" />
     <Content Include="Helpers\ScriptHelper.cs" />
     <Content Include="Images\ImageServerLogo.png" />
+    <Content Include="Pages\Admin\Alerts\AlertsGridPanel.ascx" />
+    <Content Include="Pages\Admin\Alerts\AlertsPanel.ascx" />
+    <Content Include="Pages\Admin\Alerts\Default.aspx" />
+    <Content Include="Pages\Admin\Alerts\DeleteAlertDialog.ascx" />
     <Content Include="Pages\Admin\Audit\DeletedStudies.aspx" />
     <Content Include="Pages\Admin\Audit\DeletedStudiesSearchPanel.ascx" />
     <Content Include="Pages\Admin\Audit\DeletedStudyDetailsDialog.ascx" />
@@ -996,15 +1023,15 @@
     <Content Include="Pages\Common\BaseAdminPage.aspx" />
     <Content Include="Pages\Common\BasePage.aspx" />
     <Content Include="Pages\Common\Default.aspx" />
-    <Content Include="Pages\Configure\PartitionArchive\AddEditPartitionDialog.ascx" />
-    <Content Include="Pages\Configure\PartitionArchive\Default.aspx" />
-    <Content Include="Pages\Configure\PartitionArchive\PartitionArchivePanel.ascx" />
-    <Content Include="Pages\Configure\PartitionArchive\PartitionArchiveGridPanel.ascx" />
-    <Content Include="Pages\Configure\Devices\AddEditDeviceDialog.ascx" />
-    <Content Include="Pages\Configure\Devices\DeviceGridView.ascx" />
-    <Content Include="Pages\Configure\Devices\Default.aspx" />
-    <Content Include="Pages\Configure\Devices\DevicePanel.ascx" />
-    <Content Include="Pages\Configure\FileSystems\AddEditFileSystemDialog.ascx" />
+    <Content Include="Pages\Admin\Configure\PartitionArchive\AddEditPartitionDialog.ascx" />
+    <Content Include="Pages\Admin\Configure\PartitionArchive\Default.aspx" />
+    <Content Include="Pages\Admin\Configure\PartitionArchive\PartitionArchivePanel.ascx" />
+    <Content Include="Pages\Admin\Configure\PartitionArchive\PartitionArchiveGridPanel.ascx" />
+    <Content Include="Pages\Admin\Configure\Devices\AddEditDeviceDialog.ascx" />
+    <Content Include="Pages\Admin\Configure\Devices\DeviceGridView.ascx" />
+    <Content Include="Pages\Admin\Configure\Devices\Default.aspx" />
+    <Content Include="Pages\Admin\Configure\Devices\DevicePanel.ascx" />
+    <Content Include="Pages\Admin\Configure\FileSystems\AddEditFileSystemDialog.ascx" />
     <EmbeddedResource Include="App_GlobalResources\GridPager.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -1020,23 +1047,23 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Labels.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Pages\Configure\FileSystems\Filesystem.js" />
-    <Content Include="Pages\Configure\FileSystems\FileSystemsGridView.ascx" />
-    <Content Include="Pages\Configure\FileSystems\Default.aspx" />
-    <Content Include="Pages\Configure\FileSystems\FileSystemsPanel.ascx" />
-    <Content Include="Pages\Configure\ServerPartitions\AddEditPartitionDialog.ascx" />
-    <Content Include="Pages\Configure\ServerPartitions\ServerPartitionGridPanel.ascx" />
-    <Content Include="Pages\Configure\ServerPartitions\Default.aspx" />
-    <Content Include="Pages\Configure\ServerPartitions\ServerPartitionPanel.ascx" />
-    <Content Include="Pages\Configure\ServerRules\AddEditServerRuleDialog.ascx" />
-    <Content Include="Pages\Configure\ServerRules\ServerRuleGridView.ascx" />
-    <Content Include="Pages\Configure\ServerRules\Default.aspx" />
-    <Content Include="Pages\Configure\ServerRules\ServerRulePanel.ascx" />
-    <Content Include="Pages\Configure\ServerRules\ServerRuleSamples.asmx" />
-    <Content Include="Pages\Configure\ServiceLocks\EditServiceLockDialog.ascx" />
-    <Content Include="Pages\Configure\ServiceLocks\ServiceLockGridView.ascx" />
-    <Content Include="Pages\Configure\ServiceLocks\Default.aspx" />
-    <Content Include="Pages\Configure\ServiceLocks\ServiceLockPanel.ascx" />
+    <EmbeddedResource Include="Pages\Admin\Configure\FileSystems\Filesystem.js" />
+    <Content Include="Pages\Admin\Configure\FileSystems\FileSystemsGridView.ascx" />
+    <Content Include="Pages\Admin\Configure\FileSystems\Default.aspx" />
+    <Content Include="Pages\Admin\Configure\FileSystems\FileSystemsPanel.ascx" />
+    <Content Include="Pages\Admin\Configure\ServerPartitions\AddEditPartitionDialog.ascx" />
+    <Content Include="Pages\Admin\Configure\ServerPartitions\ServerPartitionGridPanel.ascx" />
+    <Content Include="Pages\Admin\Configure\ServerPartitions\Default.aspx" />
+    <Content Include="Pages\Admin\Configure\ServerPartitions\ServerPartitionPanel.ascx" />
+    <Content Include="Pages\Admin\Configure\ServerRules\AddEditServerRuleDialog.ascx" />
+    <Content Include="Pages\Admin\Configure\ServerRules\ServerRuleGridView.ascx" />
+    <Content Include="Pages\Admin\Configure\ServerRules\Default.aspx" />
+    <Content Include="Pages\Admin\Configure\ServerRules\ServerRulePanel.ascx" />
+    <Content Include="Pages\Admin\Configure\ServerRules\ServerRuleSamples.asmx" />
+    <Content Include="Pages\Admin\Configure\ServiceLocks\EditServiceLockDialog.ascx" />
+    <Content Include="Pages\Admin\Configure\ServiceLocks\ServiceLockGridView.ascx" />
+    <Content Include="Pages\Admin\Configure\ServiceLocks\Default.aspx" />
+    <Content Include="Pages\Admin\Configure\ServiceLocks\ServiceLockPanel.ascx" />
     <Content Include="Pages\Error\JavascriptRequired.aspx" />
     <Content Include="Pages\Error\Default.aspx" />
     <Content Include="Pages\Error\ErrorPage.aspx" />

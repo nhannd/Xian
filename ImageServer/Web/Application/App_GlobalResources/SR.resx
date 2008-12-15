@@ -354,4 +354,13 @@
   <data name="StudyRequiresReconcilie" xml:space="preserve">
     <value>This study needs to be reconciled.</value>
   </data>
+  <data name="AlertDeleteConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this item from the queue?</value>
+  </data>
+  <data name="GridPagerAlertMultipleItemsFound" xml:space="preserve">
+    <value>Alerts Found</value>
+  </data>
+  <data name="GridPagerAlertSingleItemFound" xml:space="preserve">
+    <value>Alert Found</value>
+  </data>
 </root>

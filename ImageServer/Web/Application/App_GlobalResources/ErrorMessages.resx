@@ -120,6 +120,15 @@
   <data name="ActionNotAllowedAtThisTime" xml:space="preserve">
     <value>Cannot perform the action at this time: {0}. Please try again later.</value>
   </data>
+  <data name="AlertDeleteFailed" xml:space="preserve">
+    <value>Unable to delete this alert item.</value>
+  </data>
+  <data name="AlertDeleteFailed_WithException" xml:space="preserve">
+    <value>Failed to delete this alert item.&lt;br&gt;Error: {0}</value>
+  </data>
+  <data name="AlertNotAvailable" xml:space="preserve">
+    <value>This alert item is no longer available in the system.</value>
+  </data>
   <data name="DeleteStudyError" xml:space="preserve">
     <value>Unable to delete the study. See server log for more details.</value>
   </data>

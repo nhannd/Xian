@@ -9,19 +9,21 @@
       <siteMapNode url="~/Pages/Queues/RestoreQueue/Default.aspx" title="$Resources: Titles, RestoreQueue"  />
       <siteMapNode url="~/Pages/Queues/StudyIntegrityQueue/Default.aspx" title="$Resources: Titles, StudyIntegrityQueue"  />
     </siteMapNode>
-	
-		<siteMapNode url="" title="$Resources: Titles, Configure">
-				<siteMapNode url="~/Pages/Configure/Devices/Default.aspx" title="$Resources: Titles, Devices"  />
-				<siteMapNode url="~/Pages/Configure/ServerPartitions/Default.aspx" title="$Resources: Titles, ServerPartitions"  />
-				<siteMapNode url="~/Pages/Configure/FileSystems/Default.aspx" title="$Resources: Titles, FileSystems"  />
-				<siteMapNode url="" title="Audit">
-					<siteMapNode url="~/Pages/Admin/Audit/DeletedStudies.aspx" title="Deleted Studies"  />
-				</siteMapNode>
-			<siteMapNode url="~/Pages/Configure/ServerRules/Default.aspx" title="$Resources: Titles, ServerRules" />
-        <siteMapNode url="~/Pages/Configure/ServiceLocks/Default.aspx" title="$Resources: Titles, ServiceScheduling" />
-        <siteMapNode url="~/Pages/Configure/PartitionArchive/Default.aspx" title="$Resources: Titles, PartitionArchive" />
-    </siteMapNode>
 
+    <siteMapNode url="" title="$Resources: Titles, Admin">
+      <siteMapNode url="" title="$Resources: Titles, Configure">
+        <siteMapNode url="~/Pages/Admin/Configure/Devices/Default.aspx" title="$Resources: Titles, Devices"  />
+        <siteMapNode url="~/Pages/Admin/Configure/ServerPartitions/Default.aspx" title="$Resources: Titles, ServerPartitions"  />
+        <siteMapNode url="~/Pages/Admin/Configure/FileSystems/Default.aspx" title="$Resources: Titles, FileSystems"  />
+        <siteMapNode url="~/Pages/Admin/Configure/ServerRules/Default.aspx" title="$Resources: Titles, ServerRules" />
+        <siteMapNode url="~/Pages/Admin/Configure/ServiceLocks/Default.aspx" title="$Resources: Titles, ServiceScheduling" />
+        <siteMapNode url="~/Pages/Admin/Configure/PartitionArchive/Default.aspx" title="$Resources: Titles, PartitionArchive" />
+      </siteMapNode>
+      <siteMapNode url="" title="$Resources: Titles, Audit">
+        <siteMapNode url="~/Pages/Admin/Audit/DeletedStudies.aspx" title="$Resources: Titles, DeletedStudies"  />
+      </siteMapNode>
+      <siteMapNode url="~/Pages/Admin/Alerts/Default.aspx" title="$Resources: Titles, Alerts" />
+    </siteMapNode>
     <siteMapNode url="~/Pages/Help/Default.aspx" title="$Resources: Titles, About"  />
   </siteMapNode>
 </siteMap>

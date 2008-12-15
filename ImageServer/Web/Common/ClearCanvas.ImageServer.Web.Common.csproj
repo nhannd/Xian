@@ -53,6 +53,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\AlertAdaptor.cs" />
+    <Compile Include="Data\AlertController.cs" />
+    <Compile Include="Data\AlertDataSource.cs" />
     <Compile Include="Data\ArchiveQueueAdaptor.cs" />
     <Compile Include="Data\ArchiveQueueController.cs" />
     <Compile Include="Data\ArchiveQueueDataSource.cs" />

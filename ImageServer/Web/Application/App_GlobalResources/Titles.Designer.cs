@@ -79,6 +79,33 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Admin.
+        /// </summary>
+        internal static string Admin {
+            get {
+                return ResourceManager.GetString("Admin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alerts.
+        /// </summary>
+        internal static string Alerts {
+            get {
+                return ResourceManager.GetString("Alerts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alert | Admin | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string AlertsPageTitle {
+            get {
+                return ResourceManager.GetString("AlertsPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Archive.
         /// </summary>
         internal static string Archive {
@@ -106,11 +133,29 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Audit.
+        /// </summary>
+        internal static string Audit {
+            get {
+                return ResourceManager.GetString("Audit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure.
         /// </summary>
         internal static string Configure {
             get {
                 return ResourceManager.GetString("Configure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleted Studies.
+        /// </summary>
+        internal static string DeletedStudies {
+            get {
+                return ResourceManager.GetString("DeletedStudies", resourceCulture);
             }
         }
         

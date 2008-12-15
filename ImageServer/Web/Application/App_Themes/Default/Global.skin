@@ -26,6 +26,7 @@
 <ccUI:ToolbarButton runat="server" SkinID="ViewDetailsButton" EnabledImageURL="images/Buttons/ViewDetailsEnabled.png" DisabledImageURL="images/Buttons/ViewDetailsDisabled.png" />
 <ccUI:ToolbarButton runat="server" SkinID="MoveButton" EnabledImageURL="images/Buttons/MoveEnabled.png" DisabledImageURL="images/Buttons/MoveDisabled.png" />
 <ccUI:ToolbarButton runat="server" SkinID="DeleteButton" EnabledImageURL="images/Buttons/DeleteEnabled.png" DisabledImageURL="images/Buttons/DeleteDisabled.png" />
+<ccUI:ToolbarButton runat="server" SkinID="DeleteAllButton" EnabledImageURL="images/Buttons/DeleteAllEnabled.png" DisabledImageURL="images/Buttons/DeleteAllDisabled.png" />
 <ccUI:ToolbarButton runat="server" SkinID="EditButton" EnabledImageURL="images/Buttons/EditEnabled.png" DisabledImageURL="images/Buttons/EditDisabled.png" />
 <ccUI:ToolbarButton runat="server" SkinID="ResetButton" EnabledImageURL="images/Buttons/ResetEnabled.png" DisabledImageURL="images/Buttons/ResetDisabled.png" />
 <ccUI:ToolbarButton runat="server" SkinID="RescheduleButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/RescheduleEnabled.png" DisabledImageURL="images/Buttons/RescheduleDisabled.png" />
