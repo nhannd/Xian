@@ -31,10 +31,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace ClearCanvas.Common.Utilities
 {
@@ -144,22 +143,22 @@ namespace ClearCanvas.Common.Utilities
             List<string> positionals = new List<string>();
             List<string> options = new List<string>();
 
-        	foreach (IObjectMemberContext context in WalkDataMembers())
-        	{
-				CommandLineParameterAttribute a = AttributeUtils.GetAttribute<CommandLineParameterAttribute>(context.Member);
-				if (a.Position > -1)
-				{
-					positionals.Add(string.Format(a.Required ? "{0}" : "[{0}]", a.DisplayName));
-				}
-				else
-				{
-					string format = context.MemberType == typeof(bool) ? "/{0}[+|-]\t{1}" : "/{0}:(value)\t{1}";
-					string s = string.Format(format, a.Key, a.Usage);
-					if (!string.IsNullOrEmpty(a.KeyShortForm))
-						s += string.Format(" (Short form: /{0})", a.KeyShortForm);
-					options.Add(s);
-				}
-			}
+            foreach (IObjectMemberContext context in WalkDataMembers())
+            {
+                CommandLineParameterAttribute a = AttributeUtils.GetAttribute<CommandLineParameterAttribute>(context.Member);
+                if (a.Position > -1)
+                {
+                    positionals.Add(string.Format(a.Required ? "{0}" : "[{0}]", a.DisplayName));
+                }
+                else
+                {
+                    string format = context.MemberType == typeof(bool) ? "/{0}[+|-]\t{1}" : "/{0}:(value)\t{1}";
+                    string s = string.Format(format, a.Key, a.Usage);
+                    if (!string.IsNullOrEmpty(a.KeyShortForm))
+                        s += string.Format(" (Short form: /{0})", a.KeyShortForm);
+                    options.Add(s);
+                }
+            }
 
             writer.Write("Usage: ");
             if (options.Count > 0)
@@ -196,39 +195,39 @@ namespace ClearCanvas.Common.Utilities
 
         private void ProcessAttributes()
         {
-        	foreach (IObjectMemberContext context in WalkDataMembers())
-        	{
-				CommandLineParameterAttribute a = AttributeUtils.GetAttribute<CommandLineParameterAttribute>(context.Member);
-				if (a != null)
-				{
-					if (a.Position > -1)
-					{
-						// treat as positional
-						ValidateMemberType(context.Member.Name, new Type[] { typeof(string) }, context.MemberType);
-						if (_positionalArgs.Count > a.Position)
-							context.MemberValue = _positionalArgs[a.Position];
-						else
-						{
-							if (a.Required)
-								throw new CommandLineException(string.Format("Missing required command line argument <{0}>", a.DisplayName));
-						}
-					}
-					else
-					{
-						// treat as named/switch
-						if (context.MemberType == typeof(bool))
-						{
-							ValidateMemberType(context.Member.Name, new Type[] { typeof(bool) }, context.MemberType);
-							SetMemberValue(a, context, _switches);
-						}
-						else
-						{
-							ValidateMemberType(context.Member.Name, new Type[] { typeof(string), typeof(int), typeof(Enum) }, context.MemberType);
-							SetMemberValue(a, context, _namedArgs);
-						}
-					}
-				}
-			}
+            foreach (IObjectMemberContext context in WalkDataMembers())
+            {
+                CommandLineParameterAttribute a = AttributeUtils.GetAttribute<CommandLineParameterAttribute>(context.Member);
+                if (a != null)
+                {
+                    if (a.Position > -1)
+                    {
+                        // treat as positional
+                        ValidateMemberType(context.Member.Name, new Type[] { typeof(string) }, context.MemberType);
+                        if (_positionalArgs.Count > a.Position)
+                            context.MemberValue = _positionalArgs[a.Position];
+                        else
+                        {
+                            if (a.Required)
+                                throw new CommandLineException(string.Format("Missing required command line argument <{0}>", a.DisplayName));
+                        }
+                    }
+                    else
+                    {
+                        // treat as named/switch
+                        if (context.MemberType == typeof(bool))
+                        {
+                            ValidateMemberType(context.Member.Name, new Type[] { typeof(bool) }, context.MemberType);
+                            SetMemberValue(a, context, _switches);
+                        }
+                        else
+                        {
+                            ValidateMemberType(context.Member.Name, new Type[] { typeof(string), typeof(int), typeof(Enum) }, context.MemberType);
+                            SetMemberValue(a, context, _namedArgs);
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -251,7 +250,17 @@ namespace ClearCanvas.Common.Utilities
                         context.MemberValue = value;
                     else if (context.MemberType.IsEnum)
                     {
-                        context.MemberValue = Enum.Parse(context.MemberType, value.ToString());
+                        try
+                        {
+                            context.MemberValue = Enum.Parse(context.MemberType, value.ToString(), true);
+                        }
+                        catch (Exception)
+                        {
+                            throw new CommandLineException(
+                                string.Format("Invalid option for named command line argument: {0} ({1})",
+                                value,
+                                StringUtilities.Combine(keys, ", ")));
+                        }
                     }
                     else if (context.MemberType == typeof(int))
                     {
@@ -269,7 +278,7 @@ namespace ClearCanvas.Common.Utilities
 
         private void ValidateMemberType(string memberName, Type[] allowable, Type actual)
         {
-            if(!CollectionUtils.Contains(allowable, delegate (Type t) { return t.IsAssignableFrom(actual);}))
+            if (!CollectionUtils.Contains(allowable, delegate(Type t) { return t.IsAssignableFrom(actual); }))
                 throw new InvalidOperationException(
                     string.Format("Property/field {0} cannot be of type {1} - must be of type {2}",
                         memberName,
@@ -314,17 +323,17 @@ namespace ClearCanvas.Common.Utilities
             return false;
         }
 
-		private IEnumerable<IObjectMemberContext> WalkDataMembers()
-		{
-			ObjectWalker walker = new ObjectWalker(
-				delegate(MemberInfo member)
-				{
-					return AttributeUtils.HasAttribute<CommandLineParameterAttribute>(member);
-				});
-			walker.IncludeNonPublicFields = true;
-			walker.IncludeNonPublicProperties = true;
-			return walker.Walk(this);
-		}
+        private IEnumerable<IObjectMemberContext> WalkDataMembers()
+        {
+            ObjectWalker walker = new ObjectWalker(
+                delegate(MemberInfo member)
+                {
+                    return AttributeUtils.HasAttribute<CommandLineParameterAttribute>(member);
+                });
+            walker.IncludeNonPublicFields = true;
+            walker.IncludeNonPublicProperties = true;
+            return walker.Walk(this);
+        }
 
         #endregion
     }

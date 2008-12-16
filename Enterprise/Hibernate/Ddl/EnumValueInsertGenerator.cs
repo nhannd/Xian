@@ -31,165 +31,183 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
-
-using ClearCanvas.Enterprise;
-using NHibernate.Metadata;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Common.Utilities;
-using NHibernate.Mapping;
-using ClearCanvas.Common;
 using System.IO;
+using System.Reflection;
 using System.Xml;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 using NHibernate.Dialect;
-using System.ComponentModel;
+using NHibernate.Mapping;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
-    /// <summary>
-    /// Generates scripts to insert enumeration values into tables  
-    /// </summary>
-    class EnumValueInsertGenerator : DdlScriptGenerator
-    {
-        class Insert
-        {
-            public Table Table;
-            public string Code;
-            public string Value;
-            public string Description;
-            public float DisplayOrder;
+	/// <summary>
+	/// Generates scripts to insert enumeration values into tables  
+	/// </summary>
+	abstract class EnumValueInsertGenerator : DdlScriptGenerator
+	{
+		protected class Insert
+		{
+			public Table Table;
+			public string Code;
+			public string Value;
+			public string Description;
+			public float DisplayOrder;
 
-            public string GetCreateScript(Dialect dialect, string defaultSchema)
-            {
-                return string.Format("insert into {0} (Code_, Value_, Description_, DisplayOrder_, Deactivated_) values ({1}, {2}, {3}, {4}, {5})",
-                    Table.GetQualifiedName(dialect, defaultSchema),
-                    SqlFormat(Code),
-                    SqlFormat(Value),
-                    SqlFormat(Description),
-                    DisplayOrder,
+			public string GetCreateScript(Dialect dialect, string defaultSchema)
+			{
+				return string.Format("insert into {0} (Code_, Value_, Description_, DisplayOrder_, Deactivated_) values ({1}, {2}, {3}, {4}, {5})",
+					Table.GetQualifiedName(dialect, defaultSchema),
+					SqlFormat(Code),
+					SqlFormat(Value),
+					SqlFormat(Description),
+					DisplayOrder,
 					SqlFormat(false.ToString()));
-            }
+			}
 
-            private string SqlFormat(string str)
-            {
-                if (str == null)
-                    return "NULL";
+			private string SqlFormat(string str)
+			{
+				if (str == null)
+					return "NULL";
 
-                // make sure to escape ' to ''
-                return string.Format("'{0}'", str.Replace("'", "''"));
-            }
-        }
+				// make sure to escape ' to ''
+				return string.Format("'{0}'", str.Replace("'", "''"));
+			}
+		}
 
-        public override string[] GenerateCreateScripts(PersistentStore store, Dialect dialect)
-        {
-            // build a map between enum classes and C# enums
-            Dictionary<Type, Type> mapClassToEnum = new Dictionary<Type,Type>();
-            foreach(PluginInfo plugin in Platform.PluginManager.Plugins)
-            {
-                foreach(Type type in plugin.Assembly.GetTypes())
-                {
-                    if(type.IsEnum)
-                    {
-                        EnumValueClassAttribute attr = CollectionUtils.FirstElement<EnumValueClassAttribute>(
-                            type.GetCustomAttributes(typeof(EnumValueClassAttribute), false));
-                        if(attr != null)
-                            mapClassToEnum.Add(attr.EnumValueClass, type);
-                    }
-                }
-            }
+		protected Dictionary<Type, Type> _mapClassToEnum;
 
-            // mapped enum classes
-            ICollection<PersistentClass> persistentEnumClasses = CollectionUtils.Select<PersistentClass>(
-                store.Configuration.ClassMappings,
-                delegate(PersistentClass c) { return typeof(EnumValue).IsAssignableFrom(c.MappedClass); });
+		protected EnumValueInsertGenerator()
+		{
+			_mapClassToEnum = new Dictionary<Type, Type>();
+			foreach (PluginInfo plugin in Platform.PluginManager.Plugins)
+			{
+				foreach (Type type in plugin.Assembly.GetTypes())
+				{
+					if (type.IsEnum)
+					{
+						EnumValueClassAttribute attr = CollectionUtils.FirstElement<EnumValueClassAttribute>(
+							type.GetCustomAttributes(typeof(EnumValueClassAttribute), false));
+						if (attr != null)
+							_mapClassToEnum.Add(attr.EnumValueClass, type);
+					}
+				}
+			}
+		}
 
-            List<Insert> inserts = new List<Insert>();
-            foreach (PersistentClass pclass in persistentEnumClasses)
-            {
-                if (mapClassToEnum.ContainsKey(pclass.MappedClass))
-                    ProcessHardEnum(mapClassToEnum[pclass.MappedClass], pclass.Table, inserts);
-                else
-                    ProcessSoftEnum(pclass.MappedClass, pclass.Table, inserts);
-            }
+		protected abstract bool CanProcessEnum(Type enumValueClass);
+		protected abstract void ProcessEnum(Type enumValueClass, Table table, List<Insert> inserts);
 
-            string defaultSchema = store.Configuration.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+		public override string[] GenerateCreateScripts(PersistentStore store, Dialect dialect)
+		{
+			// mapped enum classes
+			ICollection<PersistentClass> persistentEnumClasses = CollectionUtils.Select<PersistentClass>(
+				store.Configuration.ClassMappings,
+				delegate(PersistentClass c) { return typeof(EnumValue).IsAssignableFrom(c.MappedClass); });
 
-            List<string> scripts = CollectionUtils.Map<Insert, string>(inserts,
-                delegate(Insert i) { return i.GetCreateScript(dialect, defaultSchema); });
-            scripts.Sort();
-            return scripts.ToArray();
-        }
+			List<Insert> inserts = new List<Insert>();
+			foreach (PersistentClass pclass in persistentEnumClasses)
+			{
+				if (this.CanProcessEnum(pclass.MappedClass))
+					ProcessEnum(pclass.MappedClass, pclass.Table, inserts);
+			}
 
-        public override string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
-        {
-            return new string[] { };    // nothing to do
-        }
+			string defaultSchema = store.Configuration.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
 
-        private void ProcessSoftEnum(Type enumValueClass, Table table, List<Insert> inserts)
-        {
-            // look for an embedded resource that matches the enum class
-            string res = string.Format("{0}.enum.xml", enumValueClass.FullName);
-            IResourceResolver resolver = new ResourceResolver(enumValueClass.Assembly);
-            try
-            {
-                using (Stream xmlStream = resolver.OpenResource(res))
-                {
-                    XmlDocument xmlDoc = new XmlDocument();
-                    xmlDoc.Load(xmlStream);
-                    int displayOrder = 1;
-                    foreach (XmlElement enumValueElement in xmlDoc.GetElementsByTagName("enum-value"))
-                    {
-                        enumValueElement.GetAttribute("code");
+			List<string> scripts = CollectionUtils.Map<Insert, string>(inserts,
+				delegate(Insert i) { return i.GetCreateScript(dialect, defaultSchema); });
+			scripts.Sort();
+			return scripts.ToArray();
+		}
 
-                        Insert insert = new Insert();
-                        insert.Table = table;
-                        insert.Code = enumValueElement.GetAttribute("code");
-                        XmlElement valueNode = CollectionUtils.FirstElement<XmlElement>(enumValueElement.GetElementsByTagName("value"));
-                        if (valueNode != null)
-                            insert.Value = valueNode.InnerText;
-                        XmlElement descNode = CollectionUtils.FirstElement<XmlElement>(enumValueElement.GetElementsByTagName("description"));
-                        if (descNode != null)
-                            insert.Description = descNode.InnerText;
+		public override string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
+		{
+			return new string[] { };    // nothing to do
+		}
+	}
 
-                        insert.DisplayOrder = displayOrder++;
+	class HardEnumValueInsertGenerator : EnumValueInsertGenerator
+	{
+		protected override bool CanProcessEnum(Type enumValueClass)
+		{
+			return _mapClassToEnum.ContainsKey(enumValueClass);
+		}
 
-                        inserts.Add(insert);
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // no embedded resource found - nothing to insert
-            }
-        }
+		protected override void ProcessEnum(Type enumValueClass, Table table, List<Insert> inserts)
+		{
+			Type enumType = _mapClassToEnum[enumValueClass];
 
-        private void ProcessHardEnum(Type enumType, Table table, List<Insert> inserts)
-        {
-            int displayOrder = 1;
+			int displayOrder = 1;
 
-            // note that we process the enum constants in order of the underlying value assigned
-            // so that the initial displayOrder reflects the natural ordering
-            // (see msdn docs for Enum.GetValues for details)
-            foreach(object value in Enum.GetValues(enumType))
-            {
-                string code = Enum.GetName(enumType, value);
-                FieldInfo fi = enumType.GetField(code);
-                EnumValueAttribute attr = AttributeUtils.GetAttribute<EnumValueAttribute>(fi);
-                if (attr != null)
-                {
-                    Insert insert = new Insert();
-                    insert.Table = table;
-                    insert.Code = code;
-                    insert.Value = attr.Value;
-                    insert.Description = attr.Description;
+			// note that we process the enum constants in order of the underlying value assigned
+			// so that the initial displayOrder reflects the natural ordering
+			// (see msdn docs for Enum.GetValues for details)
+			foreach (object value in Enum.GetValues(enumType))
+			{
+				string code = Enum.GetName(enumType, value);
+				FieldInfo fi = enumType.GetField(code);
+				EnumValueAttribute attr = AttributeUtils.GetAttribute<EnumValueAttribute>(fi);
+				if (attr != null)
+				{
+					Insert insert = new Insert();
+					insert.Table = table;
+					insert.Code = code;
+					insert.Value = attr.Value;
+					insert.Description = attr.Description;
 
-                    // add 1 because we want all display order values to initially be greater than 1
-                    insert.DisplayOrder = displayOrder++;
+					// add 1 because we want all display order values to initially be greater than 1
+					insert.DisplayOrder = displayOrder++;
 
-                    inserts.Add(insert);
-                }
-            }
-        }
-    }
+					inserts.Add(insert);
+				}
+			}
+		}
+	}
+
+	class SoftEnumValueInsertGenerator : EnumValueInsertGenerator
+	{
+		protected override bool CanProcessEnum(Type enumValueClass)
+		{
+			return !_mapClassToEnum.ContainsKey(enumValueClass);
+		}
+
+		protected override void ProcessEnum(Type enumValueClass, Table table, List<Insert> inserts)
+		{
+			// look for an embedded resource that matches the enum class
+			string res = string.Format("{0}.enum.xml", enumValueClass.FullName);
+			IResourceResolver resolver = new ResourceResolver(enumValueClass.Assembly);
+			try
+			{
+				using (Stream xmlStream = resolver.OpenResource(res))
+				{
+					XmlDocument xmlDoc = new XmlDocument();
+					xmlDoc.Load(xmlStream);
+					int displayOrder = 1;
+					foreach (XmlElement enumValueElement in xmlDoc.GetElementsByTagName("enum-value"))
+					{
+						enumValueElement.GetAttribute("code");
+
+						Insert insert = new Insert();
+						insert.Table = table;
+						insert.Code = enumValueElement.GetAttribute("code");
+						XmlElement valueNode = CollectionUtils.FirstElement<XmlElement>(enumValueElement.GetElementsByTagName("value"));
+						if (valueNode != null)
+							insert.Value = valueNode.InnerText;
+						XmlElement descNode = CollectionUtils.FirstElement<XmlElement>(enumValueElement.GetElementsByTagName("description"));
+						if (descNode != null)
+							insert.Description = descNode.InnerText;
+
+						insert.DisplayOrder = displayOrder++;
+
+						inserts.Add(insert);
+					}
+				}
+			}
+			catch (Exception)
+			{
+				// no embedded resource found - nothing to insert
+			}
+		}
+	}
 }

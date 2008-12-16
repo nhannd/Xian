@@ -29,11 +29,8 @@
 
 #endregion
 
-using System;
-using System.IO;
 using System.Collections.Generic;
-
-using NHibernate.Cfg;
+using System.IO;
 using ClearCanvas.Common;
 using NHibernate.Dialect;
 
@@ -49,8 +46,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     {
     }
 
-
-
     /// <summary>
     /// Utility class that generates a database creation and/or drop script and writes the script to a <see cref="StreamWriter"/>.
     /// </summary>
@@ -60,22 +55,25 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         private readonly PersistentStore _store;
         private readonly Dialect _dialect;
 
-        public ScriptWriter(PersistentStore store, Dialect dialect, bool populateEnums)
+        public ScriptWriter(PersistentStore store, Dialect dialect, bool populateHardEnums, bool populateSoftEnums)
         {
             _store = store;
             _dialect = dialect;
-
 
             _generators = new List<IDdlScriptGenerator>();
 
             // the order of generator execution is important, so add the static generators first
             _generators.Add(new RelationalSchemaGenerator());
-			if (populateEnums)
-			{
-				_generators.Add(new EnumValueInsertGenerator());
-			}
+            if (populateHardEnums)
+            {
+                _generators.Add(new HardEnumValueInsertGenerator());
+            }
+            if (populateSoftEnums)
+            {
+                _generators.Add(new SoftEnumValueInsertGenerator());
+            }
 
-        	// subsequently we can add extension generators, with uncontrolled ordering
+            // subsequently we can add extension generators, with uncontrolled ordering
             foreach (IDdlScriptGenerator generator in (new DdlScriptGeneratorExtensionPoint().CreateExtensions()))
             {
                 _generators.Add(generator);

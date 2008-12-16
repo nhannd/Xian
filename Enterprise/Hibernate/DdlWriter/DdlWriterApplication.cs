@@ -66,13 +66,11 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
                     WriteCreateScripts(Console.Out, dialect, cmdLine);
                 }
             }
-            catch(CommandLineException e)
+            catch (CommandLineException e)
             {
                 Console.WriteLine(e.Message);
                 cmdLine.PrintUsage(Console.Out);
             }
-
-
 
             string outputFile = "";
 
@@ -90,13 +88,17 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
         {
             try
             {
-            	PersistentStore store = PersistentStoreRegistry.GetDefaultStore() as PersistentStore;
+                PersistentStore store = PersistentStoreRegistry.GetDefaultStore() as PersistentStore;
                 store.Initialize();
 
                 PreProcessor preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
                 preProcessor.Process(store);
 
-                ScriptWriter scriptWriter = new ScriptWriter(store, dialect, cmdLine.PopulateEnumerations);
+                bool populateHardEnums = cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.all
+                    || cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.hard;
+                bool populateSoftEnums = cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.all;
+
+                ScriptWriter scriptWriter = new ScriptWriter(store, dialect, populateHardEnums, populateSoftEnums);
                 scriptWriter.WriteCreateScript(writer);
             }
             catch (Exception e)
