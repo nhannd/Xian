@@ -60,11 +60,6 @@
       <Name>ClearCanvas.Dicom</Name>
       <Private>False</Private>
     </ProjectReference>
-    <ProjectReference Include="..\..\Utilities\DicomEditor\ClearCanvas.Utilities.DicomEditor.csproj">
-      <Project>{ACCD054F-5788-4747-959A-551E6E4B477C}</Project>
-      <Name>ClearCanvas.Utilities.DicomEditor</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
@@ -73,6 +68,7 @@
     <ProjectReference Include="..\Clipboard\ClearCanvas.ImageViewer.Clipboard.csproj">
       <Project>{8517089B-809E-4A62-9AB2-CFF8C72E1AEB}</Project>
       <Name>ClearCanvas.ImageViewer.Clipboard</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
