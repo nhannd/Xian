@@ -115,6 +115,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The local data store service does not appear to be running..
+        /// </summary>
+        internal static string ExceptionLocalDataStoreNotFound {
+            get {
+                return ResourceManager.GetString("ExceptionLocalDataStoreNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An Image.
         /// </summary>
         internal static string FormatStudyComposerGenericImageLabelCaption {
@@ -174,6 +183,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer {
         internal static string Properties {
             get {
                 return ResourceManager.GetString("Properties", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select Destination.
+        /// </summary>
+        internal static string SelectDestination {
+            get {
+                return ResourceManager.GetString("SelectDestination", resourceCulture);
             }
         }
         

@@ -41,6 +41,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 				{
 					list.Add(o);
 				}
+
+				base.Context.Select(new List<IGalleryItem>(0)); // deselect all
+
 				foreach (object o in list)
 				{
 					base.Context.DataSource.Remove(o);
@@ -58,8 +61,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 			{
 				if (base.Context.DataSource.Count > 0)
 				{
-					if (base.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDeleteAllItems, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
-					{
+					if (base.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDeleteAllItems, MessageBoxActions.YesNo) == DialogBoxAction.Yes) {
+
+						base.Context.Select(new List<IGalleryItem>(0)); // deselect all
 						base.Context.DataSource.Clear();
 					}
 				}

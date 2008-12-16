@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+using System.Net;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.StudyBuilder;
@@ -102,7 +104,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer {
 
 		[Obsolete]
 		public void Export(string path) {
-			_studyBuilder.Publish(path);
+			BackgroundTask task = new BackgroundTask(
+				delegate {
+					_studyBuilder.Publish(path);
+				}, false);
+
+			ProgressDialog.Show(task, base.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
 		}
 
 		public void PublishToDirectory()
@@ -110,11 +117,29 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer {
 			//TODO pick a folder and export it...
 		}
 
+		public void PublishToLocalDataStore()
+		{
+			try {
+				DicomServerConfigurationHelper.Refresh(true);
+				string aeTitle = DicomServerConfigurationHelper.AETitle;
+				int port = DicomServerConfigurationHelper.Port;
+
+				BackgroundTask task = new BackgroundTask(
+					delegate {
+						_studyBuilder.Publish(aeTitle, aeTitle, IPAddress.Loopback.ToString(), port);
+						}, false);
+
+				ProgressDialog.Show(task, base.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
+			} catch (Exception e) {
+				ExceptionHandler.Report(e, SR.ExceptionLocalDataStoreNotFound , base.Host.DesktopWindow);
+			}
+		}
+
 		public void PublishToServer()
 		{
 			AENavigatorComponent aeNavigator = new AENavigatorComponent(false, false, false, false);
 			SimpleComponentContainer dialogContainer = new SimpleComponentContainer(aeNavigator);
-			DialogBoxAction code = this.Host.DesktopWindow.ShowDialogBox(dialogContainer, "Select Target Server");
+			DialogBoxAction code = this.Host.DesktopWindow.ShowDialogBox(dialogContainer, SR.SelectDestination );
 
 			if (code != DialogBoxAction.Ok)
 				return;
@@ -123,13 +148,18 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer {
 				return;
 			}
 
-			if (aeNavigator.SelectedServers.Servers.Count > 1) {
+			if (aeNavigator.SelectedServers.Servers.Count < 1) {
 				return;
 			}
 
-			foreach (Server destinationAE in aeNavigator.SelectedServers.Servers) {
-				_studyBuilder.Publish(ServerTree.GetClientAETitle(), destinationAE.AETitle, destinationAE.Host, destinationAE.Port);
-			}
+			BackgroundTask task = new BackgroundTask(
+				delegate {
+					foreach (Server destinationAE in aeNavigator.SelectedServers.Servers) {
+						_studyBuilder.Publish(ServerTree.GetClientAETitle(), destinationAE.AETitle, destinationAE.Host, destinationAE.Port);
+					}
+				}, false);
+
+			ProgressDialog.Show(task, base.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
 		}
 
 		#endregion

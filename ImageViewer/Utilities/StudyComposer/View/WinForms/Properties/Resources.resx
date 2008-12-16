@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,52 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddNew" xml:space="preserve">
-    <value>Add New</value>
-  </data>
-  <data name="Clear" xml:space="preserve">
-    <value>Clear</value>
-  </data>
-  <data name="Compose" xml:space="preserve">
-    <value>Compose</value>
-  </data>
-  <data name="Delete" xml:space="preserve">
-    <value>Delete</value>
-  </data>
-  <data name="Done" xml:space="preserve">
-    <value>Done</value>
-  </data>
-  <data name="ExceptionContainerNeverStarted" xml:space="preserve">
-    <value>Container was never started.</value>
-  </data>
-  <data name="ExceptionLocalDataStoreNotFound" xml:space="preserve">
-    <value>The local data store service does not appear to be running.</value>
-  </data>
-  <data name="FormatStudyComposerGenericImageLabelCaption" xml:space="preserve">
-    <value>An Image</value>
-  </data>
-  <data name="FormatStudyComposerImageLabelCaption" xml:space="preserve">
-    <value>Image {0}</value>
-  </data>
-  <data name="MessageConfirmDeleteAllItems" xml:space="preserve">
-    <value>Are you sure you want to clear everything from this panel?</value>
-  </data>
-  <data name="MessageReadingImages" xml:space="preserve">
-    <value>Reading images...</value>
-  </data>
-  <data name="MessageScanningClipboard" xml:space="preserve">
-    <value>Scanning clipboard...</value>
-  </data>
-  <data name="MessageStartingStudyComposer" xml:space="preserve">
-    <value>Starting the Study Composer...</value>
-  </data>
-  <data name="Properties" xml:space="preserve">
-    <value>Properties</value>
-  </data>
-  <data name="SelectDestination" xml:space="preserve">
-    <value>Select Destination</value>
-  </data>
-  <data name="StudyComposer" xml:space="preserve">
-    <value>Study Composer</value>
-  </data>
 </root>

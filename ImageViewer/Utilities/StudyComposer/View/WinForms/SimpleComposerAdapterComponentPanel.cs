@@ -6,9 +6,13 @@ using ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleComposerAda
 namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms {
 	public partial class SimpleComposerAdapterComponentPanel : UserControl {
 		private readonly SimpleComposerAdapterComponent _component;
+		private ToolStripMenuItem _lastPublishItem;
 
 		public SimpleComposerAdapterComponentPanel() {
 			InitializeComponent();
+
+			_lastPublishItem = mnuPublishLocal;
+			_lastPublishItem.Checked = true;
 		}
 
 		public SimpleComposerAdapterComponentPanel(SimpleComposerAdapterComponent component)
@@ -54,9 +58,41 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms {
 			_component.RefreshIcons(new Size(64, 64));
 		}
 
-		private void btnExport_Click(object sender, EventArgs e) {
+		private void btnPublish_Click(object sender, EventArgs e) {
+			_lastPublishItem.PerformClick();
+		}
+
+		private void btnPublishDropDown_Click(object sender, EventArgs e) {
+			Point p = new Point(btnPublishDropDown.Left, btnPublishDropDown.Top + btnPublishDropDown.Height);
+			mnuPublish.Show(xbtnPublish.PointToScreen( p));
+		}
+
+		private void mnuPublishLocal_Click(object sender, EventArgs e) {
+			_lastPublishItem = mnuPublishLocal;
+			mnuPublishFolder.Checked = mnuPublishRemote.Checked = !(mnuPublishLocal.Checked = true);
+
+			this.Cursor = Cursors.WaitCursor;
+			_component.PublishToLocalDataStore();
+			this.Cursor = Cursors.Default ;
+		}
+
+		private void mnuPublishRemote_Click(object sender, EventArgs e) {
+			_lastPublishItem = mnuPublishLocal;
+			mnuPublishFolder.Checked = mnuPublishLocal.Checked = !(mnuPublishRemote.Checked = true);
+
+			this.Cursor = Cursors.WaitCursor;
+			_component.PublishToServer();
+			this.Cursor = Cursors.Default;
+		}
+
+		private void mnuPublishFolder_Click(object sender, EventArgs e) {
+			_lastPublishItem = mnuPublishLocal;
+			mnuPublishLocal.Checked = mnuPublishRemote.Checked = !(mnuPublishFolder.Checked = true);
+
 			if (dlgExport.ShowDialog() == DialogResult.OK) {
+				this.Cursor = Cursors.WaitCursor;
 				_component.Export(dlgExport.SelectedPath);
+				this.Cursor = Cursors.Default;
 			}
 		}
 

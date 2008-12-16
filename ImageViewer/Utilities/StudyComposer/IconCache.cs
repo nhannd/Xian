@@ -66,6 +66,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 		{
 			lock (_images)
 			{
+				_loadQueue.Clear();
 				_images.Clear();
 			}
 		}
@@ -126,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 				this[task.Key] = task.CreateImage();
 
 				// TODO Remove this sleep
-				Thread.Sleep(500);
+				//Thread.Sleep(500);
 
 				task.NotifyCreated();
 			}
@@ -188,6 +189,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 					// in quick succession, we may only pulse once, waking
 					// a single thread up, even if there are multiple threads
 					// waiting for items.            
+					Monitor.Pulse(listLock);
+				}
+			}
+			
+			public void Clear()
+			{
+				lock (listLock)
+				{
+					queue.Clear();
 					Monitor.Pulse(listLock);
 				}
 			}

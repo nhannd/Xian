@@ -153,6 +153,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Adapters.SimpleCompose
 			_composer.PublishToDirectory();
 		}
 
+		public void PublishToLocalDataStore()
+		{
+			_composer.PublishToLocalDataStore();
+		}
+
 		public void PublishToServer()
 		{
 			_composer.PublishToServer();

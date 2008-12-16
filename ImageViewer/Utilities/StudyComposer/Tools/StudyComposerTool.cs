@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -21,14 +22,22 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.Tools
 			if (_composer != null)
 				return;
 
-			BackgroundTask task = new BackgroundTask(new BackgroundTaskMethod(InitComposer), true, null);
-			ProgressDialogComponent progressDialog = new ProgressDialogComponent(task, true, ProgressBarStyle.Continuous);
-			ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, progressDialog, SR.MessageStartingStudyComposer);
+			try
+			{
+				BackgroundTask task = new BackgroundTask(new BackgroundTaskMethod(InitComposer), true, null);
+				ProgressDialogComponent progressDialog = new ProgressDialogComponent(task, true, ProgressBarStyle.Continuous);
+				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, progressDialog, SR.MessageStartingStudyComposer);
 
-			if (_composer != null) {
-				SimpleComposerAdapterComponent component = new SimpleComposerAdapterComponent(_composer);
-				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.StudyComposer);
-				_composer = null;
+				if (_composer != null)
+				{
+					SimpleComposerAdapterComponent component = new SimpleComposerAdapterComponent(_composer);
+					ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.StudyComposer);
+					_composer = null;
+				}
+			}
+			catch(Exception ex)
+			{
+				ExceptionHandler.Report(ex, base.Context.DesktopWindow);
 			}
 		}
 

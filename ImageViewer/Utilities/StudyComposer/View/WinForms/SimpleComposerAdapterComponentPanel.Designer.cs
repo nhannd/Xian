@@ -29,9 +29,12 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms
 			this.iglImages = new System.Windows.Forms.ImageList(this.components);
 			this.pnlBottomContent = new System.Windows.Forms.Panel();
 			this.lyoButtons = new System.Windows.Forms.FlowLayoutPanel();
-			this.btnCancel = new System.Windows.Forms.Button();
+			this.btnClose = new System.Windows.Forms.Button();
 			this.btnRefresh = new System.Windows.Forms.Button();
-			this.btnExport = new System.Windows.Forms.Button();
+			this.xbtnPublish = new System.Windows.Forms.Panel();
+			this.btnPublish = new System.Windows.Forms.Button();
+			this.btnPublishDropDown = new System.Windows.Forms.Button();
+			this.lblTip = new System.Windows.Forms.Label();
 			this.lyoMainContent = new System.Windows.Forms.TableLayoutPanel();
 			this.pnlImages = new System.Windows.Forms.Panel();
 			this.pnlSeries = new System.Windows.Forms.Panel();
@@ -43,10 +46,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms
 			this.pnlPatients = new System.Windows.Forms.Panel();
 			this.dlgExport = new System.Windows.Forms.FolderBrowserDialog();
 			this.pnlTopContent = new System.Windows.Forms.Panel();
-			this.lblTip = new System.Windows.Forms.Label();
+			this.mnuPublish = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.mnuPublishLocal = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuPublishRemote = new System.Windows.Forms.ToolStripMenuItem();
+			this.mnuPublishFolder = new System.Windows.Forms.ToolStripMenuItem();
 			this.pnlBottomContent.SuspendLayout();
 			this.lyoButtons.SuspendLayout();
+			this.xbtnPublish.SuspendLayout();
 			this.lyoMainContent.SuspendLayout();
+			this.mnuPublish.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// iglImages
@@ -68,9 +76,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms
 			// 
 			// lyoButtons
 			// 
-			this.lyoButtons.Controls.Add(this.btnCancel);
+			this.lyoButtons.Controls.Add(this.btnClose);
 			this.lyoButtons.Controls.Add(this.btnRefresh);
-			this.lyoButtons.Controls.Add(this.btnExport);
+			this.lyoButtons.Controls.Add(this.xbtnPublish);
 			this.lyoButtons.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.lyoButtons.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
 			this.lyoButtons.Location = new System.Drawing.Point(502, 5);
@@ -78,15 +86,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms
 			this.lyoButtons.Size = new System.Drawing.Size(621, 31);
 			this.lyoButtons.TabIndex = 5;
 			// 
-			// btnCancel
+			// btnClose
 			// 
-			this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.btnCancel.Location = new System.Drawing.Point(523, 3);
-			this.btnCancel.Name = "btnCancel";
-			this.btnCancel.Size = new System.Drawing.Size(95, 25);
-			this.btnCancel.TabIndex = 0;
-			this.btnCancel.Text = "&Cancel";
-			this.btnCancel.UseVisualStyleBackColor = true;
+			this.btnClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.btnClose.Location = new System.Drawing.Point(523, 3);
+			this.btnClose.Name = "btnClose";
+			this.btnClose.Size = new System.Drawing.Size(95, 25);
+			this.btnClose.TabIndex = 0;
+			this.btnClose.Text = "&Close";
+			this.btnClose.UseVisualStyleBackColor = true;
 			// 
 			// btnRefresh
 			// 
@@ -98,15 +106,47 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms
 			this.btnRefresh.UseVisualStyleBackColor = true;
 			this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
 			// 
-			// btnExport
+			// xbtnPublish
 			// 
-			this.btnExport.Location = new System.Drawing.Point(321, 3);
-			this.btnExport.Name = "btnExport";
-			this.btnExport.Size = new System.Drawing.Size(95, 25);
-			this.btnExport.TabIndex = 2;
-			this.btnExport.Text = "&Export";
-			this.btnExport.UseVisualStyleBackColor = true;
-			this.btnExport.Click += new System.EventHandler(this.btnExport_Click);
+			this.xbtnPublish.Controls.Add(this.btnPublish);
+			this.xbtnPublish.Controls.Add(this.btnPublishDropDown);
+			this.xbtnPublish.Location = new System.Drawing.Point(296, 3);
+			this.xbtnPublish.Name = "xbtnPublish";
+			this.xbtnPublish.Size = new System.Drawing.Size(120, 25);
+			this.xbtnPublish.TabIndex = 3;
+			// 
+			// btnPublish
+			// 
+			this.btnPublish.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.btnPublish.Location = new System.Drawing.Point(0, 0);
+			this.btnPublish.Name = "btnPublish";
+			this.btnPublish.Size = new System.Drawing.Size(95, 25);
+			this.btnPublish.TabIndex = 2;
+			this.btnPublish.Text = "&Publish...";
+			this.btnPublish.UseVisualStyleBackColor = true;
+			this.btnPublish.Click += new System.EventHandler(this.btnPublish_Click);
+			// 
+			// btnPublishDropDown
+			// 
+			this.btnPublishDropDown.Dock = System.Windows.Forms.DockStyle.Right;
+			this.btnPublishDropDown.Image = ((System.Drawing.Image)(resources.GetObject("btnPublishDropDown.Image")));
+			this.btnPublishDropDown.Location = new System.Drawing.Point(95, 0);
+			this.btnPublishDropDown.Name = "btnPublishDropDown";
+			this.btnPublishDropDown.Size = new System.Drawing.Size(25, 25);
+			this.btnPublishDropDown.TabIndex = 3;
+			this.btnPublishDropDown.UseVisualStyleBackColor = true;
+			this.btnPublishDropDown.Click += new System.EventHandler(this.btnPublishDropDown_Click);
+			// 
+			// lblTip
+			// 
+			this.lblTip.Dock = System.Windows.Forms.DockStyle.Left;
+			this.lblTip.Location = new System.Drawing.Point(5, 5);
+			this.lblTip.Name = "lblTip";
+			this.lblTip.Size = new System.Drawing.Size(497, 31);
+			this.lblTip.TabIndex = 6;
+			this.lblTip.Text = "Tip: Hold SHIFT while dragging to create a copy of the item instead of moving it." +
+				"";
+			this.lblTip.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// lyoMainContent
 			// 
@@ -221,16 +261,35 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms
 			this.pnlTopContent.TabIndex = 4;
 			this.pnlTopContent.Visible = false;
 			// 
-			// lblTip
+			// mnuPublish
 			// 
-			this.lblTip.Dock = System.Windows.Forms.DockStyle.Left;
-			this.lblTip.Location = new System.Drawing.Point(5, 5);
-			this.lblTip.Name = "lblTip";
-			this.lblTip.Size = new System.Drawing.Size(497, 31);
-			this.lblTip.TabIndex = 6;
-			this.lblTip.Text = "Tip: Hold SHIFT while dragging to create a copy of the item instead of moving it." +
-				"";
-			this.lblTip.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.mnuPublish.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.mnuPublishLocal,
+            this.mnuPublishRemote,
+            this.mnuPublishFolder});
+			this.mnuPublish.Name = "mnuPublish";
+			this.mnuPublish.Size = new System.Drawing.Size(208, 92);
+			// 
+			// mnuPublishLocal
+			// 
+			this.mnuPublishLocal.Name = "mnuPublishLocal";
+			this.mnuPublishLocal.Size = new System.Drawing.Size(207, 22);
+			this.mnuPublishLocal.Text = "Publish to &Local Server";
+			this.mnuPublishLocal.Click += new System.EventHandler(this.mnuPublishLocal_Click);
+			// 
+			// mnuPublishRemote
+			// 
+			this.mnuPublishRemote.Name = "mnuPublishRemote";
+			this.mnuPublishRemote.Size = new System.Drawing.Size(207, 22);
+			this.mnuPublishRemote.Text = "Publish to &Remote Server...";
+			this.mnuPublishRemote.Click += new System.EventHandler(this.mnuPublishRemote_Click);
+			// 
+			// mnuPublishFolder
+			// 
+			this.mnuPublishFolder.Name = "mnuPublishFolder";
+			this.mnuPublishFolder.Size = new System.Drawing.Size(207, 22);
+			this.mnuPublishFolder.Text = "Publish to &Folder...";
+			this.mnuPublishFolder.Click += new System.EventHandler(this.mnuPublishFolder_Click);
 			// 
 			// SimpleComposerAdapterComponentPanel
 			// 
@@ -243,7 +302,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms
 			this.Size = new System.Drawing.Size(1128, 621);
 			this.pnlBottomContent.ResumeLayout(false);
 			this.lyoButtons.ResumeLayout(false);
+			this.xbtnPublish.ResumeLayout(false);
 			this.lyoMainContent.ResumeLayout(false);
+			this.mnuPublish.ResumeLayout(false);
 			this.ResumeLayout(false);
 
 		}
@@ -253,10 +314,10 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms
 		private System.Windows.Forms.Panel pnlBottomContent;
 		private System.Windows.Forms.TableLayoutPanel lyoMainContent;
 		private System.Windows.Forms.FlowLayoutPanel lyoButtons;
-		private System.Windows.Forms.Button btnCancel;
+		private System.Windows.Forms.Button btnClose;
 		private System.Windows.Forms.ImageList iglImages;
 		private System.Windows.Forms.Button btnRefresh;
-		private System.Windows.Forms.Button btnExport;
+		private System.Windows.Forms.Button btnPublish;
 		private System.Windows.Forms.FolderBrowserDialog dlgExport;
 		private System.Windows.Forms.Panel pnlTopContent;
 		private System.Windows.Forms.Label lblImages;
@@ -268,5 +329,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms
 		private System.Windows.Forms.Panel pnlStudies;
 		private System.Windows.Forms.Panel pnlPatients;
 		private System.Windows.Forms.Label lblTip;
+		private System.Windows.Forms.Panel xbtnPublish;
+		private System.Windows.Forms.Button btnPublishDropDown;
+		private System.Windows.Forms.ContextMenuStrip mnuPublish;
+		private System.Windows.Forms.ToolStripMenuItem mnuPublishLocal;
+		private System.Windows.Forms.ToolStripMenuItem mnuPublishRemote;
+		private System.Windows.Forms.ToolStripMenuItem mnuPublishFolder;
 	}
 }

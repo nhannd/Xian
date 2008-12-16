@@ -28,16 +28,16 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 
 			if (pImage != null)
 			{
-				_cache.LoadIcon(_igKey, delegate() { return _helper.CreateImageIcon(pImage); }, this.RefreshIcon);
+				//_cache.LoadIcon(_igKey, delegate() { return _helper.CreateImageIcon(pImage); }, this.RefreshIcon);
+				base.Icon = (Image)_helper.CreateImageIcon(pImage);// _cache[_igKey];
 			}
-			base.Icon = _cache[_igKey];
 		}
 
 		private ImageItem(ImageItem source) : this(source.Node.Copy(), null)
 		{
 			this._name = source._name;
 			this._igKey = source._igKey;
-			base.Icon = _cache[_igKey];
+			base.Icon = (Image) source.Icon.Clone();// _cache[_igKey];
 		}
 
 		/// <summary>
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 		}
 
 		private void RefreshIcon() {
-			base.Icon = _cache[_igKey];
+			//base.Icon = _cache[_igKey];
 		}
 
 		#region Overrides
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 		/// </summary>
 		/// <param name="iconSize">The <see cref="Size"/> of the icon to generate.</param>
 		public override void UpdateIcon(Size iconSize) {
-			Image _baseIcon = _cache[_igKey];
+			Image _baseIcon = this.Icon;// _cache[_igKey];
 			if (_baseIcon.Size != iconSize)
 			{
 				// if requesting a new icon size
@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 		#region Statics
 
 		private static readonly IconHelper _helper = new IconHelper(64, 64);
-		private static readonly IconCache _cache = new IconCache();
+		//private static readonly IconCache _cache = new IconCache();
 
 		static ImageItem()
 		{
@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer
 
 		internal static void ClearIconCache()
 		{
-			_cache.Clear();
+			//_cache.Clear();
 		}
 
 		#endregion
