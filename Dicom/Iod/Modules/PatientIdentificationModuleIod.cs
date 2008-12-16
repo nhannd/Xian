@@ -163,9 +163,9 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// Gets or sets the patients sex.
         /// </summary>
         /// <value>The patients sex.</value>
-        public Sex PatientsSex
+        public PatientsSex PatientsSex
         {
-            get { return IodBase.ParseEnum<Sex>(base.DicomAttributeCollection[DicomTags.PatientsSex].GetString(0, String.Empty), Sex.None); }
+            get { return IodBase.ParseEnum<PatientsSex>(base.DicomAttributeCollection[DicomTags.PatientsSex].GetString(0, String.Empty), PatientsSex.None); }
             set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.PatientsSex], value); }
         }
         
@@ -341,48 +341,5 @@ namespace ClearCanvas.Dicom.Iod.Modules
         //TODO: Patient Breed Registration Sequence
         #endregion
 
-    }
-
-    #region Sex Enum
-    /// <summary>
-    /// Sex Enumeration
-    /// </summary>
-    public enum Sex
-    {
-        /// <summary>
-        /// None (empty value)
-        /// </summary>
-        None,
-        /// <summary>
-        /// Male
-        /// </summary>
-        M,
-        /// <summary>
-        /// Female
-        /// </summary>
-        F,
-        /// <summary>
-        /// Other
-        /// </summary>
-        O
-    }
-    #endregion
-
-    #region ResponsiblePersonRole Enum
-    /// <summary>
-    /// Enumeration for Responsible Person
-    /// </summary>
-    public enum ResponsiblePersonRole
-    {
-        /// <summary>
-        /// None, ie, blank value
-        /// </summary>
-        None,
-        /// <summary>
-        /// 
-        /// </summary>
-        Owner
-    }
-    #endregion
-    
+    }    
 }

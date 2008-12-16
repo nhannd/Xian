@@ -34,136 +34,131 @@ using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.Dicom.Iod.Macros
 {
-    /// <summary>
-    /// Code Sequence Attributes Macro
-    /// </summary>
-    /// <remarks>As per Dicom Doc 3, Table 8.8-1 (pg 74)</remarks>
-    public class CodeSequenceMacro : SequenceIodBase
-    {
-        #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CodeSequenceMacro"/> class.
-        /// </summary>
-        public CodeSequenceMacro()
-            :base()
-        {
-        }
+	/// <summary>
+	/// Code Sequence Attributes Macro
+	/// </summary>
+	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section 8.8 (Table 8.8-1)</remarks>
+	public class CodeSequenceMacro : SequenceIodBase
+	{
+		#region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CodeSequenceMacro"/> class.
-        /// </summary>
-        /// <param name="dicomSequenceItem">The dicom sequence item.</param>
-        public CodeSequenceMacro(DicomSequenceItem dicomSequenceItem)
-            : base(dicomSequenceItem)
-        {
-        }
-        #endregion
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CodeSequenceMacro"/> class.
+		/// </summary>
+		public CodeSequenceMacro() : base() {}
 
-        #region Public Properties
+		/// <summary>
+		/// Initializes a new instance of the <see cref="CodeSequenceMacro"/> class.
+		/// </summary>
+		/// <param name="dicomSequenceItem">The dicom sequence item.</param>
+		public CodeSequenceMacro(DicomSequenceItem dicomSequenceItem) : base(dicomSequenceItem) {}
 
-        /// <summary>
-        /// Gets or sets the code value.
-        /// </summary>
-        /// <value>The code value.</value>
-        public string CodeValue
-        {
-            get { return base.DicomAttributeCollection[DicomTags.CodeValue].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.CodeValue].SetString(0, value); }
-        }
+		#endregion
 
-        /// <summary>
-        /// Gets or sets the coding scheme designator.
-        /// </summary>
-        /// <value>The coding scheme designator.</value>
-        public string CodingSchemeDesignator
-        {
-            get { return base.DicomAttributeCollection[DicomTags.CodingSchemeDesignator].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.CodingSchemeDesignator].SetString(0, value); }
-        }
+		#region Public Properties
 
-        /// <summary>
-        /// Gets or sets the coding scheme version.
-        /// </summary>
-        /// <value>The coding scheme version.</value>
-        public string CodingSchemeVersion
-        {
-            get { return base.DicomAttributeCollection[DicomTags.CodingSchemeVersion].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.CodingSchemeVersion].SetString(0, value); }
-        }
+		/// <summary>
+		/// Gets or sets the code value.
+		/// </summary>
+		/// <value>The code value.</value>
+		public string CodeValue
+		{
+			get { return base.DicomAttributeCollection[DicomTags.CodeValue].GetString(0, String.Empty); }
+			set { base.DicomAttributeCollection[DicomTags.CodeValue].SetString(0, value); }
+		}
 
-        /// <summary>
-        /// Gets or sets the code meaning.
-        /// </summary>
-        /// <value>The code meaning.</value>
-        public string CodeMeaning
-        {
-            get { return base.DicomAttributeCollection[DicomTags.CodeMeaning].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.CodeMeaning].SetString(0, value); }
-        }
+		/// <summary>
+		/// Gets or sets the coding scheme designator.
+		/// </summary>
+		/// <value>The coding scheme designator.</value>
+		public string CodingSchemeDesignator
+		{
+			get { return base.DicomAttributeCollection[DicomTags.CodingSchemeDesignator].GetString(0, String.Empty); }
+			set { base.DicomAttributeCollection[DicomTags.CodingSchemeDesignator].SetString(0, value); }
+		}
 
-        /// <summary>
-        /// Enhanced Encoding Mode: Gets or sets the context identifier.
-        /// </summary>
-        /// <value>The context identifier.</value>
-        public string ContextIdentifier
-        {
-            get { return base.DicomAttributeCollection[DicomTags.ContextIdentifier].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ContextIdentifier].SetString(0, value); }
-        }
+		/// <summary>
+		/// Gets or sets the coding scheme version.
+		/// </summary>
+		/// <value>The coding scheme version.</value>
+		public string CodingSchemeVersion
+		{
+			get { return base.DicomAttributeCollection[DicomTags.CodingSchemeVersion].GetString(0, String.Empty); }
+			set { base.DicomAttributeCollection[DicomTags.CodingSchemeVersion].SetString(0, value); }
+		}
 
-        /// <summary>
-        /// Enhanced Encoding Mode: Gets or sets the mapping resource.
-        /// </summary>
-        /// <value>The mapping resource.</value>
-        public string MappingResource
-        {
-            get { return base.DicomAttributeCollection[DicomTags.MappingResource].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.MappingResource].SetString(0, value); }
-        }
+		/// <summary>
+		/// Gets or sets the code meaning.
+		/// </summary>
+		/// <value>The code meaning.</value>
+		public string CodeMeaning
+		{
+			get { return base.DicomAttributeCollection[DicomTags.CodeMeaning].GetString(0, String.Empty); }
+			set { base.DicomAttributeCollection[DicomTags.CodeMeaning].SetString(0, value); }
+		}
 
-        /// <summary>
-        /// Enhanced Encoding Mode: Gets or sets the context group version.
-        /// </summary>
-        /// <value>The context group version.</value>
-        public DateTime? ContextGroupVersion
-        {
-	        get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeCollection, DicomTags.ContextGroupVersion, 0, 0);  }
+		/// <summary>
+		/// Enhanced Encoding Mode: Gets or sets the context identifier.
+		/// </summary>
+		/// <value>The context identifier.</value>
+		public string ContextIdentifier
+		{
+			get { return base.DicomAttributeCollection[DicomTags.ContextIdentifier].GetString(0, String.Empty); }
+			set { base.DicomAttributeCollection[DicomTags.ContextIdentifier].SetString(0, value); }
+		}
 
-            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection, DicomTags.ContextGroupVersion, 0, 0); }
-        }
+		/// <summary>
+		/// Enhanced Encoding Mode: Gets or sets the mapping resource.
+		/// </summary>
+		/// <value>The mapping resource.</value>
+		public string MappingResource
+		{
+			get { return base.DicomAttributeCollection[DicomTags.MappingResource].GetString(0, String.Empty); }
+			set { base.DicomAttributeCollection[DicomTags.MappingResource].SetString(0, value); }
+		}
 
-        /// <summary>
-        /// Enhanced Encoding Mode: Gets or sets the context group extension flag.  Y or N
-        /// </summary>
-        /// <value>The context group extension flag.</value>
-        public string ContextGroupExtensionFlag
-        {
-            get { return base.DicomAttributeCollection[DicomTags.ContextGroupExtensionFlag].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ContextGroupExtensionFlag].SetString(0, value); }
-        }
+		/// <summary>
+		/// Enhanced Encoding Mode: Gets or sets the context group version.
+		/// </summary>
+		/// <value>The context group version.</value>
+		public DateTime? ContextGroupVersion
+		{
+			get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeCollection, DicomTags.ContextGroupVersion, 0, 0); }
 
-        /// <summary>
-        /// Enhanced Encoding Mode: Gets or sets the context group local version.
-        /// </summary>
-        /// <value>The context group local version.</value>
-        public DateTime? ContextGroupLocalVersion
-        {
-            get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeCollection, DicomTags.ContextGroupLocalVersion, 0, 0); }
+			set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection, DicomTags.ContextGroupVersion, 0, 0); }
+		}
 
-            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection, DicomTags.ContextGroupLocalVersion, 0, 0); }
-        }
+		/// <summary>
+		/// Enhanced Encoding Mode: Gets or sets the context group extension flag.  Y or N
+		/// </summary>
+		/// <value>The context group extension flag.</value>
+		public string ContextGroupExtensionFlag
+		{
+			get { return base.DicomAttributeCollection[DicomTags.ContextGroupExtensionFlag].GetString(0, String.Empty); }
+			set { base.DicomAttributeCollection[DicomTags.ContextGroupExtensionFlag].SetString(0, value); }
+		}
 
-        /// <summary>
-        /// Enhanced Encoding Mode: Gets or sets the context group extension creator uid.
-        /// </summary>
-        /// <value>The context group extension creator uid.</value>
-        public string ContextGroupExtensionCreatorUid
-        {
-            get { return base.DicomAttributeCollection[DicomTags.ContextGroupExtensionCreatorUid].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ContextGroupExtensionCreatorUid].SetString(0, value); }
-        }
-        
-        #endregion
+		/// <summary>
+		/// Enhanced Encoding Mode: Gets or sets the context group local version.
+		/// </summary>
+		/// <value>The context group local version.</value>
+		public DateTime? ContextGroupLocalVersion
+		{
+			get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeCollection, DicomTags.ContextGroupLocalVersion, 0, 0); }
 
-    }
+			set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection, DicomTags.ContextGroupLocalVersion, 0, 0); }
+		}
+
+		/// <summary>
+		/// Enhanced Encoding Mode: Gets or sets the context group extension creator uid.
+		/// </summary>
+		/// <value>The context group extension creator uid.</value>
+		public string ContextGroupExtensionCreatorUid
+		{
+			get { return base.DicomAttributeCollection[DicomTags.ContextGroupExtensionCreatorUid].GetString(0, String.Empty); }
+			set { base.DicomAttributeCollection[DicomTags.ContextGroupExtensionCreatorUid].SetString(0, value); }
+		}
+
+		#endregion
+	}
 }

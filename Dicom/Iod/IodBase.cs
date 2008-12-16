@@ -158,7 +158,7 @@ namespace ClearCanvas.Dicom.Iod
 
         #region Public Static Methods
         /// <summary>
-        /// Parses an enum value for the enum type T.  Returns <paramref name="defaultValue"/> if string not found.
+        /// Parses an enum value for the enum type T, automatically converting to Pascal if necessary since enum names don't have spaces.  Returns <paramref name="defaultValue"/> if string not found.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="input">The input.</param>
@@ -173,6 +173,8 @@ namespace ClearCanvas.Dicom.Iod
 
             try
             {
+				if (input.Contains(" "))
+					input = input.Replace(" ", "");
                 return (T) Enum.Parse(typeof(T), input, true);
             }
             catch (Exception)

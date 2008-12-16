@@ -106,9 +106,9 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// Gets or sets the patients sex.
         /// </summary>
         /// <value>The patients sex.</value>
-        public Sex PatientsSex
+        public PatientsSex PatientsSex
         {
-            get { return IodBase.ParseEnum<Sex>(base.DicomAttributeCollection[DicomTags.PatientsSex].GetString(0, String.Empty), Sex.None); }
+            get { return IodBase.ParseEnum<PatientsSex>(base.DicomAttributeCollection[DicomTags.PatientsSex].GetString(0, String.Empty), PatientsSex.None); }
             set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.PatientsSex], value); }
         }
 

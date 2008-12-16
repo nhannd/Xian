@@ -33,200 +33,188 @@ using System;
 
 namespace ClearCanvas.Dicom.Iod.Macros
 {
-    /// <summary>
-    /// Code Sequence Attributes Macro
-    /// </summary>
-    /// <remarks>As per Dicom Doc 3, Table 10-2 (pg 76)</remarks>
-    public class ContentItemMacro : SequenceIodBase
-    {
-        #region Constructors
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ContentItemMacro"/> class.
-        /// </summary>
-        public ContentItemMacro()
-            :base()
-        {
-        }
+	/// <summary>
+	/// Content Item Macro
+	/// </summary>
+	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section 10.2 (Table 10-2)</remarks>
+	public class ContentItemMacro : SequenceIodBase
+	{
+		#region Constructors
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ContentItemMacro"/> class.
-        /// </summary>
-        /// <param name="dicomSequenceItem">The dicom sequence item.</param>
-        public ContentItemMacro(DicomSequenceItem dicomSequenceItem)
-            : base(dicomSequenceItem)
-        {
-        }
-        #endregion
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ContentItemMacro"/> class.
+		/// </summary>
+		public ContentItemMacro() : base() {}
 
-        #region Public Properties
-        /// <summary>
-        /// Gets or sets the type of the value.
-        /// </summary>
-        /// <value>The type of the value.</value>
-        public ContentItemValueType ValueType
-        {
-            get { return IodBase.ParseEnum<ContentItemValueType>(base.DicomAttributeCollection[DicomTags.ValueType].GetString(0, String.Empty), ContentItemValueType.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.ValueType], value); }
-        }
+		/// <summary>
+		/// Initializes a new instance of the <see cref="ContentItemMacro"/> class.
+		/// </summary>
+		/// <param name="dicomSequenceItem">The dicom sequence item.</param>
+		public ContentItemMacro(DicomSequenceItem dicomSequenceItem) : base(dicomSequenceItem) {}
 
-        public SequenceIodList<CodeSequenceMacro> ConceptNameCodeSequenceList
-        {
-            get
-            {
-                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.ConceptNameCodeSequence] as DicomAttributeSQ);
-            }
-        }
+		#endregion
 
-        /// <summary>
-        /// Datetime value for this name-value Item. Required if Value Type (0040,A040) is DATETIME.
-        /// </summary>
-        /// <value>The datetime.</value>
-        public DateTime? Datetime
-        {
-        	get { return base.DicomAttributeCollection[DicomTags.Datetime].GetDateTime(0); }
+		#region Public Properties
 
-            set 
-            { 
-                if (value.HasValue)
-                    base.DicomAttributeCollection[DicomTags.Datetime].SetDateTime(0, value.Value); 
-                else
-                    base.DicomAttributeCollection[DicomTags.Datetime].SetNullValue();
-            }
-        }
+		/// <summary>
+		/// Gets or sets the type of the value.
+		/// </summary>
+		/// <value>The type of the value.</value>
+		public ContentItemValueType ValueType
+		{
+			get { return ParseEnum<ContentItemValueType>(base.DicomAttributeCollection[DicomTags.ValueType].GetString(0, String.Empty), ContentItemValueType.None); }
+			set { SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.ValueType], value); }
+		}
 
-        /// <summary>
-        /// Date value for this name-value Item. Required if Value Type (0040,A040) is DATE.
-        /// </summary>
-        /// <value>The date.</value>
-        public DateTime? Date
-        {
-            get { return base.DicomAttributeCollection[DicomTags.Date].GetDateTime(0); }
+		public SequenceIodList<CodeSequenceMacro> ConceptNameCodeSequenceList
+		{
+			get { return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.ConceptNameCodeSequence] as DicomAttributeSQ); }
+		}
 
-            set { base.DicomAttributeCollection[DicomTags.Date].SetDateTime(0, value); }
-        }
+		/// <summary>
+		/// Datetime value for this name-value Item. Required if Value Type (0040,A040) is DATETIME.
+		/// </summary>
+		/// <value>The datetime.</value>
+		public DateTime? Datetime
+		{
+			get { return base.DicomAttributeCollection[DicomTags.Datetime].GetDateTime(0); }
 
-        /// <summary>
-        /// Time value for this name-value Item.  Required if Value Type (0040,A040) is TIME.
-        /// </summary>
-        /// <value>The time.</value>
-        public DateTime? Time
-        {
-            get { return base.DicomAttributeCollection[DicomTags.Time].GetDateTime(0); }
+			set
+			{
+				if (value.HasValue)
+					base.DicomAttributeCollection[DicomTags.Datetime].SetDateTime(0, value.Value);
+				else
+					base.DicomAttributeCollection[DicomTags.Datetime].SetNullValue();
+			}
+		}
 
-            set { base.DicomAttributeCollection[DicomTags.Time].SetDateTime(0, value); }
-        }
+		/// <summary>
+		/// Date value for this name-value Item. Required if Value Type (0040,A040) is DATE.
+		/// </summary>
+		/// <value>The date.</value>
+		public DateTime? Date
+		{
+			get { return base.DicomAttributeCollection[DicomTags.Date].GetDateTime(0); }
 
-        /// <summary>
-        /// Person name value for this name-value Item.  Required if Value Type (0040,A040) is PNAME.
-        /// </summary>
-        /// <value>The name of the person.</value>
-        public PersonName PersonName
-        {
-            get { return new PersonName(base.DicomAttributeCollection[DicomTags.PersonName].GetString(0, String.Empty)); }
-            set { base.DicomAttributeCollection[DicomTags.PersonName].SetString(0, value.ToString()); }
-        }
+			set { base.DicomAttributeCollection[DicomTags.Date].SetDateTime(0, value); }
+		}
 
-        /// <summary>
-        /// UID value for this name-value Item.  Required if Value Type (0040,A040) is UIDREF.
-        /// </summary>
-        /// <value>The uid.</value>
-        public string Uid
-        {
-            get { return base.DicomAttributeCollection[DicomTags.Uid].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.Uid].SetString(0, value); }
-        }
+		/// <summary>
+		/// Time value for this name-value Item.  Required if Value Type (0040,A040) is TIME.
+		/// </summary>
+		/// <value>The time.</value>
+		public DateTime? Time
+		{
+			get { return base.DicomAttributeCollection[DicomTags.Time].GetDateTime(0); }
 
-        /// <summary>
-        /// Text value for this name-value Item.  Required if Value Type (0040,A040) is TEXT.
-        /// </summary>
-        /// <value>The text value.</value>
-        public string TextValue
-        {
-            get { return base.DicomAttributeCollection[DicomTags.TextValue].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.TextValue].SetString(0, value); }
-        }
+			set { base.DicomAttributeCollection[DicomTags.Time].SetDateTime(0, value); }
+		}
 
-        /// <summary>
-        /// Coded concept value of this name-value Item.  Required if Value Type (0040,A040) is CODE.
-        /// </summary>
-        /// <value>The concept code sequence list.</value>
-        public SequenceIodList<CodeSequenceMacro> ConceptCodeSequenceList
-        {
-            get
-            {
-                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.ConceptCodeSequence] as DicomAttributeSQ);
-            }
-        }
+		/// <summary>
+		/// Person name value for this name-value Item.  Required if Value Type (0040,A040) is PNAME.
+		/// </summary>
+		/// <value>The name of the person.</value>
+		public PersonName PersonName
+		{
+			get { return new PersonName(base.DicomAttributeCollection[DicomTags.PersonName].GetString(0, String.Empty)); }
+			set { base.DicomAttributeCollection[DicomTags.PersonName].SetString(0, value.ToString()); }
+		}
 
-        /// <summary>
-        /// Numeric value for this name-value Item. Required if Value Type (0040,A040) is NUMERIC.
-        /// </summary>
-        /// <value>The numeric value.</value>
-        public float NumericValue
-        {
-            get { return base.DicomAttributeCollection[DicomTags.NumericValue].GetFloat32(0, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.NumericValue].SetFloat32(0, value); }
-        }
+		/// <summary>
+		/// UID value for this name-value Item.  Required if Value Type (0040,A040) is UIDREF.
+		/// </summary>
+		/// <value>The uid.</value>
+		public string Uid
+		{
+			get { return base.DicomAttributeCollection[DicomTags.Uid].GetString(0, String.Empty); }
+			set { base.DicomAttributeCollection[DicomTags.Uid].SetString(0, value); }
+		}
 
-        /// <summary>
-        /// Units of measurement for a numeric value in this namevalue Item.  Required if Value Type (0040,A040) is NUMERIC.
-        /// </summary>
-        /// <value>The measurement units code sequence list.</value>
-        public SequenceIodList<CodeSequenceMacro> MeasurementUnitsCodeSequenceList
-        {
-            get
-            {
-                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.MeasurementUnitsCodeSequence] as DicomAttributeSQ);
-            }
-        }
-        
-        #endregion
+		/// <summary>
+		/// Text value for this name-value Item.  Required if Value Type (0040,A040) is TEXT.
+		/// </summary>
+		/// <value>The text value.</value>
+		public string TextValue
+		{
+			get { return base.DicomAttributeCollection[DicomTags.TextValue].GetString(0, String.Empty); }
+			set { base.DicomAttributeCollection[DicomTags.TextValue].SetString(0, value); }
+		}
 
-    }
+		/// <summary>
+		/// Coded concept value of this name-value Item.  Required if Value Type (0040,A040) is CODE.
+		/// </summary>
+		/// <value>The concept code sequence list.</value>
+		public SequenceIodList<CodeSequenceMacro> ConceptCodeSequenceList
+		{
+			get { return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.ConceptCodeSequence] as DicomAttributeSQ); }
+		}
 
-    #region ContentItemValueType Enum
-    /// <summary>
-    /// 
-    /// </summary>
-    public enum ContentItemValueType
-    {
-        /// <summary>
-        /// 
-        /// </summary>
-        None,
-        /// <summary>
-        /// 
-        /// </summary>
-        DateTime,
-        /// <summary>
-        /// 
-        /// </summary>
-        Date,
-        /// <summary>
-        /// 
-        /// </summary>
-        Time,
-        /// <summary>
-        /// 
-        /// </summary>
-        PName,
-        /// <summary>
-        /// 
-        /// </summary>
-        UidRef,
-        /// <summary>
-        /// 
-        /// </summary>
-        Text,
-        /// <summary>
-        /// 
-        /// </summary>
-        Code,
-        /// <summary>
-        /// 
-        /// </summary>
-        Numeric
-    }
-    #endregion
-    
+		/// <summary>
+		/// Numeric value for this name-value Item. Required if Value Type (0040,A040) is NUMERIC.
+		/// </summary>
+		/// <value>The numeric value.</value>
+		public float NumericValue
+		{
+			get { return base.DicomAttributeCollection[DicomTags.NumericValue].GetFloat32(0, 0.0F); }
+			set { base.DicomAttributeCollection[DicomTags.NumericValue].SetFloat32(0, value); }
+		}
+
+		/// <summary>
+		/// Units of measurement for a numeric value in this namevalue Item.  Required if Value Type (0040,A040) is NUMERIC.
+		/// </summary>
+		/// <value>The measurement units code sequence list.</value>
+		public SequenceIodList<CodeSequenceMacro> MeasurementUnitsCodeSequenceList
+		{
+			get { return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.MeasurementUnitsCodeSequence] as DicomAttributeSQ); }
+		}
+
+		#endregion
+	}
+
+	#region ContentItemValueType Enum
+
+	/// <summary>
+	/// 
+	/// </summary>
+	public enum ContentItemValueType
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		None,
+		/// <summary>
+		/// 
+		/// </summary>
+		DateTime,
+		/// <summary>
+		/// 
+		/// </summary>
+		Date,
+		/// <summary>
+		/// 
+		/// </summary>
+		Time,
+		/// <summary>
+		/// 
+		/// </summary>
+		PName,
+		/// <summary>
+		/// 
+		/// </summary>
+		UidRef,
+		/// <summary>
+		/// 
+		/// </summary>
+		Text,
+		/// <summary>
+		/// 
+		/// </summary>
+		Code,
+		/// <summary>
+		/// 
+		/// </summary>
+		Numeric
+	}
+
+	#endregion
 }
