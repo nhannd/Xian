@@ -133,7 +133,10 @@ namespace ClearCanvas.Desktop
 							// for an item to be included, the formatted string must contain *all* keywords
 							string itemString = formatter(item);
 							return CollectionUtils.TrueForAll(keywords,
-								delegate(string kw) { return Regex.Match(itemString, @"\b" + kw, RegexOptions.IgnoreCase).Success; });
+								delegate(string kw)
+								{
+									return Regex.Match(itemString, @"\b" + Regex.Escape(kw), RegexOptions.IgnoreCase).Success;
+								});
 						});
 				}
 			}
