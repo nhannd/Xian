@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using Ionic.Utils.Zip;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions.Uhn
+namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
 {
     internal class ZipStudyFolderCommand : ServerCommand, IDisposable
     {
@@ -84,5 +82,4 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions.Uhn
 
         #endregion
     }
-
 }

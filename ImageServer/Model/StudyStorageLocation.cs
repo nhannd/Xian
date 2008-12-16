@@ -310,6 +310,25 @@ namespace ClearCanvas.ImageServer.Model
 
 				return broker.FindOne(archiveStudyStorageCriteria);
 			}
-        }        
+        }
+
+        /// <summary>
+		/// Query for the all archival records for a study.
+		/// </summary>
+		/// <param name="studyStorageKey">The primary key of the StudyStorgae table.</param>
+		/// <returns>null if not found, else the value.</returns>
+        static public IList<ArchiveStudyStorage> GetArchiveLocations(ServerEntityKey studyStorageKey)
+        {
+            using (IReadContext readContext = _store.OpenReadContext())
+            {
+                ArchiveStudyStorageSelectCriteria archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
+                archiveStudyStorageCriteria.StudyStorageKey.EqualTo(studyStorageKey);
+                archiveStudyStorageCriteria.ArchiveTime.SortDesc(0);
+
+                IArchiveStudyStorageEntityBroker broker = readContext.GetBroker<IArchiveStudyStorageEntityBroker>();
+
+                return broker.Find(archiveStudyStorageCriteria);
+            }
+        }    
     }
 }

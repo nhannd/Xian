@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private System.String _accessionNumber;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _archiveStorageKey;
+        private System.Xml.XmlDocument _archiveInfo;
         private System.String _backupPath;
         private System.String _extendedInfo;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey;
@@ -73,11 +73,11 @@ namespace ClearCanvas.ImageServer.Model
         get { return _accessionNumber; }
         set { _accessionNumber = value; }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ArchiveStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ArchiveStorageKey
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ArchiveInfo")]
+        public System.Xml.XmlDocument ArchiveInfo
         {
-        get { return _archiveStorageKey; }
-        set { _archiveStorageKey = value; }
+        get { return _archiveInfo; }
+        set { _archiveInfo = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="BackupPath")]
         public System.String BackupPath

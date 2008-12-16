@@ -4,8 +4,11 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions;
 using ClearCanvas.ImageServer.Web.Common.Data.Model;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
@@ -30,7 +33,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return CollectionUtils.SelectFirst<DeletedStudyInfo>(_studies,
                 delegate(DeletedStudyInfo info)
                     {
-                        return info.Key.Equals(key);
+                        return info.RowKey.Equals(key);
                     });
         }
 
@@ -75,6 +78,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 if (StudyDate!=null)
                     criteria.StudyDate.Like("%" + DateParser.ToDicomString(StudyDate.Value) + "%");
 
+                criteria.Timestamp.SortDesc(0);
                 IList<StudyDeleteRecord> list = broker.Find(criteria, startRowIndex, maxRows);
 
                 _studies = CollectionUtils.Map<StudyDeleteRecord, DeletedStudyInfo>(
@@ -110,10 +114,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
     internal static class DeletedStudyInfoAssembler
     {
+        static private FilesystemMonitor _fsMonitor = FilesystemMonitor.Instance;
+
         public static DeletedStudyInfo CreateDeletedStudyInfo(StudyDeleteRecord record)
         {
             DeletedStudyInfo info = new DeletedStudyInfo();
-            info.Key = record.GetKey().Key;
+            info.DeleteStudyRecord = record.GetKey();
+            info.RowKey = record.GetKey().Key;
             info.StudyInstanceUid = record.StudyInstanceUid;
             info.PatientsName = record.PatientsName;
             info.AccessionNumber = record.AccessionNumber;
@@ -121,11 +128,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             info.StudyDate = record.StudyDate;
             info.PartitionAE = record.ServerPartitionAE;
             info.StudyDescription = record.StudyDescription;
-            info.DeletedFolderPath = record.BackupPath;
+            info.BackupFolderPath = _fsMonitor.GetFilesystemInfo(record.FilesystemKey).ResolveAbsolutePath(record.BackupPath);
             info.ReasonForDeletion = record.Reason;
             info.DeleteTime = record.Timestamp;
-            info.ArchiveLocation = record.ArchiveStorageKey;
+            if (record.ArchiveInfo!=null)
+                info.Archives = XmlUtils.Deserialize<DeletedStudyArchiveInfoCollection>(record.ArchiveInfo);
 
+            
             return info;
         }
     }

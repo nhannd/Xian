@@ -8,42 +8,32 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit {
-    
-    
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies
+{
     /// <summary>
-    /// SearchResultGridView class.
+    /// DeletedStudyDetailsDialogGeneralPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class SearchResultGridView {
+    public partial class DeletedStudyDetailsDialogGeneralPanel {
         
         /// <summary>
-        /// ContainerTable control.
+        /// Panel3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table ContainerTable;
+        protected global::System.Web.UI.WebControls.Panel Panel3;
         
         /// <summary>
-        /// DataSource control.
+        /// StudyDetailView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource DataSource;
-        
-        /// <summary>
-        /// ListControl control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView ListControl;
+        protected global::System.Web.UI.WebControls.DetailsView StudyDetailView;
     }
 }

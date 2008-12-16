@@ -20,7 +20,7 @@
         <siteMapNode url="~/Pages/Admin/Configure/PartitionArchive/Default.aspx" title="$Resources: Titles, PartitionArchive" />
       </siteMapNode>
       <siteMapNode url="" title="$Resources: Titles, Audit">
-        <siteMapNode url="~/Pages/Admin/Audit/DeletedStudies.aspx" title="$Resources: Titles, DeletedStudies"  />
+        <siteMapNode url="~/Pages/Admin/Audit/DeletedStudies/Default.aspx" title="$Resources: Titles, DeletedStudies"  />
       </siteMapNode>
       <siteMapNode url="~/Pages/Admin/Alerts/Default.aspx" title="$Resources: Titles, Alerts" />
     </siteMapNode>

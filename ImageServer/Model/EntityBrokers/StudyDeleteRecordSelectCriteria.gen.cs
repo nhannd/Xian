@@ -52,15 +52,15 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["AccessionNumber"];
             } 
         }
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ArchiveStorageKey
+        public ISearchCondition<System.Xml.XmlDocument> ArchiveInfo
         {
             get
             {
-              if (!SubCriteria.ContainsKey("ArchiveStorageKey"))
+              if (!SubCriteria.ContainsKey("ArchiveInfo"))
               {
-                 SubCriteria["ArchiveStorageKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ArchiveStorageKey");
+                 SubCriteria["ArchiveInfo"] = new SearchCondition<System.Xml.XmlDocument>("ArchiveInfo");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ArchiveStorageKey"];
+              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["ArchiveInfo"];
             } 
         }
         public ISearchCondition<System.String> BackupPath

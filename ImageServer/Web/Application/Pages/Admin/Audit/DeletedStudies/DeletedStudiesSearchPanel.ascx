@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DeletedStudiesSearchPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudiesSearchPanel" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DeletedStudiesSearchPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudiesSearchPanel" %>
 
 <%@ Register Src="SearchResultGridView.ascx" TagName="SearchResultGridView" TagPrefix="localAsp" %>
 
@@ -6,10 +6,10 @@
 
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
-            <asp:Table ID="Table1" runat="server">
+            <asp:Table ID="Table1" runat="server" BorderStyle="none">
                 <asp:TableRow>
                     <asp:TableCell HorizontalAlign="right" VerticalAlign="Bottom" >                    
-                       <table cellpadding="0" cellspacing="0"  width="100%">
+                       <table cellpadding="0" cellspacing="0"  width="100%"  border="0">
                             <tr>
                                 <td align="left">
                                 <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
@@ -76,7 +76,9 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="ViewDetailsButton" OnClick="ViewDetails" />                                        
+                                        <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="ViewDetailsButton" OnClick="ViewDetailsButtonClicked" />
+                                        <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="DeleteButton" OnClick="DeleteButtonClicked" />
+                                        
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

@@ -50,7 +50,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
     {
         #region Private Members
         private StudySummary _study;
-        private Default _enclosingPage;
         private EventHandler<StudyDetailsPanelDeleteStudyClickEventArgs> _deleteStudyClickedHandler;
         private EventHandler<StudyDetailsPanelEditStudyClickEventArgs> _editStudyClickedHandler;
         #endregion Private Members

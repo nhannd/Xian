@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e, "Unexpected exception adding {0}", typeof (TServerEntity));
-                return null;
+                throw;
             }
         }
 
@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e, "Unexpected exception updating {0}", typeof (TServerEntity));
-                return false;
+                throw;
             }
         }
 
@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e, "Unexpected exception updating {0}", typeof (TServerEntity));
-                return false;
+                throw;
             }
         }
 
@@ -248,7 +248,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Error, e, "Unexpected exception updating {0}", typeof(TServerEntity));
-                return false;
+                throw;
             }
         }
 

@@ -60,7 +60,9 @@
     <Compile Include="Data\ArchiveQueueController.cs" />
     <Compile Include="Data\ArchiveQueueDataSource.cs" />
     <Compile Include="Data\ArchiveStudyStorageAdaptor.cs" />
+    <Compile Include="Data\DeletedStudyController.cs" />
     <Compile Include="Data\DeletedStudyDataSource.cs" />
+    <Compile Include="Data\DeleteStudyRecordAdaptor.cs" />
     <Compile Include="Data\Model\DeletedStudyInfo.cs" />
     <Compile Include="Data\StudyHistoryAdaptor.cs" />
     <Compile Include="Data\StudyIntegrityQueueUidAdaptor.cs" />
@@ -179,6 +181,10 @@
     <ProjectReference Include="..\..\Rules\ClearCanvas.ImageServer.Rules.csproj">
       <Project>{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}</Project>
       <Name>ClearCanvas.ImageServer.Rules</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\WorkQueue\ClearCanvas.ImageServer.Services.WorkQueue.csproj">
+      <Project>{65B9B08C-EAE4-4EE2-B164-905B03134443}</Project>
+      <Name>ClearCanvas.ImageServer.Services.WorkQueue</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

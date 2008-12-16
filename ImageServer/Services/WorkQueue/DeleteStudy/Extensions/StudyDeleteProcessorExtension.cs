@@ -1,48 +1,31 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions.Uhn
+namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
 {
-    public class StudyDeleteExtendedInfo
-    {
-        private string _serverInstanceId;
-
-        /// <summary>
-        /// The server which processed the study delete request.
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
-        public string ServerInstanceId
-        {
-            get { return _serverInstanceId; }
-            set { _serverInstanceId = value; }
-        }
-    }
-
-    
+    /// <summary>
+    /// Plugin to backup study when it is deleted for auditing purpose.
+    /// </summary>
     [ExtensionOf(typeof(DeleteStudyProcessorExtensionPoint))]
     internal class StudyDeleteProcessorExtension:IDeleteStudyProcessorExtension
     {
+        #region Private Members
         private DeleteStudyContext _context;
         private bool _enabled = true;
         private string _backupPath;
-        
-        #region IDeleteStudyProcessorExtension Members
-
-        public bool Enabled
-        {
-            get { return _enabled; }
-        }
-
-        #endregion
-
+        private DeletedStudyArchiveInfoCollection _archives;
         private string BackupSubPath
         {
             get
@@ -64,7 +47,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions.Uhn
                 return _backupPath;
             }
         }
-        
+        #endregion
+
+        #region IDeleteStudyProcessorExtension Members
+
+        public bool Enabled
+        {
+            get { return _enabled; }
+        }
+
+        #endregion
 
         #region IDeleteStudyProcessorExtension Members
 
@@ -80,10 +72,29 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions.Uhn
 
         public void OnStudyDeleting()
         {
+            StudyStorageLocation storage = _context.StorageLocation;
+            IList < ArchiveStudyStorage> archives = StudyStorageLocation.GetArchiveLocations(storage.GetKey());
+            if (archives!=null && archives.Count>0)
+            {
+                _archives = new DeletedStudyArchiveInfoCollection();
+                foreach (ArchiveStudyStorage archive in archives)
+                {
+                    DeletedStudyArchiveInfo archiveInfo = new DeletedStudyArchiveInfo();
+                    archiveInfo.ArchiveTime = archive.ArchiveTime;
+                    archiveInfo.ArchiveXml = archive.ArchiveXml;
+                    
+                    archiveInfo.PartitionArchiveRef = PartitionArchive.Load(archive.PartitionArchiveKey).GetKey().Key;
+                    archiveInfo.TransferSyntaxUid = archive.ServerTransferSyntax.Uid;
+                    _archives.Add(archiveInfo);
+                }
+            }
+            
+                        
+
             // only backup if study is manually deleted
             if (_context.WorkQueueItem.WorkQueueTypeEnum == WorkQueueTypeEnum.WebDeleteStudy)
             {
-                StudyStorageLocation storage = _context.StorageLocation;
+                
                 using (ServerCommandProcessor processor = new ServerCommandProcessor("Backup deleted study"))
                 {
                     string path = _context.Filesystem.ResolveAbsolutePath(BackupSubPath);
@@ -124,7 +135,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions.Uhn
                         XmlUtils.Deserialize<WebDeleteStudyData>(_context.WorkQueueItem.Data);
 
                     parms.Reason = extendedInfo != null? 
-                        extendedInfo.Reason:_context.WorkQueueItem.WorkQueueTypeEnum.LongDescription;
+                                                           extendedInfo.Reason:_context.WorkQueueItem.WorkQueueTypeEnum.LongDescription;
 
                     parms.ServerPartitionAE = _context.ServerPartition.AeTitle;
                     parms.FilesystemKey = storage.FilesystemKey;
@@ -139,10 +150,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions.Uhn
 
                     parms.BackupPath = BackupSubPath;
 
-                    ArchiveStudyStorage archive = StudyStorageLocation.GetArchiveLocation(storage.GetKey());
-                    if (archive != null)
+                    if (_archives != null && _archives.Count>0)
                     {
-                        parms.ArchiveStorageKey = archive.GetKey();
+                        parms.ArchiveInfo = XmlUtils.SerializeAsXmlDoc(_archives);
                     }
 
                     StudyDeleteExtendedInfo extInfo = new StudyDeleteExtendedInfo();
@@ -159,12 +169,104 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions.Uhn
                         updateContext.Commit();
                 }
             }
+        }
 
-            
+        #endregion
+       
+    }
+
+    /// <summary>
+    /// Extended information for a deleted study record
+    /// </summary>
+    [Serializable]
+    public class StudyDeleteExtendedInfo
+    {
+        #region Private Fields
+        private string _serverInstanceId;
+        #endregion
+
+        #region Public Properties
+        /// <summary>
+        /// The server which processed the study delete request.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        public string ServerInstanceId
+        {
+            get { return _serverInstanceId; }
+            set { _serverInstanceId = value; }
+        }
+        #endregion
+
+    }
+
+    /// <summary>
+    /// Archive entry information for a deleted study
+    /// </summary>
+    [Serializable]
+    public class DeletedStudyArchiveInfo
+    {
+        #region Private Fields
+        private DateTime _archiveTime;
+        private object _partitionArchiveRef;
+        private string _transferSyntaxUid;
+        private XmlDocument _archiveXml;
+        private PartitionArchive _partitionArchive;
+        #endregion
+
+        #region Public Properties
+        public DateTime ArchiveTime
+        {
+            get { return _archiveTime; }
+            set { _archiveTime = value; }
+        }
+
+        public object PartitionArchiveRef
+        {
+            get { return _partitionArchiveRef; }
+            set { _partitionArchiveRef = value; }
+        }
+
+        public string TransferSyntaxUid
+        {
+            get { return _transferSyntaxUid; }
+            set { _transferSyntaxUid = value; }
+        }
+
+        public XmlDocument ArchiveXml
+        {
+            get { return _archiveXml; }
+            set { _archiveXml = value; }
+        }
+
+        [XmlIgnore]
+        public PartitionArchive PartitionArchive
+        {
+            get
+            {
+                if (PartitionArchiveRef == null)
+                    throw new ApplicationException("PartitionArchiveRef must be set");
+
+                if (_partitionArchive == null)
+                {
+                    ServerEntityKey key = new ServerEntityKey("ParitionArchive", PartitionArchiveRef);
+                    _partitionArchive = PartitionArchive.Load(key);
+
+                }
+
+                return _partitionArchive;
+            }
         }
 
         #endregion
 
-        
+    }
+
+    /// <summary>
+    /// Collection of archive entry information for a deleted study
+    /// </summary>
+    [Serializable]
+    public class DeletedStudyArchiveInfoCollection : Collection<DeletedStudyArchiveInfo>
+    {
     }
 }

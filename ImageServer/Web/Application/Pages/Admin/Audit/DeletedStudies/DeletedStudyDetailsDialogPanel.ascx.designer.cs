@@ -8,25 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies {
     
     
     /// <summary>
-    /// DeletedStudyDetailsDialog class.
+    /// DeletedStudyDetailsDialogPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class DeletedStudyDetailsDialog {
-        
-        /// <summary>
-        /// ModalDialog control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog ModalDialog;
+    public partial class DeletedStudyDetailsDialogPanel {
         
         /// <summary>
         /// Panel3 control.
@@ -38,30 +29,48 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit {
         protected global::System.Web.UI.WebControls.Panel Panel3;
         
         /// <summary>
-        /// StudyDetailView control.
+        /// TabContainer control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DetailsView StudyDetailView;
+        protected global::AjaxControlToolkit.TabContainer TabContainer;
         
         /// <summary>
-        /// Panel1 control.
+        /// StudyInfoTabPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel Panel1;
+        protected global::AjaxControlToolkit.TabPanel StudyInfoTabPanel;
         
         /// <summary>
-        /// OKButton control.
+        /// GeneralInfoPanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OKButton;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudyDetailsDialogGeneralPanel GeneralInfoPanel;
+        
+        /// <summary>
+        /// ArchiveInfoTabPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.TabPanel ArchiveInfoTabPanel;
+        
+        /// <summary>
+        /// ArchiveInfoPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudyArchiveInfoPanel ArchiveInfoPanel;
     }
 }

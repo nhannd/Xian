@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using Timer=System.Threading.Timer;
@@ -126,6 +127,16 @@ namespace ClearCanvas.ImageServer.Common
                     return null;
             }
 		}
+
+        public ServerPartition FindPartition(ServerEntityKey key)
+        {
+            return CollectionUtils.SelectFirst(
+                       this,
+                       delegate(ServerPartition partition)
+                       {
+                           return partition.GetKey().Equals(key);
+                       });
+        }
 		#endregion
 
 		#region Private Methods

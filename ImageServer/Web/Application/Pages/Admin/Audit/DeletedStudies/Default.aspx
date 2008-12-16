@@ -1,5 +1,5 @@
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true"
-    EnableEventValidation="false" Codebehind="DeletedStudies.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies"
+    EnableEventValidation="false" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.Default"
     Title="Audit Deleted Studies" %>
 
 <%@ Register Src="DeletedStudiesSearchPanel.ascx" TagName="DeletedStudiesSearchPanel" TagPrefix="localAsp" %>
@@ -17,6 +17,11 @@
         </ContentTemplate>
       
     </asp:UpdatePanel>
-      <localAsp:DetailsDialog runat="server" ID="DetailsDialogd" />
+    
+      <localAsp:DetailsDialog runat="server" ID="DetailsDialog" />
+      <ccAsp:MessageBox runat="server" ID="DeleteConfirmMessageBox" 
+                Title="Please Confirm" 
+                Message="Are you sure you want to delete this record?<BR>You will have to delete all backup files manually." 
+                MessageType="OKCANCEL" />
 </asp:Content>
 

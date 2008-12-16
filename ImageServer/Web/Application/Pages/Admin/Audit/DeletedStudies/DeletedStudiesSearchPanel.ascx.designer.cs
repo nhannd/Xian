@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies {
     
     
     /// <summary>
@@ -218,6 +218,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton ViewStudyDetailsButton;
         
         /// <summary>
+        /// DeleteButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton DeleteButton;
+        
+        /// <summary>
         /// Panel2 control.
         /// </summary>
         /// <remarks>
@@ -242,7 +251,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.SearchResultGridView SearchResultGridView1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.SearchResultGridView SearchResultGridView1;
         
         /// <summary>
         /// GridPagerBottom control.

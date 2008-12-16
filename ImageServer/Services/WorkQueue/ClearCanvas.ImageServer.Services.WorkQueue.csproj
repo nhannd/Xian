@@ -58,8 +58,8 @@
     <Compile Include="DeleteStudy\DeleteStudyItemProcessor.cs" />
     <Compile Include="CompressStudy\CompressStudyFactoryExtension.cs" />
     <Compile Include="CompressStudy\CompressStudyItemProcessor.cs" />
-    <Compile Include="DeleteStudy\Extensions\Uhn\StudyDeleteProcessorExtension.cs" />
-    <Compile Include="DeleteStudy\Extensions\Uhn\ZipStudyFolderCOmmand.cs">
+    <Compile Include="DeleteStudy\Extensions\StudyDeleteProcessorExtension.cs" />
+    <Compile Include="DeleteStudy\Extensions\ZipStudyFolderCOmmand.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="DeleteStudy\IDeleteStudyProcessorExtension.cs" />

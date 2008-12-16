@@ -1280,7 +1280,7 @@ GO
 SET ANSI_PADDING OFF
 GO
 
-/****** Object:  Table [dbo].[StudyDeleteRecord]    Script Date: 11/28/2008 13:11:15 ******/
+/****** Object:  Table [dbo].[StudyDeleteRecord]    Script Date: 12/16/2008 15:06:40 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1290,10 +1290,9 @@ GO
 CREATE TABLE [dbo].[StudyDeleteRecord](
 	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_StudyDeleteRecord_GUID]  DEFAULT (newid()),
 	[Timestamp] [datetime] NOT NULL,
-	[Reason] [nvarchar] (1024) NULL,
-	[ServerPartitionAE] [varchar] (64) NOT NULL,
+	[Reason] [nvarchar](1024)  NULL,
+	[ServerPartitionAE] [varchar](64)  NOT NULL,
 	[FilesystemGUID] [uniqueidentifier] NOT NULL,
-	[ArchiveStorageGUID] [uniqueidentifier] NULL,
 	[BackupPath] [nvarchar](256)  NULL,
 	[StudyInstanceUid] [varchar](64)  NOT NULL,
 	[AccessionNumber] [varchar](64)  NULL,
@@ -1303,6 +1302,7 @@ CREATE TABLE [dbo].[StudyDeleteRecord](
 	[StudyDescription] [nvarchar](64)  NULL,
 	[StudyDate] [varchar](16)  NULL,
 	[StudyTime] [varchar](32)  NULL,
+	[ArchiveInfo] [xml] NULL,
 	[ExtendedInfo] [nvarchar](max)  NULL,
  CONSTRAINT [PK_StudyDeleteRecord] PRIMARY KEY CLUSTERED 
 (
@@ -1312,6 +1312,7 @@ CREATE TABLE [dbo].[StudyDeleteRecord](
 
 GO
 SET ANSI_PADDING OFF
+GO
 
 
 /****** Object:  Index [IX_StudyDeleteRecord]    Script Date: 11/28/2008 13:26:28 ******/
@@ -1776,14 +1777,10 @@ ALTER TABLE [dbo].[StudyHistory]  WITH CHECK ADD  CONSTRAINT [FK_StudyHistory_St
 REFERENCES [dbo].[StudyHistoryTypeEnum] ([Enum])
 GO
 
-/****** Object:  ForeignKey [FK_StudyDeleteRecord_ArchiveStudyStorage]    Script Date: 11/30/2008 16:50:28 ******/
-IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyDeleteRecord_ArchiveStudyStorage]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyDeleteRecord]'))
-ALTER TABLE [dbo].[StudyDeleteRecord]  WITH CHECK ADD  CONSTRAINT [FK_StudyDeleteRecord_ArchiveStudyStorage] FOREIGN KEY([ArchiveStorageGUID])
-REFERENCES [dbo].[ArchiveStudyStorage] ([GUID])
-GO
 
 /****** Object:  ForeignKey [FK_StudyDeleteRecord_Filesystem]    Script Date: 11/30/2008 16:50:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyDeleteRecord_Filesystem]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyDeleteRecord]'))
 ALTER TABLE [dbo].[StudyDeleteRecord]  WITH CHECK ADD  CONSTRAINT [FK_StudyDeleteRecord_Filesystem] FOREIGN KEY([FilesystemGUID])
 REFERENCES [dbo].[Filesystem] ([GUID])
 GO
+

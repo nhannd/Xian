@@ -80,11 +80,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             set
             {
-                ViewState[ClientID+"_Data"] = value;
+                ViewState["Data"] = value;
             }
             get
             {
-                return ViewState[ClientID + "_Data"];
+                return ViewState["Data"];
             }
         }
 
@@ -94,14 +94,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         public MessageTypeEnum MessageType
         {
             set { 
-                ViewState[ClientID + "_MsgType"] = value;
+                ViewState["MsgType"] = value;
             }
             get
             {
-                if (ViewState[ClientID + "_MsgType"] == null)
+                if (ViewState["MsgType"] == null)
                     return MessageTypeEnum.NONE;
                 else
-                    return (MessageTypeEnum) ViewState[ClientID + "_MsgType"];
+                    return (MessageTypeEnum) ViewState["MsgType"];
             }
         }
 
@@ -121,8 +121,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         public string Message
         {
             set { 
-                _message = value; 
-                MessageLabel.Text = _message; }
+                _message = value;  }
             get { 
                 return _message;
             }
@@ -136,7 +135,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             get { return _title; }
             set { 
                 _title = value;
-                ModalDialog.Title = value;
             }
         }
 
@@ -159,11 +157,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         #region Protected Methods
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-        }
-
         protected override void OnPreRender(EventArgs e)
         {
             YesButton.Visible = false;
@@ -171,6 +164,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             OKButton.Visible = false;
             CancelButton.Visible = false;
 
+            
             switch (MessageType)
             {
                 case MessageTypeEnum.ERROR:
@@ -200,15 +194,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 default:
                     break;
             }
-            
+
+            MessageLabel.Text = _message;
+            ModalDialog.Title = _title;
+
             base.OnPreRender(e);
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            
-        }
-        
         protected void YesButton_Click(object sender, EventArgs e)
         {
             if (Confirmed != null)

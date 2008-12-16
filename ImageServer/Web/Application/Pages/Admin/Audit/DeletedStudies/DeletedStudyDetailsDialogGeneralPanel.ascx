@@ -1,25 +1,17 @@
-<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.Model"%>
-<%@ Import namespace="System.ComponentModel"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Application.Helpers"%>
-<%@ Import namespace="Microsoft.JScript"%>
-<%@ Control Language="C#" AutoEventWireup="true" Codebehind="DeletedStudyDetailsDialog.ascx.cs"
-    Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudyDetailsDialog" %>
-<ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="775px">
-    <ContentTemplate>
-        <asp:Panel ID="Panel3" runat="server">
-            <table cellpadding="2" cellspacing="5" width="100%" style="background-color: #eeeeee;
-                border: solid 1px #cccccc;">
-                <tr>
-                <td>
+<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.Model"%>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="DeletedStudyDetailsDialogGeneralPanel.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudyDetailsDialogGeneralPanel" %>
+<asp:Panel ID="Panel3" runat="server">
+    <table width="100%">
+        <tr>
+            <td>
                 <asp:DetailsView ID="StudyDetailView" runat="server" AutoGenerateRows="False" GridLines="Horizontal"
-                    CellPadding="4" CssClass="GlobalGridView"
-                    Width="100%" >
+                    CellPadding="4" CssClass="GlobalGridView" Width="100%">
                     <Fields>
                         <asp:TemplateField HeaderText="Patient's Name: ">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                             <ItemTemplate>
-                                <ccUI:PersonNameLabel ID="PatientsName" runat="server" 
-                                    PersonName='<%# Eval("PatientsName") %>'
+                                <ccUI:PersonNameLabel ID="PatientsName" runat="server" PersonName='<%# Eval("PatientsName") %>'
                                     PersonNameType="Dicom"></ccUI:PersonNameLabel>
                             </ItemTemplate>
                         </asp:TemplateField>
@@ -44,40 +36,26 @@
                         <asp:BoundField DataField="PartitionAE" HeaderText="Partition AE: ">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                         </asp:BoundField>
-                        <asp:BoundField DataField="DeletedFolderPath" HeaderText="Backup Folder:">
+                        <asp:BoundField DataField="BackupFolderPath" HeaderText="Backup Folder:">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                         </asp:BoundField>
-                         <asp:TemplateField HeaderText="Reason For Deletion: ">
+                        <asp:TemplateField HeaderText="Reason For Deletion: ">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                             <ItemTemplate>
-                            <%# HtmlEncoder.EncodeText((Container.DataItem as DeletedStudyInfo).ReasonForDeletion)%>
+                                <%# HtmlEncoder.EncodeText((Container.DataItem as DeletedStudyInfo).ReasonForDeletion)%>
                             </ItemTemplate>
                         </asp:TemplateField>
                         <asp:TemplateField HeaderText="Delete Date/Time: ">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                             <ItemTemplate>
-                            <ccUI:DateTimeLabel ID="DeleteDate" runat="server"  Value='<%# Eval("DeleteTime") %>'></ccUI:DateTimeLabel>
+                                <ccUI:DateTimeLabel ID="DeleteDate" runat="server" Value='<%# Eval("DeleteTime") %>'></ccUI:DateTimeLabel>
                             </ItemTemplate>
                         </asp:TemplateField>
                     </Fields>
                     <RowStyle CssClass="GlobalGridViewRow" />
                     <AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
                 </asp:DetailsView>
-                </td>
-                </tr>
-                
-            </table>
-        </asp:Panel>
-        
-        <table cellpadding="0" cellspacing="0" width="100%">
-                <tr align="right">
-                    <td>
-                        <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                            <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="OkButton" ValidationGroup="vg1" OnClick="OKClicked" /> 
-                        </asp:Panel>
-
-                    </td>
-                </tr>
-            </table>
-    </ContentTemplate>
-</ccAsp:ModalDialog>
+            </td>
+        </tr>
+    </table>
+</asp:Panel>

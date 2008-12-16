@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.Model
 {
+    [Serializable]
     public class DeletedStudyInfo
     {
-        private object _key;
+        #region Private Fields
+        private object _rowkey;
         private string _studyInstanceUid;
         private string _patientsName;
         private string _patientId;
@@ -15,10 +20,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.Model
         private string _studyDate;
         private string _partitionAE;
         private string _studyDescription;
-        private string _deletedFolderPath;
+        private string _backupFolderPath;
         private string _reasonForDeletion;
         private DateTime _deleteTime;
-        private ServerEntityKey _archiveLocation;
+        private ServerEntityKey _deleteStudyRecord;
+        private  DeletedStudyArchiveInfoCollection _archives;
+
+        private bool _restoreScheduled;
+        #endregion
 
         public string StudyInstanceUid
         {
@@ -62,16 +71,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.Model
             set { _studyDescription = value; }
         }
 
-        public object Key
+        public object RowKey
         {
-            get { return _key; }
-            set { _key = value; }
+            get { return _rowkey; }
+            set { _rowkey = value; }
         }
 
-        public string DeletedFolderPath
+        public string BackupFolderPath
         {
-            get { return _deletedFolderPath; }
-            set { _deletedFolderPath = value; }
+            get { return _backupFolderPath; }
+            set { _backupFolderPath = value; }
         }
 
         public string ReasonForDeletion
@@ -86,10 +95,23 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.Model
             set { _deleteTime = value; }
         }
 
-        public ServerEntityKey ArchiveLocation
+        public DeletedStudyArchiveInfoCollection Archives
         {
-            get { return _archiveLocation; }
-            set { _archiveLocation = value; }
+            get { return _archives; }
+            set { _archives = value; }
+        }
+
+        public bool RestoreScheduled
+        {
+            get { return _restoreScheduled; }
+            set { _restoreScheduled = value; }
+        }
+
+        public ServerEntityKey DeleteStudyRecord
+        {
+            get { return _deleteStudyRecord; }
+            set { _deleteStudyRecord = value; }
         }
     }
+
 }

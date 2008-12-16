@@ -197,32 +197,67 @@
     <Compile Include="Pages\Admin\Alerts\DeleteAlertDialog.ascx.designer.cs">
       <DependentUpon>DeleteAlertDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Admin\Audit\DeletedStudies.aspx.cs">
-      <DependentUpon>DeletedStudies.aspx</DependentUpon>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Admin\Audit\DeletedStudies.aspx.designer.cs">
-      <DependentUpon>DeletedStudies.aspx</DependentUpon>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Admin\Audit\DeletedStudiesSearchPanel.ascx.cs">
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudiesSearchPanel.ascx.cs">
       <DependentUpon>DeletedStudiesSearchPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Admin\Audit\DeletedStudiesSearchPanel.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudiesSearchPanel.ascx.designer.cs">
       <DependentUpon>DeletedStudiesSearchPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Admin\Audit\DeletedStudyDetailsDialog.ascx.cs">
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyArchiveInfoPanel.ascx.cs">
+      <DependentUpon>DeletedStudyArchiveInfoPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyArchiveInfoPanel.ascx.designer.cs">
+      <DependentUpon>DeletedStudyArchiveInfoPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyDetailsDialog.ascx.cs">
       <DependentUpon>DeletedStudyDetailsDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Admin\Audit\DeletedStudyDetailsDialog.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyDetailsDialog.ascx.designer.cs">
       <DependentUpon>DeletedStudyDetailsDialog.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Admin\Audit\SearchResultGridView.ascx.cs">
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyDetailsDialogGeneralPanel.ascx.cs">
+      <DependentUpon>DeletedStudyDetailsDialogGeneralPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyDetailsDialogGeneralPanel.ascx.designer.cs">
+      <DependentUpon>DeletedStudyDetailsDialogGeneralPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyDetailsDialogPanel.ascx.cs">
+      <DependentUpon>DeletedStudyDetailsDialogPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyDetailsDialogPanel.ascx.designer.cs">
+      <DependentUpon>DeletedStudyDetailsDialogPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\GeneralArchiveInfoPanel.ascx.cs">
+      <DependentUpon>GeneralArchiveInfoPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\GeneralArchiveInfoPanel.ascx.designer.cs">
+      <DependentUpon>GeneralArchiveInfoPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\HsmArchiveInfoPanel.ascx.cs">
+      <DependentUpon>HsmArchiveInfoPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\HsmArchiveInfoPanel.ascx.designer.cs">
+      <DependentUpon>HsmArchiveInfoPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\SearchResultGridView.ascx.cs">
       <DependentUpon>SearchResultGridView.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Admin\Audit\SearchResultGridView.ascx.designer.cs">
+    <Compile Include="Pages\Admin\Audit\DeletedStudies\SearchResultGridView.ascx.designer.cs">
       <DependentUpon>SearchResultGridView.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Common\BarChart.aspx.cs">
@@ -1013,10 +1048,16 @@
     <Content Include="Pages\Admin\Alerts\AlertsPanel.ascx" />
     <Content Include="Pages\Admin\Alerts\Default.aspx" />
     <Content Include="Pages\Admin\Alerts\DeleteAlertDialog.ascx" />
-    <Content Include="Pages\Admin\Audit\DeletedStudies.aspx" />
-    <Content Include="Pages\Admin\Audit\DeletedStudiesSearchPanel.ascx" />
-    <Content Include="Pages\Admin\Audit\DeletedStudyDetailsDialog.ascx" />
-    <Content Include="Pages\Admin\Audit\SearchResultGridView.ascx" />
+    <Content Include="Pages\Admin\Audit\DeletedStudies\Default.aspx" />
+    <Content Include="Pages\Admin\Audit\DeletedStudies\DeletedStudiesSearchPanel.ascx" />
+    <Content Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyArchiveInfoPanel.ascx" />
+    <Content Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyDetailsDialog.ascx" />
+    <Content Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyDetailsDialogGeneralPanel.ascx" />
+    <Content Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyDetailsDialogPanel.ascx" />
+    <EmbeddedResource Include="Pages\Admin\Audit\DeletedStudies\DeletedStudySearchPanel.js" />
+    <Content Include="Pages\Admin\Audit\DeletedStudies\GeneralArchiveInfoPanel.ascx" />
+    <Content Include="Pages\Admin\Audit\DeletedStudies\HsmArchiveInfoPanel.ascx" />
+    <Content Include="Pages\Admin\Audit\DeletedStudies\SearchResultGridView.ascx" />
     <Content Include="Pages\Common\BarChart.aspx" />
     <Content Include="Pages\Common\BaseAdminPage.aspx" />
     <Content Include="Pages\Common\BasePage.aspx" />
@@ -1236,6 +1277,19 @@
       <Project>{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}</Project>
       <Name>ClearCanvas.ImageServer.Rules</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\Archiving\ClearCanvas.ImageServer.Services.Archiving.csproj">
+      <Project>{90C91F02-8AD3-43D1-B8C3-C0469213E3E5}</Project>
+      <Name>ClearCanvas.ImageServer.Services.Archiving</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\Archiving\Hsm\ClearCanvas.ImageServer.Services.Archiving.Hsm.csproj">
+      <Project>{BE27922C-C8D7-4190-8F24-5D7C1623CAFA}</Project>
+      <Name>ClearCanvas.ImageServer.Services.Archiving.Hsm</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\WorkQueue\ClearCanvas.ImageServer.Services.WorkQueue.csproj">
+      <Project>{65B9B08C-EAE4-4EE2-B164-905B03134443}</Project>
+      <Name>ClearCanvas.ImageServer.Services.WorkQueue</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common\ClearCanvas.ImageServer.Web.Common.csproj">
       <Project>{9A4EF57B-2702-4931-9E94-B194707E87FA}</Project>

@@ -46,9 +46,9 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["AccessionNumber"] = new EntityUpdateColumn<System.String>("AccessionNumber", value); }
         }
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ArchiveStorageKey
+        public System.Xml.XmlDocument ArchiveInfo
         {
-            set { SubParameters["ArchiveStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ArchiveStorageKey", value); }
+            set { SubParameters["ArchiveInfo"] = new EntityUpdateColumn<System.Xml.XmlDocument>("ArchiveInfo", value); }
         }
         public System.String BackupPath
         {

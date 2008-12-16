@@ -1,4 +1,4 @@
-<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SearchResultGridView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.SearchResultGridView" %>
+<%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SearchResultGridView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.SearchResultGridView" %>
 
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
 	Width="100%">
@@ -17,8 +17,8 @@
 				<ccUI:GridView ID="ListControl" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
 					Width="100%" EmptyDataText=""
 					CellPadding="0"  DataSourceID="DataSource"
-					SelectionMode="Multiple" PageSize="25" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
-					BorderWidth="0px" HorizontalAlign="Left" DataKeyNames="Key">
+					SelectionMode="Single" PageSize="25" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
+					BorderWidth="0px" HorizontalAlign="Left" DataKeyNames="RowKey">
 					<Columns>
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>
@@ -40,6 +40,7 @@
 							ItemStyle-HorizontalAlign="Center" />--%>
 				        <asp:BoundField DataField="PartitionAE" HeaderText="Partition" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
+					    
 					</Columns>
 					<EmptyDataTemplate>				    
                         <ccAsp:EmptySearchResultsMessage runat="server" ID="EmptySearchResultsMessage" Message="No studies were found using the provided criteria." />
