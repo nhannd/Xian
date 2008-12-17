@@ -14,35 +14,9 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 		public object GetService(Type serviceType)
 		{
 			if (serviceType == typeof(IStudyRootQuery))
-				return new StudyLocatorServiceClient();
+				return new StudyRootQueryServiceClient();
 
 			return null;
-		}
-
-		#endregion
-	}
-
-	internal class StudyLocatorServiceClient : ClientBase<IStudyRootQuery>, IStudyRootQuery
-	{
-		public StudyLocatorServiceClient()
-		{
-		}
-
-		#region IStudyRootQuery Members
-
-		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
-		{
-			return base.Channel.StudyQuery(queryCriteria);
-		}
-
-		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
-		{
-			return base.Channel.SeriesQuery(queryCriteria);
-		}
-
-		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
-		{
-			return base.Channel.ImageQuery(queryCriteria);
 		}
 
 		#endregion

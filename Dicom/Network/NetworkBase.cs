@@ -201,7 +201,7 @@ namespace ClearCanvas.Dicom.Network
             _network = network;
             _stop = false;
             _thread = new Thread(Process);
-            _thread.Name = name;
+        	_thread.Name = String.Format("{0} [{1}]", name, _thread.ManagedThreadId);
 
             _thread.Start();
         }

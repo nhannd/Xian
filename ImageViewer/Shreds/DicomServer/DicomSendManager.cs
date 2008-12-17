@@ -196,16 +196,21 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 					if (base.Status == ScuOperationStatus.Canceled)
 					{
-						OnSendError(String.Format("The C-STORE operation has been cancelled ({0}).", RemoteAE));
+						OnSendError(String.Format("The Store operation has been cancelled ({0}).", RemoteAE));
 					}
 					else if (base.Status == ScuOperationStatus.ConnectFailed)
 					{
 						OnSendError(String.Format("Unable to connect to remote server ({0}: {1}).",
 							RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
+					else if (base.Status == ScuOperationStatus.AssociationRejected)
+					{
+						OnSendError(String.Format("Association rejected ({0}: {1}).",
+							RemoteAE, base.FailureDescription ?? "no failure description provided"));
+					}
 					else if (base.Status == ScuOperationStatus.Failed)
 					{
-						OnSendError(String.Format("The C-STORE operation failed ({0}: {1}).",
+						OnSendError(String.Format("The Store operation failed ({0}: {1}).",
 							RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
 					else if (base.Status == ScuOperationStatus.TimeoutExpired)
@@ -213,13 +218,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						OnSendError(String.Format("The connection timeout has expired ({0}: {1}).",
 							RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
+					else if (base.Status == ScuOperationStatus.UnexpectedMessage)
+					{
+						OnSendError("Unexpected message received; aborted association.");
+					}
+					else if (base.Status == ScuOperationStatus.NetworkError)
+					{
+						OnSendError("An unexpected network error has occurred.");
+					}
 				}
 				catch(Exception e)
 				{
-					Platform.Log(LogLevel.Error, e, "An error occurred while processing the C-STORE operation.");
-					string message = String.Format("An unexpected error occurred while processing the C-STORE operation ({0}).",
-					                               e.Message);
-					OnSendError(message);
+					if (base.Status == ScuOperationStatus.ConnectFailed)
+					{
+						OnSendError(String.Format("Unable to connect to remote server ({0}: {1}).",
+							RemoteAE, base.FailureDescription ?? "no failure description provided"));
+					}
+					else
+					{
+						OnSendError(String.Format("An unexpected error occurred while processing the Store operation ({0}).", e.Message));
+					}
 				}
 				finally
 				{

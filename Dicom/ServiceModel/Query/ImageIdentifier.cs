@@ -1,8 +1,12 @@
 
 using System.Runtime.Serialization;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
+	/// <summary>
+	/// Query identifier for a composite object instance.
+	/// </summary>
 	[DataContract(Namespace = QueryNamespace.Value)]
 	public class ImageIdentifier : Identifier
 	{
@@ -18,10 +22,16 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		#region Public Constructors
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public ImageIdentifier()
 		{
 		}
 
+		/// <summary>
+		/// Creates an instance of <see cref="ImageIdentifier"/> from a <see cref="DicomAttributeCollection"/>.
+		/// </summary>
 		public ImageIdentifier(DicomAttributeCollection attributes)
 			: base(attributes)
 		{
@@ -31,11 +41,17 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		#region Public Properties
 
+		/// <summary>
+		/// Gets the level of the query - IMAGE.
+		/// </summary>
 		public override string QueryRetrieveLevel
 		{
 			get { return "IMAGE"; }
 		}
 
+		/// <summary>
+		/// Gets or sets the Study Instance Uid of the identified sop instance.
+		/// </summary>
 		[DicomField(DicomTags.StudyInstanceUid, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = true)]
 		public string StudyInstanceUid
@@ -44,6 +60,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _studyInstanceUid = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the Series Instance Uid of the identified sop instance.
+		/// </summary>
 		[DicomField(DicomTags.SeriesInstanceUid, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = true)]
 		public string SeriesInstanceUid
@@ -52,6 +71,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _seriesInstanceUid = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the Sop Instance Uid of the identified sop instance.
+		/// </summary>
 		[DicomField(DicomTags.SopInstanceUid, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = true)]
 		public string SopInstanceUid
@@ -60,6 +82,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _sopInstanceUid = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the Sop Class Uid of the identified sop instance.
+		/// </summary>
 		[DicomField(DicomTags.SopClassUid, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = true)]
 		public string SopClassUid
@@ -68,6 +93,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _sopClassUid = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the Instance Number of the identified sop instance.
+		/// </summary>
 		[DicomField(DicomTags.InstanceNumber, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = true)]
 		public int? InstanceNumber

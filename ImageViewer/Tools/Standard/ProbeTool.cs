@@ -40,6 +40,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -100,9 +101,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			remove { base.TooltipChanged -= value; }
 		}
 
-		public ActionModelNode DropDownMenuModel {
-			get {
-				if (_actionModel == null) {
+		public ActionModelNode DropDownMenuModel
+		{
+			get
+			{
+				if (_actionModel == null)
+				{
 					_actionModel = ActionModelRoot.CreateModel("ClearCanvas.ImageViewer.Tools.Standard", "probetool-dropdown", this.Actions);
 				}
 
@@ -137,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return false;
 
 			Probe(mouseInformation.Location);
-			
+
 			return true;
 		}
 
@@ -148,7 +152,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// <returns>True if the event was handled, false otherwise</returns>
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
-			Cancel();			
+			Cancel();
 			return false;
 		}
 
@@ -222,7 +226,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				if (showVoiValue)
 					probeString += "\n" + voiLutString;
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e);
 				probeString = SR.MessageProbeToolError;
@@ -232,8 +236,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		private void GetPixelValue(
-			GrayscaleImageGraphic grayscaleImage, 
-			Point sourcePointRounded, 
+			GrayscaleImageGraphic grayscaleImage,
+			Point sourcePointRounded,
 			ref int pixelValue,
 			ref string pixelValueString)
 		{
@@ -242,8 +246,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		private void GetModalityLutValue(
-			GrayscaleImageGraphic grayscaleImage, 
-			int pixelValue, 
+			GrayscaleImageGraphic grayscaleImage,
+			int pixelValue,
 			ref int modalityLutValue,
 			ref string modalityLutString)
 		{
@@ -261,9 +265,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		private void GetVoiLutValue(
-			GrayscaleImageGraphic grayscaleImage, 
-			int modalityLutValue, 
-			ref int voiLutValue, 
+			GrayscaleImageGraphic grayscaleImage,
+			int modalityLutValue,
+			ref int voiLutValue,
 			ref string voiLutString)
 		{
 			if (grayscaleImage.VoiLut != null)
@@ -275,96 +279,132 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		#region Probe Tool Settings
 
-		private static event EventHandler _showCTPixChanged;
-		private static event EventHandler _showNonCTModChanged;
-		private static event EventHandler _showVoiLutChanged;
+		private event EventHandler _showCTPixChanged;
+		private event EventHandler _showNonCTModChanged;
+		private event EventHandler _showVoiLutChanged;
 		private ToolSettings _settings;
 
-		public override void Initialize() {
+		public override void Initialize()
+		{
 			base.Initialize();
 
 			_settings = ToolSettings.Default;
+			_settings.PropertyChanged += OnPropertyChanged;
 		}
 
-		protected override void Dispose(bool disposing) {
+		protected override void Dispose(bool disposing)
+		{
+
+			_settings.PropertyChanged -= OnPropertyChanged;
 			_settings.Save();
 			_settings = null;
 
 			base.Dispose(disposing);
 		}
 
-		public event EventHandler ShowCTPixChanged {
+		private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			switch (e.PropertyName)
+			{
+				case "ShowCTRawPixelValue":
+					EventsHelper.Fire(_showCTPixChanged, this, EventArgs.Empty);
+					break;
+				case "ShowNonCTModPixelValue":
+					EventsHelper.Fire(_showNonCTModChanged, this, EventArgs.Empty);
+					break;
+				case "ShowVOIPixelValue":
+					EventsHelper.Fire(_showVoiLutChanged, this, EventArgs.Empty);
+					break;
+			}
+		}
+
+		public event EventHandler ShowCTPixChanged
+		{
 			add { _showCTPixChanged += value; }
 			remove { _showCTPixChanged -= value; }
 		}
 
-		public event EventHandler ShowNonCTModChanged {
+		public event EventHandler ShowNonCTModChanged
+		{
 			add { _showNonCTModChanged += value; }
 			remove { _showNonCTModChanged -= value; }
 		}
 
-		public event EventHandler ShowVoiLutChanged {
+		public event EventHandler ShowVoiLutChanged
+		{
 			add { _showVoiLutChanged += value; }
 			remove { _showVoiLutChanged -= value; }
 		}
 
-		public bool ShowCTPix {
-			get {
-				try {
+		public bool ShowCTPix
+		{
+			get
+			{
+				try
+				{
 					return _settings.ShowCTRawPixelValue;
-				} catch {
+				}
+				catch
+				{
 					return false;
 				}
 			}
-			set {
-				if (this.ShowCTPix != value) {
-					_settings.ShowCTRawPixelValue = value;
-					EventsHelper.Fire(_showCTPixChanged, this, new EventArgs());
-				}
+			set
+			{
+				_settings.ShowCTRawPixelValue = value;
 			}
 		}
 
-		public bool ShowNonCTMod {
-			get {
-				try {
+		public bool ShowNonCTMod
+		{
+			get
+			{
+				try
+				{
 					return _settings.ShowNonCTModPixelValue;
-				} catch {
+				}
+				catch
+				{
 					return false;
 				}
 			}
-			set {
-				if (this.ShowNonCTMod != value) {
-					_settings.ShowNonCTModPixelValue = value;
-					EventsHelper.Fire(_showNonCTModChanged, this, new EventArgs());
-				}
+			set
+			{
+				_settings.ShowNonCTModPixelValue = value;
 			}
 		}
 
-		public bool ShowVoiLut {
-			get {
-				try {
+		public bool ShowVoiLut
+		{
+			get
+			{
+				try
+				{
 					return _settings.ShowVOIPixelValue;
-				} catch {
+				}
+				catch
+				{
 					return false;
 				}
 			}
-			set {
-				if (this.ShowVoiLut != value) {
-					_settings.ShowVOIPixelValue = value;
-					EventsHelper.Fire(_showVoiLutChanged, this, new EventArgs());
-				}
+			set
+			{
+				_settings.ShowVOIPixelValue = value;
 			}
 		}
 
-		public void ToggleShowCTPix() {
+		public void ToggleShowCTPix()
+		{
 			this.ShowCTPix = !this.ShowCTPix;
 		}
 
-		public void ToggleShowNonCTMod() {
+		public void ToggleShowNonCTMod()
+		{
 			this.ShowNonCTMod = !this.ShowNonCTMod;
 		}
 
-		public void ToggleShowVoiLut() {
+		public void ToggleShowVoiLut()
+		{
 			this.ShowVoiLut = !this.ShowVoiLut;
 		}
 

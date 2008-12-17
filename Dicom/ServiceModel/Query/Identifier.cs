@@ -1,7 +1,11 @@
 using System.Runtime.Serialization;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
+	/// <summary>
+	/// Base class for Dicom query Identifiers.
+	/// </summary>
 	[DataContract(Namespace = QueryNamespace.Value)]
 	public abstract class Identifier
 	{
@@ -33,8 +37,14 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		#region Public Properties
 
+		/// <summary>
+		/// Gets the level of the query.
+		/// </summary>
 		public abstract string QueryRetrieveLevel { get; }
 
+		/// <summary>
+		/// Gets or sets the Specific Character set of the identified instance.
+		/// </summary>
 		[DicomField(DicomTags.SpecificCharacterSet)] //only include in rq when set explicitly.
 		[DataMember(IsRequired = false)]
 		public string SpecificCharacterSet
@@ -43,6 +53,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _specificCharacterSet = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the AE Title the identified instance can be retrieved from.
+		/// </summary>
 		[DicomField(DicomTags.RetrieveAeTitle)]
 		[DataMember(IsRequired = false)]
 		public string RetrieveAeTitle
@@ -51,6 +64,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _retrieveAeTitle = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the availability of the identified instance.
+		/// </summary>
 		[DicomField(DicomTags.InstanceAvailability)]
 		[DataMember(IsRequired = false)]
 		public string InstanceAvailability
@@ -63,6 +79,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		#region Public Methods
 
+		/// <summary>
+		/// Converts this object into a <see cref="DicomAttributeCollection"/>.
+		/// </summary>
 		public DicomAttributeCollection ToDicomAttributeCollection()
 		{
 			DicomAttributeCollection attributes = new DicomAttributeCollection();
@@ -77,6 +96,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			return attributes;
 		}
 
+		/// <summary>
+		/// Factory method to create an <see cref="Identifier"/> of type <typeparamref name="T"/> from
+		/// the given <see cref="DicomAttributeCollection"/>.
+		/// </summary>
 		public static T FromDicomAttributeCollection<T>(DicomAttributeCollection attributes) where T : Identifier, new()
 		{
 			T identifier = new T();

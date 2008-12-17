@@ -121,40 +121,4 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 		#endregion
 	}
-	
-	internal class ViewerAutomationServiceClient : ClientBase<IViewerAutomation>, IViewerAutomation
-	{
-		public ViewerAutomationServiceClient()
-		{
-		}
-
-		#region IViewerAutomation Members
-
-		public GetActiveViewersResult GetActiveViewers()
-		{
-			return base.Channel.GetActiveViewers();
-		}
-
-		public GetViewerInfoResult GetViewerInfo(GetViewerInfoRequest request)
-		{
-			return base.Channel.GetViewerInfo(request);
-		}
-
-		public OpenStudiesResult OpenStudies(OpenStudiesRequest request)
-		{
-			return base.Channel.OpenStudies(request);
-		}
-
-		public void ActivateViewer(ActivateViewerRequest request)
-		{
-			base.Channel.ActivateViewer(request);
-		}
-
-		public void CloseViewer(CloseViewerRequest request)
-		{
-			base.Channel.CloseViewer(request);
-		}
-
-		#endregion
-	}
 }

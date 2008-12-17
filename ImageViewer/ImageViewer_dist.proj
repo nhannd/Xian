@@ -122,9 +122,8 @@
 
   <ItemGroup>
     <CodecFiles Include="$(TrunkDirectory)\ImageViewer\Codec\Jpeg\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Jpeg.dll" />
-    <CodecFiles Include="$(TrunkDirectory)\ImageViewer\Codec\Jpeg2000\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Jpeg2000.dll" />
     <CodecFiles Include="$(TrunkDirectory)\ImageViewer\Codec\Rle\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Rle.dll" />
-    <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\*.dll" />
+    <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Jpeg.dll" />
     <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Rle.dll" />
   </ItemGroup>
 
@@ -205,10 +204,6 @@
     <!-- Thumbnails -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Thumbnails\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Thumbnails\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.View.WinForms.dll" />
-
-    <!-- Key Objects -->
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\KeyObjects\bin\$(Configuration)\ClearCanvas.ImageViewer.KeyObjects.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\KeyObjects\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.KeyObjects.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">

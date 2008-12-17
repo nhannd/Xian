@@ -29,11 +29,17 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		private OpenStudiesBehaviour _openStudiesBehaviour;
 		private IComparer<StudyRootStudyIdentifier> _studyComparer;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public ViewerAutomationBridge(IViewerAutomation viewerAutomationClient, IStudyRootQuery studyRootQueryClient)
 			: this(viewerAutomationClient, new StudyRootQueryBridge(studyRootQueryClient))
 		{
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		public ViewerAutomationBridge(IViewerAutomation viewerAutomationClient, IStudyRootQueryBridge studyRootQueryBridge)
 		{
 			Platform.CheckForNullReference(viewerAutomationClient, "viewerAutomationClient");
@@ -46,16 +52,25 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			_studyComparer = new StudyDateTimeComparer();
 		}
 
+		/// <summary>
+		/// Gets the underlying <see cref="IViewerAutomation"/> client.
+		/// </summary>
 		protected IViewerAutomation ViewerAutomationClient
 		{
 			get { return _viewerAutomationClient; }	
 		}
 
+		/// <summary>
+		/// Gets the underlying <see cref="IStudyRootQueryBridge"/>.
+		/// </summary>
 		protected IStudyRootQueryBridge StudyRootQueryBridge
 		{
 			get { return _studyRootQueryBridge; }
 		}
 
+		/// <summary>
+		/// Comparer used to sort results from <see cref="IStudyRootQuery.StudyQuery"/>.
+		/// </summary>
 		public IComparer<StudyRootStudyIdentifier> StudyComparer
 		{
 			get { return _studyComparer; }
@@ -64,17 +79,27 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 
 		#region IViewerAutomationBridge Members
 
+		/// <summary>
+		/// Specifies what the behaviour should be if the primary study is already the primary study in an existing viewer.
+		/// </summary>
 		public OpenStudiesBehaviour OpenStudiesBehaviour
 		{
 			get { return _openStudiesBehaviour; }
 			set { _openStudiesBehaviour = value; }
 		}
 
+		/// <summary>
+		/// Gets all the active <see cref="Viewer"/>s.
+		/// </summary>
+		/// <returns></returns>
 		public IList<Viewer> GetViewers()
 		{
 			return _viewerAutomationClient.GetActiveViewers().ActiveViewers;
 		}
 
+		/// <summary>
+		/// Gets all the active viewers having the given primary study instance uid.
+		/// </summary>
 		public IList<Viewer> GetViewers(string primaryStudyInstanceUid)
 		{
 			Platform.CheckForEmptyString(primaryStudyInstanceUid, "primaryStudyInstanceUid");
@@ -86,6 +111,9 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 						});
 		}
 
+		/// <summary>
+		/// Gets all the active viewers where the primary study has the given accession number.
+		/// </summary>
 		public IList<Viewer> GetViewersByAccessionNumber(string accessionNumber)
 		{
 			IList<StudyRootStudyIdentifier> studies = _studyRootQueryBridge.QueryByAccessionNumber(accessionNumber);
@@ -93,6 +121,9 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			return GetViewers(studies);
 		}
 
+		/// <summary>
+		/// Gets all the active viewers where the primary study has the given patient id.
+		/// </summary>
 		public IList<Viewer> GetViewersByPatientId(string patientId)
 		{
 			IList<StudyRootStudyIdentifier> studies = _studyRootQueryBridge.QueryByPatientId(patientId);
@@ -100,22 +131,34 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			return GetViewers(studies);
 		}
 
+		/// <summary>
+		/// Opens the given study.
+		/// </summary>
 		public Viewer OpenStudy(string studyInstanceUid)
 		{
 			return OpenStudies(new string[] { studyInstanceUid });
 		}
 
+		/// <summary>
+		/// Opens the given studies.
+		/// </summary>
 		public Viewer OpenStudies(IEnumerable<string> studyInstanceUids)
 		{
 			IList<StudyRootStudyIdentifier> studies = _studyRootQueryBridge.QueryByStudyInstanceUid(studyInstanceUids);
 			return OpenStudies(studies);
 		}
 
+		/// <summary>
+		/// Opens all studies matching the given <b>exact</b> accession number.
+		/// </summary>
 		public Viewer OpenStudiesByAccessionNumber(string accessionNumber)
 		{
 			return OpenStudiesByAccessionNumber(new string[] {accessionNumber });
 		}
 
+		/// <summary>
+		/// Opens all studies matching the given <b>exact</b> accession numbers.
+		/// </summary>
 		public Viewer OpenStudiesByAccessionNumber(IEnumerable<string> accessionNumbers)
 		{
 			List<StudyRootStudyIdentifier> studies = new List<StudyRootStudyIdentifier>();
@@ -126,11 +169,17 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			return OpenStudies(studies);
 		}
 
+		/// <summary>
+		/// Opens all studies matching the given <b>exact</b> patient id.
+		/// </summary>
 		public Viewer OpenStudiesByPatientId(string patientId)
 		{
 			return OpenStudiesByPatientId(new string[] { patientId });
 		}
 
+		/// <summary>
+		/// Opens all studies matching the given <b>exact</b> patient ids.
+		/// </summary>
 		public Viewer OpenStudiesByPatientId(IEnumerable<string> patientIds)
 		{
 			List<StudyRootStudyIdentifier> studies = new List<StudyRootStudyIdentifier>();
@@ -141,6 +190,9 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			return OpenStudies(studies);
 		}
 
+		/// <summary>
+		/// Opens the given study.
+		/// </summary>
 		public Viewer OpenStudies(List<OpenStudyInfo> studiesToOpen)
 		{
 			OpenStudiesRequest request = new OpenStudiesRequest();
@@ -150,6 +202,9 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			return _viewerAutomationClient.OpenStudies(request).Viewer;
 		}
 
+		/// <summary>
+		/// Activates the given <see cref="Viewer"/>.
+		/// </summary>
 		public void ActivateViewer(Viewer viewer)
 		{
 			ActivateViewerRequest request = new ActivateViewerRequest();
@@ -157,6 +212,10 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			_viewerAutomationClient.ActivateViewer(request);
 		}
 
+		/// <summary>
+		/// Closes the given <see cref="Viewer"/>.
+		/// </summary>
+		/// <param name="viewer"></param>
 		public void CloseViewer(Viewer viewer)
 		{
 			CloseViewerRequest request = new CloseViewerRequest();
@@ -164,6 +223,9 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			_viewerAutomationClient.CloseViewer(request);
 		}
 
+		/// <summary>
+		/// Gets additional studies, not including the primary one, for the given <see cref="Viewer"/>.
+		/// </summary>
 		public IList<string> GetViewerAdditionalStudies(Viewer viewer)
 		{
 			GetViewerInfoRequest request = new GetViewerInfoRequest();
@@ -212,6 +274,9 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 															});
 		}
 
+		/// <summary>
+		/// Implementation of the Dispose pattern.
+		/// </summary>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -232,6 +297,9 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Disposes this instance.
+		/// </summary>
 		public void Dispose()
 		{
 			try

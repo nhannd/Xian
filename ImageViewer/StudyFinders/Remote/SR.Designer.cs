@@ -70,6 +70,15 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Association rejected ({0})..
+        /// </summary>
+        public static string MessageFormatAssociationRejected {
+            get {
+                return ResourceManager.GetString("MessageFormatAssociationRejected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Connection failed ({0})..
         /// </summary>
         public static string MessageFormatConnectionFailed {
@@ -102,6 +111,24 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote {
         public static string MessageFormatRemoteServerCancelledFind {
             get {
                 return ResourceManager.GetString("MessageFormatRemoteServerCancelledFind", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected message was received; aborted association..
+        /// </summary>
+        public static string MessageUnexpectedMessage {
+            get {
+                return ResourceManager.GetString("MessageUnexpectedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected network error has occurred..
+        /// </summary>
+        public static string MessageUnexpectedNetworkError {
+            get {
+                return ResourceManager.GetString("MessageUnexpectedNetworkError", resourceCulture);
             }
         }
     }

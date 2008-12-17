@@ -47,6 +47,11 @@ namespace ClearCanvas.ImageViewer.Codec.Jpeg
 
             return parms;
         }
+
+		public override IDicomCodec GetDicomCodec()
+		{
+			return new DecodeOnlyCodecProxy(base.GetDicomCodec());
+		}
     }
 
 }

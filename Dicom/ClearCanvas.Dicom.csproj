@@ -319,6 +319,7 @@
     <Compile Include="ServiceModel\Query\SeriesIdentifier.cs" />
     <Compile Include="ServiceModel\Query\StudyIdentifier.cs" />
     <Compile Include="ServiceModel\Query\StudyRootQueryBridge.cs" />
+    <Compile Include="ServiceModel\Query\StudyRootQueryServiceClient.cs" />
     <Compile Include="ServiceModel\Query\StudyRootStudyIdentifier.cs" />
     <Compile Include="ServiceModel\Query\Tests\SortStudyTests.cs" />
     <Compile Include="ServiceModel\Streaming\HeaderStreamingParameters.cs" />

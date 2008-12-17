@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities;
@@ -17,6 +18,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 		private IComparer<SeriesIdentifier> _seriesComparer;
 		private IComparer<ImageIdentifier> _imageComparer;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="client">The implementation of <see cref="IStudyRootQuery"/> this bridge will use.</param>
 		public StudyRootQueryBridge(IStudyRootQuery client)
 		{
 			Platform.CheckForNullReference(client, "client");
@@ -24,24 +29,36 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			_studyComparer = new StudyDateTimeComparer();
 		}
 
+		/// <summary>
+		/// Comparer used to sort the results returned from <see cref="IStudyRootQuery.StudyQuery"/>.
+		/// </summary>
 		public IComparer<StudyRootStudyIdentifier> StudyComparer
 		{
 			get { return _studyComparer; }
 			set { _studyComparer = value; }
 		}
 
+		/// <summary>
+		/// Comparer used to sort the results returned from <see cref="IStudyRootQuery.SeriesQuery"/>.
+		/// </summary>
 		public IComparer<SeriesIdentifier> SeriesComparer
 		{
 			get { return _seriesComparer; }
 			set { _seriesComparer = value; }
 		}
 
+		/// <summary>
+		/// Comparer used to sort the results returned from <see cref="IStudyRootQuery.ImageQuery"/>.
+		/// </summary>
 		public IComparer<ImageIdentifier> ImageComparer
 		{
 			get { return _imageComparer; }
 			set { _imageComparer = value; }
 		}
 
+		/// <summary>
+		/// Performs a STUDY query for the given <b>exact</b> Accession Number.
+		/// </summary>
 		public IList<StudyRootStudyIdentifier> QueryByAccessionNumber(string accessionNumber)
 		{
 			Platform.CheckForEmptyString(accessionNumber, "accessionNumber");
@@ -53,6 +70,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			return StudyQuery(criteria);
 		}
 
+		/// <summary>
+		/// Performs a STUDY query for the given <b>exact</b> Patient Id.
+		/// </summary>
 		public IList<StudyRootStudyIdentifier> QueryByPatientId(string patientId)
 		{
 			Platform.CheckForEmptyString(patientId, "patientId");
@@ -64,11 +84,17 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			return StudyQuery(criteria);
 		}
 
+		/// <summary>
+		/// Performs a STUDY query for the given Study Instance Uid.
+		/// </summary>
 		public IList<StudyRootStudyIdentifier> QueryByStudyInstanceUid(string studyInstanceUid)
 		{
 			return QueryByStudyInstanceUid(new string[] {studyInstanceUid});
 		}
 
+		/// <summary>
+		/// Performs a STUDY query for the given Study Instance Uids.
+		/// </summary>
 		public IList<StudyRootStudyIdentifier> QueryByStudyInstanceUid(IEnumerable<string> studyInstanceUids)
 		{
 			foreach (string studyInstanceUid in studyInstanceUids)
@@ -84,6 +110,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			return StudyQuery(criteria);
 		}
 
+		/// <summary>
+		/// Performs a SERIES query for the given Study Instance Uid.
+		/// </summary>
 		public IList<SeriesIdentifier> SeriesQuery(string studyInstanceUid)
 		{
 			Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
@@ -93,6 +122,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			return SeriesQuery(studyInstanceUid);
 		}
 
+		/// <summary>
+		/// Performs an IMAGE query for the given Study and Series Instance Uid.
+		/// </summary>
 		public IList<ImageIdentifier> ImageQuery(string studyInstanceUid, string seriesInstanceUid)
 		{
 			Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
@@ -106,6 +138,11 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		#region IStudyRootQuery Members
 
+		/// <summary>
+		/// Performs a STUDY level query.
+		/// </summary>
+		/// <exception cref="FaultException{TDetail}">Thrown when some part of the data in the request is poorly formatted.</exception>
+		/// <exception cref="FaultException{QueryFailedFault}">Thrown when the query fails.</exception>
 		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
 		{
 			IList<StudyRootStudyIdentifier> results = _client.StudyQuery(queryCriteria);
@@ -115,6 +152,11 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			return results;
 		}
 
+		/// <summary>
+		/// Performs a SERIES level query.
+		/// </summary>
+		/// <exception cref="FaultException{DataValidationFault}">Thrown when some part of the data in the request is poorly formatted.</exception>
+		/// <exception cref="FaultException{QueryFailedFault}">Thrown when the query fails.</exception>
 		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
 		{
 			IList<SeriesIdentifier> results = _client.SeriesQuery(queryCriteria);
@@ -124,6 +166,11 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			return results;
 		}
 
+		/// <summary>
+		/// Performs an IMAGE level query.
+		/// </summary>
+		/// <exception cref="FaultException{DataValidationFault}">Thrown when some part of the data in the request is poorly formatted.</exception>
+		/// <exception cref="FaultException{QueryFailedFault}">Thrown when the query fails.</exception>
 		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
 		{
 			IList<ImageIdentifier> results = _client.ImageQuery(queryCriteria);
@@ -135,6 +182,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		#endregion
 
+		/// <summary>
+		/// Performs the appropriate query given the input <see cref="DicomAttributeCollection"/>, based
+		/// on the value of the QueryRetrieveLevel attribute.
+		/// </summary>
 		public IList<DicomAttributeCollection> Query(DicomAttributeCollection queryCriteria)
 		{
 			Platform.CheckForNullReference(queryCriteria, "queryCriteria");
@@ -158,6 +209,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 				delegate(T id) { return id.ToDicomAttributeCollection(); });
 		}
 
+		/// <summary>
+		/// Implementation of the Dispose pattern.
+		/// </summary>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -172,6 +226,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Disposes this instance.
+		/// </summary>
 		public void Dispose()
 		{
 			try

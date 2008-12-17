@@ -84,6 +84,14 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 						fault.Description = message;
 						throw new FaultException<QueryFailedFault>(fault, fault.Description);
 					}
+					if (scu.Status == ScuOperationStatus.AssociationRejected)
+					{
+						String message = String.Format("Association rejected ({0})",
+													   scu.FailureDescription ?? "no failure description provided");
+						QueryFailedFault fault = new QueryFailedFault();
+						fault.Description = message;
+						throw new FaultException<QueryFailedFault>(fault, fault.Description);
+					}
 					if (scu.Status == ScuOperationStatus.Failed)
 					{
 						String message = String.Format("The query operation failed ({0})",
@@ -100,6 +108,21 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 						fault.Description = message;
 						throw new FaultException<QueryFailedFault>(fault, fault.Description);
 					}
+					if (scu.Status == ScuOperationStatus.NetworkError)
+					{
+						String message = String.Format("An unexpected network error has occurred.");
+						QueryFailedFault fault = new QueryFailedFault();
+						fault.Description = message;
+						throw new FaultException<QueryFailedFault>(fault, fault.Description);
+					}
+					if (scu.Status == ScuOperationStatus.UnexpectedMessage)
+					{
+						String message = String.Format("An unexpected message was received; aborted association.");
+						QueryFailedFault fault = new QueryFailedFault();
+						fault.Description = message;
+						throw new FaultException<QueryFailedFault>(fault, fault.Description);
+					}
+
 				}
 				catch (FaultException)
 				{

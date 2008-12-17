@@ -101,36 +101,51 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 					if (base.Status == ScuOperationStatus.Canceled)
 					{
-						OnRetrieveError(String.Format("The C-MOVE operation was cancelled ({0}).", RemoteAE));
+						OnRetrieveError(String.Format("The Move operation was cancelled ({0}).", RemoteAE));
 					}
 					else if (base.Status == ScuOperationStatus.ConnectFailed)
 					{
 						OnRetrieveError(String.Format("Unable to connect to remote server ({0}: {1}).",
 							RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
+					else if (base.Status == ScuOperationStatus.AssociationRejected)
+					{
+						OnRetrieveError(String.Format("Association rejected ({0}: {1}).",
+							RemoteAE, base.FailureDescription ?? "no failure description provided"));
+					}
 					else if (base.Status == ScuOperationStatus.Failed)
 					{
-						OnRetrieveError(String.Format("The C-MOVE operation failed ({0}: {1}).",
+						OnRetrieveError(String.Format("The Move operation failed ({0}: {1}).",
 							RemoteAE, base.FailureDescription ?? "no failure description provided"));
 					}
 					else if (base.Status == ScuOperationStatus.TimeoutExpired)
 					{
-						//When the scu hasn't received a progress update for the period of the timeout,
-						//we end up showing this message.  Some SCPs won't even send progress, so you
-						//would see this message constantly.
-
-						//OnRetrieveError(String.Format("The connection timeout has expired ({0}: {1}).",
-						//    RemoteAE, base.FailureDescription ?? "no failure description provided"));
+						//ignore, because this is the scu, we don't want users to think an error has occurred
+						//in retrieving.
+					}
+					else if (base.Status == ScuOperationStatus.UnexpectedMessage)
+					{
+						//ignore, because this is the scu, we don't want users to think an error has occurred
+						//in retrieving.
+					}
+					else if (base.Status == ScuOperationStatus.NetworkError)
+					{
+						//ignore, because this is the scu, we don't want users to think an error has occurred
+						//in retrieving.
 					}
 				}
 				catch (Exception e)
 				{
-					string message = String.Format("C-MOVE operation failed: {0}:{1}:{2} -> {3}",
-										base.RemoteAE, base.RemoteHost, base.RemotePort, base.ClientAETitle);
-					Platform.Log(LogLevel.Error, e, message);
-
-					OnRetrieveError(String.Format("C-MOVE operation failed: {0}:{1}:{2} -> {3}; {4}",
-										base.RemoteAE, base.RemoteHost, base.RemotePort, base.ClientAETitle, e.Message));
+					if (base.Status == ScuOperationStatus.ConnectFailed)
+					{
+						OnRetrieveError(String.Format("Unable to connect to remote server ({0}: {1}).",
+							RemoteAE, base.FailureDescription ?? "no failure description provided"));
+					}
+					else
+					{
+						OnRetrieveError(String.Format("An unexpected error has occurred in the Move Scu: {0}:{1}:{2} -> {3}; {4}",
+						                              base.RemoteAE, base.RemoteHost, base.RemotePort, base.ClientAETitle, e.Message));
+					}
 				}
 				finally
 				{

@@ -2,6 +2,9 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
+	/// <summary>
+	/// Query identifier for a study.
+	/// </summary>
 	[DataContract(Namespace = QueryNamespace.Value)]
 	public class StudyIdentifier : Identifier
 	{
@@ -21,10 +24,16 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		#region Public Constructors
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public StudyIdentifier()
 		{
 		}
 
+		/// <summary>
+		/// Creates an instance of <see cref="StudyIdentifier"/> from a <see cref="DicomAttributeCollection"/>.
+		/// </summary>
 		public StudyIdentifier(DicomAttributeCollection attributes)
 			: base(attributes)
 		{
@@ -34,11 +43,17 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		#region Public Properties
 
+		/// <summary>
+		/// Gets the level of the query - STUDY.
+		/// </summary>
 		public override string QueryRetrieveLevel
 		{
 			get { return "STUDY"; }
 		}
 
+		/// <summary>
+		/// Gets or sets the Study Instance Uid of the identified study.
+		/// </summary>
 		[DicomField(DicomTags.StudyInstanceUid, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = true)]
 		public string StudyInstanceUid
@@ -47,6 +62,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _studyInstanceUid = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the modalities in the identified study.
+		/// </summary>
 		[DicomField(DicomTags.ModalitiesInStudy, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public string[] ModalitiesInStudy
@@ -55,6 +73,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _modalitiesInStudy = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the study description of the identified study.
+		/// </summary>
 		[DicomField(DicomTags.StudyDescription, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public string StudyDescription
@@ -63,6 +84,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _studyDescription = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the study id of the identified study.
+		/// </summary>
 		[DicomField(DicomTags.StudyId, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public string StudyId
@@ -71,6 +95,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _studyId = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the study date of the identified study.
+		/// </summary>
 		[DicomField(DicomTags.StudyDate, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public string StudyDate
@@ -79,6 +106,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _studyDate = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the study time of the identified study.
+		/// </summary>
 		[DicomField(DicomTags.StudyTime, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public string StudyTime
@@ -87,6 +117,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _studyTime = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the accession number of the identified study.
+		/// </summary>
 		[DicomField(DicomTags.AccessionNumber, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public string AccessionNumber
@@ -95,6 +128,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _accessionNumber = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the number of series belonging to the identified study.
+		/// </summary>
 		[DicomField(DicomTags.NumberOfStudyRelatedSeries, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public int? NumberOfStudyRelatedSeries
@@ -103,6 +139,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _numberOfStudyRelatedSeries = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the number of composite object instances belonging to the identified study.
+		/// </summary>
 		[DicomField(DicomTags.NumberOfStudyRelatedInstances, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public int? NumberOfStudyRelatedInstances

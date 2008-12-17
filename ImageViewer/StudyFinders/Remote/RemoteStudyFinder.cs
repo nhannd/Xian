@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
 			string combinedFilter = requestCollection[DicomTags.ModalitiesInStudy];
 
-			try
+			try 
 			{
 				foreach (string modalityFilter in modalityFilters) 
 				{
@@ -154,6 +154,12 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 								scu.FailureDescription ?? "no failure description provided");
 							throw new DicomException(message);
 						}
+						else if (scu.Status == ScuOperationStatus.AssociationRejected)
+						{
+							String message = String.Format(SR.MessageFormatAssociationRejected,
+								scu.FailureDescription ?? "no failure description provided");
+							throw new DicomException(message);
+						}
 						if (scu.Status == ScuOperationStatus.Failed)
 						{
 							String message = String.Format(SR.MessageFormatQueryOperationFailed,
@@ -165,6 +171,14 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 							String message = String.Format(SR.MessageFormatConnectTimeoutExpired,
 								scu.FailureDescription ?? "no failure description provided");
 							throw new DicomException(message);
+						}
+						if (scu.Status == ScuOperationStatus.NetworkError)
+						{
+							throw new DicomException(SR.MessageUnexpectedNetworkError);
+						}
+						if (scu.Status == ScuOperationStatus.UnexpectedMessage)
+						{
+							throw new DicomException(SR.MessageUnexpectedMessage);
 						}
 
 						//if this function returns true, it means that studies came back whose 

@@ -480,7 +480,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			FailureDescription = String.Format("Association Rejection when {0} connected to remote AE {1}", association.CallingAE, association.CalledAE);
 			Platform.Log(LogLevel.Info, FailureDescription);
-			StopRunningOperation(ScuOperationStatus.Failed);
+			StopRunningOperation(ScuOperationStatus.AssociationRejected);
 		}
 
 		/// <summary>
@@ -501,7 +501,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			{
 				Platform.Log(LogLevel.Error, ex, "Error aborting association");
 			}
-			StopRunningOperation(ScuOperationStatus.Failed);
+			StopRunningOperation(ScuOperationStatus.UnexpectedMessage);
 			throw new Exception("The method or operation is not implemented.");
 		}
 
@@ -527,7 +527,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			FailureDescription = String.Format( "Unexpected association abort received from {0} to {1}", association.CallingAE, association.CalledAE);
 			Platform.Log(LogLevel.Info, FailureDescription);
-			StopRunningOperation(ScuOperationStatus.Failed);
+			StopRunningOperation(ScuOperationStatus.UnexpectedMessage);
 		}
 
 		/// <summary>
@@ -538,9 +538,28 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="e">The e.</param>
 		public void OnNetworkError(DicomClient client, ClientAssociationParameters association, Exception e)
 		{
-			FailureDescription = String.Format("Unexpected network error");
-			Platform.Log(LogLevel.Info, FailureDescription);
-			StopRunningOperation(ScuOperationStatus.Failed);
+			//TODO: right now this method gets called in timeout and abort situations.  Should add
+			// the appropriate methods to the IDicomClientHandler to address this.
+
+			//We don't want to blow away other failure descriptions (e.g. the OnDimseTimeout one).
+			if (Status == ScuOperationStatus.Running)
+				FailureDescription = String.Format("Unexpected network error");
+
+			if (client._state == DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
+			{
+				//When this state is set and an error occurs, an appropriate message has already been logged in the client.
+			}
+			else
+			{
+				Platform.Log(LogLevel.Info, FailureDescription);
+			}
+
+			//We don't want to blow away the OnDimseTimeout 'TimeoutExpired' status.
+			ScuOperationStatus stopStatus = Status;
+			if (stopStatus == ScuOperationStatus.Running)
+				stopStatus = ScuOperationStatus.NetworkError;
+
+			StopRunningOperation(stopStatus);
 		}
 
 		/// <summary>
@@ -623,11 +642,11 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// </summary>
 		Running = 1,
 		/// <summary>
-		/// 
+		/// Dimse timeout expired.
 		/// </summary>
 		TimeoutExpired = 2,
 		/// <summary>
-		/// 
+		/// The scu operation was cancelled.
 		/// </summary>
 		Canceled = 3,
 		///<summary>
@@ -638,5 +657,17 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// A connection failure occured
 		/// </summary>
 		ConnectFailed = 5,
+		/// <summary>
+		/// The association was rejected.
+		/// </summary>
+		AssociationRejected = 6,
+		/// <summary>
+		/// An unexpected network error occurred.
+		/// </summary>
+		NetworkError = 7,
+		/// <summary>
+		/// An unexpected message was received and the association was aborted.
+		/// </summary>
+		UnexpectedMessage = 8
 	}
 }

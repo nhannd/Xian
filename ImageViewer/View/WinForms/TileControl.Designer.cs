@@ -50,6 +50,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         {
             if (disposing)
             {
+            	_tilesToRepaint.Remove(this);
+
 				DisposeSurface();
 
 				if (components != null)

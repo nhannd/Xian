@@ -2,6 +2,9 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Dicom.ServiceModel.Query
 {
+	/// <summary>
+	/// Study Root Query identifier for a study.
+	/// </summary>
 	[DataContract(Namespace = QueryNamespace.Value)]
 	public class StudyRootStudyIdentifier : StudyIdentifier
 	{
@@ -17,10 +20,16 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		#region Public Constructors
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		public StudyRootStudyIdentifier()
 		{
 		}
 
+		/// <summary>
+		/// Creates an instance of <see cref="StudyRootStudyIdentifier"/> from a <see cref="DicomAttributeCollection"/>.
+		/// </summary>
 		public StudyRootStudyIdentifier(DicomAttributeCollection attributes)
 			: base(attributes)
 		{
@@ -30,6 +39,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 
 		#region Public Properties
 
+		/// <summary>
+		/// Gets or sets the patient id of the identified study.
+		/// </summary>
 		[DicomField(DicomTags.PatientId, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public string PatientId
@@ -38,6 +50,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _patientId = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the patient's name for the identified study.
+		/// </summary>
 		[DicomField(DicomTags.PatientsName, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public string PatientsName
@@ -46,6 +61,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _patientsName = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the patient's birth date for the identified study.
+		/// </summary>
 		[DicomField(DicomTags.PatientsBirthDate, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public string PatientsBirthDate
@@ -54,6 +72,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _patientsBirthDate = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the patient's birth time for the identified study.
+		/// </summary>
 		[DicomField(DicomTags.PatientsBirthTime, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public string PatientsBirthTime
@@ -62,6 +83,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			set { _patientsBirthTime = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the patient's sex for the identified study.
+		/// </summary>
 		[DicomField(DicomTags.PatientsSex, CreateEmptyElement = true, SetNullValueIfEmpty = true)]
 		[DataMember(IsRequired = false)]
 		public string PatientsSex

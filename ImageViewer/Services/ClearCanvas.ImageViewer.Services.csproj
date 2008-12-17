@@ -39,6 +39,7 @@
     <Compile Include="Automation\ViewerAutomationBridge.cs" />
     <Compile Include="Automation\DataContracts.cs" />
     <Compile Include="Automation\IViewerAutomation.cs" />
+    <Compile Include="Automation\ViewerAutomationServiceClient.cs" />
     <Compile Include="DataContracts.cs" />
     <Compile Include="DicomServer\DataContracts.cs" />
     <Compile Include="DicomServer\DicomServerConfigurationHelper.cs" />

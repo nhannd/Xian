@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -42,6 +43,7 @@ using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Rendering;
 using MessageBox=ClearCanvas.Desktop.View.WinForms.MessageBox;
+using System.Collections;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -61,6 +63,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private IRenderingSurface _surface;
 		private IMouseButtonHandler _currentMouseButtonHandler;
 		private CursorWrapper _currentCursorWrapper;
+
+		[ThreadStatic] private static bool _drawing = false;
+		[ThreadStatic] private static bool _painting = false;
+		[ThreadStatic] private static readonly List<TileControl> _tilesToRepaint = new List<TileControl>();
 
 		#endregion
 
@@ -147,25 +153,28 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.Size = new Size(right - left, bottom - top);
 			this.ResumeLayout(false);
 		}
-		
-		public void Draw()
+
+    	public void Draw()
 		{
 			CodeClock clock = new CodeClock();
 			clock.Start();
 
-			System.Drawing.Graphics graphics = this.CreateGraphics();
-
 			if (this.Surface != null)
 			{
+				System.Drawing.Graphics graphics = this.CreateGraphics();
+
 				this.Surface.WindowID = this.Handle;
 				this.Surface.ContextID = graphics.GetHdc();
 				this.Surface.ClientRectangle = this.ClientRectangle;
 				this.Surface.ClipRectangle = this.ClientRectangle;
 
-				DrawArgs args = new DrawArgs(
-					this.Surface,
+				DrawArgs args = new DrawArgs(this.Surface,
 					new WinFormsScreenProxy(System.Windows.Forms.Screen.FromControl(this)),
 					ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
+
+				string errorMessage = null;
+
+				_drawing = true;
 
 				try
 				{
@@ -173,14 +182,24 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				}
 				catch (Exception ex)
 				{
-					MessageBox mb = new MessageBox();
-					mb.Show(ex.Message);
+					errorMessage = ex.Message;
 				}
+				finally
+				{
+					_drawing = false;
+					
+					graphics.ReleaseHdc(this.Surface.ContextID);
+					graphics.Dispose();
 
-				graphics.ReleaseHdc(this.Surface.ContextID);
-				graphics.Dispose();
+					if (errorMessage != null)
+					{
+						MessageBox mb = new MessageBox();
+						mb.Show(errorMessage);
+					}
+				}
 			}
 
+			//Cause the tile to paint/refresh.
 			Invalidate();
 			Update();
 
@@ -214,15 +233,49 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			DisposeSurface();
 		}
 
-		protected override void OnPaint(PaintEventArgs e)
+		private bool IsVistaOrLater()
 		{
-			// Make sure tile gets blacked out if there's
-			// no presentation image in it
+			return Environment.OSVersion.Version.Major >= 6;
+		}
+
+    	protected override void OnPaint(PaintEventArgs e)
+		{
+			//Assume anything Vista or later has the same issues.
+			if (IsVistaOrLater())
+			{
+				//Windows Vista is opportunistic when it comes to wait conditions (e.g. locks, Mutexes, etc)
+				//in that it will actually process WM_PAINT messages on the current thread, even though
+				//it is supposed to be blocking in a WaitSleepJoin state.  This behaviour can actually
+				//break rendering for a couple of reasons:
+				//  1. We do custom double-buffering, and it's possible that we could process a paint message
+				//     for an image that hasn't actually been rendered to the back buffer yet.
+				//  2. The renderer itself accesses the pixel data of the ImageSops, which is a synchronized operation.
+				//     In the case where 2 threads try to load the pixel data of an image simultaneously, the renderer can end up
+				//     blocking execution on the main UI thread in the middle of a rendering operation.  If we
+				//     allow another tile to paint in this situation, it actually causes some GDI errors because
+				//     the previous rendering operation has not yet completed.
+				if (_drawing || _painting)
+				{
+					e.Graphics.Clear(Color.Black);
+
+					//Queue this tile up for deferred painting and return.
+					if (!_tilesToRepaint.Contains(this))
+						_tilesToRepaint.Add(this);
+
+					return;
+				}
+
+				//We're about to paint this tile, so remove it from the queue.
+				_tilesToRepaint.Remove(this);
+			}
+
 			if (_tile.PresentationImage == null)
 				DisposeSurface();
 
 			if (this.Surface == null)
 			{
+				// Make sure tile gets blacked out if there's
+				// no presentation image in it
 				e.Graphics.Clear(Color.Black);
 			}
 			else
@@ -232,10 +285,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				this.Surface.ClientRectangle = this.ClientRectangle;
 				this.Surface.ClipRectangle = e.ClipRectangle;
 
-				DrawArgs args = new DrawArgs(
-					this.Surface,
+				DrawArgs args = new DrawArgs(this.Surface,
 					new WinFormsScreenProxy(System.Windows.Forms.Screen.FromControl(this)),
 					ClearCanvas.ImageViewer.Rendering.DrawMode.Refresh);
+
+				string errorMessage = null;
+
+				_painting = true;
 
 				try
 				{
@@ -243,11 +299,32 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				}
 				catch (Exception ex)
 				{
-					MessageBox mb = new MessageBox();
-					mb.Show(ex.Message);
+					errorMessage = ex.Message;
 				}
+				finally
+				{
+					_painting = false;
+					e.Graphics.ReleaseHdc(this.Surface.ContextID);
 
-				e.Graphics.ReleaseHdc(this.Surface.ContextID);
+					if (errorMessage != null)
+					{
+						MessageBox mb = new MessageBox();
+						mb.Show(errorMessage);
+					}
+				}
+			}
+
+			// Now that we've finished painting this tile, we can process the deferred paint jobs.
+			// The code below is self-fulfilling, in that we remove one tile from the queue and
+			// invalidate it, causing it to paint.  When it's done painting, it will remove and
+			// invalidate the next one, and so on.
+			if (IsVistaOrLater() && _tilesToRepaint.Count > 0)
+			{
+				TileControl tileToRepaint = _tilesToRepaint[0];
+				_tilesToRepaint.RemoveAt(0);
+
+				tileToRepaint.Invalidate();
+				tileToRepaint.Update();
 			}
 
 			//base.OnPaint(e);
