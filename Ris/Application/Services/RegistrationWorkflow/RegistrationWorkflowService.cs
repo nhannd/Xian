@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request)
         {
-        	List<Procedure> proceduresNotCheckedIn = GetProcedureNotCheckedIn(request.OrderRef);
+        	List<Procedure> proceduresNotCheckedIn = GetProceduresEligibleForCheckIn(request.OrderRef);
 
             ProcedureAssembler assembler = new ProcedureAssembler();
             return new GetDataForCheckInTableResponse(
@@ -155,20 +155,21 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 				return false;
 
 			// the worklist item may represent a patient without an order,
-            // in which case there is no order to check-in
+            // in which case there are no procedures to check-in
             if(itemKey.OrderRef == null)
                 return false;
 
-        	return GetProcedureNotCheckedIn(itemKey.OrderRef).Count > 0;
+        	return GetProceduresEligibleForCheckIn(itemKey.OrderRef).Count > 0;
         }
 
-		private List<Procedure> GetProcedureNotCheckedIn(EntityRef orderRef)
+		private List<Procedure> GetProceduresEligibleForCheckIn(EntityRef orderRef)
 		{
 			Order order = PersistenceContext.Load<Order>(orderRef, EntityLoadFlags.Proxy);
 			return CollectionUtils.Select(order.Procedures,
 						delegate(Procedure p)
 						{
-							return p.ProcedureCheckIn.IsPreCheckIn;
+							return p.ProcedureCheckIn.IsPreCheckIn 
+                                && !p.IsTerminated; // bug 3415: procedure must not be cancelled or completed
 						});
 		}
 
