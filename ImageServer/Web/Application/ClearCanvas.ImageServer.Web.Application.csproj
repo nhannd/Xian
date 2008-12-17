@@ -601,6 +601,13 @@
     <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\TierMigrationWorkQueueDetailsView.ascx.cs">
+      <DependentUpon>TierMigrationWorkQueueDetailsView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\WorkQueue\Edit\TierMigrationWorkQueueDetailsView.ascx.designer.cs">
+      <DependentUpon>TierMigrationWorkQueueDetailsView.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDeleted.aspx.cs">
       <DependentUpon>WorkQueueItemDeleted.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1141,6 +1148,7 @@
     <EmbeddedResource Include="Pages\Queues\RestoreQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\RestoreQueue\Default.aspx" />
     <Content Include="Pages\Queues\RestoreQueue\SearchPanel.ascx" />
+    <Content Include="Pages\Queues\WorkQueue\Edit\TierMigrationWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\WorkQueueItemDeleted.aspx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\WebEditStudyWorkQueueDetailsView.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Edit\GeneralWorkQueueDetailsView.ascx" />
@@ -1196,6 +1204,7 @@
     <Content Include="Scripts\CodeMirror\js\parsexml.js" />
     <Content Include="Scripts\CodeMirror\js\select.js" />
     <Content Include="Scripts\CodeMirror\js\stringstream.js" />
+    <Content Include="Scripts\CodeMirror\js\tokenize.js" />
     <Content Include="Scripts\CodeMirror\js\tokenizejavascript.js" />
     <Content Include="Scripts\CodeMirror\js\undo.js" />
     <Content Include="Scripts\CodeMirror\js\util.js" />
