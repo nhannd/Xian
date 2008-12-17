@@ -101,6 +101,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             }
         }
 
+        public ModalDialog ScheduleWorkQueueItemModalDialog
+        {
+            get { return ModalDialog; }
+        }
+
         #endregion Public Properties
 
         #region Events
@@ -131,8 +136,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 			WorkQueueItemListPanel.DataSourceCreated += delegate(WorkQueueDataSource source)
 														{
 															source.SearchKeys = WorkQueueKeys;
-														};
-       
+														};       
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -230,59 +234,60 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 if (toBeUpdatedList.Count>0)
                 {
                     DateTime newScheduleTime = Platform.Time;
-                    if (WorkQueueSettingsPanel.NewScheduledDateTime!=null)
-                    {
-                        newScheduleTime = WorkQueueSettingsPanel.NewScheduledDateTime.Value;
-                    }
 
-                    if (newScheduleTime < Platform.Time)
-                    {
-                        MessageDialog.MessageType =
-                                MessageBox.MessageTypeEnum.ERROR;
-                        MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_MustBeInFuture;
-                        MessageDialog.Show();
-                        ModalDialog.Show(); 
-            
-                    }
-                    else
-                    {
-                        DateTime expirationTime = newScheduleTime.AddSeconds(WorkQueueSettings.Default.WorkQueueExpireDelaySeconds);
-
-                        WorkQueuePriorityEnum priority = WorkQueueSettingsPanel.SelectedPriority;
-
-                        try
+                        if (WorkQueueSettingsPanel.NewScheduledDateTime != null && WorkQueueSettingsPanel.ScheduleNow == false)
                         {
-                            WorkQueueController controller = new WorkQueueController();
-                            bool result = controller.RescheduleWorkQueueItems(toBeUpdatedList, newScheduleTime, expirationTime, priority);
-                            if (result)
+                            newScheduleTime = WorkQueueSettingsPanel.NewScheduledDateTime.Value;
+                        }
+
+                        if (newScheduleTime < Platform.Time && WorkQueueSettingsPanel.ScheduleNow == false)
+                        {
+                            MessageDialog.MessageType =
+                                MessageBox.MessageTypeEnum.ERROR;
+                            MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_MustBeInFuture;
+                            MessageDialog.Show();
+                            ModalDialog.Show();
+                        }
+                        else
+                        {
+                            DateTime expirationTime =
+                                newScheduleTime.AddSeconds(WorkQueueSettings.Default.WorkQueueExpireDelaySeconds);
+
+                            WorkQueuePriorityEnum priority = WorkQueueSettingsPanel.SelectedPriority;
+
+                            try
                             {
-                                if (WorkQueueUpdated != null)
-                                    WorkQueueUpdated(toBeUpdatedList);
+                                WorkQueueController controller = new WorkQueueController();
+                                bool result =
+                                    controller.RescheduleWorkQueueItems(toBeUpdatedList, newScheduleTime, expirationTime,
+                                                                        priority);
+                                if (result)
+                                {
+                                    if (WorkQueueUpdated != null)
+                                        WorkQueueUpdated(toBeUpdatedList);
+                                }
+                                else
+                                {
+                                    Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user");
+                                    MessageDialog.MessageType =
+                                        MessageBox.MessageTypeEnum.ERROR;
+                                    MessageDialog.Message = "Unable to reschedule this/these work queue items";
+                                    MessageDialog.Show();
+                                }
                             }
-                            else
+                            catch (Exception e)
                             {
-                                Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user");
+                                Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user : {0}",
+                                             e.StackTrace);
+
                                 MessageDialog.MessageType =
                                     MessageBox.MessageTypeEnum.ERROR;
-                                MessageDialog.Message = "Unable to reschedule this/these work queue items";
+                                MessageDialog.Message =
+                                    String.Format(App_GlobalResources.SR.WorkQueueRescheduleFailed_Exception, e.Message);
                                 MessageDialog.Show();
                             }
                         }
-                        catch (Exception e)
-                        {
-                            Platform.Log(LogLevel.Error, "Unable to reschedule work queue items for user : {0}", e.StackTrace);
-
-                            MessageDialog.MessageType =
-                                    MessageBox.MessageTypeEnum.ERROR;
-                            MessageDialog.Message =
-                                String.Format(App_GlobalResources.SR.WorkQueueRescheduleFailed_Exception, e.Message);
-                            MessageDialog.Show();
-                        }    
-                    }
-
-                    
-                }
-                
+                    }               
             }
         }
 
@@ -347,6 +352,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     MessageBox.MessageTypeEnum.INFORMATION;
                 MessageDialog.Show();    
             }
+
+            WorkQueueSettingsPanel.ScheduleNow = false;
             
             Display();
 

@@ -49,6 +49,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         #endregion
 
+        public Edit.ScheduleWorkQueueDialog ScheduleWorkQueueItemDialog
+        {
+            get { return this.ScheduleWorkQueueDialog; }
+        }
+
         #region Protected Methods
 
         protected void Page_Load(object sender, EventArgs e)

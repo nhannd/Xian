@@ -48,17 +48,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             get
             {
                 return (DateTime?) ViewState[ClientID + "_NewScheduledDateTime"];
-                //return CalendarExtender.SelectedDate;
             }
             set
             {
                 ViewState[ClientID + "_NewScheduledDateTime"] = value;
                 CalendarExtender.SelectedDate = value;
                 NewScheduleDate.Text = value == null ? string.Empty : value.Value.ToString(CalendarExtender.Format);
-                if (value != null)
+                if (value != null && ScheduleNowCheckBox.Checked == false)
                 {
                     AddCustomTime(value.Value);
                 }
+            }
+        }
+
+        public bool ScheduleNow
+        {
+            get { return (Boolean)ViewState[ClientID + "_ScheduleNow"]; }
+            set { ViewState[ClientID + "_ScheduleNow"] = value;
+                ScheduleNowCheckBox.Checked = value;
             }
         }
 
@@ -73,17 +80,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         public void AddCustomTime(DateTime time)
         {
             string timeValue = time.ToString("hh:mm tt");
-            if (DefaultTimeList.FindByValue(timeValue)==null)
-            {
-                NewScheduleTimeDropDownList.Items.Clear();
-                foreach (ListItem item in DefaultTimeList)
-                    NewScheduleTimeDropDownList.Items.Add(item);
 
-                ListItem newItem = new ListItem(timeValue, timeValue);
-                NewScheduleTimeDropDownList.Items.Add(newItem);
-            }
-
-            NewScheduleTimeDropDownList.SelectedValue = timeValue;
+            NewScheduleTime.Text = timeValue;
         }
 
         /// <summary>
@@ -120,10 +118,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             base.OnInit(e);
 
-            ListItemCollection defaultList = DefaultTimeList;
-            foreach(ListItem item in defaultList)
-                NewScheduleTimeDropDownList.Items.Add(item);
-
             CalendarExtender.Format = DateTimeFormatter.DefaultDateFormat;
 
             PriorityDropDownList.Items.Clear();
@@ -132,6 +126,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             {
                 PriorityDropDownList.Items.Add(new ListItem(priority.Description, priority.Lookup));
             }
+
+            ScheduleNowCheckBox.Checked = false;
+            NewScheduleDate.Enabled = true;
+            NewScheduleTime.Enabled = true;
+
+            WorkQueueSettingsUpdatePanel.Update();
+
+        }
+
+        protected void ScheduleNow_CheckChanged(object sender, EventArgs arg)
+        {
+            ScheduleNow = ScheduleNowCheckBox.Checked;
+
+            if(ScheduleNow)
+            {
+                NewScheduleDate.Enabled = false;
+                NewScheduleTime.Enabled = false;
+            } else
+            {
+                NewScheduleDate.Enabled = true;
+                NewScheduleTime.Enabled = true;
+            }
+
+           WorkQueueSettingsUpdatePanel.Update();
 
         }
 
@@ -153,7 +171,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 {
                     DateTime dt = DateTime.ParseExact(NewScheduleDate.Text, CalendarExtender.Format, null);
 
-                    DateTime time = DateTime.ParseExact(NewScheduleTimeDropDownList.Text, "hh:mm tt", null);
+                    DateTime time = DateTime.Now; 
+                    
+                    if(NewScheduleTime.Text.Contains("_") == false)
+                    {
+                        try
+                        {
+                            time = DateTime.ParseExact(NewScheduleTime.Text, "hh:mm tt", null);
+                        }catch(Exception e)
+                        {
+                            //Ignore this exception since the time is not fully typed in or in an incorrect format,
+                            //that will be validated when the user presses apply.
+                        }
+                    }
 
                     NewScheduledDateTime = dt.Add(time.TimeOfDay);
 
@@ -162,8 +192,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 else
                 {
                     NewScheduledDateTime = null;
-                }
+                }                
             }
+
+            NewScheduleDate.Enabled = true;
+            NewScheduleTime.Enabled = true;
 
             base.DataBind();
         }

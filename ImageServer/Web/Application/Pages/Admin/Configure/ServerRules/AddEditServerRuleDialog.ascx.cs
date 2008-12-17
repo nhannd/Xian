@@ -261,20 +261,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                 RsltElem.value = result;
 
             }
-            
+           
             function pageLoad(){
                 $find('" + ModalDialog.PopupExtenderID + @"').add_shown(HighlightXML);
             }
 
             function HighlightXML() {
-                var editor = CodeMirror.fromTextArea('" + RuleXmlTextBox.ClientID + @"', {parserfile: 'parsexml.js',path: '../../../Scripts/CodeMirror/js/', stylesheet: '../../../Scripts/CodeMirror/css/xmlcolors.css', continuousScanning: 500  });
+                var editor = CodeMirror.fromTextArea('" + RuleXmlTextBox.ClientID + @"', {parserfile: 'parsexml.js',path: '../../../../Scripts/CodeMirror/js/', stylesheet: '../../../../Scripts/CodeMirror/css/xmlcolors.css', continuousScanning: 500  });
             }
   
             </script>";
 
 			Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, javascript);
 
-            Page.ClientScript.RegisterClientScriptInclude(GetType(), "CodeMirrorLibrary", "../../../Scripts/CodeMirror/js/codemirror.js");
+            Page.ClientScript.RegisterClientScriptInclude(GetType(), "CodeMirrorLibrary", "../../../../Scripts/CodeMirror/js/codemirror.js");
 
             EditServerRuleValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditServerRuleValidationError;
 		}

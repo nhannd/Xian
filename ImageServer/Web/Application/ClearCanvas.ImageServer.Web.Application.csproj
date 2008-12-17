@@ -92,6 +92,13 @@
     <Compile Include="Controls\EmptySearchResultsMessage.ascx.designer.cs">
       <DependentUpon>EmptySearchResultsMessage.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\JQuery.ascx.cs">
+      <DependentUpon>JQuery.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\JQuery.ascx.designer.cs">
+      <DependentUpon>JQuery.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\MessageBox.ascx.cs">
       <DependentUpon>MessageBox.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -986,6 +993,7 @@
     <Content Include="App_Themes\Default\images\Header\MenuHoverBackground.png" />
     <Content Include="App_Themes\Default\images\Indicators\IdeographicName.gif" />
     <Content Include="App_Themes\Default\images\Indicators\AutoRouteFeature.png" />
+    <Content Include="App_Themes\Default\images\Indicators\MenuArrow.gif" />
     <Content Include="App_Themes\Default\images\Indicators\QueryFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\RetrieveFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\Searching.gif" />
@@ -1034,6 +1042,7 @@
     <Content Include="App_Themes\Default\StyleSheets\WorkQueue.css" />
     <Content Include="Controls\CheckJavascript.ascx" />
     <Content Include="Controls\EmptySearchResultsMessage.ascx" />
+    <Content Include="Controls\JQuery.ascx" />
     <Content Include="Controls\MessageBox.ascx" />
     <Content Include="Controls\GridPager.ascx" />
     <Content Include="Controls\InvalidInputIndicator.ascx" />
@@ -1182,6 +1191,8 @@
     <Content Include="Scripts\CodeMirror\js\util.js" />
     <Content Include="Scripts\CodeMirror\LICENSE.txt" />
     <Content Include="Scripts\ErrorHandling.js" />
+    <Content Include="Scripts\jquery\jquery-1.2.6.min.js" />
+    <Content Include="Scripts\jquery\jquery.maskedinput.js" />
     <Content Include="Scripts\NumberFormat154.js" />
     <Content Include="GlobalMasterPage.master" />
     <Content Include="App_Themes\Default\Global.skin" />

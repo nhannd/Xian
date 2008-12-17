@@ -4,15 +4,14 @@
 <%@ Register Src="WorkQueueSettingsPanel.ascx" TagName="WorkQueueSettingsPanel" TagPrefix="localAsp" %>
 <%@ Register Src="../WorkQueueGridView.ascx" TagName="WorkQueueItemListPanel" TagPrefix="localAsp" %>
 
-<ccAsp:ModalDialog id="ModalDialog" runat="server" title="Schedule Work Queue Item" Width="800px">
+<ccAsp:ModalDialog id="ModalDialog" runat="server" title="Schedule Work Queue Item" Width="900px">
 <ContentTemplate>
    
     <asp:Panel ID="Panel1" runat="server" CssClass="DialogPanelContent" width="100%">
         
         <localAsp:WorkQueueItemListPanel ID="WorkQueueItemListPanel" runat="server" />
-        <asp:Panel runat="server" style="background-color: #eeeeee; margin: 3px;text-align: center"><center>
-            <localAsp:WorkQueueSettingsPanel  ID="WorkQueueSettingsPanel" runat="server" />   
-        </center>
+        <asp:Panel runat="server" style="border-top: solid 1px #CCCCCC; padding-top: 3px; text-align: center; padding-top: 5px; padding-bottom: 5px;">
+            <localAsp:WorkQueueSettingsPanel  ID="WorkQueueSettingsPanel" runat="server" />           
         </asp:Panel>
        
     </asp:Panel>

@@ -37,7 +37,7 @@ using System.Web.Services;
 using System.Xml;
 using ClearCanvas.ImageServer.Rules;
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Configure.ServerRules
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules
 {
 	/// <summary>
 	/// Summary description for ServerRuleSamples

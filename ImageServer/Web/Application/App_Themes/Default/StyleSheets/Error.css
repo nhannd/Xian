@@ -96,3 +96,9 @@ font-family: sans-serif;
     color: #FF0000;
     border: solid 1px #ff0000;
 }
+
+.InvalidTextEntered
+{
+    background: #FFFF99;
+    border: solid 1px red;
+}

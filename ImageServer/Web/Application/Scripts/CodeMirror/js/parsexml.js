@@ -122,7 +122,7 @@ var XMLParser = Editor.Parser = (function() {
     }
 
     return function(source, startState) {
-      return tokenizer(source, startState || inText);
+        return tokenizer(source, startState || inText);
     };
   })();
 
