@@ -242,13 +242,21 @@ namespace ClearCanvas.ImageServer.Common
                     return true;
                 }
 
-                else
-                    return false;
+                if (p1.AuditDeleteStudy != p2.AuditDeleteStudy)
+                {
+                    return true;
+                }
+
+                // nothing has changed
+                return false;
+
             }
             else
             {
+                // this is new partition
                 return true;
             }
+
         }
 		#endregion
 

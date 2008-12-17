@@ -66,12 +66,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
             Platform.CheckForNullReference(context.Study, "context.Study");
             _context = context;
 
-            // TODO: Load from configuration
-            _enabled = true;
+
+            _enabled = context.ServerPartition.AuditDeleteStudy;
         }
 
         public void OnStudyDeleting()
         {
+            if (!Enabled)
+            {
+                return;
+            }
+
             StudyStorageLocation storage = _context.StorageLocation;
             IList < ArchiveStudyStorage> archives = StudyStorageLocation.GetArchiveLocations(storage.GetKey());
             if (archives!=null && archives.Count>0)
@@ -119,6 +124,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
 
         public void OnStudyDeleted()
         {
+            if (!Enabled)
+            {
+                return;
+            }
+
             if (_context.WorkQueueItem.WorkQueueTypeEnum == WorkQueueTypeEnum.WebDeleteStudy)
             {
                 Study study = _context.Study;
