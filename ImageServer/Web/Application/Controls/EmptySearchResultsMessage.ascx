@@ -4,6 +4,7 @@
     <asp:Label runat="server" ID="ResultsMessage" Text = "No items found using the provided criteria." />
     <p></p>
     <asp:Panel runat="server"  ID="SuggestionPanel" HorizontalAlign="center">
+    <center>
         <table  class="EmptySearchResultsSuggestionPanel">
 	        <tr align="left">
 	        <td class="EmptySearchResultsSuggestionPanelHeader">
@@ -15,7 +16,7 @@
 	        </td>
 	        </tr>
 	    </table>
-        
+        </center>
     </asp:Panel>
     
 </asp:Panel>
