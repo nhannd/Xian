@@ -58,6 +58,12 @@
     <Compile Include="Folders\TranscriptionWorkflowFolders.cs" />
     <Compile Include="PatientSearchTool.cs" />
     <Compile Include="PerformedProcedureDicomSeriesComponent.cs" />
+    <Compile Include="PreliminaryDiagnosisSettings.cs" />
+    <Compile Include="PreliminaryDiagnosisSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PreliminaryDiagnosisSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ProtocollingComponentWorklistItemManager.cs" />
     <Compile Include="ProtocollingOrderDetailViewComponent.cs" />
     <Compile Include="ProtocolWorkflowItemTool.cs" />
@@ -211,6 +217,10 @@
     <None Include="DowntimeSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DowntimeSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PreliminaryDiagnosisSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PreliminaryDiagnosisSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ProtocollingSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

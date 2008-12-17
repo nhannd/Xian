@@ -73,8 +73,10 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
+				OrderNoteConversationComponent component = new OrderNoteConversationComponent(this.OrderRef, this.OrderNoteCategories);
+				component.Body = this.InitialNoteText;
 				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow,
-					new OrderNoteConversationComponent(this.OrderRef, this.OrderNoteCategories),
+					component,
 					GetTitle());
 				OnDialogClosed(exitCode);
 			}
@@ -86,6 +88,11 @@ namespace ClearCanvas.Ris.Client
 
 		protected virtual void OnDialogClosed(ApplicationComponentExitCode exitCode)
 		{
+		}
+
+		protected virtual string InitialNoteText
+		{
+			get { return ""; }
 		}
 
 		private string GetTitle()

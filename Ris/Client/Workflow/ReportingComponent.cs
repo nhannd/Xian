@@ -636,9 +636,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 						MrnFormat.Format(this.WorklistItem.Mrn),
 						AccessionFormat.Format(this.WorklistItem.AccessionNumber));
 
-					if (PreliminaryDiagnosis.ShowConversationDialog(this.WorklistItem.OrderRef, title, this.Host.DesktopWindow)
-						== ApplicationComponentExitCode.None)
-						return;   // user cancelled out
+					if (ApplicationComponentExitCode.None == PreliminaryDiagnosis.ShowConversationDialog(
+							this.WorklistItem.OrderRef, 
+							title, 
+							this.Host.DesktopWindow, 
+							PreliminaryDiagnosisSettings.Default.DefaultReviewText))
+					{
+						return; // user cancelled out
+					}
 				}
 
 				if (_canCompleteInterpretationAndVerify)

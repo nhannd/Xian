@@ -229,9 +229,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 					MrnFormat.Format(item.Mrn),
 					AccessionFormat.Format(item.AccessionNumber));
 
-				if (PreliminaryDiagnosis.ShowConversationDialog(item.OrderRef, title, this.Context.DesktopWindow)
-					== ApplicationComponentExitCode.None)
-					return false;   // user cancelled out
+				if (ApplicationComponentExitCode.None == PreliminaryDiagnosis.ShowConversationDialog(
+						item.OrderRef,
+						title,
+						this.Context.DesktopWindow,
+						PreliminaryDiagnosisSettings.Default.DefaultReviewText))
+				{
+					return false; // user cancelled out
+				}
 			}
 
 			if (item.ProcedureStepName == StepType.Transcription || item.ProcedureStepName == StepType.TranscriptionReview)

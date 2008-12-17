@@ -51,6 +51,5 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return new string[] { OrderNoteCategory.PreliminaryDiagnosis.Key }; }
 		}
-		
 	}
 }
