@@ -101,5 +101,10 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { SubCriteria["MatchPatientsSex"] = new ProcedureParameter<bool>("MatchPatientsSex", value); }
         }
+
+        public bool AuditDeleteStudy
+        {
+            set { SubCriteria["AuditDeleteStudy"] = new ProcedureParameter<bool>("AuditDeleteStudy", value); }
+        }
     }
 }

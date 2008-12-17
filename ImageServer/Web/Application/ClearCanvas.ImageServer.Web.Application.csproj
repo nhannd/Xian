@@ -78,6 +78,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Titles.resx</DependentUpon>
     </Compile>
+    <Compile Include="App_GlobalResources\Tooltips.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Tooltips.resx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CheckJavascript.ascx.cs">
       <DependentUpon>CheckJavascript.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1047,6 +1052,11 @@
     <Content Include="Controls\GridPager.ascx" />
     <Content Include="Controls\InvalidInputIndicator.ascx" />
     <Content Include="Controls\ModalDialog.ascx" />
+    <Content Include="App_GlobalResources\Tooltips.resx">
+      <SubType>Designer</SubType>
+      <Generator>GlobalResourceProxyGenerator</Generator>
+      <LastGenOutput>Tooltips.Designer.cs</LastGenOutput>
+    </Content>
     <EmbeddedResource Include="Controls\PersonNameInputPanel.js" />
     <Content Include="Controls\PersonNameInputPanel.ascx" />
     <Content Include="Controls\SectionPanel.ascx" />

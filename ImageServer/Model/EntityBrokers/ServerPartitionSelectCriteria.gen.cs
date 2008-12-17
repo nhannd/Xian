@@ -63,6 +63,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["AeTitle"];
             } 
         }
+        public ISearchCondition<System.Boolean> AuditDeleteStudy
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("AuditDeleteStudy"))
+              {
+                 SubCriteria["AuditDeleteStudy"] = new SearchCondition<System.Boolean>("AuditDeleteStudy");
+              }
+              return (ISearchCondition<System.Boolean>)SubCriteria["AuditDeleteStudy"];
+            } 
+        }
         public ISearchCondition<System.Boolean> AutoInsertDevice
         {
             get

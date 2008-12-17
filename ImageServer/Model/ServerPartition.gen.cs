@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Model
         #region Private Members
         private System.Boolean _acceptAnyDevice;
         private System.String _aeTitle;
+        private System.Boolean _auditDeleteStudy;
         private System.Boolean _autoInsertDevice;
         private System.Int32 _defaultRemotePort;
         private System.String _description;
@@ -77,6 +78,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _aeTitle; }
         set { _aeTitle = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AuditDeleteStudy")]
+        public System.Boolean AuditDeleteStudy
+        {
+        get { return _auditDeleteStudy; }
+        set { _auditDeleteStudy = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AutoInsertDevice")]
         public System.Boolean AutoInsertDevice

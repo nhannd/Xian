@@ -271,6 +271,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
             Partition.MatchPatientsSex = MatchPatientSex.Checked;
             Partition.MatchAccessionNumber = MatchAccessionNumber.Checked;
             Partition.MatchIssuerOfPatientId = MatchIssuer.Checked;
+            Partition.AuditDeleteStudy = AuditDeleteStudyCheckBox.Checked;
         }
 
         #endregion Private Methods

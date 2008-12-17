@@ -48,6 +48,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["AeTitle"] = new EntityUpdateColumn<System.String>("AeTitle", value); }
         }
+        public System.Boolean AuditDeleteStudy
+        {
+            set { SubParameters["AuditDeleteStudy"] = new EntityUpdateColumn<System.Boolean>("AuditDeleteStudy", value); }
+        }
         public System.Boolean AutoInsertDevice
         {
             set { SubParameters["AutoInsertDevice"] = new EntityUpdateColumn<System.Boolean>("AutoInsertDevice", value); }

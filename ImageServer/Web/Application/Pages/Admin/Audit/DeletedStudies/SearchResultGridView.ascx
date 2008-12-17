@@ -35,15 +35,24 @@
                             </itemtemplate>
 						</asp:TemplateField>
 						<asp:BoundField DataField="StudyDescription" HeaderText="Description" HeaderStyle-HorizontalAlign="Center"
-							ItemStyle-HorizontalAlign="Center" /><%--
-						<asp:BoundField DataField="StudyInstanceUid" HeaderText="Study Instance Uid" HeaderStyle-HorizontalAlign="Center"
-							ItemStyle-HorizontalAlign="Center" />--%>
+							ItemStyle-HorizontalAlign="Center" />
 				        <asp:BoundField DataField="PartitionAE" HeaderText="Partition" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
 					    
 					</Columns>
 					<EmptyDataTemplate>				    
-                        <ccAsp:EmptySearchResultsMessage runat="server" ID="EmptySearchResultsMessage" Message="No studies were found using the provided criteria." />
+					<ccAsp:EmptySearchResultsMessage runat="server" ID="NoResultFoundMessage" Message="No studies found using the provided criteria.">
+						<SuggestionTemplate>					
+						    <ul>
+	                            <li>Modify your search criteria.</li>
+	                            <li>
+	                                <asp:LinkButton runat="server" PostBackUrl="~/Pages/Admin/Configure/ServerPartitions/Default.aspx" 
+	                                        CssClass="EmptySearchResultsSuggestionContent">Check if audit is turned on for all partitions.</asp:LinkButton>
+	                            </li>
+	                        </ul>	    
+						</SuggestionTemplate>
+					</ccAsp:EmptySearchResultsMessage>
+					
 					</EmptyDataTemplate>
 					<RowStyle CssClass="GlobalGridViewRow" />
 					<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />

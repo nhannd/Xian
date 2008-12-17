@@ -1,5 +1,9 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions.AddEditPartitionDialog"
     Codebehind="AddEditPartitionDialog.ascx.cs" %>
+    
+<script type="text/javascript">
+
+</script>
 
 <ccAsp:ModalDialog ID="ModalDialog" runat="server">
     <ContentTemplate>
@@ -204,6 +208,22 @@
                     <HeaderTemplate>
                         Study Matching
                     </HeaderTemplate>
+                </aspAjax:TabPanel>
+                <aspAjax:TabPanel ID="TabPanel3" runat="server" HeaderText="<%$ Resources:Titles, Audit %>" CssClass="DialogTabControl">
+                    <ContentTemplate>
+                        <asp:Panel ID="Panel5" runat="server" CssClass="DialogTabPanelContent" >
+                            <table width="100%">
+                            <tr>
+                                <td>
+                                    <asp:CheckBox ID="AuditDeleteStudyCheckBox" runat="server" Text="Study Deletion" CssClass="DialogCheckBox" 
+                                            ToolTip="<%$ Resources:Tooltips, ServerPartitionAddEditDialog_AuditDeleteStudy %>"/>
+                                </td>
+                            </tr>
+                        </table>
+                        </asp:Panel>
+                    
+                    </ContentTemplate>
+                    
                 </aspAjax:TabPanel>
             </aspAjax:TabContainer>
         </asp:Panel>

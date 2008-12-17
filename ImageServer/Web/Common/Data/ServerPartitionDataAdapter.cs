@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 parms.MatchAccessionNumber = partition.MatchAccessionNumber;
                 parms.MatchIssuerOfPatientId = partition.MatchIssuerOfPatientId;
                 parms.MatchPatientsSex = partition.MatchPatientsSex;
-                
+                parms.AuditDeleteStudy = partition.AuditDeleteStudy;
                 try
                 {
                     ServerPartition insertPartition = insert.FindOne(parms);
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             parms.MatchAccessionNumber = partition.MatchAccessionNumber;
             parms.MatchIssuerOfPatientId = partition.MatchIssuerOfPatientId;
             parms.MatchPatientsSex = partition.MatchPatientsSex;
-
+            parms.AuditDeleteStudy = partition.AuditDeleteStudy;
 
             return Update(partition.Key, parms);
         }
