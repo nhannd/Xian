@@ -679,10 +679,10 @@ Preview.ReportingProceduresTable = function () {
 			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
 				 [
-					{   label: "Image Availability",
-						cellType: "html",
-						getValue: function(item) { return "<img class='alert' src='" + imagePath + "/" + _getImageAvailabilityIcon(item.ImageAvailability) + "' alt='" + item.ImageAvailability.Value + "'/>"; }
-					},
+					// {   label: "Image Availability",
+						// cellType: "html",
+						// getValue: function(item) { return "<img class='alert' src='" + imagePath + "/" + _getImageAvailabilityIcon(item.ImageAvailability) + "' alt='" + item.ImageAvailability.Value + "'/>"; }
+					// },
 					{   label: "Procedure",
 						cellType: "text",
 						getValue: function(item) { return Ris.formatProcedureName(item); }

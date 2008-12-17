@@ -4,7 +4,7 @@ using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
-	[ExtensionOf(typeof(ShredExtensionPoint))]
+	//[ExtensionOf(typeof(ShredExtensionPoint))]
 	public class ImageAvailabilityShred : RisShredBase
 	{
 		public ImageAvailabilityShred()
