@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                     delegate(CheckInOrderTableEntry entry) { return ProcedureFormat.Format(entry.Procedure); }, 1.0f));
             this.Columns.Add(
                 new TableColumn<CheckInOrderTableEntry, string>(SR.ColumnTime,
-                delegate(CheckInOrderTableEntry entry) { return Format.Date(entry.Procedure.ScheduledStartTime); }, 0.5f));
+                delegate(CheckInOrderTableEntry entry) { return Format.DateTime(entry.Procedure.ScheduledStartTime); }, 0.5f));
             this.Columns.Add(
                 new TableColumn<CheckInOrderTableEntry, string>(SR.ColumnPerformingFacility,
                 delegate(CheckInOrderTableEntry entry) { return entry.Procedure.PerformingFacility.Name; }, 0.5f));
