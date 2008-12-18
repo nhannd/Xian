@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -265,56 +266,50 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			WorklistItemSearchCriteria[] whereExcludePatient = WorklistItemSearchCriteriaUtility.Exclude(where, "PatientProfile");
 				
 			// search for worklist items, delegating the task of designing the query to the subclass
-			List<TItem> worklistItems = new List<TItem>();
-
 			if (whereSelectPatient.Length > 0)
 			{
 				HqlProjectionQuery patientOnlyWorklistItemQuery = BuildWorklistItemSearchQuery(whereSelectPatient, false);
-				worklistItems = patientOnlyWorklistItemQuery != null ? DoQuery(patientOnlyWorklistItemQuery) : new List<TItem>();
-				results.AddRange(worklistItems);
+                if (patientOnlyWorklistItemQuery != null)
+                {
+                    results = MergeResults(results, DoQuery(patientOnlyWorklistItemQuery),
+                        delegate(TItem item) { return item.ProcedureRef; });
+                }
 			}
 
 			if (whereExcludePatient.Length > 0)
 			{
 				HqlProjectionQuery patientExcludedWorklistItemQuery = BuildWorklistItemSearchQuery(whereExcludePatient, false);
-				worklistItems = patientExcludedWorklistItemQuery != null ? DoQuery(patientExcludedWorklistItemQuery) : new List<TItem>();
-				results.AddRange(worklistItems);
+                if (patientExcludedWorklistItemQuery != null)
+                {
+                    results = MergeResults(results, DoQuery(patientExcludedWorklistItemQuery),
+                        delegate(TItem item) { return item.ProcedureRef; });
+                }
 			}
 
 			if (includeDegenerate)
 			{
-				// search for procedures, and add any procedures for which there is no worklist item
+				// search for procedures
 				List<TItem> procedures = new List<TItem>();
 				if (whereSelectPatient.Length > 0)
 				{
 					HqlProjectionQuery patientBasedProcedureQuery = BuildProcedureSearchQuery(whereSelectPatient, false);
-					procedures.AddRange(DoQuery(patientBasedProcedureQuery));
-				}
+                    results = MergeResults(results, DoQuery(patientBasedProcedureQuery),
+                        delegate(TItem item) { return item.ProcedureRef; });
+                }
 
 				if (whereExcludePatient.Length > 0)
 				{
 					HqlProjectionQuery patientExcludedProcedureQuery = BuildProcedureSearchQuery(whereExcludePatient, false);
-					procedures.AddRange(DoQuery(patientExcludedProcedureQuery));
-				}
+                    results = MergeResults(results, DoQuery(patientExcludedProcedureQuery),
+                        delegate(TItem item) { return item.ProcedureRef; });
+                }
 
-				foreach (TItem procedure in procedures)
-				{
-					if (!CollectionUtils.Contains(worklistItems,
-					                              delegate(TItem item)
-					                              { return item.ProcedureRef.Equals(procedure.ProcedureRef, true); }))
-						results.Add(procedure);
-				}
-
-				// add any patients for which there is no worklist item
-				worklistItems = new List<TItem>(results);
+                // search for patients
 				HqlProjectionQuery patientQuery = BuildPatientSearchQuery(where, false);
 				List<TItem> patients = DoQuery(patientQuery);
-				foreach (TItem patient in patients)
-				{
-					if (!CollectionUtils.Contains(worklistItems,
-					                              delegate(TItem item) { return item.PatientRef.Equals(patient.PatientRef, true); }))
-						results.Add(patient);
-				}
+
+                // add any patients for which there is no result
+                results = MergeResults(results, patients, delegate(TItem item) { return item.PatientRef; });
 			}
 
     		return results;
@@ -639,7 +634,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region Helpers
 
-		private HqlSelect[] GetWorklistItemProjection(WorklistTimeField timeField)
+        private HqlSelect[] GetWorklistItemProjection(WorklistTimeField timeField)
 		{
 			HqlSelect selectTime;
 			MapTimeFieldToHqlSelect(timeField, out selectTime);
@@ -725,6 +720,30 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected int DoQueryCount(HqlQuery query)
         {
             return (int)ExecuteHqlUnique<long>(query);
+        }
+
+        /// <summary>
+        /// Returns a new list containing all items in primary, plus any items in secondary that were not
+        /// already in primary according to the specified identity provider.  The arguments are not modified.
+        /// </summary>
+        /// <param name="primary"></param>
+        /// <param name="secondary"></param>
+        /// <param name="identityProvider"></param>
+        /// <returns></returns>
+        private static List<TItem> MergeResults(List<TItem> primary, List<TItem> secondary,
+            Converter<TItem, EntityRef> identityProvider)
+        {
+            // note that we do not modify the arguments
+            List<TItem> merged = new List<TItem>(primary);
+            foreach (TItem s in secondary)
+            {
+                if (!CollectionUtils.Contains(primary,
+                     delegate(TItem p) { return identityProvider(s).Equals(identityProvider(p), true); }))
+                {
+                    merged.Add(s);
+                }
+            }
+            return merged;
         }
 
         #endregion

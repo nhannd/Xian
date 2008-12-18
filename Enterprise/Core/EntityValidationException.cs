@@ -39,11 +39,12 @@ namespace ClearCanvas.Enterprise.Core
 {
     public class EntityValidationException : Exception
     {
-        private TestResultReason[] _reasons;
+    	private readonly string _message;
+        private readonly TestResultReason[] _reasons;
 
         public EntityValidationException(string message, TestResultReason[] reasons)
-            :base(message)
         {
+        	_message = message;
             _reasons = reasons;
         }
 
@@ -52,26 +53,26 @@ namespace ClearCanvas.Enterprise.Core
         {
         }
 
+		public override string Message
+		{
+			get
+			{
+				List<string> messages = new List<string>();
+				foreach (TestResultReason reason in _reasons)
+					messages.AddRange(BuildMessageStrings(reason));
+
+				if (messages.Count > 0)
+				{
+					return _message + "\n" + StringUtilities.Combine(messages, "\n");
+				}
+				else
+					return _message;
+			}
+		}
+
         public TestResultReason[] Reasons
         {
             get { return _reasons; }
-        }
-
-        public string MessageVerbose
-        {
-            get
-            {
-                List<string> messages = new List<string>();
-                foreach (TestResultReason reason in _reasons)
-                    messages.AddRange(BuildMessageStrings(reason));
-
-                if (messages.Count > 0)
-                {
-                    return this.Message + "\n" + StringUtilities.Combine<string>(messages, "\n");
-                }
-                else
-                    return this.Message;
-            }
         }
 
         private static List<string> BuildMessageStrings(TestResultReason reason)

@@ -4,20 +4,9 @@
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.RegexIsMatch" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
 
-  <!-- RisClient specific postbuild step -->
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	</PropertyGroup>
-
-  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Oto.Executable'">
-    <RisClientBuild>false</RisClientBuild>
-    <OtoBuild>true</OtoBuild>
-  </PropertyGroup>
-
-  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Desktop.Executable'">
-    <RisClientBuild>true</RisClientBuild>
-    <OtoBuild>false</OtoBuild>
-  </PropertyGroup>
 
   <PropertyGroup>
 		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>		
@@ -25,76 +14,15 @@
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
     <CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
     <JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
-    <OtoScriptDirectory>$(DistributionDirectory)\oto\scripts</OtoScriptDirectory>
   </PropertyGroup>
-
-  <Choose>
-    <When Condition=" '$(Options)' == '' ">
-      <PropertyGroup>
-        <OptionsFlags>None</OptionsFlags>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <OptionsFlags>$(Options)</OptionsFlags>
-      </PropertyGroup>
-    </Otherwise>
-  </Choose>
 
   <ItemGroup>
 		<ConfigFiles Include="$(SolutionDir)\Workflow\actionmodels.xml" />
 	</ItemGroup>
 
   <ItemGroup>
-    <UhnSharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Uhn\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Common.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <UhnClientModuleFiles Include="$(SolutionDir)\Uhn\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.dll" />
-    <UhnClientModuleFiles Include="$(SolutionDir)\Uhn\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.View.WinForms.dll" />
-  </ItemGroup>
-  <ItemGroup>
-    <EFilmAutomationClientModuleFiles Include="$(SolutionDir)\Uhn\EFilmViewerIntegration\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.EFilmViewerIntegration.dll" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(OtoBuild)">
-    <OtoCommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\DotNetMagic2005.DLL" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$(OtoBuild)">
-    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
-    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Configuration\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.dll" />
-    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.View.WinForms.dll" />
-    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.View.WinForms.dll" />
-    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Help\bin\$(Configuration)\ClearCanvas.Desktop.Help.dll" />
-    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\ExtensionBrowser\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.dll" />
-    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Desktop\ExtensionBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Oto\bin\$(Configuration)\ClearCanvas.Oto.dll" />
-    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Oto\Ide\bin\$(Configuration)\ClearCanvas.Oto.Ide.dll" />
-    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Oto\Ide\View\WinForms\bin\$(Configuration)\ClearCanvas.Oto.Ide.View.WinForms.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <OtoScripts Include="$(TrunkDirectory)\Oto\scripts\*.js" />
-    <OtoScripts Include="$(SolutionDir)\Oto\scripts\*.js" />
-  </ItemGroup>
-
-  <ItemGroup>
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
-    <!--<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Fax\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Common.dll" />-->
-    <SharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Applets\Scintilla\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.dll" />
-    <SharedLibraryFiles Include="$(TrunkDirectory)\Desktop\Applets\Scintilla\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Applets.Scintilla.View.WinForms.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\ScintillaNet.dll" />
-    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer32.dll" />
-    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\ScintillaNet\SciLexer64.dll" />
-    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Dymo\Interop.Dymo.dll" />
-    <CommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Dymo\Interop.StdType.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -104,9 +32,6 @@
     <ClientModuleFiles Include="$(SolutionDir)\Admin\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" />
 	  <ClientModuleFiles Include="$(SolutionDir)\Workflow\bin\$(Configuration)\ClearCanvas.Ris.Client.Workflow.dll" />
 	  <ClientModuleFiles Include="$(SolutionDir)\Workflow\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Workflow.View.WinForms.dll" />
-    <!--<ClientModuleFiles Include="$(SolutionDir)\Fax\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\Fax\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Fax.View.WinForms.dll" />-->
-    <ClientModuleFiles Include="$(SolutionDir)\Oto\bin\$(Configuration)\ClearCanvas.Ris.Client.Oto.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -118,39 +43,11 @@
     <AppConfigSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
   </ItemGroup>
 
-  <Target Condition="$(RisClientBuild)" Name="AppConfigs">
+  <Target Name="AppConfigs">
     <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
   </Target>
 
-  <Target Name="Copy Uhn Files" >
-    <Copy SourceFiles="@(UhnSharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-    <Copy SourceFiles="@(UhnClientModuleFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-  </Target>
-
-  <Target Name="Copy Oto Files" >
-    <Copy SourceFiles="@(OtoCommonFiles)" DestinationFolder="$(CommonDirectory)" ContinueOnError="true" />
-    <Copy SourceFiles="@(OtoSharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-    <Copy SourceFiles="@(OtoScripts)" DestinationFolder="$(OtoScriptDirectory)" ContinueOnError="true" />
-  </Target>
-
-  <Target Name="Copy EFilm Automation Files" >
-    <Copy SourceFiles="@(EFilmAutomationClientModuleFiles)" DestinationFolder="$(PluginsDirectory)" />
-  </Target>
-
-  <Target Name="Copy Optional Files">
-
-    <RegexIsMatch Pattern="ExcludeUhn" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="ExcludeUhn" />
-    </RegexIsMatch>
-    <RegexIsMatch Pattern="ExcludeEFilmAutomation" Input="$(OptionsFlags)" >
-      <Output TaskParameter="IsMatch" PropertyName="ExcludeEFilmAutomation" />
-    </RegexIsMatch>
-
-    <CallTarget Condition="!$(ExcludeUhn)" Targets="Copy Uhn Files" />
-    <CallTarget Condition="!$(ExcludeEFilmAutomation)" Targets="Copy EFilm Automation Files" />
-  </Target>
-  
-    <Target Name="CopyClientFiles" DependsOnTargets="AppConfigs;Copy Oto Files;Copy Optional Files">
+  <Target Name="CopyClientFiles" DependsOnTargets="AppConfigs">
 		<!-- Copy Client files -->
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
 		

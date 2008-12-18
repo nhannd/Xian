@@ -204,6 +204,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 			catch (Exception)
 			{
+				Platform.Log(LogLevel.Error, e);
 				desktopWindow.ShowMessageBox("Images cannot be opened.", MessageBoxActions.Ok);
 			}
 		}

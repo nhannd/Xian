@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Server
             // convert to RequestValidationException
             if (e is EntityValidationException)
             {
-                return new RequestValidationException(((EntityValidationException)e).MessageVerbose);
+                return new RequestValidationException(e.Message);
             }
 
             // no translation

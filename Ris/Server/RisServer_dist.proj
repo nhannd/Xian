@@ -4,34 +4,22 @@
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.CombineAppConfigs" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
   <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.RegexIsMatch" AssemblyFile="$(TrunkDirectory)\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
 
-  <!-- RisClient specific postbuild step -->
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	</PropertyGroup>
 
-  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Oto.Executable'">
-    <RisServerBuild>false</RisServerBuild>
-    <OtoBuild>true</OtoBuild>
-    <ShredHostBuild>false</ShredHostBuild>
-  </PropertyGroup>
-
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Ris.Server.Executable'">
     <RisServerBuild>true</RisServerBuild>
-    <OtoBuild>false</OtoBuild>
     <ShredHostBuild>false</ShredHostBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Server.ShredHostService'">
     <RisServerBuild>false</RisServerBuild>
-    <OtoBuild>false</OtoBuild>
     <ShredHostBuild>true</ShredHostBuild>
   </PropertyGroup>
 
   <PropertyGroup>
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
-		<OtoScriptDirectory>$(DistributionDirectory)\oto\scripts</OtoScriptDirectory>
-		<JscriptDirectory>$(SolutionDir)..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
-		<SetupDirectory>$(SolutionDir)setup</SetupDirectory>
 		<DicomDirectory>$(SolutionDir)..\..\Dicom</DicomDirectory>
 		<EnterpriseDirectory>$(SolutionDir)..\..\Enterprise</EnterpriseDirectory>
 		<WorkflowDirectory>$(SolutionDir)..\..\Workflow</WorkflowDirectory>
@@ -39,24 +27,17 @@
 		<HL7Directory>$(SolutionDir)..\..\HL7</HL7Directory>
 		<ReferencedAssembliesDirectory>$(SolutionDir)..\..\ReferencedAssemblies</ReferencedAssembliesDirectory>
 		<RisApplicationDirectory>$(SolutionDir)..\Application</RisApplicationDirectory>
-		<UhnModelDirectory>$(SolutionDir)..\..\Healthcare\Uhn</UhnModelDirectory>
-		<UhnApplicationDirectory>$(SolutionDir)..\Application\Uhn</UhnApplicationDirectory>
-		<FaxModelDirectory>$(SolutionDir)..\..\Healthcare\Fax</FaxModelDirectory>
-		<FaxApplicationDirectory>$(SolutionDir)..\Application\Fax</FaxApplicationDirectory>
-		<ShredHostDirectory>$(SolutionDir)..\..\Server\ShredHost</ShredHostDirectory>
+    <ShredHostDirectory>$(SolutionDir)..\..\Server\ShredHost</ShredHostDirectory>
 		<ShredHostServiceDirectory>$(SolutionDir)..\..\Server\ShredHostService</ShredHostServiceDirectory>
 		<RisShredsDirectory>$(SolutionDir)..\Shreds</RisShredsDirectory>
 		<TrunkDirectory>$(SolutionDir)..\..</TrunkDirectory>
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<ConfigFiles Include="$(SolutionDir)\..\Client\Workflow\actionmodels.xml" />
 		<ConfigFiles Include="$(HealthcareDirectory)\Hibernate\hibernate.cfg.xml" />
 	</ItemGroup>
 	
   <ItemGroup>
-    <EnterprisePluginFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
-
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
     <EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate1.2\Iesi.Collections.dll" />
@@ -73,10 +54,6 @@
     <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Authentication\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.Hibernate.dll" />
   </ItemGroup>
 
-  <ItemGroup Condition="!$(ShredHostBuild)">
-    <EnterprisePluginFiles Include="$(EnterpriseDirectory)\Oto\bin\$(Configuration)\ClearCanvas.Enterprise.Oto.dll" />
-  </ItemGroup>	
-	
 	<ItemGroup>
 		<ModelFiles Include="$(WorkflowDirectory)\bin\$(Configuration)\ClearCanvas.Workflow.dll" />
 		<ModelFiles Include="$(WorkflowDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Workflow.Hibernate.dll" />
@@ -86,24 +63,12 @@
 		<ModelFiles Include="$(HL7Directory)\Hibernate\bin\$(Configuration)\ClearCanvas.HL7.Hibernate.dll" />
 		<ModelFiles Include="$(HL7Directory)\NHapi\bin\$(Configuration)\ClearCanvas.HL7.Hapi.dll" />
 		<ModelFiles Include="$(ReferencedAssembliesDirectory)\NHapi.*" />
-	    <ModelFiles Include="$(UhnModelDirectory)\bin\$(Configuration)\ClearCanvas.Healthcare.Uhn.dll" />
-	    <ModelFiles Include="$(UhnModelDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Uhn.Hibernate.dll" />
-	    <ModelFiles Include="$(FaxModelDirectory)\bin\$(Configuration)\ClearCanvas.Healthcare.Fax.dll" />
-	    <ModelFiles Include="$(FaxModelDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Fax.Hibernate.dll" />
 	</ItemGroup>
 	
 	<ItemGroup>
 		<RisFiles Include="$(RisApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
 		<RisFiles Include="$(RisApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Services.dll" />
 		<RisFiles Include="$(SolutionDir)bin\$(Configuration)\ClearCanvas.Ris.Server.dll" />
-		<RisFiles Include="$(UhnApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Common.dll" />
-		<RisFiles Include="$(UhnApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Services.dll" />
-		<RisFiles Include="$(FaxApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Common.dll" />
-		<RisFiles Include="$(FaxApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Fax.Services.dll" />
-  </ItemGroup>
-
-  <ItemGroup Condition="!$(ShredHostBuild)">
-    <OtoSharedLibraryFiles Include="$(TrunkDirectory)\Oto\bin\$(Configuration)\ClearCanvas.Oto.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -113,29 +78,22 @@
     <RisFiles Include="$(RisShredsDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Shreds.dll" />
   </ItemGroup>
 
-  <ItemGroup Condition="!$(ShredHostBuild)">
-    <OtoScripts Include="$(EnterpriseDirectory)\Oto\scripts\*.js" />
-    <OtoScripts Include="$(TrunkDirectory)\Oto\scripts\*.js" />
-  </ItemGroup>
-  
   <ItemGroup>
-	<ShredHostAppConfigSourceFiles  Include="$(SolutionDir)\app.config" />
-	<ShredHostAppConfigSourceFiles  Include="$(ShredHostServiceDirectory)\app.config" />
+    <ShredHostAppConfigSourceFiles  Include="$(SolutionDir)\app.config" />
+    <ShredHostAppConfigSourceFiles  Include="$(ShredHostServiceDirectory)\app.config" />
   </ItemGroup>
 
   <ItemGroup>
-    <AppConfigSourceFiles Include="$(TrunkDirectory)\Oto\app.config" />
     <AppConfigSourceFiles Include="$(SolutionDir)\app.config" />
     <AppConfigSourceFiles Include="$(SolutionDir)\Executable\app.config" />
   </ItemGroup>
 
   <Target Name="AppConfigs" Condition="!$(ShredHostBuild)">
     <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Ris.Server.Executable.exe.config" />
-    <CombineAppConfigs SourceFiles="@(AppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Oto.Executable.exe.config" />
   </Target>
 
   <Target Name="ShredHostAppConfigs" Condition="$(ShredHostBuild)">
-	<CombineAppConfigs SourceFiles="@(ShredHostAppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
+  	<CombineAppConfigs SourceFiles="@(ShredHostAppConfigSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.Server.ShredHostService.exe.config" />
   </Target>
 
   <Target Name="CopyServerFiles" >
@@ -144,12 +102,10 @@
 		
 		<!-- Copy Server Plugin files -->
 		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" ContinueOnError="true" />
-		<Copy SourceFiles="@(EnterprisePluginFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+
+    <Copy SourceFiles="@(EnterprisePluginFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
 		<Copy SourceFiles="@(ModelFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
 		<Copy SourceFiles="@(RisFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-	    <Copy SourceFiles="@(OtoSharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
-	    <Copy SourceFiles="@(OtoExecutableFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
-	    <Copy SourceFiles="@(OtoScripts)" DestinationFolder="$(OtoScriptDirectory)" ContinueOnError="true" />
 	</Target>
 	
 </Project>

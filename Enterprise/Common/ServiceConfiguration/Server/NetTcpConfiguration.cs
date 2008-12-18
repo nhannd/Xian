@@ -31,6 +31,9 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 			binding.Security.Message.ClientCredentialType = args.Authenticated ?
 				MessageCredentialType.UserName : MessageCredentialType.None;
 
+			// turn off transport security altogether
+			binding.Security.Transport.ClientCredentialType = TcpClientCredentialType.None;
+
 			// establish endpoint
 			host.AddServiceEndpoint(args.ServiceContract, binding, "");
 

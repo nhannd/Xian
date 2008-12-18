@@ -89,7 +89,7 @@ namespace ClearCanvas.Enterprise.Core.Imex
             }
             catch(EntityValidationException e)
             {
-                Log(LogLevel.Error, e.MessageVerbose);
+                Log(LogLevel.Error, e.Message);
             }
             catch (Exception e)
             {

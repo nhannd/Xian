@@ -8,10 +8,6 @@
     <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Workflow" />
     <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Healthcare" ContinueOnError="true" />
     <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Healthcare" />
-    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Healthcare\Uhn" ContinueOnError="true" />
-    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Healthcare\Uhn" />
-    <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\Healthcare\Fax" ContinueOnError="true" />
-    <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\Healthcare\Fax" />
     <Exec Command="codegen-clean.bat" WorkingDirectory="..\..\HL7" ContinueOnError="true" />
     <Exec Command="codegen-gen.bat" WorkingDirectory="..\..\HL7" />
   </Target>

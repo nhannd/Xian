@@ -21,6 +21,11 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Client
             binding.Security.Mode = args.AuthenticationRequired ? SecurityMode.TransportWithMessageCredential : SecurityMode.Transport;
             binding.Security.Message.ClientCredentialType =
                 args.AuthenticationRequired ? MessageCredentialType.UserName : MessageCredentialType.None;
+
+			// turn off transport security altogether
+			binding.Security.Transport.ClientCredentialType = TcpClientCredentialType.None;
+
+
             binding.MaxReceivedMessageSize = args.MaxReceivedMessageSize;
 
             // allow individual string content to be same size as entire message
@@ -30,6 +35,7 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Client
             ChannelFactory channelFactory = (ChannelFactory)Activator.CreateInstance(args.ChannelFactoryClass, binding,
                 new EndpointAddress(args.ServiceUri));
             channelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = args.CertificateValidationMode;
+			channelFactory.Credentials.ServiceCertificate.Authentication.RevocationMode = args.RevocationMode;
 
             return channelFactory;
         }
