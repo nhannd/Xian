@@ -32,6 +32,8 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer;
+
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
@@ -156,6 +158,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			AddStudy(image);
 			AddSeries(image);
 			_sops[image.SopInstanceUID] = image;
+		}
+
+		/// <summary>
+		/// Adds the contents of a <see cref="KeyObjectSelectionSop"/> to the <see cref="StudyTree"/>.
+		/// </summary>
+		/// <remarks>
+		/// The visualization mode of a key object selection document in the <see cref="ImageViewerComponent"/>
+		/// is to realize each individual content item of the selection as separate SOPs and add each of these
+		/// to the study tree under a series prototyped by the key object selection document.
+		/// </remarks>
+		/// <param name="keyObjectSelection"></param>
+		internal void AddKeyObjectSelection(KeyObjectSelectionSop keyObjectSelection)
+		{
+			Platform.CheckForNullReference(keyObjectSelection, "keyObjectSelection");
+
+			foreach (KeyObjectSop keyObjectSop in keyObjectSelection.CreateImages())
+			{
+				AddImage(keyObjectSop);
+			}
 		}
 
 		private void AddPatient(ImageSop sop)

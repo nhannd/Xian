@@ -1,7 +1,7 @@
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Modules;
 
-namespace ClearCanvas.ImageViewer.KeyObjects
+namespace ClearCanvas.Dicom.Iod.Iods
 {
 	public class KeyObjectSelectionDocumentIod
 	{

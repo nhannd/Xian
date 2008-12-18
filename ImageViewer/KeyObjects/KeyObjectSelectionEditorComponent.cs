@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -91,10 +92,13 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			}
 		}
 
-		public string SeriesDescription {
+		public string SeriesDescription
+		{
 			get { return _seriesDescription; }
-			set {
-				if (_seriesDescription != value) {
+			set
+			{
+				if (_seriesDescription != value)
+				{
 					_seriesDescription = value;
 					base.NotifyPropertyChanged("SeriesDescription");
 					base.Modified = true;
@@ -156,6 +160,11 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		public void SaveDocument(string filename)
 		{
 			MakeDocument().Save(filename);
+		}
+
+		public static IEnumerable StandardDocumentTitles
+		{
+			get { return KeyObjectSelectionDocumentTitleContextGroup.Values; }
 		}
 	}
 }

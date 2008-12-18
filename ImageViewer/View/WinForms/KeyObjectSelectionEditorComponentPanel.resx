@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,13 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="mnCreateKeyObjectSelection" xml:space="preserve">
-    <value>Create Key Object Selection</value>
-  </data>
-  <data name="szCreateKeyObjectSelection" xml:space="preserve">
-    <value>Create Key Object Selection</value>
-  </data>
-  <data name="tipCreateKeyObjectSelection" xml:space="preserve">
-    <value>Creates a Key Object Selection document out of the clipboard contents</value>
+  <data name="label1.Text" xml:space="preserve">
+    <value>This tool is a prototype.
+It does not yet support the creation of cross-study key object selections, nor does it check for such a case.
+If you do put images from multiple studies on the clipboard and then run this tool, the resulting key object will be placed under one of those studies only.</value>
   </data>
 </root>

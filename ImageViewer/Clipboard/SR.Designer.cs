@@ -187,6 +187,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create Key Object Selection.
+        /// </summary>
+        internal static string MenuCreateKeyObjectSelection {
+            get {
+                return ResourceManager.GetString("MenuCreateKeyObjectSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete All.
         /// </summary>
         internal static string MenuDeleteAllClipboardItems {
@@ -457,6 +466,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create Key Object Selection.
+        /// </summary>
+        internal static string TitleCreateKeyObjectSelection {
+            get {
+                return ResourceManager.GetString("TitleCreateKeyObjectSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Creating Video.
         /// </summary>
         internal static string TitleCreatingVideo {
@@ -543,6 +561,15 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         internal static string ToolbarShowClipboard {
             get {
                 return ResourceManager.GetString("ToolbarShowClipboard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creates a Key Object Selection document out of the clipboard contents.
+        /// </summary>
+        internal static string TooltipCreateKeyObjectSelection {
+            get {
+                return ResourceManager.GetString("TooltipCreateKeyObjectSelection", resourceCulture);
             }
         }
         

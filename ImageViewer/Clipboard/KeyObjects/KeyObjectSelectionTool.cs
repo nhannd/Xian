@@ -2,14 +2,15 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Clipboard;
+using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.KeyObjects
+namespace ClearCanvas.ImageViewer.Clipboard.KeyObjects
 {
-	[MenuAction("activate", "clipboard-contextmenu/mnCreateKeyObjectSelection", "CreateKeyObjectSelection")]
-	[ButtonAction("activate", "clipboard-toolbar/szCreateKeyObjectSelection", "CreateKeyObjectSelection")]
-	[Tooltip("activate", "tipCreateKeyObjectSelection")]
-	[IconSet("activate", IconScheme.Colour, "Icons.CreateKO.png", "Icons.CreateKO.png", "Icons.CreateKO.png")]
+	[MenuAction("activate", "clipboard-contextmenu/MenuCreateKeyObjectSelection", "CreateKeyObjectSelection")]
+	[ButtonAction("activate", "clipboard-toolbar/TitleCreateKeyObjectSelection", "CreateKeyObjectSelection")]
+	[Tooltip("activate", "TooltipCreateKeyObjectSelection")]
+	[IconSet("activate", IconScheme.Colour, "Icons.CreateKeyObjectSelectionToolSmall.png", "Icons.CreateKeyObjectSelectionToolSmall.png", "Icons.CreateKeyObjectSelectionToolSmall.png")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	//
 	[ExtensionOf(typeof (ClipboardToolExtensionPoint))]
@@ -36,11 +37,16 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				}
 			}
 
-			ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(base.Context.DesktopWindow, new SimpleComponentContainer(component), SR.szCreateKeyObjectSelection);
+			ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(base.Context.DesktopWindow, new SimpleComponentContainer(component), SR.TitleCreateKeyObjectSelection);
 			if(result == ApplicationComponentExitCode.Accepted)
 			{
 				component.SaveToFile();
 			}
+		}
+
+		public override void Initialize() {
+			base.Initialize();
+			base.Enabled = (base.Context.ClipboardItems.Count > 0);
 		}
 
 		protected override void OnClipboardItemsChanged() {

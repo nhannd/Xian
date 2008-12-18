@@ -567,7 +567,14 @@ namespace ClearCanvas.ImageViewer
 
 				try
 				{
-					this.StudyTree.AddImage(image);
+					if(image.Modality == "KO")
+					{
+						this.StudyTree.AddKeyObjectSelection(new KeyObjectSelectionSop(image));
+					}
+					else
+					{
+						this.StudyTree.AddImage(image);
+					}
 				}
 				catch (Exception e)
 				{

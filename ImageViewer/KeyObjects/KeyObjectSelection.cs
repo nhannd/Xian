@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.ContextGroups;
+using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Macros.DocumentRelationship;
 using ClearCanvas.Dicom.Iod.Macros.HierarchicalSeriesInstanceReference;
@@ -52,7 +53,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 		public string SeriesDescription
 		{
-			get { return _seriesDescription;  }
+			get { return _seriesDescription; }
 			set { _seriesDescription = value; }
 		}
 
@@ -288,18 +289,6 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			}
 
 			return iod;
-		}
-
-		
-	}
-
-	public sealed class KeyObjectSelectionCodeSequences
-	{
-		public static readonly Code DocumentTitleModifier = new Code(113011, "Document Title Modifier");
-		public static readonly Code KeyObjectDescription = new Code(113012, "Key Object Description");
-
-		public sealed class Code : Dicom.Iod.ContextGroups.ContextGroupBase<Code>.ContextGroupItemBase {
-			internal Code(int codeValue, string codeMeaning) : base("DCM", codeValue.ToString(), codeMeaning) { }
 		}
 	}
 }

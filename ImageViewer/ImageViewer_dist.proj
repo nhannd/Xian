@@ -204,10 +204,6 @@
     <!-- Thumbnails -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Thumbnails\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Thumbnails\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.View.WinForms.dll" />
-
-    <!-- Key Objects -->
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\KeyObjects\bin\$(Configuration)\ClearCanvas.ImageViewer.KeyObjects.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\KeyObjects\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.KeyObjects.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">

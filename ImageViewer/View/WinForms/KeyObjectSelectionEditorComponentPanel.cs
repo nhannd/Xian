@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Windows.Forms;
-using ClearCanvas.Dicom.Iod.ContextGroups;
+using ClearCanvas.ImageViewer.KeyObjects;
 
-namespace ClearCanvas.ImageViewer.KeyObjects.View.WinForms
+namespace ClearCanvas.ImageViewer.View.WinForms
 {
 	public partial class KeyObjectSelectionEditorComponentPanel : UserControl
 	{
@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects.View.WinForms
 		{
 			InitializeComponent();
 
-			foreach (KeyObjectSelectionDocumentTitle title in KeyObjectSelectionDocumentTitle.ContextGroup)
+			foreach (object title in KeyObjectSelectionEditorComponent.StandardDocumentTitles)
 			{
 				cboTitle.Items.Add(title);
 			}

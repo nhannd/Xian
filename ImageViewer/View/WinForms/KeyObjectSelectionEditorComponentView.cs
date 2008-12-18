@@ -32,8 +32,9 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.KeyObjects;
 
-namespace ClearCanvas.ImageViewer.KeyObjects.View.WinForms
+namespace ClearCanvas.ImageViewer.View.WinForms
 {
 	/// <summary>
 	/// Provides a Windows Forms view onto <see cref="KeyObjectSelectionEditorComponent"/>.

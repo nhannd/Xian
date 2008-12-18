@@ -146,6 +146,9 @@
     <Compile Include="InteractiveGraphics\RoiCalloutLocationStrategy.cs" />
     <Compile Include="InteractiveGraphics\RoiTransformPolicy.cs" />
     <Compile Include="InteractiveGraphics\Tests\EllipseIntersectionTests.cs" />
+    <Compile Include="KeyObjects\KeyObjectSelection.cs" />
+    <Compile Include="KeyObjects\KeyObjectSelectionCodeSequences.cs" />
+    <Compile Include="KeyObjects\KeyObjectSelectionEditorComponent.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LoadStudyArgs.cs" />
     <Compile Include="Mathematics\Tests\MatrixTests.cs" />
@@ -245,6 +248,8 @@
     <Compile Include="StudyManagement\Frame.cs" />
     <Compile Include="StudyManagement\FrameCollection.cs" />
     <Compile Include="StudyManagement\IPrefetchingStrategy.cs" />
+    <Compile Include="StudyManagement\KeyObjectSelectionSop.cs" />
+    <Compile Include="StudyManagement\KeyObjectSop.cs" />
     <Compile Include="StudyManagement\NormalizedPixelSpacing.cs" />
     <Compile Include="StudyManagement\ImagePlaneHelper.cs" />
     <Compile Include="StudyManagement\FrameDataRetrieverFactory.cs" />

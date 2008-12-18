@@ -199,6 +199,7 @@
     <Compile Include="Iod\IodBase.cs" />
     <Compile Include="Iod\Iods\ImageIod.cs" />
     <Compile Include="Iod\Iods\ImageQueryIod.cs" />
+    <Compile Include="Iod\Iods\KeyObjectSelectionDocumentIod.cs" />
     <Compile Include="Iod\Iods\ModalityPerformedProcedureStepIod.cs" />
     <Compile Include="Iod\Iods\ModalityWorklistIod.cs" />
     <Compile Include="Iod\Iods\PatientQueryIod.cs" />
