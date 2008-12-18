@@ -1048,6 +1048,22 @@ namespace ClearCanvas.Dicom
             sequence.Fragments.Add(new DicomFragment(buffer));
         }
 
+		public void AddFrameFragment(ByteBuffer bb)
+		{
+			DicomFragmentSequence sequence = _sq;
+			if ((bb.Length % 2) == 1)
+				throw new DicomCodecException("Fragment being appended is incorrectly an odd length: " + bb.Length);
+
+			uint offset = 0;
+			foreach (DicomFragment fragment in sequence.Fragments)
+			{
+				offset += (8 + fragment.Length);
+			}
+			sequence.OffsetTable.Add(offset);
+
+			sequence.Fragments.Add(new DicomFragment(bb));
+		}
+
         public uint GetCompressedFrameSize(int frame)
         {
             List<DicomFragment> list = GetFrameFragments(frame);
