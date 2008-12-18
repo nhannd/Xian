@@ -154,6 +154,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 			base.Stop();
 		}
 
+        public override bool HasValidationErrors
+        {
+            get
+            {
+                return _protocolEditorComponentHost.Component.HasValidationErrors || base.HasValidationErrors;
+            }
+        }
+
+        public override void ShowValidation(bool show)
+        {
+            if (_protocolEditorComponentHost != null)
+            {
+                _protocolEditorComponentHost.Component.ShowValidation(show);
+            }
+            base.ShowValidation(show);
+        }
+
 		#endregion
 
 		private ReportingWorklistItem WorklistItem
