@@ -18,28 +18,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public abstract class ReportEditorComponentBase<TReportEditorContext, TCloseReason> : ApplicationComponent, IReportEditorComponent
 		where TReportEditorContext : IReportEditorContextBase<TCloseReason>
 	{
-		/// <summary>
-		/// Defines the schema of the report content JSML.  This data-contract is never sent to the server.
-		/// It is purely a local-contract for internal use by this component.
-		/// </summary>
-		[DataContract]
-		class ReportContent : DataContractBase
-		{
-			public ReportContent()
-			{
-			}
-
-			public ReportContent(string reportText)
-			{
-				this.ReportText = reportText;
-			}
-
-			/// <summary>
-			/// The free-text component of the report.
-			/// </summary>
-			[DataMember]
-			public string ReportText;
-		}
 
 		#region PreviewComponent
 
@@ -147,7 +125,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				// HACK: update the active ReportPart object with the structured report
 				// (this is solely for the benefit of the Preview component, it does not have any affect on what is ultimately saved)
 				ReportPartDetail activePart = _context.Report.GetPart(_context.ActiveReportPartIndex);
-				activePart.Content = JsmlSerializeReportContent(_reportContent);
+				activePart.Content = _reportContent.ToJsml();
 			}
 		}
 
@@ -160,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public virtual bool Save(TCloseReason reason)
 		{
-			_context.ReportContent = JsmlSerializeReportContent(_reportContent);
+			_context.ReportContent = _reportContent.ToJsml();
 			return true;
 		}
 
@@ -209,11 +187,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool IsAddendum
 		{
 			get { return _context.ActiveReportPartIndex > 0; }
-		}
-
-		private static string JsmlSerializeReportContent(ReportContent content)
-		{
-			return JsmlSerializer.Serialize(content, "Report", false);
 		}
 	}
 }

@@ -225,7 +225,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 						Dictionary<string, string> reportData = new Dictionary<string, string>();
 						if(_hasReport)
 						{
-							reportData[ReportPartDetail.ReportContentKey] = _reportText;
+							ReportContent content = new ReportContent(_reportText);
+							reportData[ReportPartDetail.ReportContentKey] = content.ToJsml();
 						}
 
 						service.CompleteDowntimeProcedure(
