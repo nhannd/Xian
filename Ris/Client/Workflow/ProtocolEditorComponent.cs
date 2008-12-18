@@ -95,6 +95,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private ReportingWorklistItem _worklistItem;
 
 		private List<EnumValueInfo> _protocolUrgencyChoices;
+		private readonly EnumValueInfo _protocolUrgencyNone = new EnumValueInfo(null, "(None)");
 
 		private ProtocolDetail _protocolDetail;
 		private string _proceduresText;
@@ -142,6 +143,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					{
 						GetProtocolFormDataResponse response = service.GetProtocolFormData(new GetProtocolFormDataRequest());
 						_protocolUrgencyChoices = response.ProtocolUrgencyChoices;
+						_protocolUrgencyChoices.Insert(0, _protocolUrgencyNone);
 
 						LoadWorklistItem(service);
 					});
@@ -214,6 +216,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 						}
 					}
 				}
+
+				NotifyPropertyChanged("Urgency");
 			}
 		}
 
@@ -296,15 +300,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				if (_protocolDetail != null &&
-					_protocolDetail.Urgency != null)
-				{
-					return _protocolDetail.Urgency.Value;
-				}
-				else
-				{
-					return null;
-				}
+				if (_protocolDetail == null || _protocolDetail.Urgency == null)
+					return _protocolUrgencyNone.Value;
+
+				return _protocolDetail.Urgency.Value;
 			}
 			set
 			{
@@ -397,67 +396,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		#endregion
 
 		#region Private Methods
-
-		//private void ProcedureSelectionChanged(ProtocolEditorProcedurePlanSummaryTableItem item)
-		//{
-		//    // Same selection, do nothing
-		//    if (item == _selectedProcodurePlanSummaryTableItem)
-		//    {
-		//        return;
-		//    }
-
-		//    ResetDocument();
-
-		//    // Ensure something is selected
-		//    if (item != null)
-		//    {
-		//        //Refresh protocol
-		//        try
-		//        {
-		//            Platform.GetService<IProtocollingWorkflowService>(
-		//                delegate(IProtocollingWorkflowService service)
-		//                    {
-		//                        // Load available protocol groups
-		//                        ListProtocolGroupsForProcedureRequest request = new ListProtocolGroupsForProcedureRequest(item.ProcedureDetail.ProcedureRef);
-		//                        ListProtocolGroupsForProcedureResponse response = service.ListProtocolGroupsForProcedure(request);
-
-		//                        _protocolGroupChoices = response.ProtocolGroups;
-		//                        //_protocolGroup = response.InitialProtocolGroup;
-		//                        _protocolGroup = GetInitialProtocolGroup(item);
-
-		//                        RefreshAvailableProtocolCodes(item.ProtocolDetail.Codes, service);
-
-		//                        // fill out selected item codes
-		//                        _selectedProtocolCodes.Items.Clear();
-		//                        _selectedProtocolCodes.Items.AddRange(item.ProtocolDetail.Codes);
-		//                    });
-
-		//            if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
-		//                && item.ProtocolDetail.Supervisor == null)
-		//            {
-		//                // if this user has a default supervisor, retreive it, otherwise leave supervisor as null
-		//                if (!String.IsNullOrEmpty(ProtocollingSettings.Default.SupervisorID))
-		//                {
-		//                    object supervisor;
-		//                    if (_supervisorLookupHandler.Resolve(ProtocollingSettings.Default.SupervisorID, false, out supervisor))
-		//                    {
-		//                        item.ProtocolDetail.Supervisor = (StaffSummary)supervisor;
-		//                    }
-		//                }
-		//            }
-		//        }
-		//        catch (Exception e)
-		//        {
-		//            ExceptionHandler.Report(e, this.Host.DesktopWindow);
-		//        }
-		//    }
-
-		//    _selectedProcodurePlanSummaryTableItem = item;
-		//    EventsHelper.Fire(_selectedProcedurePlanSummaryTableItemChanged, this, EventArgs.Empty);
-
-		//    NotifyPropertyChanged("ProtocolGroupChoices");
-		//    //NotifyPropertyChanged("Urgency");
-		//}
 
 		private void RefreshAvailableProtocolCodes(IEnumerable<ProtocolCodeSummary> existingSelectedCodes, IProtocollingWorkflowService service)
 		{
@@ -561,14 +499,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			return value;
 		}
-
-		//private void ResetDocument()
-		//{
-		//    _protocolGroup = null;
-		//    _protocolGroupChoices = new List<ProtocolGroupSummary>();
-		//    _availableProtocolCodes.Items.Clear();
-		//    _selectedProtocolCodes.Items.Clear();
-		//}
 
 		#endregion
 	}
