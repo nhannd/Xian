@@ -505,20 +505,17 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                     throw new RequestValidationException("Report cannot be submitted for this procedure.  It may have been submitted previously.");
 
                 // start interpretation, using specified interpreter
+				// the report will end up in their drafts folder
                 Operations.StartInterpretation startOp = new Operations.StartInterpretation();
                 startOp.Execute(interpStep, interpreter, new List<InterpretationStep>(), new PersistentWorkflow(this.PersistenceContext));
 
                 // save the report data
-                SaveReportHelper(request.ReportPartExtendedProperties, interpStep, interpreter);
+                SaveReportHelper(request.ReportPartExtendedProperties, interpStep, null);
 
                 ValidateReportTextExists(interpStep);
 
-                // complete for verification, using specified interpreter as a supervisor, so it will go to them for review
-                Operations.CompleteInterpretationForVerification completeOp = new Operations.CompleteInterpretationForVerification();
-                ReportingProcedureStep nextStep = completeOp.Execute(interpStep, interpreter, new PersistentWorkflow(this.PersistenceContext));
-
                 // set the transcriptionist if known
-                nextStep.ReportPart.Transcriber = transcriptionist;
+				interpStep.ReportPart.Transcriber = transcriptionist;
             }
 
             // flip the downtime mode switch
