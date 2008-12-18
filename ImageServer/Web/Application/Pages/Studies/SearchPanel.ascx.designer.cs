@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ImageButton SearchButton;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SearchButton;
         
         /// <summary>
         /// UpdateProgress1 control.

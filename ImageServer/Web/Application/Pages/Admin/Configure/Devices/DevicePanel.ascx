@@ -30,7 +30,7 @@
                                                 <asp:DropDownList ID="DHCPFilter" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList></td>
                                             <td align="right" valign="bottom">
-                                                <asp:Panel ID="Panel3" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" /></asp:Panel>
+                                                <asp:Panel ID="Panel3" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>
                                         </tr>
                                     </table>                    

@@ -65,19 +65,36 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         /// <summary>
         /// Sets or gets the url of the image to be used when the button enabled and user hovers the mouse over the button.
         /// </summary>
-        public string EnabledHoverImageURL
+        public string HoverImageURL
         {
             get
             {
-                String s = (String)ViewState["EnabledHoverImageURL"];
+                String s = (String)ViewState["HoverImageURL"];
                 return (s ?? String.Empty);
             }
 
             set
             {
-                ViewState["EnabledHoverImageURL"] = inspectURL(value);
+                ViewState["HoverImageURL"] = inspectURL(value);
             }
-        }     
+        }
+
+        /// <summary>
+        /// Sets or gets the url of the image to be used when the mouse button is clicked.
+        /// </summary>
+        public string ClickedImageURL
+        {
+            get
+            {
+                String s = (String)ViewState["ClickedImageURL"];
+                return (s ?? String.Empty);
+            }
+
+            set
+            {
+                ViewState["ClickedImageURL"] = inspectURL(value);
+            }
+        }   
 
         /// <summary>
         /// Sets or gets the url of the image to be used when the button is disabled.
@@ -128,10 +145,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             ScriptControlDescriptor desc = new ScriptControlDescriptor("ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton", ClientID);
             desc.AddProperty("EnabledImageUrl", Page.ResolveClientUrl(EnabledImageURL));
             desc.AddProperty("DisabledImageUrl", Page.ResolveClientUrl(DisabledImageURL));
-            
-            
-            if (EnabledHoverImageURL!=null)
-                desc.AddProperty("HoverImageUrl", Page.ResolveClientUrl(EnabledHoverImageURL));
+            desc.AddProperty("HoverImageUrl", Page.ResolveClientUrl(HoverImageURL));
+            desc.AddProperty("ClickedImageUrl", Page.ResolveClientUrl(ClickedImageURL));
 
             return new ScriptDescriptor[] { desc };
         }

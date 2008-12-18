@@ -44,7 +44,7 @@
                                                 <asp:DropDownList ID="PriorityDropDownList" runat="server" CssClass="SearchDropDownList">
                                                 </asp:DropDownList>
                                             <td valign="bottom">
-                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><asp:ImageButton ID="SearchButton" runat="server" SkinID="SearchButton" OnClick="SearchButton_Click" /></asp:Panel>
+                                                <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>
                                             </td>               
                                         </tr>
                                     </table>

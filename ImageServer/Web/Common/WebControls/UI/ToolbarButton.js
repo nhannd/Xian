@@ -31,6 +31,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
              $addHandlers(this.get_element(), 
                          { 
                             'mouseover' : this._onMouseOver,
+                            'mousedown' : this._onMouseDown,
+//                            'mouseup' : this._onMouseUp,
                             'mouseout'  : this._onMouseOut,
                             'click'     : this._onClick
                          }, 
@@ -115,6 +117,25 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             }
         },
         
+        _onMouseDown : function(e) 
+        {
+/*            if (this.get_element() && !this.get_element().disabled) {     
+                this.get_element().src =  this._ClickedImageUrl;
+            }
+            else if (this.get_element() && this.get_element().disabled)
+            {
+                this.get_element().src =  this._DisabledImageUrl;
+            }
+            else {
+                this.get_element().src =  this._EnabledImageUrl;            
+            }*/
+        },
+        
+        _onMouseUp : function(e)
+        {
+            alert("MouseUp");
+            this._onClick(e);
+        },
 
         ////////////////////////////////////////////////////////////////////////////////////////////
         //
@@ -151,16 +172,18 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             this.raisePropertyChanged('HoverImageUrl');
         },
         
-        get_OnClientClick : function() {
-            return this._OnClientClick;
+        get_ClickedImageUrl : function() {
+            return this._ClickedImageUrl;
         },
 
-        set_HoverImageUrl : function(value) {
-            this._OnClientClick = value;
-            this.raisePropertyChanged('OnClientClick');
+        set_ClickedImageUrl : function(value) {
+            this._ClickedImageUrl = value;
+            this.raisePropertyChanged('ClickedImageUrl');
+        },
+        
+        get_OnClientClick : function() {
+            return this._OnClientClick;
         }
-
-
     }
 
     // Optional descriptor for JSON serialization.
