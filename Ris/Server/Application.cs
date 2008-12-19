@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -115,9 +114,6 @@ namespace ClearCanvas.Ris.Server
 
 			// kick NHibernate, rather than waiting for it to load on demand
 			PersistentStoreRegistry.GetDefaultStore();
-
-			// configure the alternate remoting channel
-			RemotingConfiguration.Configure("ClearCanvas.Ris.Server.Executable.exe.config", false);
 
 			_isStarted = true;
 		}
