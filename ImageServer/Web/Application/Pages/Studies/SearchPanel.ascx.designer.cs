@@ -20,6 +20,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
     public partial class SearchPanel {
         
         /// <summary>
+        /// JQuery1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.JQuery JQuery1;
+        
+        /// <summary>
         /// UpdatePanel control.
         /// </summary>
         /// <remarks>
@@ -135,6 +144,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox StudyDescription;
+        
+        /// <summary>
+        /// Label6 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label6;
+        
+        /// <summary>
+        /// ModalityListBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ListBox ModalityListBox;
         
         /// <summary>
         /// Panel1 control.

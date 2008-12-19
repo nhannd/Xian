@@ -35,7 +35,7 @@
     color: #205F87;
 }
 
-.SearchTextBox
+.SearchTextBox, .SearchDateBox
 {
     font-family: Sans-Serif;
     font-size: 11px;
@@ -46,6 +46,29 @@
 	margin-right: 3px;
 	border: solid 1px #305ba6;
     background: #ffffff url(../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x ;
+}
+
+.SearchTextBox.hover {
+	background: #fff;
+	border: solid 1px #99CCFF;
+	font-weight: bold;
+	color: #333333;
+}
+
+.SearchTextBox.focus {
+	background: #fff;
+	border: solid 1px #99CCFF;
+	font-weight: bold;
+	color: #333333;
+}
+
+.SearchDateBox.hover 
+{
+	background: #ffffff url(../images/MainContent/dropdown.gif) no-repeat right;
+	border: solid 1px #99CCFF;
+	font-weight: bold;
+	color: #333333;
+
 }
 
 .SearchCheckBox

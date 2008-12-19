@@ -31,7 +31,7 @@
                                                 <asp:Label ID="Label2" runat="server" Text="Time Received " CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" />
                                                 <asp:LinkButton ID="ClearReceivedDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 2px;"/><br />
-                                                <asp:TextBox ID="ReceivedDate" runat="server" CssClass="SearchTextBox" />
+                                                <asp:TextBox ID="ReceivedDate" runat="server" CssClass="SearchDateBox" />
                                             </td>
                                             <td valign="bottom">
                                                 <asp:Panel ID="Panel1" runat="server" CssClass="SearchButtonPanel"><ccUI:ToolbarButton ID="SearchButton" runat="server" SkinID="SearchIcon" OnClick="SearchButton_Click" /></asp:Panel>

@@ -393,6 +393,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private string _dateFormats;
 		private IList<StudySummary> _list = new List<StudySummary>();
 		private readonly string STUDYDATE_DATEFORMAT = "yyyyMMdd";
+	    private string[] _modalities;
 		#endregion
 
 		#region Public Properties
@@ -444,6 +445,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			get { return _resultCount; }
 			set { _resultCount = value; }
 		}
+
+        public string[] Modalities
+        {
+            get { return _modalities; }
+            set { _modalities = value; }
+        }
 		#endregion
 
 		#region Private Methods
@@ -491,7 +498,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				key = key.Replace("?", "_");
 				criteria.StudyDescription.Like(key);
 			}
-			return criteria;
+
+            if(Modalities != null && Modalities.Length > 0)
+            {
+                SeriesSelectCriteria seriesCriteria = new SeriesSelectCriteria();
+                if (Modalities.Length == 1)
+                    seriesCriteria.Modality.EqualTo(Modalities[0]);
+                else
+                    seriesCriteria.Modality.In(Modalities);
+
+                criteria.SeriesRelatedEntityCondition.Exists(seriesCriteria);
+            }
+
+            return criteria;
 		}
 
 		#endregion

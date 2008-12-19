@@ -1037,6 +1037,7 @@
     <Content Include="App_Themes\Default\images\Indicators\Searching.gif" />
     <Content Include="App_Themes\Default\images\Indicators\StoreFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\usage.png" />
+    <Content Include="App_Themes\Default\images\MainContent\dropdown.gif" />
     <Content Include="App_Themes\Default\images\MainContent\Loading.gif" />
     <Content Include="App_Themes\Default\images\MainContent\Loading.png" />
     <Content Include="App_Themes\Default\images\MainContent\MainContentBottom.png" />
@@ -1049,6 +1050,7 @@
     <Content Include="App_Themes\Default\images\Header\MenuEdge.png" />
     <Content Include="App_Themes\Default\images\MainContent\PatientSummaryBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\MainContentTitleBackground.png" />
+    <Content Include="App_Themes\Default\images\MainContent\SearchDropDownListBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\SearchPanelBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\SearchTextBoxBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\ToolbarButtonPanelBackground.png" />
@@ -1058,6 +1060,7 @@
     <Content Include="App_Themes\Default\StyleSheets\Controls\DeleteStudyConfirmDialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\GridView.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\InvalidInputIndicator.css" />
+    <Content Include="App_Themes\Default\StyleSheets\Controls\jqueryMultiSelect.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\ReconcileDialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Error.css" />
     <Content Include="App_Themes\Default\StyleSheets\Global.css" />
@@ -1237,9 +1240,11 @@
     <Content Include="Scripts\CodeMirror\js\undo.js" />
     <Content Include="Scripts\CodeMirror\js\util.js" />
     <Content Include="Scripts\CodeMirror\LICENSE.txt" />
+    <Content Include="Scripts\Effects.js" />
     <Content Include="Scripts\ErrorHandling.js" />
     <Content Include="Scripts\jquery\jquery-1.2.6.min.js" />
-    <Content Include="Scripts\jquery\jquery.maskedinput.js" />
+    <Content Include="Scripts\jquery\jquery.dimensions.js" />
+    <Content Include="Scripts\jquery\jquery.multiselect.js" />
     <Content Include="Scripts\NumberFormat154.js" />
     <Content Include="GlobalMasterPage.master" />
     <Content Include="App_Themes\Default\Global.skin" />

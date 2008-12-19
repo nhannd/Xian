@@ -21,7 +21,7 @@
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label2" runat="server" Text="Insert Date" CssClass="SearchTextBoxLabel" />&nbsp;&nbsp;
                                                 <asp:LinkButton ID="ClearInsertDateButton" runat="server" Text="X" CssClass="SmallLink" style="margin-left: 10px;"/><br />
-                                                <ccUI:TextBox ID="InsertDateFilter" runat="server" ReadOnly="true" CssClass="SearchTextBox" />
+                                                <ccUI:TextBox ID="InsertDateFilter" runat="server" ReadOnly="true" CssClass="SearchDateBox" />
                                             </td>                                            
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label4" runat="server" Text="Category" CssClass="SearchTextBoxLabel"></asp:Label><br />

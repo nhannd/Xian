@@ -32,6 +32,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -194,8 +195,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                                 source.StudyDate = StudyDate.Text;
                                             if (!String.IsNullOrEmpty(StudyDescription.Text))
                                                 source.StudyDescription = StudyDescription.Text;
-                                        };
 
+                                            if (ModalityListBox.SelectedIndex > -1)
+                                            {
+                                                List<string> modalities = new List<string>();
+                                                foreach (ListItem item in ModalityListBox.Items)
+                                                {
+                                                    if (item.Selected)
+                                                    {
+                                                        modalities.Add(item.Value);
+                                                    }
+                                                }
+                                                source.Modalities = modalities.ToArray();
+                                            }
+                                        };
         }
 
         void DeleteStudyConfirmDialog_StudyDeleted(object sender, DeleteStudyConfirmDialogStudyDeletedEventArgs e)

@@ -22,7 +22,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         #region Private Members
         private ServerEntityKey _alertItemKey;
         private Model.Alert _alert;
-        private bool _deleteAll;
         #endregion Private Members
 
         #region Events

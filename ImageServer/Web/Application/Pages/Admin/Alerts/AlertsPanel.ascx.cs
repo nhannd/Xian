@@ -46,7 +46,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
         // used for database interaction
         private AlertController _theController;
-        private Default _enclosingPage;
 
         #endregion Private Members
 

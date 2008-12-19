@@ -13,11 +13,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 {
     public partial class JQuery : System.Web.UI.UserControl
     {
-        private bool _maskedInput;
-        public bool MaskedInput
+        private bool _multiselect;
+        private bool _effects;
+
+        public bool MultiSelect
         {
-            get { return _maskedInput;  }
-            set { _maskedInput = value; }
+            get { return _multiselect;  }
+            set { _multiselect = value; }
+        }
+
+        public bool Effects
+        {
+            get { return _effects; }
+            set { _effects = value; }
         }
                 
         protected void Page_Load(object sender, EventArgs e)
@@ -31,9 +39,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
             Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "jQuery", ResolveUrl("~/Scripts/jquery/jquery-1.2.6.min.js")); 
 
-            if(MaskedInput)
+            if(MultiSelect)
             {
-                Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "MaskedInput", ResolveUrl("~/Scripts/jquery/jquery.maskedinput.js")); 
+                Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "Dimensions", ResolveUrl("~/Scripts/jquery/jquery.dimensions.js"));
+                Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "MultiSelect", ResolveUrl("~/Scripts/jquery/jquery.multiselect.js")); 
+            }
+
+            if(Effects)
+            {
+                Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "Effects", ResolveUrl("~/Scripts/Effects.js")); 
             }
         }
     }
