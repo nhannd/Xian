@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -685,7 +686,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					// notify extension pages that the worklist item has changed
 					EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
 				}
-				catch (Exception)
+				catch (FaultException<ConcurrentModificationException>)
 				{
 					this._worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Invalid);
 				}

@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
+using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -475,7 +476,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					StartProtocollingWorklistItem();
 					UpdateChildComponents();
 				}
-				catch (Exception)
+				catch (FaultException<ConcurrentModificationException>)
 				{
 					this._worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Invalid);
 				}

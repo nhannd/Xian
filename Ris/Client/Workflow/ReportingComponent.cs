@@ -31,6 +31,7 @@
 
 using System;
 using System.Security.Permissions;
+using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using System.Collections.Generic;
@@ -1006,7 +1007,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					
 					OpenImages();
 				}
-				catch (Exception)
+				catch (FaultException<ConcurrentModificationException>)
 				{
 					this._worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Invalid);
 				}
