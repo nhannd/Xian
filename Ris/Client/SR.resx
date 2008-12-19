@@ -478,7 +478,7 @@
     <value>New contact points cannot be merged.  Please deselect '{0}' and select another item.</value>
   </data>
   <data name="MessageCommunicationError" xml:space="preserve">
-    <value>A communication error occured while attempting to contact the server.  See log for details.</value>
+    <value>A communication error occured while attempting to contact the server.</value>
   </data>
   <data name="MessageConcurrentModification" xml:space="preserve">
     <value>The operation cannot be completed because modifications have been made by another user.</value>
