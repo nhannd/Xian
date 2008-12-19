@@ -95,7 +95,8 @@ namespace ClearCanvas.Enterprise.Authentication {
         public virtual void ChangePassword(string newPassword)
         {
             AuthenticationSettings settings = new AuthenticationSettings();
-            ChangePassword(newPassword, settings.PasswordExpiryDays);
+            DateTime? expiryTime = Platform.Time.AddDays(settings.PasswordExpiryDays);
+            _password = Authentication.Password.CreatePassword(newPassword, expiryTime);
         }
 
         /// <summary>
@@ -105,7 +106,7 @@ namespace ClearCanvas.Enterprise.Authentication {
         public virtual void ResetPassword()
         {
             AuthenticationSettings settings = new AuthenticationSettings();
-            ChangePassword(settings.DefaultTemporaryPassword, 0);
+            _password = Authentication.Password.CreateTemporaryPassword();
         }
 
         /// <summary>
@@ -124,12 +125,6 @@ namespace ClearCanvas.Enterprise.Authentication {
 
         #endregion
 
-        private void ChangePassword(string newPassword, int daysToExpiration)
-        {
-            DateTime? expiryTime = Platform.Time.AddDays(daysToExpiration);
-            _password = Authentication.Password.CreatePassword(newPassword, expiryTime);
-        }
-	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.

@@ -31,14 +31,22 @@ namespace ClearCanvas.Enterprise.Authentication {
         {
             Platform.CheckForNullReference(clearTextPassword, "clearTextPassword");
 
-            //TODO: if we get XML specifications working on server-side (solve jscript threading issues), use XML spec instead
             AuthenticationSettings settings = new AuthenticationSettings();
             if(!Regex.Match(clearTextPassword, settings.ValidPasswordRegex).Success)
                 throw new EntityValidationException(settings.ValidPasswordMessage);
 
-            string salt = CreateSalt();
-            string hash = CalculateHash(salt, clearTextPassword);
-            return new Password(salt, hash, expiryTime);
+            return CreatePasswordHelper(clearTextPassword, expiryTime);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="Password"/> object that represents the default temporary
+        /// password defined in <see cref="AuthenticationSettings"/> and expires immediately.
+        /// </summary>
+        /// <returns></returns>
+        public static Password CreateTemporaryPassword()
+        {
+            AuthenticationSettings settings = new AuthenticationSettings();
+            return CreatePasswordHelper(settings.DefaultTemporaryPassword, Platform.Time);
         }
 
         /// <summary>
@@ -64,6 +72,13 @@ namespace ClearCanvas.Enterprise.Authentication {
         }
 
         #region Utilities
+
+        private static Password CreatePasswordHelper(string clearTextPassword, DateTime? expiryTime)
+        {
+            string salt = CreateSalt();
+            string hash = CalculateHash(salt, clearTextPassword);
+            return new Password(salt, hash, expiryTime);
+        }
 
         private static string CreateSalt()
         {
