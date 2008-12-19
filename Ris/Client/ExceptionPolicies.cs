@@ -30,14 +30,11 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
-
+using System.ServiceModel.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
-using System.ServiceModel.Security;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -104,6 +101,7 @@ namespace ClearCanvas.Ris.Client
     /// </summary>
     [ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
     [ExceptionPolicyFor(typeof(CommunicationException))]
+    [ExceptionPolicyFor(typeof(EndpointNotFoundException))]
     public class CommunicationExceptionPolicy : IExceptionPolicy
     {
         public void Handle(Exception e, IExceptionHandlingContext context)
@@ -145,7 +143,4 @@ namespace ClearCanvas.Ris.Client
             SessionManager.RenewLogin();
         }
     }
-
-
-
 }
