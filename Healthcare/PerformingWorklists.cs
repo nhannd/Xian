@@ -126,7 +126,7 @@ namespace ClearCanvas.Healthcare
             ModalityWorklistItemSearchCriteria criteria = new ModalityWorklistItemSearchCriteria();
             criteria.ProcedureStepClass = typeof(DocumentationProcedureStep);
             criteria.ProcedureStep.State.EqualTo(ActivityStatus.IP);
-            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
+            ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepStartTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
             return new WorklistItemSearchCriteria[] { criteria };
         }
     }
