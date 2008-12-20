@@ -92,11 +92,15 @@ namespace ClearCanvas.Healthcare
 			if (newState == ActivityStatus.CM && this.ReportPart != null)
 				this.ReportPart.Complete();
 
-			// complete the procedure(s)
-			foreach (Procedure procedure in this.AllProcedures)
-			{
-				procedure.Complete((DateTime)this.EndTime);
-			}
+			// if step corresponds to the initial report (not an addendum), mark procedure(s) as
+            // being complete
+            if (this.ReportPart.Index == 0)
+            {
+                foreach (Procedure procedure in this.AllProcedures)
+                {
+                    procedure.Complete((DateTime)this.EndTime);
+                }
+            }
 
 			base.OnStateChanged(previousState, newState);
 		}
