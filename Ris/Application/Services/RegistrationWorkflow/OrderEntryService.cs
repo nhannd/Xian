@@ -342,7 +342,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             if (itemKey.OrderRef == null)
                 return false;
 
-            return true;
+            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
+            return !order.IsTerminated;
         }
 
         #endregion
