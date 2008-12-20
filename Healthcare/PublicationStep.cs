@@ -88,8 +88,7 @@ namespace ClearCanvas.Healthcare
 		protected override void OnStateChanged(ActivityStatus previousState, ActivityStatus newState)
 		{
 			// complete the report part when publication is complete
-			// (this.ReportPart != null) should always be true except perhaps during unit-tests
-			if (newState == ActivityStatus.CM && this.ReportPart != null)
+			if (newState == ActivityStatus.CM)
 				this.ReportPart.Complete();
 
 			// if step corresponds to the initial report (not an addendum), mark procedure(s) as

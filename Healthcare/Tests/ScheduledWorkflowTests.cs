@@ -231,6 +231,42 @@ namespace ClearCanvas.Healthcare.Tests
             }
         }
 
+        /// <summary>
+        /// Verify that an order with cancelled procedures can be cancelled.
+        /// (bug #3440)
+        /// </summary>
+        [Test]
+        public void CancelOrderWithCancelledProcedure()
+        {
+            Order order = TestOrderFactory.CreateOrder(2, 2, true);
+            CheckStatus(OrderStatus.SC, order);
+
+            // cancel one of the procedures - this will not cancel the order
+            Procedure p1 = CollectionUtils.FirstElement(order.Procedures);
+            p1.Cancel();
+
+            // order is still scheduled
+            CheckStatus(OrderStatus.SC, order);
+
+            // now cancel order
+            order.Cancel(new OrderCancelInfo(_defaultCancelReason, TestStaffFactory.CreateStaff(new StaffTypeEnum("SCLR", null, null)), "", null));
+
+            CheckStatus(OrderStatus.CA, order);
+            Assert.IsNull(order.StartTime);
+            Assert.IsNotNull(order.EndTime);
+
+            foreach (Procedure rp in order.Procedures)
+            {
+                CheckStatus(ProcedureStatus.CA, rp);
+                Assert.IsNull(rp.StartTime);
+                Assert.IsNotNull(rp.EndTime);
+                foreach (ProcedureStep step in rp.ProcedureSteps)
+                {
+                    CheckStatus(ActivityStatus.DC, step);
+                }
+            }
+        }
+
 		/// <summary>
 		/// When an order is replaced, verify that all procedures are cancelled, and all
 		/// procedure steps are discontinued.
@@ -419,6 +455,7 @@ namespace ClearCanvas.Healthcare.Tests
 			rp1.ModalityProcedureSteps[0].Complete(TestStaffFactory.CreateStaff(new StaffTypeEnum("STEC", null, null)));
 
             PublicationStep pub1 = new PublicationStep();
+            pub1.ReportPart = new ReportPart(new Report(), 0); // must have a report part or we get null-ref exception
             rp1.AddProcedureStep(pub1);
 
 			pub1.Complete(TestStaffFactory.CreateStaff(new StaffTypeEnum("PRAD", null, null)));
