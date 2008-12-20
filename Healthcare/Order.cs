@@ -223,10 +223,13 @@ namespace ClearCanvas.Healthcare {
 			// (otherwise cancelling the procedures will cause them to try and update the order status)
 			//SetStatus(OrderStatus.CA);
 
-			// cancel all procedures
+			// cancel/discontinue all procedures
 			foreach (Procedure rp in _procedures)
 			{
-				rp.Cancel();
+				// given that the order is still in SC, all procedures must be either
+				// SC or CA - and only those in SC need to be cancelled
+				if(rp.Status == ProcedureStatus.SC)
+					rp.Cancel();
 			}
 
 			// if the order was replaced, change the status to RP
