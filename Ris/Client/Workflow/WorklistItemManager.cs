@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			_worklistItem = worklistItem;
 			_componentMode = mode;
-			_reportNextItem = this.ReportNextItemEnabled;
+			_reportNextItem = false;
 
 			_isInitialized = true;
 		}
