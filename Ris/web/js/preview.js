@@ -541,7 +541,11 @@ Preview.ProtocolProceduresTable = function () {
 					},
 					{   label: "Status",
 						cellType: "text",
-						getValue: function(item) { return _formatProtocolStatus(item.Protocol); }
+						getValue: function(item)
+						{
+							// if the procedure was cancelled, leave the protocol status blank
+							return (item.Status.Code == "CA") ? "" : _formatProtocolStatus(item.Protocol);
+						}
 					},
 					{   label: "Protocol",
 						cellType: "html",

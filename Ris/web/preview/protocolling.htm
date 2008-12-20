@@ -81,7 +81,7 @@
 					if(orderDetail)
 					{
 						Preview.ImagingServiceSection.create($("imagingServiceSection"), orderDetail);
-						Preview.ReportingProceduresTable.create($("reportingProceduresSection"), orderDetail.Procedures);
+						Preview.ProceduresTable.create($("proceduresSection"), orderDetail.Procedures);
 
 						// select CT and MRI procedures
 						var filteredProcedures = Preview.filterProcedureByModality(orderDetail.Procedures, ["10003", "10004"]);
@@ -126,7 +126,7 @@
 			<div id="patientDemographicsSection"></div>
 			<div id="orderDetailsSection">
 				<div id="imagingServiceSection"></div>
-				<div id="reportingProceduresSection"></div>
+				<div id="proceduresSection"></div>
 				<div id="protocolProceduresSection"></div>
 				<div id="notesSection"></div>
 			</div>
