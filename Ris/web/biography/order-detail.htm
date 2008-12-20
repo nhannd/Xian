@@ -83,28 +83,55 @@
 							cellType: "html",
 							getValue: function(item) 
 							{
-								// Write values to the hidden procedure template table
-								Field.setValue($("ProcedureTypeName"), Ris.formatProcedureName(item));
-								Field.setValue($("ProcedurePerformingFacility"), item.PerformingFacility.Name);
-								Field.setValue($("ProcedureStatus"), item.Status.Value);
-								Field.setValue($("ProcedureScheduledStartTime"), Ris.formatDateTime(item.ScheduledStartTime));
-								Field.setValue($("ProcedureCheckInTime"), Ris.formatDateTime(item.CheckInTime));
-								Field.setValue($("ProcedureCheckOutTime"), Ris.formatDateTime(item.CheckOutTime));
-								Field.setValue($("ProcedureStartTime"), Ris.formatDateTime(item.StartTime));
-
+								var html = "";
+								
+								html += "<table>";
+								html += "<tr>";
+								html += "	<td class='sectionheading' colspan='4'>" + Ris.formatProcedureName(item) + "</td>";
+								html += "</tr>";
+								html += "<tr>";
+								html += "	<td width='120' class='propertyname'>Status</td>";
+								html += "	<td width='200'>" + item.Status.Value + "</td>";
+								html += "	<td width='120' class='propertyname'>Performing Facility</td>";
+								html += "	<td width='200'>" + item.PerformingFacility.Name + "</td>";
+								html += "</tr>";
+								html += "<tr>";
+								html += "	<td width='120' class='propertyname'>Scheduled Start Time</td>";
+								html += "	<td width='200'>" + Ris.formatDateTime(item.ScheduledStartTime) + "</td>";
+								html += "	<td width='120' class='propertyname'>Check-In Time</td>";
+								html += "	<td width='200'>" + Ris.formatDateTime(item.CheckInTime) + "</td>";
+								html += "</tr>";
+								html += "<tr>";
+								html += "	<td width='120' class='propertyname'>Performing Start Time</td>";
+								html += "	<td width='200'>" + Ris.formatDateTime(item.StartTime) + "</td>";
+								html += "	<td width='120' class='propertyname'>Performing End Time</td>";
+								html += "	<td width='200'>" + Ris.formatDateTime(item.CheckOutTime) + "</td>";
+								html += "</tr>";
+								html += "<tr>";
+								html += "	<td width='120' class='propertyname'>Report Published Time</td>";
 								if(item.Status.Code == 'CA' || item.Status.Code == 'DC')
 								{
-									Field.setValue($("ProcedureEndTime"), "");
-									Field.setValue($("CancelledTime"), Ris.formatDateTime(item.EndTime));
+									html += "	<td width='200'></td>";
 								}
 								else
 								{
-									Field.setValue($("ProcedureEndTime"), Ris.formatDateTime(item.EndTime));
-									Field.setValue($("CancelledTime"), "");
+									html += "	<td width='200'>" + Ris.formatDateTime(item.EndTime) + "</td>";
 								}
+								html += "</tr>";
+								html += "<tr>";
+								html += "	<td width='120' class='propertyname'>Cancelled Time</td>";
+								if(item.Status.Code == 'CA' || item.Status.Code == 'DC')
+								{
+									html += "	<td width='200'>" + Ris.formatDateTime(item.EndTime) + "</td>";
+								}
+								else
+								{
+									html += "	<td width='200'></td>";
+								}
+								html += "</tr>";
+								html += "</table>";
 
-								// retrieve the innerHTML of the template table
-								return Field.getValue($("procedureTableTemplate"));
+								return html;
 							}
 						}
 					]);
@@ -117,7 +144,6 @@
 	<body onload="javascript: onBodyLoad()">
 		<form id="myForm">
 			<div id="alertsSection"></div>
-			
 			<div id="orderDetailsSection">
 				<div id="imagingServiceSection"></div>
 
@@ -125,40 +151,6 @@
 				<table id="proceduresTable"></table>
 
 				<div id="notesSection"></div>
-
-				<div id="procedureTableTemplate" style="display:none">
-					<table>
-					<tr>
-						<td class="sectionheading" colspan="4"><div id="ProcedureTypeName"/></td>
-					</tr>
-					<tr>
-						<td width="120" class="propertyname">Status</td>
-						<td width="200"><div id="ProcedureStatus"/></td>
-						<td width="120" class="propertyname">Performing Facility</td>
-						<td width="200"><div id="ProcedurePerformingFacility"/></td>
-					</tr>
-					<tr>
-						<td width="120" class="propertyname">Scheduled Start Time</td>
-						<td width="200"><div id="ProcedureScheduledStartTime"/></td>
-						<td width="120" class="propertyname">Check-In Time</td>
-						<td width="200"><div id="ProcedureCheckInTime"/></td>
-					</tr>
-					<tr>
-						<td width="120" class="propertyname">Performing Start Time</td>
-						<td width="200"><div id="ProcedureStartTime"/></td>
-						<td width="120" class="propertyname">Performing End Time</td>
-						<td width="200"><div id="ProcedureCheckOutTime"/></td>
-					</tr>
-					<tr>
-						<td width="120" class="propertyname">Report Published Time</td>
-						<td width="200"><div id="ProcedureEndTime"/></td>
-					</tr>
-					<tr>
-						<td width="120" class="propertyname">Cancelled Time</td>
-						<td width="200"><div id="CancelledTime"/></td>
-					</tr>
-					</table>
-				</div>
 			</div>
 		</form>
 	</body>
