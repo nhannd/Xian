@@ -239,7 +239,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				}
 			}
 
-			if (item.ProcedureStepName == StepType.Transcription || item.ProcedureStepName == StepType.TranscriptionReview)
+			if (item.ProcedureStepName == StepType.Interpretation || item.ProcedureStepName == StepType.TranscriptionReview)
 			{
 				Platform.GetService<IReportingWorkflowService>(
 					delegate(IReportingWorkflowService service)
