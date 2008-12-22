@@ -523,9 +523,18 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				return _orderNoteViewComponent.HasNotesToBeAcknowledged
-					? string.IsNullOrEmpty(_body) ? SR.TitleAcknowledge : SR.TitleAcknowledgeAndPost
-					: SR.TitlePost;
+				if (_orderNoteViewComponent.HasNotesToBeAcknowledged)
+				{
+					if (_reply)
+					{
+						return SR.TitleAcknowledgeAndPost;
+					}
+					else
+					{
+						return SR.TitleAcknowledge;
+					}
+				}
+				else return SR.TitlePost;
 			}
 		}
 
@@ -533,9 +542,35 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				return _orderNoteViewComponent.HasNotesToBeAcknowledged
-					? _orderNoteViewComponent.HasUnacknowledgedNotes ? false : true
-					: string.IsNullOrEmpty(_body) ? false : true;
+				if (_orderNoteViewComponent.HasNotesToBeAcknowledged)
+				{
+					if (_orderNoteViewComponent.HasUnacknowledgedNotes)
+					{
+						return false;
+					}
+					else
+					{
+						if (_reply && string.IsNullOrEmpty(_body))
+						{
+							return false;
+						}
+						else
+						{
+							return true;
+						}
+					}
+				}
+				else
+				{
+					if (string.IsNullOrEmpty(_body))
+					{
+						return false;
+					}
+					else
+					{
+						return true;
+					}
+				}
 			}
 		}
 
@@ -616,7 +651,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void SaveChanges()
 		{
-			List<EntityRef> orderNoteRefToBeAcknowledged = CollectionUtils.Map<OrderNoteDetail, EntityRef>(
+			List<EntityRef> orderNoteRefsToBeAcknowledged = CollectionUtils.Map<OrderNoteDetail, EntityRef>(
 				_orderNoteViewComponent.NotesToBeAcknowledged,
 				delegate(OrderNoteDetail note)
 					{
@@ -626,7 +661,7 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
 				{
-					AcknowledgeAndPostRequest request = new AcknowledgeAndPostRequest(_orderRef, orderNoteRefToBeAcknowledged, GetReply());
+					AcknowledgeAndPostRequest request = new AcknowledgeAndPostRequest(_orderRef, orderNoteRefsToBeAcknowledged, GetReply());
 					service.AcknowledgeAndPost(request);
 				});
 
@@ -652,7 +687,8 @@ namespace ClearCanvas.Ris.Client
 
 		private OrderNoteDetail GetReply()
 		{
-			if (string.IsNullOrEmpty(_body)) return null;
+			// if Reply is unchecked or the body is empty, there is no reply to send.
+			if (!_reply || string.IsNullOrEmpty(_body)) return null;
 
 			OrderNoteDetail reply = new OrderNoteDetail(
 				OrderNoteCategory.PreliminaryDiagnosis.Key, 
