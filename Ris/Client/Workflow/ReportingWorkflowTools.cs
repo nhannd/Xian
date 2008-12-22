@@ -119,20 +119,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 	}
 
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Cancel Report", "Apply")]
-	[MenuAction("apply", "folderexplorer-items-toolbar/Cancel Report", "Apply")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Discard Report", "Apply")]
+    [MenuAction("apply", "folderexplorer-items-toolbar/Discard Report", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.CancelReportSmall.png", "Icons.CancelReportMedium.png", "Icons.CancelReportLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[IconSetObserver("apply", "CurrentIconSet", "LabelChanged")]
 	[LabelValueObserver("apply", "Label", "LabelChanged")]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
-	public class CancelReportingStepTool : ReportingWorkflowItemTool
+	public class DiscardReportTool : ReportingWorkflowItemTool
 	{
 		private IconSet _cancelAddendum = new IconSet(IconScheme.Colour, "Icons.CancelAddendumSmall.png", "Icons.CancelAddendumSmall.png", "Icons.CancelAddendumSmall.png");
 		private IconSet _cancelReport = new IconSet(IconScheme.Colour, "Icons.CancelReportSmall.png", "Icons.CancelReportMedium.png", "Icons.CancelReportLarge.png");
 
-		public CancelReportingStepTool()
+		public DiscardReportTool()
 			: base("CancelReportingStep")
 		{
 		}
@@ -142,7 +142,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get
 			{
 				ReportingWorklistItem item = GetSelectedItem();
-				return (item != null && item.IsAddendumStep) ? "Cancel Addendum" : "Cancel Report";
+                return (item != null && item.IsAddendumStep) ? "Discard Addendum" : "Discard Report";
 			}
 		}
 
