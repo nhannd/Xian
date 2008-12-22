@@ -110,7 +110,11 @@ namespace ClearCanvas.Healthcare
 
 			_procedures.Add(procedure);
 			procedure.Protocols.Add(this);
-		}
+
+            // dissociate the otherProtocol from the procedure
+            // (ideally we should delete otherProtocol too, but how do we do that from here?)
+            otherProtocol.Procedures.Remove(procedure);
+        }
 
 		protected internal virtual bool IsNew()
 		{
