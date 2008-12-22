@@ -430,16 +430,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
 			public bool CanExecute(Procedure procedure, Staff executingStaff)
 			{
-				if (procedure.ReportingProcedureSteps.Count == 0)
+				// a procedure must have an active report in order to create an addendum
+				if (procedure.ActiveReport == null)
+					return false;
+
+				// cannot add a new addendum while there is still an active part
+				if (procedure.ActiveReport.ActivePart != null)
 					return false;
 
 				// can only create an addendum if all reporting steps for the procedure are terminated
 				if (!CollectionUtils.TrueForAll(procedure.ReportingProcedureSteps,
 					delegate(ReportingProcedureStep ps) { return ps.IsTerminated; }))
-					return false;
-
-				// cannot add a new addendum while there is still an active report/addendum
-				if (procedure.ActiveReport != null && procedure.ActiveReport.ActivePart != null)
 					return false;
 
 				return true;

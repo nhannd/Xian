@@ -660,17 +660,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanSendReportToQueue(WorklistItemKey itemKey)
         {
-            if (itemKey.ProcedureStepRef == null)
-                return false;
+			// does the item have a procedure ref, or is it just a patient?
+			if (itemKey.ProcedureRef == null)
+				return false;
 
-            ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
-
-            if (step is ReportingProcedureStep == false)
-                return false;
-
-            ReportPart part = ((ReportingProcedureStep)step).ReportPart;
-            if (part == null)
-                return false;
+			// does the procedure have an active report
+			Procedure procedure = PersistenceContext.Load<Procedure>(itemKey.ProcedureRef);
+			if (procedure.ActiveReport == null)
+				return false;
 
             return true;
         }
