@@ -163,7 +163,7 @@ namespace ClearCanvas.Ris.Client
 				// bug #3336 : apparently having this say Completed was confusing people into
 				// thinking the procedure was completed, when in fact it is just the MPS
 				// however, hardcoding this is dumb!!! this should probably be re-visited in future (JR)
-				return "Peformed";
+				return "Performed";
 			}
 
     		return item.ModalityProcedureStep.State.Value;
