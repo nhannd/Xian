@@ -217,6 +217,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 					}
 				}
 
+				NotifyPropertyChanged("ProtocolGroupChoices");
+				NotifyPropertyChanged("ProtocolGroup");
+				NotifyPropertyChanged("SetDefaultProtocolGroupEnabled");
 				NotifyPropertyChanged("Urgency");
 			}
 		}
