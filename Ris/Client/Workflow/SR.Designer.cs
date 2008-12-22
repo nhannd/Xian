@@ -808,6 +808,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Discard the selected protocol?.
+        /// </summary>
+        internal static string MessageConfirmDiscardSelectedProtocol {
+            get {
+                return ResourceManager.GetString("MessageConfirmDiscardSelectedProtocol", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Discard the selected report?.
         /// </summary>
         internal static string MessageConfirmDiscardSelectedReport {

@@ -366,6 +366,9 @@
   <data name="MessageConfirmDiscardSelectedAddendum" xml:space="preserve">
     <value>Discard the selected addendum?</value>
   </data>
+  <data name="MessageConfirmDiscardSelectedProtocol" xml:space="preserve">
+    <value>Discard the selected protocol?</value>
+  </data>
   <data name="MessageConfirmDiscardSelectedReport" xml:space="preserve">
     <value>Discard the selected report?</value>
   </data>
