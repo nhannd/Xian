@@ -546,14 +546,9 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		private List<OrderNoteDetail> GetNoteDetails(Order order, string category)
 		{
 			OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
-			List<OrderNote> notes = CollectionUtils.Select(
-				order.Notes,
-				delegate(OrderNote note)
-					{
-						return note.Category == category;
-					});
+
 			return CollectionUtils.Map<OrderNote, OrderNoteDetail>(
-				notes,
+				OrderNote.GetNotesForOrder(order, category),
 				delegate(OrderNote note)
 					{
 						return noteAssembler.CreateOrderNoteDetail(note, this.PersistenceContext);

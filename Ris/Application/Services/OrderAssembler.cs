@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Application.Services
             if(includeNotes)
             {
                 OrderNoteAssembler orderNoteAssembler = new OrderNoteAssembler();
-                List<OrderNote> notes = new List<OrderNote>(order.Notes);
+                List<OrderNote> notes = new List<OrderNote>(OrderNote.GetNotesForOrder(order));
 
                 // apply category filter, if provided
                 if(noteCategoriesFilter != null && noteCategoriesFilter.Count > 0)

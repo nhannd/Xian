@@ -170,7 +170,7 @@ namespace ClearCanvas.Ris.Application.Services.OrderNotes
             Order order = PersistenceContext.Load<Order>(request.OrderRef);
 
             // select only notes that are actually posted, and meet category filter
-            List<OrderNote> notes = CollectionUtils.Select(order.Notes,
+            List<OrderNote> notes = CollectionUtils.Select(OrderNote.GetNotesForOrder(order),
                 delegate(OrderNote n)
                 {
                     return n.IsPosted && (request.CategoryFilters == null || request.CategoryFilters.Count == 0

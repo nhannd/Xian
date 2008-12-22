@@ -80,13 +80,6 @@
       <many-to-one name="ReplacementOrder" class="Order" column="ReplacementOrderOID_"/>
     </component>
 
-    <set name="Notes" lazy="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore"
-         where="PostTime_ is not null">
-			<key column="OrderOID_"/>
-			<one-to-many class="OrderNote"/>
-		</set>
-
-
 		<map name="ExtendedProperties" lazy="true" table="OrderExtendedProperty_">
 			<key column="OrderOID_"/>
 			<index column="Name_" type="String"/>

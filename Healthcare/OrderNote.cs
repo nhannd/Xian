@@ -34,7 +34,9 @@ using System.Collections;
 using System.Text;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Enterprise.Core;
 
 
 namespace ClearCanvas.Healthcare {
@@ -45,6 +47,26 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class OrderNote
 	{
+		public static IList<OrderNote> GetNotesForOrder(Order order)
+		{
+			return GetNotesForOrder(order, null);
+		}
+
+		public static IList<OrderNote> GetNotesForOrder(Order order, string category)
+		{
+			OrderNoteSearchCriteria where = new OrderNoteSearchCriteria();
+			where.Order.EqualTo(order);
+			where.PostTime.IsNotNull(); // only posted notes
+			if(!string.IsNullOrEmpty(category))
+			{
+				where.Category.EqualTo(category);
+			}
+
+			//run a query to find order notes
+			//TODO: using PersistenceScope is maybe not ideal but no other option right now (fix #3472)
+			return PersistenceScope.CurrentContext.GetBroker<IOrderNoteBroker>().Find(where);
+		}
+
         /// <summary>
         /// Constructor for creating a new note with recipients.
         /// </summary>
@@ -57,7 +79,6 @@ namespace ClearCanvas.Healthcare {
             :base(category, author, onBehalfOf, body, urgent)
         {
             _order = order;
-            _order.Notes.Add(this);
         }
 
         /// <summary>
@@ -68,12 +89,12 @@ namespace ClearCanvas.Healthcare {
         {
             // does the order have any notes, in the same category as this note,
             // that could have been acknowledged by the author of this note but haven't been?
-
-            bool unAckedNotes = CollectionUtils.Contains(_order.Notes,
+        	IList<OrderNote> allNotes = GetNotesForOrder(_order, this.Category);
+			bool unAckedNotes = CollectionUtils.Contains(allNotes,
                 delegate(OrderNote note)
                 {
-					// ignore this note, and notes in other categories
-					return !Equals(this, note) && note.Category == this.Category && note.CanAcknowledge(this.Author);
+					// ignore this note
+					return !Equals(this, note) && note.CanAcknowledge(this.Author);
                 });
 
             if(unAckedNotes)

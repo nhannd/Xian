@@ -83,7 +83,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 });
 
             requisition.Notes = CollectionUtils.Map<OrderNote, OrderNoteDetail>(
-                order.Notes,
+                OrderNote.GetNotesForOrder(order),
                 delegate(OrderNote note)
                 {
                     return noteAssembler.CreateOrderNoteDetail(note, context);

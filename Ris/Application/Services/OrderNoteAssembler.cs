@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Services
         /// <param name="context"></param>
         public void SynchronizeOrderNotes(Order order, IList<OrderNoteDetail> sourceList, Staff newNoteAuthor, IPersistenceContext context)
         {
-            List<OrderNote> existingNotes = new List<OrderNote>(order.Notes);
+            List<OrderNote> existingNotes = new List<OrderNote>(OrderNote.GetNotesForOrder(order));
             foreach (OrderNoteDetail detail in sourceList)
             {
                 if (!CollectionUtils.Contains(existingNotes,
@@ -204,6 +204,9 @@ namespace ClearCanvas.Ris.Application.Services
 
             if(post)
                 note.Post(staffRecipients, groupRecipients);
+
+			// bug #3467: since we removed the Notes collection from Order, need to lock this manually
+			context.Lock(note, DirtyState.New);
 
             return note;
         }
