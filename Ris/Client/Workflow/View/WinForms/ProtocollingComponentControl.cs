@@ -134,11 +134,11 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			}
 		}
 
-		private void _btnClose_Click(object sender, EventArgs e)
+		private void _btnCancel_Click(object sender, EventArgs e)
 		{
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{
-				_component.Close();
+				_component.Cancel();
 			}
 		}
 

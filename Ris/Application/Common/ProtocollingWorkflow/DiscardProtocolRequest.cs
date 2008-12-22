@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -38,20 +37,16 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 	[DataContract]
 	public class DiscardProtocolRequest : UpdateProtocolRequest
 	{
-		public DiscardProtocolRequest(EntityRef protocolStepRef, List<OrderNoteDetail> orderNotes, bool shouldUnclaim, EntityRef reassignToStaff)
-			: base(protocolStepRef, null, orderNotes)
+		public DiscardProtocolRequest(EntityRef protocolStepRef, EntityRef reassignToStaff)
+			: base(protocolStepRef, null, null)
 		{
-			this.ShouldUnclaim = shouldUnclaim;
 			this.ReassignToStaff = reassignToStaff;
 		}
 
 		public DiscardProtocolRequest(EntityRef protocolStepRef)
-			: this(protocolStepRef, null, true, null)
+			: this(protocolStepRef, null)
 		{
 		}
-
-		[DataMember]
-		public bool ShouldUnclaim;
 
 		[DataMember]
 		public EntityRef ReassignToStaff;

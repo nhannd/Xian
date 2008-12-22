@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._btnSkip = new System.Windows.Forms.Button();
 			this._protocolNextItem = new System.Windows.Forms.CheckBox();
 			this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
-			this._btnClose = new System.Windows.Forms.Button();
+			this._btnCancel = new System.Windows.Forms.Button();
 			this._additionalDetailsPanel = new System.Windows.Forms.Panel();
 			this.splitContainer2 = new System.Windows.Forms.SplitContainer();
 			this._orderNotesGroupBox = new System.Windows.Forms.GroupBox();
@@ -221,7 +221,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._protocolNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._protocolNextItem.Location = new System.Drawing.Point(3, 32);
 			this._protocolNextItem.Name = "_protocolNextItem";
-			this._protocolNextItem.Size = new System.Drawing.Size(119, 17);
+			this._protocolNextItem.Size = new System.Drawing.Size(104, 17);
 			this._protocolNextItem.TabIndex = 6;
 			this._protocolNextItem.Text = "Go To Next Item";
 			this._protocolNextItem.UseVisualStyleBackColor = true;
@@ -230,7 +230,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this.flowLayoutPanel3.AutoSize = true;
 			this.flowLayoutPanel3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.flowLayoutPanel3.Controls.Add(this._btnClose);
+			this.flowLayoutPanel3.Controls.Add(this._btnCancel);
 			this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanel3.Location = new System.Drawing.Point(478, 558);
 			this.flowLayoutPanel3.Name = "flowLayoutPanel3";
@@ -239,13 +239,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _btnClose
 			// 
-			this._btnClose.Location = new System.Drawing.Point(3, 3);
-			this._btnClose.Name = "_btnClose";
-			this._btnClose.Size = new System.Drawing.Size(75, 23);
-			this._btnClose.TabIndex = 0;
-			this._btnClose.Text = "Close";
-			this._btnClose.UseVisualStyleBackColor = true;
-			this._btnClose.Click += new System.EventHandler(this._btnClose_Click);
+			this._btnCancel.Location = new System.Drawing.Point(3, 3);
+			this._btnCancel.Name = "_btnCancel";
+			this._btnCancel.Size = new System.Drawing.Size(75, 23);
+			this._btnCancel.TabIndex = 0;
+			this._btnCancel.Text = "Cancel";
+			this._btnCancel.UseVisualStyleBackColor = true;
+			this._btnCancel.Click += new System.EventHandler(this._btnCancel_Click);
 			// 
 			// _additionalDetailsPanel
 			// 
@@ -403,7 +403,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.Button _btnSkip;
 		private System.Windows.Forms.CheckBox _protocolNextItem;
 		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
-		private System.Windows.Forms.Button _btnClose;
+		private System.Windows.Forms.Button _btnCancel;
 		private System.Windows.Forms.Label _protocolledProcedures;
     }
 }

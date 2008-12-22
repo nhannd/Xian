@@ -415,11 +415,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			try
 			{
-				Platform.GetService<IProtocollingWorkflowService>(
-					delegate(IProtocollingWorkflowService service)
-					{
-						service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _notes, _worklistItemManager.ShouldUnclaim, _assignedStaffRef));
-					});
+				if (_worklistItemManager.ShouldUnclaim)
+				{
+					Platform.GetService<IProtocollingWorkflowService>(
+						delegate(IProtocollingWorkflowService service)
+						{
+							service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _assignedStaffRef));
+						});
+				}
 
 				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Skipped);
 			}
@@ -436,17 +439,20 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
-		#region Close
+		#region Cancel
 
-		public void Close()
+		public void Cancel()
 		{
 			try
 			{
-				Platform.GetService<IProtocollingWorkflowService>(
-					delegate(IProtocollingWorkflowService service)
-					{
-						service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _notes, _worklistItemManager.ShouldUnclaim, _assignedStaffRef));
-					});
+				if (_worklistItemManager.ShouldUnclaim)
+				{
+					Platform.GetService<IProtocollingWorkflowService>(
+						delegate(IProtocollingWorkflowService service)
+						{
+							service.DiscardProtocol(new DiscardProtocolRequest(_protocolAssignmentStepRef, _assignedStaffRef));
+						});
+				}
 
 				// To be protocolled folder will be invalid if it is the source of the worklist item;  the original item will have been
 				// discontinued with a new scheduled one replacing it

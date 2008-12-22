@@ -243,26 +243,16 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
 			Staff staff = request.ReassignToStaff == null ? null : this.PersistenceContext.Load<Staff>(request.ReassignToStaff);
 
-			if (request.ShouldUnclaim)
+			// demand authority token if trying to cancel a protocol that is perfomed by someone else
+			if ((assignmentStep.State == ActivityStatus.SC && !Equals(assignmentStep.AssignedStaff, this.CurrentUserStaff)) ||
+				(assignmentStep.State == ActivityStatus.IP && !Equals(assignmentStep.PerformingStaff, this.CurrentUserStaff)))
 			{
-				// demand authority token if trying to cancel a protocol that is perfomed by someone else
-				if ((assignmentStep.State == ActivityStatus.SC && !Equals(assignmentStep.AssignedStaff, this.CurrentUserStaff)) ||
-					(assignmentStep.State == ActivityStatus.IP && !Equals(assignmentStep.PerformingStaff, this.CurrentUserStaff)))
-				{
-					PrincipalPermission permission = new PrincipalPermission(null, AuthorityTokens.Workflow.Protocol.Cancel);
-					permission.Demand();
-				}
+				PrincipalPermission permission = new PrincipalPermission(null, AuthorityTokens.Workflow.Protocol.Cancel);
+				permission.Demand();
 			}
 
-			if (request.ShouldUnclaim)
-			{
-				ProtocollingOperations.DiscardProtocolOperation op = new ProtocollingOperations.DiscardProtocolOperation();
-				op.Execute(assignmentStep, staff);
-			}
-
-			// Does it make sense to save notes here?
-			if (request.OrderNotes != null)
-				UpdateOrderNotes(assignmentStep.Procedure.Order, request.OrderNotes);
+			ProtocollingOperations.DiscardProtocolOperation op = new ProtocollingOperations.DiscardProtocolOperation();
+			op.Execute(assignmentStep, staff);
 
 			this.PersistenceContext.SynchState();
 
