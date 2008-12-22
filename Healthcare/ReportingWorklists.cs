@@ -186,6 +186,7 @@ namespace ClearCanvas.Healthcare
 			criteriaNull.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
 			criteriaNull.ReportPart.Interpreter.EqualTo(wqc.Staff);
 			criteriaNull.ProcedureStep.Scheduling.Performer.Staff.IsNull();
+			ApplyTimeCriteria(criteriaNull, WorklistTimeField.ProcedureStepStartTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 
 			return new WorklistItemSearchCriteria[] { criteriaNotEqual, criteriaNull };
 		}
@@ -203,13 +204,14 @@ namespace ClearCanvas.Healthcare
 			unsupervised.ProcedureStepClass = typeof(PublicationStep);
 			unsupervised.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
 			unsupervised.ReportPart.Verifier.EqualTo(wqc.Staff);
-			ApplyTimeCriteria(unsupervised, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeNewestItems, wqc);
+			ApplyTimeCriteria(unsupervised, WorklistTimeField.ProcedureStepCreationTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems, wqc);
 
 			ReportingWorklistItemSearchCriteria supervised = new ReportingWorklistItemSearchCriteria();
 			supervised.ProcedureStepClass = typeof(PublicationStep);
 			supervised.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
 			supervised.ReportPart.Verifier.NotEqualTo(wqc.Staff);
 			supervised.ReportPart.Interpreter.EqualTo(wqc.Staff);
+			ApplyTimeCriteria(supervised, WorklistTimeField.ProcedureStepCreationTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems, wqc);
 
 			return new WorklistItemSearchCriteria[] { unsupervised, supervised };
 		}

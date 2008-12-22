@@ -57,7 +57,7 @@ namespace ClearCanvas.Healthcare
 			criteria.ProcedureStepClass = typeof(TranscriptionStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.CM);
 			criteria.ProcedureStep.Performer.Staff.EqualTo(wqc.Staff);
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, null, WorklistOrdering.PrioritizeNewestItems, wqc);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepEndTime, WorklistTimeRange.Today, WorklistOrdering.PrioritizeNewestItems, wqc);
 
 			return new WorklistItemSearchCriteria[] { criteria };
 		}
