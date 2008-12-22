@@ -363,6 +363,9 @@
   <data name="MessageChooseRadiologist" xml:space="preserve">
     <value>You must choose a supervisor.</value>
   </data>
+  <data name="MessageConcurrentModificationCloseWorkspace" xml:space="preserve">
+    <value>The operation cannot be completed because modifications have been made by another user.  The workspace must be closed and re-opened.</value>
+  </data>
   <data name="MessageConfirmDiscardSelectedAddendum" xml:space="preserve">
     <value>Discard the selected addendum?</value>
   </data>

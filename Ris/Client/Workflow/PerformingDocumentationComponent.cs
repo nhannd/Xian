@@ -42,6 +42,7 @@ using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -179,7 +180,8 @@ namespace ClearCanvas.Ris.Client.Workflow
         private PerformedProcedureComponent _ppsComponent;
         private PerformingDocumentationOrderDetailsComponent _orderDetailsComponent;
 
-        private bool _completeEnabled;
+    	private bool _saveEnabled;
+		private bool _completeEnabled;
         private bool _alreadyCompleted;
 
         #endregion
@@ -187,6 +189,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         public PerformingDocumentationComponent(ModalityWorklistItem item)
         {
             _worklistItem = item;
+        	_saveEnabled = true;
         }
 
         #region ApplicationComponent overrides
@@ -311,7 +314,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         public bool SaveEnabled
         {
-            get { return true; }
+            get { return _saveEnabled; }
         }
 
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Documentation.Accept)]
@@ -477,6 +480,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 
                 return true;
             }
+			catch(FaultException<ConcurrentModificationException> e)
+			{
+				// bug #3469: we handle this exception explicitly, so we can instruct the user to close the workspace
+				this.Host.ShowMessageBox(SR.MessageConcurrentModificationCloseWorkspace, MessageBoxActions.Ok);
+
+				_saveEnabled = false;
+				NotifyPropertyChanged("SaveEnabled");
+
+				_completeEnabled = false;
+				NotifyPropertyChanged("CompleteEnabled");
+			}
             catch(Exception e)
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
