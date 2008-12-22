@@ -1194,49 +1194,6 @@ Preview.BannerSection = function() {
  *			note - the order note object
  */
 Preview.OrderNoteSection = function() {
-	var _html =
-		'<table width="100%" style="{margin:0px}" border="0">'+
-		'	<tr>'+
-		'		<td>From:</td>'+
-		'		<td width="100%"><div id="author"></td>'+
-		'		<td><div id="urgency"></td>'+
-		'		<td NOWRAP><div id="postDateTime"></td>'+
-		'	</tr>'+
-		'	<tr id="acknowledgedRow">'+
-		'		<td NOWRAP valign="top">Acknowledged By:</td>'+
-		'		<td width="100%" colspan="3"><div id="acknowledged"></td>'+
-		'	</tr>'+
-		'	<tr id="notAcknowledgedRow">'+
-		'		<td class="propertyname" valign="top">Waiting For Acknowledgement:</td>'+
-		'		<td width="100%" colspan="3"><B><div id="notAcknowledged"></B></td>'+
-		'	</tr>'+
-		'	<tr>'+
-		'		<td colspan="4"><div id="noteBody"></td>'+
-		'	</tr>'+
-		'</table>';
-
-	// recursively travese the subtree to get the element with the specify id
-	var _getChildElement = function(parent, id)
-		{
-			if (!parent)
-				return null;
-
-			var child = parent.firstChild;
-			while (child) 
-			{
-				if(child.id == id)
-					return child;
-
-				var grandChild = _getChildElement(child, id);
-				if (grandChild)
-					return grandChild;
-
-				child = child.nextSibling;
-			}
-			
-			return null;
-		};
-
 	var _formatStaffNameAndRoleAndOnBehalf = function(author, onBehalfOfGroup)
 		{
 			var from = Ris.formatStaffNameAndRole(author);
@@ -1307,17 +1264,6 @@ Preview.OrderNoteSection = function() {
 			if(note == null)
 				return;
 
-			element.innerHTML = _html;
-
-			Field.setValue(_getChildElement(element, "author"), _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup));
-			Field.setPreFormattedValue(_getChildElement(element, "urgency"), note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "");
-			Field.setValue(_getChildElement(element, "postDateTime"), Ris.formatDescriptiveDateTime(note.PostTime));
-			Field.setTooltip(_getChildElement(element, "postDateTime"), Ris.formatDateTime(note.PostTime));
-
-			var noteBody = _getChildElement(element, "noteBody");
-			noteBody.style.textAlign = "justify";
-			Field.setPreFormattedValue(noteBody, note.NoteBody);
-
 			note.GroupRecipients = note.GroupRecipients || [];
 			note.StaffRecipients = note.StaffRecipients || [];
 			var acknowledgedGroups = note.GroupRecipients.select(function(recipient) { return recipient.IsAcknowledged; });
@@ -1325,15 +1271,34 @@ Preview.OrderNoteSection = function() {
 			var notAcknowledgedGroups = note.GroupRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
 			var notAcknowledgedStaffs = note.StaffRecipients.select(function(recipient) { return !recipient.IsAcknowledged; });
 
+			var html = "";
+			html += '<table width="100%" style="{margin:0px}" border="0">';
+			html += '	<tr>';
+			html += '		<td>From:</td>';
+			html += '		<td width="100%">' + _formatStaffNameAndRoleAndOnBehalf(note.Author, note.OnBehalfOfGroup) + '</td>';
+			html += '		<td>' + (note.Urgent ? "<img alt='Urgent' src='" + imagePath + "/urgent.gif'/>" : "") + '</td>';
+			html += '		<td NOWRAP title="' +  Ris.formatDateTime(note.PostTime) + '">' + Ris.formatDescriptiveDateTime(note.PostTime) + '</td>';
+			html += '	</tr>';
 			if (acknowledgedGroups.length > 0 || acknowledgedStaffs.length > 0)
-				Field.setPreFormattedValue(_getChildElement(element, "acknowledged"), _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs));
-			else
-				Field.show(_getChildElement(element, "acknowledgedRow"), false);
-		
+			{
+				html += '	<tr id="acknowledgedRow">';
+				html += '		<td NOWRAP valign="top">Acknowledged By:</td>';
+				html += '		<td width="100%" colspan="3">' + _formatAcknowledged(acknowledgedGroups, acknowledgedStaffs).replaceLineBreak() + '<div id="acknowledged"></td>';
+				html += '	</tr>';
+			}
 			if (notAcknowledgedGroups.length > 0 || notAcknowledgedStaffs.length > 0)
-				Field.setPreFormattedValue(_getChildElement(element, "notAcknowledged"), _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs));
-			else
-				Field.show(_getChildElement(element, "notAcknowledgedRow"), false);
+			{
+				html += '	<tr id="notAcknowledgedRow">';
+				html += '		<td class="propertyname" valign="top">Waiting For Acknowledgement:</td>';
+				html += '		<td width="100%" colspan="3"><B>' + _formatNotAcknowledged(notAcknowledgedGroups, notAcknowledgedStaffs).replaceLineBreak() + '</B></td>';
+				html += '	</tr>';
+			}
+			html += '	<tr>';
+			html += '		<td colspan="4" style="{text-align:justify;}">' +  note.NoteBody.replaceLineBreak() + '</td>';
+			html += '	</tr>';
+			html += '</table>';
+			
+			element.innerHTML = html;
 		}
 	};
 }();
