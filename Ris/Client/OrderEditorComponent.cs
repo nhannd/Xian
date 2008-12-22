@@ -860,10 +860,9 @@ namespace ClearCanvas.Ris.Client
                     == ApplicationComponentExitCode.Accepted)
                 {
                     _proceduresTable.Items.Add(procReq);
+
+                    this.Modified = true;
                 }
-
-                this.Modified = true;
-
             }
             catch (Exception e)
             {
