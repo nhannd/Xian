@@ -595,10 +595,20 @@ Preview.ReportingProceduresTable = function () {
 		 
 	var _formatProcedureReportingStatus = function(procedure)
 	{
+		// bug #3470: there is no point drilling down into the "reporting" status unless the procedure is actually In Progress or Completed
+		// if not, we just return the Procedure status
+		if(["IP", "CM"].indexOf(procedure.Status.Code) == -1)
+			return procedure.Status.Value;
+	
 		var activeReportingStep = _getActiveReportingStep(procedure);
 		var lastCompletedPublicationStep = _getLastCompletedPublicationStep(procedure);
 
 		var lastStep = activeReportingStep ? activeReportingStep : lastCompletedPublicationStep;
+		
+		// bug #3470: there may not be any reporting steps yet, or the procedure may have been linked to another - there is no way to tell
+		// for now, just return "". The linked procedure problem should be fixed server-side in a future version
+		if(!lastStep) return "";
+		
 		var isAddendum = activeReportingStep && lastCompletedPublicationStep;
 
 		var stepName = lastStep.ProcedureStepName;
