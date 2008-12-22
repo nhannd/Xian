@@ -939,12 +939,11 @@ Preview.ReportPreview = function () {
 
 	var _formatReportStatus = function(report, isAddendum)
 	{
-		var statusMap = {X: 'Cancelled', D: 'Draft', P: 'Preliminary', F: 'Final'};
 		var timePropertyMap = {X: 'CancelledTime', D: 'CreationTime', P: 'PreliminaryTime', F: 'CompletedTime'};
 		var timeText = Ris.formatDateTime(report[timePropertyMap[report.Status.Code]]);
 		var warningText = " *** THIS " + (isAddendum ? "ADDENDUM" : "REPORT") + " HAS NOT BEEN VERIFIED ***";
 
-		var statusText = statusMap[report.Status.Code] + " - " + timeText;
+		var statusText = report.Status.Value + " - " + timeText;
 
 		if (['D', 'P'].indexOf(report.Status.Code) > -1)
 			statusText = "<font color='red'>" + statusText + warningText + "</font>";
