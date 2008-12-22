@@ -80,7 +80,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 					criteria.ProcedureStepClass = typeof(ReportingProcedureStep);
 					criteria.ProcedureStep.EqualTo(ps);
-					criteria.TimeField = WorklistTimeField.ProcedureStartTime;
+                    criteria.TimeField = WorklistTimeField.ProcedureStepScheduledStartTime;
 					return criteria;
 				}).ToArray();
 
@@ -105,7 +105,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 					criteria.ProcedureStepClass = typeof(ProtocolProcedureStep);
 					criteria.ProcedureStep.EqualTo(ps);
-					criteria.TimeField = WorklistTimeField.ProcedureStartTime;
+                    criteria.TimeField = WorklistTimeField.ProcedureStepCreationTime;
 					return criteria;
 				}).ToArray();
 
