@@ -113,7 +113,12 @@
 				{
 					Field.show($("recipient"), true);
 					Field.setValue($("recipientName"), Ris.formatPersonName(worklistItem.SelectedResultRecipient.Practitioner.Name));
-					Field.setValue($("recipientAddress1"), Ris.formatAddress(worklistItem.SelectedResultRecipient.ContactPoint.CurrentAddress));
+
+					var recipientAddress = worklistItem.SelectedResultRecipient.ContactPoint.CurrentAddress;
+					var line1 = (recipientAddress.Unit ? recipientAddress + "-" : "") + recipientAddress.Street;
+					var line2 = [recipientAddress.City, recipientAddress.Province, recipientAddress.Country, recipientAddress.PostalCode].join(" ");
+					Field.setValue($("recipientAddress1"), line1);
+					Field.setValue($("recipientAddress2"), line2);
 				}
 				else
 				{
@@ -189,7 +194,7 @@
 </head>
 <body onload="javascript: onBodyLoad()">
 	<form id="myForm">
-		<div id="letterhead">
+		<div id="letterhead" style="{height:2.8in; margin-bottome:0px; padding-bottom:0px;}">
 			<div id="letterheadLogo">
 			</div>
 			<div id="letterheadFacility">
@@ -203,11 +208,12 @@
 			</div>
 			<div class="clear"></div>
 		</div>
-		<div id="recipient">
+		<div id="recipient" style="{height:1.3in; position:absolute; top:1.5in;}">
 			<div id="recipientName"></div>
 			<div id="recipientAddress1"></div>
+			<div id="recipientAddress2"></div>
 		</div>
-		<div id="ordersummary">
+		<div id="ordersummary" style="{margin-top:0px; padding-top:0px;}">
 			<div class="leftcolumn">
 				<table>
 					<tbody valign="top">
