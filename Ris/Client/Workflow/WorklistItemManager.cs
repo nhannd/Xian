@@ -116,10 +116,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
 		private readonly string _worklistClassName;
-		private int _completedItems = 0;
+		private int _completedItemsCount = 0;
+		private int _skippedItemsCount = 0;
 		private bool _isInitialItem = true;
 
-		private readonly List<TWorklistItem> _skippedItems;
+		private readonly List<TWorklistItem> _visitedItems;
 		private readonly Stack<TWorklistItem> _worklistCache;
 
 		private bool _reportNextItem;
@@ -146,7 +147,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_worklistRef = worklistRef;
 			_worklistClassName = worklistClassName;
 
-			_skippedItems = new List<TWorklistItem>();
+			_visitedItems = new List<TWorklistItem>();
 			_worklistCache = new Stack<TWorklistItem>();
 		}
 
@@ -179,11 +180,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			if (result == WorklistItemCompletedResult.Completed)
 			{
-				_completedItems++;
-				_skippedItems.Add(_worklistItem);
+				_completedItemsCount++;
+				_visitedItems.Add(_worklistItem);
 			}
 			else if (result == WorklistItemCompletedResult.Skipped)
-				_skippedItems.Add(_worklistItem);
+			{
+				_skippedItemsCount++;
+				_visitedItems.Add(_worklistItem);
+			}
 
 			_isInitialItem = false;
 
@@ -206,7 +210,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public void IgnoreWorklistItems(List<TWorklistItem> interpretations)
 		{
-			_skippedItems.AddRange(interpretations);
+			_visitedItems.AddRange(interpretations);
 			RefreshWorklistItemCache();
 		}
 
@@ -231,7 +235,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 				if (!_isInitialItem)
 				{
-					status = status + string.Format(SR.FormatReportingStatusText, _worklistCache.Count, _completedItems, _skippedItems.Count);
+					status = status + string.Format(SR.FormatReportingStatusText, _worklistCache.Count, _completedItemsCount, _skippedItemsCount);
 				}
 
 				return status;
@@ -284,7 +288,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 					foreach (TWorklistItem item in response.WorklistItems)
 					{
-						if (WorklistItemWasPreviouslySkipped(item) == false)
+						if (WorklistItemWasPreviouslyVisited(item) == false)
 						{
 							_worklistCache.Push(item);
 						}
@@ -292,10 +296,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 				});
 		}
 
-		private bool WorklistItemWasPreviouslySkipped(TWorklistItem item)
+		private bool WorklistItemWasPreviouslyVisited(TWorklistItem item)
 		{
 			return CollectionUtils.Contains(
-				_skippedItems,
+				_visitedItems,
 				delegate(TWorklistItem skippedItem)
 				{
 					return skippedItem.AccessionNumber == item.AccessionNumber;
