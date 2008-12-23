@@ -3,13 +3,13 @@
   <Profiles />
   <Settings>
     <Setting Name="BaseUrl" Description="Base URL on which web services are hosted." Type="System.String" Scope="Application">
-      <Value Profile="(Default)">http://localhost:8000/</Value>
+      <Value Profile="(Default)">net.tcp://localhost:8000/</Value>
     </Setting>
     <Setting Name="SendExceptionDetailToClient" Description="Indicates whether exception details should be transmitted to the client." Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="ConfigurationClass" Description="Specifies the name of the service configuration class." Type="System.String" Scope="Application">
-      <Value Profile="(Default)">ClearCanvas.Enterprise.Common.ServiceConfiguration.Server.WSHttpConfiguration, ClearCanvas.Enterprise.Common</Value>
+      <Value Profile="(Default)">ClearCanvas.Enterprise.Common.ServiceConfiguration.Server.NetTcpConfiguration, ClearCanvas.Enterprise.Common</Value>
     </Setting>
     <Setting Name="MaxReceivedMessageSize" Description="Specifies the max received message size in bytes." Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">1000000</Value>

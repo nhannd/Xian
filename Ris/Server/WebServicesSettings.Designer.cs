@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Server {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Base URL on which web services are hosted.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost:8000/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("net.tcp://localhost:8000/")]
         public string BaseUrl {
             get {
                 return ((string)(this["BaseUrl"]));
@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Server {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Configuration.SettingsDescriptionAttribute("Specifies the name of the service configuration class.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas.Enterprise.Common.ServiceConfiguration.Server.WSHttpConfiguration, Cl" +
+        [global::System.Configuration.DefaultSettingValueAttribute("ClearCanvas.Enterprise.Common.ServiceConfiguration.Server.NetTcpConfiguration, Cl" +
             "earCanvas.Enterprise.Common")]
         public string ConfigurationClass {
             get {
