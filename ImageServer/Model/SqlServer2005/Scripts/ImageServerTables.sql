@@ -64,6 +64,7 @@ CREATE TABLE [dbo].[ServerPartition](
 	[Port] [int] NOT NULL,
 	[PartitionFolder] [nvarchar](16) NOT NULL,
 	[AcceptAnyDevice] [bit] NOT NULL CONSTRAINT [DF_ServerPartition_AcceptAnyDevice]  DEFAULT ((1)),
+	[AuditDeleteStudy] [bit] NOT NULL CONSTRAINT [DF_ServerPartition_AuditDeleteStudy]  DEFAULT ((0)),
 	[AutoInsertDevice] [bit] NOT NULL CONSTRAINT [DF_ServerPartition_AutoInsertDevice]  DEFAULT ((1)),
 	[DefaultRemotePort] [int] NOT NULL CONSTRAINT [DF_ServerPartition_DefaultRemotePort]  DEFAULT ((104)),
 	[StudyCount] [int] NOT NULL CONSTRAINT [DF_ServerPartition_StudyCount]  DEFAULT ((0)),
