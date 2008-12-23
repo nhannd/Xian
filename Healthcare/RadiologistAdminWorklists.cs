@@ -24,6 +24,7 @@ namespace ClearCanvas.Healthcare
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(InterpretationStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
+			criteria.ProcedureStep.Scheduling.StartTime.IsNotNull();	// only want steps that are actually scheduled
 			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepScheduledStartTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new ReportingWorklistItemSearchCriteria[] { criteria };
 		}
