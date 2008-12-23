@@ -115,7 +115,7 @@
 					Field.setValue($("recipientName"), Ris.formatPersonName(worklistItem.SelectedResultRecipient.Practitioner.Name));
 
 					var recipientAddress = worklistItem.SelectedResultRecipient.ContactPoint.CurrentAddress;
-					var line1 = (recipientAddress.Unit ? recipientAddress + "-" : "") + recipientAddress.Street;
+					var line1 = (recipientAddress.Unit ? recipientAddress.Unit + "-" : "") + recipientAddress.Street;
 					var line2 = [recipientAddress.City, recipientAddress.Province, recipientAddress.Country, recipientAddress.PostalCode].join(" ");
 					Field.setValue($("recipientAddress1"), line1);
 					Field.setValue($("recipientAddress2"), line2);
