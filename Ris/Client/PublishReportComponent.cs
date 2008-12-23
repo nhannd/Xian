@@ -459,28 +459,25 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				using (new HeaderFooterSettings())
+				foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
 				{
-					foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
+					if (checkable.IsChecked)
 					{
-						if (checkable.IsChecked)
-						{
-							ResultRecipientDetail detail = checkable.Item;
+						ResultRecipientDetail detail = checkable.Item;
 
-							PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ProcedureRef, this.ReportRef);
-							ChildComponentHost host = new ChildComponentHost(this.Host, component);
-							host.StartComponent();
-							object view = host.ComponentView.GuiElement;
+						PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ProcedureRef, this.ReportRef);
+						ChildComponentHost host = new ChildComponentHost(this.Host, component);
+						host.StartComponent();
+						object view = host.ComponentView.GuiElement;
 
-							component.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
-								this.PatientProfileRef,
-								this.OrderRef,
-								this.ProcedureRef,
-								this.ReportRef,
-								detail);
+						component.ScriptCompleted += OnPrintDocument;
+						component.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
+							this.PatientProfileRef,
+							this.OrderRef,
+							this.ProcedureRef,
+							this.ReportRef,
+							detail);
 
-							component.ScriptCompleted += OnPrintDocument;
-						}
 					}
 				}
 
@@ -535,8 +532,11 @@ namespace ClearCanvas.Ris.Client
 
 		private static void OnPrintDocument(object sender, EventArgs e)
 		{
-			PublishReportPreviewComponent component = (PublishReportPreviewComponent)sender;
-			component.PrintDocument();
+			using (new HeaderFooterSettings())
+			{
+				PublishReportPreviewComponent component = (PublishReportPreviewComponent) sender;
+				component.PrintDocument();
+			}
 		}
 
 		#endregion
