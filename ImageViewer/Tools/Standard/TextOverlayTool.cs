@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("showHide", "imageviewer-keyboard/ToolsStandardShowHideTextOverlay", "ShowHide", KeyStroke = XKeys.O)]
 	[ButtonAction("showHide", "global-toolbars/ToolbarStandard/ToolbarShowHideTextOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideTextOverlay")]
-	[GroupHint("showHide", "Tools.Image.Manipulation.TextOverlay.ShowHide")]
+	[GroupHint("showHide", "Tools.Image.Overlays.Text.ShowHide")]
 	[IconSet("showHide", IconScheme.Colour, "Icons.TextOverlayToolSmall.png", "Icons.TextOverlayToolMedium.png", "Icons.TextOverlayToolLarge.png")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

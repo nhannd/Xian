@@ -585,4 +585,13 @@ Please check the log for more details.</value>
   <data name="FormatAutoVoiLutDataDescription" xml:space="preserve">
     <value>{0} (Data)</value>
   </data>
+  <data name="MenuShowHideScaleOverlay" xml:space="preserve">
+    <value>Show/Hide Scale Overlay</value>
+  </data>
+  <data name="ToolbarShowHideScaleOverlay" xml:space="preserve">
+    <value>Show/Hide Scale Overlay</value>
+  </data>
+  <data name="TooltipShowHideScaleOverlay" xml:space="preserve">
+    <value>Show/Hide Scale Overlay</value>
+  </data>
 </root>
