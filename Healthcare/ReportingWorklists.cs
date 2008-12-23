@@ -97,11 +97,11 @@ namespace ClearCanvas.Healthcare
 		{
 			ReportingWorklistItemSearchCriteria assignedToMe = BaseCriteria();
 			assignedToMe.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+			ApplyTimeCriteria(assignedToMe, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 
 			ReportingWorklistItemSearchCriteria bySupervisor = BaseCriteria();
 			bySupervisor.ReportPart.Supervisor.EqualTo(wqc.Staff);
-
-            ApplyTimeCriteria(assignedToMe, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
+			ApplyTimeCriteria(bySupervisor, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 
 			return new ReportingWorklistItemSearchCriteria[] { assignedToMe, bySupervisor };
 		}
