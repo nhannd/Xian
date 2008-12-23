@@ -1051,7 +1051,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						// active part already has a supervisor assigned
 						_supervisor = activePart.Supervisor;
 					}
-					else if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview))
+					else if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
 					{
 						// active part does not have a supervisor assigned
 						// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
