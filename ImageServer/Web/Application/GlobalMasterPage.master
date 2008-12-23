@@ -15,8 +15,7 @@
     <!-- this is special code that web service validation needs -->
     <form id="MasterForm" runat="server" submitdisabledcontrols="true">
         <ccAsp:CheckJavascript runat="server" ID="CheckJavascript" NonJSTargetURL="~/Pages/Error/JavascriptRequired.aspx" />   
-        <ccAsp:JQuery runat="server" ID="JQueryMain" Effects="true" />
-       
+              
         <asp:ScriptManager ID="GlobalScriptManager" runat="server" EnableScriptGlobalization="true"
             EnableScriptLocalization="true" OnAsyncPostBackError="GlobalScriptManager_AsyncPostBackError" >
         </asp:ScriptManager>            

@@ -26,7 +26,7 @@
 <ccUI:ToolbarButton runat="server" SkinID="ViewDetailsButton" EnabledImageURL="images/Buttons/ViewDetailsEnabled.png" DisabledImageURL="images/Buttons/ViewDetailsDisabled.png" HoverImageURL="images/Buttons/ViewDetailsHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="MoveButton" EnabledImageURL="images/Buttons/MoveEnabled.png" DisabledImageURL="images/Buttons/MoveDisabled.png" HoverImageURL="images/Buttons/MoveHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="DeleteButton" EnabledImageURL="images/Buttons/DeleteEnabled.png" DisabledImageURL="images/Buttons/DeleteDisabled.png" HoverImageURL="images/Buttons/DeleteHover.png"/>
-<ccUI:ToolbarButton runat="server" SkinID="DeleteAllButton" EnabledImageURL="images/Buttons/DeleteAllEnabled.png" DisabledImageURL="images/Buttons/DeleteAllDisabled.png" HoverImageURL="images/DeleteAllButtons/Hover.png"/>
+<ccUI:ToolbarButton runat="server" SkinID="DeleteAllButton" EnabledImageURL="images/Buttons/DeleteAllEnabled.png" DisabledImageURL="images/Buttons/DeleteAllDisabled.png" HoverImageURL="images/Buttons/DeleteAllHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="EditButton" EnabledImageURL="images/Buttons/EditEnabled.png" DisabledImageURL="images/Buttons/EditDisabled.png" HoverImageURL="images/Buttons/EditHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="ResetButton" EnabledImageURL="images/Buttons/ResetEnabled.png" DisabledImageURL="images/Buttons/ResetDisabled.png" HoverImageURL="images/Buttons/ResetHover.png"/>
 <ccUI:ToolbarButton runat="server" SkinID="RescheduleButton" EnabledImageURL="~/App_Themes/Default/images/Buttons/RescheduleEnabled.png" DisabledImageURL="images/Buttons/RescheduleDisabled.png" HoverImageURL="images/Buttons/RescheduleHover.png"/>

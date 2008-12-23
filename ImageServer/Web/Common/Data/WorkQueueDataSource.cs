@@ -137,8 +137,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private string _patientName;
 		private int _resultCount;
 		private ServerPartition _partition;
-		private WorkQueueTypeEnum _typeEnum;
-		private WorkQueueStatusEnum _statusEnum;
+		private WorkQueueTypeEnum[] _typeEnums;
+		private WorkQueueStatusEnum[] _statusEnums;
 		private WorkQueuePriorityEnum _priorityEnum;
 		private string _dateFormats;
 		private IList<WorkQueueSummary> _list = new List<WorkQueueSummary>();
@@ -168,16 +168,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			set { _partition = value; }
 		}
 
-		public WorkQueueTypeEnum TypeEnum
+		public WorkQueueTypeEnum[] TypeEnums
 		{
-			get { return _typeEnum; }
-			set { _typeEnum = value; }
+			get { return _typeEnums; }
+			set { _typeEnums = value; }
 		}
 
-		public WorkQueueStatusEnum StatusEnum
+		public WorkQueueStatusEnum[] StatusEnums
 		{
-			get { return _statusEnum; }
-			set { _statusEnum = value; }
+			get { return _statusEnums; }
+			set { _statusEnums = value; }
 		}
 
 		public WorkQueuePriorityEnum PriorityEnum
@@ -245,11 +245,40 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			else
 				parameters.ScheduledTime = DateTime.ParseExact(ScheduledDate, DateFormats, null);
 
-			if (TypeEnum != null)
-				parameters.Type = TypeEnum;
+            if (TypeEnums != null && TypeEnums.Length > 0)
+            {
+                string types = "(";
+                if (TypeEnums.Length == 1)
+                    types += TypeEnums[0].Enum;
+                else {
+                    string separator = "";
+                    foreach (WorkQueueTypeEnum typeEnum in TypeEnums)
+                    {
+                        types += separator + typeEnum.Enum;
+                        separator = ",";
+                    }
+                }
+                
+		        parameters.Type = types + ")";
+            }
 
-			if (StatusEnum != null)
-				parameters.Status = StatusEnum;
+            if (StatusEnums != null && StatusEnums.Length > 0)
+            {
+                string statuses = "(";
+                if (StatusEnums.Length == 1)
+                    statuses += StatusEnums[0].Enum;
+                else
+                {
+                    string separator = "";
+                    foreach (WorkQueueStatusEnum statusEnum in StatusEnums)
+                    {
+                        statuses += separator + statusEnum.Enum;
+                        separator = ",";
+                    }
+                }
+
+                parameters.Status = statuses + ")";
+            }
 
 			if (PriorityEnum != null)
 				parameters.Priority = PriorityEnum;

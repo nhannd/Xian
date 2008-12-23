@@ -3,9 +3,24 @@
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.SearchPanel" %>
 <%@ Register Src="WorkQueueGridView.ascx" TagName="WorkQueueSearchResultPanel" TagPrefix="localAsp" %>
     
+   
 <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-
+    <ccAsp:JQuery runat="server" ID="JQuery1" MultiSelect="true" Effects="true" />
+<script type="text/Javascript">
+function pageLoad(){
+    $("#<%=TypeListBox.ClientID %>").multiSelect({
+        noneSelected: '',
+        oneOrMoreSelected: '% Selected',
+        style: 'width: 260px'
+    });
+    $("#<%=StatusListBox.ClientID %>").multiSelect({
+        noneSelected: '',
+        oneOrMoreSelected: '% Selected',
+        style: 'width: 130px;'
+    });
+}
+</script>
             <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
                 <asp:TableRow>
                     <asp:TableCell>                          
@@ -31,13 +46,12 @@
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label5" runat="server" Text="Type" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="TypeDropDownList" runat="server" CssClass="SearchDropDownList" Width="120px">
-                                                </asp:DropDownList></td>
+                                                <asp:ListBox ID="TypeListBox" runat="server" SelectionMode="Multiple" />
+                                            </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label6" runat="server" Text="Status" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
-                                                <asp:DropDownList ID="StatusDropDownList" runat="server" CssClass="SearchDropDownList">
-                                                </asp:DropDownList></td>
+                                                <asp:ListBox ID="StatusListBox" runat="server" SelectionMode="Multiple" /></td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label7" runat="server" Text="Priority" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />

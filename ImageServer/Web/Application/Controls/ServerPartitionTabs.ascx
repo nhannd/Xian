@@ -9,7 +9,7 @@
             <ContentTemplate>
             
             <asp:Panel runat="server" CssClass="AddPartitionMessage">
-                There are currently no partitions setup on the ImageServer. <asp:LinkButton runat="server" PostBackUrl="~/Pages/Configure/ServerPartitions/Default.aspx" CssClass="AddPartitionLink">Add New Partition</asp:LinkButton>
+                There are currently no partitions setup on the ImageServer. <asp:LinkButton runat="server" PostBackUrl="~/Pages/Admin/Configure/ServerPartitions/Default.aspx" CssClass="AddPartitionLink">Add New Partition</asp:LinkButton>
             </asp:Panel>
             
             </ContentTemplate>            

@@ -12,10 +12,9 @@
 function pageLoad(){
     $("#<%=ModalityListBox.ClientID %>").multiSelect({
         noneSelected: '',
-        oneOrMoreSelected: '*'
+        oneOrMoreSelected: '% Selected',
+        style: 'width: 120px;'
     });
-    
-    $(".SearchTextBox").mouseover(function() { $(this).addClass('hover'); }).mouseout(function() { $(this).removeClass('hover'); }).focus( function() {	$(this).addClass('focus'); }).blur( function() { $(this).removeClass('focus') });
 }
 </script>
             <asp:Table runat="server">

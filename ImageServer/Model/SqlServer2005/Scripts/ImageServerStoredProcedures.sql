@@ -260,8 +260,8 @@ CREATE PROCEDURE [dbo].[WebQueryWorkQueue]
 	@PatientID nvarchar(64) = null,
 	@PatientsName nvarchar(64) = null,
 	@ScheduledTime datetime = null,
-	@Type smallint = null,
-	@Status smallint = null,
+	@Type nvarchar(64) = null,
+	@Status nvarchar(64) = null,
 	@Priority smallint = null,
 	@StartIndex int,
 	@MaxRowCount int = 25,
@@ -295,7 +295,7 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 		
-		SET @where = @where + ''WorkQueue.WorkQueueTypeEnum = '' + CONVERT(varchar(10), @Type)
+		SET @where = @where + ''WorkQueue.WorkQueueTypeEnum in '' + @Type
 	END
 	
 	IF (@Status IS NOT NULL)
@@ -303,7 +303,7 @@ BEGIN
 		IF (@where<>'''')
 			SET @where = @where + '' AND ''
 
-		SET @where = @where + ''WorkQueue.WorkQueueStatusEnum = '' +  CONVERT(varchar(10),@Status)
+		SET @where = @where + ''WorkQueue.WorkQueueStatusEnum in '' +  @Status
 	END
 
 	IF (@Priority IS NOT NULL)

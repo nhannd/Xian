@@ -36,7 +36,6 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 {
@@ -118,11 +117,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                                                 }                                   
 
                                                                 source.DateFormats = ScheduleCalendarExtender.Format;
-                                                                if (TypeDropDownList.SelectedValue != string.Empty)
-                                                                    source.TypeEnum = WorkQueueTypeEnum.GetEnum(TypeDropDownList.SelectedValue);
 
-                                                                if (StatusDropDownList.SelectedValue != string.Empty)
-                                                                    source.StatusEnum = WorkQueueStatusEnum.GetEnum(StatusDropDownList.SelectedValue);
+                                                                if (TypeListBox.SelectedIndex > -1)
+                                                                {
+                                                                    List<WorkQueueTypeEnum> types = new List<WorkQueueTypeEnum>();
+                                                                    foreach (ListItem item in TypeListBox.Items)
+                                                                    {
+                                                                        if (item.Selected)
+                                                                        {
+                                                                            types.Add(WorkQueueTypeEnum.GetEnum(item.Value));
+                                                                        }
+                                                                    }
+                                                                    source.TypeEnums = types.ToArray();
+                                                                }
+
+                                                                if (StatusListBox.SelectedIndex > -1)
+                                                                {
+                                                                    List<WorkQueueStatusEnum> statuses = new List<WorkQueueStatusEnum>();
+                                                                    foreach (ListItem item in StatusListBox.Items)
+                                                                    {
+                                                                        if (item.Selected)
+                                                                        {
+                                                                            statuses.Add(WorkQueueStatusEnum.GetEnum(item.Value));
+                                                                        }
+                                                                    }
+                                                                    source.StatusEnums = statuses.ToArray();
+                                                                }
 
                                                                 if (PriorityDropDownList.SelectedValue != string.Empty)
                                                                     source.PriorityEnum = WorkQueuePriorityEnum.GetEnum(PriorityDropDownList.SelectedValue);
@@ -160,22 +180,48 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             IList<WorkQueueStatusEnum> workQueueStatuses = WorkQueueStatusEnum.GetAll();
             IList<WorkQueuePriorityEnum> workQueuePriorities = WorkQueuePriorityEnum.GetAll();
 
-            int prevSelectedIndex = TypeDropDownList.SelectedIndex;
-            TypeDropDownList.Items.Clear();
-            TypeDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, string.Empty));
-            foreach (WorkQueueTypeEnum t in workQueueTypes)
-                TypeDropDownList.Items.Add(new ListItem(t.Description, t.Lookup));
-            TypeDropDownList.SelectedIndex = prevSelectedIndex;
+            if (TypeListBox.Items.Count == 0)
+            {
+                foreach (WorkQueueTypeEnum t in workQueueTypes)
+                {
+                    TypeListBox.Items.Add(new ListItem(t.Description, t.Lookup));
+                }
+            }
+            else
+            {
+                ListItem[] typeItems = new ListItem[TypeListBox.Items.Count];
+                TypeListBox.Items.CopyTo(typeItems, 0);
+                TypeListBox.Items.Clear();
+                int count = 0;
+                foreach (WorkQueueTypeEnum t in workQueueTypes)
+                {
+                    TypeListBox.Items.Add(new ListItem(t.Description, t.Lookup));
+                    TypeListBox.Items[count].Selected = typeItems[count].Selected;
+                    count++;
+                }
+            }
 
-            prevSelectedIndex = StatusDropDownList.SelectedIndex;
-            StatusDropDownList.Items.Clear();
-            StatusDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, string.Empty));
-            foreach (WorkQueueStatusEnum s in workQueueStatuses)
-                StatusDropDownList.Items.Add(new ListItem(s.Description, s.Lookup));
-            StatusDropDownList.SelectedIndex = prevSelectedIndex;
-
-
-            prevSelectedIndex = PriorityDropDownList.SelectedIndex;
+            if (StatusListBox.Items.Count == 0)
+            {
+                foreach (WorkQueueStatusEnum s in workQueueStatuses)
+                {
+                    StatusListBox.Items.Add(new ListItem(s.Description, s.Lookup));
+                }
+            }
+            else
+            {
+                ListItem[] statusItems = new ListItem[StatusListBox.Items.Count];
+                StatusListBox.Items.CopyTo(statusItems, 0);
+                StatusListBox.Items.Clear();
+                int count = 0;
+                foreach (WorkQueueStatusEnum s in workQueueStatuses)
+                {
+                    StatusListBox.Items.Add(new ListItem(s.Description, s.Lookup));
+                    StatusListBox.Items[count].Selected = statusItems[count].Selected;
+                    count++;
+                }
+            }
+            int prevSelectedIndex = PriorityDropDownList.SelectedIndex;
             PriorityDropDownList.Items.Clear();
             PriorityDropDownList.Items.Add(new ListItem(App_GlobalResources.SR.Any, string.Empty));
             foreach (WorkQueuePriorityEnum p in workQueuePriorities)

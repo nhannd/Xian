@@ -29,6 +29,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
         protected global::System.Web.UI.UpdatePanel UpdatePanel;
         
         /// <summary>
+        /// JQuery1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.JQuery JQuery1;
+        
+        /// <summary>
         /// Table control.
         /// </summary>
         /// <remarks>
@@ -119,13 +128,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
         protected global::System.Web.UI.WebControls.Label Label5;
         
         /// <summary>
-        /// TypeDropDownList control.
+        /// TypeListBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList TypeDropDownList;
+        protected global::System.Web.UI.WebControls.ListBox TypeListBox;
         
         /// <summary>
         /// Label6 control.
@@ -137,13 +146,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
         protected global::System.Web.UI.WebControls.Label Label6;
         
         /// <summary>
-        /// StatusDropDownList control.
+        /// StatusListBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList StatusDropDownList;
+        protected global::System.Web.UI.WebControls.ListBox StatusListBox;
         
         /// <summary>
         /// Label7 control.

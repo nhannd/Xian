@@ -37,12 +37,15 @@ if(jQuery) (function($){
 			if( o.selectAllText == undefined ) o.selectAllText = "Select All";
 			if( o.noneSelected == undefined ) o.noneSelected = 'Select options';
 			if( o.oneOrMoreSelected == undefined ) o.oneOrMoreSelected = '% selected';
+			if( o.style == undefined ) o.style = '';
 			
 			// Initialize each multiSelect
 			$(this).each( function() {
 				var select = $(this);
 				var html = '<input type="text" readonly="readonly" class="multiSelect" value="" style="cursor: default;" />';
-				html += '<div class="multiSelectOptions" style="position: absolute; z-index: 99999; display: none;">';
+				html += '<div class="multiSelectOptions" style="position: absolute; z-index: 99999; display: none;';
+				if(o.style) html += o.style;
+				html += '">';
 				if( o.selectAll ) html += '<label class="selectAll"><input type="checkbox" class="selectAll" />' + o.selectAllText + '</label>';
 				$(select).find('OPTION').each( function() {
 					if( $(this).val() != '' ) {
