@@ -90,7 +90,9 @@ if(!Object.prototype.toJsml)
             }) + '"';
         }
 */        
-        return [this.escapeHTML()/* works for XML too */, null];
+		// Bug: #3480 - previous escapeHtml() call did not preserve line breaks.
+		var escaped = this.replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
+        return [escaped, null];
     };
 };
 
