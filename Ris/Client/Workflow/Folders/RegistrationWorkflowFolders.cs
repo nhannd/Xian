@@ -81,21 +81,21 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationPendingProtocolWorklist)]
-		[FolderPath("Pending Protocol Orders")]
+		[FolderPath("Pending Protocol")]
 		public class PendingProtocolFolder : RegistrationWorkflowFolder
 		{
 		}
 
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationCompletedProtocolWorklist)]
-		[FolderPath("Completed Protocol Orders", true)]
+		[FolderPath("Completed Protocol", true)]
 		public class CompletedProtocolFolder : RegistrationWorkflowFolder
 		{
 		}
 
 		[ExtensionOf(typeof(BookingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.RegistrationRejectedProtocolWorklist)]
-		[FolderPath("Rejected Orders")]
+		[FolderPath("Rejected Protocol")]
 		public class RejectedProtocolFolder : RegistrationWorkflowFolder
 		{
 		}
