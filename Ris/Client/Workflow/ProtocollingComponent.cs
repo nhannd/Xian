@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(this.WorklistItem));
 			_bannerComponentHost.StartComponent();
 
-			_orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent(OrderNoteCategory.Protocol));
+			_orderNotesComponentHost = new ChildComponentHost(this.Host, new OrderNoteSummaryComponent(OrderNoteCategory.Protocol, this.SaveEnabled));
 			_orderNotesComponentHost.StartComponent();
 			((OrderNoteSummaryComponent)_orderNotesComponentHost.Component).Notes = _notes;
 

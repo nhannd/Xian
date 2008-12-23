@@ -61,10 +61,20 @@ namespace ClearCanvas.Ris.Client
         private List<OrderNoteDetail> _notes;
 
         /// <summary>
+        /// Constructor allowing edits.
+        /// </summary>
+        /// <param name="category"></param>
+        public OrderNoteSummaryComponent(OrderNoteCategory category)
+            : this(category, false)
+        {
+        }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="category">Specifies the category of order notes to display, and the category under which new notes are placed.</param>
-        public OrderNoteSummaryComponent(OrderNoteCategory category)
+        /// <param name="canEdit">Specifies if the component is editable.  If not, all action buttons are disabled.</param>
+        public OrderNoteSummaryComponent(OrderNoteCategory category, bool canEdit)
         {
             Platform.CheckForNullReference(category, "category");
 
@@ -77,7 +87,9 @@ namespace ClearCanvas.Ris.Client
             _noteActionHandler.Edit.SetClickHandler(UpdateSelectedNote);
             _noteActionHandler.Delete.SetClickHandler(DeleteSelectedNote);
 
-            _noteActionHandler.Add.Enabled = true;
+            // only need to initialize the add button, since the edit and delete buttons are only ever enabled
+            // for newly added notes.  See NoteSelectionChanged()
+            _noteActionHandler.Add.Enabled = canEdit;
             _noteActionHandler.Edit.Enabled = false;
             _noteActionHandler.Delete.Enabled = false;
         }
@@ -144,22 +156,22 @@ namespace ClearCanvas.Ris.Client
             // can occur if user double clicks while holding control
             if (_currentNoteSelection == null) return;
 
-			OrderNoteDetail notedetail;
+            OrderNoteDetail notedetail;
 
-			// manually clone order note
-			notedetail = new OrderNoteDetail(
-				_currentNoteSelection.OrderNoteRef,
-				_currentNoteSelection.Category,
-				_currentNoteSelection.CreationTime,
-				_currentNoteSelection.PostTime,
-				_currentNoteSelection.Author,
-				_currentNoteSelection.OnBehalfOfGroup,
-				_currentNoteSelection.Urgent,
-				_currentNoteSelection.StaffRecipients,
-				_currentNoteSelection.GroupRecipients,
-				_currentNoteSelection.NoteBody,
-				_currentNoteSelection.CanAcknowledge
-				);
+            // manually clone order note
+            notedetail = new OrderNoteDetail(
+                _currentNoteSelection.OrderNoteRef,
+                _currentNoteSelection.Category,
+                _currentNoteSelection.CreationTime,
+                _currentNoteSelection.PostTime,
+                _currentNoteSelection.Author,
+                _currentNoteSelection.OnBehalfOfGroup,
+                _currentNoteSelection.Urgent,
+                _currentNoteSelection.StaffRecipients,
+                _currentNoteSelection.GroupRecipients,
+                _currentNoteSelection.NoteBody,
+                _currentNoteSelection.CanAcknowledge
+                );
 
             UpdateNoteDetail(notedetail);
         }
@@ -209,7 +221,7 @@ namespace ClearCanvas.Ris.Client
         private void NoteSelectionChanged()
         {
             // only un-posted notes can be edited or deleted
-            _noteActionHandler.Edit.Enabled = _noteActionHandler.Delete.Enabled = 
+            _noteActionHandler.Edit.Enabled = _noteActionHandler.Delete.Enabled =
                 (_currentNoteSelection != null && _currentNoteSelection.PostTime == null);
         }
     }
