@@ -629,6 +629,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (!_reportEditor.Save(ReportEditorCloseReason.Verify))
 					return;
 
+				if (SupervisorIsInvalid())
+					return;
+
 				// check for a prelim diagnosis
 				if (PreliminaryDiagnosis.ConversationExists(this.WorklistItem.OrderRef))
 				{
@@ -716,15 +719,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
 					return;
 
-				bool supervisorRequired = !Thread.CurrentPrincipal.IsInRole(
-					ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor);
-				supervisorRequired &= _supervisor == null;
-
-				if (supervisorRequired)
-				{
-					this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
+				if (SupervisorIsInvalid())
 					return;
-				}
 
 				Platform.GetService<IReportingWorkflowService>(
 					delegate(IReportingWorkflowService service)
@@ -784,6 +780,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToTranscription))
 					return;
 
+				if (SupervisorIsInvalid())
+					return;
+
 				Platform.GetService<IReportingWorkflowService>(
 					delegate(IReportingWorkflowService service)
 					{
@@ -833,6 +832,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 				CloseImages();
 
 				if (!_reportEditor.Save(ReportEditorCloseReason.SaveDraft))
+					return;
+
+				if (SupervisorIsInvalid())
 					return;
 
 				Platform.GetService<IReportingWorkflowService>(
@@ -964,6 +966,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return _canSaveReport; }
 		}
 
+
+		private bool SupervisorIsInvalid()
+		{
+			bool invalid = !Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor)
+						   && _supervisor == null;
+			if (invalid)
+			{
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
+			}
+			return invalid;
+		}
 
 		private void SetSupervisor(StaffSummary supervisor)
 		{
