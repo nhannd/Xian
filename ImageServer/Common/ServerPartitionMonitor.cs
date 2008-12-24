@@ -130,12 +130,16 @@ namespace ClearCanvas.ImageServer.Common
 
         public ServerPartition FindPartition(ServerEntityKey key)
         {
-            return CollectionUtils.SelectFirst(
-                       this,
-                       delegate(ServerPartition partition)
-                       {
-                           return partition.GetKey().Equals(key);
-                       });
+            lock(_partitionsLock)
+            {
+                return CollectionUtils.SelectFirst(
+                           this,
+                           delegate(ServerPartition partition)
+                           {
+                               return partition.GetKey().Equals(key);
+                           });    
+            }
+            
         }
 		#endregion
 

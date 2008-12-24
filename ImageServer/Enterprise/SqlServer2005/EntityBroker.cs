@@ -817,18 +817,28 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 else if (parm is EntityUpdateColumn<XmlDocument>)
                 {
                     XmlDocument xml = (XmlDocument) parm.Value;
-                    StringBuilder sb = new StringBuilder();
-                    XmlWriterSettings settings = new XmlWriterSettings();
-                    settings.Indent = false;
 
-                    using (XmlWriter writer = XmlWriter.Create(sb, settings))
+                    if (xml!=null)
                     {
-                        xml.WriteTo(writer);
-                        writer.Flush();
-                    }
+                        StringBuilder sb = new StringBuilder();
+                        XmlWriterSettings settings = new XmlWriterSettings();
+                        settings.Indent = false;
 
-                    valuesText.AppendFormat(", @{0}", sqlParmName);
-                    command.Parameters.AddWithValue("@" + sqlParmName, sb.ToString());
+                        using (XmlWriter writer = XmlWriter.Create(sb, settings))
+                        {
+                            xml.WriteTo(writer);
+                            writer.Flush();
+                        }
+                        valuesText.AppendFormat(", @{0}", sqlParmName);
+                        command.Parameters.AddWithValue("@" + sqlParmName, sb.ToString());
+                    }
+                    else
+                    {
+                        valuesText.AppendFormat(", @{0}", sqlParmName);
+                        command.Parameters.AddWithValue("@" + sqlParmName, DBNull.Value);    
+                    }
+                    
+                    
                 }
                 else
                 {

@@ -48,12 +48,14 @@
     <Compile Include="CommandProcessor\CreateTempDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DeleteDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
+    <Compile Include="Helpers\DicomTagPath.cs" />
     <Compile Include="CommandProcessor\FileDeleteCommand.cs" />
-    <Compile Include="CommandProcessor\IImageLevelUpdateCommand.cs" />
-    <Compile Include="CommandProcessor\ImageUpdateCommandBuilder.cs" />
+    <Compile Include="CommandProcessor\BaseImageLevelUpdateCommand.cs" />
+    <Compile Include="Helpers\ImageUpdateCommandBuilder.cs" />
     <Compile Include="CommandProcessor\InsertArchiveQueueCommand.cs" />
     <Compile Include="CommandProcessor\IServerCommand.cs" />
     <Compile Include="CommandProcessor\MoveDirectoryCommand.cs" />
+    <Compile Include="CommandProcessor\SetTagCommand.cs" />
     <Compile Include="CommandProcessor\UpdateDicomFileCommand.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="FilesystemSelector.cs" />

@@ -832,3 +832,9 @@ INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
            (newid(),100,'StudyReconciled','Study was reconciled','Demographics in the orginal images were modified to match against another study on the server.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),200,'WebEdited','Web GUI Edited','Study was edited via the Web GUI')
+GO
+

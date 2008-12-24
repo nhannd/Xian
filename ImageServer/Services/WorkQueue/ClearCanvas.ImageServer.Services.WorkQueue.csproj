@@ -72,6 +72,13 @@
     <Compile Include="ReconcileStudy\Discard\DiscardImageCommandProcessor.cs" />
     <Compile Include="ReconcileStudy\UpdateWorkQueueCommand.cs" />
     <Compile Include="StudyProcess\ImageReconciler.cs" />
+    <Compile Include="WebEditStudy\IWebEditStudyCommandCompiler.cs" />
+    <Compile Include="WebEditStudy\StudyInformation.cs" />
+    <Compile Include="WebEditStudy\WebEditStudyHistoryRecord.cs" />
+    <Compile Include="WebEditStudy\WebEditStudyCommandCompiler.cs" />
+    <Compile Include="WebEditStudy\WebEditStudyContext.cs" />
+    <Compile Include="WebEditStudy\Extensions\LogHistory\LogHistory.cs" />
+    <Compile Include="WebEditStudy\IWebEditStudyProcessorExtension.cs" />
     <Compile Include="WebEditStudy\UpdateStudyCommand.cs" />
     <Compile Include="ReconcileStudy\Mapping.cs" />
     <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommandProcessor.cs" />
@@ -105,7 +112,6 @@
     <Compile Include="TierMigrate\TierMigrationContext.cs" />
     <Compile Include="TierMigrate\TierMigrationStatistics.cs" />
     <Compile Include="UpdateStudyXmlCommand.cs" />
-    <Compile Include="WebEditStudy\WebEditStudyCommandXmlParser.cs" />
     <Compile Include="WebEditStudy\WebEditStudyItemProcessor.cs" />
     <Compile Include="WebEditStudy\WebEditStudyFactoryExtension.cs" />
     <Compile Include="StudyProcess\InstanceStatistics.cs" />

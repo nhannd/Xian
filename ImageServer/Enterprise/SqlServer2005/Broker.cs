@@ -331,9 +331,16 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 else if (prop.PropertyType == typeof(XmlDocument))
                 {
                     SqlXml xml = reader.GetSqlXml(i);
-                    XmlDocument xmlDoc = new XmlDocument();
-                    xmlDoc.LoadXml(xml.Value);
-                    prop.SetValue(entity, xmlDoc);
+                    if (xml!=null && !xml.IsNull && !String.IsNullOrEmpty(xml.Value))
+                    {
+                        XmlDocument xmlDoc = new XmlDocument();
+                        xmlDoc.LoadXml(xml.Value);
+                        prop.SetValue(entity, xmlDoc);    
+                    }
+                    else
+                    {
+                        prop.SetValue(entity, null);
+                    }
                 }
                 else if (prop.PropertyType == typeof(ServerEntityKey))
                 {

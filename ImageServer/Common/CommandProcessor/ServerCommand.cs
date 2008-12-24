@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Xml.Serialization;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
@@ -81,6 +82,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		/// <summary>
 		/// Gets and sets a value describing what the command is doing.
 		/// </summary>
+	    [XmlIgnore]
 		public string Description
 		{
 			get { return _description; }
@@ -90,6 +92,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		/// <summary>
 		/// Gets a value describing if the ServerCommand requires a rollback of the operation its included in if it fails during execution.
 		/// </summary>
+        [XmlIgnore]
 		public bool RequiresRollback
 		{
 			get { return _requiresRollback; }

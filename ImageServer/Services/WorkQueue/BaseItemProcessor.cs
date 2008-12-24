@@ -44,6 +44,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
@@ -64,6 +65,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private Model.WorkQueue _workQueueItem;
         private StudyStorageLocation _storageLocation;
         private IList<WorkQueueUid> _uidList;
+        private ServerPartition _partition;
+                    
 
         #region Protected Properties
 
@@ -122,6 +125,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         protected Model.WorkQueue WorkQueueItem
         {
             get { return _workQueueItem; }
+        }
+
+        protected Model.ServerPartition ServerPartition
+        {
+            get
+            {
+                if (_workQueueItem == null || _workQueueItem.ServerPartitionKey == null)
+                    return null;
+
+                if (_partition==null)
+                {
+                    _partition = ServerPartitionMonitor.Instance.FindPartition(_workQueueItem.ServerPartitionKey); ;
+                }
+
+                return _partition;
+            }
         }
 
         #endregion
@@ -762,7 +781,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <summary>
         /// Dispose of any native resources.
         /// </summary>
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (_readContext != null)
             {
@@ -805,7 +824,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         #endregion IWorkQueueItemProcessor members
 
         #endregion
-
-        
     }
 }

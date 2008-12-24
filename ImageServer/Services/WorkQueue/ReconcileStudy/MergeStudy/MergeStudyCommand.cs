@@ -40,6 +40,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -66,7 +67,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
         private readonly string _workingDir = ServerPlatform.GetTempPath();
 
         private Study _study;
-        private readonly List<IImageLevelUpdateCommand> _imageLevelCommands = new List<IImageLevelUpdateCommand>();
+        private readonly List<BaseImageLevelUpdateCommand> _imageLevelCommands = new List<BaseImageLevelUpdateCommand>();
         private readonly List<WorkQueueUid> _processedUidList = new List<WorkQueueUid>();
         private readonly List<WorkQueueUid> _failedUidList = new List<WorkQueueUid>();
         private readonly List<WorkQueueUid> _duplicateList = new List<WorkQueueUid>();
@@ -106,15 +107,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
         }
 
         /// <summary>
-        /// Gets the list of <see cref="IImageLevelUpdateCommand"/> for updating new images.
+        /// Gets the list of <see cref="BaseImageLevelUpdateCommand"/> for updating new images.
         /// </summary>
-        public List<IImageLevelUpdateCommand> ImageLevelCommands
+        public List<BaseImageLevelUpdateCommand> ImageLevelCommands
         {
             get { return _imageLevelCommands; }
         }
 
         #endregion
 
+        #region Overriden Protected Methods
         protected override void OnExecute()
         {
             Platform.CheckForNullReference(_reconcileContext, "_reconcileContext");
@@ -134,7 +136,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             LogResult();
 
         }
+        #endregion
 
+        #region Protected Methods
         protected override void OnUndo()
         {
             if (_processor != null)
@@ -143,6 +147,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                 _processor = null;
             }
         }
+        #endregion
 
         #region Private Members
         private void LogResult()
@@ -306,18 +311,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             }
 
         }
-        private void DeleteUid(WorkQueueUid sop)
-        {
-            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IWorkQueueUidEntityBroker delete = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
 
-                delete.Delete(sop.GetKey());
-
-                updateContext.Commit();
-            }
-        }
-
+       
 
         private string GetUidPath(WorkQueueUid sop)
         {
@@ -340,7 +335,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             }
 
 
-            List<IImageLevelUpdateCommand> updateCommandList = BuildUpdateCommandList();
+            List<BaseImageLevelUpdateCommand> updateCommandList = BuildUpdateCommandList();
             PrintUpdateCommands(updateCommandList);
 
             FileProcessor.Process(_workingDir, "*.dcm",
@@ -349,9 +344,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                                       DicomFile file = new DicomFile(path);
                                       file.Load(DicomReadOptions.StorePixelDataReferences);
                                       Platform.Log(LogLevel.Info, "Processing {0}", path);
-                                      foreach (IImageLevelUpdateCommand command in updateCommandList)
+                                      foreach (BaseImageLevelUpdateCommand command in updateCommandList)
                                       {
-                                          command.Apply(file);
+                                          command.File = file;
+                                          command.Execute();
                                       }
 
                                       // work around a bug in dicom toolkit
@@ -362,24 +358,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                                   }, true);
         }
 
-        private void PrintUpdateCommands(IList<IImageLevelUpdateCommand> updateCommandList)
+       
+        private List<BaseImageLevelUpdateCommand> BuildUpdateCommandList()
         {
-            StringBuilder log = new StringBuilder();
-            log.AppendLine();
-            log.AppendFormat("Update on merged images:");
-            log.AppendLine();
-            foreach (IImageLevelUpdateCommand cmd in updateCommandList)
-            {
-                log.AppendFormat("{0}", cmd);
-                log.AppendLine();
-            }
-            Platform.Log(LogLevel.Info, log);
-        }
-
-
-        private List<IImageLevelUpdateCommand> BuildUpdateCommandList()
-        {
-            List<IImageLevelUpdateCommand> updateCommandList = new List<IImageLevelUpdateCommand>();
+            List<BaseImageLevelUpdateCommand> updateCommandList = new List<BaseImageLevelUpdateCommand>();
             
             ImageUpdateCommandBuilder builder = new ImageUpdateCommandBuilder();
             updateCommandList.AddRange(builder.BuildCommands<DemographicInfo>(_destStudyStorage));
@@ -391,7 +373,36 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 
         #endregion
 
-       
+        #region Private Static Methods
+        private static void PrintUpdateCommands(IEnumerable<BaseImageLevelUpdateCommand> updateCommandList)
+        {
+            StringBuilder log = new StringBuilder();
+            log.AppendLine();
+            log.AppendFormat("Update on merged images:");
+            log.AppendLine();
+            foreach (BaseImageLevelUpdateCommand cmd in updateCommandList)
+            {
+                log.AppendFormat("{0}", cmd);
+                log.AppendLine();
+            }
+            Platform.Log(LogLevel.Info, log);
+        }
+        private static void DeleteUid(WorkQueueUid sop)
+        {
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                IWorkQueueUidEntityBroker delete = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+
+                delete.Delete(sop.GetKey());
+
+                updateContext.Commit();
+            }
+        }
+
+
+        #endregion
+
+
         #region IDisposable Members
 
         public void Dispose()

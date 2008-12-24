@@ -12,6 +12,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -21,8 +22,6 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {
-
-
     class PatientInfo : IEquatable<PatientInfo>
     {
         private string _name;
@@ -177,7 +176,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private PatientInfo _oldPatientInfo;
         private PatientInfo _newPatientInfo;
 
-        private readonly IList<IImageLevelUpdateCommand> _commands;
+        private readonly IList<BaseImageLevelUpdateCommand> _commands;
         private string _newStudyPath;
         private readonly string _backupDir = ServerPlatform.GetTempPath();
         private readonly ServerPartition _partition;
@@ -196,7 +195,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         #region Constructors
         public UpdateStudyCommand(ServerPartition partition, 
                                   StudyStorageLocation studyLocation,
-                                  IList<IImageLevelUpdateCommand> imageLevelCommands) 
+                                  IList<BaseImageLevelUpdateCommand> imageLevelCommands) 
             : base("Update existing study", true)
         {
             _partition = partition;
@@ -209,6 +208,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         public new UpdateStudyStatistics Statistics
         {
             get { return _statistics; }
+        }
+
+        public string NewStudyPath
+        {
+            get { return _newStudyPath; }
+            set { _newStudyPath = value; }
         }
 
         #endregion
@@ -257,30 +262,30 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _newPatientInfo = new PatientInfo(_oldPatientInfo);
             Debug.Assert(_newPatientInfo.Equals(_oldPatientInfo));
 
-            foreach (IImageLevelUpdateCommand command in _commands)
+            foreach (BaseImageLevelUpdateCommand command in _commands)
             {
                 if (command is IUpdateImageTagCommand)
                 {
                     ImageLevelUpdateEntry imageLevelUpdate = (command as IUpdateImageTagCommand).UpdateEntry;
                     if (imageLevelUpdate != null)
                     {
-                        if (imageLevelUpdate.Tag.TagValue == DicomTags.StudyDate)
+                        if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyDate)
                         {
                             _newStudyFolder = imageLevelUpdate.GetStringValue();
                         }
-                        else if (imageLevelUpdate.Tag.TagValue == DicomTags.StudyInstanceUid)
+                        else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyInstanceUid)
                         {
                             _newStudyInstanceUid = imageLevelUpdate.GetStringValue();
                         }
-                        else if (imageLevelUpdate.Tag.TagValue == DicomTags.PatientId)
+                        else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientId)
                         {
                             _newPatientInfo.PatientId = imageLevelUpdate.GetStringValue();
                         }
-                        else if (imageLevelUpdate.Tag.TagValue == DicomTags.IssuerOfPatientId)
+                        else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.IssuerOfPatientId)
                         {
                             _newPatientInfo.IssuerOfPatientId = imageLevelUpdate.GetStringValue();
                         }
-                        else if (imageLevelUpdate.Tag.TagValue == DicomTags.PatientsName)
+                        else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.PatientsName)
                         {
                             _newPatientInfo.Name = imageLevelUpdate.GetStringValue();
                         }
@@ -310,7 +315,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         }
 
-        private Patient FindPatient(PatientInfo patientInfo)
+        private static Patient FindPatient(PatientInfo patientInfo)
         {
             IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
             IPatientEntityBroker patientFindBroker = readContext.GetBroker<IPatientEntityBroker>();
@@ -338,19 +343,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             log.AppendFormat("\tCurrent location: {0}", _oldStudyPath);
             log.AppendLine();
             log.AppendFormat("Changes:\n");
-            foreach (IImageLevelUpdateCommand cmd in _commands)
+            foreach (BaseImageLevelUpdateCommand cmd in _commands)
             {
                 log.AppendFormat("\t{0}", cmd);
                 log.AppendLine();
             }
 
-            log.AppendFormat("\tNew location: {0}", _newStudyPath);
+            log.AppendFormat("\tNew location: {0}", NewStudyPath);
             log.AppendLine();
             Platform.Log(LogLevel.Info, log);
         }
         private void RestoreFilesystem()
         {
-            if (_newStudyPath == _oldStudyPath)
+            if (NewStudyPath == _oldStudyPath)
             {
                 Platform.Log(LogLevel.Info, "Restoring old study folder...");
             
@@ -387,7 +392,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             }
             else
             {
-                DirectoryUtility.DeleteIfExists(_newStudyPath, true);
+                DirectoryUtility.DeleteIfExists(NewStudyPath, true);
 
                 if (_originalFolderDeleted)
                 {
@@ -403,14 +408,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         {
             EntityDicomMap entityMap = EntityDicomMapManager.Get(entity.GetType());
 
-            foreach (IImageLevelUpdateCommand command in _commands)
+            foreach (BaseImageLevelUpdateCommand command in _commands)
             {
                 if (command is IUpdateImageTagCommand)
                 {
                     ImageLevelUpdateEntry entry = (command as IUpdateImageTagCommand).UpdateEntry;
-                    if (entityMap.ContainsKey(entry.Tag))
+                    if (entityMap.ContainsKey(entry.TagPath.Tag))
                     {
-                        entityMap[entry.Tag].SetValue(entity, entry.GetStringValue(), null);
+                        entityMap[entry.TagPath.Tag].SetValue(entity, entry.GetStringValue(), null);
                     }
                 }
 
@@ -459,14 +464,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             //                  and the patient should also be deleted if this is the only study attached to it.
             if (_patientInfoIsNotChanged)
             {
-                UpdateCurrentPatient(_study, _curPatient);
+                UpdateCurrentPatient();
             }
             else 
             {
                 if (_newPatient == null) 
                 {
                     // No matching patient in the database. We should create a new patient for this study
-                    _newPatient = CreateNewPatient(_study, _newPatientInfo); 
+                    _newPatient = CreateNewPatient(_newPatientInfo); 
                 }
                 else
                 {
@@ -486,7 +491,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _storage.Archive(UpdateContext);
         }
 
-        private Patient CreateNewPatient(Study study, PatientInfo patientInfo)
+        private Patient CreateNewPatient(PatientInfo patientInfo)
         {
             Platform.Log(LogLevel.Info, "Creating new patient {0}", patientInfo.PatientId);
             ICreatePatientForStudy createStudyBroker = UpdateContext.GetBroker<ICreatePatientForStudy>();
@@ -503,7 +508,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             return newPatient;
         }
 
-        private void UpdateCurrentPatient(Study study, Patient patient)
+        private void UpdateCurrentPatient()
         {
             Platform.Log(LogLevel.Info, "Update current patient record");
             IPatientEntityBroker patientUpdateBroker = UpdateContext.GetBroker<IPatientEntityBroker>();
@@ -547,9 +552,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                         instance.SeriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
                         instance.SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
                         
-                        foreach (IImageLevelUpdateCommand command in _commands)
+                        foreach (BaseImageLevelUpdateCommand command in _commands)
                         {
-                            command.Apply(file);
+                            command.File = file;
+                            command.Execute();
                         }
 
                         SaveFile(file);
@@ -575,15 +581,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             }
 
             Platform.Log(LogLevel.Info, "Generating new study header...");
-            string newStudyXmlPath = Path.Combine(_newStudyPath, _newStudyInstanceUid + ".xml");
-            string gzipStudyXmlPath = Path.Combine(_newStudyPath, _newStudyInstanceUid + ".xml.gz");
+            string newStudyXmlPath = Path.Combine(NewStudyPath, _newStudyInstanceUid + ".xml");
+            string gzipStudyXmlPath = Path.Combine(NewStudyPath, _newStudyInstanceUid + ".xml.gz");
             using (FileStream xmlStream = new FileStream(newStudyXmlPath, FileMode.Create),
                               gzipStream = new FileStream(gzipStudyXmlPath, FileMode.Create))
             {
                 StudyXmlIo.WriteXmlAndGzip(newStudyXml.GetMemento(new StudyXmlOutputSettings()), xmlStream, gzipStream);
             }
 
-            if (_newStudyPath!=_oldStudyPath)
+            if (NewStudyPath!=_oldStudyPath)
             {
                 Platform.Log(LogLevel.Info, "Removing old study folder...");
                 DirectoryUtility.DeleteIfExists(_oldStudyPath, true);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 {
@@ -11,9 +12,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
     /// </summary>
     class CreateStudyCommandXmlParser
     {
-        public IList<IImageLevelUpdateCommand> ParseImageLevelCommands(XmlNode createStudyNode)
+        public IList<BaseImageLevelUpdateCommand> ParseImageLevelCommands(XmlNode createStudyNode)
         {
-            List<IImageLevelUpdateCommand> _commands = new List<IImageLevelUpdateCommand>();
+            List<BaseImageLevelUpdateCommand> _commands = new List<BaseImageLevelUpdateCommand>();
 
             foreach (XmlNode subNode in createStudyNode.ChildNodes)
             {
@@ -23,8 +24,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
                     if (subNode.Name == "SetTag")
                     {
-                        UpdateTagCommandParser parser = new UpdateTagCommandParser();
-                        _commands.Add(parser.Parse(subNode));
+                        SetTagCommandCompiler compiler = new SetTagCommandCompiler();
+                        _commands.Add(compiler.Compile(new XmlNodeReader(subNode)));
                     }
                     else
                     {

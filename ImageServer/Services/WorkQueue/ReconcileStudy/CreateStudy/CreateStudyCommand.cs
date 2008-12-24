@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
         private readonly string _workingDir = ServerPlatform.GetTempPath();
 
-        private readonly List<IImageLevelUpdateCommand> _imageLevelCommands = new List<IImageLevelUpdateCommand>();
+        private readonly List<BaseImageLevelUpdateCommand> _imageLevelCommands = new List<BaseImageLevelUpdateCommand>();
         private StudyStorageLocation _destStudyStorage = null;
 
         #endregion
@@ -82,9 +82,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
         #region Public Properties
         /// <summary>
-        /// Gets a list of <see cref="IImageLevelUpdateCommand"/> used by the command to update the images.
+        /// Gets a list of <see cref="BaseImageLevelUpdateCommand"/> used by the command to update the images.
         /// </summary>
-        public List<IImageLevelUpdateCommand> ImageLevelCommands
+        public List<BaseImageLevelUpdateCommand> ImageLevelCommands
         {
             get
             {
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
         {
             StringBuilder log = new StringBuilder();
             log.AppendFormat("Changes to be applied to images:\n");
-            foreach (IImageLevelUpdateCommand cmd in _imageLevelCommands)
+            foreach (BaseImageLevelUpdateCommand cmd in _imageLevelCommands)
             {
                 log.AppendFormat("{0}", cmd);
                 log.AppendLine();
@@ -461,12 +461,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                                           DicomFile file = new DicomFile(path);
                                           file.Load(DicomReadOptions.StorePixelDataReferences);
                                           Platform.Log(LogLevel.Info, "Processing {0}", path);
-                                          foreach (IImageLevelUpdateCommand command in _imageLevelCommands)
+                                          foreach (BaseImageLevelUpdateCommand command in _imageLevelCommands)
                                           {
-                                              command.Apply(file);
+                                              command.File = file;
+                                              command.Execute();
                                           }
 
                                           // work around a bug in dicom toolkit
+                                          // Can't overwrite the file that's opened by Load(DicomReadOptions.StorePixelDataReferences)
                                           file.Save(path + ".temp");
                                           File.Delete(path);
                                           File.Move(path + ".temp", path);

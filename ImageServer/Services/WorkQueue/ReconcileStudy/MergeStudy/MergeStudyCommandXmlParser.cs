@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 {
@@ -11,13 +12,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
     class MergeStudyCommandXmlParser
     {
         /// <summary>
-        /// Retrieves the list of <see cref="IImageLevelUpdateCommand"/> specified in the xml.
+        /// Retrieves the list of <see cref="BaseImageLevelUpdateCommand"/> specified in the xml.
         /// </summary>
         /// <param name="createStudyNode"></param>
         /// <returns></returns>
-        public IList<IImageLevelUpdateCommand> ParseImageLevelCommands(XmlNode createStudyNode)
+        public List<BaseImageLevelUpdateCommand> ParseImageLevelCommands(XmlNode createStudyNode)
         {
-            List<IImageLevelUpdateCommand> _commands = new List<IImageLevelUpdateCommand>();
+            List<BaseImageLevelUpdateCommand> _commands = new List<BaseImageLevelUpdateCommand>();
 
             foreach (XmlNode subNode in createStudyNode.ChildNodes)
             {
@@ -26,8 +27,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                     //TODO: Use plugin?
                     if (subNode.Name == "SetTag")
                     {
-                        UpdateTagCommandParser parser = new UpdateTagCommandParser();
-                        _commands.Add(parser.Parse(subNode));
+                        SetTagCommandCompiler compiler = new SetTagCommandCompiler();
+
+                        _commands.Add(compiler.Compile(new XmlNodeReader(subNode)));
                     }
                     else
                     {
