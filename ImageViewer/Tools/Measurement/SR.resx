@@ -244,4 +244,16 @@ Please check the log for more details.</value>
   <data name="CommandDeleteMeasurement" xml:space="preserve">
     <value>Delete Measurement</value>
   </data>
+  <data name="CommandCreatePolygonalRoi" xml:space="preserve">
+    <value>Create Polygonal ROI</value>
+  </data>
+  <data name="MenuPolygonalRoi" xml:space="preserve">
+    <value>Polygonal ROI</value>
+  </data>
+  <data name="ToolbarPolygonalRoi" xml:space="preserve">
+    <value>Polygonal ROI</value>
+  </data>
+  <data name="TooltipPolygonalRoi" xml:space="preserve">
+    <value>Polygonal ROI</value>
+  </data>
 </root>

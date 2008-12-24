@@ -140,7 +140,9 @@
     <Compile Include="Imaging\SimpleDataLut.cs" />
     <Compile Include="Imaging\Tests\MiscellaneousLutTests.cs" />
     <Compile Include="InteractiveGraphics\BoundableInteractiveGraphic.cs" />
+    <Compile Include="InteractiveGraphics\CreatePolygonGraphicState.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphic.cs" />
+    <Compile Include="InteractiveGraphics\PolygonInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\StretchCursorTokenStrategy.cs" />
     <Compile Include="InteractiveGraphics\IRoiCalloutLocationStrategy.cs" />
     <Compile Include="InteractiveGraphics\RoiCalloutLocationStrategy.cs" />

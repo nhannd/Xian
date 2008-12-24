@@ -243,7 +243,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		protected void OnAnchorPointChanged(object sender, ListEventArgs<PointF> e)
+		protected virtual void OnAnchorPointChanged(object sender, ListEventArgs<PointF> e)
 		{
 			// This acts as a mediator.  It listens for changes in the anchor points
 			// and make corresponding changes in the position of the control points.

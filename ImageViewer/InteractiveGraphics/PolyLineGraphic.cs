@@ -131,10 +131,24 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Removes an anchor point from the <see cref="PolyLineGraphic"/>.
 		/// </summary>
+		/// <remarks>
+		/// This method does not correctly handle the case for removing points from the middle of the polyline.
+		/// </remarks>
 		/// <param name="index">The zero-based index of the anchor point to remove.</param>
 		public void RemoveAt(int index)
 		{
-			this.Graphics.RemoveAt(index);
+			// TODO make it work properly when removing points from middle of polyline.
+			if (index == 0)
+			{
+				this.Graphics.RemoveAt(index);
+			}
+			else if (index == 1)
+			{
+				// do nothing - removal of index=1 is just removal of pt2 of first line segment which must still be there.	
+			}
+			else {
+				this.Graphics.RemoveAt(index-1);
+			}
 			_numberOfPoints--;
 		}
 

@@ -79,6 +79,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create Polygonal ROI.
+        /// </summary>
+        public static string CommandCreatePolygonalRoi {
+            get {
+                return ResourceManager.GetString("CommandCreatePolygonalRoi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create Protractor.
         /// </summary>
         public static string CommandCreateProtractor {
@@ -187,6 +196,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Polygonal ROI.
+        /// </summary>
+        public static string MenuPolygonalRoi {
+            get {
+                return ResourceManager.GetString("MenuPolygonalRoi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Protractor.
         /// </summary>
         public static string MenuProtractor {
@@ -247,6 +265,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string ToolbarEllipticalRoi {
             get {
                 return ResourceManager.GetString("ToolbarEllipticalRoi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Polygonal ROI.
+        /// </summary>
+        public static string ToolbarPolygonalRoi {
+            get {
+                return ResourceManager.GetString("ToolbarPolygonalRoi", resourceCulture);
             }
         }
         
@@ -409,6 +436,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string TooltipEllipticalRoi {
             get {
                 return ResourceManager.GetString("TooltipEllipticalRoi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Polygonal ROI.
+        /// </summary>
+        public static string TooltipPolygonalRoi {
+            get {
+                return ResourceManager.GetString("TooltipPolygonalRoi", resourceCulture);
             }
         }
         
