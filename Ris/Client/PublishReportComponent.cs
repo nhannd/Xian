@@ -459,27 +459,30 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
-				{
-					if (checkable.IsChecked)
-					{
-						ResultRecipientDetail detail = checkable.Item;
+                using (new HeaderFooterSettings())
+                {
+                    foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
+                    {
+                        if (checkable.IsChecked)
+                        {
+                            ResultRecipientDetail detail = checkable.Item;
 
-						PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ProcedureRef, this.ReportRef);
-						ChildComponentHost host = new ChildComponentHost(this.Host, component);
-						host.StartComponent();
-						object view = host.ComponentView.GuiElement;
+                            PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ProcedureRef, this.ReportRef);
+                            ChildComponentHost host = new ChildComponentHost(this.Host, component);
+                            host.StartComponent();
+                            object view = host.ComponentView.GuiElement;
 
-						component.ScriptCompleted += OnPrintDocument;
-						component.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
-							this.PatientProfileRef,
-							this.OrderRef,
-							this.ProcedureRef,
-							this.ReportRef,
-							detail);
+                            component.ScriptCompleted += OnPrintDocument;
+                            component.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
+                                this.PatientProfileRef,
+                                this.OrderRef,
+                                this.ProcedureRef,
+                                this.ReportRef,
+                                detail);
 
-					}
-				}
+                        }
+                    }
+                }
 
 				this.Exit(ApplicationComponentExitCode.Accepted);
 			}

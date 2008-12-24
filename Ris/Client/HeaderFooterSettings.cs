@@ -23,6 +23,7 @@ namespace ClearCanvas.Ris.Client
 	/// </remarks>
 	public class HeaderFooterSettings : IDisposable
 	{
+        private static int _nestCount = 0;
 		private readonly RegistryKey _iePageSetupKey;
 		private readonly string _iePageSetupKeyPath = @"Software\Microsoft\Internet Explorer\PageSetup";
 
@@ -47,29 +48,37 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="footer"></param>
 		public HeaderFooterSettings(string header, string footer)
 		{
-			_iePageSetupKey = Registry.CurrentUser.OpenSubKey(_iePageSetupKeyPath, true);
-			_header = header;
-			_footer = footer;
+            if (_nestCount == 0)
+            {
+                _iePageSetupKey = Registry.CurrentUser.OpenSubKey(_iePageSetupKeyPath, true);
+                _header = header;
+                _footer = footer;
 
-			if (_iePageSetupKey != null)
-			{
-				_oldHeader = (string) _iePageSetupKey.GetValue("header");
-				_oldFooter = (string) _iePageSetupKey.GetValue("footer");
+                if (_iePageSetupKey != null)
+                {
+                    _oldHeader = (string)_iePageSetupKey.GetValue("header");
+                    _oldFooter = (string)_iePageSetupKey.GetValue("footer");
 
-				_iePageSetupKey.SetValue("header", _header);
-				_iePageSetupKey.SetValue("footer", _footer);
-			}
+                    _iePageSetupKey.SetValue("header", _header);
+                    _iePageSetupKey.SetValue("footer", _footer);
+                }
+            }
+            _nestCount++;
 		}
 
 		#region IDisposable Members
 
 		public void Dispose()
 		{
-			if (_iePageSetupKey != null)
-			{
-				_iePageSetupKey.SetValue("header", _oldHeader);
-				_iePageSetupKey.SetValue("footer", _oldFooter);
-			}
+            _nestCount--;
+            if (_nestCount == 0)
+            {
+                if (_iePageSetupKey != null)
+                {
+                    _iePageSetupKey.SetValue("header", _oldHeader);
+                    _iePageSetupKey.SetValue("footer", _oldFooter);
+                }
+            }
 		}
 
 		#endregion
