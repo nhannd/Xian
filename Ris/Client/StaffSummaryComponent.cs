@@ -174,8 +174,8 @@ namespace ClearCanvas.Ris.Client
 				delegate(IStaffAdminService service)
 				{
 					request.StaffTypesFilter = _staffTypesFilter;
-					request.LastName = _lastName;
-					request.FirstName = _firstName;
+					request.FamilyName = _lastName;
+					request.GivenName = _firstName;
 					listResponse = service.ListStaff(request);
 				});
 

@@ -43,6 +43,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -1067,18 +1068,27 @@ namespace ClearCanvas.Ris.Client.Workflow
 					else if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview))
 					{
 						// active part does not have a supervisor assigned
-						// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
+						// if this user has a default supervisor, retrieve it, otherwise leave supervisor as null
 						if (!String.IsNullOrEmpty(ReportingSettings.Default.SupervisorID))
 						{
-							object supervisor;
-							if (_supervisorLookupHandler.Resolve(ReportingSettings.Default.SupervisorID, false, out supervisor))
-							{
-								_supervisor = (StaffSummary)supervisor;
-							}
-						}
+                            _supervisor = GetStaffByID(ReportingSettings.Default.SupervisorID);
+                        }
 					}
 				});
 		}
+
+        private StaffSummary GetStaffByID(string id)
+        {
+            StaffSummary staff = null;
+            Platform.GetService<IStaffAdminService>(
+                delegate(IStaffAdminService service)
+                {
+                    ListStaffResponse response = service.ListStaff(
+                        new ListStaffRequest(id, null, null, null));
+                    staff = CollectionUtils.FirstElement(response.Staffs);
+                });
+            return staff;
+        }
 
 		private void UpdateChildComponents(bool orderDetailIsCurrent)
 		{

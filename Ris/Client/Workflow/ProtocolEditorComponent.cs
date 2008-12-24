@@ -41,6 +41,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -209,11 +210,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
 					if (!String.IsNullOrEmpty(ProtocollingSettings.Default.SupervisorID))
 					{
-						object supervisor;
-						if (_supervisorLookupHandler.Resolve(ProtocollingSettings.Default.SupervisorID, false, out supervisor))
-						{
-							_protocolDetail.Supervisor = (StaffSummary)supervisor;
-						}
+                        _protocolDetail.Supervisor = GetStaffByID(ProtocollingSettings.Default.SupervisorID);
 					}
 				}
 
@@ -223,6 +220,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 				NotifyPropertyChanged("Urgency");
 			}
 		}
+
+        private StaffSummary GetStaffByID(string id)
+        {
+            StaffSummary staff = null;
+            Platform.GetService<IStaffAdminService>(
+                delegate(IStaffAdminService service)
+                {
+                    ListStaffResponse response = service.ListStaff(
+                        new ListStaffRequest(id, null, null, null));
+                    staff = CollectionUtils.FirstElement(response.Staffs);
+                });
+            return staff;
+        }
 
 		#region Presentation Model
 

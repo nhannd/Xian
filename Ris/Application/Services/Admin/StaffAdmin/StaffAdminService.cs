@@ -64,11 +64,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 
 			StaffSearchCriteria criteria = new StaffSearchCriteria();
 			criteria.Name.FamilyName.SortAsc(0);
-			if (!string.IsNullOrEmpty(request.FirstName))
-				criteria.Name.GivenName.StartsWith(request.FirstName);
-			if (!string.IsNullOrEmpty(request.LastName))
-				criteria.Name.FamilyName.StartsWith(request.LastName);
-			if (!request.IncludeDeactivated)
+
+            if (!string.IsNullOrEmpty(request.StaffID))
+                criteria.Id.StartsWith(request.StaffID);
+
+            if (!string.IsNullOrEmpty(request.GivenName))
+				criteria.Name.GivenName.StartsWith(request.GivenName);
+
+			if (!string.IsNullOrEmpty(request.FamilyName))
+				criteria.Name.FamilyName.StartsWith(request.FamilyName);
+
+            if (!request.IncludeDeactivated)
 				criteria.Deactivated.EqualTo(false);
 
 			ApplyStaffTypesFilter(request.StaffTypesFilter, new StaffSearchCriteria[] { criteria });

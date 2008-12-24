@@ -44,24 +44,28 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         {
         }
 
-        public ListStaffRequest(string surname, string givenname, string[] staffTypesFilter)
-            : this(surname, givenname, staffTypesFilter, null)
+        public ListStaffRequest(string staffID, string familyName, string givenName, string[] staffTypesFilter)
+            : this(staffID, familyName, givenName, staffTypesFilter, null)
         {
         }
 
-        public ListStaffRequest(string surname, string givenname, string[] staffTypesFilter, SearchResultPage page)
+        public ListStaffRequest(string staffID, string familyName, string givenName, string[] staffTypesFilter, SearchResultPage page)
         {
-            this.LastName = surname;
-            this.FirstName = givenname;
+            this.StaffID = staffID;
+            this.FamilyName = familyName;
+            this.GivenName = givenName;
             this.StaffTypesFilter = staffTypesFilter;
             this.Page = page;
         }
 
         [DataMember]
-        public string FirstName;
+        public string StaffID;
 
         [DataMember]
-        public string LastName;
+        public string GivenName;
+
+        [DataMember]
+        public string FamilyName;
 
         [DataMember]
         public string[] StaffTypesFilter;
