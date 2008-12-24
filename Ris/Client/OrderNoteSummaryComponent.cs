@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         /// <param name="category"></param>
         public OrderNoteSummaryComponent(OrderNoteCategory category)
-            : this(category, false)
+            : this(category, true)
         {
         }
 
