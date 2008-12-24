@@ -497,10 +497,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private static string RemoveDefaultText(string value)
 		{
-			if (value.EndsWith(" (Default)"))
-				value.Replace(" (Default)", "");
-
-			return value;
+            return value.EndsWith(" (Default)") ? value.Replace(" (Default)", "") : value;
 		}
 
 		#endregion
