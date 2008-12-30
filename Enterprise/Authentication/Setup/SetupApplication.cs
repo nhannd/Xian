@@ -118,7 +118,13 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
                 HashedSet<AuthorityGroup> groups = new HashedSet<AuthorityGroup>();
                 groups.Add(adminGroup);
 
-                User saUser = User.CreateNewUser(new UserInfo(SysAdminUserName, SysAdminDisplayName, null, null), SysAdminInitialPassword, groups);
+                // create sa user using initial password, set to expire immediately
+                // (note that DateTime.Now is used instead of Platform.Time because
+                // we don't want to assume there is a time-server during setup)
+                User saUser = User.CreateNewUser(
+                    new UserInfo(SysAdminUserName, SysAdminDisplayName, null, null),
+                    Password.CreatePassword(SysAdminInitialPassword, DateTime.Now),
+                    groups);
                 context.Lock(saUser, DirtyState.New);
             }
         }

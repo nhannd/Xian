@@ -57,14 +57,11 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// <param name="initialPassword"></param>
         /// <param name="authorityGroups"></param>
         /// <returns></returns>
-        public static User CreateNewUser(UserInfo userInfo, string initialPassword, ISet<AuthorityGroup> authorityGroups)
+        public static User CreateNewUser(UserInfo userInfo, Password initialPassword, ISet<AuthorityGroup> authorityGroups)
         {
-            // make the password expire upon initial login
-            DateTime passwordExpiry = Platform.Time;
-
             return new User(
                 userInfo.UserName,
-                Password.CreatePassword(initialPassword, passwordExpiry),
+                initialPassword,
                 userInfo.DisplayName,
                 userInfo.ValidFrom,
                 userInfo.ValidUntil,
@@ -83,8 +80,7 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// <returns></returns>
         public static User CreateNewUser(UserInfo userInfo)
         {
-            AuthenticationSettings settings = new AuthenticationSettings();
-            return CreateNewUser(userInfo, settings.DefaultTemporaryPassword, new HashedSet<AuthorityGroup>());
+            return CreateNewUser(userInfo, Password.CreateTemporaryPassword(), new HashedSet<AuthorityGroup>());
         }
 
         /// <summary>
