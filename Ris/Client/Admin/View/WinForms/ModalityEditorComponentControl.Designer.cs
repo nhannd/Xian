@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(213, 98);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 1;
+			this._cancelButton.TabIndex = 3;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._acceptButton.Location = new System.Drawing.Point(132, 98);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
-			this._acceptButton.TabIndex = 0;
+			this._acceptButton.TabIndex = 2;
 			this._acceptButton.Text = "OK";
 			this._acceptButton.UseVisualStyleBackColor = true;
 			this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
