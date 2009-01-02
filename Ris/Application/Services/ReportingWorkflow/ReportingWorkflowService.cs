@@ -430,18 +430,19 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanSendReportToQueue")]
         public SendReportToQueueResponse SendReportToQueue(SendReportToQueueRequest request)
         {
-            Order order = PersistenceContext.Load<Order>(request.OrderRef);
+            Procedure procedure = PersistenceContext.Load<Procedure>(request.ProcedureRef);
 
             foreach (PublishRecipientDetail detail in request.Recipients)
             {
                 WorkQueueItem item = MailFaxWorkQueueItem.Create(
-                    order.AccessionNumber,
-                    request.ReportRef,
+                    procedure.Order.AccessionNumber,
+                    procedure.ActiveReport.GetRef(),
                     detail.PractitionerRef,
                     detail.ContactPointRef);
 
                 PersistenceContext.Lock(item, DirtyState.New);
             }
+
             return new SendReportToQueueResponse();
         }
 
@@ -505,7 +506,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                     throw new RequestValidationException("Report cannot be submitted for this procedure.  It may have been submitted previously.");
 
                 // start interpretation, using specified interpreter
-				// the report will end up in their drafts folder
+                // the report will end up in their drafts folder
                 Operations.StartInterpretation startOp = new Operations.StartInterpretation();
                 startOp.Execute(interpStep, interpreter, new List<InterpretationStep>(), new PersistentWorkflow(this.PersistenceContext));
 
@@ -515,7 +516,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 ValidateReportTextExists(interpStep);
 
                 // set the transcriptionist if known
-				interpStep.ReportPart.Transcriber = transcriptionist;
+                interpStep.ReportPart.Transcriber = transcriptionist;
             }
 
             // flip the downtime mode switch
@@ -660,14 +661,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanSendReportToQueue(WorklistItemKey itemKey)
         {
-			// does the item have a procedure ref, or is it just a patient?
-			if (itemKey.ProcedureRef == null)
-				return false;
+            // does the item have a procedure ref, or is it just a patient?
+            if (itemKey.ProcedureRef == null)
+                return false;
 
-			// does the procedure have an active report
-			Procedure procedure = PersistenceContext.Load<Procedure>(itemKey.ProcedureRef);
-			if (procedure.ActiveReport == null)
-				return false;
+            // does the procedure have an active report
+            Procedure procedure = PersistenceContext.Load<Procedure>(itemKey.ProcedureRef);
+            if (procedure.ActiveReport == null)
+                return false;
 
             return true;
         }

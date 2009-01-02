@@ -7,18 +7,14 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 	[DataContract]
 	public class SendReportToQueueRequest : DataContractBase
 	{
-		public SendReportToQueueRequest(EntityRef reportRef, EntityRef orderRef)
+		public SendReportToQueueRequest(EntityRef procedureRef)
 		{
-			this.ReportRef = reportRef;
-			this.OrderRef = orderRef;
+			this.ProcedureRef = procedureRef;
 			this.Recipients = new List<PublishRecipientDetail>();
 		}
 
 		[DataMember]
-		public EntityRef ReportRef;
-
-		[DataMember]
-		public EntityRef OrderRef;
+		public EntityRef ProcedureRef;
 
 		[DataMember]
 		public List<PublishRecipientDetail> Recipients;

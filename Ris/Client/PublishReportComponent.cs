@@ -391,7 +391,7 @@ namespace ClearCanvas.Ris.Client
 					Platform.GetService<IReportingWorkflowService>(
 						delegate(IReportingWorkflowService service)
 						{
-							SendReportToQueueRequest request = new SendReportToQueueRequest(this.ReportRef, this.OrderRef);
+							SendReportToQueueRequest request = new SendReportToQueueRequest(this.ProcedureRef);
 							foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
 							{
 								if (checkable.IsChecked)
