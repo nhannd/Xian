@@ -21,7 +21,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _editorTableLayoutPanel.Enabled = !_component.IsReadOnly;
+			_groups.Enabled = !_component.IsReadOnly;
+			_category.Enabled = !_component.IsReadOnly;
+			_name.ReadOnly = _component.IsReadOnly;
+			_text.ReadOnly = _component.IsReadOnly;
+
             _typeGroupBox.Enabled = !_component.IsReadOnly && _component.CanChangeType;
 
             _radioGroup.Checked = _component.IsEditingGroup;
@@ -31,7 +35,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _groups.DataSource = _component.StaffGroupChoices;
 			_groups.Format += delegate(object sender, ListControlConvertEventArgs args) { args.Value = _component.FormatStaffGroup(args.ListItem); };
 			_groups.DataBindings.Add("Value", _component, "StaffGroup", true, DataSourceUpdateMode.OnPropertyChanged);
-			_groups.DataBindings.Add("Enabled", _component, "IsEditingGroup", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_category.DataSource = _component.CategoryChoices;
 			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);

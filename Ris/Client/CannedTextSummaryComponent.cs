@@ -293,13 +293,13 @@ namespace ClearCanvas.Ris.Client
 			{
 				CannedTextSummary selectedItem = this.SelectedItems[0];
 
-				_duplicateCannedTextAction.Enabled = true;
 				_copyCannedTextToClipboardAction.Enabled = true;
 
 				this.ActionModel.Add.Enabled = HasPersonalAdminAuthority || HasGroupAdminAuthority;
-				this.ActionModel.Delete.Enabled = 
-                    selectedItem.IsPersonal && HasPersonalAdminAuthority || 
-                    selectedItem.IsGroup && HasGroupAdminAuthority;
+				this.ActionModel.Delete.Enabled =
+					_duplicateCannedTextAction.Enabled =
+						selectedItem.IsPersonal && HasPersonalAdminAuthority || 
+						selectedItem.IsGroup && HasGroupAdminAuthority;
 			}
 			else
 			{

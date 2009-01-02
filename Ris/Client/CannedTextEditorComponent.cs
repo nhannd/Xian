@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client
 		public CannedTextEditorComponent(List<string> categoryChoices)
 		{
 			_isNew = true;
-			_canChangeType = HasGroupAdminAuthority;
+			_canChangeType = HasPersonalAdminAuthority && HasGroupAdminAuthority;
 			_categoryChoices = categoryChoices;
 		}
 
@@ -82,12 +82,9 @@ namespace ClearCanvas.Ris.Client
 		/// Constructor for duplicating an existing canned text.
 		/// </summary>
 		public CannedTextEditorComponent(List<string> categoryChoices, EntityRef cannedTextRef, bool duplicate)
+			: this(categoryChoices)
 		{
-			_isNew = true;
 			_cannedTextRef = cannedTextRef;
-			_categoryChoices = categoryChoices;
-
-			_canChangeType = HasGroupAdminAuthority;
 			_isDuplicate = duplicate;
 		}
 
@@ -107,7 +104,7 @@ namespace ClearCanvas.Ris.Client
 						if (_isNew && _isDuplicate == false)
 						{
 							_cannedTextDetail = new CannedTextDetail();
-							_isEditingPersonal = true;
+							_isEditingPersonal = HasPersonalAdminAuthority;
 						}
 						else
 						{
@@ -116,13 +113,8 @@ namespace ClearCanvas.Ris.Client
 
 							_isEditingPersonal = _cannedTextDetail.IsPersonal;
 
-							// Duplicating an item, so the new canned text starts with fields pre-populated.  Set modified to true
 							if (_isDuplicate)
-							{
-								if (HasPersonalAdminAuthority)
-									_isEditingPersonal = !HasGroupAdminAuthority || _cannedTextDetail.IsPersonal;
-								this.Modified = true;
-							}
+								this.Name = "";
 						}
 					});
 
@@ -158,11 +150,6 @@ namespace ClearCanvas.Ris.Client
 			get { return _isNew; }
 		}
 
-		public bool IsDuplicate
-		{
-			get { return _isDuplicate; }
-		}
-
         public bool CanChangeType
 		{
 			get { return _canChangeType &&  _staffGroupChoices.Count > 0; }
@@ -184,8 +171,8 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                return _isEditingPersonal && !HasPersonalAdminAuthority ||
-                        !_isEditingPersonal && !HasGroupAdminAuthority;
+                return this.IsEditingPersonal && !HasPersonalAdminAuthority ||
+                        this.IsEditingGroup && !HasGroupAdminAuthority;
             }
         }
 
