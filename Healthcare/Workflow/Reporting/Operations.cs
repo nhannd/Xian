@@ -415,11 +415,14 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				// ideally, the new interpretation step should be created on the procedure that the
 				// publication step was linked to (and only one of the reported procedures should have a publication step)
 				procedure = CollectionUtils.SelectFirst(procedure.ActiveReport.Procedures,
-					delegate(Procedure p)
-					{
-						return CollectionUtils.Contains(p.ReportingProcedureSteps,
-							delegate(ReportingProcedureStep ps) { return ps.Is<PublicationStep>() && ps.State == ActivityStatus.CM; });
-					});
+						delegate(Procedure p)
+						{
+							return CollectionUtils.Contains(p.ReportingProcedureSteps,
+															delegate(ReportingProcedureStep ps) { return ps.Is<PublicationStep>() && ps.State == ActivityStatus.CM; });
+						})
+					// but if there are no publication steps (i.e. imported data), then just use the procedure that was provided.
+					// See bug #3450
+					?? procedure;
 
 				InterpretationStep interpretation = new InterpretationStep(procedure);
 				interpretation.Assign(executingStaff);
