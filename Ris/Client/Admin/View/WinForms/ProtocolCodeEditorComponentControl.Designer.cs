@@ -48,6 +48,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 0, 15, 0);
 			this.tableLayoutPanel1.RowCount = 3;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -65,12 +66,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 150);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(373, 29);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(358, 29);
 			this.flowLayoutPanel1.TabIndex = 2;
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(295, 3);
+			this._cancelButton.Location = new System.Drawing.Point(280, 3);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 1;
@@ -80,7 +81,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// _acceptButton
 			// 
-			this._acceptButton.Location = new System.Drawing.Point(214, 3);
+			this._acceptButton.Location = new System.Drawing.Point(199, 3);
 			this._acceptButton.Name = "_acceptButton";
 			this._acceptButton.Size = new System.Drawing.Size(75, 23);
 			this._acceptButton.TabIndex = 0;
@@ -99,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._name.Mask = "";
 			this._name.Name = "_name";
 			this._name.PasswordChar = '\0';
-			this._name.Size = new System.Drawing.Size(375, 40);
+			this._name.Size = new System.Drawing.Size(360, 40);
 			this._name.TabIndex = 0;
 			this._name.ToolTip = null;
 			this._name.Value = null;
@@ -113,7 +114,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._description.Location = new System.Drawing.Point(2, 46);
 			this._description.Margin = new System.Windows.Forms.Padding(2);
 			this._description.Name = "_description";
-			this._description.Size = new System.Drawing.Size(375, 99);
+			this._description.Size = new System.Drawing.Size(360, 99);
 			this._description.TabIndex = 1;
 			this._description.Value = null;
 			// 
