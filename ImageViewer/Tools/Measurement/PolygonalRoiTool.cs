@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,7 +29,7 @@
 
 #endregion
 
-using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -42,33 +42,32 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	public class PolygonRoiInfo : RoiInfo
 	{
-		private PointF _point1;
-		private PointF _point2;
+		private IList<PointF> _vertices;
 
-		public PolygonRoiInfo()
-		{
-		}
+		public PolygonRoiInfo() {}
 
-		public PointF Point1
+		/// <summary>
+		/// Gets a list of the vertices that define the polygon.
+		/// </summary>
+		public IList<PointF> Vertices
 		{
-			get { return _point1; }
-		}
-
-		public PointF Point2
-		{
-			get { return _point2; }
+			get { return _vertices; }
 		}
 
 		protected internal override void Initialize(InteractiveGraphic graphic)
 		{
-			PolygonInteractiveGraphic line = (PolygonInteractiveGraphic)graphic;
+			PolygonInteractiveGraphic polygon = (PolygonInteractiveGraphic) graphic;
 
 			base.Initialize(graphic);
 
 			graphic.CoordinateSystem = CoordinateSystem.Source;
 
-			_point1 = line.PolyLine[0];
-			_point2 = line.PolyLine[1];
+			List<PointF> vertices = new List<PointF>(polygon.VertexCount);
+			for (int n = 0; n < polygon.VertexCount; n++)
+			{
+				vertices.Add(polygon.PolyLine[n]);
+			}
+			_vertices = vertices.AsReadOnly();
 
 			graphic.ResetCoordinateSystem();
 		}
@@ -80,15 +79,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.PolygonalRoiToolSmall.png", "Icons.PolygonalRoiToolMedium.png", "Icons.PolygonalRoiToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Measurement.Roi.Polygonal")]
-
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class PolygonalRoiTool : MeasurementTool<PolygonRoiInfo>
 	{
-		public PolygonalRoiTool()
-			: base(SR.TooltipPolygonalRoi)
-		{
-		}
+		public PolygonalRoiTool() : base(SR.TooltipPolygonalRoi) {}
 
 		protected override string CreationCommandName
 		{
