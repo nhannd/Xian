@@ -236,13 +236,8 @@ if(!Date.prototype.toISOString)
         var h = isoDateString.substring(11, 13);
         var n = isoDateString.substring(14, 16);
         var s = isoDateString.substring(17, 19);
-        
-        var date = new Date();
-        date.setFullYear(y);
-        date.setMonth(m);
-        date.setDate(d);
-        date.setHours(h, n, s);
-        return date;
+
+        return new Date(y, m, d, h, n, s);
    };
 }
     
