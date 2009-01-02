@@ -108,6 +108,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool _isPrinting;
 		private bool _printCancelRequested;
 
+		private IEHeaderFooterSettings _headerFooterSettings;
+		private IEPrintBackgroundSettings _printBackgroundSettings;
+
 		public DowntimePrintFormsComponent()
 		{
 			_formPreviewComponent = new DowntimeFormViewComponent();
@@ -118,6 +121,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			_formPreviewComponentHost = new ChildComponentHost(this.Host, _formPreviewComponent);
 			_formPreviewComponentHost.StartComponent();
+
+			_headerFooterSettings = new IEHeaderFooterSettings();
+			_printBackgroundSettings = new IEPrintBackgroundSettings();
 
 			base.Start();
 		}
@@ -213,16 +219,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 					accessionNumber = response.AccessionNumber;
 				});
 
-			using (new HeaderFooterSettings())
-			{
-				DowntimeFormViewComponent component = new DowntimeFormViewComponent();
-				ChildComponentHost host = new ChildComponentHost(this.Host, component);
-				host.StartComponent();
-				object view = host.ComponentView.GuiElement;
+			DowntimeFormViewComponent component = new DowntimeFormViewComponent();
+			ChildComponentHost host = new ChildComponentHost(this.Host, component);
+			host.StartComponent();
+			object view = host.ComponentView.GuiElement;
 
-				component.ScriptCompleted += PrintDocument;
-				component.Context = new DowntimeFormViewComponent.DowntimeFormContext(accessionNumber);
-			}
+			component.ScriptCompleted += PrintDocument;
+			component.Context = new DowntimeFormViewComponent.DowntimeFormContext(accessionNumber);
 		}
 
 		private void PrintDocument(object sender, EventArgs e)

@@ -44,7 +44,6 @@ using ClearCanvas.Ris.Application.Common.BrowsePatientData;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
-using System.Text;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -155,6 +154,9 @@ namespace ClearCanvas.Ris.Client
 		private PublishReportPreviewComponent _publishReportPreviewComponent;
 		private ChildComponentHost _publishReportPreviewComponentHost;
 
+		private IEHeaderFooterSettings _headerFooterSettings;
+		private IEPrintBackgroundSettings _printBackgroundSettings;
+
 		#region Constructor
 
 		/// <summary>
@@ -222,19 +224,22 @@ namespace ClearCanvas.Ris.Client
 							}));
 				});
 
+			_headerFooterSettings = new IEHeaderFooterSettings();
+			_printBackgroundSettings = new IEPrintBackgroundSettings();
+
 			base.Start();
 		}
 
-        public override void Stop()
-        {
-            if (_publishReportPreviewComponentHost != null)
-            {
-                _publishReportPreviewComponentHost.StopComponent();
-                _publishReportPreviewComponentHost = null;
-            }
+		public override void Stop()
+		{
+			if (_publishReportPreviewComponentHost != null)
+			{
+				_publishReportPreviewComponentHost.StopComponent();
+				_publishReportPreviewComponentHost = null;
+			}
 
-            base.Stop();
-        }
+			base.Stop();
+		}
 
 		#endregion
 
@@ -420,10 +425,10 @@ namespace ClearCanvas.Ris.Client
 		{
 			string description = "";
 
-			CollectionUtils.ForEach<Checkable<ResultRecipientDetail>>(this.Recipients.Items, 
+			CollectionUtils.ForEach<Checkable<ResultRecipientDetail>>(this.Recipients.Items,
 				delegate(Checkable<ResultRecipientDetail> checkable)
 				{
-					if(checkable.IsChecked && IsInvalidContactPoint(checkable.Item))
+					if (checkable.IsChecked && IsInvalidContactPoint(checkable.Item))
 					{
 						description += Formatting.PersonNameFormat.Format(checkable.Item.Practitioner.Name) + "\n";
 					}
@@ -440,7 +445,7 @@ namespace ClearCanvas.Ris.Client
 		private bool IsInvalidContactPoint(ResultRecipientDetail resultRecipientDetail)
 		{
 
-			if(resultRecipientDetail == null)
+			if (resultRecipientDetail == null)
 				return true;
 			// TO DO: Server DataContract should indicate whether not Preffered Comm Mode is valid
 			// Temporarily using comparison to resolve validity of contact point
@@ -459,30 +464,26 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-                using (new HeaderFooterSettings())
-                {
-                    foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
-                    {
-                        if (checkable.IsChecked)
-                        {
-                            ResultRecipientDetail detail = checkable.Item;
+				foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
+				{
+					if (checkable.IsChecked)
+					{
+						ResultRecipientDetail detail = checkable.Item;
 
-                            PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ProcedureRef, this.ReportRef);
-                            ChildComponentHost host = new ChildComponentHost(this.Host, component);
-                            host.StartComponent();
-                            object view = host.ComponentView.GuiElement;
+						PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ProcedureRef, this.ReportRef);
+						ChildComponentHost host = new ChildComponentHost(this.Host, component);
+						host.StartComponent();
+						object view = host.ComponentView.GuiElement;
 
-                            component.ScriptCompleted += OnPrintDocument;
-                            component.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
-                                this.PatientProfileRef,
-                                this.OrderRef,
-                                this.ProcedureRef,
-                                this.ReportRef,
-                                detail);
-
-                        }
-                    }
-                }
+						component.ScriptCompleted += OnPrintDocument;
+						component.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
+							this.PatientProfileRef,
+							this.OrderRef,
+							this.ProcedureRef,
+							this.ReportRef,
+							detail);
+					}
+				}
 
 				this.Exit(ApplicationComponentExitCode.Accepted);
 			}
@@ -535,11 +536,8 @@ namespace ClearCanvas.Ris.Client
 
 		private static void OnPrintDocument(object sender, EventArgs e)
 		{
-			using (new HeaderFooterSettings())
-			{
-				PublishReportPreviewComponent component = (PublishReportPreviewComponent) sender;
-				component.PrintDocument();
-			}
+			PublishReportPreviewComponent component = (PublishReportPreviewComponent)sender;
+			component.PrintDocument();
 		}
 
 		#endregion

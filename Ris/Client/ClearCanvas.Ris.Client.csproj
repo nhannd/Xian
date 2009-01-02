@@ -76,7 +76,7 @@
     <Compile Include="FolderTreeNode.cs" />
     <Compile Include="Formatting\ProcedureFormat.cs" />
     <Compile Include="Formatting\StaffNameAndRoleFormat.cs" />
-    <Compile Include="HeaderFooterSettings.cs" />
+    <Compile Include="IEHeaderFooterSettings.cs" />
     <Compile Include="HomepageConfigurationComponent.cs" />
     <Compile Include="IExtensionPageProvider.cs" />
     <Compile Include="OrderNoteConversationRecipientsSettingsHelper.cs" />
@@ -138,6 +138,7 @@
       <DependentUpon>PatientSearchComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="PreliminaryDiagnosisConversationTool.cs" />
+    <Compile Include="IEPrintBackgroundSettings.cs" />
     <Compile Include="ProcedureEditorComponent.cs" />
     <Compile Include="FolderRefreshTool.cs" />
     <Compile Include="ProcedureTypeSummaryTable.cs" />
