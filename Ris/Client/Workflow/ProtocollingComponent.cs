@@ -244,7 +244,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return;
 			}
 
-			if (SupervisorRequred())
+			if (SupervisorRequired())
 				return;
 
 			try
@@ -292,7 +292,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return;
 			}
 
-			if (SupervisorRequred())
+			if (SupervisorRequired())
 				return;
 
 			try
@@ -334,7 +334,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
 		public void Reject()
 		{
-			if (SupervisorRequred())
+			if (SupervisorRequired())
 				return;
 
 			try
@@ -380,7 +380,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
 		public void Save()
 		{
-			if (SupervisorRequred())
+			if (SupervisorRequired())
 				return;
 
 			try
@@ -633,18 +633,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return ((ProtocolEditorComponent)_protocolEditorComponentHost.Component).ProtocolDetail; }
 		}
 
-		private bool SupervisorRequred()
+		private bool SupervisorRequired()
 		{
-			bool supervisorRequired =
-				!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor)
-				&& this.ProtocolDetail.Supervisor != null;
+			if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.OmitSupervisor))
+				return false;
 
-			if (supervisorRequired)
-			{
-				this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
-			}
+			if (this.ProtocolDetail.Supervisor != null)
+				return false;
 
-			return supervisorRequired;
+			this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
+
+			return true;
 		}
 
 		#endregion
