@@ -58,8 +58,7 @@ var Preview = function () {
 
 			//Define a variable to hold the anniversary of theBirthdate in the endDate year
 			var theBirthdateThisYear = new Date(endDate);
-			theBirthdateThisYear.setDate(dateOfBirth.getDate());
-			theBirthdateThisYear.setMonth(dateOfBirth.getMonth());
+			theBirthdateThisYear.setYMD(endDate.getFullYear(), dateOfBirth.getMonth(), dateOfBirth.getDate());
 
 			// calculate the age at endDate
 			var age = endDate.getFullYear() - dateOfBirth.getFullYear();
@@ -116,8 +115,7 @@ var Preview = function () {
 
 			//Define a variable to hold the anniversary of theBirthdate in the endDate year
 			var theBirthdateThisYear = new Date(endDate);
-			theBirthdateThisYear.setDate(dateOfBirth.getDate());
-			theBirthdateThisYear.setMonth(dateOfBirth.getMonth());
+			theBirthdateThisYear.setYMD(endDate.getFullYear(), dateOfBirth.getMonth(), dateOfBirth.getDate());
 
 			// calculate the age at endDate
 			var age = endDate.getFullYear() - dateOfBirth.getFullYear();

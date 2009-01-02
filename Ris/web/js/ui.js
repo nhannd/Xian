@@ -721,9 +721,7 @@ var Table = {
 					}
 					
 					var extendedDate = column.getValue(obj) || new Date();
-					extendedDate.setDate(date.getDate());
-					extendedDate.setMonth(date.getMonth());
-					extendedDate.setYear(date.getYear());
+					extendedDate.setYMD(date.getYear(), date.getMonth(), date.getDate());
 					column.setValue(obj, extendedDate);
 					table._onEditComplete(row, col); 
 				}
@@ -740,9 +738,7 @@ var Table = {
 						function(date) 
 						{
 							var extendedDate = column.getValue(obj) || new Date();
-							extendedDate.setDate(date.getDate());
-							extendedDate.setMonth(date.getMonth());
-							extendedDate.setYear(date.getYear());
+							extendedDate.setYMD(date.getYear(), date.getMonth(), date.getDate());
 							column.setValue(obj, extendedDate);
 							table._onCellUpdate(row, col);
 							table._onEditComplete(row, col);
@@ -789,8 +785,7 @@ var Table = {
 					}
 
 					var extendedDate = column.getValue(obj) || new Date();
-					extendedDate.setHours(date.getHours());  
-					extendedDate.setMinutes(date.getMinutes()); 
+					extendedDate.setHMS(date.getHours(), date.getMinutes());
 					column.setValue(obj, extendedDate);
 					table._onEditComplete(row, col); 
 				}
@@ -806,8 +801,7 @@ var Table = {
 						function(time)
 						{
 							var extendedDate = column.getValue(obj) || new Date();
-							extendedDate.setHours(time.getHours());  // Ensure Date object has extensions defined in jsx.js
-							extendedDate.setMinutes(time.getMinutes());  // Ensure Date object has extensions defined in jsx.js
+							extendedDate.setHMS(time.getHours(), time.getMinutes());
 							column.setValue(obj, extendedDate);
 							table._onCellUpdate(row, col);
 							table._onEditComplete(row, col);

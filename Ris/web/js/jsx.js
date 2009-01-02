@@ -240,6 +240,36 @@ if(!Date.prototype.toISOString)
         return new Date(y, m, d, h, n, s);
    };
 }
+
+// add some methods to *safely* mutate the Date and Time portions of a date object without producing odd side-effects
+if (!Date.prototype.setYMD)
+{
+	Date.prototype.setYMD = function(y, m, d)
+	{
+		// first we set the day of the month to 1, because every month has a day 1
+		// this is to avoid rollover into the next month, when the month is subsequently modified
+		this.setDate(1);
+		
+		// now we can safely set the year and month
+		this.setFullYear(y);
+		this.setMonth(m);
+		
+		// now we can set the day of the month safely
+		// if d < 1 or d > numberOfDays(m), jscript will automatically roll the month backward or forward
+		this.setDate(d);
+	}
+	
+	Date.prototype.setHMS = function(h, m, s)
+	{
+		this.setHours(h);
+		this.setMinutes(m);
+		
+		if(s)
+		{
+			this.setSeconds(s);
+		}
+	}
+}
     
 if (!Date.prototype.addYears)
 {
