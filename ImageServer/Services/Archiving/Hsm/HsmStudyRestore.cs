@@ -93,6 +93,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						_studyStorage = StudyStorage.Load(queueItem.StudyStorageKey);
 				}
 
+				Platform.Log(LogLevel.Error, "Starting restore of study: {0}", _studyStorage.StudyInstanceUid);
 
 				// If restoring a Nearline study, select a filesystem
 				string destinationFolder;
@@ -137,14 +138,19 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				try
 				{
 					FileStream stream = File.OpenRead(zipFile);
+					// Read a byte, just in case that makes a difference.
+					stream.ReadByte();
 					stream.Close();
 					stream.Dispose();
 				}
 				catch (Exception)
 				{
+					DateTime scheduledTime = Platform.Time.AddSeconds(HsmSettings.Default.ReadFailRescheduleDelaySeconds);
+					Platform.Log(LogLevel.Error, "Study {0} is unreadable, rescheduling restore to {1}", _studyStorage.StudyInstanceUid,
+					             scheduledTime);
 					// Just reschedule in "Restoring" state, the file is unreadable.
 					_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Restoring,
-					                               Platform.Time.AddSeconds(HsmSettings.Default.ReadFailRescheduleDelaySeconds));
+					                               scheduledTime);
 					return;
 				}
 
@@ -156,7 +162,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e, "Unexpected exception processing restore request for {0} on archive {1}",
-						 _studyStorage.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
+					_studyStorage == null ? string.Empty : _studyStorage.StudyInstanceUid, 
+					_hsmArchive.PartitionArchive.Description);
 				_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
 			}
 		}
@@ -181,7 +188,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					processor.AddCommand(new CreateDirectoryCommand(destinationFolder));
 					destinationFolder = Path.Combine(destinationFolder, _studyStorage.StudyInstanceUid);
 					processor.AddCommand(new CreateDirectoryCommand(destinationFolder));
-
 					processor.AddCommand(new ExtractZipCommand(zipFile, destinationFolder));
 
 
@@ -199,7 +205,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						                                        _studyStorage.StudyInstanceUid,
 						                                        studyFolder,
 						                                        fs.Filesystem.GetKey(), _syntax));
-
 					if (!processor.Execute())
 					{
 						Platform.Log(LogLevel.Error, "Unexpected error processing restore request for {0} on archive {1}",
@@ -213,8 +218,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 							IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 						{
 							bool retVal = _hsmArchive.UpdateRestoreQueue(update, queueItem, RestoreQueueStatusEnum.Completed, Platform.Time.AddSeconds(60));
-							Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", _studyStorage.StudyInstanceUid,
-										 _hsmArchive.PartitionArchive.Description);
 							ILockStudy studyLock = update.GetBroker<ILockStudy>();
 							LockStudyParameters parms = new LockStudyParameters();
 							parms.StudyStorageKey = queueItem.StudyStorageKey;
@@ -223,13 +226,16 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 							if (!parms.Successful || !retVal)
 							{
 								string message =
-									String.Format("Study {0} on partition {1} is failed to unlock.", _studyStorage.StudyInstanceUid,
+									String.Format("Study {0} on partition {1} failed to unlock.", _studyStorage.StudyInstanceUid,
 									              _hsmArchive.ServerPartition.Description);
 								Platform.Log(LogLevel.Info, message);
 								throw new ApplicationException(message);
 							}
 							else
 								update.Commit();
+
+							Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", _studyStorage.StudyInstanceUid,
+										 _hsmArchive.PartitionArchive.Description);
 						}
 					}
 				}
@@ -278,12 +284,9 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					else
 					{
 						// Unlock the Queue Entry and set to complete
-						using (
-							IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+						using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 						{
 							_hsmArchive.UpdateRestoreQueue(update, queueItem, RestoreQueueStatusEnum.Completed, Platform.Time.AddSeconds(60));
-							Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", _location.StudyInstanceUid,
-										 _hsmArchive.PartitionArchive.Description);
 							ILockStudy studyLock = update.GetBroker<ILockStudy>();
 							LockStudyParameters parms = new LockStudyParameters();
 							parms.StudyStorageKey = queueItem.StudyStorageKey;
@@ -291,12 +294,15 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 							bool retVal = studyLock.Execute(parms);
 							if (!parms.Successful || !retVal)
 							{
-								Platform.Log(LogLevel.Info, "Study {0} on partition {1} is failed to unlock.", _location.StudyInstanceUid,
+								Platform.Log(LogLevel.Info, "Study {0} on partition {1} failed to unlock.", _location.StudyInstanceUid,
 											 _hsmArchive.ServerPartition.Description);
 							}
-							update.Commit();
-						}
 
+							update.Commit();
+
+							Platform.Log(LogLevel.Info, "Successfully restored study: {0} on archive {1}", _location.StudyInstanceUid,
+										 _hsmArchive.PartitionArchive.Description);
+						}
 					}
 				}
 			}
