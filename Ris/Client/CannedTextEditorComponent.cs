@@ -132,6 +132,14 @@ namespace ClearCanvas.Ris.Client
 					});
 			}
 
+			// add validation rule to ensure the group must be populated when editing group
+			this.Validation.Add(new ValidationRule("StaffGroup",
+				delegate
+				{
+					bool ok = this.IsEditingPersonal || this.IsEditingGroup && this.StaffGroup != null;
+					return new ValidationResult(ok, Desktop.SR.MessageValueRequired);
+				}));
+
 			base.Start();
 		}
 
@@ -152,7 +160,7 @@ namespace ClearCanvas.Ris.Client
 
         public bool CanChangeType
 		{
-			get { return _canChangeType &&  _staffGroupChoices.Count > 0; }
+			get { return _canChangeType; }
 		}
 
 		public bool IsEditingPersonal
@@ -235,6 +243,7 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		// Dynamic Null Validation when IsEditingGroup
 		public StaffGroupSummary StaffGroup
 		{
 			get { return _cannedTextDetail.StaffGroup; }
