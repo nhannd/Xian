@@ -63,7 +63,6 @@ namespace ClearCanvas.Utilities.BuildTasks
 			set { _sourceFiles = value; }
 		}
 		
-		[Required]
 		public bool CheckDependency
 		{
 			get { return _checkDependency; }
