@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the following studies?.
+        ///   Looks up a localized string similar to The following study/studies will be deleted:.
         /// </summary>
         internal static string DeleteStudyConfirmDialog_StudyListingLabel {
             get {

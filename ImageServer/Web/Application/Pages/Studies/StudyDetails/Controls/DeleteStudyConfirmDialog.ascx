@@ -112,7 +112,7 @@
             <tr align="right">
                 <td>
                     <asp:Panel ID="Panel1" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                        <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="YesButton" 
+                        <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="OKButton" 
                             ValidationGroup="<%= ClientID %>"
                             OnClick="DeleteButton_Clicked" />
                         <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton"

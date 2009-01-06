@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="DeleteStudyConfirmDialog_StudyListingLabel" xml:space="preserve">
-    <value>Are you sure you want to delete the following studies?</value>
+    <value>The following study/studies will be deleted:</value>
   </data>
   <data name="DeleteStudyConfirmReasonLabel" xml:space="preserve">
     <value>Reason for deletion:</value>
