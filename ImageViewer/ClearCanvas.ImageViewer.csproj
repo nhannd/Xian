@@ -153,6 +153,7 @@
     <Compile Include="KeyObjects\KeyObjectSelectionEditorComponent.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LoadStudyArgs.cs" />
+    <Compile Include="Mathematics\PolygonF.cs" />
     <Compile Include="Mathematics\Tests\MatrixTests.cs" />
     <Compile Include="Mathematics\Tests\Vector3DTests.cs" />
     <Compile Include="Graphics\GraphicToolContext.cs" />

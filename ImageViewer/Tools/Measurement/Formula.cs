@@ -30,9 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -48,20 +45,5 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
             // pi/4 = 0.7853981633
             return Math.Abs(0.7853981633 * width * height);
         }
-
-		/// <summary>
-		/// Computes the area of a non-self-intersecting polygon whose ordered vertices are given by <paramref name="vertices"/>.
-		/// </summary>
-		public static double AreaOfPolygon(IList<PointF> vertices)
-		{
-			// This algorithm is derived from Green's Theorem.
-			double result = 0;
-			int point0 = vertices.Count - 1;
-			for(int point1 = 0; point1 < vertices.Count; point0 = point1, point1++)
-			{
-				result += vertices[point0].X*vertices[point1].Y - vertices[point1].X*vertices[point0].Y;
-			}
-			return Math.Abs(result/2);
-		}
 	}
 }
