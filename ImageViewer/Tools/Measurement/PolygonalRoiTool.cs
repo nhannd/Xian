@@ -29,20 +29,25 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	public class PolygonRoiInfo : RoiInfo
 	{
 		private IList<PointF> _vertices;
+		private bool _isComplex;
 
 		public PolygonRoiInfo() {}
 
@@ -54,6 +59,17 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return _vertices; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating if the polygon is complex (i.e. self-intersecting).
+		/// </summary>
+		public bool IsComplex
+		{
+			get { return _isComplex; }
+		}
+
+		/// <summary>
+		/// Initializes a <see cref="PolygonRoiInfo"/> object from a <see cref="PolygonInteractiveGraphic"/>.
+		/// </summary>
 		protected internal override void Initialize(InteractiveGraphic graphic)
 		{
 			PolygonInteractiveGraphic polygon = (PolygonInteractiveGraphic) graphic;
@@ -69,7 +85,42 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 			_vertices = vertices.AsReadOnly();
 
+			_isComplex = ComputeIntersections(_vertices);
+
 			graphic.ResetCoordinateSystem();
+		}
+
+		private static bool ComputeIntersections(IList<PointF> vertices)
+		{
+			CodeClock clock = new CodeClock();
+			clock.Start();
+			try
+			{
+				List<PointF> sideEndpoints = new List<PointF>(vertices.Count);
+				sideEndpoints.AddRange(vertices);
+				sideEndpoints.Add(sideEndpoints[0]);
+				sideEndpoints.RemoveAt(0);
+
+				// the line segments immediately preceding and succeeding a given segment are never considered as "intersecting"
+				for (int n = 2; n < vertices.Count; n++)
+				{
+					// if checking against the last line segment, skip the first line segment (since they are adjacent)
+					for (int i = (n < vertices.Count - 1) ? 0 : 1; i <= n - 2; i++)
+					{
+						PointF intersection;
+						Vector.LineSegments type = Vector.LineSegmentIntersection(vertices[n], sideEndpoints[n], vertices[i], sideEndpoints[i], out intersection);
+						if (type == Vector.LineSegments.Intersect)
+							return true;
+					}
+				}
+
+				return false;
+			}
+			finally
+			{
+				clock.Stop();
+				Trace.WriteLine(string.Format("Polygon intersections computation took {0:f4} ms", clock.Seconds * 1000), "Measurement.Polygons");
+			}
 		}
 	}
 

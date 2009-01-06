@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
         }
 
 		/// <summary>
-		/// Computes the area of a non-self-intersecting polygon whose vertices are given by <paramref name="vertices"/>.
+		/// Computes the area of a non-self-intersecting polygon whose ordered vertices are given by <paramref name="vertices"/>.
 		/// </summary>
 		public static double AreaOfPolygon(IList<PointF> vertices)
 		{
