@@ -728,6 +728,69 @@ namespace ClearCanvas.Common
 
         }
 
+		/// <summary>
+		/// Logs the specified message at the specified <see cref="LogLevel"/>.
+		/// </summary>
+		/// <remarks>This method is thread-safe.</remarks>
+		/// <param name="category">The log level.</param>
+		/// <param name="message">Message, as used with <see cref="System.Text.StringBuilder"/>.</param>
+		public static void Log(LogLevel category, String message) {
+			StringBuilder sb = new StringBuilder();
+			sb.Append(message);
+
+			switch (category) {
+				case LogLevel.Debug:
+					_log.Debug(sb.ToString());
+					break;
+				case LogLevel.Info:
+					_log.Info(sb.ToString());
+					break;
+				case LogLevel.Warn:
+					_log.Warn(sb.ToString());
+					break;
+				case LogLevel.Error:
+					_log.Error(sb.ToString());
+					break;
+				case LogLevel.Fatal:
+					_log.Fatal(sb.ToString());
+					break;
+			}
+		}
+
+
+		/// <summary>
+		/// Logs the specified exception at the specified <see cref="LogLevel"/>.
+		/// </summary>
+		/// <remarks>This method is thread-safe.</remarks>
+		/// <param name="ex">The exception to log.</param>
+		/// <param name="category">The log level.</param>
+		/// <param name="message">Message, as used with <see cref="System.Text.StringBuilder"/>.</param>
+		public static void Log(LogLevel category, Exception ex, String message) {
+			StringBuilder sb = new StringBuilder();
+			sb.AppendLine(SR.ExceptionThrown);
+			sb.AppendLine();
+			sb.Append(message);
+
+			switch (category) {
+				case LogLevel.Debug:
+					_log.Debug(sb.ToString(), ex);
+					break;
+				case LogLevel.Info:
+					_log.Info(sb.ToString(), ex);
+					break;
+				case LogLevel.Warn:
+					_log.Warn(sb.ToString(), ex);
+					break;
+				case LogLevel.Error:
+					_log.Error(sb.ToString(), ex);
+					break;
+				case LogLevel.Fatal:
+					_log.Fatal(sb.ToString(), ex);
+					break;
+			}
+
+		}
+
         /// <summary>
         /// Displays a message box with the specified message.
         /// </summary>
@@ -833,8 +896,15 @@ namespace ClearCanvas.Common
 		/// <param name="castOutput">The object resulting from the cast.</param>
 		/// <param name="castInputName">The variable name of the object that was cast.</param>
 		/// <param name="castTypeName">The name of the type the object was cast to.</param>
-		/// <remarks>To use this method, casts have to be done using the <b>as</b> operator.  The
-		/// method depends on failed casts resulting in <b>null</b>.</remarks>
+		/// <remarks>
+		/// <para>To use this method, casts have to be done using the <b>as</b> operator.  The
+		/// method depends on failed casts resulting in <b>null</b>.</para>
+		/// <para>This method has been deprecated since it does not actually perform any
+		/// cast checking itself and entirely relies on correct usage (which is not apparent
+		/// through the Visual Studio Intellisence feature) to function as an exception message
+		/// formatter. The recommended practice is to use the <see cref="CheckExpectedType"/>
+		/// if the cast output need not be consumed, or use the direct cast operator instead.</para>
+		/// </remarks>
 		/// <example>
 		/// <code>
 		/// [C#]
@@ -851,6 +921,7 @@ namespace ClearCanvas.Common
 		/// <exception cref="ArgumentNullException"><paramref name="castOutput"/>,
 		/// <paramref name="castInputName"/>, <paramref name="castTypeName"/> is <b>null</b>.</exception>
 		/// <exception cref="InvalidCastException">Cast is invalid.</exception>
+		[Obsolete("Use Platform.CheckExpectedType or perform a direct cast instead.")]
 		public static void CheckForInvalidCast(object castOutput, string castInputName, string castTypeName)
 		{
 			Platform.CheckForNullReference(castOutput, "castOutput");
