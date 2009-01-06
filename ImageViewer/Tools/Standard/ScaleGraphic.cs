@@ -54,11 +54,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// Gets the minor tick length in client-space pixels.
 		/// </summary>
 		/// <remarks>
-		/// The base implementation of <see cref="ScaleGraphic"/> has a fixed minor tick length of 15 pixels.
+		/// The base implementation of <see cref="ScaleGraphic"/> has a fixed minor tick length of 12.5 pixels.
 		/// </remarks>
 		public virtual float MinorTickLength
 		{
-			get { return 15; }
+			get { return 12.5f; }
 		}
 
 		/// <summary>
@@ -213,6 +213,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			baseLine.Pt1 = endpoint1;
 			baseLine.Pt2 = endpoint2;
+			baseLine.Color = Color.White;
 		}
 
 		/// <summary>
@@ -227,7 +228,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (this.IsMirrored)
 				length = -length;
 			tickLine.Pt1 = point;
-			tickLine.Pt2 = new PointF(point.X + length*unitNormal.Width, point.Y + length*unitNormal.Height);
+			tickLine.Pt2 = new PointF(point.X + length * unitNormal.Width, point.Y + length * unitNormal.Height);
+			tickLine.Color = Color.White;
 		}
 
 		/// <summary>
@@ -242,7 +244,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (this.IsMirrored)
 				length = -length;
 			tickLine.Pt1 = point;
-			tickLine.Pt2 = new PointF(point.X + length*unitNormal.Width, point.Y + length*unitNormal.Height);
+			tickLine.Pt2 = new PointF(point.X + length * unitNormal.Width, point.Y + length * unitNormal.Height);
+			tickLine.Color = Color.White;
 		}
 
 		/// <summary>
