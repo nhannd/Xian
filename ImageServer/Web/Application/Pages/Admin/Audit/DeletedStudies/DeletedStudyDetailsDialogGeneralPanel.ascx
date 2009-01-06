@@ -36,7 +36,7 @@
                         <asp:BoundField DataField="PartitionAE" HeaderText="Partition AE: ">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                         </asp:BoundField>
-                        <asp:BoundField DataField="BackupFolderPath" HeaderText="Backup Folder:">
+                        <asp:BoundField DataField="BackupFolderPath" HeaderText="Backup Location:">
                             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
                         </asp:BoundField>
                         <asp:TemplateField HeaderText="Reason For Deletion: ">

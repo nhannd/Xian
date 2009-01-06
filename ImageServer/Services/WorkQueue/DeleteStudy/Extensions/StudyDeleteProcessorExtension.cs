@@ -24,27 +24,44 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
         #region Private Members
         private DeleteStudyContext _context;
         private bool _enabled = true;
-        private string _backupPath;
+        private string _backupSubFolder;
+        private string _backupZipFile;
         private DeletedStudyArchiveInfoCollection _archives;
+        
         private string BackupSubPath
         {
             get
             {
-                if (String.IsNullOrEmpty(_backupPath))
+                if (String.IsNullOrEmpty(_backupSubFolder))
                 {
 
-                    string pathPrefix = Path.Combine("Deleted", _context.ServerPartition.PartitionFolder);
-
-                    _backupPath = Path.Combine(pathPrefix, _context.Study.StudyInstanceUid);
-
-                    int counter = 1;
-                    while (Directory.Exists(_context.Filesystem.ResolveAbsolutePath(_backupPath)))
-                    {
-                        _backupPath = Path.Combine(pathPrefix, String.Format("{0}({1})", _context.Study.StudyInstanceUid, counter++));
-                    }
+                    string pathPrefix = Path.Combine(_context.ServerPartition.PartitionFolder, "Deleted");
+                    _backupSubFolder = Path.Combine(pathPrefix, _context.Study.StudyInstanceUid);
                 }
 
-                return _backupPath;
+                return _backupSubFolder;
+            }
+        }
+
+        private string BackupZipFileRelativePath
+        {
+            get
+            {
+                if (String.IsNullOrEmpty(_backupZipFile))
+                {
+                    _backupZipFile = Path.Combine(BackupSubPath, Platform.Time.ToString("yyyy-MM-dd-hhmm")) + ".zip";
+
+                }
+
+                return _backupZipFile;
+            }
+        }
+
+        private string BackupFullPath
+        {
+            get
+            {
+                return _context.Filesystem.ResolveAbsolutePath(BackupZipFileRelativePath);
             }
         }
         #endregion
@@ -109,8 +126,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
                     CreateDirectoryCommand mkdir = new CreateDirectoryCommand(path);
                     processor.AddCommand(mkdir);
 
-                    string zipStudyBackupPath = Path.Combine(path, _context.Study.StudyInstanceUid + ".zip");
-                    ZipStudyFolderCommand zip = new ZipStudyFolderCommand(storage.GetStudyPath(), zipStudyBackupPath);
+                    ZipStudyFolderCommand zip = new ZipStudyFolderCommand(storage.GetStudyPath(), BackupFullPath);
                     processor.AddCommand(zip);
 
                     if (!processor.Execute())
@@ -158,7 +174,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
                     parms.StudyDescription = study.StudyDescription;
                     parms.StudyTime = study.StudyTime;
 
-                    parms.BackupPath = BackupSubPath;
+                    parms.BackupPath = BackupZipFileRelativePath;
 
                     if (_archives != null && _archives.Count>0)
                     {
