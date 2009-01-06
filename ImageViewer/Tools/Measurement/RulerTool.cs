@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -60,8 +61,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected internal override void Initialize(InteractiveGraphic graphic)
 		{
-			PolyLineInteractiveGraphic line = (PolyLineInteractiveGraphic) graphic;
-			Platform.CheckForInvalidCast(line, "line", typeof(ProtractorInteractiveGraphic).FullName);
+			PolyLineInteractiveGraphic line = (PolyLineInteractiveGraphic)graphic;
 
 			base.Initialize(graphic);
 
