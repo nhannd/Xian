@@ -61,6 +61,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         {
 			this._reportEditorSplitContainer = new System.Windows.Forms.SplitContainer();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+			this._hasErrors = new System.Windows.Forms.Label();
 			this._imagesUnavailable = new System.Windows.Forms.Label();
 			this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._cancelButton = new System.Windows.Forms.Button();
@@ -77,7 +78,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._statusText = new System.Windows.Forms.Label();
 			this._bannerPanel = new System.Windows.Forms.Panel();
-			this._hasErrors = new System.Windows.Forms.Label();
 			this._reportEditorSplitContainer.Panel1.SuspendLayout();
 			this._reportEditorSplitContainer.Panel2.SuspendLayout();
 			this._reportEditorSplitContainer.SuspendLayout();
@@ -130,6 +130,24 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.Size = new System.Drawing.Size(461, 801);
 			this.tableLayoutPanel2.TabIndex = 0;
+			// 
+			// _hasErrors
+			// 
+			this._hasErrors.AutoSize = true;
+			this._hasErrors.BackColor = System.Drawing.Color.White;
+			this._hasErrors.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.tableLayoutPanel2.SetColumnSpan(this._hasErrors, 2);
+			this._hasErrors.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._hasErrors.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._hasErrors.ForeColor = System.Drawing.Color.Red;
+			this._hasErrors.Location = new System.Drawing.Point(3, 31);
+			this._hasErrors.Margin = new System.Windows.Forms.Padding(3);
+			this._hasErrors.Name = "_hasErrors";
+			this._hasErrors.Padding = new System.Windows.Forms.Padding(3, 3, 3, 1);
+			this._hasErrors.Size = new System.Drawing.Size(455, 22);
+			this._hasErrors.TabIndex = 5;
+			this._hasErrors.Text = "Transcription has flagged the report.";
+			this._hasErrors.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// _imagesUnavailable
 			// 
@@ -257,7 +275,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._reportNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._reportNextItem.Location = new System.Drawing.Point(84, 32);
 			this._reportNextItem.Name = "_reportNextItem";
-			this._reportNextItem.Size = new System.Drawing.Size(112, 23);
+			this._reportNextItem.Size = new System.Drawing.Size(104, 23);
 			this._reportNextItem.TabIndex = 8;
 			this._reportNextItem.Text = "Go To Next Item";
 			this._reportNextItem.UseVisualStyleBackColor = true;
@@ -326,24 +344,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._bannerPanel.Name = "_bannerPanel";
 			this._bannerPanel.Size = new System.Drawing.Size(977, 79);
 			this._bannerPanel.TabIndex = 0;
-			// 
-			// _hasErrors
-			// 
-			this._hasErrors.AutoSize = true;
-			this._hasErrors.BackColor = System.Drawing.Color.White;
-			this._hasErrors.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.tableLayoutPanel2.SetColumnSpan(this._hasErrors, 2);
-			this._hasErrors.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._hasErrors.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._hasErrors.ForeColor = System.Drawing.Color.Red;
-			this._hasErrors.Location = new System.Drawing.Point(3, 31);
-			this._hasErrors.Margin = new System.Windows.Forms.Padding(3);
-			this._hasErrors.Name = "_hasErrors";
-			this._hasErrors.Padding = new System.Windows.Forms.Padding(3, 3, 3, 1);
-			this._hasErrors.Size = new System.Drawing.Size(455, 22);
-			this._hasErrors.TabIndex = 5;
-			this._hasErrors.Text = "Transcription has errors.";
-			this._hasErrors.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// ReportingComponentControl
 			// 
