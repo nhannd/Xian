@@ -483,6 +483,9 @@
   <data name="WorklistCategoryReporting" xml:space="preserve">
     <value>Reporting</value>
   </data>
+  <data name="WorklistCategoryTranscription" xml:space="preserve">
+    <value>Transcription</value>
+  </data>
   <data name="WorklistClassAndName" xml:space="preserve">
     <value>Worklist Name/Class</value>
   </data>
