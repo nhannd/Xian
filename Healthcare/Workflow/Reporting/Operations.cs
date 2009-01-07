@@ -287,6 +287,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				if (step.Is<InterpretationStep>() && step.AssignedStaff == null)
 					return false;
 
+				// cannot cancel once transcription has begun
+				if (step.Is<TranscriptionStep>() && step.State != ActivityStatus.SC)
+					return false;
+
 				// cannot cancel a step that is already completed or cancelled
 				if (step.IsTerminated)
 					return false;
