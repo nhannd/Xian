@@ -44,6 +44,16 @@ namespace ClearCanvas.Ris.Application.Common.TranscriptionWorkflow
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[OperationContract]
+		[FaultContract(typeof(RequestValidationException))]
+		[FaultContract(typeof(ConcurrentModificationException))]
+		SubmitTranscriptionForReviewResponse SubmitTranscriptionForReview(SubmitTranscriptionForReviewRequest request);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
 		[FaultContract(typeof (RequestValidationException))]
 		[FaultContract(typeof (ConcurrentModificationException))]
 		CompleteTranscriptionResponse CompleteTranscription(CompleteTranscriptionRequest request);

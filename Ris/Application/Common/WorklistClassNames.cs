@@ -191,6 +191,12 @@ namespace ClearCanvas.Ris.Application.Common
 		[WorklistClassName]
 		public const string TranscriptionCompletedWorklist = "TranscriptionCompletedWorklist";
 
+		[WorklistClassName]
+		public const string TranscriptionToBeReviewedWorklist = "TranscriptionToBeReviewedWorklist";
+
+		[WorklistClassName]
+		public const string TranscriptionAwaitingReviewWorklist = "TranscriptionAwaitingReviewWorklist";
+
 		#endregion
 	}
 }

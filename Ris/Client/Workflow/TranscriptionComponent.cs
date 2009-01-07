@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -148,6 +149,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// Transcription is saved in its current state.
 		/// </summary>
 		SaveDraft,
+
+		/// <summary>
+		/// Transcription is saved and submitted for review.
+		/// </summary>
+		SubmitForReview, 
 
 		/// <summary>
 		/// Transcription is saved, completed and sent to rad.
@@ -302,14 +308,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private bool _canComplete;
 		private bool _canReject;
+		private bool _canSubmitForReview;
 		private bool _canSaveReport;
 
-		//private EntityRef _assignedStaff;
 		private ReportDetail _report;
 		private OrderDetail _orderDetail;
 		private int _activeReportPartIndex;
-		//private ILookupHandler _supervisorLookupHandler;
-		//private StaffSummary _supervisor;
+		private ILookupHandler _supervisorLookupHandler;
+		private StaffSummary _supervisor;
 		private Dictionary<string, string> _reportPartExtendedProperties;
 
 		private ReportingOrderDetailViewComponent _orderComponent;
@@ -332,11 +338,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public override void Start()
 		{
 			//// create supervisor lookup handler, using filters supplied in application settings
-			//string filters = ReportingSettings.Default.SupervisorStaffTypeFilters;
-			//string[] staffTypes = string.IsNullOrEmpty(filters)
-			//    ? new string[] { }
-			//    : CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
-			//_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
+			string filters = TranscriptionSettings.Default.SupervisorStaffTypeFilters;
+			string[] staffTypes = string.IsNullOrEmpty(filters)
+				? new string[] { }
+				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
+			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
 			StartTranscribingWorklistItem();
 
@@ -542,6 +548,54 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
+		#region Submit For Review
+
+		public void SubmitForReview()
+		{
+			try
+			{
+				if (!_transcriptionEditor.Save(TranscriptionEditorCloseReason.SaveDraft))
+					return;
+
+				if (SupervisorIsInvalid())
+					return;
+
+				Platform.GetService<ITranscriptionWorkflowService>(
+					delegate(ITranscriptionWorkflowService service)
+					{
+						service.SubmitTranscriptionForReview(
+							new SubmitTranscriptionForReviewRequest(
+							this.WorklistItem.ProcedureStepRef,
+							_reportPartExtendedProperties, _supervisor.StaffRef));
+					});
+
+				// Destination Folders
+				DocumentManager.InvalidateFolder(typeof(Folders.Transcription.AwaitingReviewFolder));
+
+				_worklistItemManager.ProceedToNextWorklistItem(WorklistItemCompletedResult.Completed);
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, SR.ExceptionFailedToSaveReport, this.Host.DesktopWindow,
+					delegate
+					{
+						this.Exit(ApplicationComponentExitCode.Error);
+					});
+			}
+		}
+
+		public bool SubmitForReviewEnabled
+		{
+			get { return CanSubmitForReview; }
+		}
+
+		public bool SubmitForReviewVisible
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview); }
+		}
+
+		#endregion
+
 		#region Save
 
 		public void SaveReport()
@@ -639,6 +693,33 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
+		#region Supervisor
+
+		public StaffSummary Supervisor
+		{
+			get { return _supervisor; }
+			set
+			{
+				if (!Equals(value, _supervisor))
+				{
+					SetSupervisor(value);
+					NotifyPropertyChanged("Supervisor");
+				}
+			}
+		}
+
+		public ILookupHandler SupervisorLookupHandler
+		{
+			get { return _supervisorLookupHandler; }
+		}
+
+		public bool SupervisorVisible
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview); }
+		}
+
+		#endregion
+
 		#endregion
 
 		private bool CanComplete
@@ -649,6 +730,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private bool CanReject
 		{
 			get { return _canReject; }
+		}
+
+		private bool CanSubmitForReview
+		{
+			get { return _canSubmitForReview; }
 		}
 
 		private bool CanSaveReport
@@ -662,6 +748,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				case TranscriptionEditorCloseReason.SaveDraft:
 					SaveReport();
+					break;
+				case TranscriptionEditorCloseReason.SubmitForReview:
+					SubmitForReview();
 					break;
 				case TranscriptionEditorCloseReason.Complete:
 					Complete();
@@ -707,6 +796,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(this.WorklistItem));
 					_canComplete = enablementResponse.OperationEnablementDictionary["CompleteTranscription"];
 					_canReject = enablementResponse.OperationEnablementDictionary["RejectTranscription"];
+					_canSubmitForReview = enablementResponse.OperationEnablementDictionary["SubmitTranscriptionForReview"];
 					_canSaveReport = enablementResponse.OperationEnablementDictionary["SaveTranscription"];
 
 					LoadTranscriptionForEditResponse response = service.LoadTranscriptionForEdit(
@@ -717,24 +807,25 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 					ReportPartDetail activePart = _report.GetPart(_activeReportPartIndex);
 					_reportPartExtendedProperties = activePart == null ? null : activePart.ExtendedProperties;
-					//if (activePart != null && activePart.Supervisor != null)
-					//{
-					//    // active part already has a supervisor assigned
-					//    _supervisor = activePart.Supervisor;
-					//}
-					//else if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview))
-					//{
-					//    // active part does not have a supervisor assigned
-					//    // if this user has a default supervisor, retreive it, otherwise leave supervisor as null
-					//    if (!String.IsNullOrEmpty(ReportingSettings.Default.SupervisorID))
-					//    {
-					//        object supervisor;
-					//        if (_supervisorLookupHandler.Resolve(ReportingSettings.Default.SupervisorID, false, out supervisor))
-					//        {
-					//            _supervisor = (StaffSummary)supervisor;
-					//        }
-					//    }
-					//}
+
+					if (activePart != null && activePart.TranscriptionSupervisor != null)
+					{
+						// active part already has a supervisor assigned
+						_supervisor = activePart.TranscriptionSupervisor;
+					}
+					else if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview))
+					{
+						// active part does not have a supervisor assigned
+						// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
+						if (!String.IsNullOrEmpty(TranscriptionSettings.Default.SupervisorID))
+						{
+							object supervisor;
+							if (_supervisorLookupHandler.Resolve(TranscriptionSettings.Default.SupervisorID, false, out supervisor))
+							{
+								_supervisor = (StaffSummary)supervisor;
+							}
+						}
+					}
 				});
 		}
 
@@ -763,5 +854,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			NotifyPropertyChanged("StatusText");
 		}
+
+		private bool SupervisorIsInvalid()
+		{
+			if (_supervisor == null)
+			{
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
+				return true;
+			}
+			return false;
+		}
+
+		private void SetSupervisor(StaffSummary supervisor)
+		{
+			_supervisor = supervisor;
+			TranscriptionSettings.Default.SupervisorID = supervisor == null ? "" : supervisor.StaffId;
+			TranscriptionSettings.Default.Save();
+		}
+
 	}
 }

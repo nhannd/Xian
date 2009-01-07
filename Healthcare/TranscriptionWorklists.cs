@@ -46,6 +46,41 @@ namespace ClearCanvas.Healthcare
 	}
 
 	[ExtensionOf(typeof(WorklistExtensionPoint))]
+	[WorklistSupportsTimeFilter(false)]
+	[StaticWorklist(true)]
+	[WorklistClassDescription("TranscriptionToBeReviewedWorklistDescription")]
+	public class TranscriptionToBeReviewedWorklist : TranscriptionWorklist
+	{
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
+		{
+			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+			criteria.ProcedureStepClass = typeof(TranscriptionStep);
+			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC });
+			criteria.ProcedureStep.Scheduling.Performer.Staff.EqualTo(wqc.Staff);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepStartTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
+			return new WorklistItemSearchCriteria[] { criteria };
+		}
+	}
+
+	[ExtensionOf(typeof(WorklistExtensionPoint))]
+	[WorklistSupportsTimeFilter(false)]
+	[StaticWorklist(true)]
+	[WorklistClassDescription("TranscriptionAwaitingReviewWorklistDescription")]
+	public class TranscriptionAwaitingReviewWorklist : TranscriptionWorklist
+	{
+		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
+		{
+			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
+			criteria.ProcedureStepClass = typeof(TranscriptionStep);
+			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.IP, ActivityStatus.SC });
+			criteria.ProcedureStep.Scheduling.Performer.Staff.NotEqualTo(wqc.Staff);
+			criteria.ReportPart.Transcriber.EqualTo(wqc.Staff);
+			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepStartTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
+			return new WorklistItemSearchCriteria[] { criteria };
+		}
+	}
+
+	[ExtensionOf(typeof(WorklistExtensionPoint))]
 	[WorklistSupportsTimeFilter(true)]
 	[StaticWorklist(true)]
 	[WorklistClassDescription("TranscriptionCompletedWorklistDescription")]

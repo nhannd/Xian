@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
@@ -11,6 +12,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common.TranscriptionWorkflow;
 using ClearCanvas.Ris.Application.Services.ReportingWorkflow;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 {
@@ -107,6 +109,26 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		}
 
 		[UpdateOperation]
+		[OperationEnablement("CanSubmitTranscriptionForReview")]
+		public SubmitTranscriptionForReviewResponse SubmitTranscriptionForReview(SubmitTranscriptionForReviewRequest request)
+		{
+			TranscriptionStep transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
+			Staff supervisor = ResolveSupervisor(transcriptionStep, request.SupervisorRef);
+
+			if(supervisor == null)
+				throw new RequestValidationException("A supervisor is required.");
+
+			SaveReportHelper(transcriptionStep, request.ReportPartExtendedProperties);
+
+			TranscriptionOperations.SubmitTranscriptionForReview op = new TranscriptionOperations.SubmitTranscriptionForReview();
+			op.Execute(transcriptionStep, this.CurrentUserStaff, supervisor);
+
+			this.PersistenceContext.SynchState();
+
+			return new SubmitTranscriptionForReviewResponse();
+		}
+
+		[UpdateOperation]
 		[OperationEnablement("CanCompleteTranscription")]
 		public CompleteTranscriptionResponse CompleteTranscription(CompleteTranscriptionRequest request)
 		{
@@ -159,6 +181,11 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 			return CanExecuteOperation(new TranscriptionOperations.SaveTranscription(), itemKey);
 		}
 
+		public bool CanSubmitTranscriptionForReview(WorklistItemKey itemKey)
+		{
+			return CanExecuteOperation(new TranscriptionOperations.SubmitTranscriptionForReview(), itemKey);
+		}
+
 		public bool CanCompleteTranscription(WorklistItemKey itemKey)
 		{
 			return CanExecuteOperation(new TranscriptionOperations.CompleteTranscription(), itemKey);
@@ -203,6 +230,22 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 
 			TranscriptionOperations.SaveTranscription op = new TranscriptionOperations.SaveTranscription();
 			op.Execute(step, reportPartExtendedProperties);
+		}
+
+		/// <summary>
+		/// Get the supervisor, using the new supervisor if supplied, otherwise using an existing supervisor if found.
+		/// </summary>
+		/// <param name="step"></param>
+		/// <param name="newSupervisorRef"></param>
+		/// <returns></returns>
+		private Staff ResolveSupervisor(TranscriptionStep step, EntityRef newSupervisorRef)
+		{
+			Staff supervisor = newSupervisorRef == null ? null : PersistenceContext.Load<Staff>(newSupervisorRef, EntityLoadFlags.Proxy);
+
+			if (supervisor == null && step.ReportPart != null)
+				supervisor = step.ReportPart.Supervisor;
+
+			return supervisor;
 		}
 
 		#endregion

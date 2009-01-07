@@ -155,6 +155,8 @@
     <Compile Include="TranscriptionWorkflow\SaveTranscriptionResponse.cs" />
     <Compile Include="TranscriptionWorkflow\StartTranscriptionRequest.cs" />
     <Compile Include="TranscriptionWorkflow\StartTranscriptionResponse.cs" />
+    <Compile Include="TranscriptionWorkflow\SubmitTranscriptionForReviewRequest.cs" />
+    <Compile Include="TranscriptionWorkflow\SubmitTranscriptionForReviewResponse.cs" />
     <Compile Include="WorkQueueItemDetail.cs" />
     <Compile Include="ProtocollingWorkflow\ReviseSubmittedProtocolRequest.cs" />
     <Compile Include="ProtocollingWorkflow\ReviseSubmittedProtocolResponse.cs" />

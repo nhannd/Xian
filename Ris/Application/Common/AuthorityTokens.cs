@@ -202,6 +202,9 @@ namespace ClearCanvas.Ris.Application.Common
 			{
 				[AuthorityToken(Description = "Allow access to the Transcription Editor and creation of report transcriptions.")]
 				public const string Create = "Workflow/Transcription/Create";
+
+				[AuthorityToken(Description = "Allow transcriptions to be submitted for review by another party.")]
+				public const string SubmitForReview = "Workflow/Transcription/Submit For Review";
 			}
 
 			public static class Patient

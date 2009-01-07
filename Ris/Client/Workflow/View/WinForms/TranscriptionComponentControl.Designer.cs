@@ -73,6 +73,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._statusText = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._bannerPanel = new System.Windows.Forms.Panel();
+			this._submitForReviewButton = new System.Windows.Forms.Button();
+			this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._reportEditorSplitContainer.Panel1.SuspendLayout();
 			this._reportEditorSplitContainer.Panel2.SuspendLayout();
 			this._reportEditorSplitContainer.SuspendLayout();
@@ -106,6 +108,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel2.ColumnCount = 2;
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel2.Controls.Add(this._supervisor, 0, 2);
 			this.tableLayoutPanel2.Controls.Add(this._cancelButton, 1, 3);
 			this.tableLayoutPanel2.Controls.Add(this._transcriptiontEditorPanel, 0, 1);
 			this.tableLayoutPanel2.Controls.Add(this.flowLayoutPanel1, 0, 3);
@@ -122,7 +125,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(383, 752);
+			this._cancelButton.Location = new System.Drawing.Point(383, 746);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
 			this._cancelButton.TabIndex = 3;
@@ -138,7 +141,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._transcriptiontEditorPanel.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._transcriptiontEditorPanel.Location = new System.Drawing.Point(3, 3);
 			this._transcriptiontEditorPanel.Name = "_transcriptiontEditorPanel";
-			this._transcriptiontEditorPanel.Size = new System.Drawing.Size(455, 743);
+			this._transcriptiontEditorPanel.Size = new System.Drawing.Size(455, 692);
 			this._transcriptiontEditorPanel.TabIndex = 0;
 			// 
 			// flowLayoutPanel1
@@ -147,14 +150,15 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
 			this.flowLayoutPanel1.Controls.Add(this._completeButton);
 			this.flowLayoutPanel1.Controls.Add(this._rejectButton);
+			this.flowLayoutPanel1.Controls.Add(this._submitForReviewButton);
 			this.flowLayoutPanel1.Controls.Add(this._saveButton);
 			this.flowLayoutPanel1.Controls.Add(this._btnSkip);
 			this.flowLayoutPanel1.Controls.Add(this._reportNextItem);
 			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 749);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 743);
 			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(380, 52);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(380, 58);
 			this.flowLayoutPanel1.TabIndex = 2;
 			// 
 			// _completeButton
@@ -179,7 +183,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _saveButton
 			// 
-			this._saveButton.Location = new System.Drawing.Point(165, 3);
+			this._saveButton.Location = new System.Drawing.Point(274, 3);
 			this._saveButton.Name = "_saveButton";
 			this._saveButton.Size = new System.Drawing.Size(75, 23);
 			this._saveButton.TabIndex = 3;
@@ -189,7 +193,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _btnSkip
 			// 
-			this._btnSkip.Location = new System.Drawing.Point(246, 3);
+			this._btnSkip.Location = new System.Drawing.Point(3, 32);
 			this._btnSkip.Name = "_btnSkip";
 			this._btnSkip.Size = new System.Drawing.Size(75, 23);
 			this._btnSkip.TabIndex = 7;
@@ -201,9 +205,9 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this._reportNextItem.AutoSize = true;
 			this._reportNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._reportNextItem.Location = new System.Drawing.Point(3, 32);
+			this._reportNextItem.Location = new System.Drawing.Point(84, 32);
 			this._reportNextItem.Name = "_reportNextItem";
-			this._reportNextItem.Size = new System.Drawing.Size(112, 17);
+			this._reportNextItem.Size = new System.Drawing.Size(104, 23);
 			this._reportNextItem.TabIndex = 8;
 			this._reportNextItem.Text = "Go To Next Item";
 			this._reportNextItem.UseVisualStyleBackColor = true;
@@ -257,6 +261,31 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._bannerPanel.Size = new System.Drawing.Size(977, 79);
 			this._bannerPanel.TabIndex = 0;
 			// 
+			// _submitForReviewButton
+			// 
+			this._submitForReviewButton.AutoSize = true;
+			this._submitForReviewButton.Location = new System.Drawing.Point(165, 3);
+			this._submitForReviewButton.Name = "_submitForReviewButton";
+			this._submitForReviewButton.Size = new System.Drawing.Size(103, 23);
+			this._submitForReviewButton.TabIndex = 9;
+			this._submitForReviewButton.Text = "Submit for Review";
+			this._submitForReviewButton.UseVisualStyleBackColor = true;
+			this._submitForReviewButton.Click += new System.EventHandler(this._submitForReviewButton_Click);
+			// 
+			// _supervisor
+			// 
+			this._supervisor.AutoSize = true;
+			this._supervisor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel2.SetColumnSpan(this._supervisor, 2);
+			this._supervisor.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._supervisor.LabelText = "Supervising Transcriptionist:";
+			this._supervisor.Location = new System.Drawing.Point(2, 700);
+			this._supervisor.Margin = new System.Windows.Forms.Padding(2);
+			this._supervisor.Name = "_supervisor";
+			this._supervisor.Size = new System.Drawing.Size(457, 41);
+			this._supervisor.TabIndex = 4;
+			this._supervisor.Value = null;
+			// 
 			// TranscriptionComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -294,5 +323,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.Label _statusText;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
 		private System.Windows.Forms.Panel _bannerPanel;
+		private System.Windows.Forms.Button _submitForReviewButton;
+		private ClearCanvas.Ris.Client.View.WinForms.LookupField _supervisor;
     }
 }

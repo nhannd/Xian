@@ -27,6 +27,9 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 					|| step.State == ActivityStatus.IP && !Equals(step.PerformingStaff, currentUserStaff))
 					return false;
 
+				if (step.Scheduling != null && !Equals(step.AssignedStaff, currentUserStaff))
+					return false;
+
 				return true;
 			}
 		}
@@ -75,16 +78,16 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 			}
 		}
 
-		public class CompleteTranscription : TranscriptionOperation
+		public class SubmitTranscriptionForReview : TranscriptionOperation
 		{
-			public void Execute(TranscriptionStep step, Staff performingStaff)
+			public void Execute(TranscriptionStep step, Staff performingStaff, Staff supervisor)
 			{
 				step.Complete();
 
-				TranscriptionReviewStep transcriptionReviewStep = new TranscriptionReviewStep(step);
-				step.Procedure.AddProcedureStep(transcriptionReviewStep);
-				transcriptionReviewStep.Assign(step.ReportPart.Interpreter);
-				transcriptionReviewStep.Schedule(Platform.Time);
+				TranscriptionStep transcriptionStep = new TranscriptionStep(step);
+				step.Procedure.AddProcedureStep(transcriptionStep);
+				transcriptionStep.Assign(supervisor);
+				transcriptionStep.Schedule(Platform.Time);
 			}
 
 			public override bool CanExecute(TranscriptionStep step, Staff currentUserStaff)
@@ -99,11 +102,49 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 			}
 		}
 
+		public class CompleteTranscription : TranscriptionOperation
+		{
+			public void Execute(TranscriptionStep step, Staff performingStaff)
+			{
+				if(step.State == ActivityStatus.SC)
+					step.Complete(performingStaff);
+				else
+					step.Complete();
+
+				TranscriptionReviewStep transcriptionReviewStep = new TranscriptionReviewStep(step);
+				step.Procedure.AddProcedureStep(transcriptionReviewStep);
+				transcriptionReviewStep.Assign(step.ReportPart.Interpreter);
+				transcriptionReviewStep.Schedule(Platform.Time);
+			}
+
+			public override bool CanExecute(TranscriptionStep step, Staff currentUserStaff)
+			{
+				if (step.State != ActivityStatus.SC && step.State != ActivityStatus.IP)
+					return false;
+
+				if (step.State == ActivityStatus.IP && !Equals(step.PerformingStaff, currentUserStaff))
+					return false;
+
+				// scheduled items should should look like items submitted for review
+				if (step.State == ActivityStatus.SC && (step.ReportPart.Transcriber == null || step.AssignedStaff == null))
+					return false;
+
+				// if it looks like an transcription submitted for review, but not to the current user.
+				if (step.State == ActivityStatus.SC && step.ReportPart.Transcriber != null && !Equals(step.AssignedStaff, currentUserStaff))
+					return false;
+
+				return true;
+			}
+		}
+
 		public class RejectTranscription : TranscriptionOperation
 		{
 			public void Execute(TranscriptionStep step, Staff rejectedBy, string reason)
 			{
-				step.Complete();
+				if (step.State == ActivityStatus.SC)
+					step.Complete(rejectedBy);
+				else
+					step.Complete();
 
 				TranscriptionReviewStep transcriptionReviewStep = new TranscriptionReviewStep(step);
 				step.Procedure.AddProcedureStep(transcriptionReviewStep);
@@ -114,10 +155,18 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 
 			public override bool CanExecute(TranscriptionStep step, Staff currentUserStaff)
 			{
-				if (step.State != ActivityStatus.IP)
+				if (step.State != ActivityStatus.SC && step.State != ActivityStatus.IP)
 					return false;
 
-				if (!Equals(step.PerformingStaff, currentUserStaff))
+				if (step.State == ActivityStatus.IP && !Equals(step.PerformingStaff, currentUserStaff))
+					return false;
+
+				// scheduled items should should look like items submitted for review
+				if (step.State == ActivityStatus.SC && (step.ReportPart.Transcriber == null || step.AssignedStaff == null))
+					return false;
+
+				// if it looks like an transcription submitted for review, but not to the current user.
+				if (step.State == ActivityStatus.SC && step.ReportPart.Transcriber != null && !Equals(step.AssignedStaff, currentUserStaff))
 					return false;
 
 				return true;

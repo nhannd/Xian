@@ -31,5 +31,26 @@ namespace ClearCanvas.Ris.Client.Workflow {
                 return ((bool)(this["AllowMultipleTranscriptionWorkspaces"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("STRA")]
+        public string SupervisorStaffTypeFilters {
+            get {
+                return ((string)(this["SupervisorStaffTypeFilters"]));
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SupervisorID {
+            get {
+                return ((string)(this["SupervisorID"]));
+            }
+            set {
+                this["SupervisorID"] = value;
+            }
+        }
     }
 }

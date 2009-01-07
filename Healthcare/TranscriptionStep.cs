@@ -29,29 +29,23 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Text;
-
-using Iesi.Collections;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 
+namespace ClearCanvas.Healthcare
+{
 
-namespace ClearCanvas.Healthcare {
 
-
-    /// <summary>
-    /// TranscriptionStep entity
-    /// </summary>
+	/// <summary>
+	/// TranscriptionStep entity
+	/// </summary>
 	public partial class TranscriptionStep : ReportingProcedureStep
 	{
 
-        public TranscriptionStep(ReportingProcedureStep previousStep)
-            :base(previousStep)
-        {
-        }
-	
+		public TranscriptionStep(ReportingProcedureStep previousStep)
+			: base(previousStep)
+		{
+		}
+
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
 		/// object initialization.
@@ -60,23 +54,25 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-        public override string Name
-        {
-            get { return "Transcription"; }
-        }
+		public override string Name
+		{
+			get { return "Transcription"; }
+		}
 
-        protected override void OnStateChanged(ActivityStatus previousState, ActivityStatus newState)
-        {
-            if (newState == ActivityStatus.CM)
-            {
-                if (this.ReportPart == null)
-                    throw new WorkflowException("This ReportingStep does not have an associated ReportPart.");
+		protected override void OnStateChanged(ActivityStatus previousState, ActivityStatus newState)
+		{
+			if (newState == ActivityStatus.CM)
+			{
+				if (this.ReportPart == null)
+					throw new WorkflowException("This ReportingStep does not have an associated ReportPart.");
 
-                this.ReportPart.Transcriber = this.PerformingStaff;
-            }
+				// When a supervisor completes a submitted transcription, do not overwrite the original transcriber.
+				if (this.ReportPart.Transcriber == null)
+					this.ReportPart.Transcriber = this.PerformingStaff;
+			}
 
-            base.OnStateChanged(previousState, newState);
-        }
+			base.OnStateChanged(previousState, newState);
+		}
 
 		protected override ProcedureStep CreateScheduledCopy()
 		{

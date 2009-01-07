@@ -70,6 +70,41 @@ namespace ClearCanvas.Ris.Client.Workflow
 		}
 	}
 
+	//// This tool cannot be used until a TranscriptionSupervisor is added to the ReportPart
+	//[MenuAction("apply", "folderexplorer-items-contextmenu/Submit for Review", "Apply")]
+	//[ButtonAction("apply", "folderexplorer-items-toolbar/Submit for Review", "Apply")]
+	//[IconSet("apply", IconScheme.Colour, "Icons.VerifyReportSmall.png", "Icons.VerifyReportMedium.png", "Icons.VerifyReportLarge.png")]
+	//[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	//[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview)]
+	//[ExtensionOf(typeof(TranscriptionWorkflowItemToolExtensionPoint))]
+	//public class SubmitTranscriptionForReviewTool : TranscriptionWorkflowItemTool
+	//{
+	//    public SubmitTranscriptionForReviewTool()
+	//        : base("SubmitTranscriptionForReview")
+	//    {
+	//    }
+
+	//    public override void Initialize()
+	//    {
+	//        this.Context.RegisterDropHandler(typeof(Folders.Transcription.AwaitingReviewFolder), this);
+
+	//        base.Initialize();
+	//    }
+
+	//    protected override bool Execute(ReportingWorklistItem item)
+	//    {
+	//        Platform.GetService<ITranscriptionWorkflowService>(
+	//            delegate(ITranscriptionWorkflowService service)
+	//            {
+	//                service.SubmitTranscriptionForReview(new SubmitTranscriptionForReviewRequest(item.ProcedureStepRef));
+	//            });
+
+	//        this.Context.InvalidateFolders(typeof(Folders.Transcription.AwaitingReviewFolder));
+
+	//        return true;
+	//    }
+	//}
+
 	[MenuAction("apply", "folderexplorer-items-contextmenu/Edit Transcription", "Apply")]
 	[ButtonAction("apply", "folderexplorer-items-toolbar/Edit Transcription", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png")]

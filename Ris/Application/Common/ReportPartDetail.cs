@@ -95,6 +95,9 @@ namespace ClearCanvas.Ris.Application.Common
         public StaffSummary TranscribedBy;
 
         [DataMember]
+        public StaffSummary TranscriptionSupervisor;
+
+        [DataMember]
         public StaffSummary VerifiedBy;
 
         [DataMember]
@@ -123,7 +126,7 @@ namespace ClearCanvas.Ris.Application.Common
                     if (ExtendedProperties == null)
                         ExtendedProperties = new Dictionary<string, string>();
 
-                    ExtendedProperties[ReportContentKey] = value;                
+                    ExtendedProperties[ReportContentKey] = value;
                 }
             }
         }

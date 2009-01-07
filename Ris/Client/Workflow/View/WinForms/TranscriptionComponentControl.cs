@@ -72,20 +72,17 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_completeButton.DataBindings.Add("Enabled", _component, "CompleteEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 			_rejectButton.DataBindings.Add("Enabled", _component, "RejectEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
 
-			//_supervisor.LookupHandler = _component.SupervisorLookupHandler;
-			//_supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
+			_supervisor.LookupHandler = _component.SupervisorLookupHandler;
+			_supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
+			_supervisor.Visible = _component.SupervisorVisible;
 
-			//_supervisor.Visible = _component.SupervisorVisible;
-			//_verifyButton.Visible = _component.VerifyReportVisible;
-			//_sendToVerifyButton.Visible = _component.SendToVerifyVisible;
-			//_sendToTranscriptionButton.Visible = _component.SendToTranscriptionVisible;
+			_submitForReviewButton.DataBindings.Add("Enabled", _component, "SubmitForReviewEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_submitForReviewButton.Visible = _component.SubmitForReviewVisible;
 
 			_btnSkip.DataBindings.Add("Enabled", _component, "SkipEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_saveButton.DataBindings.Add("Enabled", _component, "SaveReportEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_component.PropertyChanged += _component_PropertyChanged;
-
-			//_reportedProcedures.DataBindings.Add("Text", _component, "ProceduresText", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		private void _component_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -134,6 +131,14 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			using (new CursorManager(this, Cursors.WaitCursor))
 			{
 				_component.Skip();
+			}
+		}
+
+		private void _submitForReviewButton_Click(object sender, System.EventArgs e)
+		{
+			using (new CursorManager(this, Cursors.WaitCursor))
+			{
+				_component.SubmitForReview();
 			}
 		}
 	}
