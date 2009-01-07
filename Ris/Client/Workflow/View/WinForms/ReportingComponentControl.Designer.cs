@@ -243,7 +243,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this._sendToTranscriptionButton.Location = new System.Drawing.Point(173, 3);
 			this._sendToTranscriptionButton.Name = "_sendToTranscriptionButton";
-			this._sendToTranscriptionButton.Size = new System.Drawing.Size(118, 23);
+			this._sendToTranscriptionButton.Size = new System.Drawing.Size(145, 23);
 			this._sendToTranscriptionButton.TabIndex = 2;
 			this._sendToTranscriptionButton.Text = "Send to Transcription";
 			this._sendToTranscriptionButton.UseVisualStyleBackColor = true;
@@ -251,7 +251,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _saveButton
 			// 
-			this._saveButton.Location = new System.Drawing.Point(297, 3);
+			this._saveButton.Location = new System.Drawing.Point(3, 32);
 			this._saveButton.Name = "_saveButton";
 			this._saveButton.Size = new System.Drawing.Size(75, 23);
 			this._saveButton.TabIndex = 3;
@@ -261,7 +261,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			// _btnSkip
 			// 
-			this._btnSkip.Location = new System.Drawing.Point(3, 32);
+			this._btnSkip.Location = new System.Drawing.Point(84, 32);
 			this._btnSkip.Name = "_btnSkip";
 			this._btnSkip.Size = new System.Drawing.Size(75, 23);
 			this._btnSkip.TabIndex = 7;
@@ -273,7 +273,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			// 
 			this._reportNextItem.AutoSize = true;
 			this._reportNextItem.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._reportNextItem.Location = new System.Drawing.Point(84, 32);
+			this._reportNextItem.Location = new System.Drawing.Point(165, 32);
 			this._reportNextItem.Name = "_reportNextItem";
 			this._reportNextItem.Size = new System.Drawing.Size(104, 23);
 			this._reportNextItem.TabIndex = 8;

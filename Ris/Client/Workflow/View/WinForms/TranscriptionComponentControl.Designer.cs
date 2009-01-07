@@ -61,11 +61,13 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         {
 			this._reportEditorSplitContainer = new System.Windows.Forms.SplitContainer();
 			this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+			this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._transcriptiontEditorPanel = new System.Windows.Forms.Panel();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._completeButton = new System.Windows.Forms.Button();
 			this._rejectButton = new System.Windows.Forms.Button();
+			this._submitForReviewButton = new System.Windows.Forms.Button();
 			this._saveButton = new System.Windows.Forms.Button();
 			this._btnSkip = new System.Windows.Forms.Button();
 			this._reportNextItem = new System.Windows.Forms.CheckBox();
@@ -73,8 +75,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._statusText = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this._bannerPanel = new System.Windows.Forms.Panel();
-			this._submitForReviewButton = new System.Windows.Forms.Button();
-			this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._reportEditorSplitContainer.Panel1.SuspendLayout();
 			this._reportEditorSplitContainer.Panel2.SuspendLayout();
 			this._reportEditorSplitContainer.SuspendLayout();
@@ -122,6 +122,20 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this.tableLayoutPanel2.Size = new System.Drawing.Size(461, 801);
 			this.tableLayoutPanel2.TabIndex = 0;
+			// 
+			// _supervisor
+			// 
+			this._supervisor.AutoSize = true;
+			this._supervisor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel2.SetColumnSpan(this._supervisor, 2);
+			this._supervisor.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._supervisor.LabelText = "Supervising Transcriptionist:";
+			this._supervisor.Location = new System.Drawing.Point(2, 700);
+			this._supervisor.Margin = new System.Windows.Forms.Padding(2);
+			this._supervisor.Name = "_supervisor";
+			this._supervisor.Size = new System.Drawing.Size(457, 41);
+			this._supervisor.TabIndex = 4;
+			this._supervisor.Value = null;
 			// 
 			// _cancelButton
 			// 
@@ -180,6 +194,16 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._rejectButton.Text = "Reject";
 			this._rejectButton.UseVisualStyleBackColor = true;
 			this._rejectButton.Click += new System.EventHandler(this._rejectButton_Click);
+			// 
+			// _submitForReviewButton
+			// 
+			this._submitForReviewButton.Location = new System.Drawing.Point(165, 3);
+			this._submitForReviewButton.Name = "_submitForReviewButton";
+			this._submitForReviewButton.Size = new System.Drawing.Size(103, 23);
+			this._submitForReviewButton.TabIndex = 9;
+			this._submitForReviewButton.Text = "Submit for Review";
+			this._submitForReviewButton.UseVisualStyleBackColor = true;
+			this._submitForReviewButton.Click += new System.EventHandler(this._submitForReviewButton_Click);
 			// 
 			// _saveButton
 			// 
@@ -260,31 +284,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._bannerPanel.Name = "_bannerPanel";
 			this._bannerPanel.Size = new System.Drawing.Size(977, 79);
 			this._bannerPanel.TabIndex = 0;
-			// 
-			// _submitForReviewButton
-			// 
-			this._submitForReviewButton.AutoSize = true;
-			this._submitForReviewButton.Location = new System.Drawing.Point(165, 3);
-			this._submitForReviewButton.Name = "_submitForReviewButton";
-			this._submitForReviewButton.Size = new System.Drawing.Size(103, 23);
-			this._submitForReviewButton.TabIndex = 9;
-			this._submitForReviewButton.Text = "Submit for Review";
-			this._submitForReviewButton.UseVisualStyleBackColor = true;
-			this._submitForReviewButton.Click += new System.EventHandler(this._submitForReviewButton_Click);
-			// 
-			// _supervisor
-			// 
-			this._supervisor.AutoSize = true;
-			this._supervisor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this.tableLayoutPanel2.SetColumnSpan(this._supervisor, 2);
-			this._supervisor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._supervisor.LabelText = "Supervising Transcriptionist:";
-			this._supervisor.Location = new System.Drawing.Point(2, 700);
-			this._supervisor.Margin = new System.Windows.Forms.Padding(2);
-			this._supervisor.Name = "_supervisor";
-			this._supervisor.Size = new System.Drawing.Size(457, 41);
-			this._supervisor.TabIndex = 4;
-			this._supervisor.Value = null;
 			// 
 			// TranscriptionComponentControl
 			// 
