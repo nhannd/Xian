@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
@@ -45,6 +44,13 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 				{
 					return assembler.CreateWorklistItemSummary(item, this.PersistenceContext);
 				});
+		}
+
+		[ReadOperation]
+		public GetRejectReasonChoicesResponse GetRejectReasonChoices(GetRejectReasonChoicesRequest request)
+		{
+			List<EnumValueInfo> choices = EnumUtils.GetEnumValueList<TranscriptionRejectReasonEnum>(this.PersistenceContext);
+			return new GetRejectReasonChoicesResponse(choices);
 		}
 
 		#endregion
@@ -100,8 +106,11 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 		public SaveTranscriptionResponse SaveTranscription(SaveTranscriptionRequest request)
 		{
 			TranscriptionStep transcriptionStep = this.PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef);
+			Staff supervisor = request.SupervisorRef == null 
+				? null 
+				: PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
 
-			SaveReportHelper(transcriptionStep, request.ReportPartExtendedProperties);
+			SaveReportHelper(transcriptionStep, request.ReportPartExtendedProperties, supervisor);
 
 			this.PersistenceContext.SynchState();
 
@@ -118,7 +127,7 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 			if(supervisor == null)
 				throw new RequestValidationException("A supervisor is required.");
 
-			SaveReportHelper(transcriptionStep, request.ReportPartExtendedProperties);
+			SaveReportHelper(transcriptionStep, request.ReportPartExtendedProperties, supervisor);
 
 			TranscriptionOperations.SubmitTranscriptionForReview op = new TranscriptionOperations.SubmitTranscriptionForReview();
 			op.Execute(transcriptionStep, this.CurrentUserStaff, supervisor);
@@ -152,8 +161,11 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 
 			SaveReportHelper(transcriptionStep, request.ReportPartExtendedProperties);
 
+			TranscriptionRejectReasonEnum reason =
+				EnumUtils.GetEnumValue<TranscriptionRejectReasonEnum>(request.RejectReason, this.PersistenceContext);
+
 			TranscriptionOperations.RejectTranscription op = new TranscriptionOperations.RejectTranscription();
-			op.Execute(transcriptionStep, this.CurrentUserStaff, request.RejectReason);
+			op.Execute(transcriptionStep, this.CurrentUserStaff, reason);
 
 			this.PersistenceContext.SynchState();
 
@@ -230,6 +242,15 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 
 			TranscriptionOperations.SaveTranscription op = new TranscriptionOperations.SaveTranscription();
 			op.Execute(step, reportPartExtendedProperties);
+		}
+
+		private void SaveReportHelper(TranscriptionStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor)
+		{
+			if (reportPartExtendedProperties == null)
+				return;
+
+			TranscriptionOperations.SaveTranscription op = new TranscriptionOperations.SaveTranscription();
+			op.Execute(step, reportPartExtendedProperties, supervisor);
 		}
 
 		/// <summary>

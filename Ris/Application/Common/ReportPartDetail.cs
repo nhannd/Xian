@@ -39,9 +39,21 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class ReportPartDetail : DataContractBase
     {
-        public ReportPartDetail(EntityRef reportPartRef, int index, bool isAddendum, EnumValueInfo status,
-            DateTime creationTime, DateTime? preliminaryTime, DateTime? completedTime, DateTime? cancelledTime,
-            StaffSummary supervisor, StaffSummary interpretedBy, StaffSummary transcribedBy, StaffSummary verifiedBy,
+        public ReportPartDetail(
+            EntityRef reportPartRef,
+            int index,
+            bool isAddendum,
+            EnumValueInfo status,
+            DateTime creationTime,
+            DateTime? preliminaryTime,
+            DateTime? completedTime,
+            DateTime? cancelledTime,
+            StaffSummary supervisor,
+            StaffSummary interpretedBy,
+            StaffSummary transcribedBy,
+            StaffSummary transcriptionSupervisor,
+            StaffSummary verifiedBy,
+            EnumValueInfo transcriptionRejectReason,
             Dictionary<string, string> extendedProperties)
         {
             this.ReportPartRef = reportPartRef;
@@ -55,7 +67,9 @@ namespace ClearCanvas.Ris.Application.Common
             this.Supervisor = supervisor;
             this.InterpretedBy = interpretedBy;
             this.TranscribedBy = transcribedBy;
+            this.TranscriptionSupervisor = transcriptionSupervisor;
             this.VerifiedBy = verifiedBy;
+            this.TranscriptionRejectReason = transcriptionRejectReason;
             this.ExtendedProperties = extendedProperties;
         }
 
@@ -99,6 +113,9 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public StaffSummary VerifiedBy;
+
+        [DataMember]
+        public EnumValueInfo TranscriptionRejectReason;
 
         [DataMember]
         public Dictionary<string, string> ExtendedProperties;

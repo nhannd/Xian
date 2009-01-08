@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
-    partial class ProtocolReasonComponentControl
+    partial class ReasonSelectionComponentControl
     {
         /// <summary> 
         /// Required designer variable.

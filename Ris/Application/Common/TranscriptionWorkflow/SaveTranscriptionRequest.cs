@@ -13,10 +13,19 @@ namespace ClearCanvas.Ris.Application.Common.TranscriptionWorkflow
 			this.ReportPartExtendedProperties = reportPartExtendedProperties;
 		}
 
+		public SaveTranscriptionRequest(EntityRef transcriptionStepRef, Dictionary<string, string> reportPartExtendedProperties, EntityRef supervisorRef)
+			: this(transcriptionStepRef, reportPartExtendedProperties)
+		{
+			this.SupervisorRef = supervisorRef;
+		}
+
 		[DataMember]
 		public EntityRef TranscriptionStepRef;
 
 		[DataMember]
 		public Dictionary<string, string> ReportPartExtendedProperties;
+
+		[DataMember]
+		public EntityRef SupervisorRef;
 	}
 }

@@ -228,6 +228,7 @@
     <EmbeddedResource Include="Mappings\ImageAvailabilityEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\TranscriptionWorklists.hbm.xml" />
     <EmbeddedResource Include="Mappings\TranscriptionReviewStep.hbm.xml" />
+    <EmbeddedResource Include="Mappings\TranscriptionRejectReason.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\WorkQueueItem.hbm.xml" />
     <EmbeddedResource Include="Mappings\WorkQueueStatusEnum.hbm.xml" />

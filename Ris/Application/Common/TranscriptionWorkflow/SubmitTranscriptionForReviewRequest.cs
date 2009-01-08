@@ -13,12 +13,8 @@ namespace ClearCanvas.Ris.Application.Common.TranscriptionWorkflow
 		}
 
 		public SubmitTranscriptionForReviewRequest(EntityRef reportingStepRef, Dictionary<string, string> reportPartExtendedProperties, EntityRef supervisorRef)
-			: base(reportingStepRef, reportPartExtendedProperties)
+			: base(reportingStepRef, reportPartExtendedProperties, supervisorRef)
 		{
-			this.SupervisorRef = supervisorRef;
 		}
-
-		[DataMember]
-		public EntityRef SupervisorRef;
 	}
 }

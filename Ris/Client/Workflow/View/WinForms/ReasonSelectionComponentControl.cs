@@ -30,44 +30,47 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
+using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="ProtocolReasonComponent"/>
-    /// </summary>
-    [ExtensionOf(typeof(ProtocolReasonComponentViewExtensionPoint))]
-    public class ProtocolReasonComponentView : WinFormsView, IApplicationComponentView
-    {
-        private ProtocolReasonComponent _component;
-        private ProtocolReasonComponentControl _control;
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="ProtocolReasonComponent"/>
+	/// </summary>
+	public partial class ReasonSelectionComponentControl : ApplicationComponentUserControl
+	{
+		private ReasonSelectionComponentBase _component;
+		private readonly CannedTextSupport _cannedTextSupport;
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public ReasonSelectionComponentControl(ReasonSelectionComponentBase component)
+			: base(component)
+		{
+			InitializeComponent();
 
-        #region IApplicationComponentView Members
+			_component = component;
 
-        public void SetComponent(IApplicationComponent component)
-        {
-            _component = (ProtocolReasonComponent)component;
-        }
+			_reason.DataSource = _component.ReasonChoices;
+			_reason.DataBindings.Add("Value", _component, "SelectedReasonChoice", true, DataSourceUpdateMode.OnPropertyChanged);
 
-        #endregion
+			_otherReason.DataBindings.Add("Value", _component, "OtherReason", true, DataSourceUpdateMode.OnPropertyChanged);
+			_cannedTextSupport = new CannedTextSupport(_otherReason, _component.CannedTextLookupHandler);
 
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new ProtocolReasonComponentControl(_component);
-                }
-                return _control;
-            }
-        }
-    }
+			_btnOK.DataBindings.Add("Enabled", _component, "OkayEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
+
+		private void _btnOK_Click(object sender, EventArgs e)
+		{
+			_component.Okay();
+		}
+
+		private void _btnCancel_Click(object sender, EventArgs e)
+		{
+			_component.Cancel();
+		}
+	}
 }

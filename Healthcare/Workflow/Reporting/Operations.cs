@@ -200,6 +200,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 			{
 				UpdateStep(step, executingStaff);
 
+				// Ensure Supervisor and Reject reason from previous transcriptions of the same report part are
+				// removed.
+				step.ReportPart.ResetTranscription();
+
 				TranscriptionStep transcription = new TranscriptionStep(step);
 				workflow.AddActivity(transcription);
 				return transcription;

@@ -67,6 +67,7 @@
     </Compile>
     <Compile Include="ProtocollingComponentWorklistItemManager.cs" />
     <Compile Include="ProtocollingOrderDetailViewComponent.cs" />
+    <Compile Include="ProtocolReasonComponent.cs" />
     <Compile Include="ProtocolWorkflowItemTool.cs" />
     <Compile Include="ProtocolWorkflowTools.cs" />
     <Compile Include="RadiologistAdminWorkflowFolderSystem.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="TranscriptionComponentWorklistItemManager.cs" />
     <Compile Include="TranscriptionDocument.cs" />
     <Compile Include="TranscriptionEditorComponent.cs" />
+    <Compile Include="TranscriptionRejectReasonComponent.cs" />
     <Compile Include="TranscriptionSettings.cs" />
     <Compile Include="TranscriptionSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -131,7 +133,7 @@
     </Compile>
     <Compile Include="ProtocollingComponent.cs" />
     <Compile Include="ProtocollingComponentDocument.cs" />
-    <Compile Include="ProtocolReasonComponent.cs" />
+    <Compile Include="ReasonSelectionComponentBase.cs" />
     <Compile Include="ProtocolWorkflowFolderSystem.cs" />
     <Compile Include="RandomOrderTool.cs" />
     <Compile Include="ReconciliationCandidateTable.cs" />

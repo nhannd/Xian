@@ -67,6 +67,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			_statusText.DataBindings.Add("Visible", _component, "StatusTextVisible", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_imagesUnavailable.DataBindings.Add("Visible", _component, "ImagesUnavailableVisible", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_hasErrors.DataBindings.Add("Text", _component, "HasErrorsText", true, DataSourceUpdateMode.OnPropertyChanged);
 			_hasErrors.DataBindings.Add("Visible", _component, "HasErrorsVisible", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_reportNextItem.DataBindings.Add("Checked", _component, "ReportNextItem", true, DataSourceUpdateMode.OnPropertyChanged);

@@ -537,6 +537,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return ViewImagesHelper.IsSupported && !_imagesAvailable; }
 		}
 
+		public string HasErrorsText
+		{
+			get
+			{
+				return this.WorklistItem != null 
+					? string.Format("{0}: {1}", SR.MessageTranscriptionHasErrors,  _report.GetPart(_activeReportPartIndex).TranscriptionRejectReason.Value)
+					: "";
+			}
+		}
+
 		public bool HasErrorsVisible
 		{
 			get { return this.WorklistItem != null ? this.WorklistItem.HasErrors : false; }

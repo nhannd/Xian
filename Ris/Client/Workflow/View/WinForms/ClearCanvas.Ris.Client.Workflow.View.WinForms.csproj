@@ -127,13 +127,13 @@
       <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProtocollingComponentView.cs" />
-    <Compile Include="ProtocolReasonComponentControl.cs">
+    <Compile Include="ReasonSelectionComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ProtocolReasonComponentControl.Designer.cs">
-      <DependentUpon>ProtocolReasonComponentControl.cs</DependentUpon>
+    <Compile Include="ReasonSelectionComponentControl.Designer.cs">
+      <DependentUpon>ReasonSelectionComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="ProtocolReasonComponentView.cs" />
+    <Compile Include="ReasonSelectionComponentView.cs" />
     <Compile Include="ReassignComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -332,8 +332,8 @@
       <DependentUpon>ProtocollingComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ProtocolReasonComponentControl.resx">
-      <DependentUpon>ProtocolReasonComponentControl.cs</DependentUpon>
+    <EmbeddedResource Include="ReasonSelectionComponentControl.resx">
+      <DependentUpon>ReasonSelectionComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ReassignComponentControl.resx">

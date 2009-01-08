@@ -405,6 +405,9 @@
   <data name="MessageTranscriptionComponentAlreadyOpened" xml:space="preserve">
     <value>You are currently editing {0}.  Do you want to close it and open the report for {1} instead?</value>
   </data>
+  <data name="MessageTranscriptionHasErrors" xml:space="preserve">
+    <value>Transcription has flagged the report</value>
+  </data>
   <data name="TextAny" xml:space="preserve">
     <value>(Any)</value>
   </data>

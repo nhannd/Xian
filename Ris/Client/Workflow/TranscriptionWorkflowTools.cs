@@ -4,6 +4,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common.TranscriptionWorkflow;
 
@@ -58,59 +59,70 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override bool Execute(ReportingWorklistItem item)
 		{
+			TranscriptionRejectReasonComponent component = new TranscriptionRejectReasonComponent();
+			if (this.Context.DesktopWindow.ShowDialogBox(component, "Reason") == DialogBoxAction.Ok)
+			{
+				Platform.GetService<ITranscriptionWorkflowService>(
+					delegate(ITranscriptionWorkflowService service)
+					{
+						service.RejectTranscription(new RejectTranscriptionRequest(
+							item.ProcedureStepRef, 
+							component.Reason,
+							CreateAdditionalCommentsNote(component.OtherReason)));
+					});
+
+				this.Context.InvalidateFolders(typeof (Folders.Transcription.CompletedFolder));
+			}
+			return true;
+		}
+
+		private static OrderNoteDetail CreateAdditionalCommentsNote(string additionalComments)
+		{
+			if (!string.IsNullOrEmpty(additionalComments))
+				return new OrderNoteDetail(OrderNoteCategory.General.Key, additionalComments, null, false, null, null);
+			else
+				return null;
+		}
+	}
+
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Submit for Review", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Submit for Review", "Apply")]
+	[IconSet("apply", IconScheme.Colour, "Icons.VerifyReportSmall.png", "Icons.VerifyReportMedium.png", "Icons.VerifyReportLarge.png")]
+	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview)]
+	[ExtensionOf(typeof(TranscriptionWorkflowItemToolExtensionPoint))]
+	public class SubmitTranscriptionForReviewTool : TranscriptionWorkflowItemTool
+	{
+		public SubmitTranscriptionForReviewTool()
+			: base("SubmitTranscriptionForReview")
+		{
+		}
+
+		public override void Initialize()
+		{
+			this.Context.RegisterDropHandler(typeof(Folders.Transcription.AwaitingReviewFolder), this);
+
+			base.Initialize();
+		}
+
+		protected override bool Execute(ReportingWorklistItem item)
+		{
 			Platform.GetService<ITranscriptionWorkflowService>(
 				delegate(ITranscriptionWorkflowService service)
 				{
-					service.RejectTranscription(new RejectTranscriptionRequest(item.ProcedureStepRef, "TODO: Reason"));
+					service.SubmitTranscriptionForReview(new SubmitTranscriptionForReviewRequest(item.ProcedureStepRef));
 				});
 
-			this.Context.InvalidateFolders(typeof(Folders.Transcription.CompletedFolder));
+			this.Context.InvalidateFolders(typeof(Folders.Transcription.AwaitingReviewFolder));
 
 			return true;
 		}
 	}
 
-	//// This tool cannot be used until a TranscriptionSupervisor is added to the ReportPart
-	//[MenuAction("apply", "folderexplorer-items-contextmenu/Submit for Review", "Apply")]
-	//[ButtonAction("apply", "folderexplorer-items-toolbar/Submit for Review", "Apply")]
-	//[IconSet("apply", IconScheme.Colour, "Icons.VerifyReportSmall.png", "Icons.VerifyReportMedium.png", "Icons.VerifyReportLarge.png")]
-	//[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	//[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.SubmitForReview)]
-	//[ExtensionOf(typeof(TranscriptionWorkflowItemToolExtensionPoint))]
-	//public class SubmitTranscriptionForReviewTool : TranscriptionWorkflowItemTool
-	//{
-	//    public SubmitTranscriptionForReviewTool()
-	//        : base("SubmitTranscriptionForReview")
-	//    {
-	//    }
-
-	//    public override void Initialize()
-	//    {
-	//        this.Context.RegisterDropHandler(typeof(Folders.Transcription.AwaitingReviewFolder), this);
-
-	//        base.Initialize();
-	//    }
-
-	//    protected override bool Execute(ReportingWorklistItem item)
-	//    {
-	//        Platform.GetService<ITranscriptionWorkflowService>(
-	//            delegate(ITranscriptionWorkflowService service)
-	//            {
-	//                service.SubmitTranscriptionForReview(new SubmitTranscriptionForReviewRequest(item.ProcedureStepRef));
-	//            });
-
-	//        this.Context.InvalidateFolders(typeof(Folders.Transcription.AwaitingReviewFolder));
-
-	//        return true;
-	//    }
-	//}
-
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Edit Transcription", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Edit Transcription", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Open Report", "Apply")]
+	[ButtonAction("apply", "folderexplorer-items-toolbar/Open Report", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[IconSetObserver("apply", "CurrentIconSet", "LabelChanged")]
-	[LabelValueObserver("apply", "Label", "LabelChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Transcription.Create)]
 	[ExtensionOf(typeof(TranscriptionWorkflowItemToolExtensionPoint))]
 	public class EditTranscriptionTool : TranscriptionWorkflowItemTool
@@ -128,36 +140,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 			this.Context.RegisterDoubleClickHandler(
 				(IClickAction)CollectionUtils.SelectFirst(this.Actions,
 					delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
-		}
-
-		public string Label
-		{
-			get
-			{
-				ReportingWorklistItem item = GetSelectedItem();
-				if (item != null && item.ProcedureStepName == StepType.Transcription && item.ActivityStatus.Code == StepState.Scheduled)
-					return SR.TitleCreateTranscription;
-				else
-					return SR.TitleEditTranscription;
-			}
-		}
-
-		public IconSet CurrentIconSet
-		{
-			get
-			{
-				ReportingWorklistItem item = GetSelectedItem();
-				if (item != null && item.ProcedureStepName == StepType.Transcription && item.ActivityStatus.Code == StepState.Scheduled)
-					return new IconSet(IconScheme.Colour, "Icons.CreateReportSmall.png", "Icons.CreateReportMedium.png", "Icons.CreateReportMedium.png");
-				else
-					return new IconSet(IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png");
-			}
-		}
-
-		public event EventHandler LabelChanged
-		{
-			add { this.Context.SelectionChanged += value; }
-			remove { this.Context.SelectionChanged -= value; }
 		}
 
 		public override bool Enabled

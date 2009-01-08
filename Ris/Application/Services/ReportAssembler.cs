@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Application.Services
 
             Order order = rp.Order;
 
-			summary.VisitNumber = new VisitAssembler().CreateVisitNumberDetail(order.Visit.VisitNumber);
+            summary.VisitNumber = new VisitAssembler().CreateVisitNumberDetail(order.Visit.VisitNumber);
             summary.AccessionNumber = order.AccessionNumber;
             summary.DiagnosticServiceName = order.DiagnosticService.Name;
 
@@ -79,22 +79,22 @@ namespace ClearCanvas.Ris.Application.Services
             detail.Procedures = CollectionUtils.Map<Procedure, ProcedureDetail>(report.Procedures,
                 delegate(Procedure p)
                 {
-                	return rpAssembler.CreateProcedureDetail(
-                		p,
-                		delegate(ProcedureStep ps) { return ps.Is<ReportingProcedureStep>(); },	// only Reporting steps are relevant
-                		false,	// exclude protocols
-                		context);
+                    return rpAssembler.CreateProcedureDetail(
+                        p,
+                        delegate(ProcedureStep ps) { return ps.Is<ReportingProcedureStep>(); },	// only Reporting steps are relevant
+                        false,	// exclude protocols
+                        context);
                 });
 
-			List<ReportPartDetail> parts = CollectionUtils.Map<ReportPart, ReportPartDetail>(report.Parts,
-				delegate(ReportPart part) { return CreateReportPartDetail(part, context); });
+            List<ReportPartDetail> parts = CollectionUtils.Map<ReportPart, ReportPartDetail>(report.Parts,
+                delegate(ReportPart part) { return CreateReportPartDetail(part, context); });
 
-			detail.Parts = includeCancelledParts ? parts :
-				CollectionUtils.Select(parts,
-					delegate(ReportPartDetail rpp)
-					{
-						return rpp.Status.Code.Equals(ReportPartStatus.X.ToString()) == false;
-					});
+            detail.Parts = includeCancelledParts ? parts :
+                CollectionUtils.Select(parts,
+                    delegate(ReportPartDetail rpp)
+                    {
+                        return rpp.Status.Code.Equals(ReportPartStatus.X.ToString()) == false;
+                    });
 
             return detail;
         }
@@ -114,7 +114,9 @@ namespace ClearCanvas.Ris.Application.Services
                 reportPart.Supervisor == null ? null : staffAssembler.CreateStaffSummary(reportPart.Supervisor, context),
                 reportPart.Interpreter == null ? null : staffAssembler.CreateStaffSummary(reportPart.Interpreter, context),
                 reportPart.Transcriber == null ? null : staffAssembler.CreateStaffSummary(reportPart.Transcriber, context),
+                reportPart.TranscriptionSupervisor == null ? null : staffAssembler.CreateStaffSummary(reportPart.TranscriptionSupervisor, context),
                 reportPart.Verifier == null ? null : staffAssembler.CreateStaffSummary(reportPart.Verifier, context),
+                EnumUtils.GetEnumValueInfo(reportPart.TranscriptionRejectReason),
                 new Dictionary<string, string>(reportPart.ExtendedProperties));
 
             return summary;

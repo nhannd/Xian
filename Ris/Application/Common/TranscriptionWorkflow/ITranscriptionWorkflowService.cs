@@ -14,6 +14,14 @@ namespace ClearCanvas.Ris.Application.Common.TranscriptionWorkflow
 		/// <param name="request"></param>
 		/// <returns></returns>
 		[OperationContract]
+		GetRejectReasonChoicesResponse GetRejectReasonChoices(GetRejectReasonChoicesRequest request);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]
 		StartTranscriptionResponse StartTranscription(StartTranscriptionRequest request);

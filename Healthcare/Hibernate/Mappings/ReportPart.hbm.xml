@@ -18,7 +18,10 @@
     <many-to-one name="Supervisor" class="Staff" column="SupervisorOID_"/>
     <many-to-one name="Interpreter" class="Staff" column="InterpreterOID_"/>
     <many-to-one name="Transcriber" class="Staff" column="TranscriberOID_"/>
+    <many-to-one name="TranscriptionSupervisor" class="Staff" column="TranscriptionSupervisorOID_"/>
     <many-to-one name="Verifier" class="Staff" column="VerifierOID_"/>
+
+    <many-to-one name="TranscriptionRejectReason" class="TranscriptionRejectReasonEnum" column="TranscriptionRejectReason_"/>
 
     <many-to-one name="Report" class="Report" column="ReportOID_" not-null="true" fetch="join" access="nosetter.camelcase-underscore"/>
 

@@ -30,47 +30,44 @@
 #endregion
 
 using System;
-using System.Windows.Forms;
+using System.Collections.Generic;
+using System.Text;
+
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Ris.Client.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
-	/// <summary>
-	/// Provides a Windows Forms user-interface for <see cref="ProtocolReasonComponent"/>
-	/// </summary>
-	public partial class ProtocolReasonComponentControl : ApplicationComponentUserControl
-	{
-		private ProtocolReasonComponent _component;
-		private readonly CannedTextSupport _cannedTextSupport;
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="ProtocolReasonComponent"/>
+    /// </summary>
+    [ExtensionOf(typeof(ReasonSelectionComponentViewExtensionPoint))]
+    public class ReasonSelectionComponentView : WinFormsView, IApplicationComponentView
+    {
+        private ReasonSelectionComponentBase _component;
+        private ReasonSelectionComponentControl _control;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public ProtocolReasonComponentControl(ProtocolReasonComponent component)
-			: base(component)
-		{
-			InitializeComponent();
 
-			_component = component;
+        #region IApplicationComponentView Members
 
-			_reason.DataSource = _component.ReasonChoices;
-			_reason.DataBindings.Add("Value", _component, "SelectedReasonChoice", true, DataSourceUpdateMode.OnPropertyChanged);
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (ReasonSelectionComponentBase)component;
+        }
 
-			_otherReason.DataBindings.Add("Value", _component, "OtherReason", true, DataSourceUpdateMode.OnPropertyChanged);
-			_cannedTextSupport = new CannedTextSupport(_otherReason, _component.CannedTextLookupHandler);
+        #endregion
 
-			_btnOK.DataBindings.Add("Enabled", _component, "OkayEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-		}
-
-		private void _btnOK_Click(object sender, EventArgs e)
-		{
-			_component.Okay();
-		}
-
-		private void _btnCancel_Click(object sender, EventArgs e)
-		{
-			_component.Cancel();
-		}
-	}
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new ReasonSelectionComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

@@ -146,6 +146,8 @@
     <Compile Include="TranscriptionWorkflow\CompleteTranscriptionResponse.cs" />
     <Compile Include="TranscriptionWorkflow\DiscardTranscriptionRequest.cs" />
     <Compile Include="TranscriptionWorkflow\DiscardTranscriptionResponse.cs" />
+    <Compile Include="TranscriptionWorkflow\GetRejectReasonChoicesRequest.cs" />
+    <Compile Include="TranscriptionWorkflow\GetRejectReasonChoicesResponse.cs" />
     <Compile Include="TranscriptionWorkflow\ITranscriptionWorkflowService.cs" />
     <Compile Include="TranscriptionWorkflow\LoadTranscriptionForEditRequest.cs" />
     <Compile Include="TranscriptionWorkflow\LoadTranscriptionForEditResponse.cs" />

@@ -7,18 +7,22 @@ namespace ClearCanvas.Ris.Application.Common.TranscriptionWorkflow
 	[DataContract]
 	public class RejectTranscriptionRequest : SaveTranscriptionRequest
 	{
-		public RejectTranscriptionRequest(EntityRef reportingStepRef, string rejectReason)
-			: this(reportingStepRef, null, rejectReason)
+		public RejectTranscriptionRequest(EntityRef reportingStepRef, EnumValueInfo rejectReason, OrderNoteDetail additionalComments)
+			: this(reportingStepRef, null, rejectReason, additionalComments)
 		{
 		}
 
-		public RejectTranscriptionRequest(EntityRef reportingStepRef, Dictionary<string, string> reportPartExtendedProperties, string rejectReason)
+		public RejectTranscriptionRequest(EntityRef reportingStepRef, Dictionary<string, string> reportPartExtendedProperties, EnumValueInfo rejectReason, OrderNoteDetail additionalComments)
 			: base(reportingStepRef, reportPartExtendedProperties)
 		{
 			this.RejectReason = rejectReason;
+			this.AdditionalComments = additionalComments;
 		}
 
 		[DataMember]
-		public string RejectReason;
+		public EnumValueInfo RejectReason;
+
+		[DataMember]
+		public OrderNoteDetail AdditionalComments;
 	}
 }

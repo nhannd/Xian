@@ -515,13 +515,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (!_transcriptionEditor.Save(TranscriptionEditorCloseReason.Complete))
 					return;
 
+				EnumValueInfo reason;
+				string additionalComments;
+
+				bool result = GetRejectReason("Reject Reason", out reason, out additionalComments);
+
+				if (!result || reason == null)
+					return;
+
 				Platform.GetService<ITranscriptionWorkflowService>(
 					delegate(ITranscriptionWorkflowService service)
 					{
 						service.RejectTranscription(
 							new RejectTranscriptionRequest(
 							this.WorklistItem.ProcedureStepRef,
-							_reportPartExtendedProperties, "TODO"));
+							_reportPartExtendedProperties, 
+							reason,
+							CreateAdditionalCommentsNote(additionalComments)));
 					});
 
 				// Source Folders
@@ -566,7 +576,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 						service.SubmitTranscriptionForReview(
 							new SubmitTranscriptionForReviewRequest(
 							this.WorklistItem.ProcedureStepRef,
-							_reportPartExtendedProperties, _supervisor.StaffRef));
+							_reportPartExtendedProperties,
+							_supervisor.StaffRef));
 					});
 
 				// Destination Folders
@@ -611,7 +622,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 						service.SaveTranscription(
 							new SaveTranscriptionRequest(
 							this.WorklistItem.ProcedureStepRef,
-							_reportPartExtendedProperties));
+							_reportPartExtendedProperties,
+							_supervisor.StaffRef));
 					});
 
 				// Source Folders
@@ -870,6 +882,26 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_supervisor = supervisor;
 			TranscriptionSettings.Default.SupervisorID = supervisor == null ? "" : supervisor.StaffId;
 			TranscriptionSettings.Default.Save();
+		}
+
+		private bool GetRejectReason(string title, out EnumValueInfo reason, out string additionalComments)
+		{
+			TranscriptionRejectReasonComponent component = new TranscriptionRejectReasonComponent();
+
+			ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow, component, title);
+
+			reason = component.Reason;
+			additionalComments = component.OtherReason;
+
+			return exitCode == ApplicationComponentExitCode.Accepted;
+		}
+
+		private static OrderNoteDetail CreateAdditionalCommentsNote(string additionalComments)
+		{
+			if (!string.IsNullOrEmpty(additionalComments))
+				return new OrderNoteDetail(OrderNoteCategory.General.Key, additionalComments, null, false, null, null);
+			else
+				return null;
 		}
 
 	}

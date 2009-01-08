@@ -27,7 +27,7 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 					|| step.State == ActivityStatus.IP && !Equals(step.PerformingStaff, currentUserStaff))
 					return false;
 
-				if (step.Scheduling != null && !Equals(step.AssignedStaff, currentUserStaff))
+				if (step.AssignedStaff != null && !Equals(step.AssignedStaff, currentUserStaff))
 					return false;
 
 				return true;
@@ -41,7 +41,6 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 				step.Discontinue();
 				TranscriptionStep transcriptionStep = new TranscriptionStep(step);
 				step.Procedure.AddProcedureStep(transcriptionStep);
-				transcriptionStep.Schedule(Platform.Time);
 			}
 
 			public override bool CanExecute(TranscriptionStep step, Staff currentUserStaff)
@@ -64,6 +63,13 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 				{
 					step.ReportPart.ExtendedProperties[pair.Key] = pair.Value;
 				}
+			}
+
+			public void Execute(TranscriptionStep step, Dictionary<string, string> reportPartExtendedProperties, Staff supervisor)
+			{
+				this.Execute(step, reportPartExtendedProperties);
+
+				step.ReportPart.TranscriptionSupervisor = supervisor;
 			}
 
 			public override bool CanExecute(TranscriptionStep step, Staff currentUserStaff)
@@ -129,7 +135,7 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 				if (step.State == ActivityStatus.SC && (step.ReportPart.Transcriber == null || step.AssignedStaff == null))
 					return false;
 
-				// if it looks like an transcription submitted for review, but not to the current user.
+				// if it looks like a transcription submitted for review, but not to the current user.
 				if (step.State == ActivityStatus.SC && step.ReportPart.Transcriber != null && !Equals(step.AssignedStaff, currentUserStaff))
 					return false;
 
@@ -139,12 +145,14 @@ namespace ClearCanvas.Healthcare.Workflow.Transcription
 
 		public class RejectTranscription : TranscriptionOperation
 		{
-			public void Execute(TranscriptionStep step, Staff rejectedBy, string reason)
+			public void Execute(TranscriptionStep step, Staff rejectedBy, TranscriptionRejectReasonEnum reason)
 			{
 				if (step.State == ActivityStatus.SC)
 					step.Complete(rejectedBy);
 				else
 					step.Complete();
+
+				step.ReportPart.TranscriptionRejectReason = reason;
 
 				TranscriptionReviewStep transcriptionReviewStep = new TranscriptionReviewStep(step);
 				step.Procedure.AddProcedureStep(transcriptionReviewStep);
