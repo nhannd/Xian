@@ -29,6 +29,7 @@
     <folder id="ToBeReviewedFolder" />
     <folder id="AssignedFolder" />
     <folder id="AssignedForReviewFolder" />
+    <folder id="ReviewTranscriptionFolder" />
     <folder id="DraftFolder" />
     <folder id="InTranscriptionFolder" />
     <folder id="TranscriptionReviewFolder" />
@@ -72,7 +73,9 @@
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.TranscriptionWorkflowFolderSystem">
     <folder id="ToBeTranscribedFolder" />
+    <folder id="ToBeReviewedFolder" />
     <folder id="DraftFolder" />
+    <folder id="AwaitingReviewFolder" />
     <folder id="CompletedFolder" />
   </folder-system>
 </folder-systems>

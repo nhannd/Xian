@@ -167,6 +167,8 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 			TranscriptionOperations.RejectTranscription op = new TranscriptionOperations.RejectTranscription();
 			op.Execute(transcriptionStep, this.CurrentUserStaff, reason);
 
+			AddAdditionalCommentsNote(request.AdditionalComments, transcriptionStep.Procedure.Order);
+
 			this.PersistenceContext.SynchState();
 
 			return new RejectTranscriptionResponse();
@@ -264,9 +266,18 @@ namespace ClearCanvas.Ris.Application.Services.TranscriptionWorkflow
 			Staff supervisor = newSupervisorRef == null ? null : PersistenceContext.Load<Staff>(newSupervisorRef, EntityLoadFlags.Proxy);
 
 			if (supervisor == null && step.ReportPart != null)
-				supervisor = step.ReportPart.Supervisor;
+				supervisor = step.ReportPart.TranscriptionSupervisor;
 
 			return supervisor;
+		}
+
+		private void AddAdditionalCommentsNote(OrderNoteDetail detail, Order order)
+		{
+			if (detail != null)
+			{
+				OrderNoteAssembler noteAssembler = new OrderNoteAssembler();
+				noteAssembler.CreateOrderNote(detail, order, this.CurrentUserStaff, true, this.PersistenceContext);
+			}
 		}
 
 		#endregion
