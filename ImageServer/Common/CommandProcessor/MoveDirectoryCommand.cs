@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 Platform.Log(LogLevel.Debug, "Backing up original source folder {0}", _src);
                 DirectoryUtility.Copy(_dest, _backupSrcDir);
 
-                Platform.Log(LogLevel.Info, "Original destination source folder {0} is backed up to {1}", _src, _backupSrcDir);
+                Platform.Log(LogLevel.Info, "Original source folder {0} is backed up to {1}", _src, _backupSrcDir);
             }
 
 
