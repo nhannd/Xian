@@ -30,7 +30,7 @@ namespace ClearCanvas.Ris.Client
 				PublishReportComponent component = new PublishReportComponent(
 						this.Context.PatientProfileRef,
 						this.Context.OrderRef,
-						null,
+						this.Context.ProcedureRef,
 						this.Context.ReportRef);
 
 				ApplicationComponent.LaunchAsDialog(

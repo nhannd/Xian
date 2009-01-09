@@ -63,6 +63,7 @@ namespace ClearCanvas.Ris.Client
 		EntityRef PatientRef { get; }
 		EntityRef PatientProfileRef { get; }
 		EntityRef OrderRef { get; }
+		EntityRef ProcedureRef { get; }
 		EntityRef ReportRef { get; }
 		EnumValueInfo ReportStatus { get; }
 		IDesktopWindow DesktopWindow { get; }
@@ -99,6 +100,11 @@ namespace ClearCanvas.Ris.Client
 			public EntityRef OrderRef
 			{
 				get { return _component.OrderRef; }
+			}
+
+			public EntityRef ProcedureRef
+			{
+				get { return _component.ProcedureRef; }
 			}
 
 			public EntityRef ReportRef
@@ -193,10 +199,12 @@ namespace ClearCanvas.Ris.Client
 		public class CommonReportListItem
 		{
 			private readonly EntityRef _reportRef;
+			private readonly EntityRef _procedureRef;
 			private readonly IList<ReportListItem> _reportListItems;
 
-			public CommonReportListItem(EntityRef reportRef, ReportListItem firstItem)
+			public CommonReportListItem(EntityRef procedureRef, EntityRef reportRef, ReportListItem firstItem)
 			{
+				_procedureRef = procedureRef;
 				_reportRef = reportRef;
 				_reportListItems = new List<ReportListItem>();
 				_reportListItems.Add(firstItem);
@@ -205,6 +213,11 @@ namespace ClearCanvas.Ris.Client
 			public EntityRef ReportRef
 			{
 				get { return _reportRef; }
+			}
+
+			public EntityRef ProcedureRef
+			{
+				get { return _procedureRef; }
 			}
 
 			public EnumValueInfo ReportStatus
@@ -369,6 +382,11 @@ namespace ClearCanvas.Ris.Client
 			get { return this.Context != null ? this.Context.OrderRef : null; }
 		}
 
+		public EntityRef ProcedureRef
+		{
+			get { return this._selectedReport != null ? this._selectedReport.ProcedureRef : null; }
+		}
+
 		public EntityRef ReportRef
 		{
 			get { return this._selectedReport != null ? this._selectedReport.ReportRef : null; }
@@ -442,7 +460,7 @@ namespace ClearCanvas.Ris.Client
 								}
 								else
 								{
-									reports.Add(new CommonReportListItem(item.ReportRef, item));
+									reports.Add(new CommonReportListItem(item.ProcedureRef, item.ReportRef, item));
 								}
 							});
 
