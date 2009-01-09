@@ -36,8 +36,8 @@
   <ItemGroup>
     <Compile Include="MemoryHoldTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rendering\PerformanceAnalysisComponent.cs" />
-    <Compile Include="Rendering\PerformanceAnalysisTool.cs" />
+    <Compile Include="PerformanceAnalysisComponent.cs" />
+    <Compile Include="PerformanceAnalysisTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

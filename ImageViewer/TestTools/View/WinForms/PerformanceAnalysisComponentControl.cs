@@ -38,7 +38,6 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.ImageViewer.TestTools.Rendering;
 
 namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 {
@@ -61,8 +60,6 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
         	_table.Table = _component.Table;
         	_table.MenuModel = _component.MenuModel;
         	_table.ReadOnly = true;
-
-        	_description.DataBindings.Add("Value", _component, "Description", true, DataSourceUpdateMode.OnPropertyChanged);
         }
     }
 }

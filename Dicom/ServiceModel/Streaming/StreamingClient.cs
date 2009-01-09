@@ -4,6 +4,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.ServiceModel.Streaming
 {
@@ -34,7 +35,10 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 
         public byte[] RetrievePixelData(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid, int frame, out FrameStreamingResultMetaData metaInfo)
         {
-            FrameStreamingResultMetaData result = new FrameStreamingResultMetaData();
+            CodeClock clock = new CodeClock();
+			clock.Start();
+
+			FrameStreamingResultMetaData result = new FrameStreamingResultMetaData();
             StringBuilder url = new StringBuilder();
 
             if (_baseUri.ToString().EndsWith("/"))
@@ -83,12 +87,15 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
             result.ContentLength = buffer.Length;
             result.IsLast = (response.Headers["IsLast"] != null && bool.Parse(response.Headers["IsLast"]));
 
+			clock.Stop();
+			PerformanceReportBroker.PublishReport("Streaming", "RetrievePixelData", clock.Seconds);
+
             if (response.Headers["Compressed"] != null && bool.Parse(response.Headers["Compressed"]))
             {
                 buffer = DecompressPixelData(response, buffer);
             }
 
-            metaInfo = result;
+			metaInfo = result;
             return buffer;
         }
 
@@ -169,6 +176,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
         {
             try
             {
+				CodeClock clock = new CodeClock();
+				clock.Start();
+
                 string transferSyntaxUid = response.Headers["TransferSyntaxUid"];
                 TransferSyntax transferSyntax = TransferSyntax.GetTransferSyntax(transferSyntaxUid);
                 ushort bitesAllocated = ushort.Parse(response.Headers["BitsAllocated"]);
@@ -201,6 +211,9 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 
                 cpd.AddFrameFragment(buffer);
                 buffer = cpd.GetFrame(0);
+
+				clock.Stop();
+				PerformanceReportBroker.PublishReport("Streaming", "DecompressPixelData", clock.Seconds);
 
                 return buffer;
             }

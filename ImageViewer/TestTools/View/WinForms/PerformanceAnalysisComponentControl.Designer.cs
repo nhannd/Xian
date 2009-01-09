@@ -60,41 +60,24 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
         private void InitializeComponent()
         {
 			this._table = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._description = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.SuspendLayout();
 			// 
 			// _table
 			// 
-			this._table.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._table.Location = new System.Drawing.Point(0, 46);
+			this._table.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._table.Location = new System.Drawing.Point(0, 0);
 			this._table.Name = "_table";
 			this._table.ReadOnly = false;
-			this._table.Size = new System.Drawing.Size(499, 208);
+			this._table.Size = new System.Drawing.Size(497, 404);
 			this._table.TabIndex = 0;
-			// 
-			// _description
-			// 
-			this._description.LabelText = "Description";
-			this._description.Location = new System.Drawing.Point(4, 0);
-			this._description.Margin = new System.Windows.Forms.Padding(2);
-			this._description.Mask = "";
-			this._description.Name = "_description";
-			this._description.PasswordChar = '\0';
-			this._description.Size = new System.Drawing.Size(495, 41);
-			this._description.TabIndex = 1;
-			this._description.ToolTip = null;
-			this._description.Value = null;
 			// 
 			// PerformanceAnalysisComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._description);
 			this.Controls.Add(this._table);
 			this.Name = "PerformanceAnalysisComponentControl";
-			this.Size = new System.Drawing.Size(499, 254);
+			this.Size = new System.Drawing.Size(497, 404);
 			this.ResumeLayout(false);
 
         }
@@ -102,6 +85,5 @@ namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
         #endregion
 
 		private ClearCanvas.Desktop.View.WinForms.TableView _table;
-		private ClearCanvas.Desktop.View.WinForms.TextField _description;
     }
 }

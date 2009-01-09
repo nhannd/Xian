@@ -36,7 +36,6 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.ImageViewer.TestTools.Rendering;
 
 namespace ClearCanvas.ImageViewer.TestTools.View.WinForms
 {

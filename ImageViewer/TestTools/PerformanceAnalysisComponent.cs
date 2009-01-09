@@ -35,9 +35,9 @@ using ClearCanvas.Desktop.Tables;
 using System;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Rendering;
+using System.Threading;
 
-namespace ClearCanvas.ImageViewer.TestTools.Rendering
+namespace ClearCanvas.ImageViewer.TestTools
 {
 	[ExtensionPoint]
 	public sealed class PerformanceAnalysisComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
@@ -45,33 +45,35 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering
 	}
 
 	[AssociateView(typeof(PerformanceAnalysisComponentViewExtensionPoint))]
-	public class PerformanceAnalysisComponent : ImageViewerToolComponent
+	public class PerformanceAnalysisComponent : ApplicationComponent
 	{
 		public class ReportItem
 		{
-			internal ReportItem(string reportBrokerName, int numberOfCalls, TimeSpan cumulativeTime)
+			public ReportItem(string category, string identifier, int numberOfCalls, TimeSpan cumulativeTime)
 			{
-				ReportBrokerName = reportBrokerName;
+				Category = category;
+				Identifier = identifier;
 				NumberOfCalls = numberOfCalls;
 				CumulativeTime = cumulativeTime;
 			}
 
-			public readonly string ReportBrokerName;
+			public readonly string Category;
+			public readonly string Identifier;
 			public readonly int NumberOfCalls;
 			public readonly TimeSpan CumulativeTime;
 
-			public ReportItem Increment(double seconds)
+			public ReportItem Increment(TimeSpan seconds)
 			{
-				return new ReportItem(ReportBrokerName, NumberOfCalls + 1, CumulativeTime + TimeSpan.FromSeconds(seconds));
+				return new ReportItem(Category, Identifier, NumberOfCalls + 1, CumulativeTime + seconds);
 			}
 		}
 		
 		private Table<ReportItem> _reportTable;
 		private SimpleActionModel _menuModel;
 		private string _description;
+		private volatile SynchronizationContext _uiThreadContext;
 
 		public PerformanceAnalysisComponent()
-			: base(Application.ActiveDesktopWindow)
 		{
 		}
 
@@ -85,35 +87,29 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering
 			get { return _menuModel; }	
 		}
 
-		public string Description
-		{
-			get { return _description; }	
-			set
-			{
-				_description = value;
-				NotifyPropertyChanged("Description");
-			}
-		}
-
 		public override void Start()
 		{
 			base.Start();
-			
-			RenderPerformanceReportBroker.PerformanceReport += OnReceivedReport;
+
+			_uiThreadContext = SynchronizationContext.Current;
 
 			_reportTable = new Table<ReportItem>();
-			_reportTable.Columns.Add(new TableColumn<ReportItem, string>("Name", delegate(ReportItem item) { return item.ReportBrokerName; }));
+			_reportTable.Columns.Add(new TableColumn<ReportItem, string>("Category", delegate(ReportItem item) { return item.Category; }));
+			_reportTable.Columns.Add(new TableColumn<ReportItem, string>("Identifier", delegate(ReportItem item) { return item.Identifier; }));
 			_reportTable.Columns.Add(new TableColumn<ReportItem, int>("#Calls", delegate(ReportItem item) { return item.NumberOfCalls; }));
 			_reportTable.Columns.Add(new TableColumn<ReportItem, string>("Time", delegate(ReportItem item) { return item.CumulativeTime.ToString(); }));
 
 			_menuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			_menuModel.AddAction("reset", "Reset", null, null, Reset);
+
+			PerformanceReportBroker.Report += OnReceivedReport;
 		}
 
 		public override void Stop()
 		{
-			RenderPerformanceReportBroker.PerformanceReport -= OnReceivedReport;
-
+			PerformanceReportBroker.Report -= OnReceivedReport;
+			_uiThreadContext = null;
+			
 			base.Stop();
 		}
 
@@ -122,41 +118,34 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering
 			_reportTable.Items.Clear();
 		}
 
-		protected override void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)
+		private void OnReceivedReport(object sender, ItemEventArgs<PerformanceReport> report)
 		{
-			base.OnActiveImageViewerChanged(e);
-			if (e.DeactivatedImageViewer != null)
-				e.DeactivatedImageViewer.PhysicalWorkspace.ScreenRectangleChanged -= new EventHandler(OnScreenRectangleChanged);
+			if (_uiThreadContext == null)
+				return;
 
-			if (e.ActivatedImageViewer != null)
+			if (_uiThreadContext != SynchronizationContext.Current)
 			{
-				e.ActivatedImageViewer.PhysicalWorkspace.ScreenRectangleChanged += new EventHandler(OnScreenRectangleChanged);
-				OnScreenRectangleChanged(null, EventArgs.Empty);
+				_uiThreadContext.Post(delegate { OnReceivedReport(sender, report); }, null);
+				return;
 			}
-		}
 
-		private void OnScreenRectangleChanged(object sender, EventArgs e)
-		{
-			if (base.ImageViewer == null)
-				this.Description = "n/a";
-			else
-				this.Description = String.Format("{0}x{1}", base.ImageViewer.PhysicalWorkspace.ScreenRectangle.Width,
-					              base.ImageViewer.PhysicalWorkspace.ScreenRectangle.Height);
-		}
-
-		private void OnReceivedReport(string methodName, double totalTime)
-		{
 			ReportItem item = CollectionUtils.SelectFirst(_reportTable.Items, 
-				delegate(ReportItem test) { return test.ReportBrokerName == methodName; });
+				delegate(ReportItem test)
+					{
+						return report.Item.Category == test.Category && test.Identifier == report.Item.Identifier;
+					});
 
 			if (item == null)
 			{
-				item = new ReportItem(methodName, 1, TimeSpan.FromSeconds(totalTime));
+				item = new ReportItem(report.Item.Category, report.Item.Identifier, 1, report.Item.TotalTime);
 				_reportTable.Items.Add(item);
 			}
 			else 
 			{
-				_reportTable.Items[_reportTable.Items.IndexOf(item)] = item.Increment(totalTime);
+				int index = _reportTable.Items.IndexOf(item);
+				ReportItem newItem = item.Increment(report.Item.TotalTime);
+				_reportTable.Items[index] = newItem;
+				_reportTable.Items.NotifyItemUpdated(index);
 			}
 		}
 	}

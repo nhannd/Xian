@@ -38,6 +38,8 @@ using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Validation;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -791,6 +793,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <see cref="GetNormalizedPixelData"/>
 		protected virtual byte[] CreateNormalizedPixelData()
 		{
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
 			DicomMessageBase message = this.ParentImageSop.NativeDicomObject;
 			PhotometricInterpretation photometricInterpretation;
 			byte[] rawPixelData;
@@ -815,6 +820,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			if (this.IsColor)
 				rawPixelData = this.ToArgb(rawPixelData, photometricInterpretation);
 
+			clock.Stop();
+			PerformanceReportBroker.PublishReport("Frame", "CreatePixelData", clock.Seconds);
+			
 			return rawPixelData;
 		}
 
@@ -850,6 +858,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			byte[] pixelData, 
 			PhotometricInterpretation photometricInterpretation)
 		{
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
 			int sizeInBytes = this.Rows * this.Columns * 4;
 			byte[] argbPixelData = new byte[sizeInBytes];
 
@@ -873,6 +884,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					pixelData,
 					argbPixelData);
 			}
+
+			clock.Stop();
+			PerformanceReportBroker.PublishReport("Frame", "ToARGB", clock.Seconds);
 
 			return argbPixelData;
 		}
@@ -909,6 +923,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private IDataLut CreateColorMap()
 		{
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
 			bool tagExists;
 			int lutSize, firstMappedPixel, bitsPerLutEntry;
 
@@ -950,6 +967,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			if (lutSize == 0)
 				lutSize = 65536;
 
+			clock.Stop();
+			PerformanceReportBroker.PublishReport("Frame", "CreateColorMap", clock.Seconds);
+			
 			return new PaletteColorMap(
 				lutSize,
 				firstMappedPixel,

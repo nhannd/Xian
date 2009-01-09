@@ -29,12 +29,14 @@
 
 #endregion
 
+using System;
 namespace ClearCanvas.ImageViewer.Rendering
 {
 	/// <summary>
 	/// Allows Renderers to publish the total time elapsed for a particular method to aid in 
 	/// debugging and optimization.
 	/// </summary>
+	[Obsolete("Use PerformanceReportBroker instead.")]
 	public static class RenderPerformanceReportBroker
 	{
 		/// <summary>
@@ -45,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// A Delegate that can be subscribed to in order to receive performance reports.
 		/// </summary>
-		public static PerformanceReportDelegate PerformanceReport;
+		public static event PerformanceReportDelegate PerformanceReport;
 
 		/// <summary>
 		/// Called from within a method to publish performance reports to subscribers.

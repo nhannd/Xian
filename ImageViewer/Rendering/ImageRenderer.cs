@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			}
 
 			clock.Stop();
-			RenderPerformanceReportBroker.PublishPerformanceReport("ImageRenderer.Render", clock.Seconds);
+			PerformanceReportBroker.PublishReport("ImageRenderer", "Render", clock.Seconds);
 		}
 
 		private static void RenderGrayscale(
@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			}
 
 			clock.Stop();
-			RenderPerformanceReportBroker.PublishPerformanceReport("ImageRenderer.ConstructFinalLut", clock.Seconds);
+			PerformanceReportBroker.PublishReport("ImageRenderer", "ConstructFinalLut", clock.Seconds);
 
 			return _finalLutBuffer;
 		}

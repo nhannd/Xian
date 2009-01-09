@@ -261,6 +261,7 @@
     <Compile Include="Configuration\StandardSettingsProvider.cs" />
     <Compile Include="Utilities\DictionaryEventArgs.cs" />
     <Compile Include="Utilities\ItemEventArgs.cs" />
+    <Compile Include="Utilities\PerformanceReportBroker.cs" />
     <Compile Include="Utilities\SystemResources.cs" />
     <Compile Include="Utilities\ObjectWalker.cs" />
     <Compile Include="Utilities\SimpleSerializer.cs" />

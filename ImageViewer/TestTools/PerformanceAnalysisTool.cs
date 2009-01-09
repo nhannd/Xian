@@ -31,17 +31,18 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.TestTools.Rendering
+namespace ClearCanvas.ImageViewer.TestTools
 {
-	[ButtonAction("apply", "global-toolbars/Rendering/Performance Anaysis", "Apply")]
+	[ButtonAction("apply", "global-toolbars/Performance Analysis", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "PerformanceAnalysisToolSmall.png", "PerformanceAnalysisToolMedium.png", "PerformanceAnalysisToolLarge.png")]
 
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class PerformanceAnalysisTool : ImageViewerTool
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class PerformanceAnalysisTool : Tool<IDesktopToolContext>
 	{
 		private IShelf _shelf;
 
@@ -58,7 +59,7 @@ namespace ClearCanvas.ImageViewer.TestTools.Rendering
 			}
 
 			PerformanceAnalysisComponent component = new PerformanceAnalysisComponent();
-			_shelf = ApplicationComponent.LaunchAsShelf(this.Context.DesktopWindow, component, "Rendering Performance",
+			_shelf = ApplicationComponent.LaunchAsShelf(this.Context.DesktopWindow, component, "Performance Analysis",
 			                                   ShelfDisplayHint.DockFloat);
 
 			_shelf.Closing += delegate { _shelf = null; };

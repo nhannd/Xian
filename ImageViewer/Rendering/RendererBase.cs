@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			}
 
 			clock.Stop();
-			RenderPerformanceReportBroker.PublishPerformanceReport("RendererBase.DrawTextOverlay", clock.Seconds);
+			PerformanceReportBroker.PublishReport("RendererBase", "DrawTextOverlay", clock.Seconds);
 		}
 
 		/// <summary>

@@ -137,7 +137,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			base.Render();
 
 			clock.Stop();
-			RenderPerformanceReportBroker.PublishPerformanceReport("GDIRenderer.Render", clock.Seconds);
+			PerformanceReportBroker.PublishReport("GDIRenderer", "Render", clock.Seconds);
 		}
 
 		/// <summary>
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				Surface.FinalBuffer.RenderToScreen();
 
 			clock.Stop();
-			RenderPerformanceReportBroker.PublishPerformanceReport("GDIRenderer.Refresh", clock.Seconds);
+			PerformanceReportBroker.PublishReport("GDIRenderer", "Refresh", clock.Seconds);
 		}
 
 		/// <summary>
@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			Surface.FinalBuffer.RenderImage(Surface.ImageBuffer);
 
 			clock.Stop();
-			RenderPerformanceReportBroker.PublishPerformanceReport("GDIRenderer.DrawImageGraphic", clock.Seconds);
+			PerformanceReportBroker.PublishReport("GDIRenderer", "DrawImageGraphic", clock.Seconds);
 		}
 
 		/// <summary>
