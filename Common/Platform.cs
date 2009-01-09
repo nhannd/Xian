@@ -669,7 +669,11 @@ namespace ClearCanvas.Common
         public static void Log(LogLevel category,String message, params object[] args)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat(message, args);
+
+			if (args == null || args.Length == 0)
+				sb.Append(message);
+			else
+				sb.AppendFormat(message, args);
 
             switch (category)
             {
@@ -705,7 +709,11 @@ namespace ClearCanvas.Common
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(SR.ExceptionThrown);
             sb.AppendLine();
-            sb.AppendFormat(message, args);
+
+			if (args == null || args.Length == 0)
+				sb.Append(message);
+			else
+				sb.AppendFormat(message, args);
             
             switch (category)
             {
@@ -727,69 +735,6 @@ namespace ClearCanvas.Common
             }
 
         }
-
-		/// <summary>
-		/// Logs the specified message at the specified <see cref="LogLevel"/>.
-		/// </summary>
-		/// <remarks>This method is thread-safe.</remarks>
-		/// <param name="category">The log level.</param>
-		/// <param name="message">Message, as used with <see cref="System.Text.StringBuilder"/>.</param>
-		public static void Log(LogLevel category, String message) {
-			StringBuilder sb = new StringBuilder();
-			sb.Append(message);
-
-			switch (category) {
-				case LogLevel.Debug:
-					_log.Debug(sb.ToString());
-					break;
-				case LogLevel.Info:
-					_log.Info(sb.ToString());
-					break;
-				case LogLevel.Warn:
-					_log.Warn(sb.ToString());
-					break;
-				case LogLevel.Error:
-					_log.Error(sb.ToString());
-					break;
-				case LogLevel.Fatal:
-					_log.Fatal(sb.ToString());
-					break;
-			}
-		}
-
-
-		/// <summary>
-		/// Logs the specified exception at the specified <see cref="LogLevel"/>.
-		/// </summary>
-		/// <remarks>This method is thread-safe.</remarks>
-		/// <param name="ex">The exception to log.</param>
-		/// <param name="category">The log level.</param>
-		/// <param name="message">Message, as used with <see cref="System.Text.StringBuilder"/>.</param>
-		public static void Log(LogLevel category, Exception ex, String message) {
-			StringBuilder sb = new StringBuilder();
-			sb.AppendLine(SR.ExceptionThrown);
-			sb.AppendLine();
-			sb.Append(message);
-
-			switch (category) {
-				case LogLevel.Debug:
-					_log.Debug(sb.ToString(), ex);
-					break;
-				case LogLevel.Info:
-					_log.Info(sb.ToString(), ex);
-					break;
-				case LogLevel.Warn:
-					_log.Warn(sb.ToString(), ex);
-					break;
-				case LogLevel.Error:
-					_log.Error(sb.ToString(), ex);
-					break;
-				case LogLevel.Fatal:
-					_log.Fatal(sb.ToString(), ex);
-					break;
-			}
-
-		}
 
         /// <summary>
         /// Displays a message box with the specified message.
