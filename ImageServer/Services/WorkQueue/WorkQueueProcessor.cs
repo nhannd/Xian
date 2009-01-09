@@ -48,10 +48,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     public class WorkQueueProcessor
     {
         #region Members
+
         private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private readonly Dictionary<WorkQueueTypeEnum, IWorkQueueProcessorFactory> _extensions = new Dictionary<WorkQueueTypeEnum, IWorkQueueProcessorFactory>();
 		private readonly ItemProcessingThreadPool<Model.WorkQueue> _threadPool;
         private readonly ManualResetEvent _threadStop;
+        private readonly ManualResetEvent _terminateEvent;
+
         private bool _stop = false;
 
     	private readonly List<WorkQueueTypeEnum> _memoryLimitedList = new List<WorkQueueTypeEnum>();
@@ -60,9 +63,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         #endregion
 
         #region Constructor
-        public WorkQueueProcessor(int numberThreads, ManualResetEvent threadStop, string name)
+        public WorkQueueProcessor(int numberThreads, ManualResetEvent terminateEvent, string name)
         {
-        	_threadStop = threadStop;
+            _terminateEvent = terminateEvent;
+            _threadStop = new ManualResetEvent(false);
 			_threadPool = new ItemProcessingThreadPool<Model.WorkQueue>(numberThreads);
         	_threadPool.ThreadPoolName = name + " Pool";
 
@@ -118,6 +122,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </summary>
 		public void Stop()
         {
+            _terminateEvent.Set(); // make sure it's set
+
         	_stop = true;
         	if (_threadPool.Active)
         		_threadPool.Stop();
@@ -130,47 +136,72 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		/// <param name="failureDescription">The reason for the failure.</param>
         public void FailQueueItem(Model.WorkQueue item, string failureDescription)
         {
-            using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            // Must retry to reset the status of the entry in case of db error
+            // Failure to do so will create stale work queue entry (stuck in "In Progress" state)
+            // which can only be recovered by restarting the service.
+            while(true) 
             {
-                IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
-                UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
-                parms.ProcessorID = ServiceTools.ProcessorId;
-
-                parms.WorkQueueKey = item.GetKey();
-                parms.StudyStorageKey = item.StudyStorageKey;
-                parms.FailureCount = item.FailureCount + 1;
-				parms.FailureDescription = failureDescription;
-
-				WorkQueueSettings settings = WorkQueueSettings.Instance;
-                if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
+                try
                 {
-                    Platform.Log(LogLevel.Error,
-                                 "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
-                                 item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
-                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
-                    parms.ScheduledTime = Platform.Time;
-                    parms.ExpirationTime = Platform.Time.AddDays(1);
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Error,
-                                 "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
-                                 item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
-                    parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-                    parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
-                    parms.ExpirationTime =
-                        Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
-                                                 settings.WorkQueueFailureDelayMinutes);
-                }
+                    using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+                    {
+                        IUpdateWorkQueue update = updateContext.GetBroker<IUpdateWorkQueue>();
+                        UpdateWorkQueueParameters parms = new UpdateWorkQueueParameters();
+                        parms.ProcessorID = ServiceTools.ProcessorId;
 
-                if (false == update.Execute(parms))
-                {
-                    Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum,
-                                 item.GetKey().ToString());
+                        parms.WorkQueueKey = item.GetKey();
+                        parms.StudyStorageKey = item.StudyStorageKey;
+                        parms.FailureCount = item.FailureCount + 1;
+                        parms.FailureDescription = failureDescription;
+
+                        WorkQueueSettings settings = WorkQueueSettings.Instance;
+                        if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
+                        {
+                            Platform.Log(LogLevel.Error,
+                                         "Failing {0} WorkQueue entry ({1}), reached max retry count of {2}",
+                                         item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                            parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
+                            parms.ScheduledTime = Platform.Time;
+                            parms.ExpirationTime = Platform.Time.AddDays(1);
+                        }
+                        else
+                        {
+                            Platform.Log(LogLevel.Error,
+                                         "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
+                                         item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
+                            parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
+                            parms.ScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
+                            parms.ExpirationTime =
+                                Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
+                                                         settings.WorkQueueFailureDelayMinutes);
+                        }
+
+                        if (false == update.Execute(parms))
+                        {
+                            Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum,
+                                         item.GetKey().ToString());
+
+                        }
+                        else
+                        {
+                            updateContext.Commit();
+                            break; // done
+                        }
+                    }
+
+                    
                 }
-                else
-                    updateContext.Commit();
+                catch(Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, "Error occurred when calling FailQueueItem. Retry later. {0}", ex.Message);
+                    _terminateEvent.WaitOne(2000, false);
+                    if (_stop)
+                        break;
+                }
+                
             }
+    	    
+            
         }
 
         /// <summary>
@@ -184,7 +215,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
 			if (!_threadPool.Active)
 				_threadPool.Start();
-
+            Platform.Log(LogLevel.Info, "Work Queue Processor running...");
+                        
             while (true)
             {
 				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
@@ -194,13 +226,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         Model.WorkQueue queueListItem = _threadPoolManager.GetWorkQueueItem(ServiceTools.ProcessorId);
 						if (queueListItem == null)
 						{
-							/* No result found, or reach max queue entries for each type */
-							_threadStop.WaitOne(WorkQueueSettings.Instance.WorkQueueQueryDelay, false);
-							_threadStop.Reset();
+                            /* No result found, or reach max queue entries for each type */
+							_terminateEvent.WaitOne(WorkQueueSettings.Instance.WorkQueueQueryDelay, false);
 						}
 						else
 						{
-							if (!_extensions.ContainsKey(queueListItem.WorkQueueTypeEnum))
+                            
+                            if (!_extensions.ContainsKey(queueListItem.WorkQueueTypeEnum))
 							{
 								Platform.Log(LogLevel.Error,
 											 "No extensions loaded for WorkQueue item type: {0}.  Failing item.",
@@ -229,60 +261,71 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								continue;
 							}
 
+
 							// Enqueue the actual processing of the item to the 
 							// thread pool.  
 							_threadPool.Enqueue(queueListItem, delegate(Model.WorkQueue queueItem)
 													{
-														try
-														{
-														    processor.Process(queueItem);
-														}
-														catch (Exception e)
-														{
-															Platform.Log(LogLevel.Error, e,
-																		 "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
-																		 queueItem.WorkQueueTypeEnum,
-																		 queueItem.GetKey());
-															if (e.InnerException != null)
-																FailQueueItem(queueItem, e.InnerException.Message);
-															else
-																FailQueueItem(queueItem, e.Message);
-
-
-
-															ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
-																				processor.Name, AlertTypeCodes.UnableToProcess,
-																				"Work Queue item failed: Type={0}, GUID={1}",
-																				 queueItem.WorkQueueTypeEnum,
-																				 queueItem.GetKey());
-														}
-
-														_threadPoolManager.QueueItemComplete(queueItem);
-
-														// Signal the parent thread, so it can query again
-														_threadStop.Set();
-														
-														// Cleanup the processor
-														processor.Dispose();
+														ExecuteProcessor(processor, queueItem);
 													});
 
 						}
                     }
                     catch (Exception e)
                     {
-                        Platform.Log(LogLevel.Error, e, "Unexpected exception when processing WorkQueue.");
+                        // Wait for only 1.5 seconds
+                        Platform.Log(LogLevel.Error, "Exception occured: {0}. Retry later.", e.Message);
+                        _terminateEvent.WaitOne(1500, false);
                     }
                 }
                 else
                 {
-                    // Wait for only 1.5 seconds when the thread pool is all in use.
-                    _threadStop.WaitOne(1500, false);
+                    // wait for new opening in the pool or termination
+                    WaitHandle.WaitAny(new WaitHandle[]{_threadStop, _terminateEvent}, 1500, false);
                     _threadStop.Reset();
                 }
+
                 if (_stop)
                     return;
             }
         }
+
+        private void ExecuteProcessor(IWorkQueueItemProcessor processor, Model.WorkQueue queueItem)
+        {
+            
+            try
+            {
+                processor.Process(queueItem);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e,
+                             "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
+                             queueItem.WorkQueueTypeEnum,
+                             queueItem.GetKey());
+                if (e.InnerException != null)
+                    FailQueueItem(queueItem, e.InnerException.Message);
+                else
+                    FailQueueItem(queueItem, e.Message);
+
+
+
+                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
+                                     processor.Name, AlertTypeCodes.UnableToProcess,
+                                     "Work Queue item failed: Type={0}, GUID={1}",
+                                     queueItem.WorkQueueTypeEnum,
+                                     queueItem.GetKey());
+            }
+
+            _threadPoolManager.QueueItemComplete(queueItem);
+
+            // Signal the parent thread, so it can query again
+            _threadStop.Set();
+
+            // Cleanup the processor
+            processor.Dispose();
+        }
+
         #endregion
     }
 }

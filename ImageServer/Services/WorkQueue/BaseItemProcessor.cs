@@ -561,7 +561,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                              "Resetting {0} WorkQueue entry ({1}) to Pending, current retry count {2}",
                                              item.WorkQueueTypeEnum, item.GetKey(), item.FailureCount + 1);
                                 parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-                                parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
+                                parms.ScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
                                 parms.ExpirationTime =
                                     Platform.Time.AddMinutes((settings.WorkQueueMaxFailureCount - item.FailureCount) *
                                                              settings.WorkQueueFailureDelayMinutes);
