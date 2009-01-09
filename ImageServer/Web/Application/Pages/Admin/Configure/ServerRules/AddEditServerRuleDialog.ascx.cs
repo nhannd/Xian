@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 			set
 			{
 				_partition = value;
-				ViewState[ClientID + "_ServerPartition"] = value;
+				ViewState[ "_ServerPartition"] = value;
 			}
 
 			get { return _partition; }
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 			set
 			{
 				_editMode = value;
-				ViewState[ClientID + "_EditMode"] = value;
+				ViewState[ "_EditMode"] = value;
 			}
 		}
 
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 				_rule = value;
 				// put into viewstate to retrieve later
 				if (_rule != null)
-					ViewState[ClientID + "_EdittedRule"] = _rule.GetKey();
+					ViewState[ "_EdittedRule"] = _rule.GetKey();
 			}
 			get { return _rule; }
 		}
@@ -283,15 +283,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 		{
 			if (Page.IsPostBack)
 			{
-				if (ViewState[ClientID + "_EditMode"] != null)
-					_editMode = (bool) ViewState[ClientID + "_EditMode"];
+				if (ViewState[ "_EditMode"] != null)
+					_editMode = (bool) ViewState[ "_EditMode"];
 
-				if (ViewState[ClientID + "_ServerPartition"] != null)
-					_partition = (ServerPartition) ViewState[ClientID + "_ServerPartition"];
+				if (ViewState[ "_ServerPartition"] != null)
+					_partition = (ServerPartition) ViewState[ "_ServerPartition"];
 
-				if (ViewState[ClientID + "_EdittedRule"] != null)
+				if (ViewState[ "_EdittedRule"] != null)
 				{
-					ServerEntityKey ruleKey = ViewState[ClientID + "_EdittedRule"] as ServerEntityKey;
+					ServerEntityKey ruleKey = ViewState[ "_EdittedRule"] as ServerEntityKey;
 					_rule = ServerRule.Load(ruleKey);
 				}
 			}

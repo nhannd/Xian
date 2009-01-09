@@ -197,11 +197,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         {
             set
             {
-                ViewState[ClientID + "_SelectedAlertKey"] = value;
+                ViewState["SelectedAlertKey"] = value;
             }
             get
             {
-                return ViewState[ClientID + "_SelectedAlertKey"] as ServerEntityKey;
+                return ViewState["SelectedAlertKey"] as ServerEntityKey;
             }
         }
 

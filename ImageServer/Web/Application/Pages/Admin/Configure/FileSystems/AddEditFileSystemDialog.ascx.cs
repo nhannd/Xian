@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             set
             {
                 _editMode = value;
-                ViewState[ClientID + "_EditMode"] = value;
+                ViewState[ "EditMode"] = value;
             }
             get { return _editMode; }
         }
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             set
             {
                 _filesystem = value;
-                ViewState[ClientID + "_FileSystem"] = value;
+                ViewState[ "_FileSystem"] = value;
             }
             get { return _filesystem; }
         }
@@ -138,10 +138,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             else
             {
                 // reload the filesystem information user is working on
-                if (ViewState[ClientID + "_EditMode"] != null)
-                    _editMode = (bool)ViewState[ClientID + "_EditMode"];
+                if (ViewState[ "EditMode"] != null)
+                    _editMode = (bool)ViewState[ "EditMode"];
 
-                FileSystem = ViewState[ClientID + "_FileSystem"] as Filesystem;
+                FileSystem = ViewState[ "_FileSystem"] as Filesystem;
             }
         }
 

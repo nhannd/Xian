@@ -248,12 +248,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             get
             {
-                if (ViewState[ClientID + "_State"] != null)
-                    return (ShowState)ViewState[ClientID + "_State"];
+                if (ViewState["_State"] != null)
+                    return (ShowState)ViewState["_State"];
                 else
                     return ShowState.Hide;
             }
-            set { ViewState[ClientID + "_State"] = value; }
+            set { ViewState["_State"] = value; }
            
         }
 

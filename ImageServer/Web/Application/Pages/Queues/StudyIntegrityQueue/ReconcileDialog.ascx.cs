@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             set
             {
                 _item = value;
-                ViewState[ClientID + "_StudyIntegrityQueueItem"] = _item.GetKey();
+                ViewState[ "StudyIntegrityQueueItem"] = _item.GetKey();
             }
         }
 
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// <param name="e"></param>
         protected void OKButton_Click(object sender, EventArgs e)
         {
-            ServerEntityKey itemKey = ViewState[ClientID + "_StudyIntegrityQueueItem"] as ServerEntityKey;
+            ServerEntityKey itemKey = ViewState[ "StudyIntegrityQueueItem"] as ServerEntityKey;
             StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
 
             try

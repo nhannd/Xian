@@ -92,11 +92,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         public List<ServerEntityKey> WorkQueueKeys
         {
             get {
-                return ViewState[ClientID + "_WorkQueueKeys"] as List<ServerEntityKey>;
+                return ViewState[ "_WorkQueueKeys"] as List<ServerEntityKey>;
             }
             set
             {
-                ViewState[ClientID + "_WorkQueueKeys"] = value;
+                ViewState[ "_WorkQueueKeys"] = value;
                 _workQueues = null; // invalidate this list
             }
         }

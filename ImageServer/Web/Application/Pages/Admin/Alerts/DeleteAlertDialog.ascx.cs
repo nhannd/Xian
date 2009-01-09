@@ -57,8 +57,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         /// </summary>
         public bool DeleteAll
         {
-            get { return Boolean.Parse(ViewState[ClientID + "_DeleteAll"].ToString()); }
-            set { ViewState[ClientID + "_DeleteAll"] = value; }
+            get { return Boolean.Parse(ViewState[ "DeleteAll"].ToString()); }
+            set { ViewState[ "DeleteAll"] = value; }
         }
 
         #endregion Public Properties

@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
             set
             {
                 _editMode = value;
-                ViewState[ClientID + "_EditMode"] = value;
+                ViewState[ "EditMode"] = value;
             }
         }
 
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
             {
                 _partition = value;
                 // put into viewstate to retrieve later
-                ViewState[ClientID + "_EdittedPartition"] = _partition;
+                ViewState[ "EditedPartition"] = _partition;
 				if (value != null && !Page.IsPostBack)
 				{
 					ServerPartitionValidator.OriginalAeTitle = value.AeTitle;
@@ -128,12 +128,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         {
             if (Page.IsPostBack)
             {
-                if (ViewState[ClientID + "_EditMode"] != null)
-                    _editMode = (bool) ViewState[ClientID + "_EditMode"];
+                if (ViewState[ "EditMode"] != null)
+                    _editMode = (bool) ViewState[ "EditMode"];
 
-                if (ViewState[ClientID + "_EdittedPartition"] != null)
+                if (ViewState[ "EditedPartition"] != null)
                 {
-                    _partition = ViewState[ClientID + "_EdittedPartition"] as ServerPartition;
+                    _partition = ViewState[ "EditedPartition"] as ServerPartition;
                     ServerPartitionValidator.OriginalAeTitle = _partition.AeTitle;
                 	PartitionFolderValidator.OriginalPartitionFolder = _partition.PartitionFolder;
                 }

@@ -143,12 +143,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         {
             get
             {
-                if (ViewState[ClientID + "_AutoRefresh"] == null)
+                if (ViewState[ "AutoRefresh"] == null)
                     return true;
                 else
-                    return (bool)ViewState[ClientID + "_AutoRefresh"];
+                    return (bool)ViewState[ "AutoRefresh"];
             }
-            set { ViewState[ClientID + "_AutoRefresh"] = value; }
+            set { ViewState[ "AutoRefresh"] = value; }
         }
 
         #endregion Public Properties
@@ -181,11 +181,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         {
             set
             {
-                ViewState[ClientID + "_SelectedWorkQueueItemKey"] = value;
+                ViewState[ "_SelectedWorkQueueItemKey"] = value;
             }
             get
             {
-                return ViewState[ClientID + "_SelectedWorkQueueItemKey"] as ServerEntityKey;
+                return ViewState[ "_SelectedWorkQueueItemKey"] as ServerEntityKey;
             }
         }
 

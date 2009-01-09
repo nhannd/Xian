@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             set
             {
                 _editMode = value;
-                ViewState[ClientID + "_EditMode"] = value;
+                ViewState[ "EditMode"] = value;
             }
         }
 
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             {
                 _partitionArchive = value;
                 if (_partitionArchive != null && _partitionArchive.Key != null)
-                    ViewState[ClientID + "_EdittedPartitionArchive"] = _partitionArchive.GetKey();
+                    ViewState[ "EdittedPartitionArchive"] = _partitionArchive.GetKey();
             }
             get { return _partitionArchive; }
         }
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
 			set
 			{
 				_partition = value;
-				ViewState[ClientID + "_ServerPartition"] = value;
+				ViewState[ "ServerPartition"] = value;
 			}
 
 			get { return _partition; }
@@ -116,17 +116,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         {
             if (Page.IsPostBack)
             {
-                if (ViewState[ClientID + "_EditMode"] != null)
-                    _editMode = (bool) ViewState[ClientID + "_EditMode"];
+                if (ViewState[ "EditMode"] != null)
+                    _editMode = (bool) ViewState[ "EditMode"];
 
-                if (ViewState[ClientID + "_EdittedPartitionArchive"] != null)
+                if (ViewState[ "EdittedPartitionArchive"] != null)
                 {
-                    ServerEntityKey partitionKey = ViewState[ClientID + "_EdittedPartitionArchive"] as ServerEntityKey;
+                    ServerEntityKey partitionKey = ViewState[ "EdittedPartitionArchive"] as ServerEntityKey;
                     _partitionArchive = Model.PartitionArchive.Load(partitionKey);
                 }
 
-				if (ViewState[ClientID + "_ServerPartition"] != null)
-					_partition = (ServerPartition)ViewState[ClientID + "_ServerPartition"];
+				if (ViewState[ "ServerPartition"] != null)
+					_partition = (ServerPartition)ViewState[ "ServerPartition"];
 
             }
 

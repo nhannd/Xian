@@ -157,12 +157,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         {
             get
             {
-                if (ViewState[ClientID + "_ValidateCtrlBackColor"] == null)
+                if (ViewState[ "ValidateCtrlBackColor"] == null)
                     return Color.Empty;
                 else
-                    return (Color) ViewState[ClientID + "_ValidateCtrlBackColor"];
+                    return (Color) ViewState[ "ValidateCtrlBackColor"];
             }
-            set { ViewState[ClientID + "_ValidateCtrlBackColor"] = value; }
+            set { ViewState[ "ValidateCtrlBackColor"] = value; }
         }
 
         /// <summary>
@@ -172,12 +172,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         {
             get
             {
-                if (ViewState[ClientID + "_ValidateCtrlBorderColor"] == null)
+                if (ViewState[ "ValidateCtrlBorderColor"] == null)
                     return Color.Empty;
                 else
-                    return (Color)ViewState[ClientID + "_ValidateCtrlBorderColor"];
+                    return (Color)ViewState[ "ValidateCtrlBorderColor"];
             }
-            set { ViewState[ClientID + "_ValidateCtrlBorderColor"] = value; }
+            set { ViewState[ "ValidateCtrlBorderColor"] = value; }
         }
 
         protected string ClientSideOnValidateFunctionName

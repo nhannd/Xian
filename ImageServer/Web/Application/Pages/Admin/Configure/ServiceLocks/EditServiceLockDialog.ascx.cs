@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
                 _serviceLock = value;
                 // put into viewstate to retrieve later
                 if(_serviceLock != null)
-                    ViewState[ClientID + "_ServiceLock"] = _serviceLock.GetKey();
+                    ViewState[ "_ServiceLock"] = _serviceLock.GetKey();
             }
             get
             {
@@ -127,9 +127,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
         {
             base.OnLoad(e);
 
-            if (ViewState[ClientID + "_ServiceLock"] != null)
+            if (ViewState[ "_ServiceLock"] != null)
             {
-                ServerEntityKey serviceLockKey = ViewState[ClientID + "_ServiceLock"] as ServerEntityKey;
+                ServerEntityKey serviceLockKey = ViewState[ "_ServiceLock"] as ServerEntityKey;
                 _serviceLock = ServiceLock.Load(serviceLockKey);
             }
 

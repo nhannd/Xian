@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             set
             {
                 _editMode = value;
-                ViewState[ClientID + "_EditMode"] = value;
+                ViewState[ "EditMode"] = value;
             }
         }
 
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             {
                 _device = value;
                 // put into viewstate to retrieve later
-                ViewState[ClientID + "_EdittedDevice"] = _device;
+                ViewState[ "EditedDevice"] = _device;
             }
             get { return _device; }
         }
@@ -152,11 +152,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             }
             else
             {
-                if (ViewState[ClientID + "_EditMode"] != null)
-                    _editMode = (bool) ViewState[ClientID + "_EditMode"];
+                if (ViewState[ "EditMode"] != null)
+                    _editMode = (bool) ViewState[ "EditMode"];
 
-                if (ViewState[ClientID + "_EdittedDevice"] != null)
-                    _device = ViewState[ClientID + "_EdittedDevice"] as Device;
+                if (ViewState[ "EditedDevice"] != null)
+                    _device = ViewState[ "EditedDevice"] as Device;
             }
         }
 

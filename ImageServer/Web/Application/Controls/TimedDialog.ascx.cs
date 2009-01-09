@@ -92,11 +92,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             set
             {
-                ViewState[ClientID + "_Data"] = value;
+                ViewState[ "_Data"] = value;
             }
             get
             {
-                return ViewState[ClientID + "_Data"];
+                return ViewState["_Data"];
             }
         }
 

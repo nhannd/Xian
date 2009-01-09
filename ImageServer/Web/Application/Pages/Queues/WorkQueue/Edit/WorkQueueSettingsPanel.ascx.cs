@@ -47,11 +47,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             get
             {
-                return (DateTime?) ViewState[ClientID + "_NewScheduledDateTime"];
+                return (DateTime?) ViewState[ "NewScheduledDateTime"];
             }
             set
             {
-                ViewState[ClientID + "_NewScheduledDateTime"] = value;
+                ViewState[ "NewScheduledDateTime"] = value;
                 CalendarExtender.SelectedDate = value;
                 NewScheduleDate.Text = value == null ? string.Empty : value.Value.ToString(CalendarExtender.Format);
                 if (value != null && ScheduleNowCheckBox.Checked == false)
@@ -63,8 +63,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         public bool ScheduleNow
         {
-            get { return (Boolean)ViewState[ClientID + "_ScheduleNow"]; }
-            set { ViewState[ClientID + "_ScheduleNow"] = value;
+            get { return (Boolean)ViewState[ "_ScheduleNow"]; }
+            set { ViewState[ "_ScheduleNow"] = value;
                 ScheduleNowCheckBox.Checked = value;
             }
         }

@@ -68,12 +68,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             get
             {
-                if (ViewState[ClientID + "ItemNotAvailableAlertShown"] == null)
+                if (ViewState[ "ItemNotAvailableAlertShown"] == null)
                     return false;
                 else
-                    return (bool)ViewState[ClientID + "ItemNotAvailableAlertShown"];
+                    return (bool)ViewState[ "ItemNotAvailableAlertShown"];
             }
-            set { ViewState[ClientID + "ItemNotAvailableAlertShown"] = value; }
+            set { ViewState[ "ItemNotAvailableAlertShown"] = value; }
         }
 
         #endregion Protected Properties
