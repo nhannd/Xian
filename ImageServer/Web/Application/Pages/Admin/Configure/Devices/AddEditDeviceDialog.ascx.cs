@@ -238,11 +238,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             {
                 ModalDialog1.Title  = App_GlobalResources.SR.DialogEditDeviceTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
+                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
             }
             else
             {
                 ModalDialog1.Title = App_GlobalResources.SR.DialogAddDeviceTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
+                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
             }
 
             // Update the rest of the fields

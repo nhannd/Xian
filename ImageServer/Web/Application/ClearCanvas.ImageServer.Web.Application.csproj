@@ -1225,13 +1225,19 @@
     <Content Include="Pages\Queues\WorkQueue\SearchPanel.ascx" />
     <Content Include="Pages\Queues\WorkQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\WorkQueue\WorkQueueGridView.ascx" />
+    <Content Include="Scripts\CodeMirror\css\csscolors.css" />
     <Content Include="Scripts\CodeMirror\css\docs.css" />
     <Content Include="Scripts\CodeMirror\css\jscolors.css" />
+    <Content Include="Scripts\CodeMirror\css\people.jpg" />
+    <Content Include="Scripts\CodeMirror\css\sparqlcolors.css" />
     <Content Include="Scripts\CodeMirror\css\xmlcolors.css" />
     <Content Include="Scripts\CodeMirror\js\codemirror.js" />
     <Content Include="Scripts\CodeMirror\js\editor.js" />
     <Content Include="Scripts\CodeMirror\js\mirrorframe.js" />
+    <Content Include="Scripts\CodeMirror\js\parsecss.js" />
+    <Content Include="Scripts\CodeMirror\js\parsehtmlmixed.js" />
     <Content Include="Scripts\CodeMirror\js\parsejavascript.js" />
+    <Content Include="Scripts\CodeMirror\js\parsesparql.js" />
     <Content Include="Scripts\CodeMirror\js\parsexml.js" />
     <Content Include="Scripts\CodeMirror\js\select.js" />
     <Content Include="Scripts\CodeMirror\js\stringstream.js" />
@@ -1239,7 +1245,6 @@
     <Content Include="Scripts\CodeMirror\js\tokenizejavascript.js" />
     <Content Include="Scripts\CodeMirror\js\undo.js" />
     <Content Include="Scripts\CodeMirror\js\util.js" />
-    <Content Include="Scripts\CodeMirror\LICENSE.txt" />
     <Content Include="Scripts\Effects.js" />
     <Content Include="Scripts\ErrorHandling.js" />
     <Content Include="Scripts\jquery\jquery-1.2.6.min.js" />
@@ -1295,6 +1300,7 @@
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
     </None>
     <Content Include="PersistantImage.ashx" />
+    <None Include="Scripts\CodeMirror\LICENSE" />
     <None Include="Service References\FilesystemServiceProxy.map" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <Content Include="Services\FilesystemInfoService.asmx" />

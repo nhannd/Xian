@@ -258,8 +258,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                 RsltElem = document.getElementById('" +
 								RuleXmlTextBox.ClientID +
                                 @"');
-                RsltElem.value = result;
 
+                //Set the value on the TextArea and then set the value in the Editor.
+                //CodeMirror doesn't monitor changes to the textarea.
+                RsltElem.value = result;
+                CodeMirrorEditor.setCode(RsltElem.value);
             }
            
             function pageLoad(){
@@ -267,9 +270,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             }
 
             function HighlightXML() {
-                var editor = CodeMirror.fromTextArea('" + RuleXmlTextBox.ClientID + @"', {parserfile: 'parsexml.js',path: '../../../../Scripts/CodeMirror/js/', stylesheet: '../../../../Scripts/CodeMirror/css/xmlcolors.css', continuousScanning: 500  });
+                CodeMirrorEditor = CodeMirror.fromTextArea('" + RuleXmlTextBox.ClientID + @"', {parserfile: 'parsexml.js',path: '../../../../Scripts/CodeMirror/js/', stylesheet: '../../../../Scripts/CodeMirror/css/xmlcolors.css'});
             }
   
+            var CodeMirrorEditor = null;
             </script>";
 
 			Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, javascript);
@@ -380,6 +384,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 			{
 				ModalDialog.Title = App_GlobalResources.SR.DialogEditServerRuleTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
+                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
 
 				DefaultCheckBox.Checked = _rule.DefaultRule;
 				EnabledCheckBox.Checked = _rule.Enabled;
@@ -440,6 +445,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 			{
 				ModalDialog.Title = App_GlobalResources.SR.DialogAddServerRuleTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
+                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
 
 				DefaultCheckBox.Checked = false;
 				EnabledCheckBox.Checked = true;

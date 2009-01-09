@@ -290,11 +290,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
 			{
 				ModalDialog.Title = App_GlobalResources.SR.DialogEditPartitionTitle;
 				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
+                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
 			}
 			else
 			{
 				ModalDialog.Title = App_GlobalResources.SR.DialogAddPartitionTitle;
 				OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
+                OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
 			}
 
             if (updateUI)

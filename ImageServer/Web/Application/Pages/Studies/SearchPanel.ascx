@@ -9,13 +9,11 @@
     <ContentTemplate>
 
 <script type="text/Javascript">
-function pageLoad(){
     $("#<%=ModalityListBox.ClientID %>").multiSelect({
         noneSelected: '',
         oneOrMoreSelected: '% Selected',
         style: 'width: 120px;'
     });
-}
 </script>
             <asp:Table runat="server">
                 <asp:TableRow>
@@ -70,7 +68,7 @@ function pageLoad(){
                                                     <asp:ListItem Value="PT">PT</asp:ListItem>                                                                                                        
                                                     <asp:ListItem Value="RF">RF</asp:ListItem>                                                                                                                                                            
                                                     <asp:ListItem Value="SC">SC</asp:ListItem>                                                                                                        
-                                                    <asp:ListItem Value="UF">UF</asp:ListItem>                                                                                                        
+                                                    <asp:ListItem Value="US">US</asp:ListItem>                                                                                                        
                                                     <asp:ListItem Value="XA">XA</asp:ListItem>                                                                                                                                                            
                                                 </asp:ListBox>
                                             </td>

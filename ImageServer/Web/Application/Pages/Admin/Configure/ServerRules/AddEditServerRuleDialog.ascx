@@ -90,9 +90,9 @@
 								<tr>
 									<td>
 										<div style="border: solid 1px #618FAD;" >
-										<asp:TextBox ID="RuleXmlTextBox" runat="server" EnableViewState="true" Width="100%"
-											Rows="16" TextMode="MultiLine" CssClass="DialogTextArea" onfocus="HighlightXML()"></asp:TextBox>
-</div>											
+										    <asp:TextBox ID="RuleXmlTextBox" runat="server" EnableViewState="true" Width="100%"
+											    Rows="16" TextMode="MultiLine" CssClass="DialogTextArea"></asp:TextBox>
+                                        </div>											
 									</td>
 									<td>
 										<ccAsp:InvalidInputIndicator ID="InvalidRuleHint" runat="server" SkinID="InvalidInputIndicator" />
