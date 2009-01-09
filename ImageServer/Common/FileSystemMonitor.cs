@@ -432,52 +432,61 @@ namespace ClearCanvas.ImageServer.Common
 
 			lock (_lock)
 			{
-                List < FilesystemTierEnum> tiers = FilesystemTierEnum.GetAll();
+                try
+                {
+                    List<FilesystemTierEnum> tiers = FilesystemTierEnum.GetAll();
 
-				// sorted by enum values
-				tiers.Sort(delegate(FilesystemTierEnum tier1, FilesystemTierEnum tier2)
-						   {
-							   return tier1.Enum.CompareTo(tier2.Enum);
-						   });
+                    // sorted by enum values
+                    tiers.Sort(delegate(FilesystemTierEnum tier1, FilesystemTierEnum tier2)
+                               {
+                                   return tier1.Enum.CompareTo(tier2.Enum);
+                               });
 
-			    _tierInfo = new TierInfo();
+                    _tierInfo = new TierInfo();
 
-                foreach (FilesystemTierEnum tier in tiers)
-				{
-					_tierInfo.Add(tier, new List<ServerFilesystemInfo>());
-				}
+                    foreach (FilesystemTierEnum tier in tiers)
+                    {
+                        _tierInfo.Add(tier, new List<ServerFilesystemInfo>());
+                    }
 
-				using (IReadContext read = _store.OpenReadContext())
-				{
-					IFilesystemEntityBroker filesystemSelect = read.GetBroker<IFilesystemEntityBroker>();
-					FilesystemSelectCriteria criteria = new FilesystemSelectCriteria();
-					IList<Filesystem> filesystemList = filesystemSelect.Find(criteria);
+                    using (IReadContext read = _store.OpenReadContext())
+                    {
+                        IFilesystemEntityBroker filesystemSelect = read.GetBroker<IFilesystemEntityBroker>();
+                        FilesystemSelectCriteria criteria = new FilesystemSelectCriteria();
+                        IList<Filesystem> filesystemList = filesystemSelect.Find(criteria);
 
-					foreach (Filesystem filesystem in filesystemList)
-					{
-						if (_filesystemList.ContainsKey(filesystem.Key))
-						{
-							if ((filesystem.HighWatermark != _filesystemList[filesystem.Key].Filesystem.HighWatermark)
-								|| (filesystem.LowWatermark != _filesystemList[filesystem.Key].Filesystem.LowWatermark))
-								Platform.Log(LogLevel.Info, "Watermarks have changed for filesystem {0}, Low: {1}, High: {2}",
-								             filesystem.Description, filesystem.LowWatermark, filesystem.HighWatermark);
-							_filesystemList[filesystem.Key].Filesystem = filesystem;
-							_tierInfo[filesystem.FilesystemTierEnum].Add(_filesystemList[filesystem.Key]);
-						}
-						else
-						{
-							ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
-							_filesystemList.Add(filesystem.Key, info);
-							_tierInfo[filesystem.FilesystemTierEnum].Add(info);
-							info.LoadFreeSpace();
-							changed = true;
-						}
-					}
-				}				
+                        foreach (Filesystem filesystem in filesystemList)
+                        {
+                            if (_filesystemList.ContainsKey(filesystem.Key))
+                            {
+                                if ((filesystem.HighWatermark != _filesystemList[filesystem.Key].Filesystem.HighWatermark)
+                                    || (filesystem.LowWatermark != _filesystemList[filesystem.Key].Filesystem.LowWatermark))
+                                    Platform.Log(LogLevel.Info, "Watermarks have changed for filesystem {0}, Low: {1}, High: {2}",
+                                                 filesystem.Description, filesystem.LowWatermark, filesystem.HighWatermark);
+                                _filesystemList[filesystem.Key].Filesystem = filesystem;
+                                _tierInfo[filesystem.FilesystemTierEnum].Add(_filesystemList[filesystem.Key]);
+                            }
+                            else
+                            {
+                                ServerFilesystemInfo info = new ServerFilesystemInfo(filesystem);
+                                _filesystemList.Add(filesystem.Key, info);
+                                _tierInfo[filesystem.FilesystemTierEnum].Add(info);
+                                info.LoadFreeSpace();
+                                changed = true;
+                            }
+                        }
+                    }
+                    if (changed && _changedListener != null)
+                        EventsHelper.Fire(_changedListener, this, new FilesystemChangedEventArgs(this));
+                }
+                catch(Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, ex,
+                                 "Exception has occurred while updating the filesystem list from the datbase. Retry later");
+                }
 			}
 
-			if (changed && _changedListener != null)
-				EventsHelper.Fire(_changedListener, this, new FilesystemChangedEventArgs(this));
+			
 		}
 
 		/// <summary>

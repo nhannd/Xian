@@ -150,33 +150,41 @@ namespace ClearCanvas.ImageServer.Common
 		private void LoadPartitions()
         {
             bool changed = false;
-            lock(_partitionsLock)
+            lock (_partitionsLock)
             {
-                Dictionary<string, ServerPartition> templist = new Dictionary<string, ServerPartition>();
-                IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-                using (IReadContext ctx = store.OpenReadContext())
+                try
                 {
-                    IServerPartitionEntityBroker broker = ctx.GetBroker<IServerPartitionEntityBroker>();
-                    ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
-                    IList<ServerPartition> list = broker.Find(criteria);
-                    foreach(ServerPartition partition in list)
+                    Dictionary<string, ServerPartition> templist = new Dictionary<string, ServerPartition>();
+                    IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+                    using (IReadContext ctx = store.OpenReadContext())
                     {
-                        if (IsChanged(partition))
+                        IServerPartitionEntityBroker broker = ctx.GetBroker<IServerPartitionEntityBroker>();
+                        ServerPartitionSelectCriteria criteria = new ServerPartitionSelectCriteria();
+                        IList<ServerPartition> list = broker.Find(criteria);
+                        foreach (ServerPartition partition in list)
                         {
-                            changed = true;
-                        }
+                            if (IsChanged(partition))
+                            {
+                                changed = true;
+                            }
 
-                        templist.Add(partition.AeTitle, partition);
+                            templist.Add(partition.AeTitle, partition);
+                        }
+                    }
+
+                    _partitions = templist;
+
+                    if (changed && _changedListener != null)
+                    {
+                        EventsHelper.Fire(_changedListener, this, new ServerPartitionChangedEventArgs(this));
                     }
                 }
-
-                _partitions = templist;
-            }
-
-            if (changed && _changedListener!=null)
-            {
-                EventsHelper.Fire(_changedListener, this, new ServerPartitionChangedEventArgs(this));
-            }
+                catch(Exception ex)
+                {
+                    Platform.Log(LogLevel.Error, ex,
+                             "Unexpected exception when loading partitions, possible database error.  Operation will be retried later");
+                }
+            }// lock
         }
 
 		/// <summary>
@@ -187,12 +195,13 @@ namespace ClearCanvas.ImageServer.Common
 		{
 			try
 			{
+			    Platform.Log(LogLevel.Debug, "Updating server partition list from the database");
 				LoadPartitions();
 			}
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e,
-				             "Unexpected exception when loading partitions, possible database error.  Operation will be reried later");
+				             "Unexpected exception when synchronizing from the database, possible database error.  Operation will be retried later");
 			}
 		}
 
