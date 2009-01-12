@@ -105,5 +105,10 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			return new PolygonInteractiveGraphic(true);
 		}
+
+		protected override IRoiCalloutLocationStrategy CreateCalloutLocationStrategy()
+		{
+			return new PolygonRoiCalloutLocationStrategy();
+		}
 	}
 }

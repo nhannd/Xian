@@ -45,6 +45,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	[Cloneable]
 	public class PolygonInteractiveGraphic : PolyLineInteractiveGraphic
 	{
+		private event EventHandler _polygonClosed;
+
 		[CloneIgnore]
 		private SnapPointGraphic _snapPoint;
 
@@ -70,6 +72,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected PolygonInteractiveGraphic(PolygonInteractiveGraphic source, ICloningContext context) : base(source, context)
 		{
 			context.CloneFields(source, this);
+		}
+
+		/// <summary>
+		/// Event fired when the polygon is marked as completely defined.
+		/// </summary>
+		public event EventHandler PolygonClosed
+		{
+			add { _polygonClosed += value; }
+			remove { _polygonClosed -= value; }
 		}
 
 		/// <summary>
@@ -128,6 +139,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_polygonIsClosed = true;
 
 			this.PolyLine[this.PolyLine.Count - 1] = this.PolyLine[0];
+
+			EventsHelper.Fire(_polygonClosed, this, new EventArgs());
 		}
 
 		/// <summary>

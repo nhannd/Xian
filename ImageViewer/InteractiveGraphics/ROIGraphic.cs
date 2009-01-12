@@ -406,6 +406,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			_roiGraphic.ControlPoints.ControlPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnControlPointChanged);
 			_roiGraphic.ControlPoints.Graphics.ItemAdded += new EventHandler<ListEventArgs<IGraphic>>(OnControlPointAdded);
+			_roiGraphic.ControlPoints.Graphics.ItemRemoved += new EventHandler<ListEventArgs<IGraphic>>(OnControlPointRemoved);
 			_calloutGraphic.LocationChanged += new EventHandler<PointChangedEventArgs>(OnCalloutLocationChanged);
 
 			this.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnROIGraphicStateChanged);
@@ -588,6 +589,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			SetCalloutLocation();
 			
+			if (_raiseRoiChangedEvent)
+				EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
+		}
+
+		private void OnControlPointRemoved(object sender, ListEventArgs<IGraphic> e)
+		{
+			SetCalloutLocation();
+
 			if (_raiseRoiChangedEvent)
 				EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
 		}

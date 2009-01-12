@@ -109,6 +109,7 @@
     <Compile Include="Formula.cs" />
     <Compile Include="IRoiAnalyzer.cs" />
     <Compile Include="MeasurementTool.cs" />
+    <Compile Include="PolygonRoiCalloutLocationStrategy.cs" />
     <Compile Include="ProtractorAnalyzers.cs" />
     <Compile Include="ProtractorInteractiveGraphic.cs" />
     <Compile Include="ProtractorRoiCalloutLocationStrategy.cs" />
