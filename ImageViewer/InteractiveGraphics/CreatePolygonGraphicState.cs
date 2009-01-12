@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	internal class CreatePolygonGraphicState : CreateGraphicState
 	{
-		private const float SNAP_RADIUS = 7.5f;
+		private const float SNAP_RADIUS = 15f;
 		private int _controlPointIndex;
 		private int _numberOfPointsAnchored = 0;
 
@@ -69,6 +69,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			else if (_numberOfPointsAnchored >= 5 && mouseInformation.ClickCount >= 2)
 			{
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
+				this.InteractiveGraphic.SnapPoint.Visible = false;
 
 				try {
 					_numberOfPointsAnchored--;
@@ -88,6 +89,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			else if (_numberOfPointsAnchored >= 3 && AtOrigin(mouseInformation.Location) && mouseInformation.ClickCount == 1)
 			{
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
+				this.InteractiveGraphic.SnapPoint.Visible = false;
 
 				try {
 					this.InteractiveGraphic.ControlPoints.RemoveAt(_controlPointIndex--);
@@ -120,10 +122,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
 
-			if (_numberOfPointsAnchored >= 3 && AtOrigin(mouseInformation.Location)) {
+			if (_numberOfPointsAnchored >= 3 && AtOrigin(mouseInformation.Location))
+			{
 				this.InteractiveGraphic.ControlPoints[_controlPointIndex] = this.InteractiveGraphic.PolyLine[0];
-			} else {
+				this.InteractiveGraphic.SnapPoint.Visible = true;
+			}
+			else
+			{
 				this.InteractiveGraphic.ControlPoints[_controlPointIndex] = mouseInformation.Location;
+				this.InteractiveGraphic.SnapPoint.Visible = false;
 			}
 
 			this.InteractiveGraphic.ResetCoordinateSystem();
