@@ -5,8 +5,10 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -15,7 +17,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[Tooltip("showHide", "TooltipShowHideScaleOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.Scale.ShowHide")]
 	[IconSet("showHide", IconScheme.Colour, "Icons.ScaleOverlayToolSmall.png", "Icons.ScaleOverlayToolMedium.png", "Icons.ScaleOverlayToolLarge.png")]
-	
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class ScaleOverlayTool : ImageViewerTool
 	{
@@ -209,21 +210,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			/// </summary>
 			public override void OnDrawing()
 			{
+				base.CoordinateSystem = CoordinateSystem.Destination;
+				_horizontalScale.CoordinateSystem = CoordinateSystem.Destination;
+				_verticalScale.CoordinateSystem = CoordinateSystem.Destination;
+
 				try
 				{
-					base.CoordinateSystem = CoordinateSystem.Destination;
-
-					// compute baseline
-					Rectangle clientRectangle = base.ParentPresentationImage.ClientRectangle;
-					int width5p = (int) (0.10*clientRectangle.Width);
-					int height5p = (int) (0.10*clientRectangle.Height);
-
-					_horizontalScale.CoordinateSystem = CoordinateSystem.Destination;
-					_horizontalScale.SetEndPoints(new PointF(2*width5p, clientRectangle.Height - height5p), new SizeF(clientRectangle.Width - 4*width5p, 0));
+					Rectangle hScaleBounds = ComputeScaleBounds(base.ParentPresentationImage, 0.10f, 0.05f);
+					_horizontalScale.SetEndPoints(new PointF(hScaleBounds.Left, hScaleBounds.Bottom), new SizeF(hScaleBounds.Width, 0));
 					_horizontalScale.Visible = true;
 
-					_verticalScale.CoordinateSystem = CoordinateSystem.Destination;
-					_verticalScale.SetEndPoints(new PointF(clientRectangle.Width - width5p, 2*height5p), new SizeF(0, clientRectangle.Height - 4*height5p));
+					Rectangle vScaleBounds = ComputeScaleBounds(base.ParentPresentationImage, 0.05f, 0.10f);
+					_verticalScale.SetEndPoints(new PointF(vScaleBounds.Right, vScaleBounds.Top), new SizeF(0, vScaleBounds.Height));
 					_verticalScale.Visible = true;
 				}
 				catch (ScaleGraphic.UncalibratedImageException)
@@ -245,6 +243,39 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			{
 				EventsHelper.Fire(_changed, this, EventArgs.Empty);
 				base.Draw();
+			}
+
+			/// <summary>
+			/// Computes the maximum bounds for scales on a given <see cref="IPresentationImage"/>.
+			/// </summary>
+			/// <param name="presentationImage">The image to compute bounds for.</param>
+			/// <param name="horizontalReduction">The percentage of width to subtract from both the client bounds and the source image bounds.</param>
+			/// <param name="verticalReduction">The percentage of height to subtract from both the client bounds and the source image bounds.</param>
+			/// <returns>The maximum scale bounds.</returns>
+			private static Rectangle ComputeScaleBounds(IPresentationImage presentationImage, float horizontalReduction, float verticalReduction)
+			{
+				RectangleF clientBounds = presentationImage.ClientRectangle;
+				float hReduction = horizontalReduction*clientBounds.Width;
+				float vReduction = verticalReduction*clientBounds.Height;
+
+				clientBounds = new RectangleF(clientBounds.X + hReduction, clientBounds.Y + vReduction, clientBounds.Width - 2*hReduction, clientBounds.Height - 2*vReduction);
+
+				if (presentationImage is IImageGraphicProvider)
+				{
+					ImageGraphic imageGraphic = ((IImageGraphicProvider) presentationImage).ImageGraphic;
+					Rectangle srcRectangle = new Rectangle(0, 0, imageGraphic.Columns, imageGraphic.Rows);
+
+					RectangleF imageBounds = imageGraphic.SpatialTransform.ConvertToDestination(srcRectangle);
+					hReduction = horizontalReduction*imageBounds.Width;
+					vReduction = verticalReduction*imageBounds.Height;
+
+					imageBounds = new RectangleF(imageBounds.X + hReduction, imageBounds.Y + vReduction, imageBounds.Width - 2*hReduction, imageBounds.Height - 2*vReduction);
+					return Rectangle.Round(RectangleUtilities.Intersect(imageBounds, clientBounds));
+				}
+				else
+				{
+					return Rectangle.Round(clientBounds);
+				}
 			}
 		}
 	}
