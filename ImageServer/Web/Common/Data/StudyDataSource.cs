@@ -253,9 +253,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 reason = "Study is being locked";
                 return false;
             }
-            else if (IsReconcileRequired)
+            if (IsReconcileRequired)
             {
                 reason = "There are images to be reconciled for this study";
+                return false;
+            }
+            if (IsNearline)
+            {
+                reason = "Study is nearline. It must be restored before it can be deleted.";
                 return false;
             }
 
@@ -279,28 +284,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             if (IsNearline)
             {
-                Platform.CheckTrue(IsArchived, "study.IsArchived");
-
-
-				if (_theArchiveLocation != null) 
-                {
-					if (_theStudyStorageLocation == null)
-					{
-						StudyController controller = new StudyController();
-						_theStudyStorageLocation = CollectionUtils.FirstElement(controller.GetStudyStorageLocation(TheStudy));
-					}
-
-					if (_theStudyStorageLocation != null)
-					{
-						if (_theArchiveLocation.ServerTransferSyntax.Lossless &&
-						    TransferSyntax.GetTransferSyntax(_theStudyStorageLocation.TransferSyntaxUid).LossyCompressed)
-						{
-							// archive is lossless but current copy is lossy. can't edit until the lossless is restored.
-							reason = "Study was received as lossless but is compressed lossy.";
-							return false;
-						}
-					}
-                }
+               reason = "Study is nearline. It must be restored before it can be edited.";
+               return false;
             }
 
             if (IsReconcileRequired)
@@ -317,12 +302,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             if (IsLocked)
             {
-                reason = "Study is being locked";
+                reason = "Study is being locked.";
                 return false;
             }
-            else if (IsReconcileRequired)
+            
+            if (IsReconcileRequired)
             {
-                reason = "There are images to be reconciled for this study";
+                reason = "There are images to be reconciled for this study.";
+                return false;
+            }
+            
+            if (IsNearline)
+            {
+                reason = "Study is nearline.";
                 return false;
             }
 
@@ -337,12 +329,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 reason = "Study has not been archived.";
                 return false;
             }
-            else if (IsLocked)
+            
+            if (IsLocked)
             {
                 reason = "Study is being locked";
                 return false;
             }
-            else if (IsReconcileRequired)
+            
+            if (IsReconcileRequired)
             {
                 reason = "There are images to be reconciled for this study";
                 return false;
@@ -359,9 +353,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 reason = "Study is being locked";
                 return false;
             }
-            else if (IsReconcileRequired)
+            
+            if (IsReconcileRequired)
             {
                 reason = "There are images to be reconciled for this study";
+                return false;
+            }
+
+            if (IsNearline)
+            {
+                reason = "Study is nearline.";
                 return false;
             }
 
