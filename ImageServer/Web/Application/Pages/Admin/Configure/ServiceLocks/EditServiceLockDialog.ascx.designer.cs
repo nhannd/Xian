@@ -101,13 +101,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender CalendarExtender;
         
         /// <summary>
-        /// ScheduleTimeDropDownList control.
+        /// ScheduleTime control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ScheduleTimeDropDownList;
+        protected global::System.Web.UI.WebControls.TextBox ScheduleTime;
+        
+        /// <summary>
+        /// ScheduleTimeMaskedEditExtender control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.MaskedEditExtender ScheduleTimeMaskedEditExtender;
+        
+        /// <summary>
+        /// ScheduleTimeMaskedEditValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.MaskedEditValidator ScheduleTimeMaskedEditValidator;
         
         /// <summary>
         /// Panel1 control.

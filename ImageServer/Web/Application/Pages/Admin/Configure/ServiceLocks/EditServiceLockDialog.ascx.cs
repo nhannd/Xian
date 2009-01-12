@@ -117,12 +117,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
 
         #region Protected methods
 
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-            ScheduleTimeDropDownList.Items.Clear();
-        }
-
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -164,24 +158,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
             Close();
         }
 
-
-
         #endregion Protected methods
 
         #region Private Methods
 
         private void AddCustomTime(DateTime customTime)
         {
-            ScheduleTimeDropDownList.Items.Clear();
-            ScheduleTimeDropDownList.Items.AddRange(DefaultTimeListItems.ToArray());
-
             string customTimeValue = customTime.ToString(TIME_FORMAT);
-            if (ScheduleTimeDropDownList.Items.FindByValue(customTimeValue)==null)
-            {
-                ScheduleTimeDropDownList.Items.Add(new ListItem(customTimeValue));
-            }
-
-            ScheduleTimeDropDownList.SelectedValue = customTimeValue;
+            ScheduleTime.Text = customTimeValue;
         }
 
         private void SaveData()
@@ -192,8 +176,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
 
                 ServiceLockConfigurationController controller = new ServiceLockConfigurationController();
                 DateTime scheduledDate = DateTime.ParseExact(ScheduleDate.Text, CalendarExtender.Format, null);
-                DateTime scheduleTime = DateTime.ParseExact(ScheduleTimeDropDownList.SelectedValue, TIME_FORMAT, null);
-                scheduledDate = scheduledDate.Add(scheduleTime.TimeOfDay);
+
+                if (ScheduleTime.Text.Contains("_") == false)
+                {
+                    try
+                    {
+                        DateTime scheduleTime = DateTime.ParseExact(ScheduleTime.Text, TIME_FORMAT, null);
+                        scheduledDate = scheduledDate.Add(scheduleTime.TimeOfDay);
+                    }
+                    catch (Exception e)
+                    {
+                        //Ignore this exception since the time is not fully typed in or in an incorrect format,
+                        //that will be validated when the user presses apply.
+                    }
+                }               
+                
                 if (controller.UpdateServiceLock(ServiceLock.GetKey(), Enabled.Checked, scheduledDate))
                 {
                     if (ServiceLockUpdated != null)

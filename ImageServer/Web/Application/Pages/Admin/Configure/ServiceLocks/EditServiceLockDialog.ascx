@@ -52,7 +52,9 @@
                         <ccUI:CalendarExtender ID="CalendarExtender" runat="server" 
                                     TargetControlID="ScheduleDate" PopupButtonID="DatePickerButton" CssClass="Calendar" >
                         </ccUI:CalendarExtender>&nbsp;
-                        <asp:DropDownList ID="ScheduleTimeDropDownList" runat="server" CssClass="DialogDropDownList"></asp:DropDownList>
+                        <asp:TextBox ID="ScheduleTime" runat="server" CssClass="DialogTextBox"  ValidationGroup="vg1"/>
+                        <aspAjax:MaskedEditExtender runat="server" ID="ScheduleTimeMaskedEditExtender" MaskType="Time" AcceptAMPM="true" TargetControlID="ScheduleTime" Mask="99:99" MessageValidatorTip="false" OnInvalidCssClass="InvalidTextEntered"/>
+                        <aspAjax:MaskedEditValidator runat="server" ID="ScheduleTimeMaskedEditValidator" ControlExtender="ScheduleTimeMaskedEditExtender" ControlToValidate="ScheduleTime" ValidationExpression="(0[1-9]|1[0-2]):[0-5][0-9] ([ap]m|[AP]M)" ValidationGroup="vg1"  />
                     </asp:TableCell>
                 </asp:TableRow>
                 
