@@ -31,9 +31,9 @@
 
 using System;
 
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {

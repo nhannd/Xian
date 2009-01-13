@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using System.Xml;

@@ -117,10 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExceptionFailedToDelete" xml:space="preserve">
+    <value>Unable to delete {0}.  The most likely reason is that the item is referenced by another item in the system.</value>
+  </data>
   <data name="ExceptionInvalidSession" xml:space="preserve">
     <value>Invalid or expired user session.</value>
   </data>
   <data name="ExceptionInvalidUserAccount" xml:space="preserve">
     <value>Invalid user name and/or password.</value>
+  </data>
+  <data name="MessageCannotDeleteOwnUserAccount" xml:space="preserve">
+    <value>You cannot delete your own user account.</value>
   </data>
 </root>

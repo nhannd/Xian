@@ -31,13 +31,10 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
-using ClearCanvas.Ris.Application.Services.Admin.UserAdmin;
 using System;
 using Iesi.Collections.Generic;
 using ClearCanvas.Enterprise.Core.Modelling;

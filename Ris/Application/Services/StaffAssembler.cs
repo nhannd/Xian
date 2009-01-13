@@ -80,7 +80,8 @@ namespace ClearCanvas.Ris.Application.Services
 					staff.Groups,
 					delegate(StaffGroup group) { return groupAssembler.CreateSummary(group); }),
 				new Dictionary<string, string>(staff.ExtendedProperties),
-				staff.Deactivated);
+				staff.Deactivated,
+				staff.UserName);
 		}
 
 		public void UpdateStaff(StaffDetail detail, Staff staff, bool updateGroups, IPersistenceContext context)
@@ -98,6 +99,7 @@ namespace ClearCanvas.Ris.Application.Services
 			staff.LicenseNumber = detail.LicenseNumber;
 			staff.BillingNumber = detail.BillingNumber;
 			staff.Deactivated = detail.Deactivated;
+			staff.UserName = detail.UserName;
 
 			staff.TelephoneNumbers.Clear();
 			if (detail.TelephoneNumbers != null)

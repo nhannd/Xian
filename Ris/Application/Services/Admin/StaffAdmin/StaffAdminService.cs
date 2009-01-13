@@ -43,8 +43,6 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using ClearCanvas.Enterprise.Authentication;
-using ClearCanvas.Enterprise.Authentication.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 {
@@ -73,6 +71,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 
 			if (!string.IsNullOrEmpty(request.FamilyName))
 				criteria.Name.FamilyName.StartsWith(request.FamilyName);
+
+			if (!string.IsNullOrEmpty(request.UserName))
+				criteria.UserName.EqualTo(request.UserName);
 
             if (!request.IncludeDeactivated)
 				criteria.Deactivated.EqualTo(false);
@@ -118,8 +119,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
 		public AddStaffResponse AddStaff(AddStaffRequest request)
 		{
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.StaffDetail, "StaffDetail");
+
+			// if trying to associate with a user account, check the account is free
+			if(!string.IsNullOrEmpty(request.StaffDetail.UserName))
+			{
+				ValidateUserNameFree(request.StaffDetail.UserName);
+			}
+
+			// create new staff
 			Staff staff = new Staff();
 
+			// set properties from request
 			StaffAssembler assembler = new StaffAssembler();
 			assembler.UpdateStaff(request.StaffDetail, staff, Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup), PersistenceContext);
 
@@ -135,7 +147,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
 		public UpdateStaffResponse UpdateStaff(UpdateStaffRequest request)
 		{
-			Staff staff = PersistenceContext.Load<Staff>(request.StaffDetail.StaffRef, EntityLoadFlags.CheckVersion);
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.StaffDetail, "StaffDetail");
+
+			Staff staff = PersistenceContext.Load<Staff>(request.StaffDetail.StaffRef);
+
+			// if trying to associate with a new user account, check the account is free
+			if (!string.IsNullOrEmpty(request.StaffDetail.UserName) && request.StaffDetail.UserName != staff.UserName)
+			{
+				ValidateUserNameFree(request.StaffDetail.UserName);
+			}
 
 			StaffAssembler assembler = new StaffAssembler();
 			assembler.UpdateStaff(request.StaffDetail, staff, Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup), PersistenceContext);
@@ -151,10 +172,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			{
 				IStaffBroker broker = PersistenceContext.GetBroker<IStaffBroker>();
 				Staff item = broker.Load(request.StaffRef, EntityLoadFlags.Proxy);
-
-				User affectedUser = FindUserByName(item.UserName);
-				if (affectedUser != null)
-					affectedUser.DisplayName = null;
 
 				//bug #3324: because StaffGroup owns the collection, need to iterate over each group
 				//and manually remove this staff
@@ -257,21 +274,22 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			}
 		}
 
-		private User FindUserByName(string name)
+		private void ValidateUserNameFree(string userName)
 		{
-			if (String.IsNullOrEmpty(name))
-				return null;
-
+			IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
 			try
 			{
-				UserSearchCriteria where = new UserSearchCriteria();
-				where.UserName.EqualTo(name);
-
-				return PersistenceContext.GetBroker<IUserBroker>().FindOne(where);
+				StaffSearchCriteria where = new StaffSearchCriteria();
+				where.UserName.EqualTo(userName);
+				Staff existing = staffBroker.FindOne(where);
+				if (existing != null)
+					throw new RequestValidationException(
+						string.Format("Staff cannot be associated with user {0} because this user is already associated to staff {1}",
+							userName, existing.Name));
 			}
 			catch (EntityNotFoundException)
 			{
-				return null;
+				// no previously associated staff
 			}
 		}
 	}

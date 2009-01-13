@@ -1,4 +1,5 @@
 using System.ServiceModel;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.TranscriptionWorkflow

@@ -47,7 +47,7 @@ namespace ClearCanvas.Enterprise.Authentication
     {
         #region IAuthenticationService Members
 
-        [UpdateOperation(Auditable = false)]
+    	[UpdateOperation(Auditable = false)]
         public SessionToken InitiateUserSession(string userName, string password)
         {
             Platform.CheckForNullReference(userName, "userName");
@@ -142,12 +142,6 @@ namespace ClearCanvas.Enterprise.Authentication
         public string[] ListAuthorityTokensForUser(string userName)
         {
             return PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(userName);
-        }
-
-        [ReadOperation]
-        public bool AssertTokenForUser(string userName, string token)
-        {
-            return PersistenceContext.GetBroker<IAuthorityTokenBroker>().AssertUserHasToken(userName, token);
         }
 
         #endregion

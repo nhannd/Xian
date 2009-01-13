@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -67,6 +67,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
+    <Compile Include="Admin\AuthorityGroupAdmin\AuthorityGroupAdminService.cs" />
+    <Compile Include="Admin\AuthorityGroupAssembler.cs" />
+    <Compile Include="Admin\AuthorityTokenAssembler.cs" />
+    <Compile Include="Admin\UserAdmin\UserAdminService.cs" />
+    <Compile Include="Admin\UserAdmin\UserAssembler.cs" />
     <Compile Include="AuthenticationService.cs" />
     <Compile Include="AuthorityGroup.cs" />
     <Compile Include="Imex\AuthorityGroupImex.cs" />

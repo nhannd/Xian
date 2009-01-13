@@ -89,7 +89,6 @@
     <Compile Include="IAuditFormattable.cs" />
     <Compile Include="IObjectWriter.cs" />
     <Compile Include="IEntityChangeSetRecorder.cs" />
-    <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IEntityBroker.cs" />
     <Compile Include="IExceptionRecorder.cs" />
     <Compile Include="Imex\ExportException.cs" />

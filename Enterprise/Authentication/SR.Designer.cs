@@ -61,6 +61,15 @@ namespace ClearCanvas.Enterprise.Authentication {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to delete {0}.  The most likely reason is that the item is referenced by another item in the system..
+        /// </summary>
+        internal static string ExceptionFailedToDelete {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid or expired user session..
         /// </summary>
         internal static string ExceptionInvalidSession {
@@ -75,6 +84,15 @@ namespace ClearCanvas.Enterprise.Authentication {
         internal static string ExceptionInvalidUserAccount {
             get {
                 return ResourceManager.GetString("ExceptionInvalidUserAccount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You cannot delete your own user account..
+        /// </summary>
+        internal static string MessageCannotDeleteOwnUserAccount {
+            get {
+                return ResourceManager.GetString("MessageCannotDeleteOwnUserAccount", resourceCulture);
             }
         }
     }

@@ -1,4 +1,5 @@
 using System.ServiceModel;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.OrderNotes
 {

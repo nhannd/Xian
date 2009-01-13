@@ -34,7 +34,7 @@ using System.ServiceModel;
 using System.ServiceModel.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {

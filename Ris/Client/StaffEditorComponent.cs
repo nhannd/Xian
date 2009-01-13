@@ -39,6 +39,8 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -233,6 +235,7 @@ namespace ClearCanvas.Ris.Client
 					_staffDetail.Groups = new List<StaffGroupSummary>(_groupsEditor.SelectedItems);
 				}
 
+				// add or update staff
 				Platform.GetService<IStaffAdminService>(
 					delegate(IStaffAdminService service)
 					{
@@ -250,6 +253,12 @@ namespace ClearCanvas.Ris.Client
 						}
 					});
 
+				// if necessary, update associated user account
+				if(!string.IsNullOrEmpty(_staffDetail.UserName))
+				{
+					UpdateUserAccount(_staffDetail.UserName, _staffSummary);
+				}
+
 				this.Exit(ApplicationComponentExitCode.Accepted);
 			}
 			catch (Exception e)
@@ -266,6 +275,32 @@ namespace ClearCanvas.Ris.Client
 		public override void Cancel()
 		{
 			base.Cancel();
+		}
+
+		internal static void UpdateUserAccount(string userName, StaffSummary staff)
+		{
+			if(!string.IsNullOrEmpty(userName))
+			{
+				Platform.GetService<IUserAdminService>(
+					delegate(IUserAdminService service)
+					{
+						// check if the user account exists
+						ListUsersRequest request = new ListUsersRequest();
+						request.UserName = userName;
+						request.ExactMatchOnly = true;
+						UserSummary user = CollectionUtils.FirstElement(service.ListUsers(request).Users);
+
+						if(user != null)
+						{
+							// modify the display name on the user account
+							UserDetail detail = service.LoadUserForEdit(
+								new LoadUserForEditRequest(userName)).UserDetail;
+							detail.DisplayName = (staff == null) ? null : staff.Name.ToString();
+
+							service.UpdateUser(new UpdateUserRequest(detail));
+						}
+					});
+			}
 		}
 	}
 }

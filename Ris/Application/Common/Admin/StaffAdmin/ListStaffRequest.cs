@@ -58,15 +58,33 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
             this.Page = page;
         }
 
+		/// <summary>
+		/// Filter by staff ID.
+		/// </summary>
         [DataMember]
         public string StaffID;
 
+		/// <summary>
+		/// Filter by given name, or partial given name.
+		/// </summary>
         [DataMember]
         public string GivenName;
 
-        [DataMember]
+		/// <summary>
+		/// Filter by family name, or partial family name.
+		/// </summary>
+		[DataMember]
         public string FamilyName;
 
+		/// <summary>
+		/// Filter by name of associated user account. Exact match only.  Typically not used in conjunction with any other filters.
+		/// </summary>
+		[DataMember]
+		public string UserName;
+
+		/// <summary>
+		/// Filter by staff type.
+		/// </summary>
         [DataMember]
         public string[] StaffTypesFilter;
     }

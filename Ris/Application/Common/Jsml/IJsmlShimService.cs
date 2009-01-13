@@ -35,6 +35,7 @@ using System.Text;
 using System.ServiceModel;
 using System.Xml.Serialization;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Jsml
 {

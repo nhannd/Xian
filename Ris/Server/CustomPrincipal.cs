@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Security.Principal;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Server

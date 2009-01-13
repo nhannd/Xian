@@ -32,12 +32,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.EnumerationAdmin;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common;
 using System.Security.Permissions;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.EnumerationAdmin
 {

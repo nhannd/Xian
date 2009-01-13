@@ -30,6 +30,7 @@
 #endregion
 
 using System.ServiceModel;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 

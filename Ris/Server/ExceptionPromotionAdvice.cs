@@ -35,8 +35,8 @@ using System.Text;
 using System.ServiceModel;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Ris.Application.Common;
 using Castle.DynamicProxy;
 
 namespace ClearCanvas.Ris.Server

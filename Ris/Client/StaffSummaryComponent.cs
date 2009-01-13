@@ -39,6 +39,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
@@ -242,6 +243,23 @@ namespace ClearCanvas.Ris.Client
 					Platform.GetService<IStaffAdminService>(
 						delegate(IStaffAdminService service)
 						{
+							// check if staff has associated user account
+							StaffDetail detail = service.LoadStaffForEdit(
+								new LoadStaffForEditRequest(item.StaffRef)).StaffDetail;
+							if (!string.IsNullOrEmpty(detail.UserName))
+							{
+								// ask if the account should be deleted too
+								if(this.Host.ShowMessageBox(
+									string.Format(SR.MessageConfirmDeleteAssociatedUserAccount, detail.UserName), MessageBoxActions.YesNo)
+									== DialogBoxAction.Yes)
+								{
+									Platform.GetService<IUserAdminService>(
+										delegate(IUserAdminService userAdminService)
+										{
+											userAdminService.DeleteUser(new DeleteUserRequest(detail.UserName));
+										});
+								}
+							}
 							service.DeleteStaff(new DeleteStaffRequest(item.StaffRef));
 						});
 

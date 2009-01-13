@@ -59,5 +59,14 @@ namespace ClearCanvas.Enterprise.Common {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Object modified by another user or process.
+        /// </summary>
+        internal static string ExceptionConcurrentModification {
+            get {
+                return ResourceManager.GetString("ExceptionConcurrentModification", resourceCulture);
+            }
+        }
     }
 }

@@ -49,15 +49,6 @@ namespace ClearCanvas.Ris.Application.Common
 				public const string UIValidationRules = "Admin/System/UI Validation Rules";
 			}
 
-			public static class Security
-			{
-				[AuthorityToken(Description = "Allow administration of User Accounts.")]
-				public const string User = "Admin/Security/User";
-
-				[AuthorityToken(Description = "Allow administration of Authority Groups.")]
-				public const string AuthorityGroup = "Admin/Security/Authority Group";
-			}
-
 			public static class Data
 			{
 				[AuthorityToken(Description = "Allow administration of Facilities.")]

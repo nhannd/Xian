@@ -36,9 +36,10 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
+using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Desktop.Validation;
 
@@ -105,14 +106,16 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(UserEditorComponentViewExtensionPoint))]
     public class UserEditorComponent : ApplicationComponent
     {
-        private bool _isNew;
-        private string _userName;
-        private UserDetail _userDetail;
+        private readonly bool _isNew;
+        private readonly string _userName;
+		private readonly SelectableAuthorityGroupTable _table;
+
+		private UserDetail _userDetail;
         private List<AuthorityGroupTableEntry> _authorityGroups;
-        private SelectableAuthorityGroupTable _table;
+    	private StaffSummary _associatedStaff;
+		private StaffSummary _previousAssociatedStaff;
 
         private UserSummary _userSummary;
-		private UserSummary _affectedUserSummary;
 
         /// <summary>
         /// Constructor
@@ -141,28 +144,26 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _userSummary; }
         }
 
-		/// <summary>
-		/// Returns other user that is affected by editing the user
-		/// </summary>
-		public UserSummary AffectedUserSummary
-		{
-			get { return _affectedUserSummary; }
-		}
-		
 		public override void Start()
         {
+			// load all auth groups
+			Platform.GetService<IAuthorityGroupAdminService>(
+				delegate(IAuthorityGroupAdminService service)
+				{
+					ListAuthorityGroupsResponse authorityGroupsResponse = service.ListAuthorityGroups(new ListAuthorityGroupsRequest());
+
+					_authorityGroups = CollectionUtils.Map<AuthorityGroupSummary, AuthorityGroupTableEntry>(
+						authorityGroupsResponse.AuthorityGroups,
+						delegate(AuthorityGroupSummary summary)
+						{
+							return new AuthorityGroupTableEntry(summary, this.OnAuthorityGroupChecked);
+						});
+				});
+
+			// load user
             Platform.GetService<IUserAdminService>(
                 delegate(IUserAdminService service)
                 {
-                    ListAuthorityGroupsResponse authorityGroupsResponse = service.ListAuthorityGroups(new ListAuthorityGroupsRequest());
-
-                    _authorityGroups = CollectionUtils.Map<AuthorityGroupSummary, AuthorityGroupTableEntry, List<AuthorityGroupTableEntry>>(
-                        authorityGroupsResponse.AuthorityGroups,
-                        delegate(AuthorityGroupSummary summary)
-                        {                            
-                            return new AuthorityGroupTableEntry(summary, this.OnAuthorityGroupChecked);
-                        });
-
                     if (_isNew)
                     {
                         _userDetail = new UserDetail();
@@ -172,9 +173,15 @@ namespace ClearCanvas.Ris.Client.Admin
                         LoadUserForEditResponse response = service.LoadUserForEdit(new LoadUserForEditRequest(_userName));
                         _userDetail = response.UserDetail;
                     }
-
-                    InitialiseTable();
                 });
+
+			// load associated staff if exists
+			if(!string.IsNullOrEmpty(_userDetail.UserName))
+			{
+				_previousAssociatedStaff = _associatedStaff = GetStaffForUser(_userDetail.UserName);
+			}
+
+			InitialiseTable();
 
             base.Start();
         }
@@ -204,7 +211,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public string StaffName
         {
-            get { return _userDetail.StaffRef == null ? "" : PersonNameFormat.Format(_userDetail.StaffName); }
+			get { return _associatedStaff == null ? "" : PersonNameFormat.Format(_associatedStaff.Name); }
         }
 
         public DateTime? ValidFrom
@@ -252,11 +259,8 @@ namespace ClearCanvas.Ris.Client.Admin
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, staffComponent, "Select Staff");
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    StaffSummary staffSummary = (StaffSummary)staffComponent.SummarySelection.Item;
-                    _userDetail.StaffRef = staffSummary.StaffRef;
-                    _userDetail.StaffName = staffSummary.Name;
-                    _userDetail.DisplayName =
-                        string.Format("{0}, {1}", _userDetail.StaffName.FamilyName, _userDetail.StaffName.GivenName);
+                    _associatedStaff = (StaffSummary)staffComponent.SummarySelection.Item;
+                	_userDetail.DisplayName = _associatedStaff.Name.ToString();
 
                     this.NotifyPropertyChanged("StaffName");
                     this.NotifyPropertyChanged("ClearStaffEnabled");
@@ -273,13 +277,12 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public bool ClearStaffEnabled
         {
-            get { return _userDetail.StaffRef != null; }
+			get { return _associatedStaff != null; }
         }
 
         public void ClearStaff()
         {
-            _userDetail.StaffRef = null;
-            _userDetail.StaffName = new PersonNameDetail();
+			_associatedStaff = null;
             _userDetail.DisplayName = null;
 
             this.NotifyPropertyChanged("StaffName");
@@ -297,6 +300,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
             try
             {
+				// add or update the user account
                 Platform.GetService<IUserAdminService>(
                     delegate(IUserAdminService service)
                     {
@@ -304,15 +308,30 @@ namespace ClearCanvas.Ris.Client.Admin
                         {
                             AddUserResponse response = service.AddUser(new AddUserRequest(_userDetail));
                             _userSummary = response.UserSummary;
-                        	_affectedUserSummary = response.AffectedUserSummary;
                         }
                         else
                         {
                             UpdateUserResponse response = service.UpdateUser(new UpdateUserRequest(_userDetail));
                             _userSummary = response.UserSummary;
-                        	_affectedUserSummary = response.AffectedUserSummary;
                         }
                     });
+
+				// if staff association has changed, update the involved staff
+				if(!Equals(_associatedStaff, _previousAssociatedStaff))
+				{
+					// dissociate previous
+					if(_previousAssociatedStaff != null)
+					{
+						UpdateStaffAssociation(_previousAssociatedStaff, null);
+					}
+
+					// associate new
+					if(_associatedStaff != null)
+					{
+						UpdateStaffAssociation(_associatedStaff, _userDetail.UserName);
+					}
+				}
+
 
                 this.Exit(ApplicationComponentExitCode.Accepted);
             }
@@ -396,5 +415,34 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (foundEntry != null) foundEntry.Selected = true;
             }
         }
+
+		private StaffSummary GetStaffForUser(string userName)
+		{
+			StaffSummary staff = null;
+			Platform.GetService<IStaffAdminService>(
+				delegate(IStaffAdminService service)
+				{
+					ListStaffRequest request = new ListStaffRequest();
+					request.UserName = userName;
+
+					ListStaffResponse response = service.ListStaff(request);
+					staff = CollectionUtils.FirstElement(response.Staffs);
+				});
+			return staff;
+		}
+
+		private void UpdateStaffAssociation(StaffSummary staff, string userName)
+		{
+			// update the associated staff
+			Platform.GetService<IStaffAdminService>(
+				delegate(IStaffAdminService service)
+				{
+					StaffDetail detail =
+						service.LoadStaffForEdit(new LoadStaffForEditRequest(staff.StaffRef)).StaffDetail;
+					detail.UserName = userName;
+
+					service.UpdateStaff(new UpdateStaffRequest(detail));
+				});
+		}
     }
 }

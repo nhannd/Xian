@@ -36,10 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
-using ClearCanvas.Common.Utilities;
-using System.Collections;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Desktop.Validation;
 

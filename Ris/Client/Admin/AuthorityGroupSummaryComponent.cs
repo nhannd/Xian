@@ -37,12 +37,12 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
+using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Authority Groups", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup)]
+    [ActionPermission("launch", ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class AuthorityGroupSummaryTool : Tool<IDesktopToolContext>
@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// <summary>
     /// AuthorityGroupSummaryComponent class
     /// </summary>
-    public class AuthorityGroupSummaryComponent : SummaryComponentBase<AuthorityGroupSummary, AuthorityGroupTable, ListAuthorityGroupsRequest>
+    public class AuthorityGroupSummaryComponent : SummaryComponentBase<AuthorityGroupSummary, AuthorityGroupTable>
     {
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,
@@ -99,16 +99,16 @@ namespace ClearCanvas.Ris.Client.Admin
 
 			model.AddAction("duplicate", "Duplicate","Icons.DuplicateSmall.png", "Duplicate the selected authority group",
 								DuplicateSelectedItem,
-								ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
+								ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
 
 			model.AddAction("import", "Import", "Icons.ImportAuthorityTokensSmall.png", "Import authority tokens and groups from local plugins",
 								Import,
-				                ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
+								ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
 
 
-			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
-			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
-			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
+			model.Add.SetPermissibility(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
+			model.Edit.SetPermissibility(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
+			model.Delete.SetPermissibility(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup);
 		}
 
 		#region Presentation Model
@@ -124,8 +124,8 @@ namespace ClearCanvas.Ris.Client.Admin
 					AuthorityTokenDefinition[] tokens = AuthorityGroupSetup.GetAuthorityTokens();
 					AuthorityGroupDefinition[] groups = AuthorityGroupSetup.GetDefaultAuthorityGroups();
 
-					Platform.GetService<IUserAdminService>(
-						delegate(IUserAdminService service)
+					Platform.GetService<IAuthorityGroupAdminService>(
+						delegate(IAuthorityGroupAdminService service)
 						{
 							// first import the tokens, since the default groups will likely depend on these tokens
 							service.ImportAuthorityTokens(
@@ -189,11 +189,15 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
 		/// <returns></returns>
-		protected override IList<AuthorityGroupSummary> ListItems(ListAuthorityGroupsRequest request)
+		protected override IList<AuthorityGroupSummary> ListItems(int firstRow, int maxRows)
 		{
+			ListAuthorityGroupsRequest request = new ListAuthorityGroupsRequest();
+			request.Page.FirstRow = firstRow;
+			request.Page.MaxRows = maxRows;
+
 			ListAuthorityGroupsResponse listResponse = null;
-			Platform.GetService<IUserAdminService>(
-				delegate(IUserAdminService service)
+			Platform.GetService<IAuthorityGroupAdminService>(
+				delegate(IAuthorityGroupAdminService service)
 				{
 					listResponse = service.ListAuthorityGroups(request);
 				});
@@ -258,8 +262,8 @@ namespace ClearCanvas.Ris.Client.Admin
 			{
 				try
 				{
-					Platform.GetService<IUserAdminService>(
-						delegate(IUserAdminService service)
+					Platform.GetService<IAuthorityGroupAdminService>(
+						delegate(IAuthorityGroupAdminService service)
 						{
 							service.DeleteAuthorityGroup(new DeleteAuthorityGroupRequest(item.AuthorityGroupRef));
 						});

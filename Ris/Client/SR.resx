@@ -483,6 +483,9 @@
   <data name="MessageConcurrentModification" xml:space="preserve">
     <value>The operation cannot be completed because modifications have been made by another user.</value>
   </data>
+  <data name="MessageConfirmDeleteAssociatedUserAccount" xml:space="preserve">
+    <value>Delete associated user account {0}? If you choose No, you can manually delete the account later.</value>
+  </data>
   <data name="MessageConfirmDeleteSelectedAddress" xml:space="preserve">
     <value>Are you sure you want to delete this address?</value>
   </data>

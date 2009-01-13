@@ -36,14 +36,15 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.UserAdmin;
 using System.Threading;
+using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Users", "Launch")]
-    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User)]
+    [ActionPermission("launch", ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class UserSummaryTool : Tool<IDesktopToolContext>
     {
@@ -89,7 +90,7 @@ namespace ClearCanvas.Ris.Client.Admin
     /// UserSummaryComponent class
     /// </summary>
 	[AssociateView(typeof(UserSummaryComponentViewExtensionPoint))]
-    public class UserSummaryComponent : SummaryComponentBase<UserSummary, UserTable, ListUsersRequest>
+    public class UserSummaryComponent : SummaryComponentBase<UserSummary, UserTable>
     {
         private Action _resetPasswordAction;
 		private string _id;
@@ -154,11 +155,11 @@ namespace ClearCanvas.Ris.Client.Admin
 			base.InitializeActionModel(model);
 
 			_resetPasswordAction = model.AddAction("resetPassword", SR.TitleResetPassword, "Icons.ResetToolSmall.png",
-				SR.TitleResetPassword, ResetUserPassword, ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);
+				SR.TitleResetPassword, ResetUserPassword, ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User);
 
-			model.Add.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);
-			model.Edit.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);
-			model.Delete.SetPermissibility(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Security.User);
+			model.Add.SetPermissibility(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User);
+			model.Edit.SetPermissibility(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User);
+			model.Delete.SetPermissibility(ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User);
 		}
 
 		protected override bool SupportsDelete
@@ -170,8 +171,12 @@ namespace ClearCanvas.Ris.Client.Admin
 		/// Gets the list of items to show in the table, according to the specifed first and max items.
 		/// </summary>
 		/// <returns></returns>
-		protected override IList<UserSummary> ListItems(ListUsersRequest request)
+		protected override IList<UserSummary> ListItems(int firstRow, int maxRows)
 		{
+			ListUsersRequest request = new ListUsersRequest();
+			request.Page.FirstRow = firstRow;
+			request.Page.MaxRows = maxRows;
+
 			ListUsersResponse listResponse = null;
 			Platform.GetService<IUserAdminService>(
 				delegate(IUserAdminService service)
@@ -198,20 +203,6 @@ namespace ClearCanvas.Ris.Client.Admin
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				addedItems.Add(editor.UserSummary);
-
-				if (editor.AffectedUserSummary != null)
-				{
-					// Replace the affected item
-					this.Table.Items.Replace(
-						delegate(UserSummary x) { return IsSameItem(editor.AffectedUserSummary, x); },
-						editor.AffectedUserSummary);
-
-					this.Host.DesktopWindow.ShowMessageBox(
-						string.Format(SR.MessageStaffChangeAssociation, editor.UserSummary.DisplayName,
-						              editor.AffectedUserSummary.UserName, editor.UserSummary.UserName),
-						MessageBoxActions.Ok);
-				}
-
 				return true;
 			}
 			return false;
@@ -234,19 +225,6 @@ namespace ClearCanvas.Ris.Client.Admin
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				editedItems.Add(editor.UserSummary);
-				if (editor.AffectedUserSummary != null)
-				{
-					// Replace the affected item
-					this.Table.Items.Replace(
-						delegate(UserSummary x) { return IsSameItem(editor.AffectedUserSummary, x); },
-						editor.AffectedUserSummary);
-
-					this.Host.DesktopWindow.ShowMessageBox(
-						string.Format(SR.MessageStaffChangeAssociation, editor.UserSummary.DisplayName,
-									  editor.AffectedUserSummary.UserName, editor.UserSummary.UserName),
-						MessageBoxActions.Ok);
-				}
-
 				return true;
 			}
 			return false;
@@ -264,21 +242,31 @@ namespace ClearCanvas.Ris.Client.Admin
 			failureMessage = null;
 			deletedItems = new List<UserSummary>();
 
-		    string currentUserName = Thread.CurrentPrincipal.Identity.Name;
-            if (CollectionUtils.Contains(items, delegate(UserSummary u) { return u.UserName == currentUserName; }))
-            {
-                this.Host.DesktopWindow.ShowMessageBox(string.Format(SR.MessageErrorDeleteOwnUser, currentUserName), MessageBoxActions.Ok);
-                return false;
-            }
-
 			foreach (UserSummary item in items)
 			{
 				try
 				{
+
+					// delete user account
 					Platform.GetService<IUserAdminService>(
 						delegate(IUserAdminService service)
 						{
 							service.DeleteUser(new DeleteUserRequest(item.UserName));
+						});
+
+					// dissociate any associated staff
+					Platform.GetService<IStaffAdminService>(
+						delegate(IStaffAdminService service)
+						{
+							ListStaffRequest lookupRequest = new ListStaffRequest();
+							lookupRequest.UserName = item.UserName;
+							StaffSummary staff = CollectionUtils.FirstElement(service.ListStaff(lookupRequest).Staffs);
+							if (staff != null)
+							{
+								StaffDetail detail = service.LoadStaffForEdit(new LoadStaffForEditRequest(staff.StaffRef)).StaffDetail;
+								detail.UserName = null;
+								service.UpdateStaff(new UpdateStaffRequest(detail));
+							}
 						});
 
 					deletedItems.Add(item);

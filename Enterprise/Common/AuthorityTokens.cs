@@ -48,6 +48,15 @@ namespace ClearCanvas.Enterprise.Common
 				[AuthorityToken(Description = "Allow modification of enterprise configuration store data.")]
 				public const string EnterpriseConfiguration = "Admin/System/Enterprise Configuration";
 			}
+
+			public static class Security
+			{
+				[AuthorityToken(Description = "Allow administration of User Accounts.")]
+				public const string User = "Admin/Security/User";
+
+				[AuthorityToken(Description = "Allow administration of Authority Groups.")]
+				public const string AuthorityGroup = "Admin/Security/Authority Group";
+			}
 		}
-    }
+	}
 }
