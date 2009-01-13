@@ -93,7 +93,10 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						_studyStorage = StudyStorage.Load(queueItem.StudyStorageKey);
 				}
 
-				Platform.Log(LogLevel.Error, "Starting restore of study: {0}", _studyStorage.StudyInstanceUid);
+				if (_studyStorage == null)
+					Platform.Log(LogLevel.Error, "Starting restore of study: {0}", _location.StudyInstanceUid);
+				else
+					Platform.Log(LogLevel.Error, "Starting restore of study: {0}", _studyStorage.StudyInstanceUid);
 
 				// If restoring a Nearline study, select a filesystem
 				string destinationFolder;
@@ -146,7 +149,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				catch (Exception)
 				{
 					DateTime scheduledTime = Platform.Time.AddSeconds(HsmSettings.Default.ReadFailRescheduleDelaySeconds);
-					Platform.Log(LogLevel.Error, "Study {0} is unreadable, rescheduling restore to {1}", _studyStorage.StudyInstanceUid,
+					Platform.Log(LogLevel.Error, "Study {0} is unreadable, rescheduling restore to {1}", _studyStorage == null ? (_location == null ? string.Empty : _location.StudyInstanceUid) : _studyStorage.StudyInstanceUid,
 					             scheduledTime);
 					// Just reschedule in "Restoring" state, the file is unreadable.
 					_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Restoring,
@@ -162,7 +165,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e, "Unexpected exception processing restore request for {0} on archive {1}",
-					_studyStorage == null ? string.Empty : _studyStorage.StudyInstanceUid, 
+					_studyStorage == null ? (_location == null ? string.Empty : _location.StudyInstanceUid) : _studyStorage.StudyInstanceUid, 
 					_hsmArchive.PartitionArchive.Description);
 				_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
 			}
