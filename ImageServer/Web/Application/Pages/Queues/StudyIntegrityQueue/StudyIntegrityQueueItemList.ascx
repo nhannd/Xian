@@ -18,12 +18,12 @@
 						</asp:BoundField>
 						<asp:TemplateField HeaderText="Existing Study" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
-                                <asp:Label ID="ExistingPatientName" runat="server"></asp:Label> / <asp:Label ID="ExistingAccessionNumber" runat="server"></asp:Label>
+                                <asp:Label ID="ExistingPatientId" runat="server"></asp:Label> / <asp:Label ID="ExistingPatientName" runat="server"></asp:Label> / <asp:Label ID="ExistingAccessionNumber" runat="server"></asp:Label>
                             </itemtemplate>
 						</asp:TemplateField>
 		                <asp:TemplateField HeaderText="Conflicting Study" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
-                                <asp:Label ID="ConflictingPatientName" runat="server"></asp:Label> / <asp:Label ID="ConflictingAccessionNumber" runat="server"></asp:Label>
+                                <asp:Label ID="ConflictingPatientId" runat="server"></asp:Label> / <asp:Label ID="ConflictingPatientName" runat="server"></asp:Label> / <asp:Label ID="ConflictingAccessionNumber" runat="server"></asp:Label>
                             </itemtemplate>
 						</asp:TemplateField>
 			            <asp:TemplateField HeaderText="Time Received" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">

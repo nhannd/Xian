@@ -276,26 +276,35 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             {
                 Label existingPatientName = row.FindControl("ExistingPatientName") as Label;
                 Label conflictingPatientName = row.FindControl("ConflictingPatientName") as Label;
+                Label existingPatientId = row.FindControl("ExistingPatientId") as Label;
+                Label conflictingPatientId = row.FindControl("ConflictingPatientId") as Label;
                 Label existingAccessionNumber = row.FindControl("ExistingAccessionNumber") as Label;
                 Label conflictingAccessionNumber = row.FindControl("ConflictingAccessionNumber") as Label;
-                if (existingPatientName != null && existingAccessionNumber != null)
-                {
+                
+                if(existingPatientId != null)
+                    existingPatientId.Text = summary.ExistingPatientId;
+                if(existingPatientName != null)
                     existingPatientName.Text = summary.ExistingPatientName;
+                if(existingAccessionNumber != null)
                     existingAccessionNumber.Text = summary.ExistingAccessionNumber;
+                if(conflictingPatientId != null)
+                    conflictingPatientId.Text = summary.ConflictingPatientId;
+                if (conflictingPatientId != null)
+                {
+                    conflictingPatientId.Text = summary.ConflictingPatientId;
+//                    if (!summary.ExistingPatientId.Equals(summary.ConflictingPatientId))
+  //                      conflictingPatientId.ForeColor = Color.Red;
                 }
-                if (conflictingPatientName != null && conflictingAccessionNumber != null)
+                if (conflictingPatientName != null)
                 {
                     conflictingPatientName.Text = summary.ConflictingPatientName;
-                    conflictingAccessionNumber.Text = summary.ConflictingAccessionNumber;
-
                     if (!summary.ExistingPatientName.Equals(summary.ConflictingPatientName))
-                    {
                         conflictingPatientName.ForeColor = Color.Red;
-                    }
+                }
+                if (conflictingAccessionNumber != null) {
+                    conflictingAccessionNumber.Text = summary.ConflictingAccessionNumber;
                     if (!summary.ExistingAccessionNumber.Equals(summary.ConflictingAccessionNumber))
-                    {
                         conflictingAccessionNumber.ForeColor = Color.Red;
-                    }
                 }
 
                 DateTimeLabel timeReceived = row.FindControl("TimeReceived") as DateTimeLabel;

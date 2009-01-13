@@ -85,6 +85,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         public void Clear()
         {
             PatientName.Text = string.Empty;
+            PatientId.Text = string.Empty;
+            AccessionNumber.Text = string.Empty;
+            ReceivedDate.Text = string.Empty;
         }
 
         public override void DataBind()
@@ -132,6 +135,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
 											if (!String.IsNullOrEmpty(PatientName.Text))
 												source.PatientName = "*" + PatientName.Text + "*";
+                                            if (!String.IsNullOrEmpty(PatientId.Text))
+                                                source.PatientId = "*" + PatientId.Text + "*";
                                             if (!String.IsNullOrEmpty(AccessionNumber.Text))
 										        source.AccessionNumber = "*" + AccessionNumber.Text + "*";
                                             if (!String.IsNullOrEmpty(ReceivedDate.Text))

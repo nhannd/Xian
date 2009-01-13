@@ -9,11 +9,16 @@
     <ContentTemplate>
 
 <script type="text/Javascript">
+
+Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
+
+function MultiSelect() {
     $("#<%=ModalityListBox.ClientID %>").multiSelect({
         noneSelected: '',
         oneOrMoreSelected: '% Selected',
         style: 'width: 120px;'
     });
+}
 </script>
             <asp:Table runat="server">
                 <asp:TableRow>

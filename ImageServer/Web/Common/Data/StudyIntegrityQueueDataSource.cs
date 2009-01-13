@@ -43,17 +43,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	{
 		#region Private members
 
+        private string _existingPatientId;
 		private string _existingPatientName;
         private string _existingAccessionNumber;
         private string _conflictingAccessionNumber;
         private string _conflictingPatientName;
+        private string _conflictingPatientId;
 	    private string _studyInstanceUID;
 	    private DateTime _receivedTime;
         private StudyIntegrityQueue _studyIntegrityQueueItem;
 	    private ServerPartition _partition;
         private StudySummary _study;
 
-        
 		#endregion Private members
 
 		#region Public Properties
@@ -63,7 +64,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             get { return _study; }
             set { _study = value; }
         }
-        
         
         public string ExistingAccessionNumber
         {
@@ -93,10 +93,22 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			set { _existingPatientName = value; }
 		}
 
+        public string ExistingPatientId
+        {
+            get { return _existingPatientId; }
+            set { _existingPatientId = value; }
+        }
+
         public string ConflictingPatientName
         {
             get { return _conflictingPatientName; }
             set { _conflictingPatientName = value; }
+        }
+
+        public string ConflictingPatientId
+        {
+            get { return _conflictingPatientId; }
+            set { _conflictingPatientId = value; }
         }
 
 	    public DateTime ReceivedTime
@@ -135,6 +147,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private StudyIntegrityQueueController _searchController = new StudyIntegrityQueueController();
 		private string _description;
         private string _patientName;
+        private string _patientId;
         private string _accessionNumber;
 		private string _insertTime;
 		private int _resultCount;
@@ -157,6 +170,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             get { return _patientName; }
             set { _patientName = value; }
+        }
+        public string PatientId
+        {
+            get { return _patientId; }
+            set { _patientId = value; }
         }
         public string AccessionNumber
         {
@@ -268,12 +286,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             summary.StudySummary = StudySummaryAssembler.CreateStudySummary(study);
             summary.StudyInstanceUID = summary.StudySummary.StudyInstanceUid;
             summary.ExistingPatientName = queueDescription.ExistingPatientName;
+            summary.ExistingPatientId = queueDescription.ExistingPatientId;
             summary.ExistingAccessionNumber = queueDescription.ExistingAccessionNumber;
-		    summary.ConflictingPatientName = queueDescription.ConflictingPatientName;
+            summary.ConflictingPatientId = queueDescription.ConflictingPatientId;
+            summary.ConflictingPatientName = queueDescription.ConflictingPatientName;
 		    summary.ConflictingAccessionNumber = queueDescription.ConflictingAccessionNumber;
 		    summary.ReceivedTime = item.InsertTime;
-            
-            
 
 			return summary;
 		}
@@ -287,17 +305,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             string description = string.Empty;
 
-            if (!String.IsNullOrEmpty(PatientName) && !String.IsNullOrEmpty(AccessionNumber))
+            if (!String.IsNullOrEmpty(PatientName))
             {
-                description = PatientName + "%" + AccessionNumber + "%";
+                description += PatientName + "%";
             }
-            else if (!String.IsNullOrEmpty(PatientName))
+            if (!String.IsNullOrEmpty(PatientId))
             {
-                description = PatientName + "%";
+                description += PatientId;
             }
-            else if(!String.IsNullOrEmpty(AccessionNumber))
+            if(!String.IsNullOrEmpty(AccessionNumber))
             {
-                description = AccessionNumber + "%";                
+                description += AccessionNumber + "%";                
             }
 
             if(!String.IsNullOrEmpty(description))

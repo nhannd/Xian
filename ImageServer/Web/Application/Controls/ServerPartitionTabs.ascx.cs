@@ -95,13 +95,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
             this.PartitionTabContainer.Tabs.Clear();
 
-            TabPanel headingLabelTab = new TabPanel();
-            headingLabelTab.HeaderText = "Partitions: ";
-            headingLabelTab.ID = "Tab_Heading";
-            
-            // Add the tab into the tabstrip
-            PartitionTabContainer.Tabs.Add(headingLabelTab);
-            
             foreach (ServerPartition part in ServerPartitionList)
             {
                 n++;
@@ -134,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
             if (ServerPartitionList != null && ServerPartitionList.Count > 0)
             {
-                PartitionTabContainer.ActiveTabIndex = 1;
+                PartitionTabContainer.ActiveTabIndex = 0;
             }
             else
             {

@@ -95,9 +95,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private ReconcileStudyQueueDescription GetQueueEntryDescription()
         {
             ReconcileStudyQueueDescription desc = new ReconcileStudyQueueDescription();
+            desc.ExistingPatientId = _context.CurrentStudy.PatientId;
             desc.ExistingPatientName = _context.CurrentStudy.PatientsName;
             desc.ExistingAccessionNumber = _context.CurrentStudy.AccessionNumber;
             desc.ConflictingPatientName = _context.File.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
+            desc.ConflictingPatientId = _context.File.DataSet[DicomTags.PatientId].GetString(0, String.Empty);
             desc.ConflictingAccessionNumber = _context.File.DataSet[DicomTags.AccessionNumber].GetString(0, String.Empty);
             
             return desc;

@@ -8,7 +8,9 @@
     <ContentTemplate>
     <ccAsp:JQuery runat="server" ID="JQuery1" MultiSelect="true" Effects="true" />
 <script type="text/Javascript">
-function pageLoad(){
+Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
+
+function MultiSelect(){
     $("#<%=TypeListBox.ClientID %>").multiSelect({
         noneSelected: '',
         oneOrMoreSelected: '% Selected',

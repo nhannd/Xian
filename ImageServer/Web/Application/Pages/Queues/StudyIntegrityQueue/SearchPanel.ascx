@@ -22,6 +22,11 @@
                                                     EnableViewState="False" /><br />
                                                 <asp:TextBox ID="PatientName" runat="server" CssClass="SearchTextBox" />
                                             </td>
+                                             <td align="left" valign="bottom">
+                                                <asp:Label ID="Label4" runat="server" Text="Patient ID" CssClass="SearchTextBoxLabel"
+                                                    EnableViewState="False" /><br />
+                                                <asp:TextBox ID="PatientId" runat="server" CssClass="SearchTextBox" ToolTip="Search the list by Patient Id" />
+                                            </td>
                                             <td align="left" valign="bottom">
                                                 <asp:Label ID="Label3" runat="server" Text="Accession #" CssClass="SearchTextBoxLabel"
                                                     EnableViewState="False" /><br />
