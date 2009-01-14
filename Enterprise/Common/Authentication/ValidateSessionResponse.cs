@@ -9,12 +9,22 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 	[DataContract]
 	public class ValidateSessionResponse : DataContractBase
 	{
-		public ValidateSessionResponse(SessionToken sessionToken)
+		public ValidateSessionResponse(SessionToken sessionToken, string[] authorityTokens)
 		{
-			SessionToken = sessionToken;
+			this.SessionToken = sessionToken;
+			this.AuthorityTokens = authorityTokens;
 		}
 
+		/// <summary>
+		/// Updated session token.
+		/// </summary>
 		[DataMember]
 		public SessionToken SessionToken;
+
+		/// <summary>
+		/// User authority tokens, if requested.
+		/// </summary>
+		[DataMember]
+		public string[] AuthorityTokens;
 	}
 }

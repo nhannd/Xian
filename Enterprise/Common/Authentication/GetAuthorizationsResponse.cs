@@ -14,6 +14,9 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 			AuthorityTokens = authorityTokens;
 		}
 
+		/// <summary>
+		/// Authority tokens assigned to specified user.
+		/// </summary>
 		[DataMember]
 		public string[] AuthorityTokens;
 	}

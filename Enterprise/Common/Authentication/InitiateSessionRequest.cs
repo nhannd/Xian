@@ -15,11 +15,23 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 			this.Password = password;
 		}
 
+		/// <summary>
+		/// User account to begin session for.
+		/// </summary>
 		[DataMember]
 		public string UserName;
 
+		/// <summary>
+		/// Password.
+		/// </summary>
 		[DataMember]
 		public string Password;
+
+		/// <summary>
+		/// Indicates whether the set of authorizations for this user should be returned in the response.
+		/// </summary>
+		[DataMember]
+		public bool GetAuthorizations;
 
 	}
 }

@@ -81,7 +81,11 @@ namespace ClearCanvas.Enterprise.Authentication
             AuthenticationSettings settings = new AuthenticationSettings();
             session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
 
-            return new InitiateSessionResponse(session.GetToken());
+			// get authority tokens if requested
+			string[] authorizations = request.GetAuthorizations ? 	
+				PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(request.UserName) : new string[0];
+
+            return new InitiateSessionResponse(session.GetToken(), authorizations);
         }
 
         [UpdateOperation(ChangeSetAuditable = false)]
@@ -126,7 +130,11 @@ namespace ClearCanvas.Enterprise.Authentication
             // renew the expiration time
             session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
 
-            return new ValidateSessionResponse(session.GetToken());
+			// get authority tokens if requested
+			string[] authorizations = request.GetAuthorizations ?
+				PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(request.UserName) : new string[0];
+
+            return new ValidateSessionResponse(session.GetToken(), authorizations);
         }
 
         [UpdateOperation(ChangeSetAuditable = false)]
@@ -156,6 +164,11 @@ namespace ClearCanvas.Enterprise.Authentication
         {
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
+
+			//TODO: ideally we should validate the username and session token and check session expiry
+			//this would ensure that only a user with a valid session could obtain his authorizations,
+			//however, there is an issue in the RIS right now that prevents the session token from being passed
+			// in the request... this is a WCF architecture question that needs to be resolved
 
 			string[] tokens = PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(request.UserName);
 

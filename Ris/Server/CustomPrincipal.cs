@@ -64,7 +64,8 @@ namespace ClearCanvas.Ris.Server
                 Platform.GetService<IAuthenticationService>(
                     delegate(IAuthenticationService service)
                     {
-                        _authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name)).AuthorityTokens;
+						// TODO: we are supposed to pass session token here but we don't have access to it
+                        _authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name, null)).AuthorityTokens;
                     });
             }
 

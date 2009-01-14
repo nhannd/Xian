@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
 
                         token = service.InitiateSession(new InitiateSessionRequest(user, password)).SessionToken;
 
-                        authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(user)).AuthorityTokens;
+                        authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(user, token)).AuthorityTokens;
 
                         // setup a generic principal on this thread for the duration of this request
                         // (this is necessary in order to load the WorkingFacilitySettings below)

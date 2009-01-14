@@ -16,12 +16,21 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 			this.NewPassword = newPassword;
 		}
 
+		/// <summary>
+		/// User account.
+		/// </summary>
 		[DataMember]
 		public string UserName;
 
+		/// <summary>
+		/// Current password.
+		/// </summary>
 		[DataMember]
 		public string CurrentPassword;
 
+		/// <summary>
+		/// New password.
+		/// </summary>
 		[DataMember]
 		public string NewPassword;
 

@@ -15,9 +15,15 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 			this.SessionToken = token;
 		}
 
+		/// <summary>
+		/// User account.
+		/// </summary>
 		[DataMember]
 		public string UserName;
 
+		/// <summary>
+		/// Session token identifying session to terminate.
+		/// </summary>
 		[DataMember]
 		public SessionToken SessionToken;
 

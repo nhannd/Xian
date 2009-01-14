@@ -43,6 +43,7 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 	/// </summary>
 	[CoreServiceProvider]
 	[ServiceContract]
+	[Authentication(false)]
 	public interface IAuthenticationService
 	{
 		/// <summary>
@@ -56,8 +57,7 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 		InitiateSessionResponse InitiateSession(InitiateSessionRequest request);
 
 		/// <summary>
-		/// Validates an existing user session, returning a new session token
-		/// that has the same identifier but an updated expiry time.
+		/// Validates an existing user session, returning an updated session token.
 		/// </summary>
 		/// <exception cref="SecurityTokenException">Session token expired or otherwise invalid.</exception>
 		[OperationContract]
@@ -81,7 +81,8 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 
 		/// <summary>
 		/// Obtains the set of authority tokens that have been granted to the 
-		/// specified user.
+		/// specified user.  Note: we may want to remove this method and use ValidateSession instead,
+		/// since that method also returns the current list of authorizations
 		/// </summary>
 		/// <returns></returns>
 		[OperationContract]

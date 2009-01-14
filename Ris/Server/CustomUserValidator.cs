@@ -31,14 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IdentityModel.Selectors;
-using System.IdentityModel.Tokens;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Authentication;
-using ClearCanvas.Enterprise.Core;
-using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Server
 {
