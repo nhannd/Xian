@@ -3,7 +3,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.CannedTextService
 {
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface ICannedTextService
     {

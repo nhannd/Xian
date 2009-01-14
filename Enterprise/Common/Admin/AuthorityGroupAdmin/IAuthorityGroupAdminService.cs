@@ -37,7 +37,7 @@ namespace ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin
 	/// <summary>
 	/// Provides operations to administer authority groups.
 	/// </summary>
-	[CoreServiceProvider]
+	[EnterpriseCoreService]
 	[ServiceContract]
 	public interface IAuthorityGroupAdminService
 	{

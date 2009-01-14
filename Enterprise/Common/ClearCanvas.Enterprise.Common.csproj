@@ -99,7 +99,7 @@
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="Authentication\IAuthenticationService.cs" />
     <Compile Include="AuthorityTokens.cs" />
-    <Compile Include="CoreServiceProviderAttribute.cs" />
+    <Compile Include="EnterpriseCoreServiceAttribute.cs" />
     <Compile Include="DataContractBase.cs" />
     <Compile Include="EnterpriseConfigurationStore.cs" />
     <Compile Include="EnterpriseSettingsStore.cs" />

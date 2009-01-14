@@ -7,7 +7,7 @@ namespace ClearCanvas.Ris.Application.Common.OrderNotes
     /// Defines a service contract for working with order notes.
     /// </summary>
     [ServiceContract]
-    [RisServiceProvider]
+    [RisApplicationService]
     public interface IOrderNoteService
     {
         /// <summary>

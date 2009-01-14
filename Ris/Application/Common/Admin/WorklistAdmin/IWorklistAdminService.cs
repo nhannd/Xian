@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     /// <summary>
     /// Provides services for administration of persistent worklist definitions
     /// </summary>
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface IWorklistAdminService
     {

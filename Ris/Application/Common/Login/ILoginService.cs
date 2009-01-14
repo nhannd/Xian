@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Common.Login
     /// <summary>
     /// Provides application login operations
     /// </summary>
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     [Authentication(false)]
     public interface ILoginService

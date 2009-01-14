@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeGroupAdmin
     /// <summary>
     /// 
     /// </summary>
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface IProcedureTypeGroupAdminService
     {

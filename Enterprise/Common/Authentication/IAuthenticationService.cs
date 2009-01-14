@@ -41,7 +41,7 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 	/// <summary>
 	/// Provides methods for validating user credentials and obtaining the set of authority tokens granted to a user.
 	/// </summary>
-	[CoreServiceProvider]
+	[EnterpriseCoreService]
 	[ServiceContract]
 	[Authentication(false)]
 	public interface IAuthenticationService

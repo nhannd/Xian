@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
     /// on another service using JSML-encoded request/response objects rather than native
     /// .NET request/response objects.
     /// </summary>
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface IJsmlShimService
     {

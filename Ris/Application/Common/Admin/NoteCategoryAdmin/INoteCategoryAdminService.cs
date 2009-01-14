@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin
     /// <summary>
     /// Provides operations to administer note categories
     /// </summary>
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface INoteCategoryAdminService
     {

@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin
     /// <summary>
     /// Provides operations to administer staff groups.
     /// </summary>
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface IStaffGroupAdminService
     {

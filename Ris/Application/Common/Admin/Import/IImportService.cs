@@ -37,7 +37,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.Import
 {
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface IImportService
     {

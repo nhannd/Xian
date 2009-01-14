@@ -11,7 +11,7 @@ namespace ClearCanvas.Ris.Client
     /// Extension of the <see cref="ServiceProviderExtensionPoint"/> that allows the client to obtain Core Enterprise services.
     /// </summary>
     [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
-    internal sealed class CoreServiceProvider : RemoteServiceProviderBase<CoreServiceProviderAttribute>
+    internal sealed class CoreServiceProvider : RemoteServiceProviderBase<EnterpriseCoreServiceAttribute>
     {
         private IServiceChannelConfiguration _channelConfiguration;
 

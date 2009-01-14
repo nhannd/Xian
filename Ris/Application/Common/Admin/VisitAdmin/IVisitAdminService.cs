@@ -35,7 +35,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
 {
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface IVisitAdminService
     {

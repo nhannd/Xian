@@ -36,7 +36,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
 {
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface IPatientAdminService
     {

@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 	[ServiceKnownType(typeof(RegistrationWorklistItem))]
 	[ServiceKnownType(typeof(ReportingWorklistItem))]
 
-	[RisServiceProvider]
+	[RisApplicationService]
 	[ServiceContract]
 	public interface IProtocollingWorkflowService : IWorkflowService
 	{

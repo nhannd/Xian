@@ -7,7 +7,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin
 	/// <summary>
 	/// Provides operations to administer ProcedureType entities.
 	/// </summary>
-	[RisServiceProvider]
+	[RisApplicationService]
 	[ServiceContract]
 	public interface IProcedureTypeAdminService
 	{

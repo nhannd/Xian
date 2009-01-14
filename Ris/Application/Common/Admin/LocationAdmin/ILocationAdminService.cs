@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
     /// <summary>
     /// Provides operations to administer locations
     /// </summary>
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface ILocationAdminService
     {

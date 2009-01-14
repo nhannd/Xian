@@ -38,7 +38,7 @@ namespace ClearCanvas.Enterprise.Common.Admin.UserAdmin
     /// <summary>
     /// Provides operations to administer user accounts and authority groups
     /// </summary>
-    [CoreServiceProvider]
+    [EnterpriseCoreService]
     [ServiceContract]
     public interface IUserAdminService
     {

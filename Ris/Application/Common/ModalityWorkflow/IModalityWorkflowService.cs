@@ -34,7 +34,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
 	[ServiceKnownType(typeof(ModalityWorklistItem))]
 	public interface IModalityWorkflowService : IWorklistService<ModalityWorklistItem>, IWorkflowService

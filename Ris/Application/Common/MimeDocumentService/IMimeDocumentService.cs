@@ -34,7 +34,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.MimeDocumentService
 {
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface IMimeDocumentService
     {

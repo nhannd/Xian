@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client
     /// services.
     /// </summary>
     [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
-    internal class RisServiceProvider : RemoteServiceProviderBase<RisServiceProviderAttribute>
+    internal class RisServiceProvider : RemoteServiceProviderBase<RisApplicationServiceAttribute>
     {
         private IServiceChannelConfiguration _channelConfiguration;
 

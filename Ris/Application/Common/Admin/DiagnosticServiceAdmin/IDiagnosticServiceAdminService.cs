@@ -7,7 +7,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
 	/// <summary>
 	/// Provides operations to administer DiagnosticService entities.
 	/// </summary>
-	[RisServiceProvider]
+	[RisApplicationService]
 	[ServiceContract]
 	public interface IDiagnosticServiceAdminService
 	{

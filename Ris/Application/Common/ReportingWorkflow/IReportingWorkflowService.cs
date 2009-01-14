@@ -35,7 +35,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     [ServiceKnownType(typeof(ReportingWorklistItem))]
     public interface IReportingWorkflowService : IWorklistService<ReportingWorklistItem>, IWorkflowService

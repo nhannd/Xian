@@ -216,7 +216,7 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\ReserveAccessionNumberResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\TimeShiftOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\TimeShiftOrderResponse.cs" />
-    <Compile Include="RisServiceProviderAttribute.cs" />
+    <Compile Include="RisApplicationServiceAttribute.cs" />
     <Compile Include="StaffGroupDetail.cs" />
     <Compile Include="StaffGroupSummary.cs" />
     <Compile Include="Admin\StaffGroupAdmin\UpdateStaffGroupRequest.cs" />

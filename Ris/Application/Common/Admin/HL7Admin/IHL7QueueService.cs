@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
     /// <summary>
     /// 
     /// </summary>
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface IHL7QueueService
     {

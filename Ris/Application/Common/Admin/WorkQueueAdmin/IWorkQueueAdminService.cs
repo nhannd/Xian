@@ -6,7 +6,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin
 	/// <summary>
 	/// Provides services for administering the work queue.
 	/// </summary>
-	[RisServiceProvider]
+	[RisApplicationService]
 	[ServiceContract]
 	public interface IWorkQueueAdminService
 	{

@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
     /// <summary>
     /// Provides operations to administer facilities
     /// </summary>
-    [RisServiceProvider]
+    [RisApplicationService]
     [ServiceContract]
     public interface IFacilityAdminService
     {
