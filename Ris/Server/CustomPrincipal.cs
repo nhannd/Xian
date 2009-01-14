@@ -34,8 +34,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Security.Principal;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common.Authentication;
 
 namespace ClearCanvas.Ris.Server
 {
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Server
                 Platform.GetService<IAuthenticationService>(
                     delegate(IAuthenticationService service)
                     {
-                        _authorityTokens = service.ListAuthorityTokensForUser(_identity.Name);
+                        _authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name)).AuthorityTokens;
                     });
             }
 

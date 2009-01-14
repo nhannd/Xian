@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Text;
+using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Common.Utilities;
@@ -48,15 +49,16 @@ namespace ClearCanvas.Enterprise.Authentication
         #region IAuthenticationService Members
 
     	[UpdateOperation(Auditable = false)]
-        public SessionToken InitiateUserSession(string userName, string password)
+		public InitiateSessionResponse InitiateSession(InitiateSessionRequest request)
         {
-            Platform.CheckForNullReference(userName, "userName");
-            Platform.CheckForNullReference(password, "password");
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.UserName, "UserName");
+			Platform.CheckMemberIsSet(request.Password, "Password");
 
             DateTime currentTime = Platform.Time;
 
             // check user account is valid and password is correct
-            User user = GetVerifiedUser(userName, password);
+            User user = GetVerifiedUser(request.UserName, request.Password);
 
             // check if password expired
             if(user.Password.IsExpired)
@@ -79,34 +81,38 @@ namespace ClearCanvas.Enterprise.Authentication
             AuthenticationSettings settings = new AuthenticationSettings();
             session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
 
-            return session.GetToken();
+            return new InitiateSessionResponse(session.GetToken());
         }
 
         [UpdateOperation(Auditable = false)]
-        public void ChangePassword(string userName, string currentPassword, string newPassword)
+		public ChangePasswordResponse ChangePassword(ChangePasswordRequest request)
         {
-            Platform.CheckForNullReference(userName, "userName");
-            Platform.CheckForNullReference(currentPassword, "currentPassword");
-            Platform.CheckForNullReference(newPassword, "newPassword");
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.UserName, "UserName");
+			Platform.CheckMemberIsSet(request.CurrentPassword, "CurrentPassword");
+			Platform.CheckMemberIsSet(request.NewPassword, "NewPassword");
 
             // this will fail if the currentPassword is not valid, the account is not active or whatever
-            User user = GetVerifiedUser(userName, currentPassword);
+            User user = GetVerifiedUser(request.UserName, request.CurrentPassword);
 
             // change the password
-            user.ChangePassword(newPassword);
+            user.ChangePassword(request.NewPassword);
+
+			return new ChangePasswordResponse();
         }
 
         [UpdateOperation(Auditable = false)]
-        public SessionToken ValidateUserSession(string userName, SessionToken sessionToken)
+		public ValidateSessionResponse ValidateSession(ValidateSessionRequest request)
         {
-            Platform.CheckForNullReference(userName, "userName");
-            Platform.CheckForNullReference(sessionToken, "sessionToken");
-            Platform.CheckMemberIsSet(sessionToken.Id, "sessionToken.Id");
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.UserName, "UserName");
+			Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
+			Platform.CheckMemberIsSet(request.SessionToken.Id, "SessionToken.Id");
 
             AuthenticationSettings settings = new AuthenticationSettings();
             DateTime currentTime = Platform.Time;
 
-            User user = GetVerifiedUser(userName, sessionToken);
+            User user = GetVerifiedUser(request.UserName, request.SessionToken);
             UserSession session = user.CurrentSession;
 
             // if session timeouts are enabled, check expiry time
@@ -120,13 +126,18 @@ namespace ClearCanvas.Enterprise.Authentication
             // renew the expiration time
             session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
 
-            return session.GetToken();
+            return new ValidateSessionResponse(session.GetToken());
         }
 
         [UpdateOperation(Auditable = false)]
-        public void TerminateUserSession(string userName, SessionToken sessionToken)
+		public TerminateSessionResponse TerminateSession(TerminateSessionRequest request)
         {
-            User user = GetVerifiedUser(userName, sessionToken);
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.UserName, "UserName");
+			Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
+			Platform.CheckMemberIsSet(request.SessionToken.Id, "SessionToken.Id");
+
+			User user = GetVerifiedUser(request.UserName, request.SessionToken);
 
             // set the current session to null
             UserSession session = user.CurrentSession;
@@ -135,13 +146,20 @@ namespace ClearCanvas.Enterprise.Authentication
             // delete the session object
             IUserSessionBroker broker = PersistenceContext.GetBroker<IUserSessionBroker>();
             broker.Delete(session);
+
+			return new TerminateSessionResponse();
         }
 
 
         [ReadOperation]
-        public string[] ListAuthorityTokensForUser(string userName)
+		public GetAuthorizationsResponse GetAuthorizations(GetAuthorizationsRequest request)
         {
-            return PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(userName);
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.UserName, "UserName");
+
+			string[] tokens = PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(request.UserName);
+
+			return new GetAuthorizationsResponse(tokens);
         }
 
         #endregion

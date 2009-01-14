@@ -36,6 +36,7 @@ using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.Enterprise.Core;
 using System.ServiceModel;
 
@@ -53,7 +54,7 @@ namespace ClearCanvas.Ris.Server
                 delegate(IAuthenticationService service)
                 {
                     // this call will throw an exception if the session is invalid or has expired
-                    service.ValidateUserSession(userName, new SessionToken(password));
+                    service.ValidateSession(new ValidateSessionRequest(userName, new SessionToken(password)));
                 });
         }
     }

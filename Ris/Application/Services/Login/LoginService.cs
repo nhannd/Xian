@@ -36,11 +36,14 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Login;
+using ChangePasswordRequest=ClearCanvas.Ris.Application.Common.Login.ChangePasswordRequest;
+using ChangePasswordResponse=ClearCanvas.Ris.Application.Common.Login.ChangePasswordResponse;
 
 namespace ClearCanvas.Ris.Application.Services.Login
 {
@@ -89,9 +92,9 @@ namespace ClearCanvas.Ris.Application.Services.Login
                         // note that PasswordExpiredException is part of the fault contract of this method,
                         // so we don't catch it
 
-                        token = service.InitiateUserSession(user, password);
+                        token = service.InitiateSession(new InitiateSessionRequest(user, password)).SessionToken;
 
-                        authorityTokens = service.ListAuthorityTokensForUser(user);
+                        authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(user)).AuthorityTokens;
 
                         // setup a generic principal on this thread for the duration of this request
                         // (this is necessary in order to load the WorkingFacilitySettings below)
@@ -150,7 +153,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
                 {
                     // this call will throw SecurityTokenException if user/session token not valid
                     // we intentionally don't catch this, allowing it to cause a fault
-                    service.TerminateUserSession(request.UserName, new SessionToken(request.SessionToken));
+                    service.TerminateSession(new TerminateSessionRequest(request.UserName, new SessionToken(request.SessionToken)));
                 });
 
             return new LogoutResponse();
@@ -173,7 +176,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
                     delegate(IAuthenticationService service)
                     {
                         // this call will throw SecurityTokenException if user/password not valid
-                        service.ChangePassword(user, password, newPassword);
+                        service.ChangePassword(new Enterprise.Common.Authentication.ChangePasswordRequest(user, password, newPassword));
                     });
 
             }
