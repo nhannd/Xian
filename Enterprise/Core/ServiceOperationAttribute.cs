@@ -39,7 +39,7 @@ namespace ClearCanvas.Enterprise.Core
     public abstract class ServiceOperationAttribute : Attribute
     {
         private PersistenceScopeOption _scopeOption;
-        private bool _auditable = true;
+        private bool _changeSetAuditable = true;
         
         public ServiceOperationAttribute()
         {
@@ -47,12 +47,19 @@ namespace ClearCanvas.Enterprise.Core
             _scopeOption = PersistenceScopeOption.Required;
         }
 
-        public bool Auditable
+		/// <summary>
+		/// Gets or sets a value indicating whether change-set auditing is applied to this operation.
+		/// Does not affect other levels of auditing.
+		/// </summary>
+        public bool ChangeSetAuditable
         {
-            get { return _auditable; }
-            set { _auditable = value; }
+            get { return _changeSetAuditable; }
+            set { _changeSetAuditable = value; }
         }
 
+		/// <summary>
+		/// Gets or sets the <see cref="PersistenceScopeOption"/> to apply to this operation.
+		/// </summary>
         public PersistenceScopeOption PersistenceScopeOption
         {
             get { return _scopeOption; }

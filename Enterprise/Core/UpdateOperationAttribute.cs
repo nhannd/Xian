@@ -41,7 +41,7 @@ namespace ClearCanvas.Enterprise.Core
         public UpdateOperationAttribute()
         {
             // update operations are auditable by default
-            this.Auditable = true;
+            this.ChangeSetAuditable = true;
         }
 
         public override PersistenceScope CreatePersistenceScope()

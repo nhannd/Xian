@@ -48,7 +48,7 @@ namespace ClearCanvas.Enterprise.Authentication
     {
         #region IAuthenticationService Members
 
-    	[UpdateOperation(Auditable = false)]
+    	[UpdateOperation(ChangeSetAuditable = false)]
 		public InitiateSessionResponse InitiateSession(InitiateSessionRequest request)
         {
 			Platform.CheckForNullReference(request, "request");
@@ -84,7 +84,7 @@ namespace ClearCanvas.Enterprise.Authentication
             return new InitiateSessionResponse(session.GetToken());
         }
 
-        [UpdateOperation(Auditable = false)]
+        [UpdateOperation(ChangeSetAuditable = false)]
 		public ChangePasswordResponse ChangePassword(ChangePasswordRequest request)
         {
 			Platform.CheckForNullReference(request, "request");
@@ -101,7 +101,7 @@ namespace ClearCanvas.Enterprise.Authentication
 			return new ChangePasswordResponse();
         }
 
-        [UpdateOperation(Auditable = false)]
+        [UpdateOperation(ChangeSetAuditable = false)]
 		public ValidateSessionResponse ValidateSession(ValidateSessionRequest request)
         {
 			Platform.CheckForNullReference(request, "request");
@@ -129,7 +129,7 @@ namespace ClearCanvas.Enterprise.Authentication
             return new ValidateSessionResponse(session.GetToken());
         }
 
-        [UpdateOperation(Auditable = false)]
+        [UpdateOperation(ChangeSetAuditable = false)]
 		public TerminateSessionResponse TerminateSession(TerminateSessionRequest request)
         {
 			Platform.CheckForNullReference(request, "request");

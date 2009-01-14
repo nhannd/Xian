@@ -66,7 +66,6 @@
     <Compile Include="AuditAdvice.cs" />
     <Compile Include="AuditAttribute.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
-    <Compile Include="DefaultEntityValidator.cs" />
     <Compile Include="DefaultExceptionRecorder.cs" />
     <Compile Include="EntityValidationException.cs" />
     <Compile Include="EntityVersionException.cs" />
@@ -107,7 +106,6 @@
     <Compile Include="Imex\XmlEntityImex.cs" />
     <Compile Include="Imex\XmlEnumValueImex.cs" />
     <Compile Include="IServiceOperationRecorder.cs" />
-    <Compile Include="IValidator.cs" />
     <Compile Include="IEnumBroker.cs" />
     <Compile Include="IMetadataBroker.cs" />
     <Compile Include="InProcessCoreServiceProvider.cs" />
@@ -181,7 +179,6 @@
     <Compile Include="UpdateOperationAttribute.cs" />
     <Compile Include="ValueObject.cs" />
     <Compile Include="ValueObjectSearchCriteria.cs" />
-    <Compile Include="VersionHandling.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

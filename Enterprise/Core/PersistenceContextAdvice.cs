@@ -85,7 +85,7 @@ namespace ClearCanvas.Enterprise.Core
 
             // if this operation is marked as not auditable, then explicitly
             // disable the change set recorder
-            if (attribute.Auditable == false)
+            if (attribute.ChangeSetAuditable == false)
             {
                 uctx.ChangeSetRecorder = null;
                 return;
