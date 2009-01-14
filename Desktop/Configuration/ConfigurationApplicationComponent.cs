@@ -29,28 +29,28 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.Desktop.Configuration
 {
 	/// <summary>
 	/// A component that hosts a configuration page, where some settings need to
 	/// be saved when the user dismisses it.
 	/// </summary>
-	public abstract class ConfigurationApplicationComponent : ApplicationComponent
+	public abstract class ConfigurationApplicationComponent : ApplicationComponent, IConfigurationApplicationComponent
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		protected ConfigurationApplicationComponent()
-		{ 
+		{
 		}
+
+		#region IConfigurationApplicationComponent Members
 
 		/// <summary>
 		/// Save any settings modified in the hosted component.
 		/// </summary>
 		public abstract void Save();
+
+		#endregion
 	}
 }

@@ -150,7 +150,6 @@
     <Compile Include="InteractiveGraphics\Tests\EllipseIntersectionTests.cs" />
     <Compile Include="KeyObjects\KeyObjectSelection.cs" />
     <Compile Include="KeyObjects\KeyObjectSelectionCodeSequences.cs" />
-    <Compile Include="KeyObjects\KeyObjectSelectionEditorComponent.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LoadStudyArgs.cs" />
     <Compile Include="Mathematics\PolygonF.cs" />

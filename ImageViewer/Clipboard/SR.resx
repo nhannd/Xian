@@ -159,9 +159,6 @@
   <data name="MenuCopySubsetToClipboard" xml:space="preserve">
     <value>Copy Range of Images to Clipboard</value>
   </data>
-  <data name="MenuCreateKeyObjectSelection" xml:space="preserve">
-    <value>Create Key Object Selection</value>
-  </data>
   <data name="MenuDeleteAllClipboardItems" xml:space="preserve">
     <value>Delete All</value>
   </data>
@@ -252,9 +249,6 @@
   <data name="TitleCopySubsetToClipboard" xml:space="preserve">
     <value>Copy Images to Clipboard</value>
   </data>
-  <data name="TitleCreateKeyObjectSelection" xml:space="preserve">
-    <value>Create Key Object Selection</value>
-  </data>
   <data name="TitleCreatingVideo" xml:space="preserve">
     <value>Creating Video</value>
   </data>
@@ -284,9 +278,6 @@
   </data>
   <data name="ToolbarShowClipboard" xml:space="preserve">
     <value>Clipboard</value>
-  </data>
-  <data name="TooltipCreateKeyObjectSelection" xml:space="preserve">
-    <value>Creates a Key Object Selection document out of the clipboard contents</value>
   </data>
   <data name="TooltipDeleteAllClipboardItems" xml:space="preserve">
     <value>Delete All Clipboard Items</value>

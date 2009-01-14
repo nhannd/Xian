@@ -347,8 +347,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 							queryParams["StudyInstanceUid"].Length == 0);
 
 
-			bool isQueryingMyDataStore = (_selectedServerGroup.Servers.Count == 1 && _selectedServerGroup.Servers[0].Name == SR.TitleMyDataStore);
-			if (isQueryingMyDataStore == false && isOpenSearchQuery)
+			if (!_selectedServerGroup.IsLocalDatastore && isOpenSearchQuery)
 			{
 				if (this.Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
 					return;
@@ -486,7 +485,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					}
 					else
 					{
-						throw new Exception(SR.ExceptionServerObjectIsNotQueryable);
+						throw new Exception("The specified server object is not queryable.");
 					}
 
 					aggregateStudyItemList.AddRange(serverStudyItemList);

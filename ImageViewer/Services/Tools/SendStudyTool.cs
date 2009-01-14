@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Services.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
@@ -69,7 +70,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (!Enabled || this.Context.SelectedStudy == null)
 				return;
 
-			AENavigatorComponent aeNavigator = new AENavigatorComponent(false, false, false, true);
+			AENavigatorComponent aeNavigator = new AENavigatorComponent();
+			aeNavigator.IsReadOnly = true;
+			aeNavigator.ShowCheckBoxes = false;
+			aeNavigator.ShowLocalDataStoreNode = false;
+			aeNavigator.ShowTitlebar = false;
+			aeNavigator.ShowTools = false;
+
 			SimpleComponentContainer dialogContainer = new SimpleComponentContainer(aeNavigator);
 
 			ApplicationComponentExitCode code =

@@ -30,12 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Desktop;
-using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Services.Configuration;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {

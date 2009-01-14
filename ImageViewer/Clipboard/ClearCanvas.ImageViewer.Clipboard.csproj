@@ -82,7 +82,6 @@
     <Compile Include="IImageSelectionStrategy.cs" />
     <Compile Include="CopyToClipboard\ImageSelectionStrategies.cs" />
     <Compile Include="ImageSelectionStrategy.cs" />
-    <Compile Include="KeyObjects\KeyObjectSelectionTool.cs" />
     <Compile Include="ShowClipboardTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CopyToClipboard\CopyToClipboardTool.cs" />

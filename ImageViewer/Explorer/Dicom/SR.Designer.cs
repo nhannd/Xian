@@ -160,53 +160,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open.
-        /// </summary>
-        internal static string DicomStudyBrowserToolsOpenStudy {
-            get {
-                return ResourceManager.GetString("DicomStudyBrowserToolsOpenStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retrieve.
-        /// </summary>
-        internal static string DicomStudyBrowserToolsRetrieveStudy {
-            get {
-                return ResourceManager.GetString("DicomStudyBrowserToolsRetrieveStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified server object is not queryable..
-        /// </summary>
-        internal static string ExceptionServerObjectIsNotQueryable {
-            get {
-                return ResourceManager.GetString("ExceptionServerObjectIsNotQueryable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The server properties conflict with an existing entry ({0}).
-        ///Each server must have a unique Name and cannot have the same AE Title, Host and Port as another server..
-        /// </summary>
-        internal static string FormatServerConflict {
-            get {
-                return ResourceManager.GetString("FormatServerConflict", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Server Group &apos;{0}&apos; conflicts with &apos;{1}&apos;.
-        ///Please choose another Server Group Name..
-        /// </summary>
-        internal static string FormatServerGroupConflict {
-            get {
-                return ResourceManager.GetString("FormatServerGroupConflict", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to {0} studies found on {1}.
         /// </summary>
         internal static string FormatStudiesFound {
@@ -225,92 +178,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add server.
-        /// </summary>
-        internal static string MenuAddServer {
-            get {
-                return ResourceManager.GetString("MenuAddServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add server group.
-        /// </summary>
-        internal static string MenuAddServerGroup {
-            get {
-                return ResourceManager.GetString("MenuAddServerGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete.
-        /// </summary>
-        internal static string MenuDelete {
-            get {
-                return ResourceManager.GetString("MenuDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Edit.
-        /// </summary>
-        internal static string MenuEdit {
-            get {
-                return ResourceManager.GetString("MenuEdit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
         internal static string MenuOpenStudy {
             get {
                 return ResourceManager.GetString("MenuOpenStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Verify.
-        /// </summary>
-        internal static string MenuVerify {
-            get {
-                return ResourceManager.GetString("MenuVerify", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sorry, but you cannot start two different retrieval sessions at the same time..
-        /// </summary>
-        internal static string MessageCannotStartMultipleRetrievalSessions {
-            get {
-                return ResourceManager.GetString("MessageCannotStartMultipleRetrievalSessions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to C-ECHO Verification:.
-        /// </summary>
-        internal static string MessageCEchoVerificationPrefix {
-            get {
-                return ResourceManager.GetString("MessageCEchoVerificationPrefix", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to     {0}: fail    .
-        /// </summary>
-        internal static string MessageCEchoVerificationSingleServerResultFail {
-            get {
-                return ResourceManager.GetString("MessageCEchoVerificationSingleServerResultFail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to     {0}: successful    .
-        /// </summary>
-        internal static string MessageCEchoVerificationSingleServerResultSuccess {
-            get {
-                return ResourceManager.GetString("MessageCEchoVerificationSingleServerResultSuccess", resourceCulture);
             }
         }
         
@@ -325,201 +197,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the selected server?.
-        /// </summary>
-        internal static string MessageConfirmDeleteServer {
-            get {
-                return ResourceManager.GetString("MessageConfirmDeleteServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the selected server group?.
-        /// </summary>
-        internal static string MessageConfirmDeleteServerGroup {
-            get {
-                return ResourceManager.GetString("MessageConfirmDeleteServerGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The date range you have selected is invalid because the &apos;from date&apos; is after the &apos;to date&apos;.
         ///Please change the dates and try again..
         /// </summary>
         internal static string MessageFromDateIsGreaterThanToDate {
             get {
                 return ResourceManager.GetString("MessageFromDateIsGreaterThanToDate", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Host Name cannot be empty..
-        /// </summary>
-        internal static string MessageHostNameCannotBeEmpty {
-            get {
-                return ResourceManager.GetString("MessageHostNameCannotBeEmpty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to No servers have been selected.  Please select at least one server and try again..
-        /// </summary>
-        internal static string MessageNoServersSelected {
-            get {
-                return ResourceManager.GetString("MessageNoServersSelected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Port must be between 1 and 65535..
-        /// </summary>
-        internal static string MessagePortInvalid {
-            get {
-                return ResourceManager.GetString("MessagePortInvalid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The AE Title contains invalid characters..
-        /// </summary>
-        internal static string MessageServerAEInvalidCharacters {
-            get {
-                return ResourceManager.GetString("MessageServerAEInvalidCharacters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The AE Title must be between 1 and 16 characters..
-        /// </summary>
-        internal static string MessageServerAEInvalidLength {
-            get {
-                return ResourceManager.GetString("MessageServerAEInvalidLength", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Server Group Name cannot be empty..
-        /// </summary>
-        internal static string MessageServerGroupNameCannotBeEmpty {
-            get {
-                return ResourceManager.GetString("MessageServerGroupNameCannotBeEmpty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Server Name cannot be empty..
-        /// </summary>
-        internal static string MessageServerNameCannotBeEmpty {
-            get {
-                return ResourceManager.GetString("MessageServerNameCannotBeEmpty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to create storage directory; cannot retrieve study..
-        /// </summary>
-        internal static string MessageUnableToCreateStorageDirectory {
-            get {
-                return ResourceManager.GetString("MessageUnableToCreateStorageDirectory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to delete study.  Please check the log for details..
-        /// </summary>
-        internal static string MessageUnableToDeleteStudy {
-            get {
-                return ResourceManager.GetString("MessageUnableToDeleteStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Rm 101.
-        /// </summary>
-        internal static string SampleLocation {
-            get {
-                return ResourceManager.GetString("SampleLocation", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Last retrieval server used.
-        /// </summary>
-        internal static string StatusLastRetrievalServerUsed {
-            get {
-                return ResourceManager.GetString("StatusLastRetrievalServerUsed", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Last study retrieved.
-        /// </summary>
-        internal static string StatusLastStudyRetrieved {
-            get {
-                return ResourceManager.GetString("StatusLastStudyRetrieved", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to [{0}%] Remaining: {1} Completed: {2} Failed: {3}.
-        /// </summary>
-        internal static string StatusRetrievalProgress {
-            get {
-                return ResourceManager.GetString("StatusRetrievalProgress", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retrievals completed.
-        /// </summary>
-        internal static string StatusRetrievalsComplete {
-            get {
-                return ResourceManager.GetString("StatusRetrievalsComplete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Current retrieval server.
-        /// </summary>
-        internal static string StatusRetrievingServer {
-            get {
-                return ResourceManager.GetString("StatusRetrievingServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Current study being retrieved.
-        /// </summary>
-        internal static string StatusRetrievingStudyDescription {
-            get {
-                return ResourceManager.GetString("StatusRetrievingStudyDescription", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retrieving Study# {0} of {1}..
-        /// </summary>
-        internal static string StatusRetrievingStudyNumber {
-            get {
-                return ResourceManager.GetString("StatusRetrievingStudyNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add New Server.
-        /// </summary>
-        internal static string TitleAddNewServer {
-            get {
-                return ResourceManager.GetString("TitleAddNewServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add New Server Group.
-        /// </summary>
-        internal static string TitleAddServerGroup {
-            get {
-                return ResourceManager.GetString("TitleAddServerGroup", resourceCulture);
             }
         }
         
@@ -533,56 +216,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Edit Server.
-        /// </summary>
-        internal static string TitleEditServer {
-            get {
-                return ResourceManager.GetString("TitleEditServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Edit Server Group.
-        /// </summary>
-        internal static string TitleEditServerGroup {
-            get {
-                return ResourceManager.GetString("TitleEditServerGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to My Studies.
-        /// </summary>
-        internal static string TitleMyDataStore {
-            get {
-                return ResourceManager.GetString("TitleMyDataStore", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to My Servers.
-        /// </summary>
-        internal static string TitleMyServers {
-            get {
-                return ResourceManager.GetString("TitleMyServers", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to AE Navigator.
         /// </summary>
         internal static string TitleNavigatorPane {
             get {
                 return ResourceManager.GetString("TitleNavigatorPane", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Retrieve Progress.
-        /// </summary>
-        internal static string TitleRetrieveProgressComponent {
-            get {
-                return ResourceManager.GetString("TitleRetrieveProgressComponent", resourceCulture);
             }
         }
         
@@ -623,42 +261,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add server.
-        /// </summary>
-        internal static string ToolbarAddServer {
-            get {
-                return ResourceManager.GetString("ToolbarAddServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add server group.
-        /// </summary>
-        internal static string ToolbarAddServerGroup {
-            get {
-                return ResourceManager.GetString("ToolbarAddServerGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete.
-        /// </summary>
-        internal static string ToolbarDelete {
-            get {
-                return ResourceManager.GetString("ToolbarDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Edit.
-        /// </summary>
-        internal static string ToolbarEdit {
-            get {
-                return ResourceManager.GetString("ToolbarEdit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Open.
         /// </summary>
         internal static string ToolbarOpenStudy {
@@ -668,65 +270,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Verify.
-        /// </summary>
-        internal static string ToolbarVerify {
-            get {
-                return ResourceManager.GetString("ToolbarVerify", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add server.
-        /// </summary>
-        internal static string TooltipAddServer {
-            get {
-                return ResourceManager.GetString("TooltipAddServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add server group.
-        /// </summary>
-        internal static string TooltipAddServerGroup {
-            get {
-                return ResourceManager.GetString("TooltipAddServerGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete server or server group.
-        /// </summary>
-        internal static string TooltipDelete {
-            get {
-                return ResourceManager.GetString("TooltipDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Edit server or server group.
-        /// </summary>
-        internal static string TooltipEdit {
-            get {
-                return ResourceManager.GetString("TooltipEdit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Open study.
         /// </summary>
         internal static string TooltipOpenStudy {
             get {
                 return ResourceManager.GetString("TooltipOpenStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Verify server or server group.
-        /// </summary>
-        internal static string TooltipVerify {
-            get {
-                return ResourceManager.GetString("TooltipVerify", resourceCulture);
             }
         }
     }

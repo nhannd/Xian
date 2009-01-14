@@ -39,6 +39,7 @@
     <Compile Include="ConfigurationDialog.cs" />
     <Compile Include="ConfigurationPage.cs" />
     <Compile Include="ConfigurationPageManager.cs" />
+    <Compile Include="IConfigurationApplicationComponent.cs" />
     <Compile Include="IConfigurationPage.cs" />
     <Compile Include="IConfigurationPageProvider.cs" />
     <Compile Include="LocalSettingsStore.cs" />

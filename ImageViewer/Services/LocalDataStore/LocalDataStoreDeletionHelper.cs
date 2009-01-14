@@ -39,6 +39,7 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
+	//TODO: should probably be an instantiable class.
 	public static class LocalDataStoreDeletionHelper
 	{
 		[Serializable]

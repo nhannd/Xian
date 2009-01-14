@@ -1,16 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Net;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.StudyBuilder;
-using ClearCanvas.ImageViewer.Configuration;
-using ClearCanvas.ImageViewer.Explorer.Dicom;
+using ClearCanvas.ImageViewer.Services.Configuration;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using IImageSopProvider = ClearCanvas.ImageViewer.StudyManagement.IImageSopProvider;
@@ -137,7 +134,13 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyComposer {
 
 		public void PublishToServer()
 		{
-			AENavigatorComponent aeNavigator = new AENavigatorComponent(false, false, false, false);
+			AENavigatorComponent aeNavigator = new AENavigatorComponent();
+			aeNavigator.IsReadOnly = true;
+			aeNavigator.ShowCheckBoxes = false;
+			aeNavigator.ShowLocalDataStoreNode = false;
+			aeNavigator.ShowTitlebar = false;
+			aeNavigator.ShowTools = false;
+
 			SimpleComponentContainer dialogContainer = new SimpleComponentContainer(aeNavigator);
 			DialogBoxAction code = this.Host.DesktopWindow.ShowDialogBox(dialogContainer, SR.SelectDestination );
 

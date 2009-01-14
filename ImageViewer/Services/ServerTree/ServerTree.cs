@@ -286,19 +286,65 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
             return;
         }
 
-        public List<IServerTreeNode> FindChildServers(ServerGroup serverGroup)
+		public Server FindServer(string path)
+		{
+			return FindServer(this.RootNode.ServerGroupNode, path);
+		}
+
+		public Server FindServer(ServerGroup group, string path)
+		{
+			foreach (Server server in group.ChildServers)
+			{
+				if (server.Path == path)
+					return server;
+			}
+
+			foreach (ServerGroup childGroup in group.ChildGroups)
+			{
+				Server server = FindServer(childGroup, path);
+				if (server != null)
+					return server;
+			}
+
+			return null;
+		}
+		
+		public List<IServerTreeNode> FindChildServers(ServerGroup serverGroup)
         {
             List<IServerTreeNode> listOfChildrenServers = new List<IServerTreeNode>();
             FindChildServers(serverGroup, listOfChildrenServers);
             return listOfChildrenServers;
 		}
 
-		public List<IServerTreeNode> FindDefaultServers(ServerGroup serverGroup)
+		public List<IServerTreeNode> FindCheckedServers(ServerGroup serverGroup)
 		{
-			return FindChildServers(serverGroup).FindAll(delegate(IServerTreeNode node) { return node.IsDefault; });
+			return FindChildServers(serverGroup).FindAll(delegate(IServerTreeNode node) { return node.IsChecked; });
 		}
 
-    	#endregion
+		public ServerGroup FindServerGroup(string path)
+		{
+			return FindServerGroup(this.RootNode.ServerGroupNode, path);
+		}
+
+    	public ServerGroup FindServerGroup(ServerGroup startNode, string path)
+		{
+			if (!startNode.IsServerGroup)
+				return null;
+
+			if (startNode.Path == path)
+				return startNode;
+
+			foreach (ServerGroup childrenServerGroup in startNode.ChildGroups)
+			{
+				ServerGroup foundNode = FindServerGroup(childrenServerGroup, path);
+				if (null != foundNode)
+					return foundNode;
+			}
+
+			return null;
+		}
+		
+		#endregion
 
 		#region Private methods
 
@@ -331,28 +377,10 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
 		private ServerGroup FindParentGroup(IServerTreeNode node)
         {
-            return FindGroupNode(_rootNode.ServerGroupNode, node.ParentPath);
+            return FindServerGroup(_rootNode.ServerGroupNode, node.ParentPath);
         }
 
-		private ServerGroup FindGroupNode(ServerGroup startSearchNode, string path)
-        {
-            if (!startSearchNode.IsServerGroup)
-                return null;
-
-            if (startSearchNode.Path == path)
-                return startSearchNode;
-
-			foreach (ServerGroup childrenServerGroup in startSearchNode.ChildGroups)
-            {
-				ServerGroup foundNode = FindGroupNode(childrenServerGroup, path);
-                if (null != foundNode)
-                    return foundNode;
-            }
-
-            return null;
-        }
-
-		private bool IsConflictingServerInGroup(ServerGroup serverGroup, string toFindServerName, bool excludeCurrentNode, string toFindServerAE, string toFindServerHost, int toFindServerPort, out string conflictingServerPath)
+    	private bool IsConflictingServerInGroup(ServerGroup serverGroup, string toFindServerName, bool excludeCurrentNode, string toFindServerAE, string toFindServerHost, int toFindServerPort, out string conflictingServerPath)
         {
             foreach (Server server in serverGroup.ChildServers)
             {
@@ -407,7 +435,8 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
     public interface IServerTreeNode
     {
-		bool IsDefault { get; }
+		//TODO: when the server tree is refactored/rewritten, remove this.  It should really be at the app component level.
+		bool IsChecked { get; }
         bool IsLocalDataStore { get; }
         bool IsServer { get; }
         bool IsServerGroup { get; }
@@ -455,7 +484,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
             get { return false; }
         }
 
-    	public bool IsDefault
+    	public bool IsChecked
     	{
 			get { return false; }
     	}
@@ -543,7 +572,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
 		#region IServerTreeNode Members
 
-    	public bool IsDefault
+    	public bool IsChecked
     	{
 			get { return false; }
     	}
@@ -625,7 +654,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 	{
 		#region Private Fields
 
-    	private bool _isDefault;
+    	private bool _isChecked;
 		private string _parentPath;
     	private string _path;
 		#endregion
@@ -693,10 +722,11 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
 		#region IServerTreeNode Members
 
-		public bool IsDefault
+		[XmlIgnore]
+		public bool IsChecked
     	{
-			get { return _isDefault; }
-			set { _isDefault = value; }
+			get { return _isChecked; }
+			set { _isChecked = value; }
     	}
 
 		public bool IsLocalDataStore
@@ -848,9 +878,9 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 
 		#region IServerTreeNode Members
 
-		public bool IsDefault
+		public bool IsChecked
 		{
-			get { return true; }	
+			get { return false; }	
 		}
 
 		public bool IsLocalDataStore

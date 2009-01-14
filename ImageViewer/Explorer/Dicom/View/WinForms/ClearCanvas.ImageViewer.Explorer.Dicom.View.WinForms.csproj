@@ -40,13 +40,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AENavigatorComponentView.cs" />
-    <Compile Include="AENavigatorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="AENavigatorControl.Designer.cs">
-      <DependentUpon>AENavigatorControl.cs</DependentUpon>
-    </Compile>
     <Compile Include="DicomExplorerConfigurationApplicationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -54,20 +47,6 @@
       <DependentUpon>DicomExplorerConfigurationApplicationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomExplorerConfigurationApplicationComponentView.cs" />
-    <Compile Include="DicomServerEditComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DicomServerEditComponentControl.designer.cs">
-      <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DicomServerEditComponentView.cs" />
-    <Compile Include="DicomServerGroupEditComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DicomServerGroupEditComponentControl.designer.cs">
-      <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="DicomServerGroupEditComponentView.cs" />
     <Compile Include="ModalityPicker.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -131,10 +110,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AENavigatorControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>AENavigatorControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="StudyBrowserControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StudyBrowserControl.cs</DependentUpon>
@@ -144,14 +119,6 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="DicomServerEditComponentControl.resx">
-      <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DicomServerGroupEditComponentControl.resx">
-      <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="ModalityPicker.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ModalityPicker.cs</DependentUpon>

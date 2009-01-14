@@ -121,10 +121,6 @@
       <SubType>Designer</SubType>
       <DependentUpon>ImageViewerControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="KeyObjectSelectionEditorComponentPanel.resx">
-      <DependentUpon>KeyObjectSelectionEditorComponentPanel.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -148,13 +144,6 @@
     <Compile Include="ImageViewerControl.Designer.cs">
       <DependentUpon>ImageViewerControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="KeyObjectSelectionEditorComponentPanel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="KeyObjectSelectionEditorComponentPanel.Designer.cs">
-      <DependentUpon>KeyObjectSelectionEditorComponentPanel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="KeyObjectSelectionEditorComponentView.cs" />
     <Compile Include="TileInputTranslator.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

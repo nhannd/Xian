@@ -48,8 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AENavigatorComponent.cs" />
-    <Compile Include="AENavigatorTool.cs" />
     <Compile Include="DicomExplorerConfigurationApplicationComponent.cs" />
     <Compile Include="DicomExplorerConfigurationSettings.cs" />
     <Compile Include="DicomExplorerConfigurationSettings.Designer.cs">
@@ -57,15 +55,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DicomExplorerConfigurationSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="DicomServerEditComponent.cs" />
-    <Compile Include="DicomServerGroupEditComponent.cs" />
     <Compile Include="DicomExplorerConfigurationPageProvider.cs" />
     <Compile Include="SearchPanelComponent.cs" />
-    <Compile Include="AddServerTool.cs" />
-    <Compile Include="DeleteServerTool.cs" />
-    <Compile Include="EditServerTool.cs" />
-    <Compile Include="AddServerGroupTool.cs" />
-    <Compile Include="VerifyServerTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -76,8 +67,6 @@
     <Compile Include="OpenStudyTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StudyBrowserComponent.cs" />
-    <Compile Include="Tests\AENavigatorComponentTest.cs" />
-    <Compile Include="Tests\DicomServerTreeTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -116,6 +105,10 @@
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Services\Configuration\ClearCanvas.ImageViewer.Services.Configuration.csproj">
+      <Project>{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}</Project>
+      <Name>ClearCanvas.ImageViewer.Services.Configuration</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -133,23 +126,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DicomExplorerConfigurationSettings.Designer.cs</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\AddServerGroupToolLarge.png" />
-    <EmbeddedResource Include="Icons\AddServerGroupToolMedium.png" />
-    <EmbeddedResource Include="Icons\AddServerGroupToolSmall.png" />
-    <EmbeddedResource Include="Icons\AddServerToolLarge.png" />
-    <EmbeddedResource Include="Icons\AddServerToolMedium.png" />
-    <EmbeddedResource Include="Icons\AddServerToolSmall.png" />
-    <EmbeddedResource Include="Icons\DeleteToolLarge.png" />
-    <EmbeddedResource Include="Icons\DeleteToolMedium.png" />
-    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
-    <EmbeddedResource Include="Icons\EditToolLarge.png" />
-    <EmbeddedResource Include="Icons\EditToolMedium.png" />
-    <EmbeddedResource Include="Icons\EditToolSmall.png" />
-    <EmbeddedResource Include="Icons\VerifyServerToolLarge.png" />
-    <EmbeddedResource Include="Icons\VerifyServerToolMedium.png" />
-    <EmbeddedResource Include="Icons\VerifyServerToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\OpenToolLarge.png" />

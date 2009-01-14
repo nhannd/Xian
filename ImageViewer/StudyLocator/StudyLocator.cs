@@ -159,8 +159,10 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 
 		private static IEnumerable<IServerTreeNode> GetDefaultServers()
 		{
+			//TODO: need a way of defining which servers to query for automation.
 			ServerTree serverTree = new ServerTree();
-			return serverTree.FindDefaultServers(serverTree.RootNode.ServerGroupNode);
+			//return serverTree.FindCheckedServers(serverTree.RootNode.ServerGroupNode);
+			yield return serverTree.RootNode.LocalDataStoreNode;
 		}
 	}
 }

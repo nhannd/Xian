@@ -39,10 +39,10 @@ namespace ClearCanvas.Desktop.Configuration
 	/// <summary>
 	/// A default implementation of <see cref="IConfigurationPage"/>.
 	/// </summary>
-	/// <typeparam name="T">The type of <see cref="ConfigurationApplicationComponent"/>-derived 
+	/// <typeparam name="T">The type of <see cref="IConfigurationApplicationComponent"/>-derived 
 	/// class that will be hosted in this page.  The class must have a parameterless default constructor.</typeparam>
 	public class ConfigurationPage<T> : IConfigurationPage
-		 where T : ConfigurationApplicationComponent, new()
+		 where T : IConfigurationApplicationComponent, new()
 	{
 		private T _component;
 		private string _path;

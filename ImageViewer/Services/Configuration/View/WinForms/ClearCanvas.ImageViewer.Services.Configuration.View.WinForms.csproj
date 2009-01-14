@@ -28,11 +28,29 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetMagic2005, Version=5.2.2.0, Culture=neutral, PublicKeyToken=6cf6edec59e036ec, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\ReferencedAssemblies\DotNetMagic2005.DLL</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AENavigatorComponentView.cs" />
+    <Compile Include="AENavigatorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AENavigatorControl.Designer.cs">
+      <DependentUpon>AENavigatorControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomPublishingConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomPublishingConfigurationComponentControl.Designer.cs">
+      <DependentUpon>DicomPublishingConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomPublishingConfigurationComponentView.cs" />
     <Compile Include="DicomServerConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -40,6 +58,20 @@
       <DependentUpon>DicomServerConfigurationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomServerConfigurationComponentView.cs" />
+    <Compile Include="DicomServerEditComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomServerEditComponentControl.Designer.cs">
+      <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomServerEditComponentView.cs" />
+    <Compile Include="DicomServerGroupEditComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomServerGroupEditComponentControl.Designer.cs">
+      <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomServerGroupEditComponentView.cs" />
     <Compile Include="DiskspaceManagerConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -51,8 +83,24 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AENavigatorControl.resx">
+      <DependentUpon>AENavigatorControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DicomPublishingConfigurationComponentControl.resx">
+      <DependentUpon>DicomPublishingConfigurationComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="DicomServerConfigurationComponentControl.resx">
       <DependentUpon>DicomServerConfigurationComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DicomServerEditComponentControl.resx">
+      <DependentUpon>DicomServerEditComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DicomServerGroupEditComponentControl.resx">
+      <DependentUpon>DicomServerGroupEditComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DiskspaceManagerConfigurationComponentControl.resx">
@@ -76,6 +124,10 @@
     <ProjectReference Include="..\..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\ClearCanvas.ImageViewer.Services.csproj">
+      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
+      <Name>ClearCanvas.ImageViewer.Services</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Services.Configuration.csproj">
       <Project>{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}</Project>
