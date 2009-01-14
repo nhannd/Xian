@@ -4,8 +4,8 @@
 	Width="100%">
 	<asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top">
-			<asp:ObjectDataSource ID="StudyIntegrityQueueDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.StudyIntegrityQueueDataSource"
-				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.StudyIntegrityQueueSummary" EnablePaging="true"
+			<asp:ObjectDataSource ID="StudyIntegrityQueueDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.StudyIntegrityQueueDataSource"
+				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.StudyIntegrityQueueSummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetStudyIntegrityQueueDataSource"
 				OnObjectDisposing="DisposeStudyIntegrityQueueDataSource"/>
 				<ccUI:GridView ID="StudyIntegrityQueueGridView" runat="server" SkinID="CustomGlobalGridView"

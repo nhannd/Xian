@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -34,9 +34,8 @@ using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Web.Common.Data
+namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
 	public class AlertSummary
 	{
@@ -44,7 +43,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		private Alert _theAlertItem;
 
-        #endregion Private members
+		#endregion Private members
 
 		#region Public Properties
 
@@ -58,30 +57,30 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			get { return _theAlertItem.AlertLevelEnum.Description; }
 		}
 
-        public string Category
-        {
-            get { return _theAlertItem.AlertCategoryEnum.Description; }
-        }
+		public string Category
+		{
+			get { return _theAlertItem.AlertCategoryEnum.Description; }
+		}
 
-        public string Content
-        {
-            get { return _theAlertItem.Content.GetElementsByTagName("Message").Item(0).InnerText; }
-        }
+		public string Content
+		{
+			get { return _theAlertItem.Content.GetElementsByTagName("Message").Item(0).InnerText; }
+		}
 
-	    public string Component
-	    {
-            get { return _theAlertItem.Component; }	        
-	    }
+		public string Component
+		{
+			get { return _theAlertItem.Component; }	        
+		}
 
-        public string Source
-        {
-            get { return _theAlertItem.Source; }
-        }
+		public string Source
+		{
+			get { return _theAlertItem.Source; }
+		}
 
-        public int TypeCode
-        {
-            get { return _theAlertItem.TypeCode; }
-        }
+		public int TypeCode
+		{
+			get { return _theAlertItem.TypeCode; }
+		}
 
 		public ServerEntityKey Key
 		{
@@ -109,8 +108,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		private string _insertTime;
 		private string _component;
 		private AlertLevelEnum _level;
-        private AlertCategoryEnum _category;
-	    private string _dateFormats;
+		private AlertCategoryEnum _category;
+		private string _dateFormats;
 		private int _resultCount;
 		private IList<AlertSummary> _list = new List<AlertSummary>();
 		private IList<ServerEntityKey> _searchKeys;
@@ -139,7 +138,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			set { _category = value; }
 		}
 	
-        public IList<AlertSummary> List
+		public IList<AlertSummary> List
 		{
 			get { return _list; }
 		}
@@ -154,11 +153,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			set { _searchKeys = value; }
 		}
 
-        public string DateFormats
-        {
-            get { return _dateFormats; }
-            set { _dateFormats = value; }
-        }
+		public string DateFormats
+		{
+			get { return _dateFormats; }
+			set { _dateFormats = value; }
+		}
 
 		#endregion
 
@@ -187,19 +186,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 			if (!String.IsNullOrEmpty(InsertTime))
 			{
-			    DateTime lowerDate = DateTime.ParseExact(InsertTime, DateFormats, null);
-			    DateTime upperDate = DateTime.ParseExact(InsertTime, DateFormats, null).Add(new TimeSpan(23, 59, 59));
-                criteria.InsertTime.Between(lowerDate, upperDate);
+				DateTime lowerDate = DateTime.ParseExact(InsertTime, DateFormats, null);
+				DateTime upperDate = DateTime.ParseExact(InsertTime, DateFormats, null).Add(new TimeSpan(23, 59, 59));
+				criteria.InsertTime.Between(lowerDate, upperDate);
 			}
 
-		    if (Level != null)
+			if (Level != null)
 				criteria.AlertLevelEnum.EqualTo(Level);
-            if (Category != null)
-                criteria.AlertCategoryEnum.EqualTo(Category);
+			if (Category != null)
+				criteria.AlertCategoryEnum.EqualTo(Category);
 
-			IList<Alert> list = _alertController.GetAlerts(criteria);
+			IList<Alert> list = _alertController.GetRangeAlerts(criteria, startRowIndex, maximumRows);
 
-		    resultCount = list.Count;
+			resultCount = list.Count;
 
 			return list;
 		}
@@ -235,7 +234,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		private AlertSummary CreateAlertSummary(Alert item)
 		{
-		    AlertSummary summary = new AlertSummary();
+			AlertSummary summary = new AlertSummary();
 			summary.TheAlertItem = item;
 
 			return summary;

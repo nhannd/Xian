@@ -6,7 +6,7 @@
 		<asp:TableCell VerticalAlign="top">
 		
             <asp:ObjectDataSource ID="DataSource" runat="server" 
-                TypeName="ClearCanvas.ImageServer.Web.Common.Data.DeletedStudyDataSource"
+                TypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.DeletedStudyDataSource"
 				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.Model.DeletedStudyInfo" 
 				EnablePaging="true"
 				SelectMethod="Select"

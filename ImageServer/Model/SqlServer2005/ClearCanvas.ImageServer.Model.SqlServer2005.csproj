@@ -73,6 +73,7 @@
     <Compile Include="EntityBrokers\AlertCategoryEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\AlertEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\AlertLevelEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\ApplicationLogEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveQueueEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveStudyStorageEntityBroker.gen.cs" />

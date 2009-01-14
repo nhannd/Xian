@@ -209,6 +209,27 @@
     <Compile Include="Pages\Admin\Alerts\DeleteAlertDialog.ascx.designer.cs">
       <DependentUpon>DeleteAlertDialog.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\ApplicationLog\ApplicationLogGridView.ascx.cs">
+      <DependentUpon>ApplicationLogGridView.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\ApplicationLog\ApplicationLogGridView.ascx.designer.cs">
+      <DependentUpon>ApplicationLogGridView.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\ApplicationLog\ApplicationLogPanel.ascx.cs">
+      <DependentUpon>ApplicationLogPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\ApplicationLog\ApplicationLogPanel.ascx.designer.cs">
+      <DependentUpon>ApplicationLogPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\ApplicationLog\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\ApplicationLog\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\Audit\DeletedStudies\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1105,6 +1126,9 @@
     <Content Include="Pages\Admin\Alerts\AlertsPanel.ascx" />
     <Content Include="Pages\Admin\Alerts\Default.aspx" />
     <Content Include="Pages\Admin\Alerts\DeleteAlertDialog.ascx" />
+    <Content Include="Pages\Admin\ApplicationLog\ApplicationLogGridView.ascx" />
+    <Content Include="Pages\Admin\ApplicationLog\ApplicationLogPanel.ascx" />
+    <Content Include="Pages\Admin\ApplicationLog\Default.aspx" />
     <Content Include="Pages\Admin\Audit\DeletedStudies\Default.aspx" />
     <Content Include="Pages\Admin\Audit\DeletedStudies\DeletedStudiesSearchPanel.ascx" />
     <Content Include="Pages\Admin\Audit\DeletedStudies\DeletedStudyArchiveInfoPanel.ascx" />
@@ -1249,6 +1273,7 @@
     <Content Include="Scripts\ErrorHandling.js" />
     <Content Include="Scripts\jquery\jquery-1.2.6.min.js" />
     <Content Include="Scripts\jquery\jquery.dimensions.js" />
+    <Content Include="Scripts\jquery\jquery.maskedinput-1.2.1.js" />
     <Content Include="Scripts\jquery\jquery.multiselect.js" />
     <Content Include="Scripts\NumberFormat154.js" />
     <Content Include="GlobalMasterPage.master" />

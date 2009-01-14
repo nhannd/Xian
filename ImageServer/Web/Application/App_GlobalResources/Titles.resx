@@ -237,4 +237,7 @@
   <data name="AlertsPageTitle" xml:space="preserve">
     <value>Alert | Admin | ClearCanvas ImageServer</value>
   </data>
+  <data name="ApplicationLog" xml:space="preserve">
+    <value>Application Log</value>
+  </data>
 </root>

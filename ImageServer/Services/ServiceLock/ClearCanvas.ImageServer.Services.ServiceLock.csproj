@@ -33,12 +33,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ionic.Utils.Zip, Version=1.5.0.11, Culture=neutral, PublicKeyToken=c551e179877da246, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\Ionic.Utils.Zip.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArchiveApplicationLog\ApplicationLogArchiveFactoryExtension.cs" />
+    <Compile Include="ArchiveApplicationLog\ArchivalLogWriter.cs" />
     <Compile Include="BaseServiceLockItemProcessor.cs" />
+    <Compile Include="ArchiveApplicationLog\ApplicationLogArchiveItemProcessor.cs" />
     <Compile Include="FilesystemDelete\FilesystemDeleteFactoryExtension.cs" />
     <Compile Include="FilesystemDelete\FilesystemDeleteItemProcessor.cs" />
     <Compile Include="FilesystemLosslessCompress\FilesystemLosslessCompressFactoryExtension.cs" />

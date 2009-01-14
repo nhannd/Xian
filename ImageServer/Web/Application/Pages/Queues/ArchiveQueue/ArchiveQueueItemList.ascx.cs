@@ -34,7 +34,7 @@ using System.Web.UI.WebControls;
 using System.Collections.Generic;
 
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue

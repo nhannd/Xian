@@ -148,7 +148,7 @@ namespace ClearCanvas.Dicom.Network
 
             _network = new NetworkStream(_socket);
 
-            InitializeNetwork(_network, "Client handler to: " + ep);
+            InitializeNetwork(_network, "DicomClient: " + ep);
 
             _closedEvent = new ManualResetEvent(false);
 

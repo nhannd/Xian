@@ -178,7 +178,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                         try
                         {
                             time = DateTime.ParseExact(NewScheduleTime.Text, "hh:mm tt", null);
-                        }catch(Exception e)
+                        }
+						catch(Exception)
                         {
                             //Ignore this exception since the time is not fully typed in or in an incorrect format,
                             //that will be validated when the user presses apply.

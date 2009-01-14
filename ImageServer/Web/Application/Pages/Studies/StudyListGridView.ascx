@@ -4,8 +4,8 @@
 	Width="100%">
 	<asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top">
-			<asp:ObjectDataSource ID="StudyDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.StudyDataSource"
-				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.StudySummary" EnablePaging="true"
+			<asp:ObjectDataSource ID="StudyDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.StudyDataSource"
+				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.StudySummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetStudyDataSource"
 				OnObjectDisposing="DisposeStudyDataSource"/>
 				<ccUI:GridView ID="StudyListControl" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"

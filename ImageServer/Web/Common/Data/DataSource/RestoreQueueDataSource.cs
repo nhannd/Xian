@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -35,29 +35,30 @@ using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
-namespace ClearCanvas.ImageServer.Web.Common.Data
+namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
-	public class ArchiveQueueSummary
+	public class RestoreQueueSummary
 	{
 		#region Private members
 
 		private string _patientID;
 		private string _patientName;
 		private ServerPartition _thePartition;
-		private ArchiveQueue _theArchiveQueueItem;
+		private RestoreQueue _theRestoreQueueItem;
 		#endregion Private members
 
 		#region Public Properties
 
 		public DateTime ScheduledDateTime
 		{
-			get { return _theArchiveQueueItem.ScheduledTime; }
+			get { return _theRestoreQueueItem.ScheduledTime; }
 		}
 
 		public string StatusString
 		{
-			get { return _theArchiveQueueItem.ArchiveQueueStatusEnum.Description; }
+			get { return _theRestoreQueueItem.RestoreQueueStatusEnum.Description; }
 		}
 
 		public string PatientId
@@ -74,17 +75,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		public ServerEntityKey Key
 		{
-			get { return _theArchiveQueueItem.Key; }
+			get { return _theRestoreQueueItem.Key; }
 		}
 
 		public string ProcessorId
 		{
-			get { return _theArchiveQueueItem.ProcessorId; }
+			get { return _theRestoreQueueItem.ProcessorId; }
 		}
-		public ArchiveQueue TheArchiveQueueItem
+		public RestoreQueue TheRestoreQueueItem
 		{
-			get { return _theArchiveQueueItem; }
-			set { _theArchiveQueueItem = value; }
+			get { return _theRestoreQueueItem; }
+			set { _theRestoreQueueItem = value; }
 		}
 		public ServerPartition ThePartition
 		{
@@ -94,24 +95,24 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		#endregion Public Properties
 	}
 
-	public class ArchiveQueueDataSource
+	public class RestoreQueueDataSource
 	{
 		#region Public Delegates
-		public delegate void ArchiveQueueFoundSetDelegate(IList<ArchiveQueueSummary> list);
-		public ArchiveQueueFoundSetDelegate ArchiveQueueFoundSet;
+		public delegate void RestoreQueueFoundSetDelegate(IList<RestoreQueueSummary> list);
+		public RestoreQueueFoundSetDelegate RestoreQueueFoundSet;
 		#endregion
 
 		#region Private Members
-		private ArchiveQueueController _searchController = new ArchiveQueueController();
+		private RestoreQueueController _searchController = new RestoreQueueController();
 		private string _accessionNumber;
 		private string _patientId;
 		private string _patientName;
 		private string _scheduledDate;
 		private int _resultCount;
 		private ServerPartition _partition;
-		private ArchiveQueueStatusEnum _statusEnum;
+		private RestoreQueueStatusEnum _statusEnum;
 		private string _dateFormats;
-		private IList<ArchiveQueueSummary> _list = new List<ArchiveQueueSummary>();
+		private IList<RestoreQueueSummary> _list = new List<RestoreQueueSummary>();
 		private IList<ServerEntityKey> _searchKeys;
 		#endregion
 
@@ -141,7 +142,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			get { return _partition; }
 			set { _partition = value; }
 		}
-		public ArchiveQueueStatusEnum StatusEnum
+		public RestoreQueueStatusEnum StatusEnum
 		{
 			get { return _statusEnum; }
 			set { _statusEnum = value; }
@@ -151,7 +152,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			get { return _dateFormats; }
 			set { _dateFormats = value; }
 		}
-		public IList<ArchiveQueueSummary> List
+		public IList<RestoreQueueSummary> List
 		{
 			get { return _list; }
 		}
@@ -169,29 +170,29 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		#endregion
 
 		#region Private Methods
-		private IList<ArchiveQueue> InternalSelect(int startRowIndex, int maximumRows, out int resultCount)
+		private IList<RestoreQueue> InternalSelect(int startRowIndex, int maximumRows, out int resultCount)
 		{
 			resultCount = 0;
 
-			if (maximumRows == 0) return new List<ArchiveQueue>();
+			if (maximumRows == 0) return new List<RestoreQueue>();
 
 			if (SearchKeys != null)
 			{
-				IList<ArchiveQueue> archiveQueueList = new List<ArchiveQueue>();
+				IList<RestoreQueue> archiveQueueList = new List<RestoreQueue>();
 				foreach (ServerEntityKey key in SearchKeys)
-					archiveQueueList.Add(ArchiveQueue.Load(key));
+					archiveQueueList.Add(RestoreQueue.Load(key));
 
 				resultCount = archiveQueueList.Count;
 
 				return archiveQueueList;
 			}
 
-			WebQueryArchiveQueueParameters parameters = new WebQueryArchiveQueueParameters();
+			WebQueryRestoreQueueParameters parameters = new WebQueryRestoreQueueParameters();
 			parameters.StartIndex = startRowIndex;
 			parameters.MaxRowCount = 25;
-
 			if (Partition != null)
 				parameters.ServerPartitionKey = Partition.Key;
+
 			if (AccessionNumber != null)
 				parameters.AccessionNumber = AccessionNumber.Replace("*", "%");
 			if (PatientId != null)
@@ -205,9 +206,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				parameters.ScheduledTime = DateTime.ParseExact(ScheduledDate, DateFormats, null);
 
 			if (StatusEnum != null)
-				parameters.ArchiveQueueStatusEnum = StatusEnum;
+				parameters.RestoreQueueStatusEnum = StatusEnum;
 
-			IList<ArchiveQueue> list = _searchController.FindArchiveQueue(parameters);
+			IList<RestoreQueue> list = _searchController.FindRestoreQueue(parameters);
 
 			resultCount = parameters.ResultCount;
 
@@ -216,16 +217,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		#endregion
 
 		#region Public Methods
-		public IEnumerable<ArchiveQueueSummary> Select(int startRowIndex, int maximumRows)
+		public IEnumerable<RestoreQueueSummary> Select(int startRowIndex, int maximumRows)
 		{
-			IList<ArchiveQueue> list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
+			IList<RestoreQueue> list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
 
-			_list = new List<ArchiveQueueSummary>();
-			foreach (ArchiveQueue item in list)
+			_list = new List<RestoreQueueSummary>();
+			foreach (RestoreQueue item in list)
 				_list.Add(CreateWorkQueueSummary(item));
 
-			if (ArchiveQueueFoundSet != null)
-				ArchiveQueueFoundSet(_list);
+			if (RestoreQueueFoundSet != null)
+				RestoreQueueFoundSet(_list);
 
 			return _list;
 		}
@@ -243,17 +244,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		#region Private Methods
 		/// <summary>
-		/// Constructs an instance of <see cref="WorkQueueSummary"/> based on a <see cref="WorkQueue"/> object.
+		/// Constructs an instance of <see cref="WorkQueue"/> based on a <see cref="WorkQueueSummary"/> object.
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns></returns>
 		/// <remark>
 		/// 
 		/// </remark>
-		private ArchiveQueueSummary CreateWorkQueueSummary(ArchiveQueue item)
+		private RestoreQueueSummary CreateWorkQueueSummary(RestoreQueue item)
 		{
-			ArchiveQueueSummary summary = new ArchiveQueueSummary();
-			summary.TheArchiveQueueItem = item;
+			RestoreQueueSummary summary = new RestoreQueueSummary();
+			summary.TheRestoreQueueItem = item;
 			summary.ThePartition = Partition;
 
 			// Fetch the patient info:

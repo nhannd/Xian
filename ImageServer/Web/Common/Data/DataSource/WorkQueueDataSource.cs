@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -36,7 +36,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
-namespace ClearCanvas.ImageServer.Web.Common.Data
+namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
 	/// <summary>
 	/// Summary view of a <see cref="WorkQueue"/> item in the WorkQueue configuration UI.
@@ -130,8 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		#endregion
 
 		#region Private Members
-		private WorkQueueController _searchController = new WorkQueueController();
-		private string _accessionNumber;
+		private readonly WorkQueueController _searchController = new WorkQueueController();
 		private string _patientId;
 		private string _scheduledDate;
 		private string _patientName;
@@ -245,40 +244,40 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			else
 				parameters.ScheduledTime = DateTime.ParseExact(ScheduledDate, DateFormats, null);
 
-            if (TypeEnums != null && TypeEnums.Length > 0)
-            {
-                string types = "(";
-                if (TypeEnums.Length == 1)
-                    types += TypeEnums[0].Enum;
-                else {
-                    string separator = "";
-                    foreach (WorkQueueTypeEnum typeEnum in TypeEnums)
-                    {
-                        types += separator + typeEnum.Enum;
-                        separator = ",";
-                    }
-                }
+			if (TypeEnums != null && TypeEnums.Length > 0)
+			{
+				string types = "(";
+				if (TypeEnums.Length == 1)
+					types += TypeEnums[0].Enum;
+				else {
+					string separator = "";
+					foreach (WorkQueueTypeEnum typeEnum in TypeEnums)
+					{
+						types += separator + typeEnum.Enum;
+						separator = ",";
+					}
+				}
                 
-		        parameters.Type = types + ")";
-            }
+				parameters.Type = types + ")";
+			}
 
-            if (StatusEnums != null && StatusEnums.Length > 0)
-            {
-                string statuses = "(";
-                if (StatusEnums.Length == 1)
-                    statuses += StatusEnums[0].Enum;
-                else
-                {
-                    string separator = "";
-                    foreach (WorkQueueStatusEnum statusEnum in StatusEnums)
-                    {
-                        statuses += separator + statusEnum.Enum;
-                        separator = ",";
-                    }
-                }
+			if (StatusEnums != null && StatusEnums.Length > 0)
+			{
+				string statuses = "(";
+				if (StatusEnums.Length == 1)
+					statuses += StatusEnums[0].Enum;
+				else
+				{
+					string separator = "";
+					foreach (WorkQueueStatusEnum statusEnum in StatusEnums)
+					{
+						statuses += separator + statusEnum.Enum;
+						separator = ",";
+					}
+				}
 
-                parameters.Status = statuses + ")";
-            }
+				parameters.Status = statuses + ")";
+			}
 
 			if (PriorityEnum != null)
 				parameters.Priority = PriorityEnum;
@@ -358,7 +357,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			}
 
 			if (item.WorkQueueTypeEnum == WorkQueueTypeEnum.WebMoveStudy
-			 || item.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
+			    || item.WorkQueueTypeEnum == WorkQueueTypeEnum.AutoRoute)
 			{
 				DeviceDataAdapter deviceAdaptor = new DeviceDataAdapter();
 				Device dest = deviceAdaptor.Get(item.DeviceKey);

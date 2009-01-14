@@ -366,4 +366,10 @@
   <data name="AlertDeleteAllConfirm" xml:space="preserve">
     <value>Are you sure you want to delete all Alert items from the queue?</value>
   </data>
+  <data name="GridPagerApplicationLogMultipleItems" xml:space="preserve">
+    <value>Logs Found</value>
+  </data>
+  <data name="GridPagerApplicationLogSingleItem" xml:space="preserve">
+    <value>Log Found</value>
+  </data>
 </root>

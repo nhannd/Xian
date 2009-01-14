@@ -107,5 +107,23 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock {
                 return ((int)(this["FilesystemLosslessCompressRecheckDelay"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int ApplicationLogCachedDays {
+            get {
+                return ((int)(this["ApplicationLogCachedDays"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int ApplicationLogRecheckDelay {
+            get {
+                return ((int)(this["ApplicationLogRecheckDelay"]));
+            }
+        }
     }
 }

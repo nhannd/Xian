@@ -7,8 +7,8 @@
     Width="100%">
     <asp:TableRow VerticalAlign="top">
         <asp:TableCell VerticalAlign="top">   
-            <asp:ObjectDataSource ID="AlertDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.AlertDataSource"
-				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.AlertSummary" EnablePaging="true"
+            <asp:ObjectDataSource ID="AlertDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.AlertDataSource"
+				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.AlertSummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetAlertDataSource"
 				OnObjectDisposing="DisposeAlertDataSource"/>
             <ccUI:GridView ID="AlertGridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"

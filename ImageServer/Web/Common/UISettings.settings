@@ -17,5 +17,8 @@
     <Setting Name="DefaultDateFormat" Type="System.String" Scope="Application">
       <Value Profile="(Default)">dd MMM, yyyy</Value>
     </Setting>
+    <Setting Name="TimestampFormat" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">yyyy-MM-dd HH:mm:ss.fff</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

@@ -283,6 +283,12 @@ INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            (newid(),104,'FilesystemLossyCompress','Filesystem Lossy Compress','Lossy compress studies within a Filesystem')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),200,'ArchiveApplicationLog','Archive Application Log','Archive the application log from the database to a filesystem')
+GO
+
 
 -- ServerSopClass inserts
 INSERT INTO [ImageServer].[dbo].[ServerSopClass] ([GUID],[SopClassUid],[Description],[NonImage])
@@ -838,3 +844,11 @@ INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
            (newid(),200,'WebEdited','Web GUI Edited','Study was edited via the Web GUI')
 GO
 
+
+-- ServiceLock Entries not associated with a Filesystem
+DECLARE @ArchiveApplicationLogServiceLockTypeEnum smallint
+SELECT @ArchiveApplicationLogServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = 'ArchiveApplicationLog'
+
+INSERT INTO [ImageServer].[dbo].ServiceLock
+	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+VALUES (newid(),@ArchiveApplicationLogServiceLockTypeEnum,0,getdate(),null,1)

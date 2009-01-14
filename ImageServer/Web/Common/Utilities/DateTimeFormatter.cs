@@ -94,13 +94,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
         {
             DateTime, // output both date and time
             Date, // output the date only
-            Time  // output the time only
+            Time,  // output the time only
+			Timestamp // Timestamp
         }
 
         #region Private members
         private static string _defaultDateTimeFormat; 
         private static string _defaultDateFormat; 
         private static string _defaultTimeFormat;
+		private static string _defaultTimestampFormat;
 
         #endregion Private members
 
@@ -152,6 +154,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
                 DefaultTimeFormat = UISettings.Default.TimeFormat;
             }
 
+			DefaultTimestampFormat = null;
+			if (String.IsNullOrEmpty(UISettings.Default.TimestampFormat))
+			{
+				if (fmt != null)
+				{
+					DefaultTimestampFormat = fmt.FullDateTimePattern;
+
+				}
+				else
+				{
+					DefaultTimestampFormat = "yyyy-MM-dd HH:mm:ss.fff";
+
+				}
+			}
+			else
+			{
+				// use the defined format
+				DefaultTimestampFormat = UISettings.Default.TimestampFormat;
+			}
 
             _defaultDateTimeFormat = null;
             if (String.IsNullOrEmpty(UISettings.Default.DateTimeFormat))
@@ -202,7 +223,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
             get { return _defaultTimeFormat; }
             set { _defaultTimeFormat = value; }
         }
-        #endregion Public Properties
+		public static string DefaultTimestampFormat
+		{
+			get { return _defaultTimestampFormat; }
+			set { _defaultTimestampFormat = value; }
+		}
+		#endregion Public Properties
 
         #region Public methods
 
@@ -224,9 +250,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
                     return Format(dt, DefaultDateTimeFormat);
                 case Style.Date:
                     return Format(dt, DefaultDateFormat);
-
                 case Style.Time:
                     return Format(dt, DefaultTimeFormat);
+				case Style.Timestamp:
+					return Format(dt, DefaultTimestampFormat);
 
                 default:
                     return dt.ToString();

@@ -4,8 +4,8 @@
 	Width="100%">
 	<asp:TableRow VerticalAlign="top">
 		<asp:TableCell VerticalAlign="top">
-			<asp:ObjectDataSource ID="ArchiveQueueDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.ArchiveQueueDataSource"
-				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.ArchiveQueueSummary" EnablePaging="true"
+			<asp:ObjectDataSource ID="ArchiveQueueDataSourceObject" runat="server" TypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.ArchiveQueueDataSource"
+				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.ArchiveQueueSummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetArchiveQueueDataSource"
 				OnObjectDisposing="DisposeArchiveQueueDataSource"/>
 				<ccUI:GridView ID="ArchiveQueueGridView" runat="server" SkinID="CustomGlobalGridView"

@@ -1316,6 +1316,40 @@ SET ANSI_PADDING OFF
 GO
 
 
+/****** Object:  Table [dbo].[ApplicationLog]    Script Date: 01/12/2009 15:36:19 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[ApplicationLog]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[ApplicationLog](
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_ApplicationLog_GUID]  DEFAULT (newid()),
+	[Host] [varchar](50) NOT NULL,
+	[Timestamp] [datetime] NOT NULL,
+	[LogLevel] [varchar](5) NOT NULL,
+	[Thread] [varchar](50) NOT NULL,
+	[Message] [varchar](3000) NOT NULL,
+	[Exception] [varchar](2000) NULL,
+ CONSTRAINT [PK_ApplicationLog] PRIMARY KEY NONCLUSTERED 
+(
+	[GUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
+) ON [QUEUES]
+END
+GO
+SET ANSI_PADDING OFF
+GO
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[ApplicationLog]') AND name = N'IX_ApplicationLog')
+CREATE CLUSTERED INDEX [IX_ApplicationLog] ON [dbo].[ApplicationLog] 
+(
+	[Timestamp] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
+GO
+
+
 /****** Object:  Index [IX_StudyDeleteRecord]    Script Date: 11/28/2008 13:26:28 ******/
 CREATE UNIQUE NONCLUSTERED INDEX [IX_StudyDeleteRecord] ON [dbo].[StudyDeleteRecord] 
 (

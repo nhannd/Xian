@@ -259,7 +259,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
         		                               			else
         		                               			{
         		                               				// just compare
-        		                               				int retVal =
+															if (a.Filesystem == null || b.Filesystem == null)
+																return a.ServiceLockTypeEnum.Description.CompareTo(b.ServiceLockTypeEnum.Description);
+
+															int retVal =
         		                               					a.Filesystem.Description.CompareTo(
         		                               						b.Filesystem.Description);
 															if (retVal == 0)

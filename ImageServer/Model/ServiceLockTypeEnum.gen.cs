@@ -48,6 +48,7 @@ public partial class ServiceLockTypeEnum : ServerEnum
       private static readonly ServiceLockTypeEnum _FilesystemStudyProcess = GetEnum("FilesystemStudyProcess");
       private static readonly ServiceLockTypeEnum _FilesystemLosslessCompress = GetEnum("FilesystemLosslessCompress");
       private static readonly ServiceLockTypeEnum _FilesystemLossyCompress = GetEnum("FilesystemLossyCompress");
+      private static readonly ServiceLockTypeEnum _ArchiveApplicationLog = GetEnum("ArchiveApplicationLog");
       #endregion
 
       #region Public Static Properties
@@ -85,6 +86,13 @@ public partial class ServiceLockTypeEnum : ServerEnum
       public static ServiceLockTypeEnum FilesystemLossyCompress
       {
           get { return _FilesystemLossyCompress; }
+      }
+      /// <summary>
+      /// Archive the application log from the database to a filesystem
+      /// </summary>
+      public static ServiceLockTypeEnum ArchiveApplicationLog
+      {
+          get { return _ArchiveApplicationLog; }
       }
 
       #endregion

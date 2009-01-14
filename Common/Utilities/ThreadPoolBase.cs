@@ -339,7 +339,7 @@ namespace ClearCanvas.Common.Utilities
 			{
 				ThreadStart threadStart = new ThreadStart(this.RunThread);
 				Thread thread = new Thread(threadStart);
-				thread.Name = String.Format("{0} {1}", _threadPoolName, thread.ManagedThreadId);
+				thread.Name = String.Format("{0}:{1}", _threadPoolName, thread.ManagedThreadId);
 				thread.IsBackground = true;
 				thread.Priority = _threadPriority;
 

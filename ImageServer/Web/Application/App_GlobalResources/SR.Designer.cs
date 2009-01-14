@@ -277,6 +277,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Logs Found.
+        /// </summary>
+        internal static string GridPagerApplicationLogMultipleItems {
+            get {
+                return ResourceManager.GetString("GridPagerApplicationLogMultipleItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log Found.
+        /// </summary>
+        internal static string GridPagerApplicationLogSingleItem {
+            get {
+                return ResourceManager.GetString("GridPagerApplicationLogSingleItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Devices Found.
         /// </summary>
         internal static string GridPagerDeviceMultipleItems {

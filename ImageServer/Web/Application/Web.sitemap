@@ -23,7 +23,8 @@
         <siteMapNode url="~/Pages/Admin/Audit/DeletedStudies/Default.aspx" title="$Resources: Titles, DeletedStudies"  />
       </siteMapNode>
       <siteMapNode url="~/Pages/Admin/Alerts/Default.aspx" title="$Resources: Titles, Alerts" />
-    </siteMapNode>
+	  <siteMapNode url="~/Pages/Admin/ApplicationLog/Default.aspx" title="$Resources: Titles, ApplicationLog" />
+	</siteMapNode>
     <siteMapNode url="~/Pages/Help/Default.aspx" title="$Resources: Titles, About"  />
   </siteMapNode>
 </siteMap>

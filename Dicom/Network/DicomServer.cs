@@ -139,7 +139,7 @@ namespace ClearCanvas.Dicom.Network
             _appList = appList;
 
             // Start background thread for incoming associations
-            InitializeNetwork(_network, "DicomServer Handler: " + remote);
+            InitializeNetwork(_network, "DicomServer: " + _host);
         }
 		#endregion
 
