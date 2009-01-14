@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 				}
 				else
 				{
-					reference = new WeakReference(sop.SopInstanceUID);
+					reference = new WeakReference(null);
 					_lutCache[sop.SopInstanceUID] = reference;
 				}
 
