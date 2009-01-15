@@ -957,6 +957,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="Test\Login2.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Login2.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Test\Login2.aspx.designer.cs">
+      <DependentUpon>Login2.aspx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Themes\Default\images\blank.gif" />
@@ -1358,6 +1365,7 @@
     <Content Include="PersistantImage.ashx" />
     <None Include="Scripts\CodeMirror\LICENSE" />
     <None Include="Service References\FilesystemServiceProxy.map" />
+    <Content Include="Test\SecuredWeb.config" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
@@ -1366,6 +1374,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Content Include="Test\Login2.aspx" />
     <Content Include="Web.sitemap" />
     <Content Include="Services\webservice.htc" />
   </ItemGroup>
@@ -1456,7 +1465,8 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>4771</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl></IISUrl>
+          <IISUrl>
+          </IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
         </WebProjectProperties>
       </FlavorProperties>

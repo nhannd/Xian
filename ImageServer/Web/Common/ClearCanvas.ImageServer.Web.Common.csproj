@@ -38,6 +38,7 @@
       <HintPath>..\ReferencedAssemblies\AjaxControls\AjaxControlToolkit.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
@@ -118,6 +119,7 @@
     <Compile Include="ImageServerConstants.cs" />
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\MembershipProvider.cs" />
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
