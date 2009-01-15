@@ -244,7 +244,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								continue;
 							}
 
-							Platform.Log(LogLevel.Info, "Found Queue Item to process, thread pool status: {0}", _threadPoolManager.ToString());
+							Platform.Log(LogLevel.Debug, "Found Queue Item to process, thread pool status: {0}", _threadPoolManager.ToString());
 
 							IWorkQueueProcessorFactory factory = _extensions[queueListItem.WorkQueueTypeEnum];
 

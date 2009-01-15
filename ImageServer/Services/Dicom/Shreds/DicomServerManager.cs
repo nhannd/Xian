@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Net;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network.Scp;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 
@@ -185,13 +186,26 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 		#region Public Methods
 		protected override void Initialize()
 		{
-			_changedEvent = delegate 
-									{
-                                		CheckPartitions();
-                                	};
-			ServerPartitionMonitor.Instance.Changed += _changedEvent;
+			if (_partitions == null)
+			{
+				// Force a read context to be opened.  When developing the retry mechanism 
+				// for startup when the DB was down, there were problems when the type
+				// initializer for enumerated values were failing first.  For some reason,
+				// when the database went back online, they would still give exceptions.
+				// changed to force the processor to open a dummy DB connect and cause an 
+				// exception here, instead of getting to the enumerated value initializer.
+				using (IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+				{
+				}
 
-			_partitions = new List<ServerPartition>(ServerPartitionMonitor.Instance);
+				_changedEvent = delegate
+				                	{
+				                		CheckPartitions();
+				                	};
+				ServerPartitionMonitor.Instance.Changed += _changedEvent;
+
+				_partitions = new List<ServerPartition>(ServerPartitionMonitor.Instance);
+			}
 		}
 
 		/// <summary>
