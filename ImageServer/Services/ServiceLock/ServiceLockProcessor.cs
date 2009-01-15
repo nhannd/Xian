@@ -192,13 +192,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 
 													    // Cleanup the processor
 													    processor.Dispose();
+
+														// Signal the thread to come out of sleep mode
+												    	_threadStop.Set();
 												    });
 					    }
 				    }
 				    else
 				    {
 					    // Wait for only 5 seconds when the thread pool is all in use.
-                        WaitHandle.WaitAny(new WaitHandle[] { _terminationEvent, _threadStop }, 5000, false);
+                        WaitHandle.WaitAny(new WaitHandle[] { _terminationEvent, _threadStop }, TimeSpan.FromSeconds(5), false);
                         _threadStop.Reset();
 				    }
 				    
@@ -206,7 +209,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                 catch (Exception ex)
                 {
                     Platform.Log(LogLevel.Error, ex, "Exception has occurred : {0}. Retry later.", ex.Message);
-                    WaitHandle.WaitAny(new WaitHandle[] {_terminationEvent, _threadStop}, 5000, false);
+					WaitHandle.WaitAny(new WaitHandle[] { _terminationEvent, _threadStop }, TimeSpan.FromSeconds(5), false);
                     _threadStop.Reset();
                 }
 

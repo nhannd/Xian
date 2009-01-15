@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.Shreds
 				{
 				}
 
-				_theProcessor = new ServiceLockProcessor(1, ThreadStop); // 1 threads for processor
+				_theProcessor = new ServiceLockProcessor(2, ThreadStop); // 2 threads for processor
 			}
 		}
 
