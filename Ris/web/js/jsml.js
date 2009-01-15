@@ -44,7 +44,7 @@ if(!Object.prototype.toJsml)
         for(var prop in this)
         {
             // check that the prop belongs to this object (not its prototype) and that the value is non-null and is not a function
-            if(this.hasOwnProperty(prop) && this[prop] && !(this[prop] instanceof Function))
+            if(this.hasOwnProperty(prop) && (this[prop] !== null) && (this[prop] !== undefined) && !(this[prop] instanceof Function))
                 xml += JSML.create(this[prop], prop);
         }
         return [xml, "hash"];
