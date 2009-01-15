@@ -9,6 +9,8 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {
+	//TODO: move to ImageViewer.Services.
+	//Provide option in LDS to send upon import completion?
 	public class DicomPublisher
 	{
 		private DicomPublisher()

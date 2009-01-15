@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Publishing (Dicom).
+        ///   Looks up a localized string similar to Publishing (DICOM).
         /// </summary>
         internal static string DicomPublishingConfiguration {
             get {

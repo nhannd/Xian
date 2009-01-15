@@ -80,10 +80,6 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 
 		public DicomPublishingConfigurationComponent()
 		{
-			StringCollection paths = DicomPublishingSettings.Default.DefaultServerPaths ?? new StringCollection();
-			ArrayList uniquePaths = CollectionUtils.Unique(paths);
-			_selectedServerPaths = new List<string>(CollectionUtils.Cast<string>(uniquePaths));
-
 			_aeNavigator = new AENavigatorComponent();
 
 			_aeNavigator.IsReadOnly = true;
@@ -92,43 +88,35 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 			_aeNavigator.ShowTitlebar = false;
 			_aeNavigator.ShowTools = false;
 
-			CheckServers();
+			StringCollection paths = DicomPublishingSettings.Default.DefaultServerPaths ?? new StringCollection();
+			_selectedServerPaths = new List<string>();
+
+			foreach (string path in paths)
+			{
+				Server server = _aeNavigator.ServerTree.FindServer(path);
+				if (server != null && !_selectedServerPaths.Contains(path))
+				{
+					_selectedServerPaths.Add(path);
+					server.IsChecked = true;
+				}
+			}
 
 			_aeNavigator.ServerTree.ServerTreeUpdated += OnServerTreeUpdated;
 			_navigatorHost = new NavigatorHost(this);
 		}
 
-		private void CheckServers()
-		{
-			foreach(string path in _selectedServerPaths)
-			{
-				Server server = _aeNavigator.ServerTree.FindServer(path);
-				if (server != null)
-					server.IsChecked = true;
-			}
-		}
-
 		private void OnServerTreeUpdated(object sender, EventArgs e)
 		{
-			List<IServerTreeNode> selectedServers =
-				_aeNavigator.ServerTree.FindCheckedServers(_aeNavigator.ServerTree.RootNode.ServerGroupNode);
+			List<IServerTreeNode> selectedServers = _aeNavigator.ServerTree.FindCheckedServers();
 
-			List<string> selectedPaths = 
-				CollectionUtils.Map<IServerTreeNode, string>(selectedServers,
-				                                             delegate(IServerTreeNode node){ return node.Path; });
+			List<string> selectedPaths = CollectionUtils.Map<IServerTreeNode, string>(selectedServers,
+												delegate(IServerTreeNode node) { return node.Path; });
 
-			if (selectedPaths.Count == _selectedServerPaths.Count)
+			if (!CollectionUtils.Equal<string>(_selectedServerPaths, selectedPaths, false))
 			{
-				List<string> differences =
-					CollectionUtils.Reject(selectedPaths, 
-					                       delegate(string path) { return _selectedServerPaths.Contains(path); });
-
-				if (differences.Count > 0)
-					return;
+				_selectedServerPaths = selectedPaths;
+				Modified = true;
 			}
-
-			_selectedServerPaths = selectedPaths;
-			Modified = true;
 		}
 
 		public NavigatorHost AENavigatorHost

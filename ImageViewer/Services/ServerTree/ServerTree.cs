@@ -309,14 +309,24 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 			return null;
 		}
 		
-		public List<IServerTreeNode> FindChildServers(ServerGroup serverGroup)
+		public List<IServerTreeNode> FindChildServers()
+		{
+			return FindChildServers(this.RootNode.ServerGroupNode);
+		}
+
+    	public List<IServerTreeNode> FindChildServers(ServerGroup serverGroup)
         {
             List<IServerTreeNode> listOfChildrenServers = new List<IServerTreeNode>();
             FindChildServers(serverGroup, listOfChildrenServers);
             return listOfChildrenServers;
 		}
+		
+		public List<IServerTreeNode> FindCheckedServers()
+		{
+			return FindCheckedServers(this.RootNode.ServerGroupNode);
+		}
 
-		public List<IServerTreeNode> FindCheckedServers(ServerGroup serverGroup)
+    	public List<IServerTreeNode> FindCheckedServers(ServerGroup serverGroup)
 		{
 			return FindChildServers(serverGroup).FindAll(delegate(IServerTreeNode node) { return node.IsChecked; });
 		}

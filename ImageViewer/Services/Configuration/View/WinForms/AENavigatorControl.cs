@@ -34,9 +34,11 @@ using System.Collections;
 using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.Services.ServerTree;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 {
@@ -80,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			_component.ServerTree.ServerTreeUpdated += OnServerTreeUpdated;
 			if (_component.ShowTools)
 			{
-				ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
+				_toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
 				ToolbarModel = _component.ToolbarModel;
 				MenuModel = _component.ContextMenuModel;
 			}
@@ -113,10 +115,9 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			UpdateServerGroups();
 		}
 
-		private void SetInitialCheck(TreeNode treeNode)
+		private void SetServerCheck(TreeNode serverNode)
 		{
-			if (treeNode.Tag is Server)
-				SetServerCheck(treeNode, ((IServerTreeNode)treeNode.Tag).IsChecked);
+			SetServerCheck(serverNode, ((IServerTreeNode)serverNode.Tag).IsChecked);
 		}
 
 		private void SetServerCheck(TreeNode serverNode, bool isChecked)
@@ -126,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 
 			Server server = (Server)serverNode.Tag;
 			server.IsChecked = isChecked;
-			serverNode.StateImageIndex = (int)(server.IsChecked ? CheckState.Checked : CheckState.Unchecked);
+			serverNode.StateImageIndex = (int)(isChecked ? CheckState.Checked : CheckState.Unchecked);
 		}
 
 		private void SetGroupCheck(TreeNode serverGroupNode, bool isChecked)
@@ -147,16 +148,22 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 
 		private void UpdateServerGroups()
 		{
-			UpdateServerGroups(_aeTreeView.Nodes);
+			if (!_component.ShowCheckBoxes)
+				return;
+
+			UpdateServerGroups(CollectionUtils.Cast<TreeNode>(_aeTreeView.Nodes));
 		}
 
-		private void UpdateServerGroups(IEnumerable nodes)
+		private void UpdateServerGroups(IEnumerable<TreeNode> nodes)
 		{
+			if (!_component.ShowCheckBoxes)
+				return;
+
 			foreach (TreeNode node in nodes)
 			{
 				if (node.Tag is ServerGroup)
 				{
-					UpdateServerGroups(node.Nodes);
+					UpdateServerGroups(CollectionUtils.Cast<TreeNode>(node.Nodes));
 					UpdateServerGroup(node);
 				}
 			}
@@ -170,11 +177,14 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			if (serverGroupNode.Tag is ServerGroup)
 			{
 				ServerGroup group = serverGroupNode.Tag as ServerGroup;
-				int numberOfServers = 0;
-				if (IsEntireGroupChecked(group, ref numberOfServers) && numberOfServers > 0)
-					serverGroupNode.StateImageIndex = (int) CheckState.Checked;
-				else if (IsEntireGroupUnchecked(group))
+
+				bool isEntireGroupChecked = IsEntireGroupChecked(group);
+				bool isEntireGroupUnchecked = IsEntireGroupUnchecked(group);
+				
+				if (isEntireGroupUnchecked)
 					serverGroupNode.StateImageIndex = (int)CheckState.Unchecked;
+				else if (isEntireGroupChecked)  //when there are no servers, leave it unchecked.
+					serverGroupNode.StateImageIndex = (int)CheckState.Checked;
 				else
 					serverGroupNode.StateImageIndex = (int)CheckState.Partial;
 			}
@@ -182,22 +192,15 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 
 		private bool IsEntireGroupChecked(ServerGroup group)
 		{
-			int none = 0;
-			return IsEntireGroupChecked(group, ref none);
-		}
-
-		private bool IsEntireGroupChecked(ServerGroup group, ref int numberOfServers)
-		{
 			foreach (Server server in group.ChildServers)
 			{
-				++numberOfServers;
 				if (!server.IsChecked)
 					return false;
 			}
 
 			foreach (ServerGroup subGroup in group.ChildGroups)
 			{
-				if (!IsEntireGroupChecked(subGroup, ref numberOfServers))
+				if (!IsEntireGroupChecked(subGroup))
 					return false;
 			}
 
@@ -206,15 +209,8 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 
 		private bool IsEntireGroupUnchecked(ServerGroup group)
 		{
-			int none = 0;
-			return IsEntireGroupUnchecked(group, ref none);
-		}
-
-		private bool IsEntireGroupUnchecked(ServerGroup group, ref int numberOfServers)
-		{
 			foreach (Server server in group.ChildServers)
 			{
-				++numberOfServers;
 				if (server.IsChecked)
 					return false;
 			}
@@ -229,6 +225,8 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 		}
 
 		#endregion
+
+		#region Toolbar / Menu Model
 
 		private ActionModelNode ToolbarModel
 		{
@@ -262,11 +260,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			}
 		}
 
-		private ToolStripItemDisplayStyle ToolStripItemDisplayStyle
-		{
-			get { return _toolStripItemDisplayStyle; }
-			set { _toolStripItemDisplayStyle = value; }
-		}
+		#endregion
 
 		//It is *very* important to keep the SelectedNode of the TreeView and _lastClickNode synchronized,
 		//and not only that, but _lastClickedNode must be set first, otherwise some odd behaviour can occur.
@@ -422,7 +416,8 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
             treeChild.Tag = dataChild;
             treeChild.ToolTipText = dataChild.ToString();
 
-			SetInitialCheck(treeChild);
+			if (treeChild.Tag is Server)
+				SetServerCheck(treeChild);
 
 			treeNode.Nodes.Add(treeChild);
             return treeChild;
