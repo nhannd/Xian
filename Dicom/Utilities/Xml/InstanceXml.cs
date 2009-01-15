@@ -135,7 +135,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             _transferSyntax = syntax;
         }
 
-        internal InstanceXml(XmlNode instanceNode, DicomAttributeCollection baseCollection)
+        public InstanceXml(XmlNode instanceNode, DicomAttributeCollection baseCollection)
         {
 			_collection = new DicomAttributeCollection();
 
@@ -270,7 +270,15 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			{
 				XmlNode node = (XmlNode)_instanceXmlEnumerator.Current;
 				String tagString = node.Attributes["Tag"].Value;
-				uint tagValue = uint.Parse(tagString, NumberStyles.HexNumber);
+				uint tagValue;
+				if (tagString.StartsWith("$"))
+				{
+					DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tagString.Substring(1));
+					if (dicomTag == null) throw new DicomDataException("Invalid tag name when parsing XML: " + tagString);
+					tagValue = dicomTag.TagValue;
+				}
+				else
+					tagValue = uint.Parse(tagString, NumberStyles.HexNumber);
 				if (tagValue <= tag)
 				{
 					ParseAttribute(_collection, node);
@@ -511,21 +519,29 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		private static DicomTag GetTagFromAttributeNode(XmlNode attributeNode)
 		{
-			DicomVr xmlVr = DicomVr.GetVR(attributeNode.Attributes["VR"].Value);
 			String tag = attributeNode.Attributes["Tag"].Value;
 
-			uint tagValue = uint.Parse(tag, NumberStyles.HexNumber);
-
-			DicomTag theTag = DicomTagDictionary.GetDicomTag(tagValue);
-			if (theTag == null)
-				theTag = new DicomTag(tagValue, "Unknown tag", "UnknownTag", xmlVr, false, 1, uint.MaxValue, false);
-
-			if (!theTag.VR.Equals(xmlVr))
+			uint tagValue;
+			DicomTag theTag;
+			DicomVr xmlVr;
+			if (tag.StartsWith("$"))
 			{
-				theTag = new DicomTag(tagValue, theTag.Name, theTag.VariableName, xmlVr, theTag.MultiVR, theTag.VMLow,
-								 theTag.VMHigh, theTag.Retired);
+				theTag = DicomTagDictionary.GetDicomTag(tag.Substring(1));
 			}
+			else
+			{
+				tagValue = uint.Parse(tag, NumberStyles.HexNumber);
+				theTag = DicomTagDictionary.GetDicomTag(tagValue);
+				xmlVr = DicomVr.GetVR(attributeNode.Attributes["VR"].Value);
+				if (theTag == null)
+					theTag = new DicomTag(tagValue, "Unknown tag", "UnknownTag", xmlVr, false, 1, uint.MaxValue, false);
 
+				if (!theTag.VR.Equals(xmlVr))
+				{
+					theTag = new DicomTag(tagValue, theTag.Name, theTag.VariableName, xmlVr, theTag.MultiVR, theTag.VMLow,
+					                      theTag.VMHigh, theTag.Retired);
+				}
+			}
 			return theTag;
 		}
 

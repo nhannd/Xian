@@ -30,9 +30,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 using ClearCanvas.Dicom.Codec;
+using ClearCanvas.Dicom.Network.Scu;
+using ClearCanvas.Dicom.Utilities.Xml;
 
 namespace ClearCanvas.Dicom.Samples
 {
@@ -253,6 +258,154 @@ namespace ClearCanvas.Dicom.Samples
 				if (DialogResult.OK == saveFileDialog.ShowDialog())
 					_compression.SavePixels(saveFileDialog.FileName);
 			}
+		}
+
+		private void comboBoxQueryScuQueryType_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			XmlDocument doc = new XmlDocument();
+
+			if (comboBoxQueryScuQueryType.SelectedIndex == 0)
+			{
+				Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "StudyRootStudy.xml");
+				doc.Load(stream);
+				stream.Close();
+				comboBoxQueryScuQueryLevel.Items.Clear();
+				comboBoxQueryScuQueryLevel.Items.Add("STUDY");
+				comboBoxQueryScuQueryLevel.Items.Add("SERIES");
+				comboBoxQueryScuQueryLevel.Items.Add("IMAGE");
+			}
+			else
+			{
+				Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), "PatientRootPatient.xml");
+				doc.Load(stream);
+				stream.Close();
+				comboBoxQueryScuQueryLevel.Items.Clear();
+				comboBoxQueryScuQueryLevel.Items.Add("PATIENT");
+				comboBoxQueryScuQueryLevel.Items.Add("STUDY");
+				comboBoxQueryScuQueryLevel.Items.Add("SERIES");
+				comboBoxQueryScuQueryLevel.Items.Add("IMAGE");
+			}
+
+			StringWriter sw = new StringWriter();
+
+			XmlWriterSettings xmlSettings = new XmlWriterSettings();
+
+			xmlSettings.Encoding = Encoding.UTF8;
+			xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
+			xmlSettings.Indent = true;
+			xmlSettings.NewLineOnAttributes = false;
+			xmlSettings.CheckCharacters = true;
+			xmlSettings.IndentChars = "  ";
+
+			XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
+
+			doc.WriteTo(tw);
+
+			tw.Close();
+
+			this.textBoxQueryMessage.Text = sw.ToString();
+		}
+
+		private void buttonQueryScuSearch_Click(object sender, EventArgs e)
+		{
+			XmlDocument theDoc = new XmlDocument();
+
+			try
+			{
+				theDoc.LoadXml(textBoxQueryMessage.Text);
+				InstanceXml instanceXml = new InstanceXml(theDoc.DocumentElement, null);
+				DicomAttributeCollection queryMessage = instanceXml.Collection;
+
+				if (queryMessage == null)
+				{
+					Logger.LogError("Unexpected error parsing query message");
+				}
+
+				int maxResults;
+				if (!int.TryParse(textBoxQueryScuMaxResults.Text, out maxResults))
+					maxResults = -1;
+
+				IList<DicomAttributeCollection> resultsList;
+				if (comboBoxQueryScuQueryType.SelectedIndex == 0)
+				{
+					StudyRootFindScu findScu = new StudyRootFindScu();
+					findScu.MaxResults = maxResults;
+					resultsList = findScu.Find(textBoxQueryScuLocalAe.Text,
+								 textBoxQueryScuRemoteAe.Text,
+								 textBoxQueryScuRemoteHost.Text,
+								 int.Parse(textBoxQueryScuRemotePort.Text), queryMessage);
+					findScu.Dispose();
+				}
+				else
+				{
+					PatientRootFindScu findScu = new PatientRootFindScu();
+					findScu.MaxResults = maxResults;
+					resultsList = findScu.Find(textBoxQueryScuLocalAe.Text,
+								 textBoxQueryScuRemoteAe.Text,
+								 textBoxQueryScuRemoteHost.Text,
+								 int.Parse(textBoxQueryScuRemotePort.Text), queryMessage);
+					findScu.Dispose();
+				}
+
+				foreach (DicomAttributeCollection msg in resultsList)
+				{
+					Logger.LogInfo(msg.DumpString);
+				}
+			}
+			catch (Exception x)
+			{
+				Logger.LogErrorException(x, "Unable to perform query");
+				return;
+			}		
+		}
+
+		private void comboBoxQueryScuQueryLevel_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			XmlDocument doc = new XmlDocument();
+
+			string xmlFile;
+			if (comboBoxQueryScuQueryType.SelectedIndex == 0)
+			{
+				if (comboBoxQueryScuQueryLevel.SelectedItem.Equals("STUDY"))
+					xmlFile = "StudyRootStudy.xml";
+				else if (comboBoxQueryScuQueryLevel.SelectedItem.Equals("SERIES"))
+					xmlFile = "StudyRootSeries.xml";
+				else 
+					xmlFile = "StudyRootImage.xml";
+			}
+			else
+			{
+				if (comboBoxQueryScuQueryLevel.SelectedItem.Equals("PATIENT"))
+					xmlFile = "PatientRootPatient.xml";
+				else if (comboBoxQueryScuQueryLevel.SelectedItem.Equals("STUDY"))
+					xmlFile = "PatientRootStudy.xml";
+				else if (comboBoxQueryScuQueryLevel.SelectedItem.Equals("SERIES"))
+					xmlFile = "PatientRootSeries.xml";
+				else 
+					xmlFile = "PatientRootImage.xml";
+			}
+
+			Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), xmlFile);
+			doc.Load(stream);
+			stream.Close();
+			StringWriter sw = new StringWriter();
+
+			XmlWriterSettings xmlSettings = new XmlWriterSettings();
+
+			xmlSettings.Encoding = Encoding.UTF8;
+			xmlSettings.ConformanceLevel = ConformanceLevel.Fragment;
+			xmlSettings.Indent = true;
+			xmlSettings.NewLineOnAttributes = false;
+			xmlSettings.CheckCharacters = true;
+			xmlSettings.IndentChars = "  ";
+
+			XmlWriter tw = XmlWriter.Create(sw, xmlSettings);
+
+			doc.WriteTo(tw);
+
+			tw.Close();
+
+			this.textBoxQueryMessage.Text = sw.ToString();
 		}
     }
 }

@@ -68,6 +68,14 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// Association isn't closed and is left open for the next find request when set to true.
 		/// </summary>
     	private bool _reuseAssociation = false;
+
+		/// <summary>
+		/// Maximum results to receive before sending a C-CANCEL-RQ message.
+		/// </summary>
+    	private int _maxResults = -1;
+
+		// Flag if a C-CANCEL-RQ has already been sent for an association.
+    	private bool _cancelSent = false;
         #endregion
 
         #region Public Properties
@@ -96,6 +104,17 @@ namespace ClearCanvas.Dicom.Network.Scu
 			get { return _reuseAssociation; }
 			set { _reuseAssociation = value; }
 		}
+
+		/// <summary>
+		/// When set to -1, FindScu will receive all results.  When set to a positive number,
+		/// FindScu will send a C-CANCEL-RQ message after receiving the specified number of 
+		/// responses.
+		/// </summary>
+    	public int MaxResults
+    	{
+    		get { return _maxResults; }
+			set { _maxResults = value; }
+    	}
         #endregion
 
         #region Protected Properties
@@ -312,9 +331,15 @@ namespace ClearCanvas.Dicom.Network.Scu
             {
                 // one result sent back, add to result list
                 _results.Add(message.DataSet);
+				if (_maxResults != -1 && !_cancelSent && _results.Count > _maxResults)
+				{
+					client.SendCFindCancelRequest(presentationID, message.MessageIdBeingRespondedTo);
+					_cancelSent = true;
+				}
             }
             else
             {
+				_cancelSent = false;
 				DicomState status = message.Status.Status;
 				if (message.Status.Status != DicomState.Success)
 				{

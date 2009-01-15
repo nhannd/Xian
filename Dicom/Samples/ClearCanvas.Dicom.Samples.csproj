@@ -93,6 +93,19 @@
       <Name>ClearCanvas.Dicom.Codec.Plugin</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="StudyRootStudy.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PatientRootPatient.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="PatientRootImage.xml" />
+    <EmbeddedResource Include="PatientRootSeries.xml" />
+    <EmbeddedResource Include="PatientRootStudy.xml" />
+    <EmbeddedResource Include="StudyRootImage.xml" />
+    <EmbeddedResource Include="StudyRootSeries.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

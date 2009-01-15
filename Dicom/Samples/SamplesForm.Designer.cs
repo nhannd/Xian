@@ -84,7 +84,8 @@ namespace ClearCanvas.Dicom.Samples
 			this._buttonStorageScpStartStop = new System.Windows.Forms.Button();
 			this._textBoxStorageScpPort = new System.Windows.Forms.TextBox();
 			this.label4 = new System.Windows.Forms.Label();
-			this.tabPage1 = new System.Windows.Forms.TabPage();
+			this.CompressionTab = new System.Windows.Forms.TabPage();
+			this._savePixelsButton = new System.Windows.Forms.Button();
 			this.label11 = new System.Windows.Forms.Label();
 			this.label10 = new System.Windows.Forms.Label();
 			this.label9 = new System.Windows.Forms.Label();
@@ -95,20 +96,37 @@ namespace ClearCanvas.Dicom.Samples
 			this._sourcePathTextBox = new System.Windows.Forms.TextBox();
 			this._saveFileButton = new System.Windows.Forms.Button();
 			this._openFileButton = new System.Windows.Forms.Button();
+			this.queryScuTab = new System.Windows.Forms.TabPage();
+			this.label18 = new System.Windows.Forms.Label();
+			this.comboBoxQueryScuQueryLevel = new System.Windows.Forms.ComboBox();
+			this.textBoxQueryScuMaxResults = new System.Windows.Forms.TextBox();
+			this.label17 = new System.Windows.Forms.Label();
+			this.label16 = new System.Windows.Forms.Label();
+			this.comboBoxQueryScuQueryType = new System.Windows.Forms.ComboBox();
+			this.label12 = new System.Windows.Forms.Label();
+			this.textBoxQueryScuLocalAe = new System.Windows.Forms.TextBox();
+			this.textBoxQueryScuRemotePort = new System.Windows.Forms.TextBox();
+			this.label13 = new System.Windows.Forms.Label();
+			this.textBoxQueryScuRemoteHost = new System.Windows.Forms.TextBox();
+			this.label14 = new System.Windows.Forms.Label();
+			this.textBoxQueryScuRemoteAe = new System.Windows.Forms.TextBox();
+			this.label15 = new System.Windows.Forms.Label();
+			this.textBoxQueryMessage = new System.Windows.Forms.TextBox();
+			this.buttonQueryScuSearch = new System.Windows.Forms.Button();
 			this._buttonOutputClearLog = new System.Windows.Forms.Button();
 			this.OutputTextBox = new System.Windows.Forms.TextBox();
 			this.openFileDialogStorageScu = new System.Windows.Forms.OpenFileDialog();
 			this.folderBrowserDialogStorageScp = new System.Windows.Forms.FolderBrowserDialog();
 			this.folderBrowserDialogStorageScu = new System.Windows.Forms.FolderBrowserDialog();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
-			this._savePixelsButton = new System.Windows.Forms.Button();
 			this.SamplesSplitContainer.Panel1.SuspendLayout();
 			this.SamplesSplitContainer.Panel2.SuspendLayout();
 			this.SamplesSplitContainer.SuspendLayout();
 			this.SamplesTabs.SuspendLayout();
 			this.StorageScuTab.SuspendLayout();
 			this.StorageScpTab.SuspendLayout();
-			this.tabPage1.SuspendLayout();
+			this.CompressionTab.SuspendLayout();
+			this.queryScuTab.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// SamplesSplitContainer
@@ -139,7 +157,8 @@ namespace ClearCanvas.Dicom.Samples
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.SamplesTabs.Controls.Add(this.StorageScuTab);
 			this.SamplesTabs.Controls.Add(this.StorageScpTab);
-			this.SamplesTabs.Controls.Add(this.tabPage1);
+			this.SamplesTabs.Controls.Add(this.CompressionTab);
+			this.SamplesTabs.Controls.Add(this.queryScuTab);
 			this.SamplesTabs.Location = new System.Drawing.Point(3, 0);
 			this.SamplesTabs.Name = "SamplesTabs";
 			this.SamplesTabs.SelectedIndex = 0;
@@ -383,26 +402,36 @@ namespace ClearCanvas.Dicom.Samples
 			this.label4.TabIndex = 0;
 			this.label4.Text = "Port";
 			// 
-			// tabPage1
+			// CompressionTab
 			// 
-			this.tabPage1.Controls.Add(this._savePixelsButton);
-			this.tabPage1.Controls.Add(this.label11);
-			this.tabPage1.Controls.Add(this.label10);
-			this.tabPage1.Controls.Add(this.label9);
-			this.tabPage1.Controls.Add(this.label8);
-			this.tabPage1.Controls.Add(this._sourceTransferSyntaxCombo);
-			this.tabPage1.Controls.Add(this._destinationSyntaxCombo);
-			this.tabPage1.Controls.Add(this._destinationPathTextBox);
-			this.tabPage1.Controls.Add(this._sourcePathTextBox);
-			this.tabPage1.Controls.Add(this._saveFileButton);
-			this.tabPage1.Controls.Add(this._openFileButton);
-			this.tabPage1.Location = new System.Drawing.Point(4, 22);
-			this.tabPage1.Name = "tabPage1";
-			this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-			this.tabPage1.Size = new System.Drawing.Size(910, 126);
-			this.tabPage1.TabIndex = 2;
-			this.tabPage1.Text = "Compression";
-			this.tabPage1.UseVisualStyleBackColor = true;
+			this.CompressionTab.Controls.Add(this._savePixelsButton);
+			this.CompressionTab.Controls.Add(this.label11);
+			this.CompressionTab.Controls.Add(this.label10);
+			this.CompressionTab.Controls.Add(this.label9);
+			this.CompressionTab.Controls.Add(this.label8);
+			this.CompressionTab.Controls.Add(this._sourceTransferSyntaxCombo);
+			this.CompressionTab.Controls.Add(this._destinationSyntaxCombo);
+			this.CompressionTab.Controls.Add(this._destinationPathTextBox);
+			this.CompressionTab.Controls.Add(this._sourcePathTextBox);
+			this.CompressionTab.Controls.Add(this._saveFileButton);
+			this.CompressionTab.Controls.Add(this._openFileButton);
+			this.CompressionTab.Location = new System.Drawing.Point(4, 22);
+			this.CompressionTab.Name = "CompressionTab";
+			this.CompressionTab.Padding = new System.Windows.Forms.Padding(3);
+			this.CompressionTab.Size = new System.Drawing.Size(910, 126);
+			this.CompressionTab.TabIndex = 2;
+			this.CompressionTab.Text = "Compression";
+			this.CompressionTab.UseVisualStyleBackColor = true;
+			// 
+			// _savePixelsButton
+			// 
+			this._savePixelsButton.Location = new System.Drawing.Point(742, 72);
+			this._savePixelsButton.Name = "_savePixelsButton";
+			this._savePixelsButton.Size = new System.Drawing.Size(98, 23);
+			this._savePixelsButton.TabIndex = 10;
+			this._savePixelsButton.Text = "Save Pixels";
+			this._savePixelsButton.UseVisualStyleBackColor = true;
+			this._savePixelsButton.Click += new System.EventHandler(this._savePixelsButton_Click);
 			// 
 			// label11
 			// 
@@ -490,6 +519,185 @@ namespace ClearCanvas.Dicom.Samples
 			this._openFileButton.UseVisualStyleBackColor = true;
 			this._openFileButton.Click += new System.EventHandler(this._openFileButton_Click);
 			// 
+			// queryScuTab
+			// 
+			this.queryScuTab.Controls.Add(this.label18);
+			this.queryScuTab.Controls.Add(this.comboBoxQueryScuQueryLevel);
+			this.queryScuTab.Controls.Add(this.textBoxQueryScuMaxResults);
+			this.queryScuTab.Controls.Add(this.label17);
+			this.queryScuTab.Controls.Add(this.label16);
+			this.queryScuTab.Controls.Add(this.comboBoxQueryScuQueryType);
+			this.queryScuTab.Controls.Add(this.label12);
+			this.queryScuTab.Controls.Add(this.textBoxQueryScuLocalAe);
+			this.queryScuTab.Controls.Add(this.textBoxQueryScuRemotePort);
+			this.queryScuTab.Controls.Add(this.label13);
+			this.queryScuTab.Controls.Add(this.textBoxQueryScuRemoteHost);
+			this.queryScuTab.Controls.Add(this.label14);
+			this.queryScuTab.Controls.Add(this.textBoxQueryScuRemoteAe);
+			this.queryScuTab.Controls.Add(this.label15);
+			this.queryScuTab.Controls.Add(this.textBoxQueryMessage);
+			this.queryScuTab.Controls.Add(this.buttonQueryScuSearch);
+			this.queryScuTab.Location = new System.Drawing.Point(4, 22);
+			this.queryScuTab.Name = "queryScuTab";
+			this.queryScuTab.Padding = new System.Windows.Forms.Padding(3);
+			this.queryScuTab.Size = new System.Drawing.Size(910, 126);
+			this.queryScuTab.TabIndex = 3;
+			this.queryScuTab.Text = "QuerySCU";
+			this.queryScuTab.UseVisualStyleBackColor = true;
+			// 
+			// label18
+			// 
+			this.label18.AutoSize = true;
+			this.label18.Location = new System.Drawing.Point(154, 70);
+			this.label18.Name = "label18";
+			this.label18.Size = new System.Drawing.Size(33, 13);
+			this.label18.TabIndex = 25;
+			this.label18.Text = "Level";
+			// 
+			// comboBoxQueryScuQueryLevel
+			// 
+			this.comboBoxQueryScuQueryLevel.FormattingEnabled = true;
+			this.comboBoxQueryScuQueryLevel.Items.AddRange(new object[] {
+            "PATIENT",
+            "STUDY",
+            "SERIES",
+            "IMAGE"});
+			this.comboBoxQueryScuQueryLevel.Location = new System.Drawing.Point(154, 87);
+			this.comboBoxQueryScuQueryLevel.Name = "comboBoxQueryScuQueryLevel";
+			this.comboBoxQueryScuQueryLevel.Size = new System.Drawing.Size(100, 21);
+			this.comboBoxQueryScuQueryLevel.TabIndex = 24;
+			this.comboBoxQueryScuQueryLevel.Text = "STUDY";
+			this.comboBoxQueryScuQueryLevel.SelectedIndexChanged += new System.EventHandler(this.comboBoxQueryScuQueryLevel_SelectedIndexChanged);
+			// 
+			// textBoxQueryScuMaxResults
+			// 
+			this.textBoxQueryScuMaxResults.Location = new System.Drawing.Point(288, 87);
+			this.textBoxQueryScuMaxResults.Name = "textBoxQueryScuMaxResults";
+			this.textBoxQueryScuMaxResults.Size = new System.Drawing.Size(100, 20);
+			this.textBoxQueryScuMaxResults.TabIndex = 23;
+			this.textBoxQueryScuMaxResults.Text = "-1";
+			// 
+			// label17
+			// 
+			this.label17.AutoSize = true;
+			this.label17.Location = new System.Drawing.Point(285, 71);
+			this.label17.Name = "label17";
+			this.label17.Size = new System.Drawing.Size(136, 13);
+			this.label17.TabIndex = 22;
+			this.label17.Text = "Max Results (-1 = unlimited)";
+			// 
+			// label16
+			// 
+			this.label16.AutoSize = true;
+			this.label16.Location = new System.Drawing.Point(23, 71);
+			this.label16.Name = "label16";
+			this.label16.Size = new System.Drawing.Size(62, 13);
+			this.label16.TabIndex = 21;
+			this.label16.Text = "Query Type";
+			// 
+			// comboBoxQueryScuQueryType
+			// 
+			this.comboBoxQueryScuQueryType.FormattingEnabled = true;
+			this.comboBoxQueryScuQueryType.Items.AddRange(new object[] {
+            "Study Root",
+            "Patient Root"});
+			this.comboBoxQueryScuQueryType.Location = new System.Drawing.Point(23, 87);
+			this.comboBoxQueryScuQueryType.Name = "comboBoxQueryScuQueryType";
+			this.comboBoxQueryScuQueryType.Size = new System.Drawing.Size(121, 21);
+			this.comboBoxQueryScuQueryType.TabIndex = 20;
+			this.comboBoxQueryScuQueryType.Text = "Study Root";
+			this.comboBoxQueryScuQueryType.SelectedIndexChanged += new System.EventHandler(this.comboBoxQueryScuQueryType_SelectedIndexChanged);
+			// 
+			// label12
+			// 
+			this.label12.AutoSize = true;
+			this.label12.Location = new System.Drawing.Point(23, 14);
+			this.label12.Name = "label12";
+			this.label12.Size = new System.Drawing.Size(50, 13);
+			this.label12.TabIndex = 19;
+			this.label12.Text = "Local AE";
+			// 
+			// textBoxQueryScuLocalAe
+			// 
+			this.textBoxQueryScuLocalAe.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuLocalAETitle", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+			this.textBoxQueryScuLocalAe.Location = new System.Drawing.Point(23, 31);
+			this.textBoxQueryScuLocalAe.Name = "textBoxQueryScuLocalAe";
+			this.textBoxQueryScuLocalAe.Size = new System.Drawing.Size(100, 20);
+			this.textBoxQueryScuLocalAe.TabIndex = 18;
+			this.textBoxQueryScuLocalAe.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuLocalAETitle;
+			// 
+			// textBoxQueryScuRemotePort
+			// 
+			this.textBoxQueryScuRemotePort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemotePort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+			this.textBoxQueryScuRemotePort.Location = new System.Drawing.Point(427, 32);
+			this.textBoxQueryScuRemotePort.Name = "textBoxQueryScuRemotePort";
+			this.textBoxQueryScuRemotePort.Size = new System.Drawing.Size(100, 20);
+			this.textBoxQueryScuRemotePort.TabIndex = 17;
+			this.textBoxQueryScuRemotePort.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemotePort;
+			// 
+			// label13
+			// 
+			this.label13.AutoSize = true;
+			this.label13.Location = new System.Drawing.Point(424, 15);
+			this.label13.Name = "label13";
+			this.label13.Size = new System.Drawing.Size(66, 13);
+			this.label13.TabIndex = 16;
+			this.label13.Text = "Remote Port";
+			// 
+			// textBoxQueryScuRemoteHost
+			// 
+			this.textBoxQueryScuRemoteHost.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemoteHost", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+			this.textBoxQueryScuRemoteHost.Location = new System.Drawing.Point(288, 32);
+			this.textBoxQueryScuRemoteHost.Name = "textBoxQueryScuRemoteHost";
+			this.textBoxQueryScuRemoteHost.Size = new System.Drawing.Size(100, 20);
+			this.textBoxQueryScuRemoteHost.TabIndex = 15;
+			this.textBoxQueryScuRemoteHost.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemoteHost;
+			// 
+			// label14
+			// 
+			this.label14.AutoSize = true;
+			this.label14.Location = new System.Drawing.Point(285, 15);
+			this.label14.Name = "label14";
+			this.label14.Size = new System.Drawing.Size(69, 13);
+			this.label14.TabIndex = 14;
+			this.label14.Text = "Remote Host";
+			// 
+			// textBoxQueryScuRemoteAe
+			// 
+			this.textBoxQueryScuRemoteAe.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemoteAETitle", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+			this.textBoxQueryScuRemoteAe.Location = new System.Drawing.Point(154, 32);
+			this.textBoxQueryScuRemoteAe.Name = "textBoxQueryScuRemoteAe";
+			this.textBoxQueryScuRemoteAe.Size = new System.Drawing.Size(100, 20);
+			this.textBoxQueryScuRemoteAe.TabIndex = 13;
+			this.textBoxQueryScuRemoteAe.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemoteAETitle;
+			// 
+			// label15
+			// 
+			this.label15.AutoSize = true;
+			this.label15.Location = new System.Drawing.Point(151, 15);
+			this.label15.Name = "label15";
+			this.label15.Size = new System.Drawing.Size(61, 13);
+			this.label15.TabIndex = 12;
+			this.label15.Text = "Remote AE";
+			// 
+			// textBoxQueryMessage
+			// 
+			this.textBoxQueryMessage.Location = new System.Drawing.Point(556, 6);
+			this.textBoxQueryMessage.Multiline = true;
+			this.textBoxQueryMessage.Name = "textBoxQueryMessage";
+			this.textBoxQueryMessage.Size = new System.Drawing.Size(348, 114);
+			this.textBoxQueryMessage.TabIndex = 1;
+			// 
+			// buttonQueryScuSearch
+			// 
+			this.buttonQueryScuSearch.Location = new System.Drawing.Point(452, 87);
+			this.buttonQueryScuSearch.Name = "buttonQueryScuSearch";
+			this.buttonQueryScuSearch.Size = new System.Drawing.Size(75, 23);
+			this.buttonQueryScuSearch.TabIndex = 0;
+			this.buttonQueryScuSearch.Text = "Search";
+			this.buttonQueryScuSearch.UseVisualStyleBackColor = true;
+			this.buttonQueryScuSearch.Click += new System.EventHandler(this.buttonQueryScuSearch_Click);
+			// 
 			// _buttonOutputClearLog
 			// 
 			this._buttonOutputClearLog.Location = new System.Drawing.Point(16, 3);
@@ -525,16 +733,6 @@ namespace ClearCanvas.Dicom.Samples
 			this.saveFileDialog.DefaultExt = "dcm";
 			this.saveFileDialog.Title = "Save DICOM File";
 			// 
-			// _savePixelsButton
-			// 
-			this._savePixelsButton.Location = new System.Drawing.Point(742, 72);
-			this._savePixelsButton.Name = "_savePixelsButton";
-			this._savePixelsButton.Size = new System.Drawing.Size(98, 23);
-			this._savePixelsButton.TabIndex = 10;
-			this._savePixelsButton.Text = "Save Pixels";
-			this._savePixelsButton.UseVisualStyleBackColor = true;
-			this._savePixelsButton.Click += new System.EventHandler(this._savePixelsButton_Click);
-			// 
 			// SamplesForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -552,8 +750,10 @@ namespace ClearCanvas.Dicom.Samples
 			this.StorageScuTab.PerformLayout();
 			this.StorageScpTab.ResumeLayout(false);
 			this.StorageScpTab.PerformLayout();
-			this.tabPage1.ResumeLayout(false);
-			this.tabPage1.PerformLayout();
+			this.CompressionTab.ResumeLayout(false);
+			this.CompressionTab.PerformLayout();
+			this.queryScuTab.ResumeLayout(false);
+			this.queryScuTab.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -590,7 +790,7 @@ namespace ClearCanvas.Dicom.Samples
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox _textBoxStorageScuLocalAe;
         private System.Windows.Forms.Button _buttonStorageScuClearFiles;
-		private System.Windows.Forms.TabPage tabPage1;
+		private System.Windows.Forms.TabPage CompressionTab;
 		private System.Windows.Forms.Label label9;
 		private System.Windows.Forms.Label label8;
 		private System.Windows.Forms.ComboBox _sourceTransferSyntaxCombo;
@@ -603,6 +803,23 @@ namespace ClearCanvas.Dicom.Samples
 		private System.Windows.Forms.Label label10;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog;
 		private System.Windows.Forms.Button _savePixelsButton;
+		private System.Windows.Forms.TabPage queryScuTab;
+		private System.Windows.Forms.Label label12;
+		private System.Windows.Forms.TextBox textBoxQueryScuLocalAe;
+		private System.Windows.Forms.TextBox textBoxQueryScuRemotePort;
+		private System.Windows.Forms.Label label13;
+		private System.Windows.Forms.TextBox textBoxQueryScuRemoteHost;
+		private System.Windows.Forms.Label label14;
+		private System.Windows.Forms.TextBox textBoxQueryScuRemoteAe;
+		private System.Windows.Forms.Label label15;
+		private System.Windows.Forms.TextBox textBoxQueryMessage;
+		private System.Windows.Forms.Button buttonQueryScuSearch;
+		private System.Windows.Forms.Label label16;
+		private System.Windows.Forms.ComboBox comboBoxQueryScuQueryType;
+		private System.Windows.Forms.TextBox textBoxQueryScuMaxResults;
+		private System.Windows.Forms.Label label17;
+		private System.Windows.Forms.Label label18;
+		private System.Windows.Forms.ComboBox comboBoxQueryScuQueryLevel;
     }
 }
 

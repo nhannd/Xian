@@ -9,19 +9,19 @@
       <Value Profile="(Default)" />
     </Setting>
     <Setting Name="ScuRemoteAETitle" Type="System.String" Scope="User">
-      <Value Profile="(Default)">StorageSCP</Value>
+      <Value Profile="(Default)">QuerySCP</Value>
     </Setting>
     <Setting Name="ScuRemoteHost" Type="System.String" Scope="User">
       <Value Profile="(Default)">localhost</Value>
     </Setting>
     <Setting Name="ScuLocalAETitle" Type="System.String" Scope="User">
-      <Value Profile="(Default)">StorageSCU</Value>
+      <Value Profile="(Default)">QuerySCU</Value>
     </Setting>
     <Setting Name="ScpPort" Type="System.String" Scope="User">
       <Value Profile="(Default)">2112</Value>
     </Setting>
     <Setting Name="ScuRemotePort" Type="System.String" Scope="User">
-      <Value Profile="(Default)">2112</Value>
+      <Value Profile="(Default)">104</Value>
     </Setting>
   </Settings>
 </SettingsFile>

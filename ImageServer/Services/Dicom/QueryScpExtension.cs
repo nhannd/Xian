@@ -918,7 +918,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         public override bool OnReceiveRequest(DicomServer server, ServerAssociationParameters association,
                                               byte presentationID, DicomMessage message)
         {
-            String level = message.DataSet[DicomTags.QueryRetrieveLevel].GetString(0, "");
+            String level = message.DataSet[DicomTags.QueryRetrieveLevel].GetString(0, string.Empty);
+
+			if (message.CommandField == DicomCommandField.CCancelRequest)
+			{
+				Platform.Log(LogLevel.Info,"Received stray C-FIND-CANCEL-RQ message, ignoring.");
+				return true;
+			}
 
             if (message.AffectedSopClassUid.Equals(SopClass.StudyRootQueryRetrieveInformationModelFindUid))
             {
