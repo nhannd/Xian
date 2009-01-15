@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageServer.Web.Application
         protected void LoginClicked(object sender, EventArgs e)
         {
             ILoginService service = Platform.GetService<ILoginService>();
-            LoginResult result = service.SignIn(UserName.Text, Password.Text);
+            LoginResult result = service.SignOn(UserName.Text, Password.Text);
             if (result.Successful)
             {
                 Result.Text = "Login successfully. You are part of ";

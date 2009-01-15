@@ -7,7 +7,7 @@ namespace ClearCanvas.ImageServer.Common.Services.Login
 {
     public class LoginResult
     {
-        private bool _successful;
+        private bool _successful = false;
         private SessionToken _token;
         private string[] _groups;
 
@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageServer.Common.Services.Login
 
     public interface ILoginService
     {
-        LoginResult SignIn(string userName, string password);
+        LoginResult SignOn(string userName, string password);
         void SignOff(string userName, SessionToken token);
     }
 }

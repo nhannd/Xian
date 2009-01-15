@@ -4,6 +4,7 @@ using System.ServiceModel;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Services.Login;
 
@@ -18,18 +19,19 @@ namespace ClearCanvas.ImageServer.Services.Common.Login
 
         #region ILoginService Members
 
-        public LoginResult SignIn(string userName, string password)
+        public LoginResult SignOn(string userName, string password)
         {
             AuthenticationClient client = new AuthenticationClient();
             LoginResult result = new LoginResult();
-            result.Successful = false;
 
-            SessionToken token = client.SignOn(userName, password);
-            if (token!=null)
+            InitiateSessionRequest request = new InitiateSessionRequest(userName, password);
+            request.GetAuthorizations = true;
+
+            InitiateSessionResponse response = client.InitiateSession(request);
+            if (response != null)
             {
                 result.Successful = true;
-                result.Token = token;
-                result.Groups = client.ListAuthorityTokensForUser(userName);
+                result.Groups = response.AuthorityTokens;
             }
 
             return result;
@@ -38,46 +40,42 @@ namespace ClearCanvas.ImageServer.Services.Common.Login
         public void SignOff(string userName, SessionToken token)
         {
             AuthenticationClient client = new AuthenticationClient();
-            client.SignOff(userName, token);
+            TerminateSessionRequest request = new TerminateSessionRequest(userName, token);
+            TerminateSessionResponse response = client.TerminateSession(request);
+            
         }
 
         #endregion
     }
 
-    class AuthenticationClient : ClientBase<ClearCanvas.ImageServer.Common.IAuthenticationService>,
-        ClearCanvas.ImageServer.Common.IAuthenticationService
+    class AuthenticationClient : ClientBase<IAuthenticationService>, IAuthenticationService
     {
 
         #region IAuthenticationService Members
 
-        public SessionToken SignOn(string userName, string password)
+        public InitiateSessionResponse InitiateSession(InitiateSessionRequest request)
         {
-            return base.Channel.SignOn(userName, password);
+            return base.Channel.InitiateSession(request);
         }
 
-        public SessionToken ValidateUserSession(string userName, SessionToken sessionToken)
+        public ValidateSessionResponse ValidateSession(ValidateSessionRequest request)
         {
-            return base.Channel.ValidateUserSession(userName, sessionToken);
+            return base.Channel.ValidateSession(request);
         }
 
-        public void SignOff(string userName, SessionToken sessionToken)
+        public TerminateSessionResponse TerminateSession(TerminateSessionRequest request)
         {
-            base.Channel.SignOff(userName, sessionToken);
+            return base.Channel.TerminateSession(request);
         }
 
-        public void ChangePassword(string userName, string currentPassword, string newPassword)
+        public ChangePasswordResponse ChangePassword(ChangePasswordRequest request)
         {
-            base.Channel.ChangePassword(userName, currentPassword, newPassword);
+            return base.Channel.ChangePassword(request);
         }
 
-        public string[] ListAuthorityTokensForUser(string userName)
+        public GetAuthorizationsResponse GetAuthorizations(GetAuthorizationsRequest request)
         {
-            return base.Channel.ListAuthorityTokensForUser(userName);
-        }
-
-        public bool AssertTokenForUser(string userName, string token)
-        {
-            return base.Channel.AssertTokenForUser(userName, token);
+            return base.Channel.GetAuthorizations(request);
         }
 
         #endregion
