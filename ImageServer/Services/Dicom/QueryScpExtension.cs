@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
@@ -192,6 +193,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 dataSet.SpecificCharacterSet = row.SpecificCharacterSet; // this will ensure the data is encoded using the specified character set
             }
 
+        	IList<Study> relatedStudies = row.LoadRelatedStudies();
+        	Study study = null;
+			if (relatedStudies.Count > 0)
+				study = CollectionUtils.FirstElement(relatedStudies);
+
             foreach (uint tag in tagList)
             {
                 try
@@ -220,6 +226,19 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         case DicomTags.QueryRetrieveLevel:
                             dataSet[DicomTags.QueryRetrieveLevel].SetStringValue("PATIENT");
                             break;
+						case DicomTags.PatientsSex:
+							if (study == null)
+								dataSet[DicomTags.PatientsSex].SetNullValue();
+							else 
+								dataSet[DicomTags.PatientsSex].SetStringValue(study.PatientsSex);
+                    		break;
+						case DicomTags.PatientsBirthDate:
+							if (study == null)
+								dataSet[DicomTags.PatientsBirthDate].SetNullValue();
+							else
+								dataSet[DicomTags.PatientsBirthDate].SetStringValue(study.PatientsBirthDate);
+							break;
+
                         default:
                             dataSet[tag].SetNullValue();
                             break;
@@ -279,7 +298,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         case DicomTags.PatientsBirthDate:
                             dataSet[DicomTags.PatientsBirthDate].SetStringValue(row.PatientsBirthDate);
                             break;
-                        case DicomTags.PatientsSex:
+						case DicomTags.PatientsAge:
+							dataSet[DicomTags.PatientsAge].SetStringValue(row.PatientsAge);
+							break;
+						case DicomTags.PatientsSex:
                             dataSet[DicomTags.PatientsSex].SetStringValue(row.PatientsSex);
                             break;
                         case DicomTags.StudyDate:

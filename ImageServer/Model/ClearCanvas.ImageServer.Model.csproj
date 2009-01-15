@@ -229,6 +229,7 @@
     <Compile Include="PartitionSopClass.gen.cs" />
     <Compile Include="PartitionTransferSyntax.cs" />
     <Compile Include="PartitionTransferSyntax.gen.cs" />
+    <Compile Include="Patient.cs" />
     <Compile Include="Patient.gen.cs" />
     <Compile Include="QueueStudyStateEnum.gen.cs" />
     <Compile Include="ReconcileStudyQueueDescription.cs" />
