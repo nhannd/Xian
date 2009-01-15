@@ -727,6 +727,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Staff person {0} is already associated with user {1}.  You must edit that user and clear the association..
+        /// </summary>
+        internal static string MessageStaffAlreadyAssociated {
+            get {
+                return ResourceManager.GetString("MessageStaffAlreadyAssociated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Staff {0} has changed its association from user {1} to {2}.
         /// </summary>
         internal static string MessageStaffChangeAssociation {

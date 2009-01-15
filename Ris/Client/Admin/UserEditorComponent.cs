@@ -259,12 +259,21 @@ namespace ClearCanvas.Ris.Client.Admin
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, staffComponent, "Select Staff");
                 if (exitCode == ApplicationComponentExitCode.Accepted)
                 {
-                    _associatedStaff = (StaffSummary)staffComponent.SummarySelection.Item;
-                	_userDetail.DisplayName = _associatedStaff.Name.ToString();
+                	StaffSummary staff = (StaffSummary) staffComponent.SummarySelection.Item;
+                	string otherUser;
+					if(!CheckStaffAvailable(staff, out otherUser))
+					{
+						this.Host.ShowMessageBox(
+							string.Format(SR.MessageStaffAlreadyAssociated, PersonNameFormat.Format(staff.Name), otherUser),
+							MessageBoxActions.Ok);
+						return;
+					}
+					_associatedStaff = (StaffSummary)staffComponent.SummarySelection.Item;
+					_userDetail.DisplayName = _associatedStaff.Name.ToString();
 
-                    this.NotifyPropertyChanged("StaffName");
-                    this.NotifyPropertyChanged("ClearStaffEnabled");
-                    this.Modified = true;
+					this.NotifyPropertyChanged("StaffName");
+					this.NotifyPropertyChanged("ClearStaffEnabled");
+					this.Modified = true;
                 }
 
             }
@@ -415,6 +424,21 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (foundEntry != null) foundEntry.Selected = true;
             }
         }
+
+		private bool CheckStaffAvailable(StaffSummary staff, out string otherUser)
+		{
+			bool available;
+			StaffDetail detail = null;
+			Platform.GetService<IStaffAdminService>(
+				delegate(IStaffAdminService service)
+				{
+					detail = service.LoadStaffForEdit(new LoadStaffForEditRequest(staff.StaffRef)).StaffDetail;
+				});
+
+			available = string.IsNullOrEmpty(detail.UserName) || detail.UserName == _userName;
+			otherUser = detail.UserName;
+			return available;
+		}
 
 		private StaffSummary GetStaffForUser(string userName)
 		{
