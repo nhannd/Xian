@@ -13,40 +13,31 @@ namespace ClearCanvas.Ris.Client
     [ExtensionOf(typeof(ServiceProviderExtensionPoint))]
     internal sealed class CoreServiceProvider : RemoteServiceProviderBase<EnterpriseCoreServiceAttribute>
     {
-        private IServiceChannelConfiguration _channelConfiguration;
+		public CoreServiceProvider()
+			:base(GetSettings())
+		{
 
-        private IServiceChannelConfiguration ChannelConfiguration
-        {
-            get
-            {
-                if (_channelConfiguration == null)
-                {
-                    Type configClass = Type.GetType(WebServicesSettings.Default.ConfigurationClass);
-                    _channelConfiguration = (IServiceChannelConfiguration)Activator.CreateInstance(configClass);
-                }
-                return _channelConfiguration;
-            }
-        }
+		}
 
-        protected override string ServicesBaseUrl
-        {
-            get { return WebServicesSettings.Default.ApplicationServicesBaseUrl; }
-        }
+		protected override string UserName
+		{
+			get { return LoginSession.Current.UserName; }
+		}
 
-        protected override ChannelFactory ConfigureChannelFactory(Type channelFactoryClass, Uri serviceUri, bool authenticationRequired)
-        {
-            ChannelFactory channelFactory = ChannelConfiguration.ConfigureChannelFactory(
-                new ServiceChannelConfigurationArgs(channelFactoryClass, serviceUri, authenticationRequired, 
-                    WebServicesSettings.Default.MaxReceivedMessageSize,
-                    WebServicesSettings.Default.CertificateValidationMode,
-                    WebServicesSettings.Default.RevocationMode));
+		protected override string Password
+		{
+			get { return LoginSession.Current.SessionToken; }
+		}
 
-            if (authenticationRequired)
-            {
-                channelFactory.Credentials.UserName.UserName = LoginSession.Current.UserName;
-                channelFactory.Credentials.UserName.Password = LoginSession.Current.SessionToken;
-            }
-            return channelFactory;
-        }
+		private static RemoteServiceProviderArgs GetSettings()
+		{
+			return new RemoteServiceProviderArgs(
+				WebServicesSettings.Default.ApplicationServicesBaseUrl,
+				WebServicesSettings.Default.ConfigurationClass,
+                WebServicesSettings.Default.MaxReceivedMessageSize,
+                WebServicesSettings.Default.CertificateValidationMode,
+                WebServicesSettings.Default.RevocationMode
+				);
+		}
     }
 }
