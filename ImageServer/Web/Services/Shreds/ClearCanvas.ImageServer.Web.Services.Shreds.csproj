@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
@@ -52,6 +53,14 @@
     <ProjectReference Include="..\..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
+      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
+      <Name>ClearCanvas.Enterprise.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
+      <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
+      <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj">
       <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>

@@ -180,6 +180,13 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Test\Login.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Test\Login.aspx.designer.cs">
+      <DependentUpon>Login.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\Alerts\AlertItemCollection.cs" />
     <Compile Include="Pages\Admin\Alerts\AlertsGridPanel.ascx.cs">
       <DependentUpon>AlertsGridPanel.ascx</DependentUpon>
@@ -1122,6 +1129,7 @@
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
     <Content Include="Images\ImageServerLogo.png" />
+    <Content Include="Test\Login.aspx" />
     <Content Include="Pages\Admin\Alerts\AlertsGridPanel.ascx" />
     <Content Include="Pages\Admin\Alerts\AlertsPanel.ascx" />
     <Content Include="Pages\Admin\Alerts\Default.aspx" />
@@ -1348,10 +1356,14 @@
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
+      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
+      <Name>ClearCanvas.Enterprise.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
-      <Private>True</Private>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\ClearCanvas.ImageServer.Common.csproj">
       <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
@@ -1416,8 +1428,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>4771</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>
-          </IISUrl>
+          <IISUrl></IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
         </WebProjectProperties>
       </FlavorProperties>

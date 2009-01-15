@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -42,6 +43,7 @@
     <Compile Include="Alert\AlertPlugins\DefaultAlertSink.cs" />
     <Compile Include="Alert\AlertService.cs" />
     <Compile Include="Alert\IAlertServiceExtension.cs" />
+    <Compile Include="Login\LoginService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -49,7 +49,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Shr
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
-		{BE27922C-C8D7-4190-8F24-5D7C1623CAFA} = {BE27922C-C8D7-4190-8F24-5D7C1623CAFA}
 		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1} = {DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}
 		{9A4EF57B-2702-4931-9E94-B194707E87FA} = {9A4EF57B-2702-4931-9E94-B194707E87FA}
 		{6863F5CE-F1D3-46A7-915C-DE02D1452EED} = {6863F5CE-F1D3-46A7-915C-DE02D1452EED}
@@ -73,6 +72,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Shr
 		{431E9444-9915-4D49-B92D-9B7EC086622A} = {431E9444-9915-4D49-B92D-9B7EC086622A}
 		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2} = {95FEA63F-7E51-4829-923E-8CD02C8DEAE2}
 		{90C91F02-8AD3-43D1-B8C3-C0469213E3E5} = {90C91F02-8AD3-43D1-B8C3-C0469213E3E5}
+		{BE27922C-C8D7-4190-8F24-5D7C1623CAFA} = {BE27922C-C8D7-4190-8F24-5D7C1623CAFA}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Common", "..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj", "{B5EBFFD7-6641-4932-91C9-4C4322B41868}"
@@ -153,8 +153,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Web
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
-		{221FC797-CCE8-406B-94AB-0EB290A387A6} = {221FC797-CCE8-406B-94AB-0EB290A387A6}
 		{7C4EDB0A-B94C-4078-846A-DEA974348B2B} = {7C4EDB0A-B94C-4078-846A-DEA974348B2B}
+		{6863F5CE-F1D3-46A7-915C-DE02D1452EED} = {6863F5CE-F1D3-46A7-915C-DE02D1452EED}
+		{221FC797-CCE8-406B-94AB-0EB290A387A6} = {221FC797-CCE8-406B-94AB-0EB290A387A6}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator", "Model\SqlServer2005\CodeGenerator\ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator.csproj", "{9E0CCF98-03DA-46EE-8E6B-3092F80EE9AF}"
@@ -241,6 +242,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.XmlGenera
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.TestApp.StreamingClientConsole", "TestApp\StreamingClientConsole\ClearCanvas.ImageServer.TestApp.StreamingClientConsole.csproj", "{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Authentication", "..\Enterprise\Authentication\ClearCanvas.Enterprise.Authentication.csproj", "{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -638,6 +645,16 @@ Global
 		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{FA01A7CF-D56B-4D00-961E-D98AC2186AC9}.Release|Win32.ActiveCfg = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

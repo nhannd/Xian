@@ -76,7 +76,7 @@
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Codec\Jpeg\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Jpeg.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
-
+	
   </ItemGroup>
   
   <ItemGroup>
