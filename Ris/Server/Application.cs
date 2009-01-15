@@ -160,6 +160,8 @@ namespace ClearCanvas.Ris.Server
 			// create service URI
 			Uri uri = new Uri(new Uri(baseAddress), contractAttribute.ServiceContract.FullName);
 
+			Platform.Log(LogLevel.Info, "on URI {0}", uri);
+
 			// create service host
 			ServiceHost host = new ServiceHost(serviceClass, uri);
 
