@@ -12,4 +12,9 @@
   <Attribute Tag="$ModalitiesInStudy"></Attribute>
   <Attribute Tag="$RequestingPhysician"></Attribute>
   <Attribute Tag="$ReferringPhysiciansName"></Attribute>
+  <Attribute Tag="$PatientsName"></Attribute>
+  <Attribute Tag="$PatientId"></Attribute>
+  <Attribute Tag="$PatientsBirthDate"></Attribute>
+  <Attribute Tag="$PatientsBirthTime"></Attribute>
+  <Attribute Tag="$PatientsSex"></Attribute>
 </Instance>

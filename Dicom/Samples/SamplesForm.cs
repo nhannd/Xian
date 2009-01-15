@@ -67,6 +67,8 @@ namespace ClearCanvas.Dicom.Samples
 			_destinationSyntaxCombo.Items.Add(TransferSyntax.ExplicitVrLittleEndian);
 			foreach (TransferSyntax syntax in DicomCodecRegistry.GetCodecTransferSyntaxes())
 				_destinationSyntaxCombo.Items.Add(syntax);
+
+        	comboBoxQueryScuQueryType_SelectedIndexChanged(null, null);
         }
 
         #region Button Click Handlers

@@ -38,7 +38,6 @@
   <ItemGroup>
     <Compile Include="Compression.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="QueryScu.cs" />
     <Compile Include="SamplesForm.cs">
       <SubType>Form</SubType>
     </Compile>

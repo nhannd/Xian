@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
@@ -56,7 +57,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         #region Private members
 
         private readonly List<SupportedSop> _list = new List<SupportedSop>();
-
+		private bool _cancelReceived = false;
         #endregion
 
         #region Contructors
@@ -540,7 +541,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="presentationID"></param>
         /// <param name="message">The Patient level query message.</param>
         /// <returns></returns>
-        private bool OnReceivePatientQuery(DicomServer server, byte presentationID, DicomMessage message)
+        private void OnReceivePatientQuery(DicomServer server, byte presentationID, DicomMessage message)
         {
             List<uint> tagList = new List<uint>();
 
@@ -581,22 +582,34 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                                 PopulatePatient(response, tagList, row);
                                                 server.SendCFindResponse(presentationID, message.MessageId, response,
                                                                          DicomStatuses.Pending);
+
+												if (_cancelReceived)
+													throw new DicomException("DICOM C-Cancel Received");
                                             });
                 }
                 catch (Exception e)
                 {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
-                    DicomMessage errorResponse = new DicomMessage();
-                    server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
-                                             DicomStatuses.QueryRetrieveUnableToProcess);
-                    return true;
+					if (_cancelReceived)
+					{
+						DicomMessage errorResponse = new DicomMessage();
+						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+												 DicomStatuses.Cancel);
+					}
+					else
+					{
+						Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
+						DicomMessage errorResponse = new DicomMessage();
+						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						                         DicomStatuses.QueryRetrieveUnableToProcess);
+					}
+                	return;
                 }
             }
 
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-            return true;
+        	return;
         }
 
         /// <summary>
@@ -606,7 +619,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="presentationID"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        private bool OnReceiveStudyLevelQuery(DicomServer server, byte presentationID, DicomMessage message)
+        private void OnReceiveStudyLevelQuery(DicomServer server, byte presentationID, DicomMessage message)
         {
             List<uint> tagList = new List<uint>();
 
@@ -692,23 +705,34 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                                     PopulateStudy(subRead, response, tagList, row);
                                                     server.SendCFindResponse(presentationID, message.MessageId, response,
                                                                              DicomStatuses.Pending);
+													if (_cancelReceived)
+														throw new DicomException("DICOM C-Cancel Received");
                                                 });
                     }
                 }
                 catch (Exception e)
                 {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
-                    DicomMessage errorResponse = new DicomMessage();
-                    server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
-                                             DicomStatuses.ProcessingFailure);
-                    return true;
+					if (_cancelReceived)
+					{
+						DicomMessage errorResponse = new DicomMessage();
+						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+												 DicomStatuses.Cancel);
+					}
+					else
+					{
+						Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
+						DicomMessage errorResponse = new DicomMessage();
+						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						                         DicomStatuses.ProcessingFailure);
+					}
+                	return;
                 }
             }
 
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-            return true;
+        	return;
         }
 
         /// <summary>
@@ -718,7 +742,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="presentationID"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        private bool OnReceiveSeriesLevelQuery(DicomServer server, byte presentationID, DicomMessage message)
+        private void OnReceiveSeriesLevelQuery(DicomServer server, byte presentationID, DicomMessage message)
         {
             //Read context for the query.
             using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
@@ -783,22 +807,33 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                                             server.SendCFindResponse(presentationID, message.MessageId,
                                                                                      response,
                                                                                      DicomStatuses.Pending);
+															if (_cancelReceived)
+																throw new DicomException("DICOM C-Cancel Received");
                                                         });
                     }
                 }
                 catch (Exception e)
                 {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
-                    DicomMessage errorResponse = new DicomMessage();
-                    server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
-                                             DicomStatuses.ProcessingFailure);
-                    return true;
+					if (_cancelReceived)
+					{
+						DicomMessage errorResponse = new DicomMessage();
+						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+												 DicomStatuses.Cancel);
+					}
+					else
+					{
+						Platform.Log(LogLevel.Error, e, "Unexpected exception when processing FIND request.");
+						DicomMessage errorResponse = new DicomMessage();
+						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+						                         DicomStatuses.ProcessingFailure);
+					}
+                	return;
                 }
 
                 DicomMessage finalResponse = new DicomMessage();
                 server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-                return true;
+            	return;
             }
         }
 
@@ -848,7 +883,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="presentationID"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        private bool OnReceiveImageLevelQuery(DicomServer server, byte presentationID, DicomMessage message)
+        private void OnReceiveImageLevelQuery(DicomServer server, byte presentationID, DicomMessage message)
         {
             List<uint> tagList = new List<uint>();
             List<uint> matchingTagList = new List<uint>();
@@ -868,7 +903,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				message.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(seriesInstanceUid);
 				server.SendCFindResponse(presentationID, message.MessageId, failureResponse,
                                          DicomStatuses.QueryRetrieveUnableToProcess);
-                return true;
+            	return;
             }
 
             StudyXml studyXml = LoadStudyXml(location);
@@ -889,17 +924,27 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 if (CompareInstanceMatch(message, matchingTagList, theInstanceStream))
                 {
-                    DicomMessage response = new DicomMessage();
-                    PopulateInstance(message, response, tagList, theInstanceStream);
-                    server.SendCFindResponse(presentationID, message.MessageId, response,
-                                             DicomStatuses.Pending);
+					if (_cancelReceived)
+					{
+						DicomMessage errorResponse = new DicomMessage();
+						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+												 DicomStatuses.Cancel);
+						return;
+					}
+					else
+					{
+						DicomMessage response = new DicomMessage();
+						PopulateInstance(message, response, tagList, theInstanceStream);
+						server.SendCFindResponse(presentationID, message.MessageId, response,
+						                         DicomStatuses.Pending);
+					}
                 }
             }
 
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-            return true;
+        	return;
         }
 
         #endregion
@@ -922,23 +967,41 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
 			if (message.CommandField == DicomCommandField.CCancelRequest)
 			{
-				Platform.Log(LogLevel.Info,"Received stray C-FIND-CANCEL-RQ message, ignoring.");
+				Platform.Log(LogLevel.Info,"Received C-FIND-CANCEL-RQ message.");
+				_cancelReceived = true;
 				return true;
 			}
+        	_cancelReceived = false;
 
             if (message.AffectedSopClassUid.Equals(SopClass.StudyRootQueryRetrieveInformationModelFindUid))
             {
                 if (level.Equals("STUDY"))
                 {
-                    return OnReceiveStudyLevelQuery(server, presentationID, message);
+					// We use the ThreadPool to process the thread requests. This is so that we return back
+					// to the main message loop, and continue to look for cancel request messages coming
+					// in.  There's a small chance this may cause delays in responding to query requests if
+					// the .NET Thread pool fills up.
+                	ThreadPool.QueueUserWorkItem(delegate
+													{
+														OnReceiveStudyLevelQuery(server, presentationID, message);
+													});
+                	return true;
                 }
                 else if (level.Equals("SERIES"))
                 {
-                    return OnReceiveSeriesLevelQuery(server, presentationID, message);
+					ThreadPool.QueueUserWorkItem(delegate
+													{
+														OnReceiveSeriesLevelQuery(server, presentationID, message);
+													});
+                	return true;
                 }
                 else if (level.Equals("IMAGE"))
                 {
-                    return OnReceiveImageLevelQuery(server, presentationID, message);
+					ThreadPool.QueueUserWorkItem(delegate
+													{
+														OnReceiveImageLevelQuery(server, presentationID, message);
+													});
+                	return true;
                 }
                 else
                 {
@@ -953,19 +1016,36 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 if (level.Equals("PATIENT"))
                 {
-                    return OnReceivePatientQuery(server, presentationID, message);
+					ThreadPool.QueueUserWorkItem(delegate
+								{
+									OnReceivePatientQuery(server, presentationID, message);
+								});
+
+                	return true;
                 }
                 else if (level.Equals("STUDY"))
                 {
-                    return OnReceiveStudyLevelQuery(server, presentationID, message);
+					ThreadPool.QueueUserWorkItem(delegate
+								{
+									OnReceiveStudyLevelQuery(server, presentationID, message);
+								});
+                	return true;
                 }
                 else if (level.Equals("SERIES"))
                 {
-                    return OnReceiveSeriesLevelQuery(server, presentationID, message);
+					ThreadPool.QueueUserWorkItem(delegate
+								{
+									OnReceiveSeriesLevelQuery(server, presentationID, message);
+								});
+                	return true;
                 }
                 else if (level.Equals("IMAGE"))
                 {
-                    return OnReceiveImageLevelQuery(server, presentationID, message);
+					ThreadPool.QueueUserWorkItem(delegate
+								{
+									OnReceiveImageLevelQuery(server, presentationID, message);
+								});
+                	return true;
                 }
                 else
                 {

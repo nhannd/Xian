@@ -713,6 +713,7 @@ namespace ClearCanvas.Dicom.Samples
 			this.OutputTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
+			this.OutputTextBox.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.OutputTextBox.Location = new System.Drawing.Point(3, 30);
 			this.OutputTextBox.MaxLength = 65536;
 			this.OutputTextBox.Multiline = true;
