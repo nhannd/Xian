@@ -83,6 +83,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Tooltips.resx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\AlertIndicator.ascx.cs">
+      <DependentUpon>AlertIndicator.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\AlertIndicator.ascx.designer.cs">
+      <DependentUpon>AlertIndicator.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CheckJavascript.ascx.cs">
       <DependentUpon>CheckJavascript.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -544,8 +551,8 @@
       <DependentUpon>About.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Help\Default.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Help\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
@@ -1057,6 +1064,7 @@
     <Content Include="App_Themes\Default\images\Header\ClearCanvasLogo.png" />
     <Content Include="App_Themes\Default\images\Header\LocationEdge.png" />
     <Content Include="App_Themes\Default\images\Header\MenuHoverBackground.png" />
+    <Content Include="App_Themes\Default\images\Indicators\AlertIndicatorBackground.png" />
     <Content Include="App_Themes\Default\images\Indicators\IdeographicName.gif" />
     <Content Include="App_Themes\Default\images\Indicators\AutoRouteFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\MenuArrow.gif" />
@@ -1111,6 +1119,7 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-right.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG.png" />
     <Content Include="App_Themes\Default\StyleSheets\WorkQueue.css" />
+    <Content Include="Controls\AlertIndicator.ascx" />
     <Content Include="Controls\CheckJavascript.ascx" />
     <Content Include="Controls\EmptySearchResultsMessage.ascx" />
     <Content Include="Controls\JQuery.ascx" />
@@ -1257,6 +1266,7 @@
     <Content Include="Pages\Queues\WorkQueue\SearchPanel.ascx" />
     <Content Include="Pages\Queues\WorkQueue\SearchPanel.js" />
     <Content Include="Pages\Queues\WorkQueue\WorkQueueGridView.ascx" />
+    <Content Include="Scripts\ClearCanvas.js" />
     <Content Include="Scripts\CodeMirror\css\csscolors.css" />
     <Content Include="Scripts\CodeMirror\css\docs.css" />
     <Content Include="Scripts\CodeMirror\css\jscolors.css" />
@@ -1281,6 +1291,7 @@
     <Content Include="Scripts\ErrorHandling.js" />
     <Content Include="Scripts\jquery\jquery-1.2.6.min.js" />
     <Content Include="Scripts\jquery\jquery.dimensions.js" />
+    <Content Include="Scripts\jquery\jquery.dropshadow.js" />
     <Content Include="Scripts\jquery\jquery.maskedinput-1.2.1.js" />
     <Content Include="Scripts\jquery\jquery.multiselect.js" />
     <Content Include="Scripts\NumberFormat154.js" />
@@ -1291,6 +1302,18 @@
     <None Include="Builds\PostBuild.proj" />
     <None Include="Helpers\.svn\text-base\DialogHelper.cs.svn-base" />
     <None Include="Helpers\.svn\text-base\ScriptHelper.cs.svn-base" />
+    <None Include="Pages\Help\.svn\all-wcprops" />
+    <None Include="Pages\Help\.svn\entries" />
+    <None Include="Pages\Help\.svn\format" />
+    <None Include="Pages\Help\.svn\text-base\About.aspx.cs.svn-base" />
+    <None Include="Pages\Help\.svn\text-base\About.aspx.designer.cs.svn-base" />
+    <None Include="Pages\Help\.svn\text-base\About.aspx.svn-base" />
+    <None Include="Pages\Help\.svn\text-base\Default.aspx.cs.svn-base" />
+    <None Include="Pages\Help\.svn\text-base\Default.aspx.designer.cs.svn-base" />
+    <None Include="Pages\Help\.svn\text-base\Default.aspx.svn-base" />
+    <None Include="Pages\Help\.svn\text-base\Documentation.aspx.cs.svn-base" />
+    <None Include="Pages\Help\.svn\text-base\Documentation.aspx.designer.cs.svn-base" />
+    <None Include="Pages\Help\.svn\text-base\Documentation.aspx.svn-base" />
     <None Include="Pages\Queues\WorkQueue\Edit\.svn\all-wcprops" />
     <None Include="Pages\Queues\WorkQueue\Edit\.svn\entries" />
     <None Include="Pages\Queues\WorkQueue\Edit\.svn\format" />
@@ -1404,6 +1427,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Pages\Help\.svn\prop-base\" />
+    <Folder Include="Pages\Help\.svn\props\" />
+    <Folder Include="Pages\Help\.svn\tmp\prop-base\" />
+    <Folder Include="Pages\Help\.svn\tmp\props\" />
+    <Folder Include="Pages\Help\.svn\tmp\text-base\" />
     <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\prop-base\" />
     <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\props\" />
     <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\tmp\prop-base\" />

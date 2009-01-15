@@ -8,7 +8,6 @@ Global.css - Defines the global styles for the entire web application relating
 {
 	background-color: #c5dee7;
 	margin:5px 5px 5px 5px;
-	z-index: -1;
 	font-family: Sans-Serif;
 	font-size: 14px;
 }
@@ -17,6 +16,7 @@ Global.css - Defines the global styles for the entire web application relating
 .GlobalContentPanel
 {
     background-color: Transparent;
+    position: static;
 }
 
 /*=======================================================
@@ -27,6 +27,7 @@ Global.css - Defines the global styles for the entire web application relating
 {
 	background-color: white;
 	padding: 7px 5px 5px 5px;
+    position: static;	
 }
 
 .MainContentTable

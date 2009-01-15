@@ -23,12 +23,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             set { _multiselect = value; }
         }
 
-        public bool Effects
-        {
-            get { return _effects; }
-            set { _effects = value; }
-        }
-
 		public bool MaskedInput
 		{
 			get { return _maskedinput; }
@@ -44,17 +38,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             base.OnInit(e);
 
-            Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "jQuery", ResolveUrl("~/Scripts/jquery/jquery-1.2.6.min.js")); 
+            Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "jQuery", ResolveUrl("~/Scripts/jquery/jquery-1.2.6.min.js"));
+
+            //Default Libraries
+            Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "ClearCanvas", ResolveUrl("~/Scripts/ClearCanvas.js"));
+            Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "DropShadow", ResolveUrl("~/Scripts/jquery/jquery.dropshadow.js")); 
 
             if(MultiSelect)
             {
                 Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "Dimensions", ResolveUrl("~/Scripts/jquery/jquery.dimensions.js"));
                 Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "MultiSelect", ResolveUrl("~/Scripts/jquery/jquery.multiselect.js")); 
-            }
-
-            if(Effects)
-            {
-                Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "Effects", ResolveUrl("~/Scripts/Effects.js")); 
             }
 
 			if (MaskedInput)

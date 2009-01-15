@@ -28,6 +28,15 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.HtmlControls.HtmlGenericControl IE6PNGBugFixCSS;
     
     /// <summary>
+    /// MainJQuery control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::ClearCanvas.ImageServer.Web.Application.Controls.JQuery MainJQuery;
+    
+    /// <summary>
     /// MasterForm control.
     /// </summary>
     /// <remarks>
@@ -89,6 +98,33 @@ public partial class GlobalMasterPage {
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.Menu MainMenu;
+    
+    /// <summary>
+    /// UserInformationPanel control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Panel UserInformationPanel;
+    
+    /// <summary>
+    /// AlertIndicator1 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::ClearCanvas.ImageServer.Web.Application.Controls.AlertIndicator AlertIndicator1;
+    
+    /// <summary>
+    /// LogoutButton control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.LinkButton LogoutButton;
     
     /// <summary>
     /// MainContentUpdatePanel control.

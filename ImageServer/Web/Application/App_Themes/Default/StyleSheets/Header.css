@@ -4,7 +4,7 @@
 
 .MainMenuPanel
 {
-	background: url(../../../PersistantImage.ashx?key=MenuBackground) repeat-x;
+	background: url(../../../PersistantImage.ashx?key=MenuBackground) repeat-x bottom;
 	height: 40px;
 	text-align: left;
 	font-family: Sans-Serif;
@@ -96,4 +96,25 @@
 .DynamicSelected
 {
     color: White;
+}
+
+.UserInformationPanel
+{
+    text-align: right; 
+    position: relative; 
+    font-size: 12px; 
+    font-family: Arial; 
+    top: -40px;
+    position: relative;
+}
+
+.UserInformationLink
+{
+    color: red; 
+    text-decoration: none;     
+}
+
+.NewAlerts
+{
+    font-weight: bold;
 }
