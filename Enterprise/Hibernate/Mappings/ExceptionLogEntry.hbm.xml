@@ -6,11 +6,14 @@
     </id>
     <version name="Version" column="Version_"/>
     <property name="TimeStamp" column="TimeStamp_" type="Timestamp" not-null="true"/>
+    <property name="HostName" column="HostName_" type="String" not-null="false"/>
     <property name="Application" column="Application_" type="String" not-null="false"/>
     <property name="User" column="User_" type="String"/>
     <property name="Operation" column="Operation_" type="String" length="1000"/>
     <property name="ExceptionClass" column="ExceptionClass_" type="String" length="1000"/>
     <property name="Message" column="Message_" type="String" length="4000"/>
     <property name="Details" column="Details_" type="StringClob" length="65000"/>
+    <property name="AssemblyName" column="AssemblyName_" type="String" length="500"/>
+    <property name="AssemblyLocation" column="AssemblyLocation_" type="String" length="500"/>
   </class>
 </hibernate-mapping>

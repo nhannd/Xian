@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using System.Reflection;
 using System.Threading;
+using System.Net;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -13,6 +14,7 @@ namespace ClearCanvas.Enterprise.Core
     public abstract class LogEntry : Entity
     {
         private DateTime _timestamp;
+    	private string _hostName;
         private string _application;
         private string _user;
         private string _operation;
@@ -29,13 +31,15 @@ namespace ClearCanvas.Enterprise.Core
         /// Constructor
         /// </summary>
         /// <param name="timestamp"></param>
+        /// <param name="hostName"></param>
         /// <param name="application"></param>
         /// <param name="user"></param>
         /// <param name="operation"></param>
         /// <param name="details"></param>
-        protected LogEntry(DateTime timestamp, string application, string user, string operation, string details)
+        protected LogEntry(DateTime timestamp, string hostName, string application, string user, string operation, string details)
         {
             _timestamp = timestamp;
+        	_hostName = hostName;
             _application = application;
             _user = user;
             _operation = operation;
@@ -49,7 +53,8 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="details"></param>
         protected LogEntry(string operation, string details)
             :this(
-                Platform.Time,
+				SafeGetTime(),
+				SafeGetHostName(),
                 null, // TODO: replace this with something more meaningful????
                 Thread.CurrentPrincipal.Identity.Name,
                 operation,
@@ -67,7 +72,16 @@ namespace ClearCanvas.Enterprise.Core
             set { _timestamp = value; }
         }
 
-        /// <summary>
+		/// <summary>
+		/// Gets or sets the hostname of the computer that generated this log entry.
+		/// </summary>
+		public string HostName
+		{
+			get { return _hostName; }
+			set { _hostName = value; }
+		}
+
+		/// <summary>
         /// Gets or sets the the name of the application that created this log entry.
         /// </summary>
         public string Application
@@ -101,6 +115,42 @@ namespace ClearCanvas.Enterprise.Core
         {
             get { return _details; }
             set { _details = value; }
-        }
-    }
+		}
+
+		#region Helpers
+
+		/// <summary>
+		/// Gets the hostname of the local computer, or null if an error occurs.
+		/// </summary>
+		/// <returns></returns>
+		private static string SafeGetHostName()
+		{
+			try
+			{
+				return Dns.GetHostName();
+			}
+			catch(Exception)
+			{
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Returns <see cref="Platform.Time"/>, or the local computer time if an error occurs.
+		/// </summary>
+		/// <returns></returns>
+		private static DateTime SafeGetTime()
+		{
+			try
+			{
+				return Platform.Time;
+			}
+			catch(Exception)
+			{
+				return DateTime.Now;
+			}
+		}
+
+		#endregion
+	}
 }

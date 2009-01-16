@@ -6,6 +6,7 @@
     </id>
     <version name="Version" column="Version_"/>
     <property name="TimeStamp" column="TimeStamp_" type="Timestamp" not-null="true"/>
+    <property name="HostName" column="HostName_" type="String" not-null="false"/>
     <property name="Application" column="Application_" type="String" not-null="false"/>
     <property name="Category" column="Category_" type="String" not-null="true"/>
     <property name="User" column="User_" type="String"/>
