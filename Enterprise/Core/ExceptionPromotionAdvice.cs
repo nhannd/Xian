@@ -39,9 +39,12 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using Castle.DynamicProxy;
 
-namespace ClearCanvas.Ris.Server
+namespace ClearCanvas.Enterprise.Core
 {
-    class ExceptionPromotionAdvice : IInterceptor
+	/// <summary>
+	/// Promotes certain types of exceptions to WCF faults (<see cref="FaultException{TDetail}"/>).
+	/// </summary>
+    public class ExceptionPromotionAdvice : IInterceptor
     {
         #region IMethodInterceptor Members
 
