@@ -51,6 +51,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public SoftcopyPresentationLutModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
 
 		/// <summary>
+		/// Initializes the underlying collection to implement the module or sequence using default values.
+		/// </summary>
+		public void InitializeAttributes()
+		{
+			this.PresentationLutSequence = null;
+			this.PresentationLutShape = PresentationLutShape.None;
+		}
+
+		/// <summary>
 		/// Gets or sets the value of PresentationLutSequence in the underlying collection. Type 1C.
 		/// </summary>
 		public PresentationLutSequenceItem PresentationLutSequence

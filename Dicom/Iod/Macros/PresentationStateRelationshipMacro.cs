@@ -38,7 +38,24 @@ namespace ClearCanvas.Dicom.Iod.Macros
 	/// PresentationStateRelationship Macro
 	/// </summary>
 	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.11.11 (Table C.11.11-1b)</remarks>
-	public class PresentationStateRelationshipMacro : SequenceIodBase
+	public interface IPresentationStateRelationshipMacro : IIodMacro
+	{
+		/// <summary>
+		/// Gets or sets the value of ReferencedSeriesSequence in the underlying collection. Type 1.
+		/// </summary>
+		IReferencedSeriesSequence[] ReferencedSeriesSequence { get; set; }
+
+		/// <summary>
+		/// Creates a single instance of a ReferencedSeriesSequence item. Does not modify the ReferencedSeriesSequence in the underlying collection.
+		/// </summary>
+		IReferencedSeriesSequence CreateReferencedSeriesSequence();
+	}
+
+	/// <summary>
+	/// PresentationStateRelationship Macro
+	/// </summary>
+	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.11.11 (Table C.11.11-1b)</remarks>
+	internal class PresentationStateRelationshipMacro : SequenceIodBase, IPresentationStateRelationshipMacro
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PresentationStateRelationshipMacro"/> class.
@@ -50,6 +67,11 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		/// <param name="dicomSequenceItem">The dicom sequence item.</param>
 		public PresentationStateRelationshipMacro(DicomSequenceItem dicomSequenceItem) : base(dicomSequenceItem) {}
+
+		/// <summary>
+		/// Initializes the underlying collection to implement the module or sequence using default values.
+		/// </summary>
+		public void InitializeAttributes() {}
 
 		/// <summary>
 		/// Gets or sets the value of ReferencedSeriesSequence in the underlying collection. Type 1.

@@ -53,6 +53,14 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public PresentationSeriesModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
 
 		/// <summary>
+		/// Initializes the underlying collection to implement the module or sequence using default values.
+		/// </summary>
+		public void InitializeAttributes()
+		{
+			this.Modality = Modality.PR;
+		}
+
+		/// <summary>
 		/// Gets or sets the value of Modality in the underlying collection. Type 1.
 		/// </summary>
 		public Modality Modality
@@ -63,110 +71,6 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				if (value != Modality.PR)
 					throw new ArgumentOutOfRangeException("value", "Modality must be PR.");
 				SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.Modality], value);
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the value of PresentationCreationDate and PresentationCreationTime in the underlying collection.  Type 1.
-		/// </summary>
-		public DateTime? PresentationCreationDateTime
-		{
-			get
-			{
-				string date = base.DicomAttributeCollection[DicomTags.PresentationCreationDate].GetString(0, string.Empty);
-				string time = base.DicomAttributeCollection[DicomTags.PresentationCreationTime].GetString(0, string.Empty);
-				return DateTimeParser.ParseDateAndTime(string.Empty, date, time);
-			}
-			set
-			{
-				if (!value.HasValue)
-					throw new ArgumentNullException("value", "PresentationCreation is Type 1 Required.");
-				DicomAttribute date = base.DicomAttributeCollection[DicomTags.PresentationCreationDate];
-				DicomAttribute time = base.DicomAttributeCollection[DicomTags.PresentationCreationTime];
-				DateTimeParser.SetDateTimeAttributeValues(value, date, time);
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the value of InstanceNumber in the underlying collection. Type 1.
-		/// </summary>
-		public int InstanceNumber
-		{
-			get { return base.DicomAttributeCollection[DicomTags.InstanceNumber].GetInt32(0, 0); }
-			set { base.DicomAttributeCollection[DicomTags.InstanceNumber].SetInt32(0, value); }
-		}
-
-		/// <summary>
-		/// Gets or sets the value of ContentLabel in the underlying collection. Type 1.
-		/// </summary>
-		public string ContentLabel
-		{
-			get { return base.DicomAttributeCollection[DicomTags.ContentLabel].GetString(0, string.Empty); }
-			set
-			{
-				if (string.IsNullOrEmpty(value))
-					throw new ArgumentNullException("value", "ContentLabel is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.ContentLabel].SetString(0, value);
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the value of ContentDescription in the underlying collection. Type 2.
-		/// </summary>
-		public string ContentDescription
-		{
-			get { return base.DicomAttributeCollection[DicomTags.ContentDescription].GetString(0, string.Empty); }
-			set
-			{
-				if (string.IsNullOrEmpty(value))
-				{
-					base.DicomAttributeCollection[DicomTags.ContentDescription].SetNullValue();
-					return;
-				}
-				base.DicomAttributeCollection[DicomTags.ContentDescription].SetString(0, value);
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the value of ContentCreatorsName in the underlying collection. Type 2.
-		/// </summary>
-		public string ContentCreatorsName
-		{
-			get { return base.DicomAttributeCollection[DicomTags.ContentCreatorsName].GetString(0, string.Empty); }
-			set
-			{
-				if (string.IsNullOrEmpty(value))
-				{
-					base.DicomAttributeCollection[DicomTags.ContentCreatorsName].SetNullValue();
-					return;
-				}
-				base.DicomAttributeCollection[DicomTags.ContentCreatorsName].SetString(0, value);
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets the value of ContentCreatorsIdentificationCodeSequence in the underlying collection. Type 3.
-		/// </summary>
-		public PersonIdentificationMacro ContentCreatorsIdentificationCodeSequence
-		{
-			get
-			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ContentCreatorsIdentificationCodeSequence];
-				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
-				{
-					return null;
-				}
-				return new PersonIdentificationMacro(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
-			}
-			set
-			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ContentCreatorsIdentificationCodeSequence];
-				if (value == null)
-				{
-					base.DicomAttributeCollection[DicomTags.ContentCreatorsIdentificationCodeSequence] = null;
-					return;
-				}
-				dicomAttribute.Values = new DicomSequenceItem[] {value.DicomSequenceItem};
 			}
 		}
 	}

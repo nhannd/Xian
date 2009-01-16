@@ -66,7 +66,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes the underlying collection to implement the module or sequence using default values.
 		/// </summary>
-		public virtual void InitializeAttributes() { }
+		public virtual void InitializeAttributes()
+		{
+			this.PresentationCreationDateTime = DateTime.Now;
+			this.InstanceNumber = 1;
+			this.ContentLabel = " ";
+			this.ContentDescription = null;
+			this.ContentCreatorsName = null;
+			this.ContentCreatorsIdentificationCodeSequence = null;
+		}
 
 		/// <summary>
 		/// Gets or sets the value of PresentationCreationDate and PresentationCreationTime in the underlying collection.  Type 1.

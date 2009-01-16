@@ -52,6 +52,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public PresentationStateShutterModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
 
 		/// <summary>
+		/// Initializes the underlying collection to implement the module or sequence using default values.
+		/// </summary>
+		public void InitializeAttributes()
+		{
+			this.ShutterPresentationColorCielabValue = null;
+			this.ShutterPresentationValue = null;
+		}
+
+		/// <summary>
 		/// Gets or sets the value of ShutterPresentationValue in the underlying collection. Type 1C.
 		/// </summary>
 		public int? ShutterPresentationValue

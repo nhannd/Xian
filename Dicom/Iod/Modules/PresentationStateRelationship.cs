@@ -29,7 +29,9 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Dicom.Iod.Macros;
+using ClearCanvas.Dicom.Iod.Macros.PresentationStateRelationship;
 using ClearCanvas.Dicom.Iod.Sequences;
 
 namespace ClearCanvas.Dicom.Iod.Modules
@@ -38,7 +40,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 	/// PresentationStateRelationship Module
 	/// </summary>
 	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.11.11 (Table C.11.11-1)</remarks>
-	public class PresentationStateRelationshipModuleIod : IodBase
+	public class PresentationStateRelationshipModuleIod : IodBase, IPresentationStateRelationshipMacro
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PresentationStateRelationshipModuleIod"/> class.
@@ -51,7 +53,52 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
 		public PresentationStateRelationshipModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
 
+		DicomSequenceItem IIodMacro.DicomSequenceItem
+		{
+			get { return base.DicomAttributeCollection as DicomSequenceItem; }
+			set { base.DicomAttributeCollection = value; }
+		}
 
-		
+		/// <summary>
+		/// Initializes the underlying collection to implement the module or sequence using default values.
+		/// </summary>
+		public virtual void InitializeAttributes() { }
+
+		/// <summary>
+		/// Gets or sets the value of ReferencedSeriesSequence in the underlying collection. Type 1.
+		/// </summary>
+		public IReferencedSeriesSequence[] ReferencedSeriesSequence {
+			get {
+				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedSeriesSequence];
+				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
+					return null;
+
+				IReferencedSeriesSequence[] result = new IReferencedSeriesSequence[dicomAttribute.Count];
+				DicomSequenceItem[] items = (DicomSequenceItem[])dicomAttribute.Values;
+				for (int n = 0; n < items.Length; n++)
+					result[n] = new PresentationStateRelationshipMacro.ReferencedSeriesSequenceItem(items[n]);
+
+				return result;
+			}
+			set {
+				if (value == null || value.Length == 0)
+					throw new ArgumentNullException("value", "ReferencedSeriesSequence is Type 1 Required.");
+
+				DicomSequenceItem[] result = new DicomSequenceItem[value.Length];
+				for (int n = 0; n < value.Length; n++)
+					result[n] = value[n].DicomSequenceItem;
+
+				base.DicomAttributeCollection[DicomTags.ReferencedSeriesSequence].Values = result;
+			}
+		}
+
+		/// <summary>
+		/// Creates a single instance of a ReferencedSeriesSequence item. Does not modify the ReferencedSeriesSequence in the underlying collection.
+		/// </summary>
+		public IReferencedSeriesSequence CreateReferencedSeriesSequence() {
+			IReferencedSeriesSequence iodBase = new PresentationStateRelationshipMacro.ReferencedSeriesSequenceItem(new DicomSequenceItem());
+			iodBase.InitializeAttributes();
+			return iodBase;
+		}
 	}
 }

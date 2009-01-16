@@ -56,16 +56,46 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public GeneralSeriesModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
 
 		/// <summary>
+		/// Initializes the underlying collection to implement the module or sequence using default values.
+		/// </summary>
+		public void InitializeAttributes()
+		{
+			this.BodyPartExamined = null;
+			this.CommentsOnThePerformedProcedureStep = null;
+			this.LargestPixelValueInSeries = null;
+			this.Laterality = null;
+			//this.Modality = Modality.None;
+			this.OperatorIdentificationSequence =null;
+			this.OperatorsName = null;
+			this.PatientPosition = null;
+			this.PerformedProcedureStepDescription = null;
+			this.PerformedProcedureStepId = null;
+			this.PerformedProcedureStepStartDateTime = null;
+			this.PerformedProtocolCodeSequence = null;
+			this.PerformingPhysicianIdentificationSequence = null;
+			this.PerformingPhysiciansName = null;
+			this.ProtocolName = null;
+			this.ReferencedPerformedProcedureStepSequence = null;
+			this.RelatedSeriesSequence = null;
+			this.RequestAttributesSequence = null;
+			this.SeriesDateTime = null;
+			this.SeriesDescription = null;
+			this.SeriesInstanceUid  = "1";
+			this.SeriesNumber = null;
+			this.SmallestPixelValueInSeries = null;
+		}
+
+		/// <summary>
 		/// Gets or sets the value of Modality in the underlying collection. Type 1.
 		/// </summary>
-		public string Modality
+		public Modality Modality
 		{
-			get { return base.DicomAttributeCollection[DicomTags.Modality].GetString(0, string.Empty); }
+			get { return ParseEnum(base.DicomAttributeCollection[DicomTags.Modality].GetString(0, string.Empty), Modality.None); }
 			set
 			{
-				if (string.IsNullOrEmpty(value))
-					throw new ArgumentNullException("value", "Modality is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.Modality].SetString(0, value);
+				if (value == Modality.None)
+					throw new ArgumentOutOfRangeException("value", "Modality is Type 1 Required.");
+				SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.Modality], value);
 			}
 		}
 

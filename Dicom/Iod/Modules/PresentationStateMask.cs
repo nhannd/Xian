@@ -53,6 +53,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public PresentationStateMaskModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
 
 		/// <summary>
+		/// Initializes the underlying collection to implement the module or sequence using default values.
+		/// </summary>
+		public void InitializeAttributes()
+		{
+			this.MaskSubtractionSequence = null;
+			this.RecommendedViewingMode = RecommendedViewingMode.None;
+		}
+
+		/// <summary>
 		/// Gets or sets the value of MaskSubtractionSequence in the underlying collection. Type 3.
 		/// </summary>
 		public IMaskSubtractionSequence MaskSubtractionSequence

@@ -52,6 +52,13 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public DisplayedAreaModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
 
 		/// <summary>
+		/// Initializes the underlying collection to implement the module or sequence using default values.
+		/// </summary>
+		public void InitializeAttributes()
+		{
+		}
+
+		/// <summary>
 		/// Gets or sets the value of DisplayedAreaSelectionSequence in the underlying collection. Type 1.
 		/// </summary>
 		public DisplayedAreaSelectionSequenceItem[] DisplayedAreaSelectionSequence
@@ -98,6 +105,11 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// </summary>
 			/// <param name="dicomSequenceItem">The dicom sequence item.</param>
 			public DisplayedAreaSelectionSequenceItem(DicomSequenceItem dicomSequenceItem) : base(dicomSequenceItem) {}
+
+			/// <summary>
+			/// Initializes the underlying collection to implement the module or sequence using default values.
+			/// </summary>
+			public void InitializeAttributes() { }
 
 			/// <summary>
 			/// Gets or sets the value of ReferencedImageSequence in the underlying collection. Type 1.
