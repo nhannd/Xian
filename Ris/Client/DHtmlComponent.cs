@@ -222,7 +222,7 @@ namespace ClearCanvas.Ris.Client
 
             public JsmlServiceProxy GetServiceProxy(string serviceContractName)
             {
-                return new JsmlServiceProxy(serviceContractName);
+                return new JsmlServiceProxy(serviceContractName, WebServicesSettings.Default.UseJsmlShimService);
             }
 
             public string GetActionHtml(string labelSearch, string actionLabel)

@@ -30,16 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
-using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common.Utilities;
-using System.ServiceModel;
 using ClearCanvas.Ris.Application.Common.Jsml;
-using System.IO;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -47,6 +41,7 @@ namespace ClearCanvas.Ris.Client
     /// Service proxy for use by javascript code.
     /// </summary>
     /// <remarks>
+    /// <para>
     /// This is a COM-visible class that allows javascript code running in a browser to effectively
     /// make use of <see cref="Platform.GetService"/> to obtain an abritrary service and invoke 
     /// operations on it.  For ease of use, a wrapper (outer proxy) may be created in javascript
@@ -72,19 +67,88 @@ namespace ClearCanvas.Ris.Client
     ///	    return proxy;
     ///	}
     /// </code>
+    /// </para>
+    /// <para>
+    /// The proxy can operate in one of two modes: client-side shim or server-side shim.
+    /// With client-side shim, the request/response objects are converted to/from JSML on the client-side,
+    /// and with server-side shim, this conversion is performed by the server.  Client-side shim is probably more
+    /// efficient when a binary encoding such as net.tcp is being used between client and server, whereas
+    /// the server-side shim is probably more efficient when a more verbose XML-based protocol is being used 
+    /// between client and server.
+    /// </para>
     /// </remarks>
     [ComVisible(true)]
     public class JsmlServiceProxy
     {
-        private string _serviceContractName;
+		/// <summary>
+		/// Dynamic dispatch style shim
+		/// </summary>
+		interface IShim
+		{
+			string GetOperationNames(string serviceContractName);
+			string InvokeOperation(string serviceContractName, string operationName, string requestJsml);
+		}
+
+		/// <summary>
+		/// Invokes service operations normally, and performs JSML translation on the client.
+		/// </summary>
+		class ClientSideShim : IShim
+		{
+			public string GetOperationNames(string serviceContractName)
+			{
+				string[] names = ShimUtil.GetOperationNames(serviceContractName);
+				return JsmlSerializer.Serialize(names, "operationNames");
+			}
+
+			public string InvokeOperation(string serviceContractName, string operationName, string requestJsml)
+			{
+				return ShimUtil.InvokeOperation(serviceContractName, operationName, requestJsml);
+			}
+		}
+
+		/// <summary>
+		/// Invokes serivce operations via the JSML shim service, so that JSML translation is performed on server.
+		/// </summary>
+		class ServerSideShim : IShim
+		{
+			public string GetOperationNames(string serviceContractName)
+			{
+				string[] names = null;
+				Platform.GetService<IJsmlShimService>(
+					delegate(IJsmlShimService service)
+					{
+						names = service.GetOperationNames(new GetOperationNamesRequest(serviceContractName)).OperationNames;
+					});
+				return JsmlSerializer.Serialize(names, "operationNames");
+			}
+
+			public string InvokeOperation(string serviceContractName, string operationName, string requestJsml)
+			{
+				string responseJsml = null;
+				Platform.GetService<IJsmlShimService>(
+					delegate(IJsmlShimService service)
+					{
+						InvokeOperationRequest request = new InvokeOperationRequest(serviceContractName, operationName, new JsmlBlob(requestJsml));
+						responseJsml = service.InvokeOperation(request).ResponseJsml.Value;
+					});
+				return responseJsml;
+			}
+		}
+
+
+
+        private readonly string _serviceContractName;
+    	private readonly IShim _shim;
 
         /// <summary>
         /// Constructs a proxy instance.
         /// </summary>
         /// <param name="serviceContractInterfaceName">An assembly-qualified service contract name.</param>
-        public JsmlServiceProxy(string serviceContractInterfaceName)
+        /// <param name="useServerSideShim">True to use server-side shim, false for client-side.</param>
+        public JsmlServiceProxy(string serviceContractInterfaceName, bool useServerSideShim)
         {
             _serviceContractName = serviceContractInterfaceName;
+        	_shim = useServerSideShim ? (IShim) new ServerSideShim() : new ClientSideShim();
         }
 
         /// <summary>
@@ -93,13 +157,7 @@ namespace ClearCanvas.Ris.Client
         /// <returns>A JSML-encoded array of operation names.</returns>
         public string GetOperationNames()
         {
-            string[] names = null;
-            Platform.GetService<IJsmlShimService>(
-                delegate(IJsmlShimService service)
-                {
-                    names = service.GetOperationNames(new GetOperationNamesRequest(_serviceContractName)).OperationNames;
-                });
-            return JsmlSerializer.Serialize(names, "operationNames");
+        	return _shim.GetOperationNames(_serviceContractName);
         }
 
         /// <summary>
@@ -110,14 +168,7 @@ namespace ClearCanvas.Ris.Client
         /// <returns>The response object, as JSML.</returns>
         public string InvokeOperation(string operationName, string requestJsml)
         {
-            string responseJsml = null;
-            Platform.GetService<IJsmlShimService>(
-                delegate(IJsmlShimService service)
-                {
-                    InvokeOperationRequest request = new InvokeOperationRequest(_serviceContractName, operationName, new JsmlBlob(requestJsml));
-                    responseJsml = service.InvokeOperation(request).ResponseJsml.Value;
-                });
-            return responseJsml;
+        	return _shim.InvokeOperation(_serviceContractName, operationName, requestJsml);
         }
     }
 }

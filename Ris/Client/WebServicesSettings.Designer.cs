@@ -88,5 +88,18 @@ namespace ClearCanvas.Ris.Client {
                 return ((global::System.Security.Cryptography.X509Certificates.X509RevocationMode)(this["RevocationMode"]));
             }
         }
+        
+        /// <summary>
+        /// Specify true to use JSML shim service
+        /// </summary>
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Specify true to use JSML shim service")]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseJsmlShimService {
+            get {
+                return ((bool)(this["UseJsmlShimService"]));
+            }
+        }
     }
 }

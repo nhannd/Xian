@@ -51,56 +51,29 @@ namespace ClearCanvas.Ris.Application.Services.Jsml
 
         public GetOperationNamesResponse GetOperationNames(GetOperationNamesRequest request)
         {
-            Type contract = Type.GetType(request.ServiceContractName);
-
-            List<string> names = new List<string>();
-            foreach (MethodInfo method in contract.GetMethods())
-            {
-                if (IsServiceOperation(method))
-                {
-                    names.Add(method.Name);
-                }
-            }
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.ServiceContractName, "ServiceContractName");
 
             GetOperationNamesResponse response = new GetOperationNamesResponse();
-            response.OperationNames = names.ToArray();
+        	response.OperationNames = ShimUtil.GetOperationNames(request.ServiceContractName);
             return response;
         }
 
         public InvokeOperationResponse InvokeOperation(InvokeOperationRequest request)
         {
-            Type contract = Type.GetType(request.ServiceContractName);
-            MethodInfo operation = contract.GetMethod(request.OperationName);
-            ParameterInfo[] parameters = operation.GetParameters();
-            if (parameters.Length != 1)
-                throw new InvalidOperationException("Can only invoke methods with exactly one input parameter.");
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.ServiceContractName, "ServiceContractName");
+			Platform.CheckMemberIsSet(request.OperationName, "OperationName");
+			Platform.CheckMemberIsSet(request.RequestJsml, "RequestJsml");
 
-            object service = null;
-            try
-            {
-                service = Platform.GetService(contract);
+        	string responseJsml = ShimUtil.InvokeOperation(
+				request.ServiceContractName, request.OperationName, request.RequestJsml.Value);
 
-                object innerRequest = JsmlSerializer.Deserialize(parameters[0].ParameterType, request.RequestJsml.Value);
-                object innerResponse = operation.Invoke(service, new object[] { innerRequest });
-
-                InvokeOperationResponse response = new InvokeOperationResponse();
-                string responseJsml = JsmlSerializer.Serialize(innerResponse, "responseData", false);
-
-                response.ResponseJsml = new JsmlBlob(responseJsml);
-                return response;
-            }
-            finally
-            {
-                if (service != null && service is IDisposable)
-                    (service as IDisposable).Dispose();
-            }
+			InvokeOperationResponse response = new InvokeOperationResponse();
+			response.ResponseJsml = new JsmlBlob(responseJsml);
+			return response;
         }
 
         #endregion
-
-        private bool IsServiceOperation(MethodInfo method)
-        {
-            return method.GetCustomAttributes(typeof(OperationContractAttribute), false).Length > 0;
-        }
     }
 }
