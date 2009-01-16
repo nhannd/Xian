@@ -35,11 +35,6 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common.Jsml;
-using System.Reflection;
-using System.ServiceModel;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
-using System.IO;
 
 namespace ClearCanvas.Ris.Application.Services.Jsml
 {
