@@ -44,6 +44,33 @@ namespace ClearCanvas.Enterprise.Common
     public class EntityRef : IVersionedEquatable<EntityRef>
     {
 		/// <summary>
+		/// One-letter code representing the OID class, for use in serialization.
+		/// </summary>
+		enum OidTypeCode
+		{
+			/// <summary>
+			/// Guid
+			/// </summary>
+			G,
+
+			/// <summary>
+			/// String
+			/// </summary>
+			S,
+
+			/// <summary>
+			/// Int (Int32)
+			/// </summary>
+			I,
+
+			/// <summary>
+			/// Long (Int64)
+			/// </summary>
+			L
+		}
+
+
+		/// <summary>
 		/// Provides a null-safe means of checking for equality, optionally ignoring the version.
 		/// </summary>
 		/// <param name="x"></param>
@@ -93,6 +120,12 @@ namespace ClearCanvas.Enterprise.Common
         {
         }
 
+		/// <summary>
+		/// Private constructor
+		/// </summary>
+		/// <param name="entityClassName"></param>
+		/// <param name="entityOid"></param>
+		/// <param name="version"></param>
         private EntityRef(string entityClassName, object entityOid, int version)
         {
             _entityClass = entityClassName;
@@ -227,17 +260,26 @@ namespace ClearCanvas.Enterprise.Common
             return !(x == y);
 		}
 
-		#region Serialization / Deserialization Helper
+		#region Serialization
 
+		/// <summary>
+		/// Obtains a serialized representation of this object.
+		/// </summary>
+		/// <returns></returns>
 		public string Serialize()
 		{
 			return string.Format("{0}:{1}:{2}:{3}",
 				EntityRefUtils.GetClassName(this),
-				EntityRefUtils.GetOID(this).GetType().AssemblyQualifiedName,
+				GetOidTypeCode(EntityRefUtils.GetOID(this)),
 				EntityRefUtils.GetOID(this),
 				EntityRefUtils.GetVersion(this));
 		}
 
+		/// <summary>
+		/// Recreates this object from the specified serialized representation obtained 
+		/// from a call to <see cref="Serialize"/>.
+		/// </summary>
+		/// <param name="value"></param>
 		private void Deserialize(string value)
 		{
 			Platform.CheckForNullReference(value, "value");
@@ -246,34 +288,10 @@ namespace ClearCanvas.Enterprise.Common
 			if (parts.Length != 4)
 				throw new SerializationException("Invalid EntityRef string");
 
-			string entityClassName = parts[0];
-			Type oidType = Type.GetType(parts[1], true);
-			string oidValue = parts[2];
-			int version = int.Parse(parts[3]);
-
-			object oid = null;
-			if (oidType == typeof(int))
-			{
-				oid = int.Parse(oidValue);
-			}
-			else if (oidType == typeof(long))
-			{
-				oid = long.Parse(oidValue);
-			}
-			else if (oidType == typeof(string))
-			{
-				oid = oidValue;
-			}
-			else if (oidType == typeof(Guid))
-			{
-				oid = new Guid(oidValue);
-			}
-			else
-				throw new SerializationException("Invalid EntityRef string");
-
-			this.ClassName = entityClassName;
-			this.OID = oid;
-			this.Version = version;
+			_entityClass = parts[0];
+			OidTypeCode oidType = (OidTypeCode)Enum.Parse(typeof(OidTypeCode), parts[1]);
+			_entityOid = ParseOid(parts[2], oidType);
+			_version = int.Parse(parts[3]);
 		}
 
 		#endregion
@@ -319,6 +337,8 @@ namespace ClearCanvas.Enterprise.Common
 
 		#endregion
 
+		#region Helpers
+
 		/// <summary>
 		/// Gets the assembly qualified name of the type, but without all the version and culture info.
 		/// </summary>
@@ -328,5 +348,40 @@ namespace ClearCanvas.Enterprise.Common
 		{
 			return string.Format("{0}, {1}", entityClass.FullName, entityClass.Assembly.GetName().Name);
 		}
+
+		private static OidTypeCode GetOidTypeCode(object oid)
+		{
+			if (oid is Guid)
+				return OidTypeCode.G;
+			if (oid is string)
+				return OidTypeCode.S;
+			if (oid is int)
+				return OidTypeCode.I;
+			if (oid is long)
+				return OidTypeCode.L;
+
+			// TODO: add support for other OID types as necessary
+			throw new NotSupportedException("OID type not supported.");
+		}
+
+		private static object ParseOid(string value, OidTypeCode oidType)
+		{
+			switch (oidType)
+			{
+				case OidTypeCode.G:
+					return new Guid(value);
+				case OidTypeCode.I:
+					return int.Parse(value);
+				case OidTypeCode.L:
+					return long.Parse(value);
+				case OidTypeCode.S:
+					return value;
+			}
+
+			// TODO: add support for other OID types as necessary
+			throw new NotSupportedException("OID type not supported.");
+		}
+
+		#endregion
 	}
 }
