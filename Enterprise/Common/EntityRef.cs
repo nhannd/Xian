@@ -76,10 +76,10 @@ namespace ClearCanvas.Enterprise.Common
 		/// <summary>
 		/// Deserialization constructor
 		/// </summary>
-		/// <param name="value">The serialized EntityRef value.</param>
-		public EntityRef(string value)
+		/// <param name="serializedValue">The serialized EntityRef value.</param>
+		public EntityRef(string serializedValue)
 		{
-			Deserialize(value);
+			Deserialize(serializedValue);
 		}
 
         /// <summary>
@@ -89,17 +89,11 @@ namespace ClearCanvas.Enterprise.Common
         /// <param name="entityOid"></param>
         /// <param name="version"></param>
         public EntityRef(Type entityClass, object entityOid, int version)
-            :this(entityClass.AssemblyQualifiedName, entityOid, version)
+            :this(GetSafeClassName(entityClass), entityOid, version)
         {
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="entityClassName">The assembly-qualified class name of the entity class.</param>
-        /// <param name="entityOid"></param>
-        /// <param name="version"></param>
-        public EntityRef(string entityClassName, object entityOid, int version)
+        private EntityRef(string entityClassName, object entityOid, int version)
         {
             _entityClass = entityClassName;
             _entityOid = entityOid;
@@ -324,5 +318,15 @@ namespace ClearCanvas.Enterprise.Common
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Gets the assembly qualified name of the type, but without all the version and culture info.
+		/// </summary>
+		/// <param name="entityClass"></param>
+		/// <returns></returns>
+		private static string GetSafeClassName(Type entityClass)
+		{
+			return string.Format("{0}, {1}", entityClass.FullName, entityClass.Assembly.GetName().Name);
+		}
 	}
 }
