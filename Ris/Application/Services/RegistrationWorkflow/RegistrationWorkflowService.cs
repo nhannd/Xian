@@ -66,17 +66,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 		}
 
         [ReadOperation]
-        public TextQueryResponse<PatientProfileSummary> ProfileTextQuery(TextQueryRequest request)
+        public TextQueryResponse<PatientProfileSummary> PatientProfileTextQuery(TextQueryRequest request)
         {
             ProfileTextQueryHelper helper = new ProfileTextQueryHelper(this.PersistenceContext);
             return helper.Query(request);
-        }
-
-        [ReadOperation]
-        public LoadSearchPatientFormDataResponse LoadSearchPatientFormData(LoadSearchPatientFormDataRequest request)
-        {
-            return new LoadSearchPatientFormDataResponse(
-                EnumUtils.GetEnumValueList<SexEnum>(PersistenceContext));
         }
 
         [ReadOperation]
@@ -106,12 +99,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     }));
         }
 
-        [ReadOperation]
-        public GetDataForCancelOrderTableResponse GetDataForCancelOrderTable(GetDataForCancelOrderTableRequest request)
-        {
-            return new GetDataForCancelOrderTableResponse(EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(PersistenceContext));
-        }
-
         [UpdateOperation]
         [OperationEnablement("CanCheckInProcedure")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Procedure.CheckIn)]
@@ -126,20 +113,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             }
 
             return new CheckInProcedureResponse();
-        }
-
-        [UpdateOperation]
-        [OperationEnablement("CanCancelOrder")]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Cancel)]
-		public CancelOrderResponse CancelOrder(CancelOrderRequest request)
-        {
-            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
-            OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
-
-            CancelOrderOperation op = new CancelOrderOperation();
-            op.Execute(order, new OrderCancelInfo(reason, this.CurrentUserStaff));
-
-            return new CancelOrderResponse();
         }
 
         #endregion
@@ -172,19 +145,5 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                                 && !p.IsTerminated; // bug 3415: procedure must not be cancelled or completed
 						});
 		}
-
-    	public bool CanCancelOrder(WorklistItemKey itemKey)
-        {
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Order.Cancel))
-				return false;
-
-            // the worklist item may represent a patient without an order,
-            // in which case there is no order to cancel
-            if (itemKey.OrderRef == null)
-                return false;
-
-            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
-            return order.Status == OrderStatus.SC;
-        }
     }
 }

@@ -192,6 +192,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
+        public GetCancelOrderFormDataResponse GetCancelOrderFormData(GetCancelOrderFormDataRequest request)
+        {
+            return new GetCancelOrderFormDataResponse(EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(PersistenceContext));
+        }
+
+        [ReadOperation]
         public GetOrderRequisitionForEditResponse GetOrderRequisitionForEdit(GetOrderRequisitionForEditRequest request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -279,6 +285,20 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
+        [OperationEnablement("CanCancelOrder")]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Order.Cancel)]
+        public CancelOrderResponse CancelOrder(CancelOrderRequest request)
+        {
+            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
+            OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
+
+            CancelOrderOperation op = new CancelOrderOperation();
+            op.Execute(order, new OrderCancelInfo(reason, this.CurrentUserStaff));
+
+            return new CancelOrderResponse();
+        }
+
+        [UpdateOperation]
         public TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -344,6 +364,20 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
             return !order.IsTerminated;
+        }
+
+        public bool CanCancelOrder(WorklistItemKey itemKey)
+        {
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Order.Cancel))
+                return false;
+
+            // the worklist item may represent a patient without an order,
+            // in which case there is no order to cancel
+            if (itemKey.OrderRef == null)
+                return false;
+
+            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
+            return order.Status == OrderStatus.SC;
         }
 
         #endregion

@@ -182,7 +182,7 @@ namespace ClearCanvas.Ris.Client
 						TextQueryRequest request = new TextQueryRequest();
 						request.TextQuery = _searchString;
 						request.SpecificityThreshold = PatientSearchComponentSettings.Default.SearchCriteriaSpecificityThreshold;
-						response = service.ProfileTextQuery(request);
+						response = service.PatientProfileTextQuery(request);
 					});
 
 				if (response.TooManyMatches)

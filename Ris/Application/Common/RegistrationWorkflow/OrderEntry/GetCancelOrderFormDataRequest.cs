@@ -29,21 +29,13 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
+namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
     [DataContract]
-    public class GetDataForCancelOrderTableResponse : DataContractBase
+    public class GetCancelOrderFormDataRequest : DataContractBase
     {
-        public GetDataForCancelOrderTableResponse(List<EnumValueInfo> cancelReasonChoices)
-        {
-            this.CancelReasonChoices = cancelReasonChoices;
-        }
-
-        [DataMember]
-        public List<EnumValueInfo> CancelReasonChoices;
     }
 }

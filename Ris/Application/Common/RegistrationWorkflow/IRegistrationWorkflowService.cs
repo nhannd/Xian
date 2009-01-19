@@ -51,15 +51,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// <param name="request"><see cref="TextQueryRequest"/></param>
         /// <returns></returns>
         [OperationContract]
-        TextQueryResponse<PatientProfileSummary> ProfileTextQuery(TextQueryRequest request);
-
-        /// <summary>
-        /// Load data required for the patient search
-        /// </summary>
-        /// <param name="request"><see cref="LoadSearchPatientFormDataRequest"/></param>
-        /// <returns><see cref="LoadSearchPatientFormDataResponse"/></returns>
-        [OperationContract]
-        LoadSearchPatientFormDataResponse LoadSearchPatientFormData(LoadSearchPatientFormDataRequest request);
+        TextQueryResponse<PatientProfileSummary> PatientProfileTextQuery(TextQueryRequest request);
 
         /// <summary>
         /// Get procedures that can be checked-in for a patient
@@ -77,23 +69,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
         CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request);
-
-        /// <summary>
-        /// Get orders that can be cancelled for a patient
-        /// </summary>
-        /// <param name="request"><see cref="GetDataForCancelOrderTableRequest"/></param>
-        /// <returns><see cref="GetDataForCancelOrderTableResponse"/></returns>
-        [OperationContract]
-        GetDataForCancelOrderTableResponse GetDataForCancelOrderTable(GetDataForCancelOrderTableRequest request);
-
-        /// <summary>
-        /// Cancel orders with a cancellation reason for a patient
-        /// </summary>
-        /// <param name="request"><see cref="CancelOrderRequest"/></param>
-        /// <returns><see cref="CancelOrderResponse"/></returns>
-        [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
-        [FaultContract(typeof(RequestValidationException))]
-        CancelOrderResponse CancelOrder(CancelOrderRequest request);
     }
 }

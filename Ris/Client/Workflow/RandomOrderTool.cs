@@ -133,7 +133,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                     TextQueryRequest request = new TextQueryRequest();
                     request.TextQuery = randomChar.ToString();
                     TextQueryResponse<PatientProfileSummary> response;
-                    response = service.ProfileTextQuery(request);
+                    response = service.PatientProfileTextQuery(request);
                     if (!response.TooManyMatches)
                         randomProfile = RandomUtils.ChooseRandom(response.Matches);
 
@@ -141,7 +141,7 @@ namespace ClearCanvas.Ris.Client.Workflow
                     {
                         // Search for all male patient, slow but works
                         request.TextQuery = "Male Female Unknown";
-                        response = service.ProfileTextQuery(request);
+                        response = service.PatientProfileTextQuery(request);
                         randomProfile = RandomUtils.ChooseRandom(response.Matches);
                         if (!response.TooManyMatches)
                             randomProfile = RandomUtils.ChooseRandom(response.Matches);

@@ -69,6 +69,14 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         GetOrderEntryFormDataResponse GetOrderEntryFormData(GetOrderEntryFormDataRequest request);
 
         /// <summary>
+        /// Get order cancel form data.
+        /// </summary>
+        /// <param name="request"><see cref="GetDataForCancelOrderTableRequest"/></param>
+        /// <returns><see cref="GetDataForCancelOrderTableResponse"/></returns>
+        [OperationContract]
+        GetCancelOrderFormDataResponse GetCancelOrderFormData(GetCancelOrderFormDataRequest request);
+
+        /// <summary>
         /// Loads order requisition so that the order editing form can be populated. This method will
         /// fail with a RequestValidationException if the order requisition cannot be edited.
         /// </summary>
@@ -131,6 +139,17 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
         ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request);
+
+
+        /// <summary>
+        /// Cancel orders with a cancellation reason for a patient
+        /// </summary>
+        /// <param name="request"><see cref="CancelOrderRequest"/></param>
+        /// <returns><see cref="CancelOrderResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
+        CancelOrderResponse CancelOrder(CancelOrderRequest request);
 
         /// <summary>
         /// This method is for testing/demo purposes and is not intended to be called in production.

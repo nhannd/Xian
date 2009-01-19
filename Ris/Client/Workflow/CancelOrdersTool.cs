@@ -5,6 +5,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -26,6 +27,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			base.Initialize();
 
+            // bug #3199: cancel operation moved to IOrderEntryService -> need to register for enablement
+            this.Context.RegisterWorkflowService(typeof(IOrderEntryService));
+
 			this.Context.RegisterDropHandler(typeof(Folders.Registration.CancelledFolder), this);
 		}
 
@@ -39,8 +43,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 			if (exitCode == ApplicationComponentExitCode.Accepted)
 			{
-				Platform.GetService<IRegistrationWorkflowService>(
-					delegate(IRegistrationWorkflowService service)
+				Platform.GetService<IOrderEntryService>(
+                    delegate(IOrderEntryService service)
 					{
 						service.CancelOrder(new CancelOrderRequest(item.OrderRef, cancelOrderComponent.SelectedCancelReason));
 					});

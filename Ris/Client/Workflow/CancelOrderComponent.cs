@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -64,10 +65,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         public override void Start()
         {
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
+            Platform.GetService<IOrderEntryService>(
+                delegate(IOrderEntryService service)
                 {
-                    GetDataForCancelOrderTableResponse response = service.GetDataForCancelOrderTable(new GetDataForCancelOrderTableRequest());
+                    GetCancelOrderFormDataResponse response = service.GetCancelOrderFormData(new GetCancelOrderFormDataRequest());
                     _cancelReasonChoices = response.CancelReasonChoices;
                 });
 
