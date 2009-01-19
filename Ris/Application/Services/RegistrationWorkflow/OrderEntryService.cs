@@ -154,14 +154,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                        return rptAssembler.CreateSummary(rpt);
                    });
 
-            // remove types that have already been ordered
-            summaries = CollectionUtils.Reject<ProcedureTypeSummary>(summaries,
-                      delegate(ProcedureTypeSummary s)
-                      {
-                          return request.OrderedProcedureTypes.Contains(s.ProcedureTypeRef);
-                      });
-
-
             return new ListOrderableProcedureTypesResponse(summaries);
         }
 
