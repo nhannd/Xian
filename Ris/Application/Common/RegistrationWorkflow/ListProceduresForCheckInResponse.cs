@@ -36,9 +36,9 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
     [DataContract]
-    public class GetDataForCheckInTableResponse : DataContractBase
+    public class ListProceduresForCheckInResponse : DataContractBase
     {
-        public GetDataForCheckInTableResponse(List<ProcedureSummary> items)
+        public ListProceduresForCheckInResponse(List<ProcedureSummary> items)
         {
             this.Procedures = items;
         }

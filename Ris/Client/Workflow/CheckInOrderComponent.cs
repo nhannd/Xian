@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Workflow
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    GetDataForCheckInTableResponse response = service.GetDataForCheckInTable(new GetDataForCheckInTableRequest(_worklistItem.OrderRef));
+                    ListProceduresForCheckInResponse response = service.ListProceduresForCheckIn(new ListProceduresForCheckInRequest(_worklistItem.OrderRef));
                     _checkInOrderTable.Items.AddRange(
                         CollectionUtils.Map<ProcedureSummary, CheckInOrderTableEntry>(response.Procedures,
                                 delegate(ProcedureSummary item)

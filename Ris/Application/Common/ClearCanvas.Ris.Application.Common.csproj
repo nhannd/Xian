@@ -585,8 +585,8 @@
     <Compile Include="RegistrationWorkflow\CheckInProcedureResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetCancelOrderFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetCancelOrderFormDataResponse.cs" />
-    <Compile Include="RegistrationWorkflow\GetDataForCheckInTableRequest.cs" />
-    <Compile Include="RegistrationWorkflow\GetDataForCheckInTableResponse.cs" />
+    <Compile Include="RegistrationWorkflow\ListProceduresForCheckInRequest.cs" />
+    <Compile Include="RegistrationWorkflow\ListProceduresForCheckInResponse.cs" />
     <Compile Include="QueryWorklistRequest.cs" />
     <Compile Include="QueryWorklistResponse.cs" />
     <Compile Include="RegistrationWorkflow\IRegistrationWorkflowService.cs" />

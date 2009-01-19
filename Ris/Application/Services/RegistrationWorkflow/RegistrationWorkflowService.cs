@@ -85,12 +85,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        public GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request)
+        public ListProceduresForCheckInResponse ListProceduresForCheckIn(ListProceduresForCheckInRequest request)
         {
         	List<Procedure> proceduresNotCheckedIn = GetProceduresEligibleForCheckIn(request.OrderRef);
 
             ProcedureAssembler assembler = new ProcedureAssembler();
-            return new GetDataForCheckInTableResponse(
+            return new ListProceduresForCheckInResponse(
                 CollectionUtils.Map<Procedure, ProcedureSummary, List<ProcedureSummary>>(
                     proceduresNotCheckedIn,
                     delegate(Procedure rp)

@@ -35,9 +35,9 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
     [DataContract]
-    public class GetDataForCheckInTableRequest : DataContractBase
+    public class ListProceduresForCheckInRequest : DataContractBase
     {
-        public GetDataForCheckInTableRequest(EntityRef orderRef)
+        public ListProceduresForCheckInRequest(EntityRef orderRef)
         {
             this.OrderRef = orderRef;
         }

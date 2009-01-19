@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// <param name="request"><see cref="GetDataForCheckInTableRequest"/></param>
         /// <returns><see cref="GetDataForCheckInTableResponse"/></returns>
         [OperationContract]
-        GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request);
+        ListProceduresForCheckInResponse ListProceduresForCheckIn(ListProceduresForCheckInRequest request);
 
         /// <summary>
         /// Check in procedures for a patient
