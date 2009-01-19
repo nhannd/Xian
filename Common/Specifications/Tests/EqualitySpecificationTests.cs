@@ -66,8 +66,7 @@ namespace ClearCanvas.Common.Specifications.Tests
 		{
 			EqualSpecification s = new EqualSpecification();
 			s.RefValueExpression = new ConstantExpression(1.0);
-			//TODO: uncomment this when code merged to Trunk
-			//s.Strict = true;
+			s.Strict = true;
 
 			// this should fail because in strict mode we don't do type coercion,
 			// and Object.Equals(x, y) returns false when comparing different types
@@ -132,8 +131,7 @@ namespace ClearCanvas.Common.Specifications.Tests
 		{
 			NotEqualSpecification s = new NotEqualSpecification();
 			s.RefValueExpression = new ConstantExpression(1.0);
-			//TODO: uncomment this when code merged to Trunk
-			//s.Strict = true;
+			s.Strict = true;
 
 			// this should pass because in strict mode we don't do type coercion,
 			// and Object.Equals(x, y) returns false when comparing different types

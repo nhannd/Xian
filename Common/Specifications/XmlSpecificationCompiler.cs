@@ -169,7 +169,8 @@ namespace ClearCanvas.Common.Specifications
             AddOperator(new BuiltInOperator("less-than", CreateLessThan, LessThanSchema));
             AddOperator(new BuiltInOperator("and", CreateAnd, AndSchema));
             AddOperator(new BuiltInOperator("or", CreateOr, OrSchema));
-            AddOperator(new BuiltInOperator("regex", CreateRegex, RegexSchema));
+			AddOperator(new BuiltInOperator("not", CreateNot, NotSchema));
+			AddOperator(new BuiltInOperator("regex", CreateRegex, RegexSchema));
             AddOperator(new BuiltInOperator("null", CreateIsNull, IsNullSchema));
             AddOperator(new BuiltInOperator("not-null", CreateNotNull, NotNullSchema));
             AddOperator(new BuiltInOperator("count", CreateCount, CountSchema));
@@ -405,6 +406,48 @@ namespace ClearCanvas.Common.Specifications
 
             return element;
         }
+		private Specification CreateNot(XmlElement node)
+		{
+			NotSpecification spec = new NotSpecification();
+			foreach (XmlElement child in GetChildElements(node))
+			{
+				spec.Add(BuildNode(child));
+			}
+			return spec;
+		}
+
+		private static XmlSchemaElement NotSchema()
+		{
+			XmlSchemaComplexType type = new XmlSchemaComplexType();
+
+			XmlSchemaAny any = new XmlSchemaAny();
+			any.MinOccurs = 1;
+			any.MaxOccursString = "unbounded";
+			any.ProcessContents = XmlSchemaContentProcessing.Strict;
+			any.Namespace = "##local";
+
+			XmlSchemaSequence sequence = new XmlSchemaSequence();
+			type.Particle = sequence;
+			sequence.Items.Add(any);
+
+			XmlSchemaAttribute attrib = new XmlSchemaAttribute();
+			attrib.Name = "expressionLanguage";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+			type.Attributes.Add(attrib);
+
+			attrib = new XmlSchemaAttribute();
+			attrib.Name = "failMessage";
+			attrib.Use = XmlSchemaUse.Optional;
+			attrib.SchemaTypeName = new XmlQualifiedName("string", "http://www.w3.org/2001/XMLSchema");
+			type.Attributes.Add(attrib);
+
+			XmlSchemaElement element = new XmlSchemaElement();
+			element.Name = "not";
+			element.SchemaType = type;
+
+			return element;
+		}
 
         private static Specification CreateRegex(XmlElement node)
         {

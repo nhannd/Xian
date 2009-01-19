@@ -369,6 +369,30 @@ namespace ClearCanvas.Common.Specifications.Tests
 		}
 
 		[Test]
+		public void Test_Not_Default()
+		{
+			ISpecification s = _factory.GetSpecification("not_default");
+			Assert.IsInstanceOfType(typeof(NotSpecification), s);
+
+			NotSpecification s1 = (NotSpecification)s;
+			List<ISpecification> elements = new List<ISpecification>(s1.Elements);
+			Assert.AreEqual(2, elements.Count);
+			Assert.IsInstanceOfType(typeof(TrueSpecification), elements[0]);
+			Assert.IsInstanceOfType(typeof(FalseSpecification), elements[1]);
+		}
+
+		[Test]
+		public void Test_Not_Empty()
+		{
+			ISpecification s = _factory.GetSpecification("not_missingElement");
+			Assert.IsInstanceOfType(typeof(NotSpecification), s);
+
+			NotSpecification s1 = (NotSpecification)s;
+			List<ISpecification> elements = new List<ISpecification>(s1.Elements);
+			Assert.AreEqual(0, elements.Count);
+		}
+
+		[Test]
 		public void Test_Each_Default()
 		{
 			ISpecification s = _factory.GetSpecification("each_default");

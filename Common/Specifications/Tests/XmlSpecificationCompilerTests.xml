@@ -189,8 +189,19 @@
   <spec id="or_empty">
     <or/>
   </spec>
-  
-  <!-- each -->
+
+  <!-- not -->
+  <spec id="not_default">
+	<not>
+	  <true/>
+	  <false/>
+	</not>
+  </spec>
+  <spec id="not_missingElement">
+	<not/>
+  </spec>
+
+<!-- each -->
   <spec id="each_default">
     <each>
       <true/>

@@ -79,6 +79,41 @@ namespace ClearCanvas.Common.Specifications.Tests
 			s.Add(AlwaysTrue);
 			Assert.IsTrue(s.Test(null).Success);
 		}
+
+		[Test]
+		public void Test_Not_Degenerate()
+		{
+			// TODO: this is the current behaviour - perhaps it should throw an exception instead
+			NotSpecification s = new NotSpecification();
+			Assert.IsFalse(s.Test(null).Success);
+		}
+
+		[Test]
+		public void Test_Not_AllTrue()
+		{
+			NotSpecification s = new NotSpecification();
+			s.Add(AlwaysTrue);
+			s.Add(AlwaysTrue);
+			Assert.IsFalse(s.Test(null).Success);
+		}
+
+		[Test]
+		public void Test_Not_AllFalse()
+		{
+			NotSpecification s = new NotSpecification();
+			s.Add(AlwaysFalse);
+			s.Add(AlwaysFalse);
+			Assert.IsTrue(s.Test(null).Success);
+		}
+
+		[Test]
+		public void Test_Not_Mixed()
+		{
+			NotSpecification s = new NotSpecification();
+			s.Add(AlwaysFalse);
+			s.Add(AlwaysTrue);
+			Assert.IsTrue(s.Test(null).Success);
+		}
 	}
 }
 

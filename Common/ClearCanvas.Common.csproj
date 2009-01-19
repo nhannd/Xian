@@ -128,6 +128,7 @@
     <Compile Include="log4net\FileAppender.cs" />
     <Compile Include="log4net\RollingFileAppender.cs" />
     <Compile Include="Specifications\CaseSpecification.cs" />
+    <Compile Include="Specifications\NotSpecification.cs" />
     <Compile Include="Specifications\Tests\CompositeSpecificationTests.cs" />
     <Compile Include="Specifications\Tests\CountSpecificationTests.cs" />
     <Compile Include="Specifications\Tests\EnumerableSpecificationTests.cs" />

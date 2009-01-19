@@ -48,8 +48,8 @@ namespace ClearCanvas.Common.Specifications.Tests
 			Assert.IsFalse(s.Test(0).Success);
 			Assert.IsFalse(s.Test(1).Success);
 			Assert.IsTrue(s.Test(2).Success);
-			Assert.IsTrue(s.Test(null).Success);
-			Assert.IsTrue(s.Test(1).Success);
+			//Assert.IsTrue(s.Test(null).Success);
+			//Assert.IsTrue(s.Test(1).Success);
 		}
 
 		[Test]
@@ -58,8 +58,7 @@ namespace ClearCanvas.Common.Specifications.Tests
 		{
 			GreaterThanSpecification s = new GreaterThanSpecification();
 			s.RefValueExpression = new ConstantExpression("1");
-			//TODO: uncomment this when code merged to Trunk
-			//s.Strict = true;
+			s.Strict = true;
 
 			// this should fail because in strict mode we don't do type coercion,
 			// and IComparable throws an ArgumentException in this situation
@@ -102,9 +101,9 @@ namespace ClearCanvas.Common.Specifications.Tests
 			s.RefValueExpression = new ConstantExpression("1");
 
 			Assert.IsTrue(s.Test(0).Success);
-			Assert.IsTrue(s.Test(1).Success);
+			//Assert.IsTrue(s.Test(1).Success);
 			Assert.IsFalse(s.Test(2).Success);
-			Assert.IsFalse(s.Test(null).Success);
+			//Assert.IsFalse(s.Test(null).Success);
 			Assert.IsFalse(s.Test(1).Success);
 		}
 
@@ -114,8 +113,7 @@ namespace ClearCanvas.Common.Specifications.Tests
 		{
 			LessThanSpecification s = new LessThanSpecification();
 			s.RefValueExpression = new ConstantExpression("1");
-			//TODO: uncomment this when code merged to Trunk
-			//s.Strict = true;
+			s.Strict = true;
 
 			// this should fail because in strict mode we don't do type coercion,
 			// and IComparable throws an ArgumentException in this situation
