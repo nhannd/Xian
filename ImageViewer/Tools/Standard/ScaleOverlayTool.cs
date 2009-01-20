@@ -5,7 +5,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -255,8 +254,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			private static Rectangle ComputeScaleBounds(IPresentationImage presentationImage, float horizontalReduction, float verticalReduction)
 			{
 				RectangleF clientBounds = presentationImage.ClientRectangle;
-				float hReduction = horizontalReduction*clientBounds.Width;
-				float vReduction = verticalReduction*clientBounds.Height;
+				float hReduction = horizontalReduction*Math.Min(1000f, clientBounds.Width);
+				float vReduction = verticalReduction*Math.Min(1000f, clientBounds.Height);
 
 				clientBounds = new RectangleF(clientBounds.X + hReduction, clientBounds.Y + vReduction, clientBounds.Width - 2*hReduction, clientBounds.Height - 2*vReduction);
 
@@ -266,6 +265,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					Rectangle srcRectangle = new Rectangle(0, 0, imageGraphic.Columns, imageGraphic.Rows);
 
 					RectangleF imageBounds = imageGraphic.SpatialTransform.ConvertToDestination(srcRectangle);
+					imageBounds = RectangleUtilities.ConvertToPositiveRectangle(imageBounds);
 					hReduction = horizontalReduction*imageBounds.Width;
 					vReduction = verticalReduction*imageBounds.Height;
 
