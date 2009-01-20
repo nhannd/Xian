@@ -24,8 +24,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
 		protected override IList<IProcessor> GetProcessors()
 		{
-            PublicationShredSettings settings = new PublicationShredSettings();
-            PublicationProcessor p = new PublicationProcessor(settings.BatchSize, TimeSpan.FromSeconds(settings.EmptyQueueSleepTime));
+			PublicationProcessor p = new PublicationProcessor(new PublicationShredSettings());
             return new IProcessor[] { p };
         }
 

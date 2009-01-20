@@ -27,13 +27,15 @@ namespace ClearCanvas.Ris.Shreds.Publication
     /// Processes <see cref="PublicationStep"/>s, performing all <see cref="IPublicationAction"/>s
     /// on each step.
     /// </summary>
-    public class PublicationProcessor : QueueProcessor<PublicationStep>
+    internal class PublicationProcessor : QueueProcessor<PublicationStep>
 	{
-		private object[] _publicationActions;
+		private readonly object[] _publicationActions;
+		private readonly PublicationShredSettings _settings;
 
-        public PublicationProcessor(int batchSize, TimeSpan sleepTime)
-            :base(batchSize, sleepTime)
+        public PublicationProcessor(PublicationShredSettings settings)
+			: base(settings.BatchSize, TimeSpan.FromSeconds(settings.EmptyQueueSleepTime))
         {
+        	_settings = settings;
             _publicationActions = new PublicationActionExtensionPoint().CreateExtensions();
         }
 
@@ -50,7 +52,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
 				PublicationStepSearchCriteria failures = GetCriteria();
 				failures.LastFailureTime.IsNotNull();
-				failures.LastFailureTime.LessThan(Platform.Time.AddMinutes(-5));
+				failures.LastFailureTime.LessThan(Platform.Time.AddSeconds(_settings.FailedItemRetryDelay));
 
 				PublicationStepSearchCriteria[] criteria = new PublicationStepSearchCriteria[] { noFailures, failures };
 				SearchResultPage page = new SearchResultPage(0, batchSize);
@@ -74,20 +76,36 @@ namespace ClearCanvas.Ris.Shreds.Publication
 				{
 					context.Lock(item);
 
+					// execute each publication action
 					foreach (IPublicationAction action in _publicationActions)
 					{
 						action.Execute(item, context);
 					}
 
+					// all actions succeeded, so mark the publication item as being completed
 					item.Complete(item.AssignedStaff);
+
+					// complete the transaction
+					scope.Complete();
 				}
 				catch (Exception e)
 				{
+					// one of the actions failed
 					ExceptionLogger.Log("PublicationProcessor.ProcessItem", e);
-					item.Fail();
-				}
 
-				scope.Complete();
+					// use a new scope to mark the item as failed
+					using (PersistenceScope failScope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
+					{
+						IUpdateContext failContext = (IUpdateContext) PersistenceScope.CurrentContext;
+						failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
+
+						// mark item as failed, do not complete primary transaction
+						item.Fail();
+
+						// complete the failScope transaction
+						failScope.Complete();
+					}
+				}
 			}
 		}
 
