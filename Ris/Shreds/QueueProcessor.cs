@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Shreds
 {
@@ -63,7 +64,7 @@ namespace ClearCanvas.Ris.Shreds
                 {
                     // this exception may be transient, so we just log it and continue
                     // as if the queue is empty
-                    Platform.Log(LogLevel.Error, e);
+					ExceptionLogger.Log(this.GetType().FullName + ".GetNextBatch", e);
                     items = new List<TItem>();
                 }
                 
@@ -90,8 +91,8 @@ namespace ClearCanvas.Ris.Shreds
                         catch (Exception e)
                         {
                             // nothing we can do about this, just log it and process next item
-                            Platform.Log(LogLevel.Error, e);
-                        }
+							ExceptionLogger.Log(this.GetType().FullName + ".ProcessItem", e);
+						}
                     }
                 }
             }

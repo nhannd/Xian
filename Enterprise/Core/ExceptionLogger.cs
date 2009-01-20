@@ -36,6 +36,9 @@ namespace ClearCanvas.Enterprise.Core
 				// if we fail to properly log the exception, there is nothing we can do about it
 				// just log a message to the log file
 				Platform.Log(LogLevel.Error, x);
+
+				// also log the original exception to the log file, since it did not get logged to the DB
+				Platform.Log(LogLevel.Error, e);
 			}
 		}
 	}

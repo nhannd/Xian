@@ -116,7 +116,7 @@ namespace ClearCanvas.Ris.Shreds
                 }
                 catch (Exception e)
                 {
-                    // in case it throws for some reason
+                    // in case it throws for some reason, although it is not supposed to
                     Platform.Log(LogLevel.Error, e);
                 }
             }
@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Shreds
                 catch (ThreadStateException e)
                 {
                     // can get here if the thread was not started properly
-                    Platform.Log(LogLevel.Debug, e);
+                    Platform.Log(LogLevel.Error, e);
                 }
             }
 

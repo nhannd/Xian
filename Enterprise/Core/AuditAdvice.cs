@@ -92,7 +92,7 @@ namespace ClearCanvas.Enterprise.Core
                             }
                             catch (Exception e)
                             {
-                                // audit operation failed
+                                // audit operation failed - this is low-level, so we log directly to log file
                                 Platform.Log(LogLevel.Error, e);
                             }
                         }
