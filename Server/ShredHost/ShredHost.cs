@@ -55,6 +55,10 @@ namespace ClearCanvas.Server.ShredHost
         /// <returns>true - if the ShredHost is currently running, false - if ShredHost is stopped.</returns>
         public static bool Start()
         {
+			// install the unhandled exception event handler
+			AppDomain currentDomain = AppDomain.CurrentDomain;
+			currentDomain.UnhandledException += new UnhandledExceptionEventHandler(MyUnhandledExceptionEventHandler);
+
             lock (_lockObject)
             {
                 if (RunningState.Running == _runningState || RunningState.Transition == _runningState)
@@ -223,7 +227,6 @@ namespace ClearCanvas.Server.ShredHost
                 shredController.Stop();
                 Platform.Log(LogLevel.Info, displayName + ": Stopped");
             }
-
         }
 
         #region Print asms in AD helper f(x)
@@ -239,6 +242,12 @@ namespace ClearCanvas.Server.ShredHost
             }
         }
         #endregion
+
+		internal static void MyUnhandledExceptionEventHandler(object sender, UnhandledExceptionEventArgs args)
+		{
+			Exception e = (Exception)args.ExceptionObject;
+			Platform.Log(LogLevel.Fatal, e, "Fatal error - unhandled exception in running Shred; ShredHost must terminate");
+		}
 
         internal static ShredControllerList ShredControllerList
         {
