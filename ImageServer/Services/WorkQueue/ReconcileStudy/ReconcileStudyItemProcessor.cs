@@ -148,13 +148,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         private void Complete()
         {
             DirectoryUtility.DeleteIfEmpty(_reconcileQueueData.StoragePath);
-            PostProcessing(WorkQueueItem, false, true, true);
+			PostProcessing(WorkQueueItem, 
+				WorkQueueProcessorStatus.Complete, 
+				WorkQueueProcessorNumProcessed.None, 
+				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
             Platform.Log(LogLevel.Info, "Reconciliation completed");
         }
 
         private void BatchComplete()
         {
-            PostProcessing(WorkQueueItem, true, false, true);
+			PostProcessing(WorkQueueItem, 
+				WorkQueueProcessorStatus.Pending, 
+				WorkQueueProcessorNumProcessed.Batch, 
+				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
             Platform.Log(LogLevel.Info, "StudyReconcile processed.");
         }
 
@@ -219,10 +225,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         /// Executes the processor
         /// </summary>
         /// <returns></returns>
-        bool Execute();
-
-        
+        bool Execute();        
     }
-
-    
 }

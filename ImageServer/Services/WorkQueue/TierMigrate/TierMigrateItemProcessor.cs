@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.Remoting.Contexts;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Enterprise.Core;
@@ -121,7 +120,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                 try
                 {
                     DoMigrateStudy(StorageLocation);
-                    PostProcessing(item, false, true, true);
+					PostProcessing(item, 
+						WorkQueueProcessorStatus.Complete, 
+						WorkQueueProcessorNumProcessed.None, 
+						WorkQueueProcessorDatabaseUpdate.ResetQueueState);
                 }
                 catch (Exception e)
                 {
@@ -129,11 +131,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                     FailQueueItem(item, e.Message);
                 }
             }
-            
-            
         }
 
-        private void DoMigrateStudy(StudyStorageLocation storage)
+        private static void DoMigrateStudy(StudyStorageLocation storage)
         {
             TierMigrationStatistics stat = new TierMigrationStatistics();
             stat.StudyInstanceUid = storage.StudyInstanceUid;
@@ -199,11 +199,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                             storage.StudyInstanceUid, storage.FilesystemTierEnum, 
                             newFilesystem.Filesystem.FilesystemTierEnum, 
                             files.Length,
-                            ByteCountFormatter.Format((ulong)studySize), stat.ProcessSpeed.FormattedValue);
+                            ByteCountFormatter.Format(studySize), stat.ProcessSpeed.FormattedValue);
 
-            UpdateAverageStatistics(stat);
-           
-            
+            UpdateAverageStatistics(stat);                       
         }
 
         private static void UpdateAverageStatistics(TierMigrationStatistics stat)

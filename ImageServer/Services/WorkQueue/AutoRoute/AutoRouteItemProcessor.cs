@@ -86,7 +86,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             if (WorkQueueUidList.Count == 0 
                 && item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
             {
-                PostProcessing(item, false, false, false);
+				PostProcessing(item, 
+					WorkQueueProcessorStatus.Pending, 
+					WorkQueueProcessorNumProcessed.None, 
+					WorkQueueProcessorDatabaseUpdate.None);
                 return;
             }
 
@@ -97,7 +100,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 item.FailureDescription = String.Format("Unknown auto-route destination \"{0}\"", item.DeviceKey);
                 Platform.Log(LogLevel.Error,item.FailureDescription);
 
-                PostProcessingFailure(item, true); // Fatal Error
+                PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal); // Fatal Error
                 return ;
             }
 
@@ -107,7 +110,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 Platform.Log(LogLevel.Error,
                              item.FailureDescription);
 
-                PostProcessingFailure(item, true); // Fatal error
+                PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal); // Fatal error
                 return;
             }
 
@@ -188,11 +191,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         	// Reset the WorkQueue entry status
             if (WorkQueueUidList.Count > 0 || scu.Status == ScuOperationStatus.Failed || scu.Status == ScuOperationStatus.ConnectFailed)
-                PostProcessingFailure(item, false); // failures occurred
-            else if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
-                PostProcessing(item, true, false, false); // no failures
-			else 
-				PostProcessing(item, true, true, false); // no failures, complete
+                PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal); // failures occurred
+			else if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
+				PostProcessing(item,
+					WorkQueueProcessorStatus.Pending,
+					WorkQueueProcessorNumProcessed.Batch,
+					WorkQueueProcessorDatabaseUpdate.None); // no failures
+			else
+			{
+				item.ScheduledTime = item.ExpirationTime;
+				PostProcessing(item,
+				               WorkQueueProcessorStatus.Pending,
+				               WorkQueueProcessorNumProcessed.None, // Will force the entry to idle.
+				               WorkQueueProcessorDatabaseUpdate.None); 
+			}
         }
         #endregion
 

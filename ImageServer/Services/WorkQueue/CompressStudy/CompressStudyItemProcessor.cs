@@ -104,8 +104,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
 				return false;
 			}
-
 		}
+
 		/// <summary>
 		/// Process all of the SOP Instances associated with a <see cref="WorkQueue"/> item.
 		/// </summary>
@@ -254,7 +254,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				if (WorkQueueUidList.Count == 0)
 				{
 					// No UIDs associated with the WorkQueue item.  Set the status back to idle
-					PostProcessing(item, false, false, true);
+					PostProcessing(item, 
+						WorkQueueProcessorStatus.Pending, 
+						WorkQueueProcessorNumProcessed.None, 
+						WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 					return;
 				}
 
@@ -282,12 +285,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				{
 					item.FailureDescription = String.Format("Unable to find codec for compression: {0}", compressSyntax.Name);
 					Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
-					base.PostProcessingFailure(item, true);
+					base.PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
 					return;
 				}
 
 				if (!ProcessUidList(item, theCodecFactory))
-					PostProcessingFailure(item, false);
+					PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal);
 				else
 				{
 					if (compressSyntax.LossyCompressed)
@@ -295,9 +298,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 					else
 						UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossless, compressSyntax);
 
-					PostProcessing(item, true, false, false); // batch processed, not complete
+					PostProcessing(item, 
+						WorkQueueProcessorStatus.Pending,
+						WorkQueueProcessorNumProcessed.Batch,
+						WorkQueueProcessorDatabaseUpdate.None); // batch processed, not complete
 				}
-
 			}
 		}
 

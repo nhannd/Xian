@@ -171,7 +171,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             columns.StudyStorageKey = storage.Key;
             DateTime time = Platform.Time;
             columns.ScheduledTime = time;
-            columns.ExpirationTime = time;
+            columns.ExpirationTime = time.AddMinutes(4);
             columns.FailureCount = 0;
             columns.DeviceKey = device.Key;
 

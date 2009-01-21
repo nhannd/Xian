@@ -44,10 +44,45 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
+	/// <summary>
+	/// Enum telling if a work queue entry had a fatal or nonfatal error.
+	/// </summary>
+	public enum WorkQueueProcessorFailureType
+	{
+		Fatal,
+		NonFatal
+	}
+
+	/// <summary>
+	/// Enum for telling when processing is complete for a WorkQueue item.
+	/// </summary>
+	public enum WorkQueueProcessorStatus
+	{
+		Complete,
+		Pending
+	}
+
+	/// <summary>
+	/// Enum telling if a WorkQueue item has processed any DICOM objects.
+	/// </summary>
+	public enum WorkQueueProcessorNumProcessed
+	{
+		Batch,
+		None
+	}
+
+	/// <summary>
+	/// Flag telling if a database update should be done for a WorkQueue entry.
+	/// </summary>
+	public enum WorkQueueProcessorDatabaseUpdate
+	{
+		ResetQueueState,
+		None
+	}
+
     /// <summary>
     /// Base class used when implementing WorkQueue item processors.
     /// </summary>
@@ -127,7 +162,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             get { return _workQueueItem; }
         }
 
-        protected Model.ServerPartition ServerPartition
+        protected ServerPartition ServerPartition
         {
             get
             {
@@ -335,9 +370,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		/// </remarks>
 		/// <param name="item">The <see cref="WorkQueue"/> item to set.</param>
 		/// <param name="complete">Indicates if complete.</param>
-		/// <param name="processedBatch">Processed a batch request of uids</param>
+		/// <param name="numProcessed">Tells if items were processed.</param>
 		/// <param name="resetQueueStudyState">Reset the queue study state back to Idle</param>
-		protected virtual void PostProcessing(Model.WorkQueue item, bool processedBatch, bool complete, bool resetQueueStudyState)
+		protected virtual void PostProcessing(Model.WorkQueue item, WorkQueueProcessorStatus complete, WorkQueueProcessorNumProcessed numProcessed, WorkQueueProcessorDatabaseUpdate resetQueueStudyState)
 		{
 			DBUpdateTime.Add(
 				delegate
@@ -377,18 +412,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						if (scheduledTime > item.ExpirationTime)
 							scheduledTime = item.ExpirationTime;
 
-						if (complete || !processedBatch && item.ExpirationTime < Platform.Time)
+						if (complete == WorkQueueProcessorStatus.Complete 
+							|| (numProcessed == WorkQueueProcessorNumProcessed.None) && item.ExpirationTime < Platform.Time)
 						{
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Completed;
 							parms.FailureCount = item.FailureCount;
 							parms.ScheduledTime = scheduledTime;
-							if (resetQueueStudyState)
+							if (resetQueueStudyState == WorkQueueProcessorDatabaseUpdate.ResetQueueState)
 								parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 
 							parms.ExpirationTime = item.ExpirationTime; // Keep the same
 						}
 						// If the batch size is 0, switch to idle state.
-						else if (!processedBatch)
+						else if (numProcessed == WorkQueueProcessorNumProcessed.None)
 						{
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Idle;
 							parms.ScheduledTime = scheduledTime;
@@ -442,8 +478,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		/// </para>
 		/// </remarks>
 		/// <param name="item">The <see cref="WorkQueue"/> item to set.</param>
-		/// <param name="fatal">The failure is unrecoverable</param>
-		protected virtual void PostProcessingFailure(Model.WorkQueue item, bool fatal)
+		/// <param name="processorFailureType">The failure is unrecoverable</param>
+		protected virtual void PostProcessingFailure(Model.WorkQueue item, WorkQueueProcessorFailureType processorFailureType)
 		{
 			DBUpdateTime.Add(
 				delegate
@@ -464,7 +500,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 								parms.FailureDescription = item.FailureDescription;
 
 							parms.FailureCount = item.FailureCount + 1;
-							if (fatal)
+							if (processorFailureType == WorkQueueProcessorFailureType.Fatal)
 							{
 								Platform.Log(LogLevel.Error,
 											 "Failing {0} WorkQueue entry ({1}), fatal error",

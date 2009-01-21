@@ -44,12 +44,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
     {
         protected override void AddWorkQueueUidsToSendList(Model.WorkQueue item, ImageServerStorageScu scu)
         {
-			if (!LoadStorageLocation(item))
-			{
-				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing WebMoveStudy WorkQueue item, rescheduling");
-				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
-				return;
-			}
 			string studyPath = StorageLocation.GetStudyPath();
 
             StudyXml studyXml = LoadStudyXml(StorageLocation);
@@ -59,6 +53,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
 
         protected override void ProcessItem(Model.WorkQueue item)
         {
+			if (item.ScheduledTime.Equals(item.ExpirationTime))
+			{
+				Platform.Log(LogLevel.Debug, "Removing Idle WebMoveStudy WorkQueueEntry: {0}", item.Key);
+				base.PostProcessing(item, WorkQueueProcessorStatus.Complete, 
+									WorkQueueProcessorNumProcessed.None,
+				                    WorkQueueProcessorDatabaseUpdate.None);
+				return;
+			}
+
             if (!LoadStorageLocation(item))
             {
             	Platform.Log(LogLevel.Warn,"Unable to find readable location when processing WebMoveStudy WorkQueue item, rescheduling");

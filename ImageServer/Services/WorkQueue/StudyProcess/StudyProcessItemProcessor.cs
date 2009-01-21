@@ -118,8 +118,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
 
         #endregion
-
-
     }
 
 
@@ -442,6 +440,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <summary>
         /// Schedules a reconciliation for the specified <see cref="DicomFile"/>
         /// </summary>
+        /// <param name="queueUid"></param>
         /// <param name="file"></param>
         private void ScheduleReconcile(WorkQueueUid queueUid, DicomFile file)
         {
@@ -557,11 +556,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             finally
             {
                 OnProcessUidEnd(item, sop);
-            }
-
-            
+            }            
         }
-
 
         #endregion
 
@@ -642,7 +638,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             LoadStorageLocation(item);
         }
 
-
         protected override void OnProcessItemEnd(Model.WorkQueue item)
         {
             Platform.CheckForNullReference(item, "item");
@@ -673,7 +668,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(StorageLocation, "StorageLocation");
             
             bool successful = false;
-        	bool batchProcessed = true;
+        	WorkQueueProcessorNumProcessed batchProcessed = WorkQueueProcessorNumProcessed.Batch;
             _statistics.TotalProcessTime.Add(
                     delegate
                     	{
@@ -683,7 +678,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                             if (WorkQueueUidList.Count == 0)
                             {
                                 successful = true;
-                            	batchProcessed = false;
+								batchProcessed = WorkQueueProcessorNumProcessed.None;
                             }
                             else
                             {
@@ -704,7 +699,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 );
 
 			if (successful)
-				PostProcessing(item, batchProcessed, false, true);
+				PostProcessing(item, 
+					WorkQueueProcessorStatus.Pending, 
+					batchProcessed, 
+					WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 			else
 			{
                 bool allFailedDuplicate = CollectionUtils.TrueForAll(WorkQueueUidList, delegate(WorkQueueUid uid)
@@ -715,18 +713,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 if (allFailedDuplicate)
                 {
                     Platform.Log(LogLevel.Error, "All entries are duplicates");
-                }
-
-                bool failNow = allFailedDuplicate;
-
-                if (failNow)
-                {
-                    PostProcessingFailure(item, true);
+            
+                    PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
                     return;
                 }
                 else
                 {
-                    PostProcessingFailure(item, false);
+                    PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal);
                 }
 			}
 				
@@ -756,12 +749,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
 
             return true;
-
         }
-        #endregion
-
-        
+        #endregion        
     }
-
-
 }

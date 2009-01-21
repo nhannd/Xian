@@ -85,7 +85,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
             if (WorkQueueUidList.Count == 0)
             {
                 // No UIDs associated with the WorkQueue item.  Set the status back to idle
-                PostProcessing(item, false, false, true);
+				PostProcessing(item, 
+					WorkQueueProcessorStatus.Pending, 
+					WorkQueueProcessorNumProcessed.None, 
+					WorkQueueProcessorDatabaseUpdate.ResetQueueState);
                 CheckEmptyStudy(item);
                 return;
             }      
@@ -126,7 +129,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
                 context.Commit();
             }
 
-            PostProcessing(item, true, false, true);
+			PostProcessing(item, 
+				WorkQueueProcessorStatus.Pending, 
+				WorkQueueProcessorNumProcessed.Batch, 
+				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 
         }
 
