@@ -2,8 +2,8 @@
 	This file contains a server-side Oto script that anonymizes a RIS database.
 	The contents of main() will need to be adjusted appropriately prior to execution.
 */
+import ClearCanvas.Healthcare;
 
-var Healthcare;	// Healthcare model
 var store;	// persistent store
 var mrnSequence;
 var visitNumberSequence;
@@ -27,8 +27,8 @@ function main()
 		readLines("D:\\junk\\male_names.txt"),
 		readLines("D:\\junk\\female_names.txt"));
 	
-	// init Healthcare model
-	initModel();
+	// init Healthcare store
+	initStore();
 	
 	anonymizePatients("D:\\junk\\patients.txt", true);
 	//anonymizeStaff("D:\\junk\\staff.txt", true);
@@ -42,7 +42,7 @@ function anonymizePatients(outputFile, dryRun)
 {
 	processInputSequence(
 		{
-			inputSequence: createInputSequence(Healthcare.PatientProfile),
+			inputSequence: createInputSequence(store.GetQuery("PatientProfile")),
 			processFunc: function(item)
 			{
 				return processPatient(item);
@@ -57,7 +57,7 @@ function anonymizeStaff(outputFile, dryRun)
 {
 	processInputSequence(
 		{
-			inputSequence: createInputSequence(Healthcare.Staff),
+			inputSequence: createInputSequence(store.GetQuery("Staff")),
 			processFunc: function(item)
 			{
 				return processStaff(item);
@@ -72,7 +72,7 @@ function anonymizePractitioner(outputFile, dryRun)
 {
 	processInputSequence(
 		{
-			inputSequence: createInputSequence(Healthcare.ExternalPractitioner),
+			inputSequence: createInputSequence(store.GetQuery("ExternalPractitioner")),
 			processFunc: function(item)
 			{
 				return processPractitioner(item);
@@ -98,13 +98,13 @@ function processPatient(profile)
 	processProfile(profile);
 	
 	// process all visits associated with patient
-	var visitQuery = Healthcare.Visit.NewQuery();
+	var visitQuery = store.GetQuery("Visit");
 	visitQuery.Where.Patient.EqualTo(profile.Patient);
 	visitQuery.OrderBy.VisitNumber.Id.SortAsc(0);
 	$A(visitQuery.All()).each(function(v) { processVisit(v); });
 	
 	// process all orders/reports associated with patient
-	var orderQuery = Healthcare.Order.NewQuery();
+	var orderQuery = store.GetQuery("Order");
 	orderQuery.Where.Patient.EqualTo(profile.Patient);
 	orderQuery.OrderBy.AccessionNumber.SortAsc(0);
 	$A(orderQuery.All()).each(
@@ -235,18 +235,17 @@ function processPractitioner(prac)
 // Helpers
 
 /* Creates an object that represents a sequence of input items for processing
-	queryProvider - any object that supports the method NewQuery() and returns an EntityQuery object.
+	queryProvider - an EntityQuery object.
 		
 	returns - an object with a .next() method that can be called successively to return the next item.  The sequence
 		terminates when next() returns null.
 */
-function createInputSequence(queryProvider)
+function createInputSequence(query)
 {
 	var memo = null;
 	return {
 		next : function()
 		{
-			var query = queryProvider.NewQuery();
 			query.OrderBy.OID.SortAsc(0);
 			if(memo)
 				query.Where.OID.MoreThan(memo);
@@ -332,6 +331,7 @@ function writeToStream(rows, out)
 	rows.map(function(row) { return row.join(","); }).each(
 			function(line)
 			{
+				LogInfo(line);
 				out.WriteLine(line);
 			});
 }
@@ -389,7 +389,7 @@ function createPersonNameSequence(familyNames, maleNames, femaleNames)
 	return {
 		next: function(sex)
 		{
-			var name = Healthcare.PersonName.New();
+			var name = new PersonName();
 			name.FamilyName = chooseRandom(familyNames);
 			name.GivenName = (sex == "M") ? chooseRandom(maleNames) : chooseRandom(femaleNames);
 			return name;
@@ -397,14 +397,13 @@ function createPersonNameSequence(familyNames, maleNames, femaleNames)
 	};
 }
 
-/*	Initializes the Healthcare model.
+/*	Initializes the Healthcare persistent store.
 */
-function initModel()
+function initStore()
 {
 	// create the model
-	var modelService = CreateService("PersistentDomainModelService");
-	var response = modelService.CreateModel({ ModelName: "Healthcare"});
-	Healthcare = response.Model;
+	var storeService = CreateService("PersistentStoreService");
+	var response = storeService.GetStore({ StoreName: "Healthcare"});
 	store = response.Store;
 }
 
