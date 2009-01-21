@@ -19,8 +19,8 @@
 
 .AlertDetailsPanel
 {
-    top: 18px; 
-    right: 45px; 
+    top: 19px; 
+    right: 0px; 
     position: absolute; 
     z-index: 2; 
     border: solid 2px #6699CC;
@@ -29,7 +29,7 @@
 }
 </style>
 
-<div id="AlertLinkPanel" style="border-left: solid 1px; border-right: solid 1px; padding: 0px 3px 0px 3px;"><asp:LinkButton ID="AlertLink" runat="server" PostBackUrl="~/Pages/Admin/Alerts/Default.aspx" CssClass="UserInformationLink">Alerts: <asp:Label ID="AlertsCount" runat="server" /></asp:LinkButton>
+<div id="AlertLinkPanel" >| <asp:LinkButton ID="AlertLink" runat="server" PostBackUrl="~/Pages/Admin/Alerts/Default.aspx" CssClass="UserInformationLink">Alerts: <asp:Label ID="AlertsCount" runat="server" /></asp:LinkButton>
 <div id="AlertDetailsPanel" class="AlertDetailsPanel">
     <div style="padding: 3px 5px 3px 5px;">
         <asp:Table runat="server" ID="AlertTable">
@@ -47,12 +47,10 @@
         $("#AlertDetailsPanel").hide();
         $("#AlertDetailsPanel").dropShadow({left: 2, top: 2, opacity: 0.7, blur: 2, color: "#003366"}).hide();
         $("#<%=AlertLink.ClientID %>").mouseover(function() { 
-            $("#AlertLinkPanel").css("background", "white");
             $(".AlertDetailsPanel:hidden").show().redrawShadow();
         });
         $("#CloseButton").click(function(event) { 
             event.preventDefault();
-            $("#AlertLinkPanel").css("background", "transparent");
             $("#AlertDetailsPanel:visible").removeShadow().slideUp("fast");
         });             
     });

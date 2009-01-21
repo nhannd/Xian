@@ -998,12 +998,17 @@
     <Content Include="App_Themes\Default\images\Buttons\NewStudyDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\NewStudyEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\NewStudyHover.png" />
+    <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerNextEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\NoDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\NoEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\NoHover.png" />
     <Content Include="App_Themes\Default\images\Buttons\OKDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\OKEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\OKHover.png" />
+    <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerNextDisabled.png" />
+    <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerTotalStudiesLeft.png" />
+    <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerTotalStudiesRight.png" />
+    <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerPreviousEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ReconcileDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ReconcileEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ReconcileHover.png" />

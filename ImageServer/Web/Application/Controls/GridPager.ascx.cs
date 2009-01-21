@@ -101,6 +101,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (!IsPostBack)
+            {
+                string script =
+                    "if(event.which || event.keyCode){if ((event.which == 13) || (event.keyCode == 13)) {document.getElementById('" +
+                    ChangePageButton.ClientID + "').click();return false;}} else {return true}; ";
+                
+                CurrentPage.Attributes.Add("onkeydown", script);
+            }
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -116,21 +124,44 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
             switch (e.CommandArgument.ToString().ToLower())
             {
-                case ImageServerConstants.First:
-                    Target.PageIndex = 0;
-                    break;
                 case ImageServerConstants.Prev:
                     Target.PageIndex = intCurIndex - 1;
                     break;
                 case ImageServerConstants.Next:
                     Target.PageIndex = intCurIndex + 1;
                     break;
-                case ImageServerConstants.Last:
-                    Target.PageIndex = Target.PageCount;
+                default:
+                    int newPage = Convert.ToInt32(CurrentPage.Text);
+
+                    //Adjust page to match 0..n, and handle boundary conditions.
+                    if (newPage > Target.PageCount) newPage = _target.PageCount -1;
+                    else if (newPage != 0) newPage -= 1;
+                    
+                    _target.PageIndex =  newPage;
+                    
                     break;
             }
 
             Target.DataBind();
+        }
+
+        private int AdjustCurrentPageForDisplay(int page)
+        {
+            if (_target.PageCount == 0)
+            {
+                page = 0;
+            } else if (page == 0 )
+            {
+                page = 1;
+            } else if (page >= _target.PageCount)
+            {
+                page = _target.PageCount;
+            } else
+            {
+                page += 1;
+            }
+
+            return page;
         }
 
         #endregion Protected methods
@@ -150,42 +181,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                     ItemCountLabel.Text = string.Format("{0} {1}", numRows, numRows == 1 ? ItemName : PuralItemName);
                 }
 
+                CurrentPage.Text = AdjustCurrentPageForDisplay(_target.PageIndex).ToString();
+
                 PageCountLabel.Text =
-                    string.Format("Page {0} of {1}", _target.PageIndex + 1, _target.PageCount == 0 ? 1 : _target.PageCount);
+                    string.Format(" of {0}", AdjustCurrentPageForDisplay(_target.PageCount));
 
                 if (_target.PageIndex > 0)
                 {
                     PrevPageButton.Enabled = true;
-                    PrevPageButton.CssClass = "GlobalGridPagerLink";
+                    PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousEnabled;
                 }
                 else
                 {
                     PrevPageButton.Enabled = false;
-                    PrevPageButton.CssClass = "GlobalGridPagerLinkDisabled";
+                    PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousDisabled;
                 }
 
 
                 if (_target.PageIndex < _target.PageCount - 1)
                 {
                     NextPageButton.Enabled = true;
-                    NextPageButton.CssClass = "GlobalGridPagerLink";
+                    NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextEnabled;
                 }
                 else
                 {
                     NextPageButton.Enabled = false;
-                    NextPageButton.CssClass = "GlobalGridPagerLinkDisabled";
+                    NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextDisabled;
                 }
-
-                NextPageButton.Text = App_GlobalResources.SR.GridPagerNext;
-                PrevPageButton.Text = App_GlobalResources.SR.GridPagerPrevious;
-                //if (PrevPageButton.Enabled || NextPageButton.Enabled)
-                //{
-                    //LineSpacerLabel.CssClass = "GlobalGridPagerLinkDisabled";
-                //}
-                //else
-                //{
-                    //LineSpacerLabel.CssClass = "GlobalGridPagerLinkDisabled";
-                //}
             }
         }
 
