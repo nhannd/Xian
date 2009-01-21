@@ -1,4 +1,4 @@
-<Project DefaultTargets="CopyPlugins;CopyBin" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="CopyPlugins;CopyBin;CopyConfigFiles" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Choose>
     <When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
@@ -47,6 +47,7 @@
 		<BinFiles Include="$(ProjectDir)\..\..\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll"/>
 		<BinFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
 		<BinFiles Include="$(ProjectDir)\..\..\..\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Rle.dll"/>
+    <ConfigFiles Include="$(ProjectDir)\..\..\..\ImageServer\Executable\Logging.config"/>
 	</ItemGroup>
 	<Target Name="CopyPlugins">
 		<Message Text="Copying plugin assemblies into plugins folder (ASP.NET Development Server must not be running)"/>
@@ -59,5 +60,11 @@
 		<Message Text="$(ProjectDir)"/>
 		<Message Text="@(BinFiles)"/>
 		<Copy SkipUnchangedFiles="true" SourceFiles="@(BinFiles)" DestinationFolder="$(ProjectDir)\bin"/>
-	</Target> 
+	</Target>
+  <Target Name="CopyConfigFiles">
+    <Message Text="Copying config files into output folder (ASP.NET Development Server must not be running)"/>
+    <Message Text="$(ProjectDir)"/>
+    <Message Text="@(ConfigFiles)"/>
+    <Copy SkipUnchangedFiles="true" SourceFiles="@(ConfigFiles)" DestinationFolder="$(ProjectDir)"/>
+  </Target>
 </Project> 
