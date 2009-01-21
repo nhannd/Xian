@@ -495,12 +495,23 @@ namespace ClearCanvas.ImageServer.Common
 		/// <param name="state"></param>
 		private void CheckFilesystems(object state)
 		{
+			// Load the filesystem objects into a dedicated list, in case the fileysstem list changes
+			// while we're doing this.  
+			IList<ServerFilesystemInfo> tempList;
+
 			lock (_lock)
 			{
+				tempList = new List<ServerFilesystemInfo>(_filesystemList.Count);
+
 				foreach (ServerFilesystemInfo info in _filesystemList.Values)
 				{
-					info.LoadFreeSpace();
+					tempList.Add(info);
 				}
+			}
+
+			foreach (ServerFilesystemInfo info in tempList)
+			{
+				info.LoadFreeSpace();
 			}
 		}
 

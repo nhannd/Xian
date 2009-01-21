@@ -343,6 +343,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			StudyAdaptor studyAdaptor = new StudyAdaptor();
 			StudySelectCriteria studycriteria = new StudySelectCriteria();
 			studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
+			studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
 			IList<Study> studyList = studyAdaptor.Get(studycriteria);
 
 			if (studyList == null || studyList.Count == 0)

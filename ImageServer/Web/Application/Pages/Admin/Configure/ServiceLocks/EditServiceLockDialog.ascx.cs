@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
                         DateTime scheduleTime = DateTime.ParseExact(ScheduleTime.Text, TIME_FORMAT, null);
                         scheduledDate = scheduledDate.Add(scheduleTime.TimeOfDay);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         //Ignore this exception since the time is not fully typed in or in an incorrect format,
                         //that will be validated when the user presses apply.

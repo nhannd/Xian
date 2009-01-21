@@ -15,7 +15,7 @@
       <Value Profile="(Default)">Unknown</Value>
     </Setting>
     <Setting Name="FilesystemCheckDelaySeconds" Type="System.Int32" Scope="Application">
-      <Value Profile="(Default)">60</Value>
+      <Value Profile="(Default)">120</Value>
     </Setting>
     <Setting Name="DbChangeDelaySeconds" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">180</Value>
