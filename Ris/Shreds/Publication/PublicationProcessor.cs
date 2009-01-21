@@ -46,13 +46,13 @@ namespace ClearCanvas.Ris.Shreds.Publication
 			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
 			{
 				// Get scheduled steps, where the "publishing cool-down" has elapsed
+                // eg LastFailureTime is more than a specified number of seconds ago
 				PublicationStepSearchCriteria noFailures = GetCriteria();
 				noFailures.LastFailureTime.IsNull();
 				noFailures.Scheduling.StartTime.SortAsc(0);
 
 				PublicationStepSearchCriteria failures = GetCriteria();
-				failures.LastFailureTime.IsNotNull();
-				failures.LastFailureTime.LessThan(Platform.Time.AddSeconds(_settings.FailedItemRetryDelay));
+				failures.LastFailureTime.LessThan(Platform.Time.AddSeconds(-_settings.FailedItemRetryDelay));
 
 				PublicationStepSearchCriteria[] criteria = new PublicationStepSearchCriteria[] { noFailures, failures };
 				SearchResultPage page = new SearchResultPage(0, batchSize);
@@ -67,6 +67,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
         protected override void ProcessItem(PublicationStep item)
 		{
+            Exception error = null;
 			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
 			{
 				IUpdateContext context = (IUpdateContext)PersistenceScope.CurrentContext;
@@ -92,22 +93,29 @@ namespace ClearCanvas.Ris.Shreds.Publication
 				{
 					// one of the actions failed
 					ExceptionLogger.Log("PublicationProcessor.ProcessItem", e);
-
-					// use a new scope to mark the item as failed
-					using (PersistenceScope failScope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
-					{
-						IUpdateContext failContext = (IUpdateContext) PersistenceScope.CurrentContext;
-						failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
-
-						// mark item as failed, do not complete primary transaction
-						item.Fail();
-
-						// complete the failScope transaction
-						failScope.Complete();
-					}
+                    error = e;
 				}
 			}
-		}
+
+            if (error != null)
+            {
+                // use a new scope to mark the item as failed
+                using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
+                {
+                    IUpdateContext failContext = (IUpdateContext)PersistenceScope.CurrentContext;
+                    failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
+
+                    // lock item into this contexts
+                    failContext.Lock(item, DirtyState.Clean);
+
+                    // mark item as failed
+                    item.Fail();
+
+                    // complete the transaction
+                    scope.Complete();
+                }
+            }
+        }
 
 		private static PublicationStepSearchCriteria GetCriteria()
 		{
