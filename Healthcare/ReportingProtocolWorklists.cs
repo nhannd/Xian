@@ -25,6 +25,7 @@ namespace ClearCanvas.Healthcare
 			criteria.ProcedureStepClass = typeof(ProtocolAssignmentStep);
 			criteria.ProcedureStep.State.EqualTo(ActivityStatus.SC);
 			criteria.ProcedureStep.Scheduling.Performer.Staff.IsNull();
+			criteria.Procedure.Status.EqualTo(ProcedureStatus.SC);	//bug #3498: exclude procedures that are no longer in SC status 
 			criteria.Protocol.Status.EqualTo(ProtocolStatus.PN);
 			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepCreationTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new ReportingWorklistItemSearchCriteria[] { criteria };
