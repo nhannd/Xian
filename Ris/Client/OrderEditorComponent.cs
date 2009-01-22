@@ -234,7 +234,7 @@ namespace ClearCanvas.Ris.Client
         private TabComponentContainer _rightHandComponentContainer;
         private ChildComponentHost _rightHandComponentContainerHost;
 
-        private OrderNoteSummaryComponent _noteSummaryComponent;
+        private readonly OrderNoteSummaryComponent _noteSummaryComponent;
         private ChildComponentHost _orderNoteSummaryComponentHost;
 
         private ChildComponentHost _bannerComponentHost;
@@ -414,6 +414,12 @@ namespace ClearCanvas.Ris.Client
                         // update form
                         UpdateFromRequisition(response.Requisition);
                     });
+
+				// bug #3506: in replace mode, overwrite the procedures with clean one(s) based on diagnostic service
+				if(_mode == Mode.ReplaceOrder)
+				{
+					UpdateDiagnosticService(_selectedDiagnosticService);
+				}
             }
 
             InitializeTabPages();
