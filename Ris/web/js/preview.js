@@ -965,6 +965,9 @@ Preview.ReportPreview = function () {
 		if (reportPart.VerifiedBy)
 			formattedReport += "<br> Verified By: " + Ris.formatPersonName(reportPart.VerifiedBy.Name);
 
+		if (reportPart.Supervisor)
+			formattedReport += "<br> Supervised By: " + Ris.formatPersonName(reportPart.Supervisor.Name);
+
 		return formattedReport;
 	}
 
