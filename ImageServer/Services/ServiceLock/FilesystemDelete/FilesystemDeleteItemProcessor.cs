@@ -77,6 +77,94 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         #endregion
     }
 
+	/// <summary>
+	/// Statistics class when processing a set of FilesystemQueue entries.
+	/// </summary>
+	internal class FilesystemProcessStatistics : StatisticsSet
+	{
+        #region Constructors
+		public FilesystemProcessStatistics(string name)
+            : base(name)
+        {
+        }
+        #endregion Constructors
+	}
+
+	/// <summary>
+	/// Statistics class when processing an individual row from the FilesystemQueue table.
+	/// </summary>
+	internal class StudyProcessStatistics : StatisticsSet
+	{
+		#region Constructors
+		public StudyProcessStatistics(string name)
+            : base(name)
+        {
+        }
+        #endregion Constructors
+
+		public TimeSpanStatistics TotalTime
+		{
+			get
+			{
+				if (this["TotalTime"] == null)
+					this["TotalTime"] = new TimeSpanStatistics("TotalTime");
+
+				return (this["TotalTime"] as TimeSpanStatistics);
+			}
+			set { this["TotalTime"] = value; }
+		}
+
+		public TimeSpanStatistics StudyStorageTime
+		{
+			get
+			{
+				if (this["StudyStorageTime"] == null)
+					this["StudyStorageTime"] = new TimeSpanStatistics("StudyStorageTime");
+
+				return (this["StudyStorageTime"] as TimeSpanStatistics);
+			}
+			set { this["StudyStorageTime"] = value; }
+		}
+
+		public TimeSpanStatistics CalculateDirectorySizeTime
+		{
+			get
+			{
+				if (this["CalculateDirectorySizeTime"] == null)
+					this["CalculateDirectorySizeTime"] = new TimeSpanStatistics("CalculateDirectorySizeTime");
+
+				return (this["CalculateDirectorySizeTime"] as TimeSpanStatistics);
+			}
+			set { this["CalculateDirectorySizeTime"] = value; }
+		}
+
+		public TimeSpanStatistics DbUpdateTime
+		{
+			get
+			{
+				if (this["DbUpdateTime"] == null)
+					this["DbUpdateTime"] = new TimeSpanStatistics("DbUpdateTime");
+
+				return (this["DbUpdateTime"] as TimeSpanStatistics);
+			}
+			set { this["DbUpdateTime"] = value; }
+		}
+
+		public ulong DirectorySize
+		{
+			set
+			{
+				this["DirectorySize"] = new ByteCountStatistics("DirectorySize", value);
+			}
+			get
+			{
+				if (this["DirectorySize"] == null)
+					this["DirectorySize"] = new ByteCountStatistics("DirectorySize");
+
+				return (this["DirectorySize"] as ByteCountStatistics).Value;
+			}
+		}	
+	}
 
     /// <summary>
     /// Class for processing 'FilesystemDelete' <see cref="Model.ServiceLock"/> rows.
@@ -171,20 +259,31 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         {
 			if (candidateList.Count > 0)
 				Platform.Log(LogLevel.Debug, "Scheduling delete study for {0} eligible studies...", candidateList.Count);
-			
+
+			FilesystemProcessStatistics summaryStats = new FilesystemProcessStatistics("FilesystemDeleteInsert");
+
 			foreach (FilesystemQueue queueItem in candidateList)
             {
                 if (_bytesToRemove < 0)
                     return;
 
+				StudyProcessStatistics stats = new StudyProcessStatistics("DeleteStudy");
+				stats.TotalTime.Start();
+
+				stats.StudyStorageTime.Start();
                 // First, get the StudyStorage locations for the study, and calculate the disk usage.
                 StudyStorageLocation location;
 				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
 					continue;
+				stats.StudyStorageTime.End();
 
+				stats.CalculateDirectorySizeTime.Start();
                 // Get the disk usage
-                float studySize = CalculateFolderSize(location.GetStudyPath());
+                float studySize = EstimateFolderSizeFromStudyXml(location);
+				stats.CalculateDirectorySizeTime.End();
+            	stats.DirectorySize = (ulong) studySize;
 
+				stats.DbUpdateTime.Start();
                 using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                 {
 					ILockStudy lockstudy = update.GetBroker<ILockStudy>();
@@ -222,7 +321,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                     	_scheduledTime = _scheduledTime.AddSeconds(2);
                     }
                 }
-            }
+				stats.DbUpdateTime.End();
+				stats.TotalTime.End();
+
+				summaryStats.AddSubStats(stats);
+				StatisticsLogger.Log(LogLevel.Debug, stats);
+			}
+			summaryStats.CalculateAverage();
+			StatisticsLogger.Log(LogLevel.Info, false, summaryStats);
         }
 
 		/// <summary>
@@ -234,19 +340,30 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 			if (candidateList.Count > 0)
 				Platform.Log(LogLevel.Debug, "Scheduling purge study for {0} eligible studies...", candidateList.Count);
 
+			FilesystemProcessStatistics summaryStats = new FilesystemProcessStatistics("FilesystemPurgeInsert");
+
 			foreach (FilesystemQueue queueItem in candidateList)
 			{
 				if (_bytesToRemove < 0)
 					break;
-				
+
+				StudyProcessStatistics stats = new StudyProcessStatistics("PurgeStudy");
+				stats.TotalTime.Start();
+
+				stats.StudyStorageTime.Start();
 				// First, get the StudyStorage locations for the study, and calculate the disk usage.
 				StudyStorageLocation location;
 				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
 					continue;
+				stats.StudyStorageTime.End();
 
+				stats.CalculateDirectorySizeTime.Start();
 				// Get the disk usage
-				float studySize = CalculateFolderSize(location.GetStudyPath());
+				float studySize = EstimateFolderSizeFromStudyXml(location);
+				stats.CalculateDirectorySizeTime.End();
+				stats.DirectorySize = (ulong) studySize;
 
+				stats.DbUpdateTime.Start();
 				// Update the DB
 				using (
 					IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -286,8 +403,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 						_studiesPurged++;
 						_scheduledTime = _scheduledTime.AddSeconds(2);
 					}
+					
 				}
+				stats.DbUpdateTime.End();
+				stats.TotalTime.End();
+
+				summaryStats.AddSubStats(stats);
+				StatisticsLogger.Log(LogLevel.Debug, stats);
 			}
+			summaryStats.CalculateAverage();
+			StatisticsLogger.Log(LogLevel.Info, false, summaryStats);
 		}
 
     	/// <summary>
@@ -301,6 +426,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         	if (candidateList.Count > 0)
         		Platform.Log(LogLevel.Debug, "Scheduling tier-migration for {0} eligible studies...", candidateList.Count);
 
+			FilesystemProcessStatistics summaryStats = new FilesystemProcessStatistics("FilesystemTierMigrateInsert");
         	foreach (FilesystemQueue queueItem in candidateList)
         	{
         		if (_bytesToRemove < 0)
@@ -308,15 +434,23 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                     Platform.Log(LogLevel.Debug, "Estimated disk space has been reached.");
                     break;
         		}
+				StudyProcessStatistics stats = new StudyProcessStatistics("TierMigrateStudy");
+				stats.TotalTime.Start();
 
+				stats.StudyStorageTime.Start();
         		// First, get the StudyStorage locations for the study, and calculate the disk usage.
 				StudyStorageLocation location;
 				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
 					continue;
+				stats.StudyStorageTime.End();
 
-        		// Get the disk usage
-        		float studySize = CalculateFolderSize(location.GetStudyPath());
+				stats.CalculateDirectorySizeTime.Start();
+				// Get the disk usage
+				float studySize = EstimateFolderSizeFromStudyXml(location);
+				stats.CalculateDirectorySizeTime.End();
+        		stats.DirectorySize = (ulong) studySize;
 
+				stats.DbUpdateTime.Start();
         		using (
         			IUpdateContext update =
         				PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -366,7 +500,15 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
         				_scheduledTime = _scheduledTime.Add(estMigrateTime);
         			}
         		}
-        	}
+				stats.DbUpdateTime.End();
+				stats.TotalTime.End();
+
+        		summaryStats.AddSubStats(stats);
+				StatisticsLogger.Log(LogLevel.Debug, stats);
+			}
+
+			summaryStats.CalculateAverage();
+    		StatisticsLogger.Log(LogLevel.Info, false, summaryStats);
         }
 
 		/// <summary>
@@ -440,11 +582,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
             while (_bytesToRemove > 0)
             {
-                Platform.Log(LogLevel.Debug,
-                             "{1:0.0} MBs needs to be removed from '{0}'. Querying for studies that can be migrated",
-                             fs.Filesystem.Description, _bytesToRemove/(1024*1024));
+				TimeSpanStatistics queryTime = new TimeSpanStatistics("Query Time");
+				queryTime.Start();
                 IList<FilesystemQueue> list = GetFilesystemQueueCandidates(item, Platform.Time, type, false);
-                if (list.Count > 0)
+				queryTime.End();
+				Platform.Log(LogLevel.Info,
+							 "{1:0.0} MBs needs to be removed from '{0}'. Found {2} studies that can be migrated in {3} seconds",
+							 fs.Filesystem.Description, _bytesToRemove / (1024 * 1024),
+							 list.Count,
+							 queryTime.Value.TotalSeconds);
+				if (list.Count > 0)
                 {
                     ProcessStudyMigrateCandidates(list);
                 }

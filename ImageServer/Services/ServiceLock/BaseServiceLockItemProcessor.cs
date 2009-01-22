@@ -164,10 +164,60 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 			}
 		}
 
+		/// <summary>
+		/// Estimate the folder size for a study
+		/// </summary>
+		/// <remarks>
+		/// This routine loads the StudyXml file and traverses through each series
+		/// for the study.  It then looks at the size of the first image in the series,
+		/// and assumes the series size is equal to the first image size times the number
+		/// of images within the series.  If the file sizes vary within the series, this
+		/// algorithm will fall down a bit.
+		/// </remarks>
+		/// <param name="location">The StudyStorageLocation object for the study.</param>
+		/// <returns></returns>
+		protected float EstimateFolderSizeFromStudyXml(StudyStorageLocation location)
+		{
+			float folderSize = 0.0f;
+			string studyFolder = location.GetStudyPath();
+
+			string file = Path.Combine(studyFolder, location.StudyInstanceUid + ".xml");
+			if (File.Exists(file))
+			{
+				FileInfo finfo = new FileInfo(file);
+				folderSize += finfo.Length;
+			}
+
+			StudyXml study = LoadStudyXml(location);
+			foreach (SeriesXml series in study)
+			{
+				string seriesFolder = Path.Combine(studyFolder, series.SeriesInstanceUid);
+
+				foreach (InstanceXml instance in series)
+				{
+					file = Path.Combine(seriesFolder, String.Format("{0}.dcm", instance.SopInstanceUid));
+					if (File.Exists(file))
+					{
+						FileInfo finfo = new FileInfo(file);
+						// estimate!!
+						folderSize += finfo.Length * series.NumberOfSeriesRelatedInstances;
+						break;
+					}
+				}
+			}
+
+			return folderSize;
+		}
 
         #endregion
 
         #region Static Methods
+		/// <summary>
+		/// Calculate the folder size based on recursing through all files
+		/// within the folder and adding up their sizes.
+		/// </summary>
+		/// <param name="folder">The path of the folder to calculate the size for.</param>
+		/// <returns></returns>
         protected static float CalculateFolderSize(string folder)
         {
             float folderSize = 0.0f;
