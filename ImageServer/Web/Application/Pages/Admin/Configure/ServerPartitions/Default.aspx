@@ -10,7 +10,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <asp:Panel ID="Panel1" runat="server" CssClass="ContentPanel" >
+            <asp:Panel ID="Panel1" runat="server">
                 <uc1:ServerPartitionPanel ID="ServerPartitionPanel" runat="server"></uc1:ServerPartitionPanel>
             </asp:Panel>      
             <uc2:AddEditPartitionDialog ID="AddEditPartitionDialog" runat="server" /> 

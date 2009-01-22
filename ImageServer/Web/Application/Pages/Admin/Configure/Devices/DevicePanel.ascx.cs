@@ -101,13 +101,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
 
             // setup child controls
-            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerDeviceSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerDeviceMultipleItems;
-            GridPagerTop.Target = DeviceGridViewControl1.TheGrid;
-
-            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerDeviceSingleItem;
-            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerDeviceMultipleItems;
-            GridPagerBottom.Target = DeviceGridViewControl1.TheGrid;           
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridViewControl1.TheGrid, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridViewControl1.TheGrid, ImageServerConstants.GridViewPagerPosition.bottom);
 
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
@@ -232,7 +227,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
             // UpdatePanel UpdateMode must be set to "conditional"
             // Calling UpdatePanel.Update() will force the client to refresh the screen
-            UpdatePanel.Update();
+            SearchUpdatePanel.Update();
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)

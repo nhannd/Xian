@@ -5,7 +5,7 @@
 
 <ccAsp:JQuery ID="JQuery1" runat="server" MultiSelect="true" />
 
-<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
 
 <script type="text/Javascript">
@@ -84,11 +84,7 @@ function MultiSelect() {
                                             </table>
                                         </td>
                                          <td align="right" valign="bottom">
-                                            <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel" DisplayAfter="50">
-                                                <ProgressTemplate>
-                                                    <asp:Image ID="Image1" runat="server" SkinID="Searching" />
-                                                </ProgressTemplate>
-                                            </asp:UpdateProgress>
+
                                          </td>
                                      </tr>
                                     </table>
@@ -104,7 +100,7 @@ function MultiSelect() {
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+                        <table width="100%" cellpadding="0" cellspacing="0" class="ToolbarButtonPanel">
                             <tr><td >
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>

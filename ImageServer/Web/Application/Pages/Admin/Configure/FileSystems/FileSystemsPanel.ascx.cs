@@ -110,14 +110,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             _theController = new FileSystemsConfigurationController();
 
             // setup child controls
-            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerFileSystemSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerFileSystemMultipleItems;
-            GridPagerTop.Target = FileSystemsGridView1.TheGrid;
-
-            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerFileSystemSingleItem;
-            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerFileSystemMultipleItems;
-            GridPagerBottom.Target = FileSystemsGridView1.TheGrid;
-
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerFileSystemSingleItem, App_GlobalResources.SR.GridPagerFileSystemMultipleItems, FileSystemsGridView1.TheGrid, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerFileSystemSingleItem, App_GlobalResources.SR.GridPagerFileSystemMultipleItems, FileSystemsGridView1.TheGrid, ImageServerConstants.GridViewPagerPosition.bottom);
+                
             Tiers = _theController.GetFileSystemTiers();
 
             // setup event handler for child controls
@@ -200,7 +195,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
             // UpdatePanel UpdateMode must be set to "conditional"
             // Calling UpdatePanel.Update() will force the client to refresh the screen
-            UpdatePanel.Update();
+            SearchUpdatePanel.Update();
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)

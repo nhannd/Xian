@@ -89,12 +89,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            GridPagerTop.Target = AlertsGridPanel.AlertGrid;
-            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerAlertSingleItemFound;
-            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerAlertMultipleItemsFound;
-            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerAlertSingleItemFound;
-            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerAlertMultipleItemsFound;
-            GridPagerBottom.Target = AlertsGridPanel.AlertGrid;
+
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerAlertSingleItemFound, App_GlobalResources.SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerAlertSingleItemFound, App_GlobalResources.SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, ImageServerConstants.GridViewPagerPosition.bottom);
 
             ClearInsertDateButton.OnClientClick = ScriptHelper.ClearDate(InsertDateFilter.ClientID, InsertDateCalendarExtender.ClientID);
             
@@ -178,7 +175,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         public void UpdateUI()
         {
             AlertsGridPanel.DataBind();   
-            UpdatePanel1.Update();
+            SearchUpdatePanel.Update();
 
         }
 

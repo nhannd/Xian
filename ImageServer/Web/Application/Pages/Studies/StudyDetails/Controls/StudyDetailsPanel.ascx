@@ -5,7 +5,7 @@
 <%@ Register Src="StudyDetailsTabs.ascx" TagName="StudyDetailsTabs" TagPrefix="localAsp" %>
 <%@ Register Src="StudyStateAlertPanel.ascx" TagName="StudyStateAlertPanel" TagPrefix="localAsp" %>
 
-<asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
             <table width="100%" cellpadding="0" cellspacing="0">
             <tr>

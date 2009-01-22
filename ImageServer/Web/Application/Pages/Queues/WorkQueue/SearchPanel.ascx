@@ -4,7 +4,7 @@
 <%@ Register Src="WorkQueueGridView.ascx" TagName="WorkQueueSearchResultPanel" TagPrefix="localAsp" %>
     
    
-<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
     <ccAsp:JQuery runat="server" ID="JQuery1" MultiSelect="true" Effects="true" />
 <script type="text/Javascript">

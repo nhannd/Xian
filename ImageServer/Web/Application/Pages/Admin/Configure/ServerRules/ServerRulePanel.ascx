@@ -3,7 +3,7 @@
 
 <%@ Register Src="ServerRuleGridView.ascx" TagName="ServerRuleGridView" TagPrefix="localAsp" %>
 
-<asp:UpdatePanel ID="ServerRuleUpdatePanel" runat="server" UpdateMode="Conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
             <asp:Table ID="Table" runat="server" Width="100%" CellPadding="2" style="border-color: #6699CC"
                 BorderWidth="2px">

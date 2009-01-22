@@ -2,7 +2,7 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ApplicationLogPanel.ascx.cs"
 	Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog.ApplicationLogSearchPanel" %>
 <%@ Register Src="ApplicationLogGridView.ascx" TagName="ApplicationLogGridView" TagPrefix="localAsp" %>
-<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
 	<ContentTemplate>
 		<asp:Table ID="Table1" runat="server" Width="100%">
 			<asp:TableRow>
@@ -55,14 +55,6 @@
 										</tr>
 									</table>
 								</td>
-								<td align="left" valign="bottom">
-									<asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel"
-										DisplayAfter="50">
-										<ProgressTemplate>
-											<asp:Image ID="Image1" runat="server" SkinID="Searching" />
-										</ProgressTemplate>
-									</asp:UpdateProgress>
-								</td>
 							</tr>
 						</table>
 					</asp:Panel>
@@ -70,7 +62,7 @@
 			</asp:TableRow>
 			<asp:TableRow Height="100%">
 				<asp:TableCell>
-					<table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+					<table width="100%" cellpadding="0" cellspacing="0" >
 						<tr>
 							<td>
 								<asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">

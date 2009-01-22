@@ -20,13 +20,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
     public partial class FileSystemsPanel {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// SearchUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.UpdatePanel SearchUpdatePanel;
         
         /// <summary>
         /// Panel6 control.

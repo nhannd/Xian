@@ -3,7 +3,7 @@
 
 <%@ Register Src="StudyIntegrityQueueItemList.ascx" TagName="StudyIntegrityQueueItemList" TagPrefix="localAsp" %>
 
-<asp:UpdatePanel ID="SearchPanelUpdatePanel" runat="server" UpdateMode="conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
 
             <asp:Table runat="server">

@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.UpdatePanel SearchUpdatePanel;
         
         /// <summary>
         /// Table1 control.
@@ -171,16 +171,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SearchButton;
-        
-        /// <summary>
-        /// UpdateProgress1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdateProgress UpdateProgress1;
-        
+               
         /// <summary>
         /// StudyDateCalendarExtender control.
         /// </summary>

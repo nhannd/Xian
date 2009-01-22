@@ -45,10 +45,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         private GridView _target;
         private string _itemName;
         private string _puralItemName;
+        private ImageServerConstants.GridViewPagerPosition _position;
 
         #endregion Private Members
 
         #region Public Properties
+
+        public ImageServerConstants.GridViewPagerPosition PagerPosition
+        {
+            get { return _position; }
+            set { _position = value; }
+        }
 
         /// <summary>
         /// Sets/Gets the grid associated with this control
@@ -211,8 +218,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             }
         }
 
-        public void InitializeGridPager(string singleItemLabel, string multipleItemLabel, GridView grid)
+        public void InitializeGridPager(string singleItemLabel, string multipleItemLabel, GridView grid, ImageServerConstants.GridViewPagerPosition position)
         {
+            _position = position;
             ItemName = singleItemLabel;
             PuralItemName = multipleItemLabel;
             Target = grid;

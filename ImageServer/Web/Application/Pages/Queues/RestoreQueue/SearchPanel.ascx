@@ -3,7 +3,7 @@
 
 <%@ Register Src="RestoreQueueItemList.ascx" TagName="RestoreQueueItemList" TagPrefix="localAsp" %>
 
-<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
 
             <asp:Table runat="server">

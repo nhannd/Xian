@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
             }
 
-            UpdatePanel1.Update();// force update
+            SearchUpdatePanel.Update();// force update
         }
 
         protected void DeleteStudyButton_Click(object sender, EventArgs e)

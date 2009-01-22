@@ -110,12 +110,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            GridPagerTop.Target = ServerPartitionGridPanel.TheGrid;
-            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerPartitionSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerPartitionMultipleItems;
-            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerPartitionSingleItem;
-            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerPartitionMultipleItems;
-            GridPagerBottom.Target = ServerPartitionGridPanel.TheGrid;
+
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, ServerPartitionGridPanel.TheGrid, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, ServerPartitionGridPanel.TheGrid, ImageServerConstants.GridViewPagerPosition.bottom);
 
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
@@ -234,7 +231,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
             EditPartitionButton.Enabled = partition != null;
             DeletePartitionButton.Enabled = (partition != null && _theController.CanDelete(partition));
 
-            UpdatePanel1.Update();
+            SearchUpdatePanel.Update();
         }
 
         #endregion Public methods

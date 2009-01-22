@@ -3,7 +3,7 @@
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="localAsp" %>
 <%@ Register Src="StudyGridView.ascx" TagName="StudyGridView" TagPrefix="localAsp" %>
 
-<asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
     
     <table cellpadding="0" cellspacing="0" width="100%">

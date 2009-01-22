@@ -77,15 +77,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
             }
 
             EditServiceLockDialog.ServiceLockUpdated += AddEditServiceLockDialog_ServiceLockUpdated; 
+            
             // setup child controls
-            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerServiceSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerServiceMultipleItems;
-            GridPagerTop.Target = ServiceLockGridViewControl.TheGrid;
-            
-            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerServiceSingleItem;
-            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerServiceMultipleItems;
-            GridPagerBottom.Target = ServiceLockGridViewControl.TheGrid;
-            
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerServiceSingleItem, App_GlobalResources.SR.GridPagerServiceMultipleItems, ServiceLockGridViewControl.TheGrid, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerServiceSingleItem, App_GlobalResources.SR.GridPagerServiceMultipleItems, ServiceLockGridViewControl.TheGrid, ImageServerConstants.GridViewPagerPosition.bottom);
+           
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));

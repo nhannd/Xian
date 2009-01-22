@@ -3,7 +3,7 @@
 
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="localAsp" %>
 
-<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>       
         <asp:Panel ID="Panel1" runat="server">
             <asp:Table ID="Table" runat="server">
@@ -39,7 +39,7 @@
                 </asp:TableRow>
                 <asp:TableRow Height="100%">
                     <asp:TableCell>
-                                            <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+                                            <table width="100%" cellpadding="0" cellspacing="0" class="ToolbarButtonPanel">
                             <tr><td >
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>

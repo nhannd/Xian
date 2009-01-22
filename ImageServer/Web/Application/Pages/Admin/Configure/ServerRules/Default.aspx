@@ -15,6 +15,6 @@
         </asp:UpdatePanel>
     </asp:Panel>
     
-                    <ccAsp:MessageBox ID="ConfirmDialog" runat="server" />
-                <localAsp:AddEditServerRuleDialog ID="AddEditServerRuleControl" runat="server" />
+    <ccAsp:MessageBox ID="ConfirmDialog" runat="server" />
+    <localAsp:AddEditServerRuleDialog ID="AddEditServerRuleControl" runat="server" />
 </asp:Content>

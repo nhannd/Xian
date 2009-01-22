@@ -3,7 +3,7 @@
 
 <%@ Register Src="AlertsGridPanel.ascx" TagName="AlertsGridPanel" TagPrefix="localAsp" %>
 
-<asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
          
             <asp:Table runat="server">

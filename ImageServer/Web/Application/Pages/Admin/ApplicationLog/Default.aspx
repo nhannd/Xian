@@ -8,7 +8,7 @@ Application Log
 <asp:Content ID="Content3" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
 	<asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <asp:Panel ID="Panel1" runat="server" CssClass="ContentPanel">
+            <asp:Panel ID="Panel1" runat="server">
                 <localAsp:ApplicationLogPanel ID="ApplicationLogPanel" runat="server"/>
             </asp:Panel>
             

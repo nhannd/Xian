@@ -16,6 +16,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 {
     public partial class AlertIndicator : System.Web.UI.UserControl
     {
+        protected IList<Alert> alerts;
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             AlertController controller = new AlertController();
@@ -26,41 +28,43 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
             AlertsCount.Text = controller.GetAlertsCount(criteria).ToString();
 
-            IList<Alert> alerts = controller.GetAlerts(criteria);
+            alerts = controller.GetAlerts(criteria);
 
-            int rows = 0;
-            foreach(Alert alert in alerts)
-            {
-                TableRow alertRow = new TableRow();
+            if (alerts.Count > 0) {
 
-                alertRow.Attributes.Add("class", "AlertTableCell");
+                int rows = 0;
+                foreach (Alert alert in alerts)
+                {
+                    TableRow alertRow = new TableRow();
 
-                TableCell component = new TableCell();
-                TableCell source = new TableCell();
-                TableCell description = new TableCell();
+                    alertRow.Attributes.Add("class", "AlertTableCell");
 
-                description.Wrap = false;
+                    TableCell component = new TableCell();
+                    TableCell source = new TableCell();
+                    TableCell description = new TableCell();
 
-                component.Text = alert.Component;
-                component.Wrap = false;
-                source.Text = alert.Source;
-                source.Wrap = false;
+                    description.Wrap = false;
 
-                string content = alert.Content.GetElementsByTagName("Message").Item(0).InnerText;
-                description.Text = content.Length < 50 ? content : content.Substring(0, 50);
-                description.Text += " ...";
-                description.Wrap = false;
+                    component.Text = alert.Component;
+                    component.Wrap = false;
+                    source.Text = alert.Source;
+                    source.Wrap = false;
 
-                alertRow.Cells.Add(component);
-                alertRow.Cells.Add(source);
-                alertRow.Cells.Add(description);
+                    string content = alert.Content.GetElementsByTagName("Message").Item(0).InnerText;
+                    description.Text = content.Length < 50 ? content : content.Substring(0, 50);
+                    description.Text += " ...";
+                    description.Wrap = false;
 
-                AlertTable.Rows.Add(alertRow);
+                    alertRow.Cells.Add(component);
+                    alertRow.Cells.Add(source);
+                    alertRow.Cells.Add(description);
 
-                rows++;
-                if (rows == 5) break;
+                    AlertTable.Rows.Add(alertRow);
+
+                    rows++;
+                    if (rows == 5) break;
+                }
             }
-
         }
     }
 }

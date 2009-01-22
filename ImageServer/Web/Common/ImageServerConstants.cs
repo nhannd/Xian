@@ -79,4 +79,10 @@ public class ImageServerConstants
 
     }
 
+    public enum GridViewPagerPosition
+    {
+        top = 0,
+        bottom = 1,
+    } ;
+
 }

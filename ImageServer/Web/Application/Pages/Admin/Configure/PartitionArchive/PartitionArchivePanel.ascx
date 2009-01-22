@@ -3,12 +3,12 @@
 
 <%@ Register Src="PartitionArchiveGridPanel.ascx" TagName="PartitionArchiveGridPanel" TagPrefix="localAsp" %>
 
-<asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>      
             <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell Wrap="false">
-                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContentWithoutTabs" DefaultButton="SearchButton">
+                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
                                             <td align="right" valign="bottom">
@@ -35,7 +35,7 @@
                 </asp:TableRow>
                 <asp:TableRow>
                     <asp:TableCell>
-                        <table width="100%" cellpadding="2" cellspacing="0" class="ToolbarButtonPanel">
+                        <table width="100%" cellpadding="0" cellspacing="0" class="ToolbarButtonPanel">
                             <tr><td >
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>

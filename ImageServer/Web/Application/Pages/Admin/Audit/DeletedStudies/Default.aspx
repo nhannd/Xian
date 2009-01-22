@@ -10,7 +10,7 @@
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
         <ContentTemplate>
-            <asp:Panel ID="Panel1" runat="server" CssClass="ContentPanel">
+            <asp:Panel ID="Panel1" runat="server">
                 <localAsp:DeletedStudiesSearchPanel ID="SearchPanel" runat="server"/>
             </asp:Panel>
             

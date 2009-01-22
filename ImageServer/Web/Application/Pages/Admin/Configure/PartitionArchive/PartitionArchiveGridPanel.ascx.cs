@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         {
             DataBind();
             
-            UpdatePanel.Update(); // force refresh
+            SearchUpdatePanel.Update(); // force refresh
             ((Default) Page).UpdateUI();
         }
 

@@ -124,8 +124,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
 
             ClearStudyDateButton.OnClientClick = ScriptHelper.ClearDate(StudyDate.ClientID, StudyDateCalendarExtender.ClientID);
             
-            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, SearchResultGridView1.GridViewControl);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, SearchResultGridView1.GridViewControl);
+            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, SearchResultGridView1.GridViewControl, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, SearchResultGridView1.GridViewControl, ImageServerConstants.GridViewPagerPosition.bottom);
             GridPagerTop.GetRecordCountMethod = delegate
                                                     {
                                                         return SearchResultGridView1.ResultCount;
@@ -167,7 +167,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
         {
             SearchResultGridView1.GotoPage(0);
             DataBind();
-            UpdatePanel.Update();
+            SearchUpdatePanel.Update();
         }
 
         #endregion

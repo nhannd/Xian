@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
             // UpdatePanel UpdateMode must be set to "conditional"
             // Calling UpdatePanel.Update() will force the client to refresh the screen
-            ServerRuleUpdatePanel.Update();
+            SearchUpdatePanel.Update();
         }
 
         public override void DataBind()
@@ -147,16 +147,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             ServerRuleGridViewControl.ServerRulePanel = this;
 
             // setup child controls
-            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerServerRulesSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerServerRulesMultipleItems;
-            GridPagerTop.Target = ServerRuleGridViewControl.TheGrid;
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerServerRulesSingleItem,
+                                             App_GlobalResources.SR.GridPagerServerRulesMultipleItems,
+                                             ServerRuleGridViewControl.TheGrid,
+                                             ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerServerRulesSingleItem,
+                                                         App_GlobalResources.SR.GridPagerServerRulesMultipleItems,
+                                                         ServerRuleGridViewControl.TheGrid,
+                                                         ImageServerConstants.GridViewPagerPosition.bottom);
 
             GridPagerTop.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules==null? 0:ServerRuleGridViewControl.ServerRules.Count; };
             GridPagerBottom.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules == null ? 0 : ServerRuleGridViewControl.ServerRules.Count; };
-
-            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerServerRulesSingleItem;
-            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerServerRulesMultipleItems;
-            GridPagerBottom.Target = ServerRuleGridViewControl.TheGrid;
 
             int prevSelectIndex = RuleApplyTimeDropDownList.SelectedIndex;
             RuleApplyTimeDropDownList.Items.Clear();

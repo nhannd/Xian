@@ -86,12 +86,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleCalendarExtender.ClientID);
 
             // setup child controls
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerWorkQueueSingleItem, App_GlobalResources.SR.GridPagerWorkQueueMultipleItems, workQueueItemListPanel.WorkQueueItemListControl, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerWorkQueueSingleItem, App_GlobalResources.SR.GridPagerWorkQueueMultipleItems, workQueueItemListPanel.WorkQueueItemListControl, ImageServerConstants.GridViewPagerPosition.bottom);
 
-            GridPagerTop.ItemName = App_GlobalResources.SR.GridPagerWorkQueueSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.SR.GridPagerWorkQueueMultipleItems;
-            GridPagerBottom.ItemName = App_GlobalResources.SR.GridPagerWorkQueueSingleItem;
-            GridPagerBottom.PuralItemName = App_GlobalResources.SR.GridPagerWorkQueueMultipleItems;
-            GridPagerTop.Target = workQueueItemListPanel.WorkQueueItemListControl;
             GridPagerTop.GetRecordCountMethod = delegate
                                                   {
                                                       return workQueueItemListPanel.ResultCount;
@@ -101,7 +98,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                                           return workQueueItemListPanel.ResultCount;
                                       };
 
-            GridPagerBottom.Target = workQueueItemListPanel.WorkQueueItemListControl;
 
             workQueueItemListPanel.DataSourceCreated += delegate(WorkQueueDataSource source)
                                                             {

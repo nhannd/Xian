@@ -38,6 +38,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls {
         protected global::System.Web.UI.WebControls.Image Image1;
         
         /// <summary>
+        /// SearchUpdateProgress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdateProgress SearchUpdateProgress;
+        
+        /// <summary>
         /// PrevPageButton control.
         /// </summary>
         /// <remarks>

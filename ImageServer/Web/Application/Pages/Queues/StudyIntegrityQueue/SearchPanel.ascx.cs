@@ -115,7 +115,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                          
             GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, 
                                              App_GlobalResources.Labels.GridPagerQueueMultipleItems, 
-                                             StudyIntegrityQueueItemList.StudyIntegrityQueueGrid);
+                                             StudyIntegrityQueueItemList.StudyIntegrityQueueGrid, 
+                                             ImageServerConstants.GridViewPagerPosition.top);
             GridPagerTop.GetRecordCountMethod = delegate
                               {
 								  return StudyIntegrityQueueItemList.ResultCount;
@@ -123,7 +124,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
             GridPagerBottom.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, 
                                                 App_GlobalResources.Labels.GridPagerQueueMultipleItems, 
-                                                StudyIntegrityQueueItemList.StudyIntegrityQueueGrid);
+                                                StudyIntegrityQueueItemList.StudyIntegrityQueueGrid,
+                                                ImageServerConstants.GridViewPagerPosition.bottom);
             GridPagerBottom.GetRecordCountMethod = delegate
                               {
                                   return StudyIntegrityQueueItemList.ResultCount;

@@ -112,19 +112,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleDateCalendarExtender.ClientID);
                            
             // setup child controls
-            GridPagerBottom.Target = ArchiveQueueItemList.ArchiveQueueGrid;
+            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, ArchiveQueueItemList.ArchiveQueueGrid, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, ArchiveQueueItemList.ArchiveQueueGrid, ImageServerConstants.GridViewPagerPosition.bottom);
 
-            GridPagerTop.ItemName = App_GlobalResources.Labels.GridPagerQueueSingleItem;
-            GridPagerTop.PuralItemName = App_GlobalResources.Labels.GridPagerQueueMultipleItems;
-            GridPagerTop.Target = ArchiveQueueItemList.ArchiveQueueGrid;
             GridPagerTop.GetRecordCountMethod = delegate
                               {
 								  return ArchiveQueueItemList.ResultCount;
                               };
 
-            GridPagerBottom.ItemName = App_GlobalResources.Labels.GridPagerQueueSingleItem;
-            GridPagerBottom.PuralItemName = App_GlobalResources.Labels.GridPagerQueueMultipleItems;
-            GridPagerBottom.Target = ArchiveQueueItemList.ArchiveQueueGrid;
             GridPagerBottom.GetRecordCountMethod = delegate
                               {
                                   return ArchiveQueueItemList.ResultCount;

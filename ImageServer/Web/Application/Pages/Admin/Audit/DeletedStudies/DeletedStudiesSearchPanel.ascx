@@ -4,15 +4,15 @@
 
 <asp:ScriptManagerProxy runat="server" ID="ScriptManagerProxy" />
 
-<asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="conditional">
+<asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
             <asp:Table ID="Table1" runat="server" BorderStyle="none">
                 <asp:TableRow>
                     <asp:TableCell HorizontalAlign="right" VerticalAlign="Bottom" >                    
-                       <table cellpadding="0" cellspacing="0"  width="100%"  border="0">
+                       <table cellpadding="0" cellspacing="0"  width="100%"  border="0" >
                             <tr>
                                 <td align="left">
-                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
+                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContentWithoutTabs" DefaultButton="SearchButton">
                                     <table width="100%" cellpadding="0" cellspacing="0">
                                         <tr>
                                         <td>
@@ -50,13 +50,6 @@
                                             </tr>
                                             </table>
                                         </td>
-                                         <td align="right" valign="bottom">
-                                            <asp:UpdateProgress ID="UpdateProgress1" runat="server" AssociatedUpdatePanelID="UpdatePanel"  >
-                                                <ProgressTemplate>
-                                                    <asp:Image ID="Image1" runat="server" SkinID="Searching" />
-                                                </ProgressTemplate>
-                                            </asp:UpdateProgress>
-                                         </td>
                                      </tr>
                                     </table>
                                 </asp:Panel>

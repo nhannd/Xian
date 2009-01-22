@@ -20,13 +20,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move {
     public partial class MovePanel {
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// SearchUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::System.Web.UI.UpdatePanel SearchUpdatePanel;
         
         /// <summary>
         /// MoveButton control.
