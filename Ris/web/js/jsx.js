@@ -271,54 +271,12 @@ if (!Date.prototype.setYMD)
 	}
 }
     
-if (!Date.prototype.addYears)
+if (!Date.prototype.addDays)
 {
-	Date.prototype.addYears = function(offset)
-	{
-		var newDate = new Date(this);
-		newDate.setYear(newDate.getYear() + offset);	
-		return newDate;
-	};
-
-	Date.prototype.addMonths = function(offset)
-	{
-		var newDate = new Date(this);
-		newDate.setMonth(newDate.getMonth() + offset);	
-		return newDate;
-	};
-
 	Date.prototype.addDays = function(offset)
 	{
 		var newDate = new Date(this);
 		newDate.setDate(newDate.getDate() + offset);	
-		return newDate;
-	};
-
-	Date.prototype.addHours = function(offset)
-	{
-		var newDate = new Date(this);
-		newDate.setHours(newDate.getHours() + offset);	
-		return newDate;
-	};
-
-	Date.prototype.addMinutes = function(offset)
-	{
-		var newDate = new Date(this);
-		newDate.setMinutes(newDate.getMinutes() + offset);	
-		return newDate;
-	};
-
-	Date.prototype.addSeconds = function(offset)
-	{
-		var newDate = new Date(this);
-		newDate.setSeconds(newDate.getSeconds() + offset);	
-		return newDate;
-	};
-
-	Date.prototype.addMilliseconds = function(offset)
-	{
-		var newDate = new Date(this);
-		newDate.setMilliseconds(newDate.getMilliseconds() + offset);	
 		return newDate;
 	};
 }
