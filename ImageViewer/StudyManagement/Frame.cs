@@ -532,8 +532,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				pixelAspectRatio = _parentImageSop[DicomTags.PixelAspectRatio].ToString();
 				if (!string.IsNullOrEmpty(pixelAspectRatio))
 				{
-					double[] values;
-					if (DicomStringHelper.TryGetDoubleArray(pixelAspectRatio, out values) && values.Length == 2)
+					int[] values;
+					if (DicomStringHelper.TryGetIntArray(pixelAspectRatio, out values) && values.Length == 2)
 						return new PixelAspectRatio(values[0], values[1]);
 				}
 

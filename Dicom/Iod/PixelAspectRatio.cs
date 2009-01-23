@@ -41,15 +41,15 @@ namespace ClearCanvas.Dicom.Iod
 	{
 		#region Private Members
 		
-		double _row;
-		double _column;
+		int _row;
+		int _column;
 		
 		#endregion
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public PixelAspectRatio(double row, double column)
+		public PixelAspectRatio(int row, int column)
 		{
 			_row = row;
 			_column = column;
@@ -75,7 +75,7 @@ namespace ClearCanvas.Dicom.Iod
 		/// <summary>
 		/// Gets the row (vertical) component of the ratio.
 		/// </summary>
-		public virtual double Row
+		public virtual int Row
         {
             get { return _row; }
             protected set { _row = value; }
@@ -84,7 +84,7 @@ namespace ClearCanvas.Dicom.Iod
 		/// <summary>
 		/// Gets the column (horizontal) component of the ratio.
 		/// </summary>
-        public virtual double Column
+        public virtual int Column
         {
             get { return _column; }
 			protected set { _column = value; }
@@ -99,7 +99,7 @@ namespace ClearCanvas.Dicom.Iod
 		/// </summary>
 		public override string ToString()
 		{
-			return String.Format(@"{0:G12}\{1:G12}", _row, _column);
+			return String.Format(@"{0}\{1}", _row, _column);
 		}
 
 		/// <summary>
@@ -110,8 +110,8 @@ namespace ClearCanvas.Dicom.Iod
 		/// </returns>
 		public static PixelAspectRatio FromString(string multiValuedString)
 		{
-			double[] values;
-			if (DicomStringHelper.TryGetDoubleArray(multiValuedString, out values) && values.Length == 2)
+			int[] values;
+			if (DicomStringHelper.TryGetIntArray(multiValuedString, out values) && values.Length == 2)
 					return new PixelAspectRatio(values[0], values[1]);
 
 			return null;

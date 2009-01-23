@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Drawing;
 using ClearCanvas.Dicom.Iod.Macros;
 
 namespace ClearCanvas.Dicom.Iod.Modules
@@ -54,9 +55,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes the underlying collection to implement the module or sequence using default values.
 		/// </summary>
-		public void InitializeAttributes()
-		{
-		}
+		public void InitializeAttributes() {}
 
 		/// <summary>
 		/// Gets or sets the value of DisplayedAreaSelectionSequence in the underlying collection. Type 1.
@@ -109,10 +108,16 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// <summary>
 			/// Initializes the underlying collection to implement the module or sequence using default values.
 			/// </summary>
-			public void InitializeAttributes() { }
+			public void InitializeAttributes()
+			{
+				this.ReferencedImageSequence = null;
+				this.PresentationPixelSpacing = null;
+				this.PresentationPixelAspectRatio = null;
+				this.PresentationPixelMagnificationRatio = null;
+			}
 
 			/// <summary>
-			/// Gets or sets the value of ReferencedImageSequence in the underlying collection. Type 1.
+			/// Gets or sets the value of ReferencedImageSequence in the underlying collection. Type 1C.
 			/// </summary>
 			public ImageSopInstanceReferenceMacro[] ReferencedImageSequence
 			{
@@ -132,7 +137,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				set
 				{
 					if (value == null || value.Length == 0)
-						throw new ArgumentNullException("value", "ReferencedImageSequence is Type 1 Required.");
+					{
+						base.DicomAttributeCollection[DicomTags.ReferencedImageSequence] = null;
+						return;
+					}
 
 					DicomSequenceItem[] result = new DicomSequenceItem[value.Length];
 					for (int n = 0; n < value.Length; n++)
@@ -145,44 +153,40 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// <summary>
 			/// Gets or sets the value of DisplayedAreaTopLeftHandCorner in the underlying collection. Type 1.
 			/// </summary>
-			public int[] DisplayedAreaTopLeftHandCorner
+			public Point DisplayedAreaTopLeftHandCorner
 			{
 				get
 				{
-					int[] result = new int[2];
-					if (base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].TryGetInt32(0, out result[0]))
-						if (base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].TryGetInt32(0, out result[1]))
-							return result;
-					return null;
+					int x, y;
+					if (base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].TryGetInt32(0, out x))
+						if (base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].TryGetInt32(1, out y))
+							return new Point(x, y);
+					return Point.Empty;
 				}
 				set
 				{
-					if (value == null || value.Length != 2)
-						throw new ArgumentNullException("value", "DisplayedAreaTopLeftHandCorner is Type 1 Required.");
-					base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].SetInt32(0, value[0]);
-					base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].SetInt32(1, value[1]);
+					base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].SetInt32(0, value.X);
+					base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].SetInt32(1, value.Y);
 				}
 			}
 
 			/// <summary>
 			/// Gets or sets the value of DisplayedAreaBottomRightHandCorner in the underlying collection. Type 1.
 			/// </summary>
-			public int[] DisplayedAreaBottomRightHandCorner
+			public Point DisplayedAreaBottomRightHandCorner
 			{
 				get
 				{
-					int[] result = new int[2];
-					if (base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].TryGetInt32(0, out result[0]))
-						if (base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].TryGetInt32(0, out result[1]))
-							return result;
-					return null;
+					int x, y;
+					if (base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].TryGetInt32(0, out x))
+						if (base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].TryGetInt32(1, out y))
+							return new Point(x, y);
+					return Point.Empty;
 				}
 				set
 				{
-					if (value == null || value.Length != 2)
-						throw new ArgumentNullException("value", "DisplayedAreaBottomRightHandCorner is Type 1 Required.");
-					base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].SetInt32(0, value[0]);
-					base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].SetInt32(1, value[1]);
+					base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].SetInt32(0, value.X);
+					base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].SetInt32(1, value.Y);
 				}
 			}
 
@@ -196,57 +200,53 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				{
 					if (value == PresentationSizeMode.None)
 						throw new ArgumentOutOfRangeException("value", "PresentationSizeMode is Type 1 Required.");
-					SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.PresentationSizeMode], value);
+					SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.PresentationSizeMode], value, true);
 				}
 			}
 
 			/// <summary>
 			/// Gets or sets the value of PresentationPixelSpacing in the underlying collection. Type 1C.
 			/// </summary>
-			public double[] PresentationPixelSpacing
+			public PixelSpacing PresentationPixelSpacing
 			{
 				get
 				{
-					double[] result = new double[2];
-					if (base.DicomAttributeCollection[DicomTags.PresentationPixelSpacing].TryGetFloat64(0, out result[0]))
-						if (base.DicomAttributeCollection[DicomTags.PresentationPixelSpacing].TryGetFloat64(0, out result[1]))
-							return result;
-					return null;
+					DicomAttribute attribute = base.DicomAttributeCollection[DicomTags.PresentationPixelSpacing];
+					if (attribute.IsEmpty || attribute.IsNull)
+						return null;
+					return PixelSpacing.FromString(attribute.ToString());
 				}
 				set
 				{
-					if (value == null || value.Length != 2)
+					if (value == null || value.IsNull)
 					{
 						base.DicomAttributeCollection[DicomTags.PresentationPixelSpacing] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.PresentationPixelSpacing].SetFloat64(0, value[0]);
-					base.DicomAttributeCollection[DicomTags.PresentationPixelSpacing].SetFloat64(1, value[1]);
+					base.DicomAttributeCollection[DicomTags.PresentationPixelSpacing].SetStringValue(value.ToString());
 				}
 			}
 
 			/// <summary>
 			/// Gets or sets the value of PresentationPixelAspectRatio in the underlying collection. Type 1C.
 			/// </summary>
-			public double[] PresentationPixelAspectRatio
+			public PixelAspectRatio PresentationPixelAspectRatio
 			{
 				get
 				{
-					double[] result = new double[2];
-					if (base.DicomAttributeCollection[DicomTags.PresentationPixelAspectRatio].TryGetFloat64(0, out result[0]))
-						if (base.DicomAttributeCollection[DicomTags.PresentationPixelAspectRatio].TryGetFloat64(0, out result[1]))
-							return result;
-					return null;
+					DicomAttribute attribute = base.DicomAttributeCollection[DicomTags.PresentationPixelAspectRatio];
+					if (attribute.IsEmpty || attribute.IsNull)
+						return null;
+					return PixelAspectRatio.FromString(attribute.ToString());
 				}
 				set
 				{
-					if (value == null || value.Length != 2)
+					if (value == null || value.IsNull)
 					{
 						base.DicomAttributeCollection[DicomTags.PresentationPixelAspectRatio] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.PresentationPixelAspectRatio].SetFloat64(0, value[0]);
-					base.DicomAttributeCollection[DicomTags.PresentationPixelAspectRatio].SetFloat64(1, value[1]);
+					base.DicomAttributeCollection[DicomTags.PresentationPixelAspectRatio].SetStringValue(value.ToString());
 				}
 			}
 
@@ -278,7 +278,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// Enumerated values for the <see cref="DicomTags.PresentationSizeMode"/> attribute .
 		/// </summary>
 		/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.10.4 (Table C.10-4)</remarks>
-		public enum PresentationSizeMode {
+		public enum PresentationSizeMode
+		{
 			ScaleToFit,
 			TrueSize,
 			Magnify,

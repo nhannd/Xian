@@ -93,6 +93,7 @@
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\WINDOWS\Microsoft.NET\Framework\v3.0\Windows Communication Foundation\System.Runtime.Serialization.dll</HintPath>
@@ -196,6 +197,7 @@
     <Compile Include="Iod\ContextGroups\ContextGroupBase.cs" />
     <Compile Include="Iod\ContextGroups\KeyObjectSelectionDocumentTitle.cs" />
     <Compile Include="Iod\ContinuityOfContent.cs" />
+    <Compile Include="Iod\ImageSopInstanceReferenceDictionary.cs" />
     <Compile Include="Iod\IodBase.cs" />
     <Compile Include="Iod\Iods\GrayscaleSoftcopyPresentationStateIod.cs" />
     <Compile Include="Iod\Iods\ImageIod.cs" />
@@ -308,6 +310,7 @@
     <Compile Include="Iod\Sequences\SpecimenSequence.cs" />
     <Compile Include="Iod\Sequences\SpecimenTypeCodeSequence.cs" />
     <Compile Include="Iod\Sequences\ViewCodeSequenceIod.cs" />
+    <Compile Include="Iod\SeriesReferenceDictionary.cs" />
     <Compile Include="Iod\VoiDataLut.cs" />
     <Compile Include="Iod\PatientIdentityRemoved.cs" />
     <Compile Include="Iod\PatientsSex.cs" />

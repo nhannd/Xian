@@ -377,7 +377,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Converts a rectangle whose width and/or heigh and converts it to
+		/// Takes a rectangle whose width and/or height may be negative and converts it to
 		/// an equivalent rectangle whose width and height are guaranteed to be positive
 		/// </summary>
 		/// <param name="rectangle"></param>
@@ -406,6 +406,35 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			}
 
 			return new RectangleF(left, top, width, height);
+		}
+
+		/// <summary>
+		/// Computes a rectangle specifying the 1-based pixel address and the row and column offset to get the pixel address of the opposite corner
+		/// given a rectangle specifying the 0-based coordinate and size (whose width and height need not be positive).
+		/// </summary>
+		/// <param name="rectangle">The 0-based rectangle specified as a 0-based coordinate and a size.</param>
+		/// <returns>An equivalent rectangle specifying the 1-based pixel address of the coordinate and row and column offset to get the pixel address of the opposite corner.</returns>
+		/// <exception cref="ArgumentException">Thrown if the given rectangle has zero-area, as it cannot be represented in a 1-based pixel address rectangle.</exception>
+		/// <remarks>
+		/// <para>In DICOM and certain other applications, areas of images are identified with the first pixel being at position row 1 and column 1.
+		/// In most Windows graphics rendering systems, imaging coordinates are identified as an infinitesimal point at the top-left corner of a given pixel
+		/// and the coordinates are given in a 0-based system (that is, the first pixel has a coordinate of (0,0)).</para>
+		/// <para>It is trivial to compute the addresses of the pixels included within the rectangle when the rectangle is positively-oriented
+		/// (has positive width and height) since the left most pixels are in column <see cref="Rectangle.X"/>+1, the right most pixels are in
+		/// column <see cref="Rectangle.X"/>+<see cref="Rectangle.Width"/>, and so on. It is somewhat more complicated to compute when the
+		/// rectangle is not positively-oriented due to the singularities when either <see cref="Rectangle.Width"/> or <see cref="Rectangle.Height"/>
+		/// is 0 (and hence rectangles having zero-area cannot be specified as a pixel address rectangle - a pixel address rectangle having size
+		/// 0x0 is considered as containing 1 row and 1 column).</para>
+		/// </remarks>
+		public static Rectangle ConvertToPixelAddressRectangle(Rectangle rectangle)
+		{
+			if(rectangle.Width * rectangle.Height == 0)
+				throw new ArgumentException("Zero-area rectangles cannot be specified in terms of a pixel address rectangle.", "rectangle");
+
+			Size locationOffset = new Size(rectangle.Width > 0 ? 1 : 0, rectangle.Height > 0 ? 1 : 0);
+			Size sizeOffset = new Size(rectangle.Width > 0 ? -1 : 1, rectangle.Height > 0 ? -1 : 1);
+
+			return new Rectangle(rectangle.Location + locationOffset, rectangle.Size + sizeOffset);
 		}
 	}
 }

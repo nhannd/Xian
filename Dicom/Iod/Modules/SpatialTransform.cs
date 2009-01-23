@@ -86,8 +86,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 	/// </summary>
 	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.10.6 (Table C.10-6)</remarks>
 	public enum ImageHorizontalFlip {
-		Yes,
-		No,
+		Y,
+		N,
 
 		/// <summary>
 		/// Represents the null value, which is equivalent to the unknown status.

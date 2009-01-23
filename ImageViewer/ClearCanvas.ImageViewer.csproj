@@ -119,6 +119,9 @@
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
+    <Compile Include="PresentationStates\DicomGrayscaleSoftcopyPresentationState.cs" />
+    <Compile Include="PresentationStates\DicomSoftcopyPresentationStateBase.cs" />
+    <Compile Include="PresentationStates\DicomSoftcopyPresentationState.cs" />
     <Compile Include="DisplaySetChangingEventArgs.cs" />
     <Compile Include="Graphics\ArcPrimitive.cs" />
     <Compile Include="Graphics\BoundableGraphic.cs" />
@@ -150,6 +153,7 @@
     <Compile Include="InteractiveGraphics\Tests\EllipseIntersectionTests.cs" />
     <Compile Include="KeyObjects\KeyObjectSelection.cs" />
     <Compile Include="KeyObjects\KeyObjectSelectionCodeSequences.cs" />
+    <Compile Include="PresentationStates\PresentationStateTestTool.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LoadStudyArgs.cs" />
     <Compile Include="Mathematics\PolygonF.cs" />
