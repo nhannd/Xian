@@ -74,7 +74,13 @@
 						Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderDetail.OrderingPractitioner.Name));
 						Field.setValue($("DiagnosticService"), orderDetail.DiagnosticService.Name);
 
-						var orderedProcedures = String.combine(orderDetail.Procedures.map(function(rp) { return Ris.formatProcedureName(rp); }), ", ");
+						var orderedProcedures = String.combine(
+							orderDetail.Procedures.select(
+								function(rp) { return rp.Status.Code != "CA" && rp.Status.Code != "DC"; }
+							).map(
+								function(rp) { return Ris.formatProcedureName(rp); }
+							), 
+							", ");
 						Field.setValue($("Procedures"), orderedProcedures);
 					}
 					else
