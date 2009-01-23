@@ -1,11 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Drawing;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.Dicom.Iod.Modules;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
@@ -15,7 +11,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		public DicomGrayscaleSoftcopyPresentationState() : base(SopClass) {}
 
-		public DicomGrayscaleSoftcopyPresentationState(DicomFile dicomFile) : base(SopClass, dicomFile) { }
+		public DicomGrayscaleSoftcopyPresentationState(DicomFile dicomFile) : base(SopClass, dicomFile) {}
 
 		#region Serialization Support
 
@@ -31,9 +27,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			this.SerializeOverlayPlane(iod.OverlayPlane);
 			this.SerializeOverlayActivation(iod.OverlayActivation);
 			this.SerializeDisplayedArea(iod.DisplayedArea, imagesByList);
-			this.SerializeGraphicAnnotation(iod.GraphicAnnotation);
+			this.SerializeGraphicAnnotation(iod.GraphicAnnotation, imagesByList);
 			this.SerializeSpatialTransform(iod.SpatialTransform, imagesByList);
-			this.SerializeGraphicLayer(iod.GraphicLayer);
+			this.SerializeGraphicLayer(iod.GraphicLayer, imagesByList);
 			this.SerializeModalityLut(iod.ModalityLut);
 			this.SerializeSoftcopyVoiLut(iod.SoftcopyVoiLut);
 			this.SerializeSoftcopyPresentationLut(iod.SoftcopyPresentationLut);
@@ -56,8 +52,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 			foreach (DicomGrayscalePresentationImage image in imagesByList)
 			{
-				DeserializeSpatialTransform(iod.SpatialTransform, image.SpatialTransform);
-				DeserializeDisplayedArea(iod.DisplayedArea, image);
+				this.DeserializeSpatialTransform(iod.SpatialTransform, image);
+				this.DeserializeDisplayedArea(iod.DisplayedArea, image);
+				this.DeserializeGraphicLayer(iod.GraphicLayer, image);
+				this.DeserializeGraphicAnnotation(iod.GraphicAnnotation, image);
 
 				image.Draw();
 			}

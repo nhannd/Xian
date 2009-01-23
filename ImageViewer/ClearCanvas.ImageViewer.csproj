@@ -154,6 +154,8 @@
     <Compile Include="KeyObjects\KeyObjectDeserializer.cs" />
     <Compile Include="KeyObjects\KeyObjectSerializer.cs" />
     <Compile Include="KeyObjects\KeyObjectSelectionCodeSequences.cs" />
+    <Compile Include="PresentationStates\DicomSoftcopyPresentationStateGraphic.cs" />
+    <Compile Include="PresentationStates\IPresentationStateSerializableGraphic.cs" />
     <Compile Include="PresentationStates\PresentationStateTestTool.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LoadStudyArgs.cs" />

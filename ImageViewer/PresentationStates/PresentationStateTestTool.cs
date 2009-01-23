@@ -5,10 +5,10 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.BaseTools;
 
-namespace ClearCanvas.ImageViewer.PresentationStates
-{
 #if DEBUG
 
+namespace ClearCanvas.ImageViewer.PresentationStates
+{
 	[MenuAction("save", "global-menus/Test Presentation State/Save PR Object", "SavePR")]
 	[MenuAction("load", "global-menus/Test Presentation State/Load PR Object", "LoadPR")]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
@@ -64,6 +64,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 		}
 	}
+}
 
 #endif
-}

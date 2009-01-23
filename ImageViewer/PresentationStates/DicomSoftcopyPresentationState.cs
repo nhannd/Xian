@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Macros;
-using ClearCanvas.Dicom.Iod.Macros.PresentationStateRelationship;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -25,7 +24,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		protected DicomSoftcopyPresentationState(SopClass psSopClass, DicomFile dicomFile)
 		{
-			if(dicomFile.MediaStorageSopClassUid != psSopClass.Uid)
+			if (dicomFile.MediaStorageSopClassUid != psSopClass.Uid)
 			{
 				string message = string.Format("Expected: {0}; Found: {1}", psSopClass, SopClass.GetSopClass(dicomFile.MediaStorageSopClassUid));
 				throw new ArgumentException("The specified DICOM file is not of a compatible SOP Class. " + message, "dicomFile");
@@ -34,6 +33,14 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			_psSopClass = psSopClass;
 			_dataSet = dicomFile.DataSet;
 		}
+
+		protected DicomAttributeCollection DataSet
+		{
+			get { return _dataSet; }
+		}
+
+		protected abstract void Serialize(IEnumerable<IPresentationImage> images);
+		protected abstract void Deserialize(IEnumerable<IPresentationImage> images);
 
 		#region Public Interface
 
@@ -200,7 +207,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			return imageReference;
 		}
 
-		protected static ImageSopInstanceReferenceMacro CreateImageSopInstanceReference(Frame frame) {
+		protected static ImageSopInstanceReferenceMacro CreateImageSopInstanceReference(Frame frame)
+		{
 			ImageSopInstanceReferenceMacro imageReference = new ImageSopInstanceReferenceMacro();
 			imageReference.ReferencedSopClassUid = frame.ParentImageSop.SopClassUID;
 			imageReference.ReferencedSopInstanceUid = frame.SopInstanceUID;
@@ -209,13 +217,5 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		}
 
 		#endregion
-
-		protected DicomAttributeCollection DataSet
-		{
-			get { return _dataSet; }
-		}
-
-		protected abstract void Serialize(IEnumerable<IPresentationImage> images);
-		protected abstract void Deserialize(IEnumerable<IPresentationImage> images);
 	}
 }

@@ -6,13 +6,15 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Macros.PresentationStateRelationship;
 using ClearCanvas.Dicom.Iod.Modules;
+using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
-	internal abstract class DicomSoftcopyPresentationStateBase<T> : DicomSoftcopyPresentationState where T : IPresentationImage, IImageSopProvider, ISpatialTransformProvider
+	internal abstract class DicomSoftcopyPresentationStateBase<T> : DicomSoftcopyPresentationState where T : IPresentationImage, IImageSopProvider, ISpatialTransformProvider, IImageGraphicProvider, IOverlayGraphicsProvider
 	{
 		protected DicomSoftcopyPresentationStateBase(SopClass psSopClass) : base(psSopClass) {}
 		protected DicomSoftcopyPresentationStateBase(SopClass psSopClass, DicomFile dicomFile) : base(psSopClass, dicomFile) {}
@@ -65,8 +67,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 					{
 						T tImage = (T) image;
 
-						string seriesUid =  tImage.ImageSop.SeriesInstanceUID;
-						if (dictionary.ReferencesFrame(seriesUid,  tImage.ImageSop.SopInstanceUID, tImage.Frame.FrameNumber))
+						string seriesUid = tImage.ImageSop.SeriesInstanceUID;
+						if (dictionary.ReferencesFrame(seriesUid, tImage.ImageSop.SopInstanceUID, tImage.Frame.FrameNumber))
 						{
 							if (!seriesImages.ContainsKey(seriesUid))
 								seriesImages.Add(seriesUid, new List<T>());
@@ -305,53 +307,130 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 		}
 
-		private static readonly int[] _spatialTransformRotationTranslation = new int[] {0, 270, 180, 90, 0, 90, 180, 270, 180, 270, 0, 90, 180, 90, 0, 270};
+		private static readonly int[] _spatialTransformRotationTranslation = new int[] { 0, 270, 180, 90, 0, 90, 180, 270, 180, 270, 0, 90, 180, 90, 0, 270 };
+
+		private static readonly string _roiGraphicLayerId = "ROIGraphicsS";
+
+		protected void SerializeGraphicLayer(GraphicLayerModuleIod graphicLayerModule, IList<T> images) {
+			Dictionary<string, string> layerIndex = new Dictionary<string, string>();
+			List<GraphicLayerSequenceItem> layerSequences = new List<GraphicLayerSequenceItem>();
+
+			int order = 1;
+			foreach (T image in images)
+			{
+				DicomSoftcopyPresentationStateGraphic psGraphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, false);
+				if(psGraphic != null)
+				{
+					foreach (DicomSoftcopyPresentationStateGraphic.LayerGraphic layerGraphic in psGraphic)
+					{
+						if (!layerIndex.ContainsKey(layerGraphic.Id))
+						{
+							GraphicLayerSequenceItem layerSequence = new GraphicLayerSequenceItem();
+							layerSequence.GraphicLayer = layerGraphic.Id;
+							layerSequence.GraphicLayerDescription = layerGraphic.Description;
+							layerSequence.GraphicLayerOrder = order++;
+							layerSequence.GraphicLayerRecommendedDisplayCielabValue = layerGraphic.DisplayCIELabColor;
+							layerSequence.GraphicLayerRecommendedDisplayGrayscaleValue = layerGraphic.DisplayGrayscaleColor;
+							layerSequences.Add(layerSequence);
+							layerIndex.Add(layerGraphic.Id, null);
+						}
+					}
+				}
+
+				foreach (IGraphic graphic in image.OverlayGraphics)
+				{
+					if (graphic is RoiGraphic)
+					{
+						if (!layerIndex.ContainsKey(_roiGraphicLayerId))
+						{
+							layerIndex.Add(_roiGraphicLayerId, null);
+							GraphicLayerSequenceItem layerSequence = new GraphicLayerSequenceItem();
+							layerSequence.GraphicLayer = _roiGraphicLayerId;
+							layerSequence.GraphicLayerOrder = order++;
+							layerSequences.Add(layerSequence);
+							break;
+						}
+					}
+				}
+			}
+
+			if(layerSequences.Count > 0)
+				graphicLayerModule.GraphicLayerSequence = layerSequences.ToArray();
+		}
+
+		protected void SerializeGraphicAnnotation(GraphicAnnotationModuleIod graphicAnnotationModule, IList<T> images) {
+			List<GraphicAnnotationSequenceItem> annotations = new List<GraphicAnnotationSequenceItem>();
+
+			foreach (T image in images) {
+				DicomSoftcopyPresentationStateGraphic psGraphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, false);
+				if (psGraphic != null) {
+					foreach (DicomSoftcopyPresentationStateGraphic.LayerGraphic layerGraphic in psGraphic) {
+						foreach (IGraphic graphic in layerGraphic.Graphics)
+						{
+							if(graphic is IPresentationStateSerializableGraphic)
+							{
+								GraphicAnnotationSequenceItem annotation = new GraphicAnnotationSequenceItem();
+								((IPresentationStateSerializableGraphic)graphic).SerializeRoiGraphic(annotation);
+								annotation.GraphicLayer = layerGraphic.Id;
+								annotation.ReferencedImageSequence = new ImageSopInstanceReferenceMacro[]{CreateImageSopInstanceReference(image.Frame)};
+								annotations.Add(annotation);
+							}
+						}
+					}
+				}
+
+				foreach (IGraphic graphic in image.OverlayGraphics) {
+					if (graphic is IPresentationStateSerializableGraphic) {
+						GraphicAnnotationSequenceItem annotation = new GraphicAnnotationSequenceItem();
+						((IPresentationStateSerializableGraphic)graphic).SerializeRoiGraphic(annotation);
+						annotation.GraphicLayer = _roiGraphicLayerId;
+						annotation.ReferencedImageSequence = new ImageSopInstanceReferenceMacro[] { CreateImageSopInstanceReference(image.Frame) };
+						annotations.Add(annotation);
+					}
+				}
+			}
+
+			if (annotations.Count > 0)
+				graphicAnnotationModule.GraphicAnnotationSequence = annotations.ToArray();
+		}
+
+		
 
 		#endregion
 
 		#region Unimplemented Serializers
 
-		public void SerializeMask(MaskModuleIod maskModule)
+		protected void SerializeMask(MaskModuleIod maskModule)
 		{
 			// TODO : fix this dummy implementation
 		}
 
-		public void SerializeDisplayShutter(DisplayShutterModuleIod displayShutterModule)
+		protected void SerializeDisplayShutter(DisplayShutterModuleIod displayShutterModule)
 		{
 			// TODO : fix this dummy implementation
 		}
 
-		public void SerializeBitmapDisplayShutter(BitmapDisplayShutterModuleIod bitmapDisplayShutterModule)
+		protected void SerializeBitmapDisplayShutter(BitmapDisplayShutterModuleIod bitmapDisplayShutterModule)
 		{
 			// TODO : fix this dummy implementation
 		}
 
-		public void SerializeOverlayPlane(OverlayPlaneModuleIod overlayPlaneModule)
+		protected void SerializeOverlayPlane(OverlayPlaneModuleIod overlayPlaneModule)
 		{
 			// TODO : fix this dummy implementation
 		}
 
-		public void SerializeOverlayActivation(OverlayActivationModuleIod overlayActivationModule)
+		protected void SerializeOverlayActivation(OverlayActivationModuleIod overlayActivationModule)
 		{
 			// TODO : fix this dummy implementation
 		}
 
-		public void SerializeGraphicAnnotation(GraphicAnnotationModuleIod graphicAnnotationModule)
+		protected void SerializeModalityLut(ModalityLutModuleIod modalityLutModule)
 		{
 			// TODO : fix this dummy implementation
 		}
 
-		public void SerializeGraphicLayer(GraphicLayerModuleIod graphicLayerModule)
-		{
-			// TODO : fix this dummy implementation
-		}
-
-		public void SerializeModalityLut(ModalityLutModuleIod modalityLutModule)
-		{
-			// TODO : fix this dummy implementation
-		}
-
-		public void SerializeSoftcopyVoiLut(SoftcopyVoiLutModuleIod softcopyVoiLutModule)
+		protected void SerializeSoftcopyVoiLut(SoftcopyVoiLutModuleIod softcopyVoiLutModule)
 		{
 			// TODO : fix this dummy implementation
 		}
@@ -360,7 +439,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		#region Deserialization of Presentation States
 
-		protected void DeserializeDisplayedArea(DisplayedAreaModuleIod dispAreaMod, DicomGrayscalePresentationImage image) {
+		protected void DeserializeDisplayedArea(DisplayedAreaModuleIod dispAreaMod, T image)
+		{
 			ISpatialTransform spatialTransform = image.SpatialTransform;
 			foreach (DisplayedAreaModuleIod.DisplayedAreaSelectionSequenceItem item in dispAreaMod.DisplayedAreaSelectionSequence)
 			{
@@ -390,9 +470,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 							{
 								// otherwise manually compute max magnification to show all off selected area
 								SizeF clientArea = image.ClientRectangle.Size;
-								if(spatialTransform.RotationXY % 180 > 0)
+								if (spatialTransform.RotationXY%180 > 0)
 									clientArea = new SizeF(clientArea.Height, clientArea.Width);
-								spatialTransform.Scale = Math.Min(clientArea.Width / displayRect.Width,clientArea.Height / displayRect.Height);
+								spatialTransform.Scale = Math.Min(clientArea.Width/displayRect.Width, clientArea.Height/displayRect.Height);
 							}
 
 							break;
@@ -410,14 +490,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 					displayAreaTemplate.LineStyle = LineStyle.Dot;
 					displayAreaTemplate.CoordinateSystem = CoordinateSystem.Source;
 					displayAreaTemplate.TopLeft = item.DisplayedAreaTopLeftHandCorner;
-					displayAreaTemplate.BottomRight = item.DisplayedAreaBottomRightHandCorner - new Size(1,1);
+					displayAreaTemplate.BottomRight = item.DisplayedAreaBottomRightHandCorner - new Size(1, 1);
 					displayAreaTemplate.ResetCoordinateSystem();
 #endif
 				}
 			}
 		}
 
-		protected void DeserializeSpatialTransform(SpatialTransformModuleIod module, ISpatialTransform spatialTransform) {
+		protected void DeserializeSpatialTransform(SpatialTransformModuleIod module, T image)
+		{
+			ISpatialTransform spatialTransform = image.SpatialTransform;
 			if (spatialTransform is IImageSpatialTransform)
 			{
 				IImageSpatialTransform iist = (IImageSpatialTransform) spatialTransform;
@@ -433,6 +515,45 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			{
 				spatialTransform.FlipY = false;
 				spatialTransform.RotationXY = (360 - module.ImageRotation)%360;
+			}
+		}
+
+		protected void DeserializeGraphicLayer(GraphicLayerModuleIod module, T image)
+		{
+			GraphicLayerSequenceItem[] layerSequences = module.GraphicLayerSequence;
+			if (layerSequences != null)
+			{
+				SortedDictionary<int, GraphicLayerSequenceItem> orderedSequences = new SortedDictionary<int, GraphicLayerSequenceItem>();
+				foreach (GraphicLayerSequenceItem sequenceItem in layerSequences)
+				{
+					orderedSequences.Add(sequenceItem.GraphicLayerOrder, sequenceItem);
+				}
+
+				DicomSoftcopyPresentationStateGraphic graphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, true);
+				foreach (GraphicLayerSequenceItem sequenceItem in orderedSequences.Values)
+				{
+					DicomSoftcopyPresentationStateGraphic.LayerGraphic layer = graphic.AddLayer(sequenceItem.GraphicLayer);
+					layer.Description = sequenceItem.GraphicLayerDescription;
+					layer.DisplayCIELabColor = sequenceItem.GraphicLayerRecommendedDisplayCielabValue;
+					layer.DisplayGrayscaleColor = sequenceItem.GraphicLayerRecommendedDisplayGrayscaleValue;
+				}
+			}
+		}
+
+		protected void DeserializeGraphicAnnotation(GraphicAnnotationModuleIod module, T image)
+		{
+			GraphicAnnotationSequenceItem[] annotationSequences = module.GraphicAnnotationSequence;
+			if (annotationSequences != null)
+			{
+				DicomSoftcopyPresentationStateGraphic graphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, true);
+				foreach (GraphicAnnotationSequenceItem sequenceItem in annotationSequences)
+				{
+					ImageSopInstanceReferenceDictionary dictionary = new ImageSopInstanceReferenceDictionary(sequenceItem.ReferencedImageSequence);
+					if(dictionary.ReferencesFrame(image.ImageSop.SopInstanceUID, image.Frame.FrameNumber))
+					{
+						
+					}
+				}
 			}
 		}
 

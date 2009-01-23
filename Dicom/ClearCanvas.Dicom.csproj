@@ -290,6 +290,7 @@
     <Compile Include="Iod\Sequences\BreedRegistryCodeSequence.cs" />
     <Compile Include="Iod\Sequences\BreedRegistrationSequence.cs" />
     <Compile Include="Iod\Sequences\ContentTemplateSequence.cs" />
+    <Compile Include="Iod\Sequences\GraphicAnnotationSequenceItem.cs" />
     <Compile Include="Iod\Sequences\OtherPatientIdsSequence.cs" />
     <Compile Include="Iod\Sequences\DeIdentificationMethodCodeSequence.cs" />
     <Compile Include="Iod\Sequences\PatientBreedCodeSequence.cs" />
