@@ -262,7 +262,7 @@ namespace ClearCanvas.Healthcare
         }
 
         /// <summary>
-        /// Discontinue this procedure and any procedure steps in the scheduled state.
+        /// Discontinue this procedure and any non-terminated procedure steps.
         /// </summary>
         public virtual void Discontinue()
         {
@@ -273,10 +273,10 @@ namespace ClearCanvas.Healthcare
             // (otherwise cancelling the steps will cause them to try and update the procedure status)
             SetStatus(ProcedureStatus.DC);
 
-            // discontinue any procedure steps in the scheduled status
+            // discontinue any non-terminated procedure steps
             foreach (ProcedureStep ps in _procedureSteps)
             {
-                if (ps.State == ActivityStatus.SC)
+                if (!ps.IsTerminated)
                     ps.Discontinue();
             }
 

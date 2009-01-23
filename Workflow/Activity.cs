@@ -227,6 +227,15 @@ namespace ClearCanvas.Workflow
 		public virtual void Discontinue(DateTime? endTime)
 		{
 			_endTime = endTime ?? Platform.Time;
+
+			// automatically discontinue any performed-steps that have not terminated
+			foreach (PerformedStep step in _performedSteps)
+			{
+				if(!step.IsTerminated)
+					step.Discontinue(_endTime);
+			}
+
+			// set state DC
 			ChangeState(ActivityStatus.DC);
 		}
 

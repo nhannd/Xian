@@ -254,11 +254,13 @@ namespace ClearCanvas.Healthcare {
             // (otherwise cancelling the procedures will cause them to try and update the order status)
             SetStatus(OrderStatus.DC);
             
-            // cancel any scheduled procedures
+            // cancel or discontinue any non-terminated procedures
             foreach (Procedure rp in _procedures)
             {
-                if (rp.Status == ProcedureStatus.SC)
+                if(rp.Status == ProcedureStatus.SC)
                     rp.Cancel();
+				else if(rp.Status == ProcedureStatus.IP)
+					rp.Discontinue();
             }
 
             // need to update the end-time again, after discontinuing procedures

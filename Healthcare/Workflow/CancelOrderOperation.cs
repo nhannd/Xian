@@ -40,13 +40,15 @@ namespace ClearCanvas.Healthcare.Workflow
     {
         public void Execute(Order order, OrderCancelInfo info)
         {
-            //TODO this is kinda weird - what's the point of having separate Cancel and Discontinue methods?
             if (order.Status == OrderStatus.SC)
 				order.Cancel(info);
-            else if (order.Status == OrderStatus.IP)
-				order.Discontinue(info);
             else
                 throw new WorkflowException(string.Format("Order with status {0} cannot be cancelled.", order.Status));
         }
+
+		public bool CanExecute(Order order)
+		{
+			return order.Status == OrderStatus.SC;
+		}
     }
 }

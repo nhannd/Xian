@@ -266,9 +266,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             ValidatePatientProfilesExist(newOrder);
 
             // cancel existing order
-            CancelOrderOperation op = new CancelOrderOperation();
-            op.Execute(orderToReplace, new OrderCancelInfo(reason, this.CurrentUserStaff, null, newOrder));
-
+			CancelOrderHelper(orderToReplace, new OrderCancelInfo(reason, this.CurrentUserStaff, null, newOrder));
 
             PersistenceContext.SynchState();
 
@@ -284,13 +282,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
             OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
 
-            CancelOrderOperation op = new CancelOrderOperation();
-            op.Execute(order, new OrderCancelInfo(reason, this.CurrentUserStaff));
+			CancelOrderHelper(order, new OrderCancelInfo(reason, this.CurrentUserStaff));
 
             return new CancelOrderResponse();
         }
 
-        [UpdateOperation]
+    	[UpdateOperation]
         public TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request)
         {
             Platform.CheckForNullReference(request, "request");
@@ -341,8 +338,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 return false;
 
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
-            return order.Status == OrderStatus.SC;
-        }
+
+			// the order can be replaced iff it can be cancelled/discontinued
+			CancelOrderOperation cancelOp = new CancelOrderOperation();
+			DiscontinueOrderOperation discOp = new DiscontinueOrderOperation();
+			return discOp.CanExecute(order) || cancelOp.CanExecute(order);
+		}
 
         public bool CanModifyOrder(WorklistItemKey itemKey)
         {
@@ -369,7 +370,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 return false;
 
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(itemKey.OrderRef);
-            return order.Status == OrderStatus.SC;
+
+			// cancel or discontinue
+			CancelOrderOperation cancelOp = new CancelOrderOperation();
+			DiscontinueOrderOperation discOp = new DiscontinueOrderOperation();
+        	return discOp.CanExecute(order) || cancelOp.CanExecute(order);
         }
 
         #endregion
@@ -496,6 +501,20 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             return order;
         }
+
+		private void CancelOrderHelper(Order order, OrderCancelInfo info)
+		{
+			if (order.Status == OrderStatus.SC)
+			{
+				CancelOrderOperation op = new CancelOrderOperation();
+				op.Execute(order, info);
+			}
+			else if (order.Status == OrderStatus.IP)
+			{
+				DiscontinueOrderOperation op = new DiscontinueOrderOperation();
+				op.Execute(order, info);
+			}
+		}
 
         private string GetAccessionNumberForOrder(OrderRequisition requisition)
         {
