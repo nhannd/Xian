@@ -45,16 +45,17 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>	
 		public ModalityLutModuleIod() : base() {}
 
+		//TODO: Modality lut module should take ???
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ModalityLutModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public ModalityLutModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public ModalityLutModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		DicomSequenceItem IIodMacro.DicomSequenceItem
 		{
-			get { return base.DicomAttributeCollection as DicomSequenceItem; }
-			set { base.DicomAttributeCollection = value; }
+			get { return base.DicomAttributeProvider as DicomSequenceItem; }
+			set { base.DicomAttributeProvider = value; }
 		}
 
 		/// <summary>
@@ -69,7 +70,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ModalityLutSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ModalityLutSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -78,10 +79,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			}
 			set
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ModalityLutSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ModalityLutSequence];
 				if (value == null)
 				{
-					base.DicomAttributeCollection[DicomTags.ModalityLutSequence] = null;
+					base.DicomAttributeProvider[DicomTags.ModalityLutSequence] = null;
 					return;
 				}
 				dicomAttribute.Values = new DicomSequenceItem[] {value.DicomSequenceItem};
@@ -96,7 +97,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			get
 			{
 				double result;
-				if (base.DicomAttributeCollection[DicomTags.RescaleIntercept].TryGetFloat64(0, out result))
+				if (base.DicomAttributeProvider[DicomTags.RescaleIntercept].TryGetFloat64(0, out result))
 					return result;
 				return null;
 			}
@@ -104,10 +105,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				if (!value.HasValue)
 				{
-					base.DicomAttributeCollection[DicomTags.RescaleIntercept] = null;
+					base.DicomAttributeProvider[DicomTags.RescaleIntercept] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.RescaleIntercept].SetFloat64(0, value.Value);
+				base.DicomAttributeProvider[DicomTags.RescaleIntercept].SetFloat64(0, value.Value);
 			}
 		}
 
@@ -119,7 +120,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			get
 			{
 				double result;
-				if (base.DicomAttributeCollection[DicomTags.RescaleSlope].TryGetFloat64(0, out result))
+				if (base.DicomAttributeProvider[DicomTags.RescaleSlope].TryGetFloat64(0, out result))
 					return result;
 				return null;
 			}
@@ -127,10 +128,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				if (!value.HasValue)
 				{
-					base.DicomAttributeCollection[DicomTags.RescaleSlope] = null;
+					base.DicomAttributeProvider[DicomTags.RescaleSlope] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.RescaleSlope].SetFloat64(0, value.Value);
+				base.DicomAttributeProvider[DicomTags.RescaleSlope].SetFloat64(0, value.Value);
 			}
 		}
 
@@ -139,15 +140,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string RescaleType
 		{
-			get { return base.DicomAttributeCollection[DicomTags.RescaleType].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.RescaleType].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.RescaleType] = null;
+					base.DicomAttributeProvider[DicomTags.RescaleType] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.RescaleType].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.RescaleType].SetString(0, value);
 			}
 		}
 	}

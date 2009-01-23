@@ -65,12 +65,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public Modality Modality
 		{
-			get { return ParseEnum(base.DicomAttributeCollection[DicomTags.Modality].GetString(0, string.Empty), Modality.None); }
+			get { return ParseEnum(base.DicomAttributeProvider[DicomTags.Modality].GetString(0, string.Empty), Modality.None); }
 			set
 			{
 				if (value != Modality.PR)
 					throw new ArgumentOutOfRangeException("value", "Modality must be PR.");
-				SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.Modality], value);
+				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.Modality], value);
 			}
 		}
 	}

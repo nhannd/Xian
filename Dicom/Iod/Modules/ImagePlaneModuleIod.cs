@@ -50,9 +50,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="ImagePlaneModuleIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public ImagePlaneModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public ImagePlaneModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -68,8 +66,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <remarks>See Part 3, 10.7.1.3 for more info</remarks>
         public float PixelSpacingRow
         {
-            get { return base.DicomAttributeCollection[DicomTags.PixelSpacing].GetFloat32(0, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.PixelSpacing].SetFloat32(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PixelSpacing].GetFloat32(0, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.PixelSpacing].SetFloat32(0, value); }
         }
 
         /// <summary>
@@ -80,8 +78,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The pixel spacing column.</value>
         public float PixelSpacingColumn
         {
-            get { return base.DicomAttributeCollection[DicomTags.PixelSpacing].GetFloat32(1, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.PixelSpacing].SetFloat32(1, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PixelSpacing].GetFloat32(1, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.PixelSpacing].SetFloat32(1, value); }
         }
 
         /// <summary>
@@ -96,7 +94,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <remarks>See Part 3, C7.6.2.1.1 for more info</remarks>
         public DicomAttribute ImageOrientationPatient
         {
-            get { return base.DicomAttributeCollection[DicomTags.ImageOrientationPatient]; }
+            get { return base.DicomAttributeProvider[DicomTags.ImageOrientationPatient]; }
         }
 
         /// <summary>
@@ -109,7 +107,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <remarks>See Part 3, C7.6.2.1.1 for more info</remarks>
         public DicomAttribute ImagePositionPatient
         {
-            get { return base.DicomAttributeCollection[DicomTags.ImagePositionPatient]; }
+            get { return base.DicomAttributeProvider[DicomTags.ImagePositionPatient]; }
         }
 
         /// <summary>
@@ -118,8 +116,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The slice thickness.</value>
         public float SliceThickness
         {
-            get { return base.DicomAttributeCollection[DicomTags.SliceThickness].GetFloat32(0, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.SliceThickness].SetFloat32(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.SliceThickness].GetFloat32(0, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.SliceThickness].SetFloat32(0, value); }
         }
 
         /// <summary>
@@ -129,8 +127,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <remarks>See part 3, C.7.6.2.1.2 for further explanation.</remarks>
         public float SliceLocation
         {
-            get { return base.DicomAttributeCollection[DicomTags.SliceLocation].GetFloat32(0, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.SliceLocation].SetFloat32(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.SliceLocation].GetFloat32(0, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.SliceLocation].SetFloat32(0, value); }
         }
 
         
@@ -142,7 +140,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </summary>
         public void SetCommonTags()
         {
-            SetCommonTags(base.DicomAttributeCollection);
+            SetCommonTags(base.DicomAttributeProvider);
         }
         #endregion
 
@@ -150,19 +148,18 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Sets the commonly used tags in the specified dicom attribute collection.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public static void SetCommonTags(DicomAttributeCollection dicomAttributeCollection)
+        public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
-            if (dicomAttributeCollection == null)
-                throw new ArgumentNullException("dicomAttributeCollection");
+            if (dicomAttributeProvider == null)
+				throw new ArgumentNullException("dicomAttributeProvider");
 
-            //dicomAttributeCollection[DicomTags.NumberOfCopies].SetNullValue();
-            //dicomAttributeCollection[DicomTags.PrintPriority].SetNullValue();
-            //dicomAttributeCollection[DicomTags.MediumType].SetNullValue();
-            //dicomAttributeCollection[DicomTags.FilmDestination].SetNullValue();
-            //dicomAttributeCollection[DicomTags.FilmSessionLabel].SetNullValue();
-            //dicomAttributeCollection[DicomTags.MemoryAllocation].SetNullValue();
-            //dicomAttributeCollection[DicomTags.OwnerId].SetNullValue();
+            //dicomAttributeProvider[DicomTags.NumberOfCopies].SetNullValue();
+            //dicomAttributeProvider[DicomTags.PrintPriority].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MediumType].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmDestination].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmSessionLabel].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MemoryAllocation].SetNullValue();
+            //dicomAttributeProvider[DicomTags.OwnerId].SetNullValue();
         }
 
 

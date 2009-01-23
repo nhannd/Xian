@@ -250,7 +250,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			foreach (DicomAttributeCollection collection in collectionList)
 			{
 				T iod = new T();
-				iod.DicomAttributeCollection = collection;
+				iod.DicomAttributeProvider = collection;
 				iodList.Add(iod);
 			}
 			return iodList;

@@ -51,9 +51,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="SopCommonModuleIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public SopCommonModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public SopCommonModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -65,8 +63,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The sop class uid.</value>
         public string SopClassUid
         {
-            get { return base.DicomAttributeCollection[DicomTags.SopClassUid].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.SopClassUid].SetStringValue(value); }
+            get { return base.DicomAttributeProvider[DicomTags.SopClassUid].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.SopClassUid].SetStringValue(value); }
         }
 
         /// <summary>
@@ -85,8 +83,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The sop instance uid.</value>
         public string SopInstanceUid
         {
-            get { return base.DicomAttributeCollection[DicomTags.SopInstanceUid].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.SopInstanceUid].SetStringValue(value); }
+            get { return base.DicomAttributeProvider[DicomTags.SopInstanceUid].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.SopInstanceUid].SetStringValue(value); }
         }
 
         /// <summary>
@@ -95,8 +93,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The specific character set.</value>
         public string SpecificCharacterSet
         {
-            get { return base.DicomAttributeCollection[DicomTags.SpecificCharacterSet].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.SpecificCharacterSet].SetStringValue(value); }
+            get { return base.DicomAttributeProvider[DicomTags.SpecificCharacterSet].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.SpecificCharacterSet].SetStringValue(value); }
         }
 
         #endregion

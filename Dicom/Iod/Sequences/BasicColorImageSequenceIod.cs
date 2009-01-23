@@ -68,8 +68,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <remarks>See Part 3, C.7.6.3.1.1 for more info.</remarks>
         public ushort SamplesPerPixel
         {
-            get { return base.DicomAttributeCollection[DicomTags.SamplesPerPixel].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.SamplesPerPixel].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.SamplesPerPixel].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.SamplesPerPixel].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -79,8 +79,14 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The photometric interpretation.</value>
         public PhotometricInterpretation PhotometricInterpretation
         {
-            get { return PhotometricInterpretationHelper.FromString(base.DicomAttributeCollection[DicomTags.PhotometricInterpretation].GetString(0, String.Empty)); }
-            set { base.DicomAttributeCollection[DicomTags.PhotometricInterpretation].SetString(0, value == PhotometricInterpretation.Unknown ? null : PhotometricInterpretationHelper.GetString(value)); }
+            get { return PhotometricInterpretation.FromCodeString(base.DicomAttributeProvider[DicomTags.PhotometricInterpretation].GetString(0, String.Empty)); }
+            set
+            {
+				if (value == null)
+					base.DicomAttributeProvider[DicomTags.PhotometricInterpretation] = null;
+				else
+					base.DicomAttributeProvider[DicomTags.PhotometricInterpretation].SetStringValue(value.Code);
+            }
         }
 
         /// <summary>
@@ -90,8 +96,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The planar configuration.</value>
         public ushort PlanarConfiguration
         {
-            get { return base.DicomAttributeCollection[DicomTags.PlanarConfiguration].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.PlanarConfiguration].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PlanarConfiguration].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.PlanarConfiguration].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -100,8 +106,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The rows.</value>
         public ushort Rows
         {
-            get { return base.DicomAttributeCollection[DicomTags.Rows].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.Rows].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.Rows].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.Rows].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -110,8 +116,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The columns.</value>
         public ushort Columns
         {
-            get { return base.DicomAttributeCollection[DicomTags.Columns].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.Columns].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.Columns].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.Columns].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -120,8 +126,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The pixel aspect ratio.</value>
         public int PixelAspectRatio
         {
-            get { return base.DicomAttributeCollection[DicomTags.PixelAspectRatio].GetInt32(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.PixelAspectRatio].SetInt32(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PixelAspectRatio].GetInt32(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.PixelAspectRatio].SetInt32(0, value); }
         }
 
         /// <summary>
@@ -131,8 +137,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The bits allocated.</value>
         public ushort BitsAllocated
         {
-            get { return base.DicomAttributeCollection[DicomTags.BitsAllocated].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.BitsAllocated].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.BitsAllocated].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.BitsAllocated].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -142,8 +148,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The bits stored.</value>
         public ushort BitsStored
         {
-            get { return base.DicomAttributeCollection[DicomTags.BitsStored].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.BitsStored].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.BitsStored].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.BitsStored].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -153,8 +159,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The high bit.</value>
         public ushort HighBit
         {
-            get { return base.DicomAttributeCollection[DicomTags.HighBit].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.HighBit].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.HighBit].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.HighBit].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -165,8 +171,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The pixel representation.</value>
         public string PixelRepresentation
         {
-            get { return base.DicomAttributeCollection[DicomTags.PixelRepresentation].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PixelRepresentation].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PixelRepresentation].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PixelRepresentation].SetString(0, value); }
         }
 
         /// <summary>
@@ -177,12 +183,13 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         {
             get
             {
-                if (base.DicomAttributeCollection.Contains(DicomTags.PixelData) && !base.DicomAttributeCollection[DicomTags.PixelData].IsEmpty)
-                    return (byte[])base.DicomAttributeCollection[DicomTags.PixelData].Values;
+            	DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.PixelData];
+				if (!attribute.IsNull && !attribute.IsEmpty)
+                    return (byte[])attribute.Values;
                 else
                     return null;
             }
-            set { base.DicomAttributeCollection[DicomTags.PixelData].Values = value; }
+            set { base.DicomAttributeProvider[DicomTags.PixelData].Values = value; }
         }
 
         #endregion

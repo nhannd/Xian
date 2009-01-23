@@ -62,8 +62,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The referenced sop class uid.</value>
 		public string ReferencedSopClassUid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ReferencedSopClassUid].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.ReferencedSopClassUid].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.ReferencedSopClassUid].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.ReferencedSopClassUid].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -72,8 +72,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The referenced sop instance uid.</value>
 		public string ReferencedSopInstanceUid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ReferencedSopInstanceUid].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.ReferencedSopInstanceUid].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.ReferencedSopInstanceUid].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.ReferencedSopInstanceUid].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -88,7 +88,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The referenced frame number.</value>
 		public DicomAttributeIS ReferencedFrameNumber
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ReferencedFrameNumber] as DicomAttributeIS; }
+			get { return base.DicomAttributeProvider[DicomTags.ReferencedFrameNumber] as DicomAttributeIS; }
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The referenced segment number.</value>
 		public DicomAttributeUS ReferencedSegmentNumber
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ReferencedSegmentNumber] as DicomAttributeUS; }
+			get { return base.DicomAttributeProvider[DicomTags.ReferencedSegmentNumber] as DicomAttributeUS; }
 		}
 
 		#endregion

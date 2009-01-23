@@ -33,64 +33,90 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.Dicom.Iod
 {
-	/// <summary>
-	/// Enumeration of photometric interpretations.
-	/// </summary>
-	public enum PhotometricInterpretation
-    {
-        Unknown = 0,
-        Monochrome1,
-        Monochrome2,
-        PaletteColor,
-        Rgb,
-        YbrFull,
-        YbrFull422,
-        YbrPartial422,
-        YbrIct,
-        YbrRct
-    }
+	public class PhotometricInterpretation
+	{
+		public static PhotometricInterpretation Unknown = new PhotometricInterpretation("Unknown", "", false);
 
-    /// <summary>
-    /// Helper class for converting between strings and <see cref="PhotometricInterpretation"/>s.
-    /// </summary>
-	public class PhotometricInterpretationHelper
-    {
-        static private Dictionary<PhotometricInterpretation, string> _dictionaryPhotometricInterpretation;
-        static PhotometricInterpretationHelper()
-        {
-            _dictionaryPhotometricInterpretation = new Dictionary<PhotometricInterpretation, string>();
-            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.Unknown, "UNKNOWN");
-            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.Monochrome1, "MONOCHROME1");
-            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.Monochrome2, "MONOCHROME2");
-            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.PaletteColor, "PALETTE COLOR");
-            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.Rgb, "RGB");
-            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.YbrFull, "YBR_FULL");
-            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.YbrFull422, "YBR_FULL_422");
-            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.YbrIct, "YBR_ICT");
-            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.YbrPartial422, "YBR_PARTIAL_422");
-            _dictionaryPhotometricInterpretation.Add(PhotometricInterpretation.YbrRct, "YBR_RCT");
-        }
+		public static PhotometricInterpretation Monochrome1 = new PhotometricInterpretation("Monochrome1", "MONOCHROME1", false);
+		public static PhotometricInterpretation Monochrome2 = new PhotometricInterpretation("Monochrome2", "MONOCHROME2", false);
+		public static PhotometricInterpretation PaletteColor = new PhotometricInterpretation("Palette Color", "PALETTE COLOR", true);
+		public static PhotometricInterpretation Rgb = new PhotometricInterpretation("Rgb", "RGB", true);
+		public static PhotometricInterpretation YbrFull = new PhotometricInterpretation("Ybr Full", "YBR_FULL", true);
+		public static PhotometricInterpretation YbrFull422 = new PhotometricInterpretation("Ybr (Full 4-2-2)", "YBR_FULL_422", true);
+		public static PhotometricInterpretation YbrIct = new PhotometricInterpretation("Ybr (Ict)", "YBR_ICT", true);
+		public static PhotometricInterpretation YbrPartial422 = new PhotometricInterpretation("Ybr (Partial 4-2-2)", "YBR_PARTIAL_422", true);
+		public static PhotometricInterpretation YbrRct = new PhotometricInterpretation("Ybr (Rct)", "YBR_RCT", true);
 
-        public static string GetString(PhotometricInterpretation pi)
-        {
-            if (_dictionaryPhotometricInterpretation.ContainsKey(pi))
-                return _dictionaryPhotometricInterpretation[pi];
-            else
-                return null;
-        }
+		private static readonly Dictionary<string, PhotometricInterpretation> _photometricInterpretations = new Dictionary<string, PhotometricInterpretation>();
 
-		public static PhotometricInterpretation FromString(string photometricInterpretation)
+		private readonly string _name;
+		private readonly string _code;
+		private readonly bool _isColor;
+
+		internal PhotometricInterpretation(string name, string code, bool isColor)
 		{
-			foreach (KeyValuePair<PhotometricInterpretation, string> pair in _dictionaryPhotometricInterpretation)
-			{
-				if (pair.Key == PhotometricInterpretation.Unknown)
-					continue;
-
-				if (photometricInterpretation == pair.Value)
-					return pair.Key;
-			}
-
-			return PhotometricInterpretation.Unknown;
+			_name = name;
+			_code = code;
+			_isColor = isColor;
 		}
-    }
+
+		static PhotometricInterpretation()
+		{
+			Add(Monochrome1);
+			Add(Monochrome2);
+			Add(PaletteColor);
+			Add(Rgb);
+			Add(YbrFull);
+			Add(YbrFull422);
+			Add(YbrIct);
+			Add(YbrPartial422);
+			Add(YbrRct);
+		}
+
+		private static void Add(PhotometricInterpretation photometricInterpretation)
+		{
+			_photometricInterpretations.Add(photometricInterpretation.Code, photometricInterpretation);
+		}
+
+		public string Name
+		{
+			get { return _name;	}
+		}
+
+		public string Code
+		{
+			get { return _code; }	
+		}
+
+		public bool IsColor
+		{
+			get { return _isColor; }
+		}
+
+		public override int GetHashCode()
+		{
+			return _code.GetHashCode();
+		}
+
+		public override bool Equals(object obj)
+		{
+ 			 if (obj is PhotometricInterpretation)
+ 			 	return ((PhotometricInterpretation) obj).Code == this.Code;
+
+			return base.Equals(obj);
+		}
+
+		public override string ToString()
+		{
+			return _name;
+		}
+				
+		public static PhotometricInterpretation FromCodeString(string codeString)
+		{
+			if (_photometricInterpretations.ContainsKey(codeString ?? ""))
+				return _photometricInterpretations[codeString];
+
+			return Unknown;
+		}
+	}
 }

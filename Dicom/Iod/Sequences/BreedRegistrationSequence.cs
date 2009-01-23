@@ -63,12 +63,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string BreedRegistrationNumber
 		{
-			get { return base.DicomAttributeCollection[DicomTags.BreedRegistrationNumber].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.BreedRegistrationNumber].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "BreedRegistrationNumber is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.BreedRegistrationNumber].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.BreedRegistrationNumber].SetString(0, value);
 			}
 		}
 
@@ -79,14 +79,14 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.BreedRegistryCodeSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.BreedRegistryCodeSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					return null;
 				return new BreedRegistryCodeSequence(((DicomSequenceItem[]) dicomAttribute.Values)[0]);
 			}
 			set
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.BreedRegistryCodeSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.BreedRegistryCodeSequence];
 				if (value == null)
 					throw new ArgumentNullException("value", "BreedRegistryCodeSequence is Type 1 Required.");
 				dicomAttribute.Values = new DicomSequenceItem[] {value.DicomSequenceItem};

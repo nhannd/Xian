@@ -49,20 +49,19 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SpatialTransformModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public SpatialTransformModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public SpatialTransformModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		/// <summary>
 		/// Gets or sets the value of ImageRotation in the underlying collection. Type 1.
 		/// </summary>
 		public int ImageRotation
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ImageRotation].GetInt32(0, 0); }
+			get { return base.DicomAttributeProvider[DicomTags.ImageRotation].GetInt32(0, 0); }
 			set
 			{
 				if (value % 90 != 0)
 					throw new ArgumentOutOfRangeException("value", "ImageRotation must be one of 0, 90, 180 or 270.");
-				base.DicomAttributeCollection[DicomTags.ImageRotation].SetInt32(0, ((value % 360) + 360) % 360); // this ensures that the value stored is positive and < 360
+				base.DicomAttributeProvider[DicomTags.ImageRotation].SetInt32(0, ((value % 360) + 360) % 360); // this ensures that the value stored is positive and < 360
 			}
 		}
 
@@ -71,12 +70,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public ImageHorizontalFlip ImageHorizontalFlip
 		{
-			get { return ParseEnum(base.DicomAttributeCollection[DicomTags.ImageHorizontalFlip].GetString(0, string.Empty), ImageHorizontalFlip.None); }
+			get { return ParseEnum(base.DicomAttributeProvider[DicomTags.ImageHorizontalFlip].GetString(0, string.Empty), ImageHorizontalFlip.None); }
 			set
 			{
 				if (value == ImageHorizontalFlip.None)
 					throw new ArgumentOutOfRangeException("value", "ImageHorizontalFlip is Type 1 Required.");
-				SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.ImageHorizontalFlip], value);
+				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.ImageHorizontalFlip], value);
 			}
 		}
 	}

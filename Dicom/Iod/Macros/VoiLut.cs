@@ -92,7 +92,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.VoiLutSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.VoiLutSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -109,7 +109,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				if (value == null || value.Length == 0)
 				{
-					base.DicomAttributeCollection[DicomTags.VoiLutSequence] = null;
+					base.DicomAttributeProvider[DicomTags.VoiLutSequence] = null;
 					return;
 				}
 
@@ -117,7 +117,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeCollection[DicomTags.VoiLutSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.VoiLutSequence].Values = result;
 			}
 		}
 
@@ -128,7 +128,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		{
 			get
 			{
-				DicomAttribute attribute = base.DicomAttributeCollection[DicomTags.WindowCenter];
+				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowCenter];
 				if (attribute.IsNull || attribute.IsEmpty)
 					return null;
 				return (double[]) attribute.Values;
@@ -137,10 +137,10 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				if (value == null)
 				{
-					base.DicomAttributeCollection[DicomTags.WindowCenter] = null;
+					base.DicomAttributeProvider[DicomTags.WindowCenter] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.WindowCenter].Values = value;
+				base.DicomAttributeProvider[DicomTags.WindowCenter].Values = value;
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		{
 			get
 			{
-				DicomAttribute attribute = base.DicomAttributeCollection[DicomTags.WindowWidth];
+				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowWidth];
 				if (attribute.IsNull || attribute.IsEmpty)
 					return null;
 				return (byte[]) attribute.Values;
@@ -160,10 +160,10 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				if (value == null)
 				{
-					base.DicomAttributeCollection[DicomTags.WindowWidth] = null;
+					base.DicomAttributeProvider[DicomTags.WindowWidth] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.WindowWidth].Values = value;
+				base.DicomAttributeProvider[DicomTags.WindowWidth].Values = value;
 			}
 		}
 
@@ -172,15 +172,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public string WindowCenterWidthExplanation
 		{
-			get { return base.DicomAttributeCollection[DicomTags.WindowCenterWidthExplanation].ToString(); }
+			get { return base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation].ToString(); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.WindowCenterWidthExplanation] = null;
+					base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.WindowCenterWidthExplanation].SetStringValue(value);
+				base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation].SetStringValue(value);
 			}
 		}
 
@@ -189,15 +189,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public string VoiLutFunction
 		{
-			get { return base.DicomAttributeCollection[DicomTags.VoiLutFunction].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.VoiLutFunction].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.VoiLutFunction] = null;
+					base.DicomAttributeProvider[DicomTags.VoiLutFunction] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.VoiLutFunction].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.VoiLutFunction].SetString(0, value);
 			}
 		}
 	}
@@ -229,9 +229,9 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				get
 				{
 					int[] result = new int[3];
-					if (base.DicomAttributeCollection[DicomTags.LutDescriptor].TryGetInt32(0, out result[0]))
-						if (base.DicomAttributeCollection[DicomTags.LutDescriptor].TryGetInt32(1, out result[1]))
-							if (base.DicomAttributeCollection[DicomTags.LutDescriptor].TryGetInt32(2, out result[2]))
+					if (base.DicomAttributeProvider[DicomTags.LutDescriptor].TryGetInt32(0, out result[0]))
+						if (base.DicomAttributeProvider[DicomTags.LutDescriptor].TryGetInt32(1, out result[1]))
+							if (base.DicomAttributeProvider[DicomTags.LutDescriptor].TryGetInt32(2, out result[2]))
 								return result;
 					return null;
 				}
@@ -239,9 +239,9 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				{
 					if (value == null || value.Length != 3)
 						throw new ArgumentNullException("value", "LutDescriptor is Type 1 Required.");
-					base.DicomAttributeCollection[DicomTags.LutDescriptor].SetInt32(0, value[0]);
-					base.DicomAttributeCollection[DicomTags.LutDescriptor].SetInt32(1, value[1]);
-					base.DicomAttributeCollection[DicomTags.LutDescriptor].SetInt32(2, value[2]);
+					base.DicomAttributeProvider[DicomTags.LutDescriptor].SetInt32(0, value[0]);
+					base.DicomAttributeProvider[DicomTags.LutDescriptor].SetInt32(1, value[1]);
+					base.DicomAttributeProvider[DicomTags.LutDescriptor].SetInt32(2, value[2]);
 				}
 			}
 
@@ -250,15 +250,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public string LutExplanation
 			{
-				get { return base.DicomAttributeCollection[DicomTags.LutExplanation].GetString(0, string.Empty); }
+				get { return base.DicomAttributeProvider[DicomTags.LutExplanation].GetString(0, string.Empty); }
 				set
 				{
 					if (string.IsNullOrEmpty(value))
 					{
-						base.DicomAttributeCollection[DicomTags.LutExplanation] = null;
+						base.DicomAttributeProvider[DicomTags.LutExplanation] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.LutExplanation].SetString(0, value);
+					base.DicomAttributeProvider[DicomTags.LutExplanation].SetString(0, value);
 				}
 			}
 
@@ -269,7 +269,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				get
 				{
-					DicomAttribute attribute = base.DicomAttributeCollection[DicomTags.LutData];
+					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.LutData];
 					if (attribute.IsNull || attribute.IsEmpty || attribute.Count == 0)
 						return null;
 					return (byte[]) attribute.Values;
@@ -278,10 +278,10 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				{
 					if (value == null)
 					{
-						base.DicomAttributeCollection[DicomTags.LutData] = null;
+						base.DicomAttributeProvider[DicomTags.LutData] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.LutData].Values = value;
+					base.DicomAttributeProvider[DicomTags.LutData].Values = value;
 				}
 			}
 		}

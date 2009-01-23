@@ -48,8 +48,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BitmapDisplayShutterModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public BitmapDisplayShutterModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public BitmapDisplayShutterModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		// TODO #1568: Implement Bitmap Display Shutter Module when user-shutters are implemented (Conditional module for GSPS IOD)
 	}

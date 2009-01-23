@@ -39,19 +39,17 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <summary>
 		/// Initializes a new instance of the <see cref="QueryIodBase"/> class.
         /// </summary>
-        public QueryIodBase()            
+        public QueryIodBase() : base()
         {
-            SetAttributeFromEnum(DicomAttributeCollection[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Series);
+            SetAttributeFromEnum(DicomAttributeProvider[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Series);
         }
 
         /// <summary>
 		/// Initializes a new instance of the <see cref="QueryIodBase"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public QueryIodBase(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public QueryIodBase(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
-            SetAttributeFromEnum(DicomAttributeCollection[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Series);
+            SetAttributeFromEnum(DicomAttributeProvider[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Series);
         }
         #endregion
 
@@ -62,8 +60,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// <value>The specific character set.</value>
 		public string SpecificCharacterSet
 		{
-			get { return DicomAttributeCollection[DicomTags.SpecificCharacterSet].GetString(0, String.Empty); }
-			set { DicomAttributeCollection[DicomTags.SpecificCharacterSet].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.SpecificCharacterSet].GetString(0, String.Empty); }
+			set { DicomAttributeProvider[DicomTags.SpecificCharacterSet].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -72,8 +70,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// <value>The Retrieve AE Title.</value>
 		public string RetrieveAeTitle
 		{
-			get { return DicomAttributeCollection[DicomTags.RetrieveAeTitle].GetString(0, String.Empty); }
-			set { DicomAttributeCollection[DicomTags.RetrieveAeTitle].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.RetrieveAeTitle].GetString(0, String.Empty); }
+			set { DicomAttributeProvider[DicomTags.RetrieveAeTitle].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -82,8 +80,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// <value>The media Fileset Id.</value>
 		public string StorageMediaFileSetId
 		{
-			get { return DicomAttributeCollection[DicomTags.StorageMediaFileSetId].GetString(0, String.Empty); }
-			set { DicomAttributeCollection[DicomTags.StorageMediaFileSetId].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.StorageMediaFileSetId].GetString(0, String.Empty); }
+			set { DicomAttributeProvider[DicomTags.StorageMediaFileSetId].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -92,8 +90,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// <value>The media Fileset Uid.</value>
 		public string StorageMediaFileSetUid
 		{
-			get { return DicomAttributeCollection[DicomTags.StorageMediaFileSetUid].GetString(0, String.Empty); }
-			set { DicomAttributeCollection[DicomTags.StorageMediaFileSetUid].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.StorageMediaFileSetUid].GetString(0, String.Empty); }
+			set { DicomAttributeProvider[DicomTags.StorageMediaFileSetUid].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -104,11 +102,11 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		{
 			get
 			{
-				if (!DicomAttributeCollection[DicomTags.QueryRetrieveLevel].IsEmpty)
+				if (!DicomAttributeProvider[DicomTags.QueryRetrieveLevel].IsEmpty)
 				{
 					try
 					{
-						return (QueryRetrieveLevel)Enum.Parse(typeof(QueryRetrieveLevel), DicomAttributeCollection[DicomTags.QueryRetrieveLevel].GetString(0, QueryRetrieveLevel.None.ToString()), true);
+						return (QueryRetrieveLevel)Enum.Parse(typeof(QueryRetrieveLevel), DicomAttributeProvider[DicomTags.QueryRetrieveLevel].GetString(0, QueryRetrieveLevel.None.ToString()), true);
 					}
 					catch (Exception)
 					{
@@ -120,7 +118,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
 			}
 			set
 			{
-				SetAttributeFromEnum(DicomAttributeCollection[DicomTags.QueryRetrieveLevel], value);
+				SetAttributeFromEnum(DicomAttributeProvider[DicomTags.QueryRetrieveLevel], value);
 			}
 		}
 
@@ -131,11 +129,11 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		{
 			get
 			{
-				if (!DicomAttributeCollection[DicomTags.InstanceAvailability].IsEmpty)
+				if (!DicomAttributeProvider[DicomTags.InstanceAvailability].IsEmpty)
 				{
 					try
 					{
-						return (InstanceAvailability)Enum.Parse(typeof(InstanceAvailability), DicomAttributeCollection[DicomTags.InstanceAvailability].GetString(0, InstanceAvailability.Unknown.ToString()), true);
+						return (InstanceAvailability)Enum.Parse(typeof(InstanceAvailability), DicomAttributeProvider[DicomTags.InstanceAvailability].GetString(0, InstanceAvailability.Unknown.ToString()), true);
 					}
 					catch (Exception)
 					{
@@ -144,7 +142,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
 				}
 				return InstanceAvailability.Unknown;
 			}
-			set { SetAttributeFromEnum(DicomAttributeCollection[DicomTags.InstanceAvailability], value); }
+			set { SetAttributeFromEnum(DicomAttributeProvider[DicomTags.InstanceAvailability], value); }
 		}
 	}
 

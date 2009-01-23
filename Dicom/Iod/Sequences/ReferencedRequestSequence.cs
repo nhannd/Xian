@@ -55,8 +55,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string StudyInstanceUid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.StudyInstanceUid].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.StudyInstanceUid].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.StudyInstanceUid].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.StudyInstanceUid].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -66,20 +66,20 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		{
 			get
 			{
-				if (base.DicomAttributeCollection[DicomTags.ReferencedStudySequence].Count == 0)
+				if (base.DicomAttributeProvider[DicomTags.ReferencedStudySequence].Count == 0)
 				{
 					return null;
 				}
-				return new SopInstanceReferenceMacro(((DicomSequenceItem[]) base.DicomAttributeCollection[DicomTags.ReferencedStudySequence].Values)[0]);
+				return new SopInstanceReferenceMacro(((DicomSequenceItem[]) base.DicomAttributeProvider[DicomTags.ReferencedStudySequence].Values)[0]);
 			}
 			set
 			{
 				if (value == null)
 				{
-					base.DicomAttributeCollection[DicomTags.ReferencedStudySequence] = null;
+					base.DicomAttributeProvider[DicomTags.ReferencedStudySequence] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ReferencedStudySequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+				base.DicomAttributeProvider[DicomTags.ReferencedStudySequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
 			}
 		}
 
@@ -88,8 +88,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string AccessionNumber
 		{
-			get { return base.DicomAttributeCollection[DicomTags.AccessionNumber].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.AccessionNumber].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.AccessionNumber].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.AccessionNumber].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -97,8 +97,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string PlacerOrderNumberImagingServiceRequest
 		{
-			get { return base.DicomAttributeCollection[DicomTags.PlacerOrderNumberImagingServiceRequest].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.PlacerOrderNumberImagingServiceRequest].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.PlacerOrderNumberImagingServiceRequest].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.PlacerOrderNumberImagingServiceRequest].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -106,8 +106,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string FillerOrderNumberImagingServiceRequest
 		{
-			get { return base.DicomAttributeCollection[DicomTags.FillerOrderNumberImagingServiceRequest].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.FillerOrderNumberImagingServiceRequest].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.FillerOrderNumberImagingServiceRequest].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.FillerOrderNumberImagingServiceRequest].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -115,8 +115,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string RequestedProcedureId
 		{
-			get { return base.DicomAttributeCollection[DicomTags.RequestedProcedureId].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.RequestedProcedureId].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.RequestedProcedureId].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.RequestedProcedureId].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -124,8 +124,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string RequestedProcedureDescription
 		{
-			get { return base.DicomAttributeCollection[DicomTags.RequestedProcedureDescription].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.RequestedProcedureDescription].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.RequestedProcedureDescription].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.RequestedProcedureDescription].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -135,20 +135,20 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		{
 			get
 			{
-				if (base.DicomAttributeCollection[DicomTags.RequestedProcedureCodeSequence].Count == 0)
+				if (base.DicomAttributeProvider[DicomTags.RequestedProcedureCodeSequence].Count == 0)
 				{
 					return null;
 				}
-				return new CodeSequenceMacro(((DicomSequenceItem[]) base.DicomAttributeCollection[DicomTags.RequestedProcedureCodeSequence].Values)[0]);
+				return new CodeSequenceMacro(((DicomSequenceItem[]) base.DicomAttributeProvider[DicomTags.RequestedProcedureCodeSequence].Values)[0]);
 			}
 			set
 			{
 				if (value == null)
 				{
-					base.DicomAttributeCollection[DicomTags.RequestedProcedureCodeSequence] = null;
+					base.DicomAttributeProvider[DicomTags.RequestedProcedureCodeSequence] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.RequestedProcedureCodeSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+				base.DicomAttributeProvider[DicomTags.RequestedProcedureCodeSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
 			}
 		}
 	}

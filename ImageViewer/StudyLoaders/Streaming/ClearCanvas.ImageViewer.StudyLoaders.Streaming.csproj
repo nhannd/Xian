@@ -43,8 +43,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StreamingFrame.cs" />
-    <Compile Include="StreamingImageSop.cs" />
+    <Compile Include="StreamingSopDataSource.cs" />
     <Compile Include="StreamingSettings.cs" />
     <Compile Include="StreamingSettings.Designer.cs">
       <AutoGen>True</AutoGen>

@@ -51,9 +51,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageBoxPixelModuleIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public ImageBoxPixelModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public ImageBoxPixelModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -67,8 +65,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The image box position.</value>
         public ushort ImageBoxPosition
         {
-            get { return base.DicomAttributeCollection[DicomTags.ImageBoxPosition].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.ImageBoxPosition].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ImageBoxPosition].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.ImageBoxPosition].SetUInt16(0, value); }
         }
         /// <summary>
         /// Gets or sets the polarity. Specifies whether minimum pixel values (after VOI 3LUT transformation) are to printed black or white.
@@ -77,8 +75,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The polarity.</value>
         public Polarity Polarity
         {
-            get { return IodBase.ParseEnum<Polarity>(base.DicomAttributeCollection[DicomTags.Polarity].GetString(0, String.Empty), Polarity.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.Polarity], value, false); }
+            get { return IodBase.ParseEnum<Polarity>(base.DicomAttributeProvider[DicomTags.Polarity].GetString(0, String.Empty), Polarity.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.Polarity], value, false); }
         }
 
         /// <summary>
@@ -87,8 +85,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The type of the magnification.</value>
         public MagnificationType MagnificationType
         {
-            get { return IodBase.ParseEnum<MagnificationType>(base.DicomAttributeCollection[DicomTags.MagnificationType].GetString(0, String.Empty), MagnificationType.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.MagnificationType], value, false); }
+            get { return IodBase.ParseEnum<MagnificationType>(base.DicomAttributeProvider[DicomTags.MagnificationType].GetString(0, String.Empty), MagnificationType.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.MagnificationType], value, false); }
         }
 
         /// <summary>
@@ -97,8 +95,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The type of the smoothing.</value>
         public SmoothingType SmoothingType
         {
-            get { return IodBase.ParseEnum<SmoothingType>(base.DicomAttributeCollection[DicomTags.SmoothingType].GetString(0, String.Empty), SmoothingType.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.SmoothingType], value, false); }
+            get { return IodBase.ParseEnum<SmoothingType>(base.DicomAttributeProvider[DicomTags.SmoothingType].GetString(0, String.Empty), SmoothingType.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.SmoothingType], value, false); }
         }
 
         /// <summary>
@@ -107,8 +105,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The configuration information.</value>
         public string ConfigurationInformation
         {
-            get { return base.DicomAttributeCollection[DicomTags.ConfigurationInformation].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ConfigurationInformation].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ConfigurationInformation].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ConfigurationInformation].SetString(0, value); }
         }
 
         /// <summary>
@@ -118,8 +116,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The size of the requested image.</value>
         public float RequestedImageSize
         {
-            get { return base.DicomAttributeCollection[DicomTags.RequestedImageSize].GetFloat32(0, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.RequestedImageSize].SetFloat32(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.RequestedImageSize].GetFloat32(0, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.RequestedImageSize].SetFloat32(0, value); }
         }
 
         /// <summary>
@@ -128,8 +126,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The requested decimate crop behavior.</value>
         public DecimateCropBehavior RequestedDecimateCropBehavior
         {
-            get { return IodBase.ParseEnum<DecimateCropBehavior>(base.DicomAttributeCollection[DicomTags.RequestedDecimateCropBehavior].GetString(0, String.Empty), DecimateCropBehavior.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.RequestedDecimateCropBehavior], value, false); }
+            get { return IodBase.ParseEnum<DecimateCropBehavior>(base.DicomAttributeProvider[DicomTags.RequestedDecimateCropBehavior].GetString(0, String.Empty), DecimateCropBehavior.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.RequestedDecimateCropBehavior], value, false); }
         }
 
 
@@ -141,7 +139,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<BasicGrayscaleImageSequenceIod>(base.DicomAttributeCollection[DicomTags.BasicGrayscaleImageSequence] as DicomAttributeSQ);
+                return new SequenceIodList<BasicGrayscaleImageSequenceIod>(base.DicomAttributeProvider[DicomTags.BasicGrayscaleImageSequence] as DicomAttributeSQ);
             }
         }
 
@@ -153,7 +151,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<BasicColorImageSequenceIod>(base.DicomAttributeCollection[DicomTags.BasicColorImageSequence] as DicomAttributeSQ);
+                return new SequenceIodList<BasicColorImageSequenceIod>(base.DicomAttributeProvider[DicomTags.BasicColorImageSequence] as DicomAttributeSQ);
             }
         }
 
@@ -165,7 +163,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </summary>
         public void SetCommonTags()
         {
-            SetCommonTags(base.DicomAttributeCollection);
+            SetCommonTags(base.DicomAttributeProvider);
         }
         #endregion
 
@@ -173,19 +171,18 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Sets the commonly used tags in the specified dicom attribute collection.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public static void SetCommonTags(DicomAttributeCollection dicomAttributeCollection)
+        public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
-            if (dicomAttributeCollection == null)
-                throw new ArgumentNullException("dicomAttributeCollection");
+            if (dicomAttributeProvider == null)
+				throw new ArgumentNullException("dicomAttributeProvider");
 
-            //dicomAttributeCollection[DicomTags.NumberOfCopies].SetNullValue();
-            //dicomAttributeCollection[DicomTags.PrintPriority].SetNullValue();
-            //dicomAttributeCollection[DicomTags.MediumType].SetNullValue();
-            //dicomAttributeCollection[DicomTags.FilmDestination].SetNullValue();
-            //dicomAttributeCollection[DicomTags.FilmSessionLabel].SetNullValue();
-            //dicomAttributeCollection[DicomTags.MemoryAllocation].SetNullValue();
-            //dicomAttributeCollection[DicomTags.OwnerId].SetNullValue();
+            //dicomAttributeProvider[DicomTags.NumberOfCopies].SetNullValue();
+            //dicomAttributeProvider[DicomTags.PrintPriority].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MediumType].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmDestination].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmSessionLabel].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MemoryAllocation].SetNullValue();
+            //dicomAttributeProvider[DicomTags.OwnerId].SetNullValue();
         }
 
 

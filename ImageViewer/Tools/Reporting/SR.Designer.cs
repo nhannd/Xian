@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Key Images (current).
+        /// </summary>
+        internal static string LabelKeyImageCurrentDisplaySet {
+            get {
+                return ResourceManager.GetString("LabelKeyImageCurrentDisplaySet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create Key Object Selection.
         /// </summary>
         internal static string MenuCreateKeyObjectSelection {

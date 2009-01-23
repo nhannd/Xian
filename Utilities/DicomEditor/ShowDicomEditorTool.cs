@@ -112,7 +112,13 @@ namespace ClearCanvas.Utilities.DicomEditor
                     _desktopWindow.ShowMessageBox(SR.MessagePleaseSelectAnImage, MessageBoxActions.Ok);
                     return;
                 }
-                DicomFile file = image.ImageSop.NativeDicomObject as DicomFile;
+
+            	IDicomMessageSopDataSource dataSource = image.ImageSop.DataSource as IDicomMessageSopDataSource;
+				if (dataSource == null || dataSource.SourceMessage ==  null)
+				{
+					 _desktopWindow.ShowMessageBox(SR.MessageUnknownDataSource, MessageBoxActions.Ok);
+					return;
+				}
 
                 //Fix for Ticket #623 - HH - It turns out that for memory usage optimization the pixel data tag is stripped from the in memory dataset.  
                 //So while there are probably many better ways to address the missing pixel data tag a small hack was introduced because this entire utility will 
@@ -132,7 +138,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                     _component.Clear();
                 }
 
-                _component.Load(file);
+                _component.Load(dataSource.SourceMessage);
             }
             else if (this.ContextBase is ILocalImageExplorerToolContext)
             {

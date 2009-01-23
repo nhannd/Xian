@@ -68,7 +68,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
         {
             get
             {
-                return new SequenceIodList<ReferencedSeriesSequenceIod>(base.DicomAttributeCollection[DicomTags.ReferencedSeriesSequence] as DicomAttributeSQ);
+                return new SequenceIodList<ReferencedSeriesSequenceIod>(base.DicomAttributeProvider[DicomTags.ReferencedSeriesSequence] as DicomAttributeSQ);
             }
         } 
         #endregion

@@ -40,8 +40,7 @@ namespace ClearCanvas.Dicom.Iod
         /// <summary>
         /// Initializes a new instance of the <see cref="SequenceIodBase"/> class.
         /// </summary>
-        protected SequenceIodBase()
-            :base(new DicomSequenceItem())
+        protected SequenceIodBase() : base(new DicomSequenceItem())
         {
         }
 
@@ -49,11 +48,11 @@ namespace ClearCanvas.Dicom.Iod
         /// Initializes a new instance of the <see cref="SequenceIodBase"/> class.
         /// </summary>
         /// <param name="dicomSequenceItem">The dicom sequence item.</param>
-        protected SequenceIodBase(DicomSequenceItem dicomSequenceItem)
-            :base(dicomSequenceItem)
+        protected SequenceIodBase(DicomSequenceItem dicomSequenceItem) : base(dicomSequenceItem)
         {
         }
-        #endregion
+
+		#endregion
 
         #region Public Properties
         /// <summary>
@@ -62,8 +61,8 @@ namespace ClearCanvas.Dicom.Iod
         /// <value>The dicom sequence item.</value>
         public DicomSequenceItem DicomSequenceItem
         {
-            get { return base.DicomAttributeCollection as DicomSequenceItem; }
-            set { base.DicomAttributeCollection = value; }
+            get { return base.DicomAttributeProvider as DicomSequenceItem; }
+            set { base.DicomAttributeProvider = value; }
         }
         #endregion
     }

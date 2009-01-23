@@ -50,9 +50,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <summary>
         /// Initializes a new instance of the <see cref="ImageIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public ImageIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+        public ImageIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion

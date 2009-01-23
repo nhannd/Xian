@@ -9,29 +9,31 @@ using ClearCanvas.Dicom.Iod.Macros.DocumentRelationship;
 using ClearCanvas.Dicom.Iod.Macros.HierarchicalSeriesInstanceReference;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common;
+using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.KeyObjects
 {
-	public class KeyObjectSelection
+	public class KeyObjectSerializer
 	{
-		private readonly List<ImageSop> _images;
-		private readonly List<string> _docTitleMods;
-		private DateTime _datetime = DateTime.Now;
+		private readonly List<Frame> _frames;
+		//private readonly List<string> _docTitleMods;
+		private DateTime _datetime;
 		private string _description;
 		private string _seriesDescription;
-		private int _seriesNum = 1;
+		private int _seriesNumber;
 		private KeyObjectSelectionDocumentTitle _docTitle = KeyObjectSelectionDocumentTitleContextGroup.OfInterest;
 
-		public KeyObjectSelection()
+		public KeyObjectSerializer()
 		{
-			_images = new List<ImageSop>();
-			_datetime = DateTime.Now;
-			_docTitleMods = new List<string>();
+			_frames = new List<Frame>();
+			_datetime = Platform.Time;
+			_seriesNumber = 1;
 		}
 
-		public IList<ImageSop> Images
+		public IList<Frame> Frames
 		{
-			get { return _images; }
+			get { return _frames; }
 		}
 
 		//public IList<string> DocumentTitleModifiers
@@ -59,8 +61,8 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 		public int SeriesNumber
 		{
-			get { return _seriesNum; }
-			set { _seriesNum = value; }
+			get { return _seriesNumber; }
+			set { _seriesNumber = value; }
 		}
 
 		public KeyObjectSelectionDocumentTitle DocumentTitle
@@ -69,26 +71,20 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			set { _docTitle = value; }
 		}
 
-		public void Save(string filename)
+		public DicomFile Serialize()
 		{
-			DicomFile dcf = this.ToDicomFile();
-			dcf.Save(filename);
-		}
-
-		public DicomFile ToDicomFile()
-		{
-			if (_images.Count == 0)
+			if (_frames.Count == 0)
 				throw new InvalidOperationException("Key object selection cannot be empty.");
 
 			DicomFile dcf = new DicomFile();
-			KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(_images[0].NativeDicomObject.DataSet, dcf.DataSet);
+			KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(_frames[0].ParentImageSop.DataSource, dcf.DataSet);
 
 			iod.KeyObjectDocumentSeries.InitializeAttributes();
 			iod.KeyObjectDocumentSeries.Modality = Modality.KO;
 			iod.KeyObjectDocumentSeries.SeriesDateTime = _datetime;
 			iod.KeyObjectDocumentSeries.SeriesDescription = _seriesDescription;
 			iod.KeyObjectDocumentSeries.SeriesInstanceUid = DicomUid.GenerateUid().UID;
-			iod.KeyObjectDocumentSeries.SeriesNumber = _seriesNum;
+			iod.KeyObjectDocumentSeries.SeriesNumber = _seriesNumber;
 			iod.KeyObjectDocumentSeries.ReferencedPerformedProcedureStepSequence = null;
 
 			iod.SopCommon.SopClass = SopClass.KeyObjectSelectionDocumentStorage;
@@ -107,8 +103,19 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			List<IContentSequence> contentList = new List<IContentSequence>();
 			List<IHierarchicalSopInstanceReferenceMacro> currentRequestedProcedureEvidenceList = new List<IHierarchicalSopInstanceReferenceMacro>();
 
+			Dictionary<ImageSop, List<int>> frameMap = new Dictionary<ImageSop, List<int>>();
+			foreach (Frame frame in _frames)
+			{
+				if (!frameMap.ContainsKey(frame.ParentImageSop))
+					frameMap.Add(frame.ParentImageSop, new List<int>());
+
+				List<int> frames = frameMap[frame.ParentImageSop];
+				if (!frames.Contains(frame.FrameNumber))
+					frames.Add(frame.FrameNumber);
+			}
+
 			// add images to content
-			foreach (ImageSop imageSop in _images)
+			foreach (ImageSop sop in frameMap.Keys)
 			{
 				IContentSequence content = iod.SrDocumentContent.CreateContentSequence();
 				{
@@ -117,9 +124,13 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 					IImageReferenceMacro imgMac = content.InitializeImageReferenceAttributes();
 					imgMac.ReferencedSopSequence.InitializeAttributes();
-					imgMac.ReferencedSopSequence.ReferencedSopClassUid = imageSop.SopClassUID;
-					imgMac.ReferencedSopSequence.ReferencedSopInstanceUid = imageSop.SopInstanceUID;
-					imgMac.ReferencedSopSequence.ReferencedFrameNumber = "1";
+					imgMac.ReferencedSopSequence.ReferencedSopClassUid = sop.SopClassUID;
+					imgMac.ReferencedSopSequence.ReferencedSopInstanceUid = sop.SopInstanceUID;
+					if (sop.NumberOfFrames > 1)
+						imgMac.ReferencedSopSequence.ReferencedFrameNumber = DicomStringHelper.GetDicomStringArray(frameMap[sop]);
+					else
+						imgMac.ReferencedSopSequence.ReferencedFrameNumber = null;
+
 					imgMac.ReferencedSopSequence.CreateReferencedSopSequence();
 					imgMac.ReferencedSopSequence.ReferencedSopSequence.InitializeAttributes();
 				}
@@ -127,21 +138,21 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 				IHierarchicalSopInstanceReferenceMacro currentRequestedProcedureEvidence = iod.KeyObjectDocument.CreateCurrentRequestedProcedureEvidenceSequence();
 				{
-					currentRequestedProcedureEvidence.StudyInstanceUid = imageSop.StudyInstanceUID;
+					currentRequestedProcedureEvidence.StudyInstanceUid = sop.StudyInstanceUID;
 
 					IHierarchicalSeriesInstanceReferenceMacro referencedSeries = currentRequestedProcedureEvidence.CreateReferencedSeriesSequence();
 					{
 						referencedSeries.InitializeAttributes();
-						referencedSeries.SeriesInstanceUid = imageSop.SeriesInstanceUID;
-						referencedSeries.RetrieveAeTitle = imageSop[DicomTags.RetrieveAeTitle].ToString();
-						referencedSeries.StorageMediaFileSetId = imageSop[DicomTags.StorageMediaFileSetId].GetString(0, string.Empty);
-						referencedSeries.StorageMediaFileSetUid = imageSop[DicomTags.StorageMediaFileSetUid].GetString(0, string.Empty);
+						referencedSeries.SeriesInstanceUid = sop.SeriesInstanceUID;
+						referencedSeries.RetrieveAeTitle = sop[DicomTags.RetrieveAeTitle].ToString();
+						referencedSeries.StorageMediaFileSetId = sop[DicomTags.StorageMediaFileSetId].GetString(0, string.Empty);
+						referencedSeries.StorageMediaFileSetUid = sop[DicomTags.StorageMediaFileSetUid].GetString(0, string.Empty);
 
 						IReferencedSopSequence referencedSop = referencedSeries.CreateReferencedSopSequence();
 						{
 							referencedSop.InitializeAttributes();
-							referencedSop.ReferencedSopClassUid = imageSop.SopClassUID;
-							referencedSop.ReferencedSopInstanceUid = imageSop.SopInstanceUID;
+							referencedSop.ReferencedSopClassUid = sop.SopClassUID;
+							referencedSop.ReferencedSopInstanceUid = sop.SopInstanceUID;
 						}
 						referencedSeries.ReferencedSopSequence = new IReferencedSopSequence[] {referencedSop};
 					}
@@ -170,7 +181,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			return dcf;
 		}
 
-		private static KeyObjectSelectionDocumentIod CreatePrototypeDocument(DicomAttributeCollection source, DicomAttributeCollection target)
+		private static KeyObjectSelectionDocumentIod CreatePrototypeDocument(IDicomAttributeProvider source, IDicomAttributeProvider target)
 		{
 			KeyObjectSelectionDocumentIod iod = new KeyObjectSelectionDocumentIod(target);
 

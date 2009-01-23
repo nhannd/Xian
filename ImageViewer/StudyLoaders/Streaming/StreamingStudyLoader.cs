@@ -7,7 +7,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Xml;
 using ClearCanvas.ImageViewer.Services.ServerTree;
@@ -15,31 +14,17 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
 	[ExtensionOf(typeof(StudyLoaderExtensionPoint))]
-	public class StreamingStudyLoader : IStudyLoader
+	public class StreamingStudyLoader : StudyLoader
 	{
 		private IEnumerator<DicomMessageBase> _dicomMessages;
 		private ApplicationEntity _ae;
-		private IPrefetchingStrategy _prefetchingStrategy;
 
-		#region IStudyLoader Members
-
-		public string Name
+		public StreamingStudyLoader() : base("CC_STREAMING")
 		{
-			get { return "CC_STREAMING"; }
+			PrefetchingStrategy = new VisibleDisplaySetPrefetchingStrategy(StreamingSettings.Default.PrefetchingConcurrency);
 		}
 
-		public IPrefetchingStrategy PrefetchingStrategy
-		{
-			get 
-			{
-				if (_prefetchingStrategy == null)
-					_prefetchingStrategy = new VisibleDisplaySetPrefetchingStrategy(StreamingSettings.Default.PrefetchingConcurrency);
-
-				return _prefetchingStrategy;
-			}
-		}
-
-		public int Start(StudyLoaderArgs studyLoaderArgs)
+		public override int Start(StudyLoaderArgs studyLoaderArgs)
 		{
 			ApplicationEntity ae = studyLoaderArgs.Server as ApplicationEntity;
 			_ae = ae;
@@ -54,15 +39,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			return dicomMessages.Count;
 		}
 
-		public ImageSop LoadNextImage()
+		protected override ISopDataSource  LoadNextSopDataSource()
 		{
 			if (!_dicomMessages.MoveNext())
 				return null;
-			else
-				return new StreamingImageSop(_dicomMessages.Current, _ae.Host, _ae.AETitle, _ae.WadoServicePort);
-		}
 
-		#endregion
+			return new StreamingSopDataSource(_dicomMessages.Current, _ae.Host, _ae.AETitle, _ae.WadoServicePort);
+		}
 
 		private XmlDocument RetrieveHeaderXml(StudyLoaderArgs studyLoaderArgs)
 		{

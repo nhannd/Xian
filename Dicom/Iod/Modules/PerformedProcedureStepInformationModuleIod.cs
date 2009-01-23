@@ -52,9 +52,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="PerformedProcedureStepInformationModuleIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public PerformedProcedureStepInformationModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public PerformedProcedureStepInformationModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -67,20 +65,20 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The performed station ae title.</value>
         public string PerformedStationAeTitle
         {
-            get { return base.DicomAttributeCollection[DicomTags.PerformedStationAeTitle].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PerformedStationAeTitle].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PerformedStationAeTitle].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PerformedStationAeTitle].SetString(0, value); }
         }
 
         public string PerformedStationName
         {
-            get { return base.DicomAttributeCollection[DicomTags.PerformedStationName].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PerformedStationName].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PerformedStationName].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PerformedStationName].SetString(0, value); }
         }
 
         public string PerformedLocation
         {
-            get { return base.DicomAttributeCollection[DicomTags.PerformedLocation].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PerformedLocation].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PerformedLocation].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PerformedLocation].SetString(0, value); }
         }
 
         /// <summary>
@@ -89,9 +87,9 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The performed procedure step start date.</value>
         public DateTime? PerformedProcedureStepStartDate
         {
-            get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeCollection, 0, DicomTags.PerformedProcedureStepStartDate, DicomTags.PerformedProcedureStepStartTime); }
+            get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeProvider, 0, DicomTags.PerformedProcedureStepStartDate, DicomTags.PerformedProcedureStepStartTime); }
 
-            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection, 0, DicomTags.PerformedProcedureStepStartDate, DicomTags.PerformedProcedureStepStartTime); }
+            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeProvider, 0, DicomTags.PerformedProcedureStepStartDate, DicomTags.PerformedProcedureStepStartTime); }
         }
 
         /// <summary>
@@ -100,15 +98,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The performed procedure step id.</value>
         public string PerformedProcedureStepId
         {
-            get { return base.DicomAttributeCollection[DicomTags.PerformedProcedureStepId].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PerformedProcedureStepId].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PerformedProcedureStepId].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PerformedProcedureStepId].SetString(0, value); }
         }
 
         public DateTime? PerformedProcedureStepEndDate
         {
-            get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeCollection, 0, DicomTags.PerformedProcedureStepEndDate, DicomTags.PerformedProcedureStepEndTime); }
+            get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeProvider, 0, DicomTags.PerformedProcedureStepEndDate, DicomTags.PerformedProcedureStepEndTime); }
         
-            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection, 0, DicomTags.PerformedProcedureStepEndDate, DicomTags.PerformedProcedureStepEndTime); }
+            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeProvider, 0, DicomTags.PerformedProcedureStepEndDate, DicomTags.PerformedProcedureStepEndTime); }
         }
 
         /// <summary>
@@ -117,8 +115,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The performed procedure step status.</value>
         public PerformedProcedureStepStatus PerformedProcedureStepStatus
         {
-            get { return IodBase.ParseEnum<PerformedProcedureStepStatus>(base.DicomAttributeCollection[DicomTags.PerformedProcedureStepStatus].GetString(0, String.Empty), PerformedProcedureStepStatus.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.PerformedProcedureStepStatus], value, true); }
+            get { return IodBase.ParseEnum<PerformedProcedureStepStatus>(base.DicomAttributeProvider[DicomTags.PerformedProcedureStepStatus].GetString(0, String.Empty), PerformedProcedureStepStatus.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.PerformedProcedureStepStatus], value, true); }
         }
 
         /// <summary>
@@ -127,8 +125,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The performed procedure step description.</value>
         public string PerformedProcedureStepDescription
         {
-            get { return base.DicomAttributeCollection[DicomTags.PerformedProcedureStepDescription].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PerformedProcedureStepDescription].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PerformedProcedureStepDescription].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PerformedProcedureStepDescription].SetString(0, value); }
         }
 
         /// <summary>
@@ -137,8 +135,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The comments on the performed procedure step.</value>
         public string CommentsOnThePerformedProcedureStep
         {
-            get { return base.DicomAttributeCollection[DicomTags.CommentsOnThePerformedProcedureStep].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.CommentsOnThePerformedProcedureStep].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.CommentsOnThePerformedProcedureStep].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.CommentsOnThePerformedProcedureStep].SetString(0, value); }
         }
 
         /// <summary>
@@ -147,8 +145,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The performed procedure type description.</value>
         public string PerformedProcedureTypeDescription
         {
-            get { return base.DicomAttributeCollection[DicomTags.PerformedProcedureTypeDescription].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PerformedProcedureTypeDescription].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PerformedProcedureTypeDescription].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PerformedProcedureTypeDescription].SetString(0, value); }
         }
 
         /// <summary>
@@ -159,7 +157,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.ProcedureCodeSequence] as DicomAttributeSQ);
+                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeProvider[DicomTags.ProcedureCodeSequence] as DicomAttributeSQ);
             }
         }
 
@@ -173,7 +171,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.PerformedProcedureStepDiscontinuationReasonCodeSequence] as DicomAttributeSQ);
+                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeProvider[DicomTags.PerformedProcedureStepDiscontinuationReasonCodeSequence] as DicomAttributeSQ);
             }
         }
         

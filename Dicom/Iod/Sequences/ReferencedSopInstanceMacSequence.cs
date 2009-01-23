@@ -55,12 +55,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string MacCalculationTransferSyntaxUid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.MacCalculationTransferSyntaxUid].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.MacCalculationTransferSyntaxUid].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "MacCalculationTransferSyntaxUid is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.MacCalculationTransferSyntaxUid].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.MacCalculationTransferSyntaxUid].SetString(0, value);
 			}
 		}
 
@@ -69,12 +69,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public MacAlgorithm MacAlgorithm
 		{
-			get { return ParseEnum(base.DicomAttributeCollection[DicomTags.MacAlgorithm].GetString(0, string.Empty), MacAlgorithm.Unknown); }
+			get { return ParseEnum(base.DicomAttributeProvider[DicomTags.MacAlgorithm].GetString(0, string.Empty), MacAlgorithm.Unknown); }
 			set
 			{
 				if (value == MacAlgorithm.Unknown)
 					throw new ArgumentOutOfRangeException("value", "MacAlgorithm is Type 1 Required.");
-				SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.MacAlgorithm], value);
+				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.MacAlgorithm], value);
 			}
 		}
 
@@ -83,12 +83,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public uint[] DataElementsSigned
 		{
-			get { return (uint[]) base.DicomAttributeCollection[DicomTags.DataElementsSigned].Values; }
+			get { return (uint[]) base.DicomAttributeProvider[DicomTags.DataElementsSigned].Values; }
 			set
 			{
 				if (value == null || value.Length == 0)
 					throw new ArgumentNullException("value", "DataElementsSigned is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.DataElementsSigned].Values = value;
+				base.DicomAttributeProvider[DicomTags.DataElementsSigned].Values = value;
 			}
 		}
 
@@ -97,12 +97,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public byte[] Mac
 		{
-			get { return (byte[]) base.DicomAttributeCollection[DicomTags.Mac].Values; }
+			get { return (byte[]) base.DicomAttributeProvider[DicomTags.Mac].Values; }
 			set
 			{
 				if (value == null || value.Length == 0)
 					throw new ArgumentNullException("value", "Mac is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.Mac].Values = value;
+				base.DicomAttributeProvider[DicomTags.Mac].Values = value;
 			}
 		}
 	}

@@ -32,14 +32,13 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Validation;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	//TODO: Avoid inheritance and use IDicomDataProvider that Sop simply wraps.
+	//TODO: rewrite the documentation.
 
 	/// <summary>
 	/// A DICOM SOP Instance.
@@ -110,23 +109,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </list>
 	/// </para>
 	/// </remarks>
-	public abstract class Sop : IDisposable
+	public partial class Sop : IDisposable
 	{
-		private volatile DicomMessageBase _dicomMessage;
-		private readonly object _syncLock = new object();
-		private volatile int _referenceCount = 0;
-		private volatile bool _isDisposed = false;
-		private event EventHandler _disposing;
 		private volatile Series _parentSeries;
-		private volatile bool _loaded = false;
-		private volatile bool _loading = false;
+		private volatile ISopDataCacheItemReference _dataSourceReference;
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="Sop"/>.
+		/// Creates a new instance of <see cref="Sop"/>.
 		/// </summary>
-		protected Sop(DicomMessageBase dicomMessage)
+		public Sop(ISopDataSource dataSource)
 		{
-			_dicomMessage = dicomMessage;
+			//silently use shared/cached data source.
+			_dataSourceReference = SopDataCache.Add(dataSource);
+		}
+
+		/// <summary>
+		/// Gets the <see cref="Sop"/>'s data source.
+		/// </summary>
+		public ISopDataSource DataSource
+		{
+			get { return _dataSourceReference.RealDataSource; }
 		}
 
 		/// <summary>
@@ -138,23 +140,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			internal set { _parentSeries = value; }
 		}
 
-		/// <summary>
-		/// Gets the DICOM toolkit representation of this <see cref="Sop"/>.
-		/// </summary>
-		/// <remarks>
-		/// Although this object is public, it is not recommended that it's <see cref="DicomAttribute"/>s
-		/// be modified in any way.  This object can be deep-cloned via <see cref="DicomAttributeCollection.Copy()"/>
-		/// and whatever operation/modification is required can be performed on the clone.
-		/// </remarks>
-		public virtual DicomMessageBase NativeDicomObject
-		{
-			get
-			{
-				Load();
-				return _dicomMessage;
-			}
-		}
-
 		#region Meta info
 
 		/// <summary>
@@ -162,12 +147,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public virtual string TransferSyntaxUID
 		{
-			get
-			{
-				string transferSyntaxInstanceUID;
-				transferSyntaxInstanceUID = this[DicomTags.TransferSyntaxUid].GetString(0, null);
-				return transferSyntaxInstanceUID ?? "";
-			}
+			get { return DataSource.TransferSyntaxUid; }
 		}
 
 		#endregion
@@ -179,12 +159,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public virtual string SopInstanceUID
 		{
-			get
-			{
-				string sopInstanceUID;
-				sopInstanceUID = this[DicomTags.SopInstanceUid].GetString(0, null);
-				return sopInstanceUID ?? "";
-			}
+			get { return DataSource.SopInstanceUid; }
 		}
 
 		/// <summary>
@@ -192,12 +167,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public virtual string SopClassUID
 		{
-			get
-			{
-				string sopClassUID;
-				sopClassUID = this[DicomTags.SopClassUid].GetString(0, null);
-				return sopClassUID ?? "";
-			}
+			get { return DataSource.SopClassUid; }
+			
 		}
 
 		/// <summary>
@@ -228,14 +199,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public virtual int InstanceNumber
 		{
-			get
-			{
-				int instanceNumber;
-				instanceNumber = this[DicomTags.InstanceNumber].GetInt32(0, 0);
-				return instanceNumber;
-			}
+			get { return DataSource.InstanceNumber; }
 		}
-
 		#endregion
 
 		#region Patient Module
@@ -301,12 +266,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public virtual string StudyInstanceUID
 		{
-			get
-			{
-				string studyInstanceUID;
-				studyInstanceUID = this[DicomTags.StudyInstanceUid].GetString(0, null);
-				return studyInstanceUID ?? "";
-			}
+			get { return DataSource.StudyInstanceUid; }
 		}
 
 		/// <summary>
@@ -521,12 +481,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public virtual string SeriesInstanceUID
 		{
-			get
-			{
-				string seriesInstanceUID;
-				seriesInstanceUID = this[DicomTags.SeriesInstanceUid].GetString(0, null);
-				return seriesInstanceUID ?? "";
-			}
+			get { return DataSource.SeriesInstanceUid; }
 		}
 
 		/// <summary>
@@ -660,48 +615,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
-
-		private void Load()
-		{
-			if (_loaded)
-				return;
-
-			lock (_syncLock)
-			{
-				if (_loaded)
-					return;
-
-				if (_loading)
-					return;
-
-				//So that subclasses can access NativeDicomObject from within overrides of EnsureLoaded.
-				_loading = true;
-
-				try
-				{
-					CheckIsDisposed();
-
-					EnsureLoaded();
-					_loaded = true;
-				}
-				finally
-				{
-					_loading = false;
-				}
-			}
-
-		}
-		
-		/// <summary>
-		/// Called to ensure that all DICOM data is loaded into memory.
-		/// </summary>
-		/// <remarks>
-		/// <para>Subclasses of <see cref="Sop"/> should override this method to provide any necessary additional logic to load all
-		/// DICOM data into memory.</para>
-		/// </remarks>
-		protected virtual void EnsureLoaded()
-		{
-		}
 
 		#region Dicom Tag Retrieval Methods
 
@@ -919,8 +832,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		/// <remarks>
 		/// <see cref="DicomAttribute"/>s returned from this indexer are considered
-		/// read-only and should not be modified in any way.  See <see cref="NativeDicomObject"/>
-		/// for more information.
+		/// read-only and should not be modified in any way.
 		/// </remarks>
 		/// <param name="tag">The DICOM tag to retrieve.</param>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown if the specified DICOM tag is not within the valid range for either the meta info or the dataset.</exception>
@@ -934,32 +846,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		/// <remarks>
 		/// <see cref="DicomAttribute"/>s returned from this indexer are considered
-		/// read-only and should not be modified in any way.  See <see cref="NativeDicomObject"/>
-		/// for more information.
+		/// read-only and should not be modified in any way.
 		/// </remarks>
 		/// <param name="tag">The DICOM tag to retrieve.</param>
 		/// <exception cref="ArgumentOutOfRangeException">Thrown if the specified DICOM tag is not within the valid range for either the meta info or the dataset.</exception>
 		public virtual DicomAttribute this[uint tag]
 		{
-			get
-			{
-				Load();
-
-				bool isInMetaInfoRange = (tag >= _dicomMessage.MetaInfo.StartTagValue && tag <= _dicomMessage.MetaInfo.EndTagValue);
-				bool isInDataSetRange = (tag >= _dicomMessage.DataSet.StartTagValue && tag <= _dicomMessage.DataSet.EndTagValue);
-
-				if (isInDataSetRange)
-				{
-					DicomAttribute attribute = _dicomMessage.DataSet[tag];
-					if (!attribute.IsEmpty || !isInMetaInfoRange)
-						return attribute;
-				}
-
-				if (isInMetaInfoRange)
-					return _dicomMessage.MetaInfo[tag];
-
-				throw new ArgumentOutOfRangeException("The tag is not within the valid range for either the meta info or dataset.");
-			}
+			get { return this.DataSource[tag]; }
 		}
 
 		private static void GetUint16FromAttribute(DicomAttribute attribute, uint position, out ushort value)
@@ -1011,44 +904,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
-		/// <summary>
-		/// Increments the reference count on this <see cref="Sop"/>.
-		/// </summary>
-		/// <remarks>
-		/// Internally, the <see cref="Sop"/> maintains a reference count and disposes
-		/// itself when the count goes to zero; you must call <see cref="DecrementReferenceCount"/>
-		/// exactly once for each call to <see cref="IncrementReferenceCount"/>.
-		/// </remarks>
-		internal virtual void IncrementReferenceCount()
+		public static Sop Create(ISopDataSource dataSource)
 		{
-			lock(_syncLock)
-			{
-				CheckIsDisposed();
-				++_referenceCount;
-			}
+			if (SopDataHelper.IsImageSop(dataSource.SopClassUid))
+				return new ImageSop(dataSource);
+			else
+				return new Sop(dataSource);
 		}
-
-		/// <summary>
-		/// Decrements the reference count on this <see cref="Sop"/>.
-		/// </summary>
-		/// <remarks>
-		/// Internally, the <see cref="Sop"/> maintains a reference count and disposes
-		/// itself when the count goes to zero; you must call <see cref="DecrementReferenceCount"/>
-		/// exactly once for each call to <see cref="IncrementReferenceCount"/>.
-		/// </remarks>
-		internal virtual void DecrementReferenceCount()
-		{
-			lock (_syncLock)
-			{
-				CheckIsDisposed();
-				if (_referenceCount > 0)
-					--_referenceCount;
-
-				if (_referenceCount == 0)
-					(this as IDisposable).Dispose();
-			}
-		}
-
 
 		/// <summary>
 		/// The <see cref="Sop"/> class (and derived classes) should not validate tag values from 
@@ -1062,12 +924,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				ValidateInternal();
 			}
+			catch(SopValidationException)
+			{
+				throw;
+			}
 			catch (Exception e)
 			{
-				if (e is SopValidationException)
-					throw;
-
-				throw new SopValidationException(SR.ExceptionSopInstanceValidationFailed, e);
+				throw new SopValidationException("Sop validation failed.", e);
 			}
 		}
 
@@ -1095,75 +958,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				throw new SopValidationException(SR.ExceptionInvalidPatientID);
 		}
 
-		#region Disposal
-
-		internal event EventHandler Disposing
-		{
-			add { _disposing += value; }
-			remove { _disposing += value; }
-		}
-
 		/// <summary>
-		/// Checks if the <see cref="Sop"/> has already been disposed, and if so, throws an exception.
+		/// Disposes all resources being used by this <see cref="Sop"/>.
 		/// </summary>
-		internal void CheckIsDisposed()
-		{
-			lock (_syncLock)
-			{
-				if (_isDisposed)
-					throw new ObjectDisposedException("The Sop is already disposed.");
-			}
-		}
-
-		/// <summary>
-		/// Called indirectly via the <see cref="DecrementReferenceCount"/>
-		/// method when the object is no longer needed.
-		/// </summary>
-		/// <remarks>
-		/// You should not dispose of the <see cref="Sop"/> directly, but
-		/// rather use the <see cref="IncrementReferenceCount"/> and 
-		/// <see cref="DecrementReferenceCount"/> methods, as these objects 
-		/// are often referenced in many places.
-		/// </remarks>
+		/// <param name="disposing"></param>
 		protected virtual void Dispose(bool disposing)
 		{
-			lock (_syncLock)
+			if (disposing && _dataSourceReference != null)
 			{
-				_dicomMessage = null;
-				_loaded = false;
-			}
-		}
-
-		#region IDisposable Members
-
-		/// <summary>
-		/// Releases all resources used by this <see cref="Sop"/>.
-		/// </summary>
-		/// <remarks>
-		/// You should not dispose of the <see cref="Sop"/> directly, but
-		/// rather use the <see cref="IncrementReferenceCount"/> and 
-		/// <see cref="DecrementReferenceCount"/> methods, as these objects 
-		/// are often referenced in many places.
-		/// </remarks>
-		void IDisposable.Dispose()
-		{
-			try
-			{
-				lock (_syncLock)
-				{
-					EventsHelper.Fire(_disposing, this, EventArgs.Empty);
-					Dispose(true);
-					GC.SuppressFinalize(this);
-				}
-			}
-			catch (Exception e)
-			{
-				// shouldn't throw anything from inside Dispose()
-				Platform.Log(LogLevel.Error, e);
-			}
-			finally
-			{
-				_isDisposed = true;
+				_dataSourceReference.Dispose();
+				_dataSourceReference = null;
 			}
 		}
 
@@ -1175,10 +979,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			return this.SopInstanceUID;
 		}
-
-		#endregion
-
-		#endregion
-
 	}
 }

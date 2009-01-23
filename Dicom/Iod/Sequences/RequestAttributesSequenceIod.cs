@@ -65,8 +65,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// <value>The requested procedure Id.</value>
 		public string RequestedProcedureId
 		{
-			get { return DicomAttributeCollection[DicomTags.RequestedProcedureId].GetString(0, String.Empty); }
-			set { DicomAttributeCollection[DicomTags.RequestedProcedureId].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.RequestedProcedureId].GetString(0, String.Empty); }
+			set { DicomAttributeProvider[DicomTags.RequestedProcedureId].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -75,8 +75,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// <value>The scheduled procedure step Id.</value>
 		public string ScheduledProcedureStepId
 		{
-			get { return DicomAttributeCollection[DicomTags.ScheduledProcedureStepId].GetString(0, String.Empty); }
-			set { DicomAttributeCollection[DicomTags.ScheduledProcedureStepId].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.ScheduledProcedureStepId].GetString(0, String.Empty); }
+			set { DicomAttributeProvider[DicomTags.ScheduledProcedureStepId].SetString(0, value); }
 		}
 		#endregion
 	}

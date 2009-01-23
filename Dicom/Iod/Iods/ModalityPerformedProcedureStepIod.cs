@@ -51,9 +51,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <summary>
         /// Initializes a new instance of the <see cref="ModalityPerformedProcedureStepIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public ModalityPerformedProcedureStepIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public ModalityPerformedProcedureStepIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -122,7 +120,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// </summary>
         public void SetCommonTags()
         {
-            SetCommonTags(base.DicomAttributeCollection);
+            SetCommonTags(base.DicomAttributeProvider);
         }
         #endregion
 
@@ -130,29 +128,28 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <summary>
         /// Sets the common tags for a typical request.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public static void SetCommonTags(DicomAttributeCollection dicomAttributeCollection)
+        public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
-            //dicomAttributeCollection[DicomTags.PatientsName].SetString(0, "*");
-            //dicomAttributeCollection[DicomTags.PatientId].SetNullValue();
-            //dicomAttributeCollection[DicomTags.PatientsBirthDate].SetNullValue();
-            //dicomAttributeCollection[DicomTags.PatientsBirthTime].SetNullValue();
-            //dicomAttributeCollection[DicomTags.PatientsWeight].SetNullValue();
+            //dicomAttributeProvider[DicomTags.PatientsName].SetString(0, "*");
+            //dicomAttributeProvider[DicomTags.PatientId].SetNullValue();
+            //dicomAttributeProvider[DicomTags.PatientsBirthDate].SetNullValue();
+            //dicomAttributeProvider[DicomTags.PatientsBirthTime].SetNullValue();
+            //dicomAttributeProvider[DicomTags.PatientsWeight].SetNullValue();
 
-            //dicomAttributeCollection[DicomTags.RequestedProcedureId].SetNullValue();
-            //dicomAttributeCollection[DicomTags.RequestedProcedureDescription].SetNullValue();
-            //dicomAttributeCollection[DicomTags.StudyInstanceUid].SetNullValue();
-            //dicomAttributeCollection[DicomTags.ReasonForTheRequestedProcedure].SetNullValue();
-            //dicomAttributeCollection[DicomTags.RequestedProcedureComments].SetNullValue();
-            //dicomAttributeCollection[DicomTags.RequestedProcedurePriority].SetNullValue();
-            //dicomAttributeCollection[DicomTags.ImagingServiceRequestComments].SetNullValue();
-            //dicomAttributeCollection[DicomTags.RequestingPhysician].SetNullValue();
-            //dicomAttributeCollection[DicomTags.ReferringPhysiciansName].SetNullValue();
-            //dicomAttributeCollection[DicomTags.RequestedProcedureLocation].SetNullValue();
-            //dicomAttributeCollection[DicomTags.AccessionNumber].SetNullValue();
+            //dicomAttributeProvider[DicomTags.RequestedProcedureId].SetNullValue();
+            //dicomAttributeProvider[DicomTags.RequestedProcedureDescription].SetNullValue();
+            //dicomAttributeProvider[DicomTags.StudyInstanceUid].SetNullValue();
+            //dicomAttributeProvider[DicomTags.ReasonForTheRequestedProcedure].SetNullValue();
+            //dicomAttributeProvider[DicomTags.RequestedProcedureComments].SetNullValue();
+            //dicomAttributeProvider[DicomTags.RequestedProcedurePriority].SetNullValue();
+            //dicomAttributeProvider[DicomTags.ImagingServiceRequestComments].SetNullValue();
+            //dicomAttributeProvider[DicomTags.RequestingPhysician].SetNullValue();
+            //dicomAttributeProvider[DicomTags.ReferringPhysiciansName].SetNullValue();
+            //dicomAttributeProvider[DicomTags.RequestedProcedureLocation].SetNullValue();
+            //dicomAttributeProvider[DicomTags.AccessionNumber].SetNullValue();
 
             //// TODO: this better and easier...
-            //DicomAttributeSQ dicomAttributeSQ = dicomAttributeCollection[DicomTags.ScheduledProcedureStepSequence] as DicomAttributeSQ;
+            //DicomAttributeSQ dicomAttributeSQ = dicomAttributeProvider[DicomTags.ScheduledProcedureStepSequence] as DicomAttributeSQ;
             //DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();
             //dicomAttributeSQ.Values = dicomSequenceItem;
 

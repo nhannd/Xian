@@ -36,34 +36,34 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	internal class LocalImageLoader
+	internal class LocalSopLoader
 	{
-		private IImageViewer _viewer;
+		private readonly IImageViewer _viewer;
 
-		private int _totalImages;
-		private int _failedImages;
+		private int _total;
+		private int _failed;
 
-		public LocalImageLoader(IImageViewer viewer)
+		public LocalSopLoader(IImageViewer viewer)
 		{
 			_viewer = viewer;
 		}
 
-		public int TotalImages
+		public int Total
 		{
-			get { return _totalImages; }
+			get { return _total; }
 		}
 		
-		public int FailedImages
+		public int Failed
 		{
-			get { return _failedImages; }
+			get { return _failed; }
 		}
 
 		public void Load(string[] files, IDesktopWindow desktop, out bool cancelled)
 		{
 			Platform.CheckForNullReference(files, "files");
 
-			_totalImages = 0;
-			_failedImages = 0;
+			_total = 0;
+			_failed = 0;
 
 			bool userCancelled = false;
 
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					{
 						for (int i = 0; i < files.Length; i++)
 						{
-							LoadImage(files[i]);
+							LoadSop(files[i]);
 
 							int percentComplete = (int)(((float)(i + 1) / files.Length) * 100);
 							string message = String.Format(SR.MessageFormatOpeningImages, i, files.Length);
@@ -99,24 +99,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			else
 			{
 				foreach (string file in files)
-					LoadImage(file);
+					LoadSop(file);
 
 				cancelled = false;
 			}
 		}
 
-		private void LoadImage(string file)
+		private void LoadSop(string file)
 		{
 			Platform.CheckForNullReference(file, "file");
 
-			LocalImageSop image = null;
-
 			try
 			{
-				image = new LocalImageSop(file);
-				string sopInstanceUid = image.SopInstanceUID;
-				_viewer.StudyTree.AddImage(image);
-				_viewer.EventBroker.OnImageLoaded(new ItemEventArgs<Sop>(_viewer.StudyTree.GetSop(sopInstanceUid)));
+				LocalSopDataSource dataSource = new LocalSopDataSource(file);
+				Sop sop = Sop.Create(dataSource);
+				_viewer.StudyTree.AddSop(sop);
 			}
 			catch (Exception e)
 			{
@@ -125,11 +122,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				// 2) file is a valid DICOM image, but its image parameters are invalid
 				// 3) file is a valid DICOM image, but we can't handle this type of DICOM image
 
-				_failedImages++;
+				_failed++;
 				Platform.Log(LogLevel.Error, e);
 			}
 
-			_totalImages++;
+			_total++;
 		}
 	}
 }

@@ -48,8 +48,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PresentationStateShutterModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public PresentationStateShutterModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public PresentationStateShutterModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		/// <summary>
 		/// Initializes the underlying collection to implement the module or sequence using default values.
@@ -68,7 +67,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			get
 			{
 				int result;
-				if (base.DicomAttributeCollection[DicomTags.ShutterPresentationValue].TryGetInt32(0, out result))
+				if (base.DicomAttributeProvider[DicomTags.ShutterPresentationValue].TryGetInt32(0, out result))
 					return result;
 				return null;
 			}
@@ -76,10 +75,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				if (!value.HasValue)
 				{
-					base.DicomAttributeCollection[DicomTags.ShutterPresentationValue] = null;
+					base.DicomAttributeProvider[DicomTags.ShutterPresentationValue] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ShutterPresentationValue].SetInt32(0, value.Value);
+				base.DicomAttributeProvider[DicomTags.ShutterPresentationValue].SetInt32(0, value.Value);
 			}
 		}
 
@@ -91,9 +90,9 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			get
 			{
 				int[] result = new int[3];
-				if (base.DicomAttributeCollection[DicomTags.ShutterPresentationColorCielabValue].TryGetInt32(0, out result[0]))
-					if (base.DicomAttributeCollection[DicomTags.ShutterPresentationColorCielabValue].TryGetInt32(0, out result[1]))
-						if (base.DicomAttributeCollection[DicomTags.ShutterPresentationColorCielabValue].TryGetInt32(0, out result[2]))
+				if (base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].TryGetInt32(0, out result[0]))
+					if (base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].TryGetInt32(0, out result[1]))
+						if (base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].TryGetInt32(0, out result[2]))
 					return result;
 				return null;
 			}
@@ -101,12 +100,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				if (value == null || value.Length != 3)
 				{
-					base.DicomAttributeCollection[DicomTags.ShutterPresentationColorCielabValue] = null;
+					base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ShutterPresentationColorCielabValue].SetInt32(0, value[0]);
-				base.DicomAttributeCollection[DicomTags.ShutterPresentationColorCielabValue].SetInt32(1, value[1]);
-				base.DicomAttributeCollection[DicomTags.ShutterPresentationColorCielabValue].SetInt32(2, value[2]);
+				base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].SetInt32(0, value[0]);
+				base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].SetInt32(1, value[1]);
+				base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].SetInt32(2, value[2]);
 			}
 		}
 	}

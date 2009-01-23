@@ -50,8 +50,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="KeyObjectDocumentModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public KeyObjectDocumentModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public KeyObjectDocumentModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		/// <summary>
 		/// Initializes the underlying collection to implement the module using default values.
@@ -70,8 +69,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public int InstanceNumber
 		{
-			get { return base.DicomAttributeCollection[DicomTags.InstanceNumber].GetInt32(0, 0); }
-			set { base.DicomAttributeCollection[DicomTags.InstanceNumber].SetInt32(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.InstanceNumber].GetInt32(0, 0); }
+			set { base.DicomAttributeProvider[DicomTags.InstanceNumber].SetInt32(0, value); }
 		}
 
 		/// <summary>
@@ -81,16 +80,16 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				string date = base.DicomAttributeCollection[DicomTags.ContentDate].GetString(0, string.Empty);
-				string time = base.DicomAttributeCollection[DicomTags.ContentTime].GetString(0, string.Empty);
+				string date = base.DicomAttributeProvider[DicomTags.ContentDate].GetString(0, string.Empty);
+				string time = base.DicomAttributeProvider[DicomTags.ContentTime].GetString(0, string.Empty);
 				return DateTimeParser.ParseDateAndTime(string.Empty, date, time);
 			}
 			set
 			{
 				if (!value.HasValue)
 					throw new ArgumentNullException("value", "Content is Type 1 Required.");
-				DicomAttribute date = base.DicomAttributeCollection[DicomTags.ContentDate];
-				DicomAttribute time = base.DicomAttributeCollection[DicomTags.ContentTime];
+				DicomAttribute date = base.DicomAttributeProvider[DicomTags.ContentDate];
+				DicomAttribute time = base.DicomAttributeProvider[DicomTags.ContentTime];
 				DateTimeParser.SetDateTimeAttributeValues(value, date, time);
 			}
 		}
@@ -102,7 +101,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedRequestSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedRequestSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -119,7 +118,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				if (value == null || value.Length == 0)
 				{
-					base.DicomAttributeCollection[DicomTags.ReferencedRequestSequence] = null;
+					base.DicomAttributeProvider[DicomTags.ReferencedRequestSequence] = null;
 					return;
 				}
 
@@ -127,7 +126,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeCollection[DicomTags.ReferencedRequestSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.ReferencedRequestSequence].Values = result;
 			}
 		}
 
@@ -138,7 +137,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.CurrentRequestedProcedureEvidenceSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.CurrentRequestedProcedureEvidenceSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					return null;
 
@@ -158,7 +157,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeCollection[DicomTags.CurrentRequestedProcedureEvidenceSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.CurrentRequestedProcedureEvidenceSequence].Values = result;
 			}
 		}
 
@@ -179,7 +178,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.IdenticalDocumentsSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.IdenticalDocumentsSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -196,7 +195,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				if (value == null || value.Length == 0)
 				{
-					base.DicomAttributeCollection[DicomTags.IdenticalDocumentsSequence] = null;
+					base.DicomAttributeProvider[DicomTags.IdenticalDocumentsSequence] = null;
 					return;
 				}
 
@@ -204,7 +203,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeCollection[DicomTags.IdenticalDocumentsSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.IdenticalDocumentsSequence].Values = result;
 			}
 		}
 

@@ -68,19 +68,18 @@ namespace ClearCanvas.Dicom.Iod
 		{
 		}
 
-		public static List<Window> GetWindowCenterAndWidth(DicomAttributeCollection collection)
+		public static List<Window> GetWindowCenterAndWidth(IDicomAttributeProvider provider)
 		{
 			List<Window> windowValues = new List<Window>();
 			DicomAttribute windowWidthAttribute;
 			DicomAttribute windowCenterAttribute;
-			
-			if (!collection.TryGetAttribute(DicomTags.WindowCenter, out windowCenterAttribute))
+
+			windowCenterAttribute = provider[DicomTags.WindowCenter];
+			if (!windowCenterAttribute.IsNull || windowCenterAttribute.IsEmpty)
 				return windowValues;
 
-			if (windowCenterAttribute.IsEmpty || windowCenterAttribute.IsNull)
-				return windowValues;
-				
-			if (!collection.TryGetAttribute(DicomTags.WindowWidth, out windowWidthAttribute))
+			windowWidthAttribute = provider[DicomTags.WindowWidth];
+			if (!windowWidthAttribute.IsNull || windowWidthAttribute.IsEmpty)
 				throw new DicomDataException("Window Center exists without Window Width.");	
 
 			if (windowWidthAttribute.Count != windowCenterAttribute.Count)
@@ -92,7 +91,7 @@ namespace ClearCanvas.Dicom.Iod
 			return windowValues;
 		}
 
-		public static void SetWindowCenterAndWidth(DicomAttributeCollection collection, IEnumerable<Window> windowValues)
+		public static void SetWindowCenterAndWidth(IDicomAttributeProvider provider, IEnumerable<Window> windowValues)
 		{
 			StringBuilder widthValues = new StringBuilder();
 			StringBuilder centerValues = new StringBuilder();
@@ -110,8 +109,8 @@ namespace ClearCanvas.Dicom.Iod
 				centerValues.AppendFormat("{0:G12}", value.Center);
 			}
 		
-			collection[DicomTags.WindowCenter].SetStringValue(centerValues.ToString());
-			collection[DicomTags.WindowWidth].SetStringValue(widthValues.ToString());
+			provider[DicomTags.WindowCenter].SetStringValue(centerValues.ToString());
+			provider[DicomTags.WindowWidth].SetStringValue(widthValues.ToString());
 		}
 
     	#region Public Properties

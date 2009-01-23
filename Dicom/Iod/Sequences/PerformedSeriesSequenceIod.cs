@@ -66,8 +66,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The name of the performing physicians.</value>
         public PersonName PerformingPhysiciansName
         {
-            get { return new PersonName(base.DicomAttributeCollection[DicomTags.PerformingPhysiciansName].GetString(0, String.Empty)); }
-            set { base.DicomAttributeCollection[DicomTags.PerformingPhysiciansName].SetString(0, value.ToString()); }
+            get { return new PersonName(base.DicomAttributeProvider[DicomTags.PerformingPhysiciansName].GetString(0, String.Empty)); }
+            set { base.DicomAttributeProvider[DicomTags.PerformingPhysiciansName].SetString(0, value.ToString()); }
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         {
             get
             {
-                return new SequenceIodList<PersonIdentificationMacro>(base.DicomAttributeCollection[DicomTags.PerformingPhysicianIdentificationSequence] as DicomAttributeSQ);
+                return new SequenceIodList<PersonIdentificationMacro>(base.DicomAttributeProvider[DicomTags.PerformingPhysicianIdentificationSequence] as DicomAttributeSQ);
             }
         }
 
@@ -90,8 +90,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The name of the operators.</value>
         public PersonName OperatorsName
         {
-            get { return new PersonName(base.DicomAttributeCollection[DicomTags.OperatorsName].GetString(0, String.Empty)); }
-            set { base.DicomAttributeCollection[DicomTags.OperatorsName].SetString(0, value.ToString()); }
+            get { return new PersonName(base.DicomAttributeProvider[DicomTags.OperatorsName].GetString(0, String.Empty)); }
+            set { base.DicomAttributeProvider[DicomTags.OperatorsName].SetString(0, value.ToString()); }
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         {
             get
             {
-                return new SequenceIodList<PersonIdentificationMacro>(base.DicomAttributeCollection[DicomTags.OperatorIdentificationSequence] as DicomAttributeSQ);
+                return new SequenceIodList<PersonIdentificationMacro>(base.DicomAttributeProvider[DicomTags.OperatorIdentificationSequence] as DicomAttributeSQ);
             }
         }
 
@@ -116,20 +116,20 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The name of the protocol.</value>
         public string ProtocolName
         {
-            get { return base.DicomAttributeCollection[DicomTags.ProtocolName].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ProtocolName].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ProtocolName].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ProtocolName].SetString(0, value); }
         }
 
         public string SeriesInstanceUid
         {
-            get { return base.DicomAttributeCollection[DicomTags.SeriesInstanceUid].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.SeriesInstanceUid].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.SeriesInstanceUid].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.SeriesInstanceUid].SetString(0, value); }
         }
 
         public string SeriesDescription
         {
-            get { return base.DicomAttributeCollection[DicomTags.SeriesDescription].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.SeriesDescription].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.SeriesDescription].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.SeriesDescription].SetString(0, value); }
         }
 
         /// <summary>
@@ -140,8 +140,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The retrieve ae title.</value>
         public string RetrieveAeTitle
         {
-            get { return base.DicomAttributeCollection[DicomTags.RetrieveAeTitle].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.RetrieveAeTitle].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.RetrieveAeTitle].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.RetrieveAeTitle].SetString(0, value); }
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         {
             get
             {
-                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeCollection[DicomTags.ReferencedImageSequence] as DicomAttributeSQ);
+                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeProvider[DicomTags.ReferencedImageSequence] as DicomAttributeSQ);
             }
         }
 
@@ -169,7 +169,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         {
             get
             {
-                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeCollection[DicomTags.ReferencedNonImageCompositeSopInstanceSequence] as DicomAttributeSQ);
+                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeProvider[DicomTags.ReferencedNonImageCompositeSopInstanceSequence] as DicomAttributeSQ);
             }
         }
         

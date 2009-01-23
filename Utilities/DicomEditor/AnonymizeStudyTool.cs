@@ -149,16 +149,20 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 				for (int i = 0; i < numberOfSops; ++i)
 				{
-					Sop sop = LocalStudyLoader.LoadNextImage();
-					//preserve the patient sex.
-					if (patientsSex == null)
-						anonymizer.StudyDataPrototype.PatientsSex = patientsSex = sop.PatientsSex ?? "";
+					Sop sop = LocalStudyLoader.LoadNextSop();
+					if (sop != null)
+					{
+						//preserve the patient sex.
+						if (patientsSex == null)
+							anonymizer.StudyDataPrototype.PatientsSex = patientsSex = sop.PatientsSex ?? "";
 
-					DicomFile file = (DicomFile)sop.NativeDicomObject;
-
-					anonymizer.Anonymize(file);
-
-					file.Save(String.Format("{0}\\{1}.dcm", _tempPath, i));
+						if (sop.DataSource is ILocalSopDataSource)
+						{
+							DicomFile file = ((ILocalSopDataSource)sop.DataSource).File;
+							anonymizer.Anonymize(file);
+							file.Save(String.Format("{0}\\{1}.dcm", _tempPath, i));
+						}
+					}
 
 					int progressPercent = (int)Math.Floor((i + 1) / (float)numberOfSops * 100);
 					string progressMessage = String.Format(SR.MessageAnonymizingStudy, _tempPath);

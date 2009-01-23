@@ -411,22 +411,23 @@ namespace ClearCanvas.Utilities.DicomEditor
 		/// <para>If the file exists on disk, then the editor will reload the file from disk to ensure all data is available.
 		/// If the file does not exist on disk, then currently the editor opens in readonly mode with export functions disabled.</para>
 		/// </remarks>
-		/// <param name="file">The filename of the DICOM file to load.</param>
-		public void Load(DicomFile file)
+		/// <param name="message">The source object to be loaded.</param>
+		public void Load(DicomMessageBase message)
 		{
-			DicomFile dicomFile;
-			bool isLocal = System.IO.File.Exists(file.Filename);
+			DicomFile dicomFile = message as DicomFile;
+			bool isLocal = dicomFile != null && System.IO.File.Exists(dicomFile.Filename);
 			if (isLocal)
 			{
 				// ideally, we would have some way to know if file is fully loaded,
 				// so we know if we can simply copy the dataset instead of re-reading from disk
-				dicomFile = new DicomFile(file.Filename);
-				dicomFile.Load(ClearCanvas.Dicom.DicomReadOptions.Default);
+				dicomFile = new DicomFile(dicomFile.Filename);
+				dicomFile.Load(DicomReadOptions.Default);
 			}
 			else
 			{
-				dicomFile = new DicomFile(file.Filename, file.MetaInfo.Copy(true), file.DataSet.Copy(true));
-				dicomFile.MetaInfo[DicomTags.TransferSyntaxUid].SetStringValue(file.TransferSyntaxUid);
+				dicomFile = new DicomFile(null, message.MetaInfo.Copy(true), message.DataSet.Copy(true));
+				//TODO: test this!
+				dicomFile.MetaInfo[DicomTags.TransferSyntaxUid].SetStringValue(message.MetaInfo[DicomTags.TransferSyntaxUid]);
 			}
 
 			_loadedFiles.Add(dicomFile);

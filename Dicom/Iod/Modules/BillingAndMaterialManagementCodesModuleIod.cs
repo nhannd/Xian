@@ -52,9 +52,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="BillingAndMaterialManagementCodesModuleIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public BillingAndMaterialManagementCodesModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public BillingAndMaterialManagementCodesModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -68,7 +66,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.BillingProcedureStepSequence] as DicomAttributeSQ);
+                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeProvider[DicomTags.BillingProcedureStepSequence] as DicomAttributeSQ);
             }
         }
 
@@ -80,7 +78,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<FilmConsumptionSequenceIod>(base.DicomAttributeCollection[DicomTags.FilmConsumptionSequence] as DicomAttributeSQ);
+                return new SequenceIodList<FilmConsumptionSequenceIod>(base.DicomAttributeProvider[DicomTags.FilmConsumptionSequence] as DicomAttributeSQ);
             }
         }
 
@@ -92,7 +90,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<BillingSuppliesAndDevicesSequenceIod>(base.DicomAttributeCollection[DicomTags.BillingSuppliesAndDevicesSequence] as DicomAttributeSQ);
+                return new SequenceIodList<BillingSuppliesAndDevicesSequenceIod>(base.DicomAttributeProvider[DicomTags.BillingSuppliesAndDevicesSequence] as DicomAttributeSQ);
             }
         }
         

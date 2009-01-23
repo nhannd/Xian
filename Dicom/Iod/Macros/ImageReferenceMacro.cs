@@ -138,7 +138,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedSopSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedSopSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -149,7 +149,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				if (value == null)
 					throw new ArgumentNullException("value", "ReferencedSopSequence is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.ReferencedSopSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+				base.DicomAttributeProvider[DicomTags.ReferencedSopSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
 			}
 		}
 
@@ -166,7 +166,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public IReferencedSopSequence CreateReferencedSopSequence()
 		{
-			DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedSopSequence];
+			DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedSopSequence];
 			if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 			{
 				DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();
@@ -213,12 +213,12 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public string ReferencedFrameNumber
 			{
-				get { return base.DicomAttributeCollection[DicomTags.ReferencedFrameNumber].ToString(); }
+				get { return base.DicomAttributeProvider[DicomTags.ReferencedFrameNumber].ToString(); }
 				set
 				{
 					if (string.IsNullOrEmpty(value))
-						base.DicomAttributeCollection[DicomTags.ReferencedFrameNumber] = null;
-					base.DicomAttributeCollection[DicomTags.ReferencedFrameNumber].SetStringValue(value);
+						base.DicomAttributeProvider[DicomTags.ReferencedFrameNumber] = null;
+					base.DicomAttributeProvider[DicomTags.ReferencedFrameNumber].SetStringValue(value);
 				}
 			}
 
@@ -227,12 +227,12 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public string ReferencedSegmentNumber
 			{
-				get { return base.DicomAttributeCollection[DicomTags.ReferencedSegmentNumber].ToString(); }
+				get { return base.DicomAttributeProvider[DicomTags.ReferencedSegmentNumber].ToString(); }
 				set
 				{
 					if (string.IsNullOrEmpty(value))
-						base.DicomAttributeCollection[DicomTags.ReferencedSegmentNumber] = null;
-					base.DicomAttributeCollection[DicomTags.ReferencedSegmentNumber].SetStringValue(value);
+						base.DicomAttributeProvider[DicomTags.ReferencedSegmentNumber] = null;
+					base.DicomAttributeProvider[DicomTags.ReferencedSegmentNumber].SetStringValue(value);
 				}
 			}
 
@@ -243,7 +243,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				get
 				{
-					DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedSopSequence];
+					DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedSopSequence];
 					if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					{
 						return null;
@@ -254,10 +254,10 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				{
 					if (value == null)
 					{
-						base.DicomAttributeCollection[DicomTags.ReferencedSopSequence] = null;
+						base.DicomAttributeProvider[DicomTags.ReferencedSopSequence] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.ReferencedSopSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+					base.DicomAttributeProvider[DicomTags.ReferencedSopSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
 				}
 			}
 
@@ -266,7 +266,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public ISopInstanceReferenceMacro CreateReferencedSopSequence()
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedSopSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedSopSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();
@@ -285,7 +285,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				get
 				{
-					DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedRealWorldValueMappingInstanceSequence];
+					DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedRealWorldValueMappingInstanceSequence];
 					if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					{
 						return null;
@@ -296,10 +296,10 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				{
 					if (value == null)
 					{
-						base.DicomAttributeCollection[DicomTags.ReferencedRealWorldValueMappingInstanceSequence] = null;
+						base.DicomAttributeProvider[DicomTags.ReferencedRealWorldValueMappingInstanceSequence] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.ReferencedRealWorldValueMappingInstanceSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+					base.DicomAttributeProvider[DicomTags.ReferencedRealWorldValueMappingInstanceSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
 				}
 			}
 
@@ -308,7 +308,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public ISopInstanceReferenceMacro CreateReferencedRealWorldValueMappingInstanceSequence()
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedRealWorldValueMappingInstanceSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedRealWorldValueMappingInstanceSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();

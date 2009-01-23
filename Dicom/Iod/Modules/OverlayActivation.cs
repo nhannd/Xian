@@ -48,8 +48,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OverlayActivationModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public OverlayActivationModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public OverlayActivationModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		//TODO: Overlay tags are actually 60xx,eeee where xx is anything from 00 to 1E inclusive, each representing a single layer. This still needs to be implemented.
 
@@ -61,7 +60,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			get
 			{
 				int result;
-				if (base.DicomAttributeCollection[DicomTags.OverlayActivationLayer].TryGetInt32(0, out result))
+				if (base.DicomAttributeProvider[DicomTags.OverlayActivationLayer].TryGetInt32(0, out result))
 					return result;
 				return null;
 			}
@@ -69,10 +68,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				if (!value.HasValue)
 				{
-					base.DicomAttributeCollection[DicomTags.OverlayActivationLayer] = null;
+					base.DicomAttributeProvider[DicomTags.OverlayActivationLayer] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.OverlayActivationLayer].SetInt32(0, value.Value);
+				base.DicomAttributeProvider[DicomTags.OverlayActivationLayer].SetInt32(0, value.Value);
 			}
 		}
 	}

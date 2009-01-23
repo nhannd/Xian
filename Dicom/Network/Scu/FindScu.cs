@@ -186,7 +186,7 @@ namespace ClearCanvas.Dicom.Network.Scu
             if (iod == null)
                 throw new ArgumentNullException("iod");
 
-            return Find(clientAETitle, remoteAE, remoteHost, remotePort, iod.DicomAttributeCollection);
+			return Find(clientAETitle, remoteAE, remoteHost, remotePort, iod.DicomAttributeProvider as DicomAttributeCollection);
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace ClearCanvas.Dicom.Network.Scu
             if (iod == null)
                 throw new ArgumentNullException("iod");
 
-            Find(clientAETitle, remoteAE, remoteHost, remotePort, iod.DicomAttributeCollection);
+			Find(clientAETitle, remoteAE, remoteHost, remotePort, iod.DicomAttributeProvider as DicomAttributeCollection);
             return GetResultsAsIod<T>(_results);
         }
 

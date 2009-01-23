@@ -53,15 +53,15 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string SpecimenIdentifier
 		{
-			get { return base.DicomAttributeCollection[DicomTags.SpecimenIdentifier].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.SpecimenIdentifier].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.SpecimenIdentifier].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.SpecimenIdentifier].SetNullValue();
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.SpecimenIdentifier].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.SpecimenIdentifier].SetString(0, value);
 			}
 		}
 
@@ -72,7 +72,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.SpecimenTypeCodeSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.SpecimenTypeCodeSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -81,10 +81,10 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 			}
 			set
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.SpecimenTypeCodeSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.SpecimenTypeCodeSequence];
 				if (value == null)
 				{
-					base.DicomAttributeCollection[DicomTags.SpecimenTypeCodeSequence] = null;
+					base.DicomAttributeProvider[DicomTags.SpecimenTypeCodeSequence] = null;
 					return;
 				}
 				dicomAttribute.Values = new DicomSequenceItem[] {value.DicomSequenceItem};
@@ -96,15 +96,15 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string SlideIdentifier
 		{
-			get { return base.DicomAttributeCollection[DicomTags.SlideIdentifier].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.SlideIdentifier].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.SlideIdentifier] = null;
+					base.DicomAttributeProvider[DicomTags.SlideIdentifier] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.SlideIdentifier].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.SlideIdentifier].SetString(0, value);
 			}
 		}
 	}

@@ -52,8 +52,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// Initializes a new instance of the Iod class.
         /// </summary>
         /// <param name="_dicomAttributeCollection"></param>
-        public StudyModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public StudyModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -65,8 +64,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The study instance uid.</value>
         public string StudyInstanceUid
         {
-            get { return base.DicomAttributeCollection[DicomTags.StudyInstanceUid].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.StudyInstanceUid].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.StudyInstanceUid].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.StudyInstanceUid].SetString(0, value); }
         }
 
         /// <summary>
@@ -75,8 +74,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The accession number.</value>
         public string AccessionNumber
         {
-            get { return base.DicomAttributeCollection[DicomTags.AccessionNumber].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.AccessionNumber].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.AccessionNumber].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.AccessionNumber].SetString(0, value); }
         }
 
         /// <summary>
@@ -88,11 +87,11 @@ namespace ClearCanvas.Dicom.Iod.Modules
             get
             {
                 return DateTimeParser.ParseDateAndTime(String.Empty,
-                  base.DicomAttributeCollection[DicomTags.StudyDate].GetString(0, String.Empty),
-                  base.DicomAttributeCollection[DicomTags.StudyTime].GetString(0, String.Empty));
+                  base.DicomAttributeProvider[DicomTags.StudyDate].GetString(0, String.Empty),
+                  base.DicomAttributeProvider[DicomTags.StudyTime].GetString(0, String.Empty));
             }
 
-            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection[DicomTags.StudyDate], base.DicomAttributeCollection[DicomTags.StudyTime]); }
+            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeProvider[DicomTags.StudyDate], base.DicomAttributeProvider[DicomTags.StudyTime]); }
         }
         #endregion
     }

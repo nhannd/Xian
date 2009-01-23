@@ -53,9 +53,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="RadiationDoseModuleIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public RadiationDoseModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public RadiationDoseModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -71,7 +69,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.AnatomicStructureSpaceOrRegionSequence] as DicomAttributeSQ);
+                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeProvider[DicomTags.AnatomicStructureSpaceOrRegionSequence] as DicomAttributeSQ);
             }
         }
 
@@ -81,8 +79,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The total time of fluoroscopy.</value>
         public ushort TotalTimeOfFluoroscopy
         {
-            get { return base.DicomAttributeCollection[DicomTags.TotalTimeOfFluoroscopy].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.TotalTimeOfFluoroscopy].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.TotalTimeOfFluoroscopy].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.TotalTimeOfFluoroscopy].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -92,8 +90,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The total number of exposures.</value>
         public ushort TotalNumberOfExposures
         {
-            get { return base.DicomAttributeCollection[DicomTags.TotalNumberOfExposures].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.TotalNumberOfExposures].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.TotalNumberOfExposures].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.TotalNumberOfExposures].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -103,8 +101,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The distance source to detector.</value>
         public float DistanceSourceToDetector
         {
-            get { return base.DicomAttributeCollection[DicomTags.DistanceSourceToDetector].GetFloat32(0, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.DistanceSourceToDetector].SetFloat32(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.DistanceSourceToDetector].GetFloat32(0, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.DistanceSourceToDetector].SetFloat32(0, value); }
         }
 
         /// <summary>
@@ -114,8 +112,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The distance source to entrance.</value>
         public float DistanceSourceToEntrance
         {
-            get { return base.DicomAttributeCollection[DicomTags.DistanceSourceToEntrance].GetFloat32(0, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.DistanceSourceToEntrance].SetFloat32(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.DistanceSourceToEntrance].GetFloat32(0, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.DistanceSourceToEntrance].SetFloat32(0, value); }
         }
 
         /// <summary>
@@ -125,8 +123,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The entrance dose.</value>
         public ushort EntranceDose
         {
-            get { return base.DicomAttributeCollection[DicomTags.EntranceDose].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.EntranceDose].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.EntranceDose].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.EntranceDose].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -136,8 +134,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The entrance dose in mgy.</value>
         public float EntranceDoseInMgy
         {
-            get { return base.DicomAttributeCollection[DicomTags.EntranceDoseInMgy].GetFloat32(0, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.EntranceDoseInMgy].SetFloat32(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.EntranceDoseInMgy].GetFloat32(0, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.EntranceDoseInMgy].SetFloat32(0, value); }
         }
 
         /// <summary>
@@ -146,8 +144,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The exposed area1.</value>
         public float ExposedArea1
         {
-            get { return base.DicomAttributeCollection[DicomTags.ExposedArea].GetFloat32(0, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.ExposedArea].SetFloat32(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ExposedArea].GetFloat32(0, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.ExposedArea].SetFloat32(0, value); }
         }
 
         /// <summary>
@@ -156,8 +154,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The exposed area2.</value>
         public float ExposedArea2
         {
-            get { return base.DicomAttributeCollection[DicomTags.ExposedArea].GetFloat32(1, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.ExposedArea].SetFloat32(1, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ExposedArea].GetFloat32(1, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.ExposedArea].SetFloat32(1, value); }
         }
 
         /// <summary>
@@ -170,8 +168,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The image and fluoroscopy area dose product.</value>
         public float ImageAndFluoroscopyAreaDoseProduct
         {
-            get { return base.DicomAttributeCollection[DicomTags.ImageAndFluoroscopyAreaDoseProduct].GetFloat32(0, 0.0F); }
-            set { base.DicomAttributeCollection[DicomTags.ImageAndFluoroscopyAreaDoseProduct].SetFloat32(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ImageAndFluoroscopyAreaDoseProduct].GetFloat32(0, 0.0F); }
+            set { base.DicomAttributeProvider[DicomTags.ImageAndFluoroscopyAreaDoseProduct].SetFloat32(0, value); }
         }
 
         /// <summary>
@@ -180,8 +178,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The comments on radiation dose.</value>
         public string CommentsOnRadiationDose
         {
-            get { return base.DicomAttributeCollection[DicomTags.CommentsOnRadiationDose].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.CommentsOnRadiationDose].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.CommentsOnRadiationDose].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.CommentsOnRadiationDose].SetString(0, value); }
         }
 
         /// <summary>
@@ -193,7 +191,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<ExposureDoseSequenceIod>(base.DicomAttributeCollection[DicomTags.ExposureDoseSequence] as DicomAttributeSQ);
+                return new SequenceIodList<ExposureDoseSequenceIod>(base.DicomAttributeProvider[DicomTags.ExposureDoseSequence] as DicomAttributeSQ);
             }
         }
         

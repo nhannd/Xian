@@ -61,12 +61,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string MappingResource
 		{
-			get { return base.DicomAttributeCollection[DicomTags.MappingResource].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.MappingResource].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "MappingResource is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.MappingResource].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.MappingResource].SetString(0, value);
 			}
 		}
 
@@ -75,12 +75,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string TemplateIdentifier
 		{
-			get { return base.DicomAttributeCollection[DicomTags.TemplateIdentifier].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.TemplateIdentifier].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "Template Identifier is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.TemplateIdentifier].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.TemplateIdentifier].SetString(0, value);
 			}
 		}
 	}

@@ -32,30 +32,27 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Validation;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
 	/// Represents the DICOM concept of a frame.
 	/// </summary>
-	public class Frame : IDisposable
+	public partial class Frame : IDisposable
 	{
 		#region Private fields
 
 		private readonly ImageSop _parentImageSop;
 		private readonly int _frameNumber;
-		private NormalizedPixelSpacing _normalizedPixelSpacing;
-		private ImagePlaneHelper _imagePlaneHelper;
-		private volatile byte[] _pixelData;
+		
 		private readonly object _syncLock = new object();
+		private volatile NormalizedPixelSpacing _normalizedPixelSpacing;
+		private volatile ImagePlaneHelper _imagePlaneHelper;
+		private volatile byte[] _pixelData;
 
 		#endregion
 
@@ -110,7 +107,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public int FrameNumber
 		{
-			get { return _frameNumber;}
+			get { return _frameNumber; }
 		}
 
 		#region General Image Module
@@ -407,7 +404,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				ushort samplesPerPixel;
 				samplesPerPixel = _parentImageSop[DicomTags.SamplesPerPixel].GetUInt16(0, 0);
-				return (int)samplesPerPixel;
+				return samplesPerPixel;
 			}
 		}
 
@@ -420,7 +417,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				string photometricInterpretation;
 				photometricInterpretation = _parentImageSop[DicomTags.PhotometricInterpretation].GetString(0, null);
-				return PhotometricInterpretationHelper.FromString(photometricInterpretation);
+				return PhotometricInterpretation.FromCodeString(photometricInterpretation);
 			}
 		}
 
@@ -433,7 +430,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				ushort rows;
 				rows = _parentImageSop[DicomTags.Rows].GetUInt16(0, 0);
-				return (int)rows;
+				return rows;
 			}
 		}
 
@@ -446,7 +443,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				ushort columns;
 				columns = _parentImageSop[DicomTags.Columns].GetUInt16(0, 0);
-				return (int)columns;
+				return columns;
 			}
 		}
 
@@ -459,7 +456,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				ushort bitsAllocated;
 				bitsAllocated = _parentImageSop[DicomTags.BitsAllocated].GetUInt16(0, 0);
-				return (int)bitsAllocated;
+				return bitsAllocated;
 			}
 		}
 
@@ -472,7 +469,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				ushort bitsStored;
 				bitsStored = _parentImageSop[DicomTags.BitsStored].GetUInt16(0, 0);
-				return (int)bitsStored;
+				return bitsStored;
 			}
 		}
 
@@ -485,7 +482,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				ushort highBit;
 				highBit = _parentImageSop[DicomTags.HighBit].GetUInt16(0, 0);
-				return (int)highBit;
+				return highBit;
 			}
 		}
 
@@ -498,7 +495,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				ushort pixelRepresentation;
 				pixelRepresentation = _parentImageSop[DicomTags.PixelRepresentation].GetUInt16(0, 0);
-				return (int)pixelRepresentation;
+				return pixelRepresentation;
 			}
 		}
 
@@ -514,7 +511,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				ushort planarConfiguration;
 				planarConfiguration = _parentImageSop[DicomTags.PlanarConfiguration].GetUInt16(0, 0);
-				return (int)planarConfiguration;
+				return planarConfiguration;
 			}
 		}
 
@@ -695,11 +692,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </returns>
 		public bool IsColor
 		{
-			get
-			{
-				return this.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 &&
-				       this.PhotometricInterpretation != PhotometricInterpretation.Monochrome2;
-			}
+			get { return PhotometricInterpretation.IsColor; }
 		}
 
 		/// <summary>
@@ -710,7 +703,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				if (_imagePlaneHelper == null)
-					_imagePlaneHelper = new ImagePlaneHelper(this);
+				{
+					lock (_syncLock)
+					{
+						if (_imagePlaneHelper == null)
+							_imagePlaneHelper = new ImagePlaneHelper(this);
+					}
+				}
 
 				return _imagePlaneHelper;
 			}
@@ -730,7 +729,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				if (_normalizedPixelSpacing == null)
-					_normalizedPixelSpacing = new NormalizedPixelSpacing(this);
+				{
+					lock (_syncLock)
+					{
+						if (_normalizedPixelSpacing == null)
+							_normalizedPixelSpacing = new NormalizedPixelSpacing(this);
+					}
+				}
 
 				return _normalizedPixelSpacing;
 			}
@@ -765,65 +770,21 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// call to <see cref="UnloadPixelData"/>.
 		/// </para>
 		/// </remarks>
-		/// <seealso cref="ToArgb"/>
 		public byte[] GetNormalizedPixelData()
 		{
-			if (_pixelData == null)
+			byte[] pixelData = _pixelData;
+			if (pixelData == null)
 			{
 				lock (_syncLock)
 				{
 					if (_pixelData == null)
-					{
-						_pixelData = CreateNormalizedPixelData();
-					}
+						_pixelData = _parentImageSop.DataSource.GetFrameNormalizedPixelData(FrameNumber);
+
+					pixelData = _pixelData;
 				}
 			}
 
-			return _pixelData;
-		}
-
-		/// <summary>
-		/// Gets the pixel data in normalized form.
-		/// </summary>
-		/// <remarks>
-		/// <para>Virtual method called by the <see cref="GetNormalizedPixelData"/> to get the normalized pixel data.</para>
-		/// <para>The <see cref="GetNormalizedPixelData"/> method encapsulates the necessary code to make the operation thread-safe.</para>
-		/// </remarks>
-		/// <returns></returns>
-		/// <see cref="GetNormalizedPixelData"/>
-		protected virtual byte[] CreateNormalizedPixelData()
-		{
-			CodeClock clock = new CodeClock();
-			clock.Start();
-
-			DicomMessageBase message = this.ParentImageSop.NativeDicomObject;
-			PhotometricInterpretation photometricInterpretation;
-			byte[] rawPixelData;
-
-			if (!message.TransferSyntax.Encapsulated)
-			{
-				DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(message);
-				// DICOM library uses zero-based frame numbers
-				rawPixelData = pixelData.GetFrame(this.FrameNumber - 1);
-				photometricInterpretation = this.PhotometricInterpretation;
-			}
-			else if (DicomCodecRegistry.GetCodec(message.TransferSyntax) != null)
-			{
-				DicomCompressedPixelData pixelData = new DicomCompressedPixelData(message);
-				string pi;
-				rawPixelData = pixelData.GetFrame(this.FrameNumber - 1, out pi);
-				photometricInterpretation = PhotometricInterpretationHelper.FromString(pi);
-			}
-			else
-				throw new DicomCodecException("Unsupported transfer syntax");
-
-			if (this.IsColor)
-				rawPixelData = this.ToArgb(rawPixelData, photometricInterpretation);
-
-			clock.Stop();
-			PerformanceReportBroker.PublishReport("Frame", "CreatePixelData", clock.Seconds);
-			
-			return rawPixelData;
+			return pixelData;
 		}
 
 		/// <summary>
@@ -838,57 +799,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public void UnloadPixelData()
 		{
-			lock (_syncLock)
-			{
-				_pixelData = null;
-			}
+			_parentImageSop.DataSource.UnloadFrameData(FrameNumber);
 		}
 
-		/// <summary>
-		/// Converts colour pixel data to ARGB.
-		/// </summary>
-		/// <remarks>
-		/// <para>
-		/// Normally, this helper method would be called from (subclass) implementations of
-		/// <see cref="GetNormalizedPixelData"/> the first time it is accessed.
-		/// </para>
-		/// </remarks>
-		/// <seealso cref="GetNormalizedPixelData()"/>
-		protected byte[] ToArgb(
-			byte[] pixelData, 
-			PhotometricInterpretation photometricInterpretation)
+		public IFrameReference CreateTransientReference()
 		{
-			CodeClock clock = new CodeClock();
-			clock.Start();
-
-			int sizeInBytes = this.Rows * this.Columns * 4;
-			byte[] argbPixelData = new byte[sizeInBytes];
-
-			// Convert palette colour images to ARGB so we don't get interpolation artifacts
-			// when rendering.
-			if (this.PhotometricInterpretation == PhotometricInterpretation.PaletteColor)
-			{
-				ColorSpaceConverter.ToArgb(
-					this.BitsAllocated, 
-					this.PixelRepresentation != 0 ? true : false,
-					pixelData, 
-					argbPixelData,
-					CreateColorMap());
-			}
-			// Convert RGB and YBR variants to ARGB
-			else
-			{
-				ColorSpaceConverter.ToArgb(
-					photometricInterpretation,
-					this.PlanarConfiguration,
-					pixelData,
-					argbPixelData);
-			}
-
-			clock.Stop();
-			PerformanceReportBroker.PublishReport("Frame", "ToARGB", clock.Seconds);
-
-			return argbPixelData;
+			return new FrameReference(this);
 		}
 
 		/// <summary>
@@ -919,64 +835,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					this.PlanarConfiguration, 
 					this.SamplesPerPixel
 				);
-		}
-
-		private IDataLut CreateColorMap()
-		{
-			CodeClock clock = new CodeClock();
-			clock.Start();
-
-			bool tagExists;
-			int lutSize, firstMappedPixel, bitsPerLutEntry;
-
-			DicomAttribute attribDescriptor = _parentImageSop[DicomTags.RedPaletteColorLookupTableDescriptor];
-
-			tagExists = attribDescriptor.TryGetInt32(0, out lutSize);
-
-			if (!tagExists)
-				throw new Exception("LUT Size missing.");
-
-			tagExists = attribDescriptor.TryGetInt32(1, out firstMappedPixel);
-
-			if (!tagExists)
-				throw new Exception("First Mapped Pixel missing.");
-
-			tagExists = attribDescriptor.TryGetInt32(2, out bitsPerLutEntry);
-
-			if (!tagExists)
-				throw new Exception("Bits Per Entry missing.");
-
-			byte[] redLut, greenLut, blueLut;
-
-			redLut = _parentImageSop[DicomTags.RedPaletteColorLookupTableData].Values as byte[];
-
-			if (redLut == null)
-				throw new Exception("Red Palette Color LUT missing.");
-
-			greenLut = _parentImageSop[DicomTags.GreenPaletteColorLookupTableData].Values as byte[];
-
-			if (greenLut == null)
-				throw new Exception("Green Palette Color LUT missing.");
-
-			blueLut = _parentImageSop[DicomTags.BluePaletteColorLookupTableData].Values as byte[];
-
-			if (blueLut == null)
-				throw new Exception("Blue Palette Color LUT missing.");
-
-			// The DICOM standard says that if the LUT size is 0, it means that it's 65536 in size.
-			if (lutSize == 0)
-				lutSize = 65536;
-
-			clock.Stop();
-			PerformanceReportBroker.PublishReport("Frame", "CreateColorMap", clock.Seconds);
-			
-			return new PaletteColorMap(
-				lutSize,
-				firstMappedPixel,
-				bitsPerLutEntry,
-				redLut,
-				greenLut,
-				blueLut);
 		}
 
 		/// <summary>

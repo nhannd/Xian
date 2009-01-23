@@ -52,9 +52,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="PerformedProcedureStepRelationshipModuleIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public PerformedProcedureStepRelationshipModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public PerformedProcedureStepRelationshipModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -67,8 +65,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The name of the patients.</value>
         public PersonName PatientsName
         {
-            get { return new PersonName(base.DicomAttributeCollection[DicomTags.PatientsName].GetString(0, String.Empty)); }
-            set { base.DicomAttributeCollection[DicomTags.PatientsName].SetString(0, value.ToString()); }
+            get { return new PersonName(base.DicomAttributeProvider[DicomTags.PatientsName].GetString(0, String.Empty)); }
+            set { base.DicomAttributeProvider[DicomTags.PatientsName].SetString(0, value.ToString()); }
         }
 
         /// <summary>
@@ -77,8 +75,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The patient id.</value>
         public string PatientId
         {
-            get { return base.DicomAttributeCollection[DicomTags.PatientId].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PatientId].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PatientId].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PatientId].SetString(0, value); }
         }
 
         /// <summary>
@@ -87,8 +85,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The issuer of patient id.</value>
         public string IssuerOfPatientId
         {
-            get { return base.DicomAttributeCollection[DicomTags.IssuerOfPatientId].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.IssuerOfPatientId].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.IssuerOfPatientId].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.IssuerOfPatientId].SetString(0, value); }
         }
 
         /// <summary>
@@ -97,9 +95,9 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The patients birth date.</value>
         public DateTime? PatientsBirthDate
         {
-        	get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeCollection, 0, DicomTags.PatientsBirthDate, 0);  }
+        	get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeProvider, 0, DicomTags.PatientsBirthDate, 0);  }
         
-            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection, 0, DicomTags.PatientsBirthDate, 0); }
+            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeProvider, 0, DicomTags.PatientsBirthDate, 0); }
         }
 
         /// <summary>
@@ -108,8 +106,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The patients sex.</value>
         public PatientsSex PatientsSex
         {
-            get { return IodBase.ParseEnum<PatientsSex>(base.DicomAttributeCollection[DicomTags.PatientsSex].GetString(0, String.Empty), PatientsSex.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.PatientsSex], value); }
+            get { return IodBase.ParseEnum<PatientsSex>(base.DicomAttributeProvider[DicomTags.PatientsSex].GetString(0, String.Empty), PatientsSex.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.PatientsSex], value); }
         }
 
         /// <summary>
@@ -120,7 +118,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeCollection[DicomTags.ReferencedPatientSequence] as DicomAttributeSQ);
+                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeProvider[DicomTags.ReferencedPatientSequence] as DicomAttributeSQ);
             }
         }
 
@@ -132,7 +130,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<ScheduledStepAttributesSequenceIod>(base.DicomAttributeCollection[DicomTags.ScheduledStepAttributesSequence] as DicomAttributeSQ);
+                return new SequenceIodList<ScheduledStepAttributesSequenceIod>(base.DicomAttributeProvider[DicomTags.ScheduledStepAttributesSequence] as DicomAttributeSQ);
             }
         }
 

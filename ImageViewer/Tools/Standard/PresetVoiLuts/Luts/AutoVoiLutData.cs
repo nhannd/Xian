@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 					_lutCache[sop.SopInstanceUID] = reference;
 				}
 
-				dataLuts = VoiDataLut.Create(delegate(uint tag) { return sop[tag]; });
+				dataLuts = VoiDataLut.Create(sop.DataSource);
 				_lutCache[sop.SopInstanceUID].Target = dataLuts;
 				return dataLuts;
 			}

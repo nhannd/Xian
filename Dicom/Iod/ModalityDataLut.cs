@@ -60,17 +60,12 @@ namespace ClearCanvas.Dicom.Iod
 			return new ModalityDataLut(data[0], modalityLutType);
 		}
 
-		public static ModalityDataLut Create(DicomAttributeGetter attributeGetter)
+		public static ModalityDataLut Create(IDicomAttributeProvider dicomAttributeProvider)
 		{
-			DicomAttributeSQ modalityLutSequence = (DicomAttributeSQ)attributeGetter(DicomTags.ModalityLutSequence);
-			int pixelRepresentation = GetPixelRepresentation(attributeGetter);
+			DicomAttributeSQ modalityLutSequence = (DicomAttributeSQ)dicomAttributeProvider[DicomTags.ModalityLutSequence];
+			int pixelRepresentation = GetPixelRepresentation(dicomAttributeProvider);
 
 			return Create(modalityLutSequence, pixelRepresentation);
-		}
-
-		public static ModalityDataLut Create(DicomAttributeCollection parentCollection)
-		{
-			return Create(delegate(uint tag) { return parentCollection[tag]; });
 		}
 
 		#endregion

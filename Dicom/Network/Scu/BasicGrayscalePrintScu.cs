@@ -279,7 +279,7 @@ namespace ClearCanvas.Dicom.Network.Scu
         #region Private Methods
         private void SendCreateFilmSessionRequest(DicomClient client, ClientAssociationParameters association)
         {
-            DicomMessage newRequestMessage = new DicomMessage(null, _basicFilmSessionModuleIod.DicomAttributeCollection);
+            DicomMessage newRequestMessage = new DicomMessage(null, (DicomAttributeCollection)_basicFilmSessionModuleIod.DicomAttributeProvider);
 
             byte pcid = association.FindAbstractSyntaxOrThrowException(SopClass.BasicGrayscalePrintManagementMetaSopClass);
             _filmSessionUid = DicomUid.GenerateUid();
@@ -295,7 +295,7 @@ namespace ClearCanvas.Dicom.Network.Scu
             referencedFilmSessionSequence.ReferencedSopInstanceUid = responseMessage.AffectedSopInstanceUid;
             _basicFilmBoxModuleIod.ReferencedFilmSessionSequenceList.Add(referencedFilmSessionSequence);
 
-            DicomMessage newRequestMessage = new DicomMessage(null, _basicFilmBoxModuleIod.DicomAttributeCollection);
+            DicomMessage newRequestMessage = new DicomMessage(null, (DicomAttributeCollection)_basicFilmBoxModuleIod.DicomAttributeProvider);
 
             byte pcid = association.FindAbstractSyntaxOrThrowException(SopClass.BasicGrayscalePrintManagementMetaSopClass);
 
@@ -332,7 +332,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
                 ImageBoxPixelModuleIod imageBoxPixelModuleIod = _imageBoxPixelModuleIods[_currentImageBoxIndex];
 
-                DicomMessage newRequestMessage = new DicomMessage(null, imageBoxPixelModuleIod.DicomAttributeCollection);
+                DicomMessage newRequestMessage = new DicomMessage(null, (DicomAttributeCollection)imageBoxPixelModuleIod.DicomAttributeProvider);
                 newRequestMessage.RequestedSopClassUid = SopClass.BasicGrayscaleImageBoxSopClassUid;
                 newRequestMessage.RequestedSopInstanceUid = basicFilmBoxModuleIod.ReferencedImageBoxSequenceList[_currentImageBoxIndex].ReferencedSopInstanceUid;
 

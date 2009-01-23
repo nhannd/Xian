@@ -49,8 +49,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PresentationStateMaskModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public PresentationStateMaskModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public PresentationStateMaskModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		/// <summary>
 		/// Initializes the underlying collection to implement the module or sequence using default values.
@@ -68,7 +67,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.MaskSubtractionSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -77,10 +76,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			}
 			set
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.MaskSubtractionSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
 				if (value == null)
 				{
-					base.DicomAttributeCollection[DicomTags.MaskSubtractionSequence] = null;
+					base.DicomAttributeProvider[DicomTags.MaskSubtractionSequence] = null;
 					return;
 				}
 				dicomAttribute.Values = new DicomSequenceItem[] {value.DicomSequenceItem};
@@ -92,7 +91,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public IMaskSubtractionSequence CreateMaskSubtractionSequence()
 		{
-			DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.MaskSubtractionSequence];
+			DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.MaskSubtractionSequence];
 			if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 			{
 				DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();
@@ -109,15 +108,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public RecommendedViewingMode RecommendedViewingMode
 		{
-			get { return ParseEnum(base.DicomAttributeCollection[DicomTags.RecommendedViewingMode].GetString(0, string.Empty), RecommendedViewingMode.None); }
+			get { return ParseEnum(base.DicomAttributeProvider[DicomTags.RecommendedViewingMode].GetString(0, string.Empty), RecommendedViewingMode.None); }
 			set
 			{
 				if (value == RecommendedViewingMode.None)
 				{
-					base.DicomAttributeCollection[DicomTags.RecommendedViewingMode] = null;
+					base.DicomAttributeProvider[DicomTags.RecommendedViewingMode] = null;
 					return;
 				}
-				SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.RecommendedViewingMode], value);
+				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.RecommendedViewingMode], value);
 			}
 		}
 
@@ -148,12 +147,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// </summary>
 			public MaskOperation MaskOperation
 			{
-				get { return ParseEnum(base.DicomAttributeCollection[DicomTags.MaskOperation].GetString(0, string.Empty), MaskOperation.None); }
+				get { return ParseEnum(base.DicomAttributeProvider[DicomTags.MaskOperation].GetString(0, string.Empty), MaskOperation.None); }
 				set
 				{
 					if (value == MaskOperation.None)
 						throw new ArgumentOutOfRangeException("value", "MaskOperation is Type 1 Required.");
-					SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.MaskOperation], value);
+					SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.MaskOperation], value);
 				}
 			}
 
@@ -165,7 +164,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				get
 				{
 					int result;
-					if (base.DicomAttributeCollection[DicomTags.ContrastFrameAveraging].TryGetInt32(0, out result))
+					if (base.DicomAttributeProvider[DicomTags.ContrastFrameAveraging].TryGetInt32(0, out result))
 						return result;
 					return null;
 				}
@@ -173,10 +172,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				{
 					if (!value.HasValue)
 					{
-						base.DicomAttributeCollection[DicomTags.ContrastFrameAveraging] = null;
+						base.DicomAttributeProvider[DicomTags.ContrastFrameAveraging] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.ContrastFrameAveraging].SetInt32(0, value.Value);
+					base.DicomAttributeProvider[DicomTags.ContrastFrameAveraging].SetInt32(0, value.Value);
 				}
 			}
 		}

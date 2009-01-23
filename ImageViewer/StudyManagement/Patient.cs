@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class Patient
 	{
-		private ImageSop _imageSop;
+		private Sop _sop;
 		private StudyCollection _studies;
 
 		internal Patient()
@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string PatientId
 		{
-			get { return _imageSop.PatientId; }
+			get { return _sop.PatientId; }
 		}
 
 		/// <summary>
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public PersonName PatientsName
 		{
-			get { return _imageSop.PatientsName; }
+			get { return _sop.PatientsName; }
 		}
 
 		/// <summary>
@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string PatientsBirthDate
 		{
-			get { return _imageSop.PatientsBirthDate; }
+			get { return _sop.PatientsBirthDate; }
 		}
 
 		/// <summary>
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string PatientsSex
 		{
-			get { return _imageSop.PatientsSex; }
+			get { return _sop.PatientsSex; }
 		}
 
 		#endregion
@@ -107,9 +107,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return str;
 		}
 
-		internal void SetSop(ImageSop imageSop)
+		internal void SetSop(Sop sop)
 		{
-			_imageSop = imageSop;
+			_sop = sop;
 		}
 	}
 }

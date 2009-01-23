@@ -47,8 +47,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ClinicalTrialSubjectModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public ClinicalTrialSubjectModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public ClinicalTrialSubjectModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) {}
 
 		/// <summary>
 		/// Initializes the underlying collection to implement the module or sequence using default values.
@@ -86,12 +85,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string ClinicalTrialSponsorName
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ClinicalTrialSponsorName].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ClinicalTrialSponsorName].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "ClinicalTrialSponsorName is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.ClinicalTrialSponsorName].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ClinicalTrialSponsorName].SetString(0, value);
 			}
 		}
 
@@ -100,12 +99,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string ClinicalTrialProtocolId
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ClinicalTrialProtocolId].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ClinicalTrialProtocolId].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "ClinicalTrialProtocolId is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.ClinicalTrialProtocolId].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ClinicalTrialProtocolId].SetString(0, value);
 			}
 		}
 
@@ -114,15 +113,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string ClinicalTrialProtocolName
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ClinicalTrialProtocolName].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ClinicalTrialProtocolName].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.ClinicalTrialProtocolName].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.ClinicalTrialProtocolName].SetNullValue();
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ClinicalTrialProtocolName].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ClinicalTrialProtocolName].SetString(0, value);
 			}
 		}
 
@@ -131,15 +130,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string ClinicalTrialSiteId
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ClinicalTrialSiteId].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ClinicalTrialSiteId].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.ClinicalTrialSiteId].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.ClinicalTrialSiteId].SetNullValue();
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ClinicalTrialSiteId].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ClinicalTrialSiteId].SetString(0, value);
 			}
 		}
 
@@ -148,15 +147,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string ClinicalTrialSiteName
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ClinicalTrialSiteName].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ClinicalTrialSiteName].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.ClinicalTrialSiteName].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.ClinicalTrialSiteName].SetNullValue();
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ClinicalTrialSiteName].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ClinicalTrialSiteName].SetString(0, value);
 			}
 		}
 
@@ -165,15 +164,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string ClinicalTrialSubjectId
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ClinicalTrialSubjectId].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ClinicalTrialSubjectId].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.ClinicalTrialSubjectId] = null;
+					base.DicomAttributeProvider[DicomTags.ClinicalTrialSubjectId] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ClinicalTrialSubjectId].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ClinicalTrialSubjectId].SetString(0, value);
 			}
 		}
 
@@ -182,15 +181,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string ClinicalTrialSubjectReadingId
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ClinicalTrialSubjectReadingId].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ClinicalTrialSubjectReadingId].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.ClinicalTrialSubjectReadingId] = null;
+					base.DicomAttributeProvider[DicomTags.ClinicalTrialSubjectReadingId] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ClinicalTrialSubjectReadingId].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ClinicalTrialSubjectReadingId].SetString(0, value);
 			}
 		}
 	}

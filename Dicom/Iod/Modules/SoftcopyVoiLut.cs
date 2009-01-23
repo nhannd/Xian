@@ -50,8 +50,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SoftcopyVoiLutModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public SoftcopyVoiLutModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public SoftcopyVoiLutModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		/// <summary>
 		/// Gets or sets the value of SoftcopyVoiLutSequence in the underlying collection. Type 1.
@@ -60,7 +59,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.SoftcopyVoiLutSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.SoftcopyVoiLutSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					return null;
 
@@ -80,7 +79,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeCollection[DicomTags.SoftcopyVoiLutSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.SoftcopyVoiLutSequence].Values = result;
 			}
 		}
 
@@ -109,7 +108,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				get
 				{
-					DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedImageSequence];
+					DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedImageSequence];
 					if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					{
 						return null;
@@ -126,7 +125,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				{
 					if (value == null || value.Length == 0)
 					{
-						base.DicomAttributeCollection[DicomTags.ReferencedImageSequence] = null;
+						base.DicomAttributeProvider[DicomTags.ReferencedImageSequence] = null;
 						return;
 					}
 
@@ -134,7 +133,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					for (int n = 0; n < value.Length; n++)
 						result[n] = value[n].DicomSequenceItem;
 
-					base.DicomAttributeCollection[DicomTags.ReferencedImageSequence].Values = result;
+					base.DicomAttributeProvider[DicomTags.ReferencedImageSequence].Values = result;
 				}
 			}
 
@@ -143,7 +142,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// </summary>
 			public VoiLutSequenceItem[] VoiLutSequence {
 				get {
-					DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.VoiLutSequence];
+					DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.VoiLutSequence];
 					if (dicomAttribute.IsNull || dicomAttribute.Count == 0) {
 						return null;
 					}
@@ -157,7 +156,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				}
 				set {
 					if (value == null || value.Length == 0) {
-						base.DicomAttributeCollection[DicomTags.VoiLutSequence] = null;
+						base.DicomAttributeProvider[DicomTags.VoiLutSequence] = null;
 						return;
 					}
 
@@ -165,7 +164,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					for (int n = 0; n < value.Length; n++)
 						result[n] = value[n].DicomSequenceItem;
 
-					base.DicomAttributeCollection[DicomTags.VoiLutSequence].Values = result;
+					base.DicomAttributeProvider[DicomTags.VoiLutSequence].Values = result;
 				}
 			}
 
@@ -174,17 +173,17 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// </summary>
 			public double[] WindowCenter {
 				get {
-					DicomAttribute attribute = base.DicomAttributeCollection[DicomTags.WindowCenter];
+					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowCenter];
 					if (attribute.IsNull || attribute.IsEmpty)
 						return null;
 					return (double[])attribute.Values;
 				}
 				set {
 					if (value == null) {
-						base.DicomAttributeCollection[DicomTags.WindowCenter] = null;
+						base.DicomAttributeProvider[DicomTags.WindowCenter] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.WindowCenter].Values = value;
+					base.DicomAttributeProvider[DicomTags.WindowCenter].Values = value;
 				}
 			}
 
@@ -193,17 +192,17 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// </summary>
 			public byte[] WindowWidth {
 				get {
-					DicomAttribute attribute = base.DicomAttributeCollection[DicomTags.WindowWidth];
+					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowWidth];
 					if (attribute.IsNull || attribute.IsEmpty)
 						return null;
 					return (byte[])attribute.Values;
 				}
 				set {
 					if (value == null) {
-						base.DicomAttributeCollection[DicomTags.WindowWidth] = null;
+						base.DicomAttributeProvider[DicomTags.WindowWidth] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.WindowWidth].Values = value;
+					base.DicomAttributeProvider[DicomTags.WindowWidth].Values = value;
 				}
 			}
 
@@ -211,13 +210,13 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// Gets or sets the value of WindowCenterWidthExplanation in the underlying collection. Type 3.
 			/// </summary>
 			public string WindowCenterWidthExplanation {
-				get { return base.DicomAttributeCollection[DicomTags.WindowCenterWidthExplanation].ToString(); }
+				get { return base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation].ToString(); }
 				set {
 					if (string.IsNullOrEmpty(value)) {
-						base.DicomAttributeCollection[DicomTags.WindowCenterWidthExplanation] = null;
+						base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.WindowCenterWidthExplanation].SetStringValue(value);
+					base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation].SetStringValue(value);
 				}
 			}
 
@@ -225,13 +224,13 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// Gets or sets the value of VoiLutFunction in the underlying collection. Type 3.
 			/// </summary>
 			public string VoiLutFunction {
-				get { return base.DicomAttributeCollection[DicomTags.VoiLutFunction].GetString(0, string.Empty); }
+				get { return base.DicomAttributeProvider[DicomTags.VoiLutFunction].GetString(0, string.Empty); }
 				set {
 					if (string.IsNullOrEmpty(value)) {
-						base.DicomAttributeCollection[DicomTags.VoiLutFunction] = null;
+						base.DicomAttributeProvider[DicomTags.VoiLutFunction] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.VoiLutFunction].SetString(0, value);
+					base.DicomAttributeProvider[DicomTags.VoiLutFunction].SetString(0, value);
 				}
 			}
 		}

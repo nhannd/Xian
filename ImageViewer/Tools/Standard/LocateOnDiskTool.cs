@@ -66,11 +66,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (image == null)
 				return;
 
-			LocalImageSop localImageSop = image.ImageSop as LocalImageSop;
-			if (localImageSop == null)
+        	ILocalSopDataSource localSource = image.ImageSop.DataSource as ILocalSopDataSource;
+			if (localSource == null)
 				return;
 
-			System.Diagnostics.Process.Start("explorer.exe", "/n,/select," + localImageSop.Filename);
+			System.Diagnostics.Process.Start("explorer.exe", "/n,/select," + localSource.Filename);
         }
     }
 }

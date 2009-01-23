@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 			IImageSopProvider sopProvider = pImage as IImageSopProvider;
 			if (sopProvider == null)
 				return 0;
-			component.Images.Add(sopProvider.ImageSop);
+			component.Frames.Add(sopProvider.Frame);
 			return 1;
 		}
 

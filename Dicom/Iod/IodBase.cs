@@ -45,11 +45,11 @@ namespace ClearCanvas.Dicom.Iod
         /// <summary>
         /// Contains dicom attribute collection which contains all the dicom tags
         /// </summary>
-        DicomAttributeCollection _dicomAttributeCollection;
+        IDicomAttributeProvider _dicomAttributeProvider;
 
         /// <summary>
         /// Contains a dictionary of module Iods.  Subclassed Iods can use dictionary for a lazy-loaded way of loading modules, this way
-        /// if the <see cref="DicomAttributeCollection"/> gets updated, the new attribute collection will be used (lazy loaded).
+        /// if the <see cref="DicomAttributeProvider"/> gets updated, the new attribute collection will be used (lazy loaded).
         /// </summary>
         private Dictionary<Type, IodBase> _moduleIods = new Dictionary<Type, IodBase>();
         #endregion
@@ -59,34 +59,28 @@ namespace ClearCanvas.Dicom.Iod
         /// Initializes a new instance of the <see cref="IodBase"/> class.
         /// </summary>
         protected IodBase()
-            :this(null)
+            :this(new DicomAttributeCollection())
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IodBase"/> class.
-        /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        protected IodBase(DicomAttributeCollection dicomAttributeCollection)
-        {
-            if (dicomAttributeCollection != null)
-                this._dicomAttributeCollection = dicomAttributeCollection;
-            else
-                this._dicomAttributeCollection = new DicomAttributeCollection();
-        }
-        #endregion
+		protected IodBase(IDicomAttributeProvider dicomAttributeProvider)
+		{
+			_dicomAttributeProvider = dicomAttributeProvider;
+		}
+
+    	#endregion
 
         #region Protected Properties
         /// <summary>
         /// Gets the dicom attribute collection.
         /// </summary>
         /// <value>The dicom attribute collection.</value>
-        public DicomAttributeCollection DicomAttributeCollection
+        public IDicomAttributeProvider DicomAttributeProvider
         {
-            get { return _dicomAttributeCollection; }
+            get { return _dicomAttributeProvider; }
             set 
             { 
-                _dicomAttributeCollection = value;
+                _dicomAttributeProvider = value;
                 // Clear the moduleIods so next time accessed it gets rebuilt cos of lazy loading
                 _moduleIods.Clear();
             }
@@ -100,7 +94,7 @@ namespace ClearCanvas.Dicom.Iod
         /// <param name="dicomTag">The dicom tag.</param>
         public void SetAttributeNull(DicomTag dicomTag)
         {
-            this.DicomAttributeCollection[dicomTag].SetNullValue();
+            this.DicomAttributeProvider[dicomTag].SetNullValue();
         }
 
         /// <summary>
@@ -109,7 +103,7 @@ namespace ClearCanvas.Dicom.Iod
         /// <param name="dicomTag">The dicom tag.</param>
         public void SetAttributeNull(uint dicomTag)
         {
-            this.DicomAttributeCollection[dicomTag].SetNullValue();
+            this.DicomAttributeProvider[dicomTag].SetNullValue();
         }
 
         /// <summary>
@@ -148,7 +142,7 @@ namespace ClearCanvas.Dicom.Iod
             if (!_moduleIods.ContainsKey(typeof(T)))
             {
                 T newT = new T();
-                (newT as IodBase).DicomAttributeCollection = DicomAttributeCollection;
+                (newT as IodBase).DicomAttributeProvider = DicomAttributeProvider;
 
                 _moduleIods.Add(typeof(T), newT);
             }

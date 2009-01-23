@@ -44,17 +44,16 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// </summary>
         public PatientQueryIod()
         {
-            SetAttributeFromEnum(DicomAttributeCollection[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Patient);
+            SetAttributeFromEnum(DicomAttributeProvider[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Patient);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PatientQueryIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public PatientQueryIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public PatientQueryIod(IDicomAttributeProvider dicomAttributeProvider)
+            :base(dicomAttributeProvider)
         {
-            SetAttributeFromEnum(DicomAttributeCollection[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Patient);
+            SetAttributeFromEnum(DicomAttributeProvider[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Patient);
         }
         #endregion
 
@@ -65,8 +64,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The patient id.</value>
         public string PatientId
         {
-            get { return DicomAttributeCollection[DicomTags.PatientId].GetString(0, String.Empty); }
-            set { DicomAttributeCollection[DicomTags.PatientId].SetString(0, value); }
+            get { return DicomAttributeProvider[DicomTags.PatientId].GetString(0, String.Empty); }
+            set { DicomAttributeProvider[DicomTags.PatientId].SetString(0, value); }
         }
 
         /// <summary>
@@ -75,8 +74,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The name of the patients.</value>
         public PersonName PatientsName
         {
-            get { return new PersonName(DicomAttributeCollection[DicomTags.PatientsName].GetString(0, String.Empty)); }
-            set { DicomAttributeCollection[DicomTags.PatientsName].SetString(0, value.ToString()); }
+            get { return new PersonName(DicomAttributeProvider[DicomTags.PatientsName].GetString(0, String.Empty)); }
+            set { DicomAttributeProvider[DicomTags.PatientsName].SetString(0, value.ToString()); }
         }
 
         /// <summary>
@@ -85,8 +84,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The patients birth date.</value>
         public DateTime PatientsBirthDate
         {
-            get { return DicomAttributeCollection[DicomTags.PatientsBirthDate].GetDateTime(0, DateTime.MinValue); }
-            set { DicomAttributeCollection[DicomTags.PatientsBirthDate].SetDateTime(0, value); }
+            get { return DicomAttributeProvider[DicomTags.PatientsBirthDate].GetDateTime(0, DateTime.MinValue); }
+            set { DicomAttributeProvider[DicomTags.PatientsBirthDate].SetDateTime(0, value); }
         }
 
         /// <summary>
@@ -95,8 +94,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The patients sex.</value>
         public string PatientsSex
         {
-            get { return DicomAttributeCollection[DicomTags.PatientsSex].GetString(0, String.Empty); }
-            set { DicomAttributeCollection[DicomTags.PatientsSex].SetString(0, value); }
+            get { return DicomAttributeProvider[DicomTags.PatientsSex].GetString(0, String.Empty); }
+            set { DicomAttributeProvider[DicomTags.PatientsSex].SetString(0, value); }
         }
 
 		/// <summary>
@@ -105,8 +104,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// <value>The number of patient related instances.</value>
 		public uint NumberOfPatientRelatedInstances
 		{
-			get { return DicomAttributeCollection[DicomTags.NumberOfPatientRelatedInstances].GetUInt32(0, 0); }
-			set { DicomAttributeCollection[DicomTags.NumberOfPatientRelatedInstances].SetUInt32(0, value); }
+			get { return DicomAttributeProvider[DicomTags.NumberOfPatientRelatedInstances].GetUInt32(0, 0); }
+			set { DicomAttributeProvider[DicomTags.NumberOfPatientRelatedInstances].SetUInt32(0, value); }
 		}
 
 		/// <summary>
@@ -115,8 +114,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// <value>The number of patient related series.</value>
 		public uint NumberOfPatientRelatedSeries
 		{
-			get { return DicomAttributeCollection[DicomTags.NumberOfPatientRelatedSeries].GetUInt32(0, 0); }
-			set { DicomAttributeCollection[DicomTags.NumberOfPatientRelatedSeries].SetUInt32(0, value); }
+			get { return DicomAttributeProvider[DicomTags.NumberOfPatientRelatedSeries].GetUInt32(0, 0); }
+			set { DicomAttributeProvider[DicomTags.NumberOfPatientRelatedSeries].SetUInt32(0, value); }
 		}
 
 		/// <summary>
@@ -125,8 +124,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// <value>The number of patient related studies.</value>
 		public uint NumberOfPatientRelatedStudies
 		{
-			get { return DicomAttributeCollection[DicomTags.NumberOfPatientRelatedStudies].GetUInt32(0, 0); }
-			set { DicomAttributeCollection[DicomTags.NumberOfPatientRelatedStudies].SetUInt32(0, value); }
+			get { return DicomAttributeProvider[DicomTags.NumberOfPatientRelatedStudies].GetUInt32(0, 0); }
+			set { DicomAttributeProvider[DicomTags.NumberOfPatientRelatedStudies].SetUInt32(0, value); }
 		}
 
         #endregion
@@ -137,26 +136,25 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// </summary>
          public void SetCommonTags()
         {
-            SetCommonTags(DicomAttributeCollection);
+            SetCommonTags(DicomAttributeProvider);
         }
 
         /// <summary>
         /// Sets the common tags for a patient query retrieve request.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public static void SetCommonTags(DicomAttributeCollection dicomAttributeCollection)
+        public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
-			SetAttributeFromEnum(dicomAttributeCollection[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Patient);
+			SetAttributeFromEnum(dicomAttributeProvider[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Patient);
 
 			// Always set the Patient 
-			dicomAttributeCollection[DicomTags.PatientsName].SetString(0, "*");
-			dicomAttributeCollection[DicomTags.PatientId].SetNullValue();
-			dicomAttributeCollection[DicomTags.PatientsBirthDate].SetNullValue();
-			dicomAttributeCollection[DicomTags.PatientsBirthTime].SetNullValue();
-			dicomAttributeCollection[DicomTags.PatientsSex].SetNullValue();
-			dicomAttributeCollection[DicomTags.NumberOfPatientRelatedStudies].SetNullValue();
-			dicomAttributeCollection[DicomTags.NumberOfPatientRelatedSeries].SetNullValue();
-			dicomAttributeCollection[DicomTags.NumberOfPatientRelatedInstances].SetNullValue();
+			dicomAttributeProvider[DicomTags.PatientsName].SetString(0, "*");
+			dicomAttributeProvider[DicomTags.PatientId].SetNullValue();
+			dicomAttributeProvider[DicomTags.PatientsBirthDate].SetNullValue();
+			dicomAttributeProvider[DicomTags.PatientsBirthTime].SetNullValue();
+			dicomAttributeProvider[DicomTags.PatientsSex].SetNullValue();
+			dicomAttributeProvider[DicomTags.NumberOfPatientRelatedStudies].SetNullValue();
+			dicomAttributeProvider[DicomTags.NumberOfPatientRelatedSeries].SetNullValue();
+			dicomAttributeProvider[DicomTags.NumberOfPatientRelatedInstances].SetNullValue();
 		}
         #endregion
     }

@@ -56,12 +56,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string StudyInstanceUid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.StudyInstanceUid].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.StudyInstanceUid].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "StudyInstanceUid is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.StudyInstanceUid].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.StudyInstanceUid].SetString(0, value);
 			}
 		}
 
@@ -70,12 +70,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string SeriesInstanceUid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.SeriesInstanceUid].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.SeriesInstanceUid].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "SeriesInstanceUid is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.SeriesInstanceUid].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.SeriesInstanceUid].SetString(0, value);
 			}
 		}
 
@@ -86,7 +86,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.PurposeOfReferenceCodeSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.PurposeOfReferenceCodeSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -103,7 +103,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 			{
 				if (value == null || value.Length == 0)
 				{
-					base.DicomAttributeCollection[DicomTags.PurposeOfReferenceCodeSequence].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.PurposeOfReferenceCodeSequence].SetNullValue();
 					return;
 				}
 
@@ -111,7 +111,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeCollection[DicomTags.PurposeOfReferenceCodeSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.PurposeOfReferenceCodeSequence].Values = result;
 			}
 		}
 	}

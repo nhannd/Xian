@@ -55,12 +55,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string DigitalSignatureUid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.DigitalSignatureUid].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.DigitalSignatureUid].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "DigitalSignatureUid is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.DigitalSignatureUid].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.DigitalSignatureUid].SetString(0, value);
 			}
 		}
 
@@ -69,12 +69,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public byte[] Signature
 		{
-			get { return (byte[]) base.DicomAttributeCollection[DicomTags.Signature].Values; }
+			get { return (byte[]) base.DicomAttributeProvider[DicomTags.Signature].Values; }
 			set
 			{
 				if (value == null || value.Length == 0)
 					throw new ArgumentNullException("value", "Signature is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.Signature].Values = value;
+				base.DicomAttributeProvider[DicomTags.Signature].Values = value;
 			}
 		}
 	}

@@ -29,7 +29,10 @@
 
 #endregion
 
+using System;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -108,6 +111,65 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public override string GetDescription()
 		{
 			return SR.DescriptionPaletteColorMap;
+		}
+
+		public static PaletteColorMap Create(IDicomAttributeProvider dataSource)
+		{
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
+			bool tagExists;
+			int lutSize, firstMappedPixel, bitsPerLutEntry;
+
+			DicomAttribute attribDescriptor = dataSource[DicomTags.RedPaletteColorLookupTableDescriptor];
+
+			tagExists = attribDescriptor.TryGetInt32(0, out lutSize);
+
+			if (!tagExists)
+				throw new Exception("LUT Size missing.");
+
+			tagExists = attribDescriptor.TryGetInt32(1, out firstMappedPixel);
+
+			if (!tagExists)
+				throw new Exception("First Mapped Pixel missing.");
+
+			tagExists = attribDescriptor.TryGetInt32(2, out bitsPerLutEntry);
+
+			if (!tagExists)
+				throw new Exception("Bits Per Entry missing.");
+
+			byte[] redLut, greenLut, blueLut;
+
+			redLut = dataSource[DicomTags.RedPaletteColorLookupTableData].Values as byte[];
+
+			if (redLut == null)
+				throw new Exception("Red Palette Color LUT missing.");
+
+			greenLut = dataSource[DicomTags.GreenPaletteColorLookupTableData].Values as byte[];
+
+			if (greenLut == null)
+				throw new Exception("Green Palette Color LUT missing.");
+
+			blueLut = dataSource[DicomTags.BluePaletteColorLookupTableData].Values as byte[];
+
+			if (blueLut == null)
+				throw new Exception("Blue Palette Color LUT missing.");
+
+			// The DICOM standard says that if the LUT size is 0, it means that it's 65536 in size.
+			if (lutSize == 0)
+				lutSize = 65536;
+
+			clock.Stop();
+			PerformanceReportBroker.PublishReport("PaletteColorMap", "Create", clock.Seconds);
+
+			return new PaletteColorMap(
+				lutSize,
+				firstMappedPixel,
+				bitsPerLutEntry,
+				redLut,
+				greenLut,
+				blueLut);
+
 		}
 	}
 }

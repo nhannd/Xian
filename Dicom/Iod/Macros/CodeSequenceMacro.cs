@@ -63,8 +63,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The code value.</value>
 		public string CodeValue
 		{
-			get { return base.DicomAttributeCollection[DicomTags.CodeValue].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.CodeValue].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.CodeValue].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.CodeValue].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -73,8 +73,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The coding scheme designator.</value>
 		public string CodingSchemeDesignator
 		{
-			get { return base.DicomAttributeCollection[DicomTags.CodingSchemeDesignator].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.CodingSchemeDesignator].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.CodingSchemeDesignator].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.CodingSchemeDesignator].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -83,8 +83,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The coding scheme version.</value>
 		public string CodingSchemeVersion
 		{
-			get { return base.DicomAttributeCollection[DicomTags.CodingSchemeVersion].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.CodingSchemeVersion].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.CodingSchemeVersion].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.CodingSchemeVersion].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -93,8 +93,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The code meaning.</value>
 		public string CodeMeaning
 		{
-			get { return base.DicomAttributeCollection[DicomTags.CodeMeaning].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.CodeMeaning].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.CodeMeaning].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.CodeMeaning].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -103,8 +103,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The context identifier.</value>
 		public string ContextIdentifier
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ContextIdentifier].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.ContextIdentifier].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.ContextIdentifier].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.ContextIdentifier].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -113,8 +113,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The mapping resource.</value>
 		public string MappingResource
 		{
-			get { return base.DicomAttributeCollection[DicomTags.MappingResource].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.MappingResource].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.MappingResource].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.MappingResource].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -123,9 +123,9 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The context group version.</value>
 		public DateTime? ContextGroupVersion
 		{
-			get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeCollection, DicomTags.ContextGroupVersion, 0, 0); }
+			get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeProvider, DicomTags.ContextGroupVersion, 0, 0); }
 
-			set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection, DicomTags.ContextGroupVersion, 0, 0); }
+			set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeProvider, DicomTags.ContextGroupVersion, 0, 0); }
 		}
 
 		/// <summary>
@@ -134,8 +134,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The context group extension flag.</value>
 		public string ContextGroupExtensionFlag
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ContextGroupExtensionFlag].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.ContextGroupExtensionFlag].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.ContextGroupExtensionFlag].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.ContextGroupExtensionFlag].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -144,9 +144,9 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The context group local version.</value>
 		public DateTime? ContextGroupLocalVersion
 		{
-			get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeCollection, DicomTags.ContextGroupLocalVersion, 0, 0); }
+			get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeProvider, DicomTags.ContextGroupLocalVersion, 0, 0); }
 
-			set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection, DicomTags.ContextGroupLocalVersion, 0, 0); }
+			set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeProvider, DicomTags.ContextGroupLocalVersion, 0, 0); }
 		}
 
 		/// <summary>
@@ -155,8 +155,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The context group extension creator uid.</value>
 		public string ContextGroupExtensionCreatorUid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ContextGroupExtensionCreatorUid].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.ContextGroupExtensionCreatorUid].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.ContextGroupExtensionCreatorUid].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.ContextGroupExtensionCreatorUid].SetString(0, value); }
 		}
 
 		#endregion

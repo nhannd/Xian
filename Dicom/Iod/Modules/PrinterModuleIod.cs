@@ -51,9 +51,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="PrinterModuleIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public PrinterModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public PrinterModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -65,8 +63,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The printer status.</value>
         public PrinterStatus PrinterStatus
         {
-            get { return IodBase.ParseEnum<PrinterStatus>(base.DicomAttributeCollection[DicomTags.PrinterStatus].GetString(0, String.Empty), PrinterStatus.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.PrinterStatus], value, false); }
+            get { return IodBase.ParseEnum<PrinterStatus>(base.DicomAttributeProvider[DicomTags.PrinterStatus].GetString(0, String.Empty), PrinterStatus.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.PrinterStatus], value, false); }
         }
 
         /// <summary>
@@ -75,8 +73,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The printer status info.</value>
         public string PrinterStatusInfo
         {
-            get { return base.DicomAttributeCollection[DicomTags.PrinterStatusInfo].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PrinterStatusInfo].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PrinterStatusInfo].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PrinterStatusInfo].SetString(0, value); }
         }
 
         /// <summary>
@@ -85,8 +83,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The name of the printer.</value>
         public string PrinterName
         {
-            get { return base.DicomAttributeCollection[DicomTags.PrinterName].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PrinterName].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PrinterName].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PrinterName].SetString(0, value); }
         }
 
         /// <summary>
@@ -95,8 +93,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The manufacturer.</value>
         public string Manufacturer
         {
-            get { return base.DicomAttributeCollection[DicomTags.Manufacturer].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.Manufacturer].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.Manufacturer].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.Manufacturer].SetString(0, value); }
         }
 
         /// <summary>
@@ -105,8 +103,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The name of the manufacturers model.</value>
         public string ManufacturersModelName
         {
-            get { return base.DicomAttributeCollection[DicomTags.ManufacturersModelName].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ManufacturersModelName].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ManufacturersModelName].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ManufacturersModelName].SetString(0, value); }
         }
 
         /// <summary>
@@ -115,8 +113,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The device serial number.</value>
         public string DeviceSerialNumber
         {
-            get { return base.DicomAttributeCollection[DicomTags.DeviceSerialNumber].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.DeviceSerialNumber].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.DeviceSerialNumber].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.DeviceSerialNumber].SetString(0, value); }
         }
 
         /// <summary>
@@ -125,8 +123,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The software versions.</value>
         public string SoftwareVersions
         {
-            get { return base.DicomAttributeCollection[DicomTags.SoftwareVersions].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.SoftwareVersions].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.SoftwareVersions].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.SoftwareVersions].SetString(0, value); }
         }
 
         /// <summary>
@@ -136,10 +134,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
         public DateTime? DateOfLastCalibration
         {
         	get { return DateTimeParser.ParseDateAndTime(String.Empty, 
-        					base.DicomAttributeCollection[DicomTags.DateOfLastCalibration].GetString(0, String.Empty), 
-                  base.DicomAttributeCollection[DicomTags.TimeOfLastCalibration].GetString(0, String.Empty)); }
+        					base.DicomAttributeProvider[DicomTags.DateOfLastCalibration].GetString(0, String.Empty), 
+                  base.DicomAttributeProvider[DicomTags.TimeOfLastCalibration].GetString(0, String.Empty)); }
 
-                  set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection[DicomTags.DateOfLastCalibration], base.DicomAttributeCollection[DicomTags.TimeOfLastCalibration]); }
+                  set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeProvider[DicomTags.DateOfLastCalibration], base.DicomAttributeProvider[DicomTags.TimeOfLastCalibration]); }
         }
         #endregion
 
@@ -149,7 +147,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </summary>
         public void SetCommonTags()
         {
-            SetCommonTags(base.DicomAttributeCollection);
+            SetCommonTags(base.DicomAttributeProvider);
         }
         #endregion
 
@@ -157,21 +155,20 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Sets the commonly used tags in the specified dicom attribute collection.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public static void SetCommonTags(DicomAttributeCollection dicomAttributeCollection)
+        public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
-            if (dicomAttributeCollection == null)
-                throw new ArgumentNullException("dicomAttributeCollection");
+            if (dicomAttributeProvider == null)
+				throw new ArgumentNullException("dicomAttributeProvider");
 
-            dicomAttributeCollection[DicomTags.PrinterStatus].SetNullValue();
-            dicomAttributeCollection[DicomTags.PrinterStatusInfo].SetNullValue();
-            dicomAttributeCollection[DicomTags.PrinterName].SetNullValue();
-            dicomAttributeCollection[DicomTags.Manufacturer].SetNullValue();
-            dicomAttributeCollection[DicomTags.ManufacturersModelName].SetNullValue();
-            dicomAttributeCollection[DicomTags.DeviceSerialNumber].SetNullValue();
-            dicomAttributeCollection[DicomTags.SoftwareVersions].SetNullValue();
-            dicomAttributeCollection[DicomTags.DateOfLastCalibration].SetNullValue();
-            dicomAttributeCollection[DicomTags.TimeOfLastCalibration].SetNullValue();
+            dicomAttributeProvider[DicomTags.PrinterStatus].SetNullValue();
+            dicomAttributeProvider[DicomTags.PrinterStatusInfo].SetNullValue();
+            dicomAttributeProvider[DicomTags.PrinterName].SetNullValue();
+            dicomAttributeProvider[DicomTags.Manufacturer].SetNullValue();
+            dicomAttributeProvider[DicomTags.ManufacturersModelName].SetNullValue();
+            dicomAttributeProvider[DicomTags.DeviceSerialNumber].SetNullValue();
+            dicomAttributeProvider[DicomTags.SoftwareVersions].SetNullValue();
+            dicomAttributeProvider[DicomTags.DateOfLastCalibration].SetNullValue();
+            dicomAttributeProvider[DicomTags.TimeOfLastCalibration].SetNullValue();
 
         }
         #endregion

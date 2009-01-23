@@ -213,6 +213,9 @@
   <data name="MessageTagCannotBeCreated" xml:space="preserve">
     <value>The tag cannot be created.  Please ensure that the values are properly entered and are appropriate for the tag being created.</value>
   </data>
+  <data name="MessageUnknownDataSource" xml:space="preserve">
+    <value>The source data is not in a format the Dicom Editor can understand.</value>
+  </data>
   <data name="TitleAnonymizeStudy" xml:space="preserve">
     <value>Anonymize Study</value>
   </data>

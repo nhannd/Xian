@@ -511,7 +511,7 @@ namespace ClearCanvas.ImageViewer
 		/// <para>This method has been deprecated and will be removed in the future. Use the <see cref="LoadStudy(LoadStudyArgs)"/> overload instead.</para>
 		/// <para>After this method is executed, the image viewer's <see cref="StudyTree"/>
 		/// will be populated with the appropriate <see cref="Study"/>, <see cref="Series"/> 
-		/// and <see cref="ImageSop"/> objects.</para>
+		/// and <see cref="Sop"/> objects.</para>
 		/// <para>By default, the Framework provides an implementation of 
 		/// <see cref="IStudyLoader"/> called <b>LocalDataStoreStudyLoader</b> which loads
 		/// studies from the local database.  If you have implemented your own 
@@ -531,7 +531,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <remarks>After this method is executed, the image viewer's <see cref="StudyTree"/>
 		/// will be populated with the appropriate <see cref="Study"/>, <see cref="Series"/> 
-		/// and <see cref="ImageSop"/> objects.
+		/// and <see cref="Sop"/> objects.
 		/// 
 		/// By default, the Framework provides an implementation of 
 		/// <see cref="IStudyLoader"/> called <b>LocalDataStoreStudyLoader</b> which loads
@@ -544,11 +544,10 @@ namespace ClearCanvas.ImageViewer
 		public void LoadStudy(LoadStudyArgs loadStudyArgs)
 		{
 			IStudyLoader studyLoader = this.StudyLoaders[loadStudyArgs.StudyLoaderName];
-			int totalImages = 0;
 
 			try
 			{
-				totalImages = studyLoader.Start(new StudyLoaderArgs(loadStudyArgs.StudyInstanceUid, loadStudyArgs.Server));
+				studyLoader.Start(new StudyLoaderArgs(loadStudyArgs.StudyInstanceUid, loadStudyArgs.Server));
 			}
 			catch (Exception e)
 			{
@@ -556,44 +555,38 @@ namespace ClearCanvas.ImageViewer
 				throw ex;
 			}
 
-			int numberOfImages = 0;
-			int failedImages = 0;
+			int total = 0;
+			int failed = 0;
 
 			while (true)
 			{
-				ImageSop image = studyLoader.LoadNextImage();
-				if (image == null)
+				Sop sop = studyLoader.LoadNextSop();
+				if (sop == null)
 					break;
 
 				try
 				{
-					if(image.Modality == "KO")
-					{
-						this.StudyTree.AddKeyObjectSelection(new KeyObjectSelectionSop(image));
-					}
-					else
-					{
-						this.StudyTree.AddImage(image);
-					}
+					this.StudyTree.AddSop(sop);
 				}
 				catch (Exception e)
 				{
-					failedImages++;
+					failed++;
+					sop.Dispose();
 					Platform.Log(LogLevel.Error, e);
 				}
 
-				numberOfImages++;
+				total++;
 			}
 
-			int successfulImages = numberOfImages - failedImages;
+			int successful = total - failed;
 
 			// Only bother to tell someone if at least one image loaded
-			if (successfulImages > 0)
+			if (successful > 0)
 			{
 				this.EventBroker.OnStudyLoaded(new ItemEventArgs<Study>(this.StudyTree.GetStudy(loadStudyArgs.StudyInstanceUid)));
 			}
 
-			VerifyLoad(numberOfImages, failedImages);
+			VerifyLoad(total, failed);
 
 			if (studyLoader.PrefetchingStrategy != null)
 				studyLoader.PrefetchingStrategy.Start(this);
@@ -627,10 +620,10 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(files, "files");
 
-			LocalImageLoader loader = new LocalImageLoader(this);
+			LocalSopLoader loader = new LocalSopLoader(this);
 			loader.Load(files, desktop, out cancelled);
 
-			VerifyLoad(loader.TotalImages, loader.FailedImages);
+			VerifyLoad(loader.Total, loader.Failed);
 		}
 
 		/// <summary>
@@ -783,15 +776,15 @@ namespace ClearCanvas.ImageViewer
 
 		#region Private methods
 
-		private void VerifyLoad(int totalImages, int failedImages)
+		private void VerifyLoad(int total, int failed)
 		{
-			if (failedImages == 0)
+			if (failed == 0)
 				return;
 
-			string message = String.Format("{0} of {1} images have failed to load.", failedImages, totalImages);
+			string message = String.Format("{0} of {1} sops have failed to load.", failed, total);
 			OpenStudyException ex = new OpenStudyException(message);
-			ex.TotalImages = totalImages;
-			ex.FailedImages = failedImages;
+			ex.TotalImages = total;
+			ex.FailedImages = failed;
 			throw ex;
 		}
 

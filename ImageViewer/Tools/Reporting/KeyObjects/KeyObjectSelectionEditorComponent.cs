@@ -6,6 +6,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Dicom.Iod.ContextGroups;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 {
@@ -20,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 		private string _seriesDescription;
 		private int _seriesNumber;
 		private KeyObjectSelectionDocumentTitle _docTitle;
-		private List<ImageSop> _images;
+		private List<Frame> _frames;
 
 		public KeyObjectSelectionEditorComponent()
 		{
@@ -34,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 			_seriesDescription = "";
 			_seriesNumber = 1;
 			_docTitle = KeyObjectSelectionDocumentTitleContextGroup.OfInterest;
-			_images = new List<ImageSop>();
+			_frames = new List<Frame>();
 		}
 
 		public DateTime DateTime
@@ -51,14 +52,14 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 			}
 		}
 
-		public IList<ImageSop> Images
+		public IList<Frame> Frames
 		{
-			get { return _images; }
+			get { return _frames; }
 			protected set
 			{
-				if (_images != value)
+				if (_frames != value)
 				{
-					_images = (List<ImageSop>) value;
+					_frames = (List<Frame>) value;
 					base.NotifyPropertyChanged("Images");
 					base.Modified = true;
 				}
@@ -127,23 +128,21 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 			base.NotifyAllPropertiesChanged();
 		}
 
-		private KeyObjectSelection MakeDocument()
+		private DicomFile CreateDocument()
 		{
 			this.DateTime = DateTime.Now;
 
-			KeyObjectSelection koSelection = new KeyObjectSelection();
-			koSelection.DateTime = _datetime;
-			koSelection.Description = _description;
-			koSelection.DocumentTitle = _docTitle;
-			koSelection.SeriesNumber = _seriesNumber;
-			koSelection.SeriesDescription = _seriesDescription;
+			KeyObjectSerializer serializer = new KeyObjectSerializer();
+			serializer.DateTime = _datetime;
+			serializer.Description = _description;
+			serializer.DocumentTitle = _docTitle;
+			serializer.SeriesNumber = _seriesNumber;
+			serializer.SeriesDescription = _seriesDescription;
 
-			foreach (ImageSop imageSop in _images)
-			{
-				koSelection.Images.Add(imageSop);
-			}
+			foreach (Frame frame in _frames)
+				serializer.Frames.Add(frame);
 
-			return koSelection;
+			return serializer.Serialize();
 		}
 
 		public void SaveToFile()
@@ -160,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 
 		public void SaveDocument(string filename)
 		{
-			MakeDocument().Save(filename);
+			CreateDocument().Save(filename);
 		}
 
 		public static IEnumerable StandardDocumentTitles

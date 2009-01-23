@@ -73,7 +73,7 @@ namespace ClearCanvas.Dicom
     /// 
     /// </para>
     /// </remarks>
-    public class DicomAttributeCollection : IEnumerable<DicomAttribute>
+	public class DicomAttributeCollection : IEnumerable<DicomAttribute>, IDicomAttributeProvider
     {
         #region Member Variables
         private readonly SortedDictionary<uint, DicomAttribute> _attributeList = new SortedDictionary<uint, DicomAttribute>();

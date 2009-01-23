@@ -49,9 +49,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="ImagePixelMacroIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public ImagePixelMacroIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public ImagePixelMacroIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -79,8 +77,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <remarks>See Part 3, C.7.6.3.1.1 for more info.</remarks>
         public ushort SamplesPerPixel
         {
-            get { return DicomAttributeCollection[DicomTags.SamplesPerPixel].GetUInt16(0, 0); }
-            set { DicomAttributeCollection[DicomTags.SamplesPerPixel].SetUInt16(0, value); }
+            get { return DicomAttributeProvider[DicomTags.SamplesPerPixel].GetUInt16(0, 0); }
+            set { DicomAttributeProvider[DicomTags.SamplesPerPixel].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -89,8 +87,14 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The photometric interpretation.</value>
         public PhotometricInterpretation PhotometricInterpretation
         {
-            get { return PhotometricInterpretationHelper.FromString(DicomAttributeCollection[DicomTags.PhotometricInterpretation].GetString(0, String.Empty)); }
-            set { DicomAttributeCollection[DicomTags.PhotometricInterpretation].SetString(0, value == PhotometricInterpretation.Unknown ? null : PhotometricInterpretationHelper.GetString(value)); }
+            get { return PhotometricInterpretation.FromCodeString(DicomAttributeProvider[DicomTags.PhotometricInterpretation].GetString(0, String.Empty)); }
+            set
+            {
+				if (value == null)
+					base.DicomAttributeProvider[DicomTags.PhotometricInterpretation] = null;
+				else
+					base.DicomAttributeProvider[DicomTags.PhotometricInterpretation].SetStringValue(value.Code);
+            }
         }
 
         /// <summary>
@@ -99,8 +103,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The rows.</value>
         public ushort Rows
         {
-            get { return base.DicomAttributeCollection[DicomTags.Rows].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.Rows].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.Rows].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.Rows].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -109,8 +113,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The columns.</value>
         public ushort Columns
         {
-            get { return base.DicomAttributeCollection[DicomTags.Columns].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.Columns].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.Columns].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.Columns].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -119,8 +123,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The bits allocated.</value>
         public ushort BitsAllocated
         {
-            get { return DicomAttributeCollection[DicomTags.BitsAllocated].GetUInt16(0, 0); }
-            set { DicomAttributeCollection[DicomTags.BitsAllocated].SetUInt16(0, value); }
+            get { return DicomAttributeProvider[DicomTags.BitsAllocated].GetUInt16(0, 0); }
+            set { DicomAttributeProvider[DicomTags.BitsAllocated].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -129,8 +133,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The bits stored.</value>
         public ushort BitsStored
         {
-            get { return DicomAttributeCollection[DicomTags.BitsStored].GetUInt16(0, 0); }
-            set { DicomAttributeCollection[DicomTags.BitsStored].SetUInt16(0, value); }
+            get { return DicomAttributeProvider[DicomTags.BitsStored].GetUInt16(0, 0); }
+            set { DicomAttributeProvider[DicomTags.BitsStored].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -139,8 +143,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The high bit.</value>
         public ushort HighBit
         {
-            get { return DicomAttributeCollection[DicomTags.HighBit].GetUInt16(0, 0); }
-            set { DicomAttributeCollection[DicomTags.HighBit].SetUInt16(0, value); }
+            get { return DicomAttributeProvider[DicomTags.HighBit].GetUInt16(0, 0); }
+            set { DicomAttributeProvider[DicomTags.HighBit].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -152,8 +156,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The pixel representation.</value>
         public string PixelRepresentation
         {
-            get { return DicomAttributeCollection[DicomTags.PixelRepresentation].GetString(0, String.Empty); }
-            set { DicomAttributeCollection[DicomTags.PixelRepresentation].SetString(0, value); }
+            get { return DicomAttributeProvider[DicomTags.PixelRepresentation].GetString(0, String.Empty); }
+            set { DicomAttributeProvider[DicomTags.PixelRepresentation].SetString(0, value); }
         }
 
         /// <summary>
@@ -164,12 +168,13 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get 
             {
-                if (DicomAttributeCollection.Contains(DicomTags.PixelData) && !DicomAttributeCollection[DicomTags.PixelData].IsEmpty)
-                    return (byte[])DicomAttributeCollection[DicomTags.PixelData].Values;
+            	DicomAttribute attribute = DicomAttributeProvider[DicomTags.PixelData];
+				if (!attribute.IsNull && !attribute.IsEmpty)
+                    return (byte[])DicomAttributeProvider[DicomTags.PixelData].Values;
                 else
                     return null;
             }
-            set { DicomAttributeCollection[DicomTags.PixelData].Values = value; }
+            set { DicomAttributeProvider[DicomTags.PixelData].Values = value; }
         }
 
         /// <summary>
@@ -178,19 +183,19 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The planar configuration.</value>
         public ushort PlanarConfiguration
         {
-            get { return base.DicomAttributeCollection[DicomTags.PlanarConfiguration].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.PlanarConfiguration].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PlanarConfiguration].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.PlanarConfiguration].SetUInt16(0, value); }
         }
 
         public PixelAspectRatio PixelAspectRatio
         {
-			get { return PixelAspectRatio.FromString(base.DicomAttributeCollection[DicomTags.PixelAspectRatio].ToString()); }
+			get { return PixelAspectRatio.FromString(base.DicomAttributeProvider[DicomTags.PixelAspectRatio].ToString()); }
 			set
 			{
 				if (value == null || value.IsNull)
-					base.DicomAttributeCollection[DicomTags.PixelAspectRatio].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.PixelAspectRatio].SetNullValue();
 				else
-					base.DicomAttributeCollection[DicomTags.PixelAspectRatio].SetStringValue(value.ToString());
+					base.DicomAttributeProvider[DicomTags.PixelAspectRatio].SetStringValue(value.ToString());
 			}
 		}
 
@@ -200,8 +205,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The smallest image pixel value.</value>
         public ushort SmallestImagePixelValue
         {
-            get { return base.DicomAttributeCollection[DicomTags.SmallestImagePixelValue].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.SmallestImagePixelValue].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.SmallestImagePixelValue].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.SmallestImagePixelValue].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -210,8 +215,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The largest image pixel value.</value>
         public ushort LargestImagePixelValue
         {
-            get { return base.DicomAttributeCollection[DicomTags.LargestImagePixelValue].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.LargestImagePixelValue].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.LargestImagePixelValue].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.LargestImagePixelValue].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -220,20 +225,20 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The red palette color lookup table descriptor.</value>
         public ushort RedPaletteColorLookupTableDescriptor
         {
-            get { return base.DicomAttributeCollection[DicomTags.RedPaletteColorLookupTableDescriptor].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.RedPaletteColorLookupTableDescriptor].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.RedPaletteColorLookupTableDescriptor].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.RedPaletteColorLookupTableDescriptor].SetUInt16(0, value); }
         }
 
         public ushort GreenPaletteColorLookupTableDescriptor
         {
-            get { return base.DicomAttributeCollection[DicomTags.GreenPaletteColorLookupTableDescriptor].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.GreenPaletteColorLookupTableDescriptor].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.GreenPaletteColorLookupTableDescriptor].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.GreenPaletteColorLookupTableDescriptor].SetUInt16(0, value); }
         }
 
         public ushort BluePaletteColorLookupTableDescriptor
         {
-            get { return base.DicomAttributeCollection[DicomTags.BluePaletteColorLookupTableDescriptor].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.BluePaletteColorLookupTableDescriptor].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.BluePaletteColorLookupTableDescriptor].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.BluePaletteColorLookupTableDescriptor].SetUInt16(0, value); }
         }
 
         //TODO: Red Palette Color Lookup Table Data
@@ -249,7 +254,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </summary>
         public void SetCommonTags()
         {
-            SetCommonTags(base.DicomAttributeCollection);
+            SetCommonTags(base.DicomAttributeProvider);
         }
         #endregion
 
@@ -257,19 +262,18 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Sets the commonly used tags in the specified dicom attribute collection.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public static void SetCommonTags(DicomAttributeCollection dicomAttributeCollection)
+        public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
-            if (dicomAttributeCollection == null)
-                throw new ArgumentNullException("dicomAttributeCollection");
+            if (dicomAttributeProvider == null)
+				throw new ArgumentNullException("dicomAttributeProvider");
 
-            //dicomAttributeCollection[DicomTags.NumberOfCopies].SetNullValue();
-            //dicomAttributeCollection[DicomTags.PrintPriority].SetNullValue();
-            //dicomAttributeCollection[DicomTags.MediumType].SetNullValue();
-            //dicomAttributeCollection[DicomTags.FilmDestination].SetNullValue();
-            //dicomAttributeCollection[DicomTags.FilmSessionLabel].SetNullValue();
-            //dicomAttributeCollection[DicomTags.MemoryAllocation].SetNullValue();
-            //dicomAttributeCollection[DicomTags.OwnerId].SetNullValue();
+            //dicomAttributeProvider[DicomTags.NumberOfCopies].SetNullValue();
+            //dicomAttributeProvider[DicomTags.PrintPriority].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MediumType].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmDestination].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmSessionLabel].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MemoryAllocation].SetNullValue();
+            //dicomAttributeProvider[DicomTags.OwnerId].SetNullValue();
         }
 
 

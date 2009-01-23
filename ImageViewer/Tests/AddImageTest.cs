@@ -33,17 +33,20 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Tests;
 using NUnit.Framework;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Tests;
 using System;
 
 namespace ClearCanvas.ImageViewer.Tests
 {
 	[TestFixture]
-	public class AddImageTest
+	public class AddImageTest : AbstractTest
 	{
 		public AddImageTest()
 		{
@@ -66,61 +69,81 @@ namespace ClearCanvas.ImageViewer.Tests
 			IImageViewer viewer = new ImageViewerComponent();
 			StudyTree studyTree = viewer.StudyTree;
 
-			MockImageSop image1 = new MockImageSop("patient1", "study1", "series1", "image1");
-			MockImageSop image2 = new MockImageSop("patient1", "study1", "series1", "image2");
-			MockImageSop image3 = new MockImageSop("patient1", "study1", "series2", "image3");
-			MockImageSop image4 = new MockImageSop("patient1", "study1", "series2", "image4");
-			MockImageSop image5 = new MockImageSop("patient1", "study2", "series3", "image5");
-			MockImageSop image6 = new MockImageSop("patient1", "study2", "series3", "image6");
-			MockImageSop image7 = new MockImageSop("patient2", "study3", "series4", "image7");
-			MockImageSop image8 = new MockImageSop("patient2", "study3", "series4", "image8");
-			MockImageSop image9 = new MockImageSop("patient2", "study3", "series5", "image9");
+			string studyUid1 = DicomUid.GenerateUid().UID;
+			string studyUid2 = DicomUid.GenerateUid().UID;
+			string studyUid3 = DicomUid.GenerateUid().UID;
+
+			string seriesUid1 = DicomUid.GenerateUid().UID;
+			string seriesUid2 = DicomUid.GenerateUid().UID;
+			string seriesUid3 = DicomUid.GenerateUid().UID;
+			string seriesUid4 = DicomUid.GenerateUid().UID;
+			string seriesUid5 = DicomUid.GenerateUid().UID;
+
+			string imageUid1 = DicomUid.GenerateUid().UID;
+			string imageUid2 = DicomUid.GenerateUid().UID;
+			string imageUid3 = DicomUid.GenerateUid().UID;
+			string imageUid4 = DicomUid.GenerateUid().UID;
+			string imageUid5 = DicomUid.GenerateUid().UID;
+			string imageUid6 = DicomUid.GenerateUid().UID;
+			string imageUid7 = DicomUid.GenerateUid().UID;
+			string imageUid8 = DicomUid.GenerateUid().UID;
+			string imageUid9 = DicomUid.GenerateUid().UID;
+
+			ImageSop image1 = CreateImageSop("patient1", studyUid1, seriesUid1, imageUid1);
+			ImageSop image2 = CreateImageSop("patient1", studyUid1, seriesUid1, imageUid2);
+			ImageSop image3 = CreateImageSop("patient1", studyUid1, seriesUid2, imageUid3);
+			ImageSop image4 = CreateImageSop("patient1", studyUid1, seriesUid2, imageUid4);
+			ImageSop image5 = CreateImageSop("patient1", studyUid2, seriesUid3, imageUid5);
+			ImageSop image6 = CreateImageSop("patient1", studyUid2, seriesUid3, imageUid6);
+			ImageSop image7 = CreateImageSop("patient2", studyUid3, seriesUid4, imageUid7);
+			ImageSop image8 = CreateImageSop("patient2", studyUid3, seriesUid4, imageUid8);
+			ImageSop image9 = CreateImageSop("patient2", studyUid3, seriesUid5, imageUid9);
 
 			// This is an internal method.  We would never do this from real
 			// client code, but we do it here because we just want to test that
 			// images are being properly added to the tree. 
-			studyTree.AddImage(image1);
-			studyTree.AddImage(image2);
-			studyTree.AddImage(image3);
-			studyTree.AddImage(image4);
-			studyTree.AddImage(image5);
-			studyTree.AddImage(image6);
-			studyTree.AddImage(image7);
-			studyTree.AddImage(image8);
-			studyTree.AddImage(image9);
+			studyTree.AddSop(image1);
+			studyTree.AddSop(image2);
+			studyTree.AddSop(image3);
+			studyTree.AddSop(image4);
+			studyTree.AddSop(image5);
+			studyTree.AddSop(image6);
+			studyTree.AddSop(image7);
+			studyTree.AddSop(image8);
+			studyTree.AddSop(image9);
 
 			Assert.IsTrue(studyTree.Patients.Count == 2);
 			Assert.IsTrue(studyTree.Patients["patient1"].Studies.Count == 2);
 			Assert.IsTrue(studyTree.Patients["patient2"].Studies.Count == 1);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study1"].Series.Count == 2);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study2"].Series.Count == 1);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study2"].Series.Count == 1);
-			Assert.IsTrue(studyTree.Patients["patient2"].Studies["study3"].Series.Count == 2);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study1"].Series["series1"].Sops.Count == 2);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study1"].Series["series2"].Sops.Count == 2);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study2"].Series["series3"].Sops.Count == 2);
-			Assert.IsTrue(studyTree.Patients["patient2"].Studies["study3"].Series["series4"].Sops.Count == 2);
-			Assert.IsTrue(studyTree.Patients["patient2"].Studies["study3"].Series["series5"].Sops.Count == 1);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series.Count == 2);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid2].Series.Count == 1);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid2].Series.Count == 1);
+			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series.Count == 2);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid1].Sops.Count == 2);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid2].Sops.Count == 2);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid2].Series[seriesUid3].Sops.Count == 2);
+			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid4].Sops.Count == 2);
+			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid5].Sops.Count == 1);
 
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study1"].Series["series1"].Sops["image1"].SopInstanceUID == image1.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study1"].Series["series1"].Sops["image2"].SopInstanceUID == image2.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study1"].Series["series2"].Sops["image3"].SopInstanceUID == image3.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study1"].Series["series2"].Sops["image4"].SopInstanceUID == image4.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study2"].Series["series3"].Sops["image5"].SopInstanceUID == image5.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study2"].Series["series3"].Sops["image6"].SopInstanceUID == image6.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient2"].Studies["study3"].Series["series4"].Sops["image7"].SopInstanceUID == image7.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient2"].Studies["study3"].Series["series4"].Sops["image8"].SopInstanceUID == image8.SopInstanceUID);
-			Assert.IsTrue(studyTree.Patients["patient2"].Studies["study3"].Series["series5"].Sops["image9"].SopInstanceUID == image9.SopInstanceUID);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid1].Sops[imageUid1].SopInstanceUID == image1.SopInstanceUID);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid1].Sops[imageUid2].SopInstanceUID == image2.SopInstanceUID);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid2].Sops[imageUid3].SopInstanceUID == image3.SopInstanceUID);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid2].Sops[imageUid4].SopInstanceUID == image4.SopInstanceUID);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid2].Series[seriesUid3].Sops[imageUid5].SopInstanceUID == image5.SopInstanceUID);
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid2].Series[seriesUid3].Sops[imageUid6].SopInstanceUID == image6.SopInstanceUID);
+			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid4].Sops[imageUid7].SopInstanceUID == image7.SopInstanceUID);
+			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid4].Sops[imageUid8].SopInstanceUID == image8.SopInstanceUID);
+			Assert.IsTrue(studyTree.Patients["patient2"].Studies[studyUid3].Series[seriesUid5].Sops[imageUid9].SopInstanceUID == image9.SopInstanceUID);
 
-			Assert.IsTrue(studyTree.GetSop("image1").SopInstanceUID == image1.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop("image2").SopInstanceUID == image2.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop("image3").SopInstanceUID == image3.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop("image4").SopInstanceUID == image4.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop("image5").SopInstanceUID == image5.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop("image6").SopInstanceUID == image6.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop("image7").SopInstanceUID == image7.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop("image8").SopInstanceUID == image8.SopInstanceUID);
-			Assert.IsTrue(studyTree.GetSop("image9").SopInstanceUID == image9.SopInstanceUID);
+			Assert.IsTrue(studyTree.GetSop(imageUid1).SopInstanceUID == image1.SopInstanceUID);
+			Assert.IsTrue(studyTree.GetSop(imageUid2).SopInstanceUID == image2.SopInstanceUID);
+			Assert.IsTrue(studyTree.GetSop(imageUid3).SopInstanceUID == image3.SopInstanceUID);
+			Assert.IsTrue(studyTree.GetSop(imageUid4).SopInstanceUID == image4.SopInstanceUID);
+			Assert.IsTrue(studyTree.GetSop(imageUid5).SopInstanceUID == image5.SopInstanceUID);
+			Assert.IsTrue(studyTree.GetSop(imageUid6).SopInstanceUID == image6.SopInstanceUID);
+			Assert.IsTrue(studyTree.GetSop(imageUid7).SopInstanceUID == image7.SopInstanceUID);
+			Assert.IsTrue(studyTree.GetSop(imageUid8).SopInstanceUID == image8.SopInstanceUID);
+			Assert.IsTrue(studyTree.GetSop(imageUid9).SopInstanceUID == image9.SopInstanceUID);
 
 			viewer.Dispose();
 		}
@@ -131,59 +154,37 @@ namespace ClearCanvas.ImageViewer.Tests
 			IImageViewer viewer = new ImageViewerComponent();
 			StudyTree studyTree = viewer.StudyTree;
 
-			MockImageSop image1 = new MockImageSop("patient1", "study1", "series1", "image1");
-			MockImageSop image2 = new MockImageSop("patient1", "study1", "series1", "image1");
+			string studyUid1 = DicomUid.GenerateUid().UID;
+			string seriesUid1 = DicomUid.GenerateUid().UID;
+			string imageUid1 = DicomUid.GenerateUid().UID;
 
-			studyTree.AddImage(image1);
-			studyTree.AddImage(image2);
+			ImageSop image1 = CreateImageSop("patient1", studyUid1, seriesUid1, imageUid1);
+			ImageSop image2 = CreateImageSop("patient1", studyUid1, seriesUid1, imageUid1);
 
-			Assert.IsTrue(studyTree.Patients["patient1"].Studies["study1"].Series["series1"].Sops.Count == 1);
+			studyTree.AddSop(image1);
+			studyTree.AddSop(image2);
+
+			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid1].Sops.Count == 1);
+			Assert.IsTrue(((TestDataSource)image2.DataSource).IsDisposed);
 
 			viewer.Dispose();
+
+			Assert.IsTrue(((TestDataSource)image1.DataSource).IsDisposed);
+			Assert.IsTrue(SopDataCache.ItemCount == 0);
 		}
 
-		[Test]
-		public void AddSameImageFromDifferentViewers()
+		private ImageSop CreateImageSop(string patientId, string studyUid, string seriesUid, string sopUid)
 		{
-			IImageViewer viewer1 = new ImageViewerComponent();
-			IImageViewer viewer2 = new ImageViewerComponent();
+			DicomAttributeCollection dataSet = new DicomAttributeCollection();
+			base.SetupMR(dataSet);
+			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), dataSet);
+			TestDataSource dataSource = new TestDataSource(file);
+			file.DataSet[DicomTags.PatientId].SetStringValue(patientId);
+			file.DataSet[DicomTags.StudyInstanceUid].SetStringValue(studyUid);
+			file.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(seriesUid);
+			file.DataSet[DicomTags.SopInstanceUid].SetStringValue(sopUid);
 
-			StudyTree studyTree1 = viewer1.StudyTree;
-			StudyTree studyTree2 = viewer2.StudyTree;
-
-			// Create 2 TestImageSops that have the same SOP UID
-			MockImageSop image1 = new MockImageSop("patient1", "study1", "series1", "image1");
-			MockImageSop image2 = new MockImageSop("patient1", "study1", "series1", "image1");
-
-			string sopInstanceUid = image1.SopInstanceUID;
-			studyTree1.AddImage(image1);
-
-			Sop cachedSop1 = studyTree1.GetSop(sopInstanceUid);
-			Assert.IsTrue(((ImageSopProxy)cachedSop1).RealImageSop == image1, "The cached sop is not the same as the one added."); //same object
-			
-			studyTree2.AddImage(image2);
-			try
-			{
-				image2.IncrementReferenceCount();
-				Assert.Fail("image2 should have been be disposed.");
-			}
-			catch
-			{
-				//should get an exception
-			}
-
-			Sop cachedSop2 = studyTree2.GetSop(sopInstanceUid);
-			Assert.IsTrue(((ImageSopProxy)cachedSop2).RealImageSop == image1, "The sop should be the same object as cachedSop1."); //same object
-			
-			viewer2.Dispose();
-
-			cachedSop1 = studyTree1.GetSop(sopInstanceUid);
-			Assert.IsTrue(((ImageSopProxy)cachedSop1).RealImageSop == image1, "The cached sop is not the same as the one added."); //same object
-
-			viewer1.Dispose();
-
-			ImageSop reference = SopCache.Get(sopInstanceUid);
-			Assert.AreEqual(reference, null, "The sop should no longer be cached.");
+			return new ImageSop(dataSource);
 		}
 	}
 }

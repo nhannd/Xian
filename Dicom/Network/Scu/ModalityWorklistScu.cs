@@ -106,7 +106,7 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// <returns></returns>
         public IList<ModalityWorklistIod> GetWorkList(string clientAETitle, string remoteAE, string remoteHost, int remotePort, ModalityWorklistIod modalityWorklistIod)
         {
-            base.Find(clientAETitle, remoteAE, remoteHost, remotePort, modalityWorklistIod.DicomAttributeCollection);
+			base.Find(clientAETitle, remoteAE, remoteHost, remotePort, modalityWorklistIod.DicomAttributeProvider as DicomAttributeCollection);
             return this.ModalityWorklistResults;
         }
 

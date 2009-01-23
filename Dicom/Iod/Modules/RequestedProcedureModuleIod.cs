@@ -52,8 +52,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// Initializes a new instance of the Iod class.
         /// </summary>
         /// <param name="_dicomAttributeCollection"></param>
-        public RequestedProcedureModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public RequestedProcedureModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -61,25 +60,25 @@ namespace ClearCanvas.Dicom.Iod.Modules
         #region Public Properties
         public string RequestedProcedureId
         {
-            get { return base.DicomAttributeCollection[DicomTags.RequestedProcedureId].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.RequestedProcedureId].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.RequestedProcedureId].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.RequestedProcedureId].SetString(0, value); }
         }
         public string ReasonForTheRequestedProcedure
         {
-            get { return base.DicomAttributeCollection[DicomTags.ReasonForTheRequestedProcedure].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ReasonForTheRequestedProcedure].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ReasonForTheRequestedProcedure].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ReasonForTheRequestedProcedure].SetString(0, value); }
         }
 
         public string RequestedProcedureComments
         {
-            get { return base.DicomAttributeCollection[DicomTags.RequestedProcedureComments].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.RequestedProcedureComments].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.RequestedProcedureComments].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.RequestedProcedureComments].SetString(0, value); }
         }
 
         public string StudyInstanceUid
         {
-            get { return base.DicomAttributeCollection[DicomTags.StudyInstanceUid].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.StudyInstanceUid].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.StudyInstanceUid].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.StudyInstanceUid].SetString(0, value); }
         }
 
         /// <summary>
@@ -91,11 +90,11 @@ namespace ClearCanvas.Dicom.Iod.Modules
             get
             {
                 return DateTimeParser.ParseDateAndTime(String.Empty,
-                  base.DicomAttributeCollection[DicomTags.StudyDate].GetString(0, String.Empty),
-                  base.DicomAttributeCollection[DicomTags.StudyTime].GetString(0, String.Empty));
+                  base.DicomAttributeProvider[DicomTags.StudyDate].GetString(0, String.Empty),
+                  base.DicomAttributeProvider[DicomTags.StudyTime].GetString(0, String.Empty));
             }
 
-            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection[DicomTags.StudyDate], base.DicomAttributeCollection[DicomTags.StudyTime]); }
+            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeProvider[DicomTags.StudyDate], base.DicomAttributeProvider[DicomTags.StudyTime]); }
         }
 
         /// <summary>
@@ -104,18 +103,18 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The requested procedure description.</value>
         public string RequestedProcedureDescription
         {
-            get { return base.DicomAttributeCollection[DicomTags.RequestedProcedureDescription].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.RequestedProcedureDescription].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.RequestedProcedureDescription].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.RequestedProcedureDescription].SetString(0, value); }
         }
 
         // TODO: make one with the RequestedProcedurePriority enum
         public RequestedProcedurePriority RequestedProcedurePriority
         {
-            get { return IodBase.ParseEnum<RequestedProcedurePriority>(base.DicomAttributeCollection[DicomTags.RequestedProcedurePriority].GetString(0, String.Empty), RequestedProcedurePriority.None); }
+            get { return IodBase.ParseEnum<RequestedProcedurePriority>(base.DicomAttributeProvider[DicomTags.RequestedProcedurePriority].GetString(0, String.Empty), RequestedProcedurePriority.None); }
             set 
             {
                 string stringValue = value == RequestedProcedurePriority.None ? String.Empty : value.ToString().ToUpperInvariant();
-                base.DicomAttributeCollection[DicomTags.RequestedProcedurePriority].SetString(0, stringValue); 
+                base.DicomAttributeProvider[DicomTags.RequestedProcedurePriority].SetString(0, stringValue); 
             }
         }
         

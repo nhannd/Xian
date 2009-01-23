@@ -29,47 +29,25 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
-    [ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyLoaderExtensionPoint))]
-    public class LocalDataStoreStudyLoader : IStudyLoader
+    [ExtensionOf(typeof(StudyLoaderExtensionPoint))]
+	public class LocalDataStoreStudyLoader : StudyLoader, IStudyLoader
     {
 		private IEnumerator<ISopInstance> _sops;
 
-        public LocalDataStoreStudyLoader()
+        public LocalDataStoreStudyLoader() : base("DICOM_LOCAL")
         {
 
         }
 
-        public string Name
-        {
-            get
-            {
-                return "DICOM_LOCAL";
-            }
-        }
-
-    	public IPrefetchingStrategy PrefetchingStrategy
-    	{
-			get
-			{
-				//if (_prefetchingStrategy == null)
-				//    _prefetchingStrategy = new VisibleDisplaySetPrefetchingStrategy();
-
-				//return _prefetchingStrategy;
-
-				return null;
-			}
-		}
-
-    	public int Start(StudyLoaderArgs studyLoaderArgs)
+    	public override int Start(StudyLoaderArgs studyLoaderArgs)
 		{
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
@@ -79,12 +57,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			}
 		}
 
-		public ImageSop LoadNextImage()
+		protected override ISopDataSource LoadNextSopDataSource()
         {
 			if (!_sops.MoveNext())
 				return null;
 
-			return new LocalDataStoreImageSop(_sops.Current);
+			return new LocalDataStoreSopDataSource(_sops.Current);
         }
     }
 }
+
+

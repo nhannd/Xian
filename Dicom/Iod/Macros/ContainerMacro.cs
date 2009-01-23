@@ -87,12 +87,12 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public ContinuityOfContent ContinuityOfContent
 		{
-			get { return ParseEnum(base.DicomAttributeCollection[DicomTags.ContinuityOfContent].GetString(0, string.Empty), ContinuityOfContent.Unknown); }
+			get { return ParseEnum(base.DicomAttributeProvider[DicomTags.ContinuityOfContent].GetString(0, string.Empty), ContinuityOfContent.Unknown); }
 			set
 			{
 				if (value == ContinuityOfContent.Unknown)
 					throw new ArgumentNullException("value", "Continuity of Content is Type 1 Required.");
-				SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.ContinuityOfContent], value);
+				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.ContinuityOfContent], value);
 			}
 		}
 
@@ -103,7 +103,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ContentTemplateSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ContentTemplateSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -114,10 +114,10 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				if (value == null)
 				{
-					base.DicomAttributeCollection[DicomTags.ContentTemplateSequence] = null;
+					base.DicomAttributeProvider[DicomTags.ContentTemplateSequence] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ContentTemplateSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+				base.DicomAttributeProvider[DicomTags.ContentTemplateSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
 			}
 		}
 
@@ -126,7 +126,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public ContentTemplateSequence CreateContentTemplateSequence()
 		{
-			DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ContentTemplateSequence];
+			DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ContentTemplateSequence];
 			if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 			{
 				DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();

@@ -46,17 +46,16 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// </summary>
         public SeriesQueryIod()
         {
-            SetAttributeFromEnum(DicomAttributeCollection[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Series);
+            SetAttributeFromEnum(DicomAttributeProvider[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Series);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SeriesQueryIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public SeriesQueryIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public SeriesQueryIod(IDicomAttributeProvider dicomAttributeProvider)
+			: base(dicomAttributeProvider)
         {
-            SetAttributeFromEnum(DicomAttributeCollection[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Series);
+            SetAttributeFromEnum(DicomAttributeProvider[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Series);
         }
         #endregion
 
@@ -68,8 +67,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// <value>The study instance uid.</value>
 		public string StudyInstanceUid
 		{
-			get { return DicomAttributeCollection[DicomTags.StudyInstanceUid].GetString(0, String.Empty); }
-			set { DicomAttributeCollection[DicomTags.StudyInstanceUid].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.StudyInstanceUid].GetString(0, String.Empty); }
+			set { DicomAttributeProvider[DicomTags.StudyInstanceUid].SetString(0, value); }
 		}
 
         /// <summary>
@@ -78,8 +77,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The series instance uid.</value>
         public string SeriesInstanceUid
         {
-            get { return DicomAttributeCollection[DicomTags.SeriesInstanceUid].GetString(0, String.Empty); }
-            set { DicomAttributeCollection[DicomTags.SeriesInstanceUid].SetString(0, value); }
+            get { return DicomAttributeProvider[DicomTags.SeriesInstanceUid].GetString(0, String.Empty); }
+            set { DicomAttributeProvider[DicomTags.SeriesInstanceUid].SetString(0, value); }
         }
 
 		/// <summary>
@@ -88,8 +87,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// <value>The modality.</value>
 		public string Modality
 		{
-			get { return DicomAttributeCollection[DicomTags.Modality].GetString(0, String.Empty); }
-			set { DicomAttributeCollection[DicomTags.Modality].SetString(0, value); }
+			get { return DicomAttributeProvider[DicomTags.Modality].GetString(0, String.Empty); }
+			set { DicomAttributeProvider[DicomTags.Modality].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -98,8 +97,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The series description.</value>
         public string SeriesDescription
         {
-            get { return DicomAttributeCollection[DicomTags.SeriesDescription].GetString(0, String.Empty); }
-            set { DicomAttributeCollection[DicomTags.SeriesDescription].SetString(0, value); }
+            get { return DicomAttributeProvider[DicomTags.SeriesDescription].GetString(0, String.Empty); }
+            set { DicomAttributeProvider[DicomTags.SeriesDescription].SetString(0, value); }
         }
 
         /// <summary>
@@ -108,8 +107,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The series number.</value>
         public string SeriesNumber
         {
-            get { return DicomAttributeCollection[DicomTags.SeriesNumber].GetString(0, String.Empty); }
-            set { DicomAttributeCollection[DicomTags.SeriesNumber].SetString(0, value); }
+            get { return DicomAttributeProvider[DicomTags.SeriesNumber].GetString(0, String.Empty); }
+            set { DicomAttributeProvider[DicomTags.SeriesNumber].SetString(0, value); }
         }
 
         /// <summary>
@@ -118,8 +117,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The number of series related instances.</value>
         public uint NumberOfSeriesRelatedInstances
         {
-            get { return DicomAttributeCollection[DicomTags.NumberOfSeriesRelatedInstances].GetUInt32(0, 0); }
-            set { DicomAttributeCollection[DicomTags.NumberOfSeriesRelatedInstances].SetUInt32(0, value); }
+            get { return DicomAttributeProvider[DicomTags.NumberOfSeriesRelatedInstances].GetUInt32(0, 0); }
+            set { DicomAttributeProvider[DicomTags.NumberOfSeriesRelatedInstances].SetUInt32(0, value); }
         }
 
         /// <summary>
@@ -129,10 +128,10 @@ namespace ClearCanvas.Dicom.Iod.Iods
         public DateTime? SeriesDate
         {
             get { return DateTimeParser.ParseDateAndTime(String.Empty, 
-                    DicomAttributeCollection[DicomTags.SeriesDate].GetString(0, String.Empty), 
-                    DicomAttributeCollection[DicomTags.SeriesTime].GetString(0, String.Empty)); }
+                    DicomAttributeProvider[DicomTags.SeriesDate].GetString(0, String.Empty), 
+                    DicomAttributeProvider[DicomTags.SeriesTime].GetString(0, String.Empty)); }
 
-            set { DateTimeParser.SetDateTimeAttributeValues(value, DicomAttributeCollection[DicomTags.SeriesDate], DicomAttributeCollection[DicomTags.SeriesTime]); }
+            set { DateTimeParser.SetDateTimeAttributeValues(value, DicomAttributeProvider[DicomTags.SeriesDate], DicomAttributeProvider[DicomTags.SeriesTime]); }
         }
 
         /// <summary>
@@ -142,10 +141,10 @@ namespace ClearCanvas.Dicom.Iod.Iods
         public DateTime? PerformedProcedureStepStartDate
         {
             get { return DateTimeParser.ParseDateAndTime(String.Empty, 
-                    DicomAttributeCollection[DicomTags.PerformedProcedureStepStartDate].GetString(0, String.Empty), 
-                    DicomAttributeCollection[DicomTags.PerformedProcedureStepStartTime].GetString(0, String.Empty)); }
+                    DicomAttributeProvider[DicomTags.PerformedProcedureStepStartDate].GetString(0, String.Empty), 
+                    DicomAttributeProvider[DicomTags.PerformedProcedureStepStartTime].GetString(0, String.Empty)); }
 
-            set { DateTimeParser.SetDateTimeAttributeValues(value, DicomAttributeCollection[DicomTags.PerformedProcedureStepStartDate], DicomAttributeCollection[DicomTags.PerformedProcedureStepStartTime]); }
+            set { DateTimeParser.SetDateTimeAttributeValues(value, DicomAttributeProvider[DicomTags.PerformedProcedureStepStartDate], DicomAttributeProvider[DicomTags.PerformedProcedureStepStartTime]); }
         }
 
 		/// <summary>
@@ -156,7 +155,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		{
 			get
 			{
-				return new SequenceIodList<RequestAttributesSequenceIod>(DicomAttributeCollection[DicomTags.RequestAttributesSequence] as DicomAttributeSQ);
+				return new SequenceIodList<RequestAttributesSequenceIod>(DicomAttributeProvider[DicomTags.RequestAttributesSequence] as DicomAttributeSQ);
 			}
 		}
         #endregion
@@ -167,23 +166,23 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// </summary>
         public void SetCommonTags()
         {
-            SetCommonTags(DicomAttributeCollection);
+            SetCommonTags(DicomAttributeProvider);
         }
 
-        public static void SetCommonTags(DicomAttributeCollection dicomAttributeCollection)
+        public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
-			SetAttributeFromEnum(dicomAttributeCollection[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Series);
+			SetAttributeFromEnum(dicomAttributeProvider[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Series);
 
-			dicomAttributeCollection[DicomTags.SeriesInstanceUid].SetNullValue();
-			dicomAttributeCollection[DicomTags.Modality].SetNullValue();
-			dicomAttributeCollection[DicomTags.SeriesDescription].SetNullValue();
-			dicomAttributeCollection[DicomTags.NumberOfSeriesRelatedInstances].SetNullValue();
-			dicomAttributeCollection[DicomTags.SeriesNumber].SetNullValue();
-			dicomAttributeCollection[DicomTags.SeriesDate].SetNullValue();
-			dicomAttributeCollection[DicomTags.SeriesTime].SetNullValue();
-			dicomAttributeCollection[DicomTags.RequestAttributesSequence].SetNullValue();
-			dicomAttributeCollection[DicomTags.PerformedProcedureStepStartDate].SetNullValue();
-			dicomAttributeCollection[DicomTags.PerformedProcedureStepStartTime].SetNullValue();
+			dicomAttributeProvider[DicomTags.SeriesInstanceUid].SetNullValue();
+			dicomAttributeProvider[DicomTags.Modality].SetNullValue();
+			dicomAttributeProvider[DicomTags.SeriesDescription].SetNullValue();
+			dicomAttributeProvider[DicomTags.NumberOfSeriesRelatedInstances].SetNullValue();
+			dicomAttributeProvider[DicomTags.SeriesNumber].SetNullValue();
+			dicomAttributeProvider[DicomTags.SeriesDate].SetNullValue();
+			dicomAttributeProvider[DicomTags.SeriesTime].SetNullValue();
+			dicomAttributeProvider[DicomTags.RequestAttributesSequence].SetNullValue();
+			dicomAttributeProvider[DicomTags.PerformedProcedureStepStartDate].SetNullValue();
+			dicomAttributeProvider[DicomTags.PerformedProcedureStepStartTime].SetNullValue();
         }
         #endregion
     }

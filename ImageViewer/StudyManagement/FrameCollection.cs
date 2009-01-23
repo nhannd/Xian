@@ -38,13 +38,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A collection of <see cref="Frame"/> objects.
 	/// </summary>
-	public class FrameCollection : IEnumerable
+	public class FrameCollection : IEnumerable<Frame>
 	{
-		private List<Frame> _frames = new List<Frame>();
+		private readonly List<Frame> _frames = new List<Frame>();
 
 		internal FrameCollection()
 		{
-			
 		}
 
 		/// <summary>
@@ -81,13 +80,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_frames.Add(frame);
 		}
 
-		/// <summary>
-		/// Returns an enumerator that iterates through the collection.
-		/// </summary>
-		/// <returns></returns>
-		public IEnumerator GetEnumerator()
+		#region IEnumerable<Frame> Members
+
+		public IEnumerator<Frame> GetEnumerator()
 		{
 			return _frames.GetEnumerator();
 		}
+
+		#endregion
+
+		#region IEnumerable Members
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return _frames.GetEnumerator();
+		}
+
+		#endregion
 	}
 }

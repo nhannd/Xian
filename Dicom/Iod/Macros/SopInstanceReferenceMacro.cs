@@ -81,12 +81,12 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public string ReferencedSopClassUid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ReferencedSopClassUid].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ReferencedSopClassUid].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "ReferencedSopClassUid is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.ReferencedSopClassUid].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ReferencedSopClassUid].SetString(0, value);
 			}
 		}
 
@@ -95,12 +95,12 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public string ReferencedSopInstanceUid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ReferencedSopInstanceUid].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ReferencedSopInstanceUid].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "ReferencedSopInstanceUid is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.ReferencedSopInstanceUid].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ReferencedSopInstanceUid].SetString(0, value);
 			}
 		}
 	}

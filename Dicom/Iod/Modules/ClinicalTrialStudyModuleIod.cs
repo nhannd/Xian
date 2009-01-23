@@ -45,8 +45,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ClinicalTrialStudyModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public ClinicalTrialStudyModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public ClinicalTrialStudyModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		/// <summary>
 		/// Initializes the underlying collection to implement the module or sequence using default values.
@@ -73,15 +72,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string ClinicalTrialTimePointId
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ClinicalTrialTimePointId].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ClinicalTrialTimePointId].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.ClinicalTrialTimePointId].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.ClinicalTrialTimePointId].SetNullValue();
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ClinicalTrialTimePointId].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ClinicalTrialTimePointId].SetString(0, value);
 			}
 		}
 
@@ -90,15 +89,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string ClinicalTrialTimePointDescription
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ClinicalTrialTimePointDescription].ToString(); }
+			get { return base.DicomAttributeProvider[DicomTags.ClinicalTrialTimePointDescription].ToString(); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.ClinicalTrialTimePointDescription] = null;
+					base.DicomAttributeProvider[DicomTags.ClinicalTrialTimePointDescription] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ClinicalTrialTimePointDescription].SetStringValue(value);
+				base.DicomAttributeProvider[DicomTags.ClinicalTrialTimePointDescription].SetStringValue(value);
 			}
 		}
 	}

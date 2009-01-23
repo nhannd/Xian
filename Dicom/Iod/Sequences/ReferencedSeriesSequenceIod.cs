@@ -66,8 +66,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The series instance uid.</value>
         public string SeriesInstanceUid
         {
-            get { return base.DicomAttributeCollection[DicomTags.SeriesInstanceUid].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.SeriesInstanceUid].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.SeriesInstanceUid].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.SeriesInstanceUid].SetString(0, value); }
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         {
             get
             {
-                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeCollection[DicomTags.ReferencedInstanceSequence] as DicomAttributeSQ);
+                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeProvider[DicomTags.ReferencedInstanceSequence] as DicomAttributeSQ);
             }
         }        
        #endregion

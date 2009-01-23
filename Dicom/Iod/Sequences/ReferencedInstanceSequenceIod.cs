@@ -70,8 +70,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The referenced sop class uid.</value>
         public string ReferencedSopClassUid
         {
-            get { return base.DicomAttributeCollection[DicomTags.ReferencedSopClassUid].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ReferencedSopClassUid].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ReferencedSopClassUid].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ReferencedSopClassUid].SetString(0, value); }
         }
 
         /// <summary>
@@ -80,8 +80,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The referenced sop instance uid.</value>
         public string ReferencedSopInstanceUid
         {
-            get { return base.DicomAttributeCollection[DicomTags.ReferencedSopInstanceUid].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ReferencedSopInstanceUid].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ReferencedSopInstanceUid].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ReferencedSopInstanceUid].SetString(0, value); }
         }
         
        #endregion

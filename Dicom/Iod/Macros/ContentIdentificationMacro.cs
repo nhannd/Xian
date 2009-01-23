@@ -92,8 +92,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public int InstanceNumber
 		{
-			get { return base.DicomAttributeCollection[DicomTags.InstanceNumber].GetInt32(0, 0); }
-			set { base.DicomAttributeCollection[DicomTags.InstanceNumber].SetInt32(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.InstanceNumber].GetInt32(0, 0); }
+			set { base.DicomAttributeProvider[DicomTags.InstanceNumber].SetInt32(0, value); }
 		}
 
 		/// <summary>
@@ -101,12 +101,12 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public string ContentLabel
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ContentLabel].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ContentLabel].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "ContentLabel is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.ContentLabel].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ContentLabel].SetString(0, value);
 			}
 		}
 
@@ -115,15 +115,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public string ContentDescription
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ContentDescription].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ContentDescription].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.ContentDescription].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.ContentDescription].SetNullValue();
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ContentDescription].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ContentDescription].SetString(0, value);
 			}
 		}
 
@@ -132,15 +132,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public string ContentCreatorsName
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ContentCreatorsName].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.ContentCreatorsName].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 				{
-					base.DicomAttributeCollection[DicomTags.ContentCreatorsName].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.ContentCreatorsName].SetNullValue();
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ContentCreatorsName].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.ContentCreatorsName].SetString(0, value);
 			}
 		}
 
@@ -151,7 +151,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ContentCreatorsIdentificationCodeSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ContentCreatorsIdentificationCodeSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -160,10 +160,10 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			}
 			set
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ContentCreatorsIdentificationCodeSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ContentCreatorsIdentificationCodeSequence];
 				if (value == null)
 				{
-					base.DicomAttributeCollection[DicomTags.ContentCreatorsIdentificationCodeSequence] = null;
+					base.DicomAttributeProvider[DicomTags.ContentCreatorsIdentificationCodeSequence] = null;
 					return;
 				}
 				dicomAttribute.Values = new DicomSequenceItem[] {value.DicomSequenceItem};

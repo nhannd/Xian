@@ -35,14 +35,53 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.KeyObjects;
+using ClearCanvas.Dicom.Iod.Iods;
 
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// A static factory class which creates <see cref="IPresentationImage"/>s.
+	/// A factory class which creates <see cref="IPresentationImage"/>s.
 	/// </summary>
-	public static class PresentationImageFactory
+	public class PresentationImageFactory
 	{
+		private readonly StudyTree _studyTree;
+
+		public PresentationImageFactory(StudyTree studyTree)
+		{
+			_studyTree = studyTree;
+		}
+
+		public StudyTree StudyTree
+		{
+			get { return _studyTree; }	
+		}
+
+		public virtual List<IPresentationImage> CreateImages(Sop sop)
+		{
+			if (sop is ImageSop)
+			{
+				return CreateImages((ImageSop)sop);
+			}
+			else if (sop.SopClassUID == SopClass.KeyObjectSelectionDocumentStorageUid)
+			{
+				return CreateImages(new KeyObjectSelectionDocumentIod(sop.DataSource));
+			}
+
+			return new List<IPresentationImage>();
+		}
+
+		//TODO: CreateImages overrides for the presentation state sops.
+		protected virtual List<IPresentationImage> CreateImages(KeyObjectSelectionDocumentIod keyObjectDocument)
+		{
+			return new KeyObjectDeserializer(keyObjectDocument, _studyTree).Deserialize();
+		}
+
+		protected virtual List<IPresentationImage> CreateImages(ImageSop imageSop)
+		{
+			return Create(imageSop);
+		}
+
 		/// <summary>
 		/// Creates an appropriate subclass of <see cref="BasicPresentationImage"/>
 		/// for each <see cref="Frame"/> in the input <see cref="ImageSop"/>.

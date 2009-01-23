@@ -32,7 +32,6 @@
 using System;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -40,7 +39,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A DICOM Image SOP Instance.
 	/// </summary>
-	public abstract class ImageSop : Sop
+	public class ImageSop : Sop
 	{
 		private readonly object _syncLock = new object();
 		private volatile FrameCollection _frames;
@@ -48,7 +47,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageSop"/>.
 		/// </summary>
-		protected ImageSop(DicomMessageBase dicomMessage) : base(dicomMessage)
+		public ImageSop(ISopDataSource dataSource)
+			: base(dataSource)
 		{
 		}
 
@@ -72,7 +72,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				{
 					lock (_syncLock)
 					{
-						CheckIsDisposed();
 						if (_frames == null)
 						{
 							_frames = new FrameCollection();
@@ -525,16 +524,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		/// <summary>
-		/// Called indirectly via the <see cref="Sop.DecrementReferenceCount"/>
-		/// method when the object is no longer needed.
-		/// </summary>
-		/// <remarks>
-		/// You should not dispose of the <see cref="Sop"/> directly, but
-		/// rather use the <see cref="Sop.IncrementReferenceCount"/> and 
-		/// <see cref="Sop.DecrementReferenceCount"/> methods, as these objects 
-		/// are often referenced in many places.
-		/// </remarks>
 		protected override void Dispose(bool disposing)
 		{
 			base.Dispose(disposing);
@@ -566,6 +555,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				throw new SopValidationException(String.Format(SR.ExceptionInvalidTransferSyntaxUID, this.TransferSyntaxUID));
 			}
 		}
-
 	}
 }

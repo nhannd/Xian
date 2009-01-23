@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private static void InitializePatientModule(PatientModuleIod patientModule, T prototypeImage)
 		{
-			PatientModuleIod srcPatient = new PatientModuleIod(prototypeImage.ImageSop.NativeDicomObject.DataSet);
+			PatientModuleIod srcPatient = new PatientModuleIod(prototypeImage.ImageSop.DataSource);
 			patientModule.BreedRegistrationSequence = srcPatient.BreedRegistrationSequence;
 			patientModule.DeIdentificationMethod = srcPatient.DeIdentificationMethod;
 			patientModule.DeIdentificationMethodCodeSequence = srcPatient.DeIdentificationMethodCodeSequence;
@@ -128,7 +128,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private static void InitializeClinicalTrialSubjectModule(ClinicalTrialSubjectModuleIod clinicalTrialSubjectModule, T prototypeImage)
 		{
-			ClinicalTrialSubjectModuleIod srcTrialSubject = new ClinicalTrialSubjectModuleIod(prototypeImage.ImageSop.NativeDicomObject.DataSet);
+			ClinicalTrialSubjectModuleIod srcTrialSubject = new ClinicalTrialSubjectModuleIod(prototypeImage.ImageSop.DataSource);
 			if (srcTrialSubject.HasValues()) // clinical trial subkect module is user optional
 			{
 				clinicalTrialSubjectModule.ClinicalTrialProtocolId = srcTrialSubject.ClinicalTrialProtocolId;
@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private static void InitializeGeneralStudyModule(GeneralStudyModuleIod generalStudyModule, T prototypeImage)
 		{
-			GeneralStudyModuleIod srcGeneralStudy = new GeneralStudyModuleIod(prototypeImage.ImageSop.NativeDicomObject.DataSet);
+			GeneralStudyModuleIod srcGeneralStudy = new GeneralStudyModuleIod(prototypeImage.ImageSop.DataSource);
 			generalStudyModule.AccessionNumber = srcGeneralStudy.AccessionNumber;
 			generalStudyModule.NameOfPhysiciansReadingStudy = srcGeneralStudy.NameOfPhysiciansReadingStudy;
 			generalStudyModule.PhysiciansOfRecord = srcGeneralStudy.PhysiciansOfRecord;
@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private static void InitializePatientStudyModule(PatientStudyModuleIod patientStudyModule, T prototypeImage)
 		{
-			PatientStudyModuleIod srcPatientStudy = new PatientStudyModuleIod(prototypeImage.ImageSop.NativeDicomObject.DataSet);
+			PatientStudyModuleIod srcPatientStudy = new PatientStudyModuleIod(prototypeImage.ImageSop.DataSource);
 			if (srcPatientStudy.HasValues()) // patient study module is user optional
 			{
 				patientStudyModule.AdditionalPatientHistory = srcPatientStudy.AdditionalPatientHistory;
@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private static void InitializeClinicalTrialStudyModule(ClinicalTrialStudyModuleIod clinicalTrialStudyModule, T prototypeImage)
 		{
-			ClinicalTrialStudyModuleIod srcTrialStudy = new ClinicalTrialStudyModuleIod(prototypeImage.ImageSop.NativeDicomObject.DataSet);
+			ClinicalTrialStudyModuleIod srcTrialStudy = new ClinicalTrialStudyModuleIod(prototypeImage.ImageSop.DataSource);
 			if (srcTrialStudy.HasValues()) // clinical trial study module is user optional
 			{
 				clinicalTrialStudyModule.ClinicalTrialTimePointDescription = srcTrialStudy.ClinicalTrialTimePointDescription;

@@ -52,9 +52,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="FilmBoxModuleIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public BasicFilmBoxModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public BasicFilmBoxModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -87,8 +85,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value></value>
         public string ImageDisplayFormat
         {
-            get { return base.DicomAttributeCollection[DicomTags.ImageDisplayFormat].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ImageDisplayFormat].SetStringValue(value); }
+            get { return base.DicomAttributeProvider[DicomTags.ImageDisplayFormat].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ImageDisplayFormat].SetStringValue(value); }
         }
 
         /// <summary>
@@ -98,8 +96,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The annotation display format id.</value>
         public string AnnotationDisplayFormatId
         {
-            get { return base.DicomAttributeCollection[DicomTags.AnnotationDisplayFormatId].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.AnnotationDisplayFormatId].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.AnnotationDisplayFormatId].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.AnnotationDisplayFormatId].SetString(0, value); }
         }
 
 
@@ -109,8 +107,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The film orientation.</value>
         public FilmOrientation FilmOrientation
         {
-            get { return IodBase.ParseEnum<FilmOrientation>(base.DicomAttributeCollection[DicomTags.FilmOrientation].GetString(0, String.Empty), FilmOrientation.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.FilmOrientation], value, false); }
+            get { return IodBase.ParseEnum<FilmOrientation>(base.DicomAttributeProvider[DicomTags.FilmOrientation].GetString(0, String.Empty), FilmOrientation.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.FilmOrientation], value, false); }
         }
 
         /// <summary>
@@ -119,8 +117,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The film size id.</value>
         public FilmSize FilmSizeId
         {
-            get { return GetFilmSizeEnumFromString(base.DicomAttributeCollection[DicomTags.FilmOrientation].GetString(0, String.Empty)); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.FilmOrientation], GetFilmSizeStringFromEnum(value), false); }
+            get { return GetFilmSizeEnumFromString(base.DicomAttributeProvider[DicomTags.FilmOrientation].GetString(0, String.Empty)); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.FilmOrientation], GetFilmSizeStringFromEnum(value), false); }
         }
 
         /// <summary>
@@ -130,8 +128,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The type of the magnification.</value>
         public MagnificationType MagnificationType
         {
-            get { return IodBase.ParseEnum<MagnificationType>(base.DicomAttributeCollection[DicomTags.MagnificationType].GetString(0, String.Empty), MagnificationType.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.MagnificationType], value, false); }
+            get { return IodBase.ParseEnum<MagnificationType>(base.DicomAttributeProvider[DicomTags.MagnificationType].GetString(0, String.Empty), MagnificationType.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.MagnificationType], value, false); }
         }
 
         /// <summary>
@@ -140,8 +138,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The type of the smoothing.</value>
         public SmoothingType SmoothingType
         {
-            get { return IodBase.ParseEnum<SmoothingType>(base.DicomAttributeCollection[DicomTags.SmoothingType].GetString(0, String.Empty), SmoothingType.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.SmoothingType], value, false); }
+            get { return IodBase.ParseEnum<SmoothingType>(base.DicomAttributeProvider[DicomTags.SmoothingType].GetString(0, String.Empty), SmoothingType.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.SmoothingType], value, false); }
         }
 
         /// <summary>
@@ -158,8 +156,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The border density.</value>
         public string BorderDensity
         {
-            get { return base.DicomAttributeCollection[DicomTags.BorderDensity].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.BorderDensity].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.BorderDensity].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.BorderDensity].SetString(0, value); }
         }
 
         /// <summary>
@@ -176,8 +174,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The empty image density.</value>
         public string EmptyImageDensity
         {
-            get { return base.DicomAttributeCollection[DicomTags.EmptyImageDensity].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.EmptyImageDensity].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.EmptyImageDensity].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.EmptyImageDensity].SetString(0, value); }
         }
 
 
@@ -188,8 +186,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The min density.</value>
         public ushort MinDensity
         {
-            get { return base.DicomAttributeCollection[DicomTags.MinDensity].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.MinDensity].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.MinDensity].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.MinDensity].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -199,8 +197,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The min density.</value>
         public ushort MaxDensity
         {
-            get { return base.DicomAttributeCollection[DicomTags.MaxDensity].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.MaxDensity].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.MaxDensity].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.MaxDensity].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -209,8 +207,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The trim.</value>
         public DicomBoolean Trim
         {
-            get { return IodBase.ParseEnum<DicomBoolean>(base.DicomAttributeCollection[DicomTags.Trim].GetString(0, String.Empty), DicomBoolean.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.Trim], value, false); }
+            get { return IodBase.ParseEnum<DicomBoolean>(base.DicomAttributeProvider[DicomTags.Trim].GetString(0, String.Empty), DicomBoolean.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.Trim], value, false); }
         }
 
         /// <summary>
@@ -219,8 +217,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The configuration information.</value>
         public string ConfigurationInformation
         {
-            get { return base.DicomAttributeCollection[DicomTags.ConfigurationInformation].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ConfigurationInformation].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ConfigurationInformation].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ConfigurationInformation].SetString(0, value); }
         }
 
         /// <summary>
@@ -229,8 +227,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The illumination.</value>
         public ushort Illumination
         {
-            get { return base.DicomAttributeCollection[DicomTags.Illumination].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.Illumination].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.Illumination].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.Illumination].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -239,8 +237,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The reflected ambient light.</value>
         public ushort ReflectedAmbientLight
         {
-            get { return base.DicomAttributeCollection[DicomTags.ReflectedAmbientLight].GetUInt16(0, 0); }
-            set { base.DicomAttributeCollection[DicomTags.ReflectedAmbientLight].SetUInt16(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ReflectedAmbientLight].GetUInt16(0, 0); }
+            set { base.DicomAttributeProvider[DicomTags.ReflectedAmbientLight].SetUInt16(0, value); }
         }
 
         /// <summary>
@@ -249,15 +247,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The requested resolution id.</value>
         public RequestedResolution RequestedResolutionId
         {
-            get { return IodBase.ParseEnum<RequestedResolution>(base.DicomAttributeCollection[DicomTags.RequestedResolutionId].GetString(0, String.Empty), RequestedResolution.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.RequestedResolutionId], value, false); }
+            get { return IodBase.ParseEnum<RequestedResolution>(base.DicomAttributeProvider[DicomTags.RequestedResolutionId].GetString(0, String.Empty), RequestedResolution.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.RequestedResolutionId], value, false); }
         }
 
         public SequenceIodList<ReferencedInstanceSequenceIod> ReferencedFilmSessionSequenceList
         {
             get
             {
-                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeCollection[DicomTags.ReferencedFilmSessionSequence] as DicomAttributeSQ);
+                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeProvider[DicomTags.ReferencedFilmSessionSequence] as DicomAttributeSQ);
             }
         }
 
@@ -265,7 +263,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeCollection[DicomTags.ReferencedImageBoxSequence] as DicomAttributeSQ);
+                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeProvider[DicomTags.ReferencedImageBoxSequence] as DicomAttributeSQ);
             }
         }
 
@@ -273,7 +271,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get
             {
-                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeCollection[DicomTags.ReferencedBasicAnnotationBoxSequence] as DicomAttributeSQ);
+                return new SequenceIodList<ReferencedInstanceSequenceIod>(base.DicomAttributeProvider[DicomTags.ReferencedBasicAnnotationBoxSequence] as DicomAttributeSQ);
             }
         }
 
@@ -285,7 +283,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </summary>
         public void SetCommonTags()
         {
-            SetCommonTags(base.DicomAttributeCollection);
+            SetCommonTags(base.DicomAttributeProvider);
         }
         #endregion
 
@@ -293,19 +291,18 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Sets the commonly used tags in the specified dicom attribute collection.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public static void SetCommonTags(DicomAttributeCollection dicomAttributeCollection)
+        public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
-            if (dicomAttributeCollection == null)
-                throw new ArgumentNullException("dicomAttributeCollection");
+            if (dicomAttributeProvider == null)
+				throw new ArgumentNullException("dicomAttributeProvider");
 
-            //dicomAttributeCollection[DicomTags.NumberOfCopies].SetNullValue();
-            //dicomAttributeCollection[DicomTags.PrintPriority].SetNullValue();
-            //dicomAttributeCollection[DicomTags.MediumType].SetNullValue();
-            //dicomAttributeCollection[DicomTags.FilmDestination].SetNullValue();
-            //dicomAttributeCollection[DicomTags.FilmSessionLabel].SetNullValue();
-            //dicomAttributeCollection[DicomTags.MemoryAllocation].SetNullValue();
-            //dicomAttributeCollection[DicomTags.OwnerId].SetNullValue();
+            //dicomAttributeProvider[DicomTags.NumberOfCopies].SetNullValue();
+            //dicomAttributeProvider[DicomTags.PrintPriority].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MediumType].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmDestination].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmSessionLabel].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MemoryAllocation].SetNullValue();
+            //dicomAttributeProvider[DicomTags.OwnerId].SetNullValue();
         }
 
         /// <summary>

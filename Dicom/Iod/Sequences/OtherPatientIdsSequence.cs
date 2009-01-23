@@ -64,12 +64,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string PatientId
 		{
-			get { return base.DicomAttributeCollection[DicomTags.PatientId].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.PatientId].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "PatientId is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.PatientId].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.PatientId].SetString(0, value);
 			}
 		}
 
@@ -78,12 +78,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public string IssuerOfPatientId
 		{
-			get { return base.DicomAttributeCollection[DicomTags.IssuerOfPatientId].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.IssuerOfPatientId].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "IssuerOfPatientId is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.IssuerOfPatientId].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.IssuerOfPatientId].SetString(0, value);
 			}
 		}
 
@@ -92,12 +92,12 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// </summary>
 		public TypeOfPatientId TypeOfPatientId
 		{
-			get { return ParseEnum(base.DicomAttributeCollection[DicomTags.TypeOfPatientId].GetString(0, string.Empty), TypeOfPatientId.Unknown); }
+			get { return ParseEnum(base.DicomAttributeProvider[DicomTags.TypeOfPatientId].GetString(0, string.Empty), TypeOfPatientId.Unknown); }
 			set
 			{
 				if (value == TypeOfPatientId.Unknown)
 					throw new ArgumentOutOfRangeException("value", "TypeOfPatientId is Type 1 Required.");
-				SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.TypeOfPatientId], value);
+				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.TypeOfPatientId], value);
 			}
 		}
 	}

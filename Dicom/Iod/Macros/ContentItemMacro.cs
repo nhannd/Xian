@@ -62,13 +62,13 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The type of the value.</value>
 		public ContentItemValueType ValueType
 		{
-			get { return ParseEnum<ContentItemValueType>(base.DicomAttributeCollection[DicomTags.ValueType].GetString(0, String.Empty), ContentItemValueType.None); }
-			set { SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.ValueType], value); }
+			get { return ParseEnum<ContentItemValueType>(base.DicomAttributeProvider[DicomTags.ValueType].GetString(0, String.Empty), ContentItemValueType.None); }
+			set { SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.ValueType], value); }
 		}
 
 		public SequenceIodList<CodeSequenceMacro> ConceptNameCodeSequenceList
 		{
-			get { return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.ConceptNameCodeSequence] as DicomAttributeSQ); }
+			get { return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeProvider[DicomTags.ConceptNameCodeSequence] as DicomAttributeSQ); }
 		}
 
 		/// <summary>
@@ -77,14 +77,14 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The datetime.</value>
 		public DateTime? Datetime
 		{
-			get { return base.DicomAttributeCollection[DicomTags.Datetime].GetDateTime(0); }
+			get { return base.DicomAttributeProvider[DicomTags.Datetime].GetDateTime(0); }
 
 			set
 			{
 				if (value.HasValue)
-					base.DicomAttributeCollection[DicomTags.Datetime].SetDateTime(0, value.Value);
+					base.DicomAttributeProvider[DicomTags.Datetime].SetDateTime(0, value.Value);
 				else
-					base.DicomAttributeCollection[DicomTags.Datetime].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.Datetime].SetNullValue();
 			}
 		}
 
@@ -94,9 +94,9 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The date.</value>
 		public DateTime? Date
 		{
-			get { return base.DicomAttributeCollection[DicomTags.Date].GetDateTime(0); }
+			get { return base.DicomAttributeProvider[DicomTags.Date].GetDateTime(0); }
 
-			set { base.DicomAttributeCollection[DicomTags.Date].SetDateTime(0, value); }
+			set { base.DicomAttributeProvider[DicomTags.Date].SetDateTime(0, value); }
 		}
 
 		/// <summary>
@@ -105,9 +105,9 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The time.</value>
 		public DateTime? Time
 		{
-			get { return base.DicomAttributeCollection[DicomTags.Time].GetDateTime(0); }
+			get { return base.DicomAttributeProvider[DicomTags.Time].GetDateTime(0); }
 
-			set { base.DicomAttributeCollection[DicomTags.Time].SetDateTime(0, value); }
+			set { base.DicomAttributeProvider[DicomTags.Time].SetDateTime(0, value); }
 		}
 
 		/// <summary>
@@ -116,8 +116,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The name of the person.</value>
 		public PersonName PersonName
 		{
-			get { return new PersonName(base.DicomAttributeCollection[DicomTags.PersonName].GetString(0, String.Empty)); }
-			set { base.DicomAttributeCollection[DicomTags.PersonName].SetString(0, value.ToString()); }
+			get { return new PersonName(base.DicomAttributeProvider[DicomTags.PersonName].GetString(0, String.Empty)); }
+			set { base.DicomAttributeProvider[DicomTags.PersonName].SetString(0, value.ToString()); }
 		}
 
 		/// <summary>
@@ -126,8 +126,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The uid.</value>
 		public string Uid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.Uid].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.Uid].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.Uid].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.Uid].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -136,8 +136,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The text value.</value>
 		public string TextValue
 		{
-			get { return base.DicomAttributeCollection[DicomTags.TextValue].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.TextValue].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.TextValue].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.TextValue].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -146,7 +146,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The concept code sequence list.</value>
 		public SequenceIodList<CodeSequenceMacro> ConceptCodeSequenceList
 		{
-			get { return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.ConceptCodeSequence] as DicomAttributeSQ); }
+			get { return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeProvider[DicomTags.ConceptCodeSequence] as DicomAttributeSQ); }
 		}
 
 		/// <summary>
@@ -155,8 +155,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The numeric value.</value>
 		public float NumericValue
 		{
-			get { return base.DicomAttributeCollection[DicomTags.NumericValue].GetFloat32(0, 0.0F); }
-			set { base.DicomAttributeCollection[DicomTags.NumericValue].SetFloat32(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.NumericValue].GetFloat32(0, 0.0F); }
+			set { base.DicomAttributeProvider[DicomTags.NumericValue].SetFloat32(0, value); }
 		}
 
 		/// <summary>
@@ -165,7 +165,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <value>The measurement units code sequence list.</value>
 		public SequenceIodList<CodeSequenceMacro> MeasurementUnitsCodeSequenceList
 		{
-			get { return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.MeasurementUnitsCodeSequence] as DicomAttributeSQ); }
+			get { return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeProvider[DicomTags.MeasurementUnitsCodeSequence] as DicomAttributeSQ); }
 		}
 
 		#endregion

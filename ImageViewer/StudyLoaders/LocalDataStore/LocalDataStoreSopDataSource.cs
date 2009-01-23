@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -29,69 +29,70 @@
 
 #endregion
 
-using System.Diagnostics;
-using System.Collections.Generic;
-using ClearCanvas.Common;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Dicom.DataStore;
 
-namespace ClearCanvas.ImageViewer.StudyManagement
+namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
-	internal static class SopCache
+	public class LocalDataStoreSopDataSource : LocalSopDataSource
 	{
-		private static readonly object _syncLock = new object();
-		private static readonly Dictionary<string, Sop> _sopCache;
+		private readonly object _syncLock =  new object();
+		private readonly ISopInstance _sop;
 
-		static SopCache()
+		public LocalDataStoreSopDataSource(ISopInstance sop)
+			: base(sop.GetLocationUri().LocalDiskPath)
 		{
-			_sopCache = new Dictionary<string, Sop>();
+			_sop = sop;
 		}
 
-		//for unit tests only.
-		public static ImageSop Get(string sopInstanceUid)
+		public override string TransferSyntaxUid
 		{
-			Platform.CheckForEmptyString(sopInstanceUid, "sopInstanceUid");
+			get { return _sop.TransferSyntaxUid; }
+		}
 
+		public override string StudyInstanceUid
+		{
+			get { return _sop.GetParentSeries().GetParentStudy().StudyInstanceUid; }
+		}
+		
+		public override string SeriesInstanceUid
+		{
+			get { return _sop.GetParentSeries().SeriesInstanceUid; }
+		}
+
+		public override string SopInstanceUid
+		{
+			get { return _sop.SopInstanceUid; }
+		}
+		
+		public override string SopClassUid
+		{
+			get { return _sop.SopClassUid; }
+		}
+
+		public override DicomAttribute GetDicomAttribute(uint tag)
+		{
+			//the _sop indexer is not thread-safe.
 			lock (_syncLock)
 			{
-				if (_sopCache.ContainsKey(sopInstanceUid))
-					return (ImageSop) _sopCache[sopInstanceUid];
-
-				return null;
+				if (_sop.IsStoredTag(tag))
+					return _sop[tag];
 			}
+
+			return base[tag];
 		}
 
-		public static ImageSop Add(ImageSop sop)
+		public override bool TryGetAttribute(uint tag, out DicomAttribute attribute)
 		{
-			Platform.CheckForNullReference(sop, "sop");
-
-			string sopInstanceUid = sop.SopInstanceUID;
-			lock (_syncLock)
+			if (_sop.IsStoredTag(tag))
 			{
-				if (!_sopCache.ContainsKey(sopInstanceUid))
-				{
-					sop.Disposing += OnSopDisposing;
-					_sopCache[sopInstanceUid] = sop;
-				}
-
-				return (ImageSop)_sopCache[sopInstanceUid];
+				attribute = _sop[tag];
+				if (!attribute.IsEmpty)
+					return true;
 			}
-		}
 
-		private static void OnSopDisposing(object sender, System.EventArgs e)
-		{
-			Sop sop = (Sop)sender;
-			sop.Disposing -= OnSopDisposing;
-			
-			Remove(sop);
-		}
-
-		private static void Remove(Sop sop)
-		{
-			lock (_syncLock)
-			{
-				_sopCache.Remove(sop.SopInstanceUID);
-				if (_sopCache.Count == 0)
-					Trace.WriteLine("The Sop cache is empty.");
-			}
+			return base.TryGetAttribute(tag, out attribute);
 		}
 	}
 }

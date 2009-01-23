@@ -49,8 +49,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DisplayedAreaModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public DisplayedAreaModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public DisplayedAreaModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		/// <summary>
 		/// Initializes the underlying collection to implement the module or sequence using default values.
@@ -64,7 +63,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.DisplayedAreaSelectionSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.DisplayedAreaSelectionSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					return null;
 
@@ -84,7 +83,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeCollection[DicomTags.DisplayedAreaSelectionSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.DisplayedAreaSelectionSequence].Values = result;
 			}
 		}
 
@@ -123,7 +122,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				get
 				{
-					DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedImageSequence];
+					DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedImageSequence];
 					if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 						return null;
 
@@ -138,7 +137,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				{
 					if (value == null || value.Length == 0)
 					{
-						base.DicomAttributeCollection[DicomTags.ReferencedImageSequence] = null;
+						base.DicomAttributeProvider[DicomTags.ReferencedImageSequence] = null;
 						return;
 					}
 
@@ -146,7 +145,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					for (int n = 0; n < value.Length; n++)
 						result[n] = value[n].DicomSequenceItem;
 
-					base.DicomAttributeCollection[DicomTags.ReferencedImageSequence].Values = result;
+					base.DicomAttributeProvider[DicomTags.ReferencedImageSequence].Values = result;
 				}
 			}
 
@@ -158,15 +157,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				get
 				{
 					int x, y;
-					if (base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].TryGetInt32(0, out x))
-						if (base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].TryGetInt32(1, out y))
+					if (base.DicomAttributeProvider[DicomTags.DisplayedAreaTopLeftHandCorner].TryGetInt32(0, out x))
+						if (base.DicomAttributeProvider[DicomTags.DisplayedAreaTopLeftHandCorner].TryGetInt32(1, out y))
 							return new Point(x, y);
 					return Point.Empty;
 				}
 				set
 				{
-					base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].SetInt32(0, value.X);
-					base.DicomAttributeCollection[DicomTags.DisplayedAreaTopLeftHandCorner].SetInt32(1, value.Y);
+					base.DicomAttributeProvider[DicomTags.DisplayedAreaTopLeftHandCorner].SetInt32(0, value.X);
+					base.DicomAttributeProvider[DicomTags.DisplayedAreaTopLeftHandCorner].SetInt32(1, value.Y);
 				}
 			}
 
@@ -178,15 +177,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				get
 				{
 					int x, y;
-					if (base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].TryGetInt32(0, out x))
-						if (base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].TryGetInt32(1, out y))
+					if (base.DicomAttributeProvider[DicomTags.DisplayedAreaBottomRightHandCorner].TryGetInt32(0, out x))
+						if (base.DicomAttributeProvider[DicomTags.DisplayedAreaBottomRightHandCorner].TryGetInt32(1, out y))
 							return new Point(x, y);
 					return Point.Empty;
 				}
 				set
 				{
-					base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].SetInt32(0, value.X);
-					base.DicomAttributeCollection[DicomTags.DisplayedAreaBottomRightHandCorner].SetInt32(1, value.Y);
+					base.DicomAttributeProvider[DicomTags.DisplayedAreaBottomRightHandCorner].SetInt32(0, value.X);
+					base.DicomAttributeProvider[DicomTags.DisplayedAreaBottomRightHandCorner].SetInt32(1, value.Y);
 				}
 			}
 
@@ -195,12 +194,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// </summary>
 			public PresentationSizeMode PresentationSizeMode
 			{
-				get { return ParseEnum(base.DicomAttributeCollection[DicomTags.PresentationSizeMode].GetString(0, string.Empty), PresentationSizeMode.None); }
+				get { return ParseEnum(base.DicomAttributeProvider[DicomTags.PresentationSizeMode].GetString(0, string.Empty), PresentationSizeMode.None); }
 				set
 				{
 					if (value == PresentationSizeMode.None)
 						throw new ArgumentOutOfRangeException("value", "PresentationSizeMode is Type 1 Required.");
-					SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.PresentationSizeMode], value, true);
+					SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.PresentationSizeMode], value, true);
 				}
 			}
 
@@ -211,7 +210,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				get
 				{
-					DicomAttribute attribute = base.DicomAttributeCollection[DicomTags.PresentationPixelSpacing];
+					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.PresentationPixelSpacing];
 					if (attribute.IsEmpty || attribute.IsNull)
 						return null;
 					return PixelSpacing.FromString(attribute.ToString());
@@ -220,10 +219,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				{
 					if (value == null || value.IsNull)
 					{
-						base.DicomAttributeCollection[DicomTags.PresentationPixelSpacing] = null;
+						base.DicomAttributeProvider[DicomTags.PresentationPixelSpacing] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.PresentationPixelSpacing].SetStringValue(value.ToString());
+					base.DicomAttributeProvider[DicomTags.PresentationPixelSpacing].SetStringValue(value.ToString());
 				}
 			}
 
@@ -234,7 +233,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				get
 				{
-					DicomAttribute attribute = base.DicomAttributeCollection[DicomTags.PresentationPixelAspectRatio];
+					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.PresentationPixelAspectRatio];
 					if (attribute.IsEmpty || attribute.IsNull)
 						return null;
 					return PixelAspectRatio.FromString(attribute.ToString());
@@ -243,10 +242,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				{
 					if (value == null || value.IsNull)
 					{
-						base.DicomAttributeCollection[DicomTags.PresentationPixelAspectRatio] = null;
+						base.DicomAttributeProvider[DicomTags.PresentationPixelAspectRatio] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.PresentationPixelAspectRatio].SetStringValue(value.ToString());
+					base.DicomAttributeProvider[DicomTags.PresentationPixelAspectRatio].SetStringValue(value.ToString());
 				}
 			}
 
@@ -258,7 +257,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				get
 				{
 					double result;
-					if (base.DicomAttributeCollection[DicomTags.PresentationPixelMagnificationRatio].TryGetFloat64(0, out result))
+					if (base.DicomAttributeProvider[DicomTags.PresentationPixelMagnificationRatio].TryGetFloat64(0, out result))
 						return result;
 					return null;
 				}
@@ -266,10 +265,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				{
 					if (!value.HasValue)
 					{
-						base.DicomAttributeCollection[DicomTags.PresentationPixelMagnificationRatio] = null;
+						base.DicomAttributeProvider[DicomTags.PresentationPixelMagnificationRatio] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.PresentationPixelMagnificationRatio].SetFloat64(0, value.Value);
+					base.DicomAttributeProvider[DicomTags.PresentationPixelMagnificationRatio].SetFloat64(0, value.Value);
 				}
 			}
 		}

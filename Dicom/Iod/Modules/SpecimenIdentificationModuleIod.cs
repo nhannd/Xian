@@ -48,8 +48,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="SpecimenIdentificationModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public SpecimenIdentificationModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public SpecimenIdentificationModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) {}
 
 		/// <summary>
 		/// Initializes the underlying collection to implement the module or sequence using default values.
@@ -76,12 +75,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string SpecimenAccessionNumber
 		{
-			get { return base.DicomAttributeCollection[DicomTags.SpecimenAccessionNumber].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.SpecimenAccessionNumber].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "SpecimenAccessionNumber is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.SpecimenAccessionNumber].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.SpecimenAccessionNumber].SetString(0, value);
 			}
 		}
 
@@ -92,7 +91,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.SpecimenSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.SpecimenSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -109,7 +108,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				if (value == null || value.Length == 0)
 				{
-					base.DicomAttributeCollection[DicomTags.SpecimenSequence].SetNullValue();
+					base.DicomAttributeProvider[DicomTags.SpecimenSequence].SetNullValue();
 					return;
 				}
 
@@ -117,7 +116,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeCollection[DicomTags.SpecimenSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.SpecimenSequence].Values = result;
 			}
 		}
 	}

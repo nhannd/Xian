@@ -61,82 +61,82 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         #region Public Properties
         public string ScheduledStationAeTitle
         {
-            get { return base.DicomAttributeCollection[DicomTags.ScheduledStationAeTitle].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ScheduledStationAeTitle].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ScheduledStationAeTitle].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ScheduledStationAeTitle].SetString(0, value); }
         }
 
         public string ScheduledStationName
         {
-            get { return base.DicomAttributeCollection[DicomTags.ScheduledStationName].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ScheduledStationName].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ScheduledStationName].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ScheduledStationName].SetString(0, value); }
         }
 
         public string ScheduledProcedureStepLocation
         {
-            get { return base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepLocation].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepLocation].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepLocation].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepLocation].SetString(0, value); }
         }
 
         public DateTime ScheduledProcedureStepStartDate
         {
-            get { return base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepStartDate].GetDateTime(0, DateTime.MinValue); }
-            set { base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepStartDate].SetDateTime(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepStartDate].GetDateTime(0, DateTime.MinValue); }
+            set { base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepStartDate].SetDateTime(0, value); }
         }
 
         public DateTime ScheduledProcedureStepEndDate
         {
-            get { return base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepEndDate].GetDateTime(0, DateTime.MinValue); }
-            set { base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepEndDate].SetDateTime(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepEndDate].GetDateTime(0, DateTime.MinValue); }
+            set { base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepEndDate].SetDateTime(0, value); }
         }
 
         public PersonName ScheduledPerformingPhysiciansName
         {
-            get { return new PersonName(base.DicomAttributeCollection[DicomTags.ScheduledPerformingPhysiciansName].GetString(0, String.Empty)); }
-            set { base.DicomAttributeCollection[DicomTags.ScheduledPerformingPhysiciansName].SetString(0, value.ToString()); }
+            get { return new PersonName(base.DicomAttributeProvider[DicomTags.ScheduledPerformingPhysiciansName].GetString(0, String.Empty)); }
+            set { base.DicomAttributeProvider[DicomTags.ScheduledPerformingPhysiciansName].SetString(0, value.ToString()); }
         }
 
         public string ScheduledProcedureStepDescription
         {
-            get { return base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepDescription].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepDescription].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepDescription].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepDescription].SetString(0, value); }
         }
 
         public string ScheduledProcedureStepId
         {
-            get { return base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepId].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepId].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepId].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepId].SetString(0, value); }
         }
 
         public ScheduledProcedureStepStatus ScheduledProcedureStepStatus
         {
-            get { return IodBase.ParseEnum<ScheduledProcedureStepStatus>(base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepStatus].GetString(0, String.Empty), ScheduledProcedureStepStatus.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepStatus], value, false); }
+            get { return IodBase.ParseEnum<ScheduledProcedureStepStatus>(base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepStatus].GetString(0, String.Empty), ScheduledProcedureStepStatus.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepStatus], value, false); }
         }
 
 
 
         public string CommentsOnTheScheduledProcedureStep
         {
-            get { return base.DicomAttributeCollection[DicomTags.CommentsOnTheScheduledProcedureStep].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.CommentsOnTheScheduledProcedureStep].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.CommentsOnTheScheduledProcedureStep].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.CommentsOnTheScheduledProcedureStep].SetString(0, value); }
         }
 
         public string Modality
         {
-            get { return base.DicomAttributeCollection[DicomTags.Modality].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.Modality].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.Modality].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.Modality].SetString(0, value); }
         }
 
         public string RequestedContrastAgent
         {
-            get { return base.DicomAttributeCollection[DicomTags.RequestedContrastAgent].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.RequestedContrastAgent].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.RequestedContrastAgent].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.RequestedContrastAgent].SetString(0, value); }
         }
 
         public string PreMedication
         {
-            get { return base.DicomAttributeCollection[DicomTags.PreMedication].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PreMedication].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PreMedication].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PreMedication].SetString(0, value); }
         }
         
        #endregion

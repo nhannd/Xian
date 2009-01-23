@@ -180,7 +180,6 @@
     <Compile Include="Codec\DicomCodecRegistry.cs" />
     <Compile Include="Codec\DicomCodecUnsupportedSopException.cs" />
     <Compile Include="Codec\IDicomCodec.cs" />
-    <Compile Include="Delegates.cs" />
     <Compile Include="DicomAttributeMultiValueText.cs" />
     <Compile Include="DicomDataException.cs" />
     <Compile Include="DicomDirectoryWriter.cs" />
@@ -193,6 +192,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>DicomSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="IDicomAttributeProvider.cs" />
     <Compile Include="Iod\DataLut.cs" />
     <Compile Include="Iod\ContextGroups\ContextGroupBase.cs" />
     <Compile Include="Iod\ContextGroups\KeyObjectSelectionDocumentTitle.cs" />

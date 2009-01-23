@@ -270,14 +270,14 @@ namespace ClearCanvas.Dicom.Utilities
 		/// <param name="dicomDateTag">The dicom date tag.</param>
 		/// <param name="dicomTimeTag">The dicom time tag.</param>
 		/// <returns></returns>
-		public static DateTime? ParseDateAndTime(DicomAttributeCollection dicomAttributeCollection, uint dicomDateTimeTag, uint dicomDateTag, uint dicomTimeTag)
+		public static DateTime? ParseDateAndTime(IDicomAttributeProvider dicomAttributeProvider, uint dicomDateTimeTag, uint dicomDateTag, uint dicomTimeTag)
 		{
-			if (dicomAttributeCollection == null)
-				throw new ArgumentNullException("dicomAttributeCollection");
+			if (dicomAttributeProvider == null)
+				throw new ArgumentNullException("dicomAttributeProvider");
 
-			string dicomDateTime = dicomDateTimeTag == 0 ? String.Empty : dicomAttributeCollection[dicomDateTimeTag].GetString(0, String.Empty);
-			string dicomDate = dicomDateTag == 0 ? String.Empty : dicomAttributeCollection[dicomDateTag].GetString(0, String.Empty);
-			string dicomTime = dicomTimeTag == 0 ? String.Empty : dicomAttributeCollection[dicomTimeTag].GetString(0, String.Empty);
+			string dicomDateTime = dicomDateTimeTag == 0 ? String.Empty : dicomAttributeProvider[dicomDateTimeTag].GetString(0, String.Empty);
+			string dicomDate = dicomDateTag == 0 ? String.Empty : dicomAttributeProvider[dicomDateTag].GetString(0, String.Empty);
+			string dicomTime = dicomTimeTag == 0 ? String.Empty : dicomAttributeProvider[dicomTimeTag].GetString(0, String.Empty);
 
 			return ParseDateAndTime(dicomDateTime, dicomDate, dicomTime);
 		}
@@ -332,23 +332,23 @@ namespace ClearCanvas.Dicom.Utilities
 		/// it will write the values to the separate date and time tags.
 		/// </summary>
 		/// <param name="value">The value.</param>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
+		/// <param name="dicomAttributeProvider">The dicom attribute provider.</param>
 		/// <param name="dicomDateTimeTag">The dicom date time tag.</param>
 		/// <param name="dicomDateTag">The dicom date tag.</param>
 		/// <param name="dicomTimeTag">The dicom time tag.</param>
-		public static void SetDateTimeAttributeValues(DateTime? value, DicomAttributeCollection dicomAttributeCollection, uint dicomDateTimeTag, uint dicomDateTag, uint dicomTimeTag)
+		public static void SetDateTimeAttributeValues(DateTime? value, IDicomAttributeProvider dicomAttributeProvider, uint dicomDateTimeTag, uint dicomDateTag, uint dicomTimeTag)
 		{
-			if (dicomAttributeCollection == null)
-				throw new ArgumentNullException("dicomAttributeCollection");
+			if (dicomAttributeProvider == null)
+				throw new ArgumentNullException("dicomAttributeProvider");
 
-			DicomAttribute dateTimeAttribute;
-			if (dicomAttributeCollection.TryGetAttribute(dicomDateTimeTag, out dateTimeAttribute))
+			DicomAttribute dateTimeAttribute = dicomAttributeProvider[dicomDateTimeTag];
+			if (!dateTimeAttribute.IsEmpty)
 			{
 				SetDateTimeAttributeValues(value, dateTimeAttribute, null, null);
 			}
 			else
 			{
-				SetDateTimeAttributeValues(value, dicomAttributeCollection[dicomDateTag], dicomAttributeCollection[dicomTimeTag]);
+				SetDateTimeAttributeValues(value, dicomAttributeProvider[dicomDateTag], dicomAttributeProvider[dicomTimeTag]);
 			}
 		}
 

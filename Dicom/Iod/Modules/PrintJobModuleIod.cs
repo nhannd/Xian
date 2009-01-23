@@ -51,9 +51,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="PrintJobModuleIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public PrintJobModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public PrintJobModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -65,8 +63,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The execution status.</value>
         public ExecutionStatus ExecutionStatus
         {
-            get { return IodBase.ParseEnum<ExecutionStatus>(base.DicomAttributeCollection[DicomTags.ExecutionStatus].GetString(0, String.Empty), ExecutionStatus.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.ExecutionStatus], value, false); }
+            get { return IodBase.ParseEnum<ExecutionStatus>(base.DicomAttributeProvider[DicomTags.ExecutionStatus].GetString(0, String.Empty), ExecutionStatus.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.ExecutionStatus], value, false); }
         }
 
         /// <summary>
@@ -81,8 +79,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The execution status info.</value>
         public string ExecutionStatusInfo
         {
-            get { return base.DicomAttributeCollection[DicomTags.ExecutionStatusInfo].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ExecutionStatusInfo].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ExecutionStatusInfo].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ExecutionStatusInfo].SetString(0, value); }
         }
 
         /// <summary>
@@ -91,9 +89,9 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The creation date.</value>
         public DateTime? CreationDate
         {
-            get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeCollection, 0, DicomTags.CreationDate, DicomTags.CreationTime); }
+            get { return DateTimeParser.ParseDateAndTime(base.DicomAttributeProvider, 0, DicomTags.CreationDate, DicomTags.CreationTime); }
         
-          set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection, 0, DicomTags.CreationDate, DicomTags.CreationTime); }
+          set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeProvider, 0, DicomTags.CreationDate, DicomTags.CreationTime); }
         }
 
         /// <summary>
@@ -102,8 +100,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The print priority.</value>
         public PrintPriority PrintPriority
         {
-            get { return IodBase.ParseEnum<PrintPriority>(base.DicomAttributeCollection[DicomTags.PrintPriority].GetString(0, String.Empty), PrintPriority.None); }
-            set { IodBase.SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.PrintPriority], value, false); }
+            get { return IodBase.ParseEnum<PrintPriority>(base.DicomAttributeProvider[DicomTags.PrintPriority].GetString(0, String.Empty), PrintPriority.None); }
+            set { IodBase.SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.PrintPriority], value, false); }
         }
 
         /// <summary>
@@ -112,8 +110,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The name of the printer.</value>
         public string PrinterName
         {
-            get { return base.DicomAttributeCollection[DicomTags.PrinterName].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PrinterName].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PrinterName].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PrinterName].SetString(0, value); }
         }
 
         /// <summary>
@@ -122,8 +120,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The originator.</value>
         public string Originator
         {
-            get { return base.DicomAttributeCollection[DicomTags.Originator].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.Originator].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.Originator].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.Originator].SetString(0, value); }
         }
         
         #endregion
@@ -134,7 +132,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// </summary>
         public void SetCommonTags()
         {
-            SetCommonTags(base.DicomAttributeCollection);
+            SetCommonTags(base.DicomAttributeProvider);
         }
         #endregion
 
@@ -142,19 +140,18 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Sets the commonly used tags in the specified dicom attribute collection.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public static void SetCommonTags(DicomAttributeCollection dicomAttributeCollection)
+        public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
-            if (dicomAttributeCollection == null)
-                throw new ArgumentNullException("dicomAttributeCollection");
+            if (dicomAttributeProvider == null)
+				throw new ArgumentNullException("dicomAttributeProvider");
 
-            //dicomAttributeCollection[DicomTags.NumberOfCopies].SetNullValue();
-            //dicomAttributeCollection[DicomTags.PrintPriority].SetNullValue();
-            //dicomAttributeCollection[DicomTags.MediumType].SetNullValue();
-            //dicomAttributeCollection[DicomTags.FilmDestination].SetNullValue();
-            //dicomAttributeCollection[DicomTags.FilmSessionLabel].SetNullValue();
-            //dicomAttributeCollection[DicomTags.MemoryAllocation].SetNullValue();
-            //dicomAttributeCollection[DicomTags.OwnerId].SetNullValue();
+            //dicomAttributeProvider[DicomTags.NumberOfCopies].SetNullValue();
+            //dicomAttributeProvider[DicomTags.PrintPriority].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MediumType].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmDestination].SetNullValue();
+            //dicomAttributeProvider[DicomTags.FilmSessionLabel].SetNullValue();
+            //dicomAttributeProvider[DicomTags.MemoryAllocation].SetNullValue();
+            //dicomAttributeProvider[DicomTags.OwnerId].SetNullValue();
         }
         #endregion
     }

@@ -122,9 +122,9 @@ namespace ClearCanvas.Dicom.Iod
 			}
 		}
 
-		private static double GetRescaleSlope(DicomAttributeGetter attributeGetter)
+		private static double GetRescaleSlope(IDicomAttributeProvider attributeProvider)
 		{
-			DicomAttribute rescaleSlopeAttribute = attributeGetter(DicomTags.RescaleSlope);
+			DicomAttribute rescaleSlopeAttribute = attributeProvider[DicomTags.RescaleSlope];
 			if (rescaleSlopeAttribute == null)
 				return 1.0;
 			else
@@ -182,37 +182,32 @@ namespace ClearCanvas.Dicom.Iod
 
 		#region Public Factory
 
-		public static List<VoiDataLut> Create(DicomAttributeGetter attributeGetter)
+		public static List<VoiDataLut> Create(IDicomAttributeProvider attributeProvider)
 		{
-			if (attributeGetter == null)
-				throw new ArgumentNullException("attributeGetter");
+			if (attributeProvider == null)
+				throw new ArgumentNullException("attributeProvider");
 
-			DicomAttributeSQ voiLutSequence = attributeGetter(DicomTags.VoiLutSequence) as DicomAttributeSQ;
+			DicomAttributeSQ voiLutSequence = attributeProvider[DicomTags.VoiLutSequence] as DicomAttributeSQ;
 			if (voiLutSequence == null)
 				return new List<VoiDataLut>();
 
-			DicomAttributeSQ modalityLutSequence = attributeGetter(DicomTags.ModalityLutSequence) as DicomAttributeSQ;
-			int pixelRepresentation = GetPixelRepresentation(attributeGetter);
+			DicomAttributeSQ modalityLutSequence = attributeProvider[DicomTags.ModalityLutSequence] as DicomAttributeSQ;
+			int pixelRepresentation = GetPixelRepresentation(attributeProvider);
 
 			if (IsValidAttribute(modalityLutSequence))
 				return Create(voiLutSequence, modalityLutSequence, pixelRepresentation);
 
-			DicomAttribute rescaleInterceptAttribute = attributeGetter(DicomTags.RescaleIntercept);
+			DicomAttribute rescaleInterceptAttribute = attributeProvider[DicomTags.RescaleIntercept];
 			if (IsValidAttribute(rescaleInterceptAttribute))
 			{
-				double rescaleSlope = GetRescaleSlope(attributeGetter);
+				double rescaleSlope = GetRescaleSlope(attributeProvider);
 				double rescaleIntercept = rescaleInterceptAttribute.GetFloat64(0, 0);
-				int bitsStored = GetBitsStored(attributeGetter);
+				int bitsStored = GetBitsStored(attributeProvider);
 
 				return Create(voiLutSequence, bitsStored, pixelRepresentation, rescaleSlope, rescaleIntercept);
 			}
 
 			return Create(voiLutSequence, pixelRepresentation);
-		}
-
-		public static List<VoiDataLut> Create(DicomAttributeCollection parentCollection)
-		{
-			return Create(delegate(uint tag) { return parentCollection[tag]; });
 		}
 
 		#endregion

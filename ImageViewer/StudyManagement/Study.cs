@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -40,8 +39,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class Study
 	{
-		private ImageSop _imageSop;
-		private Patient _parentPatient;
+		private Sop _sop;
+		private readonly Patient _parentPatient;
 		private SeriesCollection _series;
 
 		internal Study(Patient parentPatient)
@@ -79,7 +78,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string StudyInstanceUID
 		{
-			get { return _imageSop.StudyInstanceUID; }
+			get { return _sop.StudyInstanceUID; }
 		}
 
 		/// <summary>
@@ -87,7 +86,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string StudyDate 
 		{
-			get { return _imageSop.StudyDate; }
+			get { return _sop.StudyDate; }
 		}
 
 		/// <summary>
@@ -95,7 +94,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string StudyTime 
 		{
-			get { return _imageSop.StudyTime; }
+			get { return _sop.StudyTime; }
 		}
 
 		/// <summary>
@@ -103,7 +102,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public PersonName ReferringPhysiciansName 
 		{
-			get { return _imageSop.ReferringPhysiciansName; } 
+			get { return _sop.ReferringPhysiciansName; } 
 		}
 
 		/// <summary>
@@ -111,7 +110,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string AccessionNumber 
 		{
-			get { return _imageSop.AccessionNumber; } 
+			get { return _sop.AccessionNumber; } 
 		}
 
 		/// <summary>
@@ -119,7 +118,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string StudyDescription 
 		{
-			get { return _imageSop.StudyDescription; } 
+			get { return _sop.StudyDescription; } 
 		}
 
 		/// <summary>
@@ -127,7 +126,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public PersonName[] NameOfPhysiciansReadingStudy 
 		{
-			get { return _imageSop.NameOfPhysiciansReadingStudy; }
+			get { return _sop.NameOfPhysiciansReadingStudy; }
 		}
 
 		#endregion
@@ -139,7 +138,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string[] AdmittingDiagnosesDescription 
 		{
-			get { return _imageSop.AdmittingDiagnosesDescription; }
+			get { return _sop.AdmittingDiagnosesDescription; }
 		}
 
 		/// <summary>
@@ -147,7 +146,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string PatientsAge 
 		{
-			get { return _imageSop.PatientsAge; }
+			get { return _sop.PatientsAge; }
 		}
 
 		/// <summary>
@@ -155,7 +154,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string AdditionalPatientsHistory 
 		{
-			get { return _imageSop.AdditionalPatientsHistory; }
+			get { return _sop.AdditionalPatientsHistory; }
 		}
 
 		#endregion
@@ -171,10 +170,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return str;
 		}
 
-		internal void SetSop(ImageSop imageSop)
+		internal void SetSop(Sop sop)
 		{
-			_imageSop = imageSop;
-			this.ParentPatient.SetSop(imageSop);
+			_sop = sop;
+			this.ParentPatient.SetSop(sop);
 		}
 	}
 }

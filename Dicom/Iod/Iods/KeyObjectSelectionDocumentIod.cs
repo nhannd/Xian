@@ -5,7 +5,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
 {
 	public class KeyObjectSelectionDocumentIod
 	{
-		private readonly DicomAttributeCollection _dicomAttributeCollection;
+		private readonly IDicomAttributeProvider _dicomAttributeProvider;
 		private readonly PatientModuleIod _patientModule;
 		private readonly SpecimenIdentificationModuleIod _specimenIdentificationModule;
 		private readonly ClinicalTrialSubjectModuleIod _clinicalTrialSubjectModule;
@@ -27,21 +27,21 @@ namespace ClearCanvas.Dicom.Iod.Iods
 
 		public KeyObjectSelectionDocumentIod() : this(new DicomAttributeCollection()) {}
 
-		public KeyObjectSelectionDocumentIod(DicomAttributeCollection dicomAttributeCollection)
+		public KeyObjectSelectionDocumentIod(IDicomAttributeProvider dicomAttributeProvider)
 		{
-			_dicomAttributeCollection = dicomAttributeCollection;
-			_patientModule = new PatientModuleIod(_dicomAttributeCollection);
-			_specimenIdentificationModule = new SpecimenIdentificationModuleIod(_dicomAttributeCollection);
-			_clinicalTrialSubjectModule = new ClinicalTrialSubjectModuleIod(_dicomAttributeCollection);
-			_generalStudyModule = new GeneralStudyModuleIod(_dicomAttributeCollection);
-			_patientStudyModule = new PatientStudyModuleIod(_dicomAttributeCollection);
-			_clinicalTrialStudyModule = new ClinicalTrialStudyModuleIod(_dicomAttributeCollection);
-			_keyObjectDocumentSeriesModule = new KeyObjectDocumentSeriesModuleIod(_dicomAttributeCollection);
-			_clinicalTrialSeriesModule = new ClinicalTrialSeriesModuleIod(_dicomAttributeCollection);
-			_generalEquipmentModule = new GeneralEquipmentModuleIod(_dicomAttributeCollection);
-			_keyObjectDocumentModule = new KeyObjectDocumentModuleIod(_dicomAttributeCollection);
-			_srDocumentContentModule = new SrDocumentContentModuleIod(_dicomAttributeCollection);
-			_sopCommonModule = new SopCommonModuleIod(_dicomAttributeCollection);
+			_dicomAttributeProvider = dicomAttributeProvider;
+			_patientModule = new PatientModuleIod(_dicomAttributeProvider);
+			_specimenIdentificationModule = new SpecimenIdentificationModuleIod(_dicomAttributeProvider);
+			_clinicalTrialSubjectModule = new ClinicalTrialSubjectModuleIod(_dicomAttributeProvider);
+			_generalStudyModule = new GeneralStudyModuleIod(_dicomAttributeProvider);
+			_patientStudyModule = new PatientStudyModuleIod(_dicomAttributeProvider);
+			_clinicalTrialStudyModule = new ClinicalTrialStudyModuleIod(_dicomAttributeProvider);
+			_keyObjectDocumentSeriesModule = new KeyObjectDocumentSeriesModuleIod(_dicomAttributeProvider);
+			_clinicalTrialSeriesModule = new ClinicalTrialSeriesModuleIod(_dicomAttributeProvider);
+			_generalEquipmentModule = new GeneralEquipmentModuleIod(_dicomAttributeProvider);
+			_keyObjectDocumentModule = new KeyObjectDocumentModuleIod(_dicomAttributeProvider);
+			_srDocumentContentModule = new SrDocumentContentModuleIod(_dicomAttributeProvider);
+			_sopCommonModule = new SopCommonModuleIod(_dicomAttributeProvider);
 		}
 
 		public PatientModuleIod Patient

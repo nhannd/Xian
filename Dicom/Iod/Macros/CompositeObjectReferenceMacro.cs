@@ -83,7 +83,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedSopSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedSopSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -94,7 +94,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				if (value == null)
 					throw new ArgumentNullException("value", "ReferencedSopSequence is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.ReferencedSopSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+				base.DicomAttributeProvider[DicomTags.ReferencedSopSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
 			}
 		}
 
@@ -103,7 +103,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public ISopInstanceReferenceMacro CreateReferencedSopSequence()
 		{
-			DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedSopSequence];
+			DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedSopSequence];
 			if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 			{
 				DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();

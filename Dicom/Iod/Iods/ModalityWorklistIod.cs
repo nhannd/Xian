@@ -52,12 +52,11 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <summary>
         /// Initializes a new instance of the <see cref="ModalityWorklistIod"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public ModalityWorklistIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+        public ModalityWorklistIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
-        #endregion
+
+		#endregion
 
         #region Public Properties
 
@@ -104,7 +103,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// </summary>
         public void SetCommonTags()
         {
-            SetCommonTags(base.DicomAttributeCollection);
+            SetCommonTags(base.DicomAttributeProvider);
         }
         #endregion
 
@@ -112,12 +111,11 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <summary>
         /// Sets the common tags for a typical Modality Worklist Request.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public static void SetCommonTags(DicomAttributeCollection dicomAttributeCollection)
+        public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
         {
-            ModalityWorklistIod iod = new ModalityWorklistIod(dicomAttributeCollection);
+            ModalityWorklistIod iod = new ModalityWorklistIod(dicomAttributeProvider);
             //iod.PatientIdentificationModule.PatientsName.FirstName = "*";
-            iod.DicomAttributeCollection[DicomTags.PatientsName].SetStringValue("*");
+            iod.DicomAttributeProvider[DicomTags.PatientsName].SetStringValue("*");
             iod.SetAttributeNull(DicomTags.PatientId);
             iod.SetAttributeNull(DicomTags.PatientsBirthDate);
             iod.SetAttributeNull(DicomTags.PatientsBirthTime);
@@ -139,7 +137,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
             iod.ScheduledProcedureStepModule.ScheduledProcedureStepSequenceList.Add(scheduledProcedureStepSequenceIod);
 
             //// TODO: this better and easier...
-            //DicomAttributeSQ dicomAttributeSQ = dicomAttributeCollection[DicomTags.ScheduledProcedureStepSequence] as DicomAttributeSQ;
+            //DicomAttributeSQ dicomAttributeSQ = dicomAttributeProvider[DicomTags.ScheduledProcedureStepSequence] as DicomAttributeSQ;
             //DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();
             //dicomAttributeSQ.Values = dicomSequenceItem;
 

@@ -250,18 +250,18 @@ namespace ClearCanvas.Dicom.Iod
 
 		#region Protected Helper
 
-		protected static int GetBitsStored(DicomAttributeGetter attributeGetter)
+		protected static int GetBitsStored(IDicomAttributeProvider attributeProvider)
 		{
-			DicomAttribute bitsStoredAttribute = attributeGetter(DicomTags.BitsStored);
+			DicomAttribute bitsStoredAttribute = attributeProvider[DicomTags.BitsStored];
 			if (!IsValidAttribute(bitsStoredAttribute))
 				throw new DicomDataException("Bits Stored must exist and have a valid value.");
 
 			return bitsStoredAttribute.GetInt32(0, 0);
 		}
 
-		protected static int GetPixelRepresentation(DicomAttributeGetter attributeGetter)
+		protected static int GetPixelRepresentation(IDicomAttributeProvider dicomAttributeProvider)
 		{
-			DicomAttribute pixelRepresentationAttribute = attributeGetter(DicomTags.PixelRepresentation);
+			DicomAttribute pixelRepresentationAttribute = dicomAttributeProvider[DicomTags.PixelRepresentation];
 			if (pixelRepresentationAttribute == null)
 				return 0;
 			else

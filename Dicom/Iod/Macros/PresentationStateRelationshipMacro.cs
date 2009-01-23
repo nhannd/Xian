@@ -80,7 +80,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedSeriesSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedSeriesSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					return null;
 
@@ -100,7 +100,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeCollection[DicomTags.ReferencedSeriesSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.ReferencedSeriesSequence].Values = result;
 			}
 		}
 
@@ -141,12 +141,12 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public string SeriesInstanceUid
 			{
-				get { return base.DicomAttributeCollection[DicomTags.SeriesInstanceUid].GetString(0, string.Empty); }
+				get { return base.DicomAttributeProvider[DicomTags.SeriesInstanceUid].GetString(0, string.Empty); }
 				set
 				{
 					if (string.IsNullOrEmpty(value))
 						throw new ArgumentNullException("value", "SeriesInstanceUid is Type 1 Required.");
-					base.DicomAttributeCollection[DicomTags.SeriesInstanceUid].SetString(0, value);
+					base.DicomAttributeProvider[DicomTags.SeriesInstanceUid].SetString(0, value);
 				}
 			}
 
@@ -157,7 +157,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				get
 				{
-					DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedImageSequence];
+					DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedImageSequence];
 					if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 						return null;
 
@@ -177,7 +177,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 					for (int n = 0; n < value.Length; n++)
 						result[n] = value[n].DicomSequenceItem;
 
-					base.DicomAttributeCollection[DicomTags.ReferencedImageSequence].Values = result;
+					base.DicomAttributeProvider[DicomTags.ReferencedImageSequence].Values = result;
 				}
 			}
 		}

@@ -44,8 +44,8 @@ namespace ClearCanvas.ImageViewer
 	public class DicomColorPresentationImage
 		: ColorPresentationImage, IImageSopProvider
 	{
-		[CloneCopyReference]
-		private Frame _frame;
+		[CloneIgnore]
+		private IFrameReference _frameReference;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomColorPresentationImage"/>.
@@ -66,8 +66,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(frame, "frame");
 
-			_frame = frame;
-			_frame.ParentImageSop.IncrementReferenceCount();
+			_frameReference = frame.CreateTransientReference();
 		}
 
 		/// <summary>
@@ -76,8 +75,8 @@ namespace ClearCanvas.ImageViewer
 		protected DicomColorPresentationImage(DicomColorPresentationImage source, ICloningContext context)
 			: base(source, context)
 		{
-			context.CloneFields(source, this);
-			_frame.ParentImageSop.IncrementReferenceCount();
+			Frame frame = source.Frame;
+			_frameReference = frame.CreateTransientReference();
 		}
 
 		/// <summary>
@@ -90,7 +89,7 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>		
 		public override IPresentationImage CreateFreshCopy()
 		{
-			return new DicomColorPresentationImage(_frame);
+			return new DicomColorPresentationImage(Frame);
 		}
 
 		#region IImageSopProvider members
@@ -103,7 +102,7 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public ImageSop ImageSop
 		{
-			get { return _frame.ParentImageSop; }
+			get { return Frame.ParentImageSop; }
 		}
 
 		/// <summary>
@@ -111,7 +110,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public Frame Frame
 		{
-			get { return _frame; }
+			get { return _frameReference.Frame; }
 		}
 
 		#endregion
@@ -121,10 +120,10 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
-			if (disposing && _frame != null)
+			if (disposing && _frameReference != null)
 			{
-				_frame.ParentImageSop.DecrementReferenceCount();
-				_frame = null;
+				_frameReference.Dispose();
+				_frameReference = null;
 			}
 			
 			base.Dispose(disposing);
@@ -145,7 +144,7 @@ namespace ClearCanvas.ImageViewer
 		/// <returns>The Instance Number as a string.</returns>
 		public override string ToString()
 		{
-			return _frame.ParentImageSop.InstanceNumber.ToString();
+			return Frame.ParentImageSop.InstanceNumber.ToString();
 		}
 	}
 }

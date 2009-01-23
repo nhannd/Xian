@@ -44,19 +44,16 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// </summary>
         public ImageQueryIod()
         {
-            SetAttributeFromEnum(DicomAttributeCollection[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Image);
+            SetAttributeFromEnum(DicomAttributeProvider[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Image);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ImageQueryIod"/> class.
-        /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public ImageQueryIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
-        {
-            SetAttributeFromEnum(DicomAttributeCollection[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Image);
-        }
-        #endregion
+		public ImageQueryIod(IDicomAttributeProvider dicomAttributeProvider)
+			: base(dicomAttributeProvider)
+		{
+			SetAttributeFromEnum(DicomAttributeProvider[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Image);
+		}
+
+    	#endregion
 
         #region Public Properties
 
@@ -66,8 +63,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The study instance uid.</value>
         public string StudyInstanceUid
         {
-            get { return DicomAttributeCollection[DicomTags.StudyInstanceUid].GetString(0, String.Empty); }
-            set { DicomAttributeCollection[DicomTags.StudyInstanceUid].SetString(0, value); }
+            get { return DicomAttributeProvider[DicomTags.StudyInstanceUid].GetString(0, String.Empty); }
+            set { DicomAttributeProvider[DicomTags.StudyInstanceUid].SetString(0, value); }
         }
 
         /// <summary>
@@ -76,8 +73,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The series instance uid.</value>
         public string SeriesInstanceUid
         {
-            get { return DicomAttributeCollection[DicomTags.SeriesInstanceUid].GetString(0, String.Empty); }
-            set { DicomAttributeCollection[DicomTags.SeriesInstanceUid].SetString(0, value); }
+            get { return DicomAttributeProvider[DicomTags.SeriesInstanceUid].GetString(0, String.Empty); }
+            set { DicomAttributeProvider[DicomTags.SeriesInstanceUid].SetString(0, value); }
         }
 
         /// <summary>
@@ -86,8 +83,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The sop instance uid.</value>
         public string SopInstanceUid
         {
-            get { return DicomAttributeCollection[DicomTags.SopInstanceUid].GetString(0, String.Empty); }
-            set { DicomAttributeCollection[DicomTags.SopInstanceUid].SetString(0, value); }
+            get { return DicomAttributeProvider[DicomTags.SopInstanceUid].GetString(0, String.Empty); }
+            set { DicomAttributeProvider[DicomTags.SopInstanceUid].SetString(0, value); }
         }
 
         /// <summary>
@@ -96,8 +93,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The instance number.</value>
         public string InstanceNumber
         {
-            get { return DicomAttributeCollection[DicomTags.InstanceNumber].GetString(0, String.Empty); }
-            set { DicomAttributeCollection[DicomTags.InstanceNumber].SetString(0, value); }
+            get { return DicomAttributeProvider[DicomTags.InstanceNumber].GetString(0, String.Empty); }
+            set { DicomAttributeProvider[DicomTags.InstanceNumber].SetString(0, value); }
         }
 
         /// <summary>
@@ -106,8 +103,8 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The sop class uid.</value>
         public string SopClassUid
         {
-            get { return DicomAttributeCollection[DicomTags.SopClassUid].GetString(0, String.Empty); }
-            set { DicomAttributeCollection[DicomTags.SopClassUid].SetString(0, value); }
+            get { return DicomAttributeProvider[DicomTags.SopClassUid].GetString(0, String.Empty); }
+            set { DicomAttributeProvider[DicomTags.SopClassUid].SetString(0, value); }
         }
 
 		/// <summary>
@@ -115,7 +112,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// </summary>
 		public ushort Rows
 		{
-			get { return DicomAttributeCollection[DicomTags.Rows].GetUInt16(0, 0); }
+			get { return DicomAttributeProvider[DicomTags.Rows].GetUInt16(0, 0); }
 		}
 
 		/// <summary>
@@ -123,7 +120,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// </summary>
 		public ushort Columns
 		{
-			get { return DicomAttributeCollection[DicomTags.Columns].GetUInt16(0, 0); }
+			get { return DicomAttributeProvider[DicomTags.Columns].GetUInt16(0, 0); }
 		}
 
 		/// <summary>
@@ -131,7 +128,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// </summary>
 		public ushort BitsAllocated
 		{
-			get { return DicomAttributeCollection[DicomTags.BitsAllocated].GetUInt16(0, 0); }
+			get { return DicomAttributeProvider[DicomTags.BitsAllocated].GetUInt16(0, 0); }
 		}
 
 		/// <summary>
@@ -139,7 +136,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// </summary>
 		public string NumberOfFrames
 		{
-			get { return DicomAttributeCollection[DicomTags.NumberOfFrames].GetString(0, String.Empty); }
+			get { return DicomAttributeProvider[DicomTags.NumberOfFrames].GetString(0, String.Empty); }
 		}
 
 		/// <summary>
@@ -147,7 +144,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// </summary>
 		public string ContentLabel
 		{
-			get { return DicomAttributeCollection[DicomTags.ContentLabel].GetString(0, String.Empty); }
+			get { return DicomAttributeProvider[DicomTags.ContentLabel].GetString(0, String.Empty); }
 		}
 
 		/// <summary>
@@ -155,7 +152,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
 		/// </summary>
 		public string ContentDescription
 		{
-			get { return DicomAttributeCollection[DicomTags.ContentDescription].GetString(0, String.Empty); }
+			get { return DicomAttributeProvider[DicomTags.ContentDescription].GetString(0, String.Empty); }
 		}
 
     	#endregion
@@ -166,32 +163,32 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// </summary>
         public void SetCommonTags()
         {
-            SetCommonTags(DicomAttributeCollection);
+            SetCommonTags(DicomAttributeProvider);
         }
 
-		public static void SetCommonTags(DicomAttributeCollection dicomAttributeCollection)
+		public static void SetCommonTags(IDicomAttributeProvider dicomAttributeProvider)
 		{
-			SetAttributeFromEnum(dicomAttributeCollection[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Image);
+			SetAttributeFromEnum(dicomAttributeProvider[DicomTags.QueryRetrieveLevel], QueryRetrieveLevel.Image);
 
 			// Set image level..
-			dicomAttributeCollection[DicomTags.SopInstanceUid].SetNullValue();
-			dicomAttributeCollection[DicomTags.InstanceNumber].SetNullValue();
-			dicomAttributeCollection[DicomTags.SopClassUid].SetNullValue();
+			dicomAttributeProvider[DicomTags.SopInstanceUid].SetNullValue();
+			dicomAttributeProvider[DicomTags.InstanceNumber].SetNullValue();
+			dicomAttributeProvider[DicomTags.SopClassUid].SetNullValue();
 			// IHE specified Image Query Keys
-			dicomAttributeCollection[DicomTags.Rows].SetNullValue();
-			dicomAttributeCollection[DicomTags.Columns].SetNullValue();
-			dicomAttributeCollection[DicomTags.BitsAllocated].SetNullValue();
-			dicomAttributeCollection[DicomTags.NumberOfFrames].SetNullValue();
+			dicomAttributeProvider[DicomTags.Rows].SetNullValue();
+			dicomAttributeProvider[DicomTags.Columns].SetNullValue();
+			dicomAttributeProvider[DicomTags.BitsAllocated].SetNullValue();
+			dicomAttributeProvider[DicomTags.NumberOfFrames].SetNullValue();
 			// IHE specified Presentation State Query Keys
-			dicomAttributeCollection[DicomTags.ContentLabel].SetNullValue();
-			dicomAttributeCollection[DicomTags.ContentDescription].SetNullValue();
-			dicomAttributeCollection[DicomTags.PresentationCreationDate].SetNullValue();
-			dicomAttributeCollection[DicomTags.PresentationCreationTime].SetNullValue();
+			dicomAttributeProvider[DicomTags.ContentLabel].SetNullValue();
+			dicomAttributeProvider[DicomTags.ContentDescription].SetNullValue();
+			dicomAttributeProvider[DicomTags.PresentationCreationDate].SetNullValue();
+			dicomAttributeProvider[DicomTags.PresentationCreationTime].SetNullValue();
 			// IHE specified Report Query Keys
-			dicomAttributeCollection[DicomTags.ReferencedRequestSequence].SetNullValue();
-			dicomAttributeCollection[DicomTags.ContentDate].SetNullValue();
-			dicomAttributeCollection[DicomTags.ContentTime].SetNullValue();
-			dicomAttributeCollection[DicomTags.ConceptNameCodeSequence].SetNullValue();
+			dicomAttributeProvider[DicomTags.ReferencedRequestSequence].SetNullValue();
+			dicomAttributeProvider[DicomTags.ContentDate].SetNullValue();
+			dicomAttributeProvider[DicomTags.ContentTime].SetNullValue();
+			dicomAttributeProvider[DicomTags.ConceptNameCodeSequence].SetNullValue();
 		}
 
     	#endregion

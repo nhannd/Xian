@@ -66,8 +66,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The study instance uid.</value>
         public string StudyInstanceUid
         {
-            get { return base.DicomAttributeCollection[DicomTags.StudyInstanceUid].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.StudyInstanceUid].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.StudyInstanceUid].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.StudyInstanceUid].SetString(0, value); }
         }
 
         //TODO: Referenced Study Sequence
@@ -78,8 +78,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The accession number.</value>
         public string AccessionNumber
         {
-            get { return base.DicomAttributeCollection[DicomTags.AccessionNumber].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.AccessionNumber].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.AccessionNumber].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.AccessionNumber].SetString(0, value); }
         }
 
         /// <summary>
@@ -88,8 +88,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The placer order number imaging service request.</value>
         public string PlacerOrderNumberImagingServiceRequest
         {
-            get { return base.DicomAttributeCollection[DicomTags.PlacerOrderNumberImagingServiceRequest].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PlacerOrderNumberImagingServiceRequest].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PlacerOrderNumberImagingServiceRequest].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PlacerOrderNumberImagingServiceRequest].SetString(0, value); }
         }
 
         /// <summary>
@@ -98,8 +98,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The filler order number imaging service request.</value>
         public string FillerOrderNumberImagingServiceRequest
         {
-            get { return base.DicomAttributeCollection[DicomTags.FillerOrderNumberImagingServiceRequest].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.FillerOrderNumberImagingServiceRequest].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.FillerOrderNumberImagingServiceRequest].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.FillerOrderNumberImagingServiceRequest].SetString(0, value); }
         }
 
         /// <summary>
@@ -108,8 +108,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The requested procedure id.</value>
         public string RequestedProcedureId
         {
-            get { return base.DicomAttributeCollection[DicomTags.RequestedProcedureId].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.RequestedProcedureId].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.RequestedProcedureId].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.RequestedProcedureId].SetString(0, value); }
         }
 
         /// <summary>
@@ -118,8 +118,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The requested procedure description.</value>
         public string RequestedProcedureDescription
         {
-            get { return base.DicomAttributeCollection[DicomTags.RequestedProcedureDescription].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.RequestedProcedureDescription].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.RequestedProcedureDescription].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.RequestedProcedureDescription].SetString(0, value); }
         }
 
         // TODO: Requested Procedure Code Sequence
@@ -130,8 +130,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The scheduled procedure step id.</value>
         public string ScheduledProcedureStepId
         {
-            get { return base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepId].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepId].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepId].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepId].SetString(0, value); }
         }
 
         /// <summary>
@@ -140,8 +140,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <value>The scheduled procedure step description.</value>
         public string ScheduledProcedureStepDescription
         {
-            get { return base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepDescription].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepDescription].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepDescription].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepDescription].SetString(0, value); }
         }
 
         //TODO: >Scheduled Protocol Code Sequence

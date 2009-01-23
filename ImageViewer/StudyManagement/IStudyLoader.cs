@@ -100,14 +100,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		int Start(StudyLoaderArgs studyLoaderArgs);
 
 		/// <summary>
-		/// Loads the next image.
+		/// Loads the next <see cref="Sop"/>.
 		/// </summary>
-		/// <returns>The next <see cref="ImageSop"/> or <b>null</b> if there are
-		/// no more images remaining.</returns>
+		/// <returns>The next <see cref="Sop"/> or <b>null</b> if there are none remaining.</returns>
 		/// <remarks>
 		/// Implementers of <see cref="IStudyLoader"/> should avoid loading pixel data
 		/// in this method for performance reasons.
 		/// </remarks>
-		ImageSop LoadNextImage();
+		Sop LoadNextSop();
     }
 }

@@ -151,7 +151,8 @@
     <Compile Include="InteractiveGraphics\RoiCalloutLocationStrategy.cs" />
     <Compile Include="InteractiveGraphics\RoiTransformPolicy.cs" />
     <Compile Include="InteractiveGraphics\Tests\EllipseIntersectionTests.cs" />
-    <Compile Include="KeyObjects\KeyObjectSelection.cs" />
+    <Compile Include="KeyObjects\KeyObjectDeserializer.cs" />
+    <Compile Include="KeyObjects\KeyObjectSerializer.cs" />
     <Compile Include="KeyObjects\KeyObjectSelectionCodeSequences.cs" />
     <Compile Include="PresentationStates\PresentationStateTestTool.cs" />
     <Compile Include="LayoutManager.cs" />
@@ -251,16 +252,23 @@
     <Compile Include="Rendering\RendererBase.cs" />
     <Compile Include="Rendering\RendererFactoryBase.cs" />
     <Compile Include="Rendering\RenderPerformanceReportBroker.cs" />
+    <Compile Include="StudyManagement\FrameReference.cs" />
+    <Compile Include="StudyManagement\SopReference.cs" />
     <Compile Include="StudyManagement\Frame.cs" />
     <Compile Include="StudyManagement\FrameCollection.cs" />
+    <Compile Include="StudyManagement\IDicomMessageSopDataSource.cs" />
+    <Compile Include="StudyManagement\ILocalSopDataSource.cs" />
     <Compile Include="StudyManagement\IPrefetchingStrategy.cs" />
-    <Compile Include="StudyManagement\KeyObjectSelectionSop.cs" />
-    <Compile Include="StudyManagement\KeyObjectSop.cs" />
+    <Compile Include="StudyManagement\ISopDataSource.cs" />
+    <Compile Include="StudyManagement\ISopProvider.cs" />
+    <Compile Include="StudyManagement\LocalSopDataSource.cs" />
     <Compile Include="StudyManagement\NormalizedPixelSpacing.cs" />
     <Compile Include="StudyManagement\ImagePlaneHelper.cs" />
     <Compile Include="StudyManagement\FrameDataRetrieverFactory.cs" />
     <Compile Include="StudyManagement\OpenStudyHelper.cs" />
-    <Compile Include="StudyManagement\SopCache.cs" />
+    <Compile Include="StudyManagement\SopDataCache.cs" />
+    <Compile Include="StudyManagement\SopDataHelper.cs" />
+    <Compile Include="StudyManagement\SopDataSource.cs" />
     <Compile Include="StudyManagement\SopValidationException.cs" />
     <Compile Include="Imaging\IVoiLutManager.cs" />
     <Compile Include="Imaging\LutCollection.cs" />
@@ -321,11 +329,12 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>StandardModalitySettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="StudyManagement\ImageSopProxy.cs" />
-    <Compile Include="StudyManagement\LocalImageLoader.cs">
+    <Compile Include="StudyManagement\LocalSopLoader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="StudyManagement\Tests\MockImageSop.cs" />
+    <Compile Include="StudyManagement\DicomMessageSopDataSource.cs" />
+    <Compile Include="StudyManagement\StandardSopDataSource.cs" />
+    <Compile Include="StudyManagement\StudyLoader.cs" />
     <Compile Include="IDisplaySet.cs" />
     <Compile Include="IImageBox.cs" />
     <Compile Include="ILogicalWorkspace.cs" />
@@ -337,6 +346,7 @@
     <Compile Include="Rendering\GdiRenderingSurface.cs" />
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Rendering\IRenderingSurface.cs" />
+    <Compile Include="StudyManagement\Tests\SopTests.cs" />
     <Compile Include="StudyManagement\VisibleDisplaySetPrefetchingStrategy.cs" />
     <Compile Include="Tests\BuildTreeTest.cs" />
     <Compile Include="Tests\AddImageTest.cs" />
@@ -433,7 +443,6 @@
     <Compile Include="StudyManagement\ImageSop.cs" />
     <Compile Include="StudyManagement\IStudyFinder.cs" />
     <Compile Include="StudyManagement\IStudyLoader.cs" />
-    <Compile Include="StudyManagement\LocalImageSop.cs" />
     <Compile Include="StudyManagement\SopCollection.cs" />
     <Compile Include="StudyManagement\Series.cs" />
     <Compile Include="StudyManagement\SeriesCollection.cs" />

@@ -51,9 +51,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <summary>
         /// Initializes a new instance of the <see cref="ImagingServiceRequestModule"/> class.
         /// </summary>
-        /// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-        public ImagingServiceRequestModule(DicomAttributeCollection dicomAttributeCollection)
-            : base(dicomAttributeCollection)
+		public ImagingServiceRequestModule(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -65,8 +63,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The imaging service request comments.</value>
         public string ImagingServiceRequestComments
         {
-            get { return base.DicomAttributeCollection[DicomTags.ImagingServiceRequestComments].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.ImagingServiceRequestComments].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.ImagingServiceRequestComments].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.ImagingServiceRequestComments].SetString(0, value); }
         }
 
         /// <summary>
@@ -75,8 +73,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The requesting physician.</value>
         public PersonName RequestingPhysician
         {
-            get { return new PersonName(base.DicomAttributeCollection[DicomTags.RequestingPhysician].GetString(0, String.Empty)); }
-            set { base.DicomAttributeCollection[DicomTags.RequestingPhysician].SetString(0, value.ToString()); }
+            get { return new PersonName(base.DicomAttributeProvider[DicomTags.RequestingPhysician].GetString(0, String.Empty)); }
+            set { base.DicomAttributeProvider[DicomTags.RequestingPhysician].SetString(0, value.ToString()); }
         }
 
         /// <summary>
@@ -85,8 +83,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The name of the referring physicians.</value>
         public PersonName ReferringPhysiciansName
         {
-            get { return new PersonName(base.DicomAttributeCollection[DicomTags.ReferringPhysiciansName].GetString(0, String.Empty)); }
-            set { base.DicomAttributeCollection[DicomTags.ReferringPhysiciansName].SetString(0, value.ToString()); }
+            get { return new PersonName(base.DicomAttributeProvider[DicomTags.ReferringPhysiciansName].GetString(0, String.Empty)); }
+            set { base.DicomAttributeProvider[DicomTags.ReferringPhysiciansName].SetString(0, value.ToString()); }
         }
 
         /// <summary>
@@ -95,8 +93,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The requesting service.</value>
         public string RequestingService
         {
-            get { return base.DicomAttributeCollection[DicomTags.RequestingService].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.RequestingService].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.RequestingService].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.RequestingService].SetString(0, value); }
         }
 
         /// <summary>
@@ -105,8 +103,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The accession number.</value>
         public string AccessionNumber
         {
-            get { return base.DicomAttributeCollection[DicomTags.AccessionNumber].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.AccessionNumber].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.AccessionNumber].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.AccessionNumber].SetString(0, value); }
         }
 
         /// <summary>
@@ -116,10 +114,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
         public DateTime? IssueDateOfImagingServiceRequest
         {
         	get { return DateTimeParser.ParseDateAndTime(String.Empty, 
-        					base.DicomAttributeCollection[DicomTags.IssueDateOfImagingServiceRequest].GetString(0, String.Empty), 
-                  base.DicomAttributeCollection[DicomTags.IssueTimeOfImagingServiceRequest].GetString(0, String.Empty)); }
+        					base.DicomAttributeProvider[DicomTags.IssueDateOfImagingServiceRequest].GetString(0, String.Empty), 
+                  base.DicomAttributeProvider[DicomTags.IssueTimeOfImagingServiceRequest].GetString(0, String.Empty)); }
 
-            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeCollection[DicomTags.IssueDateOfImagingServiceRequest], base.DicomAttributeCollection[DicomTags.IssueTimeOfImagingServiceRequest]); }
+            set { DateTimeParser.SetDateTimeAttributeValues(value, base.DicomAttributeProvider[DicomTags.IssueDateOfImagingServiceRequest], base.DicomAttributeProvider[DicomTags.IssueTimeOfImagingServiceRequest]); }
         }
 
         /// <summary>
@@ -128,8 +126,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The placer order number imaging service request.</value>
         public string PlacerOrderNumberImagingServiceRequest
         {
-            get { return base.DicomAttributeCollection[DicomTags.PlacerOrderNumberImagingServiceRequest].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PlacerOrderNumberImagingServiceRequest].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PlacerOrderNumberImagingServiceRequest].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PlacerOrderNumberImagingServiceRequest].SetString(0, value); }
         }
 
         /// <summary>
@@ -138,8 +136,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The filler order number imaging service request.</value>
         public string FillerOrderNumberImagingServiceRequest
         {
-            get { return base.DicomAttributeCollection[DicomTags.FillerOrderNumberImagingServiceRequest].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.FillerOrderNumberImagingServiceRequest].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.FillerOrderNumberImagingServiceRequest].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.FillerOrderNumberImagingServiceRequest].SetString(0, value); }
         }
 
         /// <summary>
@@ -148,8 +146,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// <value>The admission id.</value>
         public string AdmissionId
         {
-            get { return base.DicomAttributeCollection[DicomTags.AdmissionId].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.AdmissionId].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.AdmissionId].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.AdmissionId].SetString(0, value); }
         }
         
         #endregion

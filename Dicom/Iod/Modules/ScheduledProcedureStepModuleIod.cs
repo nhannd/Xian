@@ -41,17 +41,17 @@ namespace ClearCanvas.Dicom.Iod.Modules
     {
         #region Constructors
         /// <summary>
-        /// </summary>
+		/// Constructor.
+		/// </summary>
         public ScheduledProcedureStepModuleIod()
             :base()
         {
         }
 
         /// <summary>
+        /// Constructor.
         /// </summary>
-        /// <param name="_dicomAttributeCollection"></param>
-        public ScheduledProcedureStepModuleIod(DicomAttributeCollection dicomAttributeCollection)
-            :base(dicomAttributeCollection)
+		public ScheduledProcedureStepModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
         {
         }
         #endregion
@@ -66,7 +66,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         {
             get 
             {
-                return new SequenceIodList<ScheduledProcedureStepSequenceIod>(base.DicomAttributeCollection[DicomTags.ScheduledProcedureStepSequence] as DicomAttributeSQ); 
+                return new SequenceIodList<ScheduledProcedureStepSequenceIod>(base.DicomAttributeProvider[DicomTags.ScheduledProcedureStepSequence] as DicomAttributeSQ); 
             }
         }
 

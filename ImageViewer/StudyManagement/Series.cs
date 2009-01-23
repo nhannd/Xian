@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -40,8 +39,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class Series
 	{
-		private ImageSop _imageSop;
-		private Study _parentStudy;
+		private Sop _sop;
+		private readonly Study _parentStudy;
 		private SopCollection _sops;
 
 		internal Series(Study parentStudy)
@@ -79,7 +78,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string Modality 
 		{ 
-			get { return _imageSop.Modality; } 
+			get { return _sop.Modality; } 
 		}
 
 		/// <summary>
@@ -87,7 +86,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string SeriesInstanceUID 
 		{ 
-			get { return _imageSop.SeriesInstanceUID; } 
+			get { return _sop.SeriesInstanceUID; } 
 		}
 
 		/// <summary>
@@ -95,7 +94,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public int SeriesNumber 
 		{ 
-			get { return _imageSop.SeriesNumber; } 
+			get { return _sop.SeriesNumber; } 
 		}
 
 		/// <summary>
@@ -103,7 +102,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string SeriesDescription 
 		{ 
-			get { return _imageSop.SeriesDescription; } 
+			get { return _sop.SeriesDescription; } 
 		}
 
 		/// <summary>
@@ -111,7 +110,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string Laterality 
 		{ 
-			get { return _imageSop.Laterality; } 
+			get { return _sop.Laterality; } 
 		}
 
 		/// <summary>
@@ -119,7 +118,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string SeriesDate 
 		{ 
-			get { return _imageSop.SeriesDate; } 
+			get { return _sop.SeriesDate; } 
 		}
 
 		/// <summary>
@@ -127,7 +126,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string SeriesTime 
 		{ 
-			get { return _imageSop.SeriesTime; } 
+			get { return _sop.SeriesTime; } 
 		}
 
 		/// <summary>
@@ -135,7 +134,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public PersonName[] PerformingPhysiciansName 
 		{ 
-			get { return _imageSop.PerformingPhysiciansName; } 
+			get { return _sop.PerformingPhysiciansName; } 
 		}
 
 		/// <summary>
@@ -143,7 +142,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public PersonName[] OperatorsName 
 		{ 
-			get { return _imageSop.OperatorsName; } 
+			get { return _sop.OperatorsName; } 
 		}
 
 		/// <summary>
@@ -151,7 +150,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string BodyPartExamined 
 		{ 
-			get { return _imageSop.BodyPartExamined; } 
+			get { return _sop.BodyPartExamined; } 
 		}
 
 		/// <summary>
@@ -159,7 +158,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string PatientPosition 
 		{ 
-			get { return _imageSop.PatientPosition; } 
+			get { return _sop.PatientPosition; } 
 		}
 
 		#endregion
@@ -171,7 +170,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string Manufacturer 
 		{ 
-			get { return _imageSop.Manufacturer; } 
+			get { return _sop.Manufacturer; } 
 		}
 
 		/// <summary>
@@ -179,7 +178,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string InstitutionName 
 		{ 
-			get { return _imageSop.InstitutionName; } 
+			get { return _sop.InstitutionName; } 
 		}
 
 		/// <summary>
@@ -187,7 +186,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string StationName 
 		{ 
-			get { return _imageSop.StationName; } 
+			get { return _sop.StationName; } 
 		}
 
 		/// <summary>
@@ -195,7 +194,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string InstitutionalDepartmentName 
 		{ 
-			get { return _imageSop.InstitutionalDepartmentName; } 
+			get { return _sop.InstitutionalDepartmentName; } 
 		}
 
 		/// <summary>
@@ -203,16 +202,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public string ManufacturersModelName 
 		{ 
-			get { return _imageSop.ManufacturersModelName; }
+			get { return _sop.ManufacturersModelName; }
 		} 
 
 		#endregion
 
 
-		internal void SetSop(ImageSop imageSop)
+		internal void SetSop(Sop sop)
 		{
-			_imageSop = imageSop;
-			this.ParentStudy.SetSop(imageSop);
+			_sop = sop;
+			this.ParentStudy.SetSop(sop);
 		}
 
 		/// <summary>

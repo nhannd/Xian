@@ -49,8 +49,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="KeyObjectDocumentSeriesModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public KeyObjectDocumentSeriesModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public KeyObjectDocumentSeriesModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		/// <summary>
 		/// Initializes the underlying collection to implement the module using default values.
@@ -70,12 +69,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public Modality Modality
 		{
-			get { return ParseEnum(base.DicomAttributeCollection[DicomTags.Modality].GetString(0, string.Empty), Modality.None); }
+			get { return ParseEnum(base.DicomAttributeProvider[DicomTags.Modality].GetString(0, string.Empty), Modality.None); }
 			set
 			{
 				if (value != Modality.KO)
 					throw new ArgumentOutOfRangeException("value", "KO is the only supported modality value.");
-				SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.Modality], value);
+				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.Modality], value);
 			}
 		}
 
@@ -84,12 +83,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string SeriesInstanceUid
 		{
-			get { return base.DicomAttributeCollection[DicomTags.SeriesInstanceUid].GetString(0, string.Empty); }
+			get { return base.DicomAttributeProvider[DicomTags.SeriesInstanceUid].GetString(0, string.Empty); }
 			set
 			{
 				if (string.IsNullOrEmpty(value))
 					throw new ArgumentNullException("value", "SeriesInstanceUid is Type 1 Required.");
-				base.DicomAttributeCollection[DicomTags.SeriesInstanceUid].SetString(0, value);
+				base.DicomAttributeProvider[DicomTags.SeriesInstanceUid].SetString(0, value);
 			}
 		}
 
@@ -98,8 +97,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public int SeriesNumber
 		{
-			get { return base.DicomAttributeCollection[DicomTags.SeriesNumber].GetInt32(0, 0); }
-			set { base.DicomAttributeCollection[DicomTags.SeriesNumber].SetInt32(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.SeriesNumber].GetInt32(0, 0); }
+			set { base.DicomAttributeProvider[DicomTags.SeriesNumber].SetInt32(0, value); }
 		}
 
 		/// <summary>
@@ -109,14 +108,14 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				string date = base.DicomAttributeCollection[DicomTags.SeriesDate].GetString(0, string.Empty);
-				string time = base.DicomAttributeCollection[DicomTags.SeriesTime].GetString(0, string.Empty);
+				string date = base.DicomAttributeProvider[DicomTags.SeriesDate].GetString(0, string.Empty);
+				string time = base.DicomAttributeProvider[DicomTags.SeriesTime].GetString(0, string.Empty);
 				return DateTimeParser.ParseDateAndTime(string.Empty, date, time);
 			}
 			set
 			{
-				DicomAttribute date = base.DicomAttributeCollection[DicomTags.SeriesDate];
-				DicomAttribute time = base.DicomAttributeCollection[DicomTags.SeriesTime];
+				DicomAttribute date = base.DicomAttributeProvider[DicomTags.SeriesDate];
+				DicomAttribute time = base.DicomAttributeProvider[DicomTags.SeriesTime];
 				DateTimeParser.SetDateTimeAttributeValues(value, date, time);
 			}
 		}
@@ -127,8 +126,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public string SeriesDescription
 		{
 			// Type 3
-			get { return base.DicomAttributeCollection[DicomTags.SeriesDescription].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.SeriesDescription].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.SeriesDescription].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.SeriesDescription].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -139,7 +138,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			// Type 2
 			get
 			{
-				DicomAttribute referencedPerformedProcedureStepSequence = base.DicomAttributeCollection[DicomTags.ReferencedPerformedProcedureStepSequence];
+				DicomAttribute referencedPerformedProcedureStepSequence = base.DicomAttributeProvider[DicomTags.ReferencedPerformedProcedureStepSequence];
 				if (referencedPerformedProcedureStepSequence.IsNull || referencedPerformedProcedureStepSequence.Count == 0)
 				{
 					return null;
@@ -148,7 +147,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			}
 			set
 			{
-				DicomAttribute referencedPerformedProcedureStepSequence = base.DicomAttributeCollection[DicomTags.ReferencedPerformedProcedureStepSequence];
+				DicomAttribute referencedPerformedProcedureStepSequence = base.DicomAttributeProvider[DicomTags.ReferencedPerformedProcedureStepSequence];
 				if (value == null)
 				{
 					referencedPerformedProcedureStepSequence.SetNullValue();
@@ -163,7 +162,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public ISopInstanceReferenceMacro CreateReferencedPerformedProcedureStepSequence()
 		{
-			DicomAttribute referencedPerformedProcedureStepSequence = base.DicomAttributeCollection[DicomTags.ReferencedPerformedProcedureStepSequence];
+			DicomAttribute referencedPerformedProcedureStepSequence = base.DicomAttributeProvider[DicomTags.ReferencedPerformedProcedureStepSequence];
 			if (referencedPerformedProcedureStepSequence.IsNull || referencedPerformedProcedureStepSequence.Count == 0)
 			{
 				DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();

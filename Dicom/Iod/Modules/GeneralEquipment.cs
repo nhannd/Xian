@@ -48,16 +48,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GeneralEquipmentModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public GeneralEquipmentModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public GeneralEquipmentModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		/// <summary>
 		/// Gets or sets the value of Manufacturer in the underlying collection.
 		/// </summary>
 		public string Manufacturer
 		{
-			get { return base.DicomAttributeCollection[DicomTags.Manufacturer].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.Manufacturer].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.Manufacturer].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.Manufacturer].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -65,8 +64,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string InstitutionName
 		{
-			get { return base.DicomAttributeCollection[DicomTags.InstitutionName].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.InstitutionName].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.InstitutionName].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.InstitutionName].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -74,8 +73,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string InstitutionAddress
 		{
-			get { return base.DicomAttributeCollection[DicomTags.InstitutionAddress].ToString(); }
-			set { base.DicomAttributeCollection[DicomTags.InstitutionAddress].SetStringValue(value); }
+			get { return base.DicomAttributeProvider[DicomTags.InstitutionAddress].ToString(); }
+			set { base.DicomAttributeProvider[DicomTags.InstitutionAddress].SetStringValue(value); }
 		}
 
 		/// <summary>
@@ -83,8 +82,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string StationName
 		{
-			get { return base.DicomAttributeCollection[DicomTags.StationName].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.StationName].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.StationName].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.StationName].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -92,8 +91,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string InstitutionalDepartmentName
 		{
-			get { return base.DicomAttributeCollection[DicomTags.InstitutionalDepartmentName].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.InstitutionalDepartmentName].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.InstitutionalDepartmentName].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.InstitutionalDepartmentName].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -101,8 +100,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string ManufacturersModelName
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ManufacturersModelName].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.ManufacturersModelName].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.ManufacturersModelName].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.ManufacturersModelName].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -110,8 +109,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string DeviceSerialNumber
 		{
-			get { return base.DicomAttributeCollection[DicomTags.DeviceSerialNumber].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.DeviceSerialNumber].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.DeviceSerialNumber].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.DeviceSerialNumber].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -119,8 +118,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string SoftwareVersions
 		{
-			get { return base.DicomAttributeCollection[DicomTags.SoftwareVersions].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.SoftwareVersions].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.SoftwareVersions].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.SoftwareVersions].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -128,8 +127,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string GantryId
 		{
-			get { return base.DicomAttributeCollection[DicomTags.GantryId].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.GantryId].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.GantryId].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.GantryId].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -137,8 +136,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public string SpatialResolution
 		{
-			get { return base.DicomAttributeCollection[DicomTags.SpatialResolution].GetString(0, string.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.SpatialResolution].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.SpatialResolution].GetString(0, string.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.SpatialResolution].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -148,14 +147,14 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				string date = base.DicomAttributeCollection[DicomTags.DateOfLastCalibration].GetString(0, string.Empty);
-				string time = base.DicomAttributeCollection[DicomTags.TimeOfLastCalibration].GetString(0, string.Empty);
+				string date = base.DicomAttributeProvider[DicomTags.DateOfLastCalibration].GetString(0, string.Empty);
+				string time = base.DicomAttributeProvider[DicomTags.TimeOfLastCalibration].GetString(0, string.Empty);
 				return DateTimeParser.ParseDateAndTime(string.Empty, date, time);
 			}
 			set
 			{
-				DicomAttribute date = base.DicomAttributeCollection[DicomTags.DateOfLastCalibration];
-				DicomAttribute time = base.DicomAttributeCollection[DicomTags.TimeOfLastCalibration];
+				DicomAttribute date = base.DicomAttributeProvider[DicomTags.DateOfLastCalibration];
+				DicomAttribute time = base.DicomAttributeProvider[DicomTags.TimeOfLastCalibration];
 				DateTimeParser.SetDateTimeAttributeValues(value, date, time);
 			}
 		}
@@ -165,8 +164,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public int PixelPaddingValue
 		{
-			get { return base.DicomAttributeCollection[DicomTags.PixelPaddingValue].GetInt32(0, 0); }
-			set { base.DicomAttributeCollection[DicomTags.PixelPaddingValue].SetInt32(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.PixelPaddingValue].GetInt32(0, 0); }
+			set { base.DicomAttributeProvider[DicomTags.PixelPaddingValue].SetInt32(0, value); }
 		}
 	}
 }

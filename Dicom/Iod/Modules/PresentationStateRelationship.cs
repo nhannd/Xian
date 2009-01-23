@@ -50,13 +50,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="PresentationStateRelationshipModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public PresentationStateRelationshipModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public PresentationStateRelationshipModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		DicomSequenceItem IIodMacro.DicomSequenceItem
 		{
-			get { return base.DicomAttributeCollection as DicomSequenceItem; }
-			set { base.DicomAttributeCollection = value; }
+			get { return base.DicomAttributeProvider as DicomSequenceItem; }
+			set { base.DicomAttributeProvider = value; }
 		}
 
 		/// <summary>
@@ -69,7 +68,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// </summary>
 		public IReferencedSeriesSequence[] ReferencedSeriesSequence {
 			get {
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedSeriesSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedSeriesSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					return null;
 
@@ -88,7 +87,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeCollection[DicomTags.ReferencedSeriesSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.ReferencedSeriesSequence].Values = result;
 			}
 		}
 

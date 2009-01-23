@@ -74,7 +74,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
         {
             get
             {
-                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.PersonIdentificationCodeSequence] as DicomAttributeSQ);
+                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeProvider[DicomTags.PersonIdentificationCodeSequence] as DicomAttributeSQ);
             }
         }
 
@@ -84,8 +84,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
         /// <value>The persons address.</value>
         public string PersonsAddress
         {
-            get { return base.DicomAttributeCollection[DicomTags.PersonsAddress].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PersonsAddress].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PersonsAddress].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PersonsAddress].SetString(0, value); }
         }
 
         /// <summary>
@@ -94,8 +94,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
         /// <value>The persons telephone numbers.</value>
         public string PersonsTelephoneNumbers
         {
-            get { return base.DicomAttributeCollection[DicomTags.PersonsTelephoneNumbers].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.PersonsTelephoneNumbers].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.PersonsTelephoneNumbers].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.PersonsTelephoneNumbers].SetString(0, value); }
         }
 
         /// <summary>
@@ -105,8 +105,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
         /// <value>The name of the institution.</value>
         public string InstitutionName
         {
-            get { return base.DicomAttributeCollection[DicomTags.InstitutionName].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.InstitutionName].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.InstitutionName].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.InstitutionName].SetString(0, value); }
         }
 
         /// <summary>
@@ -116,8 +116,8 @@ namespace ClearCanvas.Dicom.Iod.Macros
         /// <value>The institution address.</value>
         public string InstitutionAddress
         {
-            get { return base.DicomAttributeCollection[DicomTags.InstitutionAddress].GetString(0, String.Empty); }
-            set { base.DicomAttributeCollection[DicomTags.InstitutionAddress].SetString(0, value); }
+            get { return base.DicomAttributeProvider[DicomTags.InstitutionAddress].GetString(0, String.Empty); }
+            set { base.DicomAttributeProvider[DicomTags.InstitutionAddress].SetString(0, value); }
         }
 
         /// <summary>
@@ -130,7 +130,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
         {
             get
             {
-                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.InstitutionCodeSequence] as DicomAttributeSQ);
+                return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeProvider[DicomTags.InstitutionCodeSequence] as DicomAttributeSQ);
             }
         }
 

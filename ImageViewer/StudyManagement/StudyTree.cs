@@ -32,7 +32,6 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -76,7 +75,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			Platform.CheckForEmptyString(patientId, "patientId");
 
-			return this.Patients[patientId];
+			return Patients[patientId];
 		}
 
 		/// <summary>
@@ -130,56 +129,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#region Private methods
 
 		/// <summary>
-		/// Adds an <see cref="ImageSop"/> to the <see cref="StudyTree"/>.
+		/// Adds a <see cref="Sop"/> to the <see cref="StudyTree"/>.
 		/// </summary>
-		internal void AddImage(ImageSop image)
+		internal void AddSop(Sop sop)
 		{
-			Platform.CheckForNullReference(image, "image");
+			Platform.CheckForNullReference(sop, "sop");
 
-			image.Validate();
+			sop.Validate();
 
-			image.IncrementReferenceCount();
-
-			if (_sops.ContainsKey(image.SopInstanceUID))
+			if (_sops.ContainsKey(sop.SopInstanceUID))
 			{
-				image.DecrementReferenceCount();
+				sop.Dispose();
 				return;
 			}
 
-			ImageSop cachedSop = SopCache.Add(image);
-			if (image != cachedSop) //there was already one in the cache.
-			{
-				image.DecrementReferenceCount();
-				cachedSop.IncrementReferenceCount();
-			}
-
-			image = new ImageSopProxy(cachedSop);
-			AddPatient(image);
-			AddStudy(image);
-			AddSeries(image);
-			_sops[image.SopInstanceUID] = image;
+			AddPatient(sop);
+			AddStudy(sop);
+			AddSeries(sop);
+			_sops[sop.SopInstanceUID] = sop;
 		}
 
-		/// <summary>
-		/// Adds the contents of a <see cref="KeyObjectSelectionSop"/> to the <see cref="StudyTree"/>.
-		/// </summary>
-		/// <remarks>
-		/// The visualization mode of a key object selection document in the <see cref="ImageViewerComponent"/>
-		/// is to realize each individual content item of the selection as separate SOPs and add each of these
-		/// to the study tree under a series prototyped by the key object selection document.
-		/// </remarks>
-		/// <param name="keyObjectSelection"></param>
-		internal void AddKeyObjectSelection(KeyObjectSelectionSop keyObjectSelection)
-		{
-			Platform.CheckForNullReference(keyObjectSelection, "keyObjectSelection");
-
-			foreach (KeyObjectSop keyObjectSop in keyObjectSelection.CreateImages())
-			{
-				AddImage(keyObjectSop);
-			}
-		}
-
-		private void AddPatient(ImageSop sop)
+		private void AddPatient(Sop sop)
 		{
 			if (_patients[sop.PatientId] != null)
 				return;
@@ -190,7 +160,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_patients.Add(patient);
 		}
 
-		private void AddStudy(ImageSop sop)
+		private void AddStudy(Sop sop)
 		{
 			if (_studies.ContainsKey(sop.StudyInstanceUID))
 				return;
@@ -203,7 +173,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_studies[study.StudyInstanceUID] = study;
 		}
 
-		private void AddSeries(ImageSop sop)
+		private void AddSeries(Sop sop)
 		{
 			Series series;
 			if (_series.ContainsKey(sop.SeriesInstanceUID))
@@ -260,7 +230,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				if (_sops != null)
 				{
 					foreach (Sop sop in _sops.Values)
-						sop.DecrementReferenceCount();
+						sop.Dispose();
 
 					_sops.Clear();
 					_sops = null;

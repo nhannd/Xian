@@ -50,8 +50,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ImageAcquisitionResultsModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public ImageAcquisitionResultsModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public ImageAcquisitionResultsModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		#endregion
 
@@ -59,14 +58,14 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
 		public Modality Modality
 		{
-			get { return ParseEnum<Modality>(base.DicomAttributeCollection[DicomTags.Modality].GetString(0, String.Empty), Modality.None); }
-			set { SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.Modality], value); }
+			get { return ParseEnum<Modality>(base.DicomAttributeProvider[DicomTags.Modality].GetString(0, String.Empty), Modality.None); }
+			set { SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.Modality], value); }
 		}
 
 		public string StudyId
 		{
-			get { return base.DicomAttributeCollection[DicomTags.StudyId].GetString(0, String.Empty); }
-			set { base.DicomAttributeCollection[DicomTags.StudyId].SetString(0, value); }
+			get { return base.DicomAttributeProvider[DicomTags.StudyId].GetString(0, String.Empty); }
+			set { base.DicomAttributeProvider[DicomTags.StudyId].SetString(0, value); }
 		}
 
 		/// <summary>
@@ -77,7 +76,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <value>The performed protocol code sequence list.</value>
 		public SequenceIodList<CodeSequenceMacro> PerformedProtocolCodeSequenceList
 		{
-			get { return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeCollection[DicomTags.PerformedProtocolCodeSequence] as DicomAttributeSQ); }
+			get { return new SequenceIodList<CodeSequenceMacro>(base.DicomAttributeProvider[DicomTags.PerformedProtocolCodeSequence] as DicomAttributeSQ); }
 		}
 
 		/// <summary>
@@ -88,7 +87,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <value>The protocol context sequence list.</value>
 		public SequenceIodList<ContentItemMacro> ProtocolContextSequenceList
 		{
-			get { return new SequenceIodList<ContentItemMacro>(base.DicomAttributeCollection[DicomTags.ProtocolContextSequence] as DicomAttributeSQ); }
+			get { return new SequenceIodList<ContentItemMacro>(base.DicomAttributeProvider[DicomTags.ProtocolContextSequence] as DicomAttributeSQ); }
 		}
 
 		/// <summary>
@@ -98,12 +97,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <value>The content item modifier sequence list.</value>
 		public SequenceIodList<ContentItemMacro> ContentItemModifierSequenceList
 		{
-			get { return new SequenceIodList<ContentItemMacro>(base.DicomAttributeCollection[DicomTags.ContentItemModifierSequence] as DicomAttributeSQ); }
+			get { return new SequenceIodList<ContentItemMacro>(base.DicomAttributeProvider[DicomTags.ContentItemModifierSequence] as DicomAttributeSQ); }
 		}
 
 		public SequenceIodList<PerformedSeriesSequenceIod> PerformedSeriesSequenceList
 		{
-			get { return new SequenceIodList<PerformedSeriesSequenceIod>(base.DicomAttributeCollection[DicomTags.PerformedSeriesSequence] as DicomAttributeSQ); }
+			get { return new SequenceIodList<PerformedSeriesSequenceIod>(base.DicomAttributeProvider[DicomTags.PerformedSeriesSequence] as DicomAttributeSQ); }
 		}
 
 		#endregion

@@ -16,6 +16,7 @@ namespace ClearCanvas.ImageViewer
 	public class LayoutManager : ILayoutManager
 	{
 		private IImageViewer _imageViewer;
+		private PresentationImageFactory _presentationImageFactory;
 
 		/// <summary>
 		/// Constructor.
@@ -48,6 +49,18 @@ namespace ClearCanvas.ImageViewer
 		protected ILogicalWorkspace LogicalWorkspace
 		{
 			get { return _imageViewer.LogicalWorkspace; }
+		}
+
+		protected PresentationImageFactory PresentationImageFactory
+		{
+			get
+			{
+				if (_presentationImageFactory == null)
+					_presentationImageFactory = new PresentationImageFactory(ImageViewer.StudyTree);
+
+				return _presentationImageFactory;
+			}
+			set { _presentationImageFactory = value; }
 		}
 
 		#endregion
@@ -168,6 +181,9 @@ namespace ClearCanvas.ImageViewer
 			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
 			ILogicalWorkspace logicalWorkspace = ImageViewer.LogicalWorkspace;
 
+			if (logicalWorkspace.ImageSets.Count == 0)
+				return;
+
 			int imageSetIndex = 0;
 			int displaySetIndex = 0;
 
@@ -284,11 +300,43 @@ namespace ClearCanvas.ImageViewer
 			if (imageSet != null)
 				return;
 
-			imageSet = AddImageSet(study);
-			AddDisplaySets(imageSet, study);
+			AddImageSet(study);
 		}
 
-		private IImageSet AddImageSet(Study study)
+		private void AddImageSet(Study study)
+		{
+			IImageSet imageSet = null;
+			foreach (Series series in study.Series)
+			{
+				IDisplaySet displaySet = null;
+				foreach (Sop sop in series.Sops)
+				{
+					List<IPresentationImage> images = PresentationImageFactory.CreateImages(sop);
+					if (images.Count > 0)
+					{
+						if (imageSet == null)
+						{
+							imageSet = CreateImageSet(study);
+							LogicalWorkspace.ImageSets.Add(imageSet);
+						}
+
+						if (displaySet == null)
+						{
+							displaySet = CreateDisplaySet(series);
+							imageSet.DisplaySets.Add(displaySet);
+						}
+
+						foreach (IPresentationImage image in images)
+						{
+							image.Uid = sop.SopInstanceUID;
+							displaySet.PresentationImages.Add(image);
+						}
+					}
+				}
+			}
+		}
+
+		private IImageSet CreateImageSet(Study study)
 		{
 			ImageSet imageSet = new ImageSet();
 
@@ -307,10 +355,14 @@ namespace ClearCanvas.ImageViewer
 				study.ParentPatient.PatientId);
 
 			imageSet.Uid = study.StudyInstanceUID;
-
-			LogicalWorkspace.ImageSets.Add(imageSet);
-
 			return imageSet;
+		}
+
+		private IDisplaySet CreateDisplaySet(Series series)
+		{
+			string name = String.Format("{0}: {1}", series.SeriesNumber, series.SeriesDescription);
+			DisplaySet displaySet = new DisplaySet(name, series.SeriesInstanceUID);
+			return displaySet;
 		}
 
 		#endregion
@@ -338,42 +390,6 @@ namespace ClearCanvas.ImageViewer
 			return count;
 		}
 
-		#region Static Helpers
-
-		private static void AddDisplaySets(IImageSet imageSet, Study study)
-		{
-			foreach (Series series in study.Series)
-			{
-				IDisplaySet displaySet = AddDisplaySet(imageSet, series);
-				AddImages(displaySet, series);
-			}
-		}
-
-		private static IDisplaySet AddDisplaySet(IImageSet imageSet, Series series)
-		{
-			string name = String.Format("{0}: {1}", series.SeriesNumber, series.SeriesDescription);
-			DisplaySet displaySet = new DisplaySet(name, series.SeriesInstanceUID);
-
-			imageSet.DisplaySets.Add(displaySet);
-
-			return displaySet;
-		}
-
-		private static void AddImages(IDisplaySet displaySet, Series series)
-		{
-			foreach (ImageSop image in series.Sops)
-				AddImages(displaySet, image);
-		}
-
-		private static void AddImages(IDisplaySet displaySet, ImageSop imageSop)
-		{
-			foreach (IPresentationImage image in PresentationImageFactory.Create(imageSop))
-			{
-				image.Uid = imageSop.SopInstanceUID;
-				displaySet.PresentationImages.Add(image);
-			}
-		}
-
 		private static List<string> GetModalitiesInStudy(Study study)
 		{
 			List<string> modalities = new List<string>();
@@ -387,7 +403,6 @@ namespace ClearCanvas.ImageViewer
 			return modalities;
 		}
 
-		#endregion
 		#endregion
 
 		#region Disposal

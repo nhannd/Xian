@@ -39,6 +39,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Tests;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -53,7 +54,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 namespace ClearCanvas.ImageViewer.Comparers.Tests
 {
 	[TestFixture]
-	public class SortTests
+	public class SortTests : AbstractTest
 	{
 		private delegate void TraceDelegate(IEnumerable<IPresentationImage> imagesx);
 
@@ -128,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			TestSortingImageSetsByStudyDate(true);
 		}
 
-		static void TestSortingImageSetsByStudyDate(bool reverse)
+		private void TestSortingImageSetsByStudyDate(bool reverse)
 		{
 			ImageSetCollection orderedCollection = new ImageSetCollection();
 			ImageSetCollection nonOrderedCollection = new ImageSetCollection();
@@ -140,10 +141,16 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				imageSet.Name = id;
 
 				DisplaySet displaySet = new DisplaySet(id, id);
-				IPresentationImage image = new DicomGrayscalePresentationImage(NewMockImageSop(id, id, i).Frames[1]);
+				IPresentationImage image = new DicomGrayscalePresentationImage(NewImageSop(id, id, i).Frames[1]);
 				IImageSopProvider sopProvider = (IImageSopProvider)image;
-				((IMockImageSopSetters)sopProvider.ImageSop).StudyDate = i == 0 ? "" : String.Format("200801{0}", i.ToString("00"));
+				string studyDate;
+				if (i == 0)
+					studyDate = "";
+				else	
+					studyDate = String.Format("200801{0}", i.ToString("00"));
 
+				DicomMessageSopDataSource dataSource = ((DicomMessageSopDataSource)sopProvider.ImageSop.DataSource);
+				dataSource.SourceMessage.DataSet[DicomTags.StudyDate].SetString(0, studyDate);
 				imageSet.DisplaySets.Add(displaySet);
 				displaySet.PresentationImages.Add(image);
 				orderedCollection.Add(imageSet);
@@ -178,7 +185,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			}
 		}
 
-		static void TestSortingDisplaySetsBySeriesNumber(bool reverse)
+		private void TestSortingDisplaySetsBySeriesNumber(bool reverse)
 		{
 			DisplaySetCollection orderedCollection = new DisplaySetCollection();
 			DisplaySetCollection nonOrderedCollection = new DisplaySetCollection();
@@ -187,9 +194,10 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			{
 				string id = i.ToString();
 				DisplaySet displaySet = new DisplaySet(id, id);
-				IPresentationImage image = new DicomGrayscalePresentationImage(NewMockImageSop(id, id, i).Frames[1]);
+				IPresentationImage image = new DicomGrayscalePresentationImage(NewImageSop(id, id, i).Frames[1]);
 				IImageSopProvider sopProvider = (IImageSopProvider)image;
-				((IMockImageSopSetters)sopProvider.ImageSop).SeriesNumber = i;
+				DicomMessageSopDataSource dataSource = ((DicomMessageSopDataSource)sopProvider.ImageSop.DataSource);
+				dataSource.SourceMessage.DataSet[DicomTags.SeriesNumber].SetInt32(0, i);
 
 				displaySet.PresentationImages.Add(image);
 				orderedCollection.Add(displaySet);
@@ -213,7 +221,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			}
 		}
 
-		private static void TestSortingDicomImagesBySliceLocation(bool reverse)
+		private void TestSortingDicomImagesBySliceLocation(bool reverse)
 		{
 			PresentationImageCollection orderedCollection = new PresentationImageCollection();
 			PresentationImageCollection nonOrderedCollection = new PresentationImageCollection();
@@ -225,7 +233,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				new SliceLocationComparer(reverse), TraceSliceLocation);
 		}
 
-		private static void TestSortingDicomImagesByAcquisitionTime(bool reverse)
+		private void TestSortingDicomImagesByAcquisitionTime(bool reverse)
 		{
 			PresentationImageCollection orderedCollection = new PresentationImageCollection();
 			PresentationImageCollection nonOrderedCollection = new PresentationImageCollection();
@@ -237,37 +245,38 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				new SliceLocationComparer(reverse), TraceAcquisitionTime);
 		}
 
-		private static IEnumerable<IPresentationImage> GetAcquisitionTimeTestImages()
+		private IEnumerable<IPresentationImage> GetAcquisitionTimeTestImages()
 		{
-			foreach (MockFrame frame in GetAcquisitionTimeTestFrames())
+			foreach (Frame frame in GetAcquisitionTimeTestFrames())
 			{
 				yield return new DicomGrayscalePresentationImage(frame);
 			}
 		}
 
-		private static IEnumerable<MockFrame> GetAcquisitionTimeTestFrames()
+		private IEnumerable<Frame> GetAcquisitionTimeTestFrames()
 		{
 			int i = 0;
 			foreach (DateTime dateTime in GetAquisitionDateTimes())
 			{
-				MockImageSop sop = NewMockImageSop("123", "123", i++);
-				MockFrame frame = (MockFrame)sop.Frames[1];
+				ImageSop sop = NewImageSop("123", "123", i++);
+				Frame frame = sop.Frames[1];
+				DicomMessageSopDataSource dataSource = ((DicomMessageSopDataSource)frame.ParentImageSop.DataSource);
 
 				if (i%2 == 0)
 				{
-					frame.SetAcquisitionDate(dateTime.Date.ToString(DateParser.DicomDateFormat));
-					frame.SetAcquisitionTime(dateTime.ToString(TimeParser.DicomFullTimeFormat));
+					dataSource.SourceMessage.DataSet[DicomTags.AcquisitionDate].SetStringValue(dateTime.Date.ToString(DateParser.DicomDateFormat));
+					dataSource.SourceMessage.DataSet[DicomTags.AcquisitionTime].SetStringValue(dateTime.ToString(TimeParser.DicomFullTimeFormat));
 				}
 				else
 				{
-					frame.SetAcquisitionDateTime(dateTime.ToString(DateTimeParser.DicomFullDateTimeFormat));
+					dataSource.SourceMessage.DataSet[DicomTags.AcquisitionDatetime].SetStringValue(dateTime.ToString(DateTimeParser.DicomFullDateTimeFormat));
 				}
 
 				yield return frame;
 			}
 		}
 
-		private static IEnumerable<DateTime> GetAquisitionDateTimes()
+		private IEnumerable<DateTime> GetAquisitionDateTimes()
 		{
 			DateTime theTime = new DateTime(2008, 6, 10, 1, 30, 40, 345);
 			for (int i = 0; i < 20; ++i)
@@ -284,7 +293,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			}
 		}
 
-		private static void TraceAcquisitionTime(IEnumerable<IPresentationImage> images)
+		private void TraceAcquisitionTime(IEnumerable<IPresentationImage> images)
 		{
 			foreach (IPresentationImage image in images)
 			{
@@ -314,7 +323,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			}
 		}
 
-		private static void TraceSliceLocation(IEnumerable<IPresentationImage> images)
+		private void TraceSliceLocation(IEnumerable<IPresentationImage> images)
 		{
 			foreach (IPresentationImage image in images)
 			{
@@ -345,13 +354,13 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			}
 		}
 
-		private static IEnumerable<IPresentationImage> GetSliceLocationTestImages()
+		private IEnumerable<IPresentationImage> GetSliceLocationTestImages()
 		{
-			foreach (MockImageSop sop in GetSliceLocationTestImageSops())
+			foreach (ImageSop sop in GetSliceLocationTestImageSops())
 				yield return new DicomGrayscalePresentationImage(sop.Frames[1]);
 		}
 
-		private static IEnumerable<MockImageSop> GetSliceLocationTestImageSops()
+		private IEnumerable<ImageSop> GetSliceLocationTestImageSops()
 		{
 			int i = 0;
 			int instanceNumber = 1;
@@ -360,11 +369,11 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				for (int j = -3; j <= 3; ++j)
 				{
 					//we're not testing the study, series etc grouping because the 'instance and frame number one does that'
-					MockImageSop sop = NewMockImageSop("123", "1", instanceNumber++);
+					ImageSop sop = NewImageSop("123", "1", instanceNumber++);
 
-					((MockFrame)sop.Frames[1]).SetImagePositionPatient(GetSliceLocationPosition(i, j));
-					((MockFrame)sop.Frames[1]).SetImageOrientationPatient(orientation);
-
+					DicomMessageSopDataSource dataSource = ((DicomMessageSopDataSource)sop.Frames[1].ParentImageSop.DataSource);
+					dataSource.SourceMessage.DataSet[DicomTags.ImagePositionPatient].SetStringValue(GetSliceLocationPosition(i, j).ToString());
+					dataSource.SourceMessage.DataSet[DicomTags.ImageOrientationPatient].SetStringValue(orientation.ToString());
 					yield return sop;
 				}
 
@@ -372,7 +381,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			}
 		}
 
-		private static ImagePositionPatient GetSliceLocationPosition(int i, int j)
+		private ImagePositionPatient GetSliceLocationPosition(int i, int j)
 		{
 			if (i == 0 || i == 5)
 			{
@@ -400,7 +409,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			}
 		}
 
-		private static IEnumerable<ImageOrientationPatient> GetSliceLocationOrientations()
+		private IEnumerable<ImageOrientationPatient> GetSliceLocationOrientations()
 		{
 			//Sagittal (normal along -x)
 			yield return new ImageOrientationPatient(0, -1, 0, 0, 0, 1);
@@ -416,7 +425,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			yield return new ImageOrientationPatient(0, 1, 0, 0, 0, 1);
 		}
 
-		private static void TestSortingDicomImagesByInstanceAndFrameNumber(bool reverse)
+		private void TestSortingDicomImagesByInstanceAndFrameNumber(bool reverse)
 		{ 
 			PresentationImageCollection orderedCollection = new PresentationImageCollection();
 			PresentationImageCollection nonOrderedCollection = new PresentationImageCollection();
@@ -450,13 +459,13 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				new InstanceAndFrameNumberComparer(reverse), TraceInstanceAndFrameNumbers);
 		}
 
-		private static void AppendCollection(PresentationImageCollection collection, IEnumerable<PresentationImage> listImages)
+		private void AppendCollection(PresentationImageCollection collection, IEnumerable<PresentationImage> listImages)
 		{
 			foreach (PresentationImage image in listImages)
 				collection.Add(image);
 		}
 
-		private static void SortImagesAndValidate(
+		private void SortImagesAndValidate(
 			PresentationImageCollection orderedCollection, 
 			PresentationImageCollection nonOrderedCollection, 
 			bool reverse, 
@@ -490,7 +499,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			Assert.IsTrue(VerifyOrdered(orderedCollection, nonOrderedCollection));
 		}
 
-		private static void TraceInstanceAndFrameNumbers(IEnumerable<IPresentationImage> collection)
+		private void TraceInstanceAndFrameNumbers(IEnumerable<IPresentationImage> collection)
 		{
 			foreach (IPresentationImage image in collection)
 			{
@@ -510,7 +519,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			}
 		}
 
-		private static bool VerifyOrdered(
+		private bool VerifyOrdered(
 			PresentationImageCollection orderedCollection,
 			PresentationImageCollection nonOrderedCollection)
 		{
@@ -547,7 +556,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			return true;
 		}
 
-		private static void Randomize<T>(ICollection<T> orderedCollection, ICollection<T> nonOrderedCollection)
+		private void Randomize<T>(ICollection<T> orderedCollection, ICollection<T> nonOrderedCollection)
 		{ 
 			ArrayList tempCollection = new ArrayList();
 			foreach (T obj in orderedCollection)
@@ -563,7 +572,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			}
 		}
 
-		private static List<PresentationImage> NewDicomSeries(string studyUID, string seriesUID, int startInstanceNumber, uint numberInstances)
+		private List<PresentationImage> NewDicomSeries(string studyUID, string seriesUID, int startInstanceNumber, uint numberInstances)
 		{
 			Random rand = new Random();
 
@@ -578,28 +587,32 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			return listImages;
 		}
 
-		private static IEnumerable<PresentationImage> NewDicomImages(string studyUID, string seriesUID, int instanceNumber, int numberOfFrames)
+		private IEnumerable<PresentationImage> NewDicomImages(string studyUID, string seriesUID, int instanceNumber, int numberOfFrames)
 		{
-			MockImageSop sop = NewMockImageSop(studyUID, seriesUID, instanceNumber, numberOfFrames);
+			ImageSop sop = NewImageSop(studyUID, seriesUID, instanceNumber, numberOfFrames);
 			for (int i = 1; i <= numberOfFrames; ++i)
 				yield return new DicomGrayscalePresentationImage(sop.Frames[i]);
 		}
 
-		private static MockImageSop NewMockImageSop(string studyUID, string seriesUID, int instanceNumber)
+		private ImageSop NewImageSop(string studyUID, string seriesUID, int instanceNumber)
 		{
-			return NewMockImageSop(studyUID, seriesUID, instanceNumber, 1);
+			return NewImageSop(studyUID, seriesUID, instanceNumber, 1);
 		}
 
-		private static MockImageSop NewMockImageSop(string studyUID, string seriesUID, int instanceNumber, int numberOfFrames)
+		private ImageSop NewImageSop(string studyUID, string seriesUID, int instanceNumber, int numberOfFrames)
 		{
-			MockImageSop newImageSop = new MockImageSop(numberOfFrames);
-			IMockImageSopSetters setters = newImageSop;
+			DicomAttributeCollection dataSet = new DicomAttributeCollection();
 
-			setters.StudyInstanceUid = studyUID;
-			setters.SeriesInstanceUid = seriesUID;
-			setters.InstanceNumber = instanceNumber;
-			return newImageSop;
+			base.SetupMultiframeXA(dataSet, 512, 512, (uint)numberOfFrames);
+			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), dataSet);
+			TestDataSource dataSource = new TestDataSource(file);
+			file.DataSet[DicomTags.StudyInstanceUid].SetStringValue(studyUID);
+			file.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(seriesUID);
+			file.DataSet[DicomTags.SopInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+			file.DataSet[DicomTags.InstanceNumber].SetInt32(0, instanceNumber);
+			file.DataSet[DicomTags.PixelSpacing].SetStringValue(new PixelSpacing(1, 1).ToString());
 
+			return new ImageSop(dataSource);
 		}
 	}
 }

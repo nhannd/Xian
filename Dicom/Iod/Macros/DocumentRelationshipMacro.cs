@@ -89,15 +89,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// </summary>
 		public DateTime? ObservationDateTime
 		{
-			get { return base.DicomAttributeCollection[DicomTags.ObservationDateTime].GetDateTime(0); }
+			get { return base.DicomAttributeProvider[DicomTags.ObservationDateTime].GetDateTime(0); }
 			set
 			{
 				if (!value.HasValue)
 				{
-					base.DicomAttributeCollection[DicomTags.ObservationDateTime] = null;
+					base.DicomAttributeProvider[DicomTags.ObservationDateTime] = null;
 					return;
 				}
-				base.DicomAttributeCollection[DicomTags.ObservationDateTime].SetDateTime(0, value);
+				base.DicomAttributeProvider[DicomTags.ObservationDateTime].SetDateTime(0, value);
 			}
 		}
 
@@ -108,7 +108,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		{
 			get
 			{
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ContentSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ContentSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 				{
 					return null;
@@ -125,7 +125,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				if (value == null || value.Length == 0)
 				{
-					base.DicomAttributeCollection[DicomTags.ContentSequence] = null;
+					base.DicomAttributeProvider[DicomTags.ContentSequence] = null;
 					return;
 				}
 
@@ -133,7 +133,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				for (int n = 0; n < value.Length; n++)
 					result[n] = value[n].DicomSequenceItem;
 
-				base.DicomAttributeCollection[DicomTags.ContentSequence].Values = result;
+				base.DicomAttributeProvider[DicomTags.ContentSequence].Values = result;
 			}
 		}
 
@@ -191,12 +191,12 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public RelationshipType RelationshipType
 			{
-				get { return ParseEnum(base.DicomAttributeCollection[DicomTags.RelationshipType].GetString(0, string.Empty), RelationshipType.Unknown); }
+				get { return ParseEnum(base.DicomAttributeProvider[DicomTags.RelationshipType].GetString(0, string.Empty), RelationshipType.Unknown); }
 				set
 				{
 					if (value == RelationshipType.Unknown)
 						throw new ArgumentOutOfRangeException("value", "RelationshipType is Type 1 Required.");
-					SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.RelationshipType], value, true);
+					SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.RelationshipType], value, true);
 				}
 			}
 
@@ -205,15 +205,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public uint[] ReferencedContentItemIdentifier
 			{
-				get { return (uint[])base.DicomAttributeCollection[DicomTags.ReferencedContentItemIdentifier].Values; }
+				get { return (uint[])base.DicomAttributeProvider[DicomTags.ReferencedContentItemIdentifier].Values; }
 				set
 				{
 					if (value == null || value.Length == 0)
 					{
-						base.DicomAttributeCollection[DicomTags.ReferencedContentItemIdentifier] = null;
+						base.DicomAttributeProvider[DicomTags.ReferencedContentItemIdentifier] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.ReferencedContentItemIdentifier].Values = value;
+					base.DicomAttributeProvider[DicomTags.ReferencedContentItemIdentifier].Values = value;
 				}
 			}
 
@@ -224,12 +224,12 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public virtual ValueType ValueType
 			{
-				get { return ParseEnum(base.DicomAttributeCollection[DicomTags.ValueType].GetString(0, string.Empty), ValueType.None); }
+				get { return ParseEnum(base.DicomAttributeProvider[DicomTags.ValueType].GetString(0, string.Empty), ValueType.None); }
 				set
 				{
 					if (value == ValueType.None)
 						throw new ArgumentNullException("value", "ValueType is a required Type 1.");
-					SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.ValueType], value);
+					SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.ValueType], value);
 				}
 			}
 
@@ -240,7 +240,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				get
 				{
-					DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ConceptNameCodeSequence];
+					DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ConceptNameCodeSequence];
 					if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					{
 						return null;
@@ -251,10 +251,10 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				{
 					if (value == null)
 					{
-						base.DicomAttributeCollection[DicomTags.ConceptNameCodeSequence] = null;
+						base.DicomAttributeProvider[DicomTags.ConceptNameCodeSequence] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.ConceptNameCodeSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+					base.DicomAttributeProvider[DicomTags.ConceptNameCodeSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
 				}
 			}
 
@@ -263,15 +263,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public string TextValue
 			{
-				get { return base.DicomAttributeCollection[DicomTags.TextValue].ToString(); }
+				get { return base.DicomAttributeProvider[DicomTags.TextValue].ToString(); }
 				set
 				{
 					if (string.IsNullOrEmpty(value))
 					{
-						base.DicomAttributeCollection[DicomTags.TextValue] = null;
+						base.DicomAttributeProvider[DicomTags.TextValue] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.TextValue].SetStringValue(value);
+					base.DicomAttributeProvider[DicomTags.TextValue].SetStringValue(value);
 				}
 			}
 
@@ -280,15 +280,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public DateTime? DateTime
 			{
-				get { return base.DicomAttributeCollection[DicomTags.Datetime].GetDateTime(0); }
+				get { return base.DicomAttributeProvider[DicomTags.Datetime].GetDateTime(0); }
 				set
 				{
 					if (!value.HasValue)
 					{
-						base.DicomAttributeCollection[DicomTags.Datetime] = null;
+						base.DicomAttributeProvider[DicomTags.Datetime] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.Datetime].SetDateTime(0, value);
+					base.DicomAttributeProvider[DicomTags.Datetime].SetDateTime(0, value);
 				}
 			}
 
@@ -297,15 +297,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public DateTime? Date
 			{
-				get { return base.DicomAttributeCollection[DicomTags.Date].GetDateTime(0); }
+				get { return base.DicomAttributeProvider[DicomTags.Date].GetDateTime(0); }
 				set
 				{
 					if (!value.HasValue)
 					{
-						base.DicomAttributeCollection[DicomTags.Date] = null;
+						base.DicomAttributeProvider[DicomTags.Date] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.Date].SetDateTime(0, value);
+					base.DicomAttributeProvider[DicomTags.Date].SetDateTime(0, value);
 				}
 			}
 
@@ -314,15 +314,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public DateTime? Time
 			{
-				get { return base.DicomAttributeCollection[DicomTags.Time].GetDateTime(0); }
+				get { return base.DicomAttributeProvider[DicomTags.Time].GetDateTime(0); }
 				set
 				{
 					if (!value.HasValue)
 					{
-						base.DicomAttributeCollection[DicomTags.Time] = null;
+						base.DicomAttributeProvider[DicomTags.Time] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.Time].SetDateTime(0, value);
+					base.DicomAttributeProvider[DicomTags.Time].SetDateTime(0, value);
 				}
 			}
 
@@ -331,15 +331,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public string PersonName
 			{
-				get { return base.DicomAttributeCollection[DicomTags.PersonName].GetString(0, string.Empty); }
+				get { return base.DicomAttributeProvider[DicomTags.PersonName].GetString(0, string.Empty); }
 				set
 				{
 					if (string.IsNullOrEmpty(value))
 					{
-						base.DicomAttributeCollection[DicomTags.PersonName] = null;
+						base.DicomAttributeProvider[DicomTags.PersonName] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.PersonName].SetString(0, value);
+					base.DicomAttributeProvider[DicomTags.PersonName].SetString(0, value);
 				}
 			}
 
@@ -348,15 +348,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public string Uid
 			{
-				get { return base.DicomAttributeCollection[DicomTags.Uid].GetString(0, string.Empty); }
+				get { return base.DicomAttributeProvider[DicomTags.Uid].GetString(0, string.Empty); }
 				set
 				{
 					if (string.IsNullOrEmpty(value))
 					{
-						base.DicomAttributeCollection[DicomTags.Uid] = null;
+						base.DicomAttributeProvider[DicomTags.Uid] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.Uid].SetString(0, value);
+					base.DicomAttributeProvider[DicomTags.Uid].SetString(0, value);
 				}
 			}
 
@@ -388,7 +388,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			IReferencedSopSequence IImageReferenceMacro.ReferencedSopSequence {
 				get {
-					DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedSopSequence];
+					DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedSopSequence];
 					if (dicomAttribute.IsNull || dicomAttribute.Count == 0) {
 						return null;
 					}
@@ -397,7 +397,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				set {
 					if (value == null)
 						throw new ArgumentNullException("value", "ReferencedSopSequence is Type 1 Required.");
-					base.DicomAttributeCollection[DicomTags.ReferencedSopSequence].Values = new DicomSequenceItem[] { value.DicomSequenceItem };
+					base.DicomAttributeProvider[DicomTags.ReferencedSopSequence].Values = new DicomSequenceItem[] { value.DicomSequenceItem };
 				}
 			}
 
@@ -412,7 +412,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// Creates the value of ReferencedSopSequence in the underlying collection. Type 1.
 			/// </summary>
 			IReferencedSopSequence IImageReferenceMacro.CreateReferencedSopSequence() {
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ReferencedSopSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ReferencedSopSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0) {
 					DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();
 					dicomAttribute.Values = new DicomSequenceItem[] { dicomSequenceItem };
@@ -442,11 +442,11 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// Gets or sets the value of ContinuityOfContent in the underlying collection. Type 1.
 			/// </summary>
 			ContinuityOfContent IContainerMacro.ContinuityOfContent {
-				get { return ParseEnum(base.DicomAttributeCollection[DicomTags.ContinuityOfContent].GetString(0, string.Empty), ContinuityOfContent.Unknown); }
+				get { return ParseEnum(base.DicomAttributeProvider[DicomTags.ContinuityOfContent].GetString(0, string.Empty), ContinuityOfContent.Unknown); }
 				set {
 					if (value == ContinuityOfContent.Unknown)
 						throw new ArgumentNullException("value", "Continuity of Content is Type 1 Required.");
-					SetAttributeFromEnum(base.DicomAttributeCollection[DicomTags.ContinuityOfContent], value);
+					SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.ContinuityOfContent], value);
 				}
 			}
 
@@ -455,7 +455,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			ContentTemplateSequence IContainerMacro.ContentTemplateSequence {
 				get {
-					DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ContentTemplateSequence];
+					DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ContentTemplateSequence];
 					if (dicomAttribute.IsNull || dicomAttribute.Count == 0) {
 						return null;
 					}
@@ -463,10 +463,10 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				}
 				set {
 					if (value == null) {
-						base.DicomAttributeCollection[DicomTags.ContentTemplateSequence] = null;
+						base.DicomAttributeProvider[DicomTags.ContentTemplateSequence] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.ContentTemplateSequence].Values = new DicomSequenceItem[] { value.DicomSequenceItem };
+					base.DicomAttributeProvider[DicomTags.ContentTemplateSequence].Values = new DicomSequenceItem[] { value.DicomSequenceItem };
 				}
 			}
 
@@ -474,7 +474,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// Creates the value of ContentTemplateSequence in the underlying collection. Type 1C.
 			/// </summary>
 			ContentTemplateSequence IContainerMacro.CreateContentTemplateSequence() {
-				DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ContentTemplateSequence];
+				DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ContentTemplateSequence];
 				if (dicomAttribute.IsNull || dicomAttribute.Count == 0) {
 					DicomSequenceItem dicomSequenceItem = new DicomSequenceItem();
 					dicomAttribute.Values = new DicomSequenceItem[] { dicomSequenceItem };
@@ -494,15 +494,15 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// </summary>
 			public DateTime? ObservationDateTime
 			{
-				get { return base.DicomAttributeCollection[DicomTags.ObservationDateTime].GetDateTime(0); }
+				get { return base.DicomAttributeProvider[DicomTags.ObservationDateTime].GetDateTime(0); }
 				set
 				{
 					if (!value.HasValue)
 					{
-						base.DicomAttributeCollection[DicomTags.ObservationDateTime] = null;
+						base.DicomAttributeProvider[DicomTags.ObservationDateTime] = null;
 						return;
 					}
-					base.DicomAttributeCollection[DicomTags.ObservationDateTime].SetDateTime(0, value);
+					base.DicomAttributeProvider[DicomTags.ObservationDateTime].SetDateTime(0, value);
 				}
 			}
 
@@ -513,7 +513,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			{
 				get
 				{
-					DicomAttribute dicomAttribute = base.DicomAttributeCollection[DicomTags.ContentSequence];
+					DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.ContentSequence];
 					if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
 					{
 						return null;
@@ -530,7 +530,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 				{
 					if (value == null || value.Length == 0)
 					{
-						base.DicomAttributeCollection[DicomTags.ContentSequence] = null;
+						base.DicomAttributeProvider[DicomTags.ContentSequence] = null;
 						return;
 					}
 
@@ -538,7 +538,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
 					for (int n = 0; n < value.Length; n++)
 						result[n] = value[n].DicomSequenceItem;
 
-					base.DicomAttributeCollection[DicomTags.ContentSequence].Values = result;
+					base.DicomAttributeProvider[DicomTags.ContentSequence].Values = result;
 				}
 			}
 
