@@ -146,6 +146,8 @@ namespace ClearCanvas.ImageViewer.Tests
 			Assert.IsTrue(studyTree.GetSop(imageUid9).SopInstanceUID == image9.SopInstanceUID);
 
 			viewer.Dispose();
+
+			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		[Test]
@@ -161,16 +163,18 @@ namespace ClearCanvas.ImageViewer.Tests
 			ImageSop image1 = CreateImageSop("patient1", studyUid1, seriesUid1, imageUid1);
 			ImageSop image2 = CreateImageSop("patient1", studyUid1, seriesUid1, imageUid1);
 
+			//The sop has already silently disposed the 2nd data source.
+			Assert.IsTrue(Object.ReferenceEquals(image1.DataSource, image2.DataSource));
 			studyTree.AddSop(image1);
 			studyTree.AddSop(image2);
 
 			Assert.IsTrue(studyTree.Patients["patient1"].Studies[studyUid1].Series[seriesUid1].Sops.Count == 1);
-			Assert.IsTrue(((TestDataSource)image2.DataSource).IsDisposed);
 
+			TestDataSource dataSource = (TestDataSource)image1.DataSource;
 			viewer.Dispose();
 
-			Assert.IsTrue(((TestDataSource)image1.DataSource).IsDisposed);
-			Assert.IsTrue(SopDataCache.ItemCount == 0);
+			Assert.IsTrue(dataSource.IsDisposed);
+			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		private ImageSop CreateImageSop(string patientId, string studyUid, string seriesUid, string sopUid)

@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			Sop sop = Sop.Create(dataSource);
 			sop.Dispose();
 			Assert.IsTrue(dataSource.IsDisposed);
-			Assert.IsTrue(SopDataCache.ItemCount == 0);
+			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		[Test]
@@ -58,15 +58,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			
 			sop.Dispose();
 			Assert.IsFalse(dataSource.IsDisposed);
-			Assert.IsFalse(SopDataCache.ItemCount == 0);
-
+			Assert.IsFalse(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
+			
 			reference1.Dispose();
 			Assert.IsFalse(dataSource.IsDisposed);
-			Assert.IsFalse(SopDataCache.ItemCount == 0);
-
+			Assert.IsFalse(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
+			
 			reference2.Dispose();
 			Assert.IsTrue(dataSource.IsDisposed);
-			Assert.IsTrue(SopDataCache.ItemCount == 0);
+			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		[Test]
@@ -80,30 +80,30 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			TestDataSource dataSource2 = new TestDataSource(file2);
 
 			Sop sop1 = Sop.Create(dataSource1);
-			Assert.IsTrue(SopDataCache.ItemCount == 1);
-
+			Assert.IsTrue(SopDataCache.ItemCount == 1, "The Sop data cache should have 1 entry.");
+			
 			Sop sop2 = Sop.Create(dataSource2);
-			Assert.IsTrue(SopDataCache.ItemCount == 1);
-			Assert.IsTrue(dataSource2.IsDisposed);
-			Assert.IsFalse(dataSource1.IsDisposed);
+			Assert.IsTrue(SopDataCache.ItemCount == 1, "The Sop data cache should have 1 entry.");
+			Assert.IsTrue(dataSource2.IsDisposed, "The data source has not been disposed.");
+			Assert.IsFalse(dataSource1.IsDisposed, "The data source should not be disposed.");
 
 			sop1.Dispose();
-			Assert.IsTrue(SopDataCache.ItemCount == 1);
-
+			Assert.IsTrue(SopDataCache.ItemCount == 1, "The Sop data cache should have 1 entry.");
+			
 			ISopReference reference21 = sop2.CreateTransientReference();
 			ISopReference reference22 = sop2.CreateTransientReference();
 
 			reference21.Dispose();
-			Assert.IsFalse(dataSource1.IsDisposed);
-			Assert.IsTrue(SopDataCache.ItemCount == 1);
-
+			Assert.IsFalse(dataSource1.IsDisposed, "The data source has been disposed.");
+			Assert.IsTrue(SopDataCache.ItemCount == 1, "The Sop data cache should have 1 entry.");
+			
 			sop2.Dispose();
-			Assert.IsFalse(dataSource1.IsDisposed);
-			Assert.IsTrue(SopDataCache.ItemCount == 1);
-
+			Assert.IsFalse(dataSource1.IsDisposed, "The data source has been disposed.");
+			Assert.IsTrue(SopDataCache.ItemCount == 1, "The Sop data cache should have 1 entry.");
+			
 			reference22.Dispose();
-			Assert.IsTrue(dataSource1.IsDisposed);
-			Assert.IsTrue(SopDataCache.ItemCount == 0);
+			Assert.IsTrue(dataSource1.IsDisposed, "The data source has not been disposed.");
+			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 	}
 }

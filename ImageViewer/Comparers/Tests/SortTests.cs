@@ -183,6 +183,13 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				Assert.AreEqual(j.ToString(), set.Name);
 				j += reverse ? -1 : 1;
 			}
+
+			foreach (IImageSet set in nonOrderedCollection)
+				set.Dispose();
+			foreach (IImageSet set in orderedCollection)
+				set.Dispose();
+
+			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		private void TestSortingDisplaySetsBySeriesNumber(bool reverse)
@@ -219,6 +226,13 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				Assert.AreEqual(j.ToString(), set.Name);
 				j += reverse ? -1 : 1;
 			}
+
+			foreach (DisplaySet set in nonOrderedCollection)
+				set.Dispose();
+			foreach (DisplaySet set in orderedCollection)
+				set.Dispose();
+
+			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		private void TestSortingDicomImagesBySliceLocation(bool reverse)
@@ -231,6 +245,13 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 
 			SortImagesAndValidate(orderedCollection, nonOrderedCollection, reverse,
 				new SliceLocationComparer(reverse), TraceSliceLocation);
+
+			foreach (PresentationImage image in nonOrderedCollection)
+				image.Dispose();
+			foreach (PresentationImage image in orderedCollection)
+				image.Dispose();
+
+			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		private void TestSortingDicomImagesByAcquisitionTime(bool reverse)
@@ -243,6 +264,54 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 
 			SortImagesAndValidate(orderedCollection, nonOrderedCollection, reverse,
 				new SliceLocationComparer(reverse), TraceAcquisitionTime);
+
+			foreach (PresentationImage image in nonOrderedCollection)
+				image.Dispose();
+			foreach (PresentationImage image in orderedCollection)
+				image.Dispose();
+
+			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
+		}
+
+		private void TestSortingDicomImagesByInstanceAndFrameNumber(bool reverse)
+		{ 
+			PresentationImageCollection orderedCollection = new PresentationImageCollection();
+			PresentationImageCollection nonOrderedCollection = new PresentationImageCollection();
+
+			AppendCollection(orderedCollection, NewDicomSeries("123", "1", 1, 25));
+			
+			AppendCollection(orderedCollection, NewDicomSeries("123", "10", 1, 25));
+			AppendCollection(orderedCollection, NewDicomSeries("123", "111", 1, 25));
+			AppendCollection(orderedCollection, NewDicomSeries("123", "456", 1, 25));
+			AppendCollection(orderedCollection, NewDicomSeries("123", "789", 1, 25));
+
+			//Note that the seriesUID are *not* in numerical order.  This is because
+			//it is a string comparison that is being done.
+			AppendCollection(orderedCollection, NewDicomSeries("a", "1", 1, 25));
+			AppendCollection(orderedCollection, NewDicomSeries("a", "11", 1, 25));
+			AppendCollection(orderedCollection, NewDicomSeries("a", "12", 1, 25));
+			AppendCollection(orderedCollection, NewDicomSeries("a", "6", 1, 25));
+			AppendCollection(orderedCollection, NewDicomSeries("a", "7", 1, 25));
+
+			AppendCollection(orderedCollection, NewDicomSeries("b", "20", 1, 25));
+			AppendCollection(orderedCollection, NewDicomSeries("b", "21", 1, 25));
+			AppendCollection(orderedCollection, NewDicomSeries("b", "33", 1, 25));
+			AppendCollection(orderedCollection, NewDicomSeries("b", "34", 1, 25));
+			AppendCollection(orderedCollection, NewDicomSeries("b", "40", 1, 25));
+
+			//just put one of these at the end, it's enough.  We just want to see
+			// that non-Dicom images get pushed to one end (depending on forward/reverse).
+			orderedCollection.Add(new MockPresentationImage());
+
+			SortImagesAndValidate(orderedCollection, nonOrderedCollection, reverse,
+			                      new InstanceAndFrameNumberComparer(reverse), TraceInstanceAndFrameNumbers);
+
+			foreach (PresentationImage image in nonOrderedCollection)
+				image.Dispose();
+			foreach (PresentationImage image in orderedCollection)
+				image.Dispose();
+
+			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		private IEnumerable<IPresentationImage> GetAcquisitionTimeTestImages()
@@ -423,40 +492,6 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			yield return new ImageOrientationPatient(-1, 0, 0, 0, 0, 1);
 			//Sagittal (normal along +x)
 			yield return new ImageOrientationPatient(0, 1, 0, 0, 0, 1);
-		}
-
-		private void TestSortingDicomImagesByInstanceAndFrameNumber(bool reverse)
-		{ 
-			PresentationImageCollection orderedCollection = new PresentationImageCollection();
-			PresentationImageCollection nonOrderedCollection = new PresentationImageCollection();
-
-			AppendCollection(orderedCollection, NewDicomSeries("123", "1", 1, 25));
-			
-			AppendCollection(orderedCollection, NewDicomSeries("123", "10", 1, 25));
-			AppendCollection(orderedCollection, NewDicomSeries("123", "111", 1, 25));
-			AppendCollection(orderedCollection, NewDicomSeries("123", "456", 1, 25));
-			AppendCollection(orderedCollection, NewDicomSeries("123", "789", 1, 25));
-
-			//Note that the seriesUID are *not* in numerical order.  This is because
-			//it is a string comparison that is being done.
-			AppendCollection(orderedCollection, NewDicomSeries("a", "1", 1, 25));
-			AppendCollection(orderedCollection, NewDicomSeries("a", "11", 1, 25));
-			AppendCollection(orderedCollection, NewDicomSeries("a", "12", 1, 25));
-			AppendCollection(orderedCollection, NewDicomSeries("a", "6", 1, 25));
-			AppendCollection(orderedCollection, NewDicomSeries("a", "7", 1, 25));
-
-			AppendCollection(orderedCollection, NewDicomSeries("b", "20", 1, 25));
-			AppendCollection(orderedCollection, NewDicomSeries("b", "21", 1, 25));
-			AppendCollection(orderedCollection, NewDicomSeries("b", "33", 1, 25));
-			AppendCollection(orderedCollection, NewDicomSeries("b", "34", 1, 25));
-			AppendCollection(orderedCollection, NewDicomSeries("b", "40", 1, 25));
-
-			//just put one of these at the end, it's enough.  We just want to see
-			// that non-Dicom images get pushed to one end (depending on forward/reverse).
-			orderedCollection.Add(new MockPresentationImage());
-
-			SortImagesAndValidate(orderedCollection, nonOrderedCollection, reverse,
-				new InstanceAndFrameNumberComparer(reverse), TraceInstanceAndFrameNumbers);
 		}
 
 		private void AppendCollection(PresentationImageCollection collection, IEnumerable<PresentationImage> listImages)
