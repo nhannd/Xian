@@ -34,26 +34,26 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.ImageViewer.Services.Configuration
+namespace ClearCanvas.ImageViewer.Services.Configuration.ServerTree
 {
-	[ButtonAction("activate", "servertree-toolbar/ToolbarAddServer", "AddNewServer")]
-	[MenuAction("activate", "servertree-contextmenu/MenuAddServer", "AddNewServer")]
+	[ButtonAction("activate", "servertree-toolbar/ToolbarAddServerGroup", "AddNewServerGroup")]
+	[MenuAction("activate", "servertree-contextmenu/MenuAddServerGroup", "AddNewServerGroup")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-	[Tooltip("activate", "TooltipAddServer")]
-	[IconSet("activate", IconScheme.Colour, "Icons.AddServerToolSmall.png", "Icons.AddServerToolMedium.png", "Icons.AddServerToolLarge.png")]
+	[Tooltip("activate", "TooltipAddServerGroup")]
+	[IconSet("activate", IconScheme.Colour, "Icons.AddServerGroupToolSmall.png", "Icons.AddServerGroupToolMedium.png", "Icons.AddServerGroupToolLarge.png")]
 	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
-	public class AddServerTool : ServerTreeTool
+	public class AddServerGroupTool : ServerTreeTool
 	{
-		public AddServerTool()
+		public AddServerGroupTool()
 		{
 		}
 
-		private void AddNewServer()
+		private void AddNewServerGroup()
 		{
-			ServerTree.ServerTree serverTree = this.Context.ServerTree;
+			ImageViewer.Services.ServerTree.ServerTree _serverTree = this.Context.ServerTree;
 			this.Context.UpdateType = (int)ServerUpdateType.Add;
-			DicomServerEditComponent editor = new DicomServerEditComponent(serverTree);
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleAddNewServer);
+			DicomServerGroupEditComponent editor = new DicomServerGroupEditComponent(_serverTree, ServerUpdateType.Add);
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleAddServerGroup);
 			this.Context.UpdateType = (int)ServerUpdateType.None; 
 		}
 

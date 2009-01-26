@@ -39,7 +39,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
-namespace ClearCanvas.ImageViewer.Services.Configuration
+namespace ClearCanvas.ImageViewer.Services.Configuration.ServerTree
 {
 	[ExtensionPoint]
 	public sealed class ServerTreeConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>

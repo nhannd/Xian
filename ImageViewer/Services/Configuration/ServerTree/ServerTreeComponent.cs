@@ -37,7 +37,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
-namespace ClearCanvas.ImageViewer.Services.Configuration
+namespace ClearCanvas.ImageViewer.Services.Configuration.ServerTree
 {
 	[ExtensionPoint()]
 	public sealed class ServerTreeToolExtensionPoint : ExtensionPoint<ITool>
@@ -53,8 +53,8 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 	{
 		IDesktopWindow DesktopWindow { get; }
 		ClickHandlerDelegate DefaultActionHandler { get; set; }
-				
-		ServerTree.ServerTree ServerTree { get; }
+
+		ImageViewer.Services.ServerTree.ServerTree ServerTree { get; }
 
 		AEServerGroup SelectedServers { get; }
 		event EventHandler SelectedServerChanged;
@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 
 			#region IServerTreeToolContext Members
 
-			public ServerTree.ServerTree ServerTree
+			public ImageViewer.Services.ServerTree.ServerTree ServerTree
 			{
 				get { return _component._serverTree; }
 			}
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 
 		#region Fields
 
-		private ServerTree.ServerTree _serverTree;
+		private ImageViewer.Services.ServerTree.ServerTree _serverTree;
 		private event EventHandler _selectedServerChanged;
 		private AEServerGroup _selectedServers;
 		private int _updateType;
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 		private bool _isReadOnly = false;
 		private bool _showCheckBoxes = false;
 
-		public ServerTree.ServerTree ServerTree
+		public ImageViewer.Services.ServerTree.ServerTree ServerTree
 		{
 			get { return _serverTree; }
 		}
@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 		public ServerTreeComponent()
 		{
 			_selectedServers = new AEServerGroup();
-			_serverTree = new ServerTree.ServerTree();
+			_serverTree = new ImageViewer.Services.ServerTree.ServerTree();
 
 			if (_serverTree.CurrentNode != null && _serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore)
 			{

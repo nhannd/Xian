@@ -34,6 +34,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Services.Configuration;
+using ClearCanvas.ImageViewer.Services.Configuration.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {

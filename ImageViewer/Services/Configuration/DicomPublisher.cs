@@ -40,15 +40,15 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 			}
 		}
 
-		public static List<ServerTree.Server> GetServers()
+		public static List<Server> GetServers()
 		{
-			List<ServerTree.Server> servers = new List<Server>();
-			ServerTree.ServerTree serverTree = new ServerTree.ServerTree();
+			List<Server> servers = new List<Server>();
+			ImageViewer.Services.ServerTree.ServerTree serverTree = new ImageViewer.Services.ServerTree.ServerTree();
 
 			StringCollection paths = DefaultServerSettings.Default.DefaultServerPaths ?? new StringCollection();
 			foreach (string path in paths)
 			{
-				ServerTree.Server server = serverTree.FindServer(path);
+				Server server = serverTree.FindServer(path);
 				if (server != null)
 					servers.Add(server);
 			}

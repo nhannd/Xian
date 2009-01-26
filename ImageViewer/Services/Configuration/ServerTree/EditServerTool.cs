@@ -34,46 +34,54 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.ImageViewer.Services.Configuration
+namespace ClearCanvas.ImageViewer.Services.Configuration.ServerTree
 {
-	[ButtonAction("activate", "servertree-toolbar/ToolbarDelete", "DeleteServerServerGroup")]
-	[MenuAction("activate", "servertree-contextmenu/MenuDelete", "DeleteServerServerGroup")]
+	[ButtonAction("activate", "servertree-toolbar/ToolbarEdit", "EditServer")]
+	[MenuAction("activate", "servertree-contextmenu/MenuEdit", "EditServer")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-	[Tooltip("activate", "TooltipDelete")]
-	[IconSet("activate", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
+	[Tooltip("activate", "TooltipEdit")]
+	[IconSet("activate", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolMedium.png", "Icons.EditToolLarge.png")]
 	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
-	public class DeleteServerTool : ServerTreeTool
+	public class EditServerTool : ServerTreeTool
 	{
-		public DeleteServerTool()
+		public EditServerTool()
 		{
 		}
 
-		private void DeleteServerServerGroup()
+		public override void Initialize()
 		{
-			ServerTree.ServerTree serverTree = this.Context.ServerTree;
+			SetDoubleClickHandler();
+
+			base.Initialize();
+		}
+
+		private void EditServer()
+		{
+			ImageViewer.Services.ServerTree.ServerTree serverTree = this.Context.ServerTree;
+			this.Context.UpdateType = (int)ServerUpdateType.Edit;
+
 			if (serverTree.CurrentNode.IsServer)
 			{
-				if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDeleteServer, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
-					return;
-
-				this.Context.UpdateType = (int)ServerUpdateType.Delete;
-				serverTree.DeleteDicomServer();
-				this.Context.UpdateType = (int)ServerUpdateType.None; 
+				DicomServerEditComponent editor = new DicomServerEditComponent(serverTree);
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleEditServer);
 			}
-			else if (serverTree.CurrentNode.IsServerGroup)
+			else
 			{
-				if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmDeleteServerGroup, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
-					return;
-
-				this.Context.UpdateType = (int)ServerUpdateType.Delete;
-				serverTree.DeleteServerGroup();
-				this.Context.UpdateType = (int)ServerUpdateType.None; 
+				DicomServerGroupEditComponent editor = new DicomServerGroupEditComponent(serverTree, ServerUpdateType.Edit);
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleEditServerGroup);
 			}
+
+			this.Context.UpdateType = (int)ServerUpdateType.None;
+		}
+
+		private void SetDoubleClickHandler()
+		{
+			this.Context.DefaultActionHandler = EditServer;
 		}
 
 		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			//enable only if it's a server or server group, and is not the "My Servers" root node.
+			//enabled if it is a server or server group and is not the "My Servers" root node
 			this.Enabled = (this.Context.ServerTree.CurrentNode.IsServer || this.Context.ServerTree.CurrentNode.IsServerGroup) &&
 			               this.Context.ServerTree.CurrentNode != this.Context.ServerTree.RootNode.ServerGroupNode;
 		}

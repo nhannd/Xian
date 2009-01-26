@@ -35,7 +35,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
-namespace ClearCanvas.ImageViewer.Services.Configuration
+namespace ClearCanvas.ImageViewer.Services.Configuration.ServerTree
 {
 	/// <summary>
 	/// Extension point for views onto <see cref="DicomServerEditComponent"/>
@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 			{
 				DicomServerEditComponent serverComponent = (DicomServerEditComponent)component;
 
-				ServerTree.ServerTree serverTree = serverComponent._serverTree;
+				ImageViewer.Services.ServerTree.ServerTree serverTree = serverComponent._serverTree;
 
 				bool isConflicted;
 				string conflictingServerPath;
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 
 		#region Private Fields
 
-		private readonly ServerTree.ServerTree _serverTree;
+		private readonly ImageViewer.Services.ServerTree.ServerTree _serverTree;
 		private string _serverName;
 		private string _serverLocation;
 		private string _serverAE;
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 
 		#endregion
 
-		public DicomServerEditComponent(ServerTree.ServerTree dicomServerTree)
+		public DicomServerEditComponent(ImageViewer.Services.ServerTree.ServerTree dicomServerTree)
 		{
 			_serverTree = dicomServerTree;
 

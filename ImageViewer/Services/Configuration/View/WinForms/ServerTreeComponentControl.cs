@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Services.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.Collections.Generic;
 

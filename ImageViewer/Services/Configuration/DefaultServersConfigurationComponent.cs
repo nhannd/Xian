@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using ClearCanvas.ImageViewer.Services.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.Common.Utilities;
 
@@ -24,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 
 		public static List<Server> GetDefaultServers()
 		{
-			ServerTree.ServerTree tree = new ServerTree.ServerTree();
+			ImageViewer.Services.ServerTree.ServerTree tree = new ImageViewer.Services.ServerTree.ServerTree();
 			List<Server> allServers = tree.RootNode.ServerGroupNode.ChildServers;
 			StringCollection defaultServerPaths = DefaultServerSettings.Default.DefaultServerPaths;
 

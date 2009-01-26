@@ -37,7 +37,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
-namespace ClearCanvas.ImageViewer.Services.Configuration
+namespace ClearCanvas.ImageViewer.Services.Configuration.ServerTree
 {
 	[ButtonAction("activate", "servertree-toolbar/ToolbarVerify", "VerifyServer")]
 	[MenuAction("activate", "servertree-contextmenu/MenuVerify", "VerifyServer")]
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 				return;
 			}
 
-			string myAE = ServerTree.ServerTree.GetClientAETitle();
+			string myAE = ImageViewer.Services.ServerTree.ServerTree.GetClientAETitle();
 
 			StringBuilder msgText = new StringBuilder();
 			msgText.AppendFormat(SR.MessageCEchoVerificationPrefix + "\r\n\r\n");

@@ -33,7 +33,7 @@ using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.ImageViewer.Services.Configuration
+namespace ClearCanvas.ImageViewer.Services.Configuration.ServerTree
 {
 	public abstract class ServerTreeTool : Tool<IServerTreeToolContext>
 	{

@@ -33,6 +33,7 @@ using System.Windows.Forms;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Services.Configuration.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 {
