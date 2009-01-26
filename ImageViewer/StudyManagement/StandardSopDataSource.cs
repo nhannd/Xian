@@ -7,7 +7,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly object _syncLock = new object();
 		private volatile WeakReference[] _framePixelData;
 
-		protected StandardSopDataSource()
+		protected StandardSopDataSource(bool isStored)
+			: base(isStored)
 		{
 		}
 

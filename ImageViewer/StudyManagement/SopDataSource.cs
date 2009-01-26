@@ -6,8 +6,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public abstract class SopDataSource : ISopDataSource
 	{
-		protected SopDataSource()
+		private bool _isStored = false;
+
+		protected SopDataSource(bool isStored)
 		{
+			_isStored = isStored;
 		}
 
 		#region ISopDataSource Members
@@ -42,6 +45,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return this[DicomTags.InstanceNumber].GetInt32(0, 0); }
 		}
 
+		public bool IsStored
+		{
+			get { return _isStored; }
+			protected set { _isStored = value; }
+		}
+		
+		public byte[] GetFrameNormalizedPixelData(int frameNumber)
+		{
+			CheckIsImage();
+			byte[] pixelData;
+			OnGetFrameNormalizedPixelData(frameNumber, out pixelData);
+			return pixelData;
+		}
+
+		public virtual void UnloadFrameData(int frameNumber)
+		{
+		}
+
+		#endregion
+
 		protected int NumberOfFrames
 		{
 			get
@@ -63,20 +86,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		protected abstract void OnGetFrameNormalizedPixelData(int frameNumber, out byte[] pixelData);
-
-		public byte[] GetFrameNormalizedPixelData(int frameNumber)
-		{
-			CheckIsImage();
-			byte[] pixelData;
-			OnGetFrameNormalizedPixelData(frameNumber, out pixelData);
-			return pixelData;
-		}
-
-		public virtual void UnloadFrameData(int frameNumber)
-		{
-		}
-
-		#endregion
 
 		#region IDicomAttributeProvider Members
 

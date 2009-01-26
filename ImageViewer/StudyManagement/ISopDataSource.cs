@@ -15,5 +15,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		byte[] GetFrameNormalizedPixelData(int frameNumber);
 		void UnloadFrameData(int frameNumber);
+
+		bool IsStored { get; }
 	}
 }

@@ -131,6 +131,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _dataSourceReference.RealDataSource; }
 		}
 
+		public bool IsStored
+		{
+			get { return DataSource.IsStored; }	
+		}
+
 		/// <summary>
 		/// Gets the parent <see cref="Series"/>.
 		/// </summary>

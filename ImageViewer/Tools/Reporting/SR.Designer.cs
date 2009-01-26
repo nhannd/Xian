@@ -70,11 +70,20 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Create Key Object Selection.
+        ///   Looks up a localized string similar to Create Key Image.
         /// </summary>
-        internal static string MenuCreateKeyObjectSelection {
+        internal static string MenuCreateKeyImage {
             get {
-                return ResourceManager.GetString("MenuCreateKeyObjectSelection", resourceCulture);
+                return ResourceManager.GetString("MenuCreateKeyImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Key Image.
+        /// </summary>
+        internal static string MenuDeleteKeyImage {
+            get {
+                return ResourceManager.GetString("MenuDeleteKeyImage", resourceCulture);
             }
         }
         
@@ -88,11 +97,38 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Creates a Key Object Selection document out of the clipboard contents.
+        ///   Looks up a localized string similar to Create Key Image.
         /// </summary>
-        internal static string TooltipCreateKeyObjectSelection {
+        internal static string ToolbarCreateKeyImage {
             get {
-                return ResourceManager.GetString("TooltipCreateKeyObjectSelection", resourceCulture);
+                return ResourceManager.GetString("ToolbarCreateKeyImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Key Image.
+        /// </summary>
+        internal static string ToolbarDeleteKeyImage {
+            get {
+                return ResourceManager.GetString("ToolbarDeleteKeyImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create Key Image.
+        /// </summary>
+        internal static string TooltipCreateKeyImage {
+            get {
+                return ResourceManager.GetString("TooltipCreateKeyImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Key Image.
+        /// </summary>
+        internal static string TooltipDeleteKeyImage {
+            get {
+                return ResourceManager.GetString("TooltipDeleteKeyImage", resourceCulture);
             }
         }
     }

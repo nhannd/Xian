@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 		private event EventHandler _createVisibleChanged;
 		private event EventHandler _deleteVisibleChanged;
 
-		private Dictionary<string, DisplaySet> _keyImageDisplaySets;
+		private readonly Dictionary<string, DisplaySet> _keyImageDisplaySets;
 
 		#endregion
 
@@ -160,23 +160,23 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 
 		public event EventHandler CreateVisibleChanged
 		{
-			add { _createEnabledChanged += value; }
-			remove { _createEnabledChanged -= value; }
+			add { _createVisibleChanged += value; }
+			remove { _createVisibleChanged -= value; }
 		}
 
 		public event EventHandler DeleteVisibleChanged
 		{
-			add { _deleteEnabledChanged += value; }
-			remove { _deleteEnabledChanged -= value; }
+			add { _deleteVisibleChanged += value; }
+			remove { _deleteVisibleChanged -= value; }
 		}
 
 		#endregion
 
 		#region Methods
 
-		public override void Initialize()
+		private static bool IsKeyImageDisplaySet(IDisplaySet displaySet)
 		{
-			base.Initialize();
+			return displaySet.Uid.StartsWith("KEY:");
 		}
 
 		protected override void Dispose(bool disposing)
@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 			else
 			{
 				IDisplaySet displaySet = e.SelectedTile.PresentationImage.ParentDisplaySet;
-				if (displaySet is DisplaySet)
+				if (IsKeyImageDisplaySet(displaySet))
 				{
 					DeleteEnabled = true;
 					DeleteVisible = true;
@@ -208,8 +208,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 				}
 				else
 				{
-					//TODO: determine if ImageSop is 'real' or generated.
-					if (e.SelectedTile.PresentationImage is IImageSopProvider)
+					IImageSopProvider provider = e.SelectedTile.PresentationImage as IImageSopProvider;
+					if (provider != null && provider.ImageSop.DataSource.IsStored)
 					{
 						DeleteEnabled = false;
 						DeleteVisible = false;
@@ -225,11 +225,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 					}
 				}
 			}
-		}
-
-		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
-		{
-			base.OnPresentationImageSelected(sender, e);
 		}
 
 		public void Create()
@@ -248,16 +243,16 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 			}
 			else
 			{
-				//display set placement?
 				string name = SR.LabelKeyImageCurrentDisplaySet;
-				DicomUid uid = DicomUid.GenerateUid();
-				displaySet = new DisplaySet(name, uid.ToString());
+				string uid = String.Format("KEY:{0}", sopProvider.ImageSop.StudyInstanceUID);
+				displaySet = new DisplaySet(name, uid);
 				_keyImageDisplaySets[sopProvider.ImageSop.StudyInstanceUID] = displaySet;
+				
 				base.SelectedPresentationImage.ParentDisplaySet.ParentImageSet.DisplaySets.Add(displaySet);
 			}
 
-			//Need a KeyPresentationImage?
 			displaySet.PresentationImages.Add(base.SelectedPresentationImage.Clone());
+			//TODO: set initial presentation state?
 		}
 
 		public void Delete()
@@ -265,7 +260,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 			if (base.SelectedPresentationImage == null)
 				return;
 
-			if (base.SelectedPresentationImage.ParentDisplaySet is DisplaySet)
+			if (IsKeyImageDisplaySet(base.SelectedPresentationImage.ParentDisplaySet))
 			{
 				IDisplaySet displaySet = base.SelectedPresentationImage.ParentDisplaySet;
 				displaySet.PresentationImages.Remove(base.SelectedPresentationImage);
@@ -274,8 +269,10 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 
 				if (displaySet.PresentationImages.Count == 0)
 				{
+					//Make undoable?
 					imageBox.DisplaySet = null;
 					displaySet.ParentImageSet.DisplaySets.Remove(displaySet);
+					displaySet.Dispose();
 				}
 
 				imageBox.Draw();

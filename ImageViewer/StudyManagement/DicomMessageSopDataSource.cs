@@ -7,14 +7,15 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	public abstract class DicomMessageSopDataSource : StandardSopDataSource, IDicomMessageSopDataSource
+	public class DicomMessageSopDataSource : StandardSopDataSource, IDicomMessageSopDataSource
 	{
 		private readonly object _syncLock = new object();
 		private readonly DicomMessageBase _sourceMessage;
 		private bool _loaded = false;
 		private bool _loading = false;
 
-		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage)
+		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage, bool isStored)
+			: base(isStored)
 		{
 			_sourceMessage = sourceMessage;
 		}

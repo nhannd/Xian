@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		public DicomFile _file;
 
 		public TestDataSource(DicomFile file)
-			: base(file)
+			: base(file, false)
 		{
 			_file = file;
 		}
