@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		{
 			using(new CursorManager(Cursors.WaitCursor))
 			{
-				_component.PrintDocument();
+				_component.PrintLocal();
 			}
 		}
 

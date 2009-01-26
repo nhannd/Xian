@@ -122,6 +122,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_formPreviewComponentHost = new ChildComponentHost(this.Host, _formPreviewComponent);
 			_formPreviewComponentHost.StartComponent();
 
+			// subscribe to event so that we print form when document rendered
+			_formPreviewComponent.ScriptCompleted += OnDocumentRendered;
+
+
 			_headerFooterSettings = new IEHeaderFooterSettings();
 			_printBackgroundSettings = new IEPrintBackgroundSettings();
 
@@ -174,8 +178,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 				_numberOfFormsPrinted = 0;
 				_printCancelRequested = false;
 				_isPrinting = true;
-				UpdateStatus();
 
+				UpdateStatus("");
+
+				// print the first form
 				PrintNextForm();
 			}
 			catch (Exception e)
@@ -193,24 +199,23 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void PrintNextForm()
 		{
-			if (_printCancelRequested)
+			// if printing was cancelled, or completed
+			if (_printCancelRequested || (_numberOfFormsPrinted >= _numberOfFormsToPrint))
 			{
 				_isPrinting = false;
-				_statusText = string.Format(SR.MessagePrintDowntimeFormCancelled, _numberOfFormsPrinted + 1, _numberOfFormsToPrint);
-				UpdateStatus();
-				return;
-			}
-			else if (_numberOfFormsPrinted >= _numberOfFormsToPrint)
-			{
-				_isPrinting = false;
-				_statusText = string.Format(SR.MessagePrintDowntimeFormCompleted, _numberOfFormsToPrint);
-				UpdateStatus();
+
+				string text = _printCancelRequested ?
+					string.Format(SR.MessagePrintDowntimeFormCancelled, _numberOfFormsPrinted + 1, _numberOfFormsToPrint) :
+					string.Format(SR.MessagePrintDowntimeFormCompleted, _numberOfFormsToPrint);
+
+				UpdateStatus(text);
 				return;
 			}
 
-			_statusText = string.Format(SR.MessagePrintDowntimeFormProgress, _numberOfFormsPrinted + 1, _numberOfFormsToPrint);
-			UpdateStatus();
+			// still in progress
+			UpdateStatus(string.Format(SR.MessagePrintDowntimeFormProgress, _numberOfFormsPrinted + 1, _numberOfFormsToPrint));
 
+			// get next A#
 			string accessionNumber = null;
 			Platform.GetService<IOrderEntryService>(
 				delegate(IOrderEntryService service)
@@ -219,27 +224,27 @@ namespace ClearCanvas.Ris.Client.Workflow
 					accessionNumber = response.AccessionNumber;
 				});
 
-			DowntimeFormViewComponent component = new DowntimeFormViewComponent();
-			ChildComponentHost host = new ChildComponentHost(this.Host, component);
-			host.StartComponent();
-			object view = host.ComponentView.GuiElement;
-
-			component.ScriptCompleted += PrintDocument;
-			component.Context = new DowntimeFormViewComponent.DowntimeFormContext(accessionNumber);
+			_formPreviewComponent.Context = new DowntimeFormViewComponent.DowntimeFormContext(accessionNumber);
 		}
 
-		private void PrintDocument(object sender, EventArgs e)
+		private void OnDocumentRendered(object sender, EventArgs e)
 		{
-			DowntimeFormViewComponent component = (DowntimeFormViewComponent)sender;
-			component.PrintDocument();
-			_numberOfFormsPrinted++;
-			Thread.Sleep(1000);
+			if(_isPrinting)
+			{
+				_formPreviewComponent.PrintDocument();
+				_numberOfFormsPrinted++;
 
-			PrintNextForm();
+				// TODO why is this here????
+				// perhaps just a hokey way of ensuring that the browser actually finishes printing before we render next document?
+				Thread.Sleep(1000);
+
+				PrintNextForm();
+			}
 		}
 
-		private void UpdateStatus()
+		private void UpdateStatus(string text)
 		{
+			_statusText = text;
 			NotifyAllPropertiesChanged();
 		}
 	}

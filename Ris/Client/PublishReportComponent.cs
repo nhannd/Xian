@@ -33,6 +33,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -153,6 +154,8 @@ namespace ClearCanvas.Ris.Client
 
 		private PublishReportPreviewComponent _publishReportPreviewComponent;
 		private ChildComponentHost _publishReportPreviewComponentHost;
+
+		private readonly Queue<ResultRecipientDetail> _localPrintQueue = new Queue<ResultRecipientDetail>();
 
 		private IEHeaderFooterSettings _headerFooterSettings;
 		private IEPrintBackgroundSettings _printBackgroundSettings;
@@ -460,38 +463,23 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-		public void PrintDocument()
+		public void PrintLocal()
 		{
-			try
+			// add all recipients to queue
+			_localPrintQueue.Clear();
+			foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
 			{
-				foreach (Checkable<ResultRecipientDetail> checkable in this.Recipients.Items)
+				if (checkable.IsChecked)
 				{
-					if (checkable.IsChecked)
-					{
-						ResultRecipientDetail detail = checkable.Item;
-
-						PublishReportPreviewComponent component = new PublishReportPreviewComponent(this.PatientProfileRef, this.OrderRef, this.ProcedureRef, this.ReportRef);
-						ChildComponentHost host = new ChildComponentHost(this.Host, component);
-						host.StartComponent();
-						object view = host.ComponentView.GuiElement;
-
-						component.ScriptCompleted += OnPrintDocument;
-						component.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
-							this.PatientProfileRef,
-							this.OrderRef,
-							this.ProcedureRef,
-							this.ReportRef,
-							detail);
-					}
+					_localPrintQueue.Enqueue(checkable.Item);
 				}
+			}
 
-				this.Exit(ApplicationComponentExitCode.Accepted);
-			}
-			catch (Exception e)
-			{
-				ExceptionHandler.Report(e, this.Host.DesktopWindow);
-				this.Exit(ApplicationComponentExitCode.Error);
-			}
+			// hook up the script completed event so that we print document when rendered
+			_publishReportPreviewComponent.ScriptCompleted += OnDocumentRendered;
+
+			// start processing the print queue
+			PrintNextCopy();
 		}
 
 		#endregion
@@ -534,10 +522,36 @@ namespace ClearCanvas.Ris.Client
 			return choices;
 		}
 
-		private static void OnPrintDocument(object sender, EventArgs e)
+		private void PrintNextCopy()
 		{
-			PublishReportPreviewComponent component = (PublishReportPreviewComponent)sender;
-			component.PrintDocument();
+			if(_localPrintQueue.Count > 0)
+			{
+				ResultRecipientDetail recipient = _localPrintQueue.Dequeue();
+
+				_publishReportPreviewComponent.Context = new PublishReportPreviewComponent.PublishReportPreviewContext(
+					this.PatientProfileRef,
+					this.OrderRef,
+					this.ProcedureRef,
+					this.ReportRef,
+					recipient);
+			}
+			else
+			{
+				this.Exit(ApplicationComponentExitCode.Accepted);
+			}
+		}
+
+		private void OnDocumentRendered(object sender, EventArgs e)
+		{
+			// print the rendered document
+			_publishReportPreviewComponent.PrintDocument();
+
+			// TODO why is this here????
+			// perhaps just a hokey way of ensuring that the browser actually finishes printing before we render next document?
+			Thread.Sleep(1000);
+
+			// process next queued item
+			PrintNextCopy();
 		}
 
 		#endregion
