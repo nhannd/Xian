@@ -5,11 +5,16 @@
 
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>       
+    
+    <script>
+    Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
+    </script>
+    
         <asp:Panel ID="Panel1" runat="server">
             <asp:Table ID="Table" runat="server">
                 <asp:TableRow>
                     <asp:TableCell>
-                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton">
+                                <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton" >
                                     <table cellpadding="0" cellspacing="0">
                                         <tr>
 

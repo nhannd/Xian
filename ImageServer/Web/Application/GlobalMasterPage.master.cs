@@ -82,11 +82,6 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
         ";
     }
 
-    protected void OnLogoButtonClick(object sender, EventArgs e)
-    {
-        Response.Redirect("~/");
-    }
-
     protected void GlobalScriptManager_AsyncPostBackError(object sender, AsyncPostBackErrorEventArgs e)
     {
         GlobalScriptManager.AsyncPostBackErrorMessage = ExceptionHandler.ThrowAJAXException(e.Exception);

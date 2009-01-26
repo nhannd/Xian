@@ -1006,6 +1006,7 @@
     <Content Include="App_Themes\Default\images\Buttons\OKEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\OKHover.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerNextDisabled.png" />
+    <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerPreviousDisabled.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerTotalStudiesLeft.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerTotalStudiesRight.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerPreviousEnabled.png" />

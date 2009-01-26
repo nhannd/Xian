@@ -8,7 +8,7 @@
 <%@ Register Src="Controls/DeleteStudyConfirmDialog.ascx" TagName="DeleteStudyConfirmDialog" TagPrefix="localAsp" %>
 
 <asp:Content runat="server" ID="MainMenuContent" contentplaceholderID="MainMenuPlaceHolder">
-    <asp:Table ID="Table1" runat="server" Width="100%" Border="1"><asp:TableRow><asp:TableCell HorizontalAlign="right" style="padding-top: 12px;"><asp:LinkButton ID="LinkButton1" runat="server" SkinId="CloseButton" OnClientClick="javascript: window.close(); return false;" /></asp:TableCell></asp:TableRow></asp:Table>
+    <asp:Table ID="Table1" runat="server" Width="100%" ><asp:TableRow><asp:TableCell HorizontalAlign="right" style="padding-top: 12px;"><asp:LinkButton ID="LinkButton1" runat="server" SkinId="CloseButton" OnClientClick="javascript: window.close(); return false;" /></asp:TableCell></asp:TableRow></asp:Table>
 </asp:Content>
 
 <asp:Content ContentPlaceHolderID="MainContentSectionPlaceHolder" runat="server">

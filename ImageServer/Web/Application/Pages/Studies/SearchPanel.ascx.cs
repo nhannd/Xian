@@ -140,6 +140,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid, ImageServerConstants.GridViewPagerPosition.top);
             GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid, ImageServerConstants.GridViewPagerPosition.bottom);
+            
             GridPagerTop.GetRecordCountMethod = delegate
                               {
                                   return StudyListGridView.ResultCount;
@@ -174,7 +175,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                 }
 
                                 DataBind();
-                                UpdatePanel.Update(); // force refresh
+                                SearchUpdatePanel.Update(); // force refresh
                             };
 
             StudyListGridView.DataSourceCreated += delegate(StudyDataSource source)

@@ -5,6 +5,11 @@
 
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
+    
+        <script>
+    Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
+    </script>
+    
             <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0">
                 <asp:TableRow>
                     <asp:TableCell VerticalAlign="Bottom" Wrap="false">

@@ -8,6 +8,11 @@
 </asp:ScriptManagerProxy>
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="450px">
     <ContentTemplate>
+    
+        <script>
+    Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
+    </script>
+    
             <asp:ValidationSummary ID="EditFileSystemValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
                 EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogValidationErrorMessage" />   			
             <aspAjax:TabContainer ID="TabContainer1" runat="server" ActiveTabIndex="0" CssClass="DialogTabControl">

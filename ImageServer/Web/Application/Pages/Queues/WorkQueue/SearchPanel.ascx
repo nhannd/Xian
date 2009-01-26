@@ -9,6 +9,7 @@
     <ccAsp:JQuery runat="server" ID="JQuery1" MultiSelect="true" Effects="true" />
 <script type="text/Javascript">
 Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
+Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
 
 function MultiSelect(){
     $("#<%=TypeListBox.ClientID %>").multiSelect({

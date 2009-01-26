@@ -35,7 +35,7 @@
                         <asp:Table runat="server">
                             <asp:TableRow VerticalAlign="Bottom">
                                 <asp:TableCell HorizontalAlign="Left" RowSpan="3">
-                                    <asp:ImageButton runat="server" ID="LogoImage" SkinID="Logo" OnClick="OnLogoButtonClick" />
+                                    <asp:Image runat="server" ID="LogoImage" SkinID="Logo" />
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow VerticalAlign="Bottom">

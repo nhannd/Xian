@@ -70,7 +70,7 @@ public partial class GlobalMasterPage {
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.ImageButton LogoImage;
+    protected global::System.Web.UI.WebControls.Image LogoImage;
     
     /// <summary>
     /// MainMenuPlaceHolder control.

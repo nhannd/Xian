@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         private string _itemName;
         private string _puralItemName;
         private ImageServerConstants.GridViewPagerPosition _position;
+        private string _targetUpdatePanelID;
 
         #endregion Private Members
 
@@ -55,6 +56,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             get { return _position; }
             set { _position = value; }
+        }
+
+        public string AssociatedUpdatePanelID
+        {
+            set { _targetUpdatePanelID = value; }
         }
 
         /// <summary>
@@ -115,13 +121,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                     ChangePageButton.ClientID + "').click();return false;}} else {return true}; ";
                 
                 CurrentPage.Attributes.Add("onkeydown", script);
+
+                Target.DataBind();
             }
         }
 
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
+
             UpdateUI();
+        }
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+            SearchUpdateProgress.AssociatedUpdatePanelID = _targetUpdatePanelID;            
         }
 
         protected void PageButtonClick(object sender, CommandEventArgs e)
@@ -131,6 +147,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
             switch (e.CommandArgument.ToString().ToLower())
             {
+                case "":
+                    Target.PageIndex = intCurIndex;
+                    break;
                 case ImageServerConstants.Prev:
                     Target.PageIndex = intCurIndex - 1;
                     break;
@@ -138,14 +157,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                     Target.PageIndex = intCurIndex + 1;
                     break;
                 default:
-                    int newPage = Convert.ToInt32(CurrentPage.Text);
 
-                    //Adjust page to match 0..n, and handle boundary conditions.
-                    if (newPage > Target.PageCount) newPage = _target.PageCount -1;
-                    else if (newPage != 0) newPage -= 1;
-                    
-                    _target.PageIndex =  newPage;
-                    
+                    if (CurrentPage.Text.Equals(string.Empty))
+                        Target.PageIndex = intCurIndex;
+                    else
+                    {
+                        int newPage = Convert.ToInt32(CurrentPage.Text);
+
+                        //Adjust page to match 0..n, and handle boundary conditions.
+                        if (newPage > Target.PageCount)
+                        {
+                            newPage = _target.PageCount - 1;
+                            if (newPage < 0) newPage = 0;
+                        }
+                        else if (newPage != 0) newPage -= 1;
+
+                        Target.PageIndex = newPage;
+                    }
+
                     break;
             }
 

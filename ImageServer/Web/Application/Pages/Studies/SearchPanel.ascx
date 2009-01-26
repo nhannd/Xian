@@ -11,6 +11,7 @@
 <script type="text/Javascript">
 
 Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
+Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
 
 function MultiSelect() {
     $("#<%=ModalityListBox.ClientID %>").multiSelect({

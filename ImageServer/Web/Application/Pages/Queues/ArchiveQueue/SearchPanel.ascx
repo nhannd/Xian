@@ -6,6 +6,10 @@
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="conditional">
     <ContentTemplate>
 
+    <script>
+    Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
+    </script>
+
             <asp:Table runat="server">
                 <asp:TableRow>
                     <asp:TableCell HorizontalAlign="right" VerticalAlign="Bottom" >
