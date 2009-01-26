@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		private readonly int _wadoServicePort;
 
 		public StreamingSopDataSource(DicomMessageBase message, string host, string aeTitle, int wadoServicePort)
-			: base(message, true)
+			: base(message)
 		{
 			_host = host;
 			_aeTitle = aeTitle;

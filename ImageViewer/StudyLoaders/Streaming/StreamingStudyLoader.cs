@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			PrefetchingStrategy = new VisibleDisplaySetPrefetchingStrategy(StreamingSettings.Default.PrefetchingConcurrency);
 		}
 
-		public override int Start(StudyLoaderArgs studyLoaderArgs)
+		public override int OnStart(StudyLoaderArgs studyLoaderArgs)
 		{
 			ApplicationEntity ae = studyLoaderArgs.Server as ApplicationEntity;
 			_ae = ae;
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			return dicomMessages.Count;
 		}
 
-		protected override ISopDataSource  LoadNextSopDataSource()
+		protected override SopDataSource  LoadNextSopDataSource()
 		{
 			if (!_dicomMessages.MoveNext())
 				return null;

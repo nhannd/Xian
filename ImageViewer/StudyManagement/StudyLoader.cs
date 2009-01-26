@@ -4,6 +4,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	{
 		private readonly string _name;
 		private IPrefetchingStrategy _prefetchingStrategy;
+		private object _currentServer;
 
 		protected StudyLoader(string name)
 		{
@@ -23,19 +24,37 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			protected set { _prefetchingStrategy = value; }
 		}
 
-		public abstract int Start(StudyLoaderArgs studyLoaderArgs);
+		public abstract int OnStart(StudyLoaderArgs args);
+
+		public int Start(StudyLoaderArgs studyLoaderArgs)
+		{
+			_currentServer = studyLoaderArgs.Server;
+
+			return OnStart(studyLoaderArgs);
+		}
 
 		public Sop LoadNextSop()
 		{
-			ISopDataSource dataSource = LoadNextSopDataSource();
+			SopDataSource dataSource = LoadNextSopDataSource();
 			if (dataSource == null)
+			{
+				_currentServer = null;
 				return null;
+			}
 
-			return Sop.Create(dataSource);
+			dataSource.StudyLoaderName = Name;
+			dataSource.Server = _currentServer;
+
+			return CreateSop(dataSource);
 		}
 
 		#endregion
 
-		protected abstract ISopDataSource LoadNextSopDataSource();
+		protected virtual Sop CreateSop(ISopDataSource dataSource)
+		{
+			return Sop.Create(dataSource);
+		}
+
+		protected abstract SopDataSource LoadNextSopDataSource();
 	}
 }

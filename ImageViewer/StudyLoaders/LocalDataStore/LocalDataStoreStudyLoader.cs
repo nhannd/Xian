@@ -38,7 +38,7 @@ using ClearCanvas.Dicom.DataStore;
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
     [ExtensionOf(typeof(StudyLoaderExtensionPoint))]
-	public class LocalDataStoreStudyLoader : StudyLoader, IStudyLoader
+	public class LocalDataStoreStudyLoader : StudyLoader
     {
 		private IEnumerator<ISopInstance> _sops;
 
@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
         }
 
-    	public override int Start(StudyLoaderArgs studyLoaderArgs)
+    	public override int OnStart(StudyLoaderArgs studyLoaderArgs)
 		{
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			}
 		}
 
-		protected override ISopDataSource LoadNextSopDataSource()
+		protected override SopDataSource LoadNextSopDataSource()
         {
 			if (!_sops.MoveNext())
 				return null;

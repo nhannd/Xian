@@ -6,11 +6,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public abstract class SopDataSource : ISopDataSource
 	{
-		private bool _isStored = false;
+		private string _studyLoaderName;
+		private object _server;
 
-		protected SopDataSource(bool isStored)
+		protected SopDataSource()
 		{
-			_isStored = isStored;
 		}
 
 		#region ISopDataSource Members
@@ -40,17 +40,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return this[DicomTags.TransferSyntaxUid].GetString(0, String.Empty); }
 		}
 
-		public int InstanceNumber
+		public virtual int InstanceNumber
 		{
 			get { return this[DicomTags.InstanceNumber].GetInt32(0, 0); }
 		}
 
-		public bool IsStored
+		public virtual bool IsStored
 		{
-			get { return _isStored; }
-			protected set { _isStored = value; }
+			get { return !String.IsNullOrEmpty(_studyLoaderName); }
 		}
 		
+		public string StudyLoaderName
+		{
+			get { return _studyLoaderName; }
+			internal protected set { _studyLoaderName = value; }
+		}
+
+		public object Server
+		{
+			get { return _server; }
+			internal protected set { _server = value; }
+		}
+
 		public byte[] GetFrameNormalizedPixelData(int frameNumber)
 		{
 			CheckIsImage();

@@ -14,8 +14,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private bool _loaded = false;
 		private bool _loading = false;
 
-		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage, bool isStored)
-			: base(isStored)
+		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage)
+			: base()
 		{
 			_sourceMessage = sourceMessage;
 		}

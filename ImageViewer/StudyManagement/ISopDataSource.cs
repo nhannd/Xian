@@ -17,5 +17,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		void UnloadFrameData(int frameNumber);
 
 		bool IsStored { get; }
+
+		string StudyLoaderName { get; }
+		object Server { get; }
 	}
 }

@@ -5,12 +5,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public class LocalSopDataSource : DicomMessageSopDataSource, ILocalSopDataSource
 	{
 		public LocalSopDataSource(string fileName)
-			: base(new DicomFile(fileName), true)
+			: base(new DicomFile(fileName))
 		{
 		}
 
 		public LocalSopDataSource(DicomFile localFile)
-			: base(localFile, true)
+			: base(localFile)
 		{
 		}
 
