@@ -36,14 +36,11 @@ using ClearCanvas.ImageViewer.Services.Configuration;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 {
-	/// <summary>
-	/// Provides a Windows Forms view onto <see cref="DicomPublishingConfigurationComponent"/>.
-	/// </summary>
-	[ExtensionOf(typeof(DicomPublishingConfigurationComponentViewExtensionPoint))]
-	public class DicomPublishingConfigurationComponentView : WinFormsView, IApplicationComponentView
+	[ExtensionOf(typeof(ServerTreeConfigurationComponentViewExtensionPoint))]
+	public class ServerTreeConfigurationComponentView : WinFormsView, IApplicationComponentView
 	{
-		private DicomPublishingConfigurationComponent _component;
-		private DicomPublishingConfigurationComponentControl _control;
+		private ServerTreeConfigurationComponent _component;
+		private ServerTreeConfigurationComponentControl _control;
 
 		#region IApplicationComponentView Members
 
@@ -52,21 +49,18 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 		/// </summary>
 		public void SetComponent(IApplicationComponent component)
 		{
-			_component = (DicomPublishingConfigurationComponent)component;
+			_component = (ServerTreeConfigurationComponent)component;
 		}
 
 		#endregion
 
-		/// <summary>
-		/// Gets the underlying GUI component for this view.
-		/// </summary>
 		public override object GuiElement
 		{
 			get
 			{
 				if (_control == null)
 				{
-					_control = new DicomPublishingConfigurationComponentControl(_component);
+					_control = new ServerTreeConfigurationComponentControl(_component);
 				}
 				return _control;
 			}

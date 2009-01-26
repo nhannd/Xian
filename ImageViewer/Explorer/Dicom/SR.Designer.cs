@@ -216,15 +216,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AE Navigator.
-        /// </summary>
-        internal static string TitleNavigatorPane {
-            get {
-                return ResourceManager.GetString("TitleNavigatorPane", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Search.
         /// </summary>
         internal static string TitleSearch {
@@ -239,6 +230,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string TitleSearchPanelPane {
             get {
                 return ResourceManager.GetString("TitleSearchPanelPane", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Servers.
+        /// </summary>
+        internal static string TitleServerTreePane {
+            get {
+                return ResourceManager.GetString("TitleServerTreePane", resourceCulture);
             }
         }
         

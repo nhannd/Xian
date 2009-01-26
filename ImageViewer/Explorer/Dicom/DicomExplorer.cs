@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	public class DicomExplorer : IHealthcareArtifactExplorer
 	{
 		private SplitComponentContainer _splitComponentContainer;
-		private AENavigatorComponent _aeNavigator;
+		private ServerTreeComponent _serverTreeComponent;
 		private StudyBrowserComponent _studyBrowser;
 		private SearchPanelComponent _searchPanel;
 
@@ -72,10 +72,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void CreateComponentContainer()
 		{
-			if (_aeNavigator == null)
-				_aeNavigator = new AENavigatorComponent();
+			if (_serverTreeComponent == null)
+				_serverTreeComponent = new ServerTreeComponent();
 
-			_aeNavigator.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
+			_serverTreeComponent.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
 
 			if (_studyBrowser == null)
 				_studyBrowser = new StudyBrowserComponent();
@@ -83,11 +83,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (_searchPanel == null)
 				_searchPanel = new SearchPanelComponent(_studyBrowser);
 
-			_studyBrowser.SelectServerGroup(_aeNavigator.SelectedServers);
+			_studyBrowser.SelectServerGroup(_serverTreeComponent.SelectedServers);
 
 			_studyBrowser.Search();
 
-			SplitPane leftPane = new SplitPane(SR.TitleNavigatorPane, _aeNavigator, 0.25f);
+			SplitPane leftPane = new SplitPane(SR.TitleServerTreePane, _serverTreeComponent, 0.25f);
 			SplitPane rightPane = new SplitPane(SR.TitleStudyBrowserPane, _studyBrowser, 0.75f);
 
 			SplitComponentContainer bottomContainer = 
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			_studyBrowser.SelectServerGroup(_aeNavigator.SelectedServers);
+			_studyBrowser.SelectServerGroup(_serverTreeComponent.SelectedServers);
 		}
 	}
 }

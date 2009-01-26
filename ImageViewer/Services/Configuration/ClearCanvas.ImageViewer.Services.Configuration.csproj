@@ -37,15 +37,16 @@
   <ItemGroup>
     <Compile Include="AddServerGroupTool.cs" />
     <Compile Include="AddServerTool.cs" />
-    <Compile Include="AENavigatorComponent.cs" />
-    <Compile Include="AENavigatorTool.cs" />
+    <Compile Include="DefaultServersConfigurationComponent.cs" />
+    <Compile Include="ServerTreeComponent.cs" />
+    <Compile Include="ServerTreeTool.cs" />
     <Compile Include="ConfigurationPageProvider.cs" />
     <Compile Include="DeleteServerTool.cs" />
-    <Compile Include="DicomPublishingConfigurationComponent.cs" />
+    <Compile Include="ServerTreeConfigurationComponent.cs" />
     <Compile Include="DicomPublisher.cs" />
-    <Compile Include="DicomPublishingSettings.cs" />
-    <Compile Include="DicomPublishingSettings.Designer.cs">
-      <DependentUpon>DicomPublishingSettings.settings</DependentUpon>
+    <Compile Include="DefaultServerSettings.cs" />
+    <Compile Include="DefaultServerSettings.Designer.cs">
+      <DependentUpon>DefaultServerSettings.settings</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
@@ -137,9 +138,9 @@
     <EmbeddedResource Include="Icons\VerifyServerToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DicomPublishingSettings.settings">
+    <None Include="DefaultServerSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>DicomPublishingSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>DefaultServerSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

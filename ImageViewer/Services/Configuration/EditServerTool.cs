@@ -30,23 +30,19 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {
-	[ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarEdit", "EditServer")]
-	[MenuAction("activate", "dicomaenavigator-contextmenu/MenuEdit", "EditServer")]
+	[ButtonAction("activate", "servertree-toolbar/ToolbarEdit", "EditServer")]
+	[MenuAction("activate", "servertree-contextmenu/MenuEdit", "EditServer")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipEdit")]
 	[IconSet("activate", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolMedium.png", "Icons.EditToolLarge.png")]
-	[ExtensionOf(typeof(AENavigatorToolExtensionPoint))]
-	public class EditServerTool : AENavigatorTool
+	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
+	public class EditServerTool : ServerTreeTool
 	{
 		public EditServerTool()
 		{

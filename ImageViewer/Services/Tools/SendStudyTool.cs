@@ -70,14 +70,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (!Enabled || this.Context.SelectedStudy == null)
 				return;
 
-			AENavigatorComponent aeNavigator = new AENavigatorComponent();
-			aeNavigator.IsReadOnly = true;
-			aeNavigator.ShowCheckBoxes = false;
-			aeNavigator.ShowLocalDataStoreNode = false;
-			aeNavigator.ShowTitlebar = false;
-			aeNavigator.ShowTools = false;
+			ServerTreeComponent serverTreeComponent = new ServerTreeComponent();
+			serverTreeComponent.IsReadOnly = true;
+			serverTreeComponent.ShowCheckBoxes = false;
+			serverTreeComponent.ShowLocalDataStoreNode = false;
+			serverTreeComponent.ShowTitlebar = false;
+			serverTreeComponent.ShowTools = false;
 
-			SimpleComponentContainer dialogContainer = new SimpleComponentContainer(aeNavigator);
+			SimpleComponentContainer dialogContainer = new SimpleComponentContainer(serverTreeComponent);
 
 			ApplicationComponentExitCode code =
 				ApplicationComponent.LaunchAsDialog(
@@ -88,13 +88,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (code != ApplicationComponentExitCode.Accepted)
 				return;
 
-			if (aeNavigator.SelectedServers == null || aeNavigator.SelectedServers.Servers == null || aeNavigator.SelectedServers.Servers.Count == 0)
+			if (serverTreeComponent.SelectedServers == null || serverTreeComponent.SelectedServers.Servers == null || serverTreeComponent.SelectedServers.Servers.Count == 0)
 			{
 				this.Context.DesktopWindow.ShowMessageBox(SR.MessageSelectDestination, MessageBoxActions.Ok);
 				return;
 			}
 
-			if (aeNavigator.SelectedServers.Servers.Count > 1)
+			if (serverTreeComponent.SelectedServers.Servers.Count > 1)
 			{
 				if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmSendToMultipleServers, MessageBoxActions.YesNo) == DialogBoxAction.No)
 					return;
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				client.Open();
 
-				foreach (Server destinationAE in aeNavigator.SelectedServers.Servers)
+				foreach (Server destinationAE in serverTreeComponent.SelectedServers.Servers)
 				{
 					AEInformation aeInformation = new AEInformation();
 					aeInformation.AETitle = destinationAE.AETitle;

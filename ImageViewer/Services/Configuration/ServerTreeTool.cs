@@ -30,22 +30,17 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {
-	public abstract class AENavigatorTool : Tool<IAENavigatorToolContext>
+	public abstract class ServerTreeTool : Tool<IServerTreeToolContext>
 	{
 		private bool _enabled;
 		private event EventHandler _enabledChangedEvent;
 
-		public AENavigatorTool()
+		public ServerTreeTool()
 		{
 		}
 

@@ -61,11 +61,20 @@ namespace ClearCanvas.ImageViewer.Services.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Publishing (DICOM).
+        ///   Looks up a localized string similar to Default Servers.
         /// </summary>
-        internal static string DicomPublishingConfiguration {
+        internal static string DefaultServerConfiguration {
             get {
-                return ResourceManager.GetString("DicomPublishingConfiguration", resourceCulture);
+                return ResourceManager.GetString("DefaultServerConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please check the servers that should be used as defaults for the application..
+        /// </summary>
+        internal static string DescriptionDefaultServers {
+            get {
+                return ResourceManager.GetString("DescriptionDefaultServers", resourceCulture);
             }
         }
         

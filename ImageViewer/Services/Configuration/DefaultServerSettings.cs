@@ -29,43 +29,18 @@
 
 #endregion
 
-using System.Windows.Forms;
-using ClearCanvas.Common;
+using System.Configuration;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
+namespace ClearCanvas.ImageViewer.Services.Configuration
 {
-	[ExtensionOf(typeof(AENavigatorComponentViewExtensionPoint))]
-	public class AENavigatorComponentView : WinFormsView, IApplicationComponentView
+	[SettingsGroupDescription("Stores a list of default servers for the application.")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	internal sealed partial class DefaultServerSettings
 	{
-		private Control _control;
-		private AENavigatorComponent _component;
-
-		public AENavigatorComponentView()
+		private DefaultServerSettings()
 		{
-
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
-
-		public override object GuiElement
-		{
-			get
-			{
-				if (_control == null)
-				{
-					_control = new AENavigatorControl(_component);
-				}
-				return _control;
-			}
-		}
-
-		#region IApplicationComponentView Members
-
-		public void SetComponent(IApplicationComponent component)
-		{
-			_component = component as AENavigatorComponent;
-		}
-
-		#endregion	
 	}
 }

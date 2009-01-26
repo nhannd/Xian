@@ -30,40 +30,31 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
-using ClearCanvas.ImageViewer.Services.Configuration;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {
-	/// <summary>
-	/// Extension point for views onto <see cref="DicomPublishingConfigurationComponent"/>.
-	/// </summary>
 	[ExtensionPoint]
-	public sealed class DicomPublishingConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class ServerTreeConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	/// <summary>
-	/// DicomPublishingConfigurationComponent class.
-	/// </summary>
-	[AssociateView(typeof(DicomPublishingConfigurationComponentViewExtensionPoint))]
-	public class DicomPublishingConfigurationComponent : ApplicationComponentContainer, IConfigurationApplicationComponent
+	[AssociateView(typeof(ServerTreeConfigurationComponentViewExtensionPoint))]
+	public abstract class ServerTreeConfigurationComponent : ApplicationComponentContainer, IConfigurationApplicationComponent
 	{
-		public class NavigatorHost : ApplicationComponentHost
+		public class ServerTreeComponentHost : ApplicationComponentHost
 		{
-			private readonly DicomPublishingConfigurationComponent _container;
+			private readonly ServerTreeConfigurationComponent _container;
 
-			internal NavigatorHost(DicomPublishingConfigurationComponent container)
-				: base(container._aeNavigator)
+			internal ServerTreeComponentHost(ServerTreeConfigurationComponent container)
+				: base(container._serverTreeComponent)
 			{
 				_container = container;
 			}
@@ -74,26 +65,31 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 			}
 		}
 
-		private readonly NavigatorHost _navigatorHost;
-		private readonly AENavigatorComponent _aeNavigator;
+		private readonly ServerTreeComponentHost _serverTreeHost;
+		private readonly ServerTreeComponent _serverTreeComponent;
+		private readonly ReadOnlyCollection<string> _readOnlySelectedServerPaths;
 		private List<string> _selectedServerPaths;
+		private string _description;
 
-		public DicomPublishingConfigurationComponent()
+		protected ServerTreeConfigurationComponent(string description)
 		{
-			_aeNavigator = new AENavigatorComponent();
+			_description = description ?? "";
 
-			_aeNavigator.IsReadOnly = true;
-			_aeNavigator.ShowCheckBoxes = true;
-			_aeNavigator.ShowLocalDataStoreNode = false;
-			_aeNavigator.ShowTitlebar = false;
-			_aeNavigator.ShowTools = false;
+			_serverTreeComponent = new ServerTreeComponent();
 
-			StringCollection paths = DicomPublishingSettings.Default.DefaultServerPaths ?? new StringCollection();
+			_serverTreeComponent.IsReadOnly = true;
+			_serverTreeComponent.ShowCheckBoxes = true;
+			_serverTreeComponent.ShowLocalDataStoreNode = false;
+			_serverTreeComponent.ShowTitlebar = false;
+			_serverTreeComponent.ShowTools = false;
+
+			StringCollection paths = DefaultServerSettings.Default.DefaultServerPaths ?? new StringCollection();
 			_selectedServerPaths = new List<string>();
+			_readOnlySelectedServerPaths = new ReadOnlyCollection<string>(_selectedServerPaths);
 
 			foreach (string path in paths)
 			{
-				Server server = _aeNavigator.ServerTree.FindServer(path);
+				Server server = _serverTreeComponent.ServerTree.FindServer(path);
 				if (server != null && !_selectedServerPaths.Contains(path))
 				{
 					_selectedServerPaths.Add(path);
@@ -101,13 +97,13 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 				}
 			}
 
-			_aeNavigator.ServerTree.ServerTreeUpdated += OnServerTreeUpdated;
-			_navigatorHost = new NavigatorHost(this);
+			_serverTreeComponent.ServerTree.ServerTreeUpdated += OnServerTreeUpdated;
+			_serverTreeHost = new ServerTreeComponentHost(this);
 		}
 
 		private void OnServerTreeUpdated(object sender, EventArgs e)
 		{
-			List<IServerTreeNode> selectedServers = _aeNavigator.ServerTree.FindCheckedServers();
+			List<IServerTreeNode> selectedServers = _serverTreeComponent.ServerTree.FindCheckedServers();
 
 			List<string> selectedPaths = CollectionUtils.Map<IServerTreeNode, string>(selectedServers,
 												delegate(IServerTreeNode node) { return node.Path; });
@@ -119,9 +115,27 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 			}
 		}
 
-		public NavigatorHost AENavigatorHost
+		protected ReadOnlyCollection<string> SelectedServerPaths
 		{
-			get { return _navigatorHost; }	
+			get { return _readOnlySelectedServerPaths; }
+		}
+		
+		public string Description
+		{
+			get { return _description; }	
+			set
+			{
+				if (_description == value)
+					return;
+
+				_description = value;
+				NotifyPropertyChanged("Description");
+			}
+		}
+
+		public ServerTreeComponentHost ServerTreeHost
+		{
+			get { return _serverTreeHost; }	
 		}
 
 		/// <summary>
@@ -130,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 		public override void Start()
 		{
 			base.Start();
-			_navigatorHost.StartComponent();
+			_serverTreeHost.StartComponent();
 		}
 
 		/// <summary>
@@ -139,19 +153,14 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 		public override void Stop()
 		{
 			base.Stop();
-			_navigatorHost.StopComponent();
+			_serverTreeHost.StopComponent();
 		}
 
-		public void Save()
-		{
-			DicomPublishingSettings.Default.DefaultServerPaths = new StringCollection();
-			DicomPublishingSettings.Default.DefaultServerPaths.AddRange(_selectedServerPaths.ToArray());
-			DicomPublishingSettings.Default.Save();
-		}
+		public abstract void Save();
 
 		public override IEnumerable<IApplicationComponent> ContainedComponents
 		{
-			get { yield return _aeNavigator; }
+			get { yield return _serverTreeComponent; }
 		}
 
 		public override IEnumerable<IApplicationComponent> VisibleComponents

@@ -40,16 +40,16 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {
 	[ExtensionPoint()]
-	public sealed class AENavigatorToolExtensionPoint : ExtensionPoint<ITool>
+	public sealed class ServerTreeToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}
 
 	[ExtensionPoint()]
-	public sealed class AENavigatorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class ServerTreeComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	public interface IAENavigatorToolContext : IToolContext
+	public interface IServerTreeToolContext : IToolContext
 	{
 		IDesktopWindow DesktopWindow { get; }
 		ClickHandlerDelegate DefaultActionHandler { get; set; }
@@ -62,20 +62,20 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 		int UpdateType { get; set; }
 	}
 
-	[AssociateView(typeof(AENavigatorComponentViewExtensionPoint))]
-	public class AENavigatorComponent : ApplicationComponent
+	[AssociateView(typeof(ServerTreeComponentViewExtensionPoint))]
+	public class ServerTreeComponent : ApplicationComponent
 	{
-		public class AENavigatorToolContext : ToolContext, IAENavigatorToolContext
+		public class ServerTreeToolContext : ToolContext, IServerTreeToolContext
 		{
-			AENavigatorComponent _component;
+			ServerTreeComponent _component;
 
-			public AENavigatorToolContext(AENavigatorComponent component)
+			public ServerTreeToolContext(ServerTreeComponent component)
 			{
 				Platform.CheckForNullReference(component, "component");
-				_component = component; 
+				_component = component;
 			}
 
-			#region IAENavigatorToolContext Members
+			#region IServerTreeToolContext Members
 
 			public ServerTree.ServerTree ServerTree
 			{
@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 
 		#endregion
 
-		public AENavigatorComponent()
+		public ServerTreeComponent()
 		{
 			_selectedServers = new AEServerGroup();
 			_serverTree = new ServerTree.ServerTree();
@@ -275,9 +275,9 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 		{
 			base.Start();
 
-			_toolSet = new ToolSet(new AENavigatorToolExtensionPoint(), new AENavigatorToolContext(this));
-			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomaenavigator-toolbar", _toolSet.Actions);
-			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomaenavigator-contextmenu", _toolSet.Actions);
+			_toolSet = new ToolSet(new ServerTreeToolExtensionPoint(), new ServerTreeToolContext(this));
+			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "servertree-toolbar", _toolSet.Actions);
+			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "servertree-contextmenu", _toolSet.Actions);
 		}
 
 		public override void Stop()

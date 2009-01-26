@@ -34,23 +34,18 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 {
-	/// <summary>
-	/// Provides a Windows Forms user-interface for <see cref="DicomPublishingConfigurationComponent"/>.
-	/// </summary>
-	public partial class DicomPublishingConfigurationComponentControl : ApplicationComponentUserControl
+	public partial class ServerTreeConfigurationComponentControl : ApplicationComponentUserControl
 	{
-		private readonly DicomPublishingConfigurationComponent _component;
+		private readonly ServerTreeConfigurationComponent _component;
 
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public DicomPublishingConfigurationComponentControl(DicomPublishingConfigurationComponent component)
+		public ServerTreeConfigurationComponentControl(ServerTreeConfigurationComponent component)
 			:base(component)
 		{
 			_component = component;
 			InitializeComponent();
 
-			_splitContainer.Panel2.Controls.Add((UserControl)_component.AENavigatorHost.ComponentView.GuiElement);
+			_description.DataBindings.Add("Text", _component, "Description", true, DataSourceUpdateMode.OnPropertyChanged);
+			_splitContainer.Panel2.Controls.Add((UserControl)_component.ServerTreeHost.ComponentView.GuiElement);
 			_splitContainer.Panel2.Controls[0].Dock = DockStyle.Fill;
 		}
 	}

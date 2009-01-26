@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using System.Collections.Specialized;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {
@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 			List<ServerTree.Server> servers = new List<Server>();
 			ServerTree.ServerTree serverTree = new ServerTree.ServerTree();
 
-			StringCollection paths = DicomPublishingSettings.Default.DefaultServerPaths ?? new StringCollection();
+			StringCollection paths = DefaultServerSettings.Default.DefaultServerPaths ?? new StringCollection();
 			foreach (string path in paths)
 			{
 				ServerTree.Server server = serverTree.FindServer(path);

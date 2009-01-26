@@ -170,14 +170,14 @@ Please change the dates and try again.</value>
   <data name="TitleDicomExplorer" xml:space="preserve">
     <value>DICOM</value>
   </data>
-  <data name="TitleNavigatorPane" xml:space="preserve">
-    <value>AE Navigator</value>
-  </data>
   <data name="TitleSearch" xml:space="preserve">
     <value>Search</value>
   </data>
   <data name="TitleSearchPanelPane" xml:space="preserve">
     <value>Search Panel</value>
+  </data>
+  <data name="TitleServerTreePane" xml:space="preserve">
+    <value>Servers</value>
   </data>
   <data name="TitleStudyBrowserPane" xml:space="preserve">
     <value>Study Browser</value>

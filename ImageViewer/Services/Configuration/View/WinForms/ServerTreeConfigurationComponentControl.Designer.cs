@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 {
-	partial class DicomPublishingConfigurationComponentControl
+	partial class ServerTreeConfigurationComponentControl
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 		private void InitializeComponent()
 		{
 			this._splitContainer = new System.Windows.Forms.SplitContainer();
-			this.label1 = new System.Windows.Forms.Label();
+			this._description = new System.Windows.Forms.Label();
 			this._splitContainer.Panel1.SuspendLayout();
 			this._splitContainer.SuspendLayout();
 			this.SuspendLayout();
@@ -75,25 +75,25 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			// 
 			// _splitContainer.Panel1
 			// 
-			this._splitContainer.Panel1.Controls.Add(this.label1);
+			this._splitContainer.Panel1.Controls.Add(this._description);
 			this._splitContainer.Size = new System.Drawing.Size(473, 354);
 			this._splitContainer.SplitterDistance = 33;
 			this._splitContainer.TabIndex = 0;
 			// 
-			// label1
+			// _description
 			// 
-			this.label1.Location = new System.Drawing.Point(3, 10);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(456, 22);
-			this.label1.TabIndex = 0;
-			this.label1.Text = "Check the servers that newly created Dicom data should be sent to.";
+			this._description.Location = new System.Drawing.Point(3, 10);
+			this._description.Name = "_description";
+			this._description.Size = new System.Drawing.Size(456, 22);
+			this._description.TabIndex = 0;
+			this._description.Text = "<set the Description property>";
 			// 
-			// DicomPublishingConfigurationComponentControl
+			// ServerTreeConfigurationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._splitContainer);
-			this.Name = "DicomPublishingConfigurationComponentControl";
+			this.Name = "ServerTreeConfigurationComponentControl";
 			this.Size = new System.Drawing.Size(473, 354);
 			this._splitContainer.Panel1.ResumeLayout(false);
 			this._splitContainer.ResumeLayout(false);
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 		#endregion
 
 		private System.Windows.Forms.SplitContainer _splitContainer;
-		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label _description;
 
 	}
 }

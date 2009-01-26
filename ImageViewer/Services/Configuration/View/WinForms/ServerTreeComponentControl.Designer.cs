@@ -32,7 +32,7 @@
 using System;
 namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 {
-	partial class AENavigatorControl
+	partial class ServerTreeComponentControl
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AENavigatorControl));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerTreeComponentControl));
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this._aeTreeView = new System.Windows.Forms.TreeView();
 			this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			this._serverTools.TabIndex = 4;
 			this._serverTools.Text = "toolStrip2";
 			// 
-			// AENavigatorControl
+			// ServerTreeComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			this.Controls.Add(this._aeTreeView);
 			this.Controls.Add(this._serverTools);
 			this.Controls.Add(this._titleBar);
-			this.Name = "AENavigatorControl";
+			this.Name = "ServerTreeComponentControl";
 			this.Size = new System.Drawing.Size(300, 302);
 			this.ResumeLayout(false);
 			this.PerformLayout();

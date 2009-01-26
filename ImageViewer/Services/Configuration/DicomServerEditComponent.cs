@@ -30,13 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {

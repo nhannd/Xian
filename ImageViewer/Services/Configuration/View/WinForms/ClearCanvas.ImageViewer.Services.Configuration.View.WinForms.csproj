@@ -37,20 +37,20 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AENavigatorComponentView.cs" />
-    <Compile Include="AENavigatorControl.cs">
+    <Compile Include="ServerTreeComponentView.cs" />
+    <Compile Include="ServerTreeComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AENavigatorControl.Designer.cs">
-      <DependentUpon>AENavigatorControl.cs</DependentUpon>
+    <Compile Include="ServerTreeComponentControl.Designer.cs">
+      <DependentUpon>ServerTreeComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="DicomPublishingConfigurationComponentControl.cs">
+    <Compile Include="ServerTreeConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DicomPublishingConfigurationComponentControl.Designer.cs">
-      <DependentUpon>DicomPublishingConfigurationComponentControl.cs</DependentUpon>
+    <Compile Include="ServerTreeConfigurationComponentControl.Designer.cs">
+      <DependentUpon>ServerTreeConfigurationComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="DicomPublishingConfigurationComponentView.cs" />
+    <Compile Include="ServerTreeConfigurationComponentView.cs" />
     <Compile Include="DicomServerConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -83,12 +83,12 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AENavigatorControl.resx">
-      <DependentUpon>AENavigatorControl.cs</DependentUpon>
+    <EmbeddedResource Include="ServerTreeComponentControl.resx">
+      <DependentUpon>ServerTreeComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DicomPublishingConfigurationComponentControl.resx">
-      <DependentUpon>DicomPublishingConfigurationComponentControl.cs</DependentUpon>
+    <EmbeddedResource Include="ServerTreeConfigurationComponentControl.resx">
+      <DependentUpon>ServerTreeConfigurationComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="DicomServerConfigurationComponentControl.resx">

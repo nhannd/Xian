@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 
 			listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomServerConfiguration"));
 			listPages.Add(new ConfigurationPage<DiskspaceManagerConfigurationComponent>("DiskspaceManagerConfiguration"));
-			listPages.Add(new ConfigurationPage<DicomPublishingConfigurationComponent>("DicomPublishingConfiguration"));
+			listPages.Add(new ConfigurationPage<DefaultServersConfigurationComponent>("DefaultServerConfiguration"));
 
 			return listPages.AsReadOnly();
 		}

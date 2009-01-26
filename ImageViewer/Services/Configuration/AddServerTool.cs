@@ -33,17 +33,16 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {
-	[ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarAddServer", "AddNewServer")]
-	[MenuAction("activate", "dicomaenavigator-contextmenu/MenuAddServer", "AddNewServer")]
+	[ButtonAction("activate", "servertree-toolbar/ToolbarAddServer", "AddNewServer")]
+	[MenuAction("activate", "servertree-contextmenu/MenuAddServer", "AddNewServer")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipAddServer")]
 	[IconSet("activate", IconScheme.Colour, "Icons.AddServerToolSmall.png", "Icons.AddServerToolMedium.png", "Icons.AddServerToolLarge.png")]
-	[ExtensionOf(typeof(AENavigatorToolExtensionPoint))]
-	public class AddServerTool : AENavigatorTool
+	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
+	public class AddServerTool : ServerTreeTool
 	{
 		public AddServerTool()
 		{

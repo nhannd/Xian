@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;

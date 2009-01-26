@@ -29,18 +29,43 @@
 
 #endregion
 
-using System.Configuration;
+using System.Windows.Forms;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.Services.Configuration
+namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 {
-	[SettingsGroupDescription("")]
-	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class DicomPublishingSettings
+	[ExtensionOf(typeof(ServerTreeComponentViewExtensionPoint))]
+	public class ServerTreeComponentView : WinFormsView, IApplicationComponentView
 	{
-		private DicomPublishingSettings()
+		private Control _control;
+		private ServerTreeComponent _component;
+
+		public ServerTreeComponentView()
 		{
-			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+
 		}
+
+		public override object GuiElement
+		{
+			get
+			{
+				if (_control == null)
+				{
+					_control = new ServerTreeComponentControl(_component);
+				}
+				return _control;
+			}
+		}
+
+		#region IApplicationComponentView Members
+
+		public void SetComponent(IApplicationComponent component)
+		{
+			_component = component as ServerTreeComponent;
+		}
+
+		#endregion	
 	}
 }

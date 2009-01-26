@@ -35,18 +35,17 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Network.Scu;
-using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {
-	[ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarVerify", "VerifyServer")]
-	[MenuAction("activate", "dicomaenavigator-contextmenu/MenuVerify", "VerifyServer")]
+	[ButtonAction("activate", "servertree-toolbar/ToolbarVerify", "VerifyServer")]
+	[MenuAction("activate", "servertree-contextmenu/MenuVerify", "VerifyServer")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipVerify")]
 	[IconSet("activate", IconScheme.Colour, "Icons.VerifyServerToolSmall.png", "Icons.VerifyServerToolMedium.png", "Icons.VerifyServerToolLarge.png")]
-	[ExtensionOf(typeof(AENavigatorToolExtensionPoint))]
-	public class VerifyServerTool : AENavigatorTool
+	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
+	public class VerifyServerTool : ServerTreeTool
 	{
 		public VerifyServerTool()
 		{

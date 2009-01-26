@@ -30,23 +30,19 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {
-	[ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarDelete", "DeleteServerServerGroup")]
-	[MenuAction("activate", "dicomaenavigator-contextmenu/MenuDelete", "DeleteServerServerGroup")]
+	[ButtonAction("activate", "servertree-toolbar/ToolbarDelete", "DeleteServerServerGroup")]
+	[MenuAction("activate", "servertree-contextmenu/MenuDelete", "DeleteServerServerGroup")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipDelete")]
 	[IconSet("activate", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
-	[ExtensionOf(typeof(AENavigatorToolExtensionPoint))]
-	public class DeleteServerTool : AENavigatorTool
+	[ExtensionOf(typeof(ServerTreeToolExtensionPoint))]
+	public class DeleteServerTool : ServerTreeTool
 	{
 		public DeleteServerTool()
 		{

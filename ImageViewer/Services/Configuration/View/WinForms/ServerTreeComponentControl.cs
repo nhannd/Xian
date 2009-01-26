@@ -42,7 +42,7 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 {
-	public partial class AENavigatorControl : UserControl
+	public partial class ServerTreeComponentControl : UserControl
 	{
 		private enum CheckState
 		{
@@ -52,14 +52,14 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			Checked = 2
 		}
 
-		private readonly AENavigatorComponent _component;
+		private readonly ServerTreeComponent _component;
 		private TreeNode _lastClickedNode;
 		private ActionModelNode _toolbarModel;
 		private ActionModelNode _menuModel;
 		private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
 		private TreeNode _lastMouseOverNode = null;
 
-		public AENavigatorControl(AENavigatorComponent component)
+		public ServerTreeComponentControl(ServerTreeComponent component)
 		{
             Platform.CheckForNullReference(component, "component");
             InitializeComponent();
