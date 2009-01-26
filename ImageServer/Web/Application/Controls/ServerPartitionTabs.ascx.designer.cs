@@ -20,6 +20,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls {
     public partial class ServerPartitionTabs {
         
         /// <summary>
+        /// PartitionPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel PartitionPanel;
+        
+        /// <summary>
+        /// Label1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Label1;
+        
+        /// <summary>
         /// PartitionTabContainer control.
         /// </summary>
         /// <remarks>

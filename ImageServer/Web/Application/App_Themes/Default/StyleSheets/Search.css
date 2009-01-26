@@ -5,7 +5,7 @@
 
 .SearchPanelContent
 {
-    background: #3D98D1 url(../../../PersistantImage.ashx?key=SearchPanelBackground) repeat-x top;
+    background: #3D98D1;
     padding: 6px 4px 6px 4px;
 }
 

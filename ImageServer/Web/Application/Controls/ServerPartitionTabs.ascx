@@ -1,7 +1,9 @@
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ServerPartitionTabs.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Controls.ServerPartitionTabs" %>
 
-    <aspAjax:TabContainer ID="PartitionTabContainer" runat="server" ActiveTabIndex="0" CssClass="TabControl" >
+    <asp:Panel runat="server" ID="PartitionPanel" style="background: #3D98D1; border-top: solid 1px white; padding-top: 4px;">
+    <asp:Label ID="Label1" runat="server" Text="Partitions" CssClass="SearchTextBoxLabel" EnableViewState="False" style="padding-left: 5px;"/><br />    
+    <aspAjax:TabContainer ID="PartitionTabContainer" runat="server" ActiveTabIndex="0" CssClass="PartitionTabControl" >
         <aspAjax:TabPanel ID="PartitionTabPanel" runat="server">
             <HeaderTemplate>
             Add Partition
@@ -15,4 +17,5 @@
             </ContentTemplate>            
         </aspAjax:TabPanel>
     </aspAjax:TabContainer>
+    </asp:Panel>
     

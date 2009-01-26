@@ -1106,6 +1106,7 @@
     <Content Include="App_Themes\Default\images\Indicators\Watermark.gif" />
     <Content Include="App_Themes\Default\SearchIcon.png" />
     <Content Include="App_Themes\Default\SearchIconHover.png" />
+    <Content Include="App_Themes\Default\StyleSheets\Controls\PartitionTabs.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\DeleteStudyConfirmDialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\GridView.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\InvalidInputIndicator.css" />

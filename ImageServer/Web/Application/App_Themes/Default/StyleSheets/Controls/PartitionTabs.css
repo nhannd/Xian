@@ -18,56 +18,71 @@
 	Background styles
 *************************************************************************************************/
 
-.TabControl .ajax__tab_header					
+.PartitionTabControl .ajax__tab_header					
 {
-    background: #dddddd url(../../../../PersistantImage.ashx?key=TabHeaderBackgroundTop) repeat-x top;
+    background: #ffffff url(../../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x;
+    border: solid 1px #305ba6;
 	padding-bottom: 0px;
+	margin-left: 8px;
+	margin-right: 8px;
 }
-.TabControl .ajax__tab_outer
+.PartitionTabControl .ajax__tab_outer
 {
-    margin-left: 2px;
-    margin-right: 2px;
-    background:  url(../../images/Controls/Tabs/TabInactiveLeft.png) no-repeat;
-    height: 24px;
 }
-.TabControl .ajax__tab_inner
+.PartitionTabControl .ajax__tab_inner
 {
     padding-left: 2px;
-    background: url(../../images/Controls/Tabs/TabInactiveRight.png) no-repeat right;
 }
-.TabControl .ajax__tab_tab
+.PartitionTabControl .ajax__tab_tab
 {
-	padding: 6px 5px 3px 5px;
-	font-family: san-Serif;
-	color: #3a74ae;
-	font-size: 12px;
-	font-weight:bold;
-	background: url(../../../../PersistantImage.ashx?key=TabInactiveMiddle) repeat-x;
+	padding: 2px 5px 2px 5px;
+	font-family: san-Serif;	
+	color: #618FAD;
+	font-size: 11px;
+	font-weight: bold;
+	border-left: solid 1px transparent;
+	border-right: solid 1px transparent;
 }
-.TabControl .ajax__tab_hover .ajax__tab_outer
+.PartitionTabControl .ajax__tab_hover .ajax__tab_outer
 {
 
 }
-.TabControl .ajax__tab_hover .ajax__tab_inner
+.PartitionTabControl .ajax__tab_hover .ajax__tab_inner
 {
     
 }
-.TabControl .ajax__tab_hover .ajax__tab_tab
+.PartitionTabControl .ajax__tab_hover .ajax__tab_tab
 {
-    color: #618FAD;
+    color: Black;
 }
 
-.TabControl .ajax__tab_active .ajax__tab_outer
+.PartitionTabControl .ajax__tab_active .ajax__tab_outer
 {
-	background: url(../../images/Controls/Tabs/TabActiveRight.png) no-repeat right;
 }
-.TabControl .ajax__tab_active .ajax__tab_inner
+.PartitionTabControl .ajax__tab_active .ajax__tab_inner
 {
-	background:  url(../../images/Controls/Tabs/TabActiveLeft.png) no-repeat;
 }
-.TabControl .ajax__tab_active .ajax__tab_tab
+.PartitionTabControl .ajax__tab_active .ajax__tab_tab
 {
-	background: url(../../../../PersistantImage.ashx?key=TabActiveMiddle) repeat-x;
-	color: #3a74ae;
+	background: #ffffff;
+	border-left: solid 1px #305ba6;
+	border-right: solid 1px #305ba6;
 	font-weight: bold;
+	color: Black;
+}
+
+.AddPartitionMessage
+{
+    background: white;
+    text-align: center;
+    color: #205F87;
+    font-size: 16px;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}
+
+.AddPartitionLink
+{
+    color: Red;
+    font-size: 16px;
 }
