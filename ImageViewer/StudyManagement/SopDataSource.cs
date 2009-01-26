@@ -95,12 +95,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		public abstract DicomAttribute GetDicomAttribute(uint tag);
+
 		public bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
 		{
 			return TryGetAttribute(tag.TagValue, out attribute);
 		}
-
-		public abstract DicomAttribute GetDicomAttribute(uint tag);
 
 		public abstract bool TryGetAttribute(uint tag, out DicomAttribute attribute);
 
@@ -117,6 +117,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			try
 			{
 				Dispose(true);
+				GC.SuppressFinalize(this);
 			}
 			catch(Exception e)
 			{

@@ -6,7 +6,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
-	public class StreamingSopDataSource : DicomMessageSopDataSource
+	internal class StreamingSopDataSource : DicomMessageSopDataSource
 	{
 		private readonly string _host;
 		private readonly string _aeTitle;

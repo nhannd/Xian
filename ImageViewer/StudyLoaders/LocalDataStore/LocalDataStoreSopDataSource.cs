@@ -35,7 +35,7 @@ using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
-	public class LocalDataStoreSopDataSource : LocalSopDataSource
+	internal class LocalDataStoreSopDataSource : LocalSopDataSource
 	{
 		private readonly object _syncLock =  new object();
 		private readonly ISopInstance _sop;

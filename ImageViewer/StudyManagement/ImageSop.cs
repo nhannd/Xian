@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// one frame.
 		/// </remarks>
 		/// <seealso cref="NumberOfFrames"/>
-		public virtual FrameCollection Frames
+		public FrameCollection Frames
 		{
 			get
 			{
@@ -518,10 +518,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			ValidateAllowableTransferSyntax();
 
-			foreach (Frame frame in this.Frames)
-			{
+			foreach (Frame frame in Frames)
 				frame.Validate();
-			}
 		}
 
 		protected override void Dispose(bool disposing)

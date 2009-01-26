@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private readonly object _syncLock = new object();
 		private int _transientReferenceCount = 0;
+		private bool _selfDisposed = false;
 
 		private void OnReferenceDisposed()
 		{
@@ -64,7 +65,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				if (_transientReferenceCount > 0)
 					--_transientReferenceCount;
 
-				if (_transientReferenceCount == 0)
+				if (_transientReferenceCount == 0 && _selfDisposed)
 					DisposeInternal();
 			}
 		}
@@ -73,8 +74,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			lock(_syncLock)
 			{
-				if (_transientReferenceCount < 0)
-					throw new ObjectDisposedException("The underlying object has already been disposed.");
+				if (_transientReferenceCount == 0 && _selfDisposed)
+					throw new ObjectDisposedException("The underlying sop data source has already been disposed.");
 
 				++_transientReferenceCount;
 			}
@@ -84,8 +85,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			try
 			{
-				_transientReferenceCount = -1;
-
 				Dispose(true);
 				GC.SuppressFinalize(this);
 			}
@@ -102,20 +101,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public void Dispose()
 		{
-			try
+			lock(_syncLock)
 			{
-				lock(_syncLock)
-				{
-					//There are transient references out there, so they are now responsible for doing the 'real' disposal.
-					if (_transientReferenceCount > 0)
-						return;
+				_selfDisposed = true;
 
+				//Only dispose for real when self has been disposed and all the transient references have been disposed.
+				if (_transientReferenceCount == 0)
 					DisposeInternal();
-				}
-			}
-			catch(Exception e)
-			{
-				Platform.Log(LogLevel.Warn, e);
 			}
 		}
 

@@ -7,7 +7,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private readonly object _syncLock = new object();
 		private volatile WeakReference[] _framePixelData;
 
-		public StandardSopDataSource()
+		protected StandardSopDataSource()
 		{
 		}
 
@@ -37,17 +37,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected sealed override void OnGetFrameNormalizedPixelData(int frameNumber, out byte[] pixelData)
 		{
 			int frameIndex = frameNumber - 1;
+			WeakReference reference = FramePixelData[frameIndex];
 
-			if (FramePixelData[frameIndex].IsAlive)
+			try
 			{
-				pixelData = (byte[])FramePixelData[frameIndex].Target;
+				pixelData = reference.Target as byte[];
 			}
-			else
+			catch(InvalidOperationException)
+			{
+				pixelData = null;
+				reference = new WeakReference(null);
+				FramePixelData[frameIndex] = reference;
+			}
+
+			if (!reference.IsAlive || pixelData == null)
 			{
 				lock(_syncLock)
 				{
 					pixelData = CreateFrameNormalizedPixelData(frameNumber);
-					FramePixelData[frameIndex].Target = pixelData;
+					reference.Target = pixelData;
 				}
 			}
 		}

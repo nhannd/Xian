@@ -40,13 +40,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), collections[0]);
 			TestDataSource dataSource = new TestDataSource(file);
 			Sop sop = Sop.Create(dataSource);
+
+			Assert.IsFalse(dataSource.IsDisposed);
+			Assert.IsFalse(SopDataCache.ItemCount == 0, "The Sop data cache is empty.");
+
 			sop.Dispose();
+			
 			Assert.IsTrue(dataSource.IsDisposed);
 			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
 
 		[Test]
-		public void TestReferences()
+		public void TestReferences1()
 		{
 			IList<DicomAttributeCollection> collections = base.SetupMRSeries(1, 1, "test");
 			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), collections[0]);
@@ -56,14 +61,38 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			ISopReference reference1 = sop.CreateTransientReference();
 			ISopReference reference2 = sop.CreateTransientReference();
 			
-			sop.Dispose();
-			Assert.IsFalse(dataSource.IsDisposed);
-			Assert.IsFalse(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
-			
 			reference1.Dispose();
 			Assert.IsFalse(dataSource.IsDisposed);
 			Assert.IsFalse(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 			
+			reference2.Dispose();
+			Assert.IsFalse(dataSource.IsDisposed);
+			Assert.IsFalse(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
+
+			sop.Dispose();
+			Assert.IsTrue(dataSource.IsDisposed);
+			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
+		}
+
+		[Test]
+		public void TestReferences2()
+		{
+			IList<DicomAttributeCollection> collections = base.SetupMRSeries(1, 1, "test");
+			DicomFile file = new DicomFile(null, new DicomAttributeCollection(), collections[0]);
+			TestDataSource dataSource = new TestDataSource(file);
+			Sop sop = Sop.Create(dataSource);
+
+			ISopReference reference1 = sop.CreateTransientReference();
+			ISopReference reference2 = sop.CreateTransientReference();
+
+			sop.Dispose();
+			Assert.IsFalse(dataSource.IsDisposed);
+			Assert.IsFalse(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
+
+			reference1.Dispose();
+			Assert.IsFalse(dataSource.IsDisposed);
+			Assert.IsFalse(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
+
 			reference2.Dispose();
 			Assert.IsTrue(dataSource.IsDisposed);
 			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");

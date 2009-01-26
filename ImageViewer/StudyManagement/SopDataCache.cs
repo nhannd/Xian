@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				lock (_syncLock)
 				{
 					if (_referenceCount < 0)
-						throw new ObjectDisposedException("The underlying object has been disposed.");
+						throw new ObjectDisposedException("The underlying sop data source has been disposed.");
 
 					++_referenceCount;
 				}
@@ -132,6 +132,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					catch (InvalidOperationException)
 					{
 						weakReference = null;
+						item = null;
 					}
 				}
 

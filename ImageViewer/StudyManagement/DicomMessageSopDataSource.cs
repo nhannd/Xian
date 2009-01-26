@@ -10,9 +10,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public abstract class DicomMessageSopDataSource : StandardSopDataSource, IDicomMessageSopDataSource
 	{
 		private readonly object _syncLock = new object();
+		private readonly DicomMessageBase _sourceMessage;
 		private bool _loaded = false;
 		private bool _loading = false;
-		private readonly DicomMessageBase _sourceMessage;
 
 		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage)
 		{

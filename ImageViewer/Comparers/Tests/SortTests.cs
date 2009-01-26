@@ -141,7 +141,9 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				imageSet.Name = id;
 
 				DisplaySet displaySet = new DisplaySet(id, id);
-				IPresentationImage image = new DicomGrayscalePresentationImage(NewImageSop(id, id, i).Frames[1]);
+				ImageSop sop = NewImageSop(id, id, i);
+				IPresentationImage image = new DicomGrayscalePresentationImage(sop.Frames[1]);
+				sop.Dispose();
 				IImageSopProvider sopProvider = (IImageSopProvider)image;
 				string studyDate;
 				if (i == 0)
@@ -201,7 +203,9 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			{
 				string id = i.ToString();
 				DisplaySet displaySet = new DisplaySet(id, id);
-				IPresentationImage image = new DicomGrayscalePresentationImage(NewImageSop(id, id, i).Frames[1]);
+				ImageSop sop = NewImageSop(id, id, i);
+				IPresentationImage image = new DicomGrayscalePresentationImage(sop.Frames[1]);
+				sop.Dispose();
 				IImageSopProvider sopProvider = (IImageSopProvider)image;
 				DicomMessageSopDataSource dataSource = ((DicomMessageSopDataSource)sopProvider.ImageSop.DataSource);
 				dataSource.SourceMessage.DataSet[DicomTags.SeriesNumber].SetInt32(0, i);
@@ -342,6 +346,7 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 				}
 
 				yield return frame;
+				sop.Dispose();
 			}
 		}
 
@@ -426,7 +431,10 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 		private IEnumerable<IPresentationImage> GetSliceLocationTestImages()
 		{
 			foreach (ImageSop sop in GetSliceLocationTestImageSops())
+			{
 				yield return new DicomGrayscalePresentationImage(sop.Frames[1]);
+				sop.Dispose();
+			}
 		}
 
 		private IEnumerable<ImageSop> GetSliceLocationTestImageSops()
@@ -627,6 +635,8 @@ namespace ClearCanvas.ImageViewer.Comparers.Tests
 			ImageSop sop = NewImageSop(studyUID, seriesUID, instanceNumber, numberOfFrames);
 			for (int i = 1; i <= numberOfFrames; ++i)
 				yield return new DicomGrayscalePresentationImage(sop.Frames[i]);
+
+			sop.Dispose();
 		}
 
 		private ImageSop NewImageSop(string studyUID, string seriesUID, int instanceNumber)
