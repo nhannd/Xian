@@ -347,10 +347,10 @@ namespace ClearCanvas.Healthcare.Tests
             Assert.IsNull(rp2.StartTime);   // rp2 was never started
             Assert.IsNotNull(rp2.EndTime);   
 
-            // rp 1 is still in progress
-            CheckStatus(ProcedureStatus.IP, rp1);
+            // rp 1 is discontinued
+			CheckStatus(ProcedureStatus.DC, rp1);
             Assert.IsNotNull(rp1.StartTime);
-            Assert.IsNull(rp1.EndTime);
+			Assert.IsNotNull(rp1.EndTime);
 
             // order is discontinued
             CheckStatus(OrderStatus.DC, order);
@@ -529,8 +529,8 @@ namespace ClearCanvas.Healthcare.Tests
 
         /// <summary>
         /// Verify that when a procedure is discontinued:
-        /// a) SC steps are discontinued
-        /// b) IP, CM steps are unchanged.
+        /// a) SC, IP steps are discontinued
+        /// b) CM, DC steps are unchanged.
         /// </summary>
         [Test]
         public void DiscontinueProcedure()
@@ -558,14 +558,16 @@ namespace ClearCanvas.Healthcare.Tests
             Assert.IsNull(rp1.ModalityProcedureSteps[2].StartTime);
             Assert.IsNotNull(rp1.ModalityProcedureSteps[2].EndTime);
 
-            // expect other steps unchanged
+			// expect in-progress step was discontinued
+			CheckStatus(ActivityStatus.DC, rp1.ModalityProcedureSteps[0]);
+			Assert.IsNotNull(rp1.ModalityProcedureSteps[0].StartTime);
+			Assert.IsNotNull(rp1.ModalityProcedureSteps[0].EndTime);
+			
+			// expect completed steps unchanged
             CheckStatus(ActivityStatus.CM, rp1.ModalityProcedureSteps[1]);
             Assert.IsNotNull(rp1.ModalityProcedureSteps[1].StartTime);
             Assert.IsNotNull(rp1.ModalityProcedureSteps[1].EndTime);
 
-            CheckStatus(ActivityStatus.IP, rp1.ModalityProcedureSteps[0]);
-            Assert.IsNotNull(rp1.ModalityProcedureSteps[0].StartTime);
-            Assert.IsNull(rp1.ModalityProcedureSteps[0].EndTime);
         }
 
         /// <summary>
