@@ -83,8 +83,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             if (RequiresRollback)
                 Backup();
 
-            _file.Save(_path, DicomWriteOptions.Default);
-	    	_fileSaved = true;
+			using (FileStream stream = FileStreamOpener.OpenForSoleUpdate(_path, FileMode.Create))
+			{
+				_file.Save(stream, DicomWriteOptions.Default);
+				_fileSaved = true;
+			}
 		}
 
 		protected override void OnUndo()
