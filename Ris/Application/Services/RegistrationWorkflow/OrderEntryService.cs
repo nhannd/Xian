@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         #region IOrderEntryService Members
 
         [ReadOperation]
-        public ListActiveVisitsForPatientResponse ListActiveVisitsForPatient(ListActiveVisitsForPatientRequest request)
+        public ListVisitsForPatientResponse ListVisitsForPatient(ListVisitsForPatientRequest request)
         {
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.PatientRef, "PatientRef");
@@ -76,12 +76,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.PatientRef, EntityLoadFlags.Proxy);
 
             VisitSearchCriteria criteria = new VisitSearchCriteria();
-            criteria.Status.NotEqualTo(VisitStatus.DC);
             criteria.Patient.EqualTo(patient);
             criteria.AdmitTime.SortDesc(0);
 
             VisitAssembler assembler = new VisitAssembler();
-            return new ListActiveVisitsForPatientResponse(
+            return new ListVisitsForPatientResponse(
                 CollectionUtils.Map<Visit, VisitSummary, List<VisitSummary>>(
                     PersistenceContext.GetBroker<IVisitBroker>().Find(criteria),
                     delegate(Visit v)

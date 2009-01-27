@@ -45,12 +45,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     public interface IOrderEntryService : IWorkflowService
     {
         /// <summary>
-        /// List active visits for the specified patient.  Orders can be placed on active visits.
+        /// List visits for the specified patient.  Orders can be placed on any visits, including discharged visits.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
-        ListActiveVisitsForPatientResponse ListActiveVisitsForPatient(ListActiveVisitsForPatientRequest request);
+		/// <param name="request"><see cref="ListVisitsForPatientRequest"/></param>
+		/// <returns><see cref="ListVisitsForPatientResponse"/></returns>
+		[OperationContract]
+        ListVisitsForPatientResponse ListVisitsForPatient(ListVisitsForPatientRequest request);
 
         /// <summary>
         /// List the active orders for the specified patient.  Active orders are either Scheduled or In-Progress.
@@ -63,16 +63,16 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// <summary>
         /// Loads all order entry form data.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
+		/// <param name="request"><see cref="GetOrderEntryFormDataRequest"/></param>
+		/// <returns><see cref="GetOrderEntryFormDataResponse"/></returns>
+		[OperationContract]
         GetOrderEntryFormDataResponse GetOrderEntryFormData(GetOrderEntryFormDataRequest request);
 
         /// <summary>
         /// Get order cancel form data.
         /// </summary>
-        /// <param name="request"><see cref="GetDataForCancelOrderTableRequest"/></param>
-        /// <returns><see cref="GetDataForCancelOrderTableResponse"/></returns>
+		/// <param name="request"><see cref="GetCancelOrderFormDataRequest"/></param>
+		/// <returns><see cref="GetCancelOrderFormDataResponse"/></returns>
         [OperationContract]
         GetCancelOrderFormDataResponse GetCancelOrderFormData(GetCancelOrderFormDataRequest request);
 
@@ -80,52 +80,52 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// Loads order requisition so that the order editing form can be populated. This method will
         /// fail with a RequestValidationException if the order requisition cannot be edited.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
+		/// <param name="request"><see cref="GetOrderRequisitionForEditRequest"/></param>
+		/// <returns><see cref="GetOrderRequisitionForEditResponse"/></returns>
+		[OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         GetOrderRequisitionForEditResponse GetOrderRequisitionForEdit(GetOrderRequisitionForEditRequest request);
 
         /// <summary>
         /// Gets the details of a diagnostic service plan.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
+		/// <param name="request"><see cref="LoadDiagnosticServiceBreakdownRequest"/></param>
+		/// <returns><see cref="LoadDiagnosticServiceBreakdownRequest"/></returns>
+		[OperationContract]
         LoadDiagnosticServiceBreakdownResponse LoadDiagnosticServiceBreakdown(LoadDiagnosticServiceBreakdownRequest request);
 
         /// <summary>
         /// List procedure types that can be ordered based on the procedure types that have already been added to
         /// an order.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
+		/// <param name="request"><see cref="ListOrderableProcedureTypesRequest"/></param>
+		/// <returns><see cref="ListOrderableProcedureTypesResponse"/></returns>
+		[OperationContract]
         ListOrderableProcedureTypesResponse ListOrderableProcedureTypes(ListOrderableProcedureTypesRequest request);
 
         /// <summary>
         /// Gets detailed information about all of the contact points associated with a specified external practitioner.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
+		/// <param name="request"><see cref="GetExternalPractitionerContactPointsRequest"/></param>
+		/// <returns><see cref="GetExternalPractitionerContactPointsResponse"/></returns>
+		[OperationContract]
         GetExternalPractitionerContactPointsResponse GetExternalPractitionerContactPoints(GetExternalPractitionerContactPointsRequest request);
 
         /// <summary>
         /// Places a new order based on the specified information.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
+		/// <param name="request"><see cref="PlaceOrderRequest"/></param>
+		/// <returns><see cref="PlaceOrderResponse"/></returns>
+		[OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         PlaceOrderResponse PlaceOrder(PlaceOrderRequest request);
 
         /// <summary>
         /// Modifies an existing order based on the specified information.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
+		/// <param name="request"><see cref="ModifyOrderRequest"/></param>
+		/// <returns><see cref="ModifyOrderResponse"/></returns>
+		[OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
         ModifyOrderResponse ModifyOrder(ModifyOrderRequest request);
@@ -133,9 +133,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// <summary>
         /// Cancels an existing order and places a new order as a single transaction.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
+		/// <param name="request"><see cref="ReplaceOrderRequest"/></param>
+		/// <returns><see cref="ReplaceOrderResponse"/></returns>
+		[OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
         ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request);
@@ -159,18 +159,18 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// This method does not really belong on this interface but there was no other
         /// convenient place to put it.
         /// </remarks>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
+		/// <param name="request"><see cref="TimeShiftOrderRequest"/></param>
+		/// <returns><see cref="TimeShiftOrderResponse"/></returns>
+		[OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
         TimeShiftOrderResponse TimeShiftOrder(TimeShiftOrderRequest request);
 
         /// <summary>
         /// Reserve an accession number.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
+		/// <param name="request"><see cref="ReserveAccessionNumberRequest"/></param>
+		/// <returns><see cref="ReserveAccessionNumberResponse"/></returns>
+		[OperationContract]
         ReserveAccessionNumberResponse ReserveAccessionNumber(ReserveAccessionNumberRequest request);
     }
 }

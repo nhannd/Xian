@@ -592,8 +592,8 @@
     <Compile Include="RegistrationWorkflow\IRegistrationWorkflowService.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListOrdersForPatientRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListOrdersForPatientResponse.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\ListActiveVisitsForPatientRequest.cs" />
-    <Compile Include="RegistrationWorkflow\OrderEntry\ListActiveVisitsForPatientResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ListVisitsForPatientRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ListVisitsForPatientResponse.cs" />
     <Compile Include="RegistrationWorkflow\RegistrationWorklistItem.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataResponse.cs" />

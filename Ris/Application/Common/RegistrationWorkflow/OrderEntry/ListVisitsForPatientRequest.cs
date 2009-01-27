@@ -30,23 +30,21 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
     [DataContract]
-    public class ListActiveVisitsForPatientResponse : DataContractBase
+    public class ListVisitsForPatientRequest : DataContractBase
     {
-        public ListActiveVisitsForPatientResponse(List<VisitSummary> visits)
+        public ListVisitsForPatientRequest(EntityRef patientRef)
         {
-            this.Visits = visits;
+            this.PatientRef = patientRef;
         }
 
         [DataMember]
-        public List<VisitSummary> Visits;
+        public EntityRef PatientRef;
     }
 }

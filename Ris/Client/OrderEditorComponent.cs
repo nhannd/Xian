@@ -381,7 +381,7 @@ namespace ClearCanvas.Ris.Client
             Platform.GetService<IOrderEntryService>(
                 delegate(IOrderEntryService service)
                 {
-                    _activeVisits = service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientRef)).Visits;
+                    _activeVisits = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef)).Visits;
 
                     GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
                     _facilityChoices = formChoicesResponse.FacilityChoices;
@@ -588,8 +588,8 @@ namespace ClearCanvas.Ris.Client
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)
                     {
-                        ListActiveVisitsForPatientResponse response =
-                            service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientRef));
+                        ListVisitsForPatientResponse response =
+                            service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientRef));
                         _activeVisits = response.Visits;
                     });
 
@@ -862,7 +862,7 @@ namespace ClearCanvas.Ris.Client
 
                 ProcedureRequisition procReq = new ProcedureRequisition(null, _orderingFacility);
                 ProcedureEditorComponent procedureEditor = new ProcedureEditorComponent(procReq, _facilityChoices, _lateralityChoices, orderableProcedureTypes);
-                if (ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
+                if (LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Add Procedure")
                     == ApplicationComponentExitCode.Accepted)
                 {
                     _proceduresTable.Items.Add(procReq);
@@ -884,7 +884,7 @@ namespace ClearCanvas.Ris.Client
             try
             {
                 ProcedureEditorComponent procedureEditor = new ProcedureEditorComponent(_selectedProcedure, _facilityChoices, _lateralityChoices);
-                if (ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Modify Procedure")
+                if (LaunchAsDialog(this.Host.DesktopWindow, procedureEditor, "Modify Procedure")
                     == ApplicationComponentExitCode.Accepted)
                 {
                     _proceduresTable.Items.NotifyItemUpdated(_selectedProcedure);

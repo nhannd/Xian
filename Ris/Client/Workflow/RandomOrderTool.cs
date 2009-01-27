@@ -159,9 +159,9 @@ namespace ClearCanvas.Ris.Client.Workflow
             Platform.GetService<IOrderEntryService>(
                 delegate(IOrderEntryService service)
                 {
-                    ListActiveVisitsForPatientRequest request = new ListActiveVisitsForPatientRequest(patientRef);
+                    ListVisitsForPatientRequest request = new ListVisitsForPatientRequest(patientRef);
 
-                    ListActiveVisitsForPatientResponse visitResponse = service.ListActiveVisitsForPatient(request);
+                    ListVisitsForPatientResponse visitResponse = service.ListVisitsForPatient(request);
                     visit = RandomUtils.ChooseRandom(CollectionUtils.Select(visitResponse.Visits,
                         delegate(VisitSummary summary)
                         {
