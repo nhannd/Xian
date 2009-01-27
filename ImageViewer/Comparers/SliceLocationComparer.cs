@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <summary>
 		/// Compares two <see cref="Frame"/>s based on slice location.
 		/// </summary>
-		protected override int Compare(Frame x, Frame y)
+		public override int Compare(Frame x, Frame y)
 		{
 			return Compare(GetCompareValues(x), GetCompareValues(y));
 		}

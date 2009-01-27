@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 	/// <summary>
 	/// A simple matrix class.
 	/// </summary>
-	internal class Matrix
+	public class Matrix
 	{
 		private readonly int _rows;
 		private readonly int _columns;
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			_matrix = new float[rows, columns];
 		}
 
-		private Matrix(int rows, int columns, float[,] matrix)
+		public Matrix(int rows, int columns, float[,] matrix)
 		{
 			_matrix = matrix;
 			_rows = rows;

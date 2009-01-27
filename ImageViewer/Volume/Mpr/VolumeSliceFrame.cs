@@ -29,72 +29,42 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.Comparers
+namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
 	/// <summary>
-	/// Compares two <see cref="Frame"/>s based on acquisition date and time.
+	/// The VolumeSliceFrame is owned by the VolumeSliceImageSop which maintains references to
+	/// the volume and slice matrix which are used to generate the pixel data for this frame.
 	/// </summary>
-	public class AcquisitionTimeComparer : DicomFrameComparer
+	internal class VolumeSliceFrame : Frame
 	{
-		/// <summary>
-		/// Initializes a new instance of <see cref="AcquisitionTimeComparer"/>.
-		/// </summary>
-		public AcquisitionTimeComparer()
+		private byte[] _pixelData;
+
+		public VolumeSliceFrame(VolumeSliceImageSop parentImageSop, int frameNumber)
+			: base(parentImageSop, frameNumber)
 		{
 		}
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="AcquisitionTimeComparer"/>.
-		/// </summary>
-		public AcquisitionTimeComparer(bool reverse)
-			: base(reverse)
+		public void SetPixelData(byte[] pixelData)
 		{
+			_pixelData = pixelData;
 		}
 
-		private static IEnumerable<IComparable> GetCompareValues(Frame frame)
+		protected override byte[] CreateNormalizedPixelData()
 		{
-			DateTime? datePart = null;
-			TimeSpan? timePart = null;
-
-			//then sort by acquisition datetime.
-			DateTime? acquisitionDateTime = DateTimeParser.Parse(frame.AcquisitionDateTime);
-			if (acquisitionDateTime != null)
+			if (_pixelData == null)
 			{
-				datePart = acquisitionDateTime.Value.Date;
-				timePart = acquisitionDateTime.Value.TimeOfDay;
-			}
-			else 
-			{
-				datePart = DateParser.Parse(frame.AcquisitionDate);
-				if (datePart != null)
-				{
-					//only set the time part if there is a valid date part.
-					DateTime? acquisitionTime = TimeParser.Parse(frame.AcquisitionTime);
-					if (acquisitionTime != null)
-						timePart = acquisitionTime.Value.TimeOfDay;
-				}
+				_pixelData = VolumeSlicer.GenerateFramePixelData(ParentVolumeSliceImageSop.Volume,
+				                                                 ParentVolumeSliceImageSop.SliceMatrix);
 			}
 
-			yield return datePart;
-			yield return timePart;
-
-			//as a last resort.
-			yield return frame.ParentImageSop.InstanceNumber;
-			yield return frame.FrameNumber;
-			yield return frame.AcquisitionNumber;
+			return _pixelData;
 		}
 
-		/// <summary>
-		/// Compares two <see cref="Frame"/>s based on acquisition date and time.
-		/// </summary>
-		public override int Compare(Frame x, Frame y)
+		private VolumeSliceImageSop ParentVolumeSliceImageSop
 		{
-			return Compare(GetCompareValues(x), GetCompareValues(y));
+			get { return (VolumeSliceImageSop)ParentImageSop; }
 		}
 	}
 }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageViewer.Explorer.Local {
+namespace ClearCanvas.ImageViewer.Volume.Mpr {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.Explorer.Local.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.Volume.Mpr.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,56 +61,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Local {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Open.
+        ///   Looks up a localized string similar to Open Images in MPR.
         /// </summary>
-        public static string MenuOpenFiles {
+        public static string MenuOpenMpr {
             get {
-                return ResourceManager.GetString("MenuOpenFiles", resourceCulture);
+                return ResourceManager.GetString("MenuOpenMpr", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} images failed to load..
+        ///   Looks up a localized string similar to Volume Tools.
         /// </summary>
-        public static string MessageFormatImagesFailedToLoad {
+        public static string MenuVolume {
             get {
-                return ResourceManager.GetString("MessageFormatImagesFailedToLoad", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to My Computer.
-        /// </summary>
-        public static string MyComputer {
-            get {
-                return ResourceManager.GetString("MyComputer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Open Dicom Files.
-        /// </summary>
-        public static string OpenDicomFilesVerbose {
-            get {
-                return ResourceManager.GetString("OpenDicomFilesVerbose", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Open MPR.
-        /// </summary>
-        public static string OpenMprFilesVerbose {
-            get {
-                return ResourceManager.GetString("OpenMprFilesVerbose", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Image.
-        /// </summary>
-        public static string TitleImageViewer {
-            get {
-                return ResourceManager.GetString("TitleImageViewer", resourceCulture);
+                return ResourceManager.GetString("MenuVolume", resourceCulture);
             }
         }
     }

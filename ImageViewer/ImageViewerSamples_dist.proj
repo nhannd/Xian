@@ -8,12 +8,22 @@
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NPlot.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\RoiAnalysis\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\RoiAnalysis\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.View.WinForms.dll" />
-		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Volume\VTK\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Volume.VTK.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Volume\Mpr\bin\$(Configuration)\ClearCanvas.ImageViewer.Volume.Mpr.dll" />
+<!--ggerade: This is the list of vtk deps for the Volume.MPR assembly, use these for the real dist.proj
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtksys.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkCommon.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkFiltering.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkImaging.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkCommonDotNet.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkFilteringDotNet.dll" />
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\vtkImagingDotNet.dll" />
+-->
+    <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Volume\VTK\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Volume.VTK.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Volume\VTK\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Volume.VTK.View.WinForms.dll" />
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Vtk\*.*" />
     <ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Itk\*.*" />
     <ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\VtkItkAdapters\bin\$(Configuration)\ClearCanvas.ImageViewer.VtkItkAdapters.dll" />
-  </ItemGroup>
+</ItemGroup>
 
 	<Target Name="Copy Files">
     <!-- Run the image viewer build file -->

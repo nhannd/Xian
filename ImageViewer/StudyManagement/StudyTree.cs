@@ -131,7 +131,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Adds a <see cref="Sop"/> to the <see cref="StudyTree"/>.
 		/// </summary>
-		internal void AddSop(Sop sop)
+		//ggerade ToRes: promoted internal to public
+		public void AddSop(Sop sop)
 		{
 			Platform.CheckForNullReference(sop, "sop");
 

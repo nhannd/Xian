@@ -41,10 +41,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkFilteringDotNet.dll</HintPath>
     </Reference>
-    <Reference Include="vtkFormsWindow, Version=1.0.2283.31542, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkFormsWindow.dll</HintPath>
-    </Reference>
     <Reference Include="vtkGenericFilteringDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\ReferencedAssemblies\Vtk\vtkGenericFilteringDotNet.dll</HintPath>

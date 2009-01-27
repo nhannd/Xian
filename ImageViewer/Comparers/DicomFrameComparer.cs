@@ -38,7 +38,9 @@ namespace ClearCanvas.ImageViewer.Comparers
 	/// <summary>
 	/// Base class for comparing <see cref="Frame"/>s.
 	/// </summary>
-	public abstract class DicomFrameComparer : PresentationImageComparer
+	//ggerade ToRes: Is this ok? Add IComparer for Frame so that I could sort a list of Frames, had to make
+	//	the Compare method public (as well as for derivatives)
+	public abstract class DicomFrameComparer : PresentationImageComparer, IComparer<Frame>
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomFrameComparer"/>.
@@ -96,6 +98,6 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <summary>
 		/// Compares two <see cref="Frame"/>s.
 		/// </summary>
-		protected abstract int Compare(Frame x, Frame y);
+		public abstract int Compare(Frame x, Frame y);
 	}
 }

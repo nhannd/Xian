@@ -29,46 +29,40 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using ClearCanvas.ImageViewer.StudyManagement;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
-namespace ClearCanvas.ImageViewer.Comparers
-{
-	/// <summary>
-	/// Compares two <see cref="Frame"/>s based on instance number and frame number.
-	/// </summary>
-	public class InstanceAndFrameNumberComparer : DicomFrameComparer
-	{
-		/// <summary>
-		/// Initializes a new instance of <see cref="InstanceAndFrameNumberComparer"/>.
-		/// </summary>
-		public InstanceAndFrameNumberComparer()
-		{
-		}
+using ClearCanvas.Common;
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="InstanceAndFrameNumberComparer"/>.
-		/// </summary>
-		public InstanceAndFrameNumberComparer(bool reverse)
-			: base(reverse)
-		{
-		}
+[assembly: ClearCanvas.Common.Plugin()]
 
-		private static IEnumerable<IComparable> GetCompareValues(Frame frame)
-		{
-			yield return frame.ParentImageSop.InstanceNumber;
-			yield return frame.FrameNumber;
-			//as a last resort.
-			yield return frame.AcquisitionNumber;
-		}
+// General Information about an assembly is controlled through the following 
+// set of attributes. Change these attribute values to modify the information
+// associated with an assembly.
+[assembly: AssemblyTitle("ClearCanvas.ImageViewer.Volume.Reslicer")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
+[assembly: AssemblyCompany("ClearCanvas Inc.")]
+[assembly: AssemblyProduct("ClearCanvas Workstation")]
+[assembly: AssemblyCopyright("Copyright (c) 2006-2009")]
+[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCulture("")]
 
-		/// <summary>
-		/// Compares two <see cref="Frame"/>s based on instance number and frame number.
-		/// </summary>
-		public override int Compare(Frame x, Frame y)
-		{
-			return Compare(GetCompareValues(x), GetCompareValues(y));
-		}
-	}
-}
+// Setting ComVisible to false makes the types in this assembly not visible 
+// to COM components.  If you need to access a type in this assembly from 
+// COM, set the ComVisible attribute to true on that type.
+[assembly: ComVisible(false)]
+
+// The following GUID is for the ID of the typelib if this project is exposed to COM
+[assembly: Guid("805fc8d7-eb5e-481d-abd1-5356c16e7ab9")]
+
+// Version information for an assembly consists of the following four values:
+//
+//      Major Version
+//      Minor Version 
+//      Build Number
+//      Revision
+//
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

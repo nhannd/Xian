@@ -117,22 +117,10 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="MenuOpenFiles" xml:space="preserve">
-    <value>Open</value>
+  <data name="MenuVolume" xml:space="preserve">
+    <value>Volume Tools</value>
   </data>
-  <data name="MessageFormatImagesFailedToLoad" xml:space="preserve">
-    <value>{0} images failed to load.</value>
-  </data>
-  <data name="MyComputer" xml:space="preserve">
-    <value>My Computer</value>
-  </data>
-  <data name="OpenDicomFilesVerbose" xml:space="preserve">
-    <value>Open Dicom Files</value>
-  </data>
-  <data name="OpenMprFilesVerbose" xml:space="preserve">
-    <value>Open MPR</value>
-  </data>
-  <data name="TitleImageViewer" xml:space="preserve">
-    <value>Image</value>
+  <data name="MenuOpenMpr" xml:space="preserve">
+    <value>Open Images in MPR</value>
   </data>
 </root>
