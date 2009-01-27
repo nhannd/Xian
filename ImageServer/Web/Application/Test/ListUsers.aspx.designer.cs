@@ -12,12 +12,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Test {
     
     
     /// <summary>
-    /// Login2 class.
+    /// ListUsers class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class Login2 {
+    public partial class ListUsers {
         
         /// <summary>
         /// form1 control.
@@ -35,6 +35,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Test {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Login Login;
+        protected global::System.Web.UI.WebControls.Label Login;
+        
+        /// <summary>
+        /// UserGridView control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView UserGridView;
     }
 }

@@ -8,9 +8,8 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application {
-    
-    
+namespace ClearCanvas.ImageServer.Web.Application.Test
+{
     /// <summary>
     /// Login class.
     /// </summary>

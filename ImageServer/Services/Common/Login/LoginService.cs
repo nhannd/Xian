@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Security;
+using System.Security.Principal;
 using System.ServiceModel;
 using System.Text;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Services.Login;
 
 namespace ClearCanvas.ImageServer.Services.Common.Login
@@ -14,35 +18,94 @@ namespace ClearCanvas.ImageServer.Services.Common.Login
     /// Login service
     /// </summary>
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
-    public class LoginService : ICoreServiceLayer, ILoginService
+    public class LoginService : ICoreServiceLayer, ILoginService, IDisposable
     {
+        private AuthenticationClient _client = new AuthenticationClient();
 
         #region ILoginService Members
 
-        public LoginResult SignOn(string userName, string password)
+        public SessionInfo Login(string userName, string password)
         {
-            AuthenticationClient client = new AuthenticationClient();
-            LoginResult result = new LoginResult();
-
-            InitiateSessionRequest request = new InitiateSessionRequest(userName, password);
-            request.GetAuthorizations = true;
-
-            InitiateSessionResponse response = client.InitiateSession(request);
-            if (response != null)
+            
+            try
             {
-                result.Successful = true;
-                result.Groups = response.AuthorityTokens;
-            }
+                
+                InitiateSessionRequest request = new InitiateSessionRequest(userName, password);
+                request.GetAuthorizations = true;
 
-            return result;
+                InitiateSessionResponse response = _client.InitiateSession(request);
+
+                if (response != null)
+                {
+                    CustomPrincipal user =
+                    new CustomPrincipal(new CustomIdentity(userName, response.DisplayName), response.SessionToken, response.AuthorityTokens);
+                    SessionInfo session = new SessionInfo(user);
+
+                    return session;
+                }
+                else
+                {
+                    throw new SecurityException();
+                }
+            }
+                
+            catch(FaultException<PasswordExpiredException> ex)
+            {
+                throw ex.Detail;
+            }
         }
 
-        public void SignOff(string userName, SessionToken token)
+        public void Logout(SessionInfo session)
         {
-            AuthenticationClient client = new AuthenticationClient();
-            TerminateSessionRequest request = new TerminateSessionRequest(userName, token);
-            TerminateSessionResponse response = client.TerminateSession(request);
+            TerminateSessionRequest request = new TerminateSessionRequest(session.User.Identity.Name, session.Credentials.SessionToken);
+            TerminateSessionResponse response = _client.TerminateSession(request);
+        }
+
+        #endregion
+
+        #region ILoginService Members
+
+
+        public void Validate(SessionInfo session)
+        {
+            ValidateSessionRequest request = new ValidateSessionRequest(session.User.Identity.Name, session.Credentials.SessionToken);
+            request.GetAuthorizations = true;
+            ValidateSessionResponse response = _client.ValidateSession(request);
+        
+            // update session info
+            session.Credentials.Authorities = response.AuthorityTokens;
+            session.Credentials.SessionToken = response.SessionToken;
+        }
+
+        #endregion
+
+
+        #region ILoginService Members
+
+
+        public void ChangePassword(string userName, string oldPassword, string newPassword)
+        {
             
+            ChangePasswordRequest request = new ChangePasswordRequest(userName, oldPassword, newPassword);
+            ChangePasswordResponse response = _client.ChangePassword(request);
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (_client!=null)
+            {
+                switch(_client.State)
+                {
+                    case  CommunicationState.Opened:
+                        _client.Close();
+                        break;
+
+                }
+            }
         }
 
         #endregion

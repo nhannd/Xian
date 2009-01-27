@@ -85,7 +85,7 @@ namespace ClearCanvas.Enterprise.Authentication
 			string[] authorizations = request.GetAuthorizations ? 	
 				PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(request.UserName) : new string[0];
 
-            return new InitiateSessionResponse(session.GetToken(), authorizations);
+            return new InitiateSessionResponse(session.GetToken(), authorizations, user.DisplayName);
         }
 
         [UpdateOperation(ChangeSetAuditable = false)]
@@ -112,12 +112,11 @@ namespace ClearCanvas.Enterprise.Authentication
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
 			Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
 			Platform.CheckMemberIsSet(request.SessionToken.Id, "SessionToken.Id");
-
             AuthenticationSettings settings = new AuthenticationSettings();
             DateTime currentTime = Platform.Time;
 
             User user = GetVerifiedUser(request.UserName, request.SessionToken);
-            UserSession session = user.CurrentSession;
+			UserSession session = user.CurrentSession;
 
             // if session timeouts are enabled, check expiry time
             if (settings.UserSessionTimeoutEnabled && session.ExpiryTime < currentTime)
@@ -210,7 +209,6 @@ namespace ClearCanvas.Enterprise.Authentication
         private User GetVerifiedUser(string userName, SessionToken sessionToken)
         {
             User user = GetUserByUserName(userName);
-
             if (!user.IsActive || user.CurrentSession == null || user.CurrentSession.SessionId != sessionToken.Id)
             {
                 // account not active, or invalid session token

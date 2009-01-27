@@ -2,37 +2,38 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.Authentication;
 
 namespace ClearCanvas.ImageServer.Common.Services.Login
 {
-    public class LoginResult
+    public interface ILoginService:IDisposable
     {
-        private bool _successful = false;
-        private SessionToken _token;
-        private string[] _groups;
+        /// <summary>
+        /// Logs into the system using specified username and password.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        SessionInfo Login(string userName, string password);
 
-        public SessionToken Token
-        {
-            get { return _token; }
-            set { _token = value; }
-        }
+        /// <summary>
+        /// Logs out of the system.
+        /// </summary>
+        /// <param name="session"></param>
+        void Logout(SessionInfo session);
 
-        public string[] Groups
-        {
-            get { return _groups; }
-            set { _groups = value; }
-        }
+        /// <summary>
+        /// Change user's password.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="oldPassword"></param>
+        /// <param name="newPassword"></param>
+        void ChangePassword(string userName, string oldPassword, string newPassword);
 
-        public bool Successful
-        {
-            get { return _successful; }
-            set { _successful = value; }
-        }
-    }
-
-    public interface ILoginService
-    {
-        LoginResult SignOn(string userName, string password);
-        void SignOff(string userName, SessionToken token);
+        /// <summary>
+        /// Validate the specified session. Refresh the session data if needed.
+        /// </summary>
+        /// <param name="session"></param>
+        void Validate(SessionInfo session);
     }
 }

@@ -119,7 +119,8 @@
     <Compile Include="ImageServerConstants.cs" />
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Security\MembershipProvider.cs" />
+    <Compile Include="Security\CustomFormAuthenticationModule.cs" />
+    <Compile Include="Security\SessionManager.cs" />
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
@@ -167,6 +168,10 @@
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
+      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
+      <Name>ClearCanvas.Enterprise.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
@@ -186,6 +191,10 @@
     <ProjectReference Include="..\..\Rules\ClearCanvas.ImageServer.Rules.csproj">
       <Project>{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}</Project>
       <Name>ClearCanvas.ImageServer.Rules</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\Common\ClearCanvas.ImageServer.Services.Common.csproj">
+      <Project>{6863F5CE-F1D3-46A7-915C-DE02D1452EED}</Project>
+      <Name>ClearCanvas.ImageServer.Services.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Services\WorkQueue\ClearCanvas.ImageServer.Services.WorkQueue.csproj">
       <Project>{65B9B08C-EAE4-4EE2-B164-905B03134443}</Project>

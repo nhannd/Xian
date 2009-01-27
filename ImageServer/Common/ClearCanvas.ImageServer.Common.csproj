@@ -62,9 +62,9 @@
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="HttpServer.cs" />
     <Compile Include="IAlertService.cs" />
-    <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IImageServerXmlCodecParameters.cs" />
     <Compile Include="ImageServerCommonConfiguration.cs" />
+    <Compile Include="LoginCredentials.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CommandProcessor\RenameFileCommand.cs" />
     <Compile Include="CommandProcessor\SaveDicomFileCommand.cs" />
@@ -75,6 +75,7 @@
     <Compile Include="CommandProcessor\ServerDatabaseCommand.cs" />
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServerPartitionMonitor.cs" />
+    <Compile Include="Services\Admin\IAdminServices.cs" />
     <Compile Include="Services\Login\ILoginService.cs" />
     <Compile Include="ServiceTools.cs" />
     <Compile Include="FileStreamOpener.cs" />

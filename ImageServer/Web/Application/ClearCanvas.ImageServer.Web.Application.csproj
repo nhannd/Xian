@@ -187,6 +187,13 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Test\ListUsers.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>ListUsers.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Test\ListUsers.aspx.designer.cs">
+      <DependentUpon>ListUsers.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Test\Login.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>Login.aspx</DependentUpon>
@@ -957,12 +964,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="Test\Login2.aspx.cs">
+    <Compile Include="Test\TestPage.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
-      <DependentUpon>Login2.aspx</DependentUpon>
+      <DependentUpon>TestPage.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Test\Login2.aspx.designer.cs">
-      <DependentUpon>Login2.aspx</DependentUpon>
+    <Compile Include="Test\TestPage.aspx.designer.cs">
+      <DependentUpon>TestPage.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1152,6 +1159,7 @@
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
     <Content Include="Images\ImageServerLogo.png" />
+    <Content Include="Test\ListUsers.aspx" />
     <Content Include="Test\Login.aspx" />
     <Content Include="Pages\Admin\Alerts\AlertsGridPanel.ascx" />
     <Content Include="Pages\Admin\Alerts\AlertsPanel.ascx" />
@@ -1381,7 +1389,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="Test\Login2.aspx" />
+    <Content Include="Test\TestPage.aspx" />
     <Content Include="Web.sitemap" />
     <Content Include="Services\webservice.htc" />
   </ItemGroup>
@@ -1431,6 +1439,10 @@
       <Project>{BE27922C-C8D7-4190-8F24-5D7C1623CAFA}</Project>
       <Name>ClearCanvas.ImageServer.Services.Archiving.Hsm</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Services\Common\ClearCanvas.ImageServer.Services.Common.csproj">
+      <Project>{6863F5CE-F1D3-46A7-915C-DE02D1452EED}</Project>
+      <Name>ClearCanvas.ImageServer.Services.Common</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Services\WorkQueue\ClearCanvas.ImageServer.Services.WorkQueue.csproj">
       <Project>{65B9B08C-EAE4-4EE2-B164-905B03134443}</Project>
