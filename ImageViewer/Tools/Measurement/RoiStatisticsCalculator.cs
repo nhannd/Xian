@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using System.Text;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
@@ -43,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	{
 		public static string Calculate(RoiInfo roiInfo, IsPointInRoiDelegate isPointInRoi)
 		{
-			string str;
+			StringBuilder sb = new StringBuilder();
 
 			bool isGrayscale = roiInfo.PixelData is GrayscalePixelData;
 
@@ -51,9 +52,10 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			{
 				if (roiInfo.Mode == RoiAnalysisMode.Responsive)
 				{
-					return String.Format("{0}\n{1}",
-					                     String.Format(SR.ToolsMeasurementFormatMean, SR.ToolsMeasurementNoValue),
-					                     String.Format(SR.ToolsMeasurementFormatStdDev, SR.ToolsMeasurementNoValue));
+					sb.AppendFormat(SR.ToolsMeasurementFormatMean, SR.ToolsMeasurementNoValue);
+					sb.AppendLine();
+					sb.AppendFormat(SR.ToolsMeasurementFormatStdDev, SR.ToolsMeasurementNoValue);
+					return sb.ToString();
 				}
 
 				int mean = CalculateMean(
@@ -71,22 +73,25 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 				if (roiInfo.Modality == "CT")
 				{
-					str = String.Format(SR.ToolsMeasurementFormatMeanCT, mean) + "\n" +
-					      String.Format(SR.ToolsMeasurementFormatStdDevCT, stdDev);
+					sb.AppendFormat(SR.ToolsMeasurementFormatMeanCT, mean);
+					sb.AppendLine();
+					sb.AppendFormat(SR.ToolsMeasurementFormatStdDevCT, stdDev);
 				}
 				else
 				{
-					str = String.Format(SR.ToolsMeasurementFormatMean, mean) + "\n" +
-						  String.Format(SR.ToolsMeasurementFormatStdDev, stdDev);
+					sb.AppendFormat(SR.ToolsMeasurementFormatMean, mean);
+					sb.AppendLine();
+					sb.AppendFormat(SR.ToolsMeasurementFormatStdDev, stdDev);
 				}
 			}
 			else
 			{
-				str = String.Format(SR.ToolsMeasurementFormatMean, SR.NotApplicable) + "\n" +
-					  String.Format(SR.ToolsMeasurementFormatStdDev, SR.NotApplicable);
+				sb.AppendFormat(SR.ToolsMeasurementFormatMean, SR.NotApplicable);
+				sb.AppendLine();
+				sb.AppendFormat(SR.ToolsMeasurementFormatStdDev, SR.NotApplicable);
 			}
 
-			return str;
+			return sb.ToString();
 		}
 
 		private static int CalculateMean
