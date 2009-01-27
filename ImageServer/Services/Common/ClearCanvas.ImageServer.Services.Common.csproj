@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Admin\AdminServices.cs" />
+    <Compile Include="Admin\AuthorityAdminServices.cs" />
     <Compile Include="Alert\AlertPlugins\DefaultAlertSink.cs" />
     <Compile Include="Alert\AlertService.cs" />
     <Compile Include="Alert\IAlertServiceExtension.cs" />

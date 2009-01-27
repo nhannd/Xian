@@ -76,6 +76,7 @@
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServerPartitionMonitor.cs" />
     <Compile Include="Services\Admin\IAdminServices.cs" />
+    <Compile Include="Services\Admin\IAuthorityAdmin.cs" />
     <Compile Include="Services\Login\ILoginService.cs" />
     <Compile Include="ServiceTools.cs" />
     <Compile Include="FileStreamOpener.cs" />

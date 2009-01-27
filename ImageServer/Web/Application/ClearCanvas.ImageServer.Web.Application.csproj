@@ -187,6 +187,13 @@
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Test\AuthorityGroup.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>AuthorityGroup.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Test\AuthorityGroup.aspx.designer.cs">
+      <DependentUpon>AuthorityGroup.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Test\ListUsers.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
       <DependentUpon>ListUsers.aspx</DependentUpon>
@@ -1159,6 +1166,7 @@
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
     <Content Include="Images\ImageServerLogo.png" />
+    <Content Include="Test\AuthorityGroup.aspx" />
     <Content Include="Test\ListUsers.aspx" />
     <Content Include="Test\Login.aspx" />
     <Content Include="Pages\Admin\Alerts\AlertsGridPanel.ascx" />

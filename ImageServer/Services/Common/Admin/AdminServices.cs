@@ -19,7 +19,8 @@ namespace ClearCanvas.ImageServer.Services.Common.Admin
     {
         private AdminServiceClient _client = new AdminServiceClient();
         private LoginCredentials _credentials;
-            
+        private bool _clientCredentialsSet;
+
         public LoginCredentials Credentials
         {
             set { _credentials = value; }
@@ -35,12 +36,20 @@ namespace ClearCanvas.ImageServer.Services.Common.Admin
                 }
             }
         }
+        private void SetupCredentials()
+        {
+            if (!_clientCredentialsSet)
+            {
+                _client.Credentials = this.Credentials;
+                _clientCredentialsSet = true;
+            }
+        }
 
         #region IAdminServices Members
 
         public List<UserSummary> ListUsers(ListUsersRequest filters)
         {
-            _client.Credentials = this.Credentials;
+            SetupCredentials();
             ListUsersResponse response = _client.ListUsers(filters);
             return response.Users;
         }
@@ -53,7 +62,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Admin
 
         public UserDetail GetUserDetail(string username)
         {
-            _client.Credentials = this.Credentials; 
+            SetupCredentials();
             LoadUserForEditRequest request = new LoadUserForEditRequest(username);
             LoadUserForEditResponse response = _client.LoadUserForEdit(request);
             return response.UserDetail;
@@ -61,7 +70,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Admin
 
         public UserSummary UpdateUserDetail(UserDetail detail)
         {
-            _client.Credentials = this.Credentials; 
+            SetupCredentials();
             UpdateUserRequest request = new UpdateUserRequest(detail);
             UpdateUserResponse response = _client.UpdateUser(request);
             return response.UserSummary;
@@ -70,7 +79,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Admin
         public bool DeleteUser(string username)
         {
 
-            _client.Credentials = this.Credentials; 
+            SetupCredentials();
             DeleteUserRequest request = new DeleteUserRequest(username);
             DeleteUserResponse response = _client.DeleteUser(request);
         
@@ -79,7 +88,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Admin
 
         public UserSummary AddUser(UserDetail detail)
         {
-            _client.Credentials = this.Credentials; 
+            SetupCredentials();
             AddUserRequest request = new AddUserRequest(detail);
             AddUserResponse response = _client.AddUser(request);
             return response.UserSummary;
@@ -93,7 +102,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Admin
 
         public bool ResetPassword(string username)
         {
-            _client.Credentials = this.Credentials; 
+            SetupCredentials();
             ResetUserPasswordRequest request = new ResetUserPasswordRequest(username);
             ResetUserPasswordResponse response = _client.ResetUserPassword(request);
             return true;

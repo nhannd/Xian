@@ -26,6 +26,16 @@
         <asp:Button runat="server" ID="Button2" Text="Reset Password" OnClick="ResetPasswordClicked" />
         <asp:Label runat="server" ID="ResetPasswordMessage"></asp:Label>
         
+        <hr />
+        Login<asp:TextBox runat="server" ID="NewUserLoginId"></asp:TextBox>
+        Name<asp:TextBox runat="server" ID="NewUserName"></asp:TextBox>
+        Groups 
+        <asp:ListBox runat="server" ID="NewUserGroupListBox" SelectionMode="Multiple" />    
+        <asp:Button runat="server" ID="NewUserButton" Text="Create User" OnClick="NewUserButtonClicked" />
+        <asp:Button runat="server" ID="UpdateUserButton" Text="Update User" OnClick="UpdateUserButtonClicked" />
+        <asp:Label runat="server" ID="NewUserMessage"></asp:Label>
+        
+        
     </div>
     </form>
 </body>
