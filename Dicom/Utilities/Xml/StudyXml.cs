@@ -158,13 +158,23 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             return true;
         }
+		/// <summary>
+		/// Add a <see cref="DicomFile"/> to the StudyXml.
+		/// </summary>
+		/// <param name="theFile">The <see cref="DicomFile"/> to add.</param>
+		/// <returns>true on success.</returns>
+		public bool AddFile(DicomFile theFile)
+		{
+			return AddFile(theFile, 0);
+		}
 
         /// <summary>
-        /// Add a <see cref="DicomFile"/> to the StudyStream.
+		/// Add a <see cref="DicomFile"/> to the StudyXml.
         /// </summary>
-        /// <param name="theFile"></param>
-        /// <returns></returns>
-        public bool AddFile(DicomFile theFile)
+        /// <param name="theFile">The <see cref="DicomFile"/> to add.</param>
+        /// <param name="fileSize">The size in bytes of the file being added.</param>
+        /// <returns>true on scuccess.</returns>
+        public bool AddFile(DicomFile theFile, long fileSize)
         {
             // Create a copy of the collection without pixel data
             DicomAttributeCollection data = theFile.DataSet.Copy(false);
@@ -202,7 +212,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             instance = new InstanceXml(data, theFile.SopClass, theFile.TransferSyntax);
         	instance.SourceFileName = theFile.Filename;
-
+        	instance.FileSize = fileSize;
             series[sopInstanceUid] = instance;
 
             return true;

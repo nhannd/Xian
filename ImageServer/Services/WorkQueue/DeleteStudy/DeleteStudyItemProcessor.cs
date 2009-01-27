@@ -69,7 +69,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
     	private void RemoveDatabase(Model.WorkQueue item)
         {
-            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			// NOTE:  This was an IUpdateContext, however, it was modified to be an IReadContext
+			// after having problems w/ locks on asystem with a fair amount of load.  The 
+			// updates are just automatically committed within the stored procedure when it
+			// runs...
+            using (IReadContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
             {
                 // Setup the delete parameters
                 DeleteStudyStorageParameters parms = new DeleteStudyStorageParameters();
@@ -85,8 +89,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                     Platform.Log(LogLevel.Error, "Unexpected error when trying to delete study: {0} on partition {1}",
                                  StorageLocation.StudyInstanceUid, Partition.Description);
                 }
-                else
-                    updateContext.Commit();
             }
         }
 

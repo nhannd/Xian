@@ -289,7 +289,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 
 
                 Platform.Log(LogLevel.Debug, "Saving {0}", destPath);
-                SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file);
+                SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file, false);
                 processor.AddCommand(saveCommand);
                 if (uid != null)
                 {

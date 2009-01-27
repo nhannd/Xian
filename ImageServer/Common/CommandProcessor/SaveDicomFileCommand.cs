@@ -42,25 +42,38 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private readonly string _path;
         private string _backupPath;
 		private readonly DicomFile _file;
+		private readonly bool _failOnExists;
+		private bool _fileSaved = false;
 		#endregion
 
-		public SaveDicomFileCommand(string path, DicomFile file )
+		public SaveDicomFileCommand(string path, DicomFile file, bool failOnExists)
 			: base("Save DICOM Message", true)
 		{
 			Platform.CheckForNullReference(path, "File name");
 			Platform.CheckForNullReference(file, "Dicom File object");
 
 			_path = path;
-			_file = file;            
+			_file = file;
+			_failOnExists = failOnExists;
 		}
 
 	    private void Backup()
 	    {
             if (File.Exists(_path))
             {
-                Random random = new Random();
-                _backupPath = String.Format("{0}.bak.{1}", _path, random.Next()); 
-                File.Copy(_path, _backupPath);
+				if (_failOnExists)
+					throw new ApplicationException(String.Format("DICOM File unexpectedly already exists: {0}",_path));
+				try
+				{
+					Random random = new Random();
+					_backupPath = String.Format("{0}.bak.{1}", _path, random.Next());
+					File.Copy(_path, _backupPath);
+				}
+				catch (IOException)
+				{
+					_backupPath = null;
+					throw;
+				}
             }
 	    }
 
@@ -71,11 +84,12 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 Backup();
 
             _file.Save(_path, DicomWriteOptions.Default);
+	    	_fileSaved = true;
 		}
 
 		protected override void OnUndo()
 		{
-            if (File.Exists(_path)) 
+            if (File.Exists(_path) && _fileSaved) 
                 File.Delete(_path); 
             
             if (false==String.IsNullOrEmpty(_backupPath) && File.Exists(_backupPath))

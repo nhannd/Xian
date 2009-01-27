@@ -562,7 +562,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
                         _updatedSopList.Add(instance);
 
-                        newStudyXml.AddFile(file);
+						long fileSize = 0;
+						if (File.Exists(file.Filename))
+						{
+							FileInfo finfo = new FileInfo(file.Filename);
+
+							fileSize = finfo.Length;
+						}
+                        newStudyXml.AddFile(file, fileSize);
 
                         Platform.Log(LogLevel.Info, "SOP {0} updated [{1} of {2}].", instance.SopInstanceUid, _updatedSopList.Count, _totalSopCount);
                     }
@@ -629,7 +636,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                     // overwrite it
                 }
 
-                SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file);
+                SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file, false);
                 filesystemUpdateProcessor.AddCommand(saveCommand);
 
                 if (!filesystemUpdateProcessor.Execute())

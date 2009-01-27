@@ -53,6 +53,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         private readonly SopClass _sopClass = null;
         private readonly TransferSyntax _transferSyntax = null;
     	private string _sourceFileName = null;
+    	private long _fileSize = 0;
 
 		private BaseInstanceXml _baseInstance = null;
 		private XmlElement _cachedElement = null;
@@ -89,6 +90,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 				_sourceFileName = value;
 			}
+    	}
+
+    	public long FileSize
+    	{
+			get { return _fileSize; }
+			set { _fileSize = value; }
     	}
 
 		public TransferSyntax TransferSyntax
@@ -175,6 +182,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			if (instanceNode.Attributes["SourceFileName"] != null)
 			{
 				_sourceFileName = instanceNode.Attributes["SourceFileName"].Value;
+			}
+
+			if (instanceNode.Attributes["FileSize"] != null)
+			{
+				long.TryParse(instanceNode.Attributes["FileSize"].Value, out _fileSize);
 			}
 
         	// This should never happen
@@ -419,6 +431,13 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 					string fileName = SecurityElement.Escape(_sourceFileName);
 					sourceFileNameAttribute.Value = fileName;
 					instance.Attributes.Append(sourceFileNameAttribute);
+				}
+
+				if (_fileSize != 0)
+				{
+					XmlAttribute fileSize = theDocument.CreateAttribute("FileSize");
+					fileSize.Value = _fileSize.ToString();
+					instance.Attributes.Append(fileSize);
 				}
             }
 

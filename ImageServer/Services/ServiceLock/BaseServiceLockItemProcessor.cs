@@ -187,6 +187,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 				FileInfo finfo = new FileInfo(file);
 				folderSize += finfo.Length;
 			}
+			file = Path.Combine(studyFolder, location.StudyInstanceUid + ".xml.gz");
+			if (File.Exists(file))
+			{
+				FileInfo finfo = new FileInfo(file);
+				folderSize += finfo.Length;
+			}
 
 			StudyXml study = LoadStudyXml(location);
 			foreach (SeriesXml series in study)
@@ -195,13 +201,18 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 
 				foreach (InstanceXml instance in series)
 				{
-					file = Path.Combine(seriesFolder, String.Format("{0}.dcm", instance.SopInstanceUid));
-					if (File.Exists(file))
+					if (instance.FileSize != 0)
 					{
-						FileInfo finfo = new FileInfo(file);
-						// estimate!!
-						folderSize += finfo.Length * series.NumberOfSeriesRelatedInstances;
-						break;
+						folderSize += instance.FileSize;
+					}
+					else
+					{
+						file = Path.Combine(seriesFolder, String.Format("{0}.dcm", instance.SopInstanceUid));
+						if (File.Exists(file))
+						{
+							FileInfo finfo = new FileInfo(file);
+							folderSize += finfo.Length;
+						}
 					}
 				}
 			}

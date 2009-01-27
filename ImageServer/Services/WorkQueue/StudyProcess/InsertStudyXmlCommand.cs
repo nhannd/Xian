@@ -119,8 +119,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         protected override void OnExecute()
         {
+			long fileSize = 0;
+			if (File.Exists(_file.Filename))
+			{
+				FileInfo finfo = new FileInfo(_file.Filename);
+
+				fileSize = finfo.Length;
+			}
+
             // Setup the insert parameters
-            if (false == _stream.AddFile(_file))
+            if (false == _stream.AddFile(_file, fileSize))
             {
                 Platform.Log(LogLevel.Error, "Unexpected error adding SOP to XML Study Descriptor for file {0}",
                              _file.Filename);

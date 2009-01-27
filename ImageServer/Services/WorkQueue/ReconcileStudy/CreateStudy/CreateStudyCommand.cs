@@ -360,7 +360,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                 }
 
 
-                SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file);
+                SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file, false);
                 processor.AddCommand(saveCommand);
                 processor.AddCommand(new UpdateWorkQueueCommand(file, destStudyStorage, extension, false));
 

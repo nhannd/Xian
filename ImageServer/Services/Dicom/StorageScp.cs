@@ -303,7 +303,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     }
 
                     DicomFile file = ConvertToDicomFile(message, path, association);
-                    processor.AddCommand(new SaveDicomFileCommand(path, file));
+                    processor.AddCommand(new SaveDicomFileCommand(path, file,true));
 
                     processor.AddCommand(new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
 

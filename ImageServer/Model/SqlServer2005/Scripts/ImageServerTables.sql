@@ -1006,7 +1006,7 @@ CREATE TABLE [dbo].[PartitionArchive](
 ) ON [STATIC]
 END
 GO
-/****** Object:  Table [dbo].[RestoreQueue]    Script Date: 10/14/2008 23:27:23 ******/
+/****** Object:  Table [dbo].[RestoreQueue]    Script Date: 01/23/2009 16:59:12 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1025,7 +1025,7 @@ CREATE TABLE [dbo].[RestoreQueue](
  CONSTRAINT [PK_RestoreQueue] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
 ) ON [QUEUES]
 END
 GO
@@ -1037,7 +1037,13 @@ CREATE CLUSTERED INDEX [IXC_RestoreQueue] ON [dbo].[RestoreQueue]
 	[ScheduledTime] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
 GO
-/****** Object:  Table [dbo].[ArchiveStudyStorage]    Script Date: 07/08/2008 18:10:25 ******/
+CREATE NONCLUSTERED INDEX [IX_RestoreQueue] ON [dbo].[RestoreQueue] 
+(
+	[StudyStorageGUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
+GO
+
+/****** Object:  Table [dbo].[ArchiveStudyStorage]    Script Date: 01/23/2009 16:59:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1051,14 +1057,20 @@ CREATE TABLE [dbo].[ArchiveStudyStorage](
 	[ServerTransferSyntaxGUID] [uniqueidentifier] NOT NULL,
 	[ArchiveTime] [datetime] NOT NULL,
 	[ArchiveXml] [xml] NULL,
- CONSTRAINT [PK_StorageArchive] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_StorageArchive] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
 ) ON [PRIMARY]
 END
 GO
-/****** Object:  Table [dbo].[ArchiveQueue]    Script Date: 10/14/2008 23:27:20 ******/
+CREATE CLUSTERED INDEX [IXC_ArchiveStudyStorage] ON [dbo].[ArchiveStudyStorage] 
+(
+	[StudyStorageGUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
+
+/****** Object:  Table [dbo].[ArchiveQueue]    Script Date: 01/23/2009 16:59:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1088,6 +1100,11 @@ CREATE CLUSTERED INDEX [IXC_ArchiveQueue] ON [dbo].[ArchiveQueue]
 (
 	[ScheduledTime] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
+GO
+CREATE NONCLUSTERED INDEX [IX_ArchiveQueue] ON [dbo].[ArchiveQueue] 
+(
+	[StudyStorageGUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
 GO
 
 
@@ -1141,7 +1158,7 @@ SET ANSI_PADDING OFF
 
 
 GO
-/****** Object:  Table [dbo].[Alert]    Script Date: 08/01/2008 12:35:53 ******/
+/****** Object:  Table [dbo].[Alert]    Script Date: 01/23/2009 16:59:11 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1151,7 +1168,7 @@ GO
 IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[Alert]') AND type in (N'U'))
 BEGIN
 CREATE TABLE [dbo].[Alert](
-	[GUID] [uniqueidentifier] NOT NULL,
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_Alert_GUID]  DEFAULT (newid()),
 	[InsertTime] [datetime] NOT NULL,
 	[Component] [nvarchar](50)  NOT NULL,
 	[TypeCode] [int] NOT NULL,
@@ -1162,7 +1179,7 @@ CREATE TABLE [dbo].[Alert](
  CONSTRAINT [PK_SystemAlert] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
-)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 END
 GO
@@ -1192,13 +1209,13 @@ GO
 SET ANSI_PADDING OFF
 GO
 
-/****** Object:  Table [dbo].[StudyIntegrityQueue]    Script Date: 09/08/2008 10:46:53 ******/
+/****** Object:  Table [dbo].[StudyIntegrityQueue]    Script Date: 01/23/2009 16:59:12 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[StudyIntegrityQueue](
-	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_StudyIntegrityQueue_GUID]  DEFAULT (newid()),
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_StudyIntegrityQueue_GUID]  DEFAULT (newid()),
 	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
 	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_StudyIntegrityQueue_InsertTime]  DEFAULT (getdate()),
@@ -1209,12 +1226,16 @@ CREATE TABLE [dbo].[StudyIntegrityQueue](
  CONSTRAINT [PK_StudyIntegrityQueue] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
-)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
+) ON [QUEUES]
+GO
+CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueue] ON [dbo].[StudyIntegrityQueue] 
+(
+	[StudyStorageGUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
 GO
 
-/****** Object:  Table [dbo].[StudyIntegrityQueueUid]    Script Date: 09/05/2008 11:43:57 ******/
+/****** Object:  Table [dbo].[StudyIntegrityQueueUid]    Script Date: 01/23/2009 16:59:12 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1222,38 +1243,50 @@ GO
 SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[StudyIntegrityQueueUid](
-	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_StudyIntegrityQueueUid_GUID]  DEFAULT (newid()),
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_StudyIntegrityQueueUid_GUID]  DEFAULT (newid()),
 	[StudyIntegrityQueueGUID] [uniqueidentifier] NOT NULL,
 	[SeriesDescription] [nvarchar](64),
 	[SeriesInstanceUid] [varchar](64)  NOT NULL,
 	[SopInstanceUid] [varchar](64)  NOT NULL,
- CONSTRAINT [PK_StudyIntegrityQueueUid] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_StudyIntegrityQueueUid] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
-)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
+) ON [QUEUES]
+GO
+SET ANSI_PADDING OFF
+GO
+CREATE CLUSTERED INDEX [IX_StudyIntegrityQueueUid] ON [dbo].[StudyIntegrityQueueUid] 
+(
+	[StudyIntegrityQueueGUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
 GO
 
 
-/****** Object:  Table [dbo].[StudyHistory]    Script Date: 09/26/2008 16:50:35 ******/
+/****** Object:  Table [dbo].[StudyHistory]    Script Date: 01/23/2009 16:59:12 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[StudyHistory](
-	[GUID] [uniqueidentifier] NOT NULL CONSTRAINT [DF_StudyHistory_GUID]  DEFAULT (newid()),
+	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_StudyHistory_GUID]  DEFAULT (newid()),
 	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_StudyHistory_InsertTime]  DEFAULT (getdate()),
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
 	[DestStudyStorageGUID] [uniqueidentifier] NULL,
 	[StudyHistoryTypeEnum] [smallint] NOT NULL,
 	[StudyData] [xml] NOT NULL,
 	[ChangeDescription] [xml] NULL,
- CONSTRAINT [PK_StudyHistory] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_StudyHistory] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
-)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
 ) ON [PRIMARY]
+GO
+CREATE CLUSTERED INDEX [IX_StudyHistory] ON [dbo].[StudyHistory] 
+(
+	[StudyStorageGUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [PRIMARY]
+GO
 
 
 /****** Object:  Table [dbo].[StudyHistoryTypeEnum]    Script Date: 09/26/2008 23:49:11 ******/

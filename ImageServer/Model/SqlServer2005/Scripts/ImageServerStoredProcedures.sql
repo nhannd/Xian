@@ -1668,24 +1668,6 @@ BEGIN
 	FROM Study 
 	WHERE StudyInstanceUid = @StudyInstanceUid and ServerPartitionGUID = @ServerPartitionGUID
 
-	-- Begin the transaction, keep all the deletes in a single transaction
-	BEGIN TRANSACTION
-
-	-- Delete the Study / Series / RequestAttributes tables, reduce counts or delete from Patient table
-	DELETE FROM RequestAttributes 
-	WHERE SeriesGUID IN (select SeriesGUID from Series where StudyGUID = @StudyGUID)
-
-	DELETE FROM Series
-	WHERE StudyGUID = @StudyGUID
-
-	DELETE FROM Study
-	WHERE GUID = @StudyGUID
-
-	UPDATE Patient
-	SET	NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies -1,
-		NumberOfPatientRelatedSeries = NumberOfPatientRelatedSeries - @NumberOfStudyRelatedSeries,
-		NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances - @NumberOfStudyRelatedInstances
-	WHERE GUID = @PatientGUID
 	
     -- Now cleanup the more management related tables.
 	DELETE FROM FilesystemQueue 
@@ -1721,10 +1703,24 @@ BEGIN
 	DELETE FROM StudyStorage
 	WHERE GUID = @StudyStorageGUID
 
+	-- Delete the Study / Series / RequestAttributes tables, reduce counts or delete from Patient table
+	DELETE FROM RequestAttributes 
+	WHERE SeriesGUID IN (select SeriesGUID from Series where StudyGUID = @StudyGUID)
+
+	DELETE FROM Series
+	WHERE StudyGUID = @StudyGUID
+
+	DELETE FROM Study
+	WHERE GUID = @StudyGUID
+
+	UPDATE Patient
+	SET	NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies -1,
+		NumberOfPatientRelatedSeries = NumberOfPatientRelatedSeries - @NumberOfStudyRelatedSeries,
+		NumberOfPatientRelatedInstances = NumberOfPatientRelatedInstances - @NumberOfStudyRelatedInstances
+	WHERE GUID = @PatientGUID
+	
 	UPDATE dbo.ServerPartition SET StudyCount=StudyCount-1
 	WHERE GUID=@ServerPartitionGUID
-
-	COMMIT TRANSACTION
 
 	-- Do afterwards, in case multiple studies for the same patient are being deleted at once.
 	SELECT @NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies 

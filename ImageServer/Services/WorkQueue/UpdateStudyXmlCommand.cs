@@ -74,6 +74,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             // Setup the insert parameters
         	string seriesInstanceUid = _file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
         	string sopinstanceUid = _file.MediaStorageSopInstanceUid;
+        	long fileSize = 0;
+			if (File.Exists(_file.Filename))
+			{
+				FileInfo finfo = new FileInfo(_file.Filename);
+
+				fileSize = finfo.Length;
+			}
 
 			// Save the collection for undo purposes
         	SeriesXml seriesXml = _stream[seriesInstanceUid];
@@ -91,7 +98,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 Platform.Log(LogLevel.Warn, "SOP was unexpectedly not in XML Study Descriptor for file: {0}",
                              _file.Filename);
             }
-            if (false == _stream.AddFile(_file))
+        	if (false == _stream.AddFile(_file, fileSize))
             {
                 Platform.Log(LogLevel.Error, "Unexpected error adding SOP to XML Study Descriptor for file {0}",
                              _file.Filename);
@@ -113,7 +120,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 			if (_saveCollection != null)
 			{
 				DicomFile file = new DicomFile(_file.Filename, new DicomAttributeCollection(), _saveCollection);
-				_stream.AddFile(file);
+				long fileSize = 0;
+				if (File.Exists(file.Filename))
+				{
+					FileInfo finfo = new FileInfo(file.Filename);
+					fileSize = finfo.Length;
+				}
+				_stream.AddFile(file, fileSize);
 			}
             WriteStudyStream(
                 Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"),
