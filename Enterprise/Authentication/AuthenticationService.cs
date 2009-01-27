@@ -236,7 +236,9 @@ namespace ClearCanvas.Enterprise.Authentication
                 new UserSearchCriteria[]{criteria}, new SearchResultPage(0, 1), true);
 
             User user = CollectionUtils.FirstElement(users);
-            if(user == null)
+
+			// bug #3701: to ensure the username match is case-sensitive, we need to compare the stored name to the supplied name
+            if(user == null || user.UserName != userName)
             {
                 // non-existant username
                 // the error message is deliberately vague
