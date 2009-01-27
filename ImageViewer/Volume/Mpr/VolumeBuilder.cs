@@ -48,6 +48,63 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		#region Public methods
 
 		//ggerade ToDo: Add way to validate that frame collection meets our criteria.
+		//ggerade ToRes: What should this interface be like? Some things to think about:
+		//  - Should give a reason for failure, hints or something
+		//	- Perhaps need a first pass that throws out collections that just won't work at all?
+		//	- Allow for orientation and spacing allowable tolerances
+		//  - Should have a way to add smarts to try to correct (not validate, but prepare maybe?) would need
+		//		to tie that into a UI that allowed user to have a say. So need a inclusion/exclusion state or something?
+		//  - Would be nice to have smarts to group likely candidates, maybe allow multiple MPRs to load. Need a volume
+		//		selection shelf or something.
+		//  - How to deal with overlaps? "holes" in the set? Uneven spacing?
+		//
+		// As a first prototype we just have a yay or nay interface with a simple reason to show to the user
+		public static bool ValidateFrames(List<Frame> frames, out string reason)
+		{
+			// Ensure we have at least 3? frames
+			if (frames.Count < 3)
+			{
+				reason = "Display Set must have at least 3 frames";
+				return false;
+			}
+
+			// Ensure all frames have the same orientation
+			ImageOrientationPatient orient = frames[0].ImageOrientationPatient;
+			foreach (Frame frame in frames)
+			{
+				if (frame.ImageOrientationPatient.Equals(orient) == false)
+				{
+					reason = "Each image in Display Set must have same orientation";
+					return false;
+				}
+			}
+
+			// Ensure all frames are equally spaced
+			frames.Sort(new SliceLocationComparer());
+			float spacing = 0;
+			Frame lastFrame = frames[0];
+			for (int i = 1; i < frames.Count; i++)
+			{
+				Frame currentFrame = frames[i];
+				float currentSpacing = CalcSpaceBetweenPlanes(currentFrame, lastFrame);
+				if (currentSpacing < 0.01f)
+				{
+					reason = "Two images are at same patient location, MPR requires evenly spaced images";
+					return false;
+				}
+				if (spacing == 0f)
+					spacing = currentSpacing;
+				if (currentSpacing != spacing)
+				{
+					reason = "Inconsistent spacing betweeen images, MPR requires evenly spaced images";
+					return false;
+				}
+				lastFrame = currentFrame;
+			}
+
+			reason = string.Empty;
+			return true;
+		}
 
 		public static Volume BuildVolume(List<Frame> frames)
 		{
@@ -204,16 +261,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (frames.Count < 2)
 				return 0.0f;
 
-			Frame slice1 = frames[0];
-			Frame slice2 = frames[1];
+			return CalcSpaceBetweenPlanes(frames[0], frames[1]);
+		}
 
-			Vector3D point1 = slice1.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
-			Vector3D point2 = slice2.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
+		private static float CalcSpaceBetweenPlanes(Frame frame1, Frame frame2)
+		{
+			Vector3D point1 = frame1.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
+			Vector3D point2 = frame2.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
 			Vector3D delta = point1 - point2;
 
-			float sliceSpacing = delta.Magnitude;
-
-			return sliceSpacing;
+			return delta.Magnitude;
 		}
 
 		private static Matrix ImageOrientationPatientToMatrix(ImageOrientationPatient orientation)

@@ -54,12 +54,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_imageViewer = new ImageViewerComponent(_layoutManager);
 		}
 
-		public MprLayoutManager LayoutManager
+		private MprLayoutManager LayoutManager
 		{
 			get { return _layoutManager; }
 		}
 
-		public ImageViewerComponent ImageViewer
+		private ImageViewerComponent ImageViewer
 		{
 			get { return _imageViewer; }
 		}
@@ -78,11 +78,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			IDesktopWindow desktop = Application.ActiveDesktopWindow;
 
+			string reasonValidateFailed;
+			if (VolumeBuilder.ValidateFrames(frames, out reasonValidateFailed) == false)
+			{
+				desktop.ShowMessageBox("Unable to load Data Set as MPR.\n\nReason:\n" + reasonValidateFailed, MessageBoxActions.Ok);
+				return;
+			}
+
 			BackgroundTask task = new BackgroundTask(
 				delegate(IBackgroundTaskContext context)
 					{
 						BackgroundTaskProgress prog = new BackgroundTaskProgress(10, "Creating Volume...");
 						context.ReportProgress(prog);
+
 						_volume = VolumeBuilder.BuildVolume(frames);
 
 						prog = new BackgroundTaskProgress(80, "Creating Sagittal, Coronal, Axial...");
@@ -160,58 +168,50 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_failedImages = 0;
 
 			bool userCancelled = false;
+			bool volumeFailed = false;
+			string reasonVolumeFailed=string.Empty;
 
-			if (desktop != null)
-			{
-				BackgroundTask task = new BackgroundTask(
-					delegate(IBackgroundTaskContext context)
+			BackgroundTask task = new BackgroundTask(
+				delegate(IBackgroundTaskContext context)
+					{
+						int percentComplete = 0;
+						for (int i = 0; i < files.Length; i++)
 						{
-							int percentComplete = 0;
-							for (int i = 0; i < files.Length; i++)
+							LoadLocalImage(files[i]);
+
+							percentComplete = (int)(((float)(i + 1) / files.Length) * 40);
+							string message1 = String.Format(SR.MessageFormatOpeningImages, i + 1, files.Length);
+
+							BackgroundTaskProgress progress = new BackgroundTaskProgress(percentComplete, message1);
+							context.ReportProgress(progress);
+
+							if (context.CancelRequested)
 							{
-								LoadLocalImage(files[i]);
-
-								percentComplete = (int)(((float)(i + 1) / files.Length) * 40);
-								string message1 = String.Format(SR.MessageFormatOpeningImages, i + 1, files.Length);
-
-								BackgroundTaskProgress progress = new BackgroundTaskProgress(percentComplete, message1);
-								context.ReportProgress(progress);
-
-								if (context.CancelRequested)
-								{
-									userCancelled = true;
-									break;
-								}
+								userCancelled = true;
+								break;
 							}
+						}
 
-							BackgroundTaskProgress prog = new BackgroundTaskProgress(percentComplete, "Creating Volume...");
-							context.ReportProgress(prog);
-							CreateVolumeLocalFrames();
+						BackgroundTaskProgress prog = new BackgroundTaskProgress(percentComplete, "Creating Volume...");
+						context.ReportProgress(prog);
 
-							prog = new BackgroundTaskProgress(90, "Creating Sagittal, Coronal, Axial...");
-							context.ReportProgress(prog);
-							CreateAndLoadSagittalDisplaySet(_volume);
-							CreateAndLoadCoronalDisplaySet(_volume);
-							CreateAndLoadAxialDisplaySet(_volume);
+						volumeFailed = ! VolumeBuilder.ValidateFrames(_localFrames, out reasonVolumeFailed);
+						if (volumeFailed)
+							return;
+						
+						_volume = VolumeBuilder.BuildVolume(_localFrames);
 
-							context.Complete(null);
-						}, true);
+						prog = new BackgroundTaskProgress(90, "Creating Sagittal, Coronal, Axial...");
+						context.ReportProgress(prog);
+						CreateAndLoadSagittalDisplaySet(_volume);
+						CreateAndLoadCoronalDisplaySet(_volume);
+						CreateAndLoadAxialDisplaySet(_volume);
 
-				ProgressDialog.Show(task, desktop, true, ProgressBarStyle.Blocks);
-				cancelled = userCancelled;
-			}
-			else
-			{
-				foreach (string file in files)
-					LoadLocalImage(file);
+						context.Complete(null);
+					}, true);
 
-				CreateVolumeLocalFrames();
-				CreateAndLoadSagittalDisplaySet(_volume);
-				CreateAndLoadCoronalDisplaySet(_volume);
-				CreateAndLoadAxialDisplaySet(_volume);
-
-				cancelled = false;
-			}
+			ProgressDialog.Show(task, desktop, true, ProgressBarStyle.Blocks);
+			cancelled = userCancelled;
 
 			if (_failedImages > 0)
 			{
@@ -220,6 +220,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				ex.TotalImages = _totalImages;
 				ex.FailedImages = _failedImages;
 				throw ex;
+			}
+
+			//ggerade: This all very ugly... probably going away anyways so I'm not worried about it
+			if (volumeFailed)
+			{
+				desktop.ShowMessageBox("Unable to load Data Set as MPR.\n\nReason:\n" + reasonVolumeFailed, MessageBoxActions.Ok);
+				cancelled = true;
 			}
 		}
 
@@ -249,11 +256,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		}
 
 		private readonly List<Frame> _localFrames = new List<Frame>();
-
-		private void CreateVolumeLocalFrames()
-		{
-			_volume = VolumeBuilder.BuildVolume(_localFrames);
-		}
 
 		#endregion
 
@@ -314,7 +316,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				_imageViewer.Dispose();
 				_layoutManager.Dispose();
-				_volume.Dispose();
+				if (_volume != null)
+					_volume.Dispose();
 			}
 		}
 
