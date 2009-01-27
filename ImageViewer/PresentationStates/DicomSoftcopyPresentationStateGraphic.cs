@@ -16,12 +16,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		public LayerGraphic this[string layerId]
 		{
-			get { return _layers[layerId]; }
+			get { return _layers[layerId.ToUpperInvariant()]; }
 		}
 
 		public bool HasLayer(string layerId)
 		{
-			return _layers.ContainsKey(layerId);
+			return _layers.ContainsKey(layerId.ToUpperInvariant());
 		}
 
 		public int Count
@@ -31,6 +31,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		public LayerGraphic AddLayer(string layerId)
 		{
+			layerId = layerId.ToUpperInvariant();
 			if (_layers.ContainsKey(layerId))
 				return _layers[layerId];
 
@@ -42,6 +43,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		public bool RemoveLayer(string layerId)
 		{
+			layerId = layerId.ToUpperInvariant();
 			if (!_layers.ContainsKey(layerId))
 				return false;
 
@@ -82,7 +84,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			private string _description;
 
 			internal LayerGraphic(string id) {
-				_id = id;
+				_id = id.ToUpperInvariant();
 			}
 
 			public string Id

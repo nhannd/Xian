@@ -1,4 +1,6 @@
 using System;
+using System.Drawing;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod.Macros;
 
 namespace ClearCanvas.Dicom.Iod.Sequences
@@ -107,6 +109,15 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		}
 
 		/// <summary>
+		/// Appends a value to the TextObjectSequence in the underlying collection. Type 1C.
+		/// </summary>
+		public void AppendTextObjectSequence(TextObjectSequenceItem text)
+		{
+			Platform.CheckForNullReference(text, "text");
+			base.DicomAttributeProvider[DicomTags.TextObjectSequence].AddSequenceItem(text.DicomSequenceItem);
+		}
+
+		/// <summary>
 		/// Gets or sets the value of GraphicObjectSequence in the underlying collection. Type 1C.
 		/// </summary>
 		public GraphicObjectSequenceItem[] GraphicObjectSequence
@@ -140,6 +151,14 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 
 				base.DicomAttributeProvider[DicomTags.GraphicObjectSequence].Values = result;
 			}
+		}
+
+		/// <summary>
+		/// Appends a value to the GraphicObjectSequence in the underlying collection. Type 1C.
+		/// </summary>
+		public void AppendGraphicObjectSequence(GraphicObjectSequenceItem graphic) {
+			Platform.CheckForNullReference(graphic, "graphic");
+			base.DicomAttributeProvider[DicomTags.GraphicObjectSequence].AddSequenceItem(graphic.DicomSequenceItem);
 		}
 
 		/// <summary>
@@ -198,62 +217,62 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 			/// </summary>
 			public string UnformattedTextValue
 			{
-				get { return base.DicomAttributeProvider[DicomTags.UnformattedTextValue].GetString(0, string.Empty); }
+				get { return base.DicomAttributeProvider[DicomTags.UnformattedTextValue].ToString(); }
 				set
 				{
 					if (string.IsNullOrEmpty(value))
 						throw new ArgumentNullException("value", "UnformattedTextValue is Type 1 Required.");
-					base.DicomAttributeProvider[DicomTags.UnformattedTextValue].SetString(0, value);
+					base.DicomAttributeProvider[DicomTags.UnformattedTextValue].SetStringValue(value);
 				}
 			}
 
 			/// <summary>
 			/// Gets or sets the value of BoundingBoxTopLeftHandCorner in the underlying collection. Type 1C.
 			/// </summary>
-			public double[] BoundingBoxTopLeftHandCorner
+			public PointF? BoundingBoxTopLeftHandCorner
 			{
 				get
 				{
-					double[] result = new double[2];
-					if (base.DicomAttributeProvider[DicomTags.BoundingBoxTopLeftHandCorner].TryGetFloat64(0, out result[0]))
-						if (base.DicomAttributeProvider[DicomTags.BoundingBoxTopLeftHandCorner].TryGetFloat64(0, out result[1]))
-							return result;
+					float[] result = new float[2];
+					if (base.DicomAttributeProvider[DicomTags.BoundingBoxTopLeftHandCorner].TryGetFloat32(0, out result[0]))
+						if (base.DicomAttributeProvider[DicomTags.BoundingBoxTopLeftHandCorner].TryGetFloat32(1, out result[1]))
+							return new PointF(result[0], result[1]);
 					return null;
 				}
 				set
 				{
-					if (value == null || value.Length != 2)
+					if (!value.HasValue)
 					{
 						base.DicomAttributeProvider[DicomTags.BoundingBoxTopLeftHandCorner] = null;
 						return;
 					}
-					base.DicomAttributeProvider[DicomTags.BoundingBoxTopLeftHandCorner].SetFloat64(0, value[0]);
-					base.DicomAttributeProvider[DicomTags.BoundingBoxTopLeftHandCorner].SetFloat64(1, value[1]);
+					base.DicomAttributeProvider[DicomTags.BoundingBoxTopLeftHandCorner].SetFloat32(0, value.Value.X);
+					base.DicomAttributeProvider[DicomTags.BoundingBoxTopLeftHandCorner].SetFloat32(1, value.Value.Y);
 				}
 			}
 
 			/// <summary>
 			/// Gets or sets the value of BoundingBoxBottomRightHandCorner in the underlying collection. Type 1C.
 			/// </summary>
-			public double[] BoundingBoxBottomRightHandCorner
+			public PointF? BoundingBoxBottomRightHandCorner
 			{
 				get
 				{
-					double[] result = new double[2];
-					if (base.DicomAttributeProvider[DicomTags.BoundingBoxBottomRightHandCorner].TryGetFloat64(0, out result[0]))
-						if (base.DicomAttributeProvider[DicomTags.BoundingBoxBottomRightHandCorner].TryGetFloat64(0, out result[1]))
-							return result;
+					float[] result = new float[2];
+					if (base.DicomAttributeProvider[DicomTags.BoundingBoxBottomRightHandCorner].TryGetFloat32(0, out result[0]))
+						if (base.DicomAttributeProvider[DicomTags.BoundingBoxBottomRightHandCorner].TryGetFloat32(1, out result[1]))
+							return new PointF(result[0], result[1]);
 					return null;
 				}
 				set
 				{
-					if (value == null || value.Length != 2)
+					if (!value.HasValue)
 					{
 						base.DicomAttributeProvider[DicomTags.BoundingBoxBottomRightHandCorner] = null;
 						return;
 					}
-					base.DicomAttributeProvider[DicomTags.BoundingBoxBottomRightHandCorner].SetFloat64(0, value[0]);
-					base.DicomAttributeProvider[DicomTags.BoundingBoxBottomRightHandCorner].SetFloat64(1, value[1]);
+					base.DicomAttributeProvider[DicomTags.BoundingBoxBottomRightHandCorner].SetFloat32(0, value.Value.X);
+					base.DicomAttributeProvider[DicomTags.BoundingBoxBottomRightHandCorner].SetFloat32(1, value.Value.Y);
 				}
 			}
 
@@ -277,25 +296,25 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 			/// <summary>
 			/// Gets or sets the value of AnchorPoint in the underlying collection. Type 1C.
 			/// </summary>
-			public double[] AnchorPoint
+			public PointF? AnchorPoint
 			{
 				get
 				{
-					double[] result = new double[2];
-					if (base.DicomAttributeProvider[DicomTags.AnchorPoint].TryGetFloat64(0, out result[0]))
-						if (base.DicomAttributeProvider[DicomTags.AnchorPoint].TryGetFloat64(0, out result[1]))
-							return result;
+					float[] result = new float[2];
+					if (base.DicomAttributeProvider[DicomTags.AnchorPoint].TryGetFloat32(0, out result[0]))
+						if (base.DicomAttributeProvider[DicomTags.AnchorPoint].TryGetFloat32(1, out result[1]))
+							return new PointF(result[0], result[1]);
 					return null;
 				}
 				set
 				{
-					if (value == null || value.Length != 2)
+					if (!value.HasValue)
 					{
 						base.DicomAttributeProvider[DicomTags.AnchorPoint] = null;
 						return;
 					}
-					base.DicomAttributeProvider[DicomTags.AnchorPoint].SetFloat64(0, value[0]);
-					base.DicomAttributeProvider[DicomTags.AnchorPoint].SetFloat64(1, value[1]);
+					base.DicomAttributeProvider[DicomTags.AnchorPoint].SetFloat32(0, value.Value.X);
+					base.DicomAttributeProvider[DicomTags.AnchorPoint].SetFloat32(1, value.Value.Y);
 				}
 			}
 
@@ -374,20 +393,30 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 			/// <summary>
 			/// Gets or sets the value of GraphicData in the underlying collection. Type 1.
 			/// </summary>
-			public double[] GraphicData
+			public PointF[] GraphicData
 			{
 				get
 				{
 					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.GraphicData];
 					if (attribute.IsEmpty || attribute.IsNull || attribute.Count == 0)
 						return null;
-					return (double[]) attribute.Values;
+					PointF[] points = new PointF[attribute.Count / 2];
+					float[] values = (float[]) attribute.Values;
+					for (int n = 0; n < points.Length; n++)
+						points[n] = new PointF(values[2*n], values[2*n + 1]);
+					return points;
 				}
 				set
 				{
-					if (value == null || value.Length != base.DicomAttributeProvider[DicomTags.GraphicData].Count)
+					if (value == null || value.Length == 0)
 						throw new ArgumentNullException("value", "GraphicData is Type 1 Required.");
-					base.DicomAttributeProvider[DicomTags.GraphicData].Values = value;
+					float[] floats = new float[2*value.Length];
+					for (int n = 0; n < value.Length; n++)
+					{
+						floats[2*n] = value[n].X;
+						floats[2*n + 1] = value[n].Y;
+					}
+					base.DicomAttributeProvider[DicomTags.GraphicData].Values = floats;
 				}
 			}
 
@@ -490,8 +519,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.10.5 (Table C.10-5)</remarks>
 		public enum AnchorPointVisibility
 		{
-			Yes,
-			No,
+			Y,
+			N,
 
 			/// <summary>
 			/// Represents the null value, which is equivalent to the unknown status.
@@ -523,8 +552,8 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 		/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.10.5 (Table C.10-5)</remarks>
 		public enum GraphicFilled
 		{
-			Yes,
-			No,
+			Y,
+			N,
 
 			/// <summary>
 			/// Represents the null value, which is equivalent to the unknown status.

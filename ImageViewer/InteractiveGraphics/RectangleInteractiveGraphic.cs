@@ -35,6 +35,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -42,6 +43,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// A interactive rectangular graphic.
 	/// </summary>
 	[Cloneable]
+	[DicomSerializableGraphicAnnotation(typeof(RectangleInteractiveGraphicAnnotationSerializer))]
 	public class RectangleInteractiveGraphic : BoundableInteractiveGraphic
 	{
 		/// <summary>

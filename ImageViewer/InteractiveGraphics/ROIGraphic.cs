@@ -39,6 +39,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -54,7 +55,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// By default, the callout line will snap to the
 	/// nearest point on the <see cref="InteractiveGraphic"/>.
 	/// </remarks>
-	
+	[DicomSerializableGraphicAnnotation(typeof(RoiGraphicAnnotationSerializer))]
 	[Cloneable]
 	public class RoiGraphic
 		: StandardStatefulCompositeGraphic, 

@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 			PresentationStateIdentificationModuleIod presentationStateIdentificationModule = new PresentationStateIdentificationModuleIod(this.DataSet);
 			presentationStateIdentificationModule.InitializeAttributes();
-			presentationStateIdentificationModule.ContentLabel = "A";
+			presentationStateIdentificationModule.ContentLabel = "AUTOPRBYCC";
 			presentationStateIdentificationModule.InstanceNumber = 1;
 			presentationStateIdentificationModule.PresentationCreationDateTime = DateTime.Now;
 		}

@@ -119,6 +119,12 @@
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
+    <Compile Include="InteractiveGraphics\CalloutGraphicAnnotationSerializer.cs" />
+    <Compile Include="InteractiveGraphics\EllipseInteractiveGraphicAnnotationSerializer.cs" />
+    <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphicAnnotationSerializer.cs" />
+    <Compile Include="InteractiveGraphics\RectangleInteractiveGraphicAnnotationSerializer.cs" />
+    <Compile Include="InteractiveGraphics\RoiGraphicAnnotationSerializer.cs" />
+    <Compile Include="PresentationStates\DicomGraphicAnnotation.cs" />
     <Compile Include="PresentationStates\DicomGrayscaleSoftcopyPresentationState.cs" />
     <Compile Include="PresentationStates\DicomSoftcopyPresentationStateBase.cs" />
     <Compile Include="PresentationStates\DicomSoftcopyPresentationState.cs" />
@@ -155,7 +161,7 @@
     <Compile Include="KeyObjects\KeyObjectSerializer.cs" />
     <Compile Include="KeyObjects\KeyObjectSelectionCodeSequences.cs" />
     <Compile Include="PresentationStates\DicomSoftcopyPresentationStateGraphic.cs" />
-    <Compile Include="PresentationStates\IPresentationStateSerializableGraphic.cs" />
+    <Compile Include="PresentationStates\DicomSerializableGraphicAnnotationAttribute.cs" />
     <Compile Include="PresentationStates\PresentationStateTestTool.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LoadStudyArgs.cs" />

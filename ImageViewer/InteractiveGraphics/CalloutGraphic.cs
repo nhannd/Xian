@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -48,6 +49,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// to some user defined point in the scene.
 	/// </remarks>
 	[Cloneable]
+	[DicomSerializableGraphicAnnotation(typeof(CalloutGraphicAnnotationSerializer))]
 	public class CalloutGraphic 
 		: StandardStatefulCompositeGraphic, IMemorable
 	{

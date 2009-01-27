@@ -37,6 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -44,6 +45,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// An interactive polyline graphic.
 	/// </summary>
 	[Cloneable]
+	[DicomSerializableGraphicAnnotation(typeof(PolyLineInteractiveGraphicAnnotationSerializer))]
 	public class PolyLineInteractiveGraphic : InteractiveGraphic
 	{
 		#region Private fields

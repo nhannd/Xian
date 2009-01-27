@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Drawing;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.Dicom.Iod.Modules;
@@ -52,10 +53,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 			foreach (DicomGrayscalePresentationImage image in imagesByList)
 			{
+				RectangleF displayedArea;
 				this.DeserializeSpatialTransform(iod.SpatialTransform, image);
-				this.DeserializeDisplayedArea(iod.DisplayedArea, image);
+				this.DeserializeDisplayedArea(iod.DisplayedArea, out displayedArea, image);
 				this.DeserializeGraphicLayer(iod.GraphicLayer, image);
-				this.DeserializeGraphicAnnotation(iod.GraphicAnnotation, image);
+				this.DeserializeGraphicAnnotation(iod.GraphicAnnotation, displayedArea, image);
 
 				image.Draw();
 			}

@@ -34,6 +34,7 @@ using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -41,6 +42,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// A interactive elliptical graphic.
 	/// </summary>
 	[Cloneable]
+	[DicomSerializableGraphicAnnotation(typeof(EllipseInteractiveGraphicAnnotationSerializer))]
 	public class EllipseInteractiveGraphic : BoundableInteractiveGraphic
 	{
 		/// <summary>

@@ -286,7 +286,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 						break;
 				}
 
-				displayedArea.PresentationPixelAspectRatio = image.Frame.PixelAspectRatio;
+				PixelAspectRatio pixelAspectRatio = image.Frame.PixelAspectRatio;
+				if (pixelAspectRatio == null || pixelAspectRatio.IsNull)
+					pixelAspectRatio = PixelAspectRatio.FromString(image.ImageSop[DicomTags.PixelAspectRatio].ToString());
+				if (pixelAspectRatio == null || pixelAspectRatio.IsNull)
+					pixelAspectRatio = new PixelAspectRatio(1, 1);
+				displayedArea.PresentationPixelAspectRatio = pixelAspectRatio;
+
 				displayedAreas.Add(displayedArea);
 			}
 			displayedAreaModule.DisplayedAreaSelectionSequence = displayedAreas.ToArray();
@@ -307,11 +313,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 		}
 
-		private static readonly int[] _spatialTransformRotationTranslation = new int[] { 0, 270, 180, 90, 0, 90, 180, 270, 180, 270, 0, 90, 180, 90, 0, 270 };
+		private static readonly int[] _spatialTransformRotationTranslation = new int[] {0, 270, 180, 90, 0, 90, 180, 270, 180, 270, 0, 90, 180, 90, 0, 270};
 
-		private static readonly string _roiGraphicLayerId = "ROIGraphicsS";
+		private static readonly string _roiGraphicLayerId = "ROIGRAPHICS";
 
-		protected void SerializeGraphicLayer(GraphicLayerModuleIod graphicLayerModule, IList<T> images) {
+		protected void SerializeGraphicLayer(GraphicLayerModuleIod graphicLayerModule, IList<T> images)
+		{
 			Dictionary<string, string> layerIndex = new Dictionary<string, string>();
 			List<GraphicLayerSequenceItem> layerSequences = new List<GraphicLayerSequenceItem>();
 
@@ -319,14 +326,14 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			foreach (T image in images)
 			{
 				DicomSoftcopyPresentationStateGraphic psGraphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, false);
-				if(psGraphic != null)
+				if (psGraphic != null)
 				{
 					foreach (DicomSoftcopyPresentationStateGraphic.LayerGraphic layerGraphic in psGraphic)
 					{
 						if (!layerIndex.ContainsKey(layerGraphic.Id))
 						{
 							GraphicLayerSequenceItem layerSequence = new GraphicLayerSequenceItem();
-							layerSequence.GraphicLayer = layerGraphic.Id;
+							layerSequence.GraphicLayer = layerGraphic.Id.ToUpperInvariant();
 							layerSequence.GraphicLayerDescription = layerGraphic.Description;
 							layerSequence.GraphicLayerOrder = order++;
 							layerSequence.GraphicLayerRecommendedDisplayCielabValue = layerGraphic.DisplayCIELabColor;
@@ -354,37 +361,41 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				}
 			}
 
-			if(layerSequences.Count > 0)
+			if (layerSequences.Count > 0)
 				graphicLayerModule.GraphicLayerSequence = layerSequences.ToArray();
 		}
 
-		protected void SerializeGraphicAnnotation(GraphicAnnotationModuleIod graphicAnnotationModule, IList<T> images) {
+		protected void SerializeGraphicAnnotation(GraphicAnnotationModuleIod graphicAnnotationModule, IList<T> images)
+		{
 			List<GraphicAnnotationSequenceItem> annotations = new List<GraphicAnnotationSequenceItem>();
 
-			foreach (T image in images) {
+			foreach (T image in images)
+			{
 				DicomSoftcopyPresentationStateGraphic psGraphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, false);
-				if (psGraphic != null) {
-					foreach (DicomSoftcopyPresentationStateGraphic.LayerGraphic layerGraphic in psGraphic) {
+				if (psGraphic != null)
+				{
+					foreach (DicomSoftcopyPresentationStateGraphic.LayerGraphic layerGraphic in psGraphic)
+					{
 						foreach (IGraphic graphic in layerGraphic.Graphics)
 						{
-							if(graphic is IPresentationStateSerializableGraphic)
+							GraphicAnnotationSequenceItem annotation = new GraphicAnnotationSequenceItem();
+							if (GraphicAnnotationSerializer.SerializeGraphic(graphic, annotation))
 							{
-								GraphicAnnotationSequenceItem annotation = new GraphicAnnotationSequenceItem();
-								((IPresentationStateSerializableGraphic)graphic).SerializeRoiGraphic(annotation);
-								annotation.GraphicLayer = layerGraphic.Id;
-								annotation.ReferencedImageSequence = new ImageSopInstanceReferenceMacro[]{CreateImageSopInstanceReference(image.Frame)};
+								annotation.GraphicLayer = layerGraphic.Id.ToUpperInvariant();
+								annotation.ReferencedImageSequence = new ImageSopInstanceReferenceMacro[] {CreateImageSopInstanceReference(image.Frame)};
 								annotations.Add(annotation);
 							}
 						}
 					}
 				}
 
-				foreach (IGraphic graphic in image.OverlayGraphics) {
-					if (graphic is IPresentationStateSerializableGraphic) {
-						GraphicAnnotationSequenceItem annotation = new GraphicAnnotationSequenceItem();
-						((IPresentationStateSerializableGraphic)graphic).SerializeRoiGraphic(annotation);
+				foreach (IGraphic graphic in image.OverlayGraphics)
+				{
+					GraphicAnnotationSequenceItem annotation = new GraphicAnnotationSequenceItem();
+					if (GraphicAnnotationSerializer.SerializeGraphic(graphic, annotation))
+					{
 						annotation.GraphicLayer = _roiGraphicLayerId;
-						annotation.ReferencedImageSequence = new ImageSopInstanceReferenceMacro[] { CreateImageSopInstanceReference(image.Frame) };
+						annotation.ReferencedImageSequence = new ImageSopInstanceReferenceMacro[] {CreateImageSopInstanceReference(image.Frame)};
 						annotations.Add(annotation);
 					}
 				}
@@ -393,8 +404,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			if (annotations.Count > 0)
 				graphicAnnotationModule.GraphicAnnotationSequence = annotations.ToArray();
 		}
-
-		
 
 		#endregion
 
@@ -439,13 +448,17 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		#region Deserialization of Presentation States
 
-		protected void DeserializeDisplayedArea(DisplayedAreaModuleIod dispAreaMod, T image)
+		protected void DeserializeDisplayedArea(DisplayedAreaModuleIod dispAreaMod, out RectangleF displayedArea, T image)
 		{
 			ISpatialTransform spatialTransform = image.SpatialTransform;
 			foreach (DisplayedAreaModuleIod.DisplayedAreaSelectionSequenceItem item in dispAreaMod.DisplayedAreaSelectionSequence)
 			{
 				if (item.ReferencedImageSequence[0].ReferencedSopInstanceUid == image.ImageSop.SopInstanceUID)
 				{
+					RectangleF displayRect = new RectangleF(item.DisplayedAreaTopLeftHandCorner, new Size(item.DisplayedAreaBottomRightHandCorner - new Size(item.DisplayedAreaTopLeftHandCorner)));
+					displayRect = RectangleUtilities.ConvertToPositiveRectangle(displayRect);
+					displayRect.Location = displayRect.Location - new SizeF(1, 1);
+
 					switch (item.PresentationSizeMode)
 					{
 						case DisplayedAreaModuleIod.PresentationSizeMode.Magnify:
@@ -457,9 +470,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 						case DisplayedAreaModuleIod.PresentationSizeMode.ScaleToFit:
 						case DisplayedAreaModuleIod.PresentationSizeMode.None:
 						default:
-							RectangleF displayRect = new RectangleF(item.DisplayedAreaTopLeftHandCorner, new Size(item.DisplayedAreaBottomRightHandCorner - new Size(item.DisplayedAreaTopLeftHandCorner)));
-							displayRect = RectangleUtilities.ConvertToPositiveRectangle(displayRect);
-							displayRect.Location = displayRect.Location - new SizeF(1, 1);
 							if (spatialTransform is IImageSpatialTransform && displayRect.Location == new PointF(0, 0) && displayRect.Size == new SizeF(image.ImageGraphic.Columns, image.ImageGraphic.Rows))
 							{
 								// if the display rect is the whole image, then take advantage of the built-in scale image to fit functionality
@@ -489,12 +499,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 					displayAreaTemplate.Color = Color.FromArgb(255, 0, 0);
 					displayAreaTemplate.LineStyle = LineStyle.Dot;
 					displayAreaTemplate.CoordinateSystem = CoordinateSystem.Source;
-					displayAreaTemplate.TopLeft = item.DisplayedAreaTopLeftHandCorner;
-					displayAreaTemplate.BottomRight = item.DisplayedAreaBottomRightHandCorner - new Size(1, 1);
+					displayAreaTemplate.TopLeft = displayRect.Location;
+					displayAreaTemplate.BottomRight = displayRect.Location + displayRect.Size;
 					displayAreaTemplate.ResetCoordinateSystem();
 #endif
+
+					displayedArea = displayRect;
+					return;
 				}
 			}
+			displayedArea = new RectangleF(0, 0, image.ImageGraphic.Columns, image.ImageGraphic.Rows);
 		}
 
 		protected void DeserializeSpatialTransform(SpatialTransformModuleIod module, T image)
@@ -540,7 +554,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 		}
 
-		protected void DeserializeGraphicAnnotation(GraphicAnnotationModuleIod module, T image)
+		protected void DeserializeGraphicAnnotation(GraphicAnnotationModuleIod module, RectangleF displayedArea, T image)
 		{
 			GraphicAnnotationSequenceItem[] annotationSequences = module.GraphicAnnotationSequence;
 			if (annotationSequences != null)
@@ -549,9 +563,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				foreach (GraphicAnnotationSequenceItem sequenceItem in annotationSequences)
 				{
 					ImageSopInstanceReferenceDictionary dictionary = new ImageSopInstanceReferenceDictionary(sequenceItem.ReferencedImageSequence);
-					if(dictionary.ReferencesFrame(image.ImageSop.SopInstanceUID, image.Frame.FrameNumber))
+					if (dictionary.ReferencesFrame(image.ImageSop.SopInstanceUID, image.Frame.FrameNumber))
 					{
-						
+						DicomGraphicAnnotation annotation = new DicomGraphicAnnotation(sequenceItem, displayedArea);
+						graphic[sequenceItem.GraphicLayer].Graphics.Add(annotation);
 					}
 				}
 			}
