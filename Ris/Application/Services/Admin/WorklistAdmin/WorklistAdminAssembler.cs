@@ -100,6 +100,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     delegate(OrderPriorityEnum p) { return EnumUtils.GetEnumValueInfo(p); });
             }
 
+			if (worklist.OrderingPractitionerFilter.IsEnabled)
+			{
+				ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
+				detail.OrderingPractitioners = CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary>(
+					worklist.OrderingPractitionerFilter.Values,
+					delegate(ExternalPractitioner p) { return assembler.CreateExternalPractitionerSummary(p, context); });
+			}
+
             if(worklist.PortableFilter.IsEnabled)
             {
                 detail.Portabilities = new List<bool>();
@@ -204,6 +212,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     delegate(EnumValueInfo value) { return EnumUtils.GetEnumValue<OrderPriorityEnum>(value, context); }));
             }
             worklist.OrderPriorityFilter.IsEnabled = worklist.OrderPriorityFilter.Values.Count > 0;
+
+			// ordering practitioners
+			worklist.OrderingPractitionerFilter.Values.Clear();
+			if(detail.OrderingPractitioners != null)
+			{
+				worklist.OrderingPractitionerFilter.Values.AddAll(CollectionUtils.Map<ExternalPractitionerSummary, ExternalPractitioner>(
+					detail.OrderingPractitioners,
+					delegate(ExternalPractitionerSummary p)
+					{
+						return context.Load<ExternalPractitioner>(p.PractitionerRef, EntityLoadFlags.Proxy);
+					}));
+			}
+        	worklist.OrderingPractitionerFilter.IsEnabled = worklist.OrderingPractitionerFilter.Values.Count > 0;
 
             // portable
             if(detail.Portabilities != null)

@@ -182,6 +182,14 @@ namespace ClearCanvas.Healthcare
     {
     }
 
+	/// <summary>
+	/// Defines a filter that limits worklist items based on a specified 
+	/// set of <see cref="ExternalPractitioner"/> values.
+	/// </summary>
+	public class WorklistPractitionerFilter : WorklistMultiValuedFilter<ExternalPractitioner>
+	{
+	}
+
     /// <summary>
     /// Defines a filter that limits worklist items to those procedures are either portable
     /// or non-portable, according to the <see cref="Procedure.Portable"/> property.

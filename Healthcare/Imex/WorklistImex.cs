@@ -51,6 +51,11 @@ namespace ClearCanvas.Healthcare.Imex
             [DataContract]
             public class MultiValuedFilterData<TValue> : FilterData
             {
+				public MultiValuedFilterData()
+				{
+					this.Values = new List<TValue>();
+				}
+
                 [DataMember]
                 public List<TValue> Values;
             }
@@ -79,6 +84,35 @@ namespace ClearCanvas.Healthcare.Imex
 
 				[DataMember]
 				public string Id;
+			}
+
+			[DataContract]
+			public class PractitionerData
+			{
+				public PractitionerData()
+				{
+
+				}
+
+				public PractitionerData(string familyName, string givenName, string licenseNumber, string billingNumber)
+				{
+					FamilyName = familyName;
+					GivenName = givenName;
+					LicenseNumber = licenseNumber;
+					BillingNumber = billingNumber;
+				}
+
+				[DataMember]
+				public string FamilyName;
+
+				[DataMember]
+				public string GivenName;
+
+				[DataMember]
+				public string LicenseNumber;
+
+				[DataMember]
+				public string BillingNumber;
 			}
 
             [DataContract]
@@ -185,6 +219,7 @@ namespace ClearCanvas.Healthcare.Imex
                     this.ProcedureTypeGroups = new MultiValuedFilterData<ProcedureTypeGroupData>();
                     this.Facilities = new FacilitiesFilterData();
                     this.OrderPriorities = new MultiValuedFilterData<EnumValueData>();
+					this.OrderingPractitioners = new MultiValuedFilterData<PractitionerData>();
                     this.PatientClasses = new MultiValuedFilterData<EnumValueData>();
 					this.PatientLocations = new MultiValuedFilterData<LocationData>();
                     this.Portable = new SingleValuedFilterData<bool>();
@@ -199,6 +234,9 @@ namespace ClearCanvas.Healthcare.Imex
 
                 [DataMember]
                 public MultiValuedFilterData<EnumValueData> OrderPriorities;
+
+				[DataMember]
+				public MultiValuedFilterData<PractitionerData> OrderingPractitioners;
 
                 [DataMember]
                 public MultiValuedFilterData<EnumValueData> PatientClasses;
@@ -296,7 +334,15 @@ namespace ClearCanvas.Healthcare.Imex
 
             ExportFilter(worklist.OrderPriorityFilter, data.Filters.OrderPriorities,
                 delegate(OrderPriorityEnum item) { return new WorklistData.EnumValueData(item.Code); });
-            ExportFilter(worklist.PatientClassFilter, data.Filters.PatientClasses,
+
+			ExportFilter(worklist.OrderingPractitionerFilter, data.Filters.OrderingPractitioners,
+				delegate(ExternalPractitioner item)
+				{
+					 return new WorklistData.PractitionerData(
+						 item.Name.FamilyName, item.Name.GivenName, item.LicenseNumber, item.BillingNumber);
+				});
+
+			ExportFilter(worklist.PatientClassFilter, data.Filters.PatientClasses,
                 delegate(PatientClassEnum item) { return new WorklistData.EnumValueData(item.Code); });
 			ExportFilter(worklist.PatientLocationFilter, data.Filters.PatientLocations,
 				delegate(Location item) { return new WorklistData.LocationData(item.Id); });
@@ -378,6 +424,26 @@ namespace ClearCanvas.Healthcare.Imex
                     IEnumBroker broker = context.GetBroker<IEnumBroker>();
                     return broker.Find<OrderPriorityEnum>(s.Code);
                 });
+
+			ImportFilter(
+				worklist.OrderingPractitionerFilter,
+				data.Filters.OrderingPractitioners,
+				delegate(WorklistData.PractitionerData s)
+				{
+					ExternalPractitionerSearchCriteria criteria = new ExternalPractitionerSearchCriteria();
+					criteria.Name.FamilyName.EqualTo(s.FamilyName);
+					criteria.Name.GivenName.EqualTo(s.GivenName);
+
+					// these criteria may not be provided (the data may not existed when exported),
+					// but if available, they help to ensure the correct practitioner is being mapped
+					if(!string.IsNullOrEmpty(s.BillingNumber))
+						criteria.BillingNumber.EqualTo(s.BillingNumber);
+					if(!string.IsNullOrEmpty(s.LicenseNumber))
+						criteria.LicenseNumber.EqualTo(s.LicenseNumber);
+
+					IExternalPractitionerBroker broker = context.GetBroker<IExternalPractitionerBroker>();
+					return CollectionUtils.FirstElement(broker.Find(criteria));
+				});
 
             ImportFilter(
                 worklist.PatientClassFilter,

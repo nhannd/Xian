@@ -63,6 +63,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._priority = new ClearCanvas.Desktop.View.WinForms.DropListPickerField();
 			this._patientClass = new ClearCanvas.Desktop.View.WinForms.DropListPickerField();
 			this._facilities = new ClearCanvas.Desktop.View.WinForms.DropListPickerField();
+			this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this.SuspendLayout();
 			// 
 			// _portable
@@ -113,10 +114,25 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._facilities.Size = new System.Drawing.Size(213, 40);
 			this._facilities.TabIndex = 7;
 			// 
+			// _orderingPractitioner
+			// 
+			this._orderingPractitioner.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._orderingPractitioner.AutoSize = true;
+			this._orderingPractitioner.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._orderingPractitioner.LabelText = "Ordering Practitioner";
+			this._orderingPractitioner.Location = new System.Drawing.Point(14, 211);
+			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
+			this._orderingPractitioner.Name = "_orderingPractitioner";
+			this._orderingPractitioner.Size = new System.Drawing.Size(213, 41);
+			this._orderingPractitioner.TabIndex = 11;
+			this._orderingPractitioner.Value = null;
+			// 
 			// WorklistFilterEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._orderingPractitioner);
 			this.Controls.Add(this._portable);
 			this.Controls.Add(this._patientClass);
 			this.Controls.Add(this._priority);
@@ -134,5 +150,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.DropListPickerField _priority;
         private ClearCanvas.Desktop.View.WinForms.DropListPickerField _patientClass;
 		private ClearCanvas.Desktop.View.WinForms.DropListPickerField _facilities;
+		private ClearCanvas.Ris.Client.View.WinForms.LookupField _orderingPractitioner;
     }
 }

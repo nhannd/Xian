@@ -37,8 +37,6 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 
@@ -87,6 +85,9 @@ namespace ClearCanvas.Ris.Client.Admin
         private readonly List<EnumValueInfo> _patientClassChoices;
         private ArrayList _selectedPortabilities;
 
+    	private ExternalPractitionerLookupHandler _orderingPractitionerLookupHandler;
+    	private ExternalPractitionerSummary _selectedOrderingPractitioner;
+
         private readonly WorklistAdminDetail _worklistDetail;
 
         /// <summary>
@@ -122,6 +123,13 @@ namespace ClearCanvas.Ris.Client.Admin
                 _selectedPortabilities.Add(_portableItem);
             if (_worklistDetail.Portabilities.Contains(false))
                 _selectedPortabilities.Add(_nonPortableItem);
+
+			_orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
+			if(_worklistDetail.OrderingPractitioners != null)
+			{
+				// GUI only allows 1 ordering practitioner - could change this in future if needed
+				_selectedOrderingPractitioner = CollectionUtils.FirstElement(_worklistDetail.OrderingPractitioners);
+			}
 
             base.Start();
         }
@@ -223,6 +231,25 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+    	public ILookupHandler OrderingPractitionerLookupHandler
+    	{
+			get { return _orderingPractitionerLookupHandler; }
+    	}
+
+    	public ExternalPractitionerSummary SelectedOrderingPractitioner
+    	{
+			get { return _selectedOrderingPractitioner; }
+			set
+			{
+				if(!Equals(value, _selectedOrderingPractitioner))
+				{
+					_selectedOrderingPractitioner = value;
+					this.Modified = true;
+					NotifyPropertyChanged("SelectedOrderingPractitioner");
+				}
+			}
+    	}
+
         public void ItemsAddedOrRemoved()
         {
             this.Modified = true;
@@ -242,6 +269,13 @@ namespace ClearCanvas.Ris.Client.Admin
 
             _worklistDetail.Portabilities = CollectionUtils.Map<object, bool>(_selectedPortabilities,
                 delegate(object item) { return item == _portableItem ? true : false; });
+
+			// GUI only allows 1 ordering practitioner - could change this in future if needed
+			_worklistDetail.OrderingPractitioners = new List<ExternalPractitionerSummary>();
+			if(_selectedOrderingPractitioner != null)
+			{
+				_worklistDetail.OrderingPractitioners.Add(_selectedOrderingPractitioner);
+			}
         }
     }
 }

@@ -114,7 +114,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         [DataMember]
         public List<EnumValueInfo> OrderPriorities;
 
-        [DataMember]
+		[DataMember]
+		public List<ExternalPractitionerSummary> OrderingPractitioners;
+		
+		[DataMember]
         public List<EnumValueInfo> PatientClasses;
 
 		[DataMember]

@@ -78,6 +78,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _portable.DataBindings.Add("Items", _component, "PortableChoices", true, DataSourceUpdateMode.Never);
             _portable.DataBindings.Add("CheckedItems", _component, "SelectedPortabilities", true,
                                          DataSourceUpdateMode.OnPropertyChanged);
-        }
+
+        	_orderingPractitioner.LookupHandler = _component.OrderingPractitionerLookupHandler;
+			_orderingPractitioner.DataBindings.Add("Value", _component, "SelectedOrderingPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
     }
 }

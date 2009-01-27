@@ -494,10 +494,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			{
 				query.Conditions.Add(new HqlCondition("v.CurrentLocation in elements(w.PatientLocationFilter.Values)"));
 			}
+			if (worklist.OrderingPractitionerFilter.IsEnabled)
+			{
+				query.Conditions.Add(new HqlCondition("o.OrderingPractitioner in elements(w.OrderingPractitionerFilter.Values)"));
+			}
 
             // if any of the above filters were applied, add a condition to specify w
             if (worklist.ProcedureTypeGroupFilter.IsEnabled || worklist.FacilityFilter.IsEnabled || worklist.OrderPriorityFilter.IsEnabled
-				|| worklist.PatientClassFilter.IsEnabled || worklist.PatientLocationFilter.IsEnabled)
+				|| worklist.PatientClassFilter.IsEnabled || worklist.PatientLocationFilter.IsEnabled
+				|| worklist.OrderingPractitionerFilter.IsEnabled)
             {
                 query.Froms.Add(new HqlFrom("Worklist", "w"));
                 query.Conditions.Add(new HqlCondition("w = ?", worklist));

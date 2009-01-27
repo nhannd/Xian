@@ -60,6 +60,14 @@
       </set>
     </component>
     
+    <component name="OrderingPractitionerFilter" class="WorklistPractitionerFilter">
+      <property name="IsEnabled" type="Boolean" column="OrderingPractitionerFilterIsEnabled_"/>
+      <set name="Values" table="WorklistOrderingPractitioner_" lazy="true">
+        <key column="WorklistOID_"/>
+        <many-to-many column="OrderingPractitionerOID_" class="ExternalPractitioner" fetch="join"/>
+      </set>
+    </component>
+
     <component name="PortableFilter" class="WorklistPortableFilter">
       <property name="IsEnabled" type="Boolean" column="PortableFilterIsEnabled_"/>
       <property name="Value" type="Boolean" column="PortableFilterValue_"/>
