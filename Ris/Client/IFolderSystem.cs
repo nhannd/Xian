@@ -14,6 +14,16 @@ namespace ClearCanvas.Ris.Client
 		#region Properties
 
 		/// <summary>
+		/// Gets a value indicating whether initialization of this folder system can be deferred.
+		/// </summary>
+		/// <remarks>
+		/// If the folder system displays a status message, such as a total item count, in the
+		/// title bar of the explorer, then deferring initialization is probably not a good idea,
+		/// since the title bar will remain empty until the folder system is initialized.
+		/// </remarks>
+		bool LazyInitialize { get; }
+
+		/// <summary>
 		/// Gets the desktop window of the folder explorer that is hosting this folder system.
 		/// </summary>
 		IDesktopWindow DesktopWindow { get; }

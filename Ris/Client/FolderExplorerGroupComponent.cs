@@ -181,7 +181,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					FolderExplorerComponent explorer = new FolderExplorerComponent(folderSystem);
 					folderSystem.SetContext(new FolderSystemContext(this, explorer, contentComponent));
-					explorer.FolderSystemInitialized += new EventHandler(FolderSystemInitializedEventHandler);
+					explorer.Initialized += new EventHandler(FolderSystemInitializedEventHandler);
 					_folderExplorerComponents.Add(folderSystem, explorer);
 
 					StackTabPage thisPage = new StackTabPage(
@@ -314,11 +314,18 @@ namespace ClearCanvas.Ris.Client
 			{
 				_selectedFolderExplorer = explorer;
 				NotifyPropertyChanged("SearchEnabled");
-				NotifyPropertyChanged("SearhMessage");
+				NotifyPropertyChanged("SearchMessage");
 				EventsHelper.Fire(_selectedFolderExplorerChanged, this, EventArgs.Empty);
 
 				// refresh folders in newly selected folder explorer
-				_selectedFolderExplorer.InvalidateFolders();
+				if(_selectedFolderExplorer.IsInitialized)
+				{
+					_selectedFolderExplorer.InvalidateFolders();
+				}
+				else
+				{
+					_selectedFolderExplorer.Initialize();
+				}
 			}
 		}
 
@@ -328,7 +335,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Handles the <see cref="FolderExplorerComponent.FolderSystemInitialized"/> event.
+		/// Handles the <see cref="FolderExplorerComponent.Initialized"/> event.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>

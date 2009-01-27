@@ -238,6 +238,15 @@ namespace ClearCanvas.Ris.Client
 			// nothing to do
 		}
 
+		public virtual bool LazyInitialize
+		{
+			get
+			{
+				// lazy initialize by default
+				return true;
+			}
+		}
+
 		public IDesktopWindow DesktopWindow
 		{
 			get { return _context.DesktopWindow; }

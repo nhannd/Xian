@@ -58,7 +58,9 @@ namespace ClearCanvas.Ris.Client
 		private readonly FolderTreeRoot _folderTreeRoot;
 		private FolderTreeNode _selectedTreeNode;
         private event EventHandler _selectedFolderChanged;
-    	private event EventHandler _folderSystemIntialized;
+    	private event EventHandler _intialized;
+    	private bool _isInitialized;
+    	private AsyncLoader _initializeLoader;
 
         private readonly IFolderSystem _folderSystem;
     	private Timer _folderInvalidateTimer;
@@ -85,39 +87,28 @@ namespace ClearCanvas.Ris.Client
     	}
 
 		/// <summary>
-		/// Invalidates all folders.
+		/// Gets a value indicating whether this folder explorer has already been initialized.
 		/// </summary>
-		internal void InvalidateFolders()
-		{
-			// invalidate all folders, and update starting at the root
-			_folderSystem.InvalidateFolders();
-		}
+    	internal bool IsInitialized
+    	{
+			get { return _isInitialized; }
+    	}
 
 		/// <summary>
-		/// Executes a search on this folder system.
+		/// Instructs the folder explorer to initialize (build the folder system).
 		/// </summary>
-		/// <param name="searchParams"></param>
-		internal void ExecuteSearch(SearchParams searchParams)
+		internal void Initialize()
 		{
-			if (_folderSystem.SearchEnabled)
-				_folderSystem.ExecuteSearch(searchParams);
-		}
+			// check already initialized
+			if (_isInitialized)
+				return;
 
-		/// <summary>
-		/// Occurs when asynchronous initialization of this folder system has completed.
-		/// </summary>
-		internal event EventHandler FolderSystemInitialized
-		{
-			add { _folderSystemIntialized += value; }
-			remove { _folderSystemIntialized -= value; }
-		}
+			// check for initialization in progress
+			if (_initializeLoader != null)
+				return;
 
-		#region Application Component overrides
-
-        public override void Start()
-        {
-			AsyncLoader loader = new AsyncLoader();
-			loader.Run(
+			_initializeLoader = new AsyncLoader();
+			_initializeLoader.Run(
 				delegate
 				{
 					_folderSystem.Initialize();
@@ -149,18 +140,67 @@ namespace ClearCanvas.Ris.Client
 						_folderInvalidateTimer.Start();
 
 						// notify that this folder system is now initialized
-						EventsHelper.Fire(_folderSystemIntialized, this, EventArgs.Empty);
+						_isInitialized = true;
+						EventsHelper.Fire(_intialized, this, EventArgs.Empty);
 					}
 					finally
 					{
-						loader.Dispose();
+						_initializeLoader.Dispose();
+						_initializeLoader = null;
 					}
 				});
-
-			base.Start();
 		}
 
-		public override void Stop()
+		/// <summary>
+		/// Invalidates all folders.
+		/// </summary>
+		internal void InvalidateFolders()
+		{
+			// check initialized
+			if (!_isInitialized)
+				return;
+
+			// invalidate all folders, and update starting at the root
+			_folderSystem.InvalidateFolders();
+		}
+
+		/// <summary>
+		/// Executes a search on this folder system.
+		/// </summary>
+		/// <param name="searchParams"></param>
+		internal void ExecuteSearch(SearchParams searchParams)
+		{
+			// check initialized
+			if (!_isInitialized)
+				return;
+
+			if (_folderSystem.SearchEnabled)
+				_folderSystem.ExecuteSearch(searchParams);
+		}
+
+		/// <summary>
+		/// Occurs when asynchronous initialization of this folder system has completed.
+		/// </summary>
+		internal event EventHandler Initialized
+		{
+			add { _intialized += value; }
+			remove { _intialized -= value; }
+		}
+
+		#region Application Component overrides
+
+        public override void Start()
+        {
+			// if the folder system needs immediate initialization, do that now
+			if(!_folderSystem.LazyInitialize)
+			{
+				Initialize();
+			}
+
+        	base.Start();
+        }
+
+    	public override void Stop()
 		{
 			if (_folderInvalidateTimer != null)
 			{

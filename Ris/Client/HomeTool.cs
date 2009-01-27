@@ -92,9 +92,9 @@ namespace ClearCanvas.Ris.Client
 	/// <summary>
 	/// A tool for launching a home page with a <see cref="WorklistItemPreviewComponent"/> as the preview component
 	/// </summary>
-	/// <typeparam name="TFolderSystemToolExtensionPoint">Specifies the extension point used to create the set of folder systems</typeparam>
-	public abstract class WorklistPreviewHomeTool<TFolderSystemToolExtensionPoint> : HomeTool
-		where TFolderSystemToolExtensionPoint : ExtensionPoint<IFolderSystem>, new()
+	/// <typeparam name="TFolderSystemExtensionPoint">Specifies the extension point used to create the set of folder systems</typeparam>
+	public abstract class WorklistPreviewHomeTool<TFolderSystemExtensionPoint> : HomeTool
+		where TFolderSystemExtensionPoint : ExtensionPoint<IFolderSystem>, new()
 	{
 		protected override IApplicationComponent  CreateComponent()
 		{
@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client
 
 		private List<IFolderSystem> GetFolderSystems()
 		{
-			return CollectionUtils.Cast<IFolderSystem>(new TFolderSystemToolExtensionPoint().CreateExtensions());
+			return CollectionUtils.Cast<IFolderSystem>(new TFolderSystemExtensionPoint().CreateExtensions());
 		}
 	}
 }
