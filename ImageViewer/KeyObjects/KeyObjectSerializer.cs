@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			set { _docTitle = value; }
 		}
 
-		public DicomFile Serialize()
+		public List<DicomFile> Serialize()
 		{
 			if (_frames.Count == 0)
 				throw new InvalidOperationException("Key object selection cannot be empty.");
@@ -94,8 +94,9 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			iod.KeyObjectDocument.InstanceNumber = 1;
 			iod.KeyObjectDocument.ContentDateTime = DateTime.Now;
 			iod.KeyObjectDocument.ReferencedRequestSequence = null;
-			//iod.KeyObjectDocument.CurrentRequestedProcedureEvidenceSequence; This is set later.
-			iod.KeyObjectDocument.IdenticalDocumentsSequence = null; //TODO: list all identical ko in other studies
+			
+			//TODO: list all identical ko in other studies
+			iod.KeyObjectDocument.IdenticalDocumentsSequence = null;
 
 			iod.SrDocumentContent.InitializeContainerAttributes();
 			iod.SrDocumentContent.ConceptNameCodeSequence = _docTitle;
@@ -178,7 +179,11 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 			dcf.MediaStorageSopClassUid = iod.SopCommon.SopClass.Uid;
 			dcf.MediaStorageSopInstanceUid = iod.SopCommon.SopInstanceUid;
-			return dcf;
+
+			//TODO: return a list of files.
+			List<DicomFile> files = new List<DicomFile>();
+			files.Add(dcf);
+			return files;
 		}
 
 		private static KeyObjectSelectionDocumentIod CreatePrototypeDocument(IDicomAttributeProvider source, IDicomAttributeProvider target)

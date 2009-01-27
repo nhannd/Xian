@@ -29,16 +29,13 @@
 
 #endregion
 
-using System.Collections.Generic;
+using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
-using System;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 {
@@ -47,238 +44,88 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
 	[KeyboardAction("create", "imageviewer-keyboard/CreateKeyImage", "Create", KeyStroke = XKeys.Space)]
 	[Tooltip("create", "TooltipCreateKeyImage")]
 	[IconSet("create", IconScheme.Colour, "Icons.CreateKeyImageToolSmall.png", "Icons.CreateKeyImageToolMedium.png", "Icons.CreateKeyImageToolLarge.png")]
-	[EnabledStateObserver("create", "CreateEnabled", "CreateEnabledChanged")]
-	[VisibleStateObserver("create", "CreateVisible", "CreateVisibleChanged")]
+	[EnabledStateObserver("create", "Enabled", "EnabledChanged")]
 
-	[MenuAction("delete", "imageviewer-contextmenu/MenuDeleteKeyImage", "Delete")]
-	[ButtonAction("delete", "global-toolbars/ToolbarKeyImages/ToolbarDeleteKeyImage", "Delete")]
-	[Tooltip("delete", "TooltipDeleteKeyImage")]
-	[IconSet("delete", IconScheme.Colour, "Icons.DeleteKeyImageToolSmall.png", "Icons.DeleteKeyImageToolMedium.png", "Icons.DeleteKeyImageToolLarge.png")]
-	[EnabledStateObserver("delete", "DeleteEnabled", "DeleteEnabledChanged")]
-	[VisibleStateObserver("delete", "DeleteVisible", "DeleteVisibleChanged")]
+	[ButtonAction("show", "global-toolbars/ToolbarKeyImages/ToolbarShowKeyImages", "Show")]
+	[Tooltip("show", "TooltipShowKeyImages")]
+	[IconSet("show", IconScheme.Colour, "Icons.ShowKeyImagesToolSmall.png", "Icons.ShowKeyImagesToolMedium.png", "Icons.ShowKeyImagesToolLarge.png")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class KeyImageTool : ImageViewerTool
+	internal class KeyImageTool : ImageViewerTool
 	{
 		#region Private Fields
 
-		private bool _createEnabled;
-		private bool _deleteEnabled;
-
-		private bool _createVisible;
-		private bool _deleteVisible;
-
-		private event EventHandler _createEnabledChanged;
-		private event EventHandler _deleteEnabledChanged;
-
-		private event EventHandler _createVisibleChanged;
-		private event EventHandler _deleteVisibleChanged;
-
-		private readonly Dictionary<string, DisplaySet> _keyImageDisplaySets;
+		private bool _enabled;
+		private event EventHandler _enabledChanged;
 
 		#endregion
 
 		public KeyImageTool()
 		{
-			_createEnabled = false;
-			_deleteEnabled = false;
-			_createVisible = false;
-			_deleteVisible = false;
-
-			_keyImageDisplaySets = new Dictionary<string, DisplaySet>();
 		}
 
-		#region Properties
-
-		public bool CreateEnabled
+		public bool Enabled
 		{
-			get { return _createEnabled; }
+			get { return _enabled; }
 			set
 			{
-				if (value != _createEnabled)
-				{
-					_createEnabled = value;
-					EventsHelper.Fire(_createEnabledChanged, this, EventArgs.Empty);
-				}
+				if (_enabled == value)
+					return;
+
+				_enabled = value;
+				EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
 			}
 		}
 
-		public bool DeleteEnabled
+		public event EventHandler EnabledChanged
 		{
-			get { return _deleteEnabled; }
-			set
-			{
-				if (value != _deleteEnabled)
-				{
-					_deleteEnabled = value;
-					EventsHelper.Fire(_deleteEnabledChanged, this, EventArgs.Empty);
-				}
-			}
+			add { _enabledChanged += value; }
+			remove { _enabledChanged -= value; }
 		}
 
-		public bool CreateVisible
+		#region Overrides
+
+		public override void Initialize()
 		{
-			get { return _createVisible; }
-			set
-			{
-				if (value != _createVisible)
-				{
-					_createVisible = value;
-					EventsHelper.Fire(_createVisibleChanged, this, EventArgs.Empty);
-				}
-			}
+			base.Initialize();
+			KeyImageClipboard.OnViewerOpened(Context.Viewer);
+			Enabled = false;
 		}
 
-		public bool DeleteVisible
+		protected override void Dispose(bool disposing)
 		{
-			get { return _deleteVisible; }
-			set
-			{
-				if (value != _deleteVisible)
-				{
-					_deleteVisible = value;
-					EventsHelper.Fire(_deleteVisibleChanged, this, EventArgs.Empty);
-				}
-			}
+			if (Context != null)
+				KeyImageClipboard.OnViewerClosed(Context.Viewer);
+
+			base.Dispose(disposing);
 		}
 
-		#endregion
-
-		#region Events
-
-		public event EventHandler CreateEnabledChanged
+		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			add { _createEnabledChanged += value; }
-			remove { _createEnabledChanged -= value; }
+			Enabled = e.SelectedPresentationImage is IImageSopProvider;
 		}
 
-		public event EventHandler DeleteEnabledChanged
+		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
-			add { _deleteEnabledChanged += value; }
-			remove { _deleteEnabledChanged -= value; }
-		}
-
-		public event EventHandler CreateVisibleChanged
-		{
-			add { _createVisibleChanged += value; }
-			remove { _createVisibleChanged -= value; }
-		}
-
-		public event EventHandler DeleteVisibleChanged
-		{
-			add { _deleteVisibleChanged += value; }
-			remove { _deleteVisibleChanged -= value; }
+			Enabled = e.SelectedTile != null && e.SelectedTile.PresentationImage is IImageSopProvider;
 		}
 
 		#endregion
 
 		#region Methods
 
-		private static bool IsKeyImageDisplaySet(IDisplaySet displaySet)
+		public void Show()
 		{
-			return displaySet.Uid.StartsWith("KEY:");
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			//Before disposing, publish the key images to the default servers.
-			base.Dispose(disposing);
-		}
-
-		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
-		{
-			base.OnTileSelected(sender, e);
-
-			if (e.SelectedTile.PresentationImage == null)
-			{
-				DeleteVisible = false;
-				DeleteEnabled = false;
-				CreateEnabled = false;
-				CreateVisible = false;
-			}
-			else
-			{
-				IDisplaySet displaySet = e.SelectedTile.PresentationImage.ParentDisplaySet;
-				if (IsKeyImageDisplaySet(displaySet))
-				{
-					DeleteEnabled = true;
-					DeleteVisible = true;
-					CreateEnabled = false;
-					CreateVisible = false;
-				}
-				else
-				{
-					IImageSopProvider provider = e.SelectedTile.PresentationImage as IImageSopProvider;
-					if (provider != null && provider.ImageSop.DataSource.IsStored)
-					{
-						DeleteEnabled = false;
-						DeleteVisible = false;
-						CreateEnabled = true;
-						CreateVisible = true;
-					}
-					else
-					{
-						DeleteEnabled = false;
-						DeleteVisible = false;
-						CreateEnabled = false;
-						CreateVisible = true;
-					}
-				}
-			}
+			KeyImageClipboard.Show();
 		}
 
 		public void Create()
 		{
-			if (base.SelectedPresentationImage == null)
-				return;
-
-			IImageSopProvider sopProvider = base.SelectedPresentationImage as IImageSopProvider;
-			if (sopProvider == null)
-				return;
-
-			DisplaySet displaySet;
-			if (_keyImageDisplaySets.ContainsKey(sopProvider.ImageSop.StudyInstanceUID))
-			{
-				displaySet = _keyImageDisplaySets[sopProvider.ImageSop.StudyInstanceUID];
-			}
-			else
-			{
-				string name = SR.LabelKeyImageCurrentDisplaySet;
-				string uid = String.Format("KEY:{0}", sopProvider.ImageSop.StudyInstanceUID);
-				displaySet = new DisplaySet(name, uid);
-				_keyImageDisplaySets[sopProvider.ImageSop.StudyInstanceUID] = displaySet;
-				
-				base.SelectedPresentationImage.ParentDisplaySet.ParentImageSet.DisplaySets.Add(displaySet);
-			}
-
-			displaySet.PresentationImages.Add(base.SelectedPresentationImage.Clone());
-			//TODO: set initial presentation state?
+			IPresentationImage image = Context.Viewer.SelectedPresentationImage;
+			if (image != null)
+				KeyImageClipboard.Add(image);
 		}
-
-		public void Delete()
-		{
-			if (base.SelectedPresentationImage == null)
-				return;
-
-			if (IsKeyImageDisplaySet(base.SelectedPresentationImage.ParentDisplaySet))
-			{
-				IDisplaySet displaySet = base.SelectedPresentationImage.ParentDisplaySet;
-				displaySet.PresentationImages.Remove(base.SelectedPresentationImage);
-
-				IImageBox imageBox = displaySet.ImageBox;
-
-				if (displaySet.PresentationImages.Count == 0)
-				{
-					//Make undoable?
-					imageBox.DisplaySet = null;
-					displaySet.ParentImageSet.DisplaySets.Remove(displaySet);
-					displaySet.Dispose();
-				}
-
-				imageBox.Draw();
-			}
-		}
-
+		
 		#endregion
 	}
 }

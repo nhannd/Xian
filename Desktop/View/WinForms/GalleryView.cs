@@ -87,12 +87,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				if (_gallery != value)
 				{
-					_gallery = value as IBindingList;
-
-					if (_gallery == null)
+					IBindingList gallery = value as IBindingList;
+					if (gallery == null)
 						throw new Exception("DataSource must be an IBindingList of IGalleryItem objects.");
 
-					InitializeBindings();
+					if (_gallery != null)
+						_gallery.ListChanged -= OnListChanged;
+
+					_gallery = gallery;
+					_gallery.ListChanged += OnListChanged;
+
+					_listView.Items.Clear();
+					foreach (object item in _gallery)
+						AddItem(item);
 				}
 			}
 		}
@@ -232,15 +239,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes);
 			}
-		}
-
-		private void InitializeBindings()
-		{
-			_gallery.ListChanged += OnListChanged;
-			_listView.Items.Clear();
-
-			foreach (object item in _gallery)
-				AddItem(item);
 		}
 
 		private void OnListChanged(object sender, ListChangedEventArgs e)

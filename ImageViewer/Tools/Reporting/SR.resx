@@ -126,8 +126,23 @@
   <data name="MenuDeleteKeyImage" xml:space="preserve">
     <value>Delete Key Image</value>
   </data>
+  <data name="MenuShowKeyImages" xml:space="preserve">
+    <value>Show Key Images</value>
+  </data>
+  <data name="MessageInvalidSeriesDescription" xml:space="preserve">
+    <value>The SeriesDescription must be between 1 and 64 characters.</value>
+  </data>
+  <data name="MessageInvalidSeriesNumber" xml:space="preserve">
+    <value>The Series Number must be a positive integer.</value>
+  </data>
   <data name="TitleCreateKeyObjectSelection" xml:space="preserve">
     <value>Create Key Object Selection</value>
+  </data>
+  <data name="TitleEditKeyImageInformation" xml:space="preserve">
+    <value>Edit Key Image Information</value>
+  </data>
+  <data name="TitleKeyImages" xml:space="preserve">
+    <value>Key Images</value>
   </data>
   <data name="ToolbarCreateKeyImage" xml:space="preserve">
     <value>Create Key Image</value>
@@ -135,10 +150,22 @@
   <data name="ToolbarDeleteKeyImage" xml:space="preserve">
     <value>Delete Key Image</value>
   </data>
+  <data name="ToolbarEditKeyImageInformation" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ToolbarShowKeyImages" xml:space="preserve">
+    <value>Show Key Images</value>
+  </data>
   <data name="TooltipCreateKeyImage" xml:space="preserve">
     <value>Create Key Image</value>
   </data>
   <data name="TooltipDeleteKeyImage" xml:space="preserve">
     <value>Delete Key Image</value>
+  </data>
+  <data name="TooltipEditKeyImageInformation" xml:space="preserve">
+    <value>Edit Key Image Information</value>
+  </data>
+  <data name="TooltipShowKeyImages" xml:space="preserve">
+    <value>Show Key Images</value>
   </data>
 </root>

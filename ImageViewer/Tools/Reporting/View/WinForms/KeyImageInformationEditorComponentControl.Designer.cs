@@ -1,6 +1,6 @@
 namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 {
-	partial class KeyObjectSelectionEditorComponentPanel {
+	partial class KeyImageInformationEditorComponentControl {
 		/// <summary> 
 		/// Required designer variable.
 		/// </summary>
@@ -24,7 +24,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(KeyObjectSelectionEditorComponentPanel));
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this.pnlTitle = new System.Windows.Forms.Panel();
 			this.cboTitle = new System.Windows.Forms.ComboBox();
@@ -41,7 +40,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			this.pnlSeriesNum = new System.Windows.Forms.Panel();
 			this.txtSeriesNum = new System.Windows.Forms.TextBox();
 			this.lblSeriesNum = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
+			this._cancelButton = new System.Windows.Forms.Button();
+			this._okButton = new System.Windows.Forms.Button();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.pnlTitle.SuspendLayout();
 			this.pnlDesc.SuspendLayout();
@@ -52,18 +52,18 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			// 
 			// flowLayoutPanel1
 			// 
+			this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this.flowLayoutPanel1.Controls.Add(this.pnlTitle);
 			this.flowLayoutPanel1.Controls.Add(this.pnlDesc);
 			this.flowLayoutPanel1.Controls.Add(this.pnlDateTime);
 			this.flowLayoutPanel1.Controls.Add(this.pnlSeriesDesc);
 			this.flowLayoutPanel1.Controls.Add(this.pnlSeriesNum);
-			this.flowLayoutPanel1.Controls.Add(this.label1);
-			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(312, 447);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(312, 316);
 			this.flowLayoutPanel1.TabIndex = 0;
 			// 
 			// pnlTitle
@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			this.txtSeriesNum.Name = "txtSeriesNum";
 			this.txtSeriesNum.Size = new System.Drawing.Size(285, 20);
 			this.txtSeriesNum.TabIndex = 3;
-			this.txtSeriesNum.Validating += new System.ComponentModel.CancelEventHandler(this.txtSeriesNum_Validating);
+			this.txtSeriesNum.Validating += new System.ComponentModel.CancelEventHandler(this.OnValidatingSeriesNumber);
 			// 
 			// lblSeriesNum
 			// 
@@ -212,25 +212,38 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			this.lblSeriesNum.TabIndex = 2;
 			this.lblSeriesNum.Text = "Series Number:";
 			// 
-			// label1
+			// _cancelButton
 			// 
-			this.label1.AutoSize = true;
-			this.label1.ForeColor = System.Drawing.Color.Red;
-			this.label1.Location = new System.Drawing.Point(13, 305);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(281, 78);
-			this.label1.TabIndex = 8;
-			this.label1.Text = resources.GetString("label1.Text");
+			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._cancelButton.Location = new System.Drawing.Point(224, 323);
+			this._cancelButton.Name = "_cancelButton";
+			this._cancelButton.Size = new System.Drawing.Size(75, 23);
+			this._cancelButton.TabIndex = 6;
+			this._cancelButton.Text = "Cancel";
+			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this.OnCancel);
 			// 
-			// KeyObjectSelectionEditorComponentPanel
+			// _okButton
+			// 
+			this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+			this._okButton.Location = new System.Drawing.Point(143, 323);
+			this._okButton.Name = "_okButton";
+			this._okButton.Size = new System.Drawing.Size(75, 23);
+			this._okButton.TabIndex = 5;
+			this._okButton.Text = "OK";
+			this._okButton.UseVisualStyleBackColor = true;
+			this._okButton.Click += new System.EventHandler(this.OnOk);
+			// 
+			// KeyImageInformationEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._cancelButton);
+			this.Controls.Add(this._okButton);
 			this.Controls.Add(this.flowLayoutPanel1);
-			this.Name = "KeyObjectSelectionEditorComponentPanel";
-			this.Size = new System.Drawing.Size(312, 447);
+			this.Name = "KeyImageInformationEditorComponentControl";
+			this.Size = new System.Drawing.Size(312, 360);
 			this.flowLayoutPanel1.ResumeLayout(false);
-			this.flowLayoutPanel1.PerformLayout();
 			this.pnlTitle.ResumeLayout(false);
 			this.pnlTitle.PerformLayout();
 			this.pnlDesc.ResumeLayout(false);
@@ -263,6 +276,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 		private System.Windows.Forms.Panel pnlDateTime;
 		private System.Windows.Forms.Label lblDateTime;
 		private System.Windows.Forms.TextBox txtDateTime;
-		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Button _cancelButton;
+		private System.Windows.Forms.Button _okButton;
 	}
 }

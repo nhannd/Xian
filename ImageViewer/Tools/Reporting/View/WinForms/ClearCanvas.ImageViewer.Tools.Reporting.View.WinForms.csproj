@@ -35,19 +35,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KeyObjectSelectionEditorComponentPanel.cs">
+    <Compile Include="KeyImageInformationEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="KeyObjectSelectionEditorComponentPanel.Designer.cs">
-      <DependentUpon>KeyObjectSelectionEditorComponentPanel.cs</DependentUpon>
+    <Compile Include="KeyImageInformationEditorComponentControl.Designer.cs">
+      <DependentUpon>KeyImageInformationEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="KeyObjectSelectionEditorComponentView.cs" />
+    <Compile Include="KeyImageInformationEditorComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="KeyObjectSelectionEditorComponentPanel.resx">
-      <DependentUpon>KeyObjectSelectionEditorComponentPanel.cs</DependentUpon>
+    <EmbeddedResource Include="KeyImageInformationEditorComponentControl.resx">
+      <DependentUpon>KeyImageInformationEditorComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
@@ -67,6 +67,10 @@
     <ProjectReference Include="..\..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Dicom\ClearCanvas.Dicom.csproj">
+      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
+      <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Tools.Reporting.csproj">
       <Project>{7DE2AD68-75E5-44D0-B94D-7549D3AE7CC3}</Project>

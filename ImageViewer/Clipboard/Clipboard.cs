@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.ComponentModel;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer;
 
@@ -43,6 +44,11 @@ namespace ClearCanvas.ImageViewer.Clipboard
 	/// </remarks>
 	public static class Clipboard
 	{
+		public const string ClipboardSiteToolbar = "clipboard-toolbar";
+		public const string ClipboardSiteMenu = "clipboard-contextmenu";
+		
+		internal static readonly BindingList<IClipboardItem> Items = new BindingList<IClipboardItem>();
+
 		/// <summary>
 		/// Adds an <see cref="IPresentationImage"/> to the clipboard.
 		/// </summary>
@@ -57,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		{
 			Platform.CheckForNullReference(image, "image");
 
-			ClipboardComponent.AddToClipboard(image);
+			Items.Add(ClipboardComponent.CreatePresentationImageItem(image));
 		}
 
 		/// <summary>
@@ -74,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 		{
 			Platform.CheckForNullReference(displaySet, "displaySet");
 
-			ClipboardComponent.AddToClipboard(displaySet);
+			Items.Add(ClipboardComponent.CreateDisplaySetItem(displaySet));
 		}
 
 		/// <summary>
@@ -94,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			Platform.CheckForNullReference(displaySet, "displaySet");
 			Platform.CheckForNullReference(selectionStrategy, "selectionStrategy");
 
-			ClipboardComponent.AddToClipboard(displaySet, selectionStrategy);
+			Items.Add(ClipboardComponent.CreateDisplaySetItem(displaySet, selectionStrategy));
 		}
 	}
 }

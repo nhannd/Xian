@@ -51,7 +51,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
 
 			InitializeComponent();
 
-        	_galleryView.DataSource = _component.ClipboardItems;
+        	_component.DataSourceChanged += delegate { _galleryView.DataSource = _component.DataSource; };
+        	_galleryView.DataSource = _component.DataSource;
+
         	_galleryView.ToolbarModel = _component.ToolbarModel;
         	_galleryView.ContextMenuModel = _component.ContextMenuModel;
         	_galleryView.SelectionChanged += OnSelectionChanged;
@@ -59,7 +61,6 @@ namespace ClearCanvas.ImageViewer.Clipboard.View.WinForms
         	_galleryView.DragReorder = true;
 			//_galleryView.DragOutside = true;
         }
-
 
 		private void OnSelectionChanged(object sender, EventArgs e)
 		{

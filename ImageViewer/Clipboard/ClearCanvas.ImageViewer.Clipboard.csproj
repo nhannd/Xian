@@ -62,9 +62,7 @@
     </Compile>
     <Compile Include="ImageExport\AviVideoStreamWriter.cs" />
     <Compile Include="ImageExport\ExportToImageTool.cs" />
-    <Compile Include="DeleteAllClipboardItemsTool.cs" />
     <Compile Include="IconCreator.cs" />
-    <Compile Include="DeleteClipboardItemTool.cs" />
     <Compile Include="ImageExport\ExportToVideoTool.cs" />
     <Compile Include="ImageExport\FileUtilities.cs" />
     <Compile Include="ImageExport\ImageExportSettings.cs" />
@@ -157,11 +155,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ExportToVideoToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\CreateKeyObjectSelectionToolLarge.png" />
-    <EmbeddedResource Include="Icons\CreateKeyObjectSelectionToolMedium.png" />
-    <EmbeddedResource Include="Icons\CreateKeyObjectSelectionToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

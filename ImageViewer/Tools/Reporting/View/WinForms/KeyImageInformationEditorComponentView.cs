@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -29,65 +29,44 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects;
 
-#pragma warning disable 0419,1574,1587,1591
-
-namespace ClearCanvas.ImageViewer.Clipboard
+namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 {
-	[MenuAction("deleteAll", "clipboard-contextmenu/MenuDeleteAllClipboardItems", "DeleteAll")]
-	[ButtonAction("deleteAll", "clipboard-toolbar/ToolbarDeleteAllClipboardItems", "DeleteAll")]
-	[Tooltip("deleteAll", "TooltipDeleteAllClipboardItems")]
-	[IconSet("deleteAll", IconScheme.Colour, "Icons.DeleteAllClipboardItemsToolSmall.png", "Icons.DeleteAllClipboardItemsToolSmall.png", "Icons.DeleteClipboardItemToolSmall.png")]
-	[EnabledStateObserver("deleteAll", "Enabled", "EnabledChanged")]
-	
-	[ExtensionOf(typeof(ClipboardToolExtensionPoint))]
-	public class DeleteAllClipboardItemsTool : ClipboardTool
+	[ExtensionOf(typeof(KeyImageInformationEditorComponentViewExtensionPoint))]
+	public class KeyImageInformationEditorComponentView : WinFormsView, IApplicationComponentView
 	{
-		public DeleteAllClipboardItemsTool()
+		private KeyImageInformationEditorComponent _component;
+		private KeyImageInformationEditorComponentControl _control;
+
+		#region IApplicationComponentView Members
+
+		/// <summary>
+		/// Called by the host to assign this view to a component.
+		/// </summary>
+		public void SetComponent(IApplicationComponent component)
 		{
+			_component = (KeyImageInformationEditorComponent) component;
 		}
 
-		public override void Initialize()
-		{
-			base.Initialize();
-			this.Enabled = this.Context.ClipboardItems.Count > 0;
-		}
+		#endregion
 
-		protected override void OnSelectionChanged()
+		/// <summary>
+		/// Gets the underlying GUI component for this view.
+		/// </summary>
+		public override object GuiElement
 		{
-			this.Enabled = this.Context.ClipboardItems.Count > 0;
-		}
-
-		protected override void OnClipboardItemsChanged()
-		{
-			this.Enabled = this.Context.ClipboardItems.Count > 0;
-		}
-
-		public void DeleteAll()
-		{
-			bool anyLocked = false;
-			
-			List<IClipboardItem> items = new List<IClipboardItem>(this.Context.ClipboardItems);
-			foreach (ClipboardItem item in items)
+			get
 			{
-				if (item.Locked)
+				if (_control == null)
 				{
-					anyLocked = true;
+					_control = new KeyImageInformationEditorComponentControl(_component);
 				}
-				else
-				{
-					((IDisposable)item).Dispose();
-					this.Context.ClipboardItems.Remove(item);
-				}
+				return _control;
 			}
-
-			if (anyLocked)
-				this.Context.DesktopWindow.ShowMessageBox(SR.MessageUnableToClearClipboardItems, MessageBoxActions.Ok);
 		}
 	}
 }
