@@ -210,4 +210,7 @@
   <data name="ExceptionProcedureNotCheckedIn" xml:space="preserve">
     <value>Please check in the patient for this procedure and try again.</value>
   </data>
+  <data name="ExceptionUserNotAuthorized" xml:space="preserve">
+    <value>User not authorized.</value>
+  </data>
 </root>

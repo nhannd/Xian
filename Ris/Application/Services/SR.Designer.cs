@@ -304,6 +304,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User not authorized..
+        /// </summary>
+        internal static string ExceptionUserNotAuthorized {
+            get {
+                return ResourceManager.GetString("ExceptionUserNotAuthorized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The report content is required to verify this step.
         /// </summary>
         internal static string ExceptionVerifyWithNoReport {

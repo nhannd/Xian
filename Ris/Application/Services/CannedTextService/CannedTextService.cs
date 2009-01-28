@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Security.Permissions;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -7,6 +9,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.CannedTextService;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.CannedTextService
 {
@@ -96,6 +99,8 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 		{
 			try
 			{
+				CheckCannedTextWriteAccess(request.Detail);
+
 				if (string.IsNullOrEmpty(request.Detail.Name))
 					throw new RequestValidationException(SR.ExceptionCannedTextNameRequired);
 
@@ -123,6 +128,8 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 		[UpdateOperation]
 		public UpdateCannedTextResponse UpdateCannedText(UpdateCannedTextRequest request)
 		{
+			CheckCannedTextWriteAccess(request.Detail);
+
 			CannedText cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef);
 
 			CannedTextAssembler assembler = new CannedTextAssembler();
@@ -136,11 +143,31 @@ namespace ClearCanvas.Ris.Application.Services.CannedTextService
 		public DeleteCannedTextResponse DeleteCannedText(DeleteCannedTextRequest request)
 		{
 			CannedText cannedText = this.PersistenceContext.Load<CannedText>(request.CannedTextRef, EntityLoadFlags.Proxy);
+			CheckCannedTextWriteAccess(cannedText);
+
 			PersistenceContext.GetBroker<ICannedTextBroker>().Delete(cannedText);
 
 			return new DeleteCannedTextResponse();
 		}
 
 		#endregion
+
+		private static void CheckCannedTextWriteAccess(CannedText cannedText)
+		{
+			CheckCannedTextWriteAccess(cannedText.StaffGroup == null);
+		}
+
+		private static void CheckCannedTextWriteAccess(CannedTextDetail cannedText)
+		{
+			CheckCannedTextWriteAccess(cannedText.IsPersonal);
+		}
+
+		private static void CheckCannedTextWriteAccess(bool isPersonal)
+		{
+			if (isPersonal && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.CannedText.Personal) == false || 
+				!isPersonal && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.CannedText.Group) == false)
+				throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
+		}
+
 	}
 }
