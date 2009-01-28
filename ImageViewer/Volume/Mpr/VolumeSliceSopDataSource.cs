@@ -4,6 +4,13 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	//TODO: share a 'model' data source between all the slices and remove it from Volume class.
+	//class ModelVolumeSliceSopDataSource : DicomMessageSopDataSource
+	//{
+	//    private readonly Volume _volume;
+	//    private readonly DicomMessageBase _modelDicom;
+	//}
+
 	class VolumeSliceSopDataSource : DicomMessageSopDataSource 
 	{
 		private readonly Volume _volume;

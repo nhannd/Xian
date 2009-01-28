@@ -37,6 +37,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private DisplaySet _coronalDisplaySet;
 		private DisplaySet _axialDisplaySet;
 
+		//TODO: Lump into a constructor?
 		public void LoadSagittalDisplaySet(DisplaySet displaySet)
 		{
 			_sagittalDisplaySet = displaySet;
@@ -85,6 +86,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			physicalWorkspace.ImageBoxes[1].TopLeftPresentationImageIndex = _coronalDisplaySet.PresentationImages.Count / 2;
 			physicalWorkspace.ImageBoxes[2].DisplaySet = _axialDisplaySet;
 			physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = _axialDisplaySet.PresentationImages.Count / 2;
+
+			//TODO: Add this property and use it to disable the Layout Components (in Layout.Basic).
+			//physicalWorkspace.IsReadOnly = true;
 		}
 
 		#endregion

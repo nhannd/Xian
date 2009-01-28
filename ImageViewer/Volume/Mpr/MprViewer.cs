@@ -38,6 +38,9 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	//TODO: MprLoader
+	// LoadFromDisplaySet : ImageViewerComponent
+	// LoadFromFiles : ImageViewerComponent
 	public class MprViewer : IDisposable
 	{
 		#region Private fields
@@ -50,6 +53,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public MprViewer()
 		{
+			//TODO: create these after volume is built.
 			_layoutManager = new MprLayoutManager();
 			_imageViewer = new ImageViewerComponent(_layoutManager);
 		}
@@ -95,6 +99,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			List<Frame> frames = new List<Frame>();
 			foreach (PresentationImage pi in displaySet.PresentationImages)
 			{
+				//TODO: cast to IImageSopProvider
 				DicomGrayscalePresentationImage dgpi = (DicomGrayscalePresentationImage)pi;
 				foreach (Frame frame in dgpi.ImageSop.Frames)
 					frames.Add(frame);
@@ -135,7 +140,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			// Inlined below, so that I could control the workspace title
 			//ImageViewerComponent.LaunchInActiveWindow(ImageViewer);
-
+			
+			//TODO: move this out into the tool(s).
 			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
 				Application.ActiveDesktopWindow,
 				ImageViewer,

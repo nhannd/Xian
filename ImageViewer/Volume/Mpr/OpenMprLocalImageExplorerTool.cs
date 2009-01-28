@@ -94,6 +94,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			try
 			{
+				//TODO: something like this?
+				//MprLoader loader = new MprLoader();
+				//ImageViewerComponent component = loader.LoadFromDisplaySet(displaySet);
+				//ImageViewerComponent.LaunchInActiveWindow();
+
+				//host component as workspace.
+
 				MprViewer mprViewer = new MprViewer();
 				mprViewer.OpenFiles(files);
 			}

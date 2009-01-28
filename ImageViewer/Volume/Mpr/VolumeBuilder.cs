@@ -41,6 +41,13 @@ using vtk;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	//TODO: Comments from SB
+	// Consider an interface like this as opposed to static methods.
+	// VolumeBuilder builder = new VolumeBuilder(frames);
+	// ...set options (e.g. strictness, etc). 
+	// builder.Validate();
+	///Volume volume = builder.Build(); //Build() can call Validate() too.
+
 	/// <summary>
 	/// This utility class aids in creating a Volume (currently a VTK volume) from a collection of Frames
 	/// </summary>

@@ -34,6 +34,7 @@ using System.Runtime.InteropServices;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Mathematics;
 using vtk;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -75,6 +76,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		// This handle is used to pin the volume array
 		private GCHandle _volArrayPinnedHandle;
+
+		private bool _disposed;
 
 		#endregion
 
@@ -151,6 +154,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_wholeExtentY = wholeExtentY;
 			_wholeExtentZ = wholeExtentZ;
 			_modelDicom = modelDicom;
+			_disposed = false;
 		}
 		
 		#endregion
@@ -282,14 +286,23 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public void Dispose()
 		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+			}
 		}
 
 		protected void Dispose(bool disposing)
 		{
-			if (disposing) 
+			if (disposing && !_disposed) 
 			{
+				_disposed = true;
+				//can only call Free once or it throws
 				_volArrayPinnedHandle.Free();
 				if (_vtkImageData != null)
 					_vtkImageData.Dispose();

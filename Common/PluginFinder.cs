@@ -83,17 +83,13 @@ namespace ClearCanvas.Common
 			}
 			catch (FileNotFoundException e)
 			{
-				//ggerade ToRes: I was surprised that it wasn't obvious as to which plugin is failing to load, did I miss something?
-				//	Why not do something like this?:
-				Platform.Log(LogLevel.Error, "Loading plugin: {0}", path);
-				Platform.Log(LogLevel.Error,e);
-				throw e;
+				Platform.Log(LogLevel.Error, e, "File not found while loading plugin: {0}", path);
+				throw;
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Error, "Loading plugin: {0}", path);
-				Platform.Log(LogLevel.Error, e);
-				throw e;
+				Platform.Log(LogLevel.Error, e, "Error loading plugin: {0}", path);
+				throw;
 			}
 		}
 
