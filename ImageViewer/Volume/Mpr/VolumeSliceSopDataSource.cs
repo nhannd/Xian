@@ -1,15 +1,15 @@
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
-using vtk;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
 	class VolumeSliceSopDataSource : DicomMessageSopDataSource 
 	{
 		private readonly Volume _volume;
-		private readonly vtkMatrix4x4 _sliceMatrix;
+		private readonly Matrix _sliceMatrix;
 
-		internal VolumeSliceSopDataSource(DicomMessageBase sourceMessage, Volume vol, vtkMatrix4x4 resliceMatrix)
+		internal VolumeSliceSopDataSource(DicomMessageBase sourceMessage, Volume vol, Matrix resliceMatrix)
 			: base(sourceMessage)
 		{
 			_volume = vol;

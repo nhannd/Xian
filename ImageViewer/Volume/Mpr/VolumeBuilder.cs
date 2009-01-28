@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Dicom;
@@ -47,7 +48,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	{
 		#region Public methods
 
-		//ggerade ToDo: Add way to validate that frame collection meets our criteria.
 		//ggerade ToRes: What should this interface be like? Some things to think about:
 		//  - Should give a reason for failure, hints or something
 		//	- Perhaps need a first pass that throws out collections that just won't work at all?
@@ -72,6 +72,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			ImageOrientationPatient orient = frames[0].ImageOrientationPatient;
 			foreach (Frame frame in frames)
 			{
+				if (frame.ImageOrientationPatient.IsNull)
+				{
+					reason = "Each image in Display Set must have orientation set";
+					return false;
+				}
 				if (frame.ImageOrientationPatient.Equals(orient) == false)
 				{
 					reason = "Each image in Display Set must have same orientation";
@@ -94,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				}
 				if (spacing == 0f)
 					spacing = currentSpacing;
-				if (currentSpacing != spacing)
+				if (Math.Round(currentSpacing * 1000) != Math.Round(spacing * 1000))
 				{
 					reason = "Inconsistent spacing betweeen images, MPR requires evenly spaced images";
 					return false;
@@ -106,28 +111,57 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return true;
 		}
 
+		// Test out idea of grouping compatible frames (would need some serious hardening if we like the idea...)
+		public static List<List<Frame>> SplitFrameGroups(List<Frame> frames)
+		{
+			List<List<Frame>> frameGroups = new List<List<Frame>>();
+
+			// Group by like orientation
+			ImageOrientationPatient currentOrient = new ImageOrientationPatient(0, 0, 0, 0, 0, 0);
+			List<Frame> currentList = null;
+			foreach (Frame frame in frames)
+			{
+				if (currentList == null || (frame.ImageOrientationPatient.Equals(currentOrient) == false))
+				{
+					// Don't include groups with less than 3 frames
+					if (currentList != null && currentList.Count > 2)
+						frameGroups.Add(currentList);
+					currentList = new List<Frame>();
+					currentOrient = frame.ImageOrientationPatient;
+				}
+				currentList.Add(frame);
+			}
+			if (currentList != null && currentList.Count > 2)
+				frameGroups.Add(currentList);
+
+			return frameGroups;
+		}
+
 		public static Volume BuildVolume(List<Frame> frames)
 		{
 			// Sort the frames by instance/frame number to determine first frame and
 			//	Instance vs Location directions
 			frames.Sort(new InstanceAndFrameNumberComparer());
 
-			//ggerade ToRes: This is currently used by the slicer to ensure consistency of instance numbers,
-			//	I'm not sure it's really relevant in the end, but based on the current implementation it keeps the
-			//	"native" MPR DisplaySet in sync with the source DisplaySet.
-			double direction = frames[1].SliceLocation - frames[0].SliceLocation;
-			bool instanceAndSliceLocationReversed = direction < 0;
-
 			// Clone the first frame's dicom header info and use it as the volume model
 			IDicomMessageSopDataSource dataSource = (IDicomMessageSopDataSource)frames[0].ParentImageSop.DataSource;
 			DicomMessageBase firstFrameDicom = dataSource.SourceMessage;
-			
+
 			// Selectively copy from original headers
-			DicomMessageBase modelDicomFile = new DicomFile("", new DicomAttributeCollection(), 
-				CreateVolumeDataSet(firstFrameDicom.DataSet));
+			DicomMessageBase modelDicomFile = new DicomFile("", new DicomAttributeCollection(),
+			                                                CreateVolumeDataSet(firstFrameDicom.DataSet));
 
 			// Use the first frame's orientation as our volume orientation
 			Matrix volumeOrientation = ImageOrientationPatientToMatrix(frames[0].ImageOrientationPatient);
+
+			//ggerade ToRes: This is currently used by the slicer to ensure consistency of instance numbers,
+			//	I'm not sure it's really relevant in the end, but based on the current implementation it keeps the
+			//	"native" MPR DisplaySet in sync with the source DisplaySet.
+			//double direction = frames[1].SliceLocation - frames[0].SliceLocation;
+			double direction = Math.Abs(volumeOrientation[2, 0]) * (frames[1].ImagePositionPatient.X - frames[0].ImagePositionPatient.X) +
+			                   volumeOrientation[2, 1] * (frames[1].ImagePositionPatient.Y - frames[0].ImagePositionPatient.Y) +
+			                   volumeOrientation[2, 2] * (frames[1].ImagePositionPatient.Z - frames[0].ImagePositionPatient.Z);
+			bool instanceAndSliceLocationReversed = direction < 0;
 
 			vtkImageData imageData = new vtkImageData();
 
@@ -145,13 +179,36 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			double spacingZ = CalcSliceSpacing(frames);
 			imageData.SetSpacing(spacingX, spacingY, spacingZ);
 
-			// Now sort by slice location to ensure we get the VTK coordinates in sync
-			frames.Sort(new SliceLocationComparer());
+			double originX, originY, originZ;
 
-			double originX = frames[0].ImagePositionPatient.X;
-			double originY = frames[0].ImagePositionPatient.Y;
-			double originZ = frames[0].ImagePositionPatient.Z;
+			// Now sort by slice location to ensure we get the VTK coordinates in sync
+			if (volumeOrientation[0,0] == 1 && volumeOrientation[1,1] == 1) // axial
+			{
+				frames.Sort(new SliceLocationComparer());
+				originX = frames[0].ImagePositionPatient.X;
+				originY = frames[0].ImagePositionPatient.Y;
+				originZ = frames[0].ImagePositionPatient.Z;
+			}
+			else if (volumeOrientation[0,0] == 1)  // coronal
+			{
+				frames.Sort(new SliceLocationComparer(true));
+				originX = frames[0].ImagePositionPatient.X;
+				originY = frames[0].ImagePositionPatient.Z;
+				originZ = frames[0].ImagePositionPatient.Y;
+			}
+			else
+			{
+				frames.Sort(new SliceLocationComparer(true));
+				originX = frames[0].ImagePositionPatient.Y;
+				originY = frames[0].ImagePositionPatient.Z;
+				originZ = frames[0].ImagePositionPatient.X;
+			}
+
 			imageData.SetOrigin(originX, originY, originZ);
+
+			// Transform patient origin to normalized VTK origin
+			//Vector3D vtkOrigin = TransformPatientOrigin(frames[0].ImagePositionPatient, volumeOrientation);
+			//imageData.SetOrigin(vtkOrigin.X, vtkOrigin.Y, vtkOrigin.Z);
 
 			if (dataUnsigned)
 			{
@@ -270,7 +327,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Vector3D point2 = frame2.ImagePlaneHelper.ConvertToPatient(new PointF(0, 0));
 			Vector3D delta = point1 - point2;
 
-			return delta.Magnitude;
+			return delta.IsNull ? 0f : delta.Magnitude;
 		}
 
 		private static Matrix ImageOrientationPatientToMatrix(ImageOrientationPatient orientation)
@@ -279,14 +336,32 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Vector3D yOrient = new Vector3D((float)orientation.ColumnX, (float)orientation.ColumnY, (float)orientation.ColumnZ);
 			Vector3D zOrient = xOrient.Cross(yOrient);
 
-			Matrix matrix = new Matrix(4, 4, new float[4, 4]
-			                                  	{
-			                                  		{xOrient.X, xOrient.Y, xOrient.Z, 0},
-			                                  		{yOrient.X, yOrient.Y, yOrient.Z, 0},
-			                                  		{zOrient.X, zOrient.Y, zOrient.Z, 0},
-			                                  		{0, 0, 0, 1}
-			                                  	});
+			Matrix matrix = new Matrix(4, 4, new float[4,4]
+			                                 	{
+			                                 		{xOrient.X, xOrient.Y, xOrient.Z, 0},
+			                                 		{yOrient.X, yOrient.Y, yOrient.Z, 0},
+			                                 		{zOrient.X, zOrient.Y, zOrient.Z, 0},
+			                                 		{0, 0, 0, 1}
+			                                 	});
 			return matrix;
+		}
+
+		private static Vector3D TransformPatientOrigin(ImagePositionPatient patientOrigin, Matrix volumeOrientation)
+		{
+			Matrix normalPatientOrigin = new Matrix(4, 4,
+			                                        new float[4,4]
+			                                        	{
+			                                        		{1, 0, 0, 0},
+			                                        		{0, 1, 0, 0},
+			                                        		{0, 0, 1, 0},
+			                                        		{
+			                                        			(float)patientOrigin.X, (float)patientOrigin.Y,
+			                                        			(float)patientOrigin.Z, 1
+			                                        		}
+			                                        	});
+
+			Matrix transformedOrigin = normalPatientOrigin * volumeOrientation;
+			return new Vector3D(transformedOrigin[3, 0], transformedOrigin[3, 1], transformedOrigin[3, 2]);
 		}
 
 		private static short[] BuildVolumeShortArray(IEnumerable<Frame> frames, int volumeSize)

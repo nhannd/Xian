@@ -30,12 +30,14 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -96,14 +98,22 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			try
 			{
-				//BlockingOperation.Run(
-				//    delegate
-				//    {
-				//        Clipboard.Add(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
-				//    });
-
-				MprViewer viewer = new MprViewer();
-				viewer.OpenDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
+				//ggerade ToDo: Ok, this behavior is a bit odd - if multiple groups then multiple MPR workspaces, redesign somehow
+				List<List<Frame>> frameGroups = MprViewer.SplitDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
+				if (frameGroups.Count > 0)
+				{
+					foreach (List<Frame> group in frameGroups)
+					{
+						MprViewer viewer = new MprViewer();
+						viewer.OpenFrames(group);
+					}
+				}
+				else
+				{
+					// Load as one display set				
+					MprViewer viewer = new MprViewer();
+					viewer.OpenDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
+				}
 			}
 			catch (Exception e)
 			{

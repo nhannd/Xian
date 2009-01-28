@@ -209,6 +209,16 @@
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Reporting\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Reporting.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms.dll" />
 
+    <!-- Volume -->
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Volume\Mpr\bin\$(Configuration)\ClearCanvas.ImageViewer.Volume.Mpr.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtksys.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkCommon.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkFiltering.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkImaging.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkCommonDotNet.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkFilteringDotNet.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkImagingDotNet.dll" />
+
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">

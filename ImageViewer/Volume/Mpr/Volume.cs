@@ -55,17 +55,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private readonly int _height;
 		private readonly int _depth;
 
-		private readonly double _originX;
-		private readonly double _originY;
-		private readonly double _originZ;
+		private readonly float _originX;
+		private readonly float _originY;
+		private readonly float _originZ;
 
 		private readonly int _wholeExtentX;
 		private readonly int _wholeExtentY;
 		private readonly int _wholeExtentZ;
 
-		private readonly double _spacingX;
-		private readonly double _spacingY;
-		private readonly double _spacingZ;
+		private readonly float _spacingX;
+		private readonly float _spacingY;
+		private readonly float _spacingZ;
 
 		private readonly Matrix _dicomOrientationPatientMatrix;
 
@@ -110,14 +110,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_depth = dimensions[2];
 
 			double[] spacing = _vtkImageData.GetSpacing();
-			_spacingX = spacing[0];
-			_spacingY = spacing[1];
-			_spacingZ = spacing[2];
+			_spacingX = (float)spacing[0];
+			_spacingY = (float)spacing[1];
+			_spacingZ = (float)spacing[2];
 
 			double[] origin = _vtkImageData.GetOrigin();
-			_originX = origin[0];
-			_originY = origin[1];
-			_originZ = origin[2];
+			_originX = (float)origin[0];
+			_originY = (float)origin[1];
+			_originZ = (float)origin[2];
 
 			int[] wholeExtent = _vtkImageData.GetWholeExtent();
 			_wholeExtentX = wholeExtent[0] + wholeExtent[1];
@@ -130,8 +130,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		}
 
 		internal Volume(short[] volShortArray, bool dataUnsigned, int width, int height, int depth,
-			double spacingX, double spacingY, double spacingZ,
-			double originX, double originY, double originZ,
+			float spacingX, float spacingY, float spacingZ,
+			float originX, float originY, float originZ,
 			int wholeExtentX, int wholeExtentY, int wholeExtentZ,
 			DicomMessageBase modelDicom
 			)
@@ -182,17 +182,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _depth; }
 		}
 
-		public double OriginX
+		public float OriginX
 		{
 			get { return _originX; }
 		}
 
-		public double OriginY
+		public float OriginY
 		{
 			get { return _originY; }
 		}
 
-		public double OriginZ
+		public float OriginZ
 		{
 			get { return _originZ; }
 		}
@@ -202,17 +202,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return Width * Height * Depth; }
 		}
 
-		public double SpacingX
+		public float SpacingX
 		{
 			get { return _spacingX; }
 		}
 
-		public double SpacingY
+		public float SpacingY
 		{
 			get { return _spacingY; }
 		}
 
-		public double SpacingZ
+		public float SpacingZ
 		{
 			get { return _spacingZ; }
 		}
@@ -227,32 +227,32 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return _dataUnsigned;
 		}
 
-		public double MinXCoord
+		public float MinXCoord
 		{
 			get { return OriginX; }
 		}
 
-		public double MaxXCoord
+		public float MaxXCoord
 		{
 			get { return (OriginX + _spacingX * _wholeExtentX); }
 		}
 
-		public double MinYCoord
+		public float MinYCoord
 		{
 			get { return OriginY; }
 		}
 
-		public double MaxYCoord
+		public float MaxYCoord
 		{
 			get { return (OriginY + _spacingY * _wholeExtentY); }
 		}
 
-		public double MinZCoord
+		public float MinZCoord
 		{
 			get { return OriginZ; }
 		}
 
-		public double MaxZCoord
+		public float MaxZCoord
 		{
 			get { return (OriginZ + _spacingZ * _wholeExtentZ); }
 		}
@@ -266,13 +266,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Public methods
 
-		public double[] CalcCenterPoint()
+		public float[] CalcCenterPoint()
 		{
 			// Volume center point
-			double[] center = new double[3];
-			center[0] = OriginX + _spacingX * 0.5 * _wholeExtentX;
-			center[1] = OriginY + _spacingY * 0.5 * _wholeExtentY;
-			center[2] = OriginZ + _spacingZ * 0.5 * _wholeExtentZ;
+			float[] center = new float[3];
+			center[0] = OriginX + _spacingX * 0.5f * _wholeExtentX;
+			center[1] = OriginY + _spacingY * 0.5f * _wholeExtentY;
+			center[2] = OriginZ + _spacingZ * 0.5f * _wholeExtentZ;
 			return center;
 		}
 
