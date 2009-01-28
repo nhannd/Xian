@@ -24,11 +24,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
 {
     public partial class Login : System.Web.UI.Page
     {
-        private SessionToken _token;
-        private string[] _groups;
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            CurrentUser.Text = String.Format("{0}: {1}",
+                                             Thread.CurrentPrincipal, Thread.CurrentPrincipal.Identity.Name);
         }
 
         protected void LoginClicked(object sender, EventArgs e)
@@ -42,7 +41,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
                         SessionManager.InitializeSession(session);
                         Response.Redirect(FormsAuthentication.GetRedirectUrl(UserName.Text, false));
                     }
-                    catch (PasswordExpiredException ex)
+                    catch (PasswordExpiredException)
                     {
                         service.ChangePassword(UserName.Text, Password.Text, "NewPassword123");
                         SessionInfo session = service.Login(UserName.Text, "NewPassword123");

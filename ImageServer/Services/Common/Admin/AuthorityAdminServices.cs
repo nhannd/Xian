@@ -14,7 +14,7 @@ using ClearCanvas.ImageServer.Common.Services.Admin;
 namespace ClearCanvas.ImageServer.Services.Common.Admin
 {
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
-    public class AuthorityAdminServices : ICoreServiceLayer, IAuthorityAdminServices, IDisposable
+    public class AuthorityAdminServices : ICoreServiceLayer, IAuthorityAdminService, IDisposable
     {
         private AuthorityAdminServiceClient _client = new AuthorityAdminServiceClient();
         private LoginCredentials _credentials;

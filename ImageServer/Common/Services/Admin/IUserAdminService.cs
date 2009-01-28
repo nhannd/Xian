@@ -4,7 +4,7 @@ using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 
 namespace ClearCanvas.ImageServer.Common.Services.Admin
 {
-    public interface IAdminServices:IDisposable
+    public interface IUserAdminService:IDisposable
     {
         LoginCredentials Credentials { set; }
         List<UserSummary> ListUsers(ListUsersRequest filters);

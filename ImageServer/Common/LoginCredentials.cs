@@ -6,8 +6,6 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.ImageServer.Common.Services.Login;
 
 namespace ClearCanvas.ImageServer.Common
@@ -40,14 +38,11 @@ namespace ClearCanvas.ImageServer.Common
     {
         private IIdentity _identity;
         private readonly LoginCredentials _credentials;
-        public CustomPrincipal(CustomIdentity identity, SessionToken token, String[] authorities)
+
+        public CustomPrincipal(IIdentity identity, LoginCredentials credentials)
         {
             _identity = identity;
-            _credentials = new LoginCredentials();
-            _credentials.SessionToken = token;
-            _credentials.UserName = _identity.Name;
-            _credentials.DisplayName = identity.DisplayName;
-            _credentials.Authorities = authorities;
+            _credentials = credentials;
         }
 
         #region IPrincipal Members
@@ -64,8 +59,6 @@ namespace ClearCanvas.ImageServer.Common
 
         public bool IsInRole(string role)
         {
-            //TODO: Refresh the credentials instead
-
             // check that the user was granted this token
             return CollectionUtils.Contains(_credentials.Authorities,
                 delegate(string token) { return token == role; });
@@ -73,13 +66,20 @@ namespace ClearCanvas.ImageServer.Common
 
         #endregion
     }
+
+    /// <summary>
+    /// User credentials
+    /// </summary>
     public class LoginCredentials
     {
         public string UserName;
         public string DisplayName;
-        public ClearCanvas.Enterprise.Common.SessionToken SessionToken;
+        public SessionToken SessionToken;
         public string[] Authorities;
 
+        /// <summary>
+        /// Gets the credentials for the current user
+        /// </summary>
         public static LoginCredentials Current
         {
             get
@@ -98,20 +98,39 @@ namespace ClearCanvas.ImageServer.Common
             set
             {
                 Thread.CurrentPrincipal = new CustomPrincipal(
-                    new CustomIdentity(value.UserName, value.DisplayName), value.SessionToken, value.Authorities);
+                    new CustomIdentity(value.UserName, value.DisplayName), value);
             }
         }
-        
     }
 
     public class SessionInfo
     {
         private CustomPrincipal _user;
-
+        private bool _valid = false;
+        
         public SessionInfo(CustomPrincipal user)
         {
             _user = user;
 
+            Validate(); // this would refresh the authority groups
+        }
+
+        public SessionInfo(string loginId, string name, SessionToken token)
+            : this(new CustomPrincipal(new CustomIdentity(loginId, name),
+                CreateLoginCredentials(loginId, name, token)))
+        {
+            
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether or not the session information is valid.
+        /// </summary>
+        public bool Valid
+        {
+            get
+            {
+                return _valid;
+            }
         }
 
         public CustomPrincipal User
@@ -124,12 +143,23 @@ namespace ClearCanvas.ImageServer.Common
             get { return _user.Credentials; }
         }
 
-        public void Validate()
+        private static LoginCredentials CreateLoginCredentials(string loginId, string name, SessionToken token)
+
+        {
+            LoginCredentials credentials = new LoginCredentials();
+            credentials.UserName = loginId;
+            credentials.DisplayName = name;
+            credentials.SessionToken = token;
+            return credentials;
+        }
+
+        private void Validate()
         {
             Platform.GetService<ILoginService>(
                 delegate(ILoginService service)
                     {
                         service.Validate(this);
+                        _valid = true;
                     });
             
         }

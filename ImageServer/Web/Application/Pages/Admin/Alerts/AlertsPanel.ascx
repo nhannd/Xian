@@ -51,7 +51,7 @@
                             <asp:UpdatePanel ID="ToolBarUpdatePanel" runat="server" UpdateMode="Conditional">
                                 <ContentTemplate>
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
-                                        <ccUI:ToolbarButton ID="DeleteAlertButton" runat="server" SkinID="DeleteButton" OnClick="DeleteAlertButton_Click" />
+                                        <ccUI:ToolbarButton ID="DeleteAlertButton" Roles="AASD" runat="server" SkinID="DeleteButton" OnClick="DeleteAlertButton_Click" />
                                         <ccUI:ToolbarButton ID="DeleteAllAlertsButton" runat="server" SkinID="DeleteAllButton" OnClick="DeleteAllAlertsButton_Click" />
                                     </asp:Panel>
                              </ContentTemplate>

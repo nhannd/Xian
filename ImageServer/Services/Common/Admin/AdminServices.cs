@@ -2,20 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Security.Principal;
 using System.ServiceModel;
-using System.Text;
-using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Services.Admin;
-
+using IUserAdminService=ClearCanvas.ImageServer.Common.Services.Admin.IUserAdminService;
 
 namespace ClearCanvas.ImageServer.Services.Common.Admin
 {
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
-    public class AdminServices : ICoreServiceLayer, IAdminServices, IDisposable
+    public class AdminServices : ICoreServiceLayer, IUserAdminService, IDisposable
     {
         private AdminServiceClient _client = new AdminServiceClient();
         private LoginCredentials _credentials;
@@ -45,7 +42,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Admin
             }
         }
 
-        #region IAdminServices Members
+        #region IUserAdminService Members
 
         public List<UserSummary> ListUsers(ListUsersRequest filters)
         {
@@ -127,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Admin
     }
 
 
-    class AdminServiceClient : ClientBase<IUserAdminService>, IUserAdminService
+    class AdminServiceClient : ClientBase<ClearCanvas.Enterprise.Common.Admin.UserAdmin.IUserAdminService>, ClearCanvas.Enterprise.Common.Admin.UserAdmin.IUserAdminService
     {
         public LoginCredentials Credentials {
             set

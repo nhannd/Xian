@@ -37,8 +37,13 @@ namespace ClearCanvas.ImageServer.Services.Common.Login
 
                 if (response != null)
                 {
+                    LoginCredentials credentials = new LoginCredentials();
+                    credentials.UserName = userName;
+                    credentials.DisplayName = response.DisplayName;
+                    credentials.SessionToken = response.SessionToken;
+                    credentials.Authorities = response.AuthorityTokens;
                     CustomPrincipal user =
-                    new CustomPrincipal(new CustomIdentity(userName, response.DisplayName), response.SessionToken, response.AuthorityTokens);
+                    new CustomPrincipal(new CustomIdentity(userName, response.DisplayName), credentials);
                     SessionInfo session = new SessionInfo(user);
 
                     return session;

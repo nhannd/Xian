@@ -1,8 +1,10 @@
 using System;
 using System.Web;
 using System.Web.Security;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Web.Common.Exceptions;
 
 namespace ClearCanvas.ImageServer.Web.Common.Security
 {
@@ -37,10 +39,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                     String[] fields = ticket.UserData.Split('|');
                     String tokenId = fields[0];
                     String userDisplayName = fields[1];
-                    String[] authorities = fields[2].Split(',');
                     SessionToken token = new SessionToken(tokenId, ticket.Expiration);
 
-                    SessionInfo  session = new SessionInfo(new CustomPrincipal(new CustomIdentity(loginId.Name, userDisplayName), token, authorities));
+                    SessionInfo  session = new SessionInfo(loginId.Name, userDisplayName, token);
                     SessionManager.InitializeSession(session);
                 }
                 
@@ -48,6 +49,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             catch (Exception ex)
             {
                 // log the exception
+                ExceptionHandler.ThrowException(ex);
             }
             
            

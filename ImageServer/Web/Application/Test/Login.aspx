@@ -9,6 +9,7 @@
 <body>
     <form id="form1" runat="server">
     <div>
+    <asp:Label runat="server" ID="CurrentUser" /><p></p>
         Username: <asp:TextBox runat="server" ID="UserName"></asp:TextBox>
         <br />d
         Password: <asp:TextBox runat="server" ID="Password" TextMode="Password"></asp:TextBox>

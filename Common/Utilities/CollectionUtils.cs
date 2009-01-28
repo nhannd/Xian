@@ -1022,5 +1022,26 @@ namespace ClearCanvas.Common.Utilities
 			}
 			return result;
 		}
-	}
+
+        /// <summary>
+        /// Returns a value indicating whether or not there is at least one item in the list satisfying
+        /// the specified condition.
+        /// </summary>
+        /// <param name="targets">The collection to test.</param>
+        /// <param name="conditionEval">The condition to test.</param>
+        /// <returns>true if there is at least one item in the list statisfying the condition. false otherwise.</returns>
+        public static bool Any<TItem>(IEnumerable<TItem> targets, Predicate<TItem> conditionEval)
+            where TItem:class
+        {
+            foreach (TItem item in targets)
+            {
+                if (conditionEval(item))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
 }

@@ -8,8 +8,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Test
-{
+namespace ClearCanvas.ImageServer.Web.Application.Test {
+    
+    
     /// <summary>
     /// Login class.
     /// </summary>
@@ -26,6 +27,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        
+        /// <summary>
+        /// CurrentUser control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label CurrentUser;
         
         /// <summary>
         /// UserName control.

@@ -21,14 +21,17 @@ using ClearCanvas.ImageServer.Common.Services.Admin;
 using ClearCanvas.ImageServer.Common.Services.Login;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using IUserAdminService=ClearCanvas.ImageServer.Common.Services.Admin.IUserAdminService;
 
 namespace ClearCanvas.ImageServer.Web.Application.Test
 {
+    [PrincipalPermission(SecurityAction.Demand, Role=AuthorityTokens.Admin.Security.User)]
     public partial class TestPage : System.Web.UI.Page
     {
         protected void Page_Load(object sender, EventArgs e)
         {
             CustomIdentity id = SessionManager.Current.User.Identity as CustomIdentity;
+
             Message.Text = "Welcome <B>"+id.DisplayName + "</B>. Your session will expire on " +
                            SessionManager.Current.Credentials.SessionToken.ExpiryTime;
 
@@ -38,8 +41,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
 
         public override void DataBind()
         {
-            Platform.GetService<IAuthorityAdminServices>(
-                delegate(IAuthorityAdminServices service)
+            Platform.GetService<IAuthorityAdminService>(
+                delegate(IAuthorityAdminService service)
                 {
                     IList<AuthorityGroupSummary> list =  service.ListAllAuthorityGroups();
                     IList<ListItem> items= CollectionUtils.Map<AuthorityGroupSummary, ListItem>(
@@ -57,8 +60,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
 
         protected void Logout(object sender, EventArgs e)
         {
-            FormsAuthentication.SignOut();
-            FormsAuthentication.RedirectToLoginPage();
+            SessionManager.TerminiateSession();
         }
 
         protected void ChangePasswordClicked(object sender, EventArgs e)
@@ -84,8 +86,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
 
         protected void DeleteUserClicked(object sender, EventArgs e)
         {
-            Platform.GetService<IAdminServices>(
-                delegate(IAdminServices service)
+            Platform.GetService<IUserAdminService>(
+                delegate(IUserAdminService service)
                 {
                     try
                     {
@@ -102,8 +104,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
 
         protected void ResetPasswordClicked(object sender, EventArgs e)
         {
-            Platform.GetService<IAdminServices>(
-                delegate(IAdminServices service)
+            Platform.GetService<IUserAdminService>(
+                delegate(IUserAdminService service)
                 {
                     try
                     {
@@ -120,8 +122,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
 
         protected void NewUserButtonClicked(object sender, EventArgs e)
         {
-            Platform.GetService<IAdminServices>(
-                delegate(IAdminServices service)
+            Platform.GetService<IUserAdminService>(
+                delegate(IUserAdminService service)
                 {
                     try
                     {
@@ -153,8 +155,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
 
         protected void UpdateUserButtonClicked(object sender, EventArgs e)
         {
-            Platform.GetService<IAdminServices>(
-                delegate(IAdminServices service)
+            Platform.GetService<IUserAdminService>(
+                delegate(IUserAdminService service)
                 {
                     try
                     {

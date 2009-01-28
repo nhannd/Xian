@@ -31,19 +31,56 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common.Utilities;
 
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton.js", "text/javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
 {
+    public enum NoPermissionVisibility
+    {
+        Visible,
+        Invisible
+    }
+
     [ToolboxData("<{0}:ToolbarButton runat=server></{0}:ToolbarButton>")]
     [Themeable(true)]
     public class ToolbarButton : ImageButton, IScriptControl
     {
+        #region Private Members
+        private string _roleSeparator = ",";
+        private NoPermissionVisibility _noPermissionVisibilityMode;
+        #endregion
+
         #region Public Properties
+
+        /// <summary>
+		/// Specifies the roles which users must have to access to this button.
+		/// </summary>
+        public string Roles
+        {
+            get
+            {
+                return ViewState["Roles"] as string;
+            }
+            set
+            {
+                ViewState["Roles"] = value;
+            }
+        }
+
+		/// <summary>
+		/// Specifies the visiblity of the button if the user doesn't have the roles specified in <see cref="Roles"/>
+		/// </summary>
+        public NoPermissionVisibility NoPermissionVisibilityMode
+        {
+            get { return _noPermissionVisibilityMode; }
+            set { _noPermissionVisibilityMode = value; }
+        }
 
         /// <summary>
         /// Sets or gets the url of the image to be used when the button is enabled.
@@ -113,6 +150,15 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             }
         }
 
+        /// <summary>
+        /// Gets or sets the string that is used to seperate values in the <see cref="Roles"/> property.
+        /// </summary>
+        public string RoleSeparator
+        {
+            get { return _roleSeparator; }
+            set { _roleSeparator = value; }
+        }
+
         #endregion Public Properties
 
         #region Private Methods
@@ -168,6 +214,22 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             {
                 ScriptManager sm = ScriptManager.GetCurrent(Page);
                 sm.RegisterScriptControl(this);
+            }
+
+            if (String.IsNullOrEmpty(Roles)==false)
+            {
+                string[] roles = Roles.Split(new String[]{ RoleSeparator}, StringSplitOptions.RemoveEmptyEntries);
+                bool allow = CollectionUtils.Any(roles,
+                                delegate(string role)
+                                 {
+                                     return Thread.CurrentPrincipal.IsInRole(role.Trim());
+                                 });
+
+                if (!allow)
+                {
+                    Enabled = false;
+                    Visible = NoPermissionVisibilityMode==NoPermissionVisibility.Visible;
+                }
             }
 
         }

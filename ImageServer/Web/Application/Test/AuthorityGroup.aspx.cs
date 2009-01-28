@@ -33,8 +33,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
                 );
 
 
-            Platform.GetService<IAuthorityAdminServices>(
-                delegate(IAuthorityAdminServices services)
+            Platform.GetService<IAuthorityAdminService>(
+                delegate(IAuthorityAdminService services)
                 {
                     IList<AuthorityGroupSummary> list = services.ListAllAuthorityGroups();
                     List<AuthorityRowData> rows = CollectionUtils.Map<AuthorityGroupSummary, AuthorityRowData>(
@@ -78,8 +78,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
 
         protected void CreateNewGroupClicked(object sender, EventArgs e)
         {
-            Platform.GetService<IAuthorityAdminServices>(
-                delegate(IAuthorityAdminServices service)
+            Platform.GetService<IAuthorityAdminService>(
+                delegate(IAuthorityAdminService service)
                     {
                         List<AuthorityTokenSummary> tokens = new List<AuthorityTokenSummary>();
                         foreach(ListItem item in NewGroupTokenListBox.Items)
@@ -97,8 +97,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
 
         protected void NewTokenClicked(object sender, EventArgs e)
         {
-            Platform.GetService<IAuthorityAdminServices>(
-                delegate(IAuthorityAdminServices service)
+            Platform.GetService<IAuthorityAdminService>(
+                delegate(IAuthorityAdminService service)
                 {
                     List<AuthorityTokenSummary> tokenList = new List<AuthorityTokenSummary>();
                     tokenList.Add(new AuthorityTokenSummary(NewTokenDescriptionTextBox.Text, NewTokenDescriptionTextBox.Text));

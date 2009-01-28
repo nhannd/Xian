@@ -9,6 +9,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
 {
     public static class SessionManager
     {
+        /// <summary>
+        /// Returns the current session information
+        /// </summary>
+        /// <remarks>
+        /// The session information is set by calling <see cref="InitializeSession"/>. It is null 
+        /// if the <see cref="InitializeSession"/> hasn't been called or <see cref="TerminiateSession"/> has been called.
+        /// </remarks>
         public static SessionInfo Current
         {
             get
@@ -37,40 +44,47 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         /// <param name="session"></param>
         public static void InitializeSession(SessionInfo session)
         {
-            session.Validate(); // this should throw exception if the session is no longer valid
-            Current = session;
-
-            HttpCookie authCookie = HttpContext.Current.Request.Cookies[FormsAuthentication.FormsCookieName];
-            if (authCookie==null)
+            if (!session.Valid)
             {
+                throw new ApplicationException("Attempt to initialize session with an invalid session object");
+            }
+            else
+            {
+                // this should throw exception if the session is no longer valid. It also loads the authority tokens}
+
+                Current = session;
+
                 string loginId = session.User.Identity.Name;
                 string displayName = (session.User.Identity as CustomIdentity).DisplayName;
                 SessionToken token = session.Credentials.SessionToken;
                 string[] authorities = session.Credentials.Authorities;
 
-                String tokens = StringUtilities.Combine(authorities, ",");
                 String data = String.Format("{0}|{1}|{2}", token.Id, displayName, authorities);
                 FormsAuthenticationTicket authTicket = new
                     FormsAuthenticationTicket(1,  // version
-                                 loginId,           // user name
-                                 DateTime.Now,               // creation
-                                 token.ExpiryTime,          // Expiration
-                                 false,                      // Persistent
-                                 data);                    // User data
+                                 loginId,         // user name
+                                 DateTime.Now,    // creation
+                                 token.ExpiryTime,// Expiration
+                                 false,           // Persistent
+                                 data);           // User data
 
                 // Now encrypt the ticket.
                 string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
-                // Create a cookie and add the encrypted ticket to the 
-                // cookie as data.
-                authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
+                // Create a cookie with the encrypted data
+                HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
 
-                // one way to prevent cross-site scripting
-                authCookie.HttpOnly = false;
-                //authCookie.Secure = true; // over https only
-
-                HttpContext.Current.Response.Cookies.Add(authCookie);
-
+                HttpContext.Current.Response.Cookies.Set(authCookie);
             }
+
        }
+
+        /// <summary>
+        /// Terminates the current session and redirects users to the login page
+        /// </summary>
+        public static void TerminiateSession()
+        {
+            FormsAuthentication.SignOut();
+            FormsAuthentication.RedirectToLoginPage();
+        }
     }
 }

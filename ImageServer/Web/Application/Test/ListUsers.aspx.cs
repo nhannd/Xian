@@ -5,20 +5,13 @@ using System.Configuration;
 using System.Collections;
 using System.Security.Principal;
 using System.Threading;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Services.Admin;
-using ClearCanvas.ImageServer.Services.Common.Admin;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using IUserAdminService=ClearCanvas.ImageServer.Common.Services.Admin.IUserAdminService;
 
 namespace ClearCanvas.ImageServer.Web.Application.Test
 {
@@ -32,14 +25,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
         public override void DataBind()
         {
             LoginCredentials credential = SessionManager.Current.Credentials;
-            Login.Text = String.Format("{0} expire at: {1}",
+            CurrentUser.Text = String.Format("{0}: {1} expire at: {2}",
+                Thread.CurrentPrincipal,
                     credential.DisplayName,
                     credential.SessionToken.ExpiryTime
                 );
 
 
-            Platform.GetService<IAdminServices>(
-                delegate(IAdminServices services)
+            Platform.GetService<IUserAdminService>(
+                delegate(IUserAdminService services)
                     {
                         List<UserSummary> users = services.ListUsers(new ListUsersRequest());
 
@@ -53,6 +47,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
                         UserGridView.DataSource = rows;
                     });
             base.DataBind();
+        }
+
+        protected void LogoutClicked(object sender, EventArgs e)
+        {
+            SessionManager.TerminiateSession();
         }
     }
 

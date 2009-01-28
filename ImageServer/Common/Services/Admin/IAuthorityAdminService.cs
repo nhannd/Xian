@@ -5,7 +5,7 @@ using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 
 namespace ClearCanvas.ImageServer.Common.Services.Admin
 {
-    public interface IAuthorityAdminServices : IDisposable
+    public interface IAuthorityAdminService : IDisposable
     {
         LoginCredentials Credentials { set; }
         IList<AuthorityGroupSummary> ListAllAuthorityGroups();

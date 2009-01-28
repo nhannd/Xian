@@ -10,9 +10,11 @@
 <body>
     <form id="form1" runat="server">
     <div>
-        <asp:Label runat="server" ID="Login" />
+        <asp:Label runat="server" ID="CurrentUser"  />
+        <asp:Button runat="server" ID="Logout" Text="Logout" OnClick="LogoutClicked" />
         <asp:GridView runat="server" ID="UserGridView">
         </asp:GridView>
+        
     </div>
     </form>
 </body>
