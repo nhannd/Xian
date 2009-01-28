@@ -219,7 +219,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             if (String.IsNullOrEmpty(Roles)==false)
             {
                 string[] roles = Roles.Split(new String[]{ RoleSeparator}, StringSplitOptions.RemoveEmptyEntries);
-                bool allow = CollectionUtils.Any(roles,
+                bool allow = CollectionUtils.Contains(roles,
                                 delegate(string role)
                                  {
                                      return Thread.CurrentPrincipal.IsInRole(role.Trim());
