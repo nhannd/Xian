@@ -14,5 +14,8 @@
     <Setting Name="SupervisorID" Description="Stores user default supervisor." Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="PreliminaryDiagnosisReviewForPatientTypes" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">E</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
