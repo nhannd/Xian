@@ -34,13 +34,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KeyObjects\DesktopWindowTool.cs" />
-    <Compile Include="KeyObjects\EditKeyImageInformationTool.cs" />
-    <Compile Include="KeyObjects\KeyImageClipboardComponent.cs" />
-    <Compile Include="KeyObjects\KeyImageTool.cs" />
-    <Compile Include="KeyObjects\KeyImageClipboard.cs" />
-    <Compile Include="KeyObjects\KeyImageInformationEditorComponent.cs" />
-    <Compile Include="KeyObjects\KeyImageInformation.cs" />
+    <Compile Include="KeyImages\DesktopWindowTool.cs" />
+    <Compile Include="KeyImages\EditKeyImageInformationTool.cs" />
+    <Compile Include="KeyImages\KeyImageClipboardComponent.cs" />
+    <Compile Include="KeyImages\KeyImageTool.cs" />
+    <Compile Include="KeyImages\KeyImageClipboard.cs" />
+    <Compile Include="KeyImages\KeyImageInformationEditorComponent.cs" />
+    <Compile Include="KeyImages\KeyImageInformation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

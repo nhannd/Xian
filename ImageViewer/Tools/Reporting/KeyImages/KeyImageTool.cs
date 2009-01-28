@@ -37,7 +37,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
+namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
 	[MenuAction("create", "imageviewer-contextmenu/MenuCreateKeyImage", "Create")]
 	[ButtonAction("create", "global-toolbars/ToolbarKeyImages/ToolbarCreateKeyImage", "Create")]

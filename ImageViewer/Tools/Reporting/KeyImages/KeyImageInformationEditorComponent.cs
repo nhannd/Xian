@@ -5,7 +5,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Dicom.Iod.ContextGroups;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
+namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
 	[ExtensionPoint]
 	public class KeyImageInformationEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> { }

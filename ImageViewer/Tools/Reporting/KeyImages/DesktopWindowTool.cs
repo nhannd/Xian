@@ -2,7 +2,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
+namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	internal class DesktopWindowTool : Tool<IDesktopToolContext>

@@ -8,7 +8,7 @@ using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
+namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
 	public sealed class KeyImageInformation : IDisposable
 	{

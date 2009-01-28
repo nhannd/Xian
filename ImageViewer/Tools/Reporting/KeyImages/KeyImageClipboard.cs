@@ -6,7 +6,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
+namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
 	public class KeyImageClipboard
 	{

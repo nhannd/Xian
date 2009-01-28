@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using ClearCanvas.Dicom.Iod.ContextGroups;
-using ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects;
+using ClearCanvas.ImageViewer.Tools.Reporting.KeyImages;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms

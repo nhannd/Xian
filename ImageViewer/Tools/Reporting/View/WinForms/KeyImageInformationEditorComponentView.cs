@@ -32,7 +32,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects;
+using ClearCanvas.ImageViewer.Tools.Reporting.KeyImages;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 {

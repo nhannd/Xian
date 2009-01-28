@@ -1,6 +1,6 @@
 using ClearCanvas.ImageViewer.Clipboard;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
+namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
 	internal class KeyImageClipboardComponent : ClipboardComponent
 	{

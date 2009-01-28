@@ -3,7 +3,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Clipboard;
 
-namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyObjects
+namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
 	[ButtonAction("edit", KeyImageClipboard.ToolbarSite + "/ToolbarEditKeyImageInformation", "Edit")]
 	[Tooltip("edit", "TooltipEditKeyImageInformation")]
