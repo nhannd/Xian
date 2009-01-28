@@ -105,7 +105,7 @@ namespace ClearCanvas.Healthcare
             if(a == null)
                 return null;
 
-            ResourceResolver resolver = new ResourceResolver(worklistClass.Assembly);
+            ResourceResolver resolver = new ResourceResolver(worklistClass, true);
             return resolver.LocalizeString(a.Category);
         }
 
@@ -123,7 +123,7 @@ namespace ClearCanvas.Healthcare
 
             if (a != null)
             {
-                ResourceResolver resolver = new ResourceResolver(worklistClass.Assembly);
+                ResourceResolver resolver = new ResourceResolver(worklistClass, true);
                 return resolver.LocalizeString(a.DisplayName);
             }
             else
@@ -143,7 +143,7 @@ namespace ClearCanvas.Healthcare
             if (a == null)
                 return null;
 
-            ResourceResolver resolver = new ResourceResolver(worklistClass.Assembly);
+            ResourceResolver resolver = new ResourceResolver(worklistClass, true);
             return resolver.LocalizeString(a.Description);
         }
 
