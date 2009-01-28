@@ -60,6 +60,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private const int CELL_SUBROW_HEIGHT = 18;
         private readonly int _rowHeight = 0;
 
+    	private ISelection _selectionBeforeSort;
+
 		public TableView()
         {
             InitializeComponent();
@@ -280,8 +282,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                     // DataSource must be set after RowTemplate in order for changes to take effect
                     _dataGridView.DataSource = new TableAdapter(_table);
+					_dataGridView.ColumnHeaderMouseClick += _dataGridView_ColumnHeaderMouseClick;
 
-                    _table.Sorted += new EventHandler(_table_SortEvent);
+					_table.BeforeSorted += _table_BeforeSortedEvent;
+					_table.Sorted += _table_SortedEvent;
                 }
 
                 InitializeSortButton();
@@ -340,7 +344,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// to the top of the list, this isn't desirable. The following method forces the given selection to
         /// be visible on the control.
         /// </summary>
-        /// <param name="oldSelectedIndex"></param>
         private void ForceSelectionDisplay()
         {
             // check if ALL the selected entries are not visible to the user
@@ -389,7 +392,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             // intended to preserve the current index if there are displayable items already on screen
             else
             {
-                if (FirstDisplayedScrollingRowIndex != 0)
+                if (FirstDisplayedScrollingRowIndex > 0)
                     FirstDisplayedScrollingRowIndex = FirstDisplayedScrollingRowIndex;
             }
         }
@@ -505,7 +508,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                 foreach (ITableColumn column in _table.Columns)
                     column.VisibleChanged -= OnColumnVisibilityChanged;
 
-                _table.Sorted -= _table_SortEvent;
+				_dataGridView.ColumnHeaderMouseClick -= _dataGridView_ColumnHeaderMouseClick;
+				_table.BeforeSorted -= _table_BeforeSortedEvent;
+				_table.Sorted -= _table_SortedEvent;
             }
         }
 
@@ -956,12 +961,25 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _sortDescendingButton.Image = value ? SR.CheckSmall : null; }
         }
 
-        private void _table_SortEvent(object sender, EventArgs e)
+        private void _table_BeforeSortedEvent(object sender, EventArgs e)
         {
-            ResetSortButtonState();
+        	_selectionBeforeSort = this.Selection;
         }
 
-        private void sortAscendingButton_Click(object sender, EventArgs e)
+		private void _table_SortedEvent(object sender, EventArgs e)
+        {
+			if (_selectionBeforeSort.Items.Length > 0)
+				this.Selection = _selectionBeforeSort;
+
+			ResetSortButtonState();
+		}
+
+		private void _dataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+		{
+			ForceSelectionDisplay();
+		}
+		
+		private void sortAscendingButton_Click(object sender, EventArgs e)
         {
             if (_table == null || _table.SortParams == null)
                 return;

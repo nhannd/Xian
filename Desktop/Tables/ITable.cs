@@ -72,7 +72,12 @@ namespace ClearCanvas.Desktop.Tables
         /// </summary>
         void Sort(TableSortParams sortParams);
 
-        /// <summary>
+		/// <summary>
+		/// Raised before the table is sorted.
+		/// </summary>
+		event EventHandler BeforeSorted;
+		
+		/// <summary>
 		/// Raised after the table is sorted.
         /// </summary>
         event EventHandler Sorted;
