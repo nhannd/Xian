@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		{
 			lock(_syncLock)
 			{
+				//TODO: fix to catch possible InvalidOperationException from Target property.
 				WeakReference reference = null;
 				List<VoiDataLut> dataLuts = null;
 
@@ -251,6 +252,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 			return String.Format(SR.FormatAutoVoiLutDataDescription, _dataLuts[_index].Explanation);
 		}
+
+		//TODO: override min/max input.
 
 		public override object CreateMemento()
 		{
