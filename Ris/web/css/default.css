@@ -225,8 +225,11 @@ a.collapsibleHeading {
 
 .readonlyField, .readonlyTextareaField, .readonlyFieldEmpty {
 	font-style: italic;
-	padding-top:0.3em;
+	/*padding-top:0.3em;
     padding-bottom:0.18em;
+	*/
+	padding-top:4px;
+	padding-bottom:4px;
 	white-space: normal;
 }
 
