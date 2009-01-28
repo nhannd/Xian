@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				try
 				{
 					DicomSoftcopyPresentationState presentationState = DicomSoftcopyPresentationState.Create(base.SelectedPresentationImage);
-					presentationState.Save().Save(_lastPRFile);
+					presentationState.ExportAsDicomFile().Save(_lastPRFile);
 				}
 				catch (Exception ex)
 				{

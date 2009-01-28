@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			this.Deserialize(images);
 		}
 
-		public DicomFile Save()
+		public DicomFile ExportAsDicomFile()
 		{
 			DicomFile dcf = new DicomFile("", new DicomAttributeCollection(), _dataSet.Copy(true));
 			dcf.DataSet[DicomTags.SopInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 		}
 
-		public static IEnumerable<DicomSoftcopyPresentationState> Create(IEnumerable<IPresentationImage> images)
+		public static IEnumerable<KeyValuePair<IPresentationImage, DicomSoftcopyPresentationState>> Create(IEnumerable<IPresentationImage> images)
 		{
 			List<IPresentationImage> grayscaleImages = new List<IPresentationImage>();
 
@@ -129,16 +129,24 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				}
 			}
 
-			List<DicomSoftcopyPresentationState> presentationStates = new List<DicomSoftcopyPresentationState>();
-
+			Dictionary<IPresentationImage, DicomSoftcopyPresentationState> presentationStates = new Dictionary<IPresentationImage, DicomSoftcopyPresentationState>();
 			if (grayscaleImages.Count > 0)
 			{
 				DicomGrayscaleSoftcopyPresentationState grayscaleSoftcopyPresentationState = new DicomGrayscaleSoftcopyPresentationState();
 				grayscaleSoftcopyPresentationState.Serialize(grayscaleImages);
-				presentationStates.Add(grayscaleSoftcopyPresentationState);
+				//presentationStates.Add(new KeyValuePair<IPresentationImage, DicomSoftcopyPresentationState>(grayscaleSoftcopyPresentationState));
+				foreach (IPresentationImage image in grayscaleImages)
+				{
+					presentationStates.Add(image, grayscaleSoftcopyPresentationState);
+				}
 			}
 
-			return presentationStates;
+			List<KeyValuePair<IPresentationImage, DicomSoftcopyPresentationState>> presentationStatesByOriginalOrder = new List<KeyValuePair<IPresentationImage, DicomSoftcopyPresentationState>>();
+			foreach (IPresentationImage image in images)
+			{
+				presentationStatesByOriginalOrder.Add(new KeyValuePair<IPresentationImage, DicomSoftcopyPresentationState>(image, presentationStates[image]));
+			}
+			return presentationStatesByOriginalOrder;
 		}
 
 		public static DicomSoftcopyPresentationState Load(DicomFile dicomFile)
@@ -165,6 +173,23 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 
 			return presentationStates;
+		}
+
+		public static void Apply(IEnumerable<KeyValuePair<IPresentationImage, DicomSoftcopyPresentationState>> presentationStates)
+		{
+			foreach (KeyValuePair<IPresentationImage, DicomSoftcopyPresentationState> pair in presentationStates)
+			{
+				pair.Value.Apply(pair.Key);
+			}
+		}
+
+		public static void Apply(IEnumerable<KeyValuePair<IPresentationImage, DicomFile>> presentationStates)
+		{
+			foreach (KeyValuePair<IPresentationImage, DicomFile> pair in presentationStates)
+			{
+				DicomSoftcopyPresentationState presentationState = Load(pair.Value);
+				presentationState.Apply(pair.Key);
+			}
 		}
 
 		#endregion
