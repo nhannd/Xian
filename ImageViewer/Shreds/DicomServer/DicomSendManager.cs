@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Network.Scu;
@@ -10,6 +11,7 @@ using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Common.Utilities;
+using System.IO;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -103,6 +105,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		Guid SendStudies(SendStudiesRequest request);
 		Guid SendSeries(SendSeriesRequest request);
 		Guid SendSopInstances(SendSopInstancesRequest request);
+		Guid SendFiles(SendFilesRequest request);
 
 		void Cancel(Guid operationIdentifier);
 	}
@@ -130,13 +133,24 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			#region Private Fields
 
-			private readonly Guid _identifier;
-			private readonly Dictionary<string, SendStudyInformation> _studies;
-			private readonly Thread _thread;
-
-			private readonly SendOperationProgressCallback _callback;
+			private Guid _identifier;
+			private Dictionary<string, SendStudyInformation> _studies;
+			private Thread _thread;
+			private SendFilesRequest _sendFilesRequest;
+			private SendOperationProgressCallback _callback;
 
 			#endregion
+
+			public SendScu(string localAETitle, SendFilesRequest sendFilesRequest, SendOperationProgressCallback callback)
+				: base(localAETitle, sendFilesRequest.DestinationAEInformation.AETitle, 
+									sendFilesRequest.DestinationAEInformation.HostName, 
+									sendFilesRequest.DestinationAEInformation.Port)
+			{
+				Platform.CheckForEmptyString(localAETitle, "localAETitle");
+
+				_sendFilesRequest = sendFilesRequest;
+				Initialize(callback);
+			}
 
 			public SendScu(string localAETitle, AEInformation destinationAEInfo, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
 				: base(localAETitle, destinationAEInfo.AETitle, destinationAEInfo.HostName, destinationAEInfo.Port)
@@ -146,9 +160,13 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				Platform.CheckForEmptyString(destinationAEInfo.HostName, "destinationAEInfo.HostName");
 				Platform.CheckForNullReference(instancesToSend, "instancesToSend");
 
-				_studies = new Dictionary<string, SendStudyInformation>();
-				Initialize(instancesToSend);
+				Initialize(callback);
+				AddInstances(instancesToSend);
+			}
 
+			private void Initialize(SendOperationProgressCallback callback)
+			{
+				_studies = new Dictionary<string, SendStudyInformation>();
 				_identifier = Guid.NewGuid();
 
 				_thread = new Thread(SendInternal);
@@ -157,13 +175,35 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				_callback = callback;
 			}
 
-			private void Initialize(IEnumerable<ISopInstance> instancesToSend)
+			private void AddInstances(IEnumerable<ISopInstance> instancesToSend)
 			{
 				foreach (ISopInstance sop in instancesToSend)
 				{
 					AddStudy(sop.GetParentSeries().GetParentStudy());
 					AddStorageInstance(new StorageInstance(sop.GetLocationUri().LocalDiskPath));
 				}
+			}
+
+			private void AddStudyInformation(DicomFile file)
+			{
+				string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid];
+				if (_studies.ContainsKey(studyInstanceUid))
+					return;
+
+				SendStudyInformation info = new SendStudyInformation();
+				info.ToAETitle = RemoteAE;
+
+				info.StudyInformation = new StudyInformation();
+				info.StudyInformation.PatientId = file.DataSet[DicomTags.PatientId].GetString(0, "");
+				info.StudyInformation.PatientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
+
+				string studyDate = file.DataSet[DicomTags.StudyDate].GetString(0, "");
+
+				info.StudyInformation.StudyDate = DateParser.Parse(studyDate);
+				info.StudyInformation.StudyDescription = file.DataSet[DicomTags.StudyDescription].GetString(0, ""); ;
+				info.StudyInformation.StudyInstanceUid = studyInstanceUid;
+
+				_studies[studyInstanceUid] = info;
 			}
 
 			private void AddStudy(IStudy study)
@@ -247,6 +287,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			private void OnFileSent(StorageInstance storageInstance)
 			{
+				if (_sendFilesRequest != null)
+				{
+					if (_sendFilesRequest.Behaviour == SendFileBehaviour.DeleteOnSuccess)
+					{
+						//TODO: delete on successful storage!?
+					}
+				}
+
 				StoreScuSentFileInformation info = new StoreScuSentFileInformation();
 				info.ToAETitle = RemoteAE;
 				info.FileName = storageInstance.Filename;
@@ -283,15 +331,86 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 											  severity, RemoteAE, description));
 				}
 
+				if (_sendFilesRequest != null)
+				{
+					if (_sendFilesRequest.Behaviour == SendFileBehaviour.DeleteAlways)
+					{
+						//TODO: delete on successful storage!?
+					}
+				}
+
 				if (_callback != null)
 					_callback(this);
 			}
 
 			private void OnBeginSend()
 			{
+				if (_sendFilesRequest != null)
+				{
+					List<string> filesToSend = GetFilesToSend();
+					foreach (string file in filesToSend)
+					{
+						StorageInstance instance = new StorageInstance(file);
+						DicomFile dicomFile = instance.LoadFile();
+						AddStudyInformation(dicomFile);
+					}
+				}
+
 				//later, we could queue it up to limit the number of active scus.
 				foreach (SendStudyInformation info in _studies.Values)
 					LocalDataStoreEventPublisher.Instance.SendStarted(info);
+			}
+
+			private List<string> GetFilesToSend()
+			{
+				List<string> extensions = new List<string>();
+				if (_sendFilesRequest.FileExtensions != null)
+				{
+					foreach (string extension in _sendFilesRequest.FileExtensions)
+					{
+						if (!extension.StartsWith("."))
+							extensions.Add("." + extension);
+						else
+							extensions.Add(extension);
+					}
+				}
+
+				List<string> files = new List<string>();
+				foreach (string path in _sendFilesRequest.FilePaths)
+				{
+					DirectoryInfo info = new DirectoryInfo(path);
+					if (info.Exists)
+					{
+						SearchOption searchOption = SearchOption.TopDirectoryOnly;
+						if (_sendFilesRequest.Recursive)
+							searchOption = SearchOption.AllDirectories;
+
+						if (extensions.Count > 0)
+						{
+							foreach (string extension in extensions)
+							{
+								string pattern = String.Format("*{0}", extension);
+								FileInfo[] fileInfos = info.GetFiles(pattern, searchOption);
+								foreach (FileInfo fileInfo in fileInfos)
+									files.Add(fileInfo.FullName);
+							}
+						}
+						else
+						{
+							FileInfo[] fileInfos = info.GetFiles("*.*", searchOption);
+							foreach (FileInfo fileInfo in fileInfos)
+								files.Add(fileInfo.FullName);
+						}
+					}
+					else
+					{
+						FileInfo fileInfo = new FileInfo(path);
+						if (fileInfo.Exists)
+							files.Add(fileInfo.FullName);
+					}
+				}
+
+				return files;
 			}
 
 			private void OnSendError(string message)
@@ -421,6 +540,21 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
+		private Guid Send(SendFilesRequest request, SendOperationProgressCallback callback)
+		{
+			lock (_syncLock)
+			{
+				if (!_active)
+					throw new InvalidOperationException("The Dicom Send service is not active.");
+
+				DicomServerConfiguration configuration = DicomServerManager.Instance.GetServerConfiguration();
+				SendScu scu = new SendScu(configuration.AETitle, request, callback);
+				_scus.Add(scu);
+				scu.Send();
+				return scu.Identifier;
+			}
+		}
+
 		private Guid Send(AEInformation destinationAEInformation, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
 		{
 			lock (_syncLock)
@@ -491,6 +625,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				GetSopInstances(request.StudyInstanceUid, request.SeriesInstanceUid, request.SopInstanceUids), request.Callback);
 		}
 
+		public Guid SendFiles(SendFilesRequest request)
+		{
+			//TODO: no callback?
+			return Send(request, null);
+		}
+		
 		public void Cancel(Guid operationIdentifier)
 		{
 			lock (_syncLock)
@@ -502,5 +642,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		}
 
 		#endregion
+
 	}
 }

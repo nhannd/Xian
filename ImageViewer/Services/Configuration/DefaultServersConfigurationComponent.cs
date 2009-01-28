@@ -22,14 +22,5 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 			
 			DefaultServerSettings.Default.Save();
 		}
-
-		public static List<Server> GetDefaultServers()
-		{
-			ImageViewer.Services.ServerTree.ServerTree tree = new ImageViewer.Services.ServerTree.ServerTree();
-			List<Server> allServers = tree.RootNode.ServerGroupNode.ChildServers;
-			StringCollection defaultServerPaths = DefaultServerSettings.Default.DefaultServerPaths;
-
-			return CollectionUtils.Select(allServers, delegate(Server node) { return defaultServerPaths.Contains(node.Path); });
-		}
 	}
 }

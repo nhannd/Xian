@@ -29,11 +29,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
-using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Services.DicomServer
 {
@@ -51,6 +48,24 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		/// <param name="studyInstanceUids">The studies to send.</param>
 		[OperationContract]
 		void Send(AEInformation destinationAEInformation, IEnumerable<string> studyInstanceUids);
+
+		/// <summary>
+		/// Sends series within a study to another Dicom server.
+		/// </summary>
+		[OperationContract]
+		void Send(AEInformation destinationAEInformation, string studyInstanceUid, IEnumerable<string> seriesInstanceUids);
+
+		/// <summary>
+		/// Sends sops within a series to another Dicom server.
+		/// </summary>
+		[OperationContract]
+		void Send(AEInformation destinationAEInformation, string studyInstanceUid, string seriesInstanceUid, IEnumerable<string> sopInstanceUids);
+
+		/// <summary>
+		/// Sends a collection of files to another Dicom server.
+		/// </summary>
+		[OperationContract]
+		void SendFiles(SendFilesRequest request);
 
 		/// <summary>
 		/// Performs a study level retrieve from another Dicom Server.  Series and Image level retrieves will not

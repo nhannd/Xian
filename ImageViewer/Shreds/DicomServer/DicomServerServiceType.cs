@@ -81,7 +81,61 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		public void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
+		public void Send(AEInformation destinationAEInformation, string studyInstanceUid, IEnumerable<string> seriesInstanceUids)
+		{
+			try
+			{
+				SendSeriesRequest request = new SendSeriesRequest(destinationAEInformation, studyInstanceUid, seriesInstanceUids, null);
+				DicomSendManager.Instance.SendSeries(request);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				//we throw a serializable, non-FaultException-derived exception so that the 
+				//client channel *does* get closed.
+				string message = SR.ExceptionFailedToInitiateSend;
+				message += "\nDetail: " + e.Message;
+				throw new DicomServerException(message);
+			}
+		}
+
+		public void Send(AEInformation destinationAEInformation, string studyInstanceUid, string seriesInstanceUid, IEnumerable<string> sopInstanceUids)
+		{
+			try
+			{
+				SendSopInstancesRequest request = 
+					new SendSopInstancesRequest(destinationAEInformation, studyInstanceUid, seriesInstanceUid, sopInstanceUids, null);
+				DicomSendManager.Instance.SendSopInstances(request);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				//we throw a serializable, non-FaultException-derived exception so that the 
+				//client channel *does* get closed.
+				string message = SR.ExceptionFailedToInitiateSend;
+				message += "\nDetail: " + e.Message;
+				throw new DicomServerException(message);
+			}
+		}
+		
+		public void SendFiles(SendFilesRequest request)
+		{
+			try
+			{
+				DicomSendManager.Instance.SendFiles(request);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				//we throw a serializable, non-FaultException-derived exception so that the 
+				//client channel *does* get closed.
+				string message = SR.ExceptionFailedToInitiateSend;
+				message += "\nDetail: " + e.Message;
+				throw new DicomServerException(message);
+			}
+		}
+
+    	public void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
 		{
 			try
 			{

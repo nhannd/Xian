@@ -29,13 +29,66 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Services.DicomServer
 {
+	public enum SendFileBehaviour
+	{
+		DeleteOnSuccess = 0,
+		DeleteAlways
+	}
+
+	[DataContract]
+	public class SendFilesRequest
+	{
+		private AEInformation _destinationAEInformation;
+		private IEnumerable<string> _fileExtensions;
+		private IEnumerable<string> _filePaths;
+		private bool _recursive;
+		private SendFileBehaviour _behaviour;
+
+		public SendFilesRequest()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public AEInformation DestinationAEInformation
+		{
+			get { return _destinationAEInformation; }
+			set { _destinationAEInformation = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public IEnumerable<string> FilePaths
+		{
+			get { return _filePaths; }
+			set { _filePaths = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public IEnumerable<string> FileExtensions
+		{
+			get { return _fileExtensions; }
+			set { _fileExtensions = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public bool Recursive
+		{
+			get { return _recursive; }
+			set { _recursive = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public SendFileBehaviour Behaviour
+		{
+			get { return _behaviour; }
+			set { _behaviour = value; }
+		}
+	}
+
 	[DataContract]
 	public class DicomServerConfiguration
 	{

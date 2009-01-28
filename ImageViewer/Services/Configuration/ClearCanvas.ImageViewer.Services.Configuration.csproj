@@ -35,6 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefaultServers.cs" />
     <Compile Include="ServerTree\AddServerGroupTool.cs" />
     <Compile Include="ServerTree\AddServerTool.cs" />
     <Compile Include="DefaultServersConfigurationComponent.cs" />
@@ -43,7 +44,6 @@
     <Compile Include="ConfigurationPageProvider.cs" />
     <Compile Include="ServerTree\DeleteServerTool.cs" />
     <Compile Include="ServerTree\ServerTreeConfigurationComponent.cs" />
-    <Compile Include="DicomPublisher.cs" />
     <Compile Include="DefaultServerSettings.cs" />
     <Compile Include="DefaultServerSettings.Designer.cs">
       <DependentUpon>DefaultServerSettings.settings</DependentUpon>

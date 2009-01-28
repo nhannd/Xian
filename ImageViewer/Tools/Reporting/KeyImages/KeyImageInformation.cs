@@ -7,6 +7,9 @@ using ClearCanvas.Dicom.Iod.ContextGroups;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Services.Configuration;
+using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
@@ -58,35 +61,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		{
 			get { return _seriesNumber; }
 			set { _seriesNumber = value; }
-		}
-
-		private List<DicomFile> CreateDocuments()
-		{
-			KeyObjectSerializer serializer = new KeyObjectSerializer();
-			serializer.DateTime = DateTime;
-			serializer.Description = _description;
-			serializer.DocumentTitle = _docTitle;
-			serializer.SeriesNumber = _seriesNumber;
-			serializer.SeriesDescription = _seriesDescription;
-
-			foreach (Frame frame in ExtractFrames())
-				serializer.Frames.Add(frame);
-
-			return serializer.Serialize();
-		}
-
-		private IEnumerable<Frame> ExtractFrames()
-		{
-			foreach (IClipboardItem item in ClipboardItems)
-			{
-				IImageSopProvider provider = item.Item as IImageSopProvider;
-				if (provider != null)
-					yield return provider.Frame;
-			}
-		}
-
-		internal void Publish()
-		{
 		}
 
 		#region IDisposable Members

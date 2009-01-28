@@ -95,7 +95,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			{				
 				using(info)
 				{
-					info.Publish();
+					//TODO: always publish to source?
+					new KeyImagePublisher(info, true).Publish();
 				}
 			}
 		}
