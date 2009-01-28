@@ -643,13 +643,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 				if (SupervisorIsInvalid())
 					return;
 
-				string patientTypeFilters = ReportingSettings.Default.PreliminaryDiagnosisReviewForPatientTypes;
-				List<string> patientTypes = string.IsNullOrEmpty(patientTypeFilters)
+				string patientClassFilters = ReportingSettings.Default.PreliminaryDiagnosisReviewForPatientClass;
+				List<string> patientClasses = string.IsNullOrEmpty(patientClassFilters)
 					? new List<string>()
-					: CollectionUtils.Map<string, string>(patientTypeFilters.Split(','), delegate(string s) { return s.Trim(); });
+					: CollectionUtils.Map<string, string>(patientClassFilters.Split(','), delegate(string s) { return s.Trim(); });
 
 				// check for a prelim diagnosis
-				if (PreliminaryDiagnosis.ConversationExists(this.WorklistItem.OrderRef) || patientTypes.Contains(this.WorklistItem.PatientClass.Code))
+				if (PreliminaryDiagnosis.ConversationExists(this.WorklistItem.OrderRef) || patientClasses.Contains(this.WorklistItem.PatientClass.Code))
 				{
 					string title = string.Format(SR.FormatTitleContextDescriptionReviewOrderNoteConversation,
 						PersonNameFormat.Format(this.WorklistItem.PatientName),

@@ -82,11 +82,12 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("A comma separated list of patient class codes used to determine if the preliminary diagnosis dialog should be shown when verifying report.")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("E")]
-        public string PreliminaryDiagnosisReviewForPatientTypes {
+        public string PreliminaryDiagnosisReviewForPatientClass {
             get {
-                return ((string)(this["PreliminaryDiagnosisReviewForPatientTypes"]));
+                return ((string)(this["PreliminaryDiagnosisReviewForPatientClass"]));
             }
         }
     }
