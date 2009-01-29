@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		[CloneIgnore]
 		private InvariantTextPrimitive _textGraphic;
 		[CloneIgnore]
-		private LinePrimitive _lineGraphic;
+		private ArrowGraphic _lineGraphic;
 
 		[CloneCopyReference]
 		private CursorToken _moveToken;
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			get
 			{
-				return _lineGraphic.Pt1;
+				return _lineGraphic.StartPoint;
 			}
 		}
 
@@ -123,10 +123,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public PointF EndPoint
 		{
-			get { return _lineGraphic.Pt2; }
+			get { return _lineGraphic.EndPoint; }
 			set 
 			{
-				_lineGraphic.Pt2 = value;
+				_lineGraphic.EndPoint = value;
 				SetCalloutLineStart();
 			}
 		}
@@ -142,6 +142,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_lineGraphic.Color = value;
 				_textGraphic.Color = value;
 			}
+		}
+
+		public bool ShowArrow
+		{
+			get { return _lineGraphic.ShowArrowhead; }
+			set { _lineGraphic.ShowArrowhead = value; }
 		}
 
 		/// <summary>
@@ -242,7 +248,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			if (_lineGraphic == null)
 			{
-				_lineGraphic = new LinePrimitive();
+				_lineGraphic = new ArrowGraphic(false);
 				this.Graphics.Add(_lineGraphic);
 				_lineGraphic.LineStyle = LineStyle.Dash;
 			}
@@ -260,7 +266,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				delegate(IGraphic test) { return test is InvariantTextPrimitive; }) as InvariantTextPrimitive;
 
 			_lineGraphic = CollectionUtils.SelectFirst(base.Graphics,
-				delegate(IGraphic test) { return test is LinePrimitive; }) as LinePrimitive;
+				delegate(IGraphic test) { return test is ArrowGraphic; }) as ArrowGraphic;
 
 			Platform.CheckForNullReference(_lineGraphic, "_lineGraphic");
 			Platform.CheckForNullReference(_textGraphic, "_textGraphic");
@@ -271,7 +277,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private void SetCalloutLineStart()
 		{
 			_lineGraphic.CoordinateSystem = CoordinateSystem.Destination;
-			_lineGraphic.Pt1 = CalculateCalloutLineStartPoint();
+			_lineGraphic.StartPoint = CalculateCalloutLineStartPoint();
 			_lineGraphic.ResetCoordinateSystem();
 		}
 

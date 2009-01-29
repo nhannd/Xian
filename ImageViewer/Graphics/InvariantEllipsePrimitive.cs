@@ -36,7 +36,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
-	/// An ellipse <see cref="InvariantPrimitive"/>.
+	/// An elliptical <see cref="InvariantPrimitive"/>.
 	/// </summary>
 	[Cloneable(true)]
 	public class InvariantEllipsePrimitive : InvariantBoundablePrimitive

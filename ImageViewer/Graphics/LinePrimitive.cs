@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// A primitive line graphic.
 	/// </summary>
 	[Cloneable(true)]
-	public class LinePrimitive : VectorGraphic
+	public class LinePrimitive : VectorGraphic, ILineSegmentGraphic
 	{
 		#region Private fields
 		

@@ -119,6 +119,10 @@
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
+    <Compile Include="Graphics\ILineSegmentGraphic.cs" />
+    <Compile Include="Graphics\InvariantArrowheadGraphic.cs" />
+    <Compile Include="Graphics\InvariantLinePrimitive.cs" />
+    <Compile Include="Graphics\ArrowGraphic.cs" />
     <Compile Include="InteractiveGraphics\CalloutGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphicAnnotationSerializer.cs" />

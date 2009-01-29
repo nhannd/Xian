@@ -45,7 +45,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	[Cloneable(true)]
 	public abstract class InvariantBoundablePrimitive : InvariantPrimitive, IBoundableGraphic
 	{
-		private RectangleF _rectangle = new RectangleF(0,0,0,0);
+		private PointF _topLeft = new PointF(0,0);
+		private PointF _bottomRight = new PointF(0,0);
 
 		/// <summary>
 		/// Constructor.
@@ -96,8 +97,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public PointF InvariantTopLeft
 		{
-			get { return _rectangle.Location; }
-			set { _rectangle.Location = value; }
+			get { return _topLeft; }
+			set { _topLeft = value; }
 		}
 
 		/// <summary>
@@ -142,15 +143,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public PointF InvariantBottomRight
 		{
-			get
-			{
-				return new PointF(_rectangle.X + _rectangle.Width, _rectangle.Y + _rectangle.Height);
-			}
-			set
-			{
-				_rectangle.Width = value.X - _rectangle.X;
-				_rectangle.Height = value.Y - _rectangle.Y;
-			}
+			get { return _bottomRight; }
+			set { _bottomRight = value; }
 		}
 
 		/// <summary>

@@ -191,35 +191,15 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// </summary>
 		protected override void DrawLinePrimitive(LinePrimitive line)
 		{
-			Surface.FinalBuffer.Graphics.Transform = line.SpatialTransform.CumulativeTransform;
-			line.CoordinateSystem = CoordinateSystem.Source;
+			InternalDrawLinePrimitive(line);
+		}
 
-			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-			// Draw drop shadow
-			_pen.Color = Color.Black;
-			_pen.Width = CalculateScaledPenWidth(line, 1);
-
-			SetDashStyle(line);
-
-			SizeF dropShadowOffset = GetDropShadowOffset(line);
-			Surface.FinalBuffer.Graphics.DrawLine(
-				_pen,
-				line.Pt1 + dropShadowOffset,
-				line.Pt2 + dropShadowOffset);
-
-			// Draw line
-			_pen.Color = line.Color;
-
-			Surface.FinalBuffer.Graphics.DrawLine(
-				_pen,
-				line.Pt1,
-				line.Pt2);
-
-			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.None;
-
-			line.ResetCoordinateSystem();
-			Surface.FinalBuffer.Graphics.ResetTransform();
+		/// <summary>
+		/// Draws a <see cref="InvariantLinePrimitive"/>.
+		/// </summary>
+		protected override void DrawInvariantLinePrimitive(InvariantLinePrimitive line)
+		{
+			InternalDrawLinePrimitive(line);
 		}
 
 		/// <summary>
@@ -495,6 +475,38 @@ namespace ClearCanvas.ImageViewer.Rendering
 			Surface.FinalBuffer.Graphics.DrawString(message, font, _brush, Surface.ClipRectangle, format);
 
 			font.Dispose();
+		}
+
+		private void InternalDrawLinePrimitive(ILineSegmentGraphic line) {
+			Surface.FinalBuffer.Graphics.Transform = line.SpatialTransform.CumulativeTransform;
+			line.CoordinateSystem = CoordinateSystem.Source;
+
+			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+			// Draw drop shadow
+			_pen.Color = Color.Black;
+			_pen.Width = CalculateScaledPenWidth(line, 1);
+
+			SetDashStyle(line);
+
+			SizeF dropShadowOffset = GetDropShadowOffset(line);
+			Surface.FinalBuffer.Graphics.DrawLine(
+				_pen,
+				line.Pt1 + dropShadowOffset,
+				line.Pt2 + dropShadowOffset);
+
+			// Draw line
+			_pen.Color = line.Color;
+
+			Surface.FinalBuffer.Graphics.DrawLine(
+				_pen,
+				line.Pt1,
+				line.Pt2);
+
+			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.None;
+
+			line.ResetCoordinateSystem();
+			Surface.FinalBuffer.Graphics.ResetTransform();
 		}
 
 		private void InternalDrawRectanglePrimitive(IBoundableGraphic rect)

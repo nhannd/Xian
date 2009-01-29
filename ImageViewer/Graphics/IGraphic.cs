@@ -94,10 +94,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <returns>
 		/// <b>True</b> if <paramref name="point"/> "hits" the <see cref="IGraphic"/>,
 		/// <b>false</b> otherwise.
+		/// </returns>
 		/// <remarks>
 		/// It is up to the implementation of <see cref="IGraphic"/> to define what a "hit" is.
 		/// </remarks>
-		/// </returns>
 		bool HitTest(Point point);
 
 		/// <summary>
