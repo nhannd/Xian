@@ -68,13 +68,14 @@ namespace ClearCanvas.Ris.Shreds.Publication
         protected override void ProcessItem(PublicationStep item)
 		{
             Exception error = null;
-			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
-			{
-				IUpdateContext context = (IUpdateContext)PersistenceScope.CurrentContext;
-				context.ChangeSetRecorder.OperationName = this.GetType().FullName;
 
-				try
+			try
+			{
+				using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
 				{
+					IUpdateContext context = (IUpdateContext)PersistenceScope.CurrentContext;
+					context.ChangeSetRecorder.OperationName = this.GetType().FullName;
+
 					context.Lock(item);
 
 					// execute each publication action
@@ -89,12 +90,12 @@ namespace ClearCanvas.Ris.Shreds.Publication
 					// complete the transaction
 					scope.Complete();
 				}
-				catch (Exception e)
-				{
-					// one of the actions failed
-					ExceptionLogger.Log("PublicationProcessor.ProcessItem", e);
-                    error = e;
-				}
+			}
+			catch (Exception e)
+			{
+				// one of the actions failed
+				ExceptionLogger.Log("PublicationProcessor.ProcessItem", e);
+				error = e;
 			}
 
             if (error != null)
@@ -104,6 +105,9 @@ namespace ClearCanvas.Ris.Shreds.Publication
                 {
                     IUpdateContext failContext = (IUpdateContext)PersistenceScope.CurrentContext;
                     failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
+
+					// Reload the item because the item in memory might have been changed in the previous action.Execute statement
+                	item = PersistenceScope.CurrentContext.Load<PublicationStep>(item.GetRef());
 
                     // lock item into this contexts
                     failContext.Lock(item, DirtyState.Clean);
