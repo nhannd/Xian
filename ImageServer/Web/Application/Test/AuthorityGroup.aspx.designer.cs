@@ -74,6 +74,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Test {
         protected global::System.Web.UI.WebControls.Button NewToken;
         
         /// <summary>
+        /// TokenActionMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label TokenActionMessage;
+        
+        /// <summary>
+        /// GroupRef control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox GroupRef;
+        
+        /// <summary>
         /// NewGroupName control.
         /// </summary>
         /// <remarks>
@@ -101,13 +119,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Test {
         protected global::System.Web.UI.WebControls.Button NewGroupCreate;
         
         /// <summary>
-        /// List control.
+        /// GroupUpdate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView List;
+        protected global::System.Web.UI.WebControls.Button GroupUpdate;
+        
+        /// <summary>
+        /// EditGroupMessage control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label EditGroupMessage;
+        
+        /// <summary>
+        /// GroupListing control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.GridView GroupListing;
         
         /// <summary>
         /// TokenList control.

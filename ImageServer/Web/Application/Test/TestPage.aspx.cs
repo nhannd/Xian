@@ -55,6 +55,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
                     NewUserGroupListBox.Items.AddRange(CollectionUtils.ToArray(items));
                 });
 
+
+            Roles.DataSource = SessionManager.Current.Credentials.Authorities;
+
             base.DataBind();
         }
 

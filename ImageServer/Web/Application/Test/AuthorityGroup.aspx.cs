@@ -10,6 +10,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Services.Admin;
@@ -40,11 +41,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
                     List<AuthorityRowData> rows = CollectionUtils.Map<AuthorityGroupSummary, AuthorityRowData>(
                         list, delegate(AuthorityGroupSummary group)
                                    {
-                                       AuthorityRowData row = new AuthorityRowData(group);
+                                       AuthorityRowData row = new AuthorityRowData(services.LoadAuthorityGroupDetail(group));
                                        return row;
                                    });
 
-                    List.DataSource = rows;
+                    GroupListing.DataSource = rows;
 
                     IList<AuthorityTokenSummary> tokens = services.ListAuthorityTokens();
                     List<AuthorityTokenRowData> tokenRows = CollectionUtils.Map<AuthorityTokenSummary, AuthorityTokenRowData>(
@@ -91,7 +92,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
                         }
 
                         service.AddAuthorityGroup(NewGroupName.Text, tokens);
+                        EditGroupMessage.Text = "Group added";
                     });
+
+            DataBind();
         }
 
 
@@ -101,26 +105,79 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
                 delegate(IAuthorityAdminService service)
                 {
                     List<AuthorityTokenSummary> tokenList = new List<AuthorityTokenSummary>();
-                    tokenList.Add(new AuthorityTokenSummary(NewTokenDescriptionTextBox.Text, NewTokenDescriptionTextBox.Text));
+                    tokenList.Add(new AuthorityTokenSummary(NewTokenNameTextBox.Text, NewTokenDescriptionTextBox.Text));
                     service.ImportAuthorityTokens(tokenList);
+                    TokenActionMessage.Text = "Token added";
                 });
+
+            DataBind();
+        }
+
+        protected void UpdateGroupClicked(object sender, EventArgs e)
+        {
+            Platform.GetService<IAuthorityAdminService>(
+                delegate(IAuthorityAdminService service)
+                {
+                    AuthorityGroupDetail detail = new AuthorityGroupDetail();
+                    detail.AuthorityGroupRef = new EntityRef(GroupRef.Text);
+                    detail.Name = NewGroupName.Text;
+
+                    List<AuthorityTokenSummary> tokens = new List<AuthorityTokenSummary>();
+                    foreach (ListItem item in NewGroupTokenListBox.Items)
+                    {
+                        if (item.Selected)
+                        {
+                            tokens.Add(new AuthorityTokenSummary(item.Value, item.Text));
+                        }
+                    }
+                    detail.AuthorityTokens = tokens;
+                    service.UpdateAuthorityGroup(detail);
+                    EditGroupMessage.Text = "Group updated";
+                });
+
+            DataBind();
+        }
+
+        protected void GroupListing_RowCreated(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.DataRow)
+            {
+                ListBox list = e.Row.FindControl("TokenListBox") as ListBox;
+                AuthorityRowData data = (e.Row.DataItem as AuthorityRowData);
+                if (data!=null)
+                {
+                    IList<string> tokens = CollectionUtils.Map<AuthorityTokenSummary, string>(
+                    data.Tokens,
+                    delegate(AuthorityTokenSummary token)
+                    {
+                        return token.Name;
+                    }
+                    );
+
+                    list.DataSource = tokens;
+                }
+                
+                
+            }
+            
+
         }
     }
 
     class AuthorityRowData
     {
         private string _name;
+        private string _ref;
+        private int _tokenCount;
+        private List<AuthorityTokenSummary> _tokens;
 
-        public AuthorityRowData(AuthorityGroupSummary group)
+        public AuthorityRowData(AuthorityGroupDetail group)
         {
+            this.Ref = group.AuthorityGroupRef.Serialize();
             this.Name = group.Name;
 
-            //_tokens = StringUtilities.Combine(group.AuthorityTokens, "\n\r",
-            //                                 delegate(AuthorityTokenSummary token)
-            //                                     {
-            //                                         return String.Format("{0} [{1}]", token.Name, token.Description);
-            //                                     });
-            
+            Tokens = group.AuthorityTokens;
+            TokenCount = group.AuthorityTokens.Count;
         }
 
         public string Name
@@ -129,6 +186,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Test
             set { _name = value; }
         }
 
+        public string Ref
+        {
+            get { return _ref; }
+            set { _ref = value; }
+        }
+
+
+        public int TokenCount
+        {
+            get { return _tokenCount; }
+            set { _tokenCount = value; }
+        }
+
+        public List<AuthorityTokenSummary> Tokens
+        {
+            get { return _tokens; }
+            set { _tokens = value; }
+        }
     }
 
     class AuthorityTokenRowData

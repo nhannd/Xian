@@ -35,6 +35,9 @@
         <asp:Button runat="server" ID="UpdateUserButton" Text="Update User" OnClick="UpdateUserButtonClicked" />
         <asp:Label runat="server" ID="NewUserMessage"></asp:Label>
         
+        <hr />
+        Your Roles:
+        <asp:GridView runat="server" ID="Roles"></asp:GridView>
         
     </div>
     </form>
