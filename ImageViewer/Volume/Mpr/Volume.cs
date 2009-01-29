@@ -186,6 +186,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _depth; }
 		}
 
+		//ggerade ToRef: do away with OriginX,Y,Z
+		public Vector3D Origin
+		{
+			get { return new Vector3D(_originX, _originY, _originZ); }
+		}
+
 		public float OriginX
 		{
 			get { return _originX; }

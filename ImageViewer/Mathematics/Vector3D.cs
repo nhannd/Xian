@@ -44,9 +44,9 @@ namespace ClearCanvas.ImageViewer.Mathematics
 	/// </remarks>
 	public class Vector3D : IEquatable<Vector3D>
 	{
-		private readonly float _x;
-		private readonly float _y;
-		private readonly float _z;
+		private float _x;
+		private float _y;
+		private float _z;
 
 		/// <summary>
 		/// Represents the Zero vector.
@@ -64,11 +64,22 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
+		/// Copy Constructor.
+		/// </summary>
+		public Vector3D(Vector3D src)
+		{
+			_x = src.X;
+			_y = src.Y;
+			_z = src.Z;
+		}
+
+		/// <summary>
 		/// Gets or sets the x-component.
 		/// </summary>
 		public float X
 		{
 			get { return _x; }
+			set { _x = value; }
 		}
 
 		/// <summary>
@@ -77,6 +88,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public float Y
 		{
 			get { return _y; }
+			set { _y = value; }
 		}
 
 		/// <summary>
@@ -85,6 +97,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public float Z
 		{
 			get { return _z; }
+			set { _z = value; }
 		}
 
 		/// <summary>
