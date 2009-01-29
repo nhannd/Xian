@@ -665,7 +665,7 @@ var Table = {
 				input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table._onCellUpdate(row, col); }
 
 				// consider the edit complete when focus is lost
-				input.onblur = function() { table._onEditComplete(row, col); }
+				input.onchange = function() { table._onEditComplete(row, col); }
 
 				// Overwrite IE's default styling for text boxes so that all cell-types have the same height and flow properly.
 				// This cannot be done in CSS since IE ignores the "type" pseudo selector.
@@ -687,7 +687,7 @@ var Table = {
 				input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table._onCellUpdate(row, col); }
 
 				// consider the edit complete when focus is lost
-				input.onblur = function() { table._onEditComplete(row, col); }
+				input.onchange = function() { table._onEditComplete(row, col); }
 			},
 
 			_dateHelper: function(row, col, td, obj, column, table) 
@@ -703,7 +703,7 @@ var Table = {
 				inputDate.style.border = '1px solid #969696';
 				
 				// consider the edit complete when focus is lost
-				inputDate.onblur = function() 
+				inputDate.onchange = function() 
 				{ 
 					// Just tabbing through an empty field, so don't assume a value
 					if (!inputDate.value && !column.getValue(obj))
@@ -767,7 +767,7 @@ var Table = {
 				inputTime.style.border = '1px solid #969696';
 				
 				// consider the edit complete when focus is lost
-				inputTime.onblur = function() 
+				inputTime.onchange = function() 
 				{ 
 					// Just tabbing through an empty field, so don't assume a value
 					if (!inputTime.value && !column.getValue(obj))
