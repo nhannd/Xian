@@ -109,21 +109,25 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					);
 			}
 
-			private StudyInformation GetStudyInformation(string sopInstanceFilename)
+			private StudyInformation GetStudyInformation(StoreScuSentFileInformation information)
 			{
-				DicomFile dicomFile = new DicomFile(sopInstanceFilename);
+				//If the study information is already specified, then don't parse the file.
+				if (information.StudyInformation != null)
+					return information.StudyInformation;
+
+				DicomFile dicomFile = new DicomFile(information.FileName);
 				try
 				{
 					dicomFile.Load(DicomTags.PixelData, DicomReadOptions.Default);
 				}
 				catch (Exception e)
 				{
-					throw new Exception(String.Format(SR.FormatUnableToParseFile, sopInstanceFilename), e);
+					throw new Exception(String.Format(SR.FormatUnableToParseFile, information.FileName), e);
 				}
 
-				StudyInformationFieldExchanger information = new StudyInformationFieldExchanger();
-				dicomFile.DataSet.LoadDicomFields(information);
-				return information;
+				StudyInformationFieldExchanger studyInformation = new StudyInformationFieldExchanger();
+				dicomFile.DataSet.LoadDicomFields(studyInformation);
+				return studyInformation;
 			}
 
 			private SendProgressItem GetProgressItem(string toAETitle, StudyInformation studyInformation)
@@ -161,7 +165,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							try
 							{
-								StudyInformation studyInformation = GetStudyInformation(sentFileInformation.FileName);
+								StudyInformation studyInformation = GetStudyInformation(sentFileInformation);
 								SendProgressItem progressItem = GetProgressItem(sentFileInformation.ToAETitle, studyInformation);
 								progressItem.StudyInformation = studyInformation;
 

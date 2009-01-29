@@ -15,75 +15,6 @@ using System.IO;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
-	#region Send Service Definition
-
-	#region Send Request classes
-
-	internal abstract class SendRequest
-	{
-		public SendRequest(AEInformation destinationAEInformation, 
-			SendOperationProgressCallback callback)
-		{
-			DestinationAEInformation = destinationAEInformation;
-			Callback = callback;
-		}
-
-		public readonly AEInformation DestinationAEInformation;
-		public readonly SendOperationProgressCallback Callback;
-	}
-
-	internal class SendStudiesRequest : SendRequest
-	{
-		public SendStudiesRequest(AEInformation destinationAEInformation,
-			IEnumerable<string> studyInstanceUids, 
-			SendOperationProgressCallback callback)
-			: base(destinationAEInformation, callback)
-		{
-			StudyInstanceUids = studyInstanceUids;
-		}
-
-		public readonly IEnumerable<string> StudyInstanceUids;
-	}
-
-	internal class SendSeriesRequest : SendRequest
-	{
-		public SendSeriesRequest(AEInformation destinationAEInformation,
-			string studyInstanceUid,
-			IEnumerable<string> seriesInstanceUids,
-			SendOperationProgressCallback callback)
-			: base(destinationAEInformation, callback)
-		{
-			StudyInstanceUid = studyInstanceUid;
-			SeriesInstanceUids = seriesInstanceUids;
-		}
-
-		public readonly string StudyInstanceUid;
-		public readonly IEnumerable<string> SeriesInstanceUids;
-	}
-
-	internal class SendSopInstancesRequest : SendRequest
-	{
-		public SendSopInstancesRequest(
-			AEInformation destinationAEInformation, 
-			string studyInstanceUid,
-			string seriesInstanceUid,
-			IEnumerable<string> sopInstanceUids, 
-			SendOperationProgressCallback callback)
-			: base(destinationAEInformation, callback)
-		{
-			StudyInstanceUid = studyInstanceUid;
-			SeriesInstanceUid = seriesInstanceUid;
-			SopInstanceUids = sopInstanceUids;
-		}
-
-		public readonly string StudyInstanceUid;
-		public readonly string SeriesInstanceUid;
-		public readonly IEnumerable<string> SopInstanceUids;
-	}
-
-	#endregion
-	#endregion
-
 	internal delegate void SendOperationProgressCallback(ISendOperation operation);
 
 	internal interface ISendOperation
@@ -102,10 +33,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 	//TODO: Later, remove IDicomServerService and replace with something like this.
 	internal interface ISendService
 	{
-		Guid SendStudies(SendStudiesRequest request);
-		Guid SendSeries(SendSeriesRequest request);
-		Guid SendSopInstances(SendSopInstancesRequest request);
-		Guid SendFiles(SendFilesRequest request);
+		Guid SendStudies(SendStudiesRequest request, SendOperationProgressCallback callback);
+		Guid SendSeries(SendSeriesRequest request, SendOperationProgressCallback callback);
+		Guid SendSopInstances(SendSopInstancesRequest request, SendOperationProgressCallback callback);
+		Guid SendFiles(SendFilesRequest request, SendOperationProgressCallback callback);
 
 		void Cancel(Guid operationIdentifier);
 	}
@@ -169,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				_studies = new Dictionary<string, SendStudyInformation>();
 				_identifier = Guid.NewGuid();
 
-				_thread = new Thread(SendInternal);
+				_thread = new Thread(DoSend);
 				_thread.Name = String.Format("Send to {0}/{1}:{2}", base.RemoteHost, base.RemoteAE, base.RemotePort);
 
 				_callback = callback;
@@ -224,10 +155,30 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				_studies[study.StudyInstanceUid] = info;
 			}
 
-			private void SendInternal()
+			private void DoSend()
 			{
 				try
 				{
+					SendInternal();
+				}
+				catch (Exception e)
+				{
+					if (base.Status == ScuOperationStatus.ConnectFailed)
+					{
+						OnSendError(String.Format("Unable to connect to remote server ({0}: {1}).",
+							RemoteAE, base.FailureDescription ?? "no failure description provided"));
+					}
+					else
+					{
+						OnSendError(String.Format("An unexpected error occurred while processing the Store operation ({0}).", e.Message));
+					}
+				}
+
+				Instance.OnSendComplete(this);
+			}
+
+			private void SendInternal()
+			{
 					OnBeginSend();
 
 					base.Send();
@@ -266,38 +217,19 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					{
 						OnSendError("An unexpected network error has occurred.");
 					}
-				}
-				catch(Exception e)
-				{
-					if (base.Status == ScuOperationStatus.ConnectFailed)
-					{
-						OnSendError(String.Format("Unable to connect to remote server ({0}: {1}).",
-							RemoteAE, base.FailureDescription ?? "no failure description provided"));
-					}
-					else
-					{
-						OnSendError(String.Format("An unexpected error occurred while processing the Store operation ({0}).", e.Message));
-					}
-				}
-				finally
-				{
-					Instance.OnSendComplete(this);
-				}
 			}
 
 			private void OnFileSent(StorageInstance storageInstance)
 			{
-				if (_sendFilesRequest != null)
-				{
-					if (_sendFilesRequest.Behaviour == SendFileBehaviour.DeleteOnSuccess)
-					{
-						//TODO: delete on successful storage!?
-					}
-				}
-
 				StoreScuSentFileInformation info = new StoreScuSentFileInformation();
+				
+				StudyInformationFieldExchanger exchanger = new StudyInformationFieldExchanger();
+				DicomFile file = storageInstance.LoadFile();
+				file.DataSet.LoadDicomFields(exchanger);
+				info.StudyInformation = exchanger;
 				info.ToAETitle = RemoteAE;
 				info.FileName = storageInstance.Filename;
+				
 				LocalDataStoreEventPublisher.Instance.FileSent(info);
 			}
 
@@ -331,16 +263,17 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 											  severity, RemoteAE, description));
 				}
 
-				if (_sendFilesRequest != null)
+				if (_callback != null)
 				{
-					if (_sendFilesRequest.Behaviour == SendFileBehaviour.DeleteAlways)
+					try
 					{
-						//TODO: delete on successful storage!?
+						_callback(this);
+					}
+					catch(Exception e)
+					{
+						Platform.Log(LogLevel.Error, e, "Unexpected error thrown from SendScu callback.");
 					}
 				}
-
-				if (_callback != null)
-					_callback(this);
 			}
 
 			private void OnBeginSend()
@@ -348,11 +281,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				if (_sendFilesRequest != null)
 				{
 					List<string> filesToSend = GetFilesToSend();
+					if (filesToSend.Count == 0)
+						throw new Exception("No valid files were found to send.");
+
 					foreach (string file in filesToSend)
 					{
 						StorageInstance instance = new StorageInstance(file);
 						DicomFile dicomFile = instance.LoadFile();
 						AddStudyInformation(dicomFile);
+						AddStorageInstance(instance);
 					}
 				}
 
@@ -384,20 +321,21 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						SearchOption searchOption = SearchOption.TopDirectoryOnly;
 						if (_sendFilesRequest.Recursive)
 							searchOption = SearchOption.AllDirectories;
-
+						
+						FileInfo[] fileInfos = info.GetFiles("*.*", searchOption);
 						if (extensions.Count > 0)
 						{
-							foreach (string extension in extensions)
+							foreach (FileInfo fileInfo in fileInfos)
 							{
-								string pattern = String.Format("*{0}", extension);
-								FileInfo[] fileInfos = info.GetFiles(pattern, searchOption);
-								foreach (FileInfo fileInfo in fileInfos)
-									files.Add(fileInfo.FullName);
+								foreach (string extension in extensions)
+								{
+									if (0 == string.Compare(extension, fileInfo.Extension, true))
+										files.Add(fileInfo.FullName);
+								}
 							}
 						}
 						else
 						{
-							FileInfo[] fileInfos = info.GetFiles("*.*", searchOption);
 							foreach (FileInfo fileInfo in fileInfos)
 								files.Add(fileInfo.FullName);
 						}
@@ -415,13 +353,24 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			private void OnSendError(string message)
 			{
-				foreach (SendStudyInformation info in _studies.Values)
+				if (_studies.Count == 0)
 				{
-					SendErrorInformation error = new SendErrorInformation();
-					error.ToAETitle = info.ToAETitle;
-					error.StudyInformation = info.StudyInformation;
-					error.ErrorMessage = message;
-					LocalDataStoreEventPublisher.Instance.SendError(error);
+					SendErrorInformation dummyError = new SendErrorInformation();
+					dummyError.ToAETitle = RemoteAE;
+					dummyError.StudyInformation = new StudyInformation();
+					dummyError.ErrorMessage = message;
+					LocalDataStoreEventPublisher.Instance.SendError(dummyError);
+				}
+				else
+				{
+					foreach (SendStudyInformation info in _studies.Values)
+					{
+						SendErrorInformation error = new SendErrorInformation();
+						error.ToAETitle = info.ToAETitle;
+						error.StudyInformation = info.StudyInformation;
+						error.ErrorMessage = message;
+						LocalDataStoreEventPublisher.Instance.SendError(error);
+					}
 				}
 			}
 
@@ -607,28 +556,27 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region ISendService Members
 
-		public Guid SendStudies(SendStudiesRequest request)
+		public Guid SendStudies(SendStudiesRequest request, SendOperationProgressCallback callback)
 		{
 			return Send(request.DestinationAEInformation, 
-				GetStudySopInstances(request.StudyInstanceUids), request.Callback);
+				GetStudySopInstances(request.StudyInstanceUids), callback);
 		}
 
-		public Guid SendSeries(SendSeriesRequest request)
+		public Guid SendSeries(SendSeriesRequest request, SendOperationProgressCallback callback)
 		{
 			return Send(request.DestinationAEInformation, 
-				GetSeriesSopInstances(request.StudyInstanceUid, request.SeriesInstanceUids), request.Callback);
+				GetSeriesSopInstances(request.StudyInstanceUid, request.SeriesInstanceUids), callback);
 		}
 
-		public Guid SendSopInstances(SendSopInstancesRequest request)
+		public Guid SendSopInstances(SendSopInstancesRequest request, SendOperationProgressCallback callback)
 		{
 			return Send(request.DestinationAEInformation,
-				GetSopInstances(request.StudyInstanceUid, request.SeriesInstanceUid, request.SopInstanceUids), request.Callback);
+				GetSopInstances(request.StudyInstanceUid, request.SeriesInstanceUid, request.SopInstanceUids), callback);
 		}
 
-		public Guid SendFiles(SendFilesRequest request)
+		public Guid SendFiles(SendFilesRequest request, SendOperationProgressCallback callback)
 		{
-			//TODO: no callback?
-			return Send(request, null);
+			return Send(request, callback);
 		}
 		
 		public void Cancel(Guid operationIdentifier)

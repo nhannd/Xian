@@ -596,13 +596,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private bool StudyExists(string studyInstanceUid)
 		{
-			int foundIndex = _searchResults[_selectedServerGroup.GroupID].StudyList.Items.FindIndex(
+			return GetStudyIndex(studyInstanceUid) >= 0;
+		}
+
+		private int GetStudyIndex(string studyInstanceUid)
+		{
+			return _searchResults[_selectedServerGroup.GroupID].StudyList.Items.FindIndex(
 				delegate(StudyItem test)
 				{
 					return test.StudyInstanceUID == studyInstanceUid;
 				});
-
-			return foundIndex >= 0;
 		}
 
 		private void ProcessReceivedAndRemovedStudies()
@@ -620,39 +623,40 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				studyTable.Items.Clear();
 			}
 
-			List<string> newStudies = new List<string>();
+			List<string> studyUidList = new List<string>();
 			foreach (string studyUid in _setStudiesArrived.Keys)
+				studyUidList.Add(studyUid);
+
+			string studyUids = DicomStringHelper.GetDicomStringArray<string>(studyUidList);
+			if (String.IsNullOrEmpty(studyUids))
+				return;
+
+			QueryParameters parameters = PrepareQueryParameters();
+			parameters["StudyInstanceUid"] = studyUids;
+
+			try
 			{
-				if (!StudyExists(studyUid))
-					newStudies.Add(studyUid);
-			}
-
-			if (newStudies.Count > 0)
-			{
-				string studyUids = DicomStringHelper.GetDicomStringArray<string>(newStudies);
-				if (String.IsNullOrEmpty(studyUids))
-					return;
-
-				QueryParameters parameters = PrepareQueryParameters();
-				parameters["StudyInstanceUid"] = studyUids;
-
-				try
+				StudyItemList list = ImageViewerComponent.FindStudy(parameters, null, "DICOM_LOCAL");
+				foreach (StudyItem item in list)
 				{
-					StudyItemList list = ImageViewerComponent.FindStudy(parameters, null, "DICOM_LOCAL");
-					foreach (StudyItem item in list)
+					//don't need to check this again, it's just paranoia
+					if (!StudyExists(item.StudyInstanceUID))
 					{
-						//don't need to check this again, it's just paranoia
-						if (!StudyExists(item.StudyInstanceUID))
-						{
-							studyTable.Items.Add(item);
-							refreshTitle = true;
-						}
+						studyTable.Items.Add(item);
+						refreshTitle = true;
+					}
+					else
+					{
+						int index = GetStudyIndex(item.StudyInstanceUID);
+						//just update this since the rest won't change.
+						studyTable.Items[index].ModalitiesInStudy = item.ModalitiesInStudy;
+						studyTable.Items.NotifyItemUpdated(index);
 					}
 				}
-				catch(Exception e)
-				{
-					Platform.Log(LogLevel.Error, e);
-				}
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
 			}
 
 			foreach(string deleteStudyUid in _setStudiesDeleted.Keys)
@@ -673,12 +677,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_setStudiesArrived.Clear();
 			_setStudiesDeleted.Clear();
 
-			if (!refreshTitle)
-				return;
-
-			//update the search results title.
-			_searchResults[_selectedServerGroup.GroupID].ResultsTitle = 
-				String.Format(SR.FormatStudiesFound, _searchResults[_selectedServerGroup.GroupID].StudyList.Items.Count, _selectedServerGroup.Name);
+			if (refreshTitle)
+			{
+				//update the search results title.
+				_searchResults[_selectedServerGroup.GroupID].ResultsTitle =
+					String.Format(SR.FormatStudiesFound, _searchResults[_selectedServerGroup.GroupID].StudyList.Items.Count,
+					              _selectedServerGroup.Name);
+			}
 		}
 
 		private void OnSopInstanceImported(object sender, ItemEventArgs<ImportedSopInstanceInformation> e)

@@ -4,49 +4,49 @@ namespace ClearCanvas.Dicom.Iod.Iods
 {
 	public class GrayscaleSoftcopyPresentationStateIod
 	{
-		private readonly DicomAttributeCollection _dataset;
+		private readonly IDicomAttributeProvider _dicomAttributeProvider;
 
 		public GrayscaleSoftcopyPresentationStateIod() : this(new DicomAttributeCollection()) {}
 
-		public GrayscaleSoftcopyPresentationStateIod(DicomAttributeCollection dataset)
+		public GrayscaleSoftcopyPresentationStateIod(IDicomAttributeProvider provider)
 		{
-			_dataset = dataset;
+			_dicomAttributeProvider = provider;
 
-			this.Patient = new PatientModuleIod(dataset);
-			this.ClinicalTrialSubject = new ClinicalTrialSubjectModuleIod(dataset);
+			this.Patient = new PatientModuleIod(_dicomAttributeProvider);
+			this.ClinicalTrialSubject = new ClinicalTrialSubjectModuleIod(_dicomAttributeProvider);
 
-			this.GeneralStudy = new GeneralStudyModuleIod(dataset);
-			this.PatientStudy = new PatientStudyModuleIod(dataset);
-			this.ClinicalTrialStudy = new ClinicalTrialStudyModuleIod(dataset);
+			this.GeneralStudy = new GeneralStudyModuleIod(_dicomAttributeProvider);
+			this.PatientStudy = new PatientStudyModuleIod(_dicomAttributeProvider);
+			this.ClinicalTrialStudy = new ClinicalTrialStudyModuleIod(_dicomAttributeProvider);
 
-			this.GeneralSeries = new GeneralSeriesModuleIod(dataset);
-			this.ClinicalTrialSeries = new ClinicalTrialSeriesModuleIod(dataset);
-			this.PresentationSeries = new PresentationSeriesModuleIod(dataset);
+			this.GeneralSeries = new GeneralSeriesModuleIod(_dicomAttributeProvider);
+			this.ClinicalTrialSeries = new ClinicalTrialSeriesModuleIod(_dicomAttributeProvider);
+			this.PresentationSeries = new PresentationSeriesModuleIod(_dicomAttributeProvider);
 
-			this.GeneralEquipment = new GeneralEquipmentModuleIod(dataset);
+			this.GeneralEquipment = new GeneralEquipmentModuleIod(_dicomAttributeProvider);
 
-			this.PresentationStateIdentification = new PresentationStateIdentificationModuleIod(dataset);
-			this.PresentationStateRelationship = new PresentationStateRelationshipModuleIod(dataset);
-			this.PresentationStateShutter = new PresentationStateShutterModuleIod(dataset);
-			this.PresentationStateMask = new PresentationStateMaskModuleIod(dataset);
-			this.Mask = new MaskModuleIod(dataset);
-			this.DisplayShutter = new DisplayShutterModuleIod(dataset);
-			this.BitmapDisplayShutter = new BitmapDisplayShutterModuleIod(dataset);
-			this.OverlayPlane = new OverlayPlaneModuleIod(dataset);
-			this.OverlayActivation = new OverlayActivationModuleIod(dataset);
-			this.DisplayedArea = new DisplayedAreaModuleIod(dataset);
-			this.GraphicAnnotation = new GraphicAnnotationModuleIod(dataset);
-			this.SpatialTransform = new SpatialTransformModuleIod(dataset);
-			this.GraphicLayer = new GraphicLayerModuleIod(dataset);
-			this.ModalityLut = new ModalityLutModuleIod(dataset);
-			this.SoftcopyVoiLut = new SoftcopyVoiLutModuleIod(dataset);
-			this.SoftcopyPresentationLut = new SoftcopyPresentationLutModuleIod(dataset);
-			this.SopCommon = new SopCommonModuleIod(dataset);
+			this.PresentationStateIdentification = new PresentationStateIdentificationModuleIod(_dicomAttributeProvider);
+			this.PresentationStateRelationship = new PresentationStateRelationshipModuleIod(_dicomAttributeProvider);
+			this.PresentationStateShutter = new PresentationStateShutterModuleIod(_dicomAttributeProvider);
+			this.PresentationStateMask = new PresentationStateMaskModuleIod(_dicomAttributeProvider);
+			this.Mask = new MaskModuleIod(_dicomAttributeProvider);
+			this.DisplayShutter = new DisplayShutterModuleIod(_dicomAttributeProvider);
+			this.BitmapDisplayShutter = new BitmapDisplayShutterModuleIod(_dicomAttributeProvider);
+			this.OverlayPlane = new OverlayPlaneModuleIod(_dicomAttributeProvider);
+			this.OverlayActivation = new OverlayActivationModuleIod(_dicomAttributeProvider);
+			this.DisplayedArea = new DisplayedAreaModuleIod(_dicomAttributeProvider);
+			this.GraphicAnnotation = new GraphicAnnotationModuleIod(_dicomAttributeProvider);
+			this.SpatialTransform = new SpatialTransformModuleIod(_dicomAttributeProvider);
+			this.GraphicLayer = new GraphicLayerModuleIod(_dicomAttributeProvider);
+			this.ModalityLut = new ModalityLutModuleIod(_dicomAttributeProvider);
+			this.SoftcopyVoiLut = new SoftcopyVoiLutModuleIod(_dicomAttributeProvider);
+			this.SoftcopyPresentationLut = new SoftcopyPresentationLutModuleIod(_dicomAttributeProvider);
+			this.SopCommon = new SopCommonModuleIod(_dicomAttributeProvider);
 		}
 
-		public DicomAttributeCollection DataSet
+		public IDicomAttributeProvider DicomAttributeProvider
 		{
-			get { return _dataset; }
+			get { return _dicomAttributeProvider; }
 		}
 
 		#region Patient IE

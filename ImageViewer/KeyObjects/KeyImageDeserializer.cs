@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Macros.DocumentRelationship;
@@ -8,21 +9,40 @@ using ClearCanvas.Dicom.Iod.Modules;
 using ValueType=ClearCanvas.Dicom.Iod.ValueType;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer.KeyObjects
 {
-	public class KeyObjectDeserializer
+	public class KeyObjectContentItem
+	{
+		internal KeyObjectContentItem(Frame frame, Sop presentationStateSop)
+		{
+			this.Frame = frame;
+			this.PresentationStateSop = presentationStateSop;
+			if (presentationStateSop != null && presentationStateSop.SopClassUID == SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid)
+				GrayscalePresentationStateIod = new GrayscaleSoftcopyPresentationStateIod(presentationStateSop.DataSource);
+		}
+
+		public readonly Frame Frame;
+		public readonly Sop PresentationStateSop;
+
+		public readonly GrayscaleSoftcopyPresentationStateIod GrayscalePresentationStateIod;
+
+		//TODO: colour presentation state.
+	}
+
+	public class KeyImageDeserializer
 	{
 		private readonly StudyTree _studyTree;
 		private readonly KeyObjectSelectionDocumentIod _document;
 
-		public KeyObjectDeserializer(Sop sourceSop, StudyTree studyTree)
+		public KeyImageDeserializer(Sop sourceSop, StudyTree studyTree)
 		{
 			_studyTree = studyTree;
 			_document = new KeyObjectSelectionDocumentIod(sourceSop.DataSource);
 		}
 
-		public KeyObjectDeserializer(KeyObjectSelectionDocumentIod iod, StudyTree studyTree)
+		public KeyImageDeserializer(KeyObjectSelectionDocumentIod iod, StudyTree studyTree)
 		{
 			_studyTree = studyTree;
 			_document = iod;

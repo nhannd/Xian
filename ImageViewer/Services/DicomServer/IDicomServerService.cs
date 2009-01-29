@@ -31,6 +31,7 @@
 
 using System.Collections.Generic;
 using System.ServiceModel;
+using System;
 
 namespace ClearCanvas.ImageViewer.Services.DicomServer
 {
@@ -44,27 +45,32 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		/// <summary>
 		/// Send studies to another Dicom Server.
 		/// </summary>
-		/// <param name="destinationAEInformation">The Dicom server to send to.</param>
-		/// <param name="studyInstanceUids">The studies to send.</param>
-		[OperationContract]
+		[Obsolete("Use the SendStudies method instead.")]
+		[OperationContract(IsOneWay = true)]
 		void Send(AEInformation destinationAEInformation, IEnumerable<string> studyInstanceUids);
+
+		/// <summary>
+		/// Send studies to another Dicom Server.
+		/// </summary>
+		[OperationContract(IsOneWay = true)]
+		void SendStudies(SendStudiesRequest request);
 
 		/// <summary>
 		/// Sends series within a study to another Dicom server.
 		/// </summary>
-		[OperationContract]
-		void Send(AEInformation destinationAEInformation, string studyInstanceUid, IEnumerable<string> seriesInstanceUids);
+		[OperationContract(IsOneWay = true)]
+		void SendSeries(SendSeriesRequest request);
 
 		/// <summary>
 		/// Sends sops within a series to another Dicom server.
 		/// </summary>
-		[OperationContract]
-		void Send(AEInformation destinationAEInformation, string studyInstanceUid, string seriesInstanceUid, IEnumerable<string> sopInstanceUids);
+		[OperationContract(IsOneWay = true)]
+		void SendSopInstances(SendSopInstancesRequest request);
 
 		/// <summary>
 		/// Sends a collection of files to another Dicom server.
 		/// </summary>
-		[OperationContract]
+		[OperationContract(IsOneWay = true)]
 		void SendFiles(SendFilesRequest request);
 
 		/// <summary>
@@ -74,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		/// <param name="sourceAEInformation">The Dicom server to retrieve from</param>
 		/// <param name="studiesToRetrieve">The studies to retrieve.  At an absolute minimum, each <see cref="StudyInformation"/>
 		/// object passed in must have the <see cref="StudyInformation.StudyInstanceUid"/> field populated.</param>
-		[OperationContract]
+		[OperationContract(IsOneWay = true)]
 		void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve);
 
 		/// <summary>

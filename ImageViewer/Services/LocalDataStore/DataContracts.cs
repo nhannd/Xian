@@ -190,8 +190,17 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private string _toAETitle;
 		private string _fileName;
 
+		private StudyInformation _studyInformation;
+
 		public StoreScuSentFileInformation()
 		{
+		}
+
+		[DataMember(IsRequired = false)]
+		public StudyInformation StudyInformation
+		{
+			get { return _studyInformation; }
+			set { _studyInformation = value; }
 		}
 
 		[DataMember(IsRequired = true)]

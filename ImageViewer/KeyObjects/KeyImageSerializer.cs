@@ -14,7 +14,7 @@ using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.KeyObjects
 {
-	public class KeyObjectSerializer
+	public class KeyImageSerializer
 	{
 		private readonly List<Frame> _frames;
 		//private readonly List<string> _docTitleMods;
@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		private int _seriesNumber;
 		private KeyObjectSelectionDocumentTitle _docTitle = KeyObjectSelectionDocumentTitleContextGroup.OfInterest;
 
-		public KeyObjectSerializer()
+		public KeyImageSerializer()
 		{
 			_frames = new List<Frame>();
 			_datetime = Platform.Time;

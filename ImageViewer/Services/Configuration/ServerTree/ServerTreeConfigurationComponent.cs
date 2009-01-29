@@ -110,7 +110,8 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.ServerTree
 
 			if (!CollectionUtils.Equal<string>(_selectedServerPaths, selectedPaths, false))
 			{
-				_selectedServerPaths = selectedPaths;
+				_selectedServerPaths.Clear();
+				_selectedServerPaths.AddRange(selectedPaths);
 				Modified = true;
 			}
 		}

@@ -38,6 +38,8 @@ namespace ClearCanvas.ImageViewer.Services
 		private static void SaveFiles(IEnumerable<DicomFile> files, out string tempFileDirectory)
 		{
 			tempFileDirectory = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "ClearCanvas");
+			tempFileDirectory = System.IO.Path.Combine(tempFileDirectory, "Publishing");
+
 			DeleteEmptyFolders(tempFileDirectory);
 
 			tempFileDirectory = System.IO.Path.Combine(tempFileDirectory, System.IO.Path.GetRandomFileName());
@@ -84,7 +86,6 @@ namespace ClearCanvas.ImageViewer.Services
 			{
 				client.Open();
 				SendFilesRequest request = new SendFilesRequest();
-				request.Behaviour = SendFileBehaviour.DeleteOnSuccess;
 				request.FilePaths = new string[] { tempFileDirectory };
 				request.FileExtensions = new string[0];
 				request.Recursive = true;

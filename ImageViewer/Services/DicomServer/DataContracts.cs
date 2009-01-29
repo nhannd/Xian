@@ -40,16 +40,14 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		DeleteAlways
 	}
 
+	#region Send Request classes
+
 	[DataContract]
-	public class SendFilesRequest
+	public abstract class SendRequest
 	{
 		private AEInformation _destinationAEInformation;
-		private IEnumerable<string> _fileExtensions;
-		private IEnumerable<string> _filePaths;
-		private bool _recursive;
-		private SendFileBehaviour _behaviour;
 
-		public SendFilesRequest()
+		public SendRequest()
 		{
 		}
 
@@ -58,6 +56,93 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		{
 			get { return _destinationAEInformation; }
 			set { _destinationAEInformation = value; }
+		}
+	}
+
+	[DataContract]
+	public class SendStudiesRequest : SendRequest
+	{
+		private IEnumerable<string> _studyInstanceUids;
+
+		public SendStudiesRequest()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public IEnumerable<string> StudyInstanceUids
+		{
+			get { return _studyInstanceUids; }
+			set { _studyInstanceUids = value; }
+		}
+	}
+
+	[DataContract]
+	public class SendSeriesRequest : SendRequest
+	{
+		private string _studyInstanceUid;
+		private IEnumerable<string> _seriesInstanceUids;
+
+		public SendSeriesRequest()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public string StudyInstanceUid
+		{
+			get { return _studyInstanceUid; }
+			set { _studyInstanceUid = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public IEnumerable<string> SeriesInstanceUids
+		{
+			get { return _seriesInstanceUids; }
+			set { _seriesInstanceUids = value; }
+		}
+	}
+
+	[DataContract]
+	public class SendSopInstancesRequest : SendRequest
+	{
+		private string _studyInstanceUid;
+		private string _seriesInstanceUid;
+		private IEnumerable<string> _sopInstanceUids;
+
+		public SendSopInstancesRequest()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public string StudyInstanceUid
+		{
+			get { return _studyInstanceUid; }
+			set { _studyInstanceUid = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string SeriesInstanceUid
+		{
+			get { return _seriesInstanceUid; }
+			set { _seriesInstanceUid = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public IEnumerable<string> SopInstanceUids
+		{
+			get { return _sopInstanceUids; }
+			set { _sopInstanceUids = value; }
+		}
+	}
+
+	[DataContract]
+	public class SendFilesRequest : SendRequest
+	{
+		private IEnumerable<string> _fileExtensions;
+		private IEnumerable<string> _filePaths;
+		private bool _recursive;
+
+		public SendFilesRequest()
+		{
 		}
 
 		[DataMember(IsRequired = true)]
@@ -80,14 +165,9 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 			get { return _recursive; }
 			set { _recursive = value; }
 		}
-
-		[DataMember(IsRequired = false)]
-		public SendFileBehaviour Behaviour
-		{
-			get { return _behaviour; }
-			set { _behaviour = value; }
-		}
 	}
+
+	#endregion
 
 	[DataContract]
 	public class DicomServerConfiguration

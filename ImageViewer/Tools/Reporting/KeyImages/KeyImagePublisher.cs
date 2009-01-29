@@ -5,6 +5,9 @@ using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.Services;
+using System;
+using ClearCanvas.Common;
+using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
@@ -82,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private void CreateKeyObjectDocuments()
 		{
-			KeyObjectSerializer serializer = new KeyObjectSerializer();
+			KeyImageSerializer serializer = new KeyImageSerializer();
 			serializer.DateTime = _sourceInformation.DateTime;
 			serializer.Description = _sourceInformation.Description;
 			serializer.DocumentTitle = _sourceInformation.DocumentTitle;
@@ -173,10 +176,36 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				destination.Port = pair.Key.Port;
 				destinationServers.Add(destination);
 
-				DicomPublishingHelper.PublishRemote(pair.Value, destinationServers);
+				try
+				{
+					DicomPublishingHelper.PublishRemote(pair.Value, destinationServers);
+				}
+				catch (EndpointNotFoundException)
+				{
+					Platform.Log(LogLevel.Error, 
+						"Unable to publish key images to default servers; the local dicom server does not appear to be running.");
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e, 
+						"An error occurred while attempting to publish key images to server {0}.", pair.Key.AETitle);
+				}
 			}
 
-			DicomPublishingHelper.PublishLocal(_localPublishingInfo);
+			try
+			{
+				DicomPublishingHelper.PublishLocal(_localPublishingInfo);
+			}
+			catch (EndpointNotFoundException)
+			{
+				Platform.Log(LogLevel.Error,
+					"Unable to publish key images locally; the local data store service does not appear to be running.");
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e,
+						"An error occurred while attempting to publish key images locally.");
+			}
 		}
 	}
 }

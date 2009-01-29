@@ -52,8 +52,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="GeneralSeriesModuleIod"/> class.
 		/// </summary>
-		/// <param name="dicomAttributeCollection">The dicom attribute collection.</param>
-		public GeneralSeriesModuleIod(DicomAttributeCollection dicomAttributeCollection) : base(dicomAttributeCollection) {}
+		public GeneralSeriesModuleIod(IDicomAttributeProvider provider) : base(provider) { }
 
 		/// <summary>
 		/// Initializes the underlying collection to implement the module or sequence using default values.

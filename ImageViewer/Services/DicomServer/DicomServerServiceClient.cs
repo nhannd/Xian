@@ -43,19 +43,25 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		{
 		}
 
+		[Obsolete("Use the SendStudies method instead.")]
 		public void Send(AEInformation destinationAEInformation, IEnumerable<string> studyInstanceUids)
 		{
 			base.Channel.Send(destinationAEInformation, studyInstanceUids);
 		}
 
-		public void Send(AEInformation destinationAEInformation, string studyInstanceUid, IEnumerable<string> seriesInstanceUids)
+		public void SendStudies(SendStudiesRequest request)
 		{
-			base.Channel.Send(destinationAEInformation, studyInstanceUid, seriesInstanceUids);
+			base.Channel.SendStudies(request);
 		}
 
-		public void Send(AEInformation destinationAEInformation, string studyInstanceUid, string seriesInstanceUid, IEnumerable<string> sopInstanceUids)
+		public void SendSeries(SendSeriesRequest request)
 		{
-			base.Channel.Send(destinationAEInformation, studyInstanceUid, seriesInstanceUid, sopInstanceUids);
+			base.Channel.SendSeries(request);
+		}
+
+		public void SendSopInstances(SendSopInstancesRequest request)
+		{
+			base.Channel.SendSopInstances(request);
 		}
 
 		public void SendFiles(SendFilesRequest request)

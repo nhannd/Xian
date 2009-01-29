@@ -95,8 +95,15 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			{				
 				using(info)
 				{
-					//TODO: always publish to source?
-					new KeyImagePublisher(info, true).Publish();
+					try
+					{
+						new KeyImagePublisher(info, true).Publish();
+					}
+					catch (Exception e)
+					{
+						//TODO: show a message box or something?
+						Platform.Log(LogLevel.Error, e, "An error occurred while attempting to publish key images.");
+					}
 				}
 			}
 		}

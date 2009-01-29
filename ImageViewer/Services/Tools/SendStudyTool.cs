@@ -110,12 +110,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 				foreach (Server destinationAE in serverTreeComponent.SelectedServers.Servers)
 				{
+					SendStudiesRequest request = new SendStudiesRequest();
 					AEInformation aeInformation = new AEInformation();
 					aeInformation.AETitle = destinationAE.AETitle;
 					aeInformation.HostName = destinationAE.Host;
 					aeInformation.Port = destinationAE.Port;
-					
-					client.Send(aeInformation, studyUids);
+					request.DestinationAEInformation = aeInformation;
+					request.StudyInstanceUids = studyUids;
+					client.SendStudies(request);
 				}
 
 				client.Close();

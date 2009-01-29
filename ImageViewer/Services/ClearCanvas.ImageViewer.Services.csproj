@@ -49,6 +49,7 @@
     <Compile Include="DiskspaceManager\DataContracts.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerServiceClient.cs" />
     <Compile Include="DiskspaceManager\IDiskspaceManagerService.cs" />
+    <Compile Include="IDicomFilePublishingService.cs" />
     <Compile Include="LocalDataStore\DataContracts.cs" />
     <Compile Include="LocalDataStore\ILocalDataStoreActivityMonitorService.cs" />
     <Compile Include="LocalDataStore\ILocalDataStoreService.cs" />

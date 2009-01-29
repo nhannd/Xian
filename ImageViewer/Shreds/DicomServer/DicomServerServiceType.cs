@@ -67,8 +67,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			try
 			{
-				SendStudiesRequest request = new SendStudiesRequest(destinationAEInformation, studyInstanceUids, null);
-				DicomSendManager.Instance.SendStudies(request);
+				SendStudiesRequest request = new SendStudiesRequest();
+				request.DestinationAEInformation = destinationAEInformation;
+				request.StudyInstanceUids = studyInstanceUids;
+				DicomSendManager.Instance.SendStudies(request, null);
 			}
 			catch (Exception e)
 			{
@@ -81,12 +83,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		public void Send(AEInformation destinationAEInformation, string studyInstanceUid, IEnumerable<string> seriesInstanceUids)
+		public void SendStudies(SendStudiesRequest request)
 		{
 			try
 			{
-				SendSeriesRequest request = new SendSeriesRequest(destinationAEInformation, studyInstanceUid, seriesInstanceUids, null);
-				DicomSendManager.Instance.SendSeries(request);
+				DicomSendManager.Instance.SendStudies(request, null);
 			}
 			catch (Exception e)
 			{
@@ -99,13 +100,29 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		public void Send(AEInformation destinationAEInformation, string studyInstanceUid, string seriesInstanceUid, IEnumerable<string> sopInstanceUids)
+
+		public void SendSeries(SendSeriesRequest request)
 		{
 			try
 			{
-				SendSopInstancesRequest request = 
-					new SendSopInstancesRequest(destinationAEInformation, studyInstanceUid, seriesInstanceUid, sopInstanceUids, null);
-				DicomSendManager.Instance.SendSopInstances(request);
+				DicomSendManager.Instance.SendSeries(request, null);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				//we throw a serializable, non-FaultException-derived exception so that the 
+				//client channel *does* get closed.
+				string message = SR.ExceptionFailedToInitiateSend;
+				message += "\nDetail: " + e.Message;
+				throw new DicomServerException(message);
+			}
+		}
+
+		public void SendSopInstances(SendSopInstancesRequest request)
+		{
+			try
+			{
+				DicomSendManager.Instance.SendSopInstances(request, null);
 			}
 			catch (Exception e)
 			{
@@ -122,7 +139,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			try
 			{
-				DicomSendManager.Instance.SendFiles(request);
+				DicomSendManager.Instance.SendFiles(request, null);
 			}
 			catch (Exception e)
 			{

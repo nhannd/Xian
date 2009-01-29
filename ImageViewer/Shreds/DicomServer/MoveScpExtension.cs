@@ -7,6 +7,7 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Services;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -134,10 +135,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private void OnReceiveMoveStudiesRequest(Dicom.Network.DicomServer server, byte presentationID, DicomMessage message, AEInformation remoteAEInfo)
 		{
 			IEnumerable<string> studyUids = (string[])message.DataSet[DicomTags.StudyInstanceUid].Values;
-			SendStudiesRequest request = new SendStudiesRequest(remoteAEInfo, studyUids, UpdateProgress);
+			SendStudiesRequest request = new SendStudiesRequest();
+			request.StudyInstanceUids = studyUids;
+			request.DestinationAEInformation = remoteAEInfo;
 			lock (_syncLock)
 			{
-				Guid sendOperationIdentifier = DicomSendManager.Instance.SendStudies(request);
+				Guid sendOperationIdentifier = DicomSendManager.Instance.SendStudies(request, UpdateProgress);
 				_sendOperations.Add(new SendOperationInfo(sendOperationIdentifier, message.MessageId, presentationID, server));
 			}
 		}
@@ -146,11 +149,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 			string[] seriesUids = (string[])message.DataSet[DicomTags.SeriesInstanceUid].Values;
-			SendSeriesRequest request = new SendSeriesRequest(remoteAEInfo, studyInstanceUid, seriesUids, UpdateProgress);
+			SendSeriesRequest request = new SendSeriesRequest();
+			request.DestinationAEInformation = remoteAEInfo;
+			request.StudyInstanceUid = studyInstanceUid;
+			request.SeriesInstanceUids = seriesUids;
 
 			lock (_syncLock)
 			{
-				Guid sendOperationIdentifier = DicomSendManager.Instance.SendSeries(request);
+				Guid sendOperationIdentifier = DicomSendManager.Instance.SendSeries(request, UpdateProgress);
 				_sendOperations.Add(new SendOperationInfo(sendOperationIdentifier, message.MessageId, presentationID, server));
 			}
 		}
@@ -160,11 +166,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
 			string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
 			string[] sopInstanceUids = (string[])message.DataSet[DicomTags.SopInstanceUid].Values;
-			SendSopInstancesRequest request = new SendSopInstancesRequest(remoteAEInfo, studyInstanceUid, seriesInstanceUid, sopInstanceUids, UpdateProgress);
+			SendSopInstancesRequest request = new SendSopInstancesRequest();
+			request.DestinationAEInformation = remoteAEInfo;
+			request.StudyInstanceUid = studyInstanceUid;
+			request.SeriesInstanceUid = seriesInstanceUid;
+			request.SopInstanceUids = sopInstanceUids;
 
 			lock (_syncLock)
 			{
-				Guid sendOperationIdentifier = DicomSendManager.Instance.SendSopInstances(request);
+				Guid sendOperationIdentifier = DicomSendManager.Instance.SendSopInstances(request, UpdateProgress);
 				_sendOperations.Add(new SendOperationInfo(sendOperationIdentifier, message.MessageId, presentationID, server));
 			}
 		}

@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer
 		//TODO: CreateImages overrides for the presentation state sops.
 		protected virtual List<IPresentationImage> CreateImages(KeyObjectSelectionDocumentIod keyObjectDocument)
 		{
-			return new KeyObjectDeserializer(keyObjectDocument, _studyTree).Deserialize();
+			return new KeyImageDeserializer(keyObjectDocument, _studyTree).Deserialize();
 		}
 
 		protected virtual List<IPresentationImage> CreateImages(ImageSop imageSop)

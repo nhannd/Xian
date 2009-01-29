@@ -128,6 +128,8 @@
     <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RectangleInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RoiGraphicAnnotationSerializer.cs" />
+    <Compile Include="KeyObjects\KeyImageDeserializer.cs" />
+    <Compile Include="KeyObjects\KeyImageSerializer.cs" />
     <Compile Include="PresentationStates\DicomGraphicAnnotation.cs" />
     <Compile Include="PresentationStates\DicomGrayscaleSoftcopyPresentationState.cs" />
     <Compile Include="PresentationStates\DicomSoftcopyPresentationStateBase.cs" />
@@ -161,8 +163,6 @@
     <Compile Include="InteractiveGraphics\RoiCalloutLocationStrategy.cs" />
     <Compile Include="InteractiveGraphics\RoiTransformPolicy.cs" />
     <Compile Include="InteractiveGraphics\Tests\EllipseIntersectionTests.cs" />
-    <Compile Include="KeyObjects\KeyObjectDeserializer.cs" />
-    <Compile Include="KeyObjects\KeyObjectSerializer.cs" />
     <Compile Include="KeyObjects\KeyObjectSelectionCodeSequences.cs" />
     <Compile Include="PresentationStates\DicomSoftcopyPresentationStateGraphic.cs" />
     <Compile Include="PresentationStates\DicomSerializableGraphicAnnotationAttribute.cs" />
