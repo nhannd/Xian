@@ -270,7 +270,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					foreach (Procedure procedure in procedures)
 					{
 						InterpretationStep interpretation = new InterpretationStep(procedure);
-						interpretation.Schedule(Platform.Time);
+						interpretation.Schedule(step.Scheduling.StartTime, step.Scheduling.EndTime);
 						if (assignStaff != null)
 							interpretation.Assign(assignStaff);
 
