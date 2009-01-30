@@ -146,6 +146,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private bool _selectedCancelEnabled;
 		private bool _selectedClearEnabled;
 
+		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
+
 		public DicomFileImportApplicationComponent()
 		{
 		}
@@ -164,12 +166,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			_toolSet = new ToolSet(new DicomFileImportComponentToolExtensionPoint(), new DicomFileImportComponentToolContext(this));
 
-			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
-			LocalDataStoreActivityMonitor.Instance.Connected += new EventHandler(OnConnected);
-			LocalDataStoreActivityMonitor.Instance.ImportProgressUpdate += new EventHandler<ItemEventArgs<ImportProgressItem>>(OnImportProgressUpdate);
+			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker(true);
+			_localDataStoreEventBroker.LostConnection += OnLostConnection;
+			_localDataStoreEventBroker.Connected += OnConnected;
+			_localDataStoreEventBroker.ImportProgressUpdate += OnImportProgressUpdate;
 
 			Clear();
-			if (!LocalDataStoreActivityMonitor.Instance.IsConnected)
+			if (!LocalDataStoreActivityMonitor.IsConnected)
 				this.SelectedStatusMessage = SR.MessageActivityMonitorServiceUnavailable;
 			else
 				this.SelectedStatusMessage = SR.MessageNothingSelected;
@@ -179,9 +182,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			base.Stop();
 
-			LocalDataStoreActivityMonitor.Instance.LostConnection -= new EventHandler(OnLostConnection);
-			LocalDataStoreActivityMonitor.Instance.Connected -= new EventHandler(OnConnected);
-			LocalDataStoreActivityMonitor.Instance.ImportProgressUpdate -= new EventHandler<ItemEventArgs<ImportProgressItem>>(OnImportProgressUpdate);
+			_localDataStoreEventBroker.LostConnection -= OnLostConnection;
+			_localDataStoreEventBroker.Connected -= OnConnected;
+			_localDataStoreEventBroker.ImportProgressUpdate -= OnImportProgressUpdate;
+			_localDataStoreEventBroker.Dispose();
 		}
 
 		private void OnConnected(object sender, EventArgs e)
@@ -316,7 +320,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			cancelInformation.CancellationFlags = flags;
 			cancelInformation.ProgressItemIdentifiers = progressIdentifiers;
 
-			LocalDataStoreActivityMonitor.Instance.Cancel(cancelInformation);
+			LocalDataStoreActivityMonitor.Cancel(cancelInformation);
 		}
 
 		public ActionModelNode ToolbarModel
@@ -484,7 +488,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public void ClearInactive()
 		{
-			LocalDataStoreActivityMonitor.Instance.ClearInactive();
+			LocalDataStoreActivityMonitor.ClearInactive();
 		}
 	}
 }

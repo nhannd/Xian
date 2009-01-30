@@ -220,6 +220,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private string _title;
 		private Timer _timer;
 		private ClickHandlerDelegate _defaultActionHandler;
+		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 
 		/// <summary>
 		/// Constructor
@@ -245,9 +246,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_timer.IntervalMilliseconds = 30000;
 			_timer.Start();
 
-			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
-			LocalDataStoreActivityMonitor.Instance.Connected += new EventHandler(OnConnected);
-			LocalDataStoreActivityMonitor.Instance.ReceiveProgressUpdate += new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
+			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker(true);
+			_localDataStoreEventBroker.LostConnection += OnLostConnection;
+			_localDataStoreEventBroker.Connected += OnConnected;
+			_localDataStoreEventBroker.ReceiveProgressUpdate += OnReceiveProgressUpdate;
 			SetTitle();
 		}
 
@@ -258,14 +260,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_timer.Dispose();
 			_timer = null;
 
-			LocalDataStoreActivityMonitor.Instance.LostConnection -= new EventHandler(OnLostConnection);
-			LocalDataStoreActivityMonitor.Instance.Connected -= new EventHandler(OnConnected);
-			LocalDataStoreActivityMonitor.Instance.ReceiveProgressUpdate -= new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
+			_localDataStoreEventBroker.LostConnection -= OnLostConnection;
+			_localDataStoreEventBroker.Connected -= OnConnected;
+			_localDataStoreEventBroker.ReceiveProgressUpdate -= OnReceiveProgressUpdate;
 		}
 
 		private void SetTitle()
 		{
-			if (LocalDataStoreActivityMonitor.Instance.IsConnected)
+			if (LocalDataStoreActivityMonitor.IsConnected)
 				this.Title = SR.TitleReceive;
 			else
 				this.Title = String.Format("{0} ({1})", SR.TitleReceive, SR.MessageActivityMonitorServiceUnavailable);
@@ -444,7 +446,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			cancelInformation.CancellationFlags = CancellationFlags.Clear;
 			cancelInformation.ProgressItemIdentifiers = progressIdentifiers;
 
-			LocalDataStoreActivityMonitor.Instance.Cancel(cancelInformation);
+			LocalDataStoreActivityMonitor.Cancel(cancelInformation);
 		}
 
 		private void OnUpdated()

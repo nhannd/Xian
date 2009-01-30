@@ -31,23 +31,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.Common.Utilities;
 using System.ServiceModel;
-using System.ComponentModel;
-using ClearCanvas.Common;
 using System.Threading;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
 	/// <summary>
-	/// This is a singleton class that manages one connection to the LocalDataStoreActivityMonitorService for all application components.
-	/// ApplicationComponents can subscribe to the various events, but it is VERY important that all components unsubscribe when finished.
-	/// Otherwise, the connection to the service may remain open and the resources used may not get freed up.  
+	/// This is a singleton class that manages one connection to the LocalDataStoreActivityMonitorService
+	/// for the entire Application Domain.
 	/// </summary>
 	/// <remarks>
-	/// This class is not guaranteed to be thread safe and is intended only to be used from the main UI thread.
+	/// This class is thread safe.
 	/// </remarks>
 	public sealed class LocalDataStoreActivityMonitor
 	{
@@ -101,10 +97,20 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			#endregion
 		}
 
-		// One per UI Thread (or threads with valid SynchronizationContext).
-		[ThreadStatic]
+		#region Private Fields
+
 		private static LocalDataStoreActivityMonitor _instance;
 
+		private readonly object _connectionThreadLock = new object();
+		private bool _active;
+		private bool _stopThread;
+		private volatile bool _isConnected;
+
+		private LocalDataStoreActivityMonitorServiceCallback _callback;
+		private LocalDataStoreActivityMonitorServiceClient _serviceClient;
+		private Thread _connectionThread;
+
+		private readonly object _subscriptionLock = new object();
 		private event EventHandler<ItemEventArgs<ReceiveProgressItem>> _receiveProgressUpdate;
 		private event EventHandler<ItemEventArgs<SendProgressItem>> _sendProgressUpdate;
 		private event EventHandler<ItemEventArgs<ImportProgressItem>> _importProgressUpdate;
@@ -112,31 +118,19 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private event EventHandler<ItemEventArgs<ImportedSopInstanceInformation>> _sopInstanceImported;
 		private event EventHandler<ItemEventArgs<DeletedInstanceInformation>> _instanceDeleted;
 		private event EventHandler _localDataStoreCleared;
-
 		private event EventHandler _lostConnection;
 		private event EventHandler _connected;
-
-		private SynchronizationContext _synchronizationContext;
-
-		private readonly object _connectionThreadLock = new object();
-		private bool _active;
-		private bool _stopThread;
-		private volatile bool _isConnected;
-
-		private readonly object _subscriptionLock = new object();
 		private bool _refreshRequired;
 				
-		private LocalDataStoreActivityMonitorServiceCallback _callback;
-		private LocalDataStoreActivityMonitorServiceClient _serviceClient;
-		private Thread _connectionThread;
+		#endregion
 
 		private LocalDataStoreActivityMonitor()
 		{
-			_synchronizationContext = SynchronizationContext.Current;
-			Platform.CheckForNullReference(_synchronizationContext, "_synchronizationContext");
 		}
 
-		public static LocalDataStoreActivityMonitor Instance
+		#region Singleton Instance
+
+		internal static LocalDataStoreActivityMonitor Instance
 		{
 			get 
 			{
@@ -152,15 +146,14 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				}
 
 				return _instance; 
-			}	
+			}
 		}
 
-		public bool IsConnected
-		{
-			get { return _isConnected; }
-		}
-		
-		public event EventHandler<ItemEventArgs<SendProgressItem>> SendProgressUpdate
+		#endregion
+
+		#region Internal Events
+
+		internal event EventHandler<ItemEventArgs<SendProgressItem>> SendProgressUpdate
 		{
 			add 
 			{
@@ -184,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			}
 		}
 
-		public event EventHandler<ItemEventArgs<ReceiveProgressItem>> ReceiveProgressUpdate
+		internal event EventHandler<ItemEventArgs<ReceiveProgressItem>> ReceiveProgressUpdate
 		{
 			add
 			{
@@ -208,7 +201,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			}
 		}
 
-		public event EventHandler<ItemEventArgs<ImportProgressItem>> ImportProgressUpdate
+		internal event EventHandler<ItemEventArgs<ImportProgressItem>> ImportProgressUpdate
 		{
 			add 
 			{
@@ -232,7 +225,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			}
 		}
 
-		public event EventHandler<ItemEventArgs<ReindexProgressItem>> ReindexProgressUpdate
+		internal event EventHandler<ItemEventArgs<ReindexProgressItem>> ReindexProgressUpdate
 		{
 			add 
 			{
@@ -256,7 +249,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			}
 		}
 
-		public event EventHandler<ItemEventArgs<ImportedSopInstanceInformation>> SopInstanceImported
+		internal event EventHandler<ItemEventArgs<ImportedSopInstanceInformation>> SopInstanceImported
 		{
 			add
 			{
@@ -279,7 +272,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			}
 		}
 
-		public event EventHandler<ItemEventArgs<DeletedInstanceInformation>> InstanceDeleted
+		internal event EventHandler<ItemEventArgs<DeletedInstanceInformation>> InstanceDeleted
 		{
 			add
 			{
@@ -302,7 +295,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			}
 		}
 
-		public event EventHandler LocalDataStoreCleared
+		internal event EventHandler LocalDataStoreCleared
 		{
 			add
 			{
@@ -325,29 +318,54 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			}
 		}
 
-		public event EventHandler LostConnection
+		internal event EventHandler LostConnection
 		{
 			add
 			{
-				_lostConnection += value;
+				lock (_subscriptionLock)
+				{
+					_lostConnection += value;
+				}
 			}
 			remove
 			{
-				_lostConnection -= value;
+				lock (_subscriptionLock)
+				{
+					_lostConnection -= value;
+				}
 			}
 		}
 
-		public event EventHandler Connected
+		internal event EventHandler Connected
 		{
 			add
 			{
-				_connected += value;
+				lock (_subscriptionLock)
+				{
+					_connected += value;
+				}
 			}
 			remove
 			{
-				_connected -= value;
+				lock (_subscriptionLock)
+				{
+					_connected -= value;
+				}
 			}
 		}
+
+		#endregion
+
+		#region Public Properties
+
+		public static bool IsConnected
+		{
+			get { return Instance._isConnected; }
+		}
+
+		#endregion
+
+		#region Private Properties
 
 		private bool AnySubscribers
 		{
@@ -364,6 +382,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				}
 			}
 		}
+		
+		#endregion
+
+		#region Private Methods
 
 		private void OnChannelClosed(object sender, EventArgs e)
 		{
@@ -429,79 +451,78 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		private void OnReceiveProgressChanged(ReceiveProgressItem progressItem)
 		{
-			if (!this.AnySubscribers)
-				return;
+			lock (_subscriptionLock)
+			{
+				if (!this.AnySubscribers)
+					return;
 
-			_synchronizationContext.Post(delegate
-				{
-					EventsHelper.Fire(_receiveProgressUpdate, this, new ItemEventArgs<ReceiveProgressItem>(progressItem)); 
-				}, null);
+				EventsHelper.Fire(_receiveProgressUpdate, this, new ItemEventArgs<ReceiveProgressItem>(progressItem));
+			}
 		}
 
 		private void OnSendProgressChanged(SendProgressItem progressItem)
 		{
-			if (!this.AnySubscribers)
-				return;
-
-			_synchronizationContext.Post(delegate
-				{
-					EventsHelper.Fire(_sendProgressUpdate, this, new ItemEventArgs<SendProgressItem>(progressItem));
-				}, null);
+			lock (_subscriptionLock)
+			{
+				if (!this.AnySubscribers)
+					return;
+				EventsHelper.Fire(_sendProgressUpdate, this, new ItemEventArgs<SendProgressItem>(progressItem));
+			}
 		}
 
 		private void OnImportProgressChanged(ImportProgressItem progressItem)
 		{
-			if (!this.AnySubscribers)
-				return;
+			lock (_subscriptionLock)
+			{
+				if (!this.AnySubscribers)
+					return;
 
-			_synchronizationContext.Post(delegate
-				{
-					EventsHelper.Fire(_importProgressUpdate, this, new ItemEventArgs<ImportProgressItem>(progressItem));
-				}, null);
+				EventsHelper.Fire(_importProgressUpdate, this, new ItemEventArgs<ImportProgressItem>(progressItem));
+			}
 		}
 
 		private void OnReindexProgressChanged(ReindexProgressItem progressItem)
 		{
-			if (!this.AnySubscribers)
-				return;
+			lock (_subscriptionLock)
+			{
+				if (!this.AnySubscribers)
+					return;
 
-			_synchronizationContext.Post(delegate
-				{
-					EventsHelper.Fire(_reindexProgressUpdate, this, new ItemEventArgs<ReindexProgressItem>(progressItem));
-				}, null);
+				EventsHelper.Fire(_reindexProgressUpdate, this, new ItemEventArgs<ReindexProgressItem>(progressItem));
+			}
 		}
 
 		private void OnSopInstanceImported(ImportedSopInstanceInformation information)
 		{
-			if (!this.AnySubscribers)
-				return;
+			lock (_subscriptionLock)
+			{
+				if (!this.AnySubscribers)
+					return;
 
-			_synchronizationContext.Post(delegate
-				{
-					EventsHelper.Fire(_sopInstanceImported, this, new ItemEventArgs<ImportedSopInstanceInformation>(information));
-				}, null);
+				EventsHelper.Fire(_sopInstanceImported, this, new ItemEventArgs<ImportedSopInstanceInformation>(information));
+			}
 		}
 
 		private void OnInstanceDeleted(DeletedInstanceInformation information)
 		{
-			if (!this.AnySubscribers)
-				return;
+			lock (_subscriptionLock)
+			{
+				if (!this.AnySubscribers)
+					return;
 
-			_synchronizationContext.Post(delegate
-				{
-					EventsHelper.Fire(_instanceDeleted, this, new ItemEventArgs<DeletedInstanceInformation>(information));
-				}, null);
+				EventsHelper.Fire(_instanceDeleted, this, new ItemEventArgs<DeletedInstanceInformation>(information));
+			}
 		}
 
 		private void OnLocalDataStoreCleared()
 		{
-			if (!this.AnySubscribers)
-				return;
+			lock (_subscriptionLock)
+			{
+				if (!this.AnySubscribers)
+					return;
 
-			_synchronizationContext.Post(delegate
-				{
-					EventsHelper.Fire(_localDataStoreCleared, this, EventArgs.Empty);
-				}, null);
+				EventsHelper.Fire(_localDataStoreCleared, this, EventArgs.Empty);
+			}
 		}
 
 		private void OnLostConnection()
@@ -514,14 +535,14 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				{
 					if (this.AnySubscribers)
 						_refreshRequired = true;
+
+					//retry the connection one time (if needed) before firing 'lost connection'.
+					Monitor.Pulse(_connectionThreadLock);
+					Monitor.Wait(_connectionThreadLock);
+
+					if (!_isConnected)
+						EventsHelper.Fire(_lostConnection, this, EventArgs.Empty);
 				}
-
-				//retry the connection one time (if needed) before firing 'lost connection'.
-				Monitor.Pulse(_connectionThreadLock);
-				Monitor.Wait(_connectionThreadLock);
-
-				if (!_isConnected)
-					_synchronizationContext.Post(delegate { EventsHelper.Fire(_lostConnection, this, EventArgs.Empty); }, null);
 			}
 		}
 
@@ -543,7 +564,11 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 					_serviceClient.InnerChannel.Closed += new EventHandler(OnChannelClosed);
 
 					_isConnected = true;
-					_synchronizationContext.Post(delegate { EventsHelper.Fire(_connected, this, EventArgs.Empty); }, null);
+
+					lock(_subscriptionLock)
+					{
+						EventsHelper.Fire(_connected, this, EventArgs.Empty);
+					}
 				}
 				catch (EndpointNotFoundException)
 				{ 
@@ -651,12 +676,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 
 		#endregion
+		#endregion
 
 		#region Client Functions
 
-		public void Cancel(CancelProgressItemInformation information)
+		public static void Cancel(CancelProgressItemInformation information)
 		{
-			LocalDataStoreActivityMonitorServiceCallback dummy = new LocalDataStoreActivityMonitorServiceCallback(this);
+			LocalDataStoreActivityMonitorServiceCallback dummy = new LocalDataStoreActivityMonitorServiceCallback(Instance);
 			LocalDataStoreActivityMonitorServiceClient client = new LocalDataStoreActivityMonitorServiceClient(new InstanceContext(dummy));
 
 			try
@@ -665,7 +691,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				//because of the WCF buffer size, we need to break this request down into reasonable batches.
 				List<Guid> progressIdentifiers = new List<Guid>(information.ProgressItemIdentifiers);
 				List<Guid> batchList = new List<Guid>();
-				
+
 				int batchSize = 500;
 
 				while (progressIdentifiers.Count > 0)
@@ -694,9 +720,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			}
 		}
 
-		public void ClearInactive()
+		public static void ClearInactive()
 		{
-			LocalDataStoreActivityMonitorServiceCallback dummy = new LocalDataStoreActivityMonitorServiceCallback(this);
+			LocalDataStoreActivityMonitorServiceCallback dummy = new LocalDataStoreActivityMonitorServiceCallback(Instance);
 			LocalDataStoreActivityMonitorServiceClient client = new LocalDataStoreActivityMonitorServiceClient(new InstanceContext(dummy));
 
 			try
@@ -712,9 +738,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			}
 		}
 
-		public void Refresh()
+		public static void Refresh()
 		{
-			LocalDataStoreActivityMonitorServiceCallback dummy = new LocalDataStoreActivityMonitorServiceCallback(this);
+			LocalDataStoreActivityMonitorServiceCallback dummy = new LocalDataStoreActivityMonitorServiceCallback(Instance);
 			LocalDataStoreActivityMonitorServiceClient client = new LocalDataStoreActivityMonitorServiceClient(new InstanceContext(dummy));
 
 			try
@@ -728,6 +754,29 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				client.Abort();
 				throw;
 			}
+		}
+
+		#endregion
+
+		#region Public Factory Methods
+
+		public static ILocalDataStoreEventBroker CreatEventBroker()
+		{
+			return CreatEventBroker(true);
+		}
+
+		public static ILocalDataStoreEventBroker CreatEventBroker(bool useSynchronizationContext)
+		{
+			SynchronizationContext synchronizationContext = null;
+			if (useSynchronizationContext)
+				synchronizationContext = SynchronizationContext.Current;
+
+			return CreatEventBroker(synchronizationContext);
+		}
+
+		public static ILocalDataStoreEventBroker CreatEventBroker(SynchronizationContext synchronizationContext)
+		{
+			return new LocalDataStoreEventBroker(synchronizationContext);
 		}
 
 		#endregion

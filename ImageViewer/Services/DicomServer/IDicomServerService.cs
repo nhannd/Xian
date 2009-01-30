@@ -29,9 +29,9 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-using System;
 
 namespace ClearCanvas.ImageViewer.Services.DicomServer
 {
@@ -45,33 +45,9 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		/// <summary>
 		/// Send studies to another Dicom Server.
 		/// </summary>
-		[Obsolete("Use the SendStudies method instead.")]
+		[Obsolete("Use IDicomSendService instead.")]
 		[OperationContract(IsOneWay = true)]
 		void Send(AEInformation destinationAEInformation, IEnumerable<string> studyInstanceUids);
-
-		/// <summary>
-		/// Send studies to another Dicom Server.
-		/// </summary>
-		[OperationContract(IsOneWay = true)]
-		void SendStudies(SendStudiesRequest request);
-
-		/// <summary>
-		/// Sends series within a study to another Dicom server.
-		/// </summary>
-		[OperationContract(IsOneWay = true)]
-		void SendSeries(SendSeriesRequest request);
-
-		/// <summary>
-		/// Sends sops within a series to another Dicom server.
-		/// </summary>
-		[OperationContract(IsOneWay = true)]
-		void SendSopInstances(SendSopInstancesRequest request);
-
-		/// <summary>
-		/// Sends a collection of files to another Dicom server.
-		/// </summary>
-		[OperationContract(IsOneWay = true)]
-		void SendFiles(SendFilesRequest request);
 
 		/// <summary>
 		/// Performs a study level retrieve from another Dicom Server.  Series and Image level retrieves will not

@@ -44,6 +44,7 @@
     <Compile Include="DicomServer\DicomServerExtension.cs" />
     <Compile Include="DicomServer\DicomServerServiceType.cs" />
     <Compile Include="DicomServer\DicomServerSettings.cs" />
+    <Compile Include="DicomServer\DicomSendServiceType.cs" />
     <Compile Include="DicomServer\LocalDataStoreEventPublisher.cs" />
     <Compile Include="DicomServer\MoveScpExtension.cs" />
     <Compile Include="DicomServer\RemoteServerDirectory.cs" />

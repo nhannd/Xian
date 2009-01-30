@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			foreach (StudyItem item in this.Context.SelectedStudies)
 				studyUids.Add(item.StudyInstanceUID);
 
-			DicomServerServiceClient client = new DicomServerServiceClient();
+			DicomSendServiceClient client = new DicomSendServiceClient();
 
 			try
 			{
@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			Enabled = (this.Context.SelectedStudy != null &&
 			           this.Context.SelectedServerGroup.IsLocalDatastore &&
-			           LocalDataStoreActivityMonitor.Instance.IsConnected);
+			           LocalDataStoreActivityMonitor.IsConnected);
 		}
 	}
 }

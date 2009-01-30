@@ -189,6 +189,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private event EventHandler _selectionUpdated;
 
 		private Timer _timer;
+		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 
 		/// <summary>
 		/// Constructor
@@ -214,9 +215,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_timer.IntervalMilliseconds = 30000;
 			_timer.Start();
 
-			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
-			LocalDataStoreActivityMonitor.Instance.Connected += new EventHandler(OnConnected);
-			LocalDataStoreActivityMonitor.Instance.SendProgressUpdate += new EventHandler<ItemEventArgs<SendProgressItem>>(OnSendProgressUpdate);
+			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker(true);
+			_localDataStoreEventBroker.LostConnection += OnLostConnection;
+			_localDataStoreEventBroker.Connected += OnConnected;
+			_localDataStoreEventBroker.SendProgressUpdate += OnSendProgressUpdate;
 
 			SetTitle();
 		}
@@ -227,14 +229,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_timer.Dispose();
 			_timer = null;
 
-			LocalDataStoreActivityMonitor.Instance.LostConnection -= new EventHandler(OnLostConnection);
-			LocalDataStoreActivityMonitor.Instance.Connected -= new EventHandler(OnConnected);
-			LocalDataStoreActivityMonitor.Instance.SendProgressUpdate -= new EventHandler<ItemEventArgs<SendProgressItem>>(OnSendProgressUpdate);
+			_localDataStoreEventBroker.LostConnection -= OnLostConnection;
+			_localDataStoreEventBroker.Connected -= OnConnected;
+			_localDataStoreEventBroker.SendProgressUpdate -= OnSendProgressUpdate;
+			_localDataStoreEventBroker.Dispose();
 		}
 
 		private void SetTitle()
 		{
-			if (LocalDataStoreActivityMonitor.Instance.IsConnected)
+			if (LocalDataStoreActivityMonitor.IsConnected)
 				this.Title = SR.TitleSend;
 			else
 				this.Title = String.Format("{0} ({1})", SR.TitleSend, SR.MessageActivityMonitorServiceUnavailable);
@@ -396,7 +399,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			cancelInformation.CancellationFlags = CancellationFlags.Clear;
 			cancelInformation.ProgressItemIdentifiers = progressIdentifiers;
 
-			LocalDataStoreActivityMonitor.Instance.Cancel(cancelInformation);
+			LocalDataStoreActivityMonitor.Cancel(cancelInformation);
 		}
 
 		public ActionModelNode ToolbarModel

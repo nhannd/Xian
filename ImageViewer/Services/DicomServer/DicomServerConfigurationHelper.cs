@@ -30,12 +30,11 @@
 #endregion
 
 using System;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Services.ServerTree;
-using ClearCanvas.ImageViewer.Services.DicomServer;
-using System.Threading;
 using System.ServiceModel;
+using System.Threading;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.DicomServer
 {

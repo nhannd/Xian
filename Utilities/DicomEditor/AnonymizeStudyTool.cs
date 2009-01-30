@@ -207,7 +207,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 			}
 
 			this.Enabled = LocalStudyLoader != null && 
-							LocalDataStoreActivityMonitor.Instance.IsConnected && 
+							LocalDataStoreActivityMonitor.IsConnected && 
 							this.Context.SelectedStudies.Count == 1 && 
 							this.Context.SelectedServerGroup.IsLocalDatastore;
 		}

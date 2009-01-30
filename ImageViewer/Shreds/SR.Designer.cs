@@ -61,6 +61,24 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dicom Send.
+        /// </summary>
+        internal static string DicomSendService {
+            get {
+                return ResourceManager.GetString("DicomSendService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sends sop instances to remote Dicom servers.
+        /// </summary>
+        internal static string DicomSendServiceDescription {
+            get {
+                return ResourceManager.GetString("DicomSendServiceDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dicom Server.
         /// </summary>
         internal static string DicomServer {

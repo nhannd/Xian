@@ -197,6 +197,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private Dictionary<string, string> _setStudiesArrived;
 		private Dictionary<string, string> _setStudiesDeleted;
 
+		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
+
 		#endregion
 
 		public StudyBrowserComponent()
@@ -288,10 +290,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
 			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
 
-			LocalDataStoreActivityMonitor.Instance.SopInstanceImported += new EventHandler<ItemEventArgs<ImportedSopInstanceInformation>>(OnSopInstanceImported);
-			LocalDataStoreActivityMonitor.Instance.InstanceDeleted += new EventHandler<ItemEventArgs<DeletedInstanceInformation>>(OnInstanceDeleted);
-			LocalDataStoreActivityMonitor.Instance.LocalDataStoreCleared += new EventHandler(OnLocalDataStoreCleared);
-			DicomExplorerConfigurationSettings.Default.PropertyChanged += new PropertyChangedEventHandler(OnConfigurationSettingsChanged);
+			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker(true);
+			_localDataStoreEventBroker.SopInstanceImported += OnSopInstanceImported;
+			_localDataStoreEventBroker.InstanceDeleted += OnInstanceDeleted;
+			_localDataStoreEventBroker.LocalDataStoreCleared += OnLocalDataStoreCleared;
+
+			DicomExplorerConfigurationSettings.Default.PropertyChanged += OnConfigurationSettingsChanged;
 		}
 
 		public override void Stop()
@@ -299,10 +303,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_toolSet.Dispose();
 			_toolSet = null;
 
-			LocalDataStoreActivityMonitor.Instance.SopInstanceImported -= new EventHandler<ItemEventArgs<ImportedSopInstanceInformation>>(OnSopInstanceImported);
-			LocalDataStoreActivityMonitor.Instance.InstanceDeleted -= new EventHandler<ItemEventArgs<DeletedInstanceInformation>>(OnInstanceDeleted);
-			LocalDataStoreActivityMonitor.Instance.LocalDataStoreCleared -= new EventHandler(OnLocalDataStoreCleared);
-			DicomExplorerConfigurationSettings.Default.PropertyChanged -= new PropertyChangedEventHandler(OnConfigurationSettingsChanged);
+			_localDataStoreEventBroker.SopInstanceImported -= OnSopInstanceImported;
+			_localDataStoreEventBroker.InstanceDeleted -= OnInstanceDeleted;
+			_localDataStoreEventBroker.LocalDataStoreCleared -= OnLocalDataStoreCleared;
+			_localDataStoreEventBroker.Dispose();
+
+			DicomExplorerConfigurationSettings.Default.PropertyChanged -= OnConfigurationSettingsChanged;
 
 			base.Stop();
 		}

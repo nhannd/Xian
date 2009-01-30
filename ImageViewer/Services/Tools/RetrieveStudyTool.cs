@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			this.Enabled = (this.Context.SelectedStudy != null &&
 			                !this.Context.SelectedServerGroup.IsLocalDatastore &&
-			                LocalDataStoreActivityMonitor.Instance.IsConnected);
+			                LocalDataStoreActivityMonitor.IsConnected);
 		}
 	}
 }

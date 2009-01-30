@@ -59,6 +59,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private bool _cancelEnabled;
 		private bool _reindexEnabled;
 
+		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
+
 		public LocalDataStoreReindexApplicationComponent()
 		{
 			_reindexProgress = new ReindexProgressItem();
@@ -113,10 +115,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			base.Start();
 
-			LocalDataStoreActivityMonitor.Instance.LostConnection += OnLostConnection;
-			LocalDataStoreActivityMonitor.Instance.ReindexProgressUpdate += OnReindexProgressUpdate;
+			_localDataStoreEventBroker.LostConnection += OnLostConnection;
+			_localDataStoreEventBroker.ReindexProgressUpdate += OnReindexProgressUpdate;
 
-			if (!LocalDataStoreActivityMonitor.Instance.IsConnected)
+			if (!LocalDataStoreActivityMonitor.IsConnected)
 				this.OnLostConnection(null, null);
 			else
 				Reindex();
@@ -126,8 +128,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			base.Stop();
 
-			LocalDataStoreActivityMonitor.Instance.LostConnection -= OnLostConnection;
-			LocalDataStoreActivityMonitor.Instance.ReindexProgressUpdate -= OnReindexProgressUpdate;
+			_localDataStoreEventBroker.LostConnection -= OnLostConnection;
+			_localDataStoreEventBroker.ReindexProgressUpdate -= OnReindexProgressUpdate;
+			_localDataStoreEventBroker.Dispose();
 		}
 
 		public string StatusMessage
@@ -278,7 +281,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			cancelInformation.CancellationFlags = CancellationFlags.Cancel;
 			cancelInformation.ProgressItemIdentifiers = progressIdentifiers;
 
-			LocalDataStoreActivityMonitor.Instance.Cancel(cancelInformation);
+			LocalDataStoreActivityMonitor.Cancel(cancelInformation);
 		}
 	}
 }

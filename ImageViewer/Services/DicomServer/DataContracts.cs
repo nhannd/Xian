@@ -29,25 +29,53 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Services.DicomServer
 {
-	public enum SendFileBehaviour
+	public enum DeletionBehaviour
 	{
 		DeleteOnSuccess = 0,
 		DeleteAlways
 	}
 
-	#region Send Request classes
+	[DataContract]
+	public class SendOperationReference
+	{
+		private Guid _identifier;
+
+		public SendOperationReference(Guid identifier)
+		{
+			_identifier = identifier;
+		}
+
+		public SendOperationReference()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public Guid Identifier
+		{
+			get { return _identifier; }
+			set { _identifier = value; }
+		}
+
+		public static implicit operator SendOperationReference(Guid identifier)
+		{
+			return new SendOperationReference(identifier);
+		}
+
+		//TODO: steps remaining, steps completed, failed, warning.
+	}
 
 	[DataContract]
-	public abstract class SendRequest
+	public abstract class SendInstancesRequest
 	{
 		private AEInformation _destinationAEInformation;
 
-		public SendRequest()
+		public SendInstancesRequest()
 		{
 		}
 
@@ -60,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 	}
 
 	[DataContract]
-	public class SendStudiesRequest : SendRequest
+	public class SendStudiesRequest : SendInstancesRequest
 	{
 		private IEnumerable<string> _studyInstanceUids;
 
@@ -77,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 	}
 
 	[DataContract]
-	public class SendSeriesRequest : SendRequest
+	public class SendSeriesRequest : SendInstancesRequest
 	{
 		private string _studyInstanceUid;
 		private IEnumerable<string> _seriesInstanceUids;
@@ -102,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 	}
 
 	[DataContract]
-	public class SendSopInstancesRequest : SendRequest
+	public class SendSopInstancesRequest : SendInstancesRequest
 	{
 		private string _studyInstanceUid;
 		private string _seriesInstanceUid;
@@ -135,11 +163,12 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 	}
 
 	[DataContract]
-	public class SendFilesRequest : SendRequest
+	public class SendFilesRequest : SendInstancesRequest
 	{
 		private IEnumerable<string> _fileExtensions;
 		private IEnumerable<string> _filePaths;
 		private bool _recursive;
+		private DeletionBehaviour _deletionBehaviour;
 
 		public SendFilesRequest()
 		{
@@ -165,9 +194,14 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 			get { return _recursive; }
 			set { _recursive = value; }
 		}
-	}
 
-	#endregion
+		[DataMember(IsRequired = false)]
+		public DeletionBehaviour DeletionBehaviour
+		{
+			get { return _deletionBehaviour; }
+			set { _deletionBehaviour  = value; }
+		}
+	}
 
 	[DataContract]
 	public class DicomServerConfiguration

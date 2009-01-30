@@ -31,9 +31,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ServiceModel;
-using System.ServiceModel.Channels;
 
 namespace ClearCanvas.ImageViewer.Services.DicomServer
 {
@@ -47,26 +45,6 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		public void Send(AEInformation destinationAEInformation, IEnumerable<string> studyInstanceUids)
 		{
 			base.Channel.Send(destinationAEInformation, studyInstanceUids);
-		}
-
-		public void SendStudies(SendStudiesRequest request)
-		{
-			base.Channel.SendStudies(request);
-		}
-
-		public void SendSeries(SendSeriesRequest request)
-		{
-			base.Channel.SendSeries(request);
-		}
-
-		public void SendSopInstances(SendSopInstancesRequest request)
-		{
-			base.Channel.SendSopInstances(request);
-		}
-
-		public void SendFiles(SendFilesRequest request)
-		{
-			base.Channel.SendFiles(request);
 		}
 
 		public void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)

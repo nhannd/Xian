@@ -1,5 +1,4 @@
 using System.ServiceModel;
-using ClearCanvas.ImageViewer.Services.Automation;
 
 namespace ClearCanvas.ImageViewer.Services.Automation
 {

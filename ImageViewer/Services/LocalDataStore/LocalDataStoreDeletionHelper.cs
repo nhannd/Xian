@@ -31,11 +31,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using System.ServiceModel;
+using System.Threading;
 using ClearCanvas.Common;
-using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {

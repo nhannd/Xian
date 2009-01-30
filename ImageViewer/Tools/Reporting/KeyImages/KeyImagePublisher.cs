@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 				try
 				{
-					DicomPublishingHelper.PublishRemote(pair.Value, destinationServers);
+					DicomFilePublisher.PublishRemote(pair.Value, destination);
 				}
 				catch (EndpointNotFoundException)
 				{
@@ -194,7 +194,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 			try
 			{
-				DicomPublishingHelper.PublishLocal(_localPublishingInfo);
+				DicomFilePublisher.PublishLocal(_localPublishingInfo);
 			}
 			catch (EndpointNotFoundException)
 			{

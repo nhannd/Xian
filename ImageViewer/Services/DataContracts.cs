@@ -30,52 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Services
 {
-	[DataContract]
-	public class PublishFilesRequest
-	{
-		private IEnumerable<string> _fileExtensions;
-		private IEnumerable<string> _filePaths;
-		private bool _recursive;
-		private bool _publishLocally;
-
-		public PublishFilesRequest()
-		{
-		}
-
-		[DataMember(IsRequired = true)]
-		public bool PublishLocally
-		{
-			get { return _publishLocally; }
-			set { _publishLocally = value; }
-		}
-
-		[DataMember(IsRequired = true)]
-		public IEnumerable<string> FilePaths
-		{
-			get { return _filePaths; }
-			set { _filePaths = value; }
-		}
-
-		[DataMember(IsRequired = false)]
-		public IEnumerable<string> FileExtensions
-		{
-			get { return _fileExtensions; }
-			set { _fileExtensions = value; }
-		}
-
-		[DataMember(IsRequired = false)]
-		public bool Recursive
-		{
-			get { return _recursive; }
-			set { _recursive = value; }
-		}
-	}
-	
 	[DataContract]
 	public class AEInformation
 	{

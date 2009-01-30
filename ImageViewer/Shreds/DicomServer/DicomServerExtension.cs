@@ -41,16 +41,19 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
     public class DicomServerExtension : WcfShred
     {
 		private readonly string _dicomServerEndpointName = "DicomServer";
+		private readonly string _dicomSendServiceEndpointName = "DicomSend";
 		private static readonly string _studyLocatorEndpointName = "StudyLocator";
 
 		private bool _studyLocatorWCFInitialized;
 		private bool _dicomServerWcfInitialized;
+		private bool _dicomSendServiceWCFInitialized;
 
         public DicomServerExtension()
         {
 			_studyLocatorWCFInitialized = false;
 			_dicomServerWcfInitialized = false;
-        }
+        	_dicomSendServiceWCFInitialized = false;
+		}
 
         public override void Start()
         {
@@ -88,6 +91,20 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			try
 			{
+				StartNetPipeHost<DicomSendServiceType, IDicomSendService>(_dicomSendServiceEndpointName, SR.DicomSendService);
+				_dicomSendServiceWCFInitialized = true;
+				string message = String.Format(SR.FormatWCFServiceStartedSuccessfully, SR.DicomSendService);
+				Platform.Log(LogLevel.Info, message);
+				Console.WriteLine(message);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Console.WriteLine(String.Format(SR.FormatWCFServiceFailedToStart, SR.DicomSendService));
+			}
+
+			try
+			{
 				ServiceEndpointDescription sed = 
 					StartBasicHttpHost<StudyLocator.StudyLocator, IStudyRootQuery>(_studyLocatorEndpointName, SR.StudyLocator);
 				sed.Binding.Namespace = QueryNamespace.Value;
@@ -119,7 +136,20 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					Platform.Log(LogLevel.Error, e);
 				}
 			}
-			
+
+			if (_dicomSendServiceWCFInitialized)
+			{
+				try
+				{
+					StopHost(_dicomSendServiceEndpointName);
+					Platform.Log(LogLevel.Info, String.Format(SR.FormatWCFServiceStoppedSuccessfully, SR.DicomSendService));
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+				}
+			}
+
 			if (_dicomServerWcfInitialized)
         	{
         		try
