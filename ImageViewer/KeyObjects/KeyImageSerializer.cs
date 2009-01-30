@@ -8,6 +8,7 @@ using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Macros.DocumentRelationship;
 using ClearCanvas.Dicom.Iod.Macros.HierarchicalSeriesInstanceReference;
 using ClearCanvas.Dicom.Iod.Modules;
+using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Utilities;
@@ -16,7 +17,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 {
 	public class KeyImageSerializer
 	{
-		private readonly List<Frame> _frames;
+		private readonly List<KeyValuePair<Frame, DicomSoftcopyPresentationState>> _frames;
 		//private readonly List<string> _docTitleMods;
 		private DateTime _datetime;
 		private string _description;
@@ -26,12 +27,12 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 		public KeyImageSerializer()
 		{
-			_frames = new List<Frame>();
+			_frames = new List<KeyValuePair<Frame, DicomSoftcopyPresentationState>>();
 			_datetime = Platform.Time;
 			_seriesNumber = 1;
 		}
 
-		public IList<Frame> Frames
+		public IList<KeyValuePair<Frame, DicomSoftcopyPresentationState>> Frames
 		{
 			get { return _frames; }
 		}
@@ -76,114 +77,145 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			if (_frames.Count == 0)
 				throw new InvalidOperationException("Key object selection cannot be empty.");
 
-			DicomFile dcf = new DicomFile();
-			KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(_frames[0].ParentImageSop.DataSource, dcf.DataSet);
-
-			iod.KeyObjectDocumentSeries.InitializeAttributes();
-			iod.KeyObjectDocumentSeries.Modality = Modality.KO;
-			iod.KeyObjectDocumentSeries.SeriesDateTime = _datetime;
-			iod.KeyObjectDocumentSeries.SeriesDescription = _seriesDescription;
-			iod.KeyObjectDocumentSeries.SeriesInstanceUid = DicomUid.GenerateUid().UID;
-			iod.KeyObjectDocumentSeries.SeriesNumber = _seriesNumber;
-			iod.KeyObjectDocumentSeries.ReferencedPerformedProcedureStepSequence = null;
-
-			iod.SopCommon.SopClass = SopClass.KeyObjectSelectionDocumentStorage;
-			iod.SopCommon.SopInstanceUid = DicomUid.GenerateUid().UID;
-
-			iod.KeyObjectDocument.InitializeAttributes();
-			iod.KeyObjectDocument.InstanceNumber = 1;
-			iod.KeyObjectDocument.ContentDateTime = DateTime.Now;
-			iod.KeyObjectDocument.ReferencedRequestSequence = null;
-			
-			//TODO: list all identical ko in other studies
-			iod.KeyObjectDocument.IdenticalDocumentsSequence = null;
-
-			iod.SrDocumentContent.InitializeContainerAttributes();
-			iod.SrDocumentContent.ConceptNameCodeSequence = _docTitle;
-
-			List<IContentSequence> contentList = new List<IContentSequence>();
-			List<IHierarchicalSopInstanceReferenceMacro> currentRequestedProcedureEvidenceList = new List<IHierarchicalSopInstanceReferenceMacro>();
-
-			Dictionary<ImageSop, List<int>> frameMap = new Dictionary<ImageSop, List<int>>();
-			foreach (Frame frame in _frames)
+			List<DicomFile> dicomFiles = new List<DicomFile>();
+			List<IHierarchicalSopInstanceReferenceMacro> identicalDocuments = new List<IHierarchicalSopInstanceReferenceMacro>();
+			Dictionary<string, KeyObjectSelectionDocumentIod> koDocumentsByStudy = new Dictionary<string, KeyObjectSelectionDocumentIod>();
+			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> pair in _frames)
 			{
-				if (!frameMap.ContainsKey(frame.ParentImageSop))
-					frameMap.Add(frame.ParentImageSop, new List<int>());
+				string studyInstanceUid = pair.Key.StudyInstanceUID;
+				if (!koDocumentsByStudy.ContainsKey(studyInstanceUid)) {
+					DicomFile dcf = new DicomFile();
+					KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(pair.Key.ParentImageSop.DataSource, dcf.DataSet);
 
-				List<int> frames = frameMap[frame.ParentImageSop];
-				if (!frames.Contains(frame.FrameNumber))
-					frames.Add(frame.FrameNumber);
+					iod.KeyObjectDocumentSeries.InitializeAttributes();
+					iod.KeyObjectDocumentSeries.Modality = Modality.KO;
+					iod.KeyObjectDocumentSeries.SeriesDateTime = _datetime;
+					iod.KeyObjectDocumentSeries.SeriesDescription = _seriesDescription;
+					iod.KeyObjectDocumentSeries.SeriesInstanceUid = DicomUid.GenerateUid().UID;
+					iod.KeyObjectDocumentSeries.SeriesNumber = _seriesNumber;
+					iod.KeyObjectDocumentSeries.ReferencedPerformedProcedureStepSequence = null;
+					iod.SopCommon.SopClass = SopClass.KeyObjectSelectionDocumentStorage;
+					iod.SopCommon.SopInstanceUid = DicomUid.GenerateUid().UID;
+
+					identicalDocuments.Add(iod.KeyObjectDocument.CreateIdenticalDocumentsSequence(
+						studyInstanceUid,
+						iod.KeyObjectDocumentSeries.SeriesInstanceUid,
+						iod.SopCommon.SopClassUid,
+						iod.SopCommon.SopInstanceUid));
+
+					koDocumentsByStudy.Add(studyInstanceUid, iod);
+					dicomFiles.Add(dcf);
+				}
 			}
 
-			// add images to content
-			foreach (ImageSop sop in frameMap.Keys)
+			foreach (KeyObjectSelectionDocumentIod iod in koDocumentsByStudy.Values)
 			{
-				IContentSequence content = iod.SrDocumentContent.CreateContentSequence();
+				iod.KeyObjectDocument.InitializeAttributes();
+				iod.KeyObjectDocument.InstanceNumber = 1;
+				iod.KeyObjectDocument.ContentDateTime = DateTime.Now;
+				iod.KeyObjectDocument.ReferencedRequestSequence = null;
+
+				iod.KeyObjectDocument.IdenticalDocumentsSequence = identicalDocuments.ToArray();
+
+				iod.SrDocumentContent.InitializeContainerAttributes();
+				iod.SrDocumentContent.ConceptNameCodeSequence = _docTitle;
+
+				List<IContentSequence> contentList = new List<IContentSequence>();
+				List<IHierarchicalSopInstanceReferenceMacro> currentRequestedProcedureEvidenceList = new List<IHierarchicalSopInstanceReferenceMacro>();
+
+				Dictionary<ImageSop, List<int>> frameMap = new Dictionary<ImageSop, List<int>>();
+				foreach (KeyValuePair<Frame,DicomSoftcopyPresentationState> framePRPair in _frames)
 				{
-					content.RelationshipType = RelationshipType.Contains;
-					content.ReferencedContentItemIdentifier = new uint[] {1};
+					Frame frame = framePRPair.Key;
+					ImageSop sop = frame.ParentImageSop;
 
-					IImageReferenceMacro imgMac = content.InitializeImageReferenceAttributes();
-					imgMac.ReferencedSopSequence.InitializeAttributes();
-					imgMac.ReferencedSopSequence.ReferencedSopClassUid = sop.SopClassUID;
-					imgMac.ReferencedSopSequence.ReferencedSopInstanceUid = sop.SopInstanceUID;
-					if (sop.NumberOfFrames > 1)
-						imgMac.ReferencedSopSequence.ReferencedFrameNumber = DicomStringHelper.GetDicomStringArray(frameMap[sop]);
-					else
-						imgMac.ReferencedSopSequence.ReferencedFrameNumber = null;
+					// build frame map by unique sop - used to make the evidence sequence less verbose
+					if (!frameMap.ContainsKey(frame.ParentImageSop))
+						frameMap.Add(frame.ParentImageSop, new List<int>());
+					List<int> frames = frameMap[frame.ParentImageSop];
+					if (!frames.Contains(frame.FrameNumber))
+						frames.Add(frame.FrameNumber);
 
-					imgMac.ReferencedSopSequence.CreateReferencedSopSequence();
-					imgMac.ReferencedSopSequence.ReferencedSopSequence.InitializeAttributes();
-				}
-				contentList.Add(content);
-
-				IHierarchicalSopInstanceReferenceMacro currentRequestedProcedureEvidence = iod.KeyObjectDocument.CreateCurrentRequestedProcedureEvidenceSequence();
-				{
-					currentRequestedProcedureEvidence.StudyInstanceUid = sop.StudyInstanceUID;
-
-					IHierarchicalSeriesInstanceReferenceMacro referencedSeries = currentRequestedProcedureEvidence.CreateReferencedSeriesSequence();
+					// content sequence must still list all content as it was given, including any repeats
+					IContentSequence content = iod.SrDocumentContent.CreateContentSequence();
 					{
-						referencedSeries.InitializeAttributes();
-						referencedSeries.SeriesInstanceUid = sop.SeriesInstanceUID;
-						referencedSeries.RetrieveAeTitle = sop[DicomTags.RetrieveAeTitle].ToString();
-						referencedSeries.StorageMediaFileSetId = sop[DicomTags.StorageMediaFileSetId].GetString(0, string.Empty);
-						referencedSeries.StorageMediaFileSetUid = sop[DicomTags.StorageMediaFileSetUid].GetString(0, string.Empty);
+						content.RelationshipType = RelationshipType.Contains;
+						content.ReferencedContentItemIdentifier = new uint[] { 1 };
 
-						IReferencedSopSequence referencedSop = referencedSeries.CreateReferencedSopSequence();
+						IImageReferenceMacro imgMac = content.InitializeImageReferenceAttributes();
+						imgMac.ReferencedSopSequence.InitializeAttributes();
+						imgMac.ReferencedSopSequence.ReferencedSopClassUid = sop.SopClassUID;
+						imgMac.ReferencedSopSequence.ReferencedSopInstanceUid = sop.SopInstanceUID;
+						if (sop.NumberOfFrames > 1)
+							imgMac.ReferencedSopSequence.ReferencedFrameNumber = frame.FrameNumber.ToString();
+						else
+							imgMac.ReferencedSopSequence.ReferencedFrameNumber = null;
+
+						// save the presentation state
+						if(framePRPair.Value!=null)
 						{
-							referencedSop.InitializeAttributes();
-							referencedSop.ReferencedSopClassUid = sop.SopClassUID;
-							referencedSop.ReferencedSopInstanceUid = sop.SopInstanceUID;
+							DicomSoftcopyPresentationState presentationState = framePRPair.Value;
+							imgMac.ReferencedSopSequence.CreateReferencedSopSequence();
+							imgMac.ReferencedSopSequence.ReferencedSopSequence.InitializeAttributes();
+							imgMac.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopClassUid = presentationState.PresentationSopClass.Uid;
+							imgMac.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopInstanceUid = presentationState.PresentationInstanceUid;
 						}
-						referencedSeries.ReferencedSopSequence = new IReferencedSopSequence[] {referencedSop};
 					}
-					currentRequestedProcedureEvidence.ReferencedSeriesSequence = new IHierarchicalSeriesInstanceReferenceMacro[] {referencedSeries};
+					contentList.Add(content);
 				}
-				currentRequestedProcedureEvidenceList.Add(currentRequestedProcedureEvidence);
+
+				// add the description
+				if (!string.IsNullOrEmpty(_description))
+				{
+					IContentSequence koDescription = iod.SrDocumentContent.CreateContentSequence();
+					koDescription.InitializeAttributes();
+					koDescription.ConceptNameCodeSequence = KeyObjectSelectionCodeSequences.DocumentTitleModifier;
+					koDescription.TextValue = _description;
+					koDescription.RelationshipType = RelationshipType.Contains;
+					koDescription.ReferencedContentItemIdentifier = new uint[] {1};
+					contentList.Add(koDescription);
+				}
+
+				// create evidence sequence using the map built earlier
+				foreach (ImageSop sop in frameMap.Keys)
+				{
+					IHierarchicalSopInstanceReferenceMacro currentRequestedProcedureEvidence = iod.KeyObjectDocument.CreateCurrentRequestedProcedureEvidenceSequence();
+					{
+						currentRequestedProcedureEvidence.StudyInstanceUid = sop.StudyInstanceUID;
+
+						IHierarchicalSeriesInstanceReferenceMacro referencedSeries = currentRequestedProcedureEvidence.CreateReferencedSeriesSequence();
+						{
+							referencedSeries.InitializeAttributes();
+							referencedSeries.SeriesInstanceUid = sop.SeriesInstanceUID;
+							referencedSeries.RetrieveAeTitle = sop[DicomTags.RetrieveAeTitle].ToString();
+							referencedSeries.StorageMediaFileSetId = sop[DicomTags.StorageMediaFileSetId].GetString(0, string.Empty);
+							referencedSeries.StorageMediaFileSetUid = sop[DicomTags.StorageMediaFileSetUid].GetString(0, string.Empty);
+
+							IReferencedSopSequence referencedSop = referencedSeries.CreateReferencedSopSequence();
+							{
+								referencedSop.InitializeAttributes();
+								referencedSop.ReferencedSopClassUid = sop.SopClassUID;
+								referencedSop.ReferencedSopInstanceUid = sop.SopInstanceUID;
+							}
+							referencedSeries.ReferencedSopSequence = new IReferencedSopSequence[] {referencedSop};
+						}
+						currentRequestedProcedureEvidence.ReferencedSeriesSequence = new IHierarchicalSeriesInstanceReferenceMacro[] {referencedSeries};
+					}
+					currentRequestedProcedureEvidenceList.Add(currentRequestedProcedureEvidence);
+				}
+
+				// set the content and the evidence sequences
+				iod.SrDocumentContent.ContentSequence = contentList.ToArray();
+				iod.KeyObjectDocument.CurrentRequestedProcedureEvidenceSequence = currentRequestedProcedureEvidenceList.ToArray();
 			}
 
-			// add the description
-			if (!string.IsNullOrEmpty(_description))
-			{
-				IContentSequence koDescription = iod.SrDocumentContent.CreateContentSequence();
-				koDescription.InitializeAttributes();
-				koDescription.ConceptNameCodeSequence = KeyObjectSelectionCodeSequences.DocumentTitleModifier;
-				koDescription.TextValue = _description;
-				koDescription.RelationshipType = RelationshipType.Contains;
-				koDescription.ReferencedContentItemIdentifier = new uint[] {1};
-				contentList.Add(koDescription);
+			// set meta for the files
+			foreach (DicomFile dcf in dicomFiles) {
+				dcf.MediaStorageSopClassUid = dcf.DataSet[DicomTags.SopClassUid].ToString();
+				dcf.MediaStorageSopInstanceUid = dcf.DataSet[DicomTags.SopInstanceUid].ToString();
 			}
 
-			iod.SrDocumentContent.ContentSequence = contentList.ToArray();
-			iod.KeyObjectDocument.CurrentRequestedProcedureEvidenceSequence = currentRequestedProcedureEvidenceList.ToArray();
-
-			dcf.MediaStorageSopClassUid = iod.SopCommon.SopClass.Uid;
-			dcf.MediaStorageSopInstanceUid = iod.SopCommon.SopInstanceUid;
-
-			//TODO: return a list of files.
-			List<DicomFile> files = new List<DicomFile>();
-			files.Add(dcf);
-			return files;
+			return dicomFiles;
 		}
 
 		private static KeyObjectSelectionDocumentIod CreatePrototypeDocument(IDicomAttributeProvider source, IDicomAttributeProvider target)

@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Dicom.Iod.Macros;
+using ClearCanvas.Dicom.Iod.Macros.HierarchicalSeriesInstanceReference;
 using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.Dicom.Utilities;
 
@@ -50,7 +51,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="KeyObjectDocumentModuleIod"/> class.
 		/// </summary>
-		public KeyObjectDocumentModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
+		public KeyObjectDocumentModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) {}
 
 		/// <summary>
 		/// Initializes the underlying collection to implement the module using default values.
@@ -215,6 +216,31 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			IHierarchicalSopInstanceReferenceMacro iodBase = new HierarchicalSopInstanceReferenceMacro(new DicomSequenceItem());
 			iodBase.InitializeAttributes();
 			return iodBase;
+		}
+
+		/// <summary>
+		/// Creates a single instance of a IdenticalDocumentsSequence item. Does not modify the IdenticalDocumentsSequence in the underlying collection.
+		/// </summary>
+		public IHierarchicalSopInstanceReferenceMacro CreateIdenticalDocumentsSequence(string studyInstanceUid, string seriesInstanceUid, string sopClassUid, string sopInstanceUid)
+		{
+			IHierarchicalSopInstanceReferenceMacro identicalDocument;
+			IHierarchicalSeriesInstanceReferenceMacro seriesReference;
+			IReferencedSopSequence sopReference;
+
+			identicalDocument = this.CreateIdenticalDocumentsSequence();
+			identicalDocument.InitializeAttributes();
+			identicalDocument.StudyInstanceUid = studyInstanceUid;
+			identicalDocument.ReferencedSeriesSequence = new IHierarchicalSeriesInstanceReferenceMacro[] {seriesReference = identicalDocument.CreateReferencedSeriesSequence()};
+
+			seriesReference.InitializeAttributes();
+			seriesReference.SeriesInstanceUid = seriesInstanceUid;
+			seriesReference.ReferencedSopSequence = new IReferencedSopSequence[] {sopReference = seriesReference.CreateReferencedSopSequence()};
+
+			sopReference.InitializeAttributes();
+			sopReference.ReferencedSopClassUid = sopClassUid;
+			sopReference.ReferencedSopInstanceUid = sopInstanceUid;
+
+			return identicalDocument;
 		}
 	}
 }

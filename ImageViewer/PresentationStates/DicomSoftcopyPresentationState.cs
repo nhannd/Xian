@@ -8,13 +8,21 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
+	/// <summary>
+	/// Base class for DICOM Softcopy Presentation State objects.
+	/// </summary>
 	public abstract class DicomSoftcopyPresentationState
 	{
 		private readonly DicomAttributeCollection _dataSet;
 		private readonly SopClass _psSopClass;
 		private int _psInstanceNum = 1;
+		private string _psInstanceUid;
 		private string _psSeriesUid;
 
+		/// <summary>
+		/// Serialization constructor.
+		/// </summary>
+		/// <param name="psSopClass">The SOP class of the type of Softcopy Presentation State.</param>
 		protected DicomSoftcopyPresentationState(SopClass psSopClass)
 		{
 			_psSopClass = psSopClass;
@@ -22,6 +30,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			InitializeDataset();
 		}
 
+		/// <summary>
+		/// Deserialization constructor.
+		/// </summary>
+		/// <param name="psSopClass">The SOP class of the type of Softcopy Presentation State.</param>
+		/// <param name="dicomFile">The DICOM Part 10 file to deserialize.</param>
 		protected DicomSoftcopyPresentationState(SopClass psSopClass, DicomFile dicomFile)
 		{
 			if (dicomFile.MediaStorageSopClassUid != psSopClass.Uid)
@@ -31,9 +44,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 
 			_psSopClass = psSopClass;
-			_dataSet = dicomFile.DataSet;
+			_dataSet = dicomFile.DataSet.Copy(true);
 		}
 
+		/// <summary>
+		/// Gets the underlying data set of the DICOM file.
+		/// </summary>
 		protected DicomAttributeCollection DataSet
 		{
 			get { return _dataSet; }
@@ -60,6 +76,14 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			set { _psSeriesUid = value; }
 		}
 
+		public string PresentationInstanceUid {
+			get {
+				if (string.IsNullOrEmpty(_psInstanceUid))
+					_psInstanceUid = DicomUid.GenerateUid().UID;
+				return _psInstanceUid;
+			}
+		}
+
 		public int PresentationInstanceNumber
 		{
 			get { return _psInstanceNum; }
@@ -76,10 +100,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			this.Deserialize(images);
 		}
 
-		public DicomFile ExportAsDicomFile()
+		public DicomFile AsDicomFile()
 		{
 			DicomFile dcf = new DicomFile("", new DicomAttributeCollection(), _dataSet.Copy(true));
-			dcf.DataSet[DicomTags.SopInstanceUid].SetStringValue(DicomUid.GenerateUid().UID);
+			dcf.DataSet[DicomTags.SopInstanceUid].SetStringValue(this.PresentationInstanceUid);
 			dcf.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(this.PresentationSeriesUid);
 			dcf.DataSet[DicomTags.InstanceNumber].SetInt32(0, this.PresentationInstanceNumber);
 			dcf.MediaStorageSopClassUid = dcf.DataSet[DicomTags.SopClassUid].ToString();
@@ -90,6 +114,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		#endregion
 
 		#region Public Static Helpers
+
+		public static bool IsSupported(IPresentationImage image)
+		{
+			return (image is DicomGrayscalePresentationImage);
+		}
 
 		public static DicomSoftcopyPresentationState Create(IPresentationImage image)
 		{

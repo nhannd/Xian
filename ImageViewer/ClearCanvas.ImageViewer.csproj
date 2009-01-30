@@ -119,10 +119,12 @@
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
+    <Compile Include="InteractiveGraphics\CreateArrowGraphicState.cs" />
     <Compile Include="Graphics\ILineSegmentGraphic.cs" />
     <Compile Include="Graphics\InvariantArrowheadGraphic.cs" />
     <Compile Include="Graphics\InvariantLinePrimitive.cs" />
     <Compile Include="Graphics\ArrowGraphic.cs" />
+    <Compile Include="InteractiveGraphics\ArrowInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\CalloutGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphicAnnotationSerializer.cs" />
@@ -166,6 +168,8 @@
     <Compile Include="KeyObjects\KeyObjectSelectionCodeSequences.cs" />
     <Compile Include="PresentationStates\DicomSoftcopyPresentationStateGraphic.cs" />
     <Compile Include="PresentationStates\DicomSerializableGraphicAnnotationAttribute.cs" />
+    <Compile Include="PresentationStates\NewMome\xSPS.cs" />
+    <Compile Include="PresentationStates\NewMome\xSPSBase.cs" />
     <Compile Include="PresentationStates\PresentationStateTestTool.cs" />
     <Compile Include="LayoutManager.cs" />
     <Compile Include="LoadStudyArgs.cs" />
