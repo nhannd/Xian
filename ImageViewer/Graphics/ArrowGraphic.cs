@@ -7,7 +7,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// An arrow graphic.
 	/// </summary>
-	[Cloneable(true)]
+	[Cloneable]
 	public class ArrowGraphic : CompositeGraphic, ILineSegmentGraphic
 	{
 		[CloneIgnore]

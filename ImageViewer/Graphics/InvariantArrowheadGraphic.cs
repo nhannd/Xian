@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// position can be fixed relative to the source coordinate system, but whose
 	/// size is fixed in the destination coordinate system.
 	/// </remarks>
-	[Cloneable(true)]
+	[Cloneable]
 	public class InvariantArrowheadGraphic : CompositeGraphic, IVectorGraphic
 	{
 		[CloneIgnore]

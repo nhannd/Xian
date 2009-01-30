@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 	/// <summary>
 	/// A <see cref="IGraphic"/> whose contents represent those of a DICOM Graphic Annotation Sequence.
 	/// </summary>
-	[Cloneable(true)]
+	[Cloneable]
 	[DicomSerializableGraphicAnnotation(typeof (DicomGraphicAnnotationSerializer))]
 	public class DicomGraphicAnnotation : CompositeGraphic
 	{
