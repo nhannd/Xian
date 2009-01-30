@@ -222,6 +222,30 @@ namespace ClearCanvas.ImageViewer.Mathematics
 				return false;
 		}
 
+		/// <summary>
+		/// Returns a value indicating whether two sizes are equal.
+		/// </summary>
+		/// <param name="size1"></param>
+		/// <param name="size2"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// Uses <see cref="Compare(float,float,int)"/> to perform
+		/// the comparison.  Assumes a tolerance of 100.
+		/// </remarks>
+		public static bool AreEqual(SizeF size1, SizeF size2)
+		{
+			int dummy;
+			const int tolerance = 100;
+
+			int xResult = Compare(size1.Width, size2.Width, tolerance, out dummy);
+			int yResult = Compare(size1.Height, size2.Height, tolerance, out dummy);
+
+			if (xResult == 0 && yResult == 0)
+				return true;
+			else
+				return false;
+		}
+
 		//
 		// Implementation
 

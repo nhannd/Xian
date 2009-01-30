@@ -594,4 +594,10 @@ Please check the log for more details.</value>
   <data name="TooltipShowHideScaleOverlay" xml:space="preserve">
     <value>Show/Hide Scale Overlay</value>
   </data>
+  <data name="CommandCreateTextCallout" xml:space="preserve">
+    <value>Create Text Callout</value>
+  </data>
+  <data name="TooltipTextCallout" xml:space="preserve">
+    <value>Text Callout</value>
+  </data>
 </root>

@@ -134,6 +134,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set { _shaft.LineStyle = value; }
 		}
 
+		internal InvariantArrowheadGraphic Arrowhead {
+			get { return _arrowhead; }
+		}
+
+		/// <summary>
+		/// Gets the point on the arrow closest to the specified <paramref name="point"/>.
+		/// </summary>
+		public PointF GetClosestPoint(PointF point)
+		{
+			PointF pointS = new PointF();
+			double distanceS = Vector.DistanceFromPointToLine(point, _shaft.Pt1, _shaft.Pt2, ref pointS);
+			PointF pointA = _arrowhead.GetClosestPoint(point);
+			double distanceA = Vector.Distance(point, pointA);
+			return distanceS < distanceA ? pointS : pointA;
+		}
+
 		/// <summary>
 		/// One endpoint of the line in either source or destination coordinates.
 		/// </summary>

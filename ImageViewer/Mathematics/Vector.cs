@@ -130,6 +130,21 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return new Point(x, y);
 		}
 
+		public static SizeF UnitVector(PointF vector)
+		{
+			return UnitVector(PointF.Empty, vector);
+		}
+
+		public static SizeF UnitVector(PointF origin, PointF vector)
+		{
+			if (FloatComparer.AreEqual(origin, vector))
+				throw new ArgumentException("The arguments must define a valid vector.");
+			float deltaX = vector.X - origin.X;
+			float deltaY = vector.Y - origin.Y;
+			double magnitude = Math.Sqrt(deltaX*deltaX + deltaY*deltaY);
+			return new SizeF((float) (deltaX/magnitude), (float) (deltaY/magnitude));
+		}
+
 		/// <summary>
 		/// Calculates the shortest distance from a point to a line segment.
 		/// </summary>

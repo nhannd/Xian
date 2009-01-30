@@ -33,6 +33,7 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
+using System;
 using System.Drawing;
 using NUnit.Framework;
 
@@ -69,6 +70,34 @@ namespace ClearCanvas.ImageViewer.Mathematics.Tests
 
 			angle = Vector.SubtendedAngle(new PointF(10, 0), new PointF(0, 0), new PointF(-1, 0));
 			Assert.AreEqual(180, angle);
+		}
+
+		[Test]
+		public void UnitVector()
+		{
+			float oneOverSqrt2 = 1/(float) Math.Sqrt(2);
+			SizeF unitVector;
+			PointF origin;
+
+			origin = new PointF(0, 0);
+			unitVector = Vector.UnitVector(origin, origin + new SizeF(-1, 1));
+			Assert.IsTrue(FloatComparer.AreEqual(new SizeF(-oneOverSqrt2, oneOverSqrt2), unitVector));
+			Assert.IsTrue(FloatComparer.AreEqual(unitVector.Width*unitVector.Width + unitVector.Height*unitVector.Height, 1), "Magnitude must be 1.");
+
+			origin = new PointF(-1, 1);
+			unitVector = Vector.UnitVector(origin, origin + new SizeF(-2, 2));
+			Assert.IsTrue(FloatComparer.AreEqual(new SizeF(-oneOverSqrt2, oneOverSqrt2), unitVector));
+			Assert.IsTrue(FloatComparer.AreEqual(unitVector.Width*unitVector.Width + unitVector.Height*unitVector.Height, 1), "Magnitude must be 1.");
+
+			origin = new PointF(3, -1);
+			unitVector = Vector.UnitVector(origin, origin + new SizeF(-2, 2));
+			Assert.IsTrue(FloatComparer.AreEqual(new SizeF(-oneOverSqrt2, oneOverSqrt2), unitVector));
+			Assert.IsTrue(FloatComparer.AreEqual(unitVector.Width*unitVector.Width + unitVector.Height*unitVector.Height, 1), "Magnitude must be 1.");
+
+			origin = new PointF(3, 1);
+			unitVector = Vector.UnitVector(origin, origin + new SizeF(-2, 2));
+			Assert.IsTrue(FloatComparer.AreEqual(new SizeF(-oneOverSqrt2, oneOverSqrt2), unitVector));
+			Assert.IsTrue(FloatComparer.AreEqual(unitVector.Width*unitVector.Width + unitVector.Height*unitVector.Height, 1), "Magnitude must be 1.");
 		}
 	}
 }

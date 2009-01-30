@@ -115,6 +115,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create Text Callout.
+        /// </summary>
+        internal static string CommandCreateTextCallout {
+            get {
+                return ResourceManager.GetString("CommandCreateTextCallout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flip Horizontal.
         /// </summary>
         internal static string CommandFlipHorizontal {
@@ -1455,6 +1464,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string TooltipStack {
             get {
                 return ResourceManager.GetString("TooltipStack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text Callout.
+        /// </summary>
+        internal static string TooltipTextCallout {
+            get {
+                return ResourceManager.GetString("TooltipTextCallout", resourceCulture);
             }
         }
         
