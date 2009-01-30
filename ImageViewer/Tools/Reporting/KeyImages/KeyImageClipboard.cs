@@ -97,7 +97,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				{
 					try
 					{
-						new KeyImagePublisher(info, true).Publish();
+						if (info.ClipboardItems.Count > 0)
+							new KeyImagePublisher(info, true).Publish();
 					}
 					catch (Exception e)
 					{
