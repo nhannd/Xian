@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 				try
 				{
-					DicomSoftcopyPresentationState presentationState = DicomSoftcopyPresentationState.Load(dcf);
+					DicomSoftcopyPresentationState presentationState = DicomSoftcopyPresentationState.Load(dcf.DataSet);
 					presentationState.Apply(base.SelectedPresentationImage);
 				}
 				catch (Exception ex)

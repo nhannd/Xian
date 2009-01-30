@@ -76,8 +76,7 @@ namespace ClearCanvas.ImageViewer.Services
 
 			foreach (DicomFile file in files)
 			{
-				string savePath = System.IO.Path.Combine(tempDirectory, file.DataSet[DicomTags.SopInstanceUid]);
-				savePath = System.IO.Path.ChangeExtension(savePath, ".dcm");
+				string savePath = System.IO.Path.Combine(tempDirectory, file.DataSet[DicomTags.SopInstanceUid] + ".dcm");
 				file.Save(savePath);
 			}
 		}

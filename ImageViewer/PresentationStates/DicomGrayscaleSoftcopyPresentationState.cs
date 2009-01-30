@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		public DicomGrayscaleSoftcopyPresentationState() : base(SopClass) {}
 
-		public DicomGrayscaleSoftcopyPresentationState(DicomFile dicomFile) : base(SopClass, dicomFile) {}
+		public DicomGrayscaleSoftcopyPresentationState(IDicomAttributeProvider dicomFile) : base(SopClass, dicomFile) { }
 
 		#region Serialization Support
 

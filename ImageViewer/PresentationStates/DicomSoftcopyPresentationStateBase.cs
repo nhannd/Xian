@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 	internal abstract class DicomSoftcopyPresentationStateBase<T> : DicomSoftcopyPresentationState where T : IPresentationImage, IImageSopProvider, ISpatialTransformProvider, IImageGraphicProvider, IOverlayGraphicsProvider
 	{
 		protected DicomSoftcopyPresentationStateBase(SopClass psSopClass) : base(psSopClass) {}
-		protected DicomSoftcopyPresentationStateBase(SopClass psSopClass, DicomFile dicomFile) : base(psSopClass, dicomFile) {}
+		protected DicomSoftcopyPresentationStateBase(SopClass psSopClass, IDicomAttributeProvider dicomFile) : base(psSopClass, dicomFile) { }
 
 		protected override sealed void Serialize(IEnumerable<IPresentationImage> images)
 		{

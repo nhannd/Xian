@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Macros;
@@ -13,7 +14,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 	/// </summary>
 	public abstract class DicomSoftcopyPresentationState
 	{
-		private readonly DicomAttributeCollection _dataSet;
+		private readonly DicomFile _dcf;
+		private readonly IDicomAttributeProvider _dataSet;
 		private readonly SopClass _psSopClass;
 		private int _psInstanceNum = 1;
 		private string _psInstanceUid;
@@ -26,7 +28,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		protected DicomSoftcopyPresentationState(SopClass psSopClass)
 		{
 			_psSopClass = psSopClass;
-			_dataSet = new DicomAttributeCollection();
+			_dcf = new DicomFile();
+			_dataSet = _dcf.DataSet;
 			InitializeDataset();
 		}
 
@@ -34,23 +37,18 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		/// Deserialization constructor.
 		/// </summary>
 		/// <param name="psSopClass">The SOP class of the type of Softcopy Presentation State.</param>
-		/// <param name="dicomFile">The DICOM Part 10 file to deserialize.</param>
-		protected DicomSoftcopyPresentationState(SopClass psSopClass, DicomFile dicomFile)
+		/// <param name="dataset">The DICOM Part 10 file to deserialize.</param>
+		protected DicomSoftcopyPresentationState(SopClass psSopClass, IDicomAttributeProvider dataset)
 		{
-			if (dicomFile.MediaStorageSopClassUid != psSopClass.Uid)
-			{
-				string message = string.Format("Expected: {0}; Found: {1}", psSopClass, SopClass.GetSopClass(dicomFile.MediaStorageSopClassUid));
-				throw new ArgumentException("The specified DICOM file is not of a compatible SOP Class. " + message, "dicomFile");
-			}
-
 			_psSopClass = psSopClass;
-			_dataSet = dicomFile.DataSet.Copy(true);
+			_dcf = null;
+			_dataSet = dataset;
 		}
 
 		/// <summary>
-		/// Gets the underlying data set of the DICOM file.
+		/// Gets the underlying DICOM data set.
 		/// </summary>
-		protected DicomAttributeCollection DataSet
+		protected IDicomAttributeProvider DataSet
 		{
 			get { return _dataSet; }
 		}
@@ -102,13 +100,18 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		public DicomFile AsDicomFile()
 		{
-			DicomFile dcf = new DicomFile("", new DicomAttributeCollection(), _dataSet.Copy(true));
-			dcf.DataSet[DicomTags.SopInstanceUid].SetStringValue(this.PresentationInstanceUid);
-			dcf.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(this.PresentationSeriesUid);
-			dcf.DataSet[DicomTags.InstanceNumber].SetInt32(0, this.PresentationInstanceNumber);
-			dcf.MediaStorageSopClassUid = dcf.DataSet[DicomTags.SopClassUid].ToString();
-			dcf.MediaStorageSopInstanceUid = dcf.DataSet[DicomTags.SopInstanceUid].ToString();
-			return dcf;
+			if (!(_dataSet is DicomAttributeCollection))
+			{
+				throw new InvalidOperationException();
+			}
+
+			DicomFile dcf = new DicomFile("", new DicomAttributeCollection(), ((DicomAttributeCollection)_dataSet).Copy(true));
+				dcf.DataSet[DicomTags.SopInstanceUid].SetStringValue(this.PresentationInstanceUid);
+				dcf.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(this.PresentationSeriesUid);
+				dcf.DataSet[DicomTags.InstanceNumber].SetInt32(0, this.PresentationInstanceNumber);
+				dcf.MediaStorageSopClassUid = dcf.DataSet[DicomTags.SopClassUid].ToString();
+				dcf.MediaStorageSopInstanceUid = dcf.DataSet[DicomTags.SopInstanceUid].ToString();
+				return dcf;
 		}
 
 		#endregion
@@ -178,9 +181,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			return presentationStatesByOriginalOrder;
 		}
 
-		public static DicomSoftcopyPresentationState Load(DicomFile dicomFile)
+		public static DicomSoftcopyPresentationState Load(IDicomAttributeProvider dicomFile)
 		{
-			if (dicomFile.MediaStorageSopClassUid == DicomGrayscaleSoftcopyPresentationState.SopClass.Uid)
+			if (dicomFile[DicomTags.SopClassUid].ToString() == DicomGrayscaleSoftcopyPresentationState.SopClass.Uid)
 			{
 				return new DicomGrayscaleSoftcopyPresentationState(dicomFile);
 				//} else if (image is DicomColorPresentationImage) {
@@ -192,11 +195,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 		}
 
-		public static IEnumerable<DicomSoftcopyPresentationState> Load(IEnumerable<DicomFile> dicomFiles)
+		public static IEnumerable<DicomSoftcopyPresentationState> Load(IEnumerable<IDicomAttributeProvider> dicomFiles)
 		{
 			List<DicomSoftcopyPresentationState> presentationStates = new List<DicomSoftcopyPresentationState>();
 
-			foreach (DicomFile file in dicomFiles)
+			foreach (IDicomAttributeProvider file in dicomFiles)
 			{
 				presentationStates.Add(Load(file));
 			}
@@ -212,9 +215,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 		}
 
-		public static void Apply(IEnumerable<KeyValuePair<IPresentationImage, DicomFile>> presentationStates)
+		public static void Apply(IEnumerable<KeyValuePair<IPresentationImage, IDicomAttributeProvider>> presentationStates)
 		{
-			foreach (KeyValuePair<IPresentationImage, DicomFile> pair in presentationStates)
+			foreach (KeyValuePair<IPresentationImage, IDicomAttributeProvider> pair in presentationStates)
 			{
 				DicomSoftcopyPresentationState presentationState = Load(pair.Value);
 				presentationState.Apply(pair.Key);

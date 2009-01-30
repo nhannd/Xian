@@ -48,9 +48,9 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			_document = iod;
 		}
 
-		public List<IPresentationImage> Deserialize()
+		public IList<KeyObjectContentItem> Deserialize()
 		{
-			List<IPresentationImage> images = new List<IPresentationImage>();
+			List<KeyObjectContentItem> imagePRPairs = new List<KeyObjectContentItem>();
 
 			SrDocumentContentModuleIod srDoc = _document.SrDocumentContent;
 			foreach (IContentSequence contentItem in srDoc.ContentSequence)
@@ -63,11 +63,17 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 						{
 							IImageReferenceMacro imageRef = contentItem;
 							string referencedSopInstanceUid = imageRef.ReferencedSopSequence.ReferencedSopInstanceUid;
-							ImageSop referencedImage = FindReferencedImage(referencedSopInstanceUid);
+							ImageSop referencedImage = FindReferencedImageSop(referencedSopInstanceUid);
 							if (referencedImage == null)
 							{
 								Platform.Log(LogLevel.Warn, "Unable to find referenced image '{0}'.", referencedSopInstanceUid);
 								continue;
+							}
+
+							Sop presentationState = null;
+							if(imageRef.ReferencedSopSequence.ReferencedSopSequence != null)
+							{
+								presentationState = FindReferencedSop(imageRef.ReferencedSopSequence.ReferencedSopSequence.ReferencedSopInstanceUid);
 							}
 
 							string referencedFrameNumbers = imageRef.ReferencedSopSequence.ReferencedFrameNumber;
@@ -82,17 +88,16 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 									}
 									else
 									{
-										IPresentationImage image = new DicomGrayscalePresentationImage(referencedImage.Frames[frameNumber]);
-										images.Add(image);
+										KeyObjectContentItem item = new KeyObjectContentItem(referencedImage.Frames[frameNumber], presentationState);
+										imagePRPairs.Add(item);
 									}
 								}
 							}
 							else
 							{
-								foreach (Frame frame in referencedImage.Frames)
-								{
-									IPresentationImage image = new DicomGrayscalePresentationImage(frame);
-									images.Add(image);
+								foreach (Frame frame in referencedImage.Frames) {
+									KeyObjectContentItem item = new KeyObjectContentItem(frame, presentationState);
+									imagePRPairs.Add(item);
 								}
 							}
 						}
@@ -111,10 +116,10 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				}
 			}
 
-			return images;
+			return imagePRPairs.AsReadOnly();
 		}
 
-		private ImageSop FindReferencedImage(string sopInstanceUid)
+		private ImageSop FindReferencedImageSop(string sopInstanceUid)
 		{
 			string sameStudyUid = _document.GeneralStudy.StudyInstanceUid;
 			Study sameStudy = _studyTree.GetStudy(sameStudyUid);
@@ -126,6 +131,21 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 					Sop referencedSop = series.Sops[sopInstanceUid];
 					if (referencedSop != null)
 						return referencedSop as ImageSop;
+				}
+			}
+
+			return null;
+		}
+
+		private Sop FindReferencedSop(string sopInstanceUid) {
+			string sameStudyUid = _document.GeneralStudy.StudyInstanceUid;
+			Study sameStudy = _studyTree.GetStudy(sameStudyUid);
+
+			if (sameStudy != null) {
+				foreach (Series series in sameStudy.Series) {
+					Sop referencedSop = series.Sops[sopInstanceUid];
+					if (referencedSop != null)
+						return referencedSop;
 				}
 			}
 

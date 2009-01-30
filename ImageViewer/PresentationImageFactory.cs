@@ -31,12 +31,13 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.Dicom.Iod.Iods;
+using ClearCanvas.ImageViewer.KeyObjects;
+using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -54,14 +55,14 @@ namespace ClearCanvas.ImageViewer
 
 		public StudyTree StudyTree
 		{
-			get { return _studyTree; }	
+			get { return _studyTree; }
 		}
 
 		public virtual List<IPresentationImage> CreateImages(Sop sop)
 		{
 			if (sop is ImageSop)
 			{
-				return CreateImages((ImageSop)sop);
+				return CreateImages((ImageSop) sop);
 			}
 			else if (sop.SopClassUID == SopClass.KeyObjectSelectionDocumentStorageUid)
 			{
@@ -71,11 +72,24 @@ namespace ClearCanvas.ImageViewer
 			return new List<IPresentationImage>();
 		}
 
-		//TODO: CreateImages overrides for the presentation state sops.
 		protected virtual List<IPresentationImage> CreateImages(KeyObjectSelectionDocumentIod keyObjectDocument)
 		{
-			return new KeyImageDeserializer(keyObjectDocument, _studyTree).Deserialize();
+			List<IPresentationImage> images = new List<IPresentationImage>();
+			IList<KeyObjectContentItem> content = new KeyImageDeserializer(keyObjectDocument, _studyTree).Deserialize();
+			foreach (KeyObjectContentItem item in content)
+			{
+				IPresentationImage image = Create(item.Frame);
+				if (item.PresentationStateSop != null && image is IDicomSoftcopyPresentationStateProvider)
+				{
+					IDicomSoftcopyPresentationStateProvider presentationStateProvider = (IDicomSoftcopyPresentationStateProvider) image;
+					presentationStateProvider.PresentationState = DicomSoftcopyPresentationState.Load(item.PresentationStateSop.DataSource);
+				}
+				images.Add(image);
+			}
+			return images;
 		}
+
+
 
 		protected virtual List<IPresentationImage> CreateImages(ImageSop imageSop)
 		{
@@ -88,11 +102,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public static List<IPresentationImage> Create(ImageSop imageSop)
 		{
-			return CollectionUtils.Map<Frame, IPresentationImage>(imageSop.Frames, 
-										delegate(Frame frame)
-											{
-												return Create(frame);
-											});
+			return CollectionUtils.Map<Frame, IPresentationImage>(imageSop.Frames,
+			                                                      delegate(Frame frame) { return Create(frame); });
 		}
 
 		/// <summary>
@@ -106,7 +117,7 @@ namespace ClearCanvas.ImageViewer
 				throw new Exception("Photometric interpretation is unknown.");
 			}
 			else if (frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
-					 frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome2)
+			         frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome2)
 			{
 				return new DicomGrayscalePresentationImage(frame);
 			}
