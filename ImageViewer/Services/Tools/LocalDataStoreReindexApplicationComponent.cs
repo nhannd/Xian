@@ -115,6 +115,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			base.Start();
 
+			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
 			_localDataStoreEventBroker.LostConnection += OnLostConnection;
 			_localDataStoreEventBroker.ReindexProgressUpdate += OnReindexProgressUpdate;
 

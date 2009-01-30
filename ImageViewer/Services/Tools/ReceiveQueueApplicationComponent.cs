@@ -246,7 +246,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_timer.IntervalMilliseconds = 30000;
 			_timer.Start();
 
-			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker(true);
+			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
 			_localDataStoreEventBroker.LostConnection += OnLostConnection;
 			_localDataStoreEventBroker.Connected += OnConnected;
 			_localDataStoreEventBroker.ReceiveProgressUpdate += OnReceiveProgressUpdate;

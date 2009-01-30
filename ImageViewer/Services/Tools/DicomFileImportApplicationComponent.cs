@@ -166,7 +166,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			_toolSet = new ToolSet(new DicomFileImportComponentToolExtensionPoint(), new DicomFileImportComponentToolContext(this));
 
-			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker(true);
+			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
 			_localDataStoreEventBroker.LostConnection += OnLostConnection;
 			_localDataStoreEventBroker.Connected += OnConnected;
 			_localDataStoreEventBroker.ImportProgressUpdate += OnImportProgressUpdate;

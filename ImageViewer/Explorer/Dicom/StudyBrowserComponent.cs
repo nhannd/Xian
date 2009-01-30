@@ -290,7 +290,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
 			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
 
-			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker(true);
+			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
 			_localDataStoreEventBroker.SopInstanceImported += OnSopInstanceImported;
 			_localDataStoreEventBroker.InstanceDeleted += OnInstanceDeleted;
 			_localDataStoreEventBroker.LocalDataStoreCleared += OnLocalDataStoreCleared;
