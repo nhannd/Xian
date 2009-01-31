@@ -701,8 +701,16 @@ namespace ClearCanvas.ImageViewer
 			                    	{
 			                    		imageViewer.Dispose();
 			                    	};
-			imageViewer.Layout();
-			imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
+			try
+			{
+				imageViewer.Layout();
+				imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
+			}
+			catch(Exception)
+			{
+				workspace.Close();
+				throw;
+			}
 		}
 
 		#endregion

@@ -86,6 +86,7 @@ namespace ClearCanvas.ImageViewer
 		public virtual void Layout()
 		{
 			BuildLogicalWorkspace();
+			ValidateLogicalWorkspace();
 			LayoutPhysicalWorkspace();
 			
 			// Sort the display sets before filling the physical workspace, so that
@@ -127,6 +128,20 @@ namespace ClearCanvas.ImageViewer
 					BuildFromStudy(study);
 				}
 			}
+		}
+
+		protected virtual void ValidateLogicalWorkspace()
+		{
+			foreach (IImageSet imageSet in _imageViewer.LogicalWorkspace.ImageSets)
+			{
+				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
+				{
+					foreach (IPresentationImage image in displaySet.PresentationImages)
+						return;
+				}
+			}
+
+			throw new NoVisibleDisplaySetsException("The Layout operation has resulted in no images to be displayed.");
 		}
 
 		/// <summary>

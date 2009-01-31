@@ -306,6 +306,9 @@
   <data name="MessageNoRendererPluginsExist" xml:space="preserve">
     <value>No renderer plugins exist; defaulting to GDI renderer.</value>
   </data>
+  <data name="MessageNoVisibleDisplaySets" xml:space="preserve">
+    <value>No images could be found to display.  The viewer cannot be opened.</value>
+  </data>
   <data name="NamePrefetchingStrategyVisibleDisplaySet" xml:space="preserve">
     <value>Visible Display Set</value>
   </data>

@@ -628,6 +628,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No images could be found to display.  The viewer cannot be opened..
+        /// </summary>
+        public static string MessageNoVisibleDisplaySets {
+            get {
+                return ResourceManager.GetString("MessageNoVisibleDisplaySets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Visible Display Set.
         /// </summary>
         public static string NamePrefetchingStrategyVisibleDisplaySet {
