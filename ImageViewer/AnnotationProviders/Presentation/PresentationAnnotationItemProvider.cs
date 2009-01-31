@@ -47,7 +47,6 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 
 			_annotationItems.Add((IAnnotationItem)new ZoomAnnotationItem());
 			_annotationItems.Add((IAnnotationItem)new AppliedLutAnnotationItem());
-			//_annotationItems.Add((IAnnotationItem)new DFOVAnnotationItem());
 
 			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Left));
 			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Top));
@@ -55,6 +54,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			_annotationItems.Add((IAnnotationItem)new DirectionalMarkerAnnotationItem(DirectionalMarkerAnnotationItem.ImageEdge.Bottom));
 
 			_annotationItems.Add(new DFOVAnnotationItem());
+			_annotationItems.Add(new DisplaySetDescriptionAnnotationItem());
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()

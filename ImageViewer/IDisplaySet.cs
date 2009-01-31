@@ -118,6 +118,11 @@ namespace ClearCanvas.ImageViewer
 		string Name { get; }
 
 		/// <summary>
+		/// Gets or sets a description for the display set.
+		/// </summary>
+		string Description { get; }
+
+		/// <summary>
 		/// Gets a value indicating whether the <see cref="IDisplaySet"/> is selected.
 		/// </summary>
 		bool Selected { get; }

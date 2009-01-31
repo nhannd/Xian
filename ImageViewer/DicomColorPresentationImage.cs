@@ -56,17 +56,23 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="Frame"/> with a <see cref="ColorPresentationImage"/>.
 		/// </remarks>
 		public DicomColorPresentationImage(Frame frame)
-			: base(frame.Rows,
-			       frame.Columns,
-				   frame.NormalizedPixelSpacing.Column,
-				   frame.NormalizedPixelSpacing.Row,
-				   frame.PixelAspectRatio.Column,
-				   frame.PixelAspectRatio.Row,
-			       frame.GetNormalizedPixelData)
+			: this(frame.CreateTransientReference())
 		{
 			Platform.CheckForNullReference(frame, "frame");
 
 			_frameReference = frame.CreateTransientReference();
+		}
+
+		public DicomColorPresentationImage(IFrameReference frameReference)
+			: base(frameReference.Frame.Rows,
+				   frameReference.Frame.Columns,
+				   frameReference.Frame.NormalizedPixelSpacing.Column,
+				   frameReference.Frame.NormalizedPixelSpacing.Row,
+				   frameReference.Frame.PixelAspectRatio.Column,
+				   frameReference.Frame.PixelAspectRatio.Row,
+				   frameReference.Frame.GetNormalizedPixelData)
+		{
+			_frameReference = frameReference;
 		}
 
 		/// <summary>

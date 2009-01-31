@@ -361,7 +361,7 @@ namespace ClearCanvas.ImageViewer
 		private IDisplaySet CreateDisplaySet(Series series)
 		{
 			string name = String.Format("{0}: {1}", series.SeriesNumber, series.SeriesDescription);
-			DisplaySet displaySet = new DisplaySet(name, series.SeriesInstanceUID);
+			DisplaySet displaySet = new DisplaySet(name, series.SeriesInstanceUID, series.SeriesDescription);
 			return displaySet;
 		}
 

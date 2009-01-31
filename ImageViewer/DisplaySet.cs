@@ -101,6 +101,7 @@ namespace ClearCanvas.ImageViewer
 		[CloneIgnore]
 		private bool _linked = false;
 		private string _name;
+		private string _description;
 		private string _uid;
 		private event EventHandler _drawing;
 		private PresentationImageCollection _presentationImages;
@@ -119,9 +120,15 @@ namespace ClearCanvas.ImageViewer
 		/// the specified parameters.
 		/// </summary>
 		public DisplaySet(string name, string uid)
+			: this(name, uid, "")
+		{
+		}
+
+		public DisplaySet(string name, string uid, string description)
 		{
 			_name = name ?? "";
 			_uid = uid ?? "";
+			_description = description ?? "";
 		}
 
 		#region Properties
@@ -209,6 +216,11 @@ namespace ClearCanvas.ImageViewer
 		public string Name
 		{
 			get { return _name; }
+		}
+
+		public string Description
+		{
+			get { return _description; }
 		}
 
 		/// <summary>
@@ -334,7 +346,7 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public IDisplaySet CreateFreshCopy()
 		{
-			DisplaySet displaySet = new DisplaySet(this.Name, this.Uid);
+			DisplaySet displaySet = new DisplaySet(this.Name, this.Uid, this.Description);
 			displaySet.ParentImageSet = this.ParentImageSet;
 
 			foreach (IPresentationImage image in this.PresentationImages)

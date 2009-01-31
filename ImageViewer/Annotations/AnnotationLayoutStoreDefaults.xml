@@ -26,7 +26,7 @@
         <annotation-box-group id="TopRightQuadrant">
           <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Presentation.DisplaySetDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
             <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
             <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralImage.AcquisitionTime" >
@@ -133,7 +133,7 @@
         <annotation-box-group id="TopRightQuadrant">
           <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Presentation.DisplaySetDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
             <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
             <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralImage.AcquisitionTime" >
@@ -244,7 +244,7 @@
         <annotation-box-group id="TopRightQuadrant">
           <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Presentation.DisplaySetDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
             <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
             <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralImage.AcquisitionTime" >
@@ -355,7 +355,7 @@
         <annotation-box-group id="TopRightQuadrant">
           <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Presentation.DisplaySetDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
             <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
             <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralImage.AcquisitionTime" >
@@ -466,7 +466,7 @@
         <annotation-box-group id="TopRightQuadrant">
           <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Presentation.DisplaySetDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
             <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
             <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralImage.AcquisitionTime" >
@@ -597,7 +597,7 @@
         <annotation-box-group id="TopRightQuadrant">
           <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Presentation.DisplaySetDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
             <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
             <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralImage.AcquisitionTime" >
@@ -740,7 +740,7 @@
         <annotation-box-group id="TopRightQuadrant">
           <default-box-settings font="Century Gothic"  justification="Right" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Presentation.DisplaySetDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
             <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
             <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralImage.AcquisitionTime" >
@@ -863,7 +863,7 @@
         <annotation-box-group id="TopRightQuadrant">
           <default-box-settings font="Century Gothic" justification="Right" />
           <annotation-boxes>
-            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Dicom.GeneralSeries.SeriesDescription" />
+            <annotation-box normalized-rectangle="0.600000\0.000000\1.000000\0.025000" annotation-item-id="Presentation.DisplaySetDescription" />
             <annotation-box normalized-rectangle="0.500000\0.025000\1.000000\0.050000" annotation-item-id="Dicom.GeneralStudy.AccessionNumber" />
             <annotation-box normalized-rectangle="0.500000\0.050000\1.000000\0.075000" annotation-item-id="Dicom.GeneralStudy.StudyDate" />
             <annotation-box normalized-rectangle="0.500000\0.075000\1.000000\0.100000" annotation-item-id="Dicom.GeneralImage.AcquisitionTime" >

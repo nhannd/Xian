@@ -62,23 +62,29 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="Frame"/> with a <see cref="GrayscalePresentationImage"/>.
 		/// </remarks>
 		public DicomGrayscalePresentationImage(Frame frame)
-			: base(frame.Rows,
-				   frame.Columns,
-				   frame.BitsAllocated,
-				   frame.BitsStored,
-				   frame.HighBit,
-				   frame.PixelRepresentation != 0 ? true : false,
-				   frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true : false,
-				   frame.RescaleSlope,
-				   frame.RescaleIntercept,
-				   frame.NormalizedPixelSpacing.Column,
-				   frame.NormalizedPixelSpacing.Row,
-				   frame.PixelAspectRatio.Column,
-				   frame.PixelAspectRatio.Row,
-				   frame.GetNormalizedPixelData)
+			: this(frame.CreateTransientReference())
 		{
 			Platform.CheckForNullReference(frame, "frame");
 			_frameReference = frame.CreateTransientReference();
+		}
+		
+		public DicomGrayscalePresentationImage(IFrameReference frameReference)
+			: base(frameReference.Frame.Rows,
+				   frameReference.Frame.Columns,
+				   frameReference.Frame.BitsAllocated,
+				   frameReference.Frame.BitsStored,
+				   frameReference.Frame.HighBit,
+				   frameReference.Frame.PixelRepresentation != 0 ? true : false,
+				   frameReference.Frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true : false,
+				   frameReference.Frame.RescaleSlope,
+				   frameReference.Frame.RescaleIntercept,
+				   frameReference.Frame.NormalizedPixelSpacing.Column,
+				   frameReference.Frame.NormalizedPixelSpacing.Row,
+				   frameReference.Frame.PixelAspectRatio.Column,
+				   frameReference.Frame.PixelAspectRatio.Row,
+				   frameReference.Frame.GetNormalizedPixelData)
+		{
+			_frameReference = frameReference;
 		}
 
 		/// <summary>

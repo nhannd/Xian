@@ -633,6 +633,12 @@
   <data name="Presentation_DirectionalMarkers_Top_Label" xml:space="preserve">
     <value />
   </data>
+  <data name="Presentation_DisplaySetDescription_DisplayName" xml:space="preserve">
+    <value>Display Set Description</value>
+  </data>
+  <data name="Presentation_DisplaySetDescription_Label" xml:space="preserve">
+    <value>Desc.:</value>
+  </data>
   <data name="Presentation_Zoom_DisplayName" xml:space="preserve">
     <value>Zoom</value>
   </data>

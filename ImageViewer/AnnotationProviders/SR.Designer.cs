@@ -1609,6 +1609,24 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Display Set Description.
+        /// </summary>
+        internal static string Presentation_DisplaySetDescription_DisplayName {
+            get {
+                return ResourceManager.GetString("Presentation_DisplaySetDescription_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Desc.:.
+        /// </summary>
+        internal static string Presentation_DisplaySetDescription_Label {
+            get {
+                return ResourceManager.GetString("Presentation_DisplaySetDescription_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Zoom.
         /// </summary>
         internal static string Presentation_Zoom_DisplayName {
