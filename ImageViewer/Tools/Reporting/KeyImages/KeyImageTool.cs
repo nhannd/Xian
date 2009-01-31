@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowKeyImages", "Show")]
 	[Tooltip("show", "TooltipShowKeyImages")]
 	[IconSet("show", IconScheme.Colour, "Icons.ShowKeyImagesToolSmall.png", "Icons.ShowKeyImagesToolMedium.png", "Icons.ShowKeyImagesToolLarge.png")]
-	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
+	[EnabledStateObserver("show", "ShowEnabled", "ShowEnabledChanged")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	internal class KeyImageTool : ImageViewerTool
@@ -59,6 +59,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private bool _enabled;
 		private event EventHandler _enabledChanged;
+		private bool _showEnabled;
+		private event EventHandler _showEnabledChanged;
 		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 
 		#endregion
@@ -86,6 +88,25 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			remove { _enabledChanged -= value; }
 		}
 
+		public bool ShowEnabled
+		{
+			get { return _showEnabled; }
+			set
+			{
+				if (_showEnabled == value)
+					return;
+
+				_showEnabled = value;
+				EventsHelper.Fire(_showEnabledChanged, this, EventArgs.Empty);
+			}
+		}
+
+		public event EventHandler ShowEnabledChanged
+		{
+			add { _showEnabledChanged += value; }
+			remove { _showEnabledChanged -= value; }
+		}
+	
 		#region Overrides
 
 		public override void Initialize()
@@ -115,7 +136,10 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		private void UpdateEnabled()
 		{
 			Enabled = base.SelectedPresentationImage is IImageSopProvider &&
+					((IImageSopProvider)base.SelectedPresentationImage).ImageSop.DataSource.IsStored &&
 			          LocalDataStoreActivityMonitor.IsConnected;
+
+			ShowEnabled = LocalDataStoreActivityMonitor.IsConnected;
 		}
 
 		private void OnConnected(object sender, EventArgs e)
@@ -144,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		public void Show()
 		{
-			if (Enabled)
+			if (ShowEnabled)
 				KeyImageClipboard.Show();
 		}
 
