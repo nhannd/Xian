@@ -35,6 +35,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
@@ -49,6 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 	[ButtonAction("show", "global-toolbars/ToolbarKeyImages/ToolbarShowKeyImages", "Show")]
 	[Tooltip("show", "TooltipShowKeyImages")]
 	[IconSet("show", IconScheme.Colour, "Icons.ShowKeyImagesToolSmall.png", "Icons.ShowKeyImagesToolMedium.png", "Icons.ShowKeyImagesToolLarge.png")]
+	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	internal class KeyImageTool : ImageViewerTool
@@ -57,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private bool _enabled;
 		private event EventHandler _enabledChanged;
+		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 
 		#endregion
 
@@ -89,25 +92,50 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		{
 			base.Initialize();
 			KeyImageClipboard.OnViewerOpened(Context.Viewer);
-			Enabled = false;
+
+			Enabled = LocalDataStoreActivityMonitor.IsConnected;
+
+			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
+			_localDataStoreEventBroker.Connected += OnConnected;
+			_localDataStoreEventBroker.LostConnection += OnLostConnection;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
+			_localDataStoreEventBroker.Connected -= OnConnected;
+			_localDataStoreEventBroker.LostConnection -= OnLostConnection;
+			_localDataStoreEventBroker.Dispose();
+
 			if (Context != null)
 				KeyImageClipboard.OnViewerClosed(Context.Viewer);
 
 			base.Dispose(disposing);
 		}
 
+		private void UpdateEnabled()
+		{
+			Enabled = base.SelectedPresentationImage is IImageSopProvider &&
+			          LocalDataStoreActivityMonitor.IsConnected;
+		}
+
+		private void OnConnected(object sender, EventArgs e)
+		{
+			UpdateEnabled();
+		}
+
+		private void OnLostConnection(object sender, EventArgs e)
+		{
+			UpdateEnabled();
+		}
+
 		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			Enabled = e.SelectedPresentationImage is IImageSopProvider;
+			UpdateEnabled();
 		}
 
 		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
-			Enabled = e.SelectedTile != null && e.SelectedTile.PresentationImage is IImageSopProvider;
+			UpdateEnabled();
 		}
 
 		#endregion
@@ -116,11 +144,15 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		public void Show()
 		{
-			KeyImageClipboard.Show();
+			if (Enabled)
+				KeyImageClipboard.Show();
 		}
 
 		public void Create()
 		{
+			if (!Enabled)
+				return;
+
 			IPresentationImage image = Context.Viewer.SelectedPresentationImage;
 			if (image != null)
 				KeyImageClipboard.Add(image);

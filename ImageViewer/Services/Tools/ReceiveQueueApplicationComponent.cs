@@ -263,6 +263,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_localDataStoreEventBroker.LostConnection -= OnLostConnection;
 			_localDataStoreEventBroker.Connected -= OnConnected;
 			_localDataStoreEventBroker.ReceiveProgressUpdate -= OnReceiveProgressUpdate;
+			_localDataStoreEventBroker.Dispose();
 		}
 
 		private void SetTitle()

@@ -8,6 +8,14 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Services
 {
+	public class DicomFilePublishingException : Exception
+	{
+		internal DicomFilePublishingException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
+	}
+
 	public static class DicomFilePublisher
 	{
 		private static void DeleteEmptyFolders(string directory)
@@ -26,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Services
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Info, e, "Failed to delete old temp directory ({0})", subDirectory);
+					Platform.Log(LogLevel.Info, e, "Failed to delete old temp directory ({0}).", subDirectory);
 				}
 			}
 		}
@@ -83,7 +91,6 @@ namespace ClearCanvas.ImageViewer.Services
 
 		public static void PublishLocal(IEnumerable<DicomFile> files)
 		{
-			//TODO: clean up files/directory when there's no connection?
 			string tempFileDirectory;
 			SaveFiles(files, "Local", out tempFileDirectory);
 
@@ -99,16 +106,18 @@ namespace ClearCanvas.ImageViewer.Services
 				client.Import(request);
 				client.Close();
 			}
-			catch
+			catch (Exception e)
 			{
 				client.Abort();
-				throw;
+				string message =
+					String.Format("Failed to connect to the dicom send service to send files.  The files must be published manually (location: {0})",
+						tempFileDirectory);
+				throw new DicomFilePublishingException(message, e);
 			}
 		}
 
 		public static void PublishRemote(IEnumerable<DicomFile> files, AEInformation destinationServer)
 		{
-			//TODO: clean up files/directory when there's no connection?
 			string tempFileDirectory;
 			SaveFiles(files, destinationServer.AETitle , out tempFileDirectory);
 
@@ -125,10 +134,13 @@ namespace ClearCanvas.ImageViewer.Services
 				client.SendFiles(request);
 				client.Close();
 			}
-			catch
+			catch (Exception e)
 			{
 				client.Abort();
-				throw;
+				string message =
+					String.Format("Failed to connect to the local data store service to import files.  The files must be imported manually (location: {0})",
+						tempFileDirectory);
+				throw new DicomFilePublishingException(message, e);
 			}
 		}
 	}

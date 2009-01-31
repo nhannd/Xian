@@ -129,11 +129,23 @@
   <data name="MenuShowKeyImages" xml:space="preserve">
     <value>Show Key Images</value>
   </data>
+  <data name="MessageCannotPublishKeyImagesServersNotRunning" xml:space="preserve">
+    <value>Key Images cannot be published because the local services are not running.  Please start the service and click OK to continue with publishing.  To discard the Key Images, click Cancel.</value>
+  </data>
   <data name="MessageInvalidSeriesDescription" xml:space="preserve">
     <value>The SeriesDescription must be between 1 and 64 characters.</value>
   </data>
   <data name="MessageInvalidSeriesNumber" xml:space="preserve">
     <value>The Series Number must be a positive integer.</value>
+  </data>
+  <data name="MessageLocalPublishingFailed" xml:space="preserve">
+    <value>Publishing of Key Images to the local data store has failed.  Please see the logs for more details.</value>
+  </data>
+  <data name="MessagePublishingFailed" xml:space="preserve">
+    <value>Publishing of Key Images to the local data store and at least one remote server has failed.  Please see the logs for more details.</value>
+  </data>
+  <data name="MessageRemotePublishingFailed" xml:space="preserve">
+    <value>Publishing of Key Images to at least one remote server has failed.  Please see the logs for more details.</value>
   </data>
   <data name="TitleCreateKeyObjectSelection" xml:space="preserve">
     <value>Create Key Object Selection</value>

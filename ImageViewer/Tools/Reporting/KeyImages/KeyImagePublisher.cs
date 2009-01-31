@@ -9,6 +9,8 @@ using ClearCanvas.ImageViewer.Services;
 using System;
 using ClearCanvas.Common;
 using System.ServiceModel;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
@@ -179,37 +181,54 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		public void Publish()
 		{
+			if (_sourceInformation.ClipboardItems.Count == 0)
+				return;
+
+			while(!LocalDataStoreActivityMonitor.IsConnected)
+			{
+				DialogBoxAction result = Application.ActiveDesktopWindow.ShowMessageBox(
+					SR.MessageCannotPublishKeyImagesServersNotRunning, MessageBoxActions.OkCancel);
+
+				if (result == DialogBoxAction.Cancel)
+					return;
+			}
+
 			CreateKeyObjectDocuments();
 			BuildPublishingInfo();
 
+			bool remotePublishFailed = false;
 			foreach (KeyValuePair<Server, List<DicomFile>> pair in _remotePublishingInfo)
 			{
-				List<AEInformation> destinationServers = new List<AEInformation>();
-				AEInformation destination = new AEInformation();
-				destination.AETitle = pair.Key.AETitle;
-				destination.HostName = pair.Key.Host;
-				destination.Port = pair.Key.Port;
-				destinationServers.Add(destination);
-
 				try
 				{
+					List<AEInformation> destinationServers = new List<AEInformation>();
+					AEInformation destination = new AEInformation();
+					destination.AETitle = pair.Key.AETitle;
+					destination.HostName = pair.Key.Host;
+					destination.Port = pair.Key.Port;
+					destinationServers.Add(destination);
+
 					DicomFilePublisher.PublishRemote(pair.Value, destination);
 				}
 				catch (EndpointNotFoundException)
 				{
-					Platform.Log(LogLevel.Error, 
-						"Unable to publish key images to default servers; the local dicom server does not appear to be running.");
+					remotePublishFailed = true;
+					Platform.Log(LogLevel.Error,
+					             "Unable to publish key images to default servers; the local dicom server does not appear to be running.");
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Error, e, 
-						"An error occurred while attempting to publish key images to server {0}.", pair.Key.AETitle);
+					remotePublishFailed = true;
+					Platform.Log(LogLevel.Error, e,
+					             "An error occurred while attempting to publish key images to server {0}.", pair.Key.AETitle);
 				}
 			}
 
+			bool localPublishFailed = true;
 			try
 			{
 				DicomFilePublisher.PublishLocal(_localPublishingInfo);
+				localPublishFailed = false;
 			}
 			catch (EndpointNotFoundException)
 			{
@@ -221,6 +240,13 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				Platform.Log(LogLevel.Error, e,
 						"An error occurred while attempting to publish key images locally.");
 			}
+
+			if (localPublishFailed && remotePublishFailed)
+				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessagePublishingFailed, MessageBoxActions.Ok);
+			else if (localPublishFailed)
+				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageLocalPublishingFailed, MessageBoxActions.Ok);
+			else if (remotePublishFailed)
+				Application.ActiveDesktopWindow.ShowMessageBox(SR.MessageRemotePublishingFailed, MessageBoxActions.Ok);
 		}
 	}
 }

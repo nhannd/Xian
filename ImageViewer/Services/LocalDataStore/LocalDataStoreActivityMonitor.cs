@@ -531,15 +531,15 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			{
 				CloseConnection();
 
+				if (this.AnySubscribers)
+					_refreshRequired = true;
+
+				//retry the connection one time (if needed) before firing 'lost connection'.
+				Monitor.Pulse(_connectionThreadLock);
+				Monitor.Wait(_connectionThreadLock);
+
 				lock (_subscriptionLock)
 				{
-					if (this.AnySubscribers)
-						_refreshRequired = true;
-
-					//retry the connection one time (if needed) before firing 'lost connection'.
-					Monitor.Pulse(_connectionThreadLock);
-					Monitor.Wait(_connectionThreadLock);
-
 					if (!_isConnected)
 						EventsHelper.Fire(_lostConnection, this, EventArgs.Empty);
 				}
