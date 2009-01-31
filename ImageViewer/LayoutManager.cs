@@ -252,7 +252,7 @@ namespace ClearCanvas.ImageViewer
 		/// <seealso cref="SortDisplaySets"/>
 		protected virtual IComparer<IDisplaySet> GetDisplaySetComparer()
 		{
-			return new SeriesNumberComparer();
+			return new DefaultDisplaySetComparer();
 		}
 
 		/// <summary>
@@ -362,6 +362,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			string name = String.Format("{0}: {1}", series.SeriesNumber, series.SeriesDescription);
 			DisplaySet displaySet = new DisplaySet(name, series.SeriesInstanceUID, series.SeriesDescription);
+			displaySet.DefaultSortNumber = series.SeriesNumber;
 			return displaySet;
 		}
 

@@ -116,7 +116,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			component.Description = info.Description;
 			component.DocumentTitle = info.DocumentTitle;
 			component.SeriesDescription = info.SeriesDescription;
-			component.SeriesNumber = info.SeriesNumber.ToString();
 
 			ApplicationComponentExitCode exitCode = LaunchAsDialog(desktopWindow, component, SR.TitleEditKeyImageInformation);
 			if (exitCode == ApplicationComponentExitCode.Accepted)
@@ -124,7 +123,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				info.Description = component.Description;
 				info.DocumentTitle = component.DocumentTitle;
 				info.SeriesDescription = component.SeriesDescription;
-				info.SeriesNumber = Int32.Parse(component.SeriesNumber);
 			}
 		}
 

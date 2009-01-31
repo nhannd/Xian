@@ -102,6 +102,7 @@ namespace ClearCanvas.ImageViewer
 		private bool _linked = false;
 		private string _name;
 		private string _description;
+		private int _defaultSortNumber;
 		private string _uid;
 		private event EventHandler _drawing;
 		private PresentationImageCollection _presentationImages;
@@ -221,6 +222,12 @@ namespace ClearCanvas.ImageViewer
 		public string Description
 		{
 			get { return _description; }
+		}
+
+		internal int DefaultSortNumber
+		{
+			get { return _defaultSortNumber; }
+			set { _defaultSortNumber = value; }
 		}
 
 		/// <summary>

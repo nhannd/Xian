@@ -20,18 +20,12 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 				cboTitle.Items.Add(title);
 			}
 
+			base.CancelButton = _cancelButton;
+			base.AcceptButton = _okButton;
+
 			cboTitle.DataBindings.Add("SelectedItem", component, "DocumentTitle");
 			txtDesc.DataBindings.Add("Text", component, "Description");
 			txtSeriesDesc.DataBindings.Add("Text", component, "SeriesDescription");
-			txtSeriesNum.DataBindings.Add("Text", component, "SeriesNumber");
-			txtDateTime.DataBindings.Add("Text", component, "DateTime");
-		}
-
-		private void OnValidatingSeriesNumber(object sender, CancelEventArgs e)
-		{
-			int result;
-			if (!int.TryParse(txtSeriesNum.Text, out result))
-				e.Cancel = true;
 		}
 
 		private void OnOk(object sender, System.EventArgs e)

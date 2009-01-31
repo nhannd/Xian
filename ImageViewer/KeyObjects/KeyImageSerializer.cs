@@ -11,7 +11,6 @@ using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.KeyObjects
 {
@@ -22,14 +21,12 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		private DateTime _datetime;
 		private string _description;
 		private string _seriesDescription;
-		private int _seriesNumber;
 		private KeyObjectSelectionDocumentTitle _docTitle = KeyObjectSelectionDocumentTitleContextGroup.OfInterest;
 
 		public KeyImageSerializer()
 		{
 			_frames = new List<KeyValuePair<Frame, DicomSoftcopyPresentationState>>();
 			_datetime = Platform.Time;
-			_seriesNumber = 1;
 		}
 
 		public IList<KeyValuePair<Frame, DicomSoftcopyPresentationState>> Frames
@@ -60,12 +57,6 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			set { _seriesDescription = value; }
 		}
 
-		public int SeriesNumber
-		{
-			get { return _seriesNumber; }
-			set { _seriesNumber = value; }
-		}
-
 		public KeyObjectSelectionDocumentTitle DocumentTitle
 		{
 			get { return _docTitle; }
@@ -82,17 +73,21 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			Dictionary<string, KeyObjectSelectionDocumentIod> koDocumentsByStudy = new Dictionary<string, KeyObjectSelectionDocumentIod>();
 			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> pair in _frames)
 			{
-				string studyInstanceUid = pair.Key.StudyInstanceUID;
-				if (!koDocumentsByStudy.ContainsKey(studyInstanceUid)) {
+				Frame frame = pair.Key;
+				DicomSoftcopyPresentationState presentationState = pair.Value;
+
+				string studyInstanceUid = frame.StudyInstanceUID;
+				if (!koDocumentsByStudy.ContainsKey(studyInstanceUid))
+				{
 					DicomFile dcf = new DicomFile();
-					KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(pair.Key.ParentImageSop.DataSource, dcf.DataSet);
+					KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(frame.ParentImageSop.DataSource, dcf.DataSet);
 
 					iod.KeyObjectDocumentSeries.InitializeAttributes();
 					iod.KeyObjectDocumentSeries.Modality = Modality.KO;
 					iod.KeyObjectDocumentSeries.SeriesDateTime = _datetime;
 					iod.KeyObjectDocumentSeries.SeriesDescription = _seriesDescription;
 					iod.KeyObjectDocumentSeries.SeriesInstanceUid = DicomUid.GenerateUid().UID;
-					iod.KeyObjectDocumentSeries.SeriesNumber = _seriesNumber;
+					iod.KeyObjectDocumentSeries.SeriesNumber = CalculateSeriesNumber(frame);
 					iod.KeyObjectDocumentSeries.ReferencedPerformedProcedureStepSequence = null;
 					iod.SopCommon.SopClass = SopClass.KeyObjectSelectionDocumentStorage;
 					iod.SopCommon.SopInstanceUid = DicomUid.GenerateUid().UID;
@@ -112,7 +107,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			{
 				iod.KeyObjectDocument.InitializeAttributes();
 				iod.KeyObjectDocument.InstanceNumber = 1;
-				iod.KeyObjectDocument.ContentDateTime = DateTime.Now;
+				iod.KeyObjectDocument.ContentDateTime = _datetime;
 				iod.KeyObjectDocument.ReferencedRequestSequence = null;
 
 				iod.KeyObjectDocument.IdenticalDocumentsSequence = identicalDocuments.ToArray();
@@ -216,6 +211,21 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			}
 
 			return dicomFiles;
+		}
+
+		private int CalculateSeriesNumber(Frame frame)
+		{
+			if (frame.ParentImageSop == null || frame.ParentImageSop.ParentSeries == null || frame.ParentImageSop.ParentSeries.ParentStudy == null)
+				return 1;
+
+			int maxValue = 0;
+			foreach (Series series in frame.ParentImageSop.ParentSeries.ParentStudy.Series)
+			{
+				if (series.SeriesNumber > maxValue)
+					maxValue = series.SeriesNumber;
+			}
+
+			return maxValue + 1;
 		}
 
 		private static KeyObjectSelectionDocumentIod CreatePrototypeDocument(IDicomAttributeProvider source, IDicomAttributeProvider target)

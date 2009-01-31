@@ -92,10 +92,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		private void CreateKeyObjectDocuments()
 		{
 			KeyImageSerializer serializer = new KeyImageSerializer();
-			serializer.DateTime = _sourceInformation.DateTime;
 			serializer.Description = _sourceInformation.Description;
 			serializer.DocumentTitle = _sourceInformation.DocumentTitle;
-			serializer.SeriesNumber = _sourceInformation.SeriesNumber;
 			serializer.SeriesDescription = _sourceInformation.SeriesDescription;
 
 			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> frameAndPR in SourceFrames)

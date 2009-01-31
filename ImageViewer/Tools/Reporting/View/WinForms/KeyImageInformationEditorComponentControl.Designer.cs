@@ -31,23 +31,15 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			this.pnlDesc = new System.Windows.Forms.Panel();
 			this.txtDesc = new System.Windows.Forms.TextBox();
 			this.lblDesc = new System.Windows.Forms.Label();
-			this.pnlDateTime = new System.Windows.Forms.Panel();
-			this.txtDateTime = new System.Windows.Forms.TextBox();
-			this.lblDateTime = new System.Windows.Forms.Label();
 			this.pnlSeriesDesc = new System.Windows.Forms.Panel();
 			this.txtSeriesDesc = new System.Windows.Forms.TextBox();
 			this.lblSeriesDesc = new System.Windows.Forms.Label();
-			this.pnlSeriesNum = new System.Windows.Forms.Panel();
-			this.txtSeriesNum = new System.Windows.Forms.TextBox();
-			this.lblSeriesNum = new System.Windows.Forms.Label();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
 			this.flowLayoutPanel1.SuspendLayout();
 			this.pnlTitle.SuspendLayout();
 			this.pnlDesc.SuspendLayout();
-			this.pnlDateTime.SuspendLayout();
 			this.pnlSeriesDesc.SuspendLayout();
-			this.pnlSeriesNum.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// flowLayoutPanel1
@@ -56,14 +48,12 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this.flowLayoutPanel1.Controls.Add(this.pnlTitle);
 			this.flowLayoutPanel1.Controls.Add(this.pnlDesc);
-			this.flowLayoutPanel1.Controls.Add(this.pnlDateTime);
 			this.flowLayoutPanel1.Controls.Add(this.pnlSeriesDesc);
-			this.flowLayoutPanel1.Controls.Add(this.pnlSeriesNum);
 			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
 			this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
 			this.flowLayoutPanel1.Padding = new System.Windows.Forms.Padding(10);
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(312, 316);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(312, 216);
 			this.flowLayoutPanel1.TabIndex = 0;
 			// 
 			// pnlTitle
@@ -125,41 +115,11 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			this.lblDesc.TabIndex = 2;
 			this.lblDesc.Text = "Description:";
 			// 
-			// pnlDateTime
-			// 
-			this.pnlDateTime.Controls.Add(this.txtDateTime);
-			this.pnlDateTime.Controls.Add(this.lblDateTime);
-			this.pnlDateTime.Location = new System.Drawing.Point(13, 157);
-			this.pnlDateTime.Name = "pnlDateTime";
-			this.pnlDateTime.Size = new System.Drawing.Size(285, 45);
-			this.pnlDateTime.TabIndex = 7;
-			// 
-			// txtDateTime
-			// 
-			this.txtDateTime.Dock = System.Windows.Forms.DockStyle.Top;
-			this.txtDateTime.Location = new System.Drawing.Point(0, 18);
-			this.txtDateTime.Name = "txtDateTime";
-			this.txtDateTime.ReadOnly = true;
-			this.txtDateTime.Size = new System.Drawing.Size(285, 20);
-			this.txtDateTime.TabIndex = 4;
-			this.txtDateTime.Text = "(Use Current Time)";
-			// 
-			// lblDateTime
-			// 
-			this.lblDateTime.AutoSize = true;
-			this.lblDateTime.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lblDateTime.Location = new System.Drawing.Point(0, 0);
-			this.lblDateTime.Name = "lblDateTime";
-			this.lblDateTime.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
-			this.lblDateTime.Size = new System.Drawing.Size(113, 18);
-			this.lblDateTime.TabIndex = 0;
-			this.lblDateTime.Text = "Document Date/Time:";
-			// 
 			// pnlSeriesDesc
 			// 
 			this.pnlSeriesDesc.Controls.Add(this.txtSeriesDesc);
 			this.pnlSeriesDesc.Controls.Add(this.lblSeriesDesc);
-			this.pnlSeriesDesc.Location = new System.Drawing.Point(13, 208);
+			this.pnlSeriesDesc.Location = new System.Drawing.Point(13, 157);
 			this.pnlSeriesDesc.Name = "pnlSeriesDesc";
 			this.pnlSeriesDesc.Size = new System.Drawing.Size(285, 44);
 			this.pnlSeriesDesc.TabIndex = 5;
@@ -170,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			this.txtSeriesDesc.Location = new System.Drawing.Point(0, 18);
 			this.txtSeriesDesc.Name = "txtSeriesDesc";
 			this.txtSeriesDesc.Size = new System.Drawing.Size(285, 20);
-			this.txtSeriesDesc.TabIndex = 3;
+			this.txtSeriesDesc.TabIndex = 5;
 			// 
 			// lblSeriesDesc
 			// 
@@ -180,45 +140,16 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			this.lblSeriesDesc.Name = "lblSeriesDesc";
 			this.lblSeriesDesc.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
 			this.lblSeriesDesc.Size = new System.Drawing.Size(95, 18);
-			this.lblSeriesDesc.TabIndex = 2;
+			this.lblSeriesDesc.TabIndex = 4;
 			this.lblSeriesDesc.Text = "Series Description:";
-			// 
-			// pnlSeriesNum
-			// 
-			this.pnlSeriesNum.Controls.Add(this.txtSeriesNum);
-			this.pnlSeriesNum.Controls.Add(this.lblSeriesNum);
-			this.pnlSeriesNum.Location = new System.Drawing.Point(13, 258);
-			this.pnlSeriesNum.Name = "pnlSeriesNum";
-			this.pnlSeriesNum.Size = new System.Drawing.Size(285, 44);
-			this.pnlSeriesNum.TabIndex = 6;
-			// 
-			// txtSeriesNum
-			// 
-			this.txtSeriesNum.Dock = System.Windows.Forms.DockStyle.Top;
-			this.txtSeriesNum.Location = new System.Drawing.Point(0, 18);
-			this.txtSeriesNum.Name = "txtSeriesNum";
-			this.txtSeriesNum.Size = new System.Drawing.Size(285, 20);
-			this.txtSeriesNum.TabIndex = 3;
-			this.txtSeriesNum.Validating += new System.ComponentModel.CancelEventHandler(this.OnValidatingSeriesNumber);
-			// 
-			// lblSeriesNum
-			// 
-			this.lblSeriesNum.AutoSize = true;
-			this.lblSeriesNum.Dock = System.Windows.Forms.DockStyle.Top;
-			this.lblSeriesNum.Location = new System.Drawing.Point(0, 0);
-			this.lblSeriesNum.Name = "lblSeriesNum";
-			this.lblSeriesNum.Padding = new System.Windows.Forms.Padding(0, 0, 0, 5);
-			this.lblSeriesNum.Size = new System.Drawing.Size(79, 18);
-			this.lblSeriesNum.TabIndex = 2;
-			this.lblSeriesNum.Text = "Series Number:";
 			// 
 			// _cancelButton
 			// 
 			this._cancelButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._cancelButton.Location = new System.Drawing.Point(224, 323);
+			this._cancelButton.Location = new System.Drawing.Point(224, 223);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 6;
+			this._cancelButton.TabIndex = 7;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this.OnCancel);
@@ -226,10 +157,10 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			// _okButton
 			// 
 			this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._okButton.Location = new System.Drawing.Point(143, 323);
+			this._okButton.Location = new System.Drawing.Point(143, 223);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
-			this._okButton.TabIndex = 5;
+			this._okButton.TabIndex = 6;
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this.OnOk);
@@ -242,18 +173,14 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 			this.Controls.Add(this._okButton);
 			this.Controls.Add(this.flowLayoutPanel1);
 			this.Name = "KeyImageInformationEditorComponentControl";
-			this.Size = new System.Drawing.Size(312, 360);
+			this.Size = new System.Drawing.Size(312, 260);
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.pnlTitle.ResumeLayout(false);
 			this.pnlTitle.PerformLayout();
 			this.pnlDesc.ResumeLayout(false);
 			this.pnlDesc.PerformLayout();
-			this.pnlDateTime.ResumeLayout(false);
-			this.pnlDateTime.PerformLayout();
 			this.pnlSeriesDesc.ResumeLayout(false);
 			this.pnlSeriesDesc.PerformLayout();
-			this.pnlSeriesNum.ResumeLayout(false);
-			this.pnlSeriesNum.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
@@ -270,12 +197,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms
 		private System.Windows.Forms.Panel pnlSeriesDesc;
 		private System.Windows.Forms.TextBox txtSeriesDesc;
 		private System.Windows.Forms.Label lblSeriesDesc;
-		private System.Windows.Forms.Panel pnlSeriesNum;
-		private System.Windows.Forms.TextBox txtSeriesNum;
-		private System.Windows.Forms.Label lblSeriesNum;
-		private System.Windows.Forms.Panel pnlDateTime;
-		private System.Windows.Forms.Label lblDateTime;
-		private System.Windows.Forms.TextBox txtDateTime;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.Button _okButton;
 	}
