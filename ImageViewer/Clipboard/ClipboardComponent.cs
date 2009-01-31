@@ -245,8 +245,8 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			ActionSet deleteToolActions = new ActionSet(GetDeleteActions());
 			IActionSet allActions = toolActions.Union(deleteToolActions);
 
-			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, _toolbarSite, allActions);
-			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, _menuSite, allActions);
+			_toolbarModel = ActionModelRoot.CreateModel(typeof(ClipboardComponent).FullName, _toolbarSite, allActions);
+			_contextMenuModel = ActionModelRoot.CreateModel(typeof(ClipboardComponent).FullName, _menuSite, allActions);
 
 			_items.BindingList.ListChanged += OnBindingListChanged;
 		}
@@ -298,7 +298,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		private MenuAction CreateMenuAction(string id, string path, string tooltip, IconSet iconSet, ClickHandlerDelegate clickHandler)
 		{
-			id = String.Format("{0}:{1}", this.GetType().FullName, id);
+			id = String.Format("{0}:{1}", typeof(ClipboardComponent).FullName, id);
 			MenuAction action = new MenuAction(id, new ActionPath(path, _resolver), ClickActionFlags.None, _resolver);
 			action.IconSet = iconSet;
 			action.Tooltip = tooltip;
@@ -309,7 +309,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 
 		private ButtonAction CreateToolbarAction(string id, string path, string tooltip, IconSet iconSet, ClickHandlerDelegate clickHandler)
 		{
-			id = String.Format("{0}:{1}", this.GetType().FullName, id);
+			id = String.Format("{0}:{1}", typeof(ClipboardComponent).FullName, id);
 			ButtonAction action = new ButtonAction(id, new ActionPath(path, _resolver), ClickActionFlags.None, _resolver);
 			action.IconSet = iconSet;
 			action.Tooltip = tooltip;
