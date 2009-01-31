@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				ImageViewer,
 				"MPR - " + ImageViewer.PatientsLoadedLabel);
 
-			workspace.Closed += delegate { ImageViewer.Dispose(); };
+			workspace.Closed += delegate { Dispose(); };
 			ImageViewer.Layout();
 			ImageViewer.PhysicalWorkspace.SelectDefaultImageBox();
 		}
@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				ImageViewer,
 				"MPR - " + ImageViewer.PatientsLoadedLabel);
 
-			workspace.Closed += delegate { ImageViewer.Dispose(); };
+			workspace.Closed += delegate { Dispose(); };
 			ImageViewer.Layout();
 			ImageViewer.PhysicalWorkspace.SelectDefaultImageBox();
 		}
@@ -350,7 +350,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (disposing)
 			{
 				_imageViewer.Dispose();
-				_layoutManager.Dispose();
 				if (_volume != null)
 					_volume.Dispose();
 			}

@@ -43,8 +43,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
 	[MenuAction("OpenMpr", "explorerlocal-contextmenu/MenuOpenMpr", "OpenMpr")]
 	[Tooltip("OpenMpr", "OpenDicomFilesVerbose")]
-	[IconSet("OpenMpr", IconScheme.Colour, "Icons.OpenToolSmall.png", "Icons.OpenToolMedium.png", "Icons.OpenToolLarge.png"
-		)]
+	[IconSet("OpenMpr", IconScheme.Colour, "Icons.OpenToolSmall.png", "Icons.OpenToolMedium.png", "Icons.OpenToolLarge.png")]
 	[EnabledStateObserver("OpenMpr", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof (LocalImageExplorerToolExtensionPoint))]
 	public class OpenMprLocalImageExplorerTool : Tool<ILocalImageExplorerToolContext>
