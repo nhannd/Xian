@@ -90,8 +90,11 @@ namespace ClearCanvas.ImageViewer.Services
 			}
 		}
 
-		public static void PublishLocal(IEnumerable<DicomFile> files)
+		public static void PublishLocal(ICollection<DicomFile> files)
 		{
+			if (files.Count == 0)
+				return;
+
 			string tempFileDirectory;
 			SaveFiles(files, "Local", out tempFileDirectory);
 
@@ -117,8 +120,11 @@ namespace ClearCanvas.ImageViewer.Services
 			}
 		}
 
-		public static void PublishRemote(IEnumerable<DicomFile> files, AEInformation destinationServer)
+		public static void PublishRemote(ICollection<DicomFile> files, AEInformation destinationServer)
 		{
+			if (files.Count == 0)
+				return;
+
 			string tempFileDirectory;
 			SaveFiles(files, destinationServer.AETitle , out tempFileDirectory);
 

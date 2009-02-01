@@ -11,6 +11,7 @@ using ClearCanvas.Common;
 using System.ServiceModel;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
@@ -25,6 +26,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private List<Server> _defaultServers;
 		private List<Server> _allServers;
+		//TODO: change to use something like KeyObjectContentItem instead of KVP?
 		private List<KeyValuePair<Frame,DicomSoftcopyPresentationState>> _sourceFrames;
 
 		public KeyImagePublisher(KeyImageInformation information, bool publishToSourceServer)
@@ -91,6 +93,14 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			}	
 		}
 
+		private bool IsDefaultServer(Server publishServer)
+		{
+			return CollectionUtils.Contains(DefaultServers, delegate(Server server)
+																{
+																	return server.Path == publishServer.Path;
+																});
+		}
+
 		private void CreateKeyObjectDocuments()
 		{
 			KeyImageSerializer serializer = new KeyImageSerializer();
@@ -114,6 +124,24 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				});
 		}
 
+		private void AddRemotePublishDocuments(Server publishServer, Frame frame, DicomFile dcfPresentationState)
+		{
+			if (!_remotePublishingInfo.ContainsKey(publishServer))
+				_remotePublishingInfo.Add(publishServer, new List<DicomFile>());
+
+			List<DicomFile> publishDocuments = _remotePublishingInfo[publishServer];
+			DicomFile existingDocument = GetKeyObjectDocument(frame.StudyInstanceUID, publishDocuments);
+
+			if (existingDocument == null)
+			{
+				DicomFile document = GetKeyObjectDocument(frame.StudyInstanceUID, _keyObjectDocuments);
+				publishDocuments.Add(document);
+			}
+
+			if (dcfPresentationState != null && !publishDocuments.Contains(dcfPresentationState))
+				publishDocuments.Add(dcfPresentationState);
+		}
+
 		private Server GetServer(ApplicationEntity server)
 		{
 			return AllServers.Find(delegate(Server defaultServer)
@@ -122,15 +150,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private void BuildPublishingInfo()
 		{
-			foreach (Server server in DefaultServers)
-			{
-				if (!_remotePublishingInfo.ContainsKey(server))
-				{
-					_remotePublishingInfo[server] = new List<DicomFile>();
-					_remotePublishingInfo[server].AddRange(_keyObjectDocuments);
-				}
-			}
-
 			if (_publishToSourceServer)
 			{
 				foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> frameAndPR in SourceFrames)
@@ -140,28 +159,17 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 					if(frameAndPR.Value!=null)
 						dcfPresentationState = frameAndPR.Value.AsDicomFile();
 
+					foreach (Server defaultServer in DefaultServers)
+						AddRemotePublishDocuments(defaultServer, frame, dcfPresentationState);
+
 					ISopDataSource dataSource = frame.ParentImageSop.DataSource;
 					ApplicationEntity sourceServer = dataSource.Server as ApplicationEntity;
 					if (sourceServer != null)
 					{
 						Server publishServer = GetServer(sourceServer);
-						if (publishServer != null)
-						{
-							if (!_remotePublishingInfo.ContainsKey(publishServer))
-								_remotePublishingInfo.Add(publishServer, new List<DicomFile>());
-
-							List<DicomFile> publishDocuments = _remotePublishingInfo[publishServer];
-							DicomFile existingDocument = GetKeyObjectDocument(frame.StudyInstanceUID, publishDocuments);
-
-							if (existingDocument == null)
-							{
-								DicomFile document = GetKeyObjectDocument(frame.StudyInstanceUID, _keyObjectDocuments);
-								publishDocuments.Add(document);
-							}
-							
-							if(dcfPresentationState != null)
-								publishDocuments.Add(dcfPresentationState);
-						}
+						//if it's a default server, then it was already added above.
+						if (publishServer != null && !IsDefaultServer(publishServer))
+							AddRemotePublishDocuments(publishServer, frame, dcfPresentationState);
 					}
 					else if (dataSource.StudyLoaderName == "DICOM_LOCAL")
 					{

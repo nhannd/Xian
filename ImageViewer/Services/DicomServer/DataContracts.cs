@@ -37,7 +37,8 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 {
 	public enum DeletionBehaviour
 	{
-		DeleteOnSuccess = 0,
+		None = 0,
+		DeleteOnSuccess,
 		DeleteAlways
 	}
 

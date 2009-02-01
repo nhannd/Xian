@@ -274,6 +274,27 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						Platform.Log(LogLevel.Error, e, "Unexpected error thrown from SendScu callback.");
 					}
 				}
+
+				if (_sendFilesRequest != null && _sendFilesRequest.DeletionBehaviour != DeletionBehaviour.None)
+				{
+					bool deleteFile = false;
+					if (storageInstance.SendStatus.Status != DicomState.Failure)
+						deleteFile = true;
+					else if (_sendFilesRequest.DeletionBehaviour == DeletionBehaviour.DeleteAlways)
+						deleteFile = true;
+
+					if (deleteFile)
+					{
+						try
+						{
+							File.Delete(storageInstance.Filename);
+						}
+						catch (Exception e)
+						{
+							Platform.Log(LogLevel.Warn, e, "Failed to delete file after storage: {0}", storageInstance.Filename);
+						}
+					}
+				}
 			}
 
 			private void OnBeginSend()
