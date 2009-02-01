@@ -16,6 +16,7 @@ namespace ClearCanvas.ImageViewer.Services
 		}
 	}
 
+	//TODO: Instead of static helper, could be part of 2 separate bridges (IDicomSendBridge and ILocalDataStorebridge).
 	public static class DicomFilePublisher
 	{
 		private static void DeleteEmptyFolders(string directory)
