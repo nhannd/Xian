@@ -160,6 +160,7 @@ namespace ClearCanvas.ImageViewer.Clipboard
 			get { return _items.BindingList; }
 			set
 			{
+				//TODO: make setting configurable, so it can be turned off.
 				Platform.CheckForNullReference(value, "value");
 
 				CheckForLockedItems();

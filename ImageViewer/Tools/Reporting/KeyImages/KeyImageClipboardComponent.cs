@@ -2,6 +2,7 @@ using ClearCanvas.ImageViewer.Clipboard;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
+	// TODO: Make Key Image Clipboard use KeyImageClipboardItems that cannot be Locked?
 	internal class KeyImageClipboardComponent : ClipboardComponent
 	{
 		private KeyImageInformation _keyImageInformation;
