@@ -380,14 +380,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         private void ValidateOrderModifiable(Order order)
         {
-            if (order.Status != OrderStatus.SC && order.Status != OrderStatus.IP)
-                throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be modified.",
+			if (order.IsTerminated)
+				throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be modified.",
                     EnumUtils.GetEnumValueInfo(order.Status, PersistenceContext)));
         }
 
         private void ValidateOrderReplacable(Order order)
         {
-            if (order.Status != OrderStatus.SC)
+            if (order.IsTerminated)
                 throw new RequestValidationException(string.Format("Orders with a status of '{0}' cannot be replaced.",
                     EnumUtils.GetEnumValueInfo(order.Status, PersistenceContext)));
 
