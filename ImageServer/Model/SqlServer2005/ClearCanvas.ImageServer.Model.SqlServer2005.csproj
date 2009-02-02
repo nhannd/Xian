@@ -124,6 +124,10 @@
     <Compile Include="Brokers\QueryWorkQueue.cs" />
     <Compile Include="Brokers\UpdateWorkQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Upgrade\IUpgradeScript.cs" />
+    <Compile Include="Upgrade\ModelUpgradeApplication.cs" />
+    <Compile Include="Upgrade\ModelUpgradeCommandLine.cs" />
+    <Compile Include="Upgrade\UpgradeScriptExtensionPoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
@@ -156,6 +160,9 @@
     <None Include="Scripts\ImageServerDefaultData.sql" />
     <None Include="Scripts\ImageServerStoredProcedures.sql" />
     <None Include="Scripts\ImageServerTables.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UpgradeScripts\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

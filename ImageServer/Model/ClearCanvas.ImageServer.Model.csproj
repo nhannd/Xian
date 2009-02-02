@@ -81,6 +81,7 @@
     <Compile Include="Brokers\IInsertFilesystem.cs" />
     <Compile Include="Brokers\IUpdateServiceLock.cs" />
     <Compile Include="Brokers\IAttachStudyToPatient.cs" />
+    <Compile Include="DatabaseVersion.gen.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="Device.gen.cs" />
     <Compile Include="DevicePreferredTransferSyntax.cs" />
@@ -94,6 +95,8 @@
     <Compile Include="EntityBrokers\ArchiveQueueUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveStudyStorageSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveStudyStorageUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\DatabaseVersionSelectCriteria.gen.cs" />
+    <Compile Include="EntityBrokers\DatabaseVersionUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\DeviceSelectCriteria.gen.cs" />
@@ -111,6 +114,7 @@
     <Compile Include="EntityBrokers\IArchiveQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IArchiveStudyStorageEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IArchiveTypeEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IDatabaseVersionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDeviceEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDevicePreferredTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDuplicateSopPolicyEnumBroker.gen.cs" />

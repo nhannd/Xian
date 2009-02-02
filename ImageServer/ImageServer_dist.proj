@@ -20,11 +20,19 @@
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.ImageServer.ShredHostService'">
     <ShredHostBuild>true</ShredHostBuild>
 	<TestAppBuild>false</TestAppBuild>
+	<ExecutableBuild>false</ExecutableBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.ImageServer.TestApp'">
 	<ShredHostBuild>false</ShredHostBuild>
 	<TestAppBuild>true</TestAppBuild>
+	<ExecutableBuild>false</ExecutableBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.ImageServer.Executable'">
+	<ShredHostBuild>false</ShredHostBuild>
+	<TestAppBuild>false</TestAppBuild>
+	<ExecutableBuild>true</ExecutableBuild>
   </PropertyGroup>
 
   <ItemGroup>
@@ -116,6 +124,7 @@
     
     <CallTarget Condition="$(ShredHostBuild)" Targets="Copy Project Files;Copy ShredHost App Config" />
 	<CallTarget Condition="$(TestAppBuild)" Targets="Copy Project Files" />
+	<CallTarget Condition="$(ExecutableBuild)" Targets="Copy Project Files" />
 
   </Target>
 

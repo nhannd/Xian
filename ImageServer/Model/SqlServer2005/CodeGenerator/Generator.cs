@@ -18,11 +18,15 @@ namespace CodeGenerator
             private readonly string _columnName;
             private readonly Type _columnType;
             private readonly string _variableName;
+			private readonly string _databaseColumnName;
 
             public Column(string name, string type)
             {
                 _columnName = name.Replace("GUID", "Key");
                 _variableName = String.Format("_{0}{1}", _columnName.Substring(0, 1).ToLower(), _columnName.Substring(1));
+            	_databaseColumnName = _columnName;
+				if (_columnName.EndsWith("_"))
+					_columnName = _columnName.Substring(0, _columnName.Length - 1);
 
                 if (type.Equals("nvarchar"))
                     _columnType = typeof(String);
@@ -46,6 +50,11 @@ namespace CodeGenerator
                     throw new ApplicationException("Unexpected SQL Server type: " + type);
             }
 
+			public string DatabaseColumnName
+			{
+				get { return _databaseColumnName; }
+			}
+
             public string ColumnName
             {
                 get { return _columnName; }
@@ -66,10 +75,14 @@ namespace CodeGenerator
         {
             private readonly string _tableName;
             private readonly List<Column> _columnList = new List<Column>();
+        	private readonly string _databaseTableName;
 
             public Table(string name)
             {
                 _tableName = name;
+				_databaseTableName = name;
+				if (_tableName.EndsWith("_"))
+					_tableName = _tableName.Substring(0, _tableName.Length - 1);
             }
 
             public IList<Column> Columns
@@ -81,6 +94,11 @@ namespace CodeGenerator
             {
                 get { return _tableName; }
             }
+
+			public string DatabaseTableName
+			{
+				get { return _databaseTableName; }
+			}
         }
 
         #region Private Members
@@ -307,7 +325,7 @@ namespace CodeGenerator
             WritePredefinedEnums(table, writer);
 
             writer.WriteLine("      #region Constructors");
-            writer.WriteLine("      public {0}():base(\"{0}\")", table.TableName);
+            writer.WriteLine("      public {0}():base(\"{0}\")", table.DatabaseTableName);
             writer.WriteLine("      {}");
             writer.WriteLine("      #endregion");
             writer.WriteLine("      #region Public Members");
@@ -428,7 +446,7 @@ namespace CodeGenerator
             writer.WriteLine("    [ExtensionOf(typeof(BrokerExtensionPoint))]");
             writer.WriteLine("    public class {0}Broker : EntityBroker<{0}, {0}SelectCriteria, {0}UpdateColumns>, I{0}EntityBroker", table.TableName);
             writer.WriteLine("    {");
-            writer.WriteLine("        public {0}Broker() : base(\"{0}\")", table.TableName);
+            writer.WriteLine("        public {0}Broker() : base(\"{0}\")", table.DatabaseTableName);
             writer.WriteLine("        { }");
             writer.WriteLine("    }");
 
@@ -469,7 +487,7 @@ namespace CodeGenerator
             writer.WriteLine("    public partial class {0}: ServerEntity", table.TableName);
             writer.WriteLine("    {");
             writer.WriteLine("        #region Constructors");
-            writer.WriteLine("        public {0}():base(\"{0}\")", table.TableName);
+            writer.WriteLine("        public {0}():base(\"{1}\")",table.TableName, table.DatabaseTableName);
             writer.WriteLine("        {}");
             writer.WriteLine("        #endregion");
             writer.WriteLine("");
@@ -495,7 +513,7 @@ namespace CodeGenerator
                     if (tag != null)
                         writer.WriteLine("        [DicomField(DicomTags.{0}, DefaultValue = DicomFieldDefault.Null)]", col.ColumnName);
 
-                    writer.WriteLine("        [EntityFieldDatabaseMappingAttribute(TableName=\"{0}\", ColumnName=\"{1}\")]",table.TableName, col.ColumnName.Replace("Key", "GUID"));
+                    writer.WriteLine("        [EntityFieldDatabaseMappingAttribute(TableName=\"{0}\", ColumnName=\"{1}\")]",table.DatabaseTableName, col.DatabaseColumnName.Replace("Key", "GUID"));
 
                     if (col.ColumnName.EndsWith("Enum"))
                         writer.WriteLine("        public {0} {1}", col.ColumnName, col.ColumnName);
@@ -547,7 +565,7 @@ namespace CodeGenerator
             writer.WriteLine("    public partial class {0}SelectCriteria : EntitySelectCriteria", table.TableName);
             writer.WriteLine("    {");
             writer.WriteLine("        public {0}SelectCriteria()", table.TableName);
-            writer.WriteLine("        : base(\"{0}\")", table.TableName);
+            writer.WriteLine("        : base(\"{0}\")", table.DatabaseTableName);
             writer.WriteLine("        {}");
 
             foreach (Column col in table.Columns)
@@ -555,8 +573,8 @@ namespace CodeGenerator
                 if (!col.ColumnName.Equals("Key"))
                 {
                     string colType = col.ColumnName.EndsWith("Enum") ? col.ColumnName : col.ColumnType.ToString();
-                    string colName = col.ColumnName;
-                    writer.WriteLine("        public ISearchCondition<{0}> {1}", colType, colName);
+                    string colName = col.DatabaseColumnName;
+					writer.WriteLine("        public ISearchCondition<{0}> {1}", colType, col.ColumnName);
                     writer.WriteLine("        {");
                     writer.WriteLine("            get");
                     writer.WriteLine("            {");
@@ -607,7 +625,7 @@ namespace CodeGenerator
             writer.WriteLine("   public class {0}UpdateColumns : EntityUpdateColumns", table.TableName);
             writer.WriteLine("   {");
             writer.WriteLine("       public {0}UpdateColumns()", table.TableName);
-            writer.WriteLine("       : base(\"{0}\")", table.TableName);
+            writer.WriteLine("       : base(\"{0}\")", table.DatabaseTableName);
             writer.WriteLine("       {}");
 
             foreach (Column col in table.Columns)
