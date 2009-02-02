@@ -41,12 +41,19 @@ namespace ClearCanvas.Common.Statistics
     public class StatisticsLogger
     {
         private static readonly XmlDocument doc = new XmlDocument();
-        private static object[] _extensions;
-        private static StatisticsLoggerExtensionPoint _xp = new StatisticsLoggerExtensionPoint();
+        private static readonly object[] _extensions;
+        private static readonly StatisticsLoggerExtensionPoint _xp = new StatisticsLoggerExtensionPoint();
 
         static StatisticsLogger()
         {
-            _extensions = _xp.CreateExtensions();
+			try
+			{
+				_extensions = _xp.CreateExtensions();
+			}
+			catch (PluginException)
+			{
+				_extensions = new object[0];
+			}
         }
 
 		/// <summary>
@@ -80,7 +87,6 @@ namespace ClearCanvas.Common.Statistics
 			{
 				extension.OnStatisticsLogged(statistics);
 			}
-
 		}
 
     	/// <summary>
