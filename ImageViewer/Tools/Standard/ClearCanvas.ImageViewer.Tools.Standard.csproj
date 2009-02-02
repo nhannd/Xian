@@ -305,6 +305,11 @@
     <EmbeddedResource Include="Icons\ScaleOverlayToolMedium.png" />
     <EmbeddedResource Include="Icons\ScaleOverlayToolSmall.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\TextCalloutToolLarge.png" />
+    <EmbeddedResource Include="Icons\TextCalloutToolMedium.png" />
+    <EmbeddedResource Include="Icons\TextCalloutToolSmall.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent />

@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ButtonAction("activate", "global-toolbars/ToolbarAnnotation/ToolbarTextCallout", "Select", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
-	//[IconSet("activate", IconScheme.Colour, "Icons.EllipticalRoiToolSmall.png", "Icons.EllipticalRoiToolMedium.png", "Icons.EllipticalRoiToolLarge.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.TextCalloutToolSmall.png", "Icons.TextCalloutToolMedium.png", "Icons.TextCalloutToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Annotation.TextCallout")]
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
