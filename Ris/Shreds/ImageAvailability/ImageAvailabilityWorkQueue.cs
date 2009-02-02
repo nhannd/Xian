@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 	public static class ImageAvailabilityWorkQueue
 	{
 		private const string ProcedureOIDKey = "ProcedureOID";
-		private const string WorkQueueItemType = "ImageAvailability";
+		public const string WorkQueueItemType = "ImageAvailability";
 
 		/// <summary>
 		/// Creates a new work item.

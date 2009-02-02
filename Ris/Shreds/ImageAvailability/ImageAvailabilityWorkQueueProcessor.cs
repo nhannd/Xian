@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 	/// <summary>
 	/// Processes the Image Availability work queue.
 	/// </summary>
-	public class ImageAvailabilityWorkQueueProcessor : QueueProcessor<WorkQueueItem>
+	public class ImageAvailabilityWorkQueueProcessor : WorkQueueProcessor
 	{
 		private readonly IImageAvailabilityStrategy _imageAvailabilityStrategy;
 		private readonly ImageAvailabilityShredSettings _settings;
@@ -29,92 +29,37 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			}
 		}
 
-		protected override IList<WorkQueueItem> GetNextBatch(int batchSize)
+		protected override string WorkQueueItemType
 		{
-			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
-			{
-				try
-				{
-					IList<WorkQueueItem> items = ImageAvailabilityWorkQueue.GetPendingItems(batchSize, scope.Context);
-
-					scope.Complete();
-
-					return items;
-				}
-				catch (Exception e)
-				{
-					ExceptionLogger.Log("ImageAvailabilityWorkQueueItemProcessor.GetNextBatch", e);
-					throw;
-				}
-			}
+			get { return ImageAvailabilityWorkQueue.WorkQueueItemType; }
 		}
 
-		protected override void ProcessItem(WorkQueueItem item)
+		protected override void ActOnItem(WorkQueueItem item)
 		{
-			Healthcare.ImageAvailability imageAvailability;
-			Exception error = null;
+			Procedure procedure = ImageAvailabilityWorkQueue.GetProcedure(item, PersistenceScope.CurrentContext);
+			procedure.ImageAvailability = _imageAvailabilityStrategy.ComputeProcedureImageAvailability(procedure, PersistenceScope.CurrentContext);
+		}
 
-			// compute the image availability in a read-scope, thus allowing the strategy
-			// to query the model but not modify it
-			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
+		protected override void OnItemSucceeded(WorkQueueItem item)
+		{
+			// this method is overridden because image availability work items are never considered complete until they expire
+
+			Procedure procedure = ImageAvailabilityWorkQueue.GetProcedure(item, PersistenceScope.CurrentContext);
+			DateTime nextPollTime = Platform.Time.Add(GetPollingInterval(procedure.ImageAvailability));
+			if(nextPollTime < item.ExpirationTime)
 			{
-				IReadContext context = (IReadContext)scope.Context;
-				context.Lock(item);
-				Procedure procedure = ImageAvailabilityWorkQueue.GetProcedure(item, context);
-				imageAvailability = procedure.ImageAvailability;
-				try
-				{
-					imageAvailability = _imageAvailabilityStrategy.ComputeProcedureImageAvailability(procedure, context);
-
-					scope.Complete();
-				}
-				catch (Exception e)
-				{
-					// log exception
-					ExceptionLogger.Log("ImageAvailabilityWorkQueueItemProcessor.ProcessItem", e);
-
-					error = e;
-				}
+				item.Reschedule(nextPollTime);
 			}
-
-			// create an update scope, to update the procedure and/or workqueue item
-			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
+			else
 			{
-				IUpdateContext context = (IUpdateContext)scope.Context;
-				context.ChangeSetRecorder.OperationName = this.GetType().FullName;
-
-				context.Lock(item);
-				Procedure procedure = ImageAvailabilityWorkQueue.GetProcedure(item, context);
-
-				if (error == null)
-				{
-					// update the procedure
-					procedure.ImageAvailability = imageAvailability;
-
-					// reschedule or complete the workitem
-					DateTime nextPollTime = Platform.Time.Add(GetPollingInterval(imageAvailability));
-					if (nextPollTime > item.ExpirationTime)
-					{
-						// item would expire prior to next poll time, so consider it complete
-						item.Complete();
-					}
-					else
-					{
-						// reschedule item
-						item.Reschedule(nextPollTime);
-					}
-				}
-				else
-				{
-					// fail the work item so that we record the failure
-					item.Fail(error.Message);
-
-					// reschedule the work item so that it will be retried
-					item.Reschedule(Platform.Time.AddSeconds(_settings.PollingIntervalForError));
-				}
-
-				scope.Complete();
+				base.OnItemSucceeded(item);
 			}
+		}
+		protected override bool ShouldRetry(WorkQueueItem item, Exception error, out DateTime retryTime)
+		{
+			// retry unless expired
+			retryTime = Platform.Time.AddSeconds(_settings.PollingIntervalForError);
+			return (retryTime < item.ExpirationTime);
 		}
 
 		private TimeSpan GetPollingInterval(Healthcare.ImageAvailability imageAvailability)

@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 
 		#region IImageAvailabilityStrategy Members
 
-		public Healthcare.ImageAvailability ComputeProcedureImageAvailability(Procedure procedure, IReadContext context)
+		public Healthcare.ImageAvailability ComputeProcedureImageAvailability(Procedure procedure, IPersistenceContext context)
 		{
 			// Find the number of instances recorded in the DicomSeries
 			bool hasIncompleteDicomSeries;

@@ -41,85 +41,41 @@ namespace ClearCanvas.Ris.Shreds.Publication
 
 		protected override IList<PublicationStep> GetNextBatch(int batchSize)
 		{
-			IList<PublicationStep> items;
+			// Get scheduled steps, where the "publishing cool-down" has elapsed
+            // eg LastFailureTime is more than a specified number of seconds ago
+			PublicationStepSearchCriteria noFailures = GetCriteria();
+			noFailures.LastFailureTime.IsNull();
+			noFailures.Scheduling.StartTime.SortAsc(0);
 
-			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
-			{
-				// Get scheduled steps, where the "publishing cool-down" has elapsed
-                // eg LastFailureTime is more than a specified number of seconds ago
-				PublicationStepSearchCriteria noFailures = GetCriteria();
-				noFailures.LastFailureTime.IsNull();
-				noFailures.Scheduling.StartTime.SortAsc(0);
+			PublicationStepSearchCriteria failures = GetCriteria();
+			failures.LastFailureTime.LessThan(Platform.Time.AddSeconds(-_settings.FailedItemRetryDelay));
 
-				PublicationStepSearchCriteria failures = GetCriteria();
-				failures.LastFailureTime.LessThan(Platform.Time.AddSeconds(-_settings.FailedItemRetryDelay));
+			PublicationStepSearchCriteria[] criteria = new PublicationStepSearchCriteria[] { noFailures, failures };
+			SearchResultPage page = new SearchResultPage(0, batchSize);
 
-				PublicationStepSearchCriteria[] criteria = new PublicationStepSearchCriteria[] { noFailures, failures };
-				SearchResultPage page = new SearchResultPage(0, batchSize);
-
-				items = PersistenceScope.CurrentContext.GetBroker<IPublicationStepBroker>().Find(criteria, page);
-
-				scope.Complete();
-			}
-
-			return items;
+			return PersistenceScope.CurrentContext.GetBroker<IPublicationStepBroker>().Find(criteria, page);
 		}
 
-        protected override void ProcessItem(PublicationStep item)
+		protected override void ActOnItem(PublicationStep item)
 		{
-            Exception error = null;
-
-			try
+			// execute each publication action
+			foreach (IPublicationAction action in _publicationActions)
 			{
-				using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
-				{
-					IUpdateContext context = (IUpdateContext)PersistenceScope.CurrentContext;
-					context.ChangeSetRecorder.OperationName = this.GetType().FullName;
-
-					context.Lock(item);
-
-					// execute each publication action
-					foreach (IPublicationAction action in _publicationActions)
-					{
-						action.Execute(item, context);
-					}
-
-					// all actions succeeded, so mark the publication item as being completed
-					item.Complete(item.AssignedStaff);
-
-					// complete the transaction
-					scope.Complete();
-				}
+				action.Execute(item, PersistenceScope.CurrentContext);
 			}
-			catch (Exception e)
-			{
-				// one of the actions failed
-				ExceptionLogger.Log("PublicationProcessor.ProcessItem", e);
-				error = e;
-			}
+		}
 
-            if (error != null)
-            {
-                // use a new scope to mark the item as failed
-                using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
-                {
-                    IUpdateContext failContext = (IUpdateContext)PersistenceScope.CurrentContext;
-                    failContext.ChangeSetRecorder.OperationName = this.GetType().FullName;
+		protected override void OnItemFailed(PublicationStep item, Exception error)
+		{
+			// mark item as failed
+			item.Fail();
+		}
 
-					// Reload the item because the item in memory might have been changed in the previous action.Execute statement
-                	item = PersistenceScope.CurrentContext.Load<PublicationStep>(item.GetRef());
-
-                    // lock item into this contexts
-                    failContext.Lock(item, DirtyState.Clean);
-
-                    // mark item as failed
-                    item.Fail();
-
-                    // complete the transaction
-                    scope.Complete();
-                }
-            }
-        }
+		protected override void OnItemSucceeded(PublicationStep item)
+		{
+			// all actions succeeded, so mark the publication item as being completed
+			item.Complete(item.AssignedStaff);
+		}
 
 		private static PublicationStepSearchCriteria GetCriteria()
 		{
@@ -129,6 +85,5 @@ namespace ClearCanvas.Ris.Shreds.Publication
 			criteria.Scheduling.StartTime.LessThan(Platform.Time);
 			return criteria;
 		}
-
 	}
 }
