@@ -92,8 +92,6 @@ namespace ClearCanvas.Healthcare {
             {
                 if (this.ReportPart == null)
                     throw new WorkflowException("This ReportingStep does not have an associated ReportPart.");
-
-                this.ReportPart.Interpreter = this.PerformingStaff;
             }
 
             base.OnStateChanged(previousState, newState);

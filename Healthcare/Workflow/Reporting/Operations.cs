@@ -107,6 +107,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 					workflow.CurrentContext.Lock(report, DirtyState.New);
 
 					step.ReportPart = part;
+					step.ReportPart.Interpreter = executingStaff;
 				}
 
 				// attach linked interpretations to this report
