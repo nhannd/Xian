@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 					_srcPt2 = base.SpatialTransform.ConvertToSource(value);
 				}
 
-				EventsHelper.Fire(_pt1ChangedEvent, this, new PointChangedEventArgs(this.Pt2));
+				EventsHelper.Fire(_pt2ChangedEvent, this, new PointChangedEventArgs(this.Pt2));
 			}
 		}
 

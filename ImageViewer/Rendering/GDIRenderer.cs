@@ -203,6 +203,44 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
+		/// Draws a <see cref="CurvePrimitive"/>.
+		/// </summary>
+		protected override void DrawCurvePrimitive(CurvePrimitive curve) {
+			Surface.FinalBuffer.Graphics.Transform = curve.SpatialTransform.CumulativeTransform;
+			curve.CoordinateSystem = CoordinateSystem.Source;
+
+			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+
+			// Draw drop shadow
+			_pen.Color = Color.Black;
+			_pen.Width = CalculateScaledPenWidth(curve, 1);
+
+			SetDashStyle(curve);
+
+			SizeF dropShadowOffset = GetDropShadowOffset(curve);
+			PointF[] pathPoints =  curve.AsArray(dropShadowOffset, true);
+
+			if (curve.IsClosed)
+				Surface.FinalBuffer.Graphics.DrawClosedCurve(_pen, pathPoints);
+			else
+				Surface.FinalBuffer.Graphics.DrawCurve(_pen, pathPoints);
+
+			// Draw line
+			_pen.Color = curve.Color;
+			pathPoints = curve.AsArray(true);
+
+			if (curve.IsClosed)
+				Surface.FinalBuffer.Graphics.DrawClosedCurve(_pen, pathPoints);
+			else
+				Surface.FinalBuffer.Graphics.DrawCurve(_pen, pathPoints);
+
+			Surface.FinalBuffer.Graphics.SmoothingMode = SmoothingMode.None;
+
+			curve.ResetCoordinateSystem();
+			Surface.FinalBuffer.Graphics.ResetTransform();
+		}
+
+		/// <summary>
 		/// Draws a <see cref="RectanglePrimitive"/>.
 		/// </summary>
 		protected override void DrawRectanglePrimitive(RectanglePrimitive rect)

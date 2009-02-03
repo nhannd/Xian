@@ -170,6 +170,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 						DrawLinePrimitive((LinePrimitive)graphic);
 					else if (graphic is InvariantLinePrimitive)
 						DrawInvariantLinePrimitive((InvariantLinePrimitive)graphic);
+					else if (graphic is CurvePrimitive)
+						DrawCurvePrimitive((CurvePrimitive)graphic);
 					else if (graphic is RectanglePrimitive)
 						DrawRectanglePrimitive((RectanglePrimitive)graphic);
 					else if (graphic is InvariantRectanglePrimitive)
@@ -233,6 +235,11 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// Draws a <see cref="InvariantLinePrimitive"/>.  Must be overridden and implemented.
 		/// </summary>
 		protected abstract void DrawInvariantLinePrimitive(InvariantLinePrimitive line);
+
+		/// <summary>
+		/// Draws a <see cref="CurvePrimitive"/>. Must be overridden and implemented.
+		/// </summary>
+		protected abstract void DrawCurvePrimitive(CurvePrimitive curve);
 
 		/// <summary>
 		/// Draws a <see cref="RectanglePrimitive"/>.  Must be overridden and implemented.

@@ -120,6 +120,7 @@
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\DefaultDisplaySetComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
+    <Compile Include="Graphics\CurvePrimitive.cs" />
     <Compile Include="InteractiveGraphics\CreateArrowGraphicState.cs" />
     <Compile Include="Graphics\ILineSegmentGraphic.cs" />
     <Compile Include="Graphics\InvariantArrowheadGraphic.cs" />
