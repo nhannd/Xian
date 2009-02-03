@@ -629,40 +629,43 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				studyTable.Items.Clear();
 			}
 
-			List<string> studyUidList = new List<string>();
-			foreach (string studyUid in _setStudiesArrived.Keys)
-				studyUidList.Add(studyUid);
-
-			string studyUids = DicomStringHelper.GetDicomStringArray<string>(studyUidList);
-			if (String.IsNullOrEmpty(studyUids))
-				return;
-
-			QueryParameters parameters = PrepareQueryParameters();
-			parameters["StudyInstanceUid"] = studyUids;
-
-			try
+			if (_setStudiesArrived.Count > 0)
 			{
-				StudyItemList list = ImageViewerComponent.FindStudy(parameters, null, "DICOM_LOCAL");
-				foreach (StudyItem item in list)
+				List<string> studyUidList = new List<string>();
+				foreach (string studyUid in _setStudiesArrived.Keys)
+					studyUidList.Add(studyUid);
+
+				string studyUids = DicomStringHelper.GetDicomStringArray(studyUidList);
+				if (!String.IsNullOrEmpty(studyUids))
 				{
-					//don't need to check this again, it's just paranoia
-					if (!StudyExists(item.StudyInstanceUID))
+					QueryParameters parameters = PrepareQueryParameters();
+					parameters["StudyInstanceUid"] = studyUids;
+
+					try
 					{
-						studyTable.Items.Add(item);
-						refreshTitle = true;
+						StudyItemList list = ImageViewerComponent.FindStudy(parameters, null, "DICOM_LOCAL");
+						foreach (StudyItem item in list)
+						{
+							//don't need to check this again, it's just paranoia
+							if (!StudyExists(item.StudyInstanceUID))
+							{
+								studyTable.Items.Add(item);
+								refreshTitle = true;
+							}
+							else
+							{
+								int index = GetStudyIndex(item.StudyInstanceUID);
+								//just update this since the rest won't change.
+								studyTable.Items[index].ModalitiesInStudy = item.ModalitiesInStudy;
+								studyTable.Items.NotifyItemUpdated(index);
+							}
+						}
 					}
-					else
+					catch (Exception e)
 					{
-						int index = GetStudyIndex(item.StudyInstanceUID);
-						//just update this since the rest won't change.
-						studyTable.Items[index].ModalitiesInStudy = item.ModalitiesInStudy;
-						studyTable.Items.NotifyItemUpdated(index);
+						Platform.Log(LogLevel.Error, e);
 					}
 				}
-			}
-			catch(Exception e)
-			{
-				Platform.Log(LogLevel.Error, e);
 			}
 
 			foreach(string deleteStudyUid in _setStudiesDeleted.Keys)
