@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 	[DicomSerializableGraphicAnnotation(typeof (DicomGraphicAnnotationSerializer))]
 	public class DicomGraphicAnnotation : CompositeGraphic
 	{
-		private Color _color = Color.Yellow;
+		private Color _color = Color.LemonChiffon;
 
 		/// <summary>
 		/// Constructs a new <see cref="IGraphic"/> whose contents are constructed based on a <see cref="GraphicAnnotationSequenceItem">DICOM Graphic Annotation Sequence Item</see>.
@@ -89,6 +89,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			{
 				this.ResetCoordinateSystem();
 			}
+
+			OnColorChanged();
 		}
 
 		/// <summary>
@@ -189,8 +191,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private static IGraphic CreateInterpolated(IList<PointF> dataPoints)
 		{
-			// linear interpolation
-			return CreatePolyline(dataPoints);
+			CurvePrimitive curve = new CurvePrimitive();
+			for (int n = 0; n < dataPoints.Count; n++)
+				curve.Add(dataPoints[n]);
+			return curve;
 		}
 
 		private static IGraphic CreatePolyline(IList<PointF> vertices)
@@ -245,7 +249,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 					anchor = GetPointInSourceCoordinates(displayedArea, anchor);
 
 				callout.EndPoint = anchor;
-				callout.ShowArrow = true;
 			}
 			else
 			{
