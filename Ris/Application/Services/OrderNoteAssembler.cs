@@ -29,13 +29,11 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -86,25 +84,25 @@ namespace ClearCanvas.Ris.Application.Services
             foreach (OrderNoteDetail detail in sourceList)
             {
                 if (!CollectionUtils.Contains(existingNotes,
-                    delegate (OrderNote n) { return n.GetRef().Equals(detail.OrderNoteRef); }))
+                    delegate(OrderNote n) { return n.GetRef().Equals(detail.OrderNoteRef); }))
                 {
                     CreateOrderNote(detail, order, newNoteAuthor, true, context);
                 }
             }
         }
 
- 		public OrderNoteDetail CreateOrderNoteDetail(OrderNote orderNote, IPersistenceContext context)
- 		{
- 			return CreateOrderNoteDetail(orderNote, null, context);
- 		}
-       /// <summary>
+        public OrderNoteDetail CreateOrderNoteDetail(OrderNote orderNote, IPersistenceContext context)
+        {
+            return CreateOrderNoteDetail(orderNote, null, context);
+        }
+        /// <summary>
         /// Creates an <see cref="OrderNoteDetail"/> from a <see cref="OrderNote"/>.
         /// </summary>
         /// <param name="orderNote"></param>
-		/// <param name="currentUserStaff"></param>
+        /// <param name="currentUserStaff"></param>
         /// <param name="context"></param>
         /// <returns></returns>
-		public OrderNoteDetail CreateOrderNoteDetail(OrderNote orderNote, Staff currentUserStaff, IPersistenceContext context)
+        public OrderNoteDetail CreateOrderNoteDetail(OrderNote orderNote, Staff currentUserStaff, IPersistenceContext context)
         {
             List<OrderNoteDetail.StaffRecipientDetail> staffRecipients = new List<OrderNoteDetail.StaffRecipientDetail>();
             List<OrderNoteDetail.GroupRecipientDetail> groupRecipients = new List<OrderNoteDetail.GroupRecipientDetail>();
@@ -114,7 +112,7 @@ namespace ClearCanvas.Ris.Application.Services
             {
                 foreach (NotePosting posting in orderNote.Postings)
                 {
-                    if(posting is GroupNotePosting)
+                    if (posting is GroupNotePosting)
                     {
                         groupRecipients.Add(
                             CreateGroupRecipientDetail(((GroupNotePosting)posting).Recipient,
@@ -124,7 +122,7 @@ namespace ClearCanvas.Ris.Application.Services
                     else
                     {
                         staffRecipients.Add(
-							CreateStaffRecipientDetail(((StaffNotePosting)posting).Recipient,
+                            CreateStaffRecipientDetail(((StaffNotePosting)posting).Recipient,
                                                        posting.IsAcknowledged,
                                                        posting.AcknowledgedBy, context));
                     }
@@ -132,19 +130,19 @@ namespace ClearCanvas.Ris.Application.Services
             }
 
             StaffAssembler staffAssembler = new StaffAssembler();
-			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+            StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
             return new OrderNoteDetail(
                 orderNote.GetRef(),
                 orderNote.Category,
                 orderNote.CreationTime,
                 orderNote.PostTime,
                 staffAssembler.CreateStaffSummary(orderNote.Author, context),
-				orderNote.OnBehalfOfGroup == null ? null : groupAssembler.CreateSummary(orderNote.OnBehalfOfGroup),
-				orderNote.Urgent,
-                staffRecipients, 
-                groupRecipients, 
+                orderNote.OnBehalfOfGroup == null ? null : groupAssembler.CreateSummary(orderNote.OnBehalfOfGroup),
+                orderNote.Urgent,
+                staffRecipients,
+                groupRecipients,
                 orderNote.Body,
-				currentUserStaff == null ? false : orderNote.CanAcknowledge(currentUserStaff));
+                currentUserStaff == null ? false : orderNote.CanAcknowledge(currentUserStaff));
         }
 
         /// <summary>
@@ -156,16 +154,16 @@ namespace ClearCanvas.Ris.Application.Services
         public OrderNoteSummary CreateOrderNoteSummary(OrderNote orderNote, IPersistenceContext context)
         {
             StaffAssembler staffAssembler = new StaffAssembler();
-			StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
-			return new OrderNoteSummary(
+            StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+            return new OrderNoteSummary(
                 orderNote.GetRef(),
                 orderNote.Category,
                 orderNote.CreationTime,
                 orderNote.PostTime,
                 staffAssembler.CreateStaffSummary(orderNote.Author, context),
-				orderNote.OnBehalfOfGroup == null ? null : groupAssembler.CreateSummary(orderNote.OnBehalfOfGroup),
-				orderNote.IsFullyAcknowledged,
-				orderNote.Urgent,
+                orderNote.OnBehalfOfGroup == null ? null : groupAssembler.CreateSummary(orderNote.OnBehalfOfGroup),
+                orderNote.IsFullyAcknowledged,
+                orderNote.Urgent,
                 orderNote.Body);
         }
 
@@ -180,33 +178,45 @@ namespace ClearCanvas.Ris.Application.Services
         /// <returns></returns>
         public OrderNote CreateOrderNote(OrderNoteDetail detail, Order order, Staff author, bool post, IPersistenceContext context)
         {
-			List<Staff> staffRecipients = new List<Staff>();
+            List<Staff> staffRecipients = new List<Staff>();
             staffRecipients.AddRange(
-				CollectionUtils.Map<OrderNoteDetail.StaffRecipientDetail, Staff>(detail.StaffRecipients ?? new List<OrderNoteDetail.StaffRecipientDetail>(),
+                CollectionUtils.Map<OrderNoteDetail.StaffRecipientDetail, Staff>(detail.StaffRecipients ?? new List<OrderNoteDetail.StaffRecipientDetail>(),
                     delegate(OrderNoteDetail.StaffRecipientDetail item)
                     {
                         return context.Load<Staff>(item.Staff.StaffRef, EntityLoadFlags.Proxy);
                     }));
 
-			List<StaffGroup> groupRecipients = new List<StaffGroup>();
-			groupRecipients.AddRange(
-				CollectionUtils.Map<OrderNoteDetail.GroupRecipientDetail, StaffGroup>(detail.GroupRecipients ?? new List<OrderNoteDetail.GroupRecipientDetail>(),
+            List<StaffGroup> groupRecipients = new List<StaffGroup>();
+            groupRecipients.AddRange(
+                CollectionUtils.Map<OrderNoteDetail.GroupRecipientDetail, StaffGroup>(detail.GroupRecipients ?? new List<OrderNoteDetail.GroupRecipientDetail>(),
                     delegate(OrderNoteDetail.GroupRecipientDetail item)
                     {
                         return context.Load<StaffGroup>(item.Group.StaffGroupRef, EntityLoadFlags.Proxy);
                     }));
 
-			StaffGroup onBehalfOf = detail.OnBehalfOfGroup == null ? null :
-				context.Load<StaffGroup>(detail.OnBehalfOfGroup.StaffGroupRef, EntityLoadFlags.Proxy);
+            StaffGroup onBehalfOf = detail.OnBehalfOfGroup == null ? null :
+                context.Load<StaffGroup>(detail.OnBehalfOfGroup.StaffGroupRef, EntityLoadFlags.Proxy);
 
+            // Bug #3717: If an author is supplied in the OrderNoteDetail use it instead.
+            if (detail.Author != null)
+            {
+                author = context.Load<Staff>(detail.Author.StaffRef, EntityLoadFlags.Proxy);
+            }
 
             OrderNote note = new OrderNote(order, detail.Category, author, onBehalfOf, detail.NoteBody, detail.Urgent);
 
-            if(post)
+            if (post)
                 note.Post(staffRecipients, groupRecipients);
 
-			// bug #3467: since we removed the Notes collection from Order, need to lock this manually
-			context.Lock(note, DirtyState.New);
+            // Bug #3717: If a post time is supplied in the OrderNoteDetail assume it and the CreationTime are correct.
+            if (detail.PostTime.HasValue)
+            {
+                note.PostTime = detail.PostTime;
+                note.CreationTime = detail.CreationTime;
+            }
+
+            // bug #3467: since we removed the Notes collection from Order, need to lock this manually
+            context.Lock(note, DirtyState.New);
 
             return note;
         }
