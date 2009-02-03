@@ -94,12 +94,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			try
 			{
 				//host component as workspace.
-
 				VolumeLoader loader = new VolumeLoader();
 				Volume volume = loader.LoadFromFiles(files);
-				ImageViewerComponent component = VolumeLoader.CreateMprLayoutAndComponent(volume);
+				ImageViewerComponent component = MprLayoutManager.CreateMprLayoutAndComponent(volume);
 
-				ImageViewerComponent.LaunchInActiveWindow(component, "MPR - ");
+				ImageViewerComponent.LaunchInActiveWindow(component, SR.MprWorkspaceTitlePrefix);
 			}
 			catch (Exception e)
 			{

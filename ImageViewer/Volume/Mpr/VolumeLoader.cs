@@ -38,6 +38,12 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	/// <summary>
+	/// This class allows for loading of a Volume from a DisplaySet, list of Frames, or
+	/// list of local files. It currently relies on the VolumeBuilder class both to validate
+	/// that a list of frames are able to be represented as a volume and to generate
+	/// the volume from a list of frames.
+	/// </summary>
 	public class VolumeLoader
 	{
 		#region Load from DisplaySet
@@ -163,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 							LoadLocalImage(files[i]);
 
 							percentComplete = (int)(((float)(i + 1) / files.Length) * 40);
-							string message1 = String.Format(SR.MessageFormatOpeningImages, i + 1, files.Length);
+							string message1 = String.Format(ImageViewer.SR.MessageFormatOpeningImages, i + 1, files.Length);
 
 							BackgroundTaskProgress progress = new BackgroundTaskProgress(percentComplete, message1);
 							context.ReportProgress(progress);
@@ -232,23 +238,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 
 			_totalImages++;
-		}
-
-		#endregion
-
-		#region ImageViewerComponent, LayoutManager creation
-
-		//ggerade ToRes: Where to put this guy?
-		public static ImageViewerComponent CreateMprLayoutAndComponent(Volume volume)
-		{
-			MprLayoutManager layoutManager = new MprLayoutManager(volume);
-
-			ImageViewerComponent imageViewer = new ImageViewerComponent(layoutManager);
-
-			// Here we add the Mpr DisplaySets to the IVC's StudyTree, this keeps the framework happy
-			layoutManager.AddDisplaySetsToStudyTree(imageViewer.StudyTree);
-
-			return imageViewer;
 		}
 
 		#endregion

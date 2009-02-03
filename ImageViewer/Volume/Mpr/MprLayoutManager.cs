@@ -36,10 +36,33 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
 	public class MprLayoutManager : LayoutManager
 	{
+		#region ImageViewerComponent, LayoutManager creation method
+
+		//ggerade ToRef: We're thinking we may introduce an MprImageViewerComponent that will own the volume
+		//	and take care of the layout creation and such. For now I just needed a place to put this
+		//	utility method which bootstraps the Mpr Component
+		public static ImageViewerComponent CreateMprLayoutAndComponent(Volume volume)
+		{
+			MprLayoutManager layoutManager = new MprLayoutManager(volume);
+
+			ImageViewerComponent imageViewer = new ImageViewerComponent(layoutManager);
+
+			// Here we add the Mpr DisplaySets to the IVC's StudyTree, this keeps the framework happy
+			layoutManager.AddDisplaySetsToStudyTree(imageViewer.StudyTree);
+
+			return imageViewer;
+		}
+
+		#endregion
+
+		#region Private fields
+
 		private Volume _volume;
 		private DisplaySet _sagittalDisplaySet;
 		private DisplaySet _coronalDisplaySet;
 		private DisplaySet _axialDisplaySet;
+		
+		#endregion
 
 		public MprLayoutManager(Volume volume)
 		{

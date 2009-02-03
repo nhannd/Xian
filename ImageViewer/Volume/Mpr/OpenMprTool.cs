@@ -98,25 +98,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			try
 			{
-				//ggerade ToDo: Ok, this behavior is a bit odd - if multiple groups then multiple MPR workspaces, redesign somehow
-				//List<List<Frame>> frameGroups = VolumeLoader.SplitDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
-				//if (frameGroups.Count > 0)
-				//{
-				//    foreach (List<Frame> group in frameGroups)
-				//    {
-				//        VolumeLoader loader = new VolumeLoader();
-				//        loader.OpenFrames(group);
-				//    }
-				//}
-				//else
-				//{
-					// Load as one display set				
-					VolumeLoader loader = new VolumeLoader();
-					Volume volume = loader.LoadFromDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
-					ImageViewerComponent component = VolumeLoader.CreateMprLayoutAndComponent(volume);
+				//host component as workspace.
+				VolumeLoader loader = new VolumeLoader();
+				//ggerade ToDo: If DisplaySet does not contain all compatible images, use the selected pres image and find the
+				//	images that are compatible with it
+				Volume volume = loader.LoadFromDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
+				ImageViewerComponent component = MprLayoutManager.CreateMprLayoutAndComponent(volume);
 
-					ImageViewerComponent.LaunchInActiveWindow(component, "MPR - ");
-				//}
+				ImageViewerComponent.LaunchInActiveWindow(component, SR.MprWorkspaceTitlePrefix);
 			}
 			catch (Exception e)
 			{
