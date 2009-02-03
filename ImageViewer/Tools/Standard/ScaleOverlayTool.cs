@@ -61,7 +61,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					if (scale != null)
 					{
 						scale.Visible = true;
-						scale.Draw();
 					}
 				}
 			}
@@ -73,7 +72,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					if (scale != null)
 					{
 						scale.Visible = false;
-						scale.Draw();
 					}
 				}
 			}
@@ -87,7 +85,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				if (scale != null)
 				{
 					scale.Visible = true;
-					scale.Draw();
 				}
 			}
 			else
@@ -96,7 +93,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				if (scale != null)
 				{
 					scale.Visible = false;
-					scale.Draw();
 				}
 			}
 		}
@@ -105,11 +101,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Initialize();
 			base.ImageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
+			base.ImageViewer.EventBroker.ImageDrawing += OnImageDrawing;
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			base.ImageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
+			base.ImageViewer.EventBroker.ImageDrawing -= OnImageDrawing;
 			base.Dispose(disposing);
 		}
 
@@ -124,10 +122,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			RefreshGraphics();
 		}
 
-		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
+		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
 		{
-			base.OnPresentationImageSelected(sender, e);
-			RefreshGraphic(e.SelectedPresentationImage);
+			RefreshGraphic(e.PresentationImage);
 		}
 
 		private static CompositeScaleGraphic GetCompositeScaleGraphic(IPresentationImage image, bool createIfNull)
