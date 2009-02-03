@@ -99,20 +99,23 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			try
 			{
 				//ggerade ToDo: Ok, this behavior is a bit odd - if multiple groups then multiple MPR workspaces, redesign somehow
-				//List<List<Frame>> frameGroups = MprViewer.SplitDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
+				//List<List<Frame>> frameGroups = VolumeLoader.SplitDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
 				//if (frameGroups.Count > 0)
 				//{
 				//    foreach (List<Frame> group in frameGroups)
 				//    {
-				//        MprViewer viewer = new MprViewer();
-				//        viewer.OpenFrames(group);
+				//        VolumeLoader loader = new VolumeLoader();
+				//        loader.OpenFrames(group);
 				//    }
 				//}
 				//else
 				//{
 					// Load as one display set				
-					MprViewer viewer = new MprViewer();
-					viewer.OpenDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
+					VolumeLoader loader = new VolumeLoader();
+					Volume volume = loader.LoadFromDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
+					ImageViewerComponent component = VolumeLoader.CreateMprLayoutAndComponent(volume);
+
+					ImageViewerComponent.LaunchInActiveWindow(component, "MPR - ");
 				//}
 			}
 			catch (Exception e)

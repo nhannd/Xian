@@ -29,28 +29,28 @@
 
 #endregion
 
+using System;
+using ClearCanvas.ImageViewer.StudyManagement;
+
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
 	public class MprLayoutManager : LayoutManager
 	{
+		private Volume _volume;
 		private DisplaySet _sagittalDisplaySet;
 		private DisplaySet _coronalDisplaySet;
 		private DisplaySet _axialDisplaySet;
 
-		//TODO: Lump into a constructor?
-		public void LoadSagittalDisplaySet(DisplaySet displaySet)
+		public MprLayoutManager(Volume volume)
 		{
-			_sagittalDisplaySet = displaySet;
-		}
+			_volume = volume;
 
-		public void LoadCoronalDisplaySet(DisplaySet displaySet)
-		{
-			_coronalDisplaySet = displaySet;
-		}
-
-		public void LoadAxialDisplaySet(DisplaySet displaySet)
-		{
-			_axialDisplaySet = displaySet;
+			//ggerade ToRes: It might be better to create these on demand - this could be a relatively expensive
+			//	ctor. Consider doing in FillPhysicalWorkspace maybe? 
+			// Recall that the Sops need to go into the IVC's StudyTree, so we have to manage that somehow.
+			_sagittalDisplaySet = VolumeSlicer.CreateSagittalDisplaySet(volume);
+			_coronalDisplaySet = VolumeSlicer.CreateCoronalDisplaySet(volume);
+			_axialDisplaySet = VolumeSlicer.CreateAxialDisplaySet(volume);
 		}
 
 		#region ILayoutManager Members
@@ -81,11 +81,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
 			physicalWorkspace.ImageBoxes[0].DisplaySet = _sagittalDisplaySet;
 			// Let's start out in the middle of each stack
-			physicalWorkspace.ImageBoxes[0].TopLeftPresentationImageIndex = _sagittalDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[0].TopLeftPresentationImageIndex = _sagittalDisplaySet.PresentationImages.Count/2;
 			physicalWorkspace.ImageBoxes[1].DisplaySet = _coronalDisplaySet;
-			physicalWorkspace.ImageBoxes[1].TopLeftPresentationImageIndex = _coronalDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[1].TopLeftPresentationImageIndex = _coronalDisplaySet.PresentationImages.Count/2;
 			physicalWorkspace.ImageBoxes[2].DisplaySet = _axialDisplaySet;
-			physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = _axialDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = _axialDisplaySet.PresentationImages.Count/2;
 
 			//TODO: Add this property and use it to disable the Layout Components (in Layout.Basic).
 			//physicalWorkspace.IsReadOnly = true;
@@ -93,5 +93,44 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#endregion
 
+		#region StudyTree helpers
+
+		public void AddDisplaySetsToStudyTree(StudyTree tree)
+		{
+			AddAllSopsToStudyTree(tree, _sagittalDisplaySet);
+			AddAllSopsToStudyTree(tree, _coronalDisplaySet);
+			AddAllSopsToStudyTree(tree, _axialDisplaySet);
+		}
+
+		// Note: The overlays expect that a Sop is parented by a Series, so this was the easiest way
+		//	to keep the IVC happy.
+		private static void AddAllSopsToStudyTree(StudyTree tree, IDisplaySet displaySet)
+		{
+			// Now load the generated images into the viewer
+			foreach (PresentationImage presentationImage in displaySet.PresentationImages)
+			{
+				DicomGrayscalePresentationImage dicomGrayscalePresentationImage =
+					(DicomGrayscalePresentationImage) presentationImage;
+
+				ImageSop sop = dicomGrayscalePresentationImage.ImageSop;
+				tree.AddSop(sop);
+			}
+		}
+
+		#endregion
+
+		#region Disposal
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_volume != null)
+					_volume.Dispose();
+			}
+			base.Dispose(disposing);
+		}
+
+		#endregion
 	}
 }

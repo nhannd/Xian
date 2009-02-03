@@ -38,38 +38,54 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	//TODO: MprLoader
-	// LoadFromDisplaySet : ImageViewerComponent
-	// LoadFromFiles : ImageViewerComponent
-	public class MprViewer : IDisposable
+	public class VolumeLoader
 	{
-		#region Private fields
-
-		private readonly ImageViewerComponent _imageViewer;
-		private readonly MprLayoutManager _layoutManager;
-		private Volume _volume;
-
-		#endregion
-
-		public MprViewer()
-		{
-			//TODO: create these after volume is built.
-			_layoutManager = new MprLayoutManager();
-			_imageViewer = new ImageViewerComponent(_layoutManager);
-		}
-
-		private MprLayoutManager LayoutManager
-		{
-			get { return _layoutManager; }
-		}
-
-		private ImageViewerComponent ImageViewer
-		{
-			get { return _imageViewer; }
-		}
-
 		#region Load from DisplaySet
 
+		public Volume LoadFromDisplaySet(IDisplaySet displaySet)
+		{
+			List<Frame> frames = new List<Frame>();
+			foreach (PresentationImage pi in displaySet.PresentationImages)
+			{
+				IImageSopProvider dgpi = (IImageSopProvider)pi;
+				foreach (Frame frame in dgpi.ImageSop.Frames)
+					frames.Add(frame);
+			}
+
+			return LoadFromFrames(frames);
+		}
+
+		private static Volume LoadFromFrames(List<Frame> frames)
+		{
+			IDesktopWindow desktop = Application.ActiveDesktopWindow;
+
+			string reasonValidateFailed;
+			if (VolumeBuilder.ValidateFrames(frames, out reasonValidateFailed) == false)
+			{
+				desktop.ShowMessageBox("Unable to load Data Set as MPR.\n\nReason:\n" + reasonValidateFailed, MessageBoxActions.Ok);
+				//ggerade ToDo: Throw ex
+				return null;
+			}
+
+			Volume volume = null;
+
+			BackgroundTask task = new BackgroundTask(
+				delegate(IBackgroundTaskContext context)
+					{
+						BackgroundTaskProgress prog = new BackgroundTaskProgress(10, "Creating Volume...");
+						context.ReportProgress(prog);
+
+						volume = VolumeBuilder.BuildVolume(frames);
+
+						context.Complete(null);
+					}, true);
+
+			ProgressDialog.Show(task, desktop, true, ProgressBarStyle.Blocks);
+
+			return volume;
+		}
+
+		// experimental utility method to split a displayset into MPR-able subsets
 		public static List<List<Frame>> SplitDisplaySet(IDisplaySet displaySet)
 		{
 			List<Frame> allFrames = new List<Frame>();
@@ -94,77 +110,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return validatedGroups;
 		}
 
-		public void OpenDisplaySet(IDisplaySet displaySet)
-		{
-			List<Frame> frames = new List<Frame>();
-			foreach (PresentationImage pi in displaySet.PresentationImages)
-			{
-				//TODO: cast to IImageSopProvider
-				DicomGrayscalePresentationImage dgpi = (DicomGrayscalePresentationImage)pi;
-				foreach (Frame frame in dgpi.ImageSop.Frames)
-					frames.Add(frame);
-			}
-
-			OpenFrames(frames);
-		}
-
-		public void OpenFrames(List<Frame> frames)
-		{
-			IDesktopWindow desktop = Application.ActiveDesktopWindow;
-
-			string reasonValidateFailed;
-			if (VolumeBuilder.ValidateFrames(frames, out reasonValidateFailed) == false)
-			{
-				desktop.ShowMessageBox("Unable to load Data Set as MPR.\n\nReason:\n" + reasonValidateFailed, MessageBoxActions.Ok);
-				return;
-			}
-
-			BackgroundTask task = new BackgroundTask(
-				delegate(IBackgroundTaskContext context)
-					{
-						BackgroundTaskProgress prog = new BackgroundTaskProgress(10, "Creating Volume...");
-						context.ReportProgress(prog);
-
-						_volume = VolumeBuilder.BuildVolume(frames);
-
-						prog = new BackgroundTaskProgress(80, "Creating Sagittal, Coronal, Axial...");
-						context.ReportProgress(prog);
-						CreateAndLoadSagittalDisplaySet(_volume);
-						CreateAndLoadCoronalDisplaySet(_volume);
-						CreateAndLoadAxialDisplaySet(_volume);
-
-						context.Complete(null);
-					}, true);
-
-			ProgressDialog.Show(task, desktop, true, ProgressBarStyle.Blocks);
-
-			// Inlined below, so that I could control the workspace title
-			//ImageViewerComponent.LaunchInActiveWindow(ImageViewer);
-			
-			//TODO: move this out into the tool(s).
-			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
-				Application.ActiveDesktopWindow,
-				ImageViewer,
-				"MPR - " + ImageViewer.PatientsLoadedLabel);
-
-			workspace.Closed += delegate { Dispose(); };
-			ImageViewer.Layout();
-			ImageViewer.PhysicalWorkspace.SelectDefaultImageBox();
-		}
-
 		#endregion
 
 		#region Load from local files
 
-		public void OpenFiles(string[] files)
+		public Volume LoadFromFiles(string[] files)
 		{
+			Volume volume = null;
 			bool cancelled = false;
 			bool anyFailures = false;
 			int successfulImagesInLoadFailure = 0;
 
 			try
 			{
-				LoadLocalImages(files, Application.ActiveDesktopWindow, out cancelled);
+				volume = LoadLocalImages(files, Application.ActiveDesktopWindow, out cancelled);
 			}
 			catch (OpenStudyException e)
 			{
@@ -174,34 +133,23 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 
 			if (cancelled || (anyFailures && successfulImagesInLoadFailure == 0))
-			{
-				Dispose();
-				return;
-			}
+				return null;
 
-			// Inlined below, so that I could control the workspace title
-			//ImageViewerComponent.LaunchInActiveWindow(mprViewer.ImageViewer);
-
-			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
-				Application.ActiveDesktopWindow,
-				ImageViewer,
-				"MPR - " + ImageViewer.PatientsLoadedLabel);
-
-			workspace.Closed += delegate { Dispose(); };
-			ImageViewer.Layout();
-			ImageViewer.PhysicalWorkspace.SelectDefaultImageBox();
+			return volume;
 		}
 
+		private readonly List<Frame> _localFrames = new List<Frame>();
 		private int _totalImages;
 		private int _failedImages;
 
-		private void LoadLocalImages(string[] files, IDesktopWindow desktop, out bool cancelled)
+		private Volume LoadLocalImages(string[] files, IDesktopWindow desktop, out bool cancelled)
 		{
 			Platform.CheckForNullReference(files, "files");
 
 			_totalImages = 0;
 			_failedImages = 0;
 
+			Volume volume = null;
 			bool userCancelled = false;
 			bool volumeFailed = false;
 			string reasonVolumeFailed = string.Empty;
@@ -231,16 +179,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						context.ReportProgress(prog);
 
 						volumeFailed = ! VolumeBuilder.ValidateFrames(_localFrames, out reasonVolumeFailed);
+						//ggerade ToDo: Throw exception
 						if (volumeFailed)
 							return;
 
-						_volume = VolumeBuilder.BuildVolume(_localFrames);
-
-						prog = new BackgroundTaskProgress(90, "Creating Sagittal, Coronal, Axial...");
-						context.ReportProgress(prog);
-						CreateAndLoadSagittalDisplaySet(_volume);
-						CreateAndLoadCoronalDisplaySet(_volume);
-						CreateAndLoadAxialDisplaySet(_volume);
+						volume = VolumeBuilder.BuildVolume(_localFrames);
 
 						context.Complete(null);
 					}, true);
@@ -257,12 +200,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				throw ex;
 			}
 
-			//ggerade: This all very ugly... probably going away anyways so I'm not worried about it
 			if (volumeFailed)
 			{
 				desktop.ShowMessageBox("Unable to load Data Set as MPR.\n\nReason:\n" + reasonVolumeFailed, MessageBoxActions.Ok);
 				cancelled = true;
 			}
+
+			return volume;
 		}
 
 		private void LoadLocalImage(string file)
@@ -290,69 +234,21 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_totalImages++;
 		}
 
-		private readonly List<Frame> _localFrames = new List<Frame>();
-
 		#endregion
 
-		#region DisplaySet creation
+		#region ImageViewerComponent, LayoutManager creation
 
-		private void CreateAndLoadSagittalDisplaySet(Volume vol)
+		//ggerade ToRes: Where to put this guy?
+		public static ImageViewerComponent CreateMprLayoutAndComponent(Volume volume)
 		{
-			DisplaySet displaySet = VolumeSlicer.CreateSagittalDisplaySet(vol);
+			MprLayoutManager layoutManager = new MprLayoutManager(volume);
 
-			AddAllSopsToStudyTree(displaySet);
-			LayoutManager.LoadSagittalDisplaySet(displaySet);
-		}
+			ImageViewerComponent imageViewer = new ImageViewerComponent(layoutManager);
 
-		private void CreateAndLoadCoronalDisplaySet(Volume vol)
-		{
-			DisplaySet displaySet = VolumeSlicer.CreateCoronalDisplaySet(vol);
+			// Here we add the Mpr DisplaySets to the IVC's StudyTree, this keeps the framework happy
+			layoutManager.AddDisplaySetsToStudyTree(imageViewer.StudyTree);
 
-			AddAllSopsToStudyTree(displaySet);
-			LayoutManager.LoadCoronalDisplaySet(displaySet);
-		}
-
-		private void CreateAndLoadAxialDisplaySet(Volume vol)
-		{
-			DisplaySet displaySet = VolumeSlicer.CreateAxialDisplaySet(vol);
-
-			AddAllSopsToStudyTree(displaySet);
-			LayoutManager.LoadAxialDisplaySet(displaySet);
-		}
-
-		// Note: The overlays expect that a Sop is parented by a Series, so this was the easiest way
-		//	to keep the IVC happy.
-		private void AddAllSopsToStudyTree(IDisplaySet displaySet)
-		{
-			// Now load the generated images into the viewer
-			foreach (PresentationImage presentationImage in displaySet.PresentationImages)
-			{
-				DicomGrayscalePresentationImage dicomGrayscalePresentationImage =
-					(DicomGrayscalePresentationImage)presentationImage;
-
-				ImageSop sop = dicomGrayscalePresentationImage.ImageSop;
-				_imageViewer.StudyTree.AddSop(sop);
-			}
-		}
-
-		#endregion
-
-		#region Disposal
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
-		protected void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				_imageViewer.Dispose();
-				if (_volume != null)
-					_volume.Dispose();
-			}
+			return imageViewer;
 		}
 
 		#endregion

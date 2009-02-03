@@ -662,6 +662,20 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
+		/// Launches an <see cref="ImageViewerComponent"/> in the active desktop window.
+		/// </summary>
+		/// <param name="imageViewer"></param>
+		/// <param name="titlePrefix">A string to be prepended to the standard workspace title</param>
+		/// <remarks>
+		/// Subsequent <see cref="ImageViewerComponent"/>s will also be launched in workspaces in
+		/// the same window.
+		/// </remarks>
+		public static void LaunchInActiveWindow(ImageViewerComponent imageViewer, string titlePrefix)
+		{
+			LaunchInWindow(imageViewer, Application.ActiveDesktopWindow, titlePrefix);
+		}
+
+		/// <summary>
 		/// Launches an <see cref="ImageViewerComponent"/> in a separate desktop window
 		/// devoted strictly to image display.
 		/// </summary>
@@ -692,10 +706,15 @@ namespace ClearCanvas.ImageViewer
 
 		private static void LaunchInWindow(ImageViewerComponent imageViewer, IDesktopWindow desktopWindow)
 		{
+			LaunchInWindow(imageViewer, desktopWindow, string.Empty);
+		}
+
+		private static void LaunchInWindow(ImageViewerComponent imageViewer, IDesktopWindow desktopWindow, string titlePrefix)
+		{
 			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
 				desktopWindow,
 				imageViewer,
-				imageViewer.PatientsLoadedLabel);
+				titlePrefix + imageViewer.PatientsLoadedLabel);
 
 			workspace.Closed += delegate(object sender, ClosedEventArgs e)
 			                    	{
