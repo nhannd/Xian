@@ -35,6 +35,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -57,6 +58,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 	{
 		#region Private Fields
 
+		private readonly FlashOverlayController _flashOverlayController;
 		private bool _enabled;
 		private event EventHandler _enabledChanged;
 		private bool _showEnabled;
@@ -67,6 +69,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		public KeyImageTool()
 		{
+			_flashOverlayController = new FlashOverlayController("Icons.CreateKeyImageToolLarge.png", new ResourceResolver(this.GetType(), false));
 		}
 
 		public bool Enabled
@@ -179,7 +182,10 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 			IPresentationImage image = Context.Viewer.SelectedPresentationImage;
 			if (image != null)
+			{
 				KeyImageClipboard.Add(image);
+				_flashOverlayController.Flash(image);
+			}
 		}
 		
 		#endregion
