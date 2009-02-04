@@ -165,7 +165,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			const int bytesPerPixel = 4;
 
-			Surface.ImageBuffer.Graphics.Clear(Color.Black);
+			Surface.ImageBuffer.Graphics.Clear(Color.FromArgb(0x0, 0xFF, 0xFF, 0xFF));
 
 			BitmapData bitmapData = Surface.ImageBuffer.Bitmap.LockBits(
 				new Rectangle(0, 0, Surface.ImageBuffer.Bitmap.Width, Surface.ImageBuffer.Bitmap.Height),
