@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	{
 		private readonly byte[] _pixelData;
 		private readonly int _rows, _columns;
-		private int _flashSpeed = 100;
+		private int _flashSpeed = 150;
 
 		/// <summary>
 		/// Constructs a default controller.
