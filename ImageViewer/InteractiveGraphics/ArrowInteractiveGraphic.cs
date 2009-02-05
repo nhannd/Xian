@@ -9,7 +9,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	[Cloneable]
-	public class ArrowInteractiveGraphic : InteractiveGraphic
+	public class ArrowInteractiveGraphic : InteractiveGraphic, ISelectableGraphic, IFocussableGraphic
 	{
 		[CloneIgnore]
 		private ArrowGraphic _arrowGraphic;
@@ -40,6 +40,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 			}
+
+			this.StateChanged += OnGraphicStateChanged;
 		}
 
 		[OnCloneComplete]
@@ -47,7 +49,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			_arrowGraphic = CollectionUtils.SelectFirst(base.Graphics,
 			                                            delegate(IGraphic test) { return test is ArrowGraphic; }) as ArrowGraphic;
-			Platform.CheckForNullReference(_arrowGraphic, "_anchorPointsGraphic");
+			Platform.CheckForNullReference(_arrowGraphic, "_arrowGraphic");
 			Initialize();
 		}
 
@@ -59,7 +61,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override Color Color
 		{
 			get { return _arrowGraphic.Color; }
-			set { _arrowGraphic.Color = value; }
+			set
+			{
+				if (_arrowGraphic.Color != value)
+				{
+					_arrowGraphic.Color = value;
+					base.ControlPoints.Color = value;
+				}
+			}
 		}
 
 		public override RectangleF BoundingBox
@@ -73,48 +82,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _moveToken = value; }
 		}
 
-		public override object CreateMemento()
-		{
-			PointsMemento memento = new PointsMemento();
-
-			// Must store source coordinates in memento
-			this.CoordinateSystem = CoordinateSystem.Source;
-			try
-			{
-				memento.Add(this.Arrow.StartPoint);
-				memento.Add(this.Arrow.EndPoint);
-			}
-			finally
-			{
-				this.ResetCoordinateSystem();
-			}
-
-			return memento;
-		}
-
-		public override void SetMemento(object memento)
-		{
-			Platform.CheckForNullReference(memento, "memento");
-			PointsMemento pointsMemento = (PointsMemento) memento;
-
-			this.CoordinateSystem = CoordinateSystem.Source;
-			try
-			{
-				this.Arrow.StartPoint = pointsMemento[0];
-				this.Arrow.EndPoint = pointsMemento[1];
-			}
-			finally
-			{
-				this.ResetCoordinateSystem();
-			}
-		}
-
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			bool result = base.Start(mouseInformation);
 
-			if (base.State is MoveControlPointGraphicState ||
-				base.State is MoveGraphicState)
+			if (base.State is MoveControlPointGraphicState || base.State is MoveGraphicState)
 			{
 				UpdateControlPointVisiblity(false);
 			}
@@ -125,7 +97,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			if (base.State is MoveControlPointGraphicState ||
-				base.State is MoveGraphicState)
+			    base.State is MoveGraphicState)
 			{
 				UpdateControlPointVisiblity(true);
 			}
@@ -136,7 +108,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override void Cancel()
 		{
 			if (base.State is MoveControlPointGraphicState ||
-				base.State is MoveGraphicState)
+			    base.State is MoveGraphicState)
 			{
 				UpdateControlPointVisiblity(true);
 			}
@@ -179,11 +151,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return token;
 		}
 
-		protected override GraphicState CreateCreateState()
-		{
-			return new CreateArrowGraphicState(this);
-		}
-
 		protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
 		{
 			if (e.Index == 0)
@@ -197,5 +164,190 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.Arrow.EndPoint = e.Item;
 			}
 		}
+
+		#region State Machine Members
+
+		protected virtual void OnGraphicStateChanged(object sender, GraphicStateChangedEventArgs e)
+		{
+			if (typeof (InactiveGraphicState).IsAssignableFrom(e.NewState.GetType()))
+				EnterInactiveState(e.MouseInformation);
+			else if (typeof (FocussedGraphicState).IsAssignableFrom(e.NewState.GetType()))
+				EnterFocusState(e.MouseInformation);
+			else if (typeof (SelectedGraphicState).IsAssignableFrom(e.NewState.GetType()))
+				EnterSelectedState(e.MouseInformation);
+			else if (typeof (FocussedSelectedGraphicState).IsAssignableFrom(e.NewState.GetType()))
+				EnterFocusSelectedState(e.MouseInformation);
+		}
+
+		protected override GraphicState CreateCreateState()
+		{
+			return new CreateArrowGraphicState(this);
+		}
+
+		private void EnterInactiveState(IMouseInformation mouseInformation)
+		{
+			// If the currently selected graphic is this one,
+			// and we're about to go inactive, set the selected graphic
+			// to null, indicating that no graphic is currently selected
+			if (this.ParentPresentationImage != null)
+			{
+				if (this.ParentPresentationImage.SelectedGraphic == this)
+					this.ParentPresentationImage.SelectedGraphic = null;
+
+				if (this.ParentPresentationImage.FocussedGraphic == this)
+					this.ParentPresentationImage.FocussedGraphic = null;
+			}
+
+			this.UpdateControlPointVisiblity(false);
+			this.Color = Color.Yellow;
+			Draw();
+		}
+
+		private void EnterFocusState(IMouseInformation mouseInformation)
+		{
+			this.Focussed = true;
+
+			this.UpdateControlPointVisiblity(true);
+			this.Color = Color.Orange;
+			Draw();
+		}
+
+		private void EnterSelectedState(IMouseInformation mouseInformation)
+		{
+			this.Selected = true;
+
+			if (this.ParentPresentationImage != null && this.ParentPresentationImage.FocussedGraphic == this)
+				this.ParentPresentationImage.FocussedGraphic = null;
+
+			this.UpdateControlPointVisiblity(false);
+			this.Color = Color.Tomato;
+			Draw();
+		}
+
+		private void EnterFocusSelectedState(IMouseInformation mouseInformation)
+		{
+			this.Selected = true;
+			this.Focussed = true;
+
+			this.UpdateControlPointVisiblity(true);
+			this.Color = Color.Tomato;
+			Draw();
+		}
+
+		#endregion
+
+		#region ISelectableGraphic Members
+
+		[CloneIgnore]
+		private bool _selected = false;
+
+		public bool Selected
+		{
+			get { return _selected; }
+			set
+			{
+				if (_selected != value)
+				{
+					_selected = value;
+
+					if (_selected && this.ParentPresentationImage != null)
+						this.ParentPresentationImage.SelectedGraphic = this;
+
+					if (_focused)
+					{
+						if (_selected)
+							this.State = CreateFocussedSelectedState();
+						else
+							this.State = CreateFocussedState();
+					}
+					else
+					{
+						if (_selected)
+							this.State = CreateSelectedState();
+						else
+							this.State = CreateInactiveState();
+					}
+				}
+			}
+		}
+
+		#endregion
+
+		#region IFocussableGraphic Members
+
+		[CloneIgnore]
+		private bool _focused;
+
+		public bool Focussed
+		{
+			get { return _focused; }
+			set
+			{
+				if (_focused != value)
+				{
+					_focused = value;
+
+					if (_focused)
+					{
+						if (this.ParentPresentationImage != null)
+							this.ParentPresentationImage.FocussedGraphic = this;
+
+						if (this.Selected)
+							this.State = CreateFocussedSelectedState();
+						else
+							this.State = CreateFocussedState();
+					}
+					else
+					{
+						if (this.Selected)
+							this.State = CreateSelectedState();
+						else
+							this.State = CreateInactiveState();
+					}
+				}
+			}
+		}
+
+		#endregion
+
+		#region IMemorable Members
+
+		public override object CreateMemento()
+		{
+			PointsMemento memento = new PointsMemento();
+
+			// Must store source coordinates in memento
+			this.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				memento.Add(this.Arrow.StartPoint);
+				memento.Add(this.Arrow.EndPoint);
+			}
+			finally
+			{
+				this.ResetCoordinateSystem();
+			}
+
+			return memento;
+		}
+
+		public override void SetMemento(object memento)
+		{
+			Platform.CheckForNullReference(memento, "memento");
+			PointsMemento pointsMemento = (PointsMemento) memento;
+
+			this.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				this.Arrow.StartPoint = pointsMemento[0];
+				this.Arrow.EndPoint = pointsMemento[1];
+			}
+			finally
+			{
+				this.ResetCoordinateSystem();
+			}
+		}
+
+		#endregion
 	}
 }
