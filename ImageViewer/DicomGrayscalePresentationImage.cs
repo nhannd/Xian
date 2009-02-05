@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageViewer
 			if(!_presentationStateApplied && this.PresentationState != null)
 			{
 				_presentationStateApplied = true;
-				this.PresentationState.Apply(this);
+				this.PresentationState.Deserialize(this);
 			}
 
 			base.OnDrawing();

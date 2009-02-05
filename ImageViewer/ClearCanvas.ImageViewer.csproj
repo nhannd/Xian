@@ -172,6 +172,7 @@
     <Compile Include="KeyObjects\KeyObjectSelectionCodeSequences.cs" />
     <Compile Include="PresentationStates\DicomSoftcopyPresentationStateGraphic.cs" />
     <Compile Include="PresentationStates\DicomSerializableGraphicAnnotationAttribute.cs" />
+    <Compile Include="PresentationStates\DisplayAreaSerializationOption.cs" />
     <Compile Include="PresentationStates\IDicomSoftcopyPresentationStateProvider.cs" />
     <Compile Include="PresentationStates\PresentationStateTestTool.cs" />
     <Compile Include="LayoutManager.cs" />

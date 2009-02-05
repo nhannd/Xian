@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 					Frame frame = frameAndPR.Key;
 					DicomFile dcfPresentationState = null;
 					if(frameAndPR.Value!=null)
-						dcfPresentationState = frameAndPR.Value.AsDicomFile();
+						dcfPresentationState = frameAndPR.Value.DicomFile;
 
 					foreach (Server defaultServer in DefaultServers)
 						AddRemotePublishDocuments(defaultServer, frame, dcfPresentationState);

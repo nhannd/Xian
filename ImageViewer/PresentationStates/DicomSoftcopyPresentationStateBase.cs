@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Macros;
@@ -14,12 +15,21 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
+	[Cloneable]
 	internal abstract class DicomSoftcopyPresentationStateBase<T> : DicomSoftcopyPresentationState where T : IPresentationImage, IImageSopProvider, ISpatialTransformProvider, IImageGraphicProvider, IOverlayGraphicsProvider
 	{
 		protected DicomSoftcopyPresentationStateBase(SopClass psSopClass) : base(psSopClass) {}
-		protected DicomSoftcopyPresentationStateBase(SopClass psSopClass, IDicomAttributeProvider dicomFile) : base(psSopClass, dicomFile) { }
 
-		protected override sealed void Serialize(IEnumerable<IPresentationImage> images)
+		protected DicomSoftcopyPresentationStateBase(SopClass psSopClass, DicomFile dicomFile) : base(psSopClass, dicomFile) {}
+
+		protected DicomSoftcopyPresentationStateBase(SopClass psSopClass, DicomAttributeCollection dataSource) : base(psSopClass, dataSource) {}
+
+		protected DicomSoftcopyPresentationStateBase(DicomSoftcopyPresentationStateBase<T> source, ICloningContext context) : base(source, context)
+		{
+			context.CloneFields(source, this);
+		}
+
+		protected override void PerformSerialization(IEnumerable<IPresentationImage> images)
 		{
 			List<T> listImages = new List<T>();
 			Dictionary<string, IList<T>> seriesImages = new Dictionary<string, IList<T>>();
@@ -48,12 +58,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			InitializePatientStudyModule(new PatientStudyModuleIod(base.DataSet), listImages[0]);
 			InitializeClinicalTrialStudyModule(new ClinicalTrialStudyModuleIod(base.DataSet), listImages[0]);
 
-			this.Serialize(listImages, seriesImages);
+			this.PerformTypeSpecificSerialization(listImages, seriesImages);
 		}
 
-		protected abstract void Serialize(IList<T> imagesByList, IDictionary<string, IList<T>> imagesBySeries);
-
-		protected override sealed void Deserialize(IEnumerable<IPresentationImage> images)
+		protected override sealed void PerformDeserialization(IEnumerable<IPresentationImage> images)
 		{
 			foreach (PresentationStateRelationshipModuleIod psRelationship in this.RelationshipSets)
 			{
@@ -78,9 +86,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 					}
 				}
 
-				this.Deserialize(listImages, seriesImages);
+				this.PerformTypeSpecificDeserialization(listImages, seriesImages);
 			}
 		}
+
+		protected abstract void PerformTypeSpecificSerialization(IList<T> imagesByList, IDictionary<string, IList<T>> imagesBySeries);
+		protected abstract void PerformTypeSpecificDeserialization(IList<T> imagesByList, IDictionary<string, IList<T>> imagesBySeries);
 
 		/// <summary>
 		/// Gets a <see cref="PresentationStateRelationshipModuleIod"/> for this data set.
@@ -96,8 +107,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		{
 			get { return new PresentationStateRelationshipModuleIod[] {new PresentationStateRelationshipModuleIod(this.DataSet)}; }
 		}
-
-		protected abstract void Deserialize(IList<T> imagesByList, IDictionary<string, IList<T>> imagesBySeries);
 
 		#region Serialization of Demographic/Study Data
 
@@ -492,18 +501,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 					spatialTransform.TranslationX = (item.DisplayedAreaTopLeftHandCorner.X + item.DisplayedAreaBottomRightHandCorner.X - image.ImageGraphic.Columns)/-2f;
 					spatialTransform.TranslationY = (item.DisplayedAreaTopLeftHandCorner.Y + item.DisplayedAreaBottomRightHandCorner.Y - image.ImageGraphic.Rows)/-2f;
 
-#if DEBUG
-					// draws a debugging rectangle
-					RectanglePrimitive displayAreaTemplate = new RectanglePrimitive();
-					image.OverlayGraphics.Add(displayAreaTemplate);
-					displayAreaTemplate.Color = Color.FromArgb(255, 0, 0);
-					displayAreaTemplate.LineStyle = LineStyle.Dot;
-					displayAreaTemplate.CoordinateSystem = CoordinateSystem.Source;
-					displayAreaTemplate.TopLeft = displayRect.Location;
-					displayAreaTemplate.BottomRight = displayRect.Location + displayRect.Size;
-					displayAreaTemplate.ResetCoordinateSystem();
-#endif
-
 					displayedArea = displayRect;
 					return;
 				}
@@ -573,12 +570,5 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		}
 
 		#endregion
-	}
-
-	public enum DisplayAreaSerializationOption
-	{
-		SerializeAsDisplayedArea,
-		SerializeAsTrueSize,
-		SerializeAsMagnification
 	}
 }
