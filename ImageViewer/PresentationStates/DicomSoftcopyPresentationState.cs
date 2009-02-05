@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		public void Serialize(IPresentationImage image)
 		{
-			this.Serialize(new IPresentationImage[] { image });
+			this.Serialize(new IPresentationImage[] {image});
 		}
 
 		public void Serialize(IEnumerable<IPresentationImage> images)
@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		public void Deserialize(IPresentationImage image)
 		{
-			this.Deserialize(new IPresentationImage[] { image });
+			this.Deserialize(new IPresentationImage[] {image});
 		}
 
 		public void Deserialize(IEnumerable<IPresentationImage> images)
@@ -254,7 +254,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 			else if (image is DicomColorPresentationImage)
 			{
-				throw new NotImplementedException("DICOM presentation state serialization for color images has not yet been implemented.");
+				DicomColorSoftcopyPresentationState colorSoftcopyPresentationState = new DicomColorSoftcopyPresentationState();
+				colorSoftcopyPresentationState.Serialize(image);
+				return colorSoftcopyPresentationState;
 			}
 			else
 			{
@@ -265,6 +267,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		public static IDictionary<IPresentationImage, DicomSoftcopyPresentationState> Create(IEnumerable<IPresentationImage> images)
 		{
 			List<IPresentationImage> grayscaleImages = new List<IPresentationImage>();
+			List<IPresentationImage> colorImages = new List<IPresentationImage>();
 
 			foreach (IPresentationImage image in images)
 			{
@@ -274,7 +277,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				}
 				else if (image is DicomColorPresentationImage)
 				{
-					throw new NotImplementedException("DICOM presentation state serialization for color images has not yet been implemented.");
+					colorImages.Add(image);
 				}
 				else
 				{
@@ -292,6 +295,15 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 					presentationStates.Add(image, grayscaleSoftcopyPresentationState);
 				}
 			}
+			if (colorImages.Count > 0)
+			{
+				DicomColorSoftcopyPresentationState colorSoftcopyPresentationState = new DicomColorSoftcopyPresentationState();
+				colorSoftcopyPresentationState.Serialize(colorImages);
+				foreach (IPresentationImage image in colorImages)
+				{
+					presentationStates.Add(image, colorSoftcopyPresentationState);
+				}
+			}
 			return presentationStates;
 		}
 
@@ -300,6 +312,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			if (presentationState.MediaStorageSopClassUid == DicomGrayscaleSoftcopyPresentationState.SopClass.Uid)
 			{
 				return new DicomGrayscaleSoftcopyPresentationState(presentationState);
+			}
+			else if(presentationState.MediaStorageSopClassUid == DicomColorSoftcopyPresentationState.SopClass.Uid)
+			{
+				return new DicomColorSoftcopyPresentationState(presentationState);
 			}
 			else
 			{
@@ -315,28 +331,47 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				{
 					yield return new DicomGrayscaleSoftcopyPresentationState(presentationState);
 				}
+				else if (presentationState.MediaStorageSopClassUid == DicomColorSoftcopyPresentationState.SopClass.Uid)
+				{
+					yield return new DicomColorSoftcopyPresentationState(presentationState);
+				}
 			}
 		}
 
-		public static DicomSoftcopyPresentationState Load(IDicomAttributeProvider presentationState) {
-			if (presentationState[DicomTags.SopClassUid].ToString() == DicomGrayscaleSoftcopyPresentationState.SopClass.Uid) {
+		public static DicomSoftcopyPresentationState Load(IDicomAttributeProvider presentationState)
+		{
+			if (presentationState[DicomTags.SopClassUid].ToString() == DicomGrayscaleSoftcopyPresentationState.SopClass.Uid)
+			{
 				return new DicomGrayscaleSoftcopyPresentationState(presentationState);
-			} else {
+			}
+			else if (presentationState[DicomTags.SopClassUid].ToString() == DicomColorSoftcopyPresentationState.SopClass.Uid)
+			{
+				return new DicomColorSoftcopyPresentationState(presentationState);
+			}
+			else
+			{
 				throw new ArgumentException("DICOM presentation state deserialization is not supported for that SOP class.");
 			}
 		}
 
-		public static IEnumerable<DicomSoftcopyPresentationState> Load(IEnumerable<IDicomAttributeProvider> presentationStates) {
-			foreach (IDicomAttributeProvider presentationState in presentationStates) {
-				if (presentationState[DicomTags.SopClassUid].ToString() == DicomGrayscaleSoftcopyPresentationState.SopClass.Uid) {
+		public static IEnumerable<DicomSoftcopyPresentationState> Load(IEnumerable<IDicomAttributeProvider> presentationStates)
+		{
+			foreach (IDicomAttributeProvider presentationState in presentationStates)
+			{
+				if (presentationState[DicomTags.SopClassUid].ToString() == DicomGrayscaleSoftcopyPresentationState.SopClass.Uid)
+				{
 					yield return new DicomGrayscaleSoftcopyPresentationState(presentationState);
+				} 
+				else if (presentationState[DicomTags.SopClassUid].ToString() == DicomColorSoftcopyPresentationState.SopClass.Uid) 
+				{
+					yield return new DicomColorSoftcopyPresentationState(presentationState);
 				}
 			}
 		}
 
 		public static bool IsSupported(IPresentationImage image)
 		{
-			return (image is DicomGrayscalePresentationImage);
+			return (image is DicomGrayscalePresentationImage) || (image is DicomColorPresentationImage);
 		}
 
 		#endregion

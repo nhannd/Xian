@@ -136,6 +136,7 @@
     <Compile Include="KeyObjects\KeyImageDeserializer.cs" />
     <Compile Include="KeyObjects\KeyImageSerializer.cs" />
     <Compile Include="NoVisibleDisplaySetsException.cs" />
+    <Compile Include="PresentationStates\DicomColorSoftcopyPresentationState.cs" />
     <Compile Include="PresentationStates\DicomGraphicAnnotation.cs" />
     <Compile Include="PresentationStates\DicomGrayscaleSoftcopyPresentationState.cs" />
     <Compile Include="PresentationStates\DicomSoftcopyPresentationStateBase.cs" />

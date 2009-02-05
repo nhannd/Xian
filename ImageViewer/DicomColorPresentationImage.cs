@@ -33,6 +33,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
+using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -42,10 +43,12 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	[Cloneable]
 	public class DicomColorPresentationImage
-		: ColorPresentationImage, IImageSopProvider
+		: ColorPresentationImage, IImageSopProvider, IDicomSoftcopyPresentationStateProvider
 	{
 		[CloneIgnore]
 		private IFrameReference _frameReference;
+
+		private bool _presentationStateApplied = false;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomColorPresentationImage"/>.
@@ -92,7 +95,9 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>		
 		public override IPresentationImage CreateFreshCopy()
 		{
-			return new DicomColorPresentationImage(Frame);
+			DicomColorPresentationImage image = new DicomColorPresentationImage(Frame);
+			image.PresentationState = this.PresentationState;
+			return image;
 		}
 
 		#region IImageSopProvider members
@@ -118,6 +123,23 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		#region IDicomSoftcopyPresentationStateProvider Members
+
+		[CloneCopyReference]
+		private DicomSoftcopyPresentationState _presentationState;
+
+		public DicomSoftcopyPresentationState PresentationState {
+			get { return _presentationState; }
+			set {
+				if (_presentationState != value) {
+					_presentationState = value;
+					_presentationStateApplied = false;
+				}
+			}
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Dispose method.  Inheritors should override this method to do any additional cleanup.
 		/// </summary>
@@ -130,6 +152,20 @@ namespace ClearCanvas.ImageViewer
 			}
 			
 			base.Dispose(disposing);
+		}
+
+		/// <summary>
+		/// Raises the <see cref="PresentationImage.Drawing"/> event.
+		/// </summary>
+		protected override void OnDrawing()
+		{
+			if (!_presentationStateApplied && this.PresentationState != null)
+			{
+				_presentationStateApplied = true;
+				this.PresentationState.Deserialize(this);
+			}
+
+			base.OnDrawing();
 		}
 
 		/// <summary>
