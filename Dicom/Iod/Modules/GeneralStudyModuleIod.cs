@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Utilities;
 
@@ -250,6 +251,28 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					return;
 				}
 				base.DicomAttributeProvider[DicomTags.ProcedureCodeSequence].Values = new DicomSequenceItem[] {value.DicomSequenceItem};
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.AccessionNumber;
+				yield return DicomTags.NameOfPhysiciansReadingStudy;
+				yield return DicomTags.PhysiciansOfRecord;
+				yield return DicomTags.PhysiciansOfRecordIdentificationSequence;
+				yield return DicomTags.PhysiciansReadingStudyIdentificationSequence;
+				yield return DicomTags.ProcedureCodeSequence;
+				yield return DicomTags.ReferencedStudySequence;
+				yield return DicomTags.ReferringPhysicianIdentificationSequence;
+				yield return DicomTags.ReferringPhysiciansName;
+				yield return DicomTags.StudyDate;
+				yield return DicomTags.StudyTime;
+				yield return DicomTags.StudyDescription;
+				yield return DicomTags.StudyId;
+				yield return DicomTags.StudyInstanceUid;
 			}
 		}
 	}

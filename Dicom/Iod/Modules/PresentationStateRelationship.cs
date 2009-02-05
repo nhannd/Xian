@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Macros.PresentationStateRelationship;
 using ClearCanvas.Dicom.Iod.Sequences;
@@ -98,6 +99,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			IReferencedSeriesSequence iodBase = new PresentationStateRelationshipMacro.ReferencedSeriesSequenceItem(new DicomSequenceItem());
 			iodBase.InitializeAttributes();
 			return iodBase;
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.ReferencedSeriesSequence;
+			}
 		}
 	}
 }

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Macros.PerformedProcedureStepSummary;
 using ClearCanvas.Dicom.Iod.Macros.PerformedProcedureStepSummary.PerformedProtocolCodeSequence;
@@ -769,6 +770,39 @@ namespace ClearCanvas.Dicom.Iod.Modules
 						base.DicomAttributeProvider[DicomTags.ContentItemModifierSequence].Values = result;
 					}
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.BodyPartExamined;
+				yield return DicomTags.CommentsOnThePerformedProcedureStep;
+				yield return DicomTags.LargestPixelValueInSeries;
+				yield return DicomTags.Laterality;
+				yield return DicomTags.Modality;
+				yield return DicomTags.OperatorIdentificationSequence;
+				yield return DicomTags.OperatorsName;
+				yield return DicomTags.PatientPosition;
+				yield return DicomTags.PerformedProcedureStepDescription;
+				yield return DicomTags.PerformedProcedureStepId;
+				yield return DicomTags.PerformedProcedureStepStartDate;
+				yield return DicomTags.PerformedProcedureStepStartTime;
+				yield return DicomTags.PerformedProtocolCodeSequence;
+				yield return DicomTags.PerformingPhysicianIdentificationSequence;
+				yield return DicomTags.PerformingPhysiciansName;
+				yield return DicomTags.ProtocolName;
+				yield return DicomTags.ReferencedPerformedProcedureStepSequence;
+				yield return DicomTags.RelatedSeriesSequence;
+				yield return DicomTags.RequestAttributesSequence;
+				yield return DicomTags.SeriesDate;
+				yield return DicomTags.SeriesTime;
+				yield return DicomTags.SeriesDescription;
+				yield return DicomTags.SeriesInstanceUid;
+				yield return DicomTags.SeriesNumber;
+				yield return DicomTags.SmallestPixelValueInSeries;
 			}
 		}
 	}

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Sequences;
 
@@ -106,6 +107,16 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].SetInt32(0, value[0]);
 				base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].SetInt32(1, value[1]);
 				base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].SetInt32(2, value[2]);
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.ShutterPresentationColorCielabValue;
+				yield return DicomTags.ShutterPresentationValue;
 			}
 		}
 	}

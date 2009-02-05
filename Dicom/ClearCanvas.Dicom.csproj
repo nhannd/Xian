@@ -246,6 +246,7 @@
     <Compile Include="Iod\Modules\GeneralStudyModuleIod.cs" />
     <Compile Include="Iod\Modules\GraphicAnnotation.cs" />
     <Compile Include="Iod\Modules\GraphicLayer.cs" />
+    <Compile Include="Iod\Modules\IccProfileModule.cs" />
     <Compile Include="Iod\Modules\KeyObjectDocument.cs" />
     <Compile Include="Iod\Modules\KeyObjectDocumentSeries.cs" />
     <Compile Include="Iod\Modules\Mask.cs" />

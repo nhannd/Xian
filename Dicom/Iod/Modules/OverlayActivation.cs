@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Sequences;
 
@@ -72,6 +73,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					return;
 				}
 				base.DicomAttributeProvider[DicomTags.OverlayActivationLayer].SetInt32(0, value.Value);
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.OverlayActivationLayer;
 			}
 		}
 	}

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Sequences;
 
@@ -248,6 +249,27 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					return;
 				}
 				base.DicomAttributeProvider[DicomTags.RoiStandardDeviation].SetFloat64(0, value.Value);
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.OverlayBitPosition;
+				yield return DicomTags.OverlayBitsAllocated;
+				yield return DicomTags.OverlayColumns;
+				yield return DicomTags.OverlayData;
+				yield return DicomTags.OverlayDescription;
+				yield return DicomTags.OverlayLabel;
+				yield return DicomTags.OverlayOrigin;
+				yield return DicomTags.OverlayRows;
+				yield return DicomTags.OverlaySubtype;
+				yield return DicomTags.OverlayType;
+				yield return DicomTags.RoiArea;
+				yield return DicomTags.RoiMean;
+				yield return DicomTags.RoiStandardDeviation;
 			}
 		}
 	}

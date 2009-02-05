@@ -31,56 +31,42 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Dicom.Iod.Macros;
-using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
 	/// <summary>
-	/// PresentationSeries Module
+	/// IccProfile Module
 	/// </summary>
-	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.11.9 (Table C.11.9-1)</remarks>
-	public class PresentationSeriesModuleIod : IodBase
+	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.11.15 (Table C.11.15-1)</remarks>
+	public class IccProfileModuleIod : IodBase
 	{
 		/// <summary>
-		/// Initializes a new instance of the <see cref="PresentationSeriesModuleIod"/> class.
+		/// Initializes a new instance of the <see cref="IccProfileModuleIod"/> class.
 		/// </summary>	
-		public PresentationSeriesModuleIod() : base() {}
+		public IccProfileModuleIod() : base() {}
 
 		/// <summary>
-		/// Initializes a new instance of the <see cref="PresentationSeriesModuleIod"/> class.
+		/// Initializes a new instance of the <see cref="IccProfileModuleIod"/> class.
 		/// </summary>
-		public PresentationSeriesModuleIod(IDicomAttributeProvider provider) : base(provider) {}
+		/// <param name="IDicomAttributeProvider">The dicom attribute provider.</param>
+		public IccProfileModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) {}
 
 		/// <summary>
-		/// Initializes the underlying collection to implement the module or sequence using default values.
-		/// </summary>
-		public void InitializeAttributes()
+		/// NOT IMPLEMENTED. Gets or sets the value of IccProfile in the underlying collection. Type 1.
+		/// </summary> 		
+		public object IccProfile
 		{
-			this.Modality = Modality.PR;
-		}
-
-		/// <summary>
-		/// Gets or sets the value of Modality in the underlying collection. Type 1.
-		/// </summary>
-		public Modality Modality
-		{
-			get { return ParseEnum(base.DicomAttributeProvider[DicomTags.Modality].GetString(0, string.Empty), Modality.None); }
-			set
-			{
-				if (value != Modality.PR)
-					throw new ArgumentOutOfRangeException("value", "Modality must be PR.");
-				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.Modality], value);
-			}
+			// TODO - Implement this.
+			get { throw new NotImplementedException(); }
+			set { throw new NotImplementedException(); }
 		}
 
 		/// <summary>
 		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
 		/// </summary>
-		public static IEnumerable<uint> DefinedTags {
-			get {
-				yield return DicomTags.Modality;
-			}
+		public static IEnumerable<uint> DefinedTags
+		{
+			get { yield return DicomTags.IccProfile; }
 		}
 	}
 }

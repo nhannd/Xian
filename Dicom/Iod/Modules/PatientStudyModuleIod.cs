@@ -29,6 +29,8 @@
 
 #endregion
 
+using System.Collections.Generic;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Macros;
 
 namespace ClearCanvas.Dicom.Iod.Modules
@@ -351,6 +353,27 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					return;
 				}
 				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.PatientsSexNeutered], value);
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.AdditionalPatientHistory;
+				yield return DicomTags.AdmissionId;
+				yield return DicomTags.AdmittingDiagnosesCodeSequence;
+				yield return DicomTags.AdmittingDiagnosesDescription;
+				yield return DicomTags.IssuerOfAdmissionId;
+				yield return DicomTags.IssuerOfServiceEpisodeId;
+				yield return DicomTags.Occupation;
+				yield return DicomTags.PatientsAge;
+				yield return DicomTags.PatientsSexNeutered;
+				yield return DicomTags.PatientsSize;
+				yield return DicomTags.PatientsWeight;
+				yield return DicomTags.ServiceEpisodeDescription;
+				yield return DicomTags.ServiceEpisodeId;
 			}
 		}
 	}

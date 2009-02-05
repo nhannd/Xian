@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
@@ -177,6 +178,16 @@ namespace ClearCanvas.Dicom.Iod.Modules
 						throw new ArgumentOutOfRangeException("value", "LutData is Type 1 Required.");
 					base.DicomAttributeProvider[DicomTags.LutData].Values = value;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.PresentationLutSequence;
+				yield return DicomTags.PresentationLutShape;
 			}
 		}
 	}

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Sequences;
 
 namespace ClearCanvas.Dicom.Iod.Modules
@@ -78,6 +79,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					result[n] = value[n].DicomSequenceItem;
 
 				base.DicomAttributeProvider[DicomTags.GraphicAnnotationSequence].Values = result;
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.GraphicAnnotationSequence;
 			}
 		}
 	}

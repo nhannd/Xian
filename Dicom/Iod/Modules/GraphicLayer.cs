@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
@@ -77,6 +78,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					result[n] = value[n].DicomSequenceItem;
 
 				base.DicomAttributeProvider[DicomTags.GraphicLayerSequence].Values = result;
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.GraphicLayerSequence;
 			}
 		}
 	}
@@ -153,8 +163,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				int[] result = new int[3];
 				if (base.DicomAttributeProvider[DicomTags.GraphicLayerRecommendedDisplayCielabValue].TryGetInt32(0, out result[0]))
-					if (base.DicomAttributeProvider[DicomTags.GraphicLayerRecommendedDisplayCielabValue].TryGetInt32(0, out result[1]))
-						if (base.DicomAttributeProvider[DicomTags.GraphicLayerRecommendedDisplayCielabValue].TryGetInt32(0, out result[2]))
+					if (base.DicomAttributeProvider[DicomTags.GraphicLayerRecommendedDisplayCielabValue].TryGetInt32(1, out result[1]))
+						if (base.DicomAttributeProvider[DicomTags.GraphicLayerRecommendedDisplayCielabValue].TryGetInt32(2, out result[2]))
 							return result;
 				return null;
 			}

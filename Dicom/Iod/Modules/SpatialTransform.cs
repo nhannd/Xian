@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Sequences;
 
@@ -76,6 +77,16 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				if (value == ImageHorizontalFlip.None)
 					throw new ArgumentOutOfRangeException("value", "ImageHorizontalFlip is Type 1 Required.");
 				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.ImageHorizontalFlip], value);
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.ImageHorizontalFlip;
+				yield return DicomTags.ImageRotation;
 			}
 		}
 	}

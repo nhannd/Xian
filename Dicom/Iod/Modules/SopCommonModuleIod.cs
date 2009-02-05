@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
@@ -98,6 +99,17 @@ namespace ClearCanvas.Dicom.Iod.Modules
         }
 
         #endregion
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.SopClassUid;
+				yield return DicomTags.SopInstanceUid;
+				yield return DicomTags.SpecificCharacterSet;
+			}
+		}
 
     }
 }

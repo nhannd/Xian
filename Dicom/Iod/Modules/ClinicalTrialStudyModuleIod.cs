@@ -29,6 +29,8 @@
 
 #endregion
 
+using System.Collections.Generic;
+
 namespace ClearCanvas.Dicom.Iod.Modules
 {
 	/// <summary>
@@ -98,6 +100,16 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					return;
 				}
 				base.DicomAttributeProvider[DicomTags.ClinicalTrialTimePointDescription].SetStringValue(value);
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.ClinicalTrialTimePointDescription;
+				yield return DicomTags.ClinicalTrialTimePointId;
 			}
 		}
 	}

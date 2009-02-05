@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.Dicom.Iod.Modules
@@ -166,6 +167,27 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get { return base.DicomAttributeProvider[DicomTags.PixelPaddingValue].GetInt32(0, 0); }
 			set { base.DicomAttributeProvider[DicomTags.PixelPaddingValue].SetInt32(0, value); }
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.DateOfLastCalibration;
+				yield return DicomTags.TimeOfLastCalibration;
+				yield return DicomTags.DeviceSerialNumber;
+				yield return DicomTags.GantryId;
+				yield return DicomTags.InstitutionAddress;
+				yield return DicomTags.InstitutionalDepartmentName;
+				yield return DicomTags.InstitutionName;
+				yield return DicomTags.Manufacturer;
+				yield return DicomTags.ManufacturersModelName;
+				yield return DicomTags.PixelPaddingValue;
+				yield return DicomTags.SoftwareVersions;
+				yield return DicomTags.SpatialResolution;
+				yield return DicomTags.StationName;
+			}
 		}
 	}
 }

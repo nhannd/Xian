@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
@@ -190,6 +191,21 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					return;
 				}
 				base.DicomAttributeProvider[DicomTags.ClinicalTrialSubjectReadingId].SetString(0, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.ClinicalTrialProtocolId;
+				yield return DicomTags.ClinicalTrialProtocolName;
+				yield return DicomTags.ClinicalTrialSiteId;
+				yield return DicomTags.ClinicalTrialSiteName;
+				yield return DicomTags.ClinicalTrialSponsorName;
+				yield return DicomTags.ClinicalTrialSubjectId;
+				yield return DicomTags.ClinicalTrialSubjectReadingId;
 			}
 		}
 	}

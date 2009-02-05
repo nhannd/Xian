@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.Dicom.Utilities;
@@ -603,6 +604,35 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					result[n] = value[n].DicomSequenceItem;
 
 				base.DicomAttributeProvider[DicomTags.DeIdentificationMethodCodeSequence].Values = result;
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.BreedRegistrationSequence;
+				yield return DicomTags.DeIdentificationMethod;
+				yield return DicomTags.DeIdentificationMethodCodeSequence;
+				yield return DicomTags.IssuerOfPatientId;
+				yield return DicomTags.OtherPatientIds;
+				yield return DicomTags.OtherPatientIdsSequence;
+				yield return DicomTags.OtherPatientNames;
+				yield return DicomTags.PatientBreedCodeSequence;
+				yield return DicomTags.PatientBreedDescription;
+				yield return DicomTags.PatientComments;
+				yield return DicomTags.PatientId;
+				yield return DicomTags.PatientIdentityRemoved;
+				yield return DicomTags.PatientsBirthDate;
+				yield return DicomTags.PatientsBirthTime;
+				yield return DicomTags.PatientSpeciesCodeSequence;
+				yield return DicomTags.PatientSpeciesDescription;
+				yield return DicomTags.PatientsSex;
+				yield return DicomTags.ReferencedPatientSequence;
+				yield return DicomTags.ResponsibleOrganization;
+				yield return DicomTags.ResponsiblePerson;
+				yield return DicomTags.ResponsiblePersonRole;
 			}
 		}
 	}

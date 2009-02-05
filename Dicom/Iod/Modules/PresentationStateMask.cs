@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Modules.PresentationStateMask;
 
@@ -177,6 +178,16 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					}
 					base.DicomAttributeProvider[DicomTags.ContrastFrameAveraging].SetInt32(0, value.Value);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.MaskSubtractionSequence;
+				yield return DicomTags.RecommendedViewingMode;
 			}
 		}
 	}

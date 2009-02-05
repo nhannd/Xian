@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Macros.ModalityLut;
 
@@ -149,6 +150,18 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					return;
 				}
 				base.DicomAttributeProvider[DicomTags.RescaleType].SetString(0, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.ModalityLutSequence;
+				yield return DicomTags.RescaleIntercept;
+				yield return DicomTags.RescaleSlope;
+				yield return DicomTags.RescaleType;
 			}
 		}
 	}

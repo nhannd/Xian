@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Sequences;
 
@@ -51,5 +52,14 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public BitmapDisplayShutterModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
 		// TODO #1568: Implement Bitmap Display Shutter Module when user-shutters are implemented (Conditional module for GSPS IOD)
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield break;
+			}
+		}
 	}
 }

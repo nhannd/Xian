@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Dicom.Iod.Macros;
 
@@ -270,6 +271,15 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					}
 					base.DicomAttributeProvider[DicomTags.PresentationPixelMagnificationRatio].SetFloat64(0, value.Value);
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.DisplayedAreaSelectionSequence;
 			}
 		}
 

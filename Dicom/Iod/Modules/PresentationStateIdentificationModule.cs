@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.Dicom.Utilities;
@@ -162,6 +163,21 @@ namespace ClearCanvas.Dicom.Iod.Modules
 					return;
 				}
 				dicomAttribute.Values = new DicomSequenceItem[] { value.DicomSequenceItem };
+			}
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
+		/// </summary>
+		public static IEnumerable<uint> DefinedTags {
+			get {
+				yield return DicomTags.ContentCreatorsIdentificationCodeSequence;
+				yield return DicomTags.ContentCreatorsName;
+				yield return DicomTags.ContentDescription;
+				yield return DicomTags.ContentLabel;
+				yield return DicomTags.InstanceNumber;
+				yield return DicomTags.PresentationCreationDate;
+				yield return DicomTags.PresentationCreationTime;
 			}
 		}
 	}
