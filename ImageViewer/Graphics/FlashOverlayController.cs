@@ -3,7 +3,7 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Threading;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -22,6 +22,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private readonly byte[] _pixelData;
 		private readonly int _rows, _columns;
 		private int _flashSpeed = 150;
+
+		private SynchronizationContext _syncContext;
 
 		/// <summary>
 		/// Constructs a default controller.
@@ -103,6 +105,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			if (image is IOverlayGraphicsProvider)
 			{
+				_syncContext = null;
 				DoFlash(image);
 			}
 		}
@@ -115,6 +118,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			if (image is IOverlayGraphicsProvider)
 			{
+				_syncContext = SynchronizationContext.Current;
+
 				Thread t = new Thread(delegate() { DoFlash(image); });
 				t.IsBackground = true;
 				t.Start();
@@ -130,13 +135,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 			using (FlashOverlayGraphic flashOverlay = new FlashOverlayGraphic(this))
 			{
 				overlayGraphics.Add(flashOverlay);
-				image.Draw();
+				ContextDraw(image);
 
 				Thread.Sleep(_flashSpeed);
 
 				overlayGraphics.Remove(flashOverlay);
-				image.Draw();
+				ContextDraw(image);
 			}
+		}
+
+		private void ContextDraw(IDrawable drawable)
+		{
+			if (_syncContext == null)
+				drawable.Draw();
+			else
+				_syncContext.Post(delegate { drawable.Draw(); }, null);
 		}
 
 		private class FlashOverlayGraphic : ColorImageGraphic
@@ -148,13 +161,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 				// This method makes the graphic one time use only... but that's okay because we dispose of it almost immediately
 				SpatialTransform transform = base.SpatialTransform;
 
-				if (base.ParentPresentationImage is IImageGraphicProvider)
-				{
-					ImageGraphic imageGraphic = ((IImageGraphicProvider) base.ParentPresentationImage).ImageGraphic;
-					SizeF parentSize = transform.ConvertToDestination(new SizeF(imageGraphic.Columns, imageGraphic.Rows));
-					transform.TranslationX = (parentSize.Width - base.Columns)/2;
-					transform.TranslationY = (parentSize.Height - base.Rows)/2;
-				}
+				PointF srcXAxis = new PointF(1, 0);
+				PointF srcOrigin = new PointF(0, 0);
+				PointF dstOrigin = transform.ConvertToDestination(srcOrigin);
+
+				// figure out where the positive x axis went to determine the cumulative rotation
+				transform.RotationXY = -(int) Vector.SubtendedAngle(transform.ConvertToDestination(srcXAxis) - new SizeF(dstOrigin), srcOrigin, srcXAxis);
+
+				transform.TranslationX = (base.ParentPresentationImage.ClientRectangle.Width - base.Columns)/2 - dstOrigin.X;
+				transform.TranslationY = (base.ParentPresentationImage.ClientRectangle.Height - base.Rows)/2 - dstOrigin.Y;
 
 				transform.Scale = 1/transform.CumulativeScale;
 
