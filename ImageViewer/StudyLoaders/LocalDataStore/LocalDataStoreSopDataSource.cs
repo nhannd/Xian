@@ -80,16 +80,19 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 					return _sop[tag];
 			}
 
-			return base[tag];
+			return base.GetDicomAttribute(tag);
 		}
 
 		public override bool TryGetAttribute(uint tag, out DicomAttribute attribute)
 		{
-			if (_sop.IsStoredTag(tag))
+			lock (_syncLock)
 			{
-				attribute = _sop[tag];
-				if (!attribute.IsEmpty)
-					return true;
+				if (_sop.IsStoredTag(tag))
+				{
+					attribute = _sop[tag];
+					if (!attribute.IsEmpty)
+						return true;
+				}
 			}
 
 			return base.TryGetAttribute(tag, out attribute);
