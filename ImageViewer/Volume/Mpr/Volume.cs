@@ -31,10 +31,10 @@
 
 using System;
 using System.Runtime.InteropServices;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Mathematics;
 using vtk;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -43,36 +43,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	/// <summary>
 	/// The Volume class encapsulates 3 dimensional pixel data. Use the VolumeBuilder class to create a Volume.
 	/// </summary>
-	public class Volume : IDisposable
+	internal class Volume : IDisposable
 	{
 		#region Private fields
 
-		private readonly vtkImageData _vtkImageData;
-		private readonly bool _dataUnsigned;
+		// Note: Constructors ensure that only one of these arrays is set.
+		//	This defines whether the data is signed or unsigned.
 		private readonly short[] _volShortArray;
 		private readonly ushort[] _volUnsignedShortArray;
-
-		private readonly int _width;
-		private readonly int _height;
-		private readonly int _depth;
-
-		private readonly float _originX;
-		private readonly float _originY;
-		private readonly float _originZ;
-
-		private readonly int _wholeExtentX;
-		private readonly int _wholeExtentY;
-		private readonly int _wholeExtentZ;
-
-		private readonly float _spacingX;
-		private readonly float _spacingY;
-		private readonly float _spacingZ;
-
-		private readonly Matrix _dicomOrientationPatientMatrix;
-
+		//ggerade ToRef: Use a 3-tuple of ints instead of floats... (Size3D?)
+		private readonly Vector3D _dimensions;
+		private readonly Vector3D _spacing;
+		private readonly Vector3D _originPatient;
+		private readonly Matrix _orientationPatientMatrix;
 		private readonly DicomMessageBase _modelDicom;
 
-		private readonly bool _instanceAndSliceLocationReversed;
+		private readonly Vector3D _origin = new Vector3D(0,0,0);
+
+		private vtkImageData _vtkImageData;
 
 		// This handle is used to pin the volume array
 		private GCHandle _volArrayPinnedHandle;
@@ -83,9 +71,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Initialization
 
-		public Volume(short[] volShortArray, vtkImageData imageData, Matrix volumeOrientation, DicomMessageBase modelDicom, bool instanceAndSliceLocationReversed)
-			:
-			this(imageData, volumeOrientation, false, modelDicom, instanceAndSliceLocationReversed)
+		internal Volume(short[] volShortArray, Vector3D dimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPateintMatrix, DicomMessageBase modelDicom)
+			: this(dimensions, spacing, originPatient, orientationPateintMatrix, modelDicom)
 		{
 			_volShortArray = volShortArray;
 			//ggerade ToOpt: I think it would be better to pin these only while necessary. Consider refactoring
@@ -93,138 +80,44 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_volArrayPinnedHandle = GCHandle.Alloc(_volShortArray, GCHandleType.Pinned);
 		}
 
-		public Volume(ushort[] volUnsignedShortArray, vtkImageData imageData, Matrix volumeOrientation, DicomMessageBase modelDicom, bool instanceAndSliceLocationReversed)
-			:
-			this(imageData, volumeOrientation, true, modelDicom, instanceAndSliceLocationReversed)
+		internal Volume(ushort[] volUnsignedShortArray, Vector3D dimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatientMatrix, DicomMessageBase modelDicom)
+			: this(dimensions, spacing, originPatient, orientationPatientMatrix, modelDicom)
 		{
 			_volUnsignedShortArray = volUnsignedShortArray;
 			_volArrayPinnedHandle = GCHandle.Alloc(_volUnsignedShortArray, GCHandleType.Pinned);
 		}
 
-		private Volume(vtkImageData imageData, Matrix volumeOrientation, bool dataUnsigned, DicomMessageBase modelDicom, bool instanceAndSliceLocationReversed)
+		private Volume(Vector3D dimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatientMatrix, DicomMessageBase modelDicom)
 		{
-			_vtkImageData = imageData;
-			_dicomOrientationPatientMatrix = volumeOrientation;
-			_dataUnsigned = dataUnsigned;
-
-			int[] dimensions = _vtkImageData.GetDimensions();
-			_width = dimensions[0];
-			_height = dimensions[1];
-			_depth = dimensions[2];
-
-			double[] spacing = _vtkImageData.GetSpacing();
-			_spacingX = (float)spacing[0];
-			_spacingY = (float)spacing[1];
-			_spacingZ = (float)spacing[2];
-
-			double[] origin = _vtkImageData.GetOrigin();
-			_originX = (float)origin[0];
-			_originY = (float)origin[1];
-			_originZ = (float)origin[2];
-
-			int[] wholeExtent = _vtkImageData.GetWholeExtent();
-			_wholeExtentX = wholeExtent[0] + wholeExtent[1];
-			_wholeExtentY = wholeExtent[2] + wholeExtent[3];
-			_wholeExtentZ = wholeExtent[4] + wholeExtent[5];
-
+			_dimensions = dimensions;
+			_spacing = spacing;
+			_originPatient = originPatient;
+			_orientationPatientMatrix = orientationPatientMatrix;
 			_modelDicom = modelDicom;
-
-			_instanceAndSliceLocationReversed = instanceAndSliceLocationReversed;
 		}
 
-		internal Volume(short[] volShortArray, bool dataUnsigned, int width, int height, int depth,
-			float spacingX, float spacingY, float spacingZ,
-			float originX, float originY, float originZ,
-			int wholeExtentX, int wholeExtentY, int wholeExtentZ,
-			DicomMessageBase modelDicom
-			)
-		{
-			_volShortArray = volShortArray;
-			_dataUnsigned = dataUnsigned;
-			_width = width;
-			_height = height;
-			_depth = depth;
-			_spacingX = spacingX;
-			_spacingY = spacingY;
-			_spacingZ = spacingZ;
-			_originX = originX;
-			_originY = originY;
-			_originZ = originZ;
-			_wholeExtentX = wholeExtentX;
-			_wholeExtentY = wholeExtentY;
-			_wholeExtentZ = wholeExtentZ;
-			_modelDicom = modelDicom;
-			_disposed = false;
-		}
-		
 		#endregion
 
 		#region Public properties
 
-		public vtkImageData _VtkImageData
+		public Vector3D Dimensions
 		{
-			get { return _vtkImageData; }
+			get { return _dimensions; }
 		}
 
-		public Matrix DicomOrientationPatientMatrix
+		public Vector3D Spacing
 		{
-			get { return _dicomOrientationPatientMatrix; }
+			get { return _spacing; }
 		}
 
-		public int Width
+		public Vector3D OriginPatient
 		{
-			get { return _width; }
+			get { return _originPatient; }
 		}
 
-		public int Height
+		public Matrix OrientationPatientMatrix
 		{
-			get { return _height; }
-		}
-
-		public int Depth
-		{
-			get { return _depth; }
-		}
-
-		//ggerade ToRef: do away with OriginX,Y,Z
-		public Vector3D Origin
-		{
-			get { return new Vector3D(_originX, _originY, _originZ); }
-		}
-
-		public float OriginX
-		{
-			get { return _originX; }
-		}
-
-		public float OriginY
-		{
-			get { return _originY; }
-		}
-
-		public float OriginZ
-		{
-			get { return _originZ; }
-		}
-
-		public int SizeInVoxels
-		{
-			get { return Width * Height * Depth; }
-		}
-
-		public float SpacingX
-		{
-			get { return _spacingX; }
-		}
-
-		public float SpacingY
-		{
-			get { return _spacingY; }
-		}
-
-		public float SpacingZ
-		{
-			get { return _spacingZ; }
+			get { return _orientationPatientMatrix; }
 		}
 
 		public DicomMessageBase _ModelDicom
@@ -234,59 +127,171 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public bool IsDataUnsigned()
 		{
-			return _dataUnsigned;
+			return _volUnsignedShortArray != null;
+		}
+
+		public vtkImageData _VtkImageData
+		{
+			get
+			{
+				if (_vtkImageData == null)
+				{
+					_vtkImageData = new vtkImageData();
+
+					_vtkImageData.SetDimensions((int)Dimensions.X, (int)Dimensions.Y, (int)Dimensions.Z);
+					_vtkImageData.SetSpacing(Spacing.X, Spacing.Y, Spacing.Z);
+					//_vtkImageData.SetOrigin(OriginPatient.X, OriginPatient.Y, OriginPatient.Z);
+
+					if (IsDataUnsigned())
+					{
+						_vtkImageData.SetScalarTypeToUnsignedShort();
+						_vtkImageData.AllocateScalars();
+
+						_vtkImageData.GetPointData().SetScalars(CreateVtkUnsignedShortArrayWrapper(_volUnsignedShortArray));
+
+						// This call is necessary to ensure vtkImageData data's info is correct (e.g. updates WholeExtent values)
+						_vtkImageData.UpdateInformation();
+					}
+					else
+					{
+						_vtkImageData.SetScalarTypeToShort();
+						_vtkImageData.AllocateScalars();
+
+						_vtkImageData.GetPointData().SetScalars(CreateVtkShortArrayWrapper(_volShortArray));
+
+						_vtkImageData.UpdateInformation();
+					}
+					
+				}
+				return _vtkImageData;
+			}
+		}
+
+		public int SizeInVoxels
+		{
+			get { return (int)(Dimensions.X * Dimensions.Y * Dimensions.Z); }
 		}
 
 		public float MinXCoord
 		{
-			get { return OriginX; }
+			get { return Origin.X; }
 		}
 
 		public float MaxXCoord
 		{
-			get { return (OriginX + _spacingX * _wholeExtentX); }
+			get { return (Origin.X + Spacing.X * Dimensions.X); }
 		}
 
 		public float MinYCoord
 		{
-			get { return OriginY; }
+			get { return Origin.Y; }
 		}
 
 		public float MaxYCoord
 		{
-			get { return (OriginY + _spacingY * _wholeExtentY); }
+			get { return (Origin.Y + Spacing.Y * Dimensions.Y); }
 		}
 
 		public float MinZCoord
 		{
-			get { return OriginZ; }
+			get { return Origin.Z; }
 		}
 
 		public float MaxZCoord
 		{
-			get { return (OriginZ + _spacingZ * _wholeExtentZ); }
+			get { return (Origin.Z + Spacing.Z * Dimensions.Z); }
 		}
 
-		public bool InstanceAndSliceLocationReversed
+		//public float MinXCoord
+		//{
+		//    get { return OriginPatient.X; }
+		//}
+
+		//public float MaxXCoord
+		//{
+		//    get { return (OriginPatient.X + Spacing.X * Dimensions.X); }
+		//}
+
+		//public float MinYCoord
+		//{
+		//    get { return OriginPatient.Y; }
+		//}
+
+		//public float MaxYCoord
+		//{
+		//    get { return (OriginPatient.Y + Spacing.Y * Dimensions.Y); }
+		//}
+
+		//public float MinZCoord
+		//{
+		//    get { return OriginPatient.Z; }
+		//}
+
+		//public float MaxZCoord
+		//{
+		//    get { return (OriginPatient.Z + Spacing.Z * Dimensions.Z); }
+		//}
+
+		public float MinSpacing
 		{
-			get { return _instanceAndSliceLocationReversed; }
+			get { return Math.Min(Math.Min(Spacing.X, Spacing.Y), Spacing.Z); }
+		}
+
+		public Vector3D Origin
+		{
+			get { return _origin; }
 		}
 
 		#endregion
 
 		#region Public methods
 
-		public float[] CalcCenterPoint()
+		public Vector3D CalcCenterPoint()
 		{
 			// Volume center point
-			float[] center = new float[3];
-			center[0] = OriginX + _spacingX * 0.5f * _wholeExtentX;
-			center[1] = OriginY + _spacingY * 0.5f * _wholeExtentY;
-			center[2] = OriginZ + _spacingZ * 0.5f * _wholeExtentZ;
+			Vector3D center = new Vector3D(Origin.X + Spacing.X * 0.5f * Dimensions.X,
+			                               Origin.Y + Spacing.Y * 0.5f * Dimensions.Y,
+			                               Origin.Z + Spacing.Z * 0.5f * Dimensions.Z);
 			return center;
 		}
 
+		public Vector3D ConvertToPatient(Vector3D volumePosition)
+		{
+			// Set orientation transform
+			Matrix volToPat = new Matrix(OrientationPatientMatrix);
+			// Set origin translation
+			volToPat.SetRow(3, OriginPatient.X, OriginPatient.Y, OriginPatient.Z, 1);
+			
+			// Transform image position to patient position
+			Matrix imagePositionMatrix = new Matrix(1, 4);
+			imagePositionMatrix.SetRow(0, volumePosition.X, volumePosition.Y, volumePosition.Z, 1F);
+			Matrix transformed = imagePositionMatrix * volToPat;
+
+			Vector3D patientPosition = new Vector3D(transformed[0, 0], transformed[0, 1], transformed[0, 2]);
+			return patientPosition;
+		}
+
+		public Matrix RotateToPatientOrientation(Matrix orientationImage)
+		{
+			Matrix orientationPatient = orientationImage * OrientationPatientMatrix;
+			return orientationPatient;
+		}
+       
 		#endregion
+
+		private static vtkShortArray CreateVtkShortArrayWrapper(short[] shortArray)
+		{
+			vtkShortArray vtkShortArray = new vtkShortArray();
+			vtkShortArray.SetArray(shortArray, shortArray.Length, 1);
+			return vtkShortArray;
+		}
+
+		private static vtkUnsignedShortArray CreateVtkUnsignedShortArrayWrapper(ushort[] ushortArray)
+		{
+			vtkUnsignedShortArray vtkUnsignedShortArray = new vtkUnsignedShortArray();
+			vtkUnsignedShortArray.SetArray(ushortArray, ushortArray.Length, 1);
+			return vtkUnsignedShortArray;
+		}
 
 		#region Disposal
 
@@ -305,7 +310,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		protected void Dispose(bool disposing)
 		{
-			if (disposing && !_disposed) 
+			if (disposing && !_disposed)
 			{
 				_disposed = true;
 				//can only call Free once or it throws
@@ -316,6 +321,5 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		}
 
 		#endregion
-
 	}
 }

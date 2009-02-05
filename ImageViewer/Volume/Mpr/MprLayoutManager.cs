@@ -34,7 +34,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	public class MprLayoutManager : LayoutManager
+	internal class MprLayoutManager : LayoutManager
 	{
 		#region ImageViewerComponent, LayoutManager creation method
 

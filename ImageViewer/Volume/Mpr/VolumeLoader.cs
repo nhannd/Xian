@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	/// that a list of frames are able to be represented as a volume and to generate
 	/// the volume from a list of frames.
 	/// </summary>
-	public class VolumeLoader
+	internal class VolumeLoader
 	{
 		#region Load from DisplaySet
 

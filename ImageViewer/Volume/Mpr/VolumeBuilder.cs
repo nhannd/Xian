@@ -37,7 +37,6 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
-using vtk;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -47,7 +46,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	// ...set options (e.g. strictness, etc). 
 	// builder.Validate();
 	///Volume volume = builder.Build(); //Build() can call Validate() too.
-
 	/// <summary>
 	/// This utility class aids in creating a Volume (currently a VTK volume) from a collection of Frames
 	/// </summary>
@@ -55,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	{
 		#region Public methods
 
-		//ggerade ToRes: What should this interface be like? Some things to think about:
+		//ggerade ToDo: See Stewart's comments above
 		//  - Should give a reason for failure, hints or something
 		//	- Perhaps need a first pass that throws out collections that just won't work at all?
 		//	- Allow for orientation and spacing allowable tolerances
@@ -151,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			frames.Sort(new InstanceAndFrameNumberComparer());
 
 			// Clone the first frame's dicom header info and use it as the volume model
-			IDicomMessageSopDataSource dataSource = (IDicomMessageSopDataSource)frames[0].ParentImageSop.DataSource;
+			IDicomMessageSopDataSource dataSource = (IDicomMessageSopDataSource) frames[0].ParentImageSop.DataSource;
 			DicomMessageBase firstFrameDicom = dataSource.SourceMessage;
 
 			// Selectively copy from original headers
@@ -159,109 +157,48 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			                                                CreateVolumeDataSet(firstFrameDicom.DataSet));
 
 			// Use the first frame's orientation as our volume orientation
-			Matrix volumeOrientation = ImageOrientationPatientToMatrix(frames[0].ImageOrientationPatient);
+			Matrix orientationPatientMatrix = ImageOrientationPatientToMatrix(frames[0].ImageOrientationPatient);
 
-			//ggerade ToRes: This is currently used by the slicer to ensure consistency of instance numbers,
+			//ggerade ToDo: Going to deal with this elsewhere, still determine direction here I suppose
+			//  This is currently used by the slicer to ensure consistency of instance numbers,
 			//	I'm not sure it's really relevant in the end, but based on the current implementation it keeps the
 			//	"native" MPR DisplaySet in sync with the source DisplaySet.
-			//double direction = frames[1].SliceLocation - frames[0].SliceLocation;
-			double direction = Math.Abs(volumeOrientation[2, 0]) * (frames[1].ImagePositionPatient.X - frames[0].ImagePositionPatient.X) +
-			                   volumeOrientation[2, 1] * (frames[1].ImagePositionPatient.Y - frames[0].ImagePositionPatient.Y) +
-			                   volumeOrientation[2, 2] * (frames[1].ImagePositionPatient.Z - frames[0].ImagePositionPatient.Z);
-			bool instanceAndSliceLocationReversed = direction < 0;
-
-			vtkImageData imageData = new vtkImageData();
+			//double direction = Math.Abs(volumeOrientation[2, 0]) *
+			//                   (frames[1].ImagePositionPatient.X - frames[0].ImagePositionPatient.X) +
+			//                   volumeOrientation[2, 1] * (frames[1].ImagePositionPatient.Y - frames[0].ImagePositionPatient.Y) +
+			//                   volumeOrientation[2, 2] * (frames[1].ImagePositionPatient.Z - frames[0].ImagePositionPatient.Z);
+			//bool instanceAndSliceLocationReversed = direction < 0;
 
 			bool dataUnsigned = frames[0].PixelRepresentation == 0;
 
 			// Currently relying on the frames being uniform, so we'll just use the first frame for width/height
-			int width = frames[0].Columns;
-			int height = frames[0].Rows;
-			int depth = frames.Count;
-			int volumeSize = width * height * depth;
-			imageData.SetDimensions(width, height, depth);
+			Vector3D dimensions = new Vector3D(frames[0].Columns, frames[0].Rows, frames.Count);
+			int volumeSize = (int) (dimensions.X * dimensions.Y * dimensions.Z);
 
-			double spacingX = frames[0].PixelSpacing.Column;
-			double spacingY = frames[0].PixelSpacing.Row;
-			double spacingZ = CalcSliceSpacing(frames);
-			imageData.SetSpacing(spacingX, spacingY, spacingZ);
+			// Sort the frames by slice location to ensure coordinate consistency in our volumes
+			frames.Sort(new SliceLocationComparer());
+			Vector3D originPatient = new Vector3D((float)frames[0].ImagePositionPatient.X,
+								  (float)frames[0].ImagePositionPatient.Y,
+								  (float)frames[0].ImagePositionPatient.Z);
 
-			double originX, originY, originZ;
-
-			// Now sort by slice location to ensure we get the VTK coordinates in sync
-			if (volumeOrientation[0,0] == 1 && volumeOrientation[1,1] == 1) // axial
-			{
-				frames.Sort(new SliceLocationComparer());
-				originX = frames[0].ImagePositionPatient.X;
-				originY = frames[0].ImagePositionPatient.Y;
-				originZ = frames[0].ImagePositionPatient.Z;
-			}
-			else if (volumeOrientation[0,0] == 1)  // coronal
-			{
-				frames.Sort(new SliceLocationComparer(true));
-				originX = frames[0].ImagePositionPatient.X;
-				originY = frames[0].ImagePositionPatient.Z;
-				originZ = frames[0].ImagePositionPatient.Y;
-			}
-			else
-			{
-				frames.Sort(new SliceLocationComparer(true));
-				originX = frames[0].ImagePositionPatient.Y;
-				originY = frames[0].ImagePositionPatient.Z;
-				originZ = frames[0].ImagePositionPatient.X;
-			}
-
-			imageData.SetOrigin(originX, originY, originZ);
-
-			// Transform patient origin to normalized VTK origin
-			//Vector3D vtkOrigin = TransformPatientOrigin(frames[0].ImagePositionPatient, volumeOrientation);
-			//imageData.SetOrigin(vtkOrigin.X, vtkOrigin.Y, vtkOrigin.Z);
+			Vector3D spacingPatient = new Vector3D((float) frames[0].PixelSpacing.Column, (float) frames[0].PixelSpacing.Row,
+			                                CalcSliceSpacing(frames));
 
 			if (dataUnsigned)
 			{
-				imageData.SetScalarTypeToUnsignedShort();
-				imageData.AllocateScalars();
-
 				ushort[] volumeArray = BuildVolumeUnsignedShortArray(frames, volumeSize);
 
-				imageData.GetPointData().SetScalars(CreateVtkUnsignedShortArrayWrapper(volumeArray));
-
-				// This call is necessary to ensure vtkImageData data's info is correct (e.g. updates WholeExtent values)
-				imageData.UpdateInformation();
-
-				Volume vol = new Volume(volumeArray, imageData, volumeOrientation, modelDicomFile, instanceAndSliceLocationReversed);
+				Volume vol = new Volume(volumeArray, dimensions, spacingPatient, originPatient, orientationPatientMatrix, modelDicomFile);
 				return vol;
 			}
 			else
 			{
-				imageData.SetScalarTypeToShort();
-				imageData.AllocateScalars();
-
 				short[] volumeArray = BuildVolumeShortArray(frames, volumeSize);
 
-				imageData.GetPointData().SetScalars(CreateVtkShortArrayWrapper(volumeArray));
-
-				imageData.UpdateInformation();
-
-				Volume vol = new Volume(volumeArray, imageData, volumeOrientation, modelDicomFile, instanceAndSliceLocationReversed);
+				Volume vol = new Volume(volumeArray, dimensions, spacingPatient, originPatient, orientationPatientMatrix, modelDicomFile);
 				return vol;
 			}
 		}
-
-		// This was intended to create a volume without the vtkImageData, may still be useful
-		//public static Volume BuildVolume2(IList<Frame> frames)
-		//{
-		//    // Clone the first frame's dicom header info and use it as the volume model
-		//    DicomFile firstFrameDicomFile = (DicomFile)frames[1].ParentImageSop.NativeDicomObject;
-		//    DicomFile modelDicomFile = new DicomFile("", firstFrameDicomFile.MetaInfo.Copy(), firstFrameDicomFile.DataSet.Copy());
-
-		//    Volume vol = new Volume(volShortArray, dataUnsigned,
-		//                            frames[0].Columns, frames[0].Rows, frames.Count,
-		//                            frames[0].PixelSpacing.Column, frames[0].PixelSpacing.Row, CalcSliceSpacing(frames),
-		//                            0, 0, 0,
-		//                            modelDicomFile);
-		//    return vol;
-		//}
 
 		#endregion
 
@@ -339,8 +276,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private static Matrix ImageOrientationPatientToMatrix(ImageOrientationPatient orientation)
 		{
-			Vector3D xOrient = new Vector3D((float)orientation.RowX, (float)orientation.RowY, (float)orientation.RowZ);
-			Vector3D yOrient = new Vector3D((float)orientation.ColumnX, (float)orientation.ColumnY, (float)orientation.ColumnZ);
+			Vector3D xOrient = new Vector3D((float) orientation.RowX, (float) orientation.RowY, (float) orientation.RowZ);
+			Vector3D yOrient = new Vector3D((float) orientation.ColumnX, (float) orientation.ColumnY, (float) orientation.ColumnZ);
 			Vector3D zOrient = xOrient.Cross(yOrient);
 
 			Matrix matrix = new Matrix(4, 4, new float[4,4]
@@ -355,20 +292,31 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private static Vector3D TransformPatientOrigin(ImagePositionPatient patientOrigin, Matrix volumeOrientation)
 		{
-			Matrix normalPatientOrigin = new Matrix(4, 4,
-			                                        new float[4,4]
+			//Matrix normalPatientOrigin = new Matrix(4, 4,
+			//                                        new float[4,4]
+			//                                            {
+			//                                                {1, 0, 0, 0},
+			//                                                {0, 1, 0, 0},
+			//                                                {0, 0, 1, 0},
+			//                                                {
+			//                                                    (float) patientOrigin.X, (float) patientOrigin.Y,
+			//                                                    (float) patientOrigin.Z, 1
+			//                                                }
+			//                                            });
+			//Matrix transformedOrigin = normalPatientOrigin * volumeOrientation;
+			//return new Vector3D(transformedOrigin[3, 0], transformedOrigin[3, 1], transformedOrigin[3, 2]);
+
+			Matrix normalPatientOrigin = new Matrix(4, 1,
+			                                        new float[4,1]
 			                                        	{
-			                                        		{1, 0, 0, 0},
-			                                        		{0, 1, 0, 0},
-			                                        		{0, 0, 1, 0},
-			                                        		{
-			                                        			(float)patientOrigin.X, (float)patientOrigin.Y,
-			                                        			(float)patientOrigin.Z, 1
-			                                        		}
+			                                        		{(float) patientOrigin.X},
+			                                        		{(float) patientOrigin.Y},
+			                                        		{(float) patientOrigin.Z},
+			                                        		{1}
 			                                        	});
 
-			Matrix transformedOrigin = normalPatientOrigin * volumeOrientation;
-			return new Vector3D(transformedOrigin[3, 0], transformedOrigin[3, 1], transformedOrigin[3, 2]);
+			Matrix transformedOrigin = volumeOrientation * normalPatientOrigin;
+			return new Vector3D(transformedOrigin[0, 0], transformedOrigin[1, 0], transformedOrigin[2, 0]);
 		}
 
 		private static short[] BuildVolumeShortArray(IEnumerable<Frame> frames, int volumeSize)
@@ -381,8 +329,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				byte[] frameData = frame.GetNormalizedPixelData();
 
-				int start = imageIndex * frameData.Length / sizeof(short);
-				int end = start + frameData.Length / sizeof(short);
+				int start = imageIndex * frameData.Length / sizeof (short);
+				int end = start + frameData.Length / sizeof (short);
 
 #if false // Safe code. Below, used unsafe code to work with shorts directly
 				int j = 0;
@@ -402,7 +350,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					// The fixed statement "pins" the frame data, ensuring the GC won't move the referenced data
 					fixed (byte* pbFrame = frameData)
 					{
-						short* psFrame = (short*)pbFrame;
+						short* psFrame = (short*) pbFrame;
 						int j = 0;
 						for (int i = start; i < end; i++)
 						{
@@ -437,27 +385,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				{
 					ushort lowbyte = sliceData[j];
 					ushort highbyte = sliceData[j + 1];
-					volumeArray[i] = (ushort)((highbyte << 8) | lowbyte);
+					volumeArray[i] = (ushort) ((highbyte << 8) | lowbyte);
 					j += 2;
 				}
 
 				imageIndex++;
 			}
 			return volumeArray;
-		}
-
-		private static vtkShortArray CreateVtkShortArrayWrapper(short[] shortArray)
-		{
-			vtkShortArray vtkShortArray = new vtkShortArray();
-			vtkShortArray.SetArray(shortArray, shortArray.Length, 1);
-			return vtkShortArray;
-		}
-
-		private static vtkUnsignedShortArray CreateVtkUnsignedShortArrayWrapper(ushort[] ushortArray)
-		{
-			vtkUnsignedShortArray vtkUnsignedShortArray = new vtkUnsignedShortArray();
-			vtkUnsignedShortArray.SetArray(ushortArray, ushortArray.Length, 1);
-			return vtkUnsignedShortArray;
 		}
 
 #if false // this may be useful for working with unmanaged memory instead of pinned managed memory

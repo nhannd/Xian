@@ -69,6 +69,13 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			_columns = columns;
 		}
 
+		public Matrix(Matrix src)
+		{
+			_rows = src._rows;
+			_columns = src._columns;
+			_matrix = (float[,])src._matrix.Clone();
+		}
+
 		/// <summary>
 		/// Gets the number of rows in the matrix.
 		/// </summary>
