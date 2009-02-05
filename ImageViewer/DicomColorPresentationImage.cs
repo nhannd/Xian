@@ -58,9 +58,6 @@ namespace ClearCanvas.ImageViewer
 		public DicomColorPresentationImage(Frame frame)
 			: this(frame.CreateTransientReference())
 		{
-			Platform.CheckForNullReference(frame, "frame");
-
-			_frameReference = frame.CreateTransientReference();
 		}
 
 		public DicomColorPresentationImage(IFrameReference frameReference)

@@ -64,8 +64,6 @@ namespace ClearCanvas.ImageViewer
 		public DicomGrayscalePresentationImage(Frame frame)
 			: this(frame.CreateTransientReference())
 		{
-			Platform.CheckForNullReference(frame, "frame");
-			_frameReference = frame.CreateTransientReference();
 		}
 		
 		public DicomGrayscalePresentationImage(IFrameReference frameReference)
