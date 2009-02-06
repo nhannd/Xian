@@ -58,9 +58,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private readonly Matrix _orientationPatientMatrix;
 		private readonly DicomMessageBase _modelDicom;
 
-		private readonly Vector3D _origin = new Vector3D(0,0,0);
+		private readonly Vector3D _origin = new Vector3D(0, 0, 0);
 
-		private vtkImageData _vtkImageData;
+		private vtkImageData _cachedVtkVolume;
 
 		// This handle is used to pin the volume array
 		private GCHandle _volArrayPinnedHandle;
@@ -71,7 +71,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Initialization
 
-		internal Volume(short[] volShortArray, Vector3D dimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPateintMatrix, DicomMessageBase modelDicom)
+		internal Volume(short[] volShortArray, Vector3D dimensions, Vector3D spacing, Vector3D originPatient,
+		                Matrix orientationPateintMatrix, DicomMessageBase modelDicom)
 			: this(dimensions, spacing, originPatient, orientationPateintMatrix, modelDicom)
 		{
 			_volShortArray = volShortArray;
@@ -80,14 +81,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_volArrayPinnedHandle = GCHandle.Alloc(_volShortArray, GCHandleType.Pinned);
 		}
 
-		internal Volume(ushort[] volUnsignedShortArray, Vector3D dimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatientMatrix, DicomMessageBase modelDicom)
+		internal Volume(ushort[] volUnsignedShortArray, Vector3D dimensions, Vector3D spacing, Vector3D originPatient,
+		                Matrix orientationPatientMatrix, DicomMessageBase modelDicom)
 			: this(dimensions, spacing, originPatient, orientationPatientMatrix, modelDicom)
 		{
 			_volUnsignedShortArray = volUnsignedShortArray;
 			_volArrayPinnedHandle = GCHandle.Alloc(_volUnsignedShortArray, GCHandleType.Pinned);
 		}
 
-		private Volume(Vector3D dimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatientMatrix, DicomMessageBase modelDicom)
+		private Volume(Vector3D dimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatientMatrix,
+		               DicomMessageBase modelDicom)
 		{
 			_dimensions = dimensions;
 			_spacing = spacing;
@@ -130,46 +133,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return _volUnsignedShortArray != null;
 		}
 
-		public vtkImageData _VtkImageData
+		public vtkImageData _VtkVolume
 		{
 			get
 			{
-				if (_vtkImageData == null)
-				{
-					_vtkImageData = new vtkImageData();
-
-					_vtkImageData.SetDimensions((int)Dimensions.X, (int)Dimensions.Y, (int)Dimensions.Z);
-					_vtkImageData.SetSpacing(Spacing.X, Spacing.Y, Spacing.Z);
-					//_vtkImageData.SetOrigin(OriginPatient.X, OriginPatient.Y, OriginPatient.Z);
-
-					if (IsDataUnsigned())
-					{
-						_vtkImageData.SetScalarTypeToUnsignedShort();
-						_vtkImageData.AllocateScalars();
-
-						_vtkImageData.GetPointData().SetScalars(CreateVtkUnsignedShortArrayWrapper(_volUnsignedShortArray));
-
-						// This call is necessary to ensure vtkImageData data's info is correct (e.g. updates WholeExtent values)
-						_vtkImageData.UpdateInformation();
-					}
-					else
-					{
-						_vtkImageData.SetScalarTypeToShort();
-						_vtkImageData.AllocateScalars();
-
-						_vtkImageData.GetPointData().SetScalars(CreateVtkShortArrayWrapper(_volShortArray));
-
-						_vtkImageData.UpdateInformation();
-					}
-					
-				}
-				return _vtkImageData;
+				if (_cachedVtkVolume == null)
+					_cachedVtkVolume = CreateVtkVolume();
+				return _cachedVtkVolume;
 			}
 		}
 
 		public int SizeInVoxels
 		{
-			get { return (int)(Dimensions.X * Dimensions.Y * Dimensions.Z); }
+			get { return (int) (Dimensions.X * Dimensions.Y * Dimensions.Z); }
 		}
 
 		public float MinXCoord
@@ -202,37 +178,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return (Origin.Z + Spacing.Z * Dimensions.Z); }
 		}
 
-		//public float MinXCoord
-		//{
-		//    get { return OriginPatient.X; }
-		//}
-
-		//public float MaxXCoord
-		//{
-		//    get { return (OriginPatient.X + Spacing.X * Dimensions.X); }
-		//}
-
-		//public float MinYCoord
-		//{
-		//    get { return OriginPatient.Y; }
-		//}
-
-		//public float MaxYCoord
-		//{
-		//    get { return (OriginPatient.Y + Spacing.Y * Dimensions.Y); }
-		//}
-
-		//public float MinZCoord
-		//{
-		//    get { return OriginPatient.Z; }
-		//}
-
-		//public float MaxZCoord
-		//{
-		//    get { return (OriginPatient.Z + Spacing.Z * Dimensions.Z); }
-		//}
-
-		public float MinSpacing
+		public float EffectiveSpacing
 		{
 			get { return Math.Min(Math.Min(Spacing.X, Spacing.Y), Spacing.Z); }
 		}
@@ -261,13 +207,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Matrix volToPat = new Matrix(OrientationPatientMatrix);
 			// Set origin translation
 			volToPat.SetRow(3, OriginPatient.X, OriginPatient.Y, OriginPatient.Z, 1);
-			
+
 			// Transform image position to patient position
 			Matrix imagePositionMatrix = new Matrix(1, 4);
 			imagePositionMatrix.SetRow(0, volumePosition.X, volumePosition.Y, volumePosition.Z, 1F);
-			Matrix transformed = imagePositionMatrix * volToPat;
+			Matrix patientPositionMatrix = imagePositionMatrix * volToPat;
 
-			Vector3D patientPosition = new Vector3D(transformed[0, 0], transformed[0, 1], transformed[0, 2]);
+			Vector3D patientPosition = new Vector3D(patientPositionMatrix[0, 0], patientPositionMatrix[0, 1],
+			                                        patientPositionMatrix[0, 2]);
 			return patientPosition;
 		}
 
@@ -276,8 +223,39 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Matrix orientationPatient = orientationImage * OrientationPatientMatrix;
 			return orientationPatient;
 		}
-       
+
 		#endregion
+
+		#region VTK stuff
+
+		private vtkImageData CreateVtkVolume()
+		{
+			vtkImageData vtkVolume = new vtkImageData();
+
+			vtkVolume.SetDimensions((int)Dimensions.X, (int)Dimensions.Y, (int)Dimensions.Z);
+			vtkVolume.SetOrigin(0, 0, 0);
+			vtkVolume.SetSpacing(Spacing.X, Spacing.Y, Spacing.Z);
+
+			if (IsDataUnsigned())
+			{
+				vtkVolume.SetScalarTypeToUnsignedShort();
+				vtkVolume.AllocateScalars();
+
+				vtkVolume.GetPointData().SetScalars(CreateVtkUnsignedShortArrayWrapper(_volUnsignedShortArray));
+			}
+			else
+			{
+				vtkVolume.SetScalarTypeToShort();
+				vtkVolume.AllocateScalars();
+
+				vtkVolume.GetPointData().SetScalars(CreateVtkShortArrayWrapper(_volShortArray));
+			}
+
+			// This call is necessary to ensure vtkImageData data's info is correct (e.g. updates WholeExtent values)
+			vtkVolume.UpdateInformation();
+
+			return vtkVolume;
+		}
 
 		private static vtkShortArray CreateVtkShortArrayWrapper(short[] shortArray)
 		{
@@ -292,6 +270,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			vtkUnsignedShortArray.SetArray(ushortArray, ushortArray.Length, 1);
 			return vtkUnsignedShortArray;
 		}
+
+		#endregion
 
 		#region Disposal
 
@@ -315,8 +295,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				_disposed = true;
 				//can only call Free once or it throws
 				_volArrayPinnedHandle.Free();
-				if (_vtkImageData != null)
-					_vtkImageData.Dispose();
+				if (_cachedVtkVolume != null)
+					_cachedVtkVolume.Dispose();
 			}
 		}
 

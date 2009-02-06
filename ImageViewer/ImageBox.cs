@@ -217,7 +217,7 @@ namespace ClearCanvas.ImageViewer
 
 					// Force the images in the display set to fill
 					// the tiles of this image box
-					this.TopLeftPresentationImageIndex = 0;
+					this.TopLeftPresentationImageIndex = _presetTopLeftPresentationImageIndex;
 					_displaySet.Selected = this.Selected;
 				}
 
@@ -437,6 +437,16 @@ namespace ClearCanvas.ImageViewer
 					imageIndex = value;
 
 				FlowImages(imageIndex);
+			}
+		}
+
+		//ggerade ToRes: Review with Stewart
+		private int _presetTopLeftPresentationImageIndex;
+		public int PresetTopLeftPresentationImageIndex
+		{
+			set
+			{
+				_presetTopLeftPresentationImageIndex = value;
 			}
 		}
 

@@ -149,6 +149,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_sops[sop.SopInstanceUID] = sop;
 		}
 
+		public void RemoveSop(Sop sop)
+		{
+			//ggerade ToRes: Hmm, what's the right way to manage this? This whole study tree needs to get resolved
+			//	to deal with changing DisplaySets I suppose...
+			_sops[sop.SopInstanceUID] = null;
+		}
+
 		private void AddPatient(Sop sop)
 		{
 			if (_patients[sop.PatientId] != null)
@@ -257,5 +264,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		#endregion
+
 	}
 }
