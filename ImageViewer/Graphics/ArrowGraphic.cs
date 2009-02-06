@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -16,6 +17,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		[CloneIgnore]
 		private InvariantArrowheadGraphic _arrowhead;
 
+		private event EventHandler<PointChangedEventArgs> _startPointChanged;
+		private event EventHandler<PointChangedEventArgs> _endPointChanged;
+
+		private bool _visible = true;
+		private bool _showArrowhead = true;
+
 		/// <summary>
 		/// Constructs an arrow graphic.
 		/// </summary>
@@ -30,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="showArrow">A value indicating if the arrowhead should be shown.</param>
 		public ArrowGraphic(bool showArrow) : this()
 		{
-			_arrowhead.Visible = showArrow;
+			_showArrowhead = showArrow;
 		}
 
 		/// <summary>
@@ -51,7 +58,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (_arrowhead == null)
 			{
 				base.Graphics.Add(_arrowhead = new InvariantArrowheadGraphic());
+				_arrowhead.Visible = _showArrowhead;
 			}
+
+			_shaft.Pt1Changed += OnShaftPt1Changed;
+			_shaft.Pt2Changed += OnShaftPt2Changed;
 		}
 
 		[OnCloneComplete]
@@ -98,6 +109,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		public event EventHandler<PointChangedEventArgs> StartPointChanged
+		{
+			add { _startPointChanged += value; }
+			remove { _startPointChanged -= value; }
+		}
+
+		public event EventHandler<PointChangedEventArgs> EndPointChanged
+		{
+			add { _endPointChanged += value; }
+			remove { _endPointChanged -= value; }
+		}
+
 		/// <summary>
 		/// Gets or sets the line style to be used on the arrowhead.
 		/// </summary>
@@ -112,8 +135,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public bool ShowArrowhead
 		{
-			get { return _arrowhead.Visible; }
-			set { _arrowhead.Visible = value & this.Visible; }
+			get { return _showArrowhead; }
+			set
+			{
+				if (_showArrowhead != value)
+				{
+					_showArrowhead = value;
+					UpdateArrowheadVisibility();
+				}
+			}
 		}
 
 		/// <summary>
@@ -134,8 +164,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			set { _shaft.LineStyle = value; }
 		}
 
-		internal InvariantArrowheadGraphic Arrowhead {
-			get { return _arrowhead; }
+		/// <summary>
+		/// Gets or sets a value indicating whether this arrow is visible.
+		/// </summary>
+		public override bool Visible
+		{
+			get { return _visible; }
+			set
+			{
+				_visible = _shaft.Visible = value;
+				UpdateArrowheadVisibility();
+			}
 		}
 
 		/// <summary>
@@ -177,6 +216,34 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private void UpdateArrowheadAngle()
 		{
 			_arrowhead.Angle = (int) Vector.SubtendedAngle(_shaft.Pt2, _shaft.Pt1, _shaft.Pt1 + new SizeF(1, 0));
+			UpdateArrowheadVisibility();
+		}
+
+		private void UpdateArrowheadVisibility()
+		{
+			_shaft.CoordinateSystem = CoordinateSystem.Destination;
+			try
+			{
+				// if arrowhead option is true and the graphic is visible, only show arrowhead if line is long enough!
+				if (_showArrowhead && _visible)
+					_arrowhead.Visible = Vector.Distance(_shaft.Pt1, _shaft.Pt2) > _arrowhead.Height;
+				else
+					_arrowhead.Visible = false;
+			}
+			finally
+			{
+				_shaft.ResetCoordinateSystem();
+			}
+		}
+
+		private void OnShaftPt1Changed(object sender, PointChangedEventArgs e)
+		{
+			EventsHelper.Fire(_startPointChanged, this, new PointChangedEventArgs(e.Point));
+		}
+
+		private void OnShaftPt2Changed(object sender, PointChangedEventArgs e)
+		{
+			EventsHelper.Fire(_endPointChanged, this, new PointChangedEventArgs(e.Point));
 		}
 	}
 }
