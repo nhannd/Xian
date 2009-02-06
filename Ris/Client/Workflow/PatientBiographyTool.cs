@@ -40,7 +40,6 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -60,6 +59,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(EmergencyWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(PatientSearchToolExtensionPoint))]
+	[ExtensionOf(typeof(RadiologistAdminWorkflowItemToolExtensionPoint))]
     public class PatientBiographyTool : Tool<IToolContext>
     {
         private bool _enabled;
