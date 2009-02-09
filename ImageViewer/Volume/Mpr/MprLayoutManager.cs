@@ -75,6 +75,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private DisplaySet _sagittalDisplaySet;
 		private DisplaySet _coronalDisplaySet;
 		private DisplaySet _axialDisplaySet;
+		private DisplaySet _obliqueDisplaySet;
 
 		#endregion
 
@@ -90,6 +91,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_sagittalDisplaySet = VolumeSlicer.CreateSagittalDisplaySet(_volume);
 			_coronalDisplaySet = VolumeSlicer.CreateCoronalDisplaySet(_volume);
 			_axialDisplaySet = VolumeSlicer.CreateAxialDisplaySet(_volume);
+			// Hey, I said it was a hack!
+			_obliqueDisplaySet = VolumeSlicer.CreateObliqueDisplaySet(_volume, 30, 30, 30);
+			rotateXs[3] = 30;
+			rotateYs[3] = 30;
+			rotateZs[3] = 30;
 		}
 
 		public override void Layout()
@@ -103,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		protected override void LayoutPhysicalWorkspace()
 		{
-			ImageViewer.PhysicalWorkspace.SetImageBoxGrid(1, 3);
+			ImageViewer.PhysicalWorkspace.SetImageBoxGrid(2, 2);
 
 			foreach (IImageBox imageBox in ImageViewer.PhysicalWorkspace.ImageBoxes)
 				imageBox.SetTileGrid(1, 1);
@@ -119,6 +125,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			physicalWorkspace.ImageBoxes[1].TopLeftPresentationImageIndex = _coronalDisplaySet.PresentationImages.Count / 2;
 			physicalWorkspace.ImageBoxes[2].DisplaySet = _axialDisplaySet;
 			physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = _axialDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[3].DisplaySet = _obliqueDisplaySet;
+			physicalWorkspace.ImageBoxes[3].TopLeftPresentationImageIndex = _obliqueDisplaySet.PresentationImages.Count / 2;
 
 			//TODO: Add this property and use it to disable the Layout Components (in Layout.Basic).
 			//physicalWorkspace.IsReadOnly = true;
@@ -128,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Really Hacked Up MPR "rotations"
 
-		public void RotatePresentationImage(IPresentationImage presImage, int rotateX, int rotateY)
+		public void RotatePresentationImage(IPresentationImage presImage, int rotateX, int rotateY, int rotateZ)
 		{
 			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
 
@@ -149,15 +157,21 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				viewIndex = 2;
 				displaySet = _axialDisplaySet;
 			}
+			else if (presImage == physicalWorkspace.ImageBoxes[3].TopLeftPresentationImage) // oblique
+			{
+				viewIndex = 3;
+				displaySet = _obliqueDisplaySet;
+			}
 			else
 				return;
 
 			// Short circuit if nothing changed
-			if (rotateXs[viewIndex] == rotateX && rotateYs[viewIndex] == rotateY)
+			if (rotateXs[viewIndex] == rotateX && rotateYs[viewIndex] == rotateY && rotateZs[viewIndex] == rotateZ)
 				return;
 			
 			rotateXs[viewIndex] = rotateX;
 			rotateYs[viewIndex] = rotateY;
+			rotateZs[viewIndex] = rotateZ;
 
 			// Hang on to the current index, we'll keep it the same with the new DisplaySet
 			int currentIndex = physicalWorkspace.ImageBoxes[viewIndex].TopLeftPresentationImageIndex;
@@ -177,6 +191,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				case 2:
 					displaySet = _axialDisplaySet = VolumeSlicer.CreateAxialDisplaySet(_volume, rotateX, rotateY);
 					break;
+				case 3:
+					displaySet = _axialDisplaySet = VolumeSlicer.CreateObliqueDisplaySet(_volume, rotateX, rotateY, rotateZ);
+					break;
 			}
 
 			AddAllSopsToStudyTree(ImageViewer.StudyTree, displaySet);
@@ -192,8 +209,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			physicalWorkspace.ImageBoxes[viewIndex].Draw();
 		}
 
-		private int[] rotateXs = new int[3];
-		private int[] rotateYs = new int[3];
+		private int[] rotateXs = new int[4];
+		private int[] rotateYs = new int[4];
+		private int[] rotateZs = new int[4];
 
 		public int GetPresentationImageRotationX(IPresentationImage presImage)
 		{
@@ -219,6 +237,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return rotateYs[viewIndex];
 		}
 
+		public int GetPresentationImageRotationZ(IPresentationImage presImage)
+		{
+			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
+
+			int viewIndex;
+			for (viewIndex = 0; viewIndex < physicalWorkspace.ImageBoxes.Count; viewIndex++)
+				if (presImage == physicalWorkspace.ImageBoxes[viewIndex].TopLeftPresentationImage)
+					break;
+
+			return rotateZs[viewIndex];
+		}
+
 		#endregion
 
 		#region StudyTree helpers
@@ -228,6 +258,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			AddAllSopsToStudyTree(tree, _sagittalDisplaySet);
 			AddAllSopsToStudyTree(tree, _coronalDisplaySet);
 			AddAllSopsToStudyTree(tree, _axialDisplaySet);
+			AddAllSopsToStudyTree(tree, _obliqueDisplaySet);
 		}
 
 		// Note: The overlays expect that a Sop is parented by a Series, so this was the easiest way
@@ -273,5 +304,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		}
 
 		#endregion
+
 	}
 }

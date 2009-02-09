@@ -57,12 +57,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private readonly Vector3D _originPatient;
 		private readonly Matrix _orientationPatientMatrix;
 		private readonly DicomMessageBase _modelDicom;
-
+		// Decided to keep the volume origin at 0,0,0 and translate to patient coordinates
+		//	when needed. This mimics the typical image to patient coordintate transform.
 		private readonly Vector3D _origin = new Vector3D(0, 0, 0);
 
+		// As pertinent volume fields are currently readonly, we only have to create the
+		//	VTK volume wrapper once for each volume.
 		private vtkImageData _cachedVtkVolume;
 
-		// This handle is used to pin the volume array
+		// This handle is used to pin the volume array. Whenever VTK operates on the volume,
+		//	the volume array must be pinned.
 		private GCHandle _volArrayPinnedHandle;
 
 		private bool _disposed;

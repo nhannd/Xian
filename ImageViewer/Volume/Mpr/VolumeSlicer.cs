@@ -46,35 +46,41 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	/// <summary>
 	/// Volume utility class aids in extracting 2D slices from a Volume
 	/// </summary>
-	internal static class VolumeSlicer
+	internal class VolumeSlicer
 	{
+		#region fields
+
+		private InterpolationModes _interpolationMode = InterpolationModes.Linear;
+
+		#endregion
+
 		#region Public methods
 
 		#region Create ImageSop Utilities
 		// Note: These interfaces are currently unused, keeping around for future utility purposes
 
-		public static ImageSop CreateSagittalSlice(Volume vol, Vector3D sliceThroughPoint)
+		public ImageSop CreateSagittalSlice(Volume vol, Vector3D sliceThroughPoint)
 		{
 			Matrix resliceAxes = CreateResliceAxesSagittal(sliceThroughPoint);
 
 			return CreateSlice(vol, resliceAxes);
 		}
 
-		public static ImageSop CreateCoronalSlice(Volume vol, Vector3D sliceThroughPoint)
+		public ImageSop CreateCoronalSlice(Volume vol, Vector3D sliceThroughPoint)
 		{
 			Matrix resliceAxes = CreateResliceAxesCoronal(sliceThroughPoint);
 
 			return CreateSlice(vol, resliceAxes);
 		}
 
-		public static ImageSop CreateAxialSlice(Volume vol, Vector3D sliceThroughPoint)
+		public ImageSop CreateAxialSlice(Volume vol, Vector3D sliceThroughPoint)
 		{
 			Matrix resliceAxes = CreateResliceAxesAxial(sliceThroughPoint);
 
 			return CreateSlice(vol, resliceAxes);
 		}
 
-		private static ImageSop CreateSlice(Volume vol, Matrix resliceAxes)
+		private ImageSop CreateSlice(Volume vol, Matrix resliceAxes)
 		{
 			vtkImageData vtkSlice = GenerateVtkSlice(vol, resliceAxes);
 
@@ -112,9 +118,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				// First time through columns and rows will be calculated, subsequent calls will use the values returned
 				//	from the first image. 
-				//ggerade ToDo: Note that this assumes all slices will be the same size, which is only true for orthognal slices
-				//	of a cuboid volume. We'll need a solution for the not so nice cases.
-				ImageSop imageSop = CreateSagittalSliceDelayPixelData(vol, point, ref columns, ref rows, rotateX, rotateY);
+				ImageSop imageSop = CreateSagittalSliceDelayPixelData(vol, point, rotateX, rotateY, ref columns, ref rows);
 				DicomGrayscalePresentationImage presImage = new DicomGrayscalePresentationImage(imageSop.Frames[1]);
 
 				PatchUpSeriesLevelDicomAttributes(presImage, sliceIndex, seriesInstanceUid, spacing);
@@ -151,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				// First time through columns and rows will be calculated, subsequent calls will use the values returned
 				//	from the first image.
-				ImageSop imageSop = CreateCoronalSliceDelayPixelData(vol, point, ref columns, ref rows, rotateX, rotateY);
+				ImageSop imageSop = CreateCoronalSliceDelayPixelData(vol, point, rotateX, rotateY, ref columns, ref rows);
 				DicomGrayscalePresentationImage presImage = new DicomGrayscalePresentationImage(imageSop.Frames[1]);
 
 				PatchUpSeriesLevelDicomAttributes(presImage, sliceIndex, seriesInstanceUid, spacing);
@@ -170,7 +174,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		internal static DisplaySet CreateAxialDisplaySet(Volume vol, int rotateX, int rotateY)
 		{
 			DisplaySet displaySet = new DisplaySet(String.Format("{0} (Axial)", "MPR"),
-			                                       String.Format("Axial.{0}", Guid.NewGuid()));
+												   String.Format("Axial.{0}", Guid.NewGuid()));
 
 			// A new series UID for our new Sops
 			string seriesInstanceUid = DicomUid.GenerateUid().UID;
@@ -188,7 +192,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				// First time through columns and rows will be calculated, subsequent calls will use the values returned
 				//	from the first image.
-				ImageSop imageSop = CreateAxialSliceDelayPixelData(vol, point, ref columns, ref rows, rotateX, rotateY);
+				ImageSop imageSop = CreateAxialSliceDelayPixelData(vol, point, rotateX, rotateY, ref columns, ref rows);
 
 				DicomGrayscalePresentationImage presImage = new DicomGrayscalePresentationImage(imageSop.Frames[1]);
 
@@ -196,6 +200,49 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				displaySet.PresentationImages.Add(presImage);
 			}
+
+			return displaySet;
+		}
+
+		internal static DisplaySet CreateObliqueDisplaySet(Volume vol, int rotateX, int rotateY, int rotateZ)
+		{
+			DisplaySet displaySet = new DisplaySet(String.Format("{0} (Oblique)", "MPR"),
+												   String.Format("Oblique.{0}", Guid.NewGuid()));
+
+			// A new series UID for our new Sops
+			string seriesInstanceUid = DicomUid.GenerateUid().UID;
+
+			// Slice through this point, start with center
+			Vector3D point = vol.CalcCenterPoint();
+
+			float spacing = vol.Spacing.Z;
+			int sliceIndex = 0;
+			int columns = 0, rows = 0;
+#if true
+			ImageSop imageSop = CreateObliqueSliceDelayPixelData(vol, point, rotateX, rotateY, rotateZ, ref columns, ref rows);
+
+			DicomGrayscalePresentationImage presImage = new DicomGrayscalePresentationImage(imageSop.Frames[1]);
+
+			PatchUpSeriesLevelDicomAttributes(presImage, sliceIndex, seriesInstanceUid, spacing);
+
+			displaySet.PresentationImages.Add(presImage);
+#else
+
+			for (float pos = vol.MinZCoord; pos + 0.001f < vol.MaxZCoord; sliceIndex++, pos = sliceIndex * spacing)
+			{
+				point.Z = pos;
+
+				// First time through columns and rows will be calculated, subsequent calls will use the values returned
+				//	from the first image.
+				ImageSop imageSop = CreateAxialSliceDelayPixelData(vol, point, rotateX, rotateY, ref columns, ref rows);
+
+				DicomGrayscalePresentationImage presImage = new DicomGrayscalePresentationImage(imageSop.Frames[1]);
+
+				PatchUpSeriesLevelDicomAttributes(presImage, sliceIndex, seriesInstanceUid, spacing);
+
+				displaySet.PresentationImages.Add(presImage);
+			}
+#endif
 
 			return displaySet;
 		}
@@ -218,9 +265,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		//ggerade ToRef: Once I figure out the whole column/row calc business, then these should be part of the
 		//	public interface, maybe an option to generate or not is in order?
 
-		private static ImageSop CreateSagittalSliceDelayPixelData(Volume vol, Vector3D point,
-															   ref int columns, ref int rows,
-															   int rotateX, int rotateY)
+		private static ImageSop CreateSagittalSliceDelayPixelData(Volume vol, Vector3D point, int rotateX, int rotateY, ref int columns, ref int rows)
 		{
 			Matrix resliceAxes = CreateResliceAxesSagittal(point, rotateX, rotateY);
 
@@ -231,9 +276,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return imageSop;
 		}
 
-		private static ImageSop CreateCoronalSliceDelayPixelData(Volume vol, Vector3D point,
-															   ref int columns, ref int rows,
-															   int rotateX, int rotateY)
+		private static ImageSop CreateCoronalSliceDelayPixelData(Volume vol, Vector3D point, int rotateX, int rotateY, ref int columns, ref int rows)
 		{
 			Matrix resliceAxes = CreateResliceAxesCoronal(point, rotateX, rotateY);
 
@@ -244,11 +287,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return imageSop;
 		}
 
-		private static ImageSop CreateAxialSliceDelayPixelData(Volume vol, Vector3D point,
-		                                                       ref int columns, ref int rows,
-		                                                       int rotateX, int rotateY)
+		private static ImageSop CreateAxialSliceDelayPixelData(Volume vol, Vector3D point, int rotateX, int rotateY, ref int columns, ref int rows)
 		{
 			Matrix resliceAxes = CreateResliceAxesAxial(point, rotateX, rotateY);
+
+			if (columns == 0 || rows == 0)
+				CalcOutputDimensions(vol, resliceAxes, out columns, out rows);
+
+			ImageSop imageSop = CreateSliceImageSopDelayPixelData(vol, resliceAxes, columns, rows);
+			return imageSop;
+		}
+
+		private static ImageSop CreateObliqueSliceDelayPixelData(Volume vol, Vector3D point, int rotateX, int rotateY, int rotateZ, ref int columns, ref int rows)
+		{
+			Matrix resliceAxes = CreateResliceAxesOblique(point, rotateX, rotateY, rotateZ);
 
 			if (columns == 0 || rows == 0)
 				CalcOutputDimensions(vol, resliceAxes, out columns, out rows);
@@ -261,12 +313,29 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#endregion
 
+		#region Slicer Settings
+
+		internal enum InterpolationModes
+		{
+			NearestNeighbor,
+			Linear,
+			Cubic
+		}
+
+		internal InterpolationModes InterpolationMode
+		{
+			get { return _interpolationMode; }
+			set { _interpolationMode = value; }
+		}
+
+		#endregion
+
 		#endregion
 
 		#region Implementation
 
 		// This method is used by the VolumeSliceSopDataSource to generate pixel data on demand
-		internal static byte[] GenerateFrameNormalizedPixelData(Volume vol, Matrix resliceAxes)
+		internal byte[] GenerateFrameNormalizedPixelData(Volume vol, Matrix resliceAxes)
 		{
 			vtkImageData vtkSlice = GenerateVtkSlice(vol, resliceAxes);
 
@@ -278,7 +347,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		#region Dicom Slice Generation
 
 		// Extract slice in specified orientation
-		private static vtkImageData GenerateVtkSlice(Volume vol, Matrix resliceAxes)
+		private vtkImageData GenerateVtkSlice(Volume vol, Matrix resliceAxes)
 		{
 			vtkImageReslice reslicer = new vtkImageReslice();
 
@@ -286,10 +355,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			reslicer.SetInformationInput(vol._VtkVolume);
 
 			reslicer.SetOutputDimensionality(2);
-
-			//ggerade ToDo: Add interpolation mode interface
-			//reslicer.SetInterpolationModeToLinear();
-			reslicer.SetInterpolationModeToCubic();
 
 			// Note: When the VTK docs state that the output spacing defaults to the input data,
 			//	apparently they mean the raw volume. Without this call the spacing that is provided in the
@@ -304,6 +369,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			reslicer.SetResliceAxes(MatrixToVtkMatrix(resliceAxes));
 
 			//reslicer.SetOutputExtent(0,511,0,511,0,0);
+
+			switch (_interpolationMode)
+			{
+				case InterpolationModes.NearestNeighbor:
+					reslicer.SetInterpolationModeToNearestNeighbor();
+					break;
+				case InterpolationModes.Linear:
+					reslicer.SetInterpolationModeToLinear();
+					break;
+				case InterpolationModes.Cubic:
+					reslicer.SetInterpolationModeToCubic();
+					break;
+			}
 
 			vtkExecutive exec = reslicer.GetExecutive();
 			exec.Update();
@@ -346,7 +424,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			// Update Image Position (patient)
 			//
-			Vector3D topLeftOfSlicePatient = ConvertSliceCoordToPatient(new PointF(0, 0), vol, resliceAxes, rows, columns);
+			Vector3D topLeftOfSlicePatient = ConvertSliceCoordToPatient(new PointF(0, 0), vol, resliceAxes, columns, rows);
 
 			sliceDataSet[DicomTags.ImagePositionPatient].SetFloat32(0, topLeftOfSlicePatient.X);
 			sliceDataSet[DicomTags.ImagePositionPatient].SetFloat32(1, topLeftOfSlicePatient.Y);
@@ -355,17 +433,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return sliceDicom;
 		}
 
-		private static Vector3D ConvertSliceCoordToPatient(PointF sliceCoord, Volume vol, Matrix resliceAxes, int rows,
-		                                                   int columns)
+		private static Vector3D ConvertSliceCoordToPatient(PointF sliceCoord, Volume vol, Matrix resliceAxes, int columns, int rows)
 		{
 			Vector3D reslicePoint = GetReslicePoint(resliceAxes);
 
 			// Convert 2D slice coord to 3D volume point
+			//
 			Vector3D xVec = new Vector3D(resliceAxes[0, 0], resliceAxes[0, 1], resliceAxes[0, 2]);
 			Vector3D yVec = new Vector3D(resliceAxes[1, 0], resliceAxes[1, 1], resliceAxes[1, 2]);
 
-			// Determine spacing along our vectors. This is then used to adjust offset such that coordinates 
-			// are aligned in the center of our slices.
+//ggerade ToDo: Get the more generalzed else block below working...
+#if true
 			Vector3D spacingVec = new Vector3D(vol.Spacing.X, vol.Spacing.Y, vol.Spacing.Z);
 			float spacingX = Math.Abs(xVec.Dot(spacingVec));
 			float spacingY = Math.Abs(yVec.Dot(spacingVec));
@@ -375,11 +453,28 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			//	by the caller... not sure this works for all cases
 			float offsetX = ((columns / 2f) - sliceCoord.X) * vol.EffectiveSpacing - spacingX / 2;
 			float offsetY = ((rows / 2f) - sliceCoord.Y) * vol.EffectiveSpacing - spacingY / 2;
+#else
+			// Determine the plane coordinate of the reslice point, from this reference point we will
+			//	offset to the sliceCoord along the plane.
+			float resliceX = Math.Abs(xVec.Dot(reslicePoint));
+			float resliceY = Math.Abs(yVec.Dot(reslicePoint));
+			PointF reslicePlaneCoord = new PointF(resliceX / vol.EffectiveSpacing, resliceY / vol.EffectiveSpacing);
 
-			Vector3D volumeCoord = reslicePoint - (offsetX * xVec + offsetY * yVec);
+			// Determine spacing along our vectors, we'll use this to adjust our coordinates to
+			//	account for the "fence-post" rule
+			Vector3D spacingVec = new Vector3D(vol.Spacing.X, vol.Spacing.Y, vol.Spacing.Z);
+			float spacingX = xVec.Dot(spacingVec);
+			float spacingY = yVec.Dot(spacingVec);
 
-			// Convert volume top-left to patient point
-			return vol.ConvertToPatient(volumeCoord);
+			// These offsets define the x and y vector magnitudes to arrive at our Volume point
+			float offsetX = (reslicePlaneCoord.X - sliceCoord.X) * vol.EffectiveSpacing + spacingX;
+			float offsetY = (reslicePlaneCoord.Y - sliceCoord.Y) * vol.EffectiveSpacing + spacingY;
+#endif
+
+			Vector3D volumePoint = reslicePoint - (offsetX * xVec + offsetY * yVec);
+
+			// Convert 3D volume point to patient point
+			return vol.ConvertToPatient(volumePoint);
 		}
 
 		#endregion
@@ -535,14 +630,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Matrix aboutX = CalcRotateMatrixAboutX(rotateX);
 			Matrix aboutY = CalcRotateMatrixAboutY(rotateY);
 
-			Matrix sagittal = new Matrix(4, 4, new float[4,4]
-			                                	{
-			                                		{0, -1, 0, 0},
-			                                		{0, 0, -1, 0},
-			                                		{1, 0, 0, 0},
-			                                		{point.X, point.Y, point.Z, 1}
-			                                	});
+			//Matrix rotate = aboutX * aboutY;
+			//Matrix pointMatrix = new Matrix(1, 4, new float[1, 4] { { point.X, point.Y, point.Z, 1f } });
+			//Matrix rotatedPoint = pointMatrix * rotate;
 
+			Matrix sagittal = new Matrix(4, 4, new float[4, 4]
+			                                   	{
+			                                   		{0, -1, 0, 0},
+			                                   		{0, 0, -1, 0},
+			                                   		{1, 0, 0, 0},
+			                                   		{point.X, point.Y, point.Z, 1}
+													//{rotatedPoint[0,0], rotatedPoint[0,1], rotatedPoint[0,2], 1}
+			                                   	});
 
 			return aboutX * aboutY * sagittal;
 		}
@@ -569,7 +668,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Matrix aboutX = CalcRotateMatrixAboutX(rotateX);
 			Matrix aboutY = CalcRotateMatrixAboutY(rotateY);
 
-			Matrix axial = new Matrix(4, 4, new float[4,4]
+			Matrix axial = new Matrix(4, 4, new float[4, 4]
 			                                	{
 			                                		{1, 0, 0, 0},
 			                                		{0, 1, 0, 0},
@@ -581,7 +680,25 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return aboutX * aboutY * axial;
 		}
 
-		private static readonly Matrix _identityMatrix = new Matrix(4, 4, new float[4,4]
+		private static Matrix CreateResliceAxesOblique(Vector3D point, int rotateX, int rotateY, int rotateZ)
+		{
+			Matrix aboutX = CalcRotateMatrixAboutX(rotateX);
+			Matrix aboutY = CalcRotateMatrixAboutY(rotateY);
+			Matrix aboutZ = CalcRotateMatrixAboutZ(rotateZ);
+
+			Matrix axial = new Matrix(4, 4, new float[4, 4]
+			                                	{
+			                                		{1, 0, 0, 0},
+			                                		{0, 1, 0, 0},
+			                                		{0, 0, 1, 0},
+			                                		{point.X, point.Y, point.Z, 1}
+			                                	});
+
+
+			return aboutX * aboutY * aboutZ * axial;
+		}
+
+		private static readonly Matrix _identityMatrix = new Matrix(4, 4, new float[4, 4]
 		                                                                  	{
 		                                                                  		{1, 0, 0, 0},
 		                                                                  		{0, 1, 0, 0},
@@ -658,5 +775,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		#endregion
 
 		#endregion
+
 	}
 }

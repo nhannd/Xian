@@ -41,7 +41,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return temp;
 			}
 			
-			return VolumeSlicer.GenerateFrameNormalizedPixelData(_volume, _sliceMatrix);
+			VolumeSlicer slicer = new VolumeSlicer();
+			return slicer.GenerateFrameNormalizedPixelData(_volume, _sliceMatrix);
 		}
 	}
 }
