@@ -47,8 +47,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[IconSet("apply", IconScheme.Colour, "ModifyOrderSmall.png", "ModifyOrderMedium.png", "ModifyOrderLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Order.Modify)]
-
-	[ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
 	public abstract class ModifyOrderToolBase<TItem, TContext> : WorkflowItemTool<TItem, TContext>
 		where TItem : WorklistItemSummaryBase
 		where TContext : IWorkflowItemToolContext<TItem>

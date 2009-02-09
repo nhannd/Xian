@@ -37,9 +37,6 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -53,7 +50,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[ActionPermission("view", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.PatientBiography.View)]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(BookingWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(PreviewToolExtensionPoint))]
     [ExtensionOf(typeof(PerformingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
 	[ExtensionOf(typeof(ProtocolWorkflowItemToolExtensionPoint))]
@@ -69,30 +65,12 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             base.Initialize();
 
-            if (this.ContextBase is IPerformingWorkflowItemToolContext)
+            if (this.ContextBase is IWorkflowItemToolContext)
             {
-                ((IPerformingWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
+				((IWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
                 {
                     this.Enabled = DetermineEnablement();
                 };
-            }
-            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
-            {
-                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
-                {
-                    this.Enabled = DetermineEnablement();
-                };
-            }
-			else if (this.ContextBase is IReportingWorkflowItemToolContext)
-			{
-				((IReportingWorkflowItemToolContext)this.ContextBase).SelectionChanged += delegate
-				{
-					this.Enabled = DetermineEnablement();
-				};
-			}
-			else if (this.ContextBase is IPreviewToolContext)
-            {
-                this.Enabled = DetermineEnablement();
             }
             else if (this.ContextBase is IPatientSearchToolContext)
             {
@@ -105,26 +83,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         private bool DetermineEnablement()
         {
-            if (this.ContextBase is IPerformingWorkflowItemToolContext)
-            {
-                return (((IPerformingWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-                    && ((IPerformingWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
-            }
-            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
-            {
-                return (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-                    && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
-            }
-			else if (this.ContextBase is IReportingWorkflowItemToolContext)
+			if (this.ContextBase is IWorkflowItemToolContext)
 			{
-				return (((IReportingWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-					&& ((IReportingWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+				IWorkflowItemToolContext ctx = (IWorkflowItemToolContext) this.ContextBase;
+				return ctx.Selection != null && ctx.Selection.Items.Length == 1;
 			}
-            else if (this.ContextBase is IPreviewToolContext)
-            {
-                IPreviewToolContext context = (IPreviewToolContext)this.ContextBase;
-                return (context.WorklistItem != null && context.WorklistItem.PatientProfileRef != null);
-            }
             else if (this.ContextBase is IPatientSearchToolContext)
             {
                 IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
@@ -159,29 +122,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
         public void View()
         {
-            if (this.ContextBase is IPerformingWorkflowItemToolContext)
-            {
-                IPerformingWorkflowItemToolContext context = (IPerformingWorkflowItemToolContext)this.ContextBase;
-                ModalityWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
-                OpenPatient(item.PatientRef, item.PatientProfileRef, context.DesktopWindow);
-            }
-            else if (this.ContextBase is IRegistrationWorkflowItemToolContext)
-            {
-                IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-                RegistrationWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
-                OpenPatient(item.PatientRef, item.PatientProfileRef, context.DesktopWindow);
-            }
-			else if (this.ContextBase is IReportingWorkflowItemToolContext)
+			if(this.ContextBase is IWorkflowItemToolContext)
 			{
-				IReportingWorkflowItemToolContext context = (IReportingWorkflowItemToolContext)this.ContextBase;
-				ReportingWorklistItem item = CollectionUtils.FirstElement(context.SelectedItems);
-				OpenPatient(item.PatientRef, item.PatientProfileRef, context.DesktopWindow);
+				IWorkflowItemToolContext ctx = (IWorkflowItemToolContext) this.ContextBase;
+				WorklistItemSummaryBase item = (WorklistItemSummaryBase)ctx.Selection.Item;
+				OpenPatient(item.PatientRef, item.PatientProfileRef, ctx.DesktopWindow);
 			}
-			else if (this.ContextBase is IPreviewToolContext)
-            {
-                IPreviewToolContext context = (IPreviewToolContext)this.ContextBase;
-                OpenPatient(context.WorklistItem.PatientRef, context.WorklistItem.PatientProfileRef, context.DesktopWindow);
-            }
             else if (this.ContextBase is IPatientSearchToolContext)
             {
                 IPatientSearchToolContext context = (IPatientSearchToolContext)this.ContextBase;
