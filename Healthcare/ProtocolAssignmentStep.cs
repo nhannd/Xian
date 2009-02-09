@@ -114,6 +114,9 @@ namespace ClearCanvas.Healthcare
 
 		protected override void LinkProcedure(Procedure procedure)
 		{
+			if (this.Protocol == null)
+				throw new WorkflowException("This step must be associated with a Protocol before procedures can be linked.");
+
 			this.Protocol.LinkProcedure(procedure);
 		}
 

@@ -67,6 +67,9 @@ namespace ClearCanvas.Healthcare {
 
 		protected override void LinkProcedure(Procedure procedure)
 		{
+			if(this.Report == null)
+				throw new WorkflowException("This step must be associated with a Report before procedures can be linked.");
+
 			this.Report.LinkProcedure(procedure);
 		}
 
