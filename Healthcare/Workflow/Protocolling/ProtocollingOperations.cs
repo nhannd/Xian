@@ -117,7 +117,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 					{
 						foreach (ProtocolAssignmentStep step in linkedSteps)
 						{
-							step.LinkToProtocol(assignmentStep.Protocol);
+							step.LinkTo(assignmentStep);
 						}
 					}
 				}

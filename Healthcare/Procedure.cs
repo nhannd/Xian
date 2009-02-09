@@ -311,6 +311,36 @@ namespace ClearCanvas.Healthcare
             UpdateEndTime();
         }
 
+		/// <summary>
+		/// Gets the full history of this procedure, including procedure steps that 
+		/// are associated indirectly via linked workflows.
+		/// </summary>
+		/// <returns></returns>
+		public virtual List<ProcedureStep> GetWorkflowHistory()
+		{
+			List<ProcedureStep> x = new List<ProcedureStep>(_procedureSteps);
+			List<ProcedureStep> history = new List<ProcedureStep>(x);
+			while(x.Count > 0)
+			{
+				// obtain all procedure steps that are linked via steps in x
+				List<ProcedureStep> y = 
+					CollectionUtils.Concat<ProcedureStep>(
+						CollectionUtils.Map<ProcedureStep, List<ProcedureStep>>(
+							x,
+							delegate(ProcedureStep step)
+							{
+								return step.IsLinked ? step.LinkStep.GetRelatedProcedureSteps() : new List<ProcedureStep>();
+							}).ToArray());
+
+				history.AddRange(y);
+
+				// set x = y so that the next time through the loop,
+				// we follow the next level of linking
+				x = y;
+			}
+			return history;
+		}
+
         #endregion
 
         #region Helper methods

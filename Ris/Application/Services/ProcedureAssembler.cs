@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Application.Services
 			detail.ImageAvailability = EnumUtils.GetEnumValueInfo(rp.ImageAvailability, context);
 			detail.Portable = rp.Portable;
 
-			List<ProcedureStep> includedSteps = CollectionUtils.Select(rp.ProcedureSteps, procedureStepFilter);
+			List<ProcedureStep> includedSteps = CollectionUtils.Select(rp.GetWorkflowHistory(), procedureStepFilter);
 			if (includedSteps.Count > 0)
 			{
 				ProcedureStepAssembler procedureStepAssembler = new ProcedureStepAssembler();

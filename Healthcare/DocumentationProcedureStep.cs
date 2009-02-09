@@ -66,5 +66,11 @@ namespace ClearCanvas.Healthcare
 		{
 			return new DocumentationProcedureStep(this.Procedure);
 		}
+
+		protected override bool IsRelatedStep(ProcedureStep step)
+		{
+			// documentation steps do not have related steps
+			return false;
+		}
 	}
 }

@@ -136,6 +136,12 @@ namespace ClearCanvas.Healthcare {
 			return new ModalityProcedureStep(this.Procedure, _description, _modality);
 		}
 
+		protected override bool IsRelatedStep(ProcedureStep step)
+		{
+			// modality steps do not have related steps
+			return false;
+		}
+
         /// <summary>
         /// Gets or sets the description of this step (e.g. CT Chest w/o contrast).
         /// </summary>

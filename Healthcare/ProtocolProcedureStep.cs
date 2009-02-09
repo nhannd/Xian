@@ -60,8 +60,6 @@ namespace ClearCanvas.Healthcare
             set { _protocol = value; }
         }
 
-        #region ProcedureStep overrides
-
         public override string Name
         {
             get { return "Protocol"; }
@@ -89,6 +87,19 @@ namespace ClearCanvas.Healthcare
 			}
 		}
 
-		#endregion
+		protected override bool IsRelatedStep(ProcedureStep step)
+		{
+			// can't have relatives if no protocol
+			if (this.Protocol == null)
+				return false;
+
+			// relatives must be protocol steps
+			if (!step.Is<ProtocolProcedureStep>())
+				return false;
+
+			// check if tied to same protocol
+			ProtocolProcedureStep that = step.As<ProtocolProcedureStep>();
+			return that.Protocol != null && Equals(this.Protocol, that.Protocol);
+		}
 	}
 }

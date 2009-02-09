@@ -43,6 +43,8 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     public abstract class ProcedureStep : Activity
     {
+		#region Static members
+
 		/// <summary>
 		/// Returns all concrete subclasses of this class.
 		/// </summary>
@@ -67,26 +69,37 @@ namespace ClearCanvas.Healthcare
 				delegate(Type t) { return t.FullName.EndsWith(subclassName); });
 		}
 
+		#endregion
+
+
 		private Procedure _procedure;
+    	private ProcedureStep _linkStep;
 
-        /// <summary>
-        /// No-args constructor required by NHibernate.
-        /// </summary>
-        public ProcedureStep()
-        {
-        }
+		#region Constructors
 
-        /// <summary>
-        /// Constructor that assigns this step to a parent procedure.
-        /// </summary>
-        /// <param name="procedure"></param>
-        public ProcedureStep(Procedure procedure)
-        {
-            this._procedure = procedure;
-            procedure.ProcedureSteps.Add(this);
-        }
+		/// <summary>
+		/// No-args constructor required by NHibernate.
+		/// </summary>
+		public ProcedureStep()
+		{
+		}
 
-        /// <summary>
+		/// <summary>
+		/// Constructor that assigns this step to a parent procedure.
+		/// </summary>
+		/// <param name="procedure"></param>
+		public ProcedureStep(Procedure procedure)
+		{
+			this._procedure = procedure;
+			procedure.ProcedureSteps.Add(this);
+		}
+
+
+		#endregion
+
+		#region Public Properties
+
+		/// <summary>
         /// Gets a user-friendly descriptive name for this procedure step.
         /// </summary>
         public abstract string Name { get; }
@@ -109,6 +122,97 @@ namespace ClearCanvas.Healthcare
     	{
 			get { return CollectionUtils.Concat<Procedure>(GetLinkedProcedures(), new Procedure[] {_procedure}); }
     	}
+
+		/// <summary>
+		/// Gets the staff that this step was assigned to
+		/// </summary>
+		public virtual Staff AssignedStaff
+		{
+			get
+			{
+				return this.Scheduling != null && this.Scheduling.Performer != null ?
+				  ((ProcedureStepPerformer)this.Scheduling.Performer).Staff : null;
+			}
+		}
+
+		/// <summary>
+		/// Gets the staff that performed this step, which may not be the same as the <see cref="AssignedStaff"/>
+		/// </summary>
+		public virtual Staff PerformingStaff
+		{
+			get
+			{
+				return this.Performer != null ? ((ProcedureStepPerformer)this.Performer).Staff : null;
+			}
+		}
+
+		/// <summary>
+		/// Indicates if the procedure is a "Pre" procedure step.  If true, the procedure step's 
+		/// procedure is not started with the procedure.
+		/// </summary>
+		public abstract bool IsPreStep { get; }
+
+		/// <summary>
+		/// Gets the procedure step to which this step was linked, or null if this step is not linked.
+		/// </summary>
+    	public virtual ProcedureStep LinkStep
+    	{
+			get { return _linkStep; }
+			private set { _linkStep = value; }
+    	}
+
+		/// <summary>
+		/// Gets a value indicating whether this step was discontinued and linked to another step.
+		/// </summary>
+    	public virtual bool IsLinked
+    	{
+			get { return this.State == ActivityStatus.DC && _linkStep != null; }
+    	}
+
+		#endregion
+
+
+		#region Public methods
+
+		/// <summary>
+		/// Links this step to the specified other step, effectively discontinuing this step.
+		/// </summary>
+		/// <param name="other"></param>
+		public virtual void LinkTo(ProcedureStep other)
+		{
+			if (this.State != ActivityStatus.SC)
+				throw new WorkflowException("Cannot link to another step because this step has already been started.");
+
+			// link the procedure to the specified other step
+			other.LinkProcedure(_procedure);
+
+			// record the step that we linked to
+			_linkStep = other;
+
+			// discontinue this step so it doesn't show up in any worklists
+			this.Discontinue();
+		}
+
+		/// <summary>
+		/// Links the specified procedure to the workflow artifact associated with this step.
+		/// </summary>
+		/// <param name="procedure"></param>
+    	protected virtual void LinkProcedure(Procedure procedure)
+    	{
+    		throw new WorkflowException(string.Format("Procedure steps of class {0} do not support linking.", this.GetClass().Name));
+    	}
+
+		/// <summary>
+		/// Gets the set of procedure steps that are related to this procedure step,
+		/// in the sense that they relate to the same work artifact (protocol, report, etc).
+		/// Note that the result includes this step.
+		/// </summary>
+		/// <returns></returns>
+		public virtual List<ProcedureStep> GetRelatedProcedureSteps()
+		{
+			return CollectionUtils.Select(_procedure.ProcedureSteps, IsRelatedStep);
+		}
+
 
 		/// <summary>
 		/// Gets any linked procedures that are reachable through this step.
@@ -148,35 +252,6 @@ namespace ClearCanvas.Healthcare
 			}
 		}
 
-		/// <summary>
-		/// Create a new step of the same type in the Scheduled state.
-		/// </summary>
-		/// <returns></returns>
-    	protected abstract ProcedureStep CreateScheduledCopy();
-
-        /// <summary>
-        /// Gets the staff that this step was assigned to
-        /// </summary>
-        public virtual Staff AssignedStaff
-        {
-            get
-            {
-                return this.Scheduling != null && this.Scheduling.Performer != null ?
-                  ((ProcedureStepPerformer)this.Scheduling.Performer).Staff : null;
-            }
-        }
-
-        /// <summary>
-        /// Gets the staff that performed this step, which may not be the same as the <see cref="AssignedStaff"/>
-        /// </summary>
-        public virtual Staff PerformingStaff
-        {
-            get
-            {
-                return this.Performer != null ? ((ProcedureStepPerformer)this.Performer).Staff : null;
-            }
-        }
-
         /// <summary>
         /// Starts the step using the specified staff as the performer
         /// </summary>
@@ -207,15 +282,13 @@ namespace ClearCanvas.Healthcare
             Platform.CheckForNullReference(performer, "performer");
 
             Complete(new ProcedureStepPerformer(performer));
-        }
+		}
 
-        /// <summary>
-        /// Indicates if the procedure is a "Pre" procedure step.  If true, the procedure step's 
-        /// procedure is not started with the procedure.
-        /// </summary>
-        public abstract bool IsPreStep { get; }
+		#endregion
 
-        /// <summary>
+		#region Protected API
+
+		/// <summary>
         /// Called when the scheduling information for this procedure step has changed.
         /// </summary>
         protected override void OnSchedulingChanged()
@@ -239,5 +312,21 @@ namespace ClearCanvas.Healthcare
 
             base.OnStateChanged(previousState, newState);
         }
-    }
+
+		/// <summary>
+		/// Create a new step of the same type in the Scheduled state.
+		/// </summary>
+		/// <returns></returns>
+		protected abstract ProcedureStep CreateScheduledCopy();
+
+		/// <summary>
+		/// Tests whether the specified procedure step is directly related to this step,
+		/// in the sense that it targets the same work artifact (eg. protocol, report, etc.)
+		/// </summary>
+		/// <param name="step"></param>
+		/// <returns></returns>
+		protected abstract bool IsRelatedStep(ProcedureStep step);
+
+		#endregion
+	}
 }

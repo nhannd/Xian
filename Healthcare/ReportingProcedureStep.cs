@@ -74,10 +74,35 @@ namespace ClearCanvas.Healthcare
 			}
 		}
 
+		/// <summary>
+		/// Gets the <see cref="ReportPart"/> that this step targets, or null if there is no associated report part.
+		/// </summary>
         public virtual ReportPart ReportPart
         {
             get { return _reportPart; }
             set { _reportPart = value; }
         }
-	}
+
+		/// <summary>
+		/// Gets the <see cref="Report"/> that this step is associated with, or null if not associated.
+		/// </summary>
+    	public virtual Report Report
+    	{
+			get { return _reportPart == null ? null : _reportPart.Report; }
+    	}
+
+		protected override bool IsRelatedStep(ProcedureStep step)
+		{
+			// can't have relatives if no report
+			if(this.Report == null)
+				return false;
+
+			// relatives must be reporting steps
+			if (!step.Is<ReportingProcedureStep>())
+				return false;
+
+			// check if tied to same report
+			ReportingProcedureStep that = step.As<ReportingProcedureStep>();
+			return that.Report != null && Equals(this.Report, that.Report);
+		}	}
 }

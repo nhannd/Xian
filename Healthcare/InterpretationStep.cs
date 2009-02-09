@@ -65,21 +65,10 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
-        /// <summary>
-        /// Links the procedure associated with this step to the specified report, and discontinues this step.
-        /// </summary>
-        /// <param name="report"></param>
-        public virtual void LinkToReport(Report report)
-        {
-            if (this.State != ActivityStatus.SC)
-                throw new WorkflowException("Cannot link to existing report because this interpretation has already been started.");
-
-            // link the associated procedure to the specified report
-            report.LinkProcedure(this.Procedure);
-
-            // discontinue step so we don't show up in any worklists
-            this.Discontinue();
-        }
+		protected override void LinkProcedure(Procedure procedure)
+		{
+			this.Report.LinkProcedure(procedure);
+		}
 
         public override string Name
         {

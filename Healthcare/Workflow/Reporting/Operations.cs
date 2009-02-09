@@ -113,7 +113,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				// attach linked interpretations to this report
 				foreach (InterpretationStep interpretation in linkInterpretations)
 				{
-					interpretation.LinkToReport(step.ReportPart.Report);
+					interpretation.LinkTo(step);
 				}
 			}
 

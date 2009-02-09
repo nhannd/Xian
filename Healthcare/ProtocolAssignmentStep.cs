@@ -112,21 +112,10 @@ namespace ClearCanvas.Healthcare
             return this.State == ActivityStatus.IP && this.PerformingStaff == staff;
         }
 
-        /// <summary>
-        /// Links the procedure associated with this step to the specified protocol, and discontinues this step.
-        /// </summary>
-        /// <param name="protocol"></param>
-        public virtual void LinkToProtocol(Protocol protocol)
-        {
-            if (this.State != ActivityStatus.SC)
-                throw new WorkflowException("Cannot link to existing protocol because this interpretation has already been started.");
-
-            // link the associated procedure to the specified report
-            protocol.LinkProcedure(this.Procedure);
-
-            // discontinue step so we don't show up in any worklists
-            this.Discontinue();
-        }
+		protected override void LinkProcedure(Procedure procedure)
+		{
+			this.Protocol.LinkProcedure(procedure);
+		}
 
         protected override ProcedureStep CreateScheduledCopy()
         {

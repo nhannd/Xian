@@ -25,5 +25,6 @@
     </component>
     <property name="StartTime" column="StartTime_" type="DateTime" not-null="false"/>
     <property name="EndTime" column="EndTime_" type="DateTime" not-null="false"/>
+    <many-to-one name="LinkStep" class="ProcedureStep" column="LinkStepOID_"/>
   </class>
 </hibernate-mapping>
