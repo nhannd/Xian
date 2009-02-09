@@ -52,7 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Default.aspx" />
+    <Content Include="Pages\Login\Default.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +170,13 @@
     <Compile Include="Controls\TimedDialog.ascx.designer.cs">
       <DependentUpon>TimedDialog.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Default.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
     <Compile Include="GlobalMasterPage.master.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -177,14 +184,28 @@
     <Compile Include="GlobalMasterPage.master.designer.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
     </Compile>
-    <Compile Include="Default.aspx.cs">
+    <Compile Include="Pages\Login\ChangePasswordDialog.ascx.cs">
+      <DependentUpon>ChangePasswordDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Login\ChangePasswordDialog.ascx.designer.cs">
+      <DependentUpon>ChangePasswordDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Login\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Helpers\DialogHelper.cs" />
     <Compile Include="Helpers\HtmlEncoder.cs" />
     <Compile Include="Helpers\ScriptHelper.cs" />
-    <Compile Include="Default.aspx.designer.cs">
+    <Compile Include="Pages\Login\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Users\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Users\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Test\AuthorityGroup.aspx.cs">
@@ -1100,6 +1121,7 @@
     <Content Include="App_Themes\Default\images\Indicators\Searching.gif" />
     <Content Include="App_Themes\Default\images\Indicators\StoreFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\usage.png" />
+    <Content Include="App_Themes\Default\images\LoginSplash.png" />
     <Content Include="App_Themes\Default\images\MainContent\dropdown.gif" />
     <Content Include="App_Themes\Default\images\MainContent\Loading.gif" />
     <Content Include="App_Themes\Default\images\MainContent\Loading.png" />
@@ -1118,8 +1140,6 @@
     <Content Include="App_Themes\Default\images\MainContent\SearchTextBoxBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\ToolbarButtonPanelBackground.png" />
     <Content Include="App_Themes\Default\images\Indicators\Watermark.gif" />
-    <Content Include="App_Themes\Default\SearchIcon.png" />
-    <Content Include="App_Themes\Default\SearchIconHover.png" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\PartitionTabs.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\DeleteStudyConfirmDialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\GridView.css" />
@@ -1128,11 +1148,8 @@
     <Content Include="App_Themes\Default\StyleSheets\Controls\ReconcileDialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Error.css" />
     <Content Include="App_Themes\Default\StyleSheets\Global.css" />
-    <Content Include="App_Themes\Default\StyleSheets\Header.css" />
-    <Content Include="App_Themes\Default\StyleSheets\Search.css" />
-    <Content Include="App_Themes\Default\StyleSheets\SeriesDetails.css" />
-    <Content Include="App_Themes\Default\StyleSheets\StudyDetails.css" />
-    <Content Include="App_Themes\Default\StyleSheets\Toolbar.css" />
+    <Content Include="App_Themes\Default\StyleSheets\Login.css" />
+    <Content Include="App_Themes\Default\StyleSheets\Studies.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Calendar.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Dialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Tabs.css" />
@@ -1165,7 +1182,10 @@
     <Content Include="Controls\SectionPanel.ascx" />
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
+    <Content Include="Default.aspx" />
     <Content Include="Images\ImageServerLogo.png" />
+    <Content Include="Pages\Admin\Users\Default.aspx" />
+    <Content Include="Pages\Login\ChangePasswordDialog.ascx" />
     <Content Include="Test\AuthorityGroup.aspx" />
     <Content Include="Test\ListUsers.aspx" />
     <Content Include="Test\Login.aspx" />

@@ -235,9 +235,15 @@
     <value>Alerts</value>
   </data>
   <data name="AlertsPageTitle" xml:space="preserve">
-    <value>Alert | Admin | ClearCanvas ImageServer</value>
+    <value>Alerts | Admin | ClearCanvas ImageServer</value>
   </data>
   <data name="ApplicationLog" xml:space="preserve">
     <value>Application Log</value>
+  </data>
+  <data name="UserManagement" xml:space="preserve">
+    <value>User Management</value>
+  </data>
+  <data name="UserManagementPageTitle" xml:space="preserve">
+    <value>User Management | Admin | ClearCanvas ImageServer</value>
   </data>
 </root>

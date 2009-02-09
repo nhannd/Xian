@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Alert | Admin | ClearCanvas ImageServer.
+        ///   Looks up a localized string similar to Alerts | Admin | ClearCanvas ImageServer.
         /// </summary>
         internal static string AlertsPageTitle {
             get {
@@ -408,6 +408,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string StudyStorage {
             get {
                 return ResourceManager.GetString("StudyStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Management.
+        /// </summary>
+        internal static string UserManagement {
+            get {
+                return ResourceManager.GetString("UserManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Management | Admin | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string UserManagementPageTitle {
+            get {
+                return ResourceManager.GetString("UserManagementPageTitle", resourceCulture);
             }
         }
         

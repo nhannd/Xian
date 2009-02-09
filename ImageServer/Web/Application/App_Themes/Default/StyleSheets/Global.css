@@ -19,6 +19,127 @@ Global.css - Defines the global styles for the entire web application relating
     position: static;
 }
 
+/*==================================================
+ * Header Items (Main Menu and Location Panel)
+ *==================================================*/
+
+.MainMenuPanel
+{
+	background: url(../../../PersistantImage.ashx?key=MenuBackground) repeat-x bottom;
+	height: 40px;
+	text-align: left;
+	font-family: Sans-Serif;
+	color: #205F87;
+}
+
+.MainMenuContent
+{
+	padding: 11px 0px 0px 0px;
+}
+
+.StaticMenu
+{
+    color: white;
+    font-family: Sans-Serif;
+    font-size: 16px;
+}
+
+.StaticMenuItem
+{
+    color: white;
+    margin: 0px 3px 0px 3px;
+    padding: 0px 1px 0px 1px;
+    font-family: Sans-Serif;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    border-top: solid 1px #3D98D1;
+    border-left: solid 1px #3D98D1;
+    border-right: solid 1px #3D98D1;
+    border-bottom: solid 1px #3D98D1;
+}
+
+.StaticHover
+{
+    color: white;
+    background: #3482b2 url(../../../PersistantImage.ashx?key=MenuHoverBackground) repeat-x;
+    margin: 0px 3px 0px 3px;
+    padding: 0px 1px 0px 1px;
+    font-family: Sans-Serif;
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    border-top: solid 1px #2371a1;
+    border-left: solid 1px #2371a1;
+    border-right: solid 1px #2371a1;
+    border-bottom: solid 1px #2371a1;
+}
+
+.StaticSelected
+{
+    color: white;
+}
+
+.DynamicMenu
+{
+    padding: 0px 1px 0px 0px;
+    border-left: solid 1px #2371a1;
+    border-right: solid 1px #2371a1;
+    border-top: solid 1px #2371a1;
+    border-bottom: solid 1px #2371a1;
+}
+
+.DynamicMenuItem
+{
+    color: White;
+    background: #3482b2;
+    font-weight: bold;
+    font-size: 14px;
+    border-top: solid 1px #3482b2;
+    border-bottom: solid 1px #3482b2;
+    border-left: solid 1px #3482b2;
+    border-right: solid 1px #3482b2;
+    padding: 1px 1px 1px 1px;
+    margin: 1px;
+}
+
+.DynamicHover
+{
+    color: white;
+    background:  url(../../../PersistantImage.ashx?key=MenuHoverBackground) repeat-x;
+    padding: 1px 1px 1px 1px;
+    border-top: solid 1px #2371a1;
+    border-bottom: solid 1px #2371a1;
+    border-left: solid 1px #2371a1;
+    border-right: solid 1px #2371a1;
+}
+
+.DynamicSelected
+{
+    color: White;
+}
+
+.UserInformationPanel
+{
+    text-align: right; 
+    position: relative; 
+    font-size: 12px; 
+    font-family: Arial; 
+    top: -40px;
+    position: relative;
+}
+
+.UserInformationLink
+{
+    color: red; 
+    text-decoration: none;     
+}
+
+.NewAlerts
+{
+    font-weight: bold;
+}
+
 /*=======================================================
  * Main Content Panel Items 
  *=====================================================*/
@@ -69,7 +190,7 @@ Global.css - Defines the global styles for the entire web application relating
     font-size: 20px;
     padding-left: 8px;
     padding-bottom: 2px;
-    background: #3d98d1 url(../../../PersistantImage.ashx?key=MainContentTitleBackground) repeat-x;
+    background: #3d98d1;
 }
 
 .MainContentSubTitle
@@ -124,10 +245,195 @@ Global.css - Defines the global styles for the entire web application relating
   border-right:1px solid #6db1dc}
 .MainContentCornersFG{
   background:#3d98d1}
-
+  
 .ButtonPanel
 {
     text-align: right;
+}
+
+
+/*================================
+ * Toolbar Styles
+ *================================*/
+
+.ToolbarPanelContainer
+{
+	margin: 10px 0px 9px 5px;
+}
+
+.ToolbarButtonPanel
+{
+    background: #B8D9EE url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
+    height: 28px;
+    padding-top: 4px;
+    margin-top: 1px;
+}
+
+.ToolbarButtons
+{
+    padding-top: 3px;
+    padding-left: 6px;
+}
+
+.ToolbarButtonsRight
+{
+    text-align: right;
+    padding-right: 5px;
+}
+
+/*================================
+ * Search Styles
+ *================================*/
+
+.SearchPanelContainer
+{
+    margin: 5px 0px 5px 5px;
+}
+
+.SearchPanelContent
+{
+    background: #3D98D1;
+    padding: 6px 4px 6px 4px;
+}
+
+.SearchPanelContentWithoutTabs
+{
+    background: #3D98D1;
+    border-top: solid 1px #E1EFF8;
+    padding: 6px 4px 6px 4px;
+}
+
+.SearchTextBoxLabel
+{
+    font-family: Sans-Serif;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 3px;
+	margin-right: 3px;
+	color: #ffffff;
+}
+
+.SearchLabelDark
+{
+    font-family: Sans-Serif; 
+    font-size: 14px; 
+    font-weight: bold; 
+    margin-right: 5px; 
+    color: #205F87;
+}
+
+.SearchTextBox, .SearchDateBox
+{
+    font-family: Sans-Serif;
+    font-size: 11px;
+    font-weight: normal;
+    padding-left: 2px;
+    width: 100px;
+	margin-left: 3px;
+	margin-right: 3px;
+	border: solid 1px #305ba6;
+    background: #ffffff url(../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x ;
+}
+
+.SearchDateTimeTextBox
+{
+    font-family: Sans-Serif;
+    font-size: 11px;
+    font-weight: normal;
+    padding-left: 2px;
+    width: 130px;
+	margin-left: 3px;
+	margin-right: 3px;
+	border: solid 1px #305ba6;
+    background: #ffffff url(../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x ;
+}
+
+.SearchTextBox.hover {
+	background: #fff;
+	border: solid 1px #99CCFF;
+	font-weight: bold;
+	color: #333333;
+}
+
+.SearchTextBox.focus {
+	background: #fff;
+	border: solid 1px #99CCFF;
+	font-weight: bold;
+	color: #333333;
+}
+
+.SearchDateBox.hover 
+{
+	background: #ffffff url(../images/MainContent/dropdown.gif) no-repeat right;
+	border: solid 1px #99CCFF;
+	font-weight: bold;
+	color: #333333;
+
+}
+
+.SearchCheckBox
+{
+	margin-left:10px;
+	margin-right:10px;
+}
+
+.SearchDropDownList
+{
+	margin-left: 3px;
+	margin-right: 3px;
+	font-family: Sans-Serif;
+	font-size: 11px;
+	border: solid 1px #305ba6;
+	background: #ffffff url(../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x ;
+}
+
+.SearchButtonPanel
+{
+	margin-left:5px;
+	margin-right: 5px;
+	vertical-align: bottom;
+	padding: 0px;
+}
+
+.SmallLink
+{
+    color: #D13D4D;
+    font-size: 12px;
+    font-weight: bold;
+    text-decoration: none;
+    background: #8FC3E4 url(../../../PersistantImage.ashx?key=ClearButtonBackground) repeat-x;
+    border: solid 1px #305ba6;
+    padding: 0px 2px 0px 2px;
+    margin-left: 18px;
+}
+
+.EmptySearchResultsMessage
+{
+    margin: 30px 50px 30px 50px; 
+    text-align: center; 
+    padding: 5px; 
+    font-size: 16px; 
+    color: #205F87;
+}
+.EmptySearchResultsSuggestionPanel
+{
+	border-right: #205f87 1px solid;
+	border-top: #205f87 1px solid;
+	border-left: #205f87 1px solid;
+	border-bottom: #205f87 1px solid;
+	background-color: #eeffe4;
+	margin: 5px;
+}
+
+.EmptySearchResultsSuggestionContent
+{
+	font-size: normal;
+	color: #205F87;	
+}
+
+.EmptySearchResultsSuggestionPanelHeader
+{
+	border-bottom: #d3e6c6 3px solid;
 }
 
 /*================================

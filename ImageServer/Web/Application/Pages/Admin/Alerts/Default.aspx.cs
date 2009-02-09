@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Security.Permissions;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -13,6 +14,7 @@ using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 {
+//    [PrincipalPermission(SecurityAction., )]
     public partial class Default : BasePage
     {
         protected void Page_Load(object sender, EventArgs e)

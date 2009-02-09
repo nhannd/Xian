@@ -8,8 +8,9 @@
 {
 	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG.png);
 	background-repeat:no-repeat;
-	border-left: #205F87 solid 1px;
-	border-top: #205F87 solid 1px;
+	background-color: #b8d9ee;
+	border-left: #3D98D1 solid 5px;
+	border-top: #3D98D1 solid 5px;
 	width: 1px;
 }
 
@@ -24,8 +25,9 @@
 	height:20px;
 	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG.png);
 	background-repeat: repeat-x;
-	border-top: #205F87 solid 1px;
-	border-bottom: #618FAD solid 1px;
+	background-color: #b8d9ee;
+	border-top: #3D98D1 solid 5px;
+	border-bottom: #3D98D1 solid 1px;
 }
 
 .DefaultModalDialogTitleBarControlBoxes
@@ -37,8 +39,9 @@
 {
 	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG-right.png);
 	background-repeat:no-repeat;
-	border-right: #205F87 solid 1px;
-	border-top: #205F87 solid 1px;
+	background-color: #b8d9ee;
+	border-right: #3D98D1 solid 5px;
+	border-top: #3D98D1 solid 5px;
 	width: 1px;
 }
 
@@ -47,9 +50,9 @@
 	vertical-align: top;
 	padding: 10px 10px 0px 10px;
 	background-color: #E1EFF8;
-	border-left: #205F87 1px solid;
-	border-right: #205F87 1px solid;
-	border-bottom: #205F87 1px solid;
+	border-left: #3D98D1 5px solid;
+	border-right: #3D98D1 5px solid;
+	border-bottom: #3D98D1 5px solid;
 	
 }
 

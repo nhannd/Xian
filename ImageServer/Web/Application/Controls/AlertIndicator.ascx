@@ -36,7 +36,7 @@
             <asp:TableRow CssClass="AlertTableHeaderCell"><asp:TableCell>Component</asp:TableCell><asp:TableCell>Source</asp:TableCell><asp:TableCell>Description</asp:TableCell></asp:TableRow>
         </asp:Table>
     </div>
-    <div style="text-align: right; padding: 3px 7px 5px 0px; margin-top: 3px; background: #eeeeee; font-weight: bold;"><asp:LinkButton runat="server" PostBackUrl="~/Pages/Admin/Alerts/Default.aspx" style="color: #6699CC; text-decoration: none;">View All Alerts</asp:LinkButton> | <a id="CloseButton" href="" style="color: #6699CC; text-decoration: none;">Close</a></div>
+    <div style="text-align: right; padding: 3px 7px 5px 0px; margin-top: 3px; background: #eeeeee; font-weight: bold;"><table><tr><td nowrap="nowrap"><asp:LinkButton ID="LinkButton2" runat="server" PostBackUrl="~/Pages/Admin/Alerts/Default.aspx" style="color: #6699CC; text-decoration: none;">View All Alerts</asp:LinkButton></td><td> | </td><td><a id="CloseButton" href="" style="color: #6699CC; text-decoration: none;">Close</a></td></tr></table></div>
 </div>
 </div>
 

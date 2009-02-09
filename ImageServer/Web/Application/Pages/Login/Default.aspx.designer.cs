@@ -8,51 +8,69 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Controls {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Login {
     
     
     /// <summary>
-    /// AlertIndicator class.
+    /// _Default class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class AlertIndicator {
+    public partial class _Default {
         
         /// <summary>
-        /// AlertLink control.
+        /// GlobalScriptManager control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton AlertLink;
+        protected global::System.Web.UI.ScriptManager GlobalScriptManager;
         
         /// <summary>
-        /// AlertsCount control.
+        /// UserName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label AlertsCount;
+        protected global::System.Web.UI.WebControls.TextBox UserName;
         
         /// <summary>
-        /// AlertTable control.
+        /// Password control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Table AlertTable;
+        protected global::System.Web.UI.WebControls.TextBox Password;
         
         /// <summary>
-        /// LinkButton2 control.
+        /// LoginButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton2;
+        protected global::System.Web.UI.WebControls.Button LoginButton;
+        
+        /// <summary>
+        /// Result control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label Result;
+        
+        /// <summary>
+        /// ChangePasswordDialog control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Login.ChangePasswordDialog ChangePasswordDialog;
     }
 }
