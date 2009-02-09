@@ -126,8 +126,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return _sops[sopInstanceUID];
 		}
 
-		#region Private methods
-
 		/// <summary>
 		/// Adds a <see cref="Sop"/> to the <see cref="StudyTree"/>.
 		/// </summary>
@@ -149,12 +147,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_sops[sop.SopInstanceUID] = sop;
 		}
 
+		//TODO: try to make this private again.
+
 		public void RemoveSop(Sop sop)
 		{
 			//ggerade ToRes: Hmm, what's the right way to manage this? This whole study tree needs to get resolved
 			//	to deal with changing DisplaySets I suppose...
 			_sops[sop.SopInstanceUID] = null;
 		}
+
+		#region Private Methods
 
 		private void AddPatient(Sop sop)
 		{

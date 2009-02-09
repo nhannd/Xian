@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer
 		/// Gets the image viewer's <see cref="StudyTree"/>.
 		/// </summary>
 		StudyTree StudyTree { get; }
-		
+
         /// <summary>
         /// Gets the <see cref="PhysicalWorkspace"/>.
         /// </summary>
@@ -102,6 +102,8 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="IImageViewer"/>.
 		/// </summary>		
 		string PatientsLoadedLabel { get; }
+
+		bool IsLoadingPriors { get; }
 
 		/// <summary>
 		/// Loads a study with a specific Study Instance UID from a specific source.

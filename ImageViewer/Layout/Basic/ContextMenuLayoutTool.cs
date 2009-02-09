@@ -1,3 +1,5 @@
+//#define TRACEGROUPS
+
 #region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
@@ -30,14 +32,16 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
-using System.Collections.Generic;
 using ClearCanvas.ImageViewer.BaseTools;
+using System.Collections.ObjectModel;
+using ClearCanvas.Common.Utilities;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-
     /// <summary>
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
     /// it so that it reflects the state of the active workspace.
@@ -45,6 +49,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class ContextMenuLayoutTool : ImageViewerTool
 	{
+    	private ImageSetGroups _imageSetGroups;
+    	private static readonly string _rootPath = "imageviewer-contextmenu";
+    	private List<string> _currentPathElements;
+		private int _actionNumber = 0;
+    	private bool _showImageSetNames = false;
+
 		/// <summary>
         /// Constructor
         /// </summary>
@@ -66,7 +76,14 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public override void Initialize()
         {
             base.Initialize();
+			_imageSetGroups = new ImageSetGroups(base.Context.Viewer.LogicalWorkspace.ImageSets);
         }
+
+		protected override void Dispose(bool disposing)
+		{
+			_imageSetGroups.SetSourceCollection(null);
+			base.Dispose(disposing);
+		}
 
 		/// <summary>
 		/// Gets an array of <see cref="IAction"/> objects that allow selection of specific display
@@ -75,88 +92,135 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// <returns></returns>
 		private IActionSet GetDisplaySetActions()
 		{
+#if TRACEGROUPS
+			TraceGroups();
+#endif
+			_actionNumber = 1;
+			_currentPathElements = new List<string>();
 			List<IAction> actions = new List<IAction>();
-			int i = 0;
 
-			foreach (IImageSet imageSet in this.ImageViewer.LogicalWorkspace.ImageSets)
+			FilteredGroup<IImageSet> rootGroup = GetRootGroup();
+			if (rootGroup != null)
 			{
-				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
+				_showImageSetNames = base.ImageViewer.LogicalWorkspace.ImageSets.Count > 1;
+				
+				foreach (FilteredGroup<IImageSet> group in TraverseNonEmptyGroups(rootGroup))
 				{
-					actions.Add(
-						CreateDisplaySetAction(
-							this.ImageViewer.LogicalWorkspace,
-							imageSet, 
-							displaySet, 
-							++i));
+					string basePath = StringUtilities.Combine(_currentPathElements, "/");
+					foreach (IImageSet imageSet in group.Items)
+					{
+						string imageSetPath;
+						if (_showImageSetNames)
+							imageSetPath = String.Format("{0}/{1}", basePath, imageSet.Name.Replace("/", "-"));
+						else
+							imageSetPath = basePath;
+
+						foreach (IDisplaySet displaySet in imageSet.DisplaySets)
+						{
+							actions.Add(CreateDisplaySetAction(imageSetPath, displaySet));
+							++_actionNumber;
+						}
+					}
+
+					if (group.Items.Count > 0 && base.ImageViewer.IsLoadingPriors)
+					{
+						actions.Add(CreateLoadingPriorsAction(basePath));
+						++_actionNumber;
+					}
 				}
 			}
-
+			
 			return new ActionSet(actions);
 		}
 
-		/// <summary>
+		private IEnumerable<FilteredGroup<IImageSet>> TraverseNonEmptyGroups(FilteredGroup<IImageSet> group)
+		{
+			ReadOnlyCollection<IImageSet> allItems = group.GetAllItems();
+			if (allItems.Count != 0)
+			{
+				if (_currentPathElements.Count == 0)
+					_currentPathElements.Add(_rootPath);
+				else
+					_currentPathElements.Add(group.Label.Replace("/", "-"));
+
+				yield return group;
+			}
+
+			foreach (FilteredGroup<IImageSet> child in group.ChildGroups)
+			{
+				foreach (FilteredGroup<IImageSet> nonEmptyChild in TraverseNonEmptyGroups(child))
+					yield return nonEmptyChild;
+			}
+
+			if (allItems.Count != 0)
+				_currentPathElements.RemoveAt(_currentPathElements.Count - 1);
+		}
+
+		private FilteredGroup<IImageSet> GetRootGroup()
+		{
+			return GetRootGroup(_imageSetGroups.Root);
+		}
+
+		private FilteredGroup<IImageSet> GetRootGroup(FilteredGroup<IImageSet> group)
+		{
+			if (group.HasItems)
+				return group;
+
+			int validChildGroups = 0;
+    		foreach (FilteredGroup<IImageSet> child in group.ChildGroups)
+    		{
+    			if (child.GetAllItems().Count > 0)
+    				++validChildGroups;
+    		}
+
+			//if this group has more than one child group with items anywhere in it's tree, then it's first.
+			if (validChildGroups > 1)
+				return group;
+
+			foreach (FilteredGroup<IImageSet> child in group.ChildGroups)
+			{
+				FilteredGroup<IImageSet> rootGroup = GetRootGroup(child);
+				if (rootGroup != null)
+					return rootGroup;
+			}
+
+    		return null;
+		}
+
+		private IClickAction CreateLoadingPriorsAction(string basePath)
+		{
+			string pathString = String.Format("{0}/display{1}", basePath, _actionNumber);
+			ActionPath path = new ActionPath(pathString, null);
+			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, _actionNumber), path, ClickActionFlags.None, null);
+			action.GroupHint = new GroupHint("DisplaySets");
+			action.Label = SR.LabelLoadingPriors;
+			action.SetClickHandler(delegate { });
+			return action;
+		}
+
+    	/// <summary>
 		/// Creates an <see cref="IClickAction"/> that displays the specified display set when clicked.  The index
 		/// parameter is used to generate a label for the action.
 		/// </summary>
 		/// <param name="displaySet"></param>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		private IClickAction CreateDisplaySetAction(
-			ILogicalWorkspace logicalWorkspace,
-			IImageSet imageSet, 
-			IDisplaySet displaySet, 
-			int index)
+		private IClickAction CreateDisplaySetAction(string basePath, IDisplaySet displaySet)
 		{
-			string pathString;
-
-			if (logicalWorkspace.ImageSets.Count == 1)
-			{
-				pathString = string.Format("imageviewer-contextmenu/display{0}", index);
-			}
-			else
-			{
-				//string imageSetName = imageSet.Name.Replace("/", "\\");
-				string imageSetName = imageSet.Name.Replace("/", "-");
-
-				if (IsMoreThanOnePatient(logicalWorkspace.ImageSets))
-					pathString = string.Format("imageviewer-contextmenu/{0}/{1}/display{2}", imageSet.PatientInfo, imageSetName, index);
-				else
-					pathString = string.Format("imageviewer-contextmenu/{0}/display{1}", imageSetName, index);
-			}
+    		string pathString = String.Format("{0}/display{1}", basePath, _actionNumber);
+			Trace.WriteLine(String.Format("Path: {0}", pathString));
 
 			ActionPath path = new ActionPath(pathString, null);
-			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, index), path, ClickActionFlags.CheckParents, null);
+			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, _actionNumber), path, ClickActionFlags.CheckParents, null);
 			action.GroupHint = new GroupHint("DisplaySets");
 			action.Label = displaySet.Name;
-			action.SetClickHandler(
-				delegate()
-				{
-					AssignDisplaySetToImageBox(displaySet);
-				}
-			);
+			action.SetClickHandler(delegate { AssignDisplaySetToImageBox(displaySet); });
 
 			action.Checked = this.ImageViewer.SelectedImageBox != null &&
 				this.ImageViewer.SelectedImageBox.DisplaySet != null && 
 				this.ImageViewer.SelectedImageBox.DisplaySet.Uid == displaySet.Uid;
 
 			return action;
-		}
-
-		private bool IsMoreThanOnePatient(ImageSetCollection imageSetCollection)
-		{
-			string patientInfo = String.Empty;
-			int numPatients = 0;
-
-			foreach (IImageSet imageSet in imageSetCollection)
-			{
-				if (imageSet.PatientInfo != patientInfo)
-				{
-					patientInfo = imageSet.PatientInfo;
-					numPatients++;
-				}
-			}
-
-			return numPatients > 1;
 		}
 
 		private void AssignDisplaySetToImageBox(IDisplaySet displaySet)
@@ -177,5 +241,29 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			this.ImageViewer.CommandHistory.AddCommand(command);
 		}
+
+#if TRACEGROUPS
+
+		private void TraceGroups()
+		{
+			TraceGroup(_imageSetGroups.Root, _imageSetGroups.Root.Name);
+		}
+
+		private void TraceGroup(FilteredGroup<IImageSet> group, string currentGroupPath)
+		{
+			foreach (IImageSet imageSet in group.Items)
+			{
+				string imageSetPath = String.Format("{0}/{1}", currentGroupPath, imageSet.Name);
+				Trace.WriteLine(imageSetPath);
+			}
+
+			foreach (FilteredGroup<IImageSet> childGroup in group.ChildGroups)
+			{
+				string name = childGroup.Label;
+				string groupPath = String.Format("{0}/{1}", currentGroupPath, name);
+				TraceGroup(childGroup, groupPath);
+			}
+		}
+#endif
 	}
 }

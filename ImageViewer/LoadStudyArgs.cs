@@ -35,6 +35,11 @@ namespace ClearCanvas.ImageViewer
 			_studyLoaderName = studyLoaderName;
 		}
 
+		internal LoadStudyArgs(StudyItem studyItem)
+		: this(studyItem.StudyInstanceUID, studyItem.Server, studyItem.StudyLoaderName)
+		{
+		}
+
 		/// <summary>
 		/// Gets the Study Instance UID of the study to be loaded.
 		/// </summary>

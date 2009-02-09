@@ -116,8 +116,7 @@ namespace ClearCanvas.ImageViewer
 			{
 				throw new Exception("Photometric interpretation is unknown.");
 			}
-			else if (frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
-			         frame.PhotometricInterpretation == PhotometricInterpretation.Monochrome2)
+			else if (!frame.PhotometricInterpretation.IsColor)
 			{
 				return new DicomGrayscalePresentationImage(frame);
 			}

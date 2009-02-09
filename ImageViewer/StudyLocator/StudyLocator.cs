@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom.ServiceModel.Query;
+using ClearCanvas.ImageViewer.Services.Configuration;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.ServiceModel;
 using ClearCanvas.Common;
@@ -159,10 +160,11 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 
 		private static IEnumerable<IServerTreeNode> GetDefaultServers()
 		{
-			//TODO: need a way of defining which servers to query for automation.
 			ServerTree serverTree = new ServerTree();
-			//return serverTree.FindCheckedServers(serverTree.RootNode.ServerGroupNode);
 			yield return serverTree.RootNode.LocalDataStoreNode;
+
+			foreach (Server server in DefaultServers.SelectFrom(serverTree))
+				yield return server;
 		}
 	}
 }

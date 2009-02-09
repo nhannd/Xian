@@ -135,6 +135,9 @@
   <data name="LabelDefault" xml:space="preserve">
     <value>(Default)</value>
   </data>
+  <data name="LabelLoadingPriors" xml:space="preserve">
+    <value>Loading Priors ...</value>
+  </data>
   <data name="MenuLayoutManager" xml:space="preserve">
     <value>Layout Manager</value>
   </data>

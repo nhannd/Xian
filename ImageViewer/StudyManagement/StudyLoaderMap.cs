@@ -58,7 +58,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             get
             {
                 Platform.CheckForEmptyString(studyLoaderName, "studyLoaderName");
-                return _studyLoaderMap[studyLoaderName];
+				if (_studyLoaderMap.ContainsKey(studyLoaderName))
+					return _studyLoaderMap[studyLoaderName];
+            	else
+					return null;
             }
         }
 
@@ -90,6 +93,5 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         }
 
         #endregion
-
     }
 }

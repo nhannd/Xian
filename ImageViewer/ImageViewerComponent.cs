@@ -35,7 +35,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -43,6 +42,14 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// Defines an extension point for image layout management.
+	/// </summary>
+	[ExtensionPoint()]
+	public sealed class PriorStudyFinderExtensionPoint : ExtensionPoint<IPriorStudyFinder>
+	{
+	}
+
 	/// <summary>
 	/// Defines an extension point for image layout management.
 	/// </summary>
@@ -102,7 +109,7 @@ namespace ClearCanvas.ImageViewer
 	/// to extend the functionality of the IVC.
 	/// </remarks>
 	[AssociateView(typeof(ImageViewerComponentViewExtensionPoint))]
-	public class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
+	public partial class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
 	{
 		internal class ImageViewerToolContext : ToolContext, IImageViewerToolContext
 		{
@@ -137,6 +144,7 @@ namespace ClearCanvas.ImageViewer
 		private ViewerShortcutManager _shortcutManager;
 		private ToolSet _toolSet;
 		private ILayoutManager _layoutManager;
+		private PriorStudyLoader _priorStudyLoader;
 
 		private static readonly StudyFinderMap _studyFinders = new StudyFinderMap();
 		private readonly StudyLoaderMap _studyLoaders = new StudyLoaderMap();
@@ -179,10 +187,36 @@ namespace ClearCanvas.ImageViewer
 		/// with the specified <see cref="ILayoutManager"/>.
 		/// </summary>
 		public ImageViewerComponent(ILayoutManager layoutManager)
+			: this(layoutManager, CreatePriorStudyFinder())
+		{
+		}
+
+		public ImageViewerComponent(LayoutManagerCreationParameters creationParameters, IPriorStudyFinder priorStudyFinder)
+			: this(CreateLayoutManager(creationParameters), priorStudyFinder)
+		{
+		}
+
+		public ImageViewerComponent(ILayoutManager layoutManager, IPriorStudyFinder priorStudyFinder)
 		{
 			Platform.CheckForNullReference(layoutManager, "layoutManager");
 			_layoutManager = layoutManager;
 			_layoutManager.SetImageViewer(this);
+
+			_priorStudyLoader = new PriorStudyLoader(this, priorStudyFinder ?? PriorStudyFinder.Null);
+		}
+
+		private static IPriorStudyFinder CreatePriorStudyFinder()
+		{
+			try
+			{
+				return (IPriorStudyFinder)new PriorStudyFinderExtensionPoint().CreateExtension();
+			}
+			catch(NotSupportedException e)
+			{
+				Platform.Log(LogLevel.Info, e);
+			}
+
+			return null;
 		}
 
 		private static ILayoutManager CreateLayoutManager(LayoutManagerCreationParameters creationParameters)
@@ -394,6 +428,10 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		public bool IsLoadingPriors
+		{
+			get { return _priorStudyLoader.IsActive; }
+		}
 
 		/// <summary>
 		/// Gets a string containing the patients currently loaded in this
@@ -543,53 +581,10 @@ namespace ClearCanvas.ImageViewer
 		/// <exception cref="OpenStudyException">The study could not be opened.</exception>
 		public void LoadStudy(LoadStudyArgs loadStudyArgs)
 		{
-			IStudyLoader studyLoader = this.StudyLoaders[loadStudyArgs.StudyLoaderName];
-
-			try
+			using (SingleStudyLoader loader = new SingleStudyLoader(loadStudyArgs))
 			{
-				studyLoader.Start(new StudyLoaderArgs(loadStudyArgs.StudyInstanceUid, loadStudyArgs.Server));
+				loader.LoadStudy(this);
 			}
-			catch (Exception e)
-			{
-				OpenStudyException ex = new OpenStudyException("Failed to load any of the requested images.", e);
-				throw ex;
-			}
-
-			int total = 0;
-			int failed = 0;
-
-			while (true)
-			{
-				Sop sop = studyLoader.LoadNextSop();
-				if (sop == null)
-					break;
-
-				try
-				{
-					this.StudyTree.AddSop(sop);
-				}
-				catch (Exception e)
-				{
-					failed++;
-					sop.Dispose();
-					Platform.Log(LogLevel.Error, e);
-				}
-
-				total++;
-			}
-
-			int successful = total - failed;
-
-			// Only bother to tell someone if at least one image loaded
-			if (successful > 0)
-			{
-				this.EventBroker.OnStudyLoaded(new ItemEventArgs<Study>(this.StudyTree.GetStudy(loadStudyArgs.StudyInstanceUid)));
-			}
-
-			VerifyLoad(total, failed);
-
-			if (studyLoader.PrefetchingStrategy != null)
-				studyLoader.PrefetchingStrategy.Start(this);
 		}
 
 		/// <summary>
@@ -620,10 +615,10 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(files, "files");
 
-			LocalSopLoader loader = new LocalSopLoader(this);
-			loader.Load(files, desktop, out cancelled);
-
-			VerifyLoad(loader.Total, loader.Failed);
+			using (LocalSopLoader loader = new LocalSopLoader(this))
+			{
+				loader.Load(files, desktop, out cancelled);
+			}
 		}
 
 		/// <summary>
@@ -633,6 +628,7 @@ namespace ClearCanvas.ImageViewer
 		public void Layout()
 		{
 			this.LayoutManager.Layout();
+			_priorStudyLoader.Start();
 		}
 
 		/// <summary>
@@ -765,6 +761,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing)
 			{
+				StopLoadingPriors();
 				StopPrefetching();
 
 				if (_physicalWorkspace != null)
@@ -803,7 +800,7 @@ namespace ClearCanvas.ImageViewer
 
 		#region Private methods
 
-		private void VerifyLoad(int total, int failed)
+		private static void VerifyLoad(int total, int failed)
 		{
 			if (failed == 0)
 				return;
@@ -821,6 +818,15 @@ namespace ClearCanvas.ImageViewer
 			{
 				if (loader.PrefetchingStrategy != null)
 					loader.PrefetchingStrategy.Stop();
+			}
+		}
+
+		private void StopLoadingPriors()
+		{
+			if (_priorStudyLoader != null)
+			{
+				_priorStudyLoader.Stop();
+				_priorStudyLoader = null;
 			}
 		}
 

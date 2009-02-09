@@ -120,8 +120,10 @@
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\DefaultDisplaySetComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
+    <Compile Include="FilteredGroups.cs" />
     <Compile Include="Graphics\FlashOverlayController.cs" />
     <Compile Include="Graphics\CurvePrimitive.cs" />
+    <Compile Include="ImageSetGroups.cs" />
     <Compile Include="InteractiveGraphics\CreateArrowGraphicState.cs" />
     <Compile Include="Graphics\ILineSegmentGraphic.cs" />
     <Compile Include="Graphics\InvariantArrowheadGraphic.cs" />
@@ -133,6 +135,8 @@
     <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RectangleInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RoiGraphicAnnotationSerializer.cs" />
+    <Compile Include="SingleStudyLoader.cs" />
+    <Compile Include="IPriorStudyFinder.cs" />
     <Compile Include="KeyObjects\KeyImageDeserializer.cs" />
     <Compile Include="KeyObjects\KeyImageSerializer.cs" />
     <Compile Include="NoVisibleDisplaySetsException.cs" />
@@ -264,6 +268,8 @@
     <Compile Include="Mathematics\Matrix.cs" />
     <Compile Include="Mathematics\Tests\VectorTests.cs" />
     <Compile Include="Mathematics\Vector3D.cs" />
+    <Compile Include="PriorStudyFinder.cs" />
+    <Compile Include="PriorStudyLoader.cs" />
     <Compile Include="ReferenceCountedObjectWrapper.cs" />
     <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />
@@ -350,7 +356,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>StandardModalitySettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="StudyManagement\LocalSopLoader.cs">
+    <Compile Include="LocalSopLoader.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="StudyManagement\DicomMessageSopDataSource.cs" />
@@ -372,6 +378,7 @@
     <Compile Include="Tests\BuildTreeTest.cs" />
     <Compile Include="Tests\AddImageTest.cs" />
     <Compile Include="Tests\DisplaySetSelectionTest.cs" />
+    <Compile Include="Tests\FilteredGroupsTest.cs" />
     <Compile Include="Tests\MockPresentationImage.cs" />
     <Compile Include="Tests\SelectionTest.cs" />
     <Compile Include="Tests\ImageBoxAndDisplaySetInteractionTest.cs" />

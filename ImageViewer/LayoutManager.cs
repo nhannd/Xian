@@ -100,6 +100,12 @@ namespace ClearCanvas.ImageViewer
 			SortImageSets();
 
 			ImageViewer.PhysicalWorkspace.Draw();
+			OnLayoutCompleted();
+		}
+
+		protected virtual void OnLayoutCompleted()
+		{
+			ImageViewer.EventBroker.StudyLoaded += OnPriorStudyLoaded;
 		}
 
 		#endregion
@@ -251,6 +257,11 @@ namespace ClearCanvas.ImageViewer
 		protected virtual void SortImageSets()
 		{
 			LogicalWorkspace.ImageSets.Sort(GetImageSetComparer());
+		}
+
+		protected virtual void OnPriorStudyLoaded(Study study)
+		{
+			BuildFromStudy(study);
 		}
 
 		#region Comparer Factory Methods
@@ -421,6 +432,11 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		private void OnPriorStudyLoaded(object sender, ItemEventArgs<Study> e)
+		{
+			OnPriorStudyLoaded(e.Item);
+		}
+
 		#region Disposal
 
 		/// <summary>
@@ -428,6 +444,11 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected virtual void Dispose(bool disposing)
 		{
+			if (disposing && _imageViewer != null)
+			{
+				_imageViewer.EventBroker.StudyLoaded -= OnPriorStudyLoaded;
+				_imageViewer = null;
+			}
 		}
 
 		#region IDisposable Members
