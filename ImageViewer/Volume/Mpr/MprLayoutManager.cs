@@ -37,6 +37,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	internal class MprImageViewerComponent : ImageViewerComponent
 	{
 		private readonly ILayoutManager _layoutManager;
+
 		public MprImageViewerComponent(ILayoutManager layoutManager) : base(layoutManager)
 		{
 			_layoutManager = layoutManager;
@@ -55,6 +56,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		//ggerade ToRef: We're thinking we may introduce an MprImageViewerComponent that will own the volume
 		//	and take care of the layout creation and such. For now I just needed a place to put this
 		//	utility method which bootstraps the Mpr Component
+		public ImageSop _tempSop;
+
 		public static ImageViewerComponent CreateMprLayoutAndComponent(Volume volume)
 		{
 			MprLayoutManager layoutManager = new MprLayoutManager(volume);
@@ -64,8 +67,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			//ggerade ToRes: I almost got rid of the displayset members... hacked this in so that
 			//	the workspace title would get set
 			VolumeSlicer slicer = new VolumeSlicer(volume);
-			DisplaySet displaySet = slicer.CreateAxialDisplaySet();
-			imageViewer.StudyTree.AddSop(((DicomGrayscalePresentationImage)displaySet.PresentationImages[0]).ImageSop);
+			slicer.SetSlicePlaneAxial();
+			DisplaySet displaySet = slicer.CreateDisplaySet("Temporary");
+			layoutManager._tempSop = ((DicomGrayscalePresentationImage)displaySet.PresentationImages[0]).ImageSop;
+			imageViewer.StudyTree.AddSop(layoutManager._tempSop);
 
 			return imageViewer;
 		}
@@ -89,8 +94,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_volume = volume;
 			_sagittalSlicer = new VolumeSlicer(volume);
 			_coronalSlicer = new VolumeSlicer(volume);
-			_axialSlicer = new VolumeSlicer(volume); 
-			_obliqueSlicer = new VolumeSlicer(volume); 
+			_axialSlicer = new VolumeSlicer(volume);
+			_obliqueSlicer = new VolumeSlicer(volume);
 		}
 
 		public override void Layout()
@@ -112,17 +117,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		protected override void FillPhysicalWorkspace()
 		{
-			//ggerade ToRes: It might be better to create these on demand - this could be a relatively expensive
-			//	ctor. Consider doing in FillPhysicalWorkspace maybe? 
-			// Recall that the Sops need to go into the IVC's StudyTree, so we have to manage that somehow.
-			DisplaySet sagittalDisplaySet = _sagittalSlicer.CreateSagittalDisplaySet();
-			DisplaySet coronalDisplaySet = _coronalSlicer.CreateCoronalDisplaySet();
-			DisplaySet axialDisplaySet = _axialSlicer.CreateAxialDisplaySet();
+			_sagittalSlicer.SetSlicePlaneSagittal();
+			DisplaySet sagittalDisplaySet = _sagittalSlicer.CreateOrthoDisplaySet("Sagittal");
+			_coronalSlicer.SetSlicePlaneCoronal();
+			DisplaySet coronalDisplaySet = _coronalSlicer.CreateOrthoDisplaySet("Coronal");
+			_axialSlicer.SetSlicePlaneAxial();
+			DisplaySet axialDisplaySet = _axialSlicer.CreateOrthoDisplaySet("Axial");
 			// Hey, I said it was a hack!
-			DisplaySet obliqueDisplaySet = _obliqueSlicer.CreateObliqueDisplaySet(45, 0, 45);
-			rotateXs[3] = 45;
-			rotateYs[3] = 0;
-			rotateZs[3] = 45;
+			_obliqueSlicer.SetSlicePlaneOblique(45, 0, 45);
+			DisplaySet obliqueDisplaySet = _obliqueSlicer.CreateDisplaySet("Oblique");
+
+			ImageViewer.StudyTree.RemoveSop(this._tempSop);
 
 			// Here we add the Mpr DisplaySets to the IVC's StudyTree, this keeps the framework happy
 			AddAllSopsToStudyTree(ImageViewer.StudyTree, sagittalDisplaySet);
@@ -147,104 +152,67 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#endregion
 
-		#region Really Hacked Up MPR "rotations"
+		#region Oblique Image Rotations
 
-		public void RotatePresentationImage(IPresentationImage presImage, int rotateX, int rotateY, int rotateZ)
+		public void RotateObliqueImage(IPresentationImage presImage, int rotateX, int rotateY, int rotateZ)
 		{
 			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
 
-			int viewIndex;
+			IImageBox obliqueImageBox = physicalWorkspace.ImageBoxes[3];
+
 			IDisplaySet displaySet = presImage.ParentDisplaySet;
 
-			for (viewIndex = 0; viewIndex < 4; viewIndex++ )
-				if (presImage == physicalWorkspace.ImageBoxes[viewIndex].TopLeftPresentationImage)
-					break;
-
-			// Short circuit if nothing changed
-			if (rotateXs[viewIndex] == rotateX && rotateYs[viewIndex] == rotateY && rotateZs[viewIndex] == rotateZ)
+			if (presImage != obliqueImageBox.TopLeftPresentationImage)
 				return;
-			
-			rotateXs[viewIndex] = rotateX;
-			rotateYs[viewIndex] = rotateY;
-			rotateZs[viewIndex] = rotateZ;
 
 			// Hang on to the current index, we'll keep it the same with the new DisplaySet
-			int currentIndex = physicalWorkspace.ImageBoxes[viewIndex].TopLeftPresentationImageIndex;
+			int currentIndex = obliqueImageBox.TopLeftPresentationImageIndex;
 
 			//ggerade ToRes: What about other settings like Window/level? It is lost when the DisplaySets
 			// are swapped out.
 
 			// Clear out the old DisplaySet
-			physicalWorkspace.ImageBoxes[viewIndex].DisplaySet = null;
+			obliqueImageBox.DisplaySet = null;
 			RemoveAllSopsFromStudyTree(ImageViewer.StudyTree, displaySet);
 
-			switch (viewIndex)
-			{
-				case 0:
-					displaySet = _sagittalSlicer.CreateSagittalDisplaySet(rotateX, rotateY);
-					break;
-				case 1:
-					displaySet = _coronalSlicer.CreateCoronalDisplaySet(rotateX, rotateY);
-					break;
-				case 2:
-					displaySet = _axialSlicer.CreateAxialDisplaySet(rotateX, rotateY);
-					break;
-				case 3:
-					displaySet = _obliqueSlicer.CreateObliqueDisplaySet(rotateX, rotateY, rotateZ);
-					break;
-			}
+			_obliqueSlicer.SetSlicePlaneOblique(rotateX, rotateY, rotateZ);
+			displaySet = _obliqueSlicer.CreateDisplaySet("Oblique");
 
 			AddAllSopsToStudyTree(ImageViewer.StudyTree, displaySet);
 
 			// Hacked this in so that the Imagebox wouldn't jump to first image all the time
-			ImageBox box = (ImageBox)physicalWorkspace.ImageBoxes[viewIndex];
+			ImageBox box = (ImageBox) obliqueImageBox;
 			box.PresetTopLeftPresentationImageIndex = currentIndex;
 
-			physicalWorkspace.ImageBoxes[viewIndex].DisplaySet = displaySet;
+			obliqueImageBox.DisplaySet = displaySet;
 			// Taken care of by hack above
-			//physicalWorkspace.ImageBoxes[viewIndex].TopLeftPresentationImageIndex = currentIndex;
+			//obliqueImageBox.TopLeftPresentationImageIndex = currentIndex;
 
-			physicalWorkspace.ImageBoxes[viewIndex].Draw();
+			obliqueImageBox.Draw();
 		}
 
-		private int[] rotateXs = new int[4];
-		private int[] rotateYs = new int[4];
-		private int[] rotateZs = new int[4];
-
-		public int GetPresentationImageRotationX(IPresentationImage presImage)
+		public int GetObliqueImageRotationX(IPresentationImage presImage)
 		{
-			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
+			if (presImage == ImageViewer.PhysicalWorkspace.ImageBoxes[3].TopLeftPresentationImage)
+				return _obliqueSlicer.RotateX;
 
-			int viewIndex;
-			for (viewIndex = 0; viewIndex < physicalWorkspace.ImageBoxes.Count; viewIndex++)
-				if (presImage == physicalWorkspace.ImageBoxes[viewIndex].TopLeftPresentationImage)
-					break;
-
-			return rotateXs[viewIndex];
+			return 0;
 		}
 
-		public int GetPresentationImageRotationY(IPresentationImage presImage)
+		public int GetObliqueImageRotationY(IPresentationImage presImage)
 		{
-			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
+			if (presImage == ImageViewer.PhysicalWorkspace.ImageBoxes[3].TopLeftPresentationImage)
+				return _obliqueSlicer.RotateY;
 
-			int viewIndex;
-			for (viewIndex = 0; viewIndex < physicalWorkspace.ImageBoxes.Count; viewIndex++)
-				if (presImage == physicalWorkspace.ImageBoxes[viewIndex].TopLeftPresentationImage)
-					break;
-
-			return rotateYs[viewIndex];
+			return 0;
 		}
 
-		public int GetPresentationImageRotationZ(IPresentationImage presImage)
+		public int GetObliqueImageRotationZ(IPresentationImage presImage)
 		{
-			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
+			if (presImage == ImageViewer.PhysicalWorkspace.ImageBoxes[3].TopLeftPresentationImage)
+				return _obliqueSlicer.RotateZ;
 
-			int viewIndex;
-			for (viewIndex = 0; viewIndex < physicalWorkspace.ImageBoxes.Count; viewIndex++)
-				if (presImage == physicalWorkspace.ImageBoxes[viewIndex].TopLeftPresentationImage)
-					break;
-
-			return rotateZs[viewIndex];
+			return 0;
 		}
 
 		#endregion
@@ -304,6 +272,5 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		}
 
 		#endregion
-
 	}
 }

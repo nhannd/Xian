@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -125,9 +124,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			MprLayoutManager layout = GetMprLayoutManager();
 			if (layout == null)
 				return true;
-			_startRotateX = layout.GetPresentationImageRotationX(Context.Viewer.SelectedPresentationImage);
-			_startRotateY = layout.GetPresentationImageRotationY(Context.Viewer.SelectedPresentationImage);
-			_startRotateZ = layout.GetPresentationImageRotationZ(Context.Viewer.SelectedPresentationImage);
+			_startRotateX = layout.GetObliqueImageRotationX(Context.Viewer.SelectedPresentationImage);
+			_startRotateY = layout.GetObliqueImageRotationY(Context.Viewer.SelectedPresentationImage);
+			_startRotateZ = layout.GetObliqueImageRotationZ(Context.Viewer.SelectedPresentationImage);
 
 			return true;
 		}
@@ -149,7 +148,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (shiftKeystate.IsPressed)
 			{
 				int currentRotateZ = Math.Max(Math.Min(_startRotateZ - Delta.Y / 4, 90), -90);
-				layout.RotatePresentationImage(Context.Viewer.SelectedPresentationImage, _startRotateX, _startRotateY, currentRotateZ);
+				layout.RotateObliqueImage(Context.Viewer.SelectedPresentationImage, _startRotateX, _startRotateY, currentRotateZ);
 			}
 			else
 			{
@@ -167,12 +166,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					if (_lockedX)
 					{
 						int currentRotateX = Math.Max(Math.Min(_startRotateX + Delta.X / 4, 90), -90);
-						layout.RotatePresentationImage(Context.Viewer.SelectedPresentationImage, currentRotateX, _startRotateY, _startRotateZ);
+						layout.RotateObliqueImage(Context.Viewer.SelectedPresentationImage, currentRotateX, _startRotateY, _startRotateZ);
 					}
 					else
 					{
 						int currentRotateY = Math.Max(Math.Min(_startRotateY + Delta.Y / 4, 90), -90);
-						layout.RotatePresentationImage(Context.Viewer.SelectedPresentationImage, _startRotateX, currentRotateY, _startRotateZ);
+						layout.RotateObliqueImage(Context.Viewer.SelectedPresentationImage, _startRotateX, currentRotateY, _startRotateZ);
 					}
 				}
 #else
