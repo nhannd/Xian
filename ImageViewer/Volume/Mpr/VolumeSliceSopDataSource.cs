@@ -13,14 +13,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 	class VolumeSliceSopDataSource : DicomMessageSopDataSource 
 	{
-		private readonly Volume _volume;
-		private readonly Matrix _sliceMatrix;
+		private readonly VolumeSlicer _volumeSlicer;
+		private readonly Matrix _resliceMatrix;
 
-		internal VolumeSliceSopDataSource(DicomMessageBase sourceMessage, Volume vol, Matrix resliceMatrix)
+		internal VolumeSliceSopDataSource(DicomMessageBase sourceMessage, VolumeSlicer slicer, Matrix resliceMatrix)
 			: base(sourceMessage)
 		{
-			_volume = vol;
-			_sliceMatrix = resliceMatrix;
+			_volumeSlicer = slicer;
+			_resliceMatrix = resliceMatrix;
 		}
 
 		//ggerade ToRes: I think I'm going to do away with the whole up front creation of the slices, but
@@ -41,8 +41,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return temp;
 			}
 			
-			VolumeSlicer slicer = new VolumeSlicer();
-			return slicer.GenerateFrameNormalizedPixelData(_volume, _sliceMatrix);
+			return _volumeSlicer.GenerateFrameNormalizedPixelData(_resliceMatrix);
 		}
 	}
 }

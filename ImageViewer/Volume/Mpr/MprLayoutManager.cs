@@ -61,8 +61,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			MprImageViewerComponent imageViewer = new MprImageViewerComponent(layoutManager);
 
-			// Here we add the Mpr DisplaySets to the IVC's StudyTree, this keeps the framework happy
-			layoutManager.AddDisplaySetsToStudyTree(imageViewer.StudyTree);
+			//ggerade ToRes: I almost got rid of the displayset members... hacked this in so that
+			//	the workspace title would get set
+			VolumeSlicer slicer = new VolumeSlicer(volume);
+			DisplaySet displaySet = slicer.CreateAxialDisplaySet();
+			imageViewer.StudyTree.AddSop(((DicomGrayscalePresentationImage)displaySet.PresentationImages[0]).ImageSop);
 
 			return imageViewer;
 		}
@@ -71,11 +74,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Private fields
 
-		private Volume _volume;
-		private DisplaySet _sagittalDisplaySet;
-		private DisplaySet _coronalDisplaySet;
-		private DisplaySet _axialDisplaySet;
-		private DisplaySet _obliqueDisplaySet;
+		private readonly Volume _volume;
+		private readonly VolumeSlicer _sagittalSlicer;
+		private readonly VolumeSlicer _coronalSlicer;
+		private readonly VolumeSlicer _axialSlicer;
+		private readonly VolumeSlicer _obliqueSlicer;
 
 		#endregion
 
@@ -84,18 +87,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public MprLayoutManager(Volume volume)
 		{
 			_volume = volume;
-
-			//ggerade ToRes: It might be better to create these on demand - this could be a relatively expensive
-			//	ctor. Consider doing in FillPhysicalWorkspace maybe? 
-			// Recall that the Sops need to go into the IVC's StudyTree, so we have to manage that somehow.
-			_sagittalDisplaySet = VolumeSlicer.CreateSagittalDisplaySet(_volume);
-			_coronalDisplaySet = VolumeSlicer.CreateCoronalDisplaySet(_volume);
-			_axialDisplaySet = VolumeSlicer.CreateAxialDisplaySet(_volume);
-			// Hey, I said it was a hack!
-			_obliqueDisplaySet = VolumeSlicer.CreateObliqueDisplaySet(_volume, 30, 30, 30);
-			rotateXs[3] = 30;
-			rotateYs[3] = 30;
-			rotateZs[3] = 30;
+			_sagittalSlicer = new VolumeSlicer(volume);
+			_coronalSlicer = new VolumeSlicer(volume);
+			_axialSlicer = new VolumeSlicer(volume); 
+			_obliqueSlicer = new VolumeSlicer(volume); 
 		}
 
 		public override void Layout()
@@ -117,16 +112,34 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		protected override void FillPhysicalWorkspace()
 		{
+			//ggerade ToRes: It might be better to create these on demand - this could be a relatively expensive
+			//	ctor. Consider doing in FillPhysicalWorkspace maybe? 
+			// Recall that the Sops need to go into the IVC's StudyTree, so we have to manage that somehow.
+			DisplaySet sagittalDisplaySet = _sagittalSlicer.CreateSagittalDisplaySet();
+			DisplaySet coronalDisplaySet = _coronalSlicer.CreateCoronalDisplaySet();
+			DisplaySet axialDisplaySet = _axialSlicer.CreateAxialDisplaySet();
+			// Hey, I said it was a hack!
+			DisplaySet obliqueDisplaySet = _obliqueSlicer.CreateObliqueDisplaySet(45, 0, 45);
+			rotateXs[3] = 45;
+			rotateYs[3] = 0;
+			rotateZs[3] = 45;
+
+			// Here we add the Mpr DisplaySets to the IVC's StudyTree, this keeps the framework happy
+			AddAllSopsToStudyTree(ImageViewer.StudyTree, sagittalDisplaySet);
+			AddAllSopsToStudyTree(ImageViewer.StudyTree, coronalDisplaySet);
+			AddAllSopsToStudyTree(ImageViewer.StudyTree, axialDisplaySet);
+			AddAllSopsToStudyTree(ImageViewer.StudyTree, obliqueDisplaySet);
+
 			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
-			physicalWorkspace.ImageBoxes[0].DisplaySet = _sagittalDisplaySet;
+			physicalWorkspace.ImageBoxes[0].DisplaySet = sagittalDisplaySet;
 			// Let's start out in the middle of each stack
-			physicalWorkspace.ImageBoxes[0].TopLeftPresentationImageIndex = _sagittalDisplaySet.PresentationImages.Count / 2;
-			physicalWorkspace.ImageBoxes[1].DisplaySet = _coronalDisplaySet;
-			physicalWorkspace.ImageBoxes[1].TopLeftPresentationImageIndex = _coronalDisplaySet.PresentationImages.Count / 2;
-			physicalWorkspace.ImageBoxes[2].DisplaySet = _axialDisplaySet;
-			physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = _axialDisplaySet.PresentationImages.Count / 2;
-			physicalWorkspace.ImageBoxes[3].DisplaySet = _obliqueDisplaySet;
-			physicalWorkspace.ImageBoxes[3].TopLeftPresentationImageIndex = _obliqueDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[0].TopLeftPresentationImageIndex = sagittalDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[1].DisplaySet = coronalDisplaySet;
+			physicalWorkspace.ImageBoxes[1].TopLeftPresentationImageIndex = coronalDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[2].DisplaySet = axialDisplaySet;
+			physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = axialDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[3].DisplaySet = obliqueDisplaySet;
+			physicalWorkspace.ImageBoxes[3].TopLeftPresentationImageIndex = obliqueDisplaySet.PresentationImages.Count / 2;
 
 			//TODO: Add this property and use it to disable the Layout Components (in Layout.Basic).
 			//physicalWorkspace.IsReadOnly = true;
@@ -141,29 +154,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
 
 			int viewIndex;
-			DisplaySet displaySet;
-			if (presImage == physicalWorkspace.ImageBoxes[0].TopLeftPresentationImage) // sagittal
-			{
-				viewIndex = 0;
-				displaySet = _sagittalDisplaySet;
-			}
-			else if (presImage == physicalWorkspace.ImageBoxes[1].TopLeftPresentationImage) // coronal
-			{
-				viewIndex = 1;
-				displaySet = _coronalDisplaySet;
-			}
-			else if (presImage == physicalWorkspace.ImageBoxes[2].TopLeftPresentationImage) // axial
-			{
-				viewIndex = 2;
-				displaySet = _axialDisplaySet;
-			}
-			else if (presImage == physicalWorkspace.ImageBoxes[3].TopLeftPresentationImage) // oblique
-			{
-				viewIndex = 3;
-				displaySet = _obliqueDisplaySet;
-			}
-			else
-				return;
+			IDisplaySet displaySet = presImage.ParentDisplaySet;
+
+			for (viewIndex = 0; viewIndex < 4; viewIndex++ )
+				if (presImage == physicalWorkspace.ImageBoxes[viewIndex].TopLeftPresentationImage)
+					break;
 
 			// Short circuit if nothing changed
 			if (rotateXs[viewIndex] == rotateX && rotateYs[viewIndex] == rotateY && rotateZs[viewIndex] == rotateZ)
@@ -176,6 +171,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// Hang on to the current index, we'll keep it the same with the new DisplaySet
 			int currentIndex = physicalWorkspace.ImageBoxes[viewIndex].TopLeftPresentationImageIndex;
 
+			//ggerade ToRes: What about other settings like Window/level? It is lost when the DisplaySets
+			// are swapped out.
+
 			// Clear out the old DisplaySet
 			physicalWorkspace.ImageBoxes[viewIndex].DisplaySet = null;
 			RemoveAllSopsFromStudyTree(ImageViewer.StudyTree, displaySet);
@@ -183,16 +181,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			switch (viewIndex)
 			{
 				case 0:
-					displaySet = _sagittalDisplaySet = VolumeSlicer.CreateSagittalDisplaySet(_volume, rotateX, rotateY);
+					displaySet = _sagittalSlicer.CreateSagittalDisplaySet(rotateX, rotateY);
 					break;
 				case 1:
-					displaySet = _coronalDisplaySet = VolumeSlicer.CreateCoronalDisplaySet(_volume, rotateX, rotateY);
+					displaySet = _coronalSlicer.CreateCoronalDisplaySet(rotateX, rotateY);
 					break;
 				case 2:
-					displaySet = _axialDisplaySet = VolumeSlicer.CreateAxialDisplaySet(_volume, rotateX, rotateY);
+					displaySet = _axialSlicer.CreateAxialDisplaySet(rotateX, rotateY);
 					break;
 				case 3:
-					displaySet = _axialDisplaySet = VolumeSlicer.CreateObliqueDisplaySet(_volume, rotateX, rotateY, rotateZ);
+					displaySet = _obliqueSlicer.CreateObliqueDisplaySet(rotateX, rotateY, rotateZ);
 					break;
 			}
 
@@ -255,10 +253,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public void AddDisplaySetsToStudyTree(StudyTree tree)
 		{
-			AddAllSopsToStudyTree(tree, _sagittalDisplaySet);
-			AddAllSopsToStudyTree(tree, _coronalDisplaySet);
-			AddAllSopsToStudyTree(tree, _axialDisplaySet);
-			AddAllSopsToStudyTree(tree, _obliqueDisplaySet);
+			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
+
+			foreach (IImageBox box in physicalWorkspace.ImageBoxes)
+			{
+				AddAllSopsToStudyTree(tree, box.TopLeftPresentationImage.ParentDisplaySet);
+			}
 		}
 
 		// Note: The overlays expect that a Sop is parented by a Series, so this was the easiest way
