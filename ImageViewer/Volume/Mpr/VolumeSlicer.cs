@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	/// <summary>
 	/// Volume utility class aids in extracting 2D slices from a Volume
 	/// </summary>
-	internal class VolumeSlicer
+	public class VolumeSlicer
 	{
 		#region Private fields
 
@@ -55,10 +55,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private Matrix _resliceAxes;
 		private InterpolationModes _interpolationMode = InterpolationModes.Linear;
 
+		private Vector3D _sliceThroughPointPatient;
+
 		//ggerade ToRef: Switch from degrees to radians, allows finer control
-		private int _rotateX;
-		private int _rotateY;
-		private int _rotateZ;
+		private int _rotateAboutX;
+		private int _rotateAboutY;
+		private int _rotateAboutZ;
 
 		#endregion
 
@@ -88,10 +90,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public void SetSlicePlaneOblique(int rotateX, int rotateY, int rotateZ)
 		{
-			RotateX = rotateX;
-			RotateY = rotateY;
-			RotateZ = rotateZ;
+			RotateAboutX = rotateX;
+			RotateAboutY = rotateY;
+			RotateAboutZ = rotateZ;
 			_resliceAxes = CreateResliceAxesOblique(rotateX, rotateY, rotateZ);
+		}
+
+		public void SetSliceThroughPointPatient(Vector3D sliceThroughPointPatient)
+		{
+			_sliceThroughPointPatient = new Vector3D(sliceThroughPointPatient);
 		}
 
 		public enum InterpolationModes
@@ -107,26 +114,25 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			set { _interpolationMode = value; }
 		}
 
-		public int RotateX
+		public int RotateAboutX
 		{
-			get { return _rotateX; }
-			private set { _rotateX = value; }
+			get { return _rotateAboutX; }
+			private set { _rotateAboutX = value; }
 		}
 
-		public int RotateY
+		public int RotateAboutY
 		{
-			get { return _rotateY; }
-			private set { _rotateY = value; }
+			get { return _rotateAboutY; }
+			private set { _rotateAboutY = value; }
 		}
 
-		public int RotateZ
+		public int RotateAboutZ
 		{
-			get { return _rotateZ; }
-			private set { _rotateZ = value; }
+			get { return _rotateAboutZ; }
+			private set { _rotateAboutZ = value; }
 		}
 
 		#endregion
-
 
 		public ImageSop CreateSliceImageSop(Vector3D point)
 		{
@@ -142,7 +148,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Create DisplaySet utilities
 
-		internal DisplaySet CreateDisplaySet(string displaySetName)
+		public DisplaySet CreateDisplaySet(string displaySetName)
 		{
 			DisplaySet displaySet = new DisplaySet(String.Format("MPR ({0})", displaySetName),
 			                                       String.Format("{0}.{1}", displaySetName, Guid.NewGuid()));
@@ -150,8 +156,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// A new series UID for our new Sops
 			string seriesInstanceUid = DicomUid.GenerateUid().UID;
 
-			// Slice through this point, start with center
-			Vector3D centerPoint = _volume.CenterPoint;
+			// Slice through this point
+			Vector3D throughPoint;
+			if (_sliceThroughPointPatient != null)
+				throughPoint = _volume.ConvertToVolume(_sliceThroughPointPatient);
+			else
+				throughPoint = _volume.CenterPoint;
 
 			Vector3D zVec = new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
 			Vector3D spacingVector = 5 * zVec;
@@ -168,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// So I settled on just the longest axis, creates enough slices without going out of bounds too often
 			int numSlices = (int) (_volume.LongAxisMagnitude / spacingVector.Magnitude);
 
-			Vector3D startPoint = centerPoint - (numSlices / 2) * spacingVector;
+			Vector3D startPoint = throughPoint - (numSlices / 2) * spacingVector;
 
 			int sliceIndex;
 			for (sliceIndex = 0; sliceIndex < numSlices; sliceIndex++)
@@ -183,6 +193,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return displaySet;
 		}
 
+		//ggerade ToRef: once generalized, this should be handled by CreateDisplaySet
 		internal DisplaySet CreateOrthoDisplaySet(string displaySetName)
 		{
 			DisplaySet displaySet = new DisplaySet(String.Format("MPR ({0})", displaySetName),
@@ -319,9 +330,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 
 			vtkExecutive exec = reslicer.GetExecutive();
+			exec.AddObserver(123, VtkReslicerExecutiveCallback);
 			exec.Update();
 
 			return reslicer.GetOutput();
+		}
+
+		private static void VtkReslicerExecutiveCallback(vtkObject vtkObj, uint eid, object obj, IntPtr nativeSomethingOrOther)
+		{
+			Debug.WriteLine(eid);
 		}
 
 		private DicomFile CreateSliceDicom()

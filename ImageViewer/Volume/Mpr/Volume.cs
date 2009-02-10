@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -43,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	/// <summary>
 	/// The Volume class encapsulates 3 dimensional pixel data. Use the VolumeBuilder class to create a Volume.
 	/// </summary>
-	internal class Volume : IDisposable
+	public class Volume : IDisposable
 	{
 		#region Private fields
 
@@ -128,24 +129,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _orientationPatientMatrix; }
 		}
 
-		public DicomMessageBase _ModelDicom
-		{
-			get { return _modelDicom; }
-		}
-
 		public bool IsDataUnsigned()
 		{
 			return _volUnsignedShortArray != null;
-		}
-
-		public vtkImageData _VtkVolume
-		{
-			get
-			{
-				if (_cachedVtkVolume == null)
-					_cachedVtkVolume = CreateVtkVolume();
-				return _cachedVtkVolume;
-			}
 		}
 
 		public int SizeInVoxels
@@ -209,21 +195,46 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
+		public Vector3D CenterPointPatient
+		{
+			get
+			{
+				return ConvertToPatient(CenterPoint);
+			}
+		}
+
 		public Vector3D ConvertToPatient(Vector3D volumePosition)
 		{
 			// Set orientation transform
-			Matrix volToPat = new Matrix(OrientationPatientMatrix);
+			Matrix volumePatientTransform = new Matrix(OrientationPatientMatrix);
 			// Set origin translation
-			volToPat.SetRow(3, OriginPatient.X, OriginPatient.Y, OriginPatient.Z, 1);
+			volumePatientTransform.SetRow(3, OriginPatient.X, OriginPatient.Y, OriginPatient.Z, 1);
 
-			// Transform image position to patient position
+			// Transform volume position to patient position
 			Matrix imagePositionMatrix = new Matrix(1, 4);
 			imagePositionMatrix.SetRow(0, volumePosition.X, volumePosition.Y, volumePosition.Z, 1F);
-			Matrix patientPositionMatrix = imagePositionMatrix * volToPat;
+			Matrix patientPositionMatrix = imagePositionMatrix * volumePatientTransform;
 
 			Vector3D patientPosition = new Vector3D(patientPositionMatrix[0, 0], patientPositionMatrix[0, 1],
 			                                        patientPositionMatrix[0, 2]);
 			return patientPosition;
+		}
+
+		public Vector3D ConvertToVolume(Vector3D patientPosition)
+		{
+			// Set orientation transform
+			Matrix patientVolumeTransform = new Matrix(OrientationPatientMatrix.Transpose());
+			// Set origin translation
+			patientVolumeTransform.SetRow(3, -OriginPatient.X, -OriginPatient.Y, -OriginPatient.Z, 1);
+
+			// Transform patient position to volume position
+			Matrix patientPositionMatrix = new Matrix(1, 4);
+			patientPositionMatrix.SetRow(0, patientPosition.X, patientPosition.Y, patientPosition.Z, 1F);
+			Matrix imagePositionMatrix = patientPositionMatrix * patientVolumeTransform;
+
+			Vector3D imagePosition = new Vector3D(imagePositionMatrix[0, 0], imagePositionMatrix[0, 1],
+			                                      imagePositionMatrix[0, 2]);
+			return imagePosition;
 		}
 
 		public Matrix RotateToPatientOrientation(Matrix orientationImage)
@@ -234,20 +245,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public float LongAxisMagnitude
 		{
-			get
-			{
-				return Math.Max(Math.Max(Dimensions.X, Dimensions.Y), Dimensions.Z);
-			}
+			get { return Math.Max(Math.Max(Dimensions.X, Dimensions.Y), Dimensions.Z); }
 		}
 
 		public float ShortAxisMagnitude
 		{
-			get
-			{
-				return Math.Min(Math.Min(Dimensions.X, Dimensions.Y), Dimensions.Z);
-			}
+			get { return Math.Min(Math.Min(Dimensions.X, Dimensions.Y), Dimensions.Z); }
 		}
-		
+
 		public float DiagonalMagnitude
 		{
 			get
@@ -262,22 +267,37 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			get
 			{
+				//ggerade ToOpt: This doesn't seem like the most intelligent way to determine this (it was late :)
 				if (Dimensions.Y > Dimensions.X)
 					if (Dimensions.Z > Dimensions.X)
 						return (float) Math.Sqrt(Dimensions.Y * Dimensions.Y + Dimensions.Z * Dimensions.Z);
 					else
-						return (float)Math.Sqrt(Dimensions.Y * Dimensions.Y + Dimensions.X * Dimensions.X);
+						return (float) Math.Sqrt(Dimensions.Y * Dimensions.Y + Dimensions.X * Dimensions.X);
+				else if (Dimensions.Z > Dimensions.Y)
+					return (float) Math.Sqrt(Dimensions.X * Dimensions.X + Dimensions.Z * Dimensions.Z);
 				else
-					if (Dimensions.Z > Dimensions.Y)
-						return (float)Math.Sqrt(Dimensions.X * Dimensions.X + Dimensions.Z * Dimensions.Z);
-					else
-						return (float)Math.Sqrt(Dimensions.X * Dimensions.X + Dimensions.Y * Dimensions.Y);
+					return (float) Math.Sqrt(Dimensions.X * Dimensions.X + Dimensions.Y * Dimensions.Y);
 			}
 		}
 
 		#endregion
 
 		#region Implementation
+
+		internal DicomMessageBase _ModelDicom
+		{
+			get { return _modelDicom; }
+		}
+
+		internal vtkImageData _VtkVolume
+		{
+			get
+			{
+				if (_cachedVtkVolume == null)
+					_cachedVtkVolume = CreateVtkVolume();
+				return _cachedVtkVolume;
+			}
+		}
 
 		internal int LargestOutputImageDimension
 		{
@@ -287,7 +307,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				//return (int)(LongAxisMagnitude / EffectiveSpacing + 0.5f);
 				float longOutputDimension = LongAxisMagnitude / EffectiveSpacing;
 				float shortOutputDimenstion = ShortAxisMagnitude / EffectiveSpacing;
-				return (int)Math.Sqrt(longOutputDimension * longOutputDimension + shortOutputDimenstion * shortOutputDimenstion);
+				return (int) Math.Sqrt(longOutputDimension * longOutputDimension + shortOutputDimenstion * shortOutputDimenstion);
 			}
 		}
 
@@ -306,22 +326,21 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			vtkImageData vtkVolume = new vtkImageData();
 
+			//ggerade ToRes: This attempt to capture vtkError OutputWindow failed...
+			//vtkVolume.AddObserver(123, VtkVolumeCallback);
+
 			vtkVolume.SetDimensions((int) ArrayDimensions.X, (int) ArrayDimensions.Y, (int) ArrayDimensions.Z);
-			vtkVolume.SetOrigin(0, 0, 0);
+			vtkVolume.SetOrigin(Origin.X, Origin.Y, Origin.Z);
 			vtkVolume.SetSpacing(Spacing.X, Spacing.Y, Spacing.Z);
 
 			if (IsDataUnsigned())
 			{
 				vtkVolume.SetScalarTypeToUnsignedShort();
-				vtkVolume.AllocateScalars();
-
 				vtkVolume.GetPointData().SetScalars(CreateVtkUnsignedShortArrayWrapper(_volUnsignedShortArray));
 			}
 			else
 			{
 				vtkVolume.SetScalarTypeToShort();
-				vtkVolume.AllocateScalars();
-
 				vtkVolume.GetPointData().SetScalars(CreateVtkShortArrayWrapper(_volShortArray));
 			}
 
@@ -329,6 +348,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			vtkVolume.UpdateInformation();
 
 			return vtkVolume;
+		}
+
+		private static void VtkVolumeCallback(vtkObject vtkObj, uint eid, object obj, IntPtr nativeSomethingOrOther)
+		{
+			Debug.WriteLine(eid);
 		}
 
 		private static vtkShortArray CreateVtkShortArrayWrapper(short[] shortArray)

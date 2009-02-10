@@ -194,7 +194,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public int GetObliqueImageRotationX(IPresentationImage presImage)
 		{
 			if (presImage == ImageViewer.PhysicalWorkspace.ImageBoxes[3].TopLeftPresentationImage)
-				return _obliqueSlicer.RotateX;
+				return _obliqueSlicer.RotateAboutX;
 
 			return 0;
 		}
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public int GetObliqueImageRotationY(IPresentationImage presImage)
 		{
 			if (presImage == ImageViewer.PhysicalWorkspace.ImageBoxes[3].TopLeftPresentationImage)
-				return _obliqueSlicer.RotateY;
+				return _obliqueSlicer.RotateAboutY;
 
 			return 0;
 		}
@@ -210,7 +210,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public int GetObliqueImageRotationZ(IPresentationImage presImage)
 		{
 			if (presImage == ImageViewer.PhysicalWorkspace.ImageBoxes[3].TopLeftPresentationImage)
-				return _obliqueSlicer.RotateZ;
+				return _obliqueSlicer.RotateAboutZ;
 
 			return 0;
 		}
