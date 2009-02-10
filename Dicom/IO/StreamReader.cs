@@ -313,7 +313,7 @@ namespace ClearCanvas.Dicom.IO
                         {
                             if (_tag.IsPrivate)
                             {
-                                if (_tag.Element <= 0x00ff)
+								if (_tag.Element <= 0x00ff && _tag.Element >= 0x0010)
                                 {
                                     // Reset the tag with the right VR and a more descriptive name.
                                     _tag = new DicomTag(_tag.TagValue, "Private Creator Code", "PrivateCreatorCode", DicomVr.LOvr, false, 1, uint.MaxValue, false);
