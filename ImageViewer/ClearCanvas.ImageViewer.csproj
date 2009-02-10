@@ -374,6 +374,12 @@
     <Compile Include="Rendering\IRenderer.cs" />
     <Compile Include="Rendering\IRenderingSurface.cs" />
     <Compile Include="StudyManagement\Tests\SopTests.cs" />
+    <Compile Include="StudyManagement\ValidationSettings.cs" />
+    <Compile Include="StudyManagement\ValidationSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ValidationSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="StudyManagement\VisibleDisplaySetPrefetchingStrategy.cs" />
     <Compile Include="Tests\BuildTreeTest.cs" />
     <Compile Include="Tests\AddImageTest.cs" />
@@ -542,6 +548,10 @@
     </None>
     <None Include="ClassDiagrams\Workspaces.cd" />
     <None Include="ClassDiagrams\StudyTree.cd" />
+    <None Include="StudyManagement\ValidationSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ValidationSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

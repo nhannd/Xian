@@ -948,7 +948,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		/// <exception cref="SopValidationException">Thrown when validation fails.</exception>
 		protected virtual void ValidateInternal()
-		{ 
+		{
+			if (ValidationSettings.Default.DisableSopValidation)
+				return;
+
 			DicomValidator.ValidateSOPInstanceUID(this.SopInstanceUID);
 			DicomValidator.ValidateSeriesInstanceUID(this.SeriesInstanceUID);
 			DicomValidator.ValidateStudyInstanceUID(this.StudyInstanceUID);
