@@ -8,7 +8,7 @@ using ClearCanvas.Dicom.Iod.Modules;
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
 	[Cloneable]
-	internal sealed class DicomGrayscaleSoftcopyPresentationState : DicomSoftcopyPresentationStateBase<DicomGrayscalePresentationImage>
+	internal sealed class DicomGrayscaleSoftcopyPresentationState : DicomSoftcopyPresentationStateMaskLutBase<DicomGrayscalePresentationImage>
 	{
 		public static readonly SopClass SopClass = SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass;
 
@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			this.SerializeSpatialTransform(iod.SpatialTransform, imagesByList);
 			this.SerializeGraphicLayer(iod.GraphicLayer, imagesByList);
 			this.SerializeModalityLut(iod.ModalityLut);
-			this.SerializeSoftcopyVoiLut(iod.SoftcopyVoiLut);
+			this.SerializeSoftcopyVoiLut(iod.SoftcopyVoiLut, imagesByList);
 			this.SerializeSoftcopyPresentationLut(iod.SoftcopyPresentationLut);
 		}
 
@@ -69,9 +69,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				this.DeserializeDisplayedArea(iod.DisplayedArea, out displayedArea, image);
 				this.DeserializeGraphicLayer(iod.GraphicLayer, image);
 				this.DeserializeGraphicAnnotation(iod.GraphicAnnotation, displayedArea, image);
-
+				this.DeserializeModalityLut(iod.ModalityLut, image);
+				this.DeserializeSoftcopyVoiLut(iod.SoftcopyVoiLut, image);
+				this.DeserializeSoftcopyPresentationLut(iod.SoftcopyPresentationLut, image);
 				image.Draw();
 			}
+		}
+
+		private void DeserializeSoftcopyPresentationLut(SoftcopyPresentationLutModuleIod module, DicomGrayscalePresentationImage image)
+		{
+			// TODO : fix this dummy implementation
 		}
 
 		#endregion

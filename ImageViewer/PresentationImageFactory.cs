@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
@@ -81,8 +82,15 @@ namespace ClearCanvas.ImageViewer
 				IPresentationImage image = Create(item.Frame);
 				if (item.PresentationStateSop != null && image is IDicomSoftcopyPresentationStateProvider)
 				{
-					IDicomSoftcopyPresentationStateProvider presentationStateProvider = (IDicomSoftcopyPresentationStateProvider) image;
-					presentationStateProvider.PresentationState = DicomSoftcopyPresentationState.Load(item.PresentationStateSop.DataSource);
+					try
+					{
+						IDicomSoftcopyPresentationStateProvider presentationStateProvider = (IDicomSoftcopyPresentationStateProvider) image;
+						presentationStateProvider.PresentationState = DicomSoftcopyPresentationState.Load(item.PresentationStateSop.DataSource);
+					}
+					catch (Exception ex)
+					{
+						Platform.Log(LogLevel.Warn, ex, SR.MessagePresentationStateReadFailure);
+					}
 				}
 				images.Add(image);
 			}

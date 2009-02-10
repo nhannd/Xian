@@ -273,6 +273,9 @@
   <data name="FormatDescriptionModalityLutLinear" xml:space="preserve">
     <value>Slope: {0:F2} Int.: {1:F2}</value>
   </data>
+  <data name="FormatDescriptionPresentationStateLinearLut" xml:space="preserve">
+    <value>W:{0} L:{1} ({2})</value>
+  </data>
   <data name="FormatMouseButtonShortcutDescription" xml:space="preserve">
     <value>{0} : {1}</value>
   </data>
@@ -308,6 +311,12 @@
   </data>
   <data name="MessageNoVisibleDisplaySets" xml:space="preserve">
     <value>No images could be found to display.  The viewer cannot be opened.</value>
+  </data>
+  <data name="MessagePresentationStateApplicationFailure" xml:space="preserve">
+    <value>An error has occured while attempting to load a presentation state. The presentation state may not have been loaded in its entirety. Please check the log for more details.</value>
+  </data>
+  <data name="MessagePresentationStateReadFailure" xml:space="preserve">
+    <value>An error has occured while attempting to read a presentation state file. Please check the log for more details.</value>
   </data>
   <data name="NamePrefetchingStrategyVisibleDisplaySet" xml:space="preserve">
     <value>Visible Display Set</value>

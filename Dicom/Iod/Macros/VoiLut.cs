@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Macros.VoiLut;
 
 namespace ClearCanvas.Dicom.Iod.Macros
@@ -53,17 +54,27 @@ namespace ClearCanvas.Dicom.Iod.Macros
 		/// <summary>
 		/// Gets or sets the value of WindowWidth in the underlying collection. Type 1C.
 		/// </summary>
-		byte[] WindowWidth { get; set; }
+		double[] WindowWidth { get; set; }
 
 		/// <summary>
 		/// Gets or sets the value of WindowCenterWidthExplanation in the underlying collection. Type 3.
 		/// </summary>
-		string WindowCenterWidthExplanation { get; set; }
+		string[] WindowCenterWidthExplanation { get; set; }
 
 		/// <summary>
 		/// Gets or sets the value of VoiLutFunction in the underlying collection. Type 3.
 		/// </summary>
-		string VoiLutFunction { get; set; }
+		VoiLutFunction VoiLutFunction { get; set; }
+
+		/// <summary>
+		/// Gets the number of VOI Data LUTs included in this sequence.
+		/// </summary>
+		long CountDataLuts { get; }
+
+		/// <summary>
+		/// Gets the number of VOI Windows included in this sequence.
+		/// </summary>
+		long CountWindows { get; }
 	}
 
 	/// <summary>
@@ -129,75 +140,123 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			get
 			{
 				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowCenter];
-				if (attribute.IsNull || attribute.IsEmpty)
+				if (attribute.IsNull || attribute.IsEmpty || attribute.Count == 0)
 					return null;
-				return (double[]) attribute.Values;
+
+				double[] values = new double[attribute.Count];
+				for (int n = 0; n < attribute.Count; n++)
+					values[n] = attribute.GetFloat64(n, 0);
+				return values;
 			}
 			set
 			{
-				if (value == null)
+				if (value == null || value.Length == 0)
 				{
 					base.DicomAttributeProvider[DicomTags.WindowCenter] = null;
 					return;
 				}
-				base.DicomAttributeProvider[DicomTags.WindowCenter].Values = value;
+
+				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowCenter];
+				for (int n = value.Length - 1; n >= 0; n--)
+					attribute.SetFloat64(n, value[n]);
 			}
 		}
 
 		/// <summary>
 		/// Gets or sets the value of WindowWidth in the underlying collection. Type 1C.
 		/// </summary>
-		public byte[] WindowWidth
+		public double[] WindowWidth
 		{
 			get
 			{
 				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowWidth];
-				if (attribute.IsNull || attribute.IsEmpty)
+				if (attribute.IsNull || attribute.IsEmpty || attribute.Count == 0)
 					return null;
-				return (byte[]) attribute.Values;
+
+				double[] values = new double[attribute.Count];
+				for (int n = 0; n < attribute.Count; n++)
+					values[n] = attribute.GetFloat64(n, 0);
+				return values;
 			}
 			set
 			{
-				if (value == null)
+				if (value == null || value.Length == 0)
 				{
 					base.DicomAttributeProvider[DicomTags.WindowWidth] = null;
 					return;
 				}
-				base.DicomAttributeProvider[DicomTags.WindowWidth].Values = value;
+
+				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowWidth];
+				for (int n = value.Length - 1; n >= 0; n--)
+					attribute.SetFloat64(n, value[n]);
 			}
 		}
 
 		/// <summary>
 		/// Gets or sets the value of WindowCenterWidthExplanation in the underlying collection. Type 3.
 		/// </summary>
-		public string WindowCenterWidthExplanation
+		public string[] WindowCenterWidthExplanation
 		{
-			get { return base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation].ToString(); }
+			get
+			{
+				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation];
+				if (attribute.IsNull || attribute.IsEmpty || attribute.Count == 0)
+					return null;
+				return (string[]) attribute.Values;
+			}
 			set
 			{
-				if (string.IsNullOrEmpty(value))
+				if (value == null || value.Length == 0)
 				{
 					base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation] = null;
 					return;
 				}
-				base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation].SetStringValue(value);
+				base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation].Values = value;
 			}
 		}
 
 		/// <summary>
 		/// Gets or sets the value of VoiLutFunction in the underlying collection. Type 3.
 		/// </summary>
-		public string VoiLutFunction
+		public VoiLutFunction VoiLutFunction
 		{
-			get { return base.DicomAttributeProvider[DicomTags.VoiLutFunction].GetString(0, string.Empty); }
+			get { return ParseEnum(base.DicomAttributeProvider[DicomTags.VoiLutFunction].GetString(0, string.Empty), VoiLutFunction.None); }
 			set
 			{
-				if (string.IsNullOrEmpty(value))
+				if (value == VoiLutFunction.None)
 				{
 					base.DicomAttributeProvider[DicomTags.VoiLutFunction] = null;
 					return;
 				}
-				base.DicomAttributeProvider[DicomTags.VoiLutFunction].SetString(0, value);
+				SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.VoiLutFunction], value);
+			}
+		}
+
+		/// <summary>
+		/// Gets the number of VOI Data LUTs included in this sequence.
+		/// </summary>
+		public long CountDataLuts
+		{
+			get
+			{
+				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.VoiLutSequence];
+				if (attribute.IsNull || attribute.IsEmpty)
+					return 0;
+				return attribute.Count;
+			}
+		}
+
+		/// <summary>
+		/// Gets the number of VOI Windows included in this sequence.
+		/// </summary>
+		public long CountWindows
+		{
+			get
+			{
+				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowCenter];
+				if (attribute.IsNull || attribute.IsEmpty)
+					return 0;
+				return attribute.Count;
 			}
 		}
 	}
@@ -265,18 +324,18 @@ namespace ClearCanvas.Dicom.Iod.Macros
 			/// <summary>
 			/// Gets or sets the value of LutData in the underlying collection. Type 1C.
 			/// </summary>
-			public byte[] LutData
+			public ushort[] LutData
 			{
 				get
 				{
 					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.LutData];
 					if (attribute.IsNull || attribute.IsEmpty || attribute.Count == 0)
 						return null;
-					return (byte[]) attribute.Values;
+					return (ushort[])attribute.Values;
 				}
 				set
 				{
-					if (value == null)
+					if (value == null || value.Length == 0)
 					{
 						base.DicomAttributeProvider[DicomTags.LutData] = null;
 						return;
@@ -284,6 +343,21 @@ namespace ClearCanvas.Dicom.Iod.Macros
 					base.DicomAttributeProvider[DicomTags.LutData].Values = value;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Enumerated values for the <see cref="DicomTags.VoiLutFunction"/> attribute describing
+		/// a VOI LUT function to apply to the <see cref="IVoiLutMacro.WindowCenter"/> and <see cref="IVoiLutMacro.WindowWidth"/>.
+		/// </summary>
+		/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.11.2 (Table C.11-2b)</remarks>
+		public enum VoiLutFunction {
+			Linear,
+			Sigmoid,
+
+			/// <summary>
+			/// Represents the null value, which is equivalent to the unknown status.
+			/// </summary>
+			None
 		}
 	}
 }

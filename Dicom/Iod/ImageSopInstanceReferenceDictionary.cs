@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod.Macros;
 
 namespace ClearCanvas.Dicom.Iod
@@ -7,9 +8,16 @@ namespace ClearCanvas.Dicom.Iod
 	{
 		private readonly Dictionary<string, IList<int>> _frameDictionary = new Dictionary<string, IList<int>>();
 		private readonly Dictionary<string, IList<uint>> _segmentDictionary = new Dictionary<string, IList<uint>>();
+		private readonly bool _emptyDictionaryMatchesAll;
 
-		public ImageSopInstanceReferenceDictionary(IEnumerable<ImageSopInstanceReferenceMacro> imageSopReferences)
+		public ImageSopInstanceReferenceDictionary(IEnumerable<ImageSopInstanceReferenceMacro> imageSopReferences) : this(imageSopReferences ?? new ImageSopInstanceReferenceMacro[0], false) {}
+
+		public ImageSopInstanceReferenceDictionary(IEnumerable<ImageSopInstanceReferenceMacro> imageSopReferences, bool emptyDictionaryMatchesAll)
 		{
+			Platform.CheckForNullReference(imageSopReferences, "imageSopReferences");
+
+			_emptyDictionaryMatchesAll = emptyDictionaryMatchesAll;
+
 			foreach (ImageSopInstanceReferenceMacro imageSopReference in imageSopReferences)
 			{
 				DicomAttributeIS frames = imageSopReference.ReferencedFrameNumber;
@@ -34,6 +42,11 @@ namespace ClearCanvas.Dicom.Iod
 			}
 		}
 
+		public bool IsEmpty
+		{
+			get { return _frameDictionary.Count == 0; }
+		}
+
 		public bool ReferencesSop(string imageSopInstanceUid)
 		{
 			return ReferencesAny(imageSopInstanceUid);
@@ -41,6 +54,9 @@ namespace ClearCanvas.Dicom.Iod
 
 		public bool ReferencesAny(string imageSopInstanceUid)
 		{
+			if (_emptyDictionaryMatchesAll && this.IsEmpty)
+				return true; // return true if dictionary is empty and empty matches all
+
 			if (_frameDictionary.ContainsKey(imageSopInstanceUid))
 				return true;
 			return false;
@@ -48,6 +64,9 @@ namespace ClearCanvas.Dicom.Iod
 
 		public bool ReferencesAllFrames(string imageSopInstanceUid)
 		{
+			if (_emptyDictionaryMatchesAll && this.IsEmpty)
+				return true; // return true if dictionary is empty and empty matches all
+
 			if (_frameDictionary.ContainsKey(imageSopInstanceUid))
 			{
 				IList<int> frames = _frameDictionary[imageSopInstanceUid];
@@ -57,8 +76,11 @@ namespace ClearCanvas.Dicom.Iod
 			return false;
 		}
 
-		public bool ReferencesAllSegments(string imageSopInstanceUid)
+		public bool ReferencesAllSegments(string imageSopInstanceUid) 
 		{
+			if (_emptyDictionaryMatchesAll && this.IsEmpty)
+				return true; // return true if dictionary is empty and empty matches all
+
 			if (_segmentDictionary.ContainsKey(imageSopInstanceUid))
 			{
 				IList<uint> segments = _segmentDictionary[imageSopInstanceUid];
@@ -68,8 +90,11 @@ namespace ClearCanvas.Dicom.Iod
 			return false;
 		}
 
-		public bool ReferencesFrame(string imageSopInstanceUid, int frameNumber)
+		public bool ReferencesFrame(string imageSopInstanceUid, int frameNumber) 
 		{
+			if (_emptyDictionaryMatchesAll && this.IsEmpty)
+				return true; // return true if dictionary is empty and empty matches all
+
 			if (_frameDictionary.ContainsKey(imageSopInstanceUid))
 			{
 				IList<int> frames = _frameDictionary[imageSopInstanceUid];
@@ -79,8 +104,11 @@ namespace ClearCanvas.Dicom.Iod
 			return false;
 		}
 
-		public bool ReferencesSegment(string imageSopInstanceUid, uint segmentNumber)
+		public bool ReferencesSegment(string imageSopInstanceUid, uint segmentNumber) 
 		{
+			if (_emptyDictionaryMatchesAll && this.IsEmpty)
+				return true; // return true if dictionary is empty and empty matches all
+
 			if (_segmentDictionary.ContainsKey(imageSopInstanceUid))
 			{
 				IList<uint> segments = _segmentDictionary[imageSopInstanceUid];

@@ -173,7 +173,15 @@ namespace ClearCanvas.ImageViewer
 			if(!_presentationStateApplied && this.PresentationState != null)
 			{
 				_presentationStateApplied = true;
-				this.PresentationState.Deserialize(this);
+				try
+				{
+					this.PresentationState.Deserialize(this);
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Warn, ex, SR.MessagePresentationStateApplicationFailure);
+					base.ImageViewer.DesktopWindow.ShowMessageBox(SR.MessagePresentationStateApplicationFailure, MessageBoxActions.Ok);
+				}
 			}
 
 			base.OnDrawing();

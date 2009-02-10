@@ -135,6 +135,7 @@
     <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RectangleInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RoiGraphicAnnotationSerializer.cs" />
+    <Compile Include="PresentationStates\DicomSoftcopyPresentationStateMaskLutBase.cs" />
     <Compile Include="SingleStudyLoader.cs" />
     <Compile Include="IPriorStudyFinder.cs" />
     <Compile Include="KeyObjects\KeyImageDeserializer.cs" />

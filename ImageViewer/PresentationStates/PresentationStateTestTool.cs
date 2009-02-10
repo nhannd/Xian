@@ -15,6 +15,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 	internal class PresentationStateTestTool : ImageViewerTool
 	{
 		private readonly FileExtensionFilter extDcm = new FileExtensionFilter("*.dcm", "Dicom Files (*.dcm)");
+		private readonly FileExtensionFilter extPre = new FileExtensionFilter("*.pre", "PRE Files (*.pre)");
 		private readonly FileExtensionFilter extAll = new FileExtensionFilter("*.*", "All Files (*.*)");
 		private string _lastPRFile = "";
 
@@ -22,6 +23,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		{
 			FileDialogCreationArgs args = new FileDialogCreationArgs(_lastPRFile);
 			args.Filters.Add(extDcm);
+			args.Filters.Add(extPre);
 			args.Filters.Add(extAll);
 			args.FileExtension = "dcm";
 			FileDialogResult result = base.Context.DesktopWindow.ShowSaveFileDialogBox(args);
@@ -45,6 +47,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		{
 			FileDialogCreationArgs args = new FileDialogCreationArgs(_lastPRFile);
 			args.Filters.Add(extDcm);
+			args.Filters.Add(extPre);
 			args.Filters.Add(extAll);
 			FileDialogResult result = base.Context.DesktopWindow.ShowOpenFileDialogBox(args);
 			if (result.Action == DialogBoxAction.Ok)

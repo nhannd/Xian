@@ -142,21 +142,25 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// Gets or sets the value of VoiLutSequence in the underlying collection. Type 1C.
 			/// </summary>
 			public VoiLutSequenceItem[] VoiLutSequence {
-				get {
+				get
+				{
 					DicomAttribute dicomAttribute = base.DicomAttributeProvider[DicomTags.VoiLutSequence];
-					if (dicomAttribute.IsNull || dicomAttribute.Count == 0) {
+					if (dicomAttribute.IsNull || dicomAttribute.Count == 0)
+					{
 						return null;
 					}
 
 					VoiLutSequenceItem[] result = new VoiLutSequenceItem[dicomAttribute.Count];
-					DicomSequenceItem[] items = (DicomSequenceItem[])dicomAttribute.Values;
+					DicomSequenceItem[] items = (DicomSequenceItem[]) dicomAttribute.Values;
 					for (int n = 0; n < items.Length; n++)
 						result[n] = new VoiLutSequenceItem(items[n]);
 
 					return result;
 				}
-				set {
-					if (value == null || value.Length == 0) {
+				set
+				{
+					if (value == null || value.Length == 0)
+					{
 						base.DicomAttributeProvider[DicomTags.VoiLutSequence] = null;
 						return;
 					}
@@ -172,66 +176,128 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			/// <summary>
 			/// Gets or sets the value of WindowCenter in the underlying collection. Type 1C.
 			/// </summary>
-			public double[] WindowCenter {
-				get {
+			public double[] WindowCenter
+			{
+				get
+				{
 					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowCenter];
-					if (attribute.IsNull || attribute.IsEmpty)
+					if (attribute.IsNull || attribute.IsEmpty || attribute.Count == 0)
 						return null;
-					return (double[])attribute.Values;
+
+					double[] values = new double[attribute.Count];
+					for (int n = 0; n < attribute.Count; n++)
+						values[n] = attribute.GetFloat64(n, 0);
+					return values;
 				}
-				set {
-					if (value == null) {
+				set
+				{
+					if (value == null || value.Length == 0)
+					{
 						base.DicomAttributeProvider[DicomTags.WindowCenter] = null;
 						return;
 					}
-					base.DicomAttributeProvider[DicomTags.WindowCenter].Values = value;
+
+					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowCenter];
+					for (int n = value.Length - 1; n >= 0; n--)
+						attribute.SetFloat64(n, value[n]);
 				}
 			}
 
 			/// <summary>
 			/// Gets or sets the value of WindowWidth in the underlying collection. Type 1C.
 			/// </summary>
-			public byte[] WindowWidth {
-				get {
+			public double[] WindowWidth
+			{
+				get
+				{
 					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowWidth];
-					if (attribute.IsNull || attribute.IsEmpty)
+					if (attribute.IsNull || attribute.IsEmpty || attribute.Count == 0)
 						return null;
-					return (byte[])attribute.Values;
+
+					double[] values = new double[attribute.Count];
+					for (int n = 0; n < attribute.Count; n++)
+						values[n] = attribute.GetFloat64(n, 0);
+					return values;
 				}
-				set {
-					if (value == null) {
+				set
+				{
+					if (value == null || value.Length == 0)
+					{
 						base.DicomAttributeProvider[DicomTags.WindowWidth] = null;
 						return;
 					}
-					base.DicomAttributeProvider[DicomTags.WindowWidth].Values = value;
+
+					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowWidth];
+					for (int n = value.Length - 1; n >= 0; n--)
+						attribute.SetFloat64(n, value[n]);
 				}
 			}
 
 			/// <summary>
 			/// Gets or sets the value of WindowCenterWidthExplanation in the underlying collection. Type 3.
 			/// </summary>
-			public string WindowCenterWidthExplanation {
-				get { return base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation].ToString(); }
-				set {
-					if (string.IsNullOrEmpty(value)) {
+			public string[] WindowCenterWidthExplanation
+			{
+				get
+				{
+					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation];
+					if (attribute.IsNull || attribute.IsEmpty || attribute.Count == 0)
+						return null;
+					return (string[]) attribute.Values;
+				}
+				set
+				{
+					if (value == null || value.Length == 0)
+					{
 						base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation] = null;
 						return;
 					}
-					base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation].SetStringValue(value);
+					base.DicomAttributeProvider[DicomTags.WindowCenterWidthExplanation].Values = value;
 				}
 			}
 
 			/// <summary>
 			/// Gets or sets the value of VoiLutFunction in the underlying collection. Type 3.
 			/// </summary>
-			public string VoiLutFunction {
-				get { return base.DicomAttributeProvider[DicomTags.VoiLutFunction].GetString(0, string.Empty); }
-				set {
-					if (string.IsNullOrEmpty(value)) {
+			public VoiLutFunction VoiLutFunction
+			{
+				get { return ParseEnum(base.DicomAttributeProvider[DicomTags.VoiLutFunction].GetString(0, string.Empty), VoiLutFunction.None); }
+				set
+				{
+					if (value == VoiLutFunction.None)
+					{
 						base.DicomAttributeProvider[DicomTags.VoiLutFunction] = null;
 						return;
 					}
-					base.DicomAttributeProvider[DicomTags.VoiLutFunction].SetString(0, value);
+					SetAttributeFromEnum(base.DicomAttributeProvider[DicomTags.VoiLutFunction], value);
+				}
+			}
+
+			/// <summary>
+			/// Gets the number of VOI Data LUTs included in this sequence.
+			/// </summary>
+			public long CountDataLuts
+			{
+				get
+				{
+					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.VoiLutSequence];
+					if (attribute.IsNull || attribute.IsEmpty)
+						return 0;
+					return attribute.Count;
+				}
+			}
+
+			/// <summary>
+			/// Gets the number of VOI Windows included in this sequence.
+			/// </summary>
+			public long CountWindows
+			{
+				get
+				{
+					DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.WindowCenter];
+					if (attribute.IsNull || attribute.IsEmpty)
+						return 0;
+					return attribute.Count;
 				}
 			}
 		}

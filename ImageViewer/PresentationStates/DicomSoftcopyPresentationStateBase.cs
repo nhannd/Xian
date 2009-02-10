@@ -237,11 +237,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			presentationStateShutterModule.InitializeAttributes();
 		}
 
-		protected void SerializePresentationStateMask(PresentationStateMaskModuleIod presentationStateMaskModule)
-		{
-			presentationStateMaskModule.InitializeAttributes();
-		}
-
 		protected void SerializeDisplayedArea(DisplayedAreaModuleIod displayedAreaModule, IList<T> images)
 		{
 			displayedAreaModule.InitializeAttributes();
@@ -418,11 +413,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		#region Unimplemented Serializers
 
-		protected void SerializeMask(MaskModuleIod maskModule)
-		{
-			// TODO : fix this dummy implementation
-		}
-
 		protected void SerializeDisplayShutter(DisplayShutterModuleIod displayShutterModule)
 		{
 			// TODO : fix this dummy implementation
@@ -439,16 +429,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		}
 
 		protected void SerializeOverlayActivation(OverlayActivationModuleIod overlayActivationModule)
-		{
-			// TODO : fix this dummy implementation
-		}
-
-		protected void SerializeModalityLut(ModalityLutModuleIod modalityLutModule)
-		{
-			// TODO : fix this dummy implementation
-		}
-
-		protected void SerializeSoftcopyVoiLut(SoftcopyVoiLutModuleIod softcopyVoiLutModule)
 		{
 			// TODO : fix this dummy implementation
 		}
@@ -532,39 +512,39 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		protected void DeserializeGraphicLayer(GraphicLayerModuleIod module, T image)
 		{
 			GraphicLayerSequenceItem[] layerSequences = module.GraphicLayerSequence;
-			if (layerSequences != null)
-			{
-				SortedDictionary<int, GraphicLayerSequenceItem> orderedSequences = new SortedDictionary<int, GraphicLayerSequenceItem>();
-				foreach (GraphicLayerSequenceItem sequenceItem in layerSequences)
-				{
-					orderedSequences.Add(sequenceItem.GraphicLayerOrder, sequenceItem);
-				}
+			if (layerSequences == null)
+				return;
 
-				DicomSoftcopyPresentationStateGraphic graphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, true);
-				foreach (GraphicLayerSequenceItem sequenceItem in orderedSequences.Values)
-				{
-					DicomSoftcopyPresentationStateGraphic.LayerGraphic layer = graphic.AddLayer(sequenceItem.GraphicLayer);
-					layer.Description = sequenceItem.GraphicLayerDescription;
-					layer.DisplayCIELabColor = sequenceItem.GraphicLayerRecommendedDisplayCielabValue;
-					layer.DisplayGrayscaleColor = sequenceItem.GraphicLayerRecommendedDisplayGrayscaleValue;
-				}
+			SortedDictionary<int, GraphicLayerSequenceItem> orderedSequences = new SortedDictionary<int, GraphicLayerSequenceItem>();
+			foreach (GraphicLayerSequenceItem sequenceItem in layerSequences)
+			{
+				orderedSequences.Add(sequenceItem.GraphicLayerOrder, sequenceItem);
+			}
+
+			DicomSoftcopyPresentationStateGraphic graphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, true);
+			foreach (GraphicLayerSequenceItem sequenceItem in orderedSequences.Values)
+			{
+				DicomSoftcopyPresentationStateGraphic.LayerGraphic layer = graphic.AddLayer(sequenceItem.GraphicLayer);
+				layer.Description = sequenceItem.GraphicLayerDescription;
+				layer.DisplayCIELabColor = sequenceItem.GraphicLayerRecommendedDisplayCielabValue;
+				layer.DisplayGrayscaleColor = sequenceItem.GraphicLayerRecommendedDisplayGrayscaleValue;
 			}
 		}
 
 		protected void DeserializeGraphicAnnotation(GraphicAnnotationModuleIod module, RectangleF displayedArea, T image)
 		{
 			GraphicAnnotationSequenceItem[] annotationSequences = module.GraphicAnnotationSequence;
-			if (annotationSequences != null)
+			if (annotationSequences == null)
+				return;
+
+			DicomSoftcopyPresentationStateGraphic graphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, true);
+			foreach (GraphicAnnotationSequenceItem sequenceItem in annotationSequences)
 			{
-				DicomSoftcopyPresentationStateGraphic graphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, true);
-				foreach (GraphicAnnotationSequenceItem sequenceItem in annotationSequences)
+				ImageSopInstanceReferenceDictionary dictionary = new ImageSopInstanceReferenceDictionary(sequenceItem.ReferencedImageSequence, true);
+				if (dictionary.ReferencesFrame(image.ImageSop.SopInstanceUID, image.Frame.FrameNumber))
 				{
-					ImageSopInstanceReferenceDictionary dictionary = new ImageSopInstanceReferenceDictionary(sequenceItem.ReferencedImageSequence);
-					if (dictionary.ReferencesFrame(image.ImageSop.SopInstanceUID, image.Frame.FrameNumber))
-					{
-						DicomGraphicAnnotation annotation = new DicomGraphicAnnotation(sequenceItem, displayedArea);
-						graphic[sequenceItem.GraphicLayer].Graphics.Add(annotation);
-					}
+					DicomGraphicAnnotation annotation = new DicomGraphicAnnotation(sequenceItem, displayedArea);
+					graphic[sequenceItem.GraphicLayer].Graphics.Add(annotation);
 				}
 			}
 		}
