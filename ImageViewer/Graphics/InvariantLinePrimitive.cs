@@ -47,6 +47,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		public override bool Contains(Point point)
+		{
+			return false;
+		}
+
 		/// <summary>
 		/// The endpoint of the line as specified by <see cref="InvariantLinePrimitive.TopLeft"/> in either source or destination coordinates.
 		/// </summary>

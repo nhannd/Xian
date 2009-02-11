@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -69,6 +70,26 @@ namespace ClearCanvas.ImageViewer.Graphics
 				this.Rectangle,
 				this.SpatialTransform);
 			this.ResetCoordinateSystem();
+
+			return result;
+		}
+
+		public override bool Contains(Point point)
+		{
+			//TODO: duplicated from EllipsePrimitive - should combine.
+			GraphicsPath path = new GraphicsPath();
+			bool result;
+
+			this.CoordinateSystem = CoordinateSystem.Source;
+			path.AddEllipse(this.Rectangle);
+			this.ResetCoordinateSystem();
+
+			if (this.CoordinateSystem == CoordinateSystem.Destination)
+				path.Transform(SpatialTransform.CumulativeTransform);
+
+			result = path.IsVisible(point);
+
+			path.Dispose();
 
 			return result;
 		}

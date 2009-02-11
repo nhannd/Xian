@@ -67,5 +67,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			return result;
 		}
+
+		public override bool Contains(Point point)
+		{
+			return this.Rectangle.Contains(point);
+		}
 	}
 }

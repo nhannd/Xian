@@ -177,6 +177,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		public abstract bool Contains(Point point);
+
 		/// <summary>
 		/// Gets the rectangle that defines a <see cref="BoundableGraphic"/>.
 		/// </summary>

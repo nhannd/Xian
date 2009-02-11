@@ -54,6 +54,8 @@
     <Compile Include="MprRotateTool.cs" />
     <Compile Include="OpenMprLocalImageExplorerTool.cs" />
     <Compile Include="OpenMprTool.cs" />
+    <Compile Include="PinwheelGraphic.cs" />
+    <Compile Include="RotateObliqueTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	{
 		private readonly ILayoutManager _layoutManager;
 
-		public MprImageViewerComponent(ILayoutManager layoutManager) : base(layoutManager)
+		public MprImageViewerComponent(ILayoutManager layoutManager) : base(layoutManager, null)
 		{
 			_layoutManager = layoutManager;
 		}
