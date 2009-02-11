@@ -86,9 +86,9 @@ namespace ClearCanvas.ImageServer.Codec.Jpeg.JpegBaselineAction
 			syntaxAttribute.Value = _quality.ToString();
 			element.Attributes.Append(syntaxAttribute);
 
-			Platform.Log(LogLevel.Debug,
+			Platform.Log(LogLevel.Info,
 			             "Jpeg Baseline Compression Scheduling: This study {0} on partition {1} will be compressed on {2}",
-			             context.Message.DataSet[DicomTags.StudyInstanceUid], context.ServerPartition.AeTitle, scheduledTime);
+			             context.StudyStorage.StudyInstanceUid, context.ServerPartition.AeTitle, scheduledTime);
 
 			context.CommandProcessor.AddCommand(
 				new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,

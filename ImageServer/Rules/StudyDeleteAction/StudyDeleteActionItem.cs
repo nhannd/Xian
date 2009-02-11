@@ -67,8 +67,10 @@ namespace ClearCanvas.ImageServer.Rules.StudyDeleteAction
 
             scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
 
-            Platform.Log(LogLevel.Debug, "Study Delete Rule: This study will be eligible for deletion on {0}", scheduledTime);
-            context.CommandProcessor.AddCommand(
+			Platform.Log(LogLevel.Info,
+						 "Online Retention: Study {0} on partition {1} will be deleted after {2}",
+						 context.StudyStorage.StudyInstanceUid, context.ServerPartition.Description, scheduledTime);
+			context.CommandProcessor.AddCommand(
                 new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
                                                  scheduledTime, null));
 

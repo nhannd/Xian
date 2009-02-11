@@ -35,6 +35,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
@@ -74,7 +75,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 			if (File.Exists(studyXmlFile))
 			{
-				using (Stream fileStream = new FileStream(studyXmlFile, FileMode.Open))
+				using (Stream fileStream = FileStreamOpener.OpenForRead(studyXmlFile, FileMode.Open))
 				{
 					XmlDocument theDoc = new XmlDocument();
 

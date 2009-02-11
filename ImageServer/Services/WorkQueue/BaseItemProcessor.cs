@@ -690,7 +690,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         String streamFile = Path.Combine(location.GetStudyPath(), location.StudyInstanceUid + ".xml");
                         if (File.Exists(streamFile))
                         {
-                            using (Stream fileStream = new FileStream(streamFile, FileMode.Open))
+                            using (Stream fileStream = FileStreamOpener.OpenForRead(streamFile, FileMode.Open))
                             {
                                 XmlDocument theDoc = new XmlDocument();
 

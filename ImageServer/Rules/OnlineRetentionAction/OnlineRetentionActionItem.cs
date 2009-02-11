@@ -67,8 +67,11 @@ namespace ClearCanvas.ImageServer.Rules.OnlineRetentionAction
             }
 
             scheduledTime = CalculateOffsetTime(scheduledTime, _offsetTime, _units);
-            
-            Platform.Log(LogLevel.Debug, "Online Retention Rule: This study will be eligible for purge on {0}", scheduledTime);
+
+        	Platform.Log(LogLevel.Info,
+        	             "Online Retention: Study {0} on partition {1} will stay online at least until {2}",
+        	             context.StudyStorage.StudyInstanceUid, context.ServerPartition.AeTitle, scheduledTime);
+
             context.CommandProcessor.AddCommand(
                 new InsertFilesystemQueueCommand(_queueType, context.FilesystemKey, context.StudyLocationKey,
                                                  scheduledTime, null));

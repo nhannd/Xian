@@ -185,22 +185,49 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             ConflictingAccessionNumber.Text = ReconcileDetails.ConflictingPatient.AccessionNumber;
 
             if (!ExistingNameLabel.Text.Equals(ConflictingNameLabel.Text))
+            {
                 ConflictingNameLabel.CssClass = "ConflictingValueLabel";
+                if (ExistingNameLabel.Text.Equals(string.Empty)) ExistingNameLabel.Text = "Not Specified";
+                if (ConflictingNameLabel.Text.Equals(string.Empty)) ConflictingNameLabel.Text = "Not Specified";
+            }
 
             if (!ExistingPatientID.Text.Equals(ConflictingPatientID.Text))
+            {
                 ConflictingPatientID.CssClass = "ConflictingValueLabel";
+                if (ExistingPatientID.Text.Equals(string.Empty)) ExistingPatientID.Text = "Not Specified";
+                if (ConflictingPatientID.Text.Equals(string.Empty)) ConflictingPatientID.Text = "Not Specified";
+            }
+ 
 
             if (!ExistingPatientBirthDate.Text.Equals(ConflictingPatientBirthDate.Text))
+            {
                 ConflictingPatientBirthDate.CssClass = "ConflictingValueLabel";
+                if (ExistingPatientBirthDate.Text.Equals(string.Empty)) ExistingPatientBirthDate.Text = "Not Specified";
+                if (ConflictingPatientBirthDate.Text.Equals(string.Empty)) ConflictingPatientBirthDate.Text = "Not Specified";
+            }
+                
 
             if (!ExistingPatientSex.Text.Equals(ConflictingPatientSex.Text))
+            {
                 ConflictingPatientSex.CssClass = "ConflictingValueLabel";
-
+                if (ExistingPatientSex.Text.Equals(string.Empty)) ExistingPatientSex.Text = "Not Specified";
+                if (ConflictingPatientSex.Text.Equals(string.Empty)) ConflictingPatientSex.Text = "Not Specified";
+            }
+                
             if (!ExistingPatientIssuerOfPatientID.Text.Equals(ConflictingPatientIssuerOfPatientID.Text))
+            {
                 ConflictingPatientIssuerOfPatientID.CssClass = "ConflictingValueLabel";
+                if (ExistingPatientIssuerOfPatientID.Text.Equals(string.Empty)) ExistingPatientIssuerOfPatientID.Text = "Not Specified";
+                if (ConflictingPatientIssuerOfPatientID.Text.Equals(string.Empty)) ConflictingPatientIssuerOfPatientID.Text = "Not Specified";  
+            }
 
             if (!ExistingAccessionNumber.Text.Equals(ConflictingAccessionNumber.Text))
+            {
                 ConflictingAccessionNumber.CssClass = "ConflictingValueLabel";
+                if (ExistingAccessionNumber.Text.Equals(string.Empty)) ExistingAccessionNumber.Text = "Not Specified";
+                if (ConflictingAccessionNumber.Text.Equals(string.Empty)) ConflictingAccessionNumber.Text = "Not Specified";                
+            }
+
 
             ExistingPatientSeriesGridView.DataSource = ReconcileDetails.ExistingPatient.Series;
             ExistingPatientSeriesGridView.DataBind();

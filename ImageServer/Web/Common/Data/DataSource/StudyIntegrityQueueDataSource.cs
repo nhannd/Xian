@@ -332,6 +332,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				criteria.InsertTime.Between(insertTime, insertTime.AddHours(24));
 			}
 
+			// Must do a sort order for range search to work right in this release.
+			criteria.InsertTime.SortAsc(0);
+
 			return criteria;
 		}
 

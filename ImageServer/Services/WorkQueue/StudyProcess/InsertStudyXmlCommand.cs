@@ -83,22 +83,30 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
 			// allocate the random number generator here, in case we need it below
 			Random rand = new Random();
-
+			string tmpStreamFile = streamFile + "_tmp";
+			string tmpGzStreamFile =  gzStreamFile + "_tmp";
 			for (int i = 0; ; i++)
 				try
 				{
-					if (File.Exists(streamFile))
-						File.Delete(streamFile);
-					if (File.Exists(gzStreamFile))
-						File.Delete(gzStreamFile);
+					if (File.Exists(tmpStreamFile))
+						File.Delete(tmpStreamFile);
+					if (File.Exists(tmpGzStreamFile))
+						File.Delete(tmpGzStreamFile);
 
-					using (FileStream xmlStream = new FileStream(streamFile, FileMode.CreateNew),
-									  gzipStream = new FileStream(gzStreamFile, FileMode.CreateNew))
+					using (FileStream xmlStream = FileStreamOpener.OpenForSoleUpdate(tmpStreamFile, FileMode.CreateNew),
+									  gzipStream = FileStreamOpener.OpenForSoleUpdate(tmpGzStreamFile, FileMode.CreateNew))
 					{
 						StudyXmlIo.WriteXmlAndGzip(doc, xmlStream, gzipStream);
 						xmlStream.Close();
 						gzipStream.Close();
 					}
+
+					if (File.Exists(streamFile))
+						File.Delete(streamFile);
+					File.Move(tmpStreamFile, streamFile);
+					if (File.Exists(gzStreamFile))
+						File.Delete(gzStreamFile);
+					File.Move(tmpGzStreamFile,gzStreamFile);
 					return;
 				}
 				catch (IOException)

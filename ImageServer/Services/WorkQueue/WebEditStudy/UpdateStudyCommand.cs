@@ -590,10 +590,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             Platform.Log(LogLevel.Info, "Generating new study header...");
             string newStudyXmlPath = Path.Combine(NewStudyPath, _newStudyInstanceUid + ".xml");
             string gzipStudyXmlPath = Path.Combine(NewStudyPath, _newStudyInstanceUid + ".xml.gz");
-            using (FileStream xmlStream = new FileStream(newStudyXmlPath, FileMode.Create),
-                              gzipStream = new FileStream(gzipStudyXmlPath, FileMode.Create))
+            using (FileStream xmlStream = FileStreamOpener.OpenForSoleUpdate(newStudyXmlPath, FileMode.Create),
+							  gzipStream = FileStreamOpener.OpenForSoleUpdate(gzipStudyXmlPath, FileMode.Create))
             {
                 StudyXmlIo.WriteXmlAndGzip(newStudyXml.GetMemento(new StudyXmlOutputSettings()), xmlStream, gzipStream);
+				xmlStream.Close();
+				gzipStream.Close();
             }
 
             if (NewStudyPath!=_oldStudyPath)
@@ -657,10 +659,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         {
             XmlDocument doc = new XmlDocument();
             StudyXml studyXml = new StudyXml();
-            using (FileStream stream = File.OpenRead(studyXmlPath))
+			using (FileStream stream = FileStreamOpener.OpenForRead(studyXmlPath,FileMode.Open))
             {
                 StudyXmlIo.Read(doc, stream);
                 studyXml.SetMemento(doc);
+				stream.Close();
             }
 
             return studyXml;

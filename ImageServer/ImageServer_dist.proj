@@ -50,6 +50,7 @@
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\ServiceLock\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Streaming\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\app.config" />
+	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\Hsm\app.config" />
   </ItemGroup>
 
   <ItemGroup>

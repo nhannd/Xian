@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 for (int i = 0; ;i++ )
                     try
                     {
-                        using (Stream fileStream = new FileStream(streamFile, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        using (Stream fileStream = FileStreamOpener.OpenForRead(streamFile, FileMode.Open))
                         {
                             XmlDocument theDoc = new XmlDocument();
 

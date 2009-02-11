@@ -53,6 +53,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         #endregion
 
+		#region Private Static Members
+		private static readonly StudyXmlOutputSettings _outputSettings = ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings;
+		#endregion
+
         #region Constructors
 
         public UpdateStudyXmlCommand(DicomFile file, StudyXml stream, StudyStorageLocation storageLocation)
@@ -134,40 +138,49 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 _stream);
         }
 
-        private static void WriteStudyStream(string streamFile, string gzStreamFile, StudyXml theStream)
-        {
-            XmlDocument doc = theStream.GetMemento(ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings);
+		private static void WriteStudyStream(string streamFile, string gzStreamFile, StudyXml theStream)
+		{
+			XmlDocument doc = theStream.GetMemento(_outputSettings);
 
-            // allocate the random number generator here, in case we need it below
-            Random rand = new Random();
+			// allocate the random number generator here, in case we need it below
+			Random rand = new Random();
+			string tmpStreamFile = streamFile + "_tmp";
+			string tmpGzStreamFile = gzStreamFile + "_tmp";
+			for (int i = 0; ; i++)
+				try
+				{
+					if (File.Exists(tmpStreamFile))
+						File.Delete(tmpStreamFile);
+					if (File.Exists(tmpGzStreamFile))
+						File.Delete(tmpGzStreamFile);
 
-            for (int i = 0;; i++)
-                try
-                {
-                    if (File.Exists(streamFile))
-                        File.Delete(streamFile);
-					if (File.Exists(gzStreamFile))
-						File.Delete(gzStreamFile);
-
-					using (FileStream xmlStream = new FileStream(streamFile, FileMode.CreateNew),
-									  gzipStream = new FileStream(gzStreamFile, FileMode.CreateNew))
+					using (FileStream xmlStream = FileStreamOpener.OpenForSoleUpdate(tmpStreamFile, FileMode.CreateNew),
+									  gzipStream = FileStreamOpener.OpenForSoleUpdate(tmpGzStreamFile, FileMode.CreateNew))
 					{
 						StudyXmlIo.WriteXmlAndGzip(doc, xmlStream, gzipStream);
 						xmlStream.Close();
 						gzipStream.Close();
 					}
-                	return;
-                }
-                catch (IOException)
-                {
-                    if (i < 5)
-                    {
-                        Thread.Sleep(rand.Next(5, 50)); // Sleep 5-50 milliseconds
-                        continue;
-                    }
 
-                    throw;
-                }
-        }
+					if (File.Exists(streamFile))
+						File.Delete(streamFile);
+					File.Move(tmpStreamFile, streamFile);
+					if (File.Exists(gzStreamFile))
+						File.Delete(gzStreamFile);
+					File.Move(tmpGzStreamFile, gzStreamFile);
+					return;
+				}
+				catch (IOException)
+				{
+					if (i < 5)
+					{
+						Thread.Sleep(rand.Next(5, 50)); // Sleep 5-50 milliseconds
+						continue;
+					}
+
+					throw;
+				}
+		}
+       
     }
 }

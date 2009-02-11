@@ -87,6 +87,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			{
 				_file.Save(stream, DicomWriteOptions.Default);
 				_fileSaved = true;
+				stream.Close();
 			}
 		}
 

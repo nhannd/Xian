@@ -117,6 +117,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 			}
             else
             {
+				if (CheckForProcessingStudy(item))
+				{
+					Platform.Log(LogLevel.Info,
+								 "Tier Migrate entry for study {0} has conflicting WorkQueue entry, reinserting into FilesystemQueue",
+								 StorageLocation.StudyInstanceUid);
+					return;
+				}
+
                 try
                 {
                     DoMigrateStudy(StorageLocation);
@@ -224,6 +232,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
         protected override bool CanStart()
         {
+        	return true;
+			/*
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
             workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
@@ -231,6 +241,46 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
             List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
             return relatedItems == null || relatedItems.Count == 0;
+			 */
         }
+
+		private bool CheckForProcessingStudy(Model.WorkQueue item)
+		{
+			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+			workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
+			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
+			List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
+			if (relatedItems == null || relatedItems.Count == 0)
+				return false;
+
+			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IWorkQueueUidEntityBroker broker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+				WorkQueueUidSelectCriteria workQueueUidCriteria = new WorkQueueUidSelectCriteria();
+				workQueueUidCriteria.WorkQueueKey.EqualTo(item.Key);
+				broker.Delete(workQueueUidCriteria);
+
+				FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
+				parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
+				parms.ScheduledTime = Platform.Time.AddMinutes(10);
+				parms.StudyStorageKey = item.StudyStorageKey;
+				parms.FilesystemKey = StorageLocation.FilesystemKey;
+
+				IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
+
+				if (false == insertQueue.Execute(parms))
+				{
+					Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
+				}
+				else
+					updateContext.Commit();
+			}
+
+			PostProcessing(item, 
+				WorkQueueProcessorStatus.Complete, 
+				WorkQueueProcessorNumProcessed.None,
+				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+			return true;
+		}
     }
 }

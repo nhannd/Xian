@@ -53,6 +53,7 @@ namespace ClearCanvas.ImageServer.Rules
         private readonly ServerEntityKey _studyLocationKey;
         private readonly ServerEntityKey _filesystemKey;
     	private readonly ServerPartition _partition;
+    	private readonly StudyStorage _studyStorage;
     	private ServerCommandProcessor _commandProcessor;
         #endregion
 
@@ -66,6 +67,7 @@ namespace ClearCanvas.ImageServer.Rules
             _studyLocationKey = studyLocationKey;
             _filesystemKey = filesystemKey;
         	_partition = ServerPartition.Load(serverPartitionKey);
+        	_studyStorage = StudyStorage.Load(_studyLocationKey);
         }
 
         #endregion
@@ -119,6 +121,14 @@ namespace ClearCanvas.ImageServer.Rules
     	public ServerPartition ServerPartition
     	{
 			get { return _partition; }
+    	}
+
+		/// <summary>
+		/// Storage Information for study.
+		/// </summary>
+    	public StudyStorage StudyStorage
+    	{
+			get { return _studyStorage; }
     	}
         #endregion
     }

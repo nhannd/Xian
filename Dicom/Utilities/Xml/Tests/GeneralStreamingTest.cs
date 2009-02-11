@@ -64,6 +64,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml.Tests
 			using (Stream fileStream = new FileStream(streamFile, FileMode.CreateNew))
 			{
 				StudyXmlIo.Write(doc, fileStream);
+				fileStream.Close();
 			}
 
 			return;

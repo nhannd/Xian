@@ -2535,6 +2535,7 @@ BEGIN
 		ScheduledTime < getdate() 
 		AND ArchiveQueue.PartitionArchiveGUID = @PartitionArchiveGUID
 		AND ArchiveQueue.ArchiveQueueStatusEnum = @PendingStatusEnum
+		AND NOT EXISTS (SELECT GUID FROM WorkQueue WHERE ArchiveQueue.StudyStorageGUID = WorkQueue.StudyStorageGUID)
 	ORDER BY ArchiveQueue.ScheduledTime
 
 	if @@ROWCOUNT != 0

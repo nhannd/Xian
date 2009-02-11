@@ -81,10 +81,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
             catch (Exception e)
             {
-                Platform.Log(LogLevel.Fatal, e, "Unable to open database connnection");
-                throw new PersistenceException("Unexpected exception opening database connection", e);
+                Platform.Log(LogLevel.Fatal, e, "Exception when opening database connection for reading");
+
+                throw new PersistenceException("Unexpected exception opening database connection for reading", e);
             }
-        }
+            }
 
         public IUpdateContext OpenUpdateContext(UpdateContextSyncMode mode)
         {
@@ -98,10 +99,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
             catch (Exception e)
             {
-				Platform.Log(LogLevel.Fatal, e, "Unable to open database connnection");
-                throw new PersistenceException("Unexpected exception opening database connection", e);
+				Platform.Log(LogLevel.Fatal, e, "Exception when opening database connection for update");
+
+                throw new PersistenceException("Unexpected exception opening database connection for update", e);
             }
-        }
+            }
 
         #endregion
     }

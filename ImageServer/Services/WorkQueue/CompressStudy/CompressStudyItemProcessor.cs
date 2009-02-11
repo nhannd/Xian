@@ -38,10 +38,13 @@ using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
 using System.Diagnostics;
 
@@ -239,6 +242,56 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
             }
 		}
 
+		private bool CheckForProcessingStudy(Model.WorkQueue item)
+		{
+			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+			workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
+			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
+			List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
+			if (relatedItems == null || relatedItems.Count == 0)
+				return false;
+
+			XmlElement element = item.Data.DocumentElement;
+
+			string syntax = element.Attributes["syntax"].Value;
+
+			TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
+
+
+			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IWorkQueueUidEntityBroker broker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+				WorkQueueUidSelectCriteria workQueueUidCriteria = new WorkQueueUidSelectCriteria();
+				workQueueUidCriteria.WorkQueueKey.EqualTo(item.Key);
+				broker.Delete(workQueueUidCriteria);
+
+				FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
+				if (compressSyntax.LosslessCompressed)
+					parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LosslessCompress;
+				else
+					parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LossyCompress;
+				parms.ScheduledTime = Platform.Time.AddMinutes(10);
+				parms.StudyStorageKey = item.StudyStorageKey;
+				parms.FilesystemKey = StorageLocation.FilesystemKey;
+
+				parms.QueueXml = item.Data;
+
+				IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
+
+				if (false == insertQueue.Execute(parms))
+				{
+					Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
+				}
+				else
+					updateContext.Commit();
+			}
+
+			PostProcessing(item, WorkQueueProcessorStatus.Complete,
+				WorkQueueProcessorNumProcessed.None,
+				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+
+			return true;
+		}
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
 			if (!LoadStorageLocation(item))
@@ -249,6 +302,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			}
 			else
 			{
+
+				if (CheckForProcessingStudy(item))
+				{
+					Platform.Log(LogLevel.Info,
+					             "Compression entry for study {0} has existing WorkQueue entry, reinserting into FilesystemQueue",
+					             StorageLocation.StudyInstanceUid);
+					return;
+				}
 				LoadUids(item);
 				
 				if (WorkQueueUidList.Count == 0)
@@ -260,7 +321,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 						WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 					return;
 				}
-
 
 
 				XmlElement element = item.Data.DocumentElement;
@@ -332,15 +392,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
         protected override bool CanStart()
         {
-            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-            workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
-            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
-
-            // don't compress until the study has been completely processed.
-            workQueueCriteria.WorkQueueStatusEnum.In(
-                new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending, WorkQueueStatusEnum.Failed });
-            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
-            return relatedItems == null || relatedItems.Count == 0;
+        	return true;
         }
 
 

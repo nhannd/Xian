@@ -140,6 +140,23 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             return text;
         }
 
+        /// <summary>
+        /// Replaces escaped characters with their ascii equivalent
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static string DecodeValue(string value)
+        {
+            // Cleanup the common XML character replacements
+            string text = value;
+            text= text.Replace("&lt;", "<").
+                Replace("&gt;", ">").
+                Replace("&quot;", "\"").
+                Replace("&apos;", "'").
+                Replace("&amp;", "&");
+            return text;
+        }
+
     }
 
     /// <summary>

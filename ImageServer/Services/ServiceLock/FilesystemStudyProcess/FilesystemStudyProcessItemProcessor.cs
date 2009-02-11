@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
                 return null;
             }
 
-            FileStream stream = new FileStream(studyXml, FileMode.Open);
+			FileStream stream = FileStreamOpener.OpenForRead(studyXml, FileMode.Open);
             XmlDocument theDoc = new XmlDocument();
             StudyXmlIo.Read(theDoc, stream);
             stream.Close();

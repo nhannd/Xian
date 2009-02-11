@@ -1,14 +1,44 @@
+#region License
+
+// Copyright (c) 2006-2009, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Xml;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Common.Helpers
@@ -98,11 +128,12 @@ namespace ClearCanvas.ImageServer.Common.Helpers
         {
             StudyXml studyXml = new StudyXml();
             string studyXmlPath = Path.Combine(storageLocation.GetStudyPath(), storageLocation.StudyInstanceUid + ".xml");
-            using (Stream stream = new FileStream(studyXmlPath, FileMode.Open))
+            using (Stream stream = FileStreamOpener.OpenForRead(studyXmlPath, FileMode.Open))
             {
                 XmlDocument doc = new XmlDocument();
                 StudyXmlIo.Read(doc, stream);
                 studyXml.SetMemento(doc);
+				stream.Close();
             }
             return studyXml;
         }
@@ -116,7 +147,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
             if (node == null)
                 return null;
             else
-                return node.InnerText;
+                return XmlUtils.DecodeValue(node.InnerText);
         }
 
     }
@@ -127,7 +158,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
 
     public class EntityDicomMapManager : Dictionary<Type, EntityDicomMap>
     {
-        private static EntityDicomMapManager _instance = new EntityDicomMapManager();
+        private static readonly EntityDicomMapManager _instance = new EntityDicomMapManager();
         public static EntityDicomMapManager Instance
         {
             get { return _instance; }

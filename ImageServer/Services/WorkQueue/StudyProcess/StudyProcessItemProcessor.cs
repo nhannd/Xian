@@ -158,6 +158,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="file">The DICOM file being processed.</param>
         private void ProcessStudyRules(Model.WorkQueue item, DicomFile file)
         {
+
             if (_studyProcessedRulesEngine == null)
             {
                 _studyProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyProcessed, item.ServerPartitionKey);
@@ -169,6 +170,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _studyProcessedRulesEngine.Statistics.ExecutionTime.Reset();
             }
             ServerActionContext context = new ServerActionContext(file,StorageLocation.FilesystemKey, item.ServerPartitionKey,item.StudyStorageKey);
+
+			Platform.Log(LogLevel.Info, "Processing Study Level rules for study {0} on partition {1}",
+				StorageLocation.StudyInstanceUid, context.ServerPartition.Description);
 
             context.CommandProcessor = new ServerCommandProcessor("Study Rule Processor");
 
@@ -183,7 +187,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             if (false == context.CommandProcessor.Execute())
             {
-                Platform.Log(LogLevel.Error, "Unexpeected failure processing Study level rules");
+				Platform.Log(LogLevel.Error, "Unexpected failure processing Study level rules for study {0}", StorageLocation.StudyInstanceUid);
             }
         }
 

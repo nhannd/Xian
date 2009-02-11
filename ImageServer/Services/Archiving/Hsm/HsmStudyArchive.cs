@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <param name="studyXmlFile"></param>
 		public void LoadStudyXml(string studyXmlFile)
 		{
-			using (Stream fileStream = new FileStream(studyXmlFile, FileMode.Open))
+			using (Stream fileStream = FileStreamOpener.OpenForRead(studyXmlFile, FileMode.Open))
 			{
 				XmlDocument theDoc = new XmlDocument();
 
@@ -114,6 +114,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Pending, Platform.Time.AddMinutes(2));
 					return;
 				}
+				Platform.Log(LogLevel.Info, "Starting archival of study {0} on partition {1} to archive {2}", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description,
+					_hsmArchive.PartitionArchive.Description);
 
 				// First, check to see if we can lock the study, if not just reschedule the queue entry.
 				if (!_storageLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))

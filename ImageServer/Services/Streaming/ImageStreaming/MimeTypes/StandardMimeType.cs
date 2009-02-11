@@ -1,6 +1,7 @@
 using System.IO;
 using System.Net;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.MimeTypes
@@ -29,7 +30,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.MimeTypes
 
                 MimeTypeProcessorOutput output = new MimeTypeProcessorOutput();
                 output.ContentType = OutputMimeType;
-                using (FileStream stream = new FileStream(context.ImagePath, FileMode.Open, FileAccess.Read))
+                using (FileStream stream = FileStreamOpener.OpenForRead(context.ImagePath, FileMode.Open))
                 {
                     output.ContentType = OutputMimeType;
                     byte[] buffer = new byte[stream.Length];
@@ -44,6 +45,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.MimeTypes
                         }
                     } while (readBytes > 0);
                     output.Output = buffer;
+					stream.Close();
                 }
                 return output;    
             }
