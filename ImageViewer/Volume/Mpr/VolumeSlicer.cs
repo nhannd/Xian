@@ -182,6 +182,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				throughPoint = _volume.CenterPoint;
 
 			Vector3D spacingVector = ActualSliceSpacingVector;
+			// Keep same spacing (2mm) for all as change in number of frames per DisplaySet causes weird behavior
+			spacingVector = spacingVector.Normalize();
+			spacingVector *= 2; 
 
 			//ggerade ToDo: Determine the length of the vector that passes through the volume
 			// Here are a few cheap ways to determine the number of slices
@@ -460,7 +463,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			float spacingX = xVec.Dot(spacingVec);
 			float spacingY = yVec.Dot(spacingVec);
 
-#if false
+#if true
 			// Determine the center image volume point
 			//
 			Vector3D n = xVec.Cross(yVec); // or zVec
