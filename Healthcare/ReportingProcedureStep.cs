@@ -104,5 +104,6 @@ namespace ClearCanvas.Healthcare
 			// check if tied to same report
 			ReportingProcedureStep that = step.As<ReportingProcedureStep>();
 			return that.Report != null && Equals(this.Report, that.Report);
-		}	}
+		}
+	}
 }

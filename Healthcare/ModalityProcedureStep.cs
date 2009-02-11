@@ -118,7 +118,7 @@ namespace ClearCanvas.Healthcare {
 
         public override string Name
         {
-            get { return _description; }
+            get { return "Modality"; }
         }
 
         public override bool IsPreStep

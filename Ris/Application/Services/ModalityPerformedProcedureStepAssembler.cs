@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Services
     {
         public ModalityPerformedProcedureStepDetail CreateModalityPerformedProcedureStepDetail(ModalityPerformedProcedureStep mpps, IPersistenceContext context)
         {
-            string name = StringUtilities.Combine(mpps.Activities, " / ", delegate(Activity a) { return a.As<ModalityProcedureStep>().Name; });
+            string name = StringUtilities.Combine(mpps.Activities, " / ", delegate(Activity a) { return a.As<ModalityProcedureStep>().Description; });
 
             ProcedureStepAssembler assembler = new ProcedureStepAssembler();
 

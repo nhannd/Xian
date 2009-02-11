@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Client
                                 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable)
                                 {
 									// if MPS description is identical to procedure type name, don't put redundant text
-									if(checkable.Item.ModalityProcedureStep.ProcedureStepName == checkable.Item.Procedure.Type.Name)
+									if(checkable.Item.ModalityProcedureStep.Description == checkable.Item.Procedure.Type.Name)
 									{
 										return ProcedureFormat.Format(checkable.Item.Procedure);
 									}
@@ -140,7 +140,7 @@ namespace ClearCanvas.Ris.Client
 										// MPS desc is different, so append it
 										return string.Format("{0} - {1}",
 											ProcedureFormat.Format(checkable.Item.Procedure),
-											checkable.Item.ModalityProcedureStep.ProcedureStepName);
+											checkable.Item.ModalityProcedureStep.Description);
 									}
                                 },
                                 0.5f,
