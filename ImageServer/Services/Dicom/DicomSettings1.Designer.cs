@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
     internal sealed partial class DicomSettings : global::System.Configuration.ApplicationSettingsBase {
         
         private static DicomSettings defaultInstance = ((DicomSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new DicomSettings())));
@@ -38,6 +38,15 @@ namespace ClearCanvas.ImageServer.Services.Dicom {
         public bool ListenIPV4 {
             get {
                 return ((bool)(this["ListenIPV4"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int MaxQueryResponses {
+            get {
+                return ((int)(this["MaxQueryResponses"]));
             }
         }
     }

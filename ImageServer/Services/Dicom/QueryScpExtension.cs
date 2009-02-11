@@ -596,6 +596,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         }
                 }
 
+				int resultCount = 0;
                 try
                 {
                     find.Find(criteria, delegate(Patient row)
@@ -607,6 +608,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
 												if (_cancelReceived)
 													throw new DicomException("DICOM C-Cancel Received");
+
+                                            	resultCount++;
+												if (DicomSettings.Default.MaxQueryResponses != -1 
+													&& DicomSettings.Default.MaxQueryResponses < resultCount)
+													throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
                                             });
                 }
                 catch (Exception e)
@@ -616,6 +622,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
+					}
+					else if (DicomSettings.Default.MaxQueryResponses != -1 
+						  && DicomSettings.Default.MaxQueryResponses < resultCount)
+					{
+						Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: {0} on query from {1}", resultCount, server.AssociationParams.CallingAE);
+						DicomMessage errorResponse = new DicomMessage();
+						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+												 DicomStatuses.Success);						
 					}
 					else
 					{
@@ -709,10 +723,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         }
                 }
 
-                try
+				int resultCount = 0;
+				try
                 {
                     // Open another read context, in case additional queries are required.
-                    using (IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+					using (IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                     {
                         find.Find(criteria, delegate(Study row)
                                                 {
@@ -729,6 +744,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                                                              DicomStatuses.Pending);
 													if (_cancelReceived)
 														throw new DicomException("DICOM C-Cancel Received");
+
+													resultCount++;
+													if (DicomSettings.Default.MaxQueryResponses != -1
+														&& DicomSettings.Default.MaxQueryResponses < resultCount)
+														throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
+
                                                 });
                     }
                 }
@@ -739,6 +760,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
+					}
+					else if (DicomSettings.Default.MaxQueryResponses != -1
+						  && DicomSettings.Default.MaxQueryResponses < resultCount)
+					{
+						Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: {0} on query from {1}", resultCount, server.AssociationParams.CallingAE);
+						DicomMessage errorResponse = new DicomMessage();
+						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+												 DicomStatuses.Success);
 					}
 					else
 					{
@@ -817,10 +846,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         }
                 }
 
-                try
+				int resultCount = 0;
+				try
                 {
                     // Open a second read context, in case other queries are required.
-                    using (IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+					using (IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                     {
                         selectSeries.Find(criteria, delegate(Series row)
                                                         {
@@ -831,6 +861,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                                                                      DicomStatuses.Pending);
 															if (_cancelReceived)
 																throw new DicomException("DICOM C-Cancel Received");
+
+															resultCount++;
+															if (DicomSettings.Default.MaxQueryResponses != -1
+																&& DicomSettings.Default.MaxQueryResponses < resultCount)
+																throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
+
                                                         });
                     }
                 }
@@ -841,6 +877,15 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
+					}
+					else if (DicomSettings.Default.MaxQueryResponses != -1
+						  && DicomSettings.Default.MaxQueryResponses < resultCount)
+					{
+						Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: {0} on query from {1}",resultCount,server.AssociationParams.CallingAE);
+
+						DicomMessage errorResponse = new DicomMessage();
+						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
+												 DicomStatuses.Success);
 					}
 					else
 					{
@@ -942,6 +987,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     matchingTagList.Add(attrib.Tag.TagValue);
             }
 
+        	int resultCount = 0;
+
             foreach (InstanceXml theInstanceStream in seriesXml)
             {
                 if (CompareInstanceMatch(message, matchingTagList, theInstanceStream))
@@ -959,6 +1006,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						PopulateInstance(message, response, tagList, theInstanceStream);
 						server.SendCFindResponse(presentationID, message.MessageId, response,
 						                         DicomStatuses.Pending);
+
+						resultCount++;
+						if (DicomSettings.Default.MaxQueryResponses != -1
+							&& DicomSettings.Default.MaxQueryResponses < resultCount)
+						{
+							Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: " + resultCount);
+							break;
+						}
 					}
                 }
             }
