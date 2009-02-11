@@ -1,8 +1,10 @@
 using System;
+using System.ServiceModel;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ProtocollingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -30,15 +32,28 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override bool Execute(ReportingWorklistItem item)
 		{
-			Platform.GetService<IProtocollingWorkflowService>(
-				delegate(IProtocollingWorkflowService service)
-				{
-					service.AcceptProtocol(new AcceptProtocolRequest(item.ProcedureStepRef));
-				});
+			try
+			{
+				ExecuteHelper(item.ProcedureStepRef, null);
+			}
+			catch (FaultException<SupervisorValidationException>)
+			{
+				ExecuteHelper(item.ProcedureStepRef, GetSupervisorRef());
+			}
 
 			this.Context.InvalidateFolders(typeof(Folders.Reporting.CompletedProtocolFolder));
 
 			return true;
+		}
+
+		private void ExecuteHelper(EntityRef procedureStepRef, EntityRef supervisorRef)
+		{
+			Platform.GetService<IProtocollingWorkflowService>(
+				delegate(IProtocollingWorkflowService service)
+				{
+					AcceptProtocolRequest request = new AcceptProtocolRequest(procedureStepRef, supervisorRef);
+					service.AcceptProtocol(request);
+				});
 		}
 	}
 
@@ -66,18 +81,32 @@ namespace ClearCanvas.Ris.Client.Workflow
 			ProtocolReasonComponent component = new ProtocolReasonComponent();
 			if (this.Context.DesktopWindow.ShowDialogBox(component, "Reason") == DialogBoxAction.Ok)
 			{
-				Platform.GetService<IProtocollingWorkflowService>(
-					delegate(IProtocollingWorkflowService service)
-					{
-						service.RejectProtocol(new RejectProtocolRequest(
-														item.ProcedureStepRef,
-														component.Reason,
-														CreateAdditionalCommentsNote(component.OtherReason)));
-					});
+				try
+				{
+					ExecuteHelper(item.ProcedureStepRef, component.Reason, component.OtherReason, null);
+				}
+				catch (FaultException<SupervisorValidationException>)
+				{
+					ExecuteHelper(item.ProcedureStepRef, component.Reason, component.OtherReason, GetSupervisorRef());
+				}
 
 				this.Context.InvalidateFolders(typeof (Folders.Reporting.RejectedProtocolFolder));
 			}
 			return true;
+		}
+
+		private void ExecuteHelper(EntityRef procedureStepRef, EnumValueInfo reason, string otherReason, EntityRef supervisorRef)
+		{
+			Platform.GetService<IProtocollingWorkflowService>(
+				delegate(IProtocollingWorkflowService service)
+				{
+					RejectProtocolRequest request = new RejectProtocolRequest(
+						procedureStepRef, 
+						supervisorRef,
+						reason,
+						CreateAdditionalCommentsNote(otherReason));
+					service.RejectProtocol(request);
+				});
 		}
 
 		private static OrderNoteDetail CreateAdditionalCommentsNote(string additionalComments)
@@ -125,15 +154,28 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override bool Execute(ReportingWorklistItem item)
 		{
+			try
+			{
+				ExecuteHelper(item.ProcedureStepRef, null);
+			}
+			catch (FaultException<SupervisorValidationException>)
+			{
+				ExecuteHelper(item.ProcedureStepRef, GetSupervisorRef());
+			}
+
+			this.Context.InvalidateFolders(typeof(Folders.Reporting.AwaitingApprovalProtocolFolder));
+
+			return true;
+		}
+
+		private void ExecuteHelper(EntityRef procedureStepRef, EntityRef supervisorRef)
+		{
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)
 				{
-					service.SubmitProtocolForApproval(new SubmitProtocolForApprovalRequest(item.ProcedureStepRef));
+					SubmitProtocolForApprovalRequest request = new SubmitProtocolForApprovalRequest(procedureStepRef, supervisorRef);
+					service.SubmitProtocolForApproval(request);
 				});
-
-			this.Context.InvalidateFolders(typeof(Folders.Reporting.AwaitingReviewFolder));
-
-			return true;
 		}
 	}
 
@@ -168,8 +210,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				{
 					service.DiscardProtocol(new DiscardProtocolRequest(item.ProcedureStepRef));
 				});
-
-			this.Context.InvalidateFolders(typeof(Folders.Reporting.AwaitingReviewFolder));
 
 			return true;
 		}

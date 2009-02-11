@@ -29,23 +29,51 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using System.Text;
 
-namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.Workflow;
+
+namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
-	[DataContract]
-	public class AcceptProtocolRequest : UpdateProtocolRequest
-	{
-		public AcceptProtocolRequest(EntityRef protocolAssignmentStepRef, ProtocolDetail protocol, List<OrderNoteDetail> orderNotes)
-			: base(protocolAssignmentStepRef, protocol, orderNotes)
-		{
-		}
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="StaffSelectionComponent"/>.
+    /// </summary>
+    [ExtensionOf(typeof(StaffSelectionComponentViewExtensionPoint))]
+    public class StaffSelectionComponentView : WinFormsView, IApplicationComponentView
+    {
+        private StaffSelectionComponent _component;
+        private StaffSelectionComponentControl _control;
 
-		public AcceptProtocolRequest(EntityRef protocolAssignmentStepRef, EntityRef supervisorRef)
-			: base(protocolAssignmentStepRef, supervisorRef)
-		{
-		}
-	}
+        #region IApplicationComponentView Members
+
+        /// <summary>
+        /// Called by the host to assign this view to a component.
+        /// </summary>
+        public void SetComponent(IApplicationComponent component)
+        {
+            _component = (StaffSelectionComponent)component;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new StaffSelectionComponentControl(_component);
+                }
+                return _control;
+            }
+        }
+    }
 }

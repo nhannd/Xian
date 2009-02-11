@@ -8,5 +8,8 @@
     <Setting Name="SupervisorID" Description="Stores user default supervisor." Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
+    <Setting Name="ShouldApplyDefaultSupervisor" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

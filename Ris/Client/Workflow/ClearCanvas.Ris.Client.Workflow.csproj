@@ -82,6 +82,8 @@
     <Compile Include="ReportContent.cs" />
     <Compile Include="ReportEditorComponentBase.cs" />
     <Compile Include="ReportingOrderDetailViewComponent.cs" />
+    <Compile Include="StaffSelectionComponent.cs" />
+    <Compile Include="SupervisorSelectionComponent.cs" />
     <Compile Include="TranscriptionComponent.cs" />
     <Compile Include="TranscriptionComponentWorklistItemManager.cs" />
     <Compile Include="TranscriptionDocument.cs" />

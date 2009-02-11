@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,13 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExceptionConcurrentModification" xml:space="preserve">
-    <value>Object modified by another user or process</value>
-  </data>
-  <data name="ExceptionEnablementMethodNotFound" xml:space="preserve">
-    <value>Cannot find enablement method {0} for {1}</value>
-  </data>
-  <data name="ExceptionSupervisorRequired" xml:space="preserve">
-    <value>A supervising radiologist must be supplied in order to complete this action</value>
-  </data>
 </root>

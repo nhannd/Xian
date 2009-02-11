@@ -68,6 +68,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(SupervisorValidationException))]
         CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request);
 
         /// <summary>
@@ -78,6 +79,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(SupervisorValidationException))]
         CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request);
 
         /// <summary>
@@ -88,6 +90,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(SupervisorValidationException))]
         CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request);
 
         /// <summary>

@@ -369,6 +369,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private int _activeReportPartIndex;
 		private ILookupHandler _supervisorLookupHandler;
 		private StaffSummary _supervisor;
+		private bool _rememberSupervisor;
 		private Dictionary<string, string> _reportPartExtendedProperties;
 
 		private PriorReportComponent _priorReportComponent;
@@ -398,6 +399,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 				? new string[] { }
 				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
 			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
+
+			_rememberSupervisor = ReportingSettings.Default.ShouldApplyDefaultSupervisor;
 
 			StartReportingWorklistItem();
 
@@ -448,19 +451,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override void Stop()
 		{
-            if (_bannerHost != null)
-            {
-                _bannerHost.StopComponent();
-                _bannerHost = null;
-            }
+			if (_bannerHost != null)
+			{
+				_bannerHost.StopComponent();
+				_bannerHost = null;
+			}
 
-            if (_rightHandComponentContainerHost != null)
-            {
-                _rightHandComponentContainerHost.StopComponent();
-                _rightHandComponentContainerHost = null;
-            }
+			if (_rightHandComponentContainerHost != null)
+			{
+				_rightHandComponentContainerHost.StopComponent();
+				_rightHandComponentContainerHost = null;
+			}
 
-            if (_reportEditorHost != null)
+			if (_reportEditorHost != null)
 			{
 				_reportEditorHost.StopComponent();
 
@@ -541,8 +544,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return this.WorklistItem != null 
-					? string.Format("{0}: {1}", SR.MessageTranscriptionHasErrors,  _report.GetPart(_activeReportPartIndex).TranscriptionRejectReason.Value)
+				return this.WorklistItem != null
+					? string.Format("{0}: {1}", SR.MessageTranscriptionHasErrors, _report.GetPart(_activeReportPartIndex).TranscriptionRejectReason.Value)
 					: "";
 			}
 		}
@@ -621,6 +624,30 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview); }
 		}
 
+		public bool RememberSupervisor
+		{
+			get { return _rememberSupervisor; }
+			set
+			{
+				if (!Equals(value, _rememberSupervisor))
+				{
+					_rememberSupervisor = value;
+					ReportingSettings.Default.ShouldApplyDefaultSupervisor = _rememberSupervisor;
+					ReportingSettings.Default.Save();
+					NotifyPropertyChanged("RememberSupervisor");
+				}
+			}
+		}
+
+		public bool RememberSupervisorVisible
+		{
+			get
+			{
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.SubmitForReview)
+					&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.OmitSupervisor);
+			}
+		}
+
 		#endregion
 
 		#region Verify
@@ -657,9 +684,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 						AccessionFormat.Format(this.WorklistItem.AccessionNumber));
 
 					if (ApplicationComponentExitCode.None == PreliminaryDiagnosis.ShowConversationDialog(
-							this.WorklistItem.OrderRef, 
-							title, 
-							this.Host.DesktopWindow, 
+							this.WorklistItem.OrderRef,
+							title,
+							this.Host.DesktopWindow,
 							PreliminaryDiagnosisSettings.Default.DefaultReviewText))
 					{
 						return; // user cancelled out
@@ -731,7 +758,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 				}
 
 				CloseImages();
-				
+
 				if (!_reportEditor.Save(ReportEditorCloseReason.SendToBeVerified))
 					return;
 
@@ -848,9 +875,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 				CloseImages();
 
 				if (!_reportEditor.Save(ReportEditorCloseReason.SaveDraft))
-					return;
-
-				if (SupervisorIsInvalid())
 					return;
 
 				Platform.GetService<IReportingWorkflowService>(
@@ -1033,7 +1057,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 					UpdateChildComponents(true);
 					// notify extension pages that the worklist item has changed
 					EventsHelper.Fire(_worklistItemChanged, this, EventArgs.Empty);
-					
+
 					OpenImages();
 				}
 				catch (FaultException<ConcurrentModificationException>)
@@ -1084,32 +1108,32 @@ namespace ClearCanvas.Ris.Client.Workflow
 					{
 						// active part does not have a supervisor assigned
 						// if this user has a default supervisor, retrieve it, otherwise leave supervisor as null
-						if (!String.IsNullOrEmpty(ReportingSettings.Default.SupervisorID))
+						if (_rememberSupervisor && !String.IsNullOrEmpty(ReportingSettings.Default.SupervisorID))
 						{
-                            _supervisor = GetStaffByID(ReportingSettings.Default.SupervisorID);
-                        }
+							_supervisor = GetStaffByID(ReportingSettings.Default.SupervisorID);
+						}
 					}
 				});
 		}
 
-        private StaffSummary GetStaffByID(string id)
-        {
-            StaffSummary staff = null;
-            Platform.GetService<IStaffAdminService>(
-                delegate(IStaffAdminService service)
-                {
-                    ListStaffResponse response = service.ListStaff(
-                        new ListStaffRequest(id, null, null, null));
-                    staff = CollectionUtils.FirstElement(response.Staffs);
-                });
-            return staff;
-        }
+		private StaffSummary GetStaffByID(string id)
+		{
+			StaffSummary staff = null;
+			Platform.GetService<IStaffAdminService>(
+				delegate(IStaffAdminService service)
+				{
+					ListStaffResponse response = service.ListStaff(
+						new ListStaffRequest(id, null, null, null));
+					staff = CollectionUtils.FirstElement(response.Staffs);
+				});
+			return staff;
+		}
 
 		private void UpdateChildComponents(bool orderDetailIsCurrent)
 		{
 			((BannerComponent)_bannerHost.Component).HealthcareContext = this.WorklistItem;
 			_priorReportComponent.WorklistItem = this.WorklistItem;
-            _orderComponent.Context = new ReportingOrderDetailViewComponent.PatientOrderContext(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
+			_orderComponent.Context = new ReportingOrderDetailViewComponent.PatientOrderContext(this.WorklistItem.PatientRef, this.WorklistItem.OrderRef);
 
 			if (orderDetailIsCurrent)
 			{
@@ -1130,7 +1154,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void OpenImages()
 		{
-			if (!ViewImagesHelper.IsSupported) 
+			if (!ViewImagesHelper.IsSupported)
 				return;
 
 			try

@@ -34,6 +34,8 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
@@ -136,6 +138,15 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (this.Context.SelectedItems.Count != 1)
 				return null;
 			return CollectionUtils.FirstElement(this.Context.SelectedItems);
+		}
+
+		protected EntityRef GetSupervisorRef()
+		{
+			ReportingSupervisorSelectionComponent component = new ReportingSupervisorSelectionComponent();
+			if (ApplicationComponentExitCode.Accepted == ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, component, SR.TitleSelectSupervisor))
+				return component.Staff != null ? component.Staff.StaffRef : null;
+			else
+				return null;
 		}
 	}
 }

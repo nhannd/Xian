@@ -31,9 +31,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
@@ -74,15 +77,29 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override bool Execute(ReportingWorklistItem item)
 		{
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(item.ProcedureStepRef));
-				});
+			try
+			{
+				ExecuteHelper(item.ProcedureStepRef, null);
+			}
+			catch (FaultException<SupervisorValidationException>)
+			{
+				ExecuteHelper(item.ProcedureStepRef, GetSupervisorRef());
+			}
 
 			this.Context.InvalidateFolders(typeof(Folders.Reporting.InTranscriptionFolder));
 
 			return true;
+		}
+
+		private void ExecuteHelper(EntityRef procedureStepRef, EntityRef supervisorRef)
+		{
+			Platform.GetService<IReportingWorkflowService>(
+				delegate(IReportingWorkflowService service)
+				{
+					CompleteInterpretationForTranscriptionRequest request = new CompleteInterpretationForTranscriptionRequest(procedureStepRef);
+					request.SupervisorRef = supervisorRef;
+					service.CompleteInterpretationForTranscription(request);
+				});
 		}
 	}
 
@@ -107,20 +124,34 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override bool Execute(ReportingWorklistItem item)
 		{
-			Platform.GetService<IReportingWorkflowService>(
-				delegate(IReportingWorkflowService service)
-				{
-					service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(item.ProcedureStepRef));
-				});
+			try
+			{
+				ExecuteHelper(item.ProcedureStepRef, null);
+			}
+			catch (FaultException<SupervisorValidationException>)
+			{
+				ExecuteHelper(item.ProcedureStepRef, GetSupervisorRef());
+			}
 
 			this.Context.InvalidateFolders(typeof(Folders.Reporting.AwaitingReviewFolder));
 
 			return true;
 		}
+
+		private void ExecuteHelper(EntityRef procedureStepRef, EntityRef supervisorRef)
+		{
+			Platform.GetService<IReportingWorkflowService>(
+				delegate(IReportingWorkflowService service)
+				{
+					CompleteInterpretationForVerificationRequest request = new CompleteInterpretationForVerificationRequest(procedureStepRef);
+					request.SupervisorRef = supervisorRef;
+					service.CompleteInterpretationForVerification(request);
+				});
+		}
 	}
 
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Discard Report", "Apply")]
-    [MenuAction("apply", "folderexplorer-items-toolbar/Discard Report", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-contextmenu/Discard Report", "Apply")]
+	[MenuAction("apply", "folderexplorer-items-toolbar/Discard Report", "Apply")]
 	[IconSet("apply", IconScheme.Colour, "Icons.CancelReportSmall.png", "Icons.CancelReportMedium.png", "Icons.CancelReportLarge.png")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[IconSetObserver("apply", "CurrentIconSet", "LabelChanged")]
@@ -142,7 +173,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			get
 			{
 				ReportingWorklistItem item = GetSelectedItem();
-                return (item != null && item.IsAddendumStep) ? "Discard Addendum" : "Discard Report";
+				return (item != null && item.IsAddendumStep) ? "Discard Addendum" : "Discard Report";
 			}
 		}
 
@@ -207,7 +238,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return this.Context.SelectedItems.Count == 1 && 
+				return this.Context.SelectedItems.Count == 1 &&
 					(this.Context.GetOperationEnablement("CompleteInterpretationAndVerify") ||
 					this.Context.GetOperationEnablement("CompleteVerification"));
 			}
@@ -239,26 +270,42 @@ namespace ClearCanvas.Ris.Client.Workflow
 				}
 			}
 
-			if (item.ProcedureStepName == StepType.Interpretation || item.ProcedureStepName == StepType.TranscriptionReview)
+			try
 			{
-				Platform.GetService<IReportingWorkflowService>(
-					delegate(IReportingWorkflowService service)
-					{
-						service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(item.ProcedureStepRef));
-					});
+				ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, null);
 			}
-			else if (item.ProcedureStepName == StepType.Verification)
+			catch (FaultException<SupervisorValidationException>)
 			{
-				Platform.GetService<IReportingWorkflowService>(
-					delegate(IReportingWorkflowService service)
-					{
-						service.CompleteVerification(new CompleteVerificationRequest(item.ProcedureStepRef));
-					});
+				ExecuteHelper(item.ProcedureStepName, item.ProcedureStepRef, GetSupervisorRef());
 			}
 
 			this.Context.InvalidateFolders(typeof(Folders.Reporting.VerifiedFolder));
 
 			return true;
+		}
+
+		private void ExecuteHelper(string procedureStepName, EntityRef procedureStepRef, EntityRef supervisorRef)
+		{
+			if (procedureStepName == StepType.Interpretation || procedureStepName == StepType.TranscriptionReview)
+			{
+				Platform.GetService<IReportingWorkflowService>(
+					delegate(IReportingWorkflowService service)
+					{
+						CompleteInterpretationAndVerifyRequest request = new CompleteInterpretationAndVerifyRequest(procedureStepRef);
+						request.SupervisorRef = supervisorRef;
+						service.CompleteInterpretationAndVerify(request);
+					});
+			}
+			else if (procedureStepName == StepType.Verification)
+			{
+				Platform.GetService<IReportingWorkflowService>(
+					delegate(IReportingWorkflowService service)
+					{
+						CompleteVerificationRequest request = new CompleteVerificationRequest(procedureStepRef);
+						request.SupervisorRef = supervisorRef;
+						service.CompleteVerification(request);
+					});
+			}
 		}
 	}
 

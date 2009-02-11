@@ -30,7 +30,6 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
         {
 			this.components = new System.ComponentModel.Container();
 			this._tableLayoutInner = new System.Windows.Forms.TableLayoutPanel();
-			this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
 			this._protocolCodesSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
@@ -39,16 +38,20 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._urgency = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._author = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+			this._rememberSupervisorCheckbox = new System.Windows.Forms.CheckBox();
+			this._supervisor = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._tableLayoutInner.SuspendLayout();
 			this.groupBox1.SuspendLayout();
 			this.tableLayoutPanel3.SuspendLayout();
+			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _tableLayoutInner
 			// 
 			this._tableLayoutInner.ColumnCount = 1;
 			this._tableLayoutInner.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-			this._tableLayoutInner.Controls.Add(this._supervisor, 0, 3);
+			this._tableLayoutInner.Controls.Add(this.tableLayoutPanel1, 0, 3);
 			this._tableLayoutInner.Controls.Add(this.groupBox1, 0, 1);
 			this._tableLayoutInner.Controls.Add(this._urgency, 0, 0);
 			this._tableLayoutInner.Controls.Add(this._author, 0, 2);
@@ -61,22 +64,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle());
 			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle());
-			this._tableLayoutInner.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
 			this._tableLayoutInner.Size = new System.Drawing.Size(527, 695);
 			this._tableLayoutInner.TabIndex = 3;
-			// 
-			// _supervisor
-			// 
-			this._supervisor.AutoSize = true;
-			this._supervisor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-			this._supervisor.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._supervisor.LabelText = "Supervising Radiologist (if applicable):";
-			this._supervisor.Location = new System.Drawing.Point(2, 652);
-			this._supervisor.Margin = new System.Windows.Forms.Padding(2);
-			this._supervisor.Name = "_supervisor";
-			this._supervisor.Size = new System.Drawing.Size(523, 41);
-			this._supervisor.TabIndex = 4;
-			this._supervisor.Value = null;
 			// 
 			// groupBox1
 			// 
@@ -189,6 +178,47 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._author.ToolTip = null;
 			this._author.Value = null;
 			// 
+			// tableLayoutPanel1
+			// 
+			this.tableLayoutPanel1.AutoSize = true;
+			this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this.tableLayoutPanel1.ColumnCount = 2;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+			this.tableLayoutPanel1.Controls.Add(this._rememberSupervisorCheckbox, 1, 0);
+			this.tableLayoutPanel1.Controls.Add(this._supervisor, 0, 0);
+			this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 650);
+			this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
+			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
+			this.tableLayoutPanel1.RowCount = 1;
+			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+			this.tableLayoutPanel1.Size = new System.Drawing.Size(527, 45);
+			this.tableLayoutPanel1.TabIndex = 7;
+			// 
+			// _rememberSupervisorCheckbox
+			// 
+			this._rememberSupervisorCheckbox.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._rememberSupervisorCheckbox.Location = new System.Drawing.Point(420, 3);
+			this._rememberSupervisorCheckbox.Name = "_rememberSupervisorCheckbox";
+			this._rememberSupervisorCheckbox.Size = new System.Drawing.Size(104, 39);
+			this._rememberSupervisorCheckbox.TabIndex = 2;
+			this._rememberSupervisorCheckbox.Text = "Remember Supervisor?";
+			this._rememberSupervisorCheckbox.UseVisualStyleBackColor = true;
+			// 
+			// _supervisor
+			// 
+			this._supervisor.AutoSize = true;
+			this._supervisor.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+			this._supervisor.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._supervisor.LabelText = "Supervising Radiologist (if applicable):";
+			this._supervisor.Location = new System.Drawing.Point(2, 2);
+			this._supervisor.Margin = new System.Windows.Forms.Padding(2);
+			this._supervisor.Name = "_supervisor";
+			this._supervisor.Size = new System.Drawing.Size(413, 41);
+			this._supervisor.TabIndex = 1;
+			this._supervisor.Value = null;
+			// 
 			// ProtocolEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -202,6 +232,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this.groupBox1.PerformLayout();
 			this.tableLayoutPanel3.ResumeLayout(false);
 			this.tableLayoutPanel3.PerformLayout();
+			this.tableLayoutPanel1.ResumeLayout(false);
+			this.tableLayoutPanel1.PerformLayout();
 			this.ResumeLayout(false);
 
         }
@@ -217,6 +249,8 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 		private System.Windows.Forms.Button _btnSetDefault;
 		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _urgency;
 		private ClearCanvas.Desktop.View.WinForms.TextField _author;
+		private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+		private System.Windows.Forms.CheckBox _rememberSupervisorCheckbox;
 		private ClearCanvas.Ris.Client.View.WinForms.LookupField _supervisor;
     }
 }

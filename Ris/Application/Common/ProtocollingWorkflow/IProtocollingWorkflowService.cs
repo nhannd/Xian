@@ -73,16 +73,19 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		[OperationContract]
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(SupervisorValidationException))]
 		AcceptProtocolResponse AcceptProtocol(AcceptProtocolRequest request);
 
 		[OperationContract]
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(SupervisorValidationException))]
 		RejectProtocolResponse RejectProtocol(RejectProtocolRequest request);
 
 		[OperationContract]
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(SupervisorValidationException))]
 		SubmitProtocolForApprovalResponse SubmitProtocolForApproval(SubmitProtocolForApprovalRequest request);
 
 		[OperationContract]
@@ -93,6 +96,7 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 		[OperationContract]
 		[FaultContract(typeof(RequestValidationException))]
 		[FaultContract(typeof(ConcurrentModificationException))]
+		[FaultContract(typeof(SupervisorValidationException))]
 		SaveProtocolResponse SaveProtocol(SaveProtocolRequest request);
 
 		[OperationContract]

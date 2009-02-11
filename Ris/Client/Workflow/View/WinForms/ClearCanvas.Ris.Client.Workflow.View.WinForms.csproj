@@ -183,6 +183,13 @@
       <DependentUpon>PerformingDocumentationOrderDetailsComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PerformingDocumentationOrderDetailsComponentView.cs" />
+    <Compile Include="StaffSelectionComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StaffSelectionComponentControl.Designer.cs">
+      <DependentUpon>StaffSelectionComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StaffSelectionComponentView.cs" />
     <Compile Include="TranscriptionComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -349,6 +356,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StaffSelectionComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StaffSelectionComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TranscriptionComponentControl.resx">
       <SubType>Designer</SubType>

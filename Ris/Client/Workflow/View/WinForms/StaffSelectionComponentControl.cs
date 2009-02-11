@@ -29,23 +29,40 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
+namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 {
-	[DataContract]
-	public class AcceptProtocolRequest : UpdateProtocolRequest
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="StaffSelectionComponent"/>.
+	/// </summary>
+	public partial class StaffSelectionComponentControl : ApplicationComponentUserControl
 	{
-		public AcceptProtocolRequest(EntityRef protocolAssignmentStepRef, ProtocolDetail protocol, List<OrderNoteDetail> orderNotes)
-			: base(protocolAssignmentStepRef, protocol, orderNotes)
+		private readonly StaffSelectionComponent _component;
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public StaffSelectionComponentControl(StaffSelectionComponent component)
+			: base(component)
 		{
+			_component = component;
+			InitializeComponent();
+
+			_staff.LookupHandler = _component.StaffLookupHandler;
+			_staff.DataBindings.Add("Value", _component, "Staff", true, DataSourceUpdateMode.OnPropertyChanged);
+			_staff.DataBindings.Add("LabelText", _component, "LabelText", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
-		public AcceptProtocolRequest(EntityRef protocolAssignmentStepRef, EntityRef supervisorRef)
-			: base(protocolAssignmentStepRef, supervisorRef)
+		private void _acceptButton_Click(object sender, System.EventArgs e)
 		{
+			_component.Accept();
+		}
+
+		private void _cancelButton_Click(object sender, System.EventArgs e)
+		{
+			_component.Cancel();
 		}
 	}
 }

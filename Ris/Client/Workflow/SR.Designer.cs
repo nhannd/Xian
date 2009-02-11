@@ -1546,6 +1546,15 @@ namespace ClearCanvas.Ris.Client.Workflow {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select Supervisor.
+        /// </summary>
+        internal static string TitleSelectSupervisor {
+            get {
+                return ResourceManager.GetString("TitleSelectSupervisor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Start.
         /// </summary>
         internal static string TitleStartMps {

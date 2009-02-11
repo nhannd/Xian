@@ -108,10 +108,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private readonly ProtocolCodeTable _availableProtocolCodes;
 		private readonly ProtocolCodeTable _selectedProtocolCodes;
-        private ProtocolCodeSummary _selectedProtocolCodesSelection;
+		private ProtocolCodeSummary _selectedProtocolCodesSelection;
 		private bool _canEdit;
 
 		private ILookupHandler _supervisorLookupHandler;
+		private bool _rememberSupervisor;
 
 		#endregion
 
@@ -139,15 +140,17 @@ namespace ClearCanvas.Ris.Client.Workflow
 				: CollectionUtils.Map<string, string>(filters.Split(','), delegate(string s) { return s.Trim(); }).ToArray();
 			_supervisorLookupHandler = new StaffLookupHandler(this.Host.DesktopWindow, staffTypes);
 
+			_rememberSupervisor = ProtocollingSettings.Default.ShouldApplyDefaultSupervisor;
+
 			Platform.GetService<IProtocollingWorkflowService>(
 				delegate(IProtocollingWorkflowService service)
-					{
-						GetProtocolFormDataResponse response = service.GetProtocolFormData(new GetProtocolFormDataRequest());
-						_protocolUrgencyChoices = response.ProtocolUrgencyChoices;
-						_protocolUrgencyChoices.Insert(0, _protocolUrgencyNone);
+				{
+					GetProtocolFormDataResponse response = service.GetProtocolFormData(new GetProtocolFormDataRequest());
+					_protocolUrgencyChoices = response.ProtocolUrgencyChoices;
+					_protocolUrgencyChoices.Insert(0, _protocolUrgencyNone);
 
-						LoadWorklistItem(service);
-					});
+					LoadWorklistItem(service);
+				});
 
 			base.Start();
 		}
@@ -208,9 +211,9 @@ namespace ClearCanvas.Ris.Client.Workflow
 					&& _protocolDetail.Supervisor == null)
 				{
 					// if this user has a default supervisor, retreive it, otherwise leave supervisor as null
-					if (!String.IsNullOrEmpty(ProtocollingSettings.Default.SupervisorID))
+					if (_rememberSupervisor && !String.IsNullOrEmpty(ProtocollingSettings.Default.SupervisorID))
 					{
-                        _protocolDetail.Supervisor = GetStaffByID(ProtocollingSettings.Default.SupervisorID);
+						_protocolDetail.Supervisor = GetStaffByID(ProtocollingSettings.Default.SupervisorID);
 					}
 				}
 
@@ -221,18 +224,18 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
-        private StaffSummary GetStaffByID(string id)
-        {
-            StaffSummary staff = null;
-            Platform.GetService<IStaffAdminService>(
-                delegate(IStaffAdminService service)
-                {
-                    ListStaffResponse response = service.ListStaff(
-                        new ListStaffRequest(id, null, null, null));
-                    staff = CollectionUtils.FirstElement(response.Staffs);
-                });
-            return staff;
-        }
+		private StaffSummary GetStaffByID(string id)
+		{
+			StaffSummary staff = null;
+			Platform.GetService<IStaffAdminService>(
+				delegate(IStaffAdminService service)
+				{
+					ListStaffResponse response = service.ListStaff(
+						new ListStaffRequest(id, null, null, null));
+					staff = CollectionUtils.FirstElement(response.Staffs);
+				});
+			return staff;
+		}
 
 		#region Presentation Model
 
@@ -282,13 +285,37 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
+		public bool RememberSupervisor
+		{
+			get { return _rememberSupervisor; }
+			set
+			{
+				if (!Equals(value, _rememberSupervisor))
+				{
+					_rememberSupervisor = value;
+					ProtocollingSettings.Default.ShouldApplyDefaultSupervisor = _rememberSupervisor;
+					ProtocollingSettings.Default.Save();
+					NotifyPropertyChanged("RememberSupervisor");
+				}
+			}
+		}
+
+		public bool RememberSupervisorVisible
+		{
+			get
+			{
+				return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.SubmitForReview)
+					&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.OmitSupervisor);
+			}
+		}
+
 		#endregion
 
 		public string Author
 		{
 			get
 			{
-				return _protocolDetail != null 
+				return _protocolDetail != null
 					? PersonNameFormat.Format(_protocolDetail.Author.Name)
 					: string.Empty;
 			}
@@ -298,7 +325,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				if(_protocolDetail != null)
+				if (_protocolDetail != null)
 				{
 					return !String.Equals(LoginSession.Current.Staff.StaffId, _protocolDetail.Author.StaffId);
 				}
@@ -507,7 +534,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private static string RemoveDefaultText(string value)
 		{
-            return value.EndsWith(" (Default)") ? value.Replace(" (Default)", "") : value;
+			return value.EndsWith(" (Default)") ? value.Replace(" (Default)", "") : value;
 		}
 
 		#endregion

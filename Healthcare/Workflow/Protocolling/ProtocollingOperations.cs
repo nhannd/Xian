@@ -38,14 +38,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Protocolling
 {
-	public class SupervisorRequiredException : Exception
-	{
-		public SupervisorRequiredException()
-			: base("A supervisor is required.")
-		{
-		}
-	}
-
 	public class ProtocollingOperations
 	{
 		public abstract class ProtocollingOperation
@@ -328,7 +320,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 
 		public class SubmitForApprovalOperation : ProtocollingOperation
 		{
-			public void Execute(ProtocolAssignmentStep assignmentStep, Staff supervisor, bool canOmitSupervisor)
+			public void Execute(ProtocolAssignmentStep assignmentStep)
 			{
 				assignmentStep.Complete();
 				assignmentStep.Protocol.SubmitForApproval();
@@ -338,15 +330,7 @@ namespace ClearCanvas.Healthcare.Workflow.Protocolling
 				assignmentStep.Procedure.AddProcedureStep(approvalStep);
 
 				approvalStep.Schedule(Platform.Time);
-				if (supervisor == null)
-				{
-					// Use previously supervisor set in previous operation if it exists.
-					supervisor = assignmentStep.Protocol.Supervisor;
-
-					if (supervisor == null && !canOmitSupervisor)
-						throw new SupervisorRequiredException();
-				}
-				approvalStep.Assign(supervisor);
+				approvalStep.Assign(assignmentStep.Protocol.Supervisor);
 			}
 
 			public override bool CanExecute(ProtocolProcedureStep step, Staff currentUserStaff)

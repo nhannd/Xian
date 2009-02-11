@@ -380,9 +380,6 @@ namespace ClearCanvas.Ris.Client.Workflow
 		[PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Protocol.Create)]
 		public void Save()
 		{
-			if (SupervisorRequired())
-				return;
-
 			try
 			{
 				Platform.GetService<IProtocollingWorkflowService>(

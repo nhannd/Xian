@@ -256,7 +256,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		{
 			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
 
-			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes);
+			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes, request.SupervisorRef, true);
 
 			ProtocollingOperations.AcceptProtocolOperation op = new ProtocollingOperations.AcceptProtocolOperation();
 			op.Execute(assignmentStep, this.CurrentUserStaff);
@@ -273,7 +273,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		{
 			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
 
-			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes);
+			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes, request.SupervisorRef, true);
 
 			ProtocolRejectReasonEnum reason =
 				EnumUtils.GetEnumValue<ProtocolRejectReasonEnum>(request.RejectReason, this.PersistenceContext);
@@ -295,7 +295,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		{
 			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
 
-			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes);
+			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes, request.SupervisorRef, false);
 
 			return new SaveProtocolResponse();
 		}
@@ -321,26 +321,11 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		public SubmitProtocolForApprovalResponse SubmitProtocolForApproval(SubmitProtocolForApprovalRequest request)
 		{
 			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
-			Staff supervisor = null;
 
-			if (request.Protocol != null)
-			{
-				supervisor = GetSupervisor(request.Protocol);
-			}
+			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes, request.SupervisorRef, true);
 
-			SaveProtocolHelper(assignmentStep, request.Protocol, request.OrderNotes);
-
-			bool canOmitSupervisor = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.OmitSupervisor);
-
-			try
-			{
-				ProtocollingOperations.SubmitForApprovalOperation op = new ProtocollingOperations.SubmitForApprovalOperation();
-				op.Execute(assignmentStep, supervisor, canOmitSupervisor);
-			}
-			catch (SupervisorRequiredException e)
-			{
-				throw new RequestValidationException(e.Message);
-			}
+			ProtocollingOperations.SubmitForApprovalOperation op = new ProtocollingOperations.SubmitForApprovalOperation();
+			op.Execute(assignmentStep);
 
 			this.PersistenceContext.SynchState();
 
@@ -490,23 +475,36 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 		#endregion
 
-		private void SaveProtocolHelper(ProtocolAssignmentStep step, ProtocolDetail protocolDetail, List<OrderNoteDetail> notes)
+		private void SaveProtocolHelper(ProtocolAssignmentStep step, ProtocolDetail protocolDetail, List<OrderNoteDetail> notes, EntityRef supervisorRef, bool supervisorValidationRequired)
 		{
+			Protocol protocol = step.Protocol;
+
+			if (protocolDetail != null && supervisorRef != null)
+				throw new RequestValidationException("UpdateProtocolRequest should not specify both a ProtocolDetail and a SupervisorRef");
+
+			if (supervisorValidationRequired
+				&& Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.OmitSupervisor) == false
+				&& protocol.Supervisor == null 
+				&& (protocolDetail == null || protocolDetail.Supervisor == null)
+				&& supervisorRef == null)
+			{
+				throw new SupervisorValidationException();
+			}
+
 			if (protocolDetail != null)
 			{
 				ProtocolAssembler assembler = new ProtocolAssembler();
-				Protocol protocol = this.PersistenceContext.Load<Protocol>(protocolDetail.ProtocolRef);
 				assembler.UpdateProtocol(protocol, protocolDetail, this.PersistenceContext);
+			}
+
+			if (supervisorRef != null)
+			{
+				Staff supervisor = this.PersistenceContext.Load<Staff>(supervisorRef);
+				protocol.Supervisor = supervisor;
 			}
 
 			if (notes != null)
 				UpdateOrderNotes(step.Procedure.Order, notes);
-		}
-
-		private Staff GetSupervisor(ProtocolDetail protocolDetail)
-		{
-			EntityRef supervisorRef = (protocolDetail != null && protocolDetail.Supervisor != null) ? protocolDetail.Supervisor.StaffRef : null;
-			return supervisorRef == null ? null : this.PersistenceContext.Load<Staff>(supervisorRef);
 		}
 
 		protected override object GetWorkItemKey(WorklistItemSummaryBase item)

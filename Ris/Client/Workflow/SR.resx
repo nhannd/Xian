@@ -612,6 +612,9 @@
   <data name="TitleReviseReport" xml:space="preserve">
     <value>Revise Report</value>
   </data>
+  <data name="TitleSelectSupervisor" xml:space="preserve">
+    <value>Select Supervisor</value>
+  </data>
   <data name="TitleStartMps" xml:space="preserve">
     <value>Start</value>
   </data>

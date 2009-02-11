@@ -80,8 +80,11 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 
 			_supervisor.LookupHandler = _component.SupervisorLookupHandler;
 			_supervisor.DataBindings.Add("Value", _component, "Supervisor", true, DataSourceUpdateMode.OnPropertyChanged);
+			_rememberSupervisorCheckbox.DataBindings.Add("Checked", _component, "RememberSupervisor", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_supervisor.Visible = _component.SupervisorVisible;
+			_rememberSupervisorCheckbox.Visible = _component.RememberSupervisorVisible;
+
 			_verifyButton.Visible = _component.VerifyReportVisible;
 			_sendToVerifyButton.Visible = _component.SendToVerifyVisible;
 			_sendToTranscriptionButton.Visible = _component.SendToTranscriptionVisible;

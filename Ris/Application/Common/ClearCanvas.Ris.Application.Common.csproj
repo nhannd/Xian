@@ -135,6 +135,7 @@
     <Compile Include="ProtocollingWorkflow\GetLinkableProtocolsResponse.cs" />
     <Compile Include="ReportingWorkflow\StartTranscriptionReviewRequest.cs" />
     <Compile Include="ReportingWorkflow\StartTranscriptionReviewResponse.cs" />
+    <Compile Include="SupervisorValidationException.cs" />
     <Compile Include="TranscriptionWorkflow\CompleteTranscriptionRequest.cs" />
     <Compile Include="TranscriptionWorkflow\CompleteTranscriptionResponse.cs" />
     <Compile Include="TranscriptionWorkflow\DiscardTranscriptionRequest.cs" />

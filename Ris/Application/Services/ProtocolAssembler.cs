@@ -82,7 +82,9 @@ namespace ClearCanvas.Ris.Application.Services
 		public void UpdateProtocol(Protocol protocol, ProtocolDetail detail, IPersistenceContext context)
 		{
 			protocol.Urgency = EnumUtils.GetEnumValue<ProtocolUrgencyEnum>(detail.Urgency, context);
-			protocol.Supervisor = detail.Supervisor != null ? context.Load<Staff>(detail.Supervisor.StaffRef) : null;
+
+			// if detail specifies a supervisor use it otherwise retain previous supervisor (null or valued)
+			protocol.Supervisor = detail.Supervisor != null ? context.Load<Staff>(detail.Supervisor.StaffRef) : protocol.Supervisor;
 
 			protocol.Codes.Clear();
 			foreach (ProtocolCodeSummary item in detail.Codes)

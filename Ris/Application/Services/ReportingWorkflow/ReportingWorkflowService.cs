@@ -124,7 +124,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             ReportingProcedureStep interpretation = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             Staff supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
-            SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor);
+            SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor, true);
 
             ValidateReportTextExists(interpretation);
 
@@ -146,7 +146,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             ReportingProcedureStep interpretation = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             Staff supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
-            SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor);
+            SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor, true);
 
             ValidateReportTextExists(interpretation);
 
@@ -168,7 +168,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             ReportingProcedureStep interpretation = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             Staff supervisor = ResolveSupervisor(interpretation, request.SupervisorRef);
 
-            SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor);
+            SaveReportHelper(request.ReportPartExtendedProperties, interpretation, supervisor, true);
 
             ValidateReportTextExists(interpretation);
 
@@ -242,7 +242,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             Staff supervisor = ResolveSupervisor(verification, request.SupervisorRef);
 
-            SaveReportHelper(request.ReportPartExtendedProperties, verification, supervisor);
+            SaveReportHelper(request.ReportPartExtendedProperties, verification, supervisor, true);
 
             ValidateReportTextExists(verification);
 
@@ -324,7 +324,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             Staff supervisor = ResolveSupervisor(step, request.SupervisorRef);
 
-            SaveReportHelper(request.ReportPartExtendedProperties, step, supervisor);
+			// saving a draft does not require supervisor validation
+            SaveReportHelper(request.ReportPartExtendedProperties, step, supervisor, false);
 
             PersistenceContext.SynchState();
             return new SaveReportResponse(step.GetRef());
@@ -511,7 +512,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 startOp.Execute(interpStep, interpreter, new List<InterpretationStep>(), new PersistentWorkflow(this.PersistenceContext));
 
                 // save the report data
-                SaveReportHelper(request.ReportPartExtendedProperties, interpStep, null);
+                SaveReportHelper(request.ReportPartExtendedProperties, interpStep, null, false);
 
                 ValidateReportTextExists(interpStep);
 
@@ -733,10 +734,15 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         /// <param name="reportPartExtendedProperties"></param>
         /// <param name="step"></param>
         /// <param name="supervisor"></param>
-        private void SaveReportHelper(Dictionary<string, string> reportPartExtendedProperties, ReportingProcedureStep step, Staff supervisor)
+        /// <param name="supervisorValidationRequired"></param>
+        private void SaveReportHelper(Dictionary<string, string> reportPartExtendedProperties, ReportingProcedureStep step, Staff supervisor, bool supervisorValidationRequired)
         {
-            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.OmitSupervisor) == false && supervisor == null)
-                throw new RequestValidationException(SR.ExceptionSupervisorRequired);
+            if (supervisorValidationRequired 
+                && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.OmitSupervisor) == false 
+                && supervisor == null)
+            {
+                throw new SupervisorValidationException();
+            }
 
             if (reportPartExtendedProperties == null)
                 return;

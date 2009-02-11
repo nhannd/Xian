@@ -55,5 +55,17 @@ namespace ClearCanvas.Ris.Client.Workflow {
                 this["SupervisorID"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShouldApplyDefaultSupervisor {
+            get {
+                return ((bool)(this["ShouldApplyDefaultSupervisor"]));
+            }
+            set {
+                this["ShouldApplyDefaultSupervisor"] = value;
+            }
+        }
     }
 }

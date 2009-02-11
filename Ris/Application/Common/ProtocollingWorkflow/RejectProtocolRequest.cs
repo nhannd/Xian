@@ -52,10 +52,13 @@ namespace ClearCanvas.Ris.Application.Common.ProtocollingWorkflow
 
 		public RejectProtocolRequest(
 			EntityRef protocolAssignmentStepRef, 
+			EntityRef supervisorRef, 
 			EnumValueInfo rejectReason, 
 			OrderNoteDetail additionalCommentsNote)
-			: this(protocolAssignmentStepRef, null, null, rejectReason, additionalCommentsNote)
+			: base(protocolAssignmentStepRef, supervisorRef)
 		{
+			this.RejectReason = rejectReason;
+			this.AdditionalCommentsNote = additionalCommentsNote;
 		}
 
 		[DataMember]
