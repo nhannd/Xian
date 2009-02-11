@@ -102,17 +102,11 @@ namespace ClearCanvas.Ris.Client
                                  delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.ModalityProcedureStep.Modality.Name; },
                                  0.5f));
 
-			TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string> scheduledStartTimeColumn = 
-                new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
+			DateTimeTableColumn<Checkable<ProcedurePlanSummaryTableItem>> scheduledStartTimeColumn = 
+                new DateTimeTableColumn<Checkable<ProcedurePlanSummaryTableItem>>(
 				     SR.ColumnScheduledTime,
-				     delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return Format.DateTime(checkable.Item.ModalityProcedureStep.ScheduledStartTime); },
+				     delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.ModalityProcedureStep.ScheduledStartTime; },
 				     0.5f);
-
-			scheduledStartTimeColumn.Comparison = 
-				delegate(Checkable<ProcedurePlanSummaryTableItem> x, Checkable<ProcedurePlanSummaryTableItem> y)
-				{
-					return Nullable.Compare(x.Item.ModalityProcedureStep.ScheduledStartTime, y.Item.ModalityProcedureStep.ScheduledStartTime);
-				};
 
 			this.Columns.Add(scheduledStartTimeColumn);
 

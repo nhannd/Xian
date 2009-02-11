@@ -73,6 +73,8 @@ namespace ClearCanvas.Desktop.Tables
 
 		private Converter<TItem, string> _tooltipTextProvider;
 
+    	private Converter<TColumn, object> _valueFormatter = delegate(TColumn value) { return (TColumn)value; };
+
         /// <summary>
         /// Constructs a multi-cellrow table column.
         /// </summary>
@@ -282,6 +284,25 @@ namespace ClearCanvas.Desktop.Tables
         {
             _valueSetter((TItem)item, (TColumn)value);
         }
+
+		/// <summary>
+		/// Gets or sets the value formatter for this binding.
+		/// </summary>
+		public Converter<TColumn, object> ValueFormatter
+		{
+			get { return _valueFormatter; }
+			set { _valueFormatter = value; }
+		}
+
+		/// <summary>
+		/// Format the value of this column for the specified item.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		/// <returns>The formatted value</returns>
+		public override object FormatValue(object value)
+		{
+			return _valueFormatter((TColumn)value);
+		}
 
         /// <summary>
         /// Sets the click action of this column on the specified item.

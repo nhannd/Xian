@@ -106,6 +106,13 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="value">The value.</param>
         void SetValue(object item, object value);
 
+		/// <summary>
+		/// Format the value of this column for the specified item.
+		/// </summary>
+		/// <param name="value">The value.</param>
+		/// <returns>The formatted value</returns>
+    	object FormatValue(object value);
+
         /// <summary>
         /// Sets the click action of this column on the specified item.
         /// </summary>

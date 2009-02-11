@@ -71,12 +71,10 @@ namespace ClearCanvas.Ris.Client.Workflow
                 1.5f);
 
             // Currently the creation time of the interpretation step
-            TableColumn<ReportingWorklistItem, string> procedureEndTimeColumn = new TableColumn<ReportingWorklistItem, string>(
+            DateTimeTableColumn<ReportingWorklistItem> procedureEndTimeColumn = new DateTimeTableColumn<ReportingWorklistItem>(
                 SR.ColumnTime,
-                delegate(ReportingWorklistItem item) { return Format.DateTime(item.Time); },
+                delegate(ReportingWorklistItem item) { return item.Time; },
                 1.1f);
-            procedureEndTimeColumn.Comparison = delegate(ReportingWorklistItem item1, ReportingWorklistItem item2)
-                { return Nullable.Compare(item1.Time, item2.Time); };
 
             TableColumn<ReportingWorklistItem, string> descriptionRow = new TableColumn<ReportingWorklistItem, string>(
                 SR.ColumnDescription,

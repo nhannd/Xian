@@ -63,27 +63,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         public override object GetValue(object component)
         {
-            if (this.PropertyType == typeof(IconSet))
-            {
-                IconSet iconSet = (IconSet)_column.GetValue(component);
-				if(iconSet == null)
-					return null;
-
-				try
-				{
-					// try to create the icon
-					return IconFactory.CreateIcon(iconSet.SmallIcon, _column.ResourceResolver);
-				}
-				catch(Exception e)
-				{
-					Platform.Log(LogLevel.Error, e);
-					return null;
-				}
-            }
-            else
-            {
-                return _column.GetValue(component);
-            }
+            return _column.GetValue(component);
         }
 
         public override void SetValue(object component, object value)

@@ -34,6 +34,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
@@ -1081,6 +1082,31 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 			ITableColumn column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
 			e.ToolTipText = column.GetTooltipText(_table.Items[e.RowIndex]);
+		}
+
+		private void _dataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+		{
+			ITableColumn column = (ITableColumn)_dataGridView.Columns[e.ColumnIndex].Tag;
+
+			// Unless we know the type of e.Value can be handled by the DataGridView, we do not want to set e.FormattingApplied to true. Doing so will 
+			// prevent the cell from formatting e.Value into type it can handle (eg. string), result in FormatException for value type like int, float, etc.			
+			if (column.ColumnType == typeof(IconSet))
+			{
+				try
+				{
+					// try to create the icon
+					IconSet iconSet = (IconSet)e.Value;
+					e.Value = IconFactory.CreateIcon(iconSet.SmallIcon, column.ResourceResolver);
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Error, ex);
+				}
+			}
+			else
+			{
+				e.Value = column.FormatValue(e.Value);
+			}
 		}
     }
 }

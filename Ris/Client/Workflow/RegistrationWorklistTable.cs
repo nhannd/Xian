@@ -73,12 +73,10 @@ namespace ClearCanvas.Ris.Client.Workflow
                 delegate(RegistrationWorklistItem item) { return PersonNameFormat.Format(item.PatientName); },
                 1.5f);
 
-            TableColumn<RegistrationWorklistItem, string> scheduledForColumn = new TableColumn<RegistrationWorklistItem, string>(
+            DateTimeTableColumn<RegistrationWorklistItem> scheduledForColumn = new DateTimeTableColumn<RegistrationWorklistItem>(
                 SR.ColumnTime,
-                delegate(RegistrationWorklistItem item) { return Format.DateTime(item.Time); },
+                delegate(RegistrationWorklistItem item) { return item.Time; },
                 1.1f);
-            scheduledForColumn.Comparison = delegate(RegistrationWorklistItem item1, RegistrationWorklistItem item2)
-                { return Nullable.Compare(item1.Time, item2.Time); };
 
             TableColumn<RegistrationWorklistItem, string> descriptionRow = new TableColumn<RegistrationWorklistItem, string>(
                 SR.ColumnDescription,

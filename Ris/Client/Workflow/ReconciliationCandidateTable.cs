@@ -29,13 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
@@ -64,11 +58,9 @@ namespace ClearCanvas.Ris.Client.Workflow
               new TableColumn<ReconciliationCandidateTableEntry, string>(SR.ColumnHealthcardNumber,
                   delegate(ReconciliationCandidateTableEntry item) { return HealthcardFormat.Format(item.ReconciliationCandidate.PatientProfile.Healthcard); }, 1.0f));
 
-            TableColumn<ReconciliationCandidateTableEntry, string> dateOfBirthColumn =
-              new TableColumn<ReconciliationCandidateTableEntry, string>(SR.ColumnDateOfBirth,
-                  delegate(ReconciliationCandidateTableEntry item) { return Format.DateTime(item.ReconciliationCandidate.PatientProfile.DateOfBirth); }, 1.0f);
-            dateOfBirthColumn.Comparison = delegate(ReconciliationCandidateTableEntry x, ReconciliationCandidateTableEntry y)
-                { return Nullable.Compare(x.ReconciliationCandidate.PatientProfile.DateOfBirth, y.ReconciliationCandidate.PatientProfile.DateOfBirth); };
+            DateTimeTableColumn<ReconciliationCandidateTableEntry> dateOfBirthColumn =
+              new DateTimeTableColumn<ReconciliationCandidateTableEntry>(SR.ColumnDateOfBirth,
+                  delegate(ReconciliationCandidateTableEntry item) { return item.ReconciliationCandidate.PatientProfile.DateOfBirth; }, 1.0f);
             this.Columns.Add(dateOfBirthColumn);
 
             this.Columns.Add(
