@@ -29,6 +29,7 @@
 
 #endregion
 
+using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
@@ -121,10 +122,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			DisplaySet sagittalDisplaySet = _sagittalSlicer.CreateOrthoDisplaySet("Sagittal");
 			_coronalSlicer.SetSlicePlaneCoronal();
 			DisplaySet coronalDisplaySet = _coronalSlicer.CreateOrthoDisplaySet("Coronal");
+#if true
 			_axialSlicer.SetSlicePlaneAxial();
 			DisplaySet axialDisplaySet = _axialSlicer.CreateOrthoDisplaySet("Axial");
+#else
+			_axialSlicer.SetSlicePlaneOblique(45, 0, 0);
+			Vector3D sliceThroughPatient = _volume.CenterPointPatient;
+			//_axialSlicer.SliceThroughPointPatient = sliceThroughPatient;
+			//_axialSlicer.SliceExtentMillimeters = 150;
+			DisplaySet axialDisplaySet = _axialSlicer.CreateDisplaySet("Oblique2");
+#endif
+
 			// Hey, I said it was a hack!
-			_obliqueSlicer.SetSlicePlaneOblique(45, 0, 45);
+			_obliqueSlicer.SetSlicePlaneOblique(45, 0, 0);
+			//Vector3D sliceThroughPatient = _volume.CenterPointPatient;
+			//sliceThroughPatient.Y -= 100;
+			//sliceThroughPatient.Z += 100;
+			//_obliqueSlicer.SliceThroughPointPatient = sliceThroughPatient;
+			//_obliqueSlicer.SliceExtentMillimeters = 150;
 			DisplaySet obliqueDisplaySet = _obliqueSlicer.CreateDisplaySet("Oblique");
 
 			ImageViewer.StudyTree.RemoveSop(this._tempSop);
@@ -176,6 +191,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			RemoveAllSopsFromStudyTree(ImageViewer.StudyTree, displaySet);
 
 			_obliqueSlicer.SetSlicePlaneOblique(rotateX, rotateY, rotateZ);
+
+			//Vector3D sliceThroughPatient = _volume.CenterPointPatient;
+			//sliceThroughPatient.X = 0;
+			//sliceThroughPatient.Y = 0;
+			//sliceThroughPatient.Z = 0;
+			//_obliqueSlicer.SliceThroughPointPatient = sliceThroughPatient;
+			//_obliqueSlicer.SliceExtentMillimeters = 150;
+		
 			displaySet = _obliqueSlicer.CreateDisplaySet("Oblique");
 
 			AddAllSopsToStudyTree(ImageViewer.StudyTree, displaySet);

@@ -174,6 +174,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return Math.Min(Math.Min(Spacing.X, Spacing.Y), Spacing.Z); }
 		}
 
+		public float MaxSpacing
+		{
+			get { return Math.Max(Math.Max(Spacing.X, Spacing.Y), Spacing.Z); }
+		}
+
 		public Vector3D Origin
 		{
 			get { return _origin; }
