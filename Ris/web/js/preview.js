@@ -528,6 +528,33 @@ Preview.ProtocolProceduresTable = function () {
 				parentElement.style.display = 'block';
 			}
 			
+			// group procedures according to their protocol ref(indicates linked protocolling),
+			// or by procedureRef, if they don't have a protocol (effectively not grouping them)
+			var procGroupings = procedures.groupBy(
+				function(proc)
+				{
+					return proc.Protocol ? proc.Protocol.ProtocolRef : proc.ProcedureRef;
+				});
+
+			// transform the groupings into individual items that can be displayed in the table	
+			procGroupings = procGroupings.map(
+				function(grouping)
+				{
+					// reduce each procedure Grouping to a single item, where all procedure names are concatenated (all other fields should be identical)
+					return grouping.reduce({},
+						function(memo, item) 
+						{
+							return {
+								Procedure : memo.Procedure ? [memo.Procedure, Ris.formatProcedureName(item)].join(', ') : Ris.formatProcedureName(item),
+								// if the procedure was cancelled, leave the protocol status blank
+								Status : memo.Status || ((item.Status.Code == "CA") ? "" : _formatProtocolStatus(item.Protocol)),
+								Protocol: memo.Protocol || _formatProtocolCode(item.Protocol),
+								Author : memo.Author || _formatProtocolAuthor(item.Protocol),
+								Urgency: memo.Urgency || _formatProtocolUrgency(item.Protocol)
+							};
+						});
+				});
+
 			Preview.ProceduresTableHelper.addHeading(parentElement, 'Protocols');
 
 			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
@@ -535,32 +562,28 @@ Preview.ProtocolProceduresTable = function () {
 				 [
 					{   label: "Procedure",
 						cellType: "text",
-						getValue: function(item) { return Ris.formatProcedureName(item); }
+						getValue: function(item) { return item.Procedure; }
 					},
 					{   label: "Status",
 						cellType: "text",
-						getValue: function(item)
-						{
-							// if the procedure was cancelled, leave the protocol status blank
-							return (item.Status.Code == "CA") ? "" : _formatProtocolStatus(item.Protocol);
-						}
+						getValue: function(item) { return item.Status; }
 					},
 					{   label: "Protocol",
 						cellType: "html",
-						getValue: function(item) { return _formatProtocolCode(item.Protocol); }
+						getValue: function(item) { return item.Protocol; }
 					},
 					{   label: "Author",
 						cellType: "text",
-						getValue: function(item) { return _formatProtocolAuthor(item.Protocol); }
+						getValue: function(item) { return item.Author; }
 					},
 					{   label: "Urgency",
 						cellType: "text",
-						getValue: function(item) { return _formatProtocolUrgency(item.Protocol); }
+						getValue: function(item) { return item.WTIS; }
 					}
 				 ]);
 
 			htmlTable.rowCycleClassNames = ["row0", "row1"];
-			htmlTable.bindItems(procedures);
+			htmlTable.bindItems(procGroupings);
 		}
 	};
 }();
@@ -687,6 +710,33 @@ Preview.ReportingProceduresTable = function () {
 			{
 				parentElement.style.display = 'block';
 			}
+			
+			// group procedures according to their active reporting step (indicates linked reporting),
+			// or by procedureRef, if they don't have an active reporting step (effectively not grouping them)
+			var procGroupings = procedures.groupBy(
+				function(proc)
+				{
+					var ps = _getActiveReportingStep(proc);
+					return ps ? ps.ProcedureStepRef : proc.ProcedureRef;
+				});
+
+			// transform the groupings into individual items that can be displayed in the table	
+			procGroupings = procGroupings.map(
+				function(grouping)
+				{
+					// reduce each procedure Grouping to a single item, where all procedure names are concatenated (all other fields should be identical)
+					return grouping.reduce({},
+						function(memo, item) 
+						{
+							return {
+								Procedure : memo.Procedure ? [memo.Procedure, Ris.formatProcedureName(item)].join(', ') : Ris.formatProcedureName(item),
+								Status : memo.Status || _formatProcedureReportingStatus(item),
+								StartEndTime: memo.StartEndTime || Preview.ProceduresTableHelper.formatProcedureStartEndTime(item.StartTime, item.CheckOutTime),
+								PerformingStaff : memo.PerformingStaff || Preview.ProceduresTableHelper.formatProcedurePerformingStaff(item),
+								Owner: memo.Owner || _formatProcedureReportingOwner(item)
+							};
+						});
+				});
 
 			var htmlTable = Preview.ProceduresTableHelper.addTable(parentElement);
 			htmlTable = Table.createTable(htmlTable, { editInPlace: false, flow: false, addColumnHeadings: true },
@@ -697,28 +747,28 @@ Preview.ReportingProceduresTable = function () {
 					// },
 					{   label: "Procedure",
 						cellType: "text",
-						getValue: function(item) { return Ris.formatProcedureName(item); }
+						getValue: function(item) { return item.Procedure; }
 					},
 					{   label: "Status",
 						cellType: "text",
-						getValue: function(item) { return _formatProcedureReportingStatus(item); }
+						getValue: function(item) { return item.Status; }
 					},
 					{   label: "Start/End Time",
 						cellType: "text",
-						getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedureStartEndTime(item.StartTime, item.CheckOutTime); }
+						getValue: function(item) { return item.StartEndTime; }
 					},
 					{   label: "Performing Staff",
 						cellType: "text",
-						getValue: function(item) { return Preview.ProceduresTableHelper.formatProcedurePerformingStaff(item); }
+						getValue: function(item) { return item.PerformingStaff; }
 					},
 					{   label: "Owner",
 						cellType: "text",
-						getValue: function(item) { return _formatProcedureReportingOwner(item); }
+						getValue: function(item) { return item.Owner; }
 					}
 				 ]);
 
 			htmlTable.rowCycleClassNames = ["row0", "row1"];
-			htmlTable.bindItems(procedures);
+			htmlTable.bindItems(procGroupings);
 		}
 	};
 }();

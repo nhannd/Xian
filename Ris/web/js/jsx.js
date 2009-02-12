@@ -116,6 +116,21 @@ if(!Array.prototype.indexOf)
 	};
 }
 
+// returns an array containing only the unique elements of this array
+if(!Array.prototype.unique)
+{
+	Array.prototype.unique = function(obj)
+	{
+		var result = [];
+		for(var i = 0; i < this.length; i++)
+		{
+			var obj = this[i];
+			if(result.indexOf(obj) < 0)
+				result.push(obj);
+		}
+		return result;
+	};
+}
 
 // removes the item at the specified index
 if(!Array.prototype.removeAt)
@@ -159,6 +174,36 @@ if(!Array.prototype.toHash)
 		for(var i=0; i < keys.length; i++)
 			obj[keys[i]] = this[i];
 		return obj;
+	};
+}
+
+// this method implements the same pattern as the LINQ group By operator 
+// it is NOT the same as the SQL group by operator
+// it transforms this array into a set of sub-arrays, partitioned according to the specified keyFunc
+// the keyFunc maps an item in the array to a key
+// this function returns an array of sub-arrays, each sub-array containing the set of items that map to a given key
+// a "key" property is added to each sub-array, containing the key that was used to group it
+// for example:
+// 	["Adam", "Ana", "Bob", "Bill"].groupBy(function(item) { return item.substring(1); } )
+// returns
+//	[ ["Adam", "Ana"], ["Bob", "Bill"] ]
+// where ["Adam", "Ana"].key => "A" and ["Bob", "Bill"].key => "B"
+if(!Array.prototype.groupBy)
+{
+	Array.prototype.groupBy = function(keyFunc)
+	{
+		var keys = [];
+		var groups = {};
+        for(var i = 0; i < this.length; i++)
+		{
+			var value = this[i];
+			var key = keyFunc(value);
+			keys.push(key);	// store list of all keys encountered
+			groups[key] = groups[key] || [];
+			groups[key].push(value);
+		}
+		
+		return keys.unique().map(function(k) { return groups[k]; });
 	};
 }
 
