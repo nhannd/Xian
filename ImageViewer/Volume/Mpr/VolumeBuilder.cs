@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				}
 				if (spacing == 0f)
 					spacing = currentSpacing;
-				if (Math.Round(currentSpacing * 1000) != Math.Round(spacing * 1000))
+				if (Math.Round(currentSpacing * 100) != Math.Round(spacing * 100))
 				{
 					reason = "Inconsistent spacing betweeen images, MPR requires evenly spaced images";
 					return false;

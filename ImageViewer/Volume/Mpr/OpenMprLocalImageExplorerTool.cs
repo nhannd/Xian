@@ -97,6 +97,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				VolumeLoader loader = new VolumeLoader();
 				Volume volume = loader.LoadFromFiles(files);
 				ImageViewerComponent component = MprLayoutManager.CreateMprLayoutAndComponent(volume);
+				if (volume == null)
+					return;
 
 				ImageViewerComponent.LaunchInActiveWindow(component, SR.MprWorkspaceTitlePrefix);
 			}

@@ -42,7 +42,7 @@ using ClearCanvas.Desktop.Tools;
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
 	[MenuAction("openMpr", "imageviewer-contextmenu/MenuVolume/MenuOpenMpr", "OpenMpr")]
-	[IconSet("openMpr", IconScheme.Colour, "Icons.CopyToClipboardToolSmall.png", "Icons.CopyToClipboardToolMedium.png", "Icons.CopyToClipboardToolLarge.png")]
+	[IconSet("OpenMpr", IconScheme.Colour, "Icons.OpenToolSmall.png", "Icons.OpenToolMedium.png", "Icons.OpenToolLarge.png")]
 	[EnabledStateObserver("openMpr", "OpenMprEnabled", "OpenMprEnabledChanged")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
@@ -101,6 +101,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				//ggerade ToDo: If DisplaySet does not contain all compatible images, use the selected pres image and find the
 				//	images that are compatible with it
 				Volume volume = loader.LoadFromDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
+				if (volume == null)
+					return;
+
 				ImageViewerComponent component = MprLayoutManager.CreateMprLayoutAndComponent(volume);
 
 				ImageViewerComponent.LaunchInActiveWindow(component, SR.MprWorkspaceTitlePrefix);
