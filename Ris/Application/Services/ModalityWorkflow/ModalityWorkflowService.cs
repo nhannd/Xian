@@ -432,6 +432,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
 		private InterpretationStep GetPendingInterpretationStep(Procedure procedure)
 		{
+			// bug #3859: don't want to create an interpretation step for a completed procedure
+			// (migrated data may not have any interpretation steps even for a completed procedure)
 			if (procedure.IsTerminated)
 				return null;
 
