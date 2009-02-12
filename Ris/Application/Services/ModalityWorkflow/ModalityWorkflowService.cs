@@ -336,7 +336,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 			{
 				if (procedure.IsPerformed)
 				{
-					InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure, false);
+					InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure);
 					if (interpretationStep != null)
 					{
 						interpretationStep.Assign(interpreter);
@@ -394,7 +394,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 				// because it may be desirable to scheduled the interpretation prior to completing the documentation
 				if (procedure.IsPerformed)
 				{
-					InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure, true);
+					InterpretationStep interpretationStep = GetPendingInterpretationStep(procedure);
 					if (interpretationStep != null)
 					{
 						// bug #3037: schedule the interpretation for the performed time, which may be earlier than the current time 
@@ -430,13 +430,16 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 					delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
 		}
 
-		private InterpretationStep GetPendingInterpretationStep(Procedure procedure, bool createIfStepNotExist)
+		private InterpretationStep GetPendingInterpretationStep(Procedure procedure)
 		{
+			if (procedure.IsTerminated)
+				return null;
+
 			List<ProcedureStep> interpretationSteps = CollectionUtils.Select(procedure.ProcedureSteps,
 				delegate(ProcedureStep ps) { return ps.Is<InterpretationStep>(); });
 
 			// no interp step, so create one
-			if (interpretationSteps.Count == 0 && createIfStepNotExist)
+			if (interpretationSteps.Count == 0)
 			{
 				InterpretationStep interpretationStep = new InterpretationStep(procedure);
 				PersistenceContext.Lock(interpretationStep, DirtyState.New);
