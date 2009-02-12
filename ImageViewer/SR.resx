@@ -291,6 +291,9 @@
   <data name="LabelError" xml:space="preserve">
     <value>Error:</value>
   </data>
+  <data name="LabelPresentationStateLut" xml:space="preserve">
+    <value>PR LUT</value>
+  </data>
   <data name="LabelUnknown" xml:space="preserve">
     <value>Unknown</value>
   </data>
@@ -302,6 +305,9 @@
   </data>
   <data name="MessageErrorLoadingAnnotationLayout" xml:space="preserve">
     <value>An unrecoverable error occurred while attempting to load the text overlay.  Please see the log for details.</value>
+  </data>
+  <data name="MessageFailedToGetVOIDataLUTs" xml:space="preserve">
+    <value>Creation of VOI Data LUTs failed.</value>
   </data>
   <data name="MessageFormatOpeningImages" xml:space="preserve">
     <value>Opening {0} of {1} images</value>

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Iod;
@@ -385,6 +386,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#endregion
 
 		#region VOI LUT Module
+
+		public virtual IList<VoiDataLut> VoiDataLuts
+		{
+			get { return base.GetVoiDataLuts(); }
+		}
 
 		/// <summary>
 		/// Gets the window width and center.

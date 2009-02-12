@@ -61,6 +61,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 				}
 			}
 
+			private IDicomVoiLutsProvider DicomVoiLutsProvider
+			{
+				get
+				{
+					if (_image is IDicomVoiLutsProvider)
+						return (IDicomVoiLutsProvider) _image;
+					return null;
+				}
+			}
+
 			private GrayscalePixelData PixelData
 			{
 				get { return (GrayscalePixelData)((IImageGraphicProvider)_image).ImageGraphic.PixelData; }
@@ -78,20 +88,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			private AutoVoiLutData GetDataLut()
 			{
-				Frame frame = Frame;
-				if (frame == null)
+				IDicomVoiLutsProvider voiLutsProvider = this.DicomVoiLutsProvider;
+				if (voiLutsProvider == null)
 					return null;
 
-				return AutoVoiLutData.CreateFrom(frame);
+				return AutoVoiLutData.CreateFrom(voiLutsProvider);
 			}
 
 			private AutoVoiLutLinear GetLinearLut()
 			{
-				Frame frame = Frame;
-				if (frame == null)
+				IDicomVoiLutsProvider voiLutsProvider = this.DicomVoiLutsProvider;
+				if (voiLutsProvider == null)
 					return null;
 
-				return AutoVoiLutLinear.CreateFrom(Frame);
+				return AutoVoiLutLinear.CreateFrom(voiLutsProvider);
 			}
 
 			private MinMaxPixelCalculatedLinearLut GetMinMaxLut()
@@ -125,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			public void ApplyNextLut()
 			{
 				IComposableLut currentLut = CurrentLut;
-				Frame frame = Frame;
+				IDicomVoiLutsProvider voiLutsProvider = this.DicomVoiLutsProvider;
 
 				AdjustableDataLut adjustableDataLut = currentLut as AdjustableDataLut;
 				if (adjustableDataLut != null && !(adjustableDataLut.DataLut is AutoVoiLutData))
@@ -136,9 +146,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 				if (adjustableDataLut != null)
 				{
 					AutoVoiLutData dataLut = (AutoVoiLutData) adjustableDataLut.DataLut;
-					if (dataLut.IsLast && AutoVoiLutLinear.CanCreateFrom(frame))
+					if (dataLut.IsLast && AutoVoiLutLinear.CanCreateFrom(voiLutsProvider))
 					{
-						VoiLutManager.InstallLut(AutoVoiLutLinear.CreateFrom(frame));
+						VoiLutManager.InstallLut(AutoVoiLutLinear.CreateFrom(voiLutsProvider));
 					}
 					else
 					{
@@ -148,8 +158,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 				}
 				else if (linearLut != null)
 				{
-					if (linearLut.IsLast && AutoVoiLutData.CanCreateFrom(frame))
-						VoiLutManager.InstallLut(new AdjustableDataLut(AutoVoiLutData.CreateFrom(frame)));
+					if (linearLut.IsLast && AutoVoiLutData.CanCreateFrom(voiLutsProvider))
+						VoiLutManager.InstallLut(new AdjustableDataLut(AutoVoiLutData.CreateFrom(voiLutsProvider)));
 					else
 						linearLut.ApplyNext();
 				}
@@ -169,8 +179,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 				if (IsImageSopProvider(presentationImage))
 				{
-					Frame frame = ((IImageSopProvider)presentationImage).Frame;
-					if (AutoVoiLutLinear.CanCreateFrom(frame) || AutoVoiLutData.CanCreateFrom(frame))
+					IDicomVoiLutsProvider voiLutsProvider = presentationImage as IDicomVoiLutsProvider;
+					if (AutoVoiLutLinear.CanCreateFrom(voiLutsProvider) || AutoVoiLutData.CanCreateFrom(voiLutsProvider))
 						return true;
 				}
 

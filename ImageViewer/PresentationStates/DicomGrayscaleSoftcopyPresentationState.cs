@@ -4,6 +4,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.Dicom.Iod.Modules;
+using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
@@ -47,9 +48,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			this.SerializeSoftcopyPresentationLut(iod.SoftcopyPresentationLut);
 		}
 
+		/// <summary>
+		/// Serializes the Softcopy Presentation LUT IOD module (DICOM PS 3.3, C.11.6)
+		/// </summary>
+		/// <remarks>Softcopy Presentation LUTs are not currently supported by this product.</remarks>
+		/// <param name="module">The IOD module.</param>
 		private void SerializeSoftcopyPresentationLut(SoftcopyPresentationLutModuleIod module)
 		{
-			// TODO : fix this dummy implementation
 			module.InitializeAttributes();
 			module.PresentationLutShape = PresentationLutShape.Identity;
 		}
@@ -76,10 +81,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 		}
 
-		private void DeserializeSoftcopyPresentationLut(SoftcopyPresentationLutModuleIod module, DicomGrayscalePresentationImage image)
-		{
-			// TODO : fix this dummy implementation
-		}
+		/// <summary>
+		/// Deserializes the Softcopy Presentation LUT IOD module (DICOM PS 3.3, C.11.6)
+		/// </summary>
+		/// <remarks>Softcopy Presentation LUTs are not currently supported by this product.</remarks>
+		/// <param name="module">The IOD module.</param>
+		/// <param name="image">The <see cref="IPresentationImage"/> to deserialize to.</param>
+		private void DeserializeSoftcopyPresentationLut(SoftcopyPresentationLutModuleIod module, DicomGrayscalePresentationImage image) {}
 
 		#endregion
 

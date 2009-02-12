@@ -36,6 +36,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -45,8 +46,8 @@ namespace ClearCanvas.ImageViewer
 	/// A DICOM grayscale <see cref="PresentationImage"/>.
 	/// </summary>
 	[Cloneable]
-	public class DicomGrayscalePresentationImage 
-		: GrayscalePresentationImage, IImageSopProvider, IDicomSoftcopyPresentationStateProvider
+	public class DicomGrayscalePresentationImage
+		: GrayscalePresentationImage, IImageSopProvider, IDicomSoftcopyPresentationStateProvider, IDicomVoiLutsProvider
 	{
 		[CloneIgnore]
 		private IFrameReference _frameReference;
@@ -83,6 +84,7 @@ namespace ClearCanvas.ImageViewer
 				   frameReference.Frame.GetNormalizedPixelData)
 		{
 			_frameReference = frameReference;
+			_dicomVoiLuts = new DicomVoiLuts(this);
 		}
 
 		/// <summary>
@@ -93,6 +95,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			Frame frame = source.Frame;
 			_frameReference = frame.CreateTransientReference();
+			_dicomVoiLuts = new DicomVoiLuts(this);
 		}
 
 		/// <summary>
@@ -148,6 +151,18 @@ namespace ClearCanvas.ImageViewer
 					_presentationStateApplied = false;
 				}
 			}
+		}
+
+		#endregion
+
+		#region IDicomVoiLutsProvider Members
+
+		[CloneIgnore]
+		private readonly DicomVoiLuts _dicomVoiLuts;
+
+		public IDicomVoiLuts DicomVoiLuts
+		{
+			get { return _dicomVoiLuts; }
 		}
 
 		#endregion

@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ClearCanvas.Common;
+using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	internal interface ISopDataCacheItemReference : IDisposable
 	{
 		ISopDataSource RealDataSource { get; }
+		IList<VoiDataLut> VoiDataLuts { get; }
 		ISopDataCacheItemReference Clone();
 	}
 
@@ -17,6 +20,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private class Item
 		{
 			private readonly ISopDataSource _realDataSource;
+			private IList<VoiDataLut> _sopVoiDataLuts;
 			private int _referenceCount = 0;
 
 			public Item(ISopDataSource realDataSource)
@@ -27,6 +31,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			public ISopDataSource RealDataSource
 			{
 				get { return _realDataSource; }	
+			}
+
+			public IList<VoiDataLut> VoiDataLuts
+			{
+				get
+				{
+					if (_sopVoiDataLuts == null)
+					{
+						try
+						{
+							_sopVoiDataLuts = VoiDataLut.Create(_realDataSource).AsReadOnly();
+						}
+						catch (Exception ex)
+						{
+							Platform.Log(LogLevel.Warn, ex, SR.MessageFailedToGetVOIDataLUTs);
+							_sopVoiDataLuts = new List<VoiDataLut>().AsReadOnly();
+						}
+					}
+
+					return _sopVoiDataLuts;
+				}
 			}
 
 			public void OnReferenceCreated()
@@ -79,6 +104,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			public ISopDataSource RealDataSource
 			{
 				get { return _item.RealDataSource; }
+			}
+
+			public IList<VoiDataLut> VoiDataLuts
+			{
+				get { return _item.VoiDataLuts; }
 			}
 
 			public ISopDataCacheItemReference Clone()

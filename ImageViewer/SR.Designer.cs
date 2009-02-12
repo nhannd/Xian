@@ -583,6 +583,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to PR LUT.
+        /// </summary>
+        public static string LabelPresentationStateLut {
+            get {
+                return ResourceManager.GetString("LabelPresentationStateLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown.
         /// </summary>
         public static string LabelUnknown {
@@ -615,6 +624,15 @@ namespace ClearCanvas.ImageViewer {
         public static string MessageErrorLoadingAnnotationLayout {
             get {
                 return ResourceManager.GetString("MessageErrorLoadingAnnotationLayout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creation of VOI Data LUTs failed..
+        /// </summary>
+        public static string MessageFailedToGetVOIDataLUTs {
+            get {
+                return ResourceManager.GetString("MessageFailedToGetVOIDataLUTs", resourceCulture);
             }
         }
         

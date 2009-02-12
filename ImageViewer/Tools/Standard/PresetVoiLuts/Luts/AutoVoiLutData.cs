@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 using DataLut=ClearCanvas.ImageViewer.Imaging.DataLut;
@@ -133,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		#region Private Fields
 
 		[CloneCopyReference]
-		private readonly List<VoiDataLut> _dataLuts;
+		private readonly IList<VoiDataLut> _dataLuts;
 		private readonly string _keyPrefix;
 		private int _index;
 
@@ -141,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		#region Constructor
 
-		private AutoVoiLutData(List<VoiDataLut> dataLuts, string keyPrefix)
+		private AutoVoiLutData(IList<VoiDataLut> dataLuts, string keyPrefix)
 		{
 			Platform.CheckForNullReference(dataLuts, "dataLuts");
 			Platform.CheckPositive(dataLuts.Count, "dataLuts.Count");
@@ -201,35 +202,29 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		#region Statics
 
-		public static bool CanCreateFrom(Frame frame)
+		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
 		{
-			if (frame.ParentImageSop.NumberOfFrames > 1)
-			{
-				//data luts don't apply to multi-frame images of any kind.
-				return false;
-			}
-
-			DicomAttributeSQ voiLutSequence = (DicomAttributeSQ)frame.ParentImageSop[DicomTags.VoiLutSequence];
-			return !voiLutSequence.IsEmpty && !voiLutSequence.IsNull;
+			return provider != null && (provider.DicomVoiLuts.ImageVoiDataLuts.Count > 0 || provider.DicomVoiLuts.PresentationVoiDataLuts.Count > 0);
 		}
 
-		public static AutoVoiLutData CreateFrom(Frame frame)
+		public static AutoVoiLutData CreateFrom(IDicomVoiLutsProvider provider)
 		{
-			if (frame.ParentImageSop.NumberOfFrames > 1)
-			{
-				//data luts don't apply to multi-frame images of any kind.
+			IDicomVoiLuts luts = provider.DicomVoiLuts;
+			IList<VoiDataLut> dataLuts;
+			if (luts.PresentationVoiDataLuts.Count > 0)
+				dataLuts = luts.PresentationVoiDataLuts;
+			else if (luts.ImageVoiDataLuts.Count > 0)
+				dataLuts = luts.ImageVoiDataLuts;
+			else
 				return null;
-			}
 
-			List<VoiDataLut> luts = DataLutCacheTool.GetDataLuts(frame.ParentImageSop);
-			if (luts == null || luts.Count == 0)
+			if (dataLuts.Count == 0)
 				return null;
 
-			foreach (VoiDataLut lut in luts)
+			foreach (VoiDataLut lut in dataLuts)
 				lut.CorrectMinMaxOutput(); //see the comment for this method.
 
-			string keyPrefix = String.Format("{0}:{1}", frame.ParentImageSop.SopInstanceUID, frame.FrameNumber);
-			return new AutoVoiLutData(luts, keyPrefix);
+			return new AutoVoiLutData(dataLuts, provider.DicomVoiLuts.PresentationStateSopInstanceUid);
 		}
 
 		#endregion

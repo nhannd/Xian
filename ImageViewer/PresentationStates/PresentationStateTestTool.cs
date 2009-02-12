@@ -3,7 +3,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Imaging;
 
 #if DEBUG
 
@@ -59,6 +61,33 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				{
 					DicomSoftcopyPresentationState presentationState = DicomSoftcopyPresentationState.Load(dcf);
 					presentationState.Deserialize(base.SelectedPresentationImage);
+
+					// automatically install a lut from the presentation state if applicable
+					if (base.SelectedPresentationImage is IDicomVoiLutsProvider && base.SelectedPresentationImage is IVoiLutProvider)
+					{
+						IDicomVoiLutsProvider voiLutsProvider = (IDicomVoiLutsProvider) base.SelectedPresentationImage;
+
+						if (voiLutsProvider.DicomVoiLuts.PresentationVoiDataLuts.Count > 0)
+						{
+							VoiDataLut dataLutIod = voiLutsProvider.DicomVoiLuts.PresentationVoiDataLuts[0];
+							AdjustableDataLut dataLut = new AdjustableDataLut(
+								new SimpleDataLut(dataLutIod.FirstMappedPixelValue,
+								                  dataLutIod.Data,
+								                  dataLutIod.MinOutputValue,
+								                  dataLutIod.MaxOutputValue,
+								                  dataLutIod.ToString(),
+								                  dataLutIod.Explanation));
+							base.SelectedVoiLutProvider.VoiLutManager.InstallLut(dataLut);
+							base.SelectedPresentationImage.Draw();
+						}
+						else if (voiLutsProvider.DicomVoiLuts.PresentationVoiLinearLuts.Count > 0)
+						{
+							Window window = voiLutsProvider.DicomVoiLuts.PresentationVoiLinearLuts[0];
+							BasicVoiLutLinear linearLut = new BasicVoiLutLinear(window.Width, window.Center);
+							base.SelectedVoiLutProvider.VoiLutManager.InstallLut(linearLut);
+							base.SelectedPresentationImage.Draw();
+						}
+					}
 				}
 				catch (Exception ex)
 				{

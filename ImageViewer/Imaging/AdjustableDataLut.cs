@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// the full window, since the true values won't necessarily have any real meaning.
 	/// </remarks>
 	[Cloneable(true)]
-	public class AdjustableDataLut : ComposableLut, IBasicVoiLutLinear
+	public class AdjustableDataLut : ComposableLut, IBasicVoiLutLinear, IDataLut
 	{
 		private class Memento
 		{
@@ -47,6 +47,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private readonly DataLut _dataLut;
 		private readonly BasicVoiLutLinear _linearLut;
+
+		[CloneIgnore]
+		private int[] _lutDataCache = null;
 
 		#endregion
 
@@ -96,12 +99,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private void OnDataLutChanged(object sender, EventArgs e)
 		{
 			UpdateMinMaxInputLinear();
-			base.OnLutChanged();
+			this.OnLutChanged();
 		}
 
 		private void OnLinearLutChanged(object sender, EventArgs e)
 		{
-			base.OnLutChanged();
+			this.OnLutChanged();
 		}
 
 		private void UpdateMinMaxInputLinear()
@@ -215,7 +218,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_linearLut.WindowWidth = FullWindow;
 			_linearLut.WindowCenter = _dataLut.MinOutputValue + FullWindow / 2;
 
-			base.OnLutChanged();
+			this.OnLutChanged();
 		}
 
 		/// <summary>
@@ -257,6 +260,47 @@ namespace ClearCanvas.ImageViewer.Imaging
 			
 			if (lutMemento.LinearLutMemento != null)
 				_linearLut.SetMemento(lutMemento.LinearLutMemento);
+		}
+
+		#endregion
+
+		#region Overrides
+
+		protected override void OnLutChanged()
+		{
+			// when something changes, wipe the cached lut array
+			_lutDataCache = null;
+
+			base.OnLutChanged();
+		}
+
+		#endregion
+
+		#region IDataLut Members
+
+		int[] IDataLut.Data
+		{
+			get
+			{
+				if (_lutDataCache == null)
+				{
+					int lutLength = _dataLut.Length;
+					int[] lutData = new int[lutLength];
+					unsafe
+					{
+						fixed (int* output = lutData)
+						{
+							fixed (int* input = _dataLut.Data)
+							{
+								for (int n = 0; n < lutLength; n++)
+									output[n] = _linearLut[input[n]];
+							}
+						}
+					}
+					_lutDataCache = lutData;
+				}
+				return _lutDataCache;
+			}
 		}
 
 		#endregion

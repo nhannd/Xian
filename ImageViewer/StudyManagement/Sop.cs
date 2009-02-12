@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
@@ -143,6 +144,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get { return _parentSeries; }
 			internal set { _parentSeries = value; }
+		}
+
+		internal IList<VoiDataLut> GetVoiDataLuts()
+		{
+			return _dataSourceReference.VoiDataLuts;
 		}
 
 		#region Meta info
@@ -909,6 +915,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		#region Static Helpers
+
 		public static Sop Create(ISopDataSource dataSource)
 		{
 			if (SopDataHelper.IsImageSop(dataSource.SopClassUid))
@@ -916,6 +924,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			else
 				return new Sop(dataSource);
 		}
+
+		#endregion
+
+		#region Validation
 
 		/// <summary>
 		/// The <see cref="Sop"/> class (and derived classes) should not validate tag values from 
@@ -965,6 +977,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			if (String.IsNullOrEmpty(this.PatientId) || this.PatientId.TrimEnd(' ').Length == 0)
 				throw new SopValidationException(SR.ExceptionInvalidPatientID);
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Disposes all resources being used by this <see cref="Sop"/>.

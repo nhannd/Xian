@@ -151,23 +151,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		}
 
 		#region Statics
-		
-		public static bool CanCreateFrom(Frame frame)
+
+		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
 		{
-			return GetWindowCenterAndWidth(frame) != null;
+			return provider != null && (provider.DicomVoiLuts.ImageVoiLinearLuts.Count > 0 || provider.DicomVoiLuts.PresentationVoiLinearLuts.Count > 0);
 		}
 
-		public static AutoVoiLutLinear CreateFrom(Frame frame)
+		public static AutoVoiLutLinear CreateFrom(IDicomVoiLutsProvider provider)
 		{
-			Window[] windowCenterAndWidth = GetWindowCenterAndWidth(frame);
-			if (windowCenterAndWidth == null)
-				return null;
-
-			string[] explanations = frame.WindowCenterAndWidthExplanation;
-			if (explanations == null || explanations.Length != windowCenterAndWidth.Length)
-				return new AutoVoiLutLinear(new List<Window>(windowCenterAndWidth), null);
-			else
-				return new AutoVoiLutLinear(new List<Window>(windowCenterAndWidth), explanations);
+			IDicomVoiLuts luts = provider.DicomVoiLuts;
+			if (luts.PresentationVoiLinearLuts.Count > 0)
+				return new AutoVoiLutLinear(luts.PresentationVoiLinearLuts, luts.PresentationVoiLinearLutExplanations);
+			else if(luts.ImageVoiLinearLuts.Count > 0)
+				return new AutoVoiLutLinear(luts.ImageVoiLinearLuts, luts.ImageVoiLinearLutExplanations);
+			return null;
 		}
 
 		#endregion
