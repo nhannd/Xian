@@ -51,6 +51,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DefineObliqueTool.cs" />
+    <Compile Include="MprImageViewerToolHelper.cs" />
     <Compile Include="MprRotateTool.cs" />
     <Compile Include="OpenMprLocalImageExplorerTool.cs" />
     <Compile Include="OpenMprTool.cs" />

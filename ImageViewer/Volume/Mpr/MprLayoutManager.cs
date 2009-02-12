@@ -31,6 +31,8 @@
 
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Mathematics;
+using System;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -168,6 +170,64 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		#endregion
 
 		#region Oblique Image Rotations
+
+		public void SetObliqueCutLine(IPresentationImage presImage, Vector3D planeNormal, Vector3D startPoint, Vector3D endPoint)
+		{
+			//TODO: just copied from the rotate method.
+			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
+
+			IImageBox obliqueImageBox = physicalWorkspace.ImageBoxes[3];
+
+			IDisplaySet displaySet = presImage.ParentDisplaySet;
+
+			if (presImage != obliqueImageBox.TopLeftPresentationImage)
+				return;
+
+			// Hang on to the current index, we'll keep it the same with the new DisplaySet
+			int currentIndex = obliqueImageBox.TopLeftPresentationImageIndex;
+
+			//ggerade ToRes: What about other settings like Window/level? It is lost when the DisplaySets
+			// are swapped out.
+
+			// Clear out the old DisplaySet
+			obliqueImageBox.DisplaySet = null;
+			RemoveAllSopsFromStudyTree(ImageViewer.StudyTree, displaySet);
+
+			//TODO: this is clearly wrong.  Correct by adding similar interface to slicer.
+
+			Vector3D direction = endPoint - startPoint;
+			Vector3D cutPlaneNormal = planeNormal.Cross(direction);
+
+			Vector3D projXY = new Vector3D(cutPlaneNormal.X, cutPlaneNormal.Y, 0);
+			Vector3D projXZ = new Vector3D(cutPlaneNormal.X, 0, cutPlaneNormal.Z);
+			Vector3D projYZ = new Vector3D(0, cutPlaneNormal.Y, cutPlaneNormal.Z);
+
+			int aboutX = (int)(-Vector3D.yUnit.GetAngleBetween(projYZ) * 180 / Math.PI);
+			int aboutY = (int)(Vector3D.xUnit.GetAngleBetween(projXZ) * 180 / Math.PI);
+			int aboutZ = (int)(Vector3D.xUnit.GetAngleBetween(projXY) * 180 / Math.PI);
+
+			_obliqueSlicer.SetSlicePlaneOblique(aboutX, aboutY, aboutZ);
+
+			//TODO: set slice extent along line direction using line length
+			//TODO: set slice extent in direction orthogonal to line (use same extent?)
+			//Vector3D cutPoint = startPoint + (endPoint - startPoint) / 2F;
+			//_obliqueSlicer.SetSliceThroughPointPatient(cutPoint);
+
+
+			displaySet = _obliqueSlicer.CreateDisplaySet("Oblique");
+
+			AddAllSopsToStudyTree(ImageViewer.StudyTree, displaySet);
+
+			// Hacked this in so that the Imagebox wouldn't jump to first image all the time
+			ImageBox box = (ImageBox)obliqueImageBox;
+			box.PresetTopLeftPresentationImageIndex = currentIndex;
+
+			obliqueImageBox.DisplaySet = displaySet;
+			// Taken care of by hack above
+			//obliqueImageBox.TopLeftPresentationImageIndex = currentIndex;
+
+			obliqueImageBox.Draw();
+		}
 
 		public void RotateObliqueImage(IPresentationImage presImage, int rotateX, int rotateY, int rotateZ)
 		{

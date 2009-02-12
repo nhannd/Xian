@@ -22,6 +22,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class RotateObliqueTool : MouseImageViewerTool
 	{
+		private MprImageViewerToolHelper _toolHelper;
+
 		private PinwheelGraphic _currentPinwheelGraphic;
 		private bool _rotatingGraphic = false;
 		private int _rotationAxis = -1;
@@ -49,7 +51,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public override void Initialize()
 		{
 			base.Initialize();
-			Visible = GetMprLayoutManager() != null;
+
+			_toolHelper = new MprImageViewerToolHelper(Context);
+
+			Visible = _toolHelper.GetMprLayoutManager() != null;
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
@@ -85,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				double angle = Vector.SubtendedAngle(mouse, vertex, rotationAnchor);
 
 				int rotationX, rotationY, rotationZ;
-				GetRotationAngles(out rotationX, out rotationY, out rotationZ);
+				_toolHelper.GetObliqueRotationAngles(out rotationX, out rotationY, out rotationZ);
 
 				if (_rotationAxis == 0)
 				{
@@ -106,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				_currentPinwheelGraphic.ResetCoordinateSystem();
 				_currentPinwheelGraphic.Draw();
 
-				GetMprLayoutManager().RotateObliqueImage(GetObliqueImage(), rotationX, rotationY, rotationZ);
+				_toolHelper.GetMprLayoutManager().RotateObliqueImage(_toolHelper.GetObliqueImage(), rotationX, rotationY, rotationZ);
 				return true;
 			}
 
@@ -116,13 +121,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private void OnActivationChanged(object sender, System.EventArgs e)
 		{
 			base.ActivationChanged -= new System.EventHandler(OnActivationChanged);
-			RemoveGraphic();
+			RemovePinwheelGraphic();
+			UpdateRotationAxis();
+		}
+
+		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
+		{
+			RemovePinwheelGraphic();
 			UpdateRotationAxis();
 		}
 
 		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			RemoveGraphic();
+			RemovePinwheelGraphic();
 			UpdateRotationAxis();
 
 			if (Visible && Active)
@@ -154,6 +165,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (selectedImage == null)
 				return;
 
+			if (!_toolHelper.IsAxialImage(selectedImage) && 
+				!_toolHelper.IsCoronalImage(selectedImage) && 
+				!_toolHelper.IsSaggittalImage(selectedImage))
+			{
+				return;
+			}
+
 			IOverlayGraphicsProvider overlayProvider = selectedImage as IOverlayGraphicsProvider;
 			IImageGraphicProvider imageGraphicProvider = selectedImage as IImageGraphicProvider;
 			
@@ -171,24 +189,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
-		private void UpdateRotationAxis()
-		{
-			IPresentationImage selectedImage = base.Context.Viewer.SelectedPresentationImage;
-			MprLayoutManager layoutManager = GetMprLayoutManager();
-			_rotationAxis = -1;
-
-			if (selectedImage != null && layoutManager != null)
-			{
-				if (IsSaggittalImage(selectedImage))
-					_rotationAxis = 0; //x
-				else if (IsCoronalImage(selectedImage))
-					_rotationAxis = 1; //y
-				else if (IsAxialImage(selectedImage))
-					_rotationAxis = 2; //z
-			}
-		}
-
-		private void RemoveGraphic()
+		private void RemovePinwheelGraphic()
 		{
 			if (_currentPinwheelGraphic != null)
 			{
@@ -202,15 +203,27 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_currentPinwheelGraphic = null;
 		}
 
-		private IPresentationImage GetObliqueImage()
+		private void UpdateRotationAxis()
 		{
-			return ImageViewer.PhysicalWorkspace.ImageBoxes[3].TopLeftPresentationImage;
+			IPresentationImage selectedImage = base.Context.Viewer.SelectedPresentationImage;
+			MprLayoutManager layoutManager = _toolHelper.GetMprLayoutManager();
+			_rotationAxis = -1;
+
+			if (selectedImage != null && layoutManager != null)
+			{
+				if (_toolHelper.IsSaggittalImage(selectedImage))
+					_rotationAxis = 0; //x
+				else if (_toolHelper.IsCoronalImage(selectedImage))
+					_rotationAxis = 1; //y
+				else if (_toolHelper.IsAxialImage(selectedImage))
+					_rotationAxis = 2; //z
+			}
 		}
 
 		private int GetRotationAngle()
 		{
 			int rotationX, rotationY, rotationZ;
-			GetRotationAngles(out rotationX, out rotationY, out rotationZ);
+			_toolHelper.GetObliqueRotationAngles(out rotationX, out rotationY, out rotationZ);
 
 			if (_rotationAxis == 0)
 				return rotationX;
@@ -220,64 +233,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return rotationZ;
 
 			return 0;
-		}
-
-		private void GetRotationAngles(out int rotationX, out int rotationY, out int rotationZ)
-		{
-			rotationX = 0;
-			rotationY = 0;
-			rotationZ = 0;
-
-			IPresentationImage obliqueImage = GetObliqueImage();
-			MprLayoutManager layoutManager = GetMprLayoutManager();
-
-			if (obliqueImage != null && layoutManager != null)
-			{
-				rotationX = layoutManager.GetObliqueImageRotationX(obliqueImage);
-				rotationY = layoutManager.GetObliqueImageRotationY(obliqueImage);
-				rotationZ = layoutManager.GetObliqueImageRotationZ(obliqueImage);
-			}
-		}
-
-		private MprLayoutManager GetMprLayoutManager()
-		{
-			if (base.Context.Viewer is MprImageViewerComponent)
-				return ((MprImageViewerComponent)base.Context.Viewer).LayoutManager as MprLayoutManager;
-
-			return null;
-		}
-
-		private bool IsAxialImage(IPresentationImage image)
-		{
-			return image.ParentDisplaySet.ImageBox == GetAxialImageBox();
-		}
-
-		private bool IsCoronalImage(IPresentationImage image)
-		{
-			return image.ParentDisplaySet.ImageBox == GetCoronalImageBox();
-		}
-		
-		private bool IsSaggittalImage(IPresentationImage image)
-		{
-			return image.ParentDisplaySet.ImageBox == GetSagittalImageBox();
-		}
-
-		private IImageBox GetSagittalImageBox()
-		{
-			IPhysicalWorkspace workspace = base.Context.Viewer.PhysicalWorkspace;
-			return workspace.ImageBoxes[0];
-		}
-
-		private IImageBox GetCoronalImageBox()
-		{
-			IPhysicalWorkspace workspace = base.Context.Viewer.PhysicalWorkspace;
-			return workspace.ImageBoxes[1];
-		}
-
-		private IImageBox GetAxialImageBox()
-		{
-			IPhysicalWorkspace workspace = base.Context.Viewer.PhysicalWorkspace;
-			return workspace.ImageBoxes[2];
 		}
 	}
 }

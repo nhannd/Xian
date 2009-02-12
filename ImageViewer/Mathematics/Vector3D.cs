@@ -53,6 +53,10 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// </summary>
 		public static readonly Vector3D Null = new Vector3D(0F, 0F, 0F);
 
+		public static readonly Vector3D xUnit = new Vector3D(1F, 0F, 0F);
+		public static readonly Vector3D yUnit = new Vector3D(0F, 1F, 0F);
+		public static readonly Vector3D zUnit = new Vector3D(0F, 0F, 1F);
+
 		/// <summary>
 		/// Constructor.
 		/// </summary>
@@ -147,6 +151,53 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			float z = _x * right.Y - _y * right.X;
 
 			return new Vector3D(x, y, z);
+		}
+
+		public bool IsParallel(Vector3D other, float angleTolerance)
+		{
+			angleTolerance = Math.Abs(angleTolerance);
+			float upper = angleTolerance;
+			float lower = -angleTolerance;
+
+			float angle = GetAngleBetween(other);
+
+			bool parallel = FloatComparer.IsGreaterThan(angle, lower) && FloatComparer.IsLessThan(angle, upper);
+
+			if (!parallel)
+			{
+				upper = (float)Math.PI + angleTolerance;
+				lower = (float)Math.PI - angleTolerance;
+				parallel = FloatComparer.IsGreaterThan(angle, lower) && FloatComparer.IsLessThan(angle, upper);
+			}
+
+			return parallel;
+		}
+
+		public bool IsOrthogonal(Vector3D other, float angleTolerance)
+		{
+			angleTolerance = Math.Abs(angleTolerance);
+			float upper = (float)Math.PI / 2 + angleTolerance;
+			float lower = (float)Math.PI / 2 - angleTolerance;
+
+			float angle = GetAngleBetween(other);
+
+			return FloatComparer.IsGreaterThan(angle, lower) && FloatComparer.IsLessThan(angle, upper);
+		}
+
+		public float GetAngleBetween(Vector3D other)
+		{
+			Vector3D normal1 = this.Normalize();
+			Vector3D normal2 = other.Normalize();
+
+			// the vectors are already normalized, so we don't need to divide by the magnitudes.
+			float dot = normal1.Dot(normal2);
+
+			if (dot < -1F)
+				dot = -1F;
+			if (dot > 1F)
+				dot = 1F;
+
+			return Math.Abs((float)Math.Acos(dot));
 		}
 
 		/// <summary>

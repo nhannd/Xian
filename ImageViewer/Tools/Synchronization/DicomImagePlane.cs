@@ -327,35 +327,19 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 			return this._sourceFrame.FrameOfReferenceUid == otherFrame.FrameOfReferenceUid;
 		}
 
-		public bool IsOrthogonalTo(DicomImagePlane other, float angleTolerance)
-		{
-			angleTolerance = Math.Abs(angleTolerance);
-			float upper = (float)Math.PI / 2 + angleTolerance;
-			float lower = (float)Math.PI / 2 - angleTolerance;
-
-			float angle = GetAngleBetween(other);
-
-			return FloatComparer.IsGreaterThan(angle, lower) && FloatComparer.IsLessThan(angle, upper);
-		}
-
 		public bool IsParallelTo(DicomImagePlane other, float angleTolerance)
 		{
-			angleTolerance = Math.Abs(angleTolerance);
-			float upper = angleTolerance;
-			float lower = - angleTolerance;
+			return Normal.IsParallel(other.Normal, angleTolerance);
+		}
 
-			float angle = GetAngleBetween(other);
+		public bool IsOrthogonalTo(DicomImagePlane other, float angleTolerance)
+		{
+			return Normal.IsOrthogonal(other.Normal, angleTolerance);
+		}
 
-			bool parallel = FloatComparer.IsGreaterThan(angle, lower) && FloatComparer.IsLessThan(angle, upper);
-
-			if (!parallel)
-			{
-				upper = (float)Math.PI + angleTolerance;
-				lower = (float)Math.PI - angleTolerance;
-				parallel = FloatComparer.IsGreaterThan(angle, lower) && FloatComparer.IsLessThan(angle, upper);
-			}
-
-			return parallel;
+		public float GetAngleBetween(DicomImagePlane other)
+		{
+			return Normal.GetAngleBetween(other.Normal);
 		}
 
 		public bool GetIntersectionPoints(DicomImagePlane other, out Vector3D intersectionPointPatient1, out Vector3D intersectionPointPatient2)
@@ -394,22 +378,6 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 					});
 
 			return intersectionPointPatient1 != null && intersectionPointPatient2 != null;
-		}
-
-		public float GetAngleBetween(DicomImagePlane other)
-		{
-			Vector3D normal1 = this.Normal.Normalize();
-			Vector3D normal2 = other.Normal.Normalize();
-
-			// the vectors are already normalized, so we don't need to divide by the magnitudes.
-			float dot = normal1.Dot(normal2);
-
-			if (dot < -1F)
-				dot = -1F;
-			if (dot > 1F)
-				dot = 1F;
-
-			return Math.Abs((float)Math.Acos(dot));
 		}
 
 		#endregion
