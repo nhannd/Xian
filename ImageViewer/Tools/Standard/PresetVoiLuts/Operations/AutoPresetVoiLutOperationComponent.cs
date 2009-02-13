@@ -30,9 +30,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
@@ -50,17 +50,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 				_image = image;
 			}
 
-			private Frame Frame
-			{
-				get
-				{
-					if (_image is IImageSopProvider)
-						return ((IImageSopProvider)_image).Frame;
-
-					return null;
-				}
-			}
-
 			private IDicomVoiLutsProvider DicomVoiLutsProvider
 			{
 				get
@@ -73,126 +62,182 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			private GrayscalePixelData PixelData
 			{
-				get { return (GrayscalePixelData)((IImageGraphicProvider)_image).ImageGraphic.PixelData; }
+				get { return (GrayscalePixelData) ((IImageGraphicProvider) _image).ImageGraphic.PixelData; }
 			}
 
 			private IVoiLutManager VoiLutManager
 			{
-				get { return ((IVoiLutProvider)_image).VoiLutManager; }
+				get { return ((IVoiLutProvider) _image).VoiLutManager; }
 			}
 
 			private IComposableLut CurrentLut
 			{
-				get { return VoiLutManager.GetLut(); }
+				get { return this.VoiLutManager.GetLut(); }
 			}
 
-			private AutoVoiLutData GetDataLut()
-			{
-				IDicomVoiLutsProvider voiLutsProvider = this.DicomVoiLutsProvider;
-				if (voiLutsProvider == null)
-					return null;
-
-				return AutoVoiLutData.CreateFrom(voiLutsProvider);
-			}
-
-			private AutoVoiLutLinear GetLinearLut()
-			{
-				IDicomVoiLutsProvider voiLutsProvider = this.DicomVoiLutsProvider;
-				if (voiLutsProvider == null)
-					return null;
-
-				return AutoVoiLutLinear.CreateFrom(voiLutsProvider);
-			}
-
-			private MinMaxPixelCalculatedLinearLut GetMinMaxLut()
+			private MinMaxPixelCalculatedLinearLut GetDefaultMinMaxLut()
 			{
 				if (IsModalityLutProvider(_image))
-					return new MinMaxPixelCalculatedLinearLut(PixelData, ((IModalityLutProvider)_image).ModalityLut);
+					return new MinMaxPixelCalculatedLinearLut(this.PixelData, ((IModalityLutProvider) _image).ModalityLut);
 				else
-					return new MinMaxPixelCalculatedLinearLut(PixelData);
+					return new MinMaxPixelCalculatedLinearLut(this.PixelData);
 			}
 
 			public IComposableLut GetInitialLut()
 			{
-				IComposableLut lut = GetDataLut();
-				if (lut != null)
-					lut = new AdjustableDataLut((AutoVoiLutData)lut);
-
-				if (lut == null)
-					lut = GetLinearLut();
-
-				if (lut == null)
-					lut = GetMinMaxLut();
-
-				return lut;
+				foreach (State state in _stateProgression)
+				{
+					IComposableLut lut = state.GetLut(this);
+					if (lut != null)
+						return lut;
+				}
+				return this.GetDefaultMinMaxLut();
 			}
+
+			#region State Machine
+
+			private class State
+			{
+				private delegate IComposableLut LutGetter(LutApplicator applicator);
+
+				private readonly LutGetter _lutGetter;
+
+				private State(LutGetter lutGetter)
+				{
+					_lutGetter = lutGetter;
+				}
+
+				public IComposableLut GetLut(LutApplicator applicator)
+				{
+					return _lutGetter(applicator);
+				}
+
+				public static State GetState(IComposableLut currentLut)
+				{
+					if (currentLut is AdjustableDataLut)
+					{
+						AdjustableDataLut adj = (AdjustableDataLut) currentLut;
+						if (adj.DataLut is AutoPresentationVoiLutData)
+							return PresentationData;
+						else if (adj.DataLut is AutoImageVoiLutData)
+							return ImageData;
+					}
+					else if (currentLut is AutoPresentationVoiLutLinear)
+					{
+						return PresentationLinear;
+					}
+					else if (currentLut is AutoImageVoiLutLinear)
+					{
+						return ImageLinear;
+					}
+					return null;
+				}
+
+				public static readonly State PresentationData = new State(GetPresentationDataLut);
+				public static readonly State PresentationLinear = new State(GetPresentationLinearLut);
+				public static readonly State ImageData = new State(GetImageDataLut);
+				public static readonly State ImageLinear = new State(GetImageLinearLut);
+
+				private static AdjustableDataLut GetImageDataLut(LutApplicator applicator)
+				{
+					IDicomVoiLutsProvider voiLutsProvider = applicator.DicomVoiLutsProvider;
+					if (voiLutsProvider == null)
+						return null;
+
+					AutoVoiLutData dataLut = AutoImageVoiLutData.CreateFrom(voiLutsProvider);
+					if (dataLut == null)
+						return null;
+					return new AdjustableAutoVoiDataLut(dataLut);
+				}
+
+				private static AutoVoiLutLinear GetImageLinearLut(LutApplicator applicator)
+				{
+					IDicomVoiLutsProvider voiLutsProvider = applicator.DicomVoiLutsProvider;
+					if (voiLutsProvider == null)
+						return null;
+					return AutoImageVoiLutLinear.CreateFrom(voiLutsProvider);
+				}
+
+				private static AdjustableDataLut GetPresentationDataLut(LutApplicator applicator)
+				{
+					IDicomVoiLutsProvider voiLutsProvider = applicator.DicomVoiLutsProvider;
+					if (voiLutsProvider == null)
+						return null;
+
+					AutoVoiLutData dataLut = AutoPresentationVoiLutData.CreateFrom(voiLutsProvider);
+					if (dataLut == null)
+						return null;
+					return new AdjustableAutoVoiDataLut(dataLut);
+				}
+
+				private static AutoVoiLutLinear GetPresentationLinearLut(LutApplicator applicator)
+				{
+					IDicomVoiLutsProvider voiLutsProvider = applicator.DicomVoiLutsProvider;
+					if (voiLutsProvider == null)
+						return null;
+					return AutoPresentationVoiLutLinear.CreateFrom(voiLutsProvider);
+				}
+			}
+
+			#endregion
+
+			private static readonly IList<State> _stateProgression = new State[] {State.PresentationData, State.PresentationLinear, State.ImageData, State.ImageLinear};
 
 			public void ApplyInitialLut()
 			{
-				VoiLutManager.InstallLut(GetInitialLut());
+				this.VoiLutManager.InstallLut(this.GetInitialLut());
 			}
 
 			public void ApplyNextLut()
 			{
-				IComposableLut currentLut = CurrentLut;
-				IDicomVoiLutsProvider voiLutsProvider = this.DicomVoiLutsProvider;
+				IComposableLut currentLut = this.CurrentLut;
+				State currentState = State.GetState(currentLut);
 
-				AdjustableDataLut adjustableDataLut = currentLut as AdjustableDataLut;
-				if (adjustableDataLut != null && !(adjustableDataLut.DataLut is AutoVoiLutData))
-					adjustableDataLut = null;
-
-				AutoVoiLutLinear linearLut = currentLut as AutoVoiLutLinear;
-
-				if (adjustableDataLut != null)
+				if (currentLut is IAutoVoiLut)
 				{
-					AutoVoiLutData dataLut = (AutoVoiLutData) adjustableDataLut.DataLut;
-					if (dataLut.IsLast && AutoVoiLutLinear.CanCreateFrom(voiLutsProvider))
+					IAutoVoiLut autoVoiLut = (IAutoVoiLut) currentLut;
+					if (autoVoiLut.IsLast)
 					{
-						VoiLutManager.InstallLut(AutoVoiLutLinear.CreateFrom(voiLutsProvider));
+						int nextState = _stateProgression.IndexOf(currentState) + 1;
+						for (int n = nextState; n < nextState + _stateProgression.Count; n++)
+						{
+							IComposableLut lut = _stateProgression[(n%_stateProgression.Count)].GetLut(this);
+							if (lut != null)
+							{
+								this.VoiLutManager.InstallLut(lut);
+								return;
+							}
+						}
 					}
 					else
 					{
-						dataLut.ApplyNext();
-						adjustableDataLut.Reset();
+						autoVoiLut.ApplyNext();
+						return;
 					}
-				}
-				else if (linearLut != null)
-				{
-					if (linearLut.IsLast && AutoVoiLutData.CanCreateFrom(voiLutsProvider))
-						VoiLutManager.InstallLut(new AdjustableDataLut(AutoVoiLutData.CreateFrom(voiLutsProvider)));
-					else
-						linearLut.ApplyNext();
 				}
 				else
 				{
-					ApplyInitialLut();
+					this.ApplyInitialLut();
 				}
 			}
 
 			public static bool CanCreateFrom(IPresentationImage presentationImage)
 			{
-				if (!IsVoiLutProvider(presentationImage))
-					return false;
-
-				if (!IsGrayScaleImage(presentationImage))
-					return false;
-
-				if (IsImageSopProvider(presentationImage))
+				if (IsVoiLutProvider(presentationImage) && IsGrayScaleImage(presentationImage) && IsImageSopProvider(presentationImage))
 				{
 					IDicomVoiLutsProvider voiLutsProvider = presentationImage as IDicomVoiLutsProvider;
-					if (AutoVoiLutLinear.CanCreateFrom(voiLutsProvider) || AutoVoiLutData.CanCreateFrom(voiLutsProvider))
-						return true;
+					return (AutoImageVoiLutLinear.CanCreateFrom(voiLutsProvider)
+					        || AutoPresentationVoiLutLinear.CanCreateFrom(voiLutsProvider)
+					        || AutoImageVoiLutData.CanCreateFrom(voiLutsProvider)
+					        || AutoPresentationVoiLutData.CanCreateFrom(voiLutsProvider));
 				}
-
 				return false;
 			}
 		}
 
 		#endregion
 
-		public AutoPresetVoiLutOperationComponent()
-		{
-		}
+		public AutoPresetVoiLutOperationComponent() {}
 
 		public override string Name
 		{
@@ -216,7 +261,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 			if (!AppliesTo(presentationImage))
 				throw new InvalidOperationException("The input presentation image is not supported.");
-				
+
 			new LutApplicator(presentationImage).ApplyNextLut();
 		}
 

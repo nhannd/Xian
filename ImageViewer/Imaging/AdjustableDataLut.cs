@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Reset();
 		}
 
-		private AdjustableDataLut()
+		protected AdjustableDataLut()
 		{
 		}
 

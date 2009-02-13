@@ -16,6 +16,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		IList<Window> ImageVoiLinearLuts { get; }
 		IList<string> ImageVoiLinearLutExplanations { get; }
 		IList<VoiDataLut> ImageVoiDataLuts { get; }
+		string ImageSopInstanceUid { get; }
+		int ImageSopFrameNumber { get; }
 
 		IList<Window> PresentationVoiLinearLuts { get; }
 		IList<string> PresentationVoiLinearLutExplanations { get; }
@@ -86,6 +88,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		#region Image Luts
+
+		public string ImageSopInstanceUid
+		{
+			get { return _image.ImageSop.SopInstanceUID; }
+		}
+
+		public int ImageSopFrameNumber
+		{
+			get { return _image.Frame.FrameNumber; }
+		}
 
 		public IList<Window> ImageVoiLinearLuts {
 			get

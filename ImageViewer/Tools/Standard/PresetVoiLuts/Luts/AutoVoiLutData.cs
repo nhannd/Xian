@@ -1,148 +1,86 @@
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom;
 using DataLut=ClearCanvas.ImageViewer.Imaging.DataLut;
-using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 {
-	#region DataLut cache
-
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class DataLutCacheTool : ImageViewerTool
+	internal interface IAutoVoiLut : IComposableLut
 	{
-		private bool _disposed = false;
+		bool IsLast { get; }
+		void ApplyNext();
+	}
 
-		private static int _referenceCount;
-		private static readonly object _syncLock = new object();
-		private static readonly Dictionary<string, WeakReference> _lutCache = new Dictionary<string, WeakReference>();
+	[Cloneable(true)]
+	internal class AdjustableAutoVoiDataLut : AdjustableDataLut, IAutoVoiLut
+	{
+		public AdjustableAutoVoiDataLut(AutoVoiLutData lut) : base(lut) {}
+		private AdjustableAutoVoiDataLut() : base() {}
 
-		public DataLutCacheTool()
+		public bool IsLast
 		{
+			get { return ((AutoVoiLutData) base.DataLut).IsLast; }
 		}
 
-		public override void Initialize()
+		public void ApplyNext()
 		{
-			lock(_syncLock)
-			{
-				++_referenceCount;
-			}
-			
-			base.Initialize();
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			lock (_syncLock)
-			{
-				if (_disposed)
-					return;
-
-				_disposed = true;
-
-				--_referenceCount;
-				if (_referenceCount == 0)
-					_lutCache.Clear();
-			}
-
-			base.Dispose(disposing);
-		}
-
-		internal static List<VoiDataLut> GetDataLuts(ImageSop sop)
-		{
-			lock(_syncLock)
-			{
-				//TODO: fix to catch possible InvalidOperationException from Target property.
-				WeakReference reference = null;
-				List<VoiDataLut> dataLuts = null;
-
-				if (_lutCache.ContainsKey(sop.SopInstanceUID))
-				{
-					reference = _lutCache[sop.SopInstanceUID];
-					if (reference.IsAlive)
-					{
-						dataLuts = reference.Target as List<VoiDataLut>;
-						if (dataLuts != null)
-							return dataLuts;
-					}
-				}
-				else
-				{
-					reference = new WeakReference(null);
-					_lutCache[sop.SopInstanceUID] = reference;
-				}
-
-				dataLuts = VoiDataLut.Create(sop.DataSource);
-				_lutCache[sop.SopInstanceUID].Target = dataLuts;
-				return dataLuts;
-			}
+			((AutoVoiLutData) base.DataLut).ApplyNext();
+			this.Reset();
 		}
 	}
 
-	#endregion
-
 	[Cloneable(true)]
-	internal class AutoVoiLutData : DataLut
+	internal abstract class AutoVoiLutData : DataLut, IAutoVoiLut
 	{
 		#region Memento
 
 		private class AutoVoiLutDataMemento : IEquatable<AutoVoiLutDataMemento>
 		{
 			public readonly int Index;
+			public readonly string Name;
 
-			public AutoVoiLutDataMemento(int index)
+			public AutoVoiLutDataMemento(string name, int index)
 			{
+				this.Name = name;
 				this.Index = index;
 			}
 
 			public override int GetHashCode()
 			{
-				return base.GetHashCode();
+				return this.Index.GetHashCode() ^ this.Name.GetHashCode() ^ 0x589bf89d;
 			}
 
 			public override bool Equals(object obj)
 			{
-				if (obj == this)
-					return true;
-
 				if (obj is AutoVoiLutDataMemento)
-					return this.Equals((AutoVoiLutDataMemento)obj);
-
+					return this.Equals((AutoVoiLutDataMemento) obj);
 				return false;
 			}
 
-			#region IEquatable<AutoVoiLutDataMemento> Members
-
 			public bool Equals(AutoVoiLutDataMemento other)
 			{
-				if (other == null)
-					return false;
-
-				return this.Index == other.Index;
+				return other != null && this.Name == other.Name && this.Index == other.Index;
 			}
-
-			#endregion
 		}
-		
+
 		#endregion
 
 		#region Private Fields
 
 		[CloneCopyReference]
 		private readonly IList<VoiDataLut> _dataLuts;
+
 		private readonly string _keyPrefix;
 		private int _index;
 
 		#endregion
 
-		#region Constructor
+		#region Constructors
 
-		private AutoVoiLutData(IList<VoiDataLut> dataLuts, string keyPrefix)
+		protected AutoVoiLutData(IList<VoiDataLut> dataLuts, string keyPrefix)
 		{
 			Platform.CheckForNullReference(dataLuts, "dataLuts");
 			Platform.CheckPositive(dataLuts.Count, "dataLuts.Count");
@@ -154,84 +92,58 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 			ApplyNext();
 		}
-		
-		private AutoVoiLutData()
-		{
-		}
+
+		/// <summary>
+		/// Cloning constructor
+		/// </summary>
+		protected AutoVoiLutData() {}
 
 		#endregion
 
-		#region Private Methods
+		#region Protected Properties
 
-		private void SetIndex(int newIndex)
+		protected int Index
 		{
-			int lastIndex = _index;
-			_index = newIndex;
-			if (_index >= _dataLuts.Count)
-				_index = 0;
-
-			if (lastIndex != _index)
+			get { return _index; }
+			set
 			{
-				VoiDataLut lut = _dataLuts[_index];
-				base.MinInputValue = lut.FirstMappedPixelValue;
-				base.MaxInputValue = lut.LastMappedPixelValue;
-				base.MinOutputValue = lut.MinOutputValue;
-				base.MaxOutputValue = lut.MaxOutputValue;
+				int lastIndex = _index;
+				_index = value;
+				if (_index >= _dataLuts.Count)
+					_index = 0;
 
-				base.OnLutChanged();
+				if (lastIndex != _index)
+				{
+					VoiDataLut lut = _dataLuts[_index];
+					base.MinInputValue = lut.FirstMappedPixelValue;
+					base.MaxInputValue = lut.LastMappedPixelValue;
+					base.MinOutputValue = lut.MinOutputValue;
+					base.MaxOutputValue = lut.MaxOutputValue;
+
+					base.OnLutChanged();
+				}
 			}
 		}
 
 		#endregion
 
-		#region Public Properties
+		#region Public Properties/Methods
+
+		public abstract string Name { get; }
 
 		public bool IsLast
 		{
 			get { return _index >= _dataLuts.Count - 1; }
 		}
 
-		public override int[] Data
+		public override sealed int[] Data
 		{
 			get { return _dataLuts[_index].Data; }
 		}
 
-		#endregion
-
-		#region Public Methods
-
-		#region Statics
-
-		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
-		{
-			return provider != null && (provider.DicomVoiLuts.ImageVoiDataLuts.Count > 0 || provider.DicomVoiLuts.PresentationVoiDataLuts.Count > 0);
-		}
-
-		public static AutoVoiLutData CreateFrom(IDicomVoiLutsProvider provider)
-		{
-			IDicomVoiLuts luts = provider.DicomVoiLuts;
-			IList<VoiDataLut> dataLuts;
-			if (luts.PresentationVoiDataLuts.Count > 0)
-				dataLuts = luts.PresentationVoiDataLuts;
-			else if (luts.ImageVoiDataLuts.Count > 0)
-				dataLuts = luts.ImageVoiDataLuts;
-			else
-				return null;
-
-			if (dataLuts.Count == 0)
-				return null;
-
-			foreach (VoiDataLut lut in dataLuts)
-				lut.CorrectMinMaxOutput(); //see the comment for this method.
-
-			return new AutoVoiLutData(dataLuts, provider.DicomVoiLuts.PresentationStateSopInstanceUid);
-		}
-
-		#endregion
-
 		public void ApplyNext()
 		{
-			SetIndex(_index + 1);
+			this.Index = _index + 1;
 		}
 
 		public override string GetKey()
@@ -250,20 +162,92 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		//TODO: override min/max input.
 
-		public override object CreateMemento()
+		public override sealed object CreateMemento()
 		{
-			return new AutoVoiLutDataMemento(_index);
+			return new AutoVoiLutDataMemento(this.Name, this.Index);
 		}
 
-		public override void SetMemento(object memento)
+		public override sealed void SetMemento(object memento)
 		{
-			Platform.CheckForNullReference(memento, "memento");
-			AutoVoiLutDataMemento lutMemento = memento as AutoVoiLutDataMemento;
-			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(AutoVoiLutDataMemento).FullName);
-
-			SetIndex(lutMemento.Index);
+			AutoVoiLutDataMemento lutMemento = (AutoVoiLutDataMemento) memento;
+			Platform.CheckTrue(this.Name == lutMemento.Name, "Memento has a different creator.");
+			this.Index = lutMemento.Index;
 		}
 
 		#endregion
+	}
+
+	[Cloneable(true)]
+	internal sealed class AutoImageVoiLutData : AutoVoiLutData
+	{
+		private readonly string _name = "AutoImageVoiLutData";
+		private AutoImageVoiLutData(IList<VoiDataLut> dataLuts, string keyPrefix) : base(dataLuts, keyPrefix) {}
+
+		/// <summary>
+		/// Cloning constructor
+		/// </summary>
+		private AutoImageVoiLutData() : base() {}
+
+		public override string Name
+		{
+			get { return _name; }
+		}
+
+		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
+		{
+			return provider != null && provider.DicomVoiLuts.ImageVoiDataLuts.Count > 0;
+		}
+
+		public static AutoImageVoiLutData CreateFrom(IDicomVoiLutsProvider provider)
+		{
+			IDicomVoiLuts luts = provider.DicomVoiLuts;
+			IList<VoiDataLut> dataLuts;
+			if (luts.ImageVoiDataLuts.Count > 0)
+				dataLuts = luts.ImageVoiDataLuts;
+			else
+				return null;
+
+			foreach (VoiDataLut lut in dataLuts)
+				lut.CorrectMinMaxOutput(); //see the comment for this method.
+
+			return new AutoImageVoiLutData(dataLuts, string.Format("{0}:{1}", provider.DicomVoiLuts.ImageSopInstanceUid, provider.DicomVoiLuts.ImageSopFrameNumber));
+		}
+	}
+
+	[Cloneable(true)]
+	internal sealed class AutoPresentationVoiLutData : AutoVoiLutData
+	{
+		private readonly string _name = "AutoPresentationVoiLutData";
+		private AutoPresentationVoiLutData(IList<VoiDataLut> dataLuts, string keyPrefix) : base(dataLuts, keyPrefix) {}
+
+		/// <summary>
+		/// Cloning constructor
+		/// </summary>
+		private AutoPresentationVoiLutData() : base() {}
+
+		public override string Name
+		{
+			get { return _name; }
+		}
+
+		public static bool CanCreateFrom(IDicomVoiLutsProvider provider)
+		{
+			return provider != null && provider.DicomVoiLuts.PresentationVoiDataLuts.Count > 0;
+		}
+
+		public static AutoPresentationVoiLutData CreateFrom(IDicomVoiLutsProvider provider)
+		{
+			IDicomVoiLuts luts = provider.DicomVoiLuts;
+			IList<VoiDataLut> dataLuts;
+			if (luts.PresentationVoiDataLuts.Count > 0)
+				dataLuts = luts.PresentationVoiDataLuts;
+			else
+				return null;
+
+			foreach (VoiDataLut lut in dataLuts)
+				lut.CorrectMinMaxOutput(); //see the comment for this method.
+
+			return new AutoPresentationVoiLutData(dataLuts, provider.DicomVoiLuts.PresentationStateSopInstanceUid);
+		}
 	}
 }

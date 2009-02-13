@@ -41,9 +41,9 @@ namespace ClearCanvas.Dicom.Iod
 		/// <remarks>
 		/// Some vendors set the <see cref="BitsPerEntry"/> to 16, but then only encode the lut values to the same bit depth
 		/// as the actual pixel values (e.g. 12 bits).  This can make the images look really bad.  Apparently, this is the
-		/// workaround David Clunie suggests
-		/// (see <see cref="http://groups.google.com/group/comp.protocols.dicom/browse_thread/thread/6a033444802a35fc/0f0a9a1e35c1468e?lnk=gst&q=VOI+LUT"/>).
+		/// workaround David Clunie suggests.
 		/// </remarks>
+		/// <seealso cref="http://groups.google.com/group/comp.protocols.dicom/browse_thread/thread/6a033444802a35fc/0f0a9a1e35c1468e?lnk=gst"/>
 		public void CorrectMinMaxOutput()
 		{
 			if (!_alreadyCorrected && BitsPerEntry == 16)
