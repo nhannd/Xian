@@ -132,9 +132,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Vector3D startPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(start);
 			Vector3D endPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(end);
 
-			Vector3D normal = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.GetNormalVector();
+			Vector3D orientationRow = new Vector3D(
+				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.RowX,
+				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.RowY,
+				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.RowZ);
 
-			_toolHelper.GetMprLayoutManager().SetObliqueCutLine(_toolHelper.GetObliqueImage(), normal, startPatient, endPatient);
+			Vector3D orientationColumn = new Vector3D(
+				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnX,
+				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnY,
+				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnZ);
+
+			_toolHelper.GetMprLayoutManager().SetObliqueCutLine(orientationColumn, orientationRow, startPatient, endPatient);
 		}
 
 		public override bool Track(IMouseInformation mouseInformation)

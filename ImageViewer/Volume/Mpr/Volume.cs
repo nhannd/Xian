@@ -242,10 +242,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return imagePosition;
 		}
 
-		public Matrix RotateToPatientOrientation(Matrix orientationImage)
+		public Matrix RotateToPatientOrientation(Matrix orientationVolume)
 		{
-			Matrix orientationPatient = orientationImage * OrientationPatientMatrix;
+			Matrix orientationPatient = orientationVolume * OrientationPatientMatrix;
 			return orientationPatient;
+		}
+
+		public Matrix RotateToVolumeOrientation(Matrix orientationPatient)
+		{
+			Matrix orientationVolume = orientationPatient * OrientationPatientMatrix.Transpose();
+			return orientationVolume;
 		}
 
 		public float LongAxisMagnitude
