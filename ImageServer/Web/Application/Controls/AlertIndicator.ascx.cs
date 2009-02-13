@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             AlertController controller = new AlertController();
             AlertSelectCriteria criteria = new AlertSelectCriteria();
 
-//            criteria.AlertLevelEnum.EqualTo(AlertLevelEnum.Critical);
+            criteria.AlertLevelEnum.EqualTo(AlertLevelEnum.Critical);
             criteria.InsertTime.SortDesc(1);
 
             AlertsCount.Text = controller.GetAlertsCount(criteria).ToString();

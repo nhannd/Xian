@@ -21,16 +21,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 		{
 			base.OnInit(e);
 
-			GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerApplicationLogSingleItem, App_GlobalResources.SR.GridPagerApplicationLogMultipleItems, ApplicationLogGridView.ApplicationLogListGrid, ImageServerConstants.GridViewPagerPosition.top);
-			GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerApplicationLogSingleItem, App_GlobalResources.SR.GridPagerApplicationLogMultipleItems, ApplicationLogGridView.ApplicationLogListGrid, ImageServerConstants.GridViewPagerPosition.bottom);
-			GridPagerTop.GetRecordCountMethod = delegate
-							  {
-								  return ApplicationLogGridView.ResultCount;
-							  };
-			GridPagerBottom.GetRecordCountMethod = delegate
-										  {
-											  return ApplicationLogGridView.ResultCount;
-										  };
+			GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerApplicationLogSingleItem, App_GlobalResources.SR.GridPagerApplicationLogMultipleItems, ApplicationLogGridView.ApplicationLogListGrid, delegate { return ApplicationLogGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
+			GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerApplicationLogSingleItem, App_GlobalResources.SR.GridPagerApplicationLogMultipleItems, ApplicationLogGridView.ApplicationLogListGrid, delegate { return ApplicationLogGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.bottom);
 
 			ApplicationLogGridView.DataSourceCreated += delegate(ApplicationLogDataSource source)
 			                                       	{

@@ -8,42 +8,42 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Users {
+namespace ClearCanvas.ImageServer.Web.Application.Controls {
     
     
     /// <summary>
-    /// Default class.
+    /// GridViewPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class Default {
+    public partial class GridViewPanel {
         
         /// <summary>
-        /// PageContent control.
+        /// ContainerTable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PageContent;
+        protected global::System.Web.UI.WebControls.Table ContainerTable;
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// DataSourcePlaceHolder control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder DataSourcePlaceHolder;
         
         /// <summary>
-        /// UserPanel control.
+        /// GridViewPlaceHolder control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Users.UserPanel UserPanel;
+        protected global::System.Web.UI.WebControls.ContentPlaceHolder GridViewPlaceHolder;
     }
 }

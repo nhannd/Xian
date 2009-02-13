@@ -104,6 +104,13 @@
     <Compile Include="Controls\EmptySearchResultsMessage.ascx.designer.cs">
       <DependentUpon>EmptySearchResultsMessage.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\GridViewPanel.ascx.cs">
+      <DependentUpon>GridViewPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\GridViewPanel.ascx.designer.cs">
+      <DependentUpon>GridViewPanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\JQuery.ascx.cs">
       <DependentUpon>JQuery.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -183,6 +190,20 @@
     </Compile>
     <Compile Include="GlobalMasterPage.master.designer.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Users\UserGridPanel.ascx.cs">
+      <DependentUpon>UserGridPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Users\UserGridPanel.ascx.designer.cs">
+      <DependentUpon>UserGridPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\Users\UserPanel.ascx.cs">
+      <DependentUpon>UserPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Users\UserPanel.ascx.designer.cs">
+      <DependentUpon>UserPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Login\ChangePasswordDialog.ascx.cs">
       <DependentUpon>ChangePasswordDialog.ascx</DependentUpon>
@@ -1167,6 +1188,7 @@
     <Content Include="Controls\AlertIndicator.ascx" />
     <Content Include="Controls\CheckJavascript.ascx" />
     <Content Include="Controls\EmptySearchResultsMessage.ascx" />
+    <Content Include="Controls\GridViewPanel.ascx" />
     <Content Include="Controls\JQuery.ascx" />
     <Content Include="Controls\MessageBox.ascx" />
     <Content Include="Controls\GridPager.ascx" />
@@ -1185,6 +1207,8 @@
     <Content Include="Default.aspx" />
     <Content Include="Images\ImageServerLogo.png" />
     <Content Include="Pages\Admin\Users\Default.aspx" />
+    <Content Include="Pages\Admin\Users\UserGridPanel.ascx" />
+    <Content Include="Pages\Admin\Users\UserPanel.ascx" />
     <Content Include="Pages\Login\ChangePasswordDialog.ascx" />
     <Content Include="Test\AuthorityGroup.aspx" />
     <Content Include="Test\ListUsers.aspx" />

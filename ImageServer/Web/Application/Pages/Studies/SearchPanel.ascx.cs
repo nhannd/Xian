@@ -138,18 +138,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {
             ClearStudyDateButton.OnClientClick = ScriptHelper.ClearDate(StudyDate.ClientID, StudyDateCalendarExtender.ClientID);
             
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid, ImageServerConstants.GridViewPagerPosition.bottom);
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.bottom);
             
-            GridPagerTop.GetRecordCountMethod = delegate
-                              {
-                                  return StudyListGridView.ResultCount;
-                              };
-            GridPagerBottom.GetRecordCountMethod = delegate
-                                          {
-                                              return StudyListGridView.ResultCount;
-                                          };
-
             RestoreMessageBox.Confirmed += delegate(object data)
                             {
                                 if (data is IList<Study>)

@@ -112,19 +112,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleDateCalendarExtender.ClientID);
                           
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid, ImageServerConstants.GridViewPagerPosition.bottom);
-
-            GridPagerTop.GetRecordCountMethod = delegate
-                              {
-								  return RestoreQueueItemList.ResultCount;
-                              };
-
-            GridPagerBottom.GetRecordCountMethod = delegate
-                              {
-                                  return RestoreQueueItemList.ResultCount;
-                              };
-
+            GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid, delegate { return RestoreQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid, delegate { return RestoreQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.bottom);
 
             MessageBox.Confirmed += delegate(object data)
                             {

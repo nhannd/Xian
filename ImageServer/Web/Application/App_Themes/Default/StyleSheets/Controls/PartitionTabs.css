@@ -1,3 +1,11 @@
+.PartitionPanel
+{
+    background: #B8D9EE url(../../../../PersistantImage.ashx?key=SearchPanelBackground) repeat-x top;
+    padding-top: 4px;
+}
+
+
+
 /*************************************************************************************************
 
 	AJAX Tab control CSS
@@ -20,8 +28,8 @@
 
 .PartitionTabControl .ajax__tab_header					
 {
-    background: #ffffff url(../../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x;
-    border: solid 1px #305ba6;
+/*    background: #ffffff url(../../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x;*/
+/*    border: solid 1px #305ba6;*/
 	padding-bottom: 0px;
 	margin-left: 8px;
 	margin-right: 8px;
@@ -42,6 +50,7 @@
 	font-weight: bold;
 	border-left: solid 1px transparent;
 	border-right: solid 1px transparent;
+	background: #ffffff url(../../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x;
 }
 .PartitionTabControl .ajax__tab_hover .ajax__tab_outer
 {
@@ -65,8 +74,7 @@
 .PartitionTabControl .ajax__tab_active .ajax__tab_tab
 {
 	background: #ffffff;
-	border-left: solid 1px #305ba6;
-	border-right: solid 1px #305ba6;
+	border: solid 1px #305ba6;
 	font-weight: bold;
 	color: Black;
 }
@@ -86,3 +94,4 @@
     color: Red;
     font-size: 16px;
 }
+

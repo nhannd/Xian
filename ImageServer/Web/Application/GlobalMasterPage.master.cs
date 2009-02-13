@@ -41,7 +41,11 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using System.Reflection;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Services.Login;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
+using ClearCanvas.ImageServer.Web.Common.Security;
 
 public partial class GlobalMasterPage : System.Web.UI.MasterPage
 {
@@ -59,6 +63,16 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
         }
 
         AddIE6PngBugFixCSS(); 
+
+        CustomIdentity id = SessionManager.Current.User.Identity as CustomIdentity;
+
+        if (id != null)
+        {
+            Username.Text = id.DisplayName;
+        } else
+        {
+            Username.Text = "unknown";
+        }
 
         //GlobalScriptManager.Scripts.Add(new ScriptReference("~/Scripts/ErrorHandling.js"));
     }
@@ -80,6 +94,12 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
                 );
             }
         ";
+    }
+
+    protected void Logout_Click(Object sender, EventArgs e)
+    {
+        SessionManager.TerminiateSession();
+        Response.Redirect("~/Pages/Login/Default.aspx");
     }
 
     protected void GlobalScriptManager_AsyncPostBackError(object sender, AsyncPostBackErrorEventArgs e)

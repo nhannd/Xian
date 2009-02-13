@@ -111,20 +111,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         {
             base.OnInit(e);
 
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, ServerPartitionGridPanel.TheGrid, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, ServerPartitionGridPanel.TheGrid, ImageServerConstants.GridViewPagerPosition.bottom);
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, ServerPartitionGridPanel.TheGrid, delegate { return Partitions.Count; }, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, ServerPartitionGridPanel.TheGrid, delegate { return Partitions.Count; }, ImageServerConstants.GridViewPagerPosition.bottom);
 
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Disabled));
 
-            SetupEventHandlers();
-        }
-
-        protected void SetupEventHandlers()
-        {
-            GridPagerTop.GetRecordCountMethod = delegate { return Partitions.Count; };
-            GridPagerBottom.GetRecordCountMethod = delegate { return Partitions.Count; };
         }
 
         public override void DataBind()

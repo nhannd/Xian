@@ -191,6 +191,7 @@ Global.css - Defines the global styles for the entire web application relating
     padding-left: 8px;
     padding-bottom: 2px;
     background: #3d98d1;
+    border-bottom: solid 1px #3d98d1;
 }
 
 .MainContentSubTitle
@@ -265,8 +266,8 @@ Global.css - Defines the global styles for the entire web application relating
 {
     background: #B8D9EE url(../../../PersistantImage.ashx?key=ToolbarButtonPanelBackground) repeat-x;
     height: 28px;
-    padding-top: 4px;
-    margin-top: 1px;
+    padding-top: 5px;
+    border-top: solid 1px white;
 }
 
 .ToolbarButtons
@@ -292,14 +293,17 @@ Global.css - Defines the global styles for the entire web application relating
 
 .SearchPanelContent
 {
-    background: #3D98D1;
+    background: #B8D9EE url(../../../PersistantImage.ashx?key=SearchPanelBackground) repeat-x bottom;
+    border-top: solid 1px white;
+    border-bottom: solid 1px #3D98D1;
     padding: 6px 4px 6px 4px;
 }
 
 .SearchPanelContentWithoutTabs
 {
-    background: #3D98D1;
-    border-top: solid 1px #E1EFF8;
+    background: #B8D9EE url(../../../PersistantImage.ashx?key=SearchPanelBackground) repeat-x bottom;
+    border-top: solid 1px #205F87;
+    border-bottom: solid 1px #3D98D1;
     padding: 6px 4px 6px 4px;
 }
 
@@ -310,7 +314,7 @@ Global.css - Defines the global styles for the entire web application relating
     font-weight: bold;
     margin-left: 3px;
 	margin-right: 3px;
-	color: #ffffff;
+	color: #205F87;
 }
 
 .SearchLabelDark

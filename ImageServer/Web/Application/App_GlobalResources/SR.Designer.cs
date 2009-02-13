@@ -430,6 +430,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Users Found..
+        /// </summary>
+        internal static string GridPagerUserMultipleItemsFound {
+            get {
+                return ResourceManager.GetString("GridPagerUserMultipleItemsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Found..
+        /// </summary>
+        internal static string GridPagerUserSingleItemFound {
+            get {
+                return ResourceManager.GetString("GridPagerUserSingleItemFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Work Items Found.
         /// </summary>
         internal static string GridPagerWorkQueueMultipleItems {

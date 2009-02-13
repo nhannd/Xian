@@ -57,6 +57,7 @@
     <Compile Include="Data\ApplicationLogAdaptor.cs" />
     <Compile Include="Data\AlertAdaptor.cs" />
     <Compile Include="Data\AlertController.cs" />
+    <Compile Include="Data\UserManagementController.cs" />
     <Compile Include="Data\DataSource\AlertDataSource.cs" />
     <Compile Include="Data\ApplicationLogController.cs" />
     <Compile Include="Data\ArchiveQueueAdaptor.cs" />
@@ -64,6 +65,9 @@
     <Compile Include="Data\DataSource\ArchiveQueueDataSource.cs" />
     <Compile Include="Data\ArchiveStudyStorageAdaptor.cs" />
     <Compile Include="Data\DataSource\ApplicationLogDataSource.cs" />
+    <Compile Include="Data\DataSource\TokenDataSource.cs" />
+    <Compile Include="Data\DataSource\UserGroupDataSource.cs" />
+    <Compile Include="Data\DataSource\UserDataSource.cs" />
     <Compile Include="Data\DeletedStudyController.cs" />
     <Compile Include="Data\DataSource\DeletedStudyDataSource.cs" />
     <Compile Include="Data\DeleteStudyRecordAdaptor.cs" />

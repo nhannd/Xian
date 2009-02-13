@@ -247,12 +247,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             }
         }
 
-        public void InitializeGridPager(string singleItemLabel, string multipleItemLabel, GridView grid, ImageServerConstants.GridViewPagerPosition position)
+        public void InitializeGridPager(string singleItemLabel, string multipleItemLabel, GridView grid, GetRecordCountMethodDelegate recordCount, ImageServerConstants.GridViewPagerPosition position)
         {
             _position = position;
             ItemName = singleItemLabel;
             PuralItemName = multipleItemLabel;
             Target = grid;
+            GetRecordCountMethod = recordCount;
         }
 
         #endregion Public methods

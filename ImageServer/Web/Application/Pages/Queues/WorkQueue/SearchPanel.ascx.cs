@@ -86,18 +86,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleCalendarExtender.ClientID);
 
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerWorkQueueSingleItem, App_GlobalResources.SR.GridPagerWorkQueueMultipleItems, workQueueItemListPanel.WorkQueueItemListControl, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerWorkQueueSingleItem, App_GlobalResources.SR.GridPagerWorkQueueMultipleItems, workQueueItemListPanel.WorkQueueItemListControl, ImageServerConstants.GridViewPagerPosition.bottom);
-
-            GridPagerTop.GetRecordCountMethod = delegate
-                                                  {
-                                                      return workQueueItemListPanel.ResultCount;
-                                                  };
-            GridPagerBottom.GetRecordCountMethod = delegate
-                                      {
-                                          return workQueueItemListPanel.ResultCount;
-                                      };
-
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerWorkQueueSingleItem, App_GlobalResources.SR.GridPagerWorkQueueMultipleItems, workQueueItemListPanel.WorkQueueItemListControl, delegate { return workQueueItemListPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerWorkQueueSingleItem, App_GlobalResources.SR.GridPagerWorkQueueMultipleItems, workQueueItemListPanel.WorkQueueItemListControl, delegate { return workQueueItemListPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.bottom);
 
             workQueueItemListPanel.DataSourceCreated += delegate(WorkQueueDataSource source)
                                                             {

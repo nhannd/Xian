@@ -372,4 +372,10 @@
   <data name="GridPagerApplicationLogSingleItem" xml:space="preserve">
     <value>Log Found</value>
   </data>
+  <data name="GridPagerUserMultipleItemsFound" xml:space="preserve">
+    <value>Users Found.</value>
+  </data>
+  <data name="GridPagerUserSingleItemFound" xml:space="preserve">
+    <value>User Found.</value>
+  </data>
 </root>

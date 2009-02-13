@@ -90,8 +90,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         {
             base.OnInit(e);
 
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerAlertSingleItemFound, App_GlobalResources.SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerAlertSingleItemFound, App_GlobalResources.SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, ImageServerConstants.GridViewPagerPosition.bottom);
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerAlertSingleItemFound, App_GlobalResources.SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, delegate { return AlertsGridPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerAlertSingleItemFound, App_GlobalResources.SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, delegate { return AlertsGridPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.bottom);
 
             ClearInsertDateButton.OnClientClick = ScriptHelper.ClearDate(InsertDateFilter.ClientID, InsertDateCalendarExtender.ClientID);
             
@@ -117,9 +117,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
         protected void SetupEventHandlers()
         {
-            GridPagerTop.GetRecordCountMethod = delegate { return AlertsGridPanel.ResultCount; };
-            GridPagerBottom.GetRecordCountMethod = delegate { return AlertsGridPanel.ResultCount; };
-
             AlertsGridPanel.DataSourceCreated += delegate(AlertDataSource source)
                             {
                                 if (!String.IsNullOrEmpty(ComponentFilter.Text))

@@ -75,15 +75,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         #region Protected Methods
 
-        /// <summary>
-        /// Set up event handlers for the child controls.
-        /// </summary>
-        protected void SetUpEventHandlers()
-        {
-            GridPagerTop.GetRecordCountMethod = delegate { return DeviceGridViewControl1.Devices.Count; };
-            GridPagerBottom.GetRecordCountMethod = delegate { return DeviceGridViewControl1.Devices.Count; };
-        }
-
         protected void Clear()
         {
             AETitleFilter.Text = string.Empty;
@@ -99,12 +90,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             // initialize the controller
             _theController = new DeviceConfigurationController();
 
-
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridViewControl1.TheGrid, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridViewControl1.TheGrid, ImageServerConstants.GridViewPagerPosition.bottom);
-
-            //GridPagerTop.AssociatedUpdatePanelID = SearchUpdatePanel.ClientID;
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridViewControl1.TheGrid, delegate { return DeviceGridViewControl1.Devices.Count; }, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridViewControl1.TheGrid, delegate { return DeviceGridViewControl1.Devices.Count; }, ImageServerConstants.GridViewPagerPosition.bottom);
 
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.All));
             StatusFilter.Items.Add(new ListItem(App_GlobalResources.SR.Enabled));
@@ -114,8 +102,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.DHCP));
             DHCPFilter.Items.Add(new ListItem(App_GlobalResources.SR.NoDHCP));
 
-            // setup event handler for child controls
-            SetUpEventHandlers();
         }
 
         /// <summary>

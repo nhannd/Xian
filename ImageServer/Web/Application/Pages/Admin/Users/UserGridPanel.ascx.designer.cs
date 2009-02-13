@@ -12,38 +12,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Users {
     
     
     /// <summary>
-    /// Default class.
+    /// UserGridPanel class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class Default {
+    public partial class UserGridPanel {
         
         /// <summary>
-        /// PageContent control.
+        /// ContainerTable control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel PageContent;
+        protected global::System.Web.UI.WebControls.Table ContainerTable;
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// UserDataSourceObject control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel1;
+        protected global::System.Web.UI.WebControls.ObjectDataSource UserDataSourceObject;
         
         /// <summary>
-        /// UserPanel control.
+        /// UserGridView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Users.UserPanel UserPanel;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView UserGridView;
     }
 }

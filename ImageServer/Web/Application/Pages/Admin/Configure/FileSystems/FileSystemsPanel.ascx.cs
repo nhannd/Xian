@@ -87,15 +87,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
         #region protected methods
 
-        /// <summary>
-        /// Set up event handlers for the child controls.
-        /// </summary>
-        protected void SetUpEventHandlers()
-        {
-            GridPagerTop.GetRecordCountMethod = delegate { return FileSystemsGridView1.FileSystems.Count; };
-            GridPagerBottom.GetRecordCountMethod = delegate { return FileSystemsGridView1.FileSystems.Count; };
-        }
-
         protected override void OnPreRender(EventArgs e)
         {
             UpdateUI();
@@ -110,13 +101,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             _theController = new FileSystemsConfigurationController();
 
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerFileSystemSingleItem, App_GlobalResources.SR.GridPagerFileSystemMultipleItems, FileSystemsGridView1.TheGrid, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerFileSystemSingleItem, App_GlobalResources.SR.GridPagerFileSystemMultipleItems, FileSystemsGridView1.TheGrid, ImageServerConstants.GridViewPagerPosition.bottom);
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerFileSystemSingleItem, App_GlobalResources.SR.GridPagerFileSystemMultipleItems, FileSystemsGridView1.TheGrid, delegate { return FileSystemsGridView1.FileSystems.Count; }, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerFileSystemSingleItem, App_GlobalResources.SR.GridPagerFileSystemMultipleItems, FileSystemsGridView1.TheGrid, delegate { return FileSystemsGridView1.FileSystems.Count; }, ImageServerConstants.GridViewPagerPosition.bottom);
                 
             Tiers = _theController.GetFileSystemTiers();
-
-            // setup event handler for child controls
-            SetUpEventHandlers();
 
             int prevSelectIndex = TiersDropDownList.SelectedIndex;
             if (TiersDropDownList.Items.Count == 0)

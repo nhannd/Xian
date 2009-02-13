@@ -20,6 +20,9 @@
         <div id="LoginCredentials">
         <table>
             <tr>
+                <td colspan="2" align="right"><asp:Panel style="background: #8FC3E4; padding: 2px 7px 2px 7px;" runat="server" ID="LoginErrorPanel" Visible="false"><asp:Label runat="server" ID="LoginError" ForeColor="red" Text="Invalid username/password combination." /></asp:Panel></td>
+            </tr>        
+            <tr>
             <td>Username:</td>
             <td><asp:TextBox runat="server" ID="UserName" Width="100" CssClass="LoginTextInput"></asp:TextBox></td>
             </tr>
@@ -28,15 +31,15 @@
             <td><asp:TextBox runat="server" ID="Password" TextMode="Password" Width="100" CssClass="LoginTextInput"></asp:TextBox></td>
             </tr> 
             <tr>
-                <td colspan="2" align="right"><asp:Button runat="server" ID="LoginButton" OnClick="LoginClicked"  Text="Login" CssClass="LoginButton"/></td>            
-            </tr>   
+                <td colspan="2" align="right"><asp:Button runat="server" ID="LoginButton" OnClick="LoginClicked"  Text="Login" CssClass="LoginButton"/></td>
+            </tr>               
             <tr>
-                <td colspan="2" align="right" style="padding-top: 10px;"><asp:LinkButton runat="server" CssClass="LoginLink" OnClick="ChangePassword">Change Password</asp:LinkButton></td>            
+                <td colspan="2" align="right" ><asp:LinkButton runat="server" CssClass="LoginLink" OnClick="ChangePassword">Change Password</asp:LinkButton></td>            
             </tr>   
         </table>
         </div>
                         
-            <asp:Label runat="server" ID="Result"></asp:Label>
+            
     </div>
     
     <asp:UpdatePanel runat="server">

@@ -149,15 +149,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
             // setup child controls
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerServerRulesSingleItem,
                                              App_GlobalResources.SR.GridPagerServerRulesMultipleItems,
-                                             ServerRuleGridViewControl.TheGrid,
+                                             ServerRuleGridViewControl.TheGrid, delegate { return ServerRuleGridViewControl.ServerRules==null? 0:ServerRuleGridViewControl.ServerRules.Count; },
                                              ImageServerConstants.GridViewPagerPosition.top);
             GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerServerRulesSingleItem,
                                                          App_GlobalResources.SR.GridPagerServerRulesMultipleItems,
                                                          ServerRuleGridViewControl.TheGrid,
+                                                         delegate { return ServerRuleGridViewControl.ServerRules == null ? 0 : ServerRuleGridViewControl.ServerRules.Count; },
                                                          ImageServerConstants.GridViewPagerPosition.bottom);
-
-            GridPagerTop.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules==null? 0:ServerRuleGridViewControl.ServerRules.Count; };
-            GridPagerBottom.GetRecordCountMethod = delegate { return ServerRuleGridViewControl.ServerRules == null ? 0 : ServerRuleGridViewControl.ServerRules.Count; };
 
             int prevSelectIndex = RuleApplyTimeDropDownList.SelectedIndex;
             RuleApplyTimeDropDownList.Items.Clear();

@@ -29,6 +29,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login {
         protected global::System.Web.UI.ScriptManager GlobalScriptManager;
         
         /// <summary>
+        /// LoginErrorPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel LoginErrorPanel;
+        
+        /// <summary>
+        /// LoginError control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label LoginError;
+        
+        /// <summary>
         /// UserName control.
         /// </summary>
         /// <remarks>
@@ -54,15 +72,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button LoginButton;
-        
-        /// <summary>
-        /// Result control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Result;
         
         /// <summary>
         /// ChangePasswordDialog control.

@@ -51,7 +51,7 @@
                                 </asp:TableCell>
                                 <asp:TableCell runat="server" Width="50%" HorizontalAlign="right" CssClass="MainMenuPanel" VerticalAlign="Bottom">
                                         <asp:Panel ID="UserInformationPanel" runat="server" CssClass="UserInformationPanel">
-                                             <table><tr><td>logged in as <b>jbluks</b></td><td><ccasp:AlertIndicator ID="AlertIndicator1" runat="server" /></td><td>| <asp:LinkButton ID="LogoutButton" runat="server" CssClass="UserInformationLink">Logout</asp:LinkButton></td></tr></table> 
+                                             <table><tr><td>logged in as <b><asp:Label ID="Username" runat="server"></asp:Label></b></td><td><ccasp:AlertIndicator ID="AlertIndicator1" runat="server" /></td><td>| <asp:LinkButton ID="LogoutButton" runat="server" CssClass="UserInformationLink" OnClick="Logout_Click">Logout</asp:LinkButton></td></tr></table> 
                                         </asp:Panel>
                                 </asp:TableCell>
                                 <asp:TableCell VerticalAlign="Bottom">

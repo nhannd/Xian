@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Configuration;
 using System.ServiceModel;
 using System.Threading;
 using System.Web.Security;
@@ -46,8 +47,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-//            CurrentUser.Text = String.Format("{0}: {1}",
-//                                             Thread.CurrentPrincipal, Thread.CurrentPrincipal.Identity.Name);
         }
 
         protected void LoginClicked(object sender, EventArgs e)
@@ -63,13 +62,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                     }
                     catch (PasswordExpiredException)
                     {
-                        service.ChangePassword(UserName.Text, Password.Text, "NewPassword123");
-                        SessionInfo session = service.Login(UserName.Text, "NewPassword123");
+                        service.ChangePassword(UserName.Text, Password.Text, ConfigurationManager.AppSettings["DefaultPassword"]);
+                        SessionInfo session = service.Login(UserName.Text, ConfigurationManager.AppSettings["DefaultPassword"]);
                         SessionManager.InitializeSession(session);
                     }
 					catch (FaultException x)
 					{
 						Platform.Log(LogLevel.Info,x,"Invalid login");
+					    LoginErrorPanel.Visible = true;
+                        UserName.Focus();
 					}
 
                 });

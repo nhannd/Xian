@@ -109,6 +109,15 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.WebControls.Panel UserInformationPanel;
     
     /// <summary>
+    /// Username control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Label Username;
+    
+    /// <summary>
     /// AlertIndicator1 control.
     /// </summary>
     /// <remarks>

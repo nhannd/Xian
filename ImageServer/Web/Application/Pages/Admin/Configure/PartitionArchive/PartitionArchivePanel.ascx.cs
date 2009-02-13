@@ -151,16 +151,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             // initialize the controller
             _theController = new PartitionArchiveConfigController();
 
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, PartitionArchiveGridPanel.TheGrid, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, PartitionArchiveGridPanel.TheGrid, ImageServerConstants.GridViewPagerPosition.bottom);
-
-            SetupEventHandlers();
-        }
-
-        protected void SetupEventHandlers()
-        {
-            GridPagerTop.GetRecordCountMethod = delegate { return PartitionArchives.Count; };
-            GridPagerBottom.GetRecordCountMethod = delegate { return PartitionArchives.Count; };
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, PartitionArchiveGridPanel.TheGrid, delegate { return PartitionArchives.Count; }, ImageServerConstants.GridViewPagerPosition.top);
+            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, PartitionArchiveGridPanel.TheGrid, delegate { return PartitionArchives.Count; }, ImageServerConstants.GridViewPagerPosition.bottom);
         }
 
         public override void DataBind()
