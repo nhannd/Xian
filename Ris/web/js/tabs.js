@@ -1,3 +1,5 @@
+var tabsInitialized = false;
+
 function TabControl(tabControlId)
 {
 	this.currentTabPage = null;
@@ -62,6 +64,9 @@ TabPage.prototype.Hide = function()
 
 function initTabs()
 {
+	if (tabsInitialized)
+		return;
+
 	var divs = document.getElementsByTagName("DIV");
 	for(var i=0; i < divs.length; i++)
 	{
@@ -70,6 +75,8 @@ function initTabs()
 			new TabControl(divs[i].getAttribute("ID"));
 		}
 	}
+	
+	tabsInitialized = true;
 }
 
 var classAttribute = "class";
