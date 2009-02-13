@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 	/// <summary>
 	/// Class for processing FilesystemLossyCompress <see cref="ServiceLock"/> entries.
 	/// </summary>
-	public class FilesystemLossyCompressItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
+	public class FilesystemLossyCompressItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor, ICancelable
 	{
 		#region Private Members
 		private int _studiesInserted = 0;
@@ -62,6 +62,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 
 			foreach (FilesystemQueue queueItem in candidateList)
 			{
+				// Check for Shutdown/Cancel
+				if (CancelPending) break;
+
 				// First, get the StudyStorage locations for the study, and calculate the disk usage.
 				StudyStorageLocation location;
 				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))

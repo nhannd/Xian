@@ -49,14 +49,22 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
     /// Base class with common routines for processors of <see cref="Model.ServiceLock"/> entries.
     /// </summary>
     public class BaseServiceLockItemProcessor : IDisposable
-    {
-        private IReadContext _readContext;
+	{
+		#region Private Members
+		private IReadContext _readContext;
+		private bool _cancelPending = false;
+		private readonly object _syncRoot = new object();
+		#endregion
 
-        #region Protected Properties
-        protected IReadContext ReadContext
+		#region Protected Properties
+		protected IReadContext ReadContext
         {
             get { return _readContext; }
         }
+		protected bool CancelPending
+		{
+			get { lock (_syncRoot) return _cancelPending; }
+		}
         #endregion
 
         #region Contructors
@@ -222,7 +230,15 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 
         #endregion
 
-        #region Static Methods
+		#region Public Methods
+		public void Cancel()
+		{
+			lock (_syncRoot)
+				_cancelPending = true;
+		}
+		#endregion
+
+		#region Static Methods
 		/// <summary>
 		/// Calculate the folder size based on recursing through all files
 		/// within the folder and adding up their sizes.

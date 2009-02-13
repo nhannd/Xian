@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
@@ -51,7 +50,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         #region Members
         private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private readonly Dictionary<ServiceLockTypeEnum, IServiceLockProcessorFactory> _extensions = new Dictionary<ServiceLockTypeEnum, IServiceLockProcessorFactory>();
-        private readonly ItemProcessingThreadPool<Model.ServiceLock> _threadPool;
+        private readonly ServiceLockThreadPool _threadPool;
         private readonly ManualResetEvent _threadStop;
         private readonly ManualResetEvent _terminationEvent;
         private bool _stop = false;
@@ -68,7 +67,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             _terminationEvent = terminationEvent;
             _threadStop = new ManualResetEvent(false);
 
-			_threadPool = new ItemProcessingThreadPool<Model.ServiceLock>(numberThreads);
+			_threadPool = new ServiceLockThreadPool(numberThreads);
         	_threadPool.ThreadPoolName = "ServiceLock Pool";
 
             ServiceLockFactoryExtensionPoint ep = new ServiceLockFactoryExtensionPoint();
@@ -128,7 +127,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                 
                 try
                 {
-                    if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
+                    if (_threadPool.CanQueueItem)
 				    {
 					    Model.ServiceLock queueListItem;
 
@@ -174,24 +173,24 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 							    continue;
 						    }
 
-						    _threadPool.Enqueue(queueListItem, delegate(Model.ServiceLock queueItem)
+						    _threadPool.Enqueue(processor, queueListItem, delegate(IServiceLockItemProcessor queueProcessor, Model.ServiceLock queueItem)
 												    {
 													    try
 													    {
-														    processor.Process(queueItem);
+															queueProcessor.Process(queueItem);
 													    }
 													    catch (Exception e)
 													    {
 														    Platform.Log(LogLevel.Error, e,
 																	     "Unexpected exception when processing ServiceLock item of type {0}.  Failing Queue item. (GUID: {1})",
-																	     queueItem.ServiceLockTypeEnum,
-																	     queueItem.GetKey());
+																		 queueItem.ServiceLockTypeEnum,
+																		 queueItem.GetKey());
 
-														    ResetServiceLock(queueItem);
+															ResetServiceLock(queueItem);
 													    }
 
 													    // Cleanup the processor
-													    processor.Dispose();
+														queueProcessor.Dispose();
 
 														// Signal the thread to come out of sleep mode
 												    	_threadStop.Set();

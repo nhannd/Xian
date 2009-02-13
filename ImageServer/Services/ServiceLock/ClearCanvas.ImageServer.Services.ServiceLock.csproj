@@ -61,6 +61,7 @@
     <Compile Include="IServiceLockItemProcessor.cs" />
     <Compile Include="IServiceLockProcessorFactory.cs" />
     <Compile Include="ServiceLockSettings.cs" />
+    <Compile Include="ServiceLockThreadPool.cs" />
     <Compile Include="Shreds\ServiceLockServerExtension.cs" />
     <Compile Include="Shreds\ServiceLockServerManager.cs" />
     <Compile Include="ServiceLockSettings.Designer.cs">

@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
     /// <summary>
     /// Class for processing 'FilesystemReinventory' <see cref="Model.ServiceLock"/> rows.
     /// </summary>
-    class FilesystemReinventoryItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
+    class FilesystemReinventoryItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor, ICancelable
     {
     	#region Private Members
         private IPersistentStore _store;
@@ -84,6 +84,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
                 {
                     foreach(DirectoryInfo studyDir in dateDir.GetDirectories())
                     {
+						// Check for Cancel message
+						if (CancelPending) return;
+
                         String studyInstanceUid = studyDir.Name;
 
                         StudyStorageLocation location;
@@ -266,8 +269,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
             item.ScheduledTime = item.ScheduledTime.AddDays(1);
 
-            UnlockServiceLock(item, false, Platform.Time.AddDays(1));
-        }
+			if (CancelPending)
+			{
+				Platform.Log(LogLevel.Info,
+				             "Filesystem Reinventory of {0} has been canceled, rescheduling.  Note that the entire Filesystem will be reinventoried again.",
+				             info.Filesystem.Description);
+				UnlockServiceLock(item, true, Platform.Time.AddMinutes(1));
+			}
+			else
+				UnlockServiceLock(item, false, Platform.Time.AddDays(1));
+	}
 
         
         #endregion

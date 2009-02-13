@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
     /// <summary>
     /// Class for reprocessing the rules engine for studies on a filesystem.
     /// </summary>
-    public class FilesystemStudyProcessItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
+    public class FilesystemStudyProcessItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor, ICancelable
     {
         #region Private Members
         private readonly FilesystemReprocessStatistics _stats = new FilesystemReprocessStatistics();
@@ -182,6 +182,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
                             StudyStorageLocation location = LoadStorageLocation(partition.GetKey(), studyInstanceUid);
                             ProcessStudy(location, engine);
                             _stats.NumStudies++;
+
+							if (CancelPending) return;
                         }
                         catch (Exception e)
                         {
@@ -261,7 +263,15 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
 
         	item.ScheduledTime = item.ScheduledTime.AddDays(1);
 
-        	UnlockServiceLock(item, false, Platform.Time.AddDays(1));
+			if (CancelPending)
+			{
+				Platform.Log(LogLevel.Info,
+				             "Filesystem Reprocess of {0} has been canceled, rescheduling.  Entire filesystem will be reprocessed.",
+				             info.Filesystem.Description);
+				UnlockServiceLock(item, true, Platform.Time.AddMinutes(1));
+			}
+			else
+	        	UnlockServiceLock(item, false, Platform.Time.AddDays(1));
         }
 
     	public new void Dispose()

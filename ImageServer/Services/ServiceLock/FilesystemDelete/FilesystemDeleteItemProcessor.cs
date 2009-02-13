@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
     /// <summary>
     /// Class for processing 'FilesystemDelete' <see cref="Model.ServiceLock"/> rows.
     /// </summary>
-    public class FilesystemDeleteItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
+    public class FilesystemDeleteItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor, ICancelable
     {
         #region Private Members
 		private DateTime _scheduledTime = Platform.Time;
@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
 			foreach (FilesystemQueue queueItem in candidateList)
             {
-                if (_bytesToRemove < 0)
+				if (_bytesToRemove < 0 || CancelPending)
                     return;
 
 				StudyProcessStatistics stats = new StudyProcessStatistics("DeleteStudy");
@@ -344,7 +344,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
 			foreach (FilesystemQueue queueItem in candidateList)
 			{
-				if (_bytesToRemove < 0)
+				if (_bytesToRemove < 0 || CancelPending)
 					break;
 
 				StudyProcessStatistics stats = new StudyProcessStatistics("PurgeStudy");
@@ -429,7 +429,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 			FilesystemProcessStatistics summaryStats = new FilesystemProcessStatistics("FilesystemTierMigrateInsert");
         	foreach (FilesystemQueue queueItem in candidateList)
         	{
-        		if (_bytesToRemove < 0)
+				if (_bytesToRemove < 0 || CancelPending)
         		{
                     Platform.Log(LogLevel.Debug, "Estimated disk space has been reached.");
                     break;
@@ -532,6 +532,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 if (list.Count > 0)
                 {
                     ProcessStudyDeleteCandidates(list);
+					if (CancelPending) break;
                 }
                 else
                 {
@@ -562,6 +563,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				if (list.Count > 0)
 				{
 					ProcessStudyPurgeCandidates(list);
+					if (CancelPending) break;
 				}
 				else
 				{
@@ -594,6 +596,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				if (list.Count > 0)
                 {
                     ProcessStudyMigrateCandidates(list);
+					if (CancelPending) break;
                 }
                 else
                 {
@@ -736,10 +739,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 
                         MigrateStudies(item, fs);
 
-                        if (_bytesToRemove > 0)
+                        if (_bytesToRemove > 0 && !CancelPending)
                             DeleteStudies(item, fs);
 
-                        if (_bytesToRemove > 0)
+                        if (_bytesToRemove > 0 && !CancelPending)
                             PurgeStudies(item, fs);
 
 
