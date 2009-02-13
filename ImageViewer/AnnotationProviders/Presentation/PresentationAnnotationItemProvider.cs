@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 
 			_annotationItems.Add(new DFOVAnnotationItem());
 			_annotationItems.Add(new DisplaySetDescriptionAnnotationItem());
+			_annotationItems.Add(new DisplaySetNumberAnnotationItem());
 		}
 
 		public override IEnumerable<IAnnotationItem> GetAnnotationItems()

@@ -52,9 +52,16 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
             Frame frame = provider.Frame;
 
-            string str = String.Format("{0}/{1}",
-                                frame.ParentImageSop.InstanceNumber,
-                                frame.ParentImageSop.ParentSeries.Sops.Count);
+            string str;
+			
+			if (frame.ParentImageSop.ParentSeries != null)
+			{
+				str = String.Format("{0}/{1}", frame.ParentImageSop.InstanceNumber, frame.ParentImageSop.ParentSeries.Sops.Count);
+			}
+			else
+			{
+				str = frame.ParentImageSop.InstanceNumber.ToString();
+			}
 
             if (frame.ParentImageSop.NumberOfFrames > 1)
             {

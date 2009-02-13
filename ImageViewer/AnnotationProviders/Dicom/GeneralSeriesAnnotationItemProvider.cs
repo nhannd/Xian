@@ -170,10 +170,15 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 						resolver,
 						delegate(Frame frame)
 						{
-							string str = String.Format("{0}/{1}",
-								frame.ParentImageSop.SeriesNumber,
-								frame.ParentImageSop.ParentSeries.ParentStudy.Series.Count);
-							return str;
+							if (frame.ParentImageSop.ParentSeries != null)
+							{
+								return String.Format("{0}/{1}", frame.ParentImageSop.SeriesNumber, 
+									frame.ParentImageSop.ParentSeries.ParentStudy.Series.Count);
+							}
+							else
+							{
+								return frame.ParentImageSop.SeriesNumber.ToString();
+							}
 						},
 						DicomDataFormatHelper.RawStringFormat
 					)

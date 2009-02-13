@@ -17,6 +17,7 @@ namespace ClearCanvas.ImageViewer
 	{
 		private IImageViewer _imageViewer;
 		private PresentationImageFactory _presentationImageFactory;
+		private bool _layoutCompleted;
 
 		/// <summary>
 		/// Constructor.
@@ -85,6 +86,9 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public virtual void Layout()
 		{
+			if (_layoutCompleted)
+				throw new InvalidOperationException("Layout has already been called.");
+
 			BuildLogicalWorkspace();
 			ValidateLogicalWorkspace();
 			LayoutPhysicalWorkspace();
@@ -105,13 +109,15 @@ namespace ClearCanvas.ImageViewer
 
 		protected virtual void OnLayoutCompleted()
 		{
+			_layoutCompleted = true;
 			ImageViewer.EventBroker.StudyLoaded += OnPriorStudyLoaded;
 		}
 
 		#endregion
 
-		#region Protected Virtual Methods
+		#region Protected Methods
 
+		#region Virtual
 		/// <summary>
 		/// Builds the <see cref="ILogicalWorkspace"/>, creating and populating <see cref="ILogicalWorkspace.ImageSets"/>
 		/// from the contents of <see cref="IImageViewer.StudyTree"/>.
@@ -237,12 +243,7 @@ namespace ClearCanvas.ImageViewer
 		protected virtual void SortDisplaySets()
 		{
 			foreach (IImageSet imageSet in LogicalWorkspace.ImageSets)
-			{
-				imageSet.DisplaySets.Sort(GetDisplaySetComparer());
-
-				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
-					displaySet.PresentationImages.Sort(GetPresentationImageComparer());
-			}
+				SortDisplaySets(imageSet.DisplaySets);
 		}
 
 		/// <summary>
@@ -264,6 +265,21 @@ namespace ClearCanvas.ImageViewer
 			BuildFromStudy(study);
 		}
 
+		#endregion
+
+		protected void SortDisplaySets(DisplaySetCollection displaySets)
+		{
+			displaySets.Sort(GetDisplaySetComparer());
+
+			foreach (IDisplaySet displaySet in displaySets)
+				SortImages(displaySet.PresentationImages);
+		}
+
+		protected void SortImages(PresentationImageCollection images)
+		{
+			images.Sort(GetPresentationImageComparer());
+		}
+
 		#region Comparer Factory Methods
 
 		/// <summary>
@@ -278,7 +294,7 @@ namespace ClearCanvas.ImageViewer
 		/// <seealso cref="SortDisplaySets"/>
 		protected virtual IComparer<IDisplaySet> GetDisplaySetComparer()
 		{
-			return new DefaultDisplaySetComparer();
+			return DisplaySetCollection.GetDefaultComparer();
 		}
 
 		/// <summary>
@@ -293,7 +309,7 @@ namespace ClearCanvas.ImageViewer
 		/// <seealso cref="SortDisplaySets"/>
 		protected virtual IComparer<IPresentationImage> GetPresentationImageComparer()
 		{
-			return new InstanceAndFrameNumberComparer();
+			return PresentationImageCollection.GetDefaultComparer();
 		}
 
 		/// <summary>
@@ -308,7 +324,7 @@ namespace ClearCanvas.ImageViewer
 		/// <seealso cref="SortImageSets"/>
 		protected virtual IComparer<IImageSet> GetImageSetComparer()
 		{
-			return new StudyDateComparer();
+			return ImageSetCollection.GetDefaultComparer();
 		}
 
 		#endregion
@@ -343,7 +359,6 @@ namespace ClearCanvas.ImageViewer
 						if (imageSet == null)
 						{
 							imageSet = CreateImageSet(study);
-							LogicalWorkspace.ImageSets.Add(imageSet);
 						}
 
 						if (displaySet == null)
@@ -360,6 +375,14 @@ namespace ClearCanvas.ImageViewer
 					}
 				}
 			}
+
+			//We used to create the imageset and add it, then add a display set,
+			//then the images, etc, so that the 'added' event could be observed for
+			//everything.  No point, really - it's no different than just observing
+			//the image set being added and then iterating through it's members on first add.
+			//Then you could observe new additions after that point.
+			if (imageSet != null)
+				AddImageSet(imageSet);
 		}
 
 		private IImageSet CreateImageSet(Study study)
@@ -368,11 +391,14 @@ namespace ClearCanvas.ImageViewer
 
 			DateTime studyDate;
 			DateParser.Parse(study.StudyDate, out studyDate);
+			DateTime studyTime;
+			TimeParser.Parse(study.StudyTime, out studyTime);
 
 			string modalitiesInStudy = StringUtilities.Combine(GetModalitiesInStudy(study), ", ");
 
-			imageSet.Name = String.Format("{0} [{1}] {2}",
+			imageSet.Name = String.Format("{0} {1} [{2}] {3}",
 				studyDate.ToString(Format.DateFormat),
+				studyTime.ToString(Format.TimeFormat),
 				modalitiesInStudy ?? "",
 				study.StudyDescription);
 
@@ -388,8 +414,25 @@ namespace ClearCanvas.ImageViewer
 		{
 			string name = String.Format("{0}: {1}", series.SeriesNumber, series.SeriesDescription);
 			DisplaySet displaySet = new DisplaySet(name, series.SeriesInstanceUID, series.SeriesDescription);
-			displaySet.DefaultSortNumber = series.SeriesNumber;
+			displaySet.Number = series.SeriesNumber;
 			return displaySet;
+		}
+
+		private void AddImageSet(IImageSet imageSet)
+		{
+			int insertIndex = LogicalWorkspace.ImageSets.Count;
+			if (_layoutCompleted)
+			{
+				//A bit cheap, but once the initial layout is done, we need to keep everything sorted.
+				List<IImageSet> sorted = new List<IImageSet>(LogicalWorkspace.ImageSets);
+				sorted.Add(imageSet);
+				sorted.Sort(LogicalWorkspace.ImageSets.Comparer);
+				insertIndex = sorted.IndexOf(imageSet);
+			}
+
+			SortDisplaySets(imageSet.DisplaySets);
+
+			LogicalWorkspace.ImageSets.Insert(insertIndex, imageSet);
 		}
 
 		#endregion

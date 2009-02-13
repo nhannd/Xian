@@ -391,7 +391,7 @@
     <value>Series Description</value>
   </data>
   <data name="Dicom_GeneralSeries_SeriesDescription_Label" xml:space="preserve">
-    <value>Series Desc.</value>
+    <value>Desc.</value>
   </data>
   <data name="Dicom_GeneralSeries_SeriesNumber_DisplayName" xml:space="preserve">
     <value>Series Number</value>
@@ -637,7 +637,13 @@
     <value>Display Set Description</value>
   </data>
   <data name="Presentation_DisplaySetDescription_Label" xml:space="preserve">
-    <value>Desc.:</value>
+    <value>Desc.</value>
+  </data>
+  <data name="Presentation_DisplaySetNumber_DisplayName" xml:space="preserve">
+    <value>Display Set Number</value>
+  </data>
+  <data name="Presentation_DisplaySetNumber_Label" xml:space="preserve">
+    <value>Se</value>
   </data>
   <data name="Presentation_Zoom_DisplayName" xml:space="preserve">
     <value>Zoom</value>

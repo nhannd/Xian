@@ -123,6 +123,11 @@ namespace ClearCanvas.ImageViewer
 		string Description { get; }
 
 		/// <summary>
+		/// Gets a number assigned to the display set, normally corresponding to a series number.
+		/// </summary>
+		int Number { get; }
+
+		/// <summary>
 		/// Gets a value indicating whether the <see cref="IDisplaySet"/> is selected.
 		/// </summary>
 		bool Selected { get; }

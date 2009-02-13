@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		protected IEnumerable<IComparable> GetCompareValues(DisplaySet displaySet)
 		{
-			yield return displaySet.DefaultSortNumber;
+			yield return displaySet.Number;
 			yield return displaySet.Name;
 		}
 

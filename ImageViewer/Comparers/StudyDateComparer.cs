@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
@@ -61,6 +62,12 @@ namespace ClearCanvas.ImageViewer.Comparers
 		{
 		}
 
+		private IEnumerable<IComparable> GetCompareValues(ImageSop sop)
+		{
+			yield return DateParser.Parse(sop.StudyDate);
+			yield return TimeParser.Parse(sop.StudyTime);
+		}
+
 		#region IComparer<IDisplaySet> Members
 
 		/// <summary>
@@ -71,28 +78,7 @@ namespace ClearCanvas.ImageViewer.Comparers
 		/// <returns></returns>
 		protected override int Compare(ImageSop x, ImageSop y)
 		{
-			DateTime? studyDate1 = DateParser.Parse(x.StudyDate);
-			DateTime? studyDate2 = DateParser.Parse(y.StudyDate);
-
-			if (studyDate1 == null)
-			{
-				if (studyDate2 == null)
-					return 0;
-				else
-					return ReturnValue; // x < y, we want null dates at the beginning for non-reverse sorting.
-			}
-			else
-			{
-				if (studyDate2 == null)
-					return -ReturnValue; // x > y, we want null dates at the beginning for non-reverse sorting.
-			}
-
-			if ((DateTime)studyDate1 < (DateTime)studyDate2)
-				return this.ReturnValue;
-			else if ((DateTime)studyDate1 > (DateTime)studyDate2)
-				return -this.ReturnValue;
-			else
-				return 0;
+			return Compare(GetCompareValues(x), GetCompareValues(y));
 		}
 
 		#endregion

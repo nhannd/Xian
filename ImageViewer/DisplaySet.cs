@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer
 
 			public DisplaySetMemento(IDisplaySet displaySet)
 			{
-				Comparer = displaySet.PresentationImages.CurrentComparer;
+				Comparer = displaySet.PresentationImages.Comparer;
 			}
 
 			public bool ComparersEqual(IComparer<IPresentationImage> x, IComparer<IPresentationImage> y)
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer
 		private bool _linked = false;
 		private string _name;
 		private string _description;
-		private int _defaultSortNumber;
+		private int _number;
 		private string _uid;
 		private event EventHandler _drawing;
 		private PresentationImageCollection _presentationImages;
@@ -224,10 +224,10 @@ namespace ClearCanvas.ImageViewer
 			get { return _description; }
 		}
 
-		internal int DefaultSortNumber
+		public int Number
 		{
-			get { return _defaultSortNumber; }
-			set { _defaultSortNumber = value; }
+			get { return _number; }
+			set { _number = value; }
 		}
 
 		/// <summary>
@@ -355,11 +355,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			DisplaySet displaySet = new DisplaySet(this.Name, this.Uid, this.Description);
 			displaySet.ParentImageSet = this.ParentImageSet;
+			displaySet.Number = Number;
 
 			foreach (IPresentationImage image in this.PresentationImages)
 				displaySet.PresentationImages.Add(image.CreateFreshCopy());
 
-			displaySet.PresentationImages.CurrentComparer = PresentationImages.CurrentComparer;
+			displaySet.PresentationImages.Comparer = PresentationImages.Comparer;
 
 			if (ParentImageSet != null)
 				((ImageSet)ParentImageSet).AddCopy(displaySet);
@@ -456,7 +457,7 @@ namespace ClearCanvas.ImageViewer
 			}
 
 			//keep the sort order.
-			PresentationImages.CurrentComparer = source.PresentationImages.CurrentComparer;
+			PresentationImages.Comparer = source.PresentationImages.Comparer;
 		}
 
 		#region IMemorable Members

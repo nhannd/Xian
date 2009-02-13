@@ -34,7 +34,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber">
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Presentation.DisplaySetNumber">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
@@ -141,7 +141,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber">
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Presentation.DisplaySetNumber">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
@@ -252,7 +252,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber">
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Presentation.DisplaySetNumber">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
@@ -363,7 +363,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber">
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Presentation.DisplaySetNumber">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
@@ -474,7 +474,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber">
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Presentation.DisplaySetNumber">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
@@ -605,7 +605,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber">
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Presentation.DisplaySetNumber">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
@@ -748,7 +748,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber">
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Presentation.DisplaySetNumber">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
@@ -871,7 +871,7 @@
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>
             </annotation-box>
-            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Dicom.GeneralSeries.SeriesNumber">
+            <annotation-box normalized-rectangle="0.500000\0.100000\1.000000\0.125000" annotation-item-id="Presentation.DisplaySetNumber">
               <box-settings>
                 <configuration-settings show-label="true" show-label-if-empty="true" />
               </box-settings>

@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class PresentationImageCollection : ObservableList<IPresentationImage>
 	{
-		private IComparer<IPresentationImage> _currentComparer;
+		private IComparer<IPresentationImage> _comparer;
 
 		/// <summary>
 		/// Instantiates a new instance of <see cref="PresentationImageCollection"/>.
@@ -50,10 +50,20 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
-		internal IComparer<IPresentationImage> CurrentComparer
+		internal static IComparer<IPresentationImage> GetDefaultComparer()
 		{
-			get { return _currentComparer; }
-			set { _currentComparer = value; }
+			return new InstanceAndFrameNumberComparer();
+		}
+
+		internal IComparer<IPresentationImage> Comparer
+		{
+			get { return _comparer; }
+			set { _comparer = value; }
+		}
+
+		public void Sort()
+		{
+			Sort(_comparer ?? GetDefaultComparer());
 		}
 
 		/// <summary>
@@ -62,8 +72,8 @@ namespace ClearCanvas.ImageViewer
 		public override void Sort(IComparer<IPresentationImage> comparer)
 		{
 			Platform.CheckForNullReference(comparer, "comparer");
-			_currentComparer = comparer;
-			base.Sort(comparer);
+			_comparer = comparer ?? GetDefaultComparer();
+			base.Sort(_comparer);
 		}
 	}
 }

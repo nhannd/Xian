@@ -183,27 +183,14 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
-		protected override bool AddItemToChildren(IImageSet imageSet)
+		protected override FilteredGroup<IImageSet> CreateNewGroup(IImageSet imageSet)
 		{
-			if (!base.AddItemToChildren(imageSet))
-			{
-				PatientImageSetGroup newGroup = new PatientImageSetGroup(imageSet);
-				ChildGroups.Add(newGroup);
-				if (!AddItemToChild(imageSet, newGroup))
-					Debug.Assert(false, "Item should be guaranteed to have been inserted.");
-			}
-
-			return true;
+			return new PatientImageSetGroup(imageSet);
 		}
 
-		protected override void RemoveItem(IImageSet imageSet)
+		protected override void  OnChildGroupEmpty(FilteredGroup<IImageSet> childGroup, out bool remove)
 		{
-			List<FilteredGroup<IImageSet>> allGroups = new List<FilteredGroup<IImageSet>>(ChildGroups);
-			foreach (FilteredGroup<IImageSet> group in allGroups)
-			{
-				if (group.Items.Count == 0)
-					base.ChildGroups.Remove(group);
-			}
+			remove = true;
 		}
 	}
 
@@ -211,10 +198,10 @@ namespace ClearCanvas.ImageViewer
 
 	#region Filtered Image Set Groups
 
-	public class ImageSetGroups
+	public class ImageSetGroups : IDisposable
 	{
 		private readonly PatientsImageSetGroup _root;
-		private ImageSetCollection _sourceImageSetCollection;
+		private ImageSetCollection _sourceCollection;
 
 		public ImageSetGroups()
 		{
@@ -224,7 +211,7 @@ namespace ClearCanvas.ImageViewer
 		public ImageSetGroups(ImageSetCollection sourceImageSets)
 			: this()
 		{
-			SetSourceCollection(sourceImageSets);
+			SourceCollection = sourceImageSets;
 		}
 
 		public PatientsImageSetGroup Root
@@ -232,32 +219,64 @@ namespace ClearCanvas.ImageViewer
 			get { return _root; }	
 		}
 
-		public void SetSourceCollection(ImageSetCollection sourceImageSets)
+		public ImageSetCollection SourceCollection
 		{
-			if (_sourceImageSetCollection == sourceImageSets)
-				return;
-
-			if (_sourceImageSetCollection != null)
+			set
 			{
-				_sourceImageSetCollection.ItemAdded -= OnImageSetAdded;
-				_sourceImageSetCollection.ItemChanging -= OnImageSetChanging;
-				_sourceImageSetCollection.ItemChanged -= OnImageSetChanged;
-				_sourceImageSetCollection.ItemRemoved -= OnImageSetRemoved;
+				if (_sourceCollection == value)
+					return;
 
-				_root.Clear();
+				if (_sourceCollection != null)
+				{
+					_sourceCollection.ItemAdded -= OnImageSetAdded;
+					_sourceCollection.ItemChanging -= OnImageSetChanging;
+					_sourceCollection.ItemChanged -= OnImageSetChanged;
+					_sourceCollection.ItemRemoved -= OnImageSetRemoved;
+
+					_root.Clear();
+				}
+
+				_sourceCollection = value;
+				if (_sourceCollection != null)
+				{
+					_root.Add(_sourceCollection);
+
+					_sourceCollection.ItemAdded += OnImageSetAdded;
+					_sourceCollection.ItemChanging += OnImageSetChanging;
+					_sourceCollection.ItemChanged += OnImageSetChanged;
+					_sourceCollection.ItemRemoved += OnImageSetRemoved;
+				}
 			}
-
-			_sourceImageSetCollection = sourceImageSets;
-			if (_sourceImageSetCollection != null)
+			get
 			{
-				_root.Add(_sourceImageSetCollection);
-
-				_sourceImageSetCollection.ItemAdded += OnImageSetAdded;
-				_sourceImageSetCollection.ItemChanging += OnImageSetChanging;
-				_sourceImageSetCollection.ItemChanged += OnImageSetChanged;
-				_sourceImageSetCollection.ItemRemoved += OnImageSetRemoved;
+				return _sourceCollection;
 			}
 		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				SourceCollection = null;
+			}
+		}
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e, "An unexpected error has occurred.");
+			}
+		}
+
+		#endregion
 
 		private void OnImageSetAdded(object sender, ListEventArgs<IImageSet> e)
 		{

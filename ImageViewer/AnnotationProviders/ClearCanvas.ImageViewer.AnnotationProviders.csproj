@@ -57,7 +57,7 @@
     <Compile Include="Presentation\DirectionalMarkerAnnotationItem.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Presentation\DisplaySetDescriptionAnnotationItem.cs" />
+    <Compile Include="Presentation\DisplaySetAnnotationItems.cs" />
     <Compile Include="Presentation\PresentationAnnotationItemProvider.cs">
       <SubType>Code</SubType>
     </Compile>

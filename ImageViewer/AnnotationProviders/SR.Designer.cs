@@ -880,7 +880,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Series Desc..
+        ///   Looks up a localized string similar to Desc..
         /// </summary>
         internal static string Dicom_GeneralSeries_SeriesDescription_Label {
             get {
@@ -1618,11 +1618,29 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Desc.:.
+        ///   Looks up a localized string similar to Desc..
         /// </summary>
         internal static string Presentation_DisplaySetDescription_Label {
             get {
                 return ResourceManager.GetString("Presentation_DisplaySetDescription_Label", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display Set Number.
+        /// </summary>
+        internal static string Presentation_DisplaySetNumber_DisplayName {
+            get {
+                return ResourceManager.GetString("Presentation_DisplaySetNumber_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Se.
+        /// </summary>
+        internal static string Presentation_DisplaySetNumber_Label {
+            get {
+                return ResourceManager.GetString("Presentation_DisplaySetNumber_Label", resourceCulture);
             }
         }
         

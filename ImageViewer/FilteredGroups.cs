@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
@@ -90,7 +91,6 @@ namespace ClearCanvas.ImageViewer
 
 	#endregion
 
-	//TODO: add sorting!
 	public class FilteredGroup<T> where T : class 
 	{
 		private FilteredGroup<T> _parentGroup;
@@ -169,6 +169,20 @@ namespace ClearCanvas.ImageViewer
 			e.Item.ParentGroup = null;
 		}
 
+		private void OnEmpty()
+		{
+			if (ParentGroup != null)
+				ParentGroup.OnChildGroupEmpty(this);
+		}
+
+		private void OnChildGroupEmpty(FilteredGroup<T> childGroup)
+		{
+			bool remove;
+			OnChildGroupEmpty(childGroup, out remove);
+			if (remove)
+				ChildGroups.Remove(childGroup);
+		}
+
 		private void OnItemAdded(object sender, ListEventArgs<T> e)
 		{
 			OnItemAdded(e.Item);
@@ -205,6 +219,11 @@ namespace ClearCanvas.ImageViewer
 			//when it no longer exists in any children, add it back to our list.
 			if (!found)
 				_items.Add(item);
+		}
+
+		protected virtual void OnChildGroupEmpty(FilteredGroup<T> childGroup, out bool remove)
+		{
+			remove = false;
 		}
 
 		#endregion
@@ -251,7 +270,12 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public Methods
 
-		public ReadOnlyCollection<T> GetAllItems()
+		public List<T> GetItems()
+		{
+			return new List<T>(_items);
+		}
+
+		public List<T> GetAllItems()
 		{
 			List<T> items = new List<T>();
 			foreach (T item in Items)
@@ -266,10 +290,10 @@ namespace ClearCanvas.ImageViewer
 					items.Add(item);
 			}
 
-			return items.AsReadOnly();
+			return items;
 		}
 
-		public IEnumerable<T> GetAllChildItems()
+		public List<T> GetAllChildItems()
 		{
 			List<T> items = new List<T>();
 			foreach (FilteredGroup<T> child in ChildGroups)
@@ -281,7 +305,7 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 			
-			return items.AsReadOnly();
+			return items;
 		}
 
 		#endregion
@@ -350,6 +374,18 @@ namespace ClearCanvas.ImageViewer
 					addedToChild = true;
 			}
 
+			if (!addedToChild)
+			{
+				FilteredGroup<T> newGroup = CreateNewGroup(item);
+				if (newGroup != null)
+				{
+					ChildGroups.Add(newGroup);
+					addedToChild = AddItemToChild(item, newGroup);
+					if (!addedToChild)
+						Debug.Assert(false, "Item should be guaranteed to have been inserted.");
+				}
+			}
+
 			return addedToChild;
 		}
 
@@ -363,12 +399,19 @@ namespace ClearCanvas.ImageViewer
 			return child.AddItem(item);
 		}
 
+		protected virtual FilteredGroup<T> CreateNewGroup(T item)
+		{
+			return null;
+		}
+
 		protected virtual void RemoveItem(T item)
 		{
 			foreach (FilteredGroup<T> group in ChildGroups)
 				group.RemoveItem(item);
 
 			_items.Remove(item);
+			if (GetAllItems().Count == 0)
+				OnEmpty();
 		}
 
 		#endregion

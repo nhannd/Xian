@@ -36,7 +36,6 @@ using System.Collections.Generic;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.BaseTools;
-using System.Collections.ObjectModel;
 using ClearCanvas.Common.Utilities;
 using System.Diagnostics;
 
@@ -64,10 +63,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		public override IActionSet Actions
 		{
-			get
-			{
-				return GetDisplaySetActions();
-			}
+			get { return GetDisplaySetActions(); }
 		}
 		
 		/// <summary>
@@ -77,11 +73,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         {
             base.Initialize();
 			_imageSetGroups = new ImageSetGroups(base.Context.Viewer.LogicalWorkspace.ImageSets);
-        }
+		}
 
 		protected override void Dispose(bool disposing)
 		{
-			_imageSetGroups.SetSourceCollection(null);
+			_imageSetGroups.Dispose();
 			base.Dispose(disposing);
 		}
 
@@ -107,7 +103,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				foreach (FilteredGroup<IImageSet> group in TraverseNonEmptyGroups(rootGroup))
 				{
 					string basePath = StringUtilities.Combine(_currentPathElements, "/");
-					foreach (IImageSet imageSet in group.Items)
+
+					//not incredibly efficient, but there really aren't that many items.
+					List<IImageSet> orderedItems = CollectionUtils.Reject(_imageSetGroups.SourceCollection,
+								delegate(IImageSet imageSet){ return !group.Items.Contains(imageSet); });
+
+					foreach (IImageSet imageSet in orderedItems)
 					{
 						string imageSetPath;
 						if (_showImageSetNames)
@@ -135,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private IEnumerable<FilteredGroup<IImageSet>> TraverseNonEmptyGroups(FilteredGroup<IImageSet> group)
 		{
-			ReadOnlyCollection<IImageSet> allItems = group.GetAllItems();
+			List<IImageSet> allItems = group.GetAllItems();
 			if (allItems.Count != 0)
 			{
 				if (_currentPathElements.Count == 0)

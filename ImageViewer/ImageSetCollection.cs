@@ -29,7 +29,10 @@
 
 #endregion
 
+using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Comparers;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -38,12 +41,39 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class ImageSetCollection : ObservableList<IImageSet>
 	{
+		private IComparer<IImageSet> _comparer;
+
 		/// <summary>
-		/// Instantiates a new instance of <see cref="ImageSetCollection"/>.
+		/// Instantiates a new instance of <see cref="DisplaySetCollection"/>.
 		/// </summary>
 		internal ImageSetCollection()
 		{
+		}
 
+		internal static IComparer<IImageSet> GetDefaultComparer()
+		{
+			return new StudyDateComparer();
+		}
+
+		internal IComparer<IImageSet> Comparer
+		{
+			get { return _comparer; }
+			set { _comparer = value; }
+		}
+
+		public void Sort()
+		{
+			Sort(_comparer ?? GetDefaultComparer());
+		}
+
+		/// <summary>
+		/// Sorts the collection with the given comparer.
+		/// </summary>
+		public override void Sort(IComparer<IImageSet> comparer)
+		{
+			Platform.CheckForNullReference(comparer, "comparer");
+			_comparer = comparer;
+			base.Sort(_comparer);
 		}
 	}
 }
