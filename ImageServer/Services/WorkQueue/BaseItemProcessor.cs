@@ -101,7 +101,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private StudyStorageLocation _storageLocation;
         private IList<WorkQueueUid> _uidList;
         private ServerPartition _partition;
-                    
+    	private bool _cancelPending = false;
+    	private readonly object _syncRoot = new object();   
 
         #region Protected Properties
 
@@ -178,6 +179,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
+    	protected bool CancelPending
+    	{
+			get { lock (_syncRoot) return _cancelPending; }
+    	}
         #endregion
 
         #region Contructors
@@ -811,6 +816,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         protected abstract void ProcessItem(Model.WorkQueue item);
 
         #endregion
+
+		public void Cancel()
+		{
+			lock (_syncRoot)
+				_cancelPending = true;
+		}
 
         #region IWorkQueueItemProcessor Members
 

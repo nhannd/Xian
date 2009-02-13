@@ -38,6 +38,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
@@ -124,7 +125,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// <summary>
     /// Processor for 'StudyProcess' <see cref="WorkQueue"/> entries.
     /// </summary>
-    public class StudyProcessItemProcessor : BaseItemProcessor
+    public class StudyProcessItemProcessor : BaseItemProcessor, ICancelable
     {
         #region Private Members
         private ServerRulesEngine _sopProcessedRulesEngine;
@@ -134,7 +135,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private StudyProcessStatistics _statistics;
         private InstanceStatistics _instanceStats;
         private StudyProcessorContext _context;
-        
         #endregion
 
         #region Public Properties
@@ -475,6 +475,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 if (sop.Failed)
                     continue;
 
+				if (CancelPending)
+				{
+					Platform.Log(LogLevel.Info, "Processing of study canceled for shutdown: {0}", StorageLocation.StudyInstanceUid);
+					return true;	
+				}
+
                 if (ProcessWorkQueueUid(item, sop, studyXml))
                     successfulProcessCount++;
             }
@@ -725,8 +731,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 {
                     PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal);
                 }
-			}
-				
+			}				
         }
 
 

@@ -50,7 +50,7 @@ using System.Diagnostics;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 {
-	public class CompressStudyItemProcessor : BaseItemProcessor
+	public class CompressStudyItemProcessor : BaseItemProcessor, ICancelable
 	{
 		#region Private Members
 		private CompressInstanceStatistics _instanceStats;
@@ -128,6 +128,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			{
 				if (sop.Failed)
 					continue;
+
+				if (CancelPending)
+				{
+					Platform.Log(LogLevel.Info,
+					             "Received cancel request while compressing study {0}.  {1} instances successfully processed.",
+					             StorageLocation.StudyInstanceUid, successfulProcessCount);
+
+					return successfulProcessCount > 0;
+				}
 
 				if (ProcessWorkQueueUid(item, sop, studyXml, theCodecFactory))
 					successfulProcessCount++;
@@ -407,5 +416,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                     studyXml.NumberOfStudyRelatedInstances, files.Length);
             }
         }
-    }
+	}
 }

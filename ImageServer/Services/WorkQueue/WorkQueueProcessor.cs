@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
@@ -51,24 +50,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private readonly Dictionary<WorkQueueTypeEnum, IWorkQueueProcessorFactory> _extensions = new Dictionary<WorkQueueTypeEnum, IWorkQueueProcessorFactory>();
-		private readonly ItemProcessingThreadPool<Model.WorkQueue> _threadPool;
+		private readonly WorkQueueThreadPool _threadPool;
         private readonly ManualResetEvent _threadStop;
         private readonly ManualResetEvent _terminateEvent;
-
         private bool _stop = false;
+    	private readonly List<WorkQueueTypeEnum> _nonMemoryLimitedList = new List<WorkQueueTypeEnum>();
 
-    	private readonly List<WorkQueueTypeEnum> _memoryLimitedList = new List<WorkQueueTypeEnum>();
-
-    	private readonly WorkQueueThreadPoolManager _threadPoolManager;
         #endregion
 
-        #region Constructor
-        public WorkQueueProcessor(int numberThreads, ManualResetEvent terminateEvent, string name)
+		#region Constructor
+		public WorkQueueProcessor(int numberThreads, ManualResetEvent terminateEvent, string name)
         {
             _terminateEvent = terminateEvent;
             _threadStop = new ManualResetEvent(false);
-			_threadPool = new ItemProcessingThreadPool<Model.WorkQueue>(numberThreads);
-        	_threadPool.ThreadPoolName = name + " Pool";
 
         	string memoryLimitedTypes = WorkQueueSettings.Instance.NonMemoryLimitedWorkQueueTypes;
 			if (memoryLimitedTypes.Length > 0)
@@ -79,16 +73,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					WorkQueueTypeEnum val = WorkQueueTypeEnum.GetEnum(type);
 					if (val != null)
 					{
-                        if (!_memoryLimitedList.Contains(val))
-                            _memoryLimitedList.Add(val);
+                        if (!_nonMemoryLimitedList.Contains(val))
+                            _nonMemoryLimitedList.Add(val);
 					}							
 				}
 			}
 
-        	_threadPoolManager =
-        		new WorkQueueThreadPoolManager(WorkQueueSettings.Instance.PriorityWorkQueueThreadCount,
-        		                               WorkQueueSettings.Instance.MemoryLimitedWorkQueueThreadCount,
-        		                               _memoryLimitedList);
+			_threadPool =
+				new WorkQueueThreadPool(numberThreads,
+				                        WorkQueueSettings.Instance.PriorityWorkQueueThreadCount,
+				                        WorkQueueSettings.Instance.MemoryLimitedWorkQueueThreadCount,
+				                        _nonMemoryLimitedList);
+			_threadPool.ThreadPoolName = name + " Pool";
+
 
             WorkQueueFactoryExtensionPoint ep = new WorkQueueFactoryExtensionPoint();
             object[] factories = ep.CreateExtensions();
@@ -116,25 +113,156 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 	    }
 		#endregion
 
-        #region Methods
-    	/// <summary>
-        /// Stop the WorkQueue processor
-        /// </summary>
+        #region Public Methods
+		/// <summary>
+		/// Stop the WorkQueue processor
+		/// </summary>
 		public void Stop()
-        {
-            _terminateEvent.Set(); // make sure it's set
+		{
+			_terminateEvent.Set(); // make sure it's set
+			_stop = true;
+			if (_threadPool.Active)
+				_threadPool.Stop();
+		}
 
-        	_stop = true;
-        	if (_threadPool.Active)
-        		_threadPool.Stop();
-        }
+		/// <summary>
+		/// The processing thread.
+		/// </summary>
+		/// <remarks>
+		/// This method queries the database for WorkQueue entries to work on, and then uses
+		/// a thread pool to process the entries.
+		/// </remarks>
+		public void Run()
+		{
+			if (!_threadPool.Active)
+				_threadPool.Start();
+
+			Platform.Log(LogLevel.Info, "Work Queue Processor running...");
+
+			while (true)
+			{
+				if (_stop)
+					return;
+
+				if (_threadPool.CanQueueItem)
+				{
+					try
+					{
+						Model.WorkQueue queueListItem = GetWorkQueueItem(ServiceTools.ProcessorId);
+						if (queueListItem == null)
+						{
+							/* No result found, or reach max queue entries for each type */
+							_terminateEvent.WaitOne(WorkQueueSettings.Instance.WorkQueueQueryDelay, false);
+							continue;
+						}
+						else if (!_extensions.ContainsKey(queueListItem.WorkQueueTypeEnum))
+						{
+							Platform.Log(LogLevel.Error,
+										 "No extensions loaded for WorkQueue item type: {0}.  Failing item.",
+										 queueListItem.WorkQueueTypeEnum);
+
+							//Just fail the WorkQueue item, not much else we can do
+							FailQueueItem(queueListItem, "No plugin to handle WorkQueue type: " + queueListItem.WorkQueueTypeEnum);
+							continue;
+						}
+
+						try
+						{
+							IWorkQueueProcessorFactory factory = _extensions[queueListItem.WorkQueueTypeEnum];
+							IWorkQueueItemProcessor processor = factory.GetItemProcessor();
+
+							// Enqueue the actual processing of the item to the thread pool.  
+							_threadPool.Enqueue(processor, queueListItem, ExecuteProcessor);
+						}
+						catch (Exception e)
+						{
+							Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkQueue processor.");
+							FailQueueItem(queueListItem, "Failure getting WorkQueue processor: " + e.Message);
+							continue;
+						}
+					}
+					catch (Exception e)
+					{
+						// Wait for only 1.5 seconds
+						Platform.Log(LogLevel.Error, "Exception occured: {0}. Retry later.", e.Message);
+						_terminateEvent.WaitOne(1500, false);
+					}
+				}
+				else
+				{
+					// wait for new opening in the pool or termination
+					WaitHandle.WaitAny(new WaitHandle[] { _threadStop, _terminateEvent }, 1500, false);
+					_threadStop.Reset();
+				}
+			}
+		}
+
+		#endregion
+
+		#region Private Methods
+		/// <summary>
+		/// The actual delegate 
+		/// </summary>
+		/// <param name="processor"></param>
+		/// <param name="queueItem"></param>
+		private void ExecuteProcessor(IWorkQueueItemProcessor processor, Model.WorkQueue queueItem)
+		{
+			try
+			{
+				processor.Process(queueItem);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e,
+							 "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
+							 queueItem.WorkQueueTypeEnum,
+							 queueItem.GetKey());
+				if (e.InnerException != null)
+					FailQueueItem(queueItem, e.InnerException.Message);
+				else
+					FailQueueItem(queueItem, e.Message);
+
+				ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
+									 processor.Name, AlertTypeCodes.UnableToProcess,
+									 "Work Queue item failed: Type={0}, GUID={1}",
+									 queueItem.WorkQueueTypeEnum,
+									 queueItem.GetKey());
+			}
+
+
+			// Signal the parent thread, so it can query again
+			_threadStop.Set();
+
+			// Cleanup the processor
+			processor.Dispose();
+		}
+
+		/// <summary>
+		/// Get array of enumerated values to query on.
+		/// </summary>
+		/// <returns></returns>
+		private string GetNonMemoryLimitedTypeString()
+		{
+			string typeString = String.Empty;
+			if (_nonMemoryLimitedList.Count > 0)
+			{
+				foreach (WorkQueueTypeEnum type in _nonMemoryLimitedList)
+				{
+					if (typeString.Length > 0)
+						typeString += "," + type.Enum;
+					else
+						typeString = type.Enum.ToString();
+				}
+			}
+			return typeString;
+		}
 
     	/// <summary>
         /// Simple routine for failing a work queue item.
         /// </summary>
         /// <param name="item">The item to fail.</param>
 		/// <param name="failureDescription">The reason for the failure.</param>
-        public void FailQueueItem(Model.WorkQueue item, string failureDescription)
+        private void FailQueueItem(Model.WorkQueue item, string failureDescription)
         {
             // Must retry to reset the status of the entry in case of db error
             // Failure to do so will create stale work queue entry (stuck in "In Progress" state)
@@ -180,16 +308,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         {
                             Platform.Log(LogLevel.Error, "Unable to update {0} WorkQueue GUID: {1}", item.WorkQueueTypeEnum,
                                          item.GetKey().ToString());
-
                         }
                         else
                         {
                             updateContext.Commit();
                             break; // done
                         }
-                    }
-
-                    
+                    }                    
                 }
                 catch(Exception ex)
                 {
@@ -197,134 +322,84 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     _terminateEvent.WaitOne(2000, false);
                     if (_stop)
                         break;
-                }
-                
-            }
-    	    
-            
-        }
-
-        /// <summary>
-        /// The processing thread.
-        /// </summary>
-        /// <remarks>
-        /// This method queries the database for WorkQueue entries to work on, and then uses
-        /// a thread pool to process the entries.
-        /// </remarks>
-        public void Run()
-        {
-			if (!_threadPool.Active)
-				_threadPool.Start();
-            Platform.Log(LogLevel.Info, "Work Queue Processor running...");
-                        
-            while (true)
-            {
-				if ((_threadPool.QueueCount + _threadPool.ActiveCount) < _threadPool.Concurrency)
-                {
-                    try
-                    {
-                        Model.WorkQueue queueListItem = _threadPoolManager.GetWorkQueueItem(ServiceTools.ProcessorId);
-						if (queueListItem == null)
-						{
-                            /* No result found, or reach max queue entries for each type */
-							_terminateEvent.WaitOne(WorkQueueSettings.Instance.WorkQueueQueryDelay, false);
-						}
-						else
-						{
-                            
-                            if (!_extensions.ContainsKey(queueListItem.WorkQueueTypeEnum))
-							{
-								Platform.Log(LogLevel.Error,
-											 "No extensions loaded for WorkQueue item type: {0}.  Failing item.",
-											 queueListItem.WorkQueueTypeEnum);
-
-								//Just fail the WorkQueue item, not much else we can do
-								FailQueueItem(queueListItem, "No plugin to handle WorkQueue type: " + queueListItem.WorkQueueTypeEnum);
-								_threadPoolManager.QueueItemComplete(queueListItem);
-								continue;
-							}
-
-							Platform.Log(LogLevel.Debug, "Found Queue Item to process, thread pool status: {0}", _threadPoolManager.ToString());
-
-							IWorkQueueProcessorFactory factory = _extensions[queueListItem.WorkQueueTypeEnum];
-
-							IWorkQueueItemProcessor processor;
-							try
-							{
-								processor = factory.GetItemProcessor();
-							}
-							catch (Exception e)
-							{
-								Platform.Log(LogLevel.Error, e, "Unexpected exception creating WorkQueue processor.");
-								FailQueueItem(queueListItem, "Failure getting WorkQueue processor: " + e.Message);
-								_threadPoolManager.QueueItemComplete(queueListItem);
-								continue;
-							}
-
-
-							// Enqueue the actual processing of the item to the 
-							// thread pool.  
-							_threadPool.Enqueue(queueListItem, delegate(Model.WorkQueue queueItem)
-													{
-														ExecuteProcessor(processor, queueItem);
-													});
-
-						}
-                    }
-                    catch (Exception e)
-                    {
-                        // Wait for only 1.5 seconds
-                        Platform.Log(LogLevel.Error, "Exception occured: {0}. Retry later.", e.Message);
-                        _terminateEvent.WaitOne(1500, false);
-                    }
-                }
-                else
-                {
-                    // wait for new opening in the pool or termination
-                    WaitHandle.WaitAny(new WaitHandle[]{_threadStop, _terminateEvent}, 1500, false);
-                    _threadStop.Reset();
-                }
-
-                if (_stop)
-                    return;
+                }                
             }
         }
+      
+		/// <summary>
+		/// Method for getting next <see cref="WorkQueue"/> entry.
+		/// </summary>
+		/// <param name="processorId">The Id of the processor.</param>
+		/// <remarks>
+		/// </remarks>
+		/// <returns>
+		/// A <see cref="WorkQueue"/> entry if found, or else null;
+		/// </returns>
+		public Model.WorkQueue GetWorkQueueItem(string processorId)
+		{
+			Model.WorkQueue queueListItem = null;
 
-        private void ExecuteProcessor(IWorkQueueItemProcessor processor, Model.WorkQueue queueItem)
-        {
-            
-            try
-            {
-                processor.Process(queueItem);
-            }
-            catch (Exception e)
-            {
-                Platform.Log(LogLevel.Error, e,
-                             "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
-                             queueItem.WorkQueueTypeEnum,
-                             queueItem.GetKey());
-                if (e.InnerException != null)
-                    FailQueueItem(queueItem, e.InnerException.Message);
-                else
-                    FailQueueItem(queueItem, e.Message);
+			// If we don't have the max high priority threads in use,
+			// first see if there's any available
+			if (_threadPool.HighPriorityThreadsAvailable)
+			{
+				using (
+					IUpdateContext updateContext =
+						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
+					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
+					parms.ProcessorID = processorId;
+					parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
 
+					queueListItem = select.FindOne(parms);
 
+					if (queueListItem != null)
+						updateContext.Commit();
+				}
+			}
 
-                ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Error,
-                                     processor.Name, AlertTypeCodes.UnableToProcess,
-                                     "Work Queue item failed: Type={0}, GUID={1}",
-                                     queueItem.WorkQueueTypeEnum,
-                                     queueItem.GetKey());
-            }
+			// If we didn't find a high priority work queue item, and we have threads 
+			// available for memory limited work queue items, query for the next queue item available.
+			if (queueListItem == null
+				&& _threadPool.MemoryLimitedThreadsAvailable)
+			{
+				using (
+					IUpdateContext updateContext =
+						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
+					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
+					parms.ProcessorID = processorId;
 
-            _threadPoolManager.QueueItemComplete(queueItem);
+					queueListItem = select.FindOne(parms);
 
-            // Signal the parent thread, so it can query again
-            _threadStop.Set();
+					if (queueListItem != null)
+						updateContext.Commit();
+				}
+			}
 
-            // Cleanup the processor
-            processor.Dispose();
-        }
+			// This logic only accessed if memory limited and priority threads are used up 
+			if (queueListItem == null)
+			{
+				using (
+					IUpdateContext updateContext =
+						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					IQueryWorkQueue select = updateContext.GetBroker<IQueryWorkQueue>();
+					WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
+					parms.ProcessorID = processorId;
+					parms.WorkQueueTypeEnumList = GetNonMemoryLimitedTypeString();
+
+					queueListItem = select.FindOne(parms);
+
+					if (queueListItem != null)
+						updateContext.Commit();
+				}
+			}
+
+			return queueListItem;
+		}
 
         #endregion
     }

@@ -34,15 +34,17 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.Dicom;
+using ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 {
     /// <summary>
     /// Processor for 'AutoRoute <see cref="WorkQueue"/> entries
     /// </summary>
-    public class AutoRouteItemProcessor : BaseItemProcessor
+    public class AutoRouteItemProcessor : BaseItemProcessor, ICancelable
     {
         #region Protected Methods
         /// <summary>
@@ -162,16 +164,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                                         	}
                                         }
 
-                                    	if (instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
-                                            {
-                                                item.FailureDescription =
-                                                    String.Format("SOP Class not supported by remote device: {0}",
-                                                                  instance.SopClass.Name);
-                                                Platform.Log(LogLevel.Warn,
-                                                             "Unable to transfer SOP Instance, SOP Class is not supported by remote device: {0}",
-                                                             instance.SopClass.Name);
-                                            }
-                                        
+										if (instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
+										{
+											item.FailureDescription =
+												String.Format("SOP Class not supported by remote device: {0}",
+												              instance.SopClass.Name);
+											Platform.Log(LogLevel.Warn,
+											             "Unable to transfer SOP Instance, SOP Class is not supported by remote device: {0}",
+											             instance.SopClass.Name);
+										}
+
+										if (CancelPending && !(this is WebMoveStudyItemProcessor) && !scu.Canceled)
+										{
+											Platform.Log(LogLevel.Info,"Auto-route canceled due to shutdown for study: {0}",StorageLocation.StudyInstanceUid);
+											item.FailureDescription = "Operation was canceled due to server shutdown request.";
+											scu.Cancel();
+										}
                                     };
 
             // Block until send is complete
@@ -190,7 +198,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 			}
 
         	// Reset the WorkQueue entry status
-            if (WorkQueueUidList.Count > 0 || scu.Status == ScuOperationStatus.Failed || scu.Status == ScuOperationStatus.ConnectFailed)
+            if ((WorkQueueUidList.Count > 0) || scu.Status == ScuOperationStatus.Failed || scu.Status == ScuOperationStatus.ConnectFailed)
                 PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal); // failures occurred
 			else if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
 				PostProcessing(item,

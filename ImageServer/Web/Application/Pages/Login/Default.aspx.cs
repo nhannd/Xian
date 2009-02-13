@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.ServiceModel;
 using System.Threading;
 using System.Web.Security;
 using ClearCanvas.Common;
@@ -66,6 +67,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                         SessionInfo session = service.Login(UserName.Text, "NewPassword123");
                         SessionManager.InitializeSession(session);
                     }
+					catch (FaultException x)
+					{
+						Platform.Log(LogLevel.Info,x,"Invalid login");
+					}
+
                 });
             
         }
