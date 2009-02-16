@@ -178,13 +178,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                     // Get the Patients Name for processing purposes.
                     String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
 
-                    IImageServerXmlCodecParameters codecParmFactory = theCodecFactory as IImageServerXmlCodecParameters;
-                    if (codecParmFactory == null)
-                    {
-                        Platform.Log(LogLevel.Error, "Incorrect Codec for ImageServer, unable to access IImageSeverXmlCodecParameters interface for codec {0}!", theCodecFactory.GetType().ToString());
-                        throw new ApplicationException("Incorect codec type for ImageServer: " + theCodecFactory.GetType());
-                    }
-
                     if (file.TransferSyntax.Equals(theCodecFactory.CodecTransferSyntax))
                     {
                         Platform.Log(LogLevel.Warn, "Skip compressing SOP {0}. Its current transfer syntax is {1}", 
@@ -198,7 +191,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
                         ServerActionContext context = new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
                         context.CommandProcessor = processor;
                         
-                        DicomCodecParameters parms = codecParmFactory.GetCodecParameters(item.Data);
+                        DicomCodecParameters parms = theCodecFactory.GetCodecParameters(item.Data);
                         DicomCompressCommand compressCommand =
                             new DicomCompressCommand(context.Message, theCodecFactory.CodecTransferSyntax, codec, parms, true);
                         processor.AddCommand(compressCommand);

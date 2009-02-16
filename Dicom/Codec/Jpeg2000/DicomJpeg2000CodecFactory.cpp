@@ -12,6 +12,7 @@ namespace Dicom {
 namespace Codec {
 namespace Jpeg2000 {
 	
+	//DicomJpeg2000LosslessCodecFactory
 	ClearCanvas::Dicom::TransferSyntax^ DicomJpeg2000LosslessCodecFactory::CodecTransferSyntax::get()  {
 		return ClearCanvas::Dicom::TransferSyntax::Jpeg2000ImageCompressionLosslessOnly;
 	}
@@ -21,10 +22,19 @@ namespace Jpeg2000 {
 	DicomCodecParameters^ DicomJpeg2000LosslessCodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) {
 		return gcnew DicomJpeg2000Parameters();
 	}
+	DicomCodecParameters^ DicomJpeg2000LosslessCodecFactory::GetCodecParameters(XmlDocument^ parms)
+    {
+		DicomJpeg2000Parameters^ codecParms = gcnew DicomJpeg2000Parameters();
+		codecParms->Irreversible = false;
+		codecParms->UpdatePhotometricInterpretation = true;
+		codecParms->Rate = 1; //1 == Lossless
+		return codecParms;
+	}
 	IDicomCodec^ DicomJpeg2000LosslessCodecFactory::GetDicomCodec() {
 		return gcnew DicomJpeg2000LosslessCodec();
 	}
 
+	//DicomJpeg2000LossyCodecFactory
 	TransferSyntax^ DicomJpeg2000LossyCodecFactory::CodecTransferSyntax::get()  {
 		return TransferSyntax::Jpeg2000ImageCompression;
 	}
@@ -33,6 +43,24 @@ namespace Jpeg2000 {
 	}
 	DicomCodecParameters^ DicomJpeg2000LossyCodecFactory::GetCodecParameters(DicomAttributeCollection^ dataSet) {
 		return gcnew DicomJpeg2000Parameters();
+	}
+	DicomCodecParameters^ DicomJpeg2000LossyCodecFactory::GetCodecParameters(XmlDocument^ parms)
+    {
+		DicomJpeg2000Parameters^ codecParms = gcnew DicomJpeg2000Parameters();
+
+		codecParms->Irreversible = true;
+		codecParms->UpdatePhotometricInterpretation = true;
+
+		XmlElement^ element = parms->DocumentElement;
+
+		String^ ratioString = element->Attributes["ratio"]->Value;
+		float ratio;
+		if (false == float::TryParse(ratioString, ratio))
+			throw gcnew ApplicationException("Invalid compression ratio specified for JPEG 2000 Lossy: " + ratioString);
+
+		codecParms->Rate = ratio;
+
+		return codecParms;
 	}
 	IDicomCodec^ DicomJpeg2000LossyCodecFactory::GetDicomCodec() {
 		return gcnew DicomJpeg2000LossyCodec();

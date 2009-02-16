@@ -37,8 +37,6 @@
 
   <ItemGroup>
 	<DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
-	<DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
-	<DicomAssemblyFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -70,6 +68,8 @@
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Web\Services\Shreds\bin\$(Configuration)\ClearCanvas.ImageServer.Web.Services.Shreds.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\Hsm\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.Hsm.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
   </ItemGroup>
   
   <ItemGroup>
@@ -77,12 +77,12 @@
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Common.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Dicom\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Dicom.dll" />
-	  <PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\bin\$(Configuration)\ClearCanvas.ImageServer.Services.WorkQueue.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\bin\$(Configuration)\ClearCanvas.ImageServer.Services.WorkQueue.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Streaming\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Streaming.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\ServiceLock\bin\$(Configuration)\ClearCanvas.ImageServer.Services.ServiceLock.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll" />
-	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Codec\Rle\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Rle.dll" />
-	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Codec\Jpeg\bin\$(Configuration)\ClearCanvas.ImageServer.Codec.Jpeg.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\RleCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.RleCodec.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Rules\JpegCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.JpegCodec.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
 	

@@ -6,6 +6,8 @@ using namespace System::Runtime::InteropServices;
 using namespace System::Security::Permissions;
 using namespace ClearCanvas::Common;
 
+[assembly: ClearCanvas::Common::Plugin]
+
 //
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
@@ -16,7 +18,7 @@ using namespace ClearCanvas::Common;
 [assembly:AssemblyConfigurationAttribute("")];
 [assembly:AssemblyCompanyAttribute("ClearCanvas Inc.")];
 [assembly:AssemblyProductAttribute("ClearCanvas.Dicom.Codec.Jpeg2000")];
-[assembly:AssemblyCopyrightAttribute("Copyright (c)  2008")];
+[assembly:AssemblyCopyrightAttribute("Copyright (c) 2008-2009")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 

@@ -324,6 +324,10 @@
 			ReferencedProjectIdentifier="{497CEAC5-C575-47A7-9230-610D6A3B6A2A}"
 			RelativePathToProject=".\Codec\Jpeg2000\OpenJPEG\OpenJPEG.vcproj"
 		/>
+		<AssemblyReference
+			RelativePath="System.XML.dll"
+			AssemblyName="System.Xml, Version=2.0.0.0, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL"
+		/>
 	</References>
 	<Files>
 		<Filter

@@ -1483,6 +1483,16 @@
       <Name>ClearCanvas.ImageServer.Rules</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\Rules\JpegCodec\ClearCanvas.ImageServer.Rules.JpegCodec.csproj">
+      <Project>{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}</Project>
+      <Name>ClearCanvas.ImageServer.Rules.JpegCodec</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Rules\RleCodec\ClearCanvas.ImageServer.Rules.RleCodec.csproj">
+      <Project>{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}</Project>
+      <Name>ClearCanvas.ImageServer.Rules.RleCodec</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\Services\Archiving\ClearCanvas.ImageServer.Services.Archiving.csproj">
       <Project>{90C91F02-8AD3-43D1-B8C3-C0469213E3E5}</Project>
       <Name>ClearCanvas.ImageServer.Services.Archiving</Name>

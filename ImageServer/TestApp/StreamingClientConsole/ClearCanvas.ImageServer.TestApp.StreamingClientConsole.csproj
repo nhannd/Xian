@@ -51,14 +51,6 @@
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Codec\Jpeg\ClearCanvas.ImageServer.Codec.Jpeg.csproj">
-      <Project>{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}</Project>
-      <Name>ClearCanvas.ImageServer.Codec.Jpeg</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Codec\Rle\ClearCanvas.ImageServer.Codec.Rle.csproj">
-      <Project>{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}</Project>
-      <Name>ClearCanvas.ImageServer.Codec.Rle</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

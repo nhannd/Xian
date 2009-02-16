@@ -6,6 +6,7 @@
 
 using namespace System;
 using namespace System::IO;
+using namespace System::Xml;
 
 using namespace ClearCanvas::Dicom;
 using namespace ClearCanvas::Dicom::Codec;
@@ -17,23 +18,26 @@ namespace Dicom {
 namespace Codec {
 namespace Jpeg2000 {
 
-
+[ClearCanvas::Common::ExtensionOf(DicomCodecFactoryExtensionPoint::typeid)]
 public ref class DicomJpeg2000LosslessCodecFactory : public IDicomCodecFactory {
 public:
     virtual property String^ Name { String^ get() ;}
     virtual property ClearCanvas::Dicom::TransferSyntax^ CodecTransferSyntax {  ClearCanvas::Dicom::TransferSyntax^ get(); };
 
     virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);
-    virtual IDicomCodec^ GetDicomCodec();
+    virtual DicomCodecParameters^ GetCodecParameters(XmlDocument^ parms);
+	virtual IDicomCodec^ GetDicomCodec();
 };
 
+[ClearCanvas::Common::ExtensionOf(DicomCodecFactoryExtensionPoint::typeid)]
 public ref class DicomJpeg2000LossyCodecFactory : public IDicomCodecFactory {
 public:
     virtual property String^ Name { String^ get();}
     virtual property ClearCanvas::Dicom::TransferSyntax^ CodecTransferSyntax { ClearCanvas::Dicom::TransferSyntax^ get(); };
 
     virtual DicomCodecParameters^ GetCodecParameters(DicomAttributeCollection^ dataSet);
-    virtual IDicomCodec^ GetDicomCodec();
+    virtual DicomCodecParameters^ GetCodecParameters(XmlDocument^ parms);
+	virtual IDicomCodec^ GetDicomCodec();
 };
 
 

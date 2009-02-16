@@ -122,9 +122,11 @@
 
   <ItemGroup>
     <CodecFiles Include="$(TrunkDirectory)\ImageViewer\Codec\Jpeg\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Jpeg.dll" />
-    <CodecFiles Include="$(TrunkDirectory)\ImageViewer\Codec\Rle\bin\$(Configuration)\ClearCanvas.ImageViewer.Codec.Rle.dll" />
-    <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Jpeg.dll" />
     <CodecFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Rle.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+	<CodecCommonFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Codecs\ClearCanvas.Dicom.Codec.Jpeg.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -337,7 +339,10 @@
     <!-- Copy plugins -->
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginsDirectory)" />
     <Copy SourceFiles="@(CodecFiles)" DestinationFolder="$(PluginsDirectory)" />
-
+	
+	<!-- The Jpeg assembly must go into the common directory so its not treated as a plugin -->
+	<Copy SourceFiles="@(CodecCommonFiles)" DestinationFolder="$(CommonDirectory)" />
+	
   </Target>
 
   <Target Name="Copy Project Files" DependsOnTargets="Copy Plugin Files">

@@ -85,12 +85,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.Codec.Rle
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.Codec.Plugin", "Codec\Plugin\ClearCanvas.Dicom.Codec.Plugin.csproj", "{A5061667-48D0-4847-B72E-DCB2AB907F8E}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -283,22 +277,6 @@ Global
 		{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}.Release|x64.Build.0 = Release|Any CPU
 		{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}.Release|x86.ActiveCfg = Release|Any CPU
 		{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}.Release|x86.Build.0 = Release|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Debug|x64.Build.0 = Debug|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Debug|x86.Build.0 = Debug|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|x64.ActiveCfg = Release|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|x64.Build.0 = Release|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|x86.ActiveCfg = Release|Any CPU
-		{A5061667-48D0-4847-B72E-DCB2AB907F8E}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

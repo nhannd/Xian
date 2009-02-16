@@ -52,6 +52,8 @@
 //    Colby Dillion (colby.dillion@gmail.com)
 #endregion
 
+using System.Xml;
+
 namespace ClearCanvas.Dicom.Codec
 {
 	//TODO: empty class - just return an object?
@@ -133,6 +135,12 @@ namespace ClearCanvas.Dicom.Codec
         /// <param name="dataSet">The data set to get codec parameters for.  Note that this value may be null.</param>
         /// <returns>The codec parameters.</returns>
         DicomCodecParameters GetCodecParameters(DicomAttributeCollection dataSet);
+		/// <summary>
+		/// Get the codec parameters.
+		/// </summary>
+		/// <param name="parms">XML based codec parameters.</param>
+		/// <returns>The codec parameters.</returns>
+		DicomCodecParameters GetCodecParameters(XmlDocument parms);
         /// <summary>
         /// Get an <see cref="IDicomCodec"/> codec.
         /// </summary>

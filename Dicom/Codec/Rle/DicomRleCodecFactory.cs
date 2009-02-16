@@ -29,11 +29,15 @@
 
 #endregion
 
+using System.Xml;
+using ClearCanvas.Common;
+
 namespace ClearCanvas.Dicom.Codec.Rle
 {
     /// <summary>
     /// Default codec factory for the DICOM RLE Transfer Syntax.
     /// </summary>
+	[ExtensionOf(typeof(DicomCodecFactoryExtensionPoint))]
     public class DicomRleCodecFactory : IDicomCodecFactory
     {
         private readonly string _name = TransferSyntax.RleLossless.Name;
@@ -53,7 +57,12 @@ namespace ClearCanvas.Dicom.Codec.Rle
         {
             return new DicomRleCodecParameters();
         }
+		public DicomCodecParameters GetCodecParameters(XmlDocument parms)
+		{
+			DicomRleCodecParameters codecParms = new DicomRleCodecParameters();
 
+			return codecParms;
+		}
         public IDicomCodec GetDicomCodec()
         {
             return new DicomRleCodec();
