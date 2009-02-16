@@ -30,24 +30,19 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
-using IUserAdminService = ClearCanvas.ImageServer.Common.Services.Admin.IUserAdminService;
+using IUserAdminService=ClearCanvas.ImageServer.Common.Services.Admin.IUserAdminService;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
     public class UserDataSource
     {
         #region Private Members
-        private UserManagementController _controller = new UserManagementController();
-        private IList<UserRowData> _list = null;
-        private int _resultCount;
+
+    	private int _resultCount;
         #endregion Private Members
 
         #region Public Members
@@ -88,7 +83,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                                 
                                 userRowData = CollectionUtils.ToArray(rows);
 
-                                Array.Copy(userRowData, startRowIndex, userRowDataRange, 0, maximumRows);
+                            	Array.Copy(userRowData, startRowIndex, userRowDataRange, 0,
+                            	           userRowData.Length < maximumRows ? userRowData.Length : maximumRows);
                             });
 
             if (userRowData != null)
