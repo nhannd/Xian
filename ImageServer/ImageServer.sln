@@ -247,12 +247,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Rul
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Rules.Jpeg2000Codec", "Rules\Jpeg2000Codec\ClearCanvas.ImageServer.Rules.Jpeg2000Codec.csproj", "{106DA31F-C502-493B-9478-F3E22566FDF2}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Rules.JpegCodec", "Rules\JpegCodec\ClearCanvas.ImageServer.Rules.JpegCodec.csproj", "{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -647,16 +641,6 @@ Global
 		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Release|Win32.ActiveCfg = Release|Any CPU
-		{106DA31F-C502-493B-9478-F3E22566FDF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{106DA31F-C502-493B-9478-F3E22566FDF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{106DA31F-C502-493B-9478-F3E22566FDF2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{106DA31F-C502-493B-9478-F3E22566FDF2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{106DA31F-C502-493B-9478-F3E22566FDF2}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{106DA31F-C502-493B-9478-F3E22566FDF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{106DA31F-C502-493B-9478-F3E22566FDF2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{106DA31F-C502-493B-9478-F3E22566FDF2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{106DA31F-C502-493B-9478-F3E22566FDF2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{106DA31F-C502-493B-9478-F3E22566FDF2}.Release|Win32.ActiveCfg = Release|Any CPU
 		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
