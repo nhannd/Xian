@@ -121,6 +121,7 @@
     <Compile Include="StackTabPage.cs" />
     <Compile Include="StockDesktopTools.cs" />
     <Compile Include="SuggestionProviderBase.cs" />
+    <Compile Include="Tables\DateTableColumn.cs" />
     <Compile Include="Tables\DateTimeTableColumn.cs" />
     <Compile Include="Tables\FilteredItemCollection.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />

@@ -35,17 +35,17 @@ namespace ClearCanvas.Desktop.Tables
 {
 	/// <summary>
 	/// Subclass of the <see cref="TableColumn{TItem,TColumn}"/> class for a nullable DateTime column type.
-	/// The value is formatted as DateTime.
+	/// The value is formatted as Date only.
 	/// </summary>
 	/// <typeparam name="TItem">The type of item on which the table is based.</typeparam>
-	public class DateTimeTableColumn<TItem> : TableColumn<TItem, DateTime?>
+	public class DateTableColumn<TItem> : DateTimeTableColumn<TItem>
 	{
         /// <summary>
         /// Constructs a read-only single-cellrow DateTime table column.
         /// </summary>
         /// <param name="columnName">The name of the column.</param>
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
-		public DateTimeTableColumn(string columnName, GetColumnValueDelegate<TItem, DateTime?> valueGetter)
+		public DateTableColumn(string columnName, GetColumnValueDelegate<TItem, DateTime?> valueGetter)
             : this(columnName, valueGetter, 1.0f)
         {
 		}
@@ -56,11 +56,11 @@ namespace ClearCanvas.Desktop.Tables
         /// <param name="columnName">The name of the column.</param>
         /// <param name="valueGetter">A delegate that accepts an item and pulls the column value from the item.</param>
         /// <param name="widthFactor">A weighting factor that is applied to the width of the column.</param>
-        public DateTimeTableColumn(string columnName, GetColumnValueDelegate<TItem, DateTime?> valueGetter, float widthFactor)
+		public DateTableColumn(string columnName, GetColumnValueDelegate<TItem, DateTime?> valueGetter, float widthFactor)
             : base(columnName, valueGetter, widthFactor)
         {
-			this.ValueFormatter = delegate(DateTime? value) { return Format.DateTime(value); };
-			this.Comparison = delegate(TItem item1, TItem item2) { return Nullable.Compare(valueGetter(item1), valueGetter(item2)); };
+			this.ValueFormatter = delegate(DateTime? value) { return Format.Date(value); };
 		}
+
 	}
 }
