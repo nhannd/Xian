@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,16 +29,42 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 {
-	public interface IUpgradeScript
+	public class BaseUpgradeScript : IUpgradeScript
 	{
-		string GetScript();
-		DatabaseVersion UpgradeFromVersion { get; }
-		DatabaseVersion UpgradeToVersion { get; }
+		private readonly DatabaseVersion _upgradeFromVersion;
+		private readonly DatabaseVersion _upgradeToVersion;
+		private readonly string _scriptName;
+		public BaseUpgradeScript(DatabaseVersion upgradeFromVersion, DatabaseVersion upgradeToVersion, string scriptName)
+		{
+			_upgradeToVersion = upgradeToVersion;
+			_upgradeFromVersion = upgradeFromVersion;
+			_scriptName = scriptName;
+		}
+		public string GetScript()
+		{
+			string sql;
+
+			using (Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), _scriptName))
+			{
+				StreamReader reader = new StreamReader(stream);
+				sql = reader.ReadToEnd();
+				stream.Close();
+			}
+			return sql;
+		}
+
+		public DatabaseVersion UpgradeFromVersion
+		{
+			get {return _upgradeFromVersion;}
+		}
+
+		public DatabaseVersion UpgradeToVersion
+		{
+			get { return _upgradeToVersion; }
+		}
 	}
 }

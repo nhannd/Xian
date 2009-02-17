@@ -44,6 +44,26 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public Filesystem():base("Filesystem")
         {}
+        public Filesystem(
+             System.String _description_
+            ,System.Boolean _enabled_
+            ,System.String _filesystemPath_
+            ,FilesystemTierEnum _filesystemTierEnum_
+            ,System.Decimal _highWatermark_
+            ,System.Decimal _lowWatermark_
+            ,System.Boolean _readOnly_
+            ,System.Boolean _writeOnly_
+            ):base("Filesystem")
+        {
+            _description = _description_;
+            _enabled = _enabled_;
+            _filesystemPath = _filesystemPath_;
+            _filesystemTierEnum = _filesystemTierEnum_;
+            _highWatermark = _highWatermark_;
+            _lowWatermark = _lowWatermark_;
+            _readOnly = _readOnly_;
+            _writeOnly = _writeOnly_;
+        }
         #endregion
 
         #region Private Members
@@ -120,6 +140,29 @@ namespace ClearCanvas.ImageServer.Model
         {
             IFilesystemEntityBroker broker = read.GetBroker<IFilesystemEntityBroker>();
             Filesystem theObject = broker.Load(key);
+            return theObject;
+        }
+        static public Filesystem Insert(Filesystem table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public Filesystem Insert(IUpdateContext update, Filesystem table)
+        {
+            IFilesystemEntityBroker broker = update.GetBroker<IFilesystemEntityBroker>();
+            FilesystemUpdateColumns updateColumns = new FilesystemUpdateColumns();
+            updateColumns.Description = table.Description;
+            updateColumns.Enabled = table.Enabled;
+            updateColumns.FilesystemPath = table.FilesystemPath;
+            updateColumns.FilesystemTierEnum = table.FilesystemTierEnum;
+            updateColumns.HighWatermark = table.HighWatermark;
+            updateColumns.LowWatermark = table.LowWatermark;
+            updateColumns.ReadOnly = table.ReadOnly;
+            updateColumns.WriteOnly = table.WriteOnly;
+            Filesystem theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

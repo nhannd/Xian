@@ -45,6 +45,46 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public Study():base("Study")
         {}
+        public Study(
+             System.String _accessionNumber_
+            ,System.String _issuerOfPatientId_
+            ,System.Int32 _numberOfStudyRelatedInstances_
+            ,System.Int32 _numberOfStudyRelatedSeries_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _patientKey_
+            ,System.String _patientId_
+            ,System.String _patientsAge_
+            ,System.String _patientsBirthDate_
+            ,System.String _patientsName_
+            ,System.String _patientsSex_
+            ,System.String _referringPhysiciansName_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ,System.String _specificCharacterSet_
+            ,System.String _studyDate_
+            ,System.String _studyDescription_
+            ,System.String _studyId_
+            ,System.String _studyInstanceUid_
+            ,System.String _studyTime_
+            ):base("Study")
+        {
+            _accessionNumber = _accessionNumber_;
+            _issuerOfPatientId = _issuerOfPatientId_;
+            _numberOfStudyRelatedInstances = _numberOfStudyRelatedInstances_;
+            _numberOfStudyRelatedSeries = _numberOfStudyRelatedSeries_;
+            _patientKey = _patientKey_;
+            _patientId = _patientId_;
+            _patientsAge = _patientsAge_;
+            _patientsBirthDate = _patientsBirthDate_;
+            _patientsName = _patientsName_;
+            _patientsSex = _patientsSex_;
+            _referringPhysiciansName = _referringPhysiciansName_;
+            _serverPartitionKey = _serverPartitionKey_;
+            _specificCharacterSet = _specificCharacterSet_;
+            _studyDate = _studyDate_;
+            _studyDescription = _studyDescription_;
+            _studyId = _studyId_;
+            _studyInstanceUid = _studyInstanceUid_;
+            _studyTime = _studyTime_;
+        }
         #endregion
 
         #region Private Members
@@ -207,6 +247,39 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyEntityBroker broker = read.GetBroker<IStudyEntityBroker>();
             Study theObject = broker.Load(key);
+            return theObject;
+        }
+        static public Study Insert(Study table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public Study Insert(IUpdateContext update, Study table)
+        {
+            IStudyEntityBroker broker = update.GetBroker<IStudyEntityBroker>();
+            StudyUpdateColumns updateColumns = new StudyUpdateColumns();
+            updateColumns.AccessionNumber = table.AccessionNumber;
+            updateColumns.IssuerOfPatientId = table.IssuerOfPatientId;
+            updateColumns.NumberOfStudyRelatedInstances = table.NumberOfStudyRelatedInstances;
+            updateColumns.NumberOfStudyRelatedSeries = table.NumberOfStudyRelatedSeries;
+            updateColumns.PatientKey = table.PatientKey;
+            updateColumns.PatientId = table.PatientId;
+            updateColumns.PatientsAge = table.PatientsAge;
+            updateColumns.PatientsBirthDate = table.PatientsBirthDate;
+            updateColumns.PatientsName = table.PatientsName;
+            updateColumns.PatientsSex = table.PatientsSex;
+            updateColumns.ReferringPhysiciansName = table.ReferringPhysiciansName;
+            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
+            updateColumns.SpecificCharacterSet = table.SpecificCharacterSet;
+            updateColumns.StudyDate = table.StudyDate;
+            updateColumns.StudyDescription = table.StudyDescription;
+            updateColumns.StudyId = table.StudyId;
+            updateColumns.StudyInstanceUid = table.StudyInstanceUid;
+            updateColumns.StudyTime = table.StudyTime;
+            Study theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

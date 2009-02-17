@@ -44,6 +44,24 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public StudyIntegrityQueue():base("StudyIntegrityQueue")
         {}
+        public StudyIntegrityQueue(
+             System.String _description_
+            ,System.DateTime _insertTime_
+            ,System.Xml.XmlDocument _queueData_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ,System.Xml.XmlDocument _studyData_
+            ,StudyIntegrityReasonEnum _studyIntegrityReasonEnum_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+            ):base("StudyIntegrityQueue")
+        {
+            _description = _description_;
+            _insertTime = _insertTime_;
+            _queueData = _queueData_;
+            _serverPartitionKey = _serverPartitionKey_;
+            _studyData = _studyData_;
+            _studyIntegrityReasonEnum = _studyIntegrityReasonEnum_;
+            _studyStorageKey = _studyStorageKey_;
+        }
         #endregion
 
         #region Private Members
@@ -113,6 +131,28 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyIntegrityQueueEntityBroker broker = read.GetBroker<IStudyIntegrityQueueEntityBroker>();
             StudyIntegrityQueue theObject = broker.Load(key);
+            return theObject;
+        }
+        static public StudyIntegrityQueue Insert(StudyIntegrityQueue table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public StudyIntegrityQueue Insert(IUpdateContext update, StudyIntegrityQueue table)
+        {
+            IStudyIntegrityQueueEntityBroker broker = update.GetBroker<IStudyIntegrityQueueEntityBroker>();
+            StudyIntegrityQueueUpdateColumns updateColumns = new StudyIntegrityQueueUpdateColumns();
+            updateColumns.Description = table.Description;
+            updateColumns.InsertTime = table.InsertTime;
+            updateColumns.QueueData = table.QueueData;
+            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
+            updateColumns.StudyData = table.StudyData;
+            updateColumns.StudyIntegrityReasonEnum = table.StudyIntegrityReasonEnum;
+            updateColumns.StudyStorageKey = table.StudyStorageKey;
+            StudyIntegrityQueue theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

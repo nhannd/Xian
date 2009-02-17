@@ -44,6 +44,18 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public DatabaseVersion():base("DatabaseVersion_")
         {}
+        public DatabaseVersion(
+             System.String _build__
+            ,System.String _major__
+            ,System.String _minor__
+            ,System.String _revision__
+            ):base("DatabaseVersion_")
+        {
+            _build_ = _build__;
+            _major_ = _major__;
+            _minor_ = _minor__;
+            _revision_ = _revision__;
+        }
         #endregion
 
         #region Private Members
@@ -92,6 +104,25 @@ namespace ClearCanvas.ImageServer.Model
         {
             IDatabaseVersionEntityBroker broker = read.GetBroker<IDatabaseVersionEntityBroker>();
             DatabaseVersion theObject = broker.Load(key);
+            return theObject;
+        }
+        static public DatabaseVersion Insert(DatabaseVersion table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public DatabaseVersion Insert(IUpdateContext update, DatabaseVersion table)
+        {
+            IDatabaseVersionEntityBroker broker = update.GetBroker<IDatabaseVersionEntityBroker>();
+            DatabaseVersionUpdateColumns updateColumns = new DatabaseVersionUpdateColumns();
+            updateColumns.Build = table.Build;
+            updateColumns.Major = table.Major;
+            updateColumns.Minor = table.Minor;
+            updateColumns.Revision = table.Revision;
+            DatabaseVersion theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

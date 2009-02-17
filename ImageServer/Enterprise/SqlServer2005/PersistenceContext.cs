@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
     /// <summary>
     /// Defines the extension point for all NHibernate broker classes.
     /// </summary>
-    [ExtensionPoint()]
+    [ExtensionPoint]
     public class BrokerExtensionPoint : ExtensionPoint<IPersistenceBroker>
     {
     }
@@ -60,8 +60,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         private ITransactionNotifier _transactionNotifier;
         #endregion
 
-        #region Internal Properties
-        internal SqlConnection Connection
+        #region Properties
+        public SqlConnection Connection
         {
             get { return _connection; }
         }

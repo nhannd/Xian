@@ -45,6 +45,40 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public StudyDeleteRecord():base("StudyDeleteRecord")
         {}
+        public StudyDeleteRecord(
+             System.String _accessionNumber_
+            ,System.Xml.XmlDocument _archiveInfo_
+            ,System.String _backupPath_
+            ,System.String _extendedInfo_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey_
+            ,System.String _patientId_
+            ,System.String _patientsName_
+            ,System.String _reason_
+            ,System.String _serverPartitionAE_
+            ,System.String _studyDate_
+            ,System.String _studyDescription_
+            ,System.String _studyId_
+            ,System.String _studyInstanceUid_
+            ,System.String _studyTime_
+            ,System.DateTime _timestamp_
+            ):base("StudyDeleteRecord")
+        {
+            _accessionNumber = _accessionNumber_;
+            _archiveInfo = _archiveInfo_;
+            _backupPath = _backupPath_;
+            _extendedInfo = _extendedInfo_;
+            _filesystemKey = _filesystemKey_;
+            _patientId = _patientId_;
+            _patientsName = _patientsName_;
+            _reason = _reason_;
+            _serverPartitionAE = _serverPartitionAE_;
+            _studyDate = _studyDate_;
+            _studyDescription = _studyDescription_;
+            _studyId = _studyId_;
+            _studyInstanceUid = _studyInstanceUid_;
+            _studyTime = _studyTime_;
+            _timestamp = _timestamp_;
+        }
         #endregion
 
         #region Private Members
@@ -178,6 +212,36 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyDeleteRecordEntityBroker broker = read.GetBroker<IStudyDeleteRecordEntityBroker>();
             StudyDeleteRecord theObject = broker.Load(key);
+            return theObject;
+        }
+        static public StudyDeleteRecord Insert(StudyDeleteRecord table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public StudyDeleteRecord Insert(IUpdateContext update, StudyDeleteRecord table)
+        {
+            IStudyDeleteRecordEntityBroker broker = update.GetBroker<IStudyDeleteRecordEntityBroker>();
+            StudyDeleteRecordUpdateColumns updateColumns = new StudyDeleteRecordUpdateColumns();
+            updateColumns.AccessionNumber = table.AccessionNumber;
+            updateColumns.ArchiveInfo = table.ArchiveInfo;
+            updateColumns.BackupPath = table.BackupPath;
+            updateColumns.ExtendedInfo = table.ExtendedInfo;
+            updateColumns.FilesystemKey = table.FilesystemKey;
+            updateColumns.PatientId = table.PatientId;
+            updateColumns.PatientsName = table.PatientsName;
+            updateColumns.Reason = table.Reason;
+            updateColumns.ServerPartitionAE = table.ServerPartitionAE;
+            updateColumns.StudyDate = table.StudyDate;
+            updateColumns.StudyDescription = table.StudyDescription;
+            updateColumns.StudyId = table.StudyId;
+            updateColumns.StudyInstanceUid = table.StudyInstanceUid;
+            updateColumns.StudyTime = table.StudyTime;
+            updateColumns.Timestamp = table.Timestamp;
+            StudyDeleteRecord theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

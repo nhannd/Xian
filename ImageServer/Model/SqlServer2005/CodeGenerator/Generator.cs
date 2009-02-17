@@ -488,8 +488,35 @@ namespace CodeGenerator
             writer.WriteLine("    {");
             writer.WriteLine("        #region Constructors");
             writer.WriteLine("        public {0}():base(\"{1}\")",table.TableName, table.DatabaseTableName);
-            writer.WriteLine("        {}");
-            writer.WriteLine("        #endregion");
+			writer.WriteLine("        {}");
+			writer.WriteLine("        public {0}(", table.TableName);
+        	char comma = ' ';
+			foreach (Column col in table.Columns)
+			{
+				if (!col.ColumnName.Equals("Key"))
+				{
+					if (col.ColumnName.EndsWith("Enum"))
+						writer.WriteLine("            {0}{1} {2}_", comma, col.ColumnName, col.VariableName);
+					else
+						writer.WriteLine("            {0}{1} {2}_", comma, col.ColumnType, col.VariableName);
+
+					comma = ',';
+				}
+			}
+			writer.WriteLine("            ):base(\"{0}\")", table.DatabaseTableName);
+			writer.WriteLine("        {");
+			foreach (Column col in table.Columns)
+			{
+				if (!col.ColumnName.Equals("Key"))
+				{
+					if (col.ColumnName.EndsWith("Enum"))
+						writer.WriteLine("            {0} = {0}_;", col.VariableName);
+					else
+						writer.WriteLine("            {0} = {0}_;", col.VariableName);
+				}
+			}
+			writer.WriteLine("        }");
+			writer.WriteLine("        #endregion");
             writer.WriteLine("");
             writer.WriteLine("        #region Private Members");
             foreach (Column col in table.Columns)
@@ -541,7 +568,29 @@ namespace CodeGenerator
             writer.WriteLine("            {0} theObject = broker.Load(key);", table.TableName);
             writer.WriteLine("            return theObject;");
             writer.WriteLine("        }");
-            writer.WriteLine("        #endregion");
+			writer.WriteLine("        static public {0} Insert({0} table)", table.TableName);
+			writer.WriteLine("        {");
+			writer.WriteLine("            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))");
+			writer.WriteLine("            {");
+			writer.WriteLine("                return Insert(update, table);");
+			writer.WriteLine("            }");
+			writer.WriteLine("        }");
+			writer.WriteLine("        static public {0} Insert(IUpdateContext update, {0} table)", table.TableName);
+			writer.WriteLine("        {");
+			writer.WriteLine("            I{0}EntityBroker broker = update.GetBroker<I{0}EntityBroker>();", table.TableName);
+			writer.WriteLine("            {0}UpdateColumns updateColumns = new {0}UpdateColumns();", table.TableName);
+			foreach (Column col in table.Columns)
+			{
+				if (!col.ColumnName.Equals("Key"))
+				{
+					writer.WriteLine("            updateColumns.{0} = table.{0};", col.ColumnName);
+				}
+			}
+			writer.WriteLine("            {0} theObject = broker.Insert(updateColumns);", table.TableName);
+			writer.WriteLine("            update.Commit();");
+			writer.WriteLine("            return theObject;");
+			writer.WriteLine("        }");
+			writer.WriteLine("        #endregion");
             writer.WriteLine("    }");
 
             WriteFooter(writer);

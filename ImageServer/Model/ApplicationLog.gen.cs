@@ -44,6 +44,22 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public ApplicationLog():base("ApplicationLog")
         {}
+        public ApplicationLog(
+             System.String _exception_
+            ,System.String _host_
+            ,System.String _logLevel_
+            ,System.String _message_
+            ,System.String _thread_
+            ,System.DateTime _timestamp_
+            ):base("ApplicationLog")
+        {
+            _exception = _exception_;
+            _host = _host_;
+            _logLevel = _logLevel_;
+            _message = _message_;
+            _thread = _thread_;
+            _timestamp = _timestamp_;
+        }
         #endregion
 
         #region Private Members
@@ -106,6 +122,27 @@ namespace ClearCanvas.ImageServer.Model
         {
             IApplicationLogEntityBroker broker = read.GetBroker<IApplicationLogEntityBroker>();
             ApplicationLog theObject = broker.Load(key);
+            return theObject;
+        }
+        static public ApplicationLog Insert(ApplicationLog table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public ApplicationLog Insert(IUpdateContext update, ApplicationLog table)
+        {
+            IApplicationLogEntityBroker broker = update.GetBroker<IApplicationLogEntityBroker>();
+            ApplicationLogUpdateColumns updateColumns = new ApplicationLogUpdateColumns();
+            updateColumns.Exception = table.Exception;
+            updateColumns.Host = table.Host;
+            updateColumns.LogLevel = table.LogLevel;
+            updateColumns.Message = table.Message;
+            updateColumns.Thread = table.Thread;
+            updateColumns.Timestamp = table.Timestamp;
+            ApplicationLog theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

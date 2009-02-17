@@ -45,6 +45,16 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public RequestAttributes():base("RequestAttributes")
         {}
+        public RequestAttributes(
+             System.String _requestedProcedureId_
+            ,System.String _scheduledProcedureStepId_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _seriesKey_
+            ):base("RequestAttributes")
+        {
+            _requestedProcedureId = _requestedProcedureId_;
+            _scheduledProcedureStepId = _scheduledProcedureStepId_;
+            _seriesKey = _seriesKey_;
+        }
         #endregion
 
         #region Private Members
@@ -88,6 +98,24 @@ namespace ClearCanvas.ImageServer.Model
         {
             IRequestAttributesEntityBroker broker = read.GetBroker<IRequestAttributesEntityBroker>();
             RequestAttributes theObject = broker.Load(key);
+            return theObject;
+        }
+        static public RequestAttributes Insert(RequestAttributes table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public RequestAttributes Insert(IUpdateContext update, RequestAttributes table)
+        {
+            IRequestAttributesEntityBroker broker = update.GetBroker<IRequestAttributesEntityBroker>();
+            RequestAttributesUpdateColumns updateColumns = new RequestAttributesUpdateColumns();
+            updateColumns.RequestedProcedureId = table.RequestedProcedureId;
+            updateColumns.ScheduledProcedureStepId = table.ScheduledProcedureStepId;
+            updateColumns.SeriesKey = table.SeriesKey;
+            RequestAttributes theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

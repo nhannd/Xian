@@ -45,6 +45,30 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public Series():base("Series")
         {}
+        public Series(
+             System.String _modality_
+            ,System.Int32 _numberOfSeriesRelatedInstances_
+            ,System.String _performedProcedureStepStartDate_
+            ,System.String _performedProcedureStepStartTime_
+            ,System.String _seriesDescription_
+            ,System.String _seriesInstanceUid_
+            ,System.String _seriesNumber_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ,System.String _sourceApplicationEntityTitle_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyKey_
+            ):base("Series")
+        {
+            _modality = _modality_;
+            _numberOfSeriesRelatedInstances = _numberOfSeriesRelatedInstances_;
+            _performedProcedureStepStartDate = _performedProcedureStepStartDate_;
+            _performedProcedureStepStartTime = _performedProcedureStepStartTime_;
+            _seriesDescription = _seriesDescription_;
+            _seriesInstanceUid = _seriesInstanceUid_;
+            _seriesNumber = _seriesNumber_;
+            _serverPartitionKey = _serverPartitionKey_;
+            _sourceApplicationEntityTitle = _sourceApplicationEntityTitle_;
+            _studyKey = _studyKey_;
+        }
         #endregion
 
         #region Private Members
@@ -143,6 +167,31 @@ namespace ClearCanvas.ImageServer.Model
         {
             ISeriesEntityBroker broker = read.GetBroker<ISeriesEntityBroker>();
             Series theObject = broker.Load(key);
+            return theObject;
+        }
+        static public Series Insert(Series table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public Series Insert(IUpdateContext update, Series table)
+        {
+            ISeriesEntityBroker broker = update.GetBroker<ISeriesEntityBroker>();
+            SeriesUpdateColumns updateColumns = new SeriesUpdateColumns();
+            updateColumns.Modality = table.Modality;
+            updateColumns.NumberOfSeriesRelatedInstances = table.NumberOfSeriesRelatedInstances;
+            updateColumns.PerformedProcedureStepStartDate = table.PerformedProcedureStepStartDate;
+            updateColumns.PerformedProcedureStepStartTime = table.PerformedProcedureStepStartTime;
+            updateColumns.SeriesDescription = table.SeriesDescription;
+            updateColumns.SeriesInstanceUid = table.SeriesInstanceUid;
+            updateColumns.SeriesNumber = table.SeriesNumber;
+            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
+            updateColumns.SourceApplicationEntityTitle = table.SourceApplicationEntityTitle;
+            updateColumns.StudyKey = table.StudyKey;
+            Series theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

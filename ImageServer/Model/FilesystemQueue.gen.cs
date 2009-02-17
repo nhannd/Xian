@@ -45,6 +45,22 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public FilesystemQueue():base("FilesystemQueue")
         {}
+        public FilesystemQueue(
+             ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey_
+            ,FilesystemQueueTypeEnum _filesystemQueueTypeEnum_
+            ,System.Xml.XmlDocument _queueXml_
+            ,System.DateTime _scheduledTime_
+            ,System.String _seriesInstanceUid_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+            ):base("FilesystemQueue")
+        {
+            _filesystemKey = _filesystemKey_;
+            _filesystemQueueTypeEnum = _filesystemQueueTypeEnum_;
+            _queueXml = _queueXml_;
+            _scheduledTime = _scheduledTime_;
+            _seriesInstanceUid = _seriesInstanceUid_;
+            _studyStorageKey = _studyStorageKey_;
+        }
         #endregion
 
         #region Private Members
@@ -108,6 +124,27 @@ namespace ClearCanvas.ImageServer.Model
         {
             IFilesystemQueueEntityBroker broker = read.GetBroker<IFilesystemQueueEntityBroker>();
             FilesystemQueue theObject = broker.Load(key);
+            return theObject;
+        }
+        static public FilesystemQueue Insert(FilesystemQueue table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public FilesystemQueue Insert(IUpdateContext update, FilesystemQueue table)
+        {
+            IFilesystemQueueEntityBroker broker = update.GetBroker<IFilesystemQueueEntityBroker>();
+            FilesystemQueueUpdateColumns updateColumns = new FilesystemQueueUpdateColumns();
+            updateColumns.FilesystemKey = table.FilesystemKey;
+            updateColumns.FilesystemQueueTypeEnum = table.FilesystemQueueTypeEnum;
+            updateColumns.QueueXml = table.QueueXml;
+            updateColumns.ScheduledTime = table.ScheduledTime;
+            updateColumns.SeriesInstanceUid = table.SeriesInstanceUid;
+            updateColumns.StudyStorageKey = table.StudyStorageKey;
+            FilesystemQueue theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

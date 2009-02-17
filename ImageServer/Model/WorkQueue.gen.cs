@@ -44,6 +44,38 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public WorkQueue():base("WorkQueue")
         {}
+        public WorkQueue(
+             System.Xml.XmlDocument _data_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _deviceKey_
+            ,System.DateTime _expirationTime_
+            ,System.Int32 _failureCount_
+            ,System.String _failureDescription_
+            ,System.DateTime _insertTime_
+            ,System.String _processorID_
+            ,System.DateTime _scheduledTime_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyHistoryKey_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+            ,WorkQueuePriorityEnum _workQueuePriorityEnum_
+            ,WorkQueueStatusEnum _workQueueStatusEnum_
+            ,WorkQueueTypeEnum _workQueueTypeEnum_
+            ):base("WorkQueue")
+        {
+            _data = _data_;
+            _deviceKey = _deviceKey_;
+            _expirationTime = _expirationTime_;
+            _failureCount = _failureCount_;
+            _failureDescription = _failureDescription_;
+            _insertTime = _insertTime_;
+            _processorID = _processorID_;
+            _scheduledTime = _scheduledTime_;
+            _serverPartitionKey = _serverPartitionKey_;
+            _studyHistoryKey = _studyHistoryKey_;
+            _studyStorageKey = _studyStorageKey_;
+            _workQueuePriorityEnum = _workQueuePriorityEnum_;
+            _workQueueStatusEnum = _workQueueStatusEnum_;
+            _workQueueTypeEnum = _workQueueTypeEnum_;
+        }
         #endregion
 
         #region Private Members
@@ -162,6 +194,35 @@ namespace ClearCanvas.ImageServer.Model
         {
             IWorkQueueEntityBroker broker = read.GetBroker<IWorkQueueEntityBroker>();
             WorkQueue theObject = broker.Load(key);
+            return theObject;
+        }
+        static public WorkQueue Insert(WorkQueue table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public WorkQueue Insert(IUpdateContext update, WorkQueue table)
+        {
+            IWorkQueueEntityBroker broker = update.GetBroker<IWorkQueueEntityBroker>();
+            WorkQueueUpdateColumns updateColumns = new WorkQueueUpdateColumns();
+            updateColumns.Data = table.Data;
+            updateColumns.DeviceKey = table.DeviceKey;
+            updateColumns.ExpirationTime = table.ExpirationTime;
+            updateColumns.FailureCount = table.FailureCount;
+            updateColumns.FailureDescription = table.FailureDescription;
+            updateColumns.InsertTime = table.InsertTime;
+            updateColumns.ProcessorID = table.ProcessorID;
+            updateColumns.ScheduledTime = table.ScheduledTime;
+            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
+            updateColumns.StudyHistoryKey = table.StudyHistoryKey;
+            updateColumns.StudyStorageKey = table.StudyStorageKey;
+            updateColumns.WorkQueuePriorityEnum = table.WorkQueuePriorityEnum;
+            updateColumns.WorkQueueStatusEnum = table.WorkQueueStatusEnum;
+            updateColumns.WorkQueueTypeEnum = table.WorkQueueTypeEnum;
+            WorkQueue theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

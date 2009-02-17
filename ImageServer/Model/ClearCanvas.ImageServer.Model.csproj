@@ -81,6 +81,7 @@
     <Compile Include="Brokers\IInsertFilesystem.cs" />
     <Compile Include="Brokers\IUpdateServiceLock.cs" />
     <Compile Include="Brokers\IAttachStudyToPatient.cs" />
+    <Compile Include="DatabaseVersion.cs" />
     <Compile Include="DatabaseVersion.gen.cs" />
     <Compile Include="Device.cs" />
     <Compile Include="Device.gen.cs" />

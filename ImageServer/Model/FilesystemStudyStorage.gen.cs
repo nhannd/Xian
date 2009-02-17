@@ -44,6 +44,18 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public FilesystemStudyStorage():base("FilesystemStudyStorage")
         {}
+        public FilesystemStudyStorage(
+             ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey_
+            ,System.String _studyFolder_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+            ):base("FilesystemStudyStorage")
+        {
+            _filesystemKey = _filesystemKey_;
+            _serverTransferSyntaxKey = _serverTransferSyntaxKey_;
+            _studyFolder = _studyFolder_;
+            _studyStorageKey = _studyStorageKey_;
+        }
         #endregion
 
         #region Private Members
@@ -92,6 +104,25 @@ namespace ClearCanvas.ImageServer.Model
         {
             IFilesystemStudyStorageEntityBroker broker = read.GetBroker<IFilesystemStudyStorageEntityBroker>();
             FilesystemStudyStorage theObject = broker.Load(key);
+            return theObject;
+        }
+        static public FilesystemStudyStorage Insert(FilesystemStudyStorage table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public FilesystemStudyStorage Insert(IUpdateContext update, FilesystemStudyStorage table)
+        {
+            IFilesystemStudyStorageEntityBroker broker = update.GetBroker<IFilesystemStudyStorageEntityBroker>();
+            FilesystemStudyStorageUpdateColumns updateColumns = new FilesystemStudyStorageUpdateColumns();
+            updateColumns.FilesystemKey = table.FilesystemKey;
+            updateColumns.ServerTransferSyntaxKey = table.ServerTransferSyntaxKey;
+            updateColumns.StudyFolder = table.StudyFolder;
+            updateColumns.StudyStorageKey = table.StudyStorageKey;
+            FilesystemStudyStorage theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

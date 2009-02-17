@@ -44,6 +44,32 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public Device():base("Device")
         {}
+        public Device(
+             System.String _aeTitle_
+            ,System.Boolean _allowAutoRoute_
+            ,System.Boolean _allowQuery_
+            ,System.Boolean _allowRetrieve_
+            ,System.Boolean _allowStorage_
+            ,System.String _description_
+            ,System.Boolean _dhcp_
+            ,System.Boolean _enabled_
+            ,System.String _ipAddress_
+            ,System.Int32 _port_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ):base("Device")
+        {
+            _aeTitle = _aeTitle_;
+            _allowAutoRoute = _allowAutoRoute_;
+            _allowQuery = _allowQuery_;
+            _allowRetrieve = _allowRetrieve_;
+            _allowStorage = _allowStorage_;
+            _description = _description_;
+            _dhcp = _dhcp_;
+            _enabled = _enabled_;
+            _ipAddress = _ipAddress_;
+            _port = _port_;
+            _serverPartitionKey = _serverPartitionKey_;
+        }
         #endregion
 
         #region Private Members
@@ -141,6 +167,32 @@ namespace ClearCanvas.ImageServer.Model
         {
             IDeviceEntityBroker broker = read.GetBroker<IDeviceEntityBroker>();
             Device theObject = broker.Load(key);
+            return theObject;
+        }
+        static public Device Insert(Device table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public Device Insert(IUpdateContext update, Device table)
+        {
+            IDeviceEntityBroker broker = update.GetBroker<IDeviceEntityBroker>();
+            DeviceUpdateColumns updateColumns = new DeviceUpdateColumns();
+            updateColumns.AeTitle = table.AeTitle;
+            updateColumns.AllowAutoRoute = table.AllowAutoRoute;
+            updateColumns.AllowQuery = table.AllowQuery;
+            updateColumns.AllowRetrieve = table.AllowRetrieve;
+            updateColumns.AllowStorage = table.AllowStorage;
+            updateColumns.Description = table.Description;
+            updateColumns.Dhcp = table.Dhcp;
+            updateColumns.Enabled = table.Enabled;
+            updateColumns.IpAddress = table.IpAddress;
+            updateColumns.Port = table.Port;
+            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
+            Device theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

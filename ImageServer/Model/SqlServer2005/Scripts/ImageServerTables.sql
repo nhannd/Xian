@@ -1382,6 +1382,23 @@ CREATE CLUSTERED INDEX [IX_ApplicationLog] ON [dbo].[ApplicationLog]
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
 GO
 
+/****** Object:  Table [dbo].[DatabaseVersion_]    Script Date: 02/16/2009 15:36:52 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DatabaseVersion_]') AND type in (N'U'))
+BEGIN
+CREATE TABLE [dbo].[DatabaseVersion_](
+	[Major_] [nvarchar](5) NOT NULL,
+	[Minor_] [nvarchar](5) NOT NULL,
+	[Revision_] [nvarchar](5) NOT NULL,
+	[Build_] [nvarchar](5) NOT NULL
+) ON [PRIMARY]
+END
+GO
+
+
 
 /****** Object:  Index [IX_StudyDeleteRecord]    Script Date: 11/28/2008 13:26:28 ******/
 CREATE UNIQUE NONCLUSTERED INDEX [IX_StudyDeleteRecord] ON [dbo].[StudyDeleteRecord] 

@@ -44,6 +44,24 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public ServiceLock():base("ServiceLock")
         {}
+        public ServiceLock(
+             System.Boolean _enabled_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey_
+            ,System.Boolean _lock_
+            ,System.String _processorId_
+            ,System.DateTime _scheduledTime_
+            ,ServiceLockTypeEnum _serviceLockTypeEnum_
+            ,System.Xml.XmlDocument _state_
+            ):base("ServiceLock")
+        {
+            _enabled = _enabled_;
+            _filesystemKey = _filesystemKey_;
+            _lock = _lock_;
+            _processorId = _processorId_;
+            _scheduledTime = _scheduledTime_;
+            _serviceLockTypeEnum = _serviceLockTypeEnum_;
+            _state = _state_;
+        }
         #endregion
 
         #region Private Members
@@ -113,6 +131,28 @@ namespace ClearCanvas.ImageServer.Model
         {
             IServiceLockEntityBroker broker = read.GetBroker<IServiceLockEntityBroker>();
             ServiceLock theObject = broker.Load(key);
+            return theObject;
+        }
+        static public ServiceLock Insert(ServiceLock table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public ServiceLock Insert(IUpdateContext update, ServiceLock table)
+        {
+            IServiceLockEntityBroker broker = update.GetBroker<IServiceLockEntityBroker>();
+            ServiceLockUpdateColumns updateColumns = new ServiceLockUpdateColumns();
+            updateColumns.Enabled = table.Enabled;
+            updateColumns.FilesystemKey = table.FilesystemKey;
+            updateColumns.Lock = table.Lock;
+            updateColumns.ProcessorId = table.ProcessorId;
+            updateColumns.ScheduledTime = table.ScheduledTime;
+            updateColumns.ServiceLockTypeEnum = table.ServiceLockTypeEnum;
+            updateColumns.State = table.State;
+            ServiceLock theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

@@ -44,6 +44,16 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public DevicePreferredTransferSyntax():base("DevicePreferredTransferSyntax")
         {}
+        public DevicePreferredTransferSyntax(
+             ClearCanvas.ImageServer.Enterprise.ServerEntityKey _deviceKey_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverSopClassKey_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey_
+            ):base("DevicePreferredTransferSyntax")
+        {
+            _deviceKey = _deviceKey_;
+            _serverSopClassKey = _serverSopClassKey_;
+            _serverTransferSyntaxKey = _serverTransferSyntaxKey_;
+        }
         #endregion
 
         #region Private Members
@@ -85,6 +95,24 @@ namespace ClearCanvas.ImageServer.Model
         {
             IDevicePreferredTransferSyntaxEntityBroker broker = read.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
             DevicePreferredTransferSyntax theObject = broker.Load(key);
+            return theObject;
+        }
+        static public DevicePreferredTransferSyntax Insert(DevicePreferredTransferSyntax table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public DevicePreferredTransferSyntax Insert(IUpdateContext update, DevicePreferredTransferSyntax table)
+        {
+            IDevicePreferredTransferSyntaxEntityBroker broker = update.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
+            DevicePreferredTransferSyntaxUpdateColumns updateColumns = new DevicePreferredTransferSyntaxUpdateColumns();
+            updateColumns.DeviceKey = table.DeviceKey;
+            updateColumns.ServerSopClassKey = table.ServerSopClassKey;
+            updateColumns.ServerTransferSyntaxKey = table.ServerTransferSyntaxKey;
+            DevicePreferredTransferSyntax theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

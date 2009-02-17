@@ -44,6 +44,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public ArchiveQueue():base("ArchiveQueue")
         {}
+        public ArchiveQueue(
+             ArchiveQueueStatusEnum _archiveQueueStatusEnum_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _partitionArchiveKey_
+            ,System.String _processorId_
+            ,System.DateTime _scheduledTime_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+            ):base("ArchiveQueue")
+        {
+            _archiveQueueStatusEnum = _archiveQueueStatusEnum_;
+            _partitionArchiveKey = _partitionArchiveKey_;
+            _processorId = _processorId_;
+            _scheduledTime = _scheduledTime_;
+            _studyStorageKey = _studyStorageKey_;
+        }
         #endregion
 
         #region Private Members
@@ -99,6 +113,26 @@ namespace ClearCanvas.ImageServer.Model
         {
             IArchiveQueueEntityBroker broker = read.GetBroker<IArchiveQueueEntityBroker>();
             ArchiveQueue theObject = broker.Load(key);
+            return theObject;
+        }
+        static public ArchiveQueue Insert(ArchiveQueue table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public ArchiveQueue Insert(IUpdateContext update, ArchiveQueue table)
+        {
+            IArchiveQueueEntityBroker broker = update.GetBroker<IArchiveQueueEntityBroker>();
+            ArchiveQueueUpdateColumns updateColumns = new ArchiveQueueUpdateColumns();
+            updateColumns.ArchiveQueueStatusEnum = table.ArchiveQueueStatusEnum;
+            updateColumns.PartitionArchiveKey = table.PartitionArchiveKey;
+            updateColumns.ProcessorId = table.ProcessorId;
+            updateColumns.ScheduledTime = table.ScheduledTime;
+            updateColumns.StudyStorageKey = table.StudyStorageKey;
+            ArchiveQueue theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

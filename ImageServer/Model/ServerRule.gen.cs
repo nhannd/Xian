@@ -44,6 +44,26 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public ServerRule():base("ServerRule")
         {}
+        public ServerRule(
+             System.Boolean _defaultRule_
+            ,System.Boolean _enabled_
+            ,System.Boolean _exemptRule_
+            ,System.String _ruleName_
+            ,System.Xml.XmlDocument _ruleXml_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ,ServerRuleApplyTimeEnum _serverRuleApplyTimeEnum_
+            ,ServerRuleTypeEnum _serverRuleTypeEnum_
+            ):base("ServerRule")
+        {
+            _defaultRule = _defaultRule_;
+            _enabled = _enabled_;
+            _exemptRule = _exemptRule_;
+            _ruleName = _ruleName_;
+            _ruleXml = _ruleXml_;
+            _serverPartitionKey = _serverPartitionKey_;
+            _serverRuleApplyTimeEnum = _serverRuleApplyTimeEnum_;
+            _serverRuleTypeEnum = _serverRuleTypeEnum_;
+        }
         #endregion
 
         #region Private Members
@@ -120,6 +140,29 @@ namespace ClearCanvas.ImageServer.Model
         {
             IServerRuleEntityBroker broker = read.GetBroker<IServerRuleEntityBroker>();
             ServerRule theObject = broker.Load(key);
+            return theObject;
+        }
+        static public ServerRule Insert(ServerRule table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public ServerRule Insert(IUpdateContext update, ServerRule table)
+        {
+            IServerRuleEntityBroker broker = update.GetBroker<IServerRuleEntityBroker>();
+            ServerRuleUpdateColumns updateColumns = new ServerRuleUpdateColumns();
+            updateColumns.DefaultRule = table.DefaultRule;
+            updateColumns.Enabled = table.Enabled;
+            updateColumns.ExemptRule = table.ExemptRule;
+            updateColumns.RuleName = table.RuleName;
+            updateColumns.RuleXml = table.RuleXml;
+            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
+            updateColumns.ServerRuleApplyTimeEnum = table.ServerRuleApplyTimeEnum;
+            updateColumns.ServerRuleTypeEnum = table.ServerRuleTypeEnum;
+            ServerRule theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

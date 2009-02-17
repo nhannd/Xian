@@ -44,6 +44,44 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public ServerPartition():base("ServerPartition")
         {}
+        public ServerPartition(
+             System.Boolean _acceptAnyDevice_
+            ,System.String _aeTitle_
+            ,System.Boolean _auditDeleteStudy_
+            ,System.Boolean _autoInsertDevice_
+            ,System.Int32 _defaultRemotePort_
+            ,System.String _description_
+            ,DuplicateSopPolicyEnum _duplicateSopPolicyEnum_
+            ,System.Boolean _enabled_
+            ,System.Boolean _matchAccessionNumber_
+            ,System.Boolean _matchIssuerOfPatientId_
+            ,System.Boolean _matchPatientId_
+            ,System.Boolean _matchPatientsBirthDate_
+            ,System.Boolean _matchPatientsName_
+            ,System.Boolean _matchPatientsSex_
+            ,System.String _partitionFolder_
+            ,System.Int32 _port_
+            ,System.Int32 _studyCount_
+            ):base("ServerPartition")
+        {
+            _acceptAnyDevice = _acceptAnyDevice_;
+            _aeTitle = _aeTitle_;
+            _auditDeleteStudy = _auditDeleteStudy_;
+            _autoInsertDevice = _autoInsertDevice_;
+            _defaultRemotePort = _defaultRemotePort_;
+            _description = _description_;
+            _duplicateSopPolicyEnum = _duplicateSopPolicyEnum_;
+            _enabled = _enabled_;
+            _matchAccessionNumber = _matchAccessionNumber_;
+            _matchIssuerOfPatientId = _matchIssuerOfPatientId_;
+            _matchPatientId = _matchPatientId_;
+            _matchPatientsBirthDate = _matchPatientsBirthDate_;
+            _matchPatientsName = _matchPatientsName_;
+            _matchPatientsSex = _matchPatientsSex_;
+            _partitionFolder = _partitionFolder_;
+            _port = _port_;
+            _studyCount = _studyCount_;
+        }
         #endregion
 
         #region Private Members
@@ -183,6 +221,38 @@ namespace ClearCanvas.ImageServer.Model
         {
             IServerPartitionEntityBroker broker = read.GetBroker<IServerPartitionEntityBroker>();
             ServerPartition theObject = broker.Load(key);
+            return theObject;
+        }
+        static public ServerPartition Insert(ServerPartition table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public ServerPartition Insert(IUpdateContext update, ServerPartition table)
+        {
+            IServerPartitionEntityBroker broker = update.GetBroker<IServerPartitionEntityBroker>();
+            ServerPartitionUpdateColumns updateColumns = new ServerPartitionUpdateColumns();
+            updateColumns.AcceptAnyDevice = table.AcceptAnyDevice;
+            updateColumns.AeTitle = table.AeTitle;
+            updateColumns.AuditDeleteStudy = table.AuditDeleteStudy;
+            updateColumns.AutoInsertDevice = table.AutoInsertDevice;
+            updateColumns.DefaultRemotePort = table.DefaultRemotePort;
+            updateColumns.Description = table.Description;
+            updateColumns.DuplicateSopPolicyEnum = table.DuplicateSopPolicyEnum;
+            updateColumns.Enabled = table.Enabled;
+            updateColumns.MatchAccessionNumber = table.MatchAccessionNumber;
+            updateColumns.MatchIssuerOfPatientId = table.MatchIssuerOfPatientId;
+            updateColumns.MatchPatientId = table.MatchPatientId;
+            updateColumns.MatchPatientsBirthDate = table.MatchPatientsBirthDate;
+            updateColumns.MatchPatientsName = table.MatchPatientsName;
+            updateColumns.MatchPatientsSex = table.MatchPatientsSex;
+            updateColumns.PartitionFolder = table.PartitionFolder;
+            updateColumns.Port = table.Port;
+            updateColumns.StudyCount = table.StudyCount;
+            ServerPartition theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

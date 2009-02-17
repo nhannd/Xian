@@ -45,6 +45,26 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public Patient():base("Patient")
         {}
+        public Patient(
+             System.String _issuerOfPatientId_
+            ,System.Int32 _numberOfPatientRelatedInstances_
+            ,System.Int32 _numberOfPatientRelatedSeries_
+            ,System.Int32 _numberOfPatientRelatedStudies_
+            ,System.String _patientId_
+            ,System.String _patientsName_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ,System.String _specificCharacterSet_
+            ):base("Patient")
+        {
+            _issuerOfPatientId = _issuerOfPatientId_;
+            _numberOfPatientRelatedInstances = _numberOfPatientRelatedInstances_;
+            _numberOfPatientRelatedSeries = _numberOfPatientRelatedSeries_;
+            _numberOfPatientRelatedStudies = _numberOfPatientRelatedStudies_;
+            _patientId = _patientId_;
+            _patientsName = _patientsName_;
+            _serverPartitionKey = _serverPartitionKey_;
+            _specificCharacterSet = _specificCharacterSet_;
+        }
         #endregion
 
         #region Private Members
@@ -128,6 +148,29 @@ namespace ClearCanvas.ImageServer.Model
         {
             IPatientEntityBroker broker = read.GetBroker<IPatientEntityBroker>();
             Patient theObject = broker.Load(key);
+            return theObject;
+        }
+        static public Patient Insert(Patient table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public Patient Insert(IUpdateContext update, Patient table)
+        {
+            IPatientEntityBroker broker = update.GetBroker<IPatientEntityBroker>();
+            PatientUpdateColumns updateColumns = new PatientUpdateColumns();
+            updateColumns.IssuerOfPatientId = table.IssuerOfPatientId;
+            updateColumns.NumberOfPatientRelatedInstances = table.NumberOfPatientRelatedInstances;
+            updateColumns.NumberOfPatientRelatedSeries = table.NumberOfPatientRelatedSeries;
+            updateColumns.NumberOfPatientRelatedStudies = table.NumberOfPatientRelatedStudies;
+            updateColumns.PatientId = table.PatientId;
+            updateColumns.PatientsName = table.PatientsName;
+            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
+            updateColumns.SpecificCharacterSet = table.SpecificCharacterSet;
+            Patient theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

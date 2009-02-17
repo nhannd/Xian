@@ -31,7 +31,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -71,6 +75,42 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 
 				return CollectionUtils.FirstElement(versions);
 			}
+		}
+
+		public void ExecuteSql(SqlConnection connection, IUpgradeScript script)
+		{
+			string sql = script.GetScript();
+
+			Regex regex = new Regex("^\\s*GO\\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+			string[] lines = regex.Split(sql);
+
+			SqlTransaction transaction = connection.BeginTransaction();
+			using (SqlCommand cmd = connection.CreateCommand())
+			{
+				cmd.Connection = connection;
+				cmd.Transaction = transaction;
+
+				foreach (string line in lines)
+				{
+					if (line.Length > 0)
+					{
+						cmd.CommandText = line;
+						cmd.CommandType = CommandType.Text;
+
+						try
+						{
+							cmd.ExecuteNonQuery();
+						}
+						catch (SqlException)
+						{
+							transaction.Rollback();
+							throw;
+						}
+					}
+				}
+			}
+
+			transaction.Commit();
 		}
 	}
 }

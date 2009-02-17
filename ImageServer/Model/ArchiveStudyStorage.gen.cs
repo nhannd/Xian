@@ -44,6 +44,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public ArchiveStudyStorage():base("ArchiveStudyStorage")
         {}
+        public ArchiveStudyStorage(
+             System.DateTime _archiveTime_
+            ,System.Xml.XmlDocument _archiveXml_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _partitionArchiveKey_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+            ):base("ArchiveStudyStorage")
+        {
+            _archiveTime = _archiveTime_;
+            _archiveXml = _archiveXml_;
+            _partitionArchiveKey = _partitionArchiveKey_;
+            _serverTransferSyntaxKey = _serverTransferSyntaxKey_;
+            _studyStorageKey = _studyStorageKey_;
+        }
         #endregion
 
         #region Private Members
@@ -99,6 +113,26 @@ namespace ClearCanvas.ImageServer.Model
         {
             IArchiveStudyStorageEntityBroker broker = read.GetBroker<IArchiveStudyStorageEntityBroker>();
             ArchiveStudyStorage theObject = broker.Load(key);
+            return theObject;
+        }
+        static public ArchiveStudyStorage Insert(ArchiveStudyStorage table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public ArchiveStudyStorage Insert(IUpdateContext update, ArchiveStudyStorage table)
+        {
+            IArchiveStudyStorageEntityBroker broker = update.GetBroker<IArchiveStudyStorageEntityBroker>();
+            ArchiveStudyStorageUpdateColumns updateColumns = new ArchiveStudyStorageUpdateColumns();
+            updateColumns.ArchiveTime = table.ArchiveTime;
+            updateColumns.ArchiveXml = table.ArchiveXml;
+            updateColumns.PartitionArchiveKey = table.PartitionArchiveKey;
+            updateColumns.ServerTransferSyntaxKey = table.ServerTransferSyntaxKey;
+            updateColumns.StudyStorageKey = table.StudyStorageKey;
+            ArchiveStudyStorage theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

@@ -45,6 +45,16 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public ServerSopClass():base("ServerSopClass")
         {}
+        public ServerSopClass(
+             System.String _description_
+            ,System.Boolean _nonImage_
+            ,System.String _sopClassUid_
+            ):base("ServerSopClass")
+        {
+            _description = _description_;
+            _nonImage = _nonImage_;
+            _sopClassUid = _sopClassUid_;
+        }
         #endregion
 
         #region Private Members
@@ -87,6 +97,24 @@ namespace ClearCanvas.ImageServer.Model
         {
             IServerSopClassEntityBroker broker = read.GetBroker<IServerSopClassEntityBroker>();
             ServerSopClass theObject = broker.Load(key);
+            return theObject;
+        }
+        static public ServerSopClass Insert(ServerSopClass table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public ServerSopClass Insert(IUpdateContext update, ServerSopClass table)
+        {
+            IServerSopClassEntityBroker broker = update.GetBroker<IServerSopClassEntityBroker>();
+            ServerSopClassUpdateColumns updateColumns = new ServerSopClassUpdateColumns();
+            updateColumns.Description = table.Description;
+            updateColumns.NonImage = table.NonImage;
+            updateColumns.SopClassUid = table.SopClassUid;
+            ServerSopClass theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

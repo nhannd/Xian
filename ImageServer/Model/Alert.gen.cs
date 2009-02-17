@@ -44,6 +44,24 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public Alert():base("Alert")
         {}
+        public Alert(
+             AlertCategoryEnum _alertCategoryEnum_
+            ,AlertLevelEnum _alertLevelEnum_
+            ,System.String _component_
+            ,System.Xml.XmlDocument _content_
+            ,System.DateTime _insertTime_
+            ,System.String _source_
+            ,System.Int32 _typeCode_
+            ):base("Alert")
+        {
+            _alertCategoryEnum = _alertCategoryEnum_;
+            _alertLevelEnum = _alertLevelEnum_;
+            _component = _component_;
+            _content = _content_;
+            _insertTime = _insertTime_;
+            _source = _source_;
+            _typeCode = _typeCode_;
+        }
         #endregion
 
         #region Private Members
@@ -113,6 +131,28 @@ namespace ClearCanvas.ImageServer.Model
         {
             IAlertEntityBroker broker = read.GetBroker<IAlertEntityBroker>();
             Alert theObject = broker.Load(key);
+            return theObject;
+        }
+        static public Alert Insert(Alert table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public Alert Insert(IUpdateContext update, Alert table)
+        {
+            IAlertEntityBroker broker = update.GetBroker<IAlertEntityBroker>();
+            AlertUpdateColumns updateColumns = new AlertUpdateColumns();
+            updateColumns.AlertCategoryEnum = table.AlertCategoryEnum;
+            updateColumns.AlertLevelEnum = table.AlertLevelEnum;
+            updateColumns.Component = table.Component;
+            updateColumns.Content = table.Content;
+            updateColumns.InsertTime = table.InsertTime;
+            updateColumns.Source = table.Source;
+            updateColumns.TypeCode = table.TypeCode;
+            Alert theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

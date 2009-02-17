@@ -45,6 +45,24 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public WorkQueueUid():base("WorkQueueUid")
         {}
+        public WorkQueueUid(
+             System.Boolean _duplicate_
+            ,System.String _extension_
+            ,System.Boolean _failed_
+            ,System.Int16 _failureCount_
+            ,System.String _seriesInstanceUid_
+            ,System.String _sopInstanceUid_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _workQueueKey_
+            ):base("WorkQueueUid")
+        {
+            _duplicate = _duplicate_;
+            _extension = _extension_;
+            _failed = _failed_;
+            _failureCount = _failureCount_;
+            _seriesInstanceUid = _seriesInstanceUid_;
+            _sopInstanceUid = _sopInstanceUid_;
+            _workQueueKey = _workQueueKey_;
+        }
         #endregion
 
         #region Private Members
@@ -116,6 +134,28 @@ namespace ClearCanvas.ImageServer.Model
         {
             IWorkQueueUidEntityBroker broker = read.GetBroker<IWorkQueueUidEntityBroker>();
             WorkQueueUid theObject = broker.Load(key);
+            return theObject;
+        }
+        static public WorkQueueUid Insert(WorkQueueUid table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public WorkQueueUid Insert(IUpdateContext update, WorkQueueUid table)
+        {
+            IWorkQueueUidEntityBroker broker = update.GetBroker<IWorkQueueUidEntityBroker>();
+            WorkQueueUidUpdateColumns updateColumns = new WorkQueueUidUpdateColumns();
+            updateColumns.Duplicate = table.Duplicate;
+            updateColumns.Extension = table.Extension;
+            updateColumns.Failed = table.Failed;
+            updateColumns.FailureCount = table.FailureCount;
+            updateColumns.SeriesInstanceUid = table.SeriesInstanceUid;
+            updateColumns.SopInstanceUid = table.SopInstanceUid;
+            updateColumns.WorkQueueKey = table.WorkQueueKey;
+            WorkQueueUid theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

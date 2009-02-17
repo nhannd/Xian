@@ -44,6 +44,22 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public StudyHistory():base("StudyHistory")
         {}
+        public StudyHistory(
+             System.Xml.XmlDocument _changeDescription_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _destStudyStorageKey_
+            ,System.DateTime _insertTime_
+            ,System.Xml.XmlDocument _studyData_
+            ,StudyHistoryTypeEnum _studyHistoryTypeEnum_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+            ):base("StudyHistory")
+        {
+            _changeDescription = _changeDescription_;
+            _destStudyStorageKey = _destStudyStorageKey_;
+            _insertTime = _insertTime_;
+            _studyData = _studyData_;
+            _studyHistoryTypeEnum = _studyHistoryTypeEnum_;
+            _studyStorageKey = _studyStorageKey_;
+        }
         #endregion
 
         #region Private Members
@@ -106,6 +122,27 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyHistoryEntityBroker broker = read.GetBroker<IStudyHistoryEntityBroker>();
             StudyHistory theObject = broker.Load(key);
+            return theObject;
+        }
+        static public StudyHistory Insert(StudyHistory table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public StudyHistory Insert(IUpdateContext update, StudyHistory table)
+        {
+            IStudyHistoryEntityBroker broker = update.GetBroker<IStudyHistoryEntityBroker>();
+            StudyHistoryUpdateColumns updateColumns = new StudyHistoryUpdateColumns();
+            updateColumns.ChangeDescription = table.ChangeDescription;
+            updateColumns.DestStudyStorageKey = table.DestStudyStorageKey;
+            updateColumns.InsertTime = table.InsertTime;
+            updateColumns.StudyData = table.StudyData;
+            updateColumns.StudyHistoryTypeEnum = table.StudyHistoryTypeEnum;
+            updateColumns.StudyStorageKey = table.StudyStorageKey;
+            StudyHistory theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

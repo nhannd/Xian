@@ -44,6 +44,16 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public PartitionSopClass():base("PartitionSopClass")
         {}
+        public PartitionSopClass(
+             System.Boolean _enabled_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverSopClassKey_
+            ):base("PartitionSopClass")
+        {
+            _enabled = _enabled_;
+            _serverPartitionKey = _serverPartitionKey_;
+            _serverSopClassKey = _serverSopClassKey_;
+        }
         #endregion
 
         #region Private Members
@@ -85,6 +95,24 @@ namespace ClearCanvas.ImageServer.Model
         {
             IPartitionSopClassEntityBroker broker = read.GetBroker<IPartitionSopClassEntityBroker>();
             PartitionSopClass theObject = broker.Load(key);
+            return theObject;
+        }
+        static public PartitionSopClass Insert(PartitionSopClass table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public PartitionSopClass Insert(IUpdateContext update, PartitionSopClass table)
+        {
+            IPartitionSopClassEntityBroker broker = update.GetBroker<IPartitionSopClassEntityBroker>();
+            PartitionSopClassUpdateColumns updateColumns = new PartitionSopClassUpdateColumns();
+            updateColumns.Enabled = table.Enabled;
+            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
+            updateColumns.ServerSopClassKey = table.ServerSopClassKey;
+            PartitionSopClass theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

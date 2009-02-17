@@ -44,6 +44,24 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public PartitionArchive():base("PartitionArchive")
         {}
+        public PartitionArchive(
+             System.Int32 _archiveDelayHours_
+            ,ArchiveTypeEnum _archiveTypeEnum_
+            ,System.Xml.XmlDocument _configurationXml_
+            ,System.String _description_
+            ,System.Boolean _enabled_
+            ,System.Boolean _readOnly_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ):base("PartitionArchive")
+        {
+            _archiveDelayHours = _archiveDelayHours_;
+            _archiveTypeEnum = _archiveTypeEnum_;
+            _configurationXml = _configurationXml_;
+            _description = _description_;
+            _enabled = _enabled_;
+            _readOnly = _readOnly_;
+            _serverPartitionKey = _serverPartitionKey_;
+        }
         #endregion
 
         #region Private Members
@@ -113,6 +131,28 @@ namespace ClearCanvas.ImageServer.Model
         {
             IPartitionArchiveEntityBroker broker = read.GetBroker<IPartitionArchiveEntityBroker>();
             PartitionArchive theObject = broker.Load(key);
+            return theObject;
+        }
+        static public PartitionArchive Insert(PartitionArchive table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public PartitionArchive Insert(IUpdateContext update, PartitionArchive table)
+        {
+            IPartitionArchiveEntityBroker broker = update.GetBroker<IPartitionArchiveEntityBroker>();
+            PartitionArchiveUpdateColumns updateColumns = new PartitionArchiveUpdateColumns();
+            updateColumns.ArchiveDelayHours = table.ArchiveDelayHours;
+            updateColumns.ArchiveTypeEnum = table.ArchiveTypeEnum;
+            updateColumns.ConfigurationXml = table.ConfigurationXml;
+            updateColumns.Description = table.Description;
+            updateColumns.Enabled = table.Enabled;
+            updateColumns.ReadOnly = table.ReadOnly;
+            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
+            PartitionArchive theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

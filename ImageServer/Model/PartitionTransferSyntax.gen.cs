@@ -44,6 +44,16 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public PartitionTransferSyntax():base("PartitionTransferSyntax")
         {}
+        public PartitionTransferSyntax(
+             System.Boolean _enabled_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey_
+            ):base("PartitionTransferSyntax")
+        {
+            _enabled = _enabled_;
+            _serverPartitionKey = _serverPartitionKey_;
+            _serverTransferSyntaxKey = _serverTransferSyntaxKey_;
+        }
         #endregion
 
         #region Private Members
@@ -85,6 +95,24 @@ namespace ClearCanvas.ImageServer.Model
         {
             IPartitionTransferSyntaxEntityBroker broker = read.GetBroker<IPartitionTransferSyntaxEntityBroker>();
             PartitionTransferSyntax theObject = broker.Load(key);
+            return theObject;
+        }
+        static public PartitionTransferSyntax Insert(PartitionTransferSyntax table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public PartitionTransferSyntax Insert(IUpdateContext update, PartitionTransferSyntax table)
+        {
+            IPartitionTransferSyntaxEntityBroker broker = update.GetBroker<IPartitionTransferSyntaxEntityBroker>();
+            PartitionTransferSyntaxUpdateColumns updateColumns = new PartitionTransferSyntaxUpdateColumns();
+            updateColumns.Enabled = table.Enabled;
+            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
+            updateColumns.ServerTransferSyntaxKey = table.ServerTransferSyntaxKey;
+            PartitionTransferSyntax theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

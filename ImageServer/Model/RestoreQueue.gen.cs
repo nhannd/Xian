@@ -44,6 +44,20 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public RestoreQueue():base("RestoreQueue")
         {}
+        public RestoreQueue(
+             ClearCanvas.ImageServer.Enterprise.ServerEntityKey _archiveStudyStorageKey_
+            ,System.String _processorId_
+            ,RestoreQueueStatusEnum _restoreQueueStatusEnum_
+            ,System.DateTime _scheduledTime_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
+            ):base("RestoreQueue")
+        {
+            _archiveStudyStorageKey = _archiveStudyStorageKey_;
+            _processorId = _processorId_;
+            _restoreQueueStatusEnum = _restoreQueueStatusEnum_;
+            _scheduledTime = _scheduledTime_;
+            _studyStorageKey = _studyStorageKey_;
+        }
         #endregion
 
         #region Private Members
@@ -99,6 +113,26 @@ namespace ClearCanvas.ImageServer.Model
         {
             IRestoreQueueEntityBroker broker = read.GetBroker<IRestoreQueueEntityBroker>();
             RestoreQueue theObject = broker.Load(key);
+            return theObject;
+        }
+        static public RestoreQueue Insert(RestoreQueue table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public RestoreQueue Insert(IUpdateContext update, RestoreQueue table)
+        {
+            IRestoreQueueEntityBroker broker = update.GetBroker<IRestoreQueueEntityBroker>();
+            RestoreQueueUpdateColumns updateColumns = new RestoreQueueUpdateColumns();
+            updateColumns.ArchiveStudyStorageKey = table.ArchiveStudyStorageKey;
+            updateColumns.ProcessorId = table.ProcessorId;
+            updateColumns.RestoreQueueStatusEnum = table.RestoreQueueStatusEnum;
+            updateColumns.ScheduledTime = table.ScheduledTime;
+            updateColumns.StudyStorageKey = table.StudyStorageKey;
+            RestoreQueue theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion

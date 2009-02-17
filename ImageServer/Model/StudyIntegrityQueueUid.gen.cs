@@ -45,6 +45,18 @@ namespace ClearCanvas.ImageServer.Model
         #region Constructors
         public StudyIntegrityQueueUid():base("StudyIntegrityQueueUid")
         {}
+        public StudyIntegrityQueueUid(
+             System.String _seriesDescription_
+            ,System.String _seriesInstanceUid_
+            ,System.String _sopInstanceUid_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyIntegrityQueueKey_
+            ):base("StudyIntegrityQueueUid")
+        {
+            _seriesDescription = _seriesDescription_;
+            _seriesInstanceUid = _seriesInstanceUid_;
+            _sopInstanceUid = _sopInstanceUid_;
+            _studyIntegrityQueueKey = _studyIntegrityQueueKey_;
+        }
         #endregion
 
         #region Private Members
@@ -96,6 +108,25 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyIntegrityQueueUidEntityBroker broker = read.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
             StudyIntegrityQueueUid theObject = broker.Load(key);
+            return theObject;
+        }
+        static public StudyIntegrityQueueUid Insert(StudyIntegrityQueueUid table)
+        {
+            using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                return Insert(update, table);
+            }
+        }
+        static public StudyIntegrityQueueUid Insert(IUpdateContext update, StudyIntegrityQueueUid table)
+        {
+            IStudyIntegrityQueueUidEntityBroker broker = update.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
+            StudyIntegrityQueueUidUpdateColumns updateColumns = new StudyIntegrityQueueUidUpdateColumns();
+            updateColumns.SeriesDescription = table.SeriesDescription;
+            updateColumns.SeriesInstanceUid = table.SeriesInstanceUid;
+            updateColumns.SopInstanceUid = table.SopInstanceUid;
+            updateColumns.StudyIntegrityQueueKey = table.StudyIntegrityQueueKey;
+            StudyIntegrityQueueUid theObject = broker.Insert(updateColumns);
+            update.Commit();
             return theObject;
         }
         #endregion
