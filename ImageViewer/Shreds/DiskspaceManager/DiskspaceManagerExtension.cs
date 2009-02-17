@@ -31,6 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Shreds;
 using ClearCanvas.Server.ShredHost;
 using ClearCanvas.ImageViewer.Services.DiskspaceManager;
 
