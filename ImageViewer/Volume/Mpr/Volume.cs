@@ -254,6 +254,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return orientationVolume;
 		}
 
+		public Vector3D RotateToPatientOrientation(Vector3D volumeVec)
+		{
+			Matrix volumePos = new Matrix(4, 1);
+			volumePos.SetColumn(0, volumeVec.X, volumeVec.Y, volumeVec.Z, 1F);
+			Matrix patientPos = OrientationPatientMatrix * volumePos;
+			return new Vector3D(patientPos[0, 0], patientPos[1, 0], patientPos[2, 0]);
+		}
+
 		public float LongAxisMagnitude
 		{
 			get { return Math.Max(Math.Max(Dimensions.X, Dimensions.Y), Dimensions.Z); }

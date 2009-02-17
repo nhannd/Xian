@@ -97,16 +97,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				       		{0, 0, 0, 1}
 				       	});
 
-			//Vector3D patientOrientationOrtho = sourceOrientationRowPatient.Cross(sourceOrientationColumnPatient);
-			//Matrix srcPlanePatientOrientation = new Matrix
-			//    (4, 4, new float[4, 4]
-			//            {
-			//                {sourceOrientationRowPatient.X, sourceOrientationRowPatient.Y, sourceOrientationRowPatient.Z, 0},
-			//                {sourceOrientationColumnPatient.X, sourceOrientationColumnPatient.Y, sourceOrientationColumnPatient.Z, 0},
-			//                {patientOrientationOrtho.X, patientOrientationOrtho.Y, patientOrientationOrtho.Z, 0},
-			//                {0, 0, 0, 1}
-			//            });
-			//Matrix srcPlaneOrientation = _volume.RotateToVolumeOrientation(srcPlanePatientOrientation);
+			Vector3D patientOrientationOrtho = sourceOrientationRowPatient.Cross(sourceOrientationColumnPatient);
+			Matrix srcPlanePatientOrientation = new Matrix
+				(4, 4, new float[4, 4]
+			            {
+			                {sourceOrientationRowPatient.X, sourceOrientationRowPatient.Y, sourceOrientationRowPatient.Z, 0},
+			                {sourceOrientationColumnPatient.X, sourceOrientationColumnPatient.Y, sourceOrientationColumnPatient.Z, 0},
+			                {patientOrientationOrtho.X, patientOrientationOrtho.Y, patientOrientationOrtho.Z, 0},
+			                {0, 0, 0, 1}
+			            });
+			
+			Matrix srcPlaneOrientation = _volume.RotateToVolumeOrientation(srcPlanePatientOrientation);
+
 
 			_resliceAxes = _volume.RotateToVolumeOrientation(slicePlanePatientOrientation);
 
@@ -252,8 +254,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			get
 			{
-				Vector3D zVec = new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
 				Vector3D spacingVec = new Vector3D(_volume.Spacing.X, _volume.Spacing.Y, _volume.Spacing.Z);
+				spacingVec = _volume.RotateToPatientOrientation(spacingVec);
+
+				Vector3D zVec = new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
 				float spacing = zVec.Dot(spacingVec);
 				return spacing * zVec;
 			}
@@ -337,12 +341,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// So I settled on just the longest axis, creates enough slices without going out of bounds too often
 			int numSlices = (int) (_volume.LongAxisMagnitude / spacingVector.Magnitude);
 
-			Vector3D startPoint = throughPoint - (numSlices / 2) * spacingVector;
+			Vector3D startPoint = throughPoint + (numSlices / 2) * spacingVector;
 
 			int sliceIndex;
 			for (sliceIndex = 0; sliceIndex < numSlices; sliceIndex++)
 			{
-				Vector3D point = startPoint + sliceIndex * spacingVector;
+				Vector3D point = startPoint - (sliceIndex * spacingVector);
 				ImageSop imageSop = CreateSliceImageSop(point);
 				DicomGrayscalePresentationImage presImage = new DicomGrayscalePresentationImage(imageSop.Frames[1]);
 				SetSeriesLevelDicomAttributes(presImage, sliceIndex, seriesInstanceUid, spacingVector.Magnitude);
@@ -375,12 +379,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			int numSlices = (int) (_volume.LongAxisMagnitude / spacingVector.Magnitude);
 
 			//ggerade ToDo: Start on actual slice boundaries
-			Vector3D startPoint = centerPoint - (numSlices / 2) * spacingVector;
+			Vector3D startPoint = centerPoint + (numSlices / 2) * spacingVector;
 
 			int sliceIndex;
 			for (sliceIndex = 0; sliceIndex < numSlices; sliceIndex++)
 			{
-				Vector3D point = startPoint + sliceIndex * spacingVector;
+				Vector3D point = startPoint - (sliceIndex * spacingVector);
 				ImageSop imageSop = CreateSliceImageSop(point);
 				DicomGrayscalePresentationImage presImage = new DicomGrayscalePresentationImage(imageSop.Frames[1]);
 				SetSeriesLevelDicomAttributes(presImage, sliceIndex, seriesInstanceUid, spacingVector.Magnitude);
@@ -661,7 +665,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			return new Matrix(4, 4, new float[4,4]
 			                        	{
-			                        		{0, -1, 0, 0},
+			                        		{0, 1, 0, 0},
 			                        		{0, 0, -1, 0},
 			                        		{1, 0, 0, 0},
 			                        		{0, 0, 0, 1}

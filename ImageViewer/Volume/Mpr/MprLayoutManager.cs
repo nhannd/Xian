@@ -153,13 +153,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			AddAllSopsToStudyTree(ImageViewer.StudyTree, obliqueDisplaySet);
 
 			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
-			physicalWorkspace.ImageBoxes[0].DisplaySet = sagittalDisplaySet;
+			physicalWorkspace.ImageBoxes[0].DisplaySet = axialDisplaySet;
 			// Let's start out in the middle of each stack
-			physicalWorkspace.ImageBoxes[0].TopLeftPresentationImageIndex = sagittalDisplaySet.PresentationImages.Count / 2;
-			physicalWorkspace.ImageBoxes[1].DisplaySet = coronalDisplaySet;
-			physicalWorkspace.ImageBoxes[1].TopLeftPresentationImageIndex = coronalDisplaySet.PresentationImages.Count / 2;
-			physicalWorkspace.ImageBoxes[2].DisplaySet = axialDisplaySet;
-			physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = axialDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[0].TopLeftPresentationImageIndex = axialDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[1].DisplaySet = sagittalDisplaySet;
+			physicalWorkspace.ImageBoxes[1].TopLeftPresentationImageIndex = sagittalDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[2].DisplaySet = coronalDisplaySet;
+			physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = coronalDisplaySet.PresentationImages.Count / 2;
 			physicalWorkspace.ImageBoxes[3].DisplaySet = obliqueDisplaySet;
 			physicalWorkspace.ImageBoxes[3].TopLeftPresentationImageIndex = obliqueDisplaySet.PresentationImages.Count / 2;
 
@@ -186,6 +186,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// Clear out the old DisplaySet
 			obliqueImageBox.DisplaySet = null;
 			RemoveAllSopsFromStudyTree(ImageViewer.StudyTree, displaySet);
+
+			//foreach (PresentationImage presentationImage in displaySet.PresentationImages)
+			//	presentationImage.Dispose();
 
 			_obliqueSlicer.SetSlicePlanePatient(sourceOrientationColumn, sourceOrientationRow, startPoint, endPoint);
 
@@ -308,6 +311,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				ImageSop sop = dicomGrayscalePresentationImage.ImageSop;
 				tree.RemoveSop(sop);
+				//sop.Dispose();
 			}
 		}
 

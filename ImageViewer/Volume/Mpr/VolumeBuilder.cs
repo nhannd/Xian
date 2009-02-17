@@ -175,7 +175,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Vector3D dimensions = new Vector3D(frames[0].Columns, frames[0].Rows, frames.Count);
 			int volumeSize = (int) (dimensions.X * dimensions.Y * dimensions.Z);
 
-			// Sort the frames by slice location to ensure coordinate consistency in our volumes
+			// Sort the frames by slice location to ensure coordinate consistency in our volumes.
+			// Sort by increasing location results in frames being added F to H, R to L, and A to P
 			frames.Sort(new SliceLocationComparer());
 			Vector3D originPatient = new Vector3D((float)frames[0].ImagePositionPatient.X,
 								  (float)frames[0].ImagePositionPatient.Y,
