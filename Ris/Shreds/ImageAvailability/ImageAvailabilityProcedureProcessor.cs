@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
 	/// <summary>
 	/// Processes in-progress procedures, and schedules corresponding Image Availability work queue items.
 	/// </summary>
-	public class ImageAvailabilityProcedureProcessor : QueueProcessor<Procedure>
+	public class ImageAvailabilityProcedureProcessor : EntityQueueProcessor<Procedure>
 	{
 		private readonly ImageAvailabilityShredSettings _settings;
 
@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			_settings = settings;
 		}
 
-		protected override IList<Procedure> GetNextBatch(int batchSize)
+		protected override IList<Procedure> GetNextBatchCore(int batchSize)
 		{
 			// Find a list of procedures that match the criteria
 			ProcedureSearchCriteria criteria = new ProcedureSearchCriteria();
@@ -32,7 +32,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			return PersistenceScope.CurrentContext.GetBroker<IProcedureBroker>().Find(criteria, page);
 		}
 
-		protected override void ActOnItem(Procedure procedure)
+		protected override void ActOnItemCore(Procedure procedure)
 		{
 			// create the workqueue item
 			TimeSpan expirationTime = TimeSpan.FromHours(_settings.ExpirationTime);

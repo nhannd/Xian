@@ -1,12 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Healthcare {
+namespace ClearCanvas.Workflow {
 
 
     /// <summary>

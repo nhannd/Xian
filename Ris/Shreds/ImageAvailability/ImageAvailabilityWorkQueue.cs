@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Workflow;
+using ClearCanvas.Workflow.Brokers;
 
 namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {

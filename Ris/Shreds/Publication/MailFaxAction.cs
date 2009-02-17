@@ -1,6 +1,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Shreds.Publication
 {

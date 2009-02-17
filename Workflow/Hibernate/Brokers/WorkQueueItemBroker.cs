@@ -4,7 +4,7 @@ using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Common;
 using System;
 
-namespace ClearCanvas.Healthcare.Hibernate.Brokers
+namespace ClearCanvas.Workflow.Hibernate.Brokers
 {
 	public partial class WorkQueueItemBroker
 	{

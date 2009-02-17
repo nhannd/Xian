@@ -1,19 +1,18 @@
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.Server.ShredHost;
 using System.Threading;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.Ris.Shreds
+namespace ClearCanvas.Common.Shreds
 {
     /// <summary>
-    /// Specialization of <see cref="Shred"/> for running code packaged in <see cref="IProcessor"/>
+	/// Specialization of <see cref="Shred"/> for running code packaged in <see cref="QueueProcessor"/>
     /// implementations.
     /// </summary>
-	public abstract class RisShredBase : Shred
+	public abstract class QueueProcessorShred : Shred
 	{
 		private bool _isStarted = false;
-        private readonly List<IProcessor> _processors = new List<IProcessor>();
+		private readonly List<QueueProcessor> _processors = new List<QueueProcessor>();
         private readonly List<Thread> _processorThreads = new List<Thread>();
 
         private readonly TimeSpan _shutDownTimeOut = new TimeSpan(0, 0, 60);
@@ -26,7 +25,7 @@ namespace ClearCanvas.Ris.Shreds
         /// invocations need not return the same processor instances.
         /// </remarks>
         /// <returns></returns>
-        protected abstract IList<IProcessor> GetProcessors();
+		protected abstract IList<QueueProcessor> GetProcessors();
 
 		#region Shred overrides
 
@@ -72,7 +71,7 @@ namespace ClearCanvas.Ris.Shreds
 			{
 
                 // attempt to start all processors - if any throws an exception, abort
-				foreach (IProcessor processor in GetProcessors())
+				foreach (QueueProcessor processor in GetProcessors())
 				{
                     Thread thread = StartProcessorThread(processor);
 
@@ -106,7 +105,7 @@ namespace ClearCanvas.Ris.Shreds
 			Platform.Log(LogLevel.Info, string.Format(SR.ShredStopping, this.GetDisplayName()));
 
             // request all processors to stop
-			foreach (IProcessor processor in _processors)
+			foreach (QueueProcessor processor in _processors)
 			{
                 try
                 {
@@ -147,7 +146,7 @@ namespace ClearCanvas.Ris.Shreds
         /// </summary>
         /// <param name="processor"></param>
         /// <returns></returns>
-        private static Thread StartProcessorThread(IProcessor processor)
+		private static Thread StartProcessorThread(QueueProcessor processor)
         {
             Thread thread = new Thread(
                 delegate()

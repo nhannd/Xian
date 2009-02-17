@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Server.ShredHost;
-using System;
+using ClearCanvas.Common.Shreds;
 
 namespace ClearCanvas.Ris.Shreds.Publication
 {
 	[ExtensionOf(typeof(ShredExtensionPoint))]
-	public class PublicationShred : RisShredBase
+	public class PublicationShred : QueueProcessorShred
 	{
 		public PublicationShred()
 		{
@@ -22,10 +21,10 @@ namespace ClearCanvas.Ris.Shreds.Publication
 			return SR.PublicationShredDescription;
 		}
 
-		protected override IList<IProcessor> GetProcessors()
+		protected override IList<QueueProcessor> GetProcessors()
 		{
 			PublicationProcessor p = new PublicationProcessor(new PublicationShredSettings());
-            return new IProcessor[] { p };
+			return new QueueProcessor[] { p };
         }
 
 	}

@@ -51,15 +51,12 @@
     <Compile Include="IWcfShred.cs" />
     <Compile Include="RunningState.cs" />
     <Compile Include="ServiceEndpointDescription.cs" />
-    <Compile Include="ShredExtensionPoint.cs" />
     <Compile Include="ShredHost.cs" />
     <Compile Include="ExtensionScanner.cs" />
-    <Compile Include="IShred.cs" />
     <Compile Include="IShredCommunicationProxy.cs" />
     <Compile Include="MarshallableList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProxyList.cs" />
-    <Compile Include="ShredBase.cs" />
     <Compile Include="ShredCommunicationServiceType.cs" />
     <Compile Include="ShredController.cs" />
     <Compile Include="ShredControllerList.cs" />

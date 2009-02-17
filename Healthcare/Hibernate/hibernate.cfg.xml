@@ -13,8 +13,8 @@
     <!--MS SQL-->
     <property name="hibernate.dialect">NHibernate.Dialect.MsSql2000Dialect</property>
     <property name="connection.driver_class">NHibernate.Driver.SqlClientDriver</property>
-    <property name="connection.connection_string">Data Source=172.16.10.167\SQLEXPRESS;Initial Catalog=Ris58;User Id=risuser;Password=rispass</property>
-    <property name="hibernate.default_schema">Ris58.dbo</property>
+    <property name="connection.connection_string">Data Source=172.16.10.167\SQLEXPRESS;Initial Catalog=Ris59;User Id=risuser;Password=rispass</property>
+    <property name="hibernate.default_schema">Ris59.dbo</property>
     <property name="hibernate.use_proxy_validator">false</property>
     <property name="hibernate.connection.release_mode">on_close</property>
   </session-factory>

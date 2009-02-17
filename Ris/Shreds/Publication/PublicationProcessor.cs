@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
     /// Processes <see cref="PublicationStep"/>s, performing all <see cref="IPublicationAction"/>s
     /// on each step.
     /// </summary>
-    internal class PublicationProcessor : QueueProcessor<PublicationStep>
+    internal class PublicationProcessor : EntityQueueProcessor<PublicationStep>
 	{
 		private readonly object[] _publicationActions;
 		private readonly PublicationShredSettings _settings;
@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
             _publicationActions = new PublicationActionExtensionPoint().CreateExtensions();
         }
 
-		protected override IList<PublicationStep> GetNextBatch(int batchSize)
+		protected override IList<PublicationStep> GetNextBatchCore(int batchSize)
 		{
 			// Get scheduled steps, where the "publishing cool-down" has elapsed
             // eg LastFailureTime is more than a specified number of seconds ago
@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Shreds.Publication
 			return PersistenceScope.CurrentContext.GetBroker<IPublicationStepBroker>().Find(criteria, page);
 		}
 
-		protected override void ActOnItem(PublicationStep item)
+		protected override void ActOnItemCore(PublicationStep item)
 		{
 			// execute each publication action
 			foreach (IPublicationAction action in _publicationActions)

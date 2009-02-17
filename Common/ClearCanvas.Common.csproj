@@ -293,6 +293,13 @@
     <Compile Include="Utilities\NullExtensionFactory.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Shreds\IShred.cs" />
+    <Compile Include="Shreds\QueueProcessor.cs" />
+    <Compile Include="Shreds\QueueProcessorShred.cs" />
+    <Compile Include="Shreds\ShredBase.cs" />
+    <Compile Include="Shreds\ShredExtensionPoint.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

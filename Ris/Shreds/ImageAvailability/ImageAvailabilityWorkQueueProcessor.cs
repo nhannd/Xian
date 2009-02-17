@@ -1,9 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
@@ -34,7 +33,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			get { return ImageAvailabilityWorkQueue.WorkQueueItemType; }
 		}
 
-		protected override void ActOnItem(WorkQueueItem item)
+		protected override void ActOnItemCore(WorkQueueItem item)
 		{
 			Procedure procedure = ImageAvailabilityWorkQueue.GetProcedure(item, PersistenceScope.CurrentContext);
 			procedure.ImageAvailability = _imageAvailabilityStrategy.ComputeProcedureImageAvailability(procedure, PersistenceScope.CurrentContext);
@@ -54,7 +53,8 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			{
 				base.OnItemSucceeded(item);
 			}
-		}
+		}
+
 		protected override bool ShouldRetry(WorkQueueItem item, Exception error, out DateTime retryTime)
 		{
 			// retry unless expired

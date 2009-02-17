@@ -141,22 +141,4 @@
   <data name="PublicationShredName" xml:space="preserve">
     <value>Publication</value>
   </data>
-  <data name="ShredFailedToStart" xml:space="preserve">
-    <value>The {0} shred has failed to start.  Please check the log for more details.</value>
-  </data>
-  <data name="ShredFailedToStop" xml:space="preserve">
-    <value>The {0} shred has failed to stop.  Please check the log for more details.</value>
-  </data>
-  <data name="ShredStartedSuccessfully" xml:space="preserve">
-    <value>The {0} shred has started successfully.</value>
-  </data>
-  <data name="ShredStarting" xml:space="preserve">
-    <value>Starting {0} Shred</value>
-  </data>
-  <data name="ShredStoppedSuccessfully" xml:space="preserve">
-    <value>The {0} shred has stopped successfully.</value>
-  </data>
-  <data name="ShredStopping" xml:space="preserve">
-    <value>Stopping {0} Shred</value>
-  </data>
 </root>

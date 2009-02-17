@@ -1,6 +1,6 @@
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Healthcare
+namespace ClearCanvas.Workflow
 {
 	/// <summary>
 	/// WorkQueueStatus enumeration

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace ClearCanvas.Healthcare.Brokers
+namespace ClearCanvas.Workflow.Brokers
 {
 	public partial interface IWorkQueueItemBroker
 	{

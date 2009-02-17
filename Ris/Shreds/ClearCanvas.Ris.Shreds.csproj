@@ -50,7 +50,6 @@
     <Compile Include="ImageAvailability\ImageAvailabilityShred.cs" />
     <Compile Include="ImageAvailability\ImageAvailabilityWorkQueue.cs" />
     <Compile Include="ImageAvailability\ImageAvailabilityWorkQueueProcessor.cs" />
-    <Compile Include="IProcessor.cs" />
     <Compile Include="Publication\PublicationProcessor.cs" />
     <Compile Include="Publication\PublicationShred.cs" />
     <Compile Include="Publication\PublicationShredSettings.cs" />
@@ -60,16 +59,12 @@
       <DependentUpon>PublicationShredSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="Publication\MailFaxAction.cs" />
-    <Compile Include="QueueProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ProcessorBase.cs" />
-    <Compile Include="RisShredBase.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="WorkQueueProcessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">
@@ -98,10 +93,6 @@
     <ProjectReference Include="..\..\Healthcare\ClearCanvas.Healthcare.csproj">
       <Project>{748C08F1-FD6E-49F6-90BB-90C3A323C714}</Project>
       <Name>ClearCanvas.Healthcare</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj">
-      <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>
-      <Name>ClearCanvas.Server.ShredHost</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Workflow\ClearCanvas.Workflow.csproj">
       <Project>{576C4A35-B314-49D0-BF53-4BD43D8D1F31}</Project>

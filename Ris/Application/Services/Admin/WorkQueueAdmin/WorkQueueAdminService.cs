@@ -4,10 +4,10 @@ using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.WorkQueueAdmin;
+using ClearCanvas.Workflow;
+using ClearCanvas.Workflow.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.WorkQueueAdmin
 {

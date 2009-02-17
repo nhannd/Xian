@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="*.gen.cs" />
     <Compile Include="Brokers\*.gen.cs" />
+    <Compile Include="Brokers\WorkQueueItemBroker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -80,6 +81,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Mappings\PerformedStepStatusEnum.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\WorkQueueStatusEnum.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\WorkQueueItem.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

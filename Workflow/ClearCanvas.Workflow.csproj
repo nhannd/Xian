@@ -38,6 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
+    <Compile Include="Brokers\IWorkQueueItemBroker.cs" />
     <Compile Include="PerformedStepSearchCriteria.cs" />
     <Compile Include="PerformedStepStatusTransitionLogic.cs" />
     <Compile Include="ActivitySchedulingSearchCriteria.cs" />
@@ -61,6 +62,9 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="WorkflowException.cs" />
+    <Compile Include="WorkQueueItem.cs" />
+    <Compile Include="WorkQueueProcessor.cs" />
+    <Compile Include="WorkQueueStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

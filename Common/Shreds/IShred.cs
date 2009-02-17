@@ -30,15 +30,13 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace ClearCanvas.Server.ShredHost
+namespace ClearCanvas.Common.Shreds
 {
     /// <summary>
     /// Defines the set of operations that are possible on a Shred
     /// </summary>
-    /// <seealso cref="ShredExtensionPoint"/>
+    /// <remarks>See also <see cref="ShredExtensionPoint"/></remarks>
     public interface IShred
     {
         /// <summary>

@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.Server.ShredHost;
+using ClearCanvas.Common.Shreds;
 
 namespace ClearCanvas.Ris.Shreds.ImageAvailability
 {
 	//[ExtensionOf(typeof(ShredExtensionPoint))]
-	public class ImageAvailabilityShred : RisShredBase
+	public class ImageAvailabilityShred : QueueProcessorShred
 	{
 		public ImageAvailabilityShred()
 		{
@@ -21,10 +20,10 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			return SR.ImageAvailabilityShredDescription;
 		}
 
-		protected override IList<IProcessor> GetProcessors()
+		protected override IList<QueueProcessor> GetProcessors()
 		{
             ImageAvailabilityShredSettings settings = new ImageAvailabilityShredSettings();
-            IProcessor[] processors = new IProcessor[] {
+			QueueProcessor[] processors = new QueueProcessor[] {
                 new ImageAvailabilityProcedureProcessor(settings),
                 new ImageAvailabilityWorkQueueProcessor(settings)
             };

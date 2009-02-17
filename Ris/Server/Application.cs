@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Shreds;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;

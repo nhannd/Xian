@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Shreds;
 
 namespace ClearCanvas.Server.ShredHost
 {

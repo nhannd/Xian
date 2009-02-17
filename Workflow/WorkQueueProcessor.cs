@@ -1,16 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common.Shreds;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Workflow.Brokers;
 
-namespace ClearCanvas.Ris.Shreds
+namespace ClearCanvas.Workflow
 {
 	/// <summary>
-	/// A specialization of <see cref="QueueProcessor{T}"/> that operates on items of type <see cref="WorkQueueItem"/>.
+	/// A specialization of <see cref="QueueProcessor{TItem}"/> that operates on items of type <see cref="WorkQueueItem"/>.
 	/// </summary>
-	public abstract class WorkQueueProcessor : QueueProcessor<WorkQueueItem>
+	public abstract class WorkQueueProcessor : EntityQueueProcessor<WorkQueueItem>
 	{
 		protected WorkQueueProcessor(int batchSize, TimeSpan sleepTime)
 			:base(batchSize, sleepTime)
@@ -25,7 +24,7 @@ namespace ClearCanvas.Ris.Shreds
 		/// </remarks>
 		/// <param name="batchSize"></param>
 		/// <returns></returns>
-		protected override IList<WorkQueueItem> GetNextBatch(int batchSize)
+		protected override IList<WorkQueueItem> GetNextBatchCore(int batchSize)
 		{
 			return PersistenceScope.CurrentContext.GetBroker<IWorkQueueItemBroker>().GetPendingItems(WorkQueueItemType, batchSize);
 		}
