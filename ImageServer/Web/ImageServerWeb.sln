@@ -16,8 +16,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Web
 		{7C4EDB0A-B94C-4078-846A-DEA974348B2B} = {7C4EDB0A-B94C-4078-846A-DEA974348B2B}
 		{6863F5CE-F1D3-46A7-915C-DE02D1452EED} = {6863F5CE-F1D3-46A7-915C-DE02D1452EED}
 		{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04} = {DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244} = {2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F} = {4E4B60EC-FFB9-49A9-A40F-385FC68D798F}
 		{221FC797-CCE8-406B-94AB-0EB290A387A6} = {221FC797-CCE8-406B-94AB-0EB290A387A6}
 		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF} = {AD9ECE2B-8268-4115-8DC8-860FBD011FFF}
 	EndProjectSection
@@ -100,18 +98,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Rul
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Codec.Jpeg", "..\Codec\Jpeg\ClearCanvas.ImageServer.Codec.Jpeg.csproj", "{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Codec.Rle", "..\Codec\Rle\ClearCanvas.ImageServer.Codec.Rle.csproj", "{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom.Codec.Rle", "..\..\Dicom\Codec\Rle\ClearCanvas.Dicom.Codec.Rle.csproj", "{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -143,6 +129,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Ser
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Services.Common", "..\Services\Common\ClearCanvas.ImageServer.Services.Common.csproj", "{6863F5CE-F1D3-46A7-915C-DE02D1452EED}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Rules.RleCodec", "..\Rules\RleCodec\ClearCanvas.ImageServer.Rules.RleCodec.csproj", "{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Rules.JpegCodec", "..\Rules\JpegCodec\ClearCanvas.ImageServer.Rules.JpegCodec.csproj", "{467661B8-91B6-41D9-A35E-BCFB45931FAE}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -340,30 +338,6 @@ Global
 		{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{523EDDC1-7C6E-404D-A8ED-5F043F5E6BE3}.Release|Win32.ActiveCfg = Release|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Debug|.NET.ActiveCfg = Debug|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Release|.NET.ActiveCfg = Release|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Release|Win32.ActiveCfg = Release|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Debug|.NET.ActiveCfg = Debug|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Debug|Win32.ActiveCfg = Debug|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Release|.NET.ActiveCfg = Release|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{4E4B60EC-FFB9-49A9-A40F-385FC68D798F}.Release|Win32.ActiveCfg = Release|Any CPU
 		{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}.Debug|.NET.ActiveCfg = Debug|Any CPU
 		{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AB89527E-B1B6-49A4-B3A0-D07948FC23E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
@@ -436,6 +410,30 @@ Global
 		{6863F5CE-F1D3-46A7-915C-DE02D1452EED}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{6863F5CE-F1D3-46A7-915C-DE02D1452EED}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6863F5CE-F1D3-46A7-915C-DE02D1452EED}.Release|Win32.ActiveCfg = Release|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Release|.NET.ActiveCfg = Release|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1A6C8ECA-D604-4A9C-AAC7-BC7F71685698}.Release|Win32.ActiveCfg = Release|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Debug|.NET.ActiveCfg = Debug|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Release|.NET.ActiveCfg = Release|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{467661B8-91B6-41D9-A35E-BCFB45931FAE}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
