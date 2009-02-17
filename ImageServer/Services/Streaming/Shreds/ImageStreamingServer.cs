@@ -2,9 +2,9 @@ using System;
 using System.Net;
 using System.Web;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Shreds;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming;
-using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 {

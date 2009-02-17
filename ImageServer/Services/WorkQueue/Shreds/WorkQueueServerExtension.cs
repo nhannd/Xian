@@ -31,7 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Server.ShredHost;
+using ClearCanvas.Common.Shreds;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.Shreds
 {

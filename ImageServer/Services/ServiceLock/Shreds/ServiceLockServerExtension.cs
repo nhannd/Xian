@@ -31,7 +31,7 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Server.ShredHost;
+using ClearCanvas.Common.Shreds;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.Shreds
 {
@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.Shreds
       
 		public ServiceLockServerExtension()
 		{
-			_className = this.GetType().ToString();
+			_className = GetType().ToString();
 		}
 		public override void Start()
 		{
