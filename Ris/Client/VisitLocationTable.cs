@@ -60,19 +60,13 @@ namespace ClearCanvas.Ris.Client
                     return string.Format("{0}, {1}, {2}, {3}, {4}", vl.Location.Bed, vl.Location.Room, vl.Location.Floor, vl.Location.Building, vl.Location.Facility.Name);
                 },
                 2.5f));
-            this.Columns.Add(new TableColumn<VisitLocationDetail, string>(
+            this.Columns.Add(new DateTimeTableColumn<VisitLocationDetail>(
                 SR.ColumnStartTime,
-                delegate(VisitLocationDetail vl)
-                {
-                    return Format.DateTime(vl.StartTime);
-                },
+                delegate(VisitLocationDetail vl) { return vl.StartTime; },
                 0.8f));
-            this.Columns.Add(new TableColumn<VisitLocationDetail, string>(
+            this.Columns.Add(new DateTimeTableColumn<VisitLocationDetail>(
                 SR.ColumnEndTime,
-                delegate(VisitLocationDetail vl)
-                {
-                    return Format.DateTime(vl.EndTime);
-                },
+                delegate(VisitLocationDetail vl) { return vl.EndTime; },
                 0.8f));
         }
     }

@@ -58,12 +58,12 @@ namespace ClearCanvas.Ris.Client
                 delegate(PatientNoteDetail n) { return (n.Category == null ? "" : n.Category.Description); }, 0.4f));
             this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Created By",
                 delegate(PatientNoteDetail n) { return PersonNameFormat.Format(n.Author.Name); }, 0.2f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnCreatedOn,
-                delegate(PatientNoteDetail n) { return Format.Date(n.CreationTime); }, 0.1f));
-			this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Valid From",
-				delegate(PatientNoteDetail n) { return Format.Date(n.ValidRangeFrom); }, 0.1f));
-			this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Valid Until",
-				delegate(PatientNoteDetail n) { return Format.Date(n.ValidRangeUntil); }, 0.1f));
+            this.Columns.Add(new DateTableColumn<PatientNoteDetail>(SR.ColumnCreatedOn,
+                delegate(PatientNoteDetail n) { return n.CreationTime; }, 0.1f));
+			this.Columns.Add(new DateTableColumn<PatientNoteDetail>("Valid From",
+				delegate(PatientNoteDetail n) { return n.ValidRangeFrom; }, 0.1f));
+			this.Columns.Add(new DateTableColumn<PatientNoteDetail>("Valid Until",
+				delegate(PatientNoteDetail n) { return n.ValidRangeUntil; }, 0.1f));
             this.Columns.Add(new TableColumn<PatientNoteDetail, string>("Comment",
                 delegate(PatientNoteDetail n) { return (n.Comment != null && n.Comment.Length > 0 ? String.Format("Comment: {0}", n.Comment) : ""); }, 0.1f, NoteCommentRow));
         }

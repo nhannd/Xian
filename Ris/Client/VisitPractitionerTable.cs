@@ -59,19 +59,13 @@ namespace ClearCanvas.Ris.Client
                     return PersonNameFormat.Format(vp.Practitioner.Name);
                 },
                 2.5f));
-            this.Columns.Add(new TableColumn<VisitPractitionerDetail, string>(
+			this.Columns.Add(new DateTimeTableColumn<VisitPractitionerDetail>(
                 SR.ColumnStartTime,
-                delegate(VisitPractitionerDetail vp)
-                {
-                    return Format.DateTime(vp.StartTime);
-                },
+                delegate(VisitPractitionerDetail vp) { return vp.StartTime; },
                 0.8f));
-            this.Columns.Add(new TableColumn<VisitPractitionerDetail, string>(
+			this.Columns.Add(new DateTimeTableColumn<VisitPractitionerDetail>(
                 SR.ColumnEndTime,
-                delegate(VisitPractitionerDetail vp)
-                {
-                    return Format.DateTime(vp.EndTime);
-                },
+                delegate(VisitPractitionerDetail vp) { return vp.EndTime; },
                 0.8f));
         }
     }

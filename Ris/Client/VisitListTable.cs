@@ -33,12 +33,12 @@ namespace ClearCanvas.Ris.Client
 				1.0f));
 			
 			//admit date/time
-			this.Columns.Add(new TableColumn<VisitListItem, string>(SR.ColumnAdmitDateTime,
-				delegate(VisitListItem _visitListItem) { return Format.Date(_visitListItem.AdmitTime); },
+			this.Columns.Add(new DateTableColumn<VisitListItem>(SR.ColumnAdmitDateTime,
+				delegate(VisitListItem _visitListItem) { return _visitListItem.AdmitTime; },
 				1.0f));
 
-			this.Columns.Add(new TableColumn<VisitListItem, string>(SR.ColumnDischargeDateTime,
-				delegate(VisitListItem _visitListItem) { return Format.Date(_visitListItem.DischargeTime); },
+			this.Columns.Add(new DateTableColumn<VisitListItem>(SR.ColumnDischargeDateTime,
+				delegate(VisitListItem _visitListItem) { return _visitListItem.DischargeTime; },
 				1.0f));
 		}
 	}

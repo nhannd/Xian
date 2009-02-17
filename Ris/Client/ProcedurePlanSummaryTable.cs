@@ -110,14 +110,14 @@ namespace ClearCanvas.Ris.Client
 
 			this.Columns.Add(scheduledStartTimeColumn);
 
-			this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
+			this.Columns.Add(new DateTimeTableColumn<Checkable<ProcedurePlanSummaryTableItem>>(
 								 SR.ColumnCheckInTime,
-								 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return Format.DateTime(checkable.Item.Procedure.CheckInTime); },
+								 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.Procedure.CheckInTime; },
 								 0.5f));
 
-			this.Columns.Add(new TableColumn<Checkable<ProcedurePlanSummaryTableItem>, string>(
+			this.Columns.Add(new DateTimeTableColumn<Checkable<ProcedurePlanSummaryTableItem>>(
 								 SR.ColumnStartTime,
-								 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return Format.DateTime(checkable.Item.ModalityProcedureStep.StartTime); },
+								 delegate(Checkable<ProcedurePlanSummaryTableItem> checkable) { return checkable.Item.ModalityProcedureStep.StartTime; },
 								 0.5f));
 
 

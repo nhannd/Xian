@@ -55,11 +55,8 @@ namespace ClearCanvas.Ris.Client
             this.Columns.Add(_createdOnColumn = new TableColumn<PatientNoteDetail, string>(SR.ColumnCreatedOn,
                 delegate(PatientNoteDetail n) { return n.CreationTime == null ? SR.LabelNew : Format.DateTime(n.CreationTime); },
                 0.2f));
-            this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnExpiryDate,
-                delegate(PatientNoteDetail n)
-                {
-                    return n.ValidRangeUntil == null ? "" : Format.DateTime(n.ValidRangeUntil);
-                },
+            this.Columns.Add(new DateTimeTableColumn<PatientNoteDetail>(SR.ColumnExpiryDate,
+                delegate(PatientNoteDetail n) { return n.ValidRangeUntil; },
                 0.2f));
 
             this.Columns.Add(new TableColumn<PatientNoteDetail, string>(SR.ColumnComments,

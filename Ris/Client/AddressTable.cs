@@ -50,8 +50,8 @@ namespace ClearCanvas.Ris.Client
             this.Columns.Add(new TableColumn<AddressDetail, string>(SR.ColumnAddress,
                 delegate(AddressDetail a) { return AddressFormat.Format(a); }, 
                 2.2f));
-            this.Columns.Add(new TableColumn<AddressDetail, string>(SR.ColumnExpiryDate,
-                delegate(AddressDetail a) { return Format.Date(a.ValidRangeUntil); }, 
+            this.Columns.Add(new DateTableColumn<AddressDetail>(SR.ColumnExpiryDate,
+                delegate(AddressDetail a) { return a.ValidRangeUntil; }, 
                 0.9f));
 
         }

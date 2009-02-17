@@ -44,14 +44,14 @@ namespace ClearCanvas.Ris.Client.Admin
 	{
 		public WorkQueueSummaryTable()
 		{
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnCreationTime,
-				delegate(WorkQueueItemSummary item) { return Format.DateTime(item.CreationTime); }));
+			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnCreationTime,
+				delegate(WorkQueueItemSummary item) { return item.CreationTime; }));
 
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnScheduledTime,
-				delegate(WorkQueueItemSummary item) { return Format.DateTime(item.ScheduledTime); }));
+			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnScheduledTime,
+				delegate(WorkQueueItemSummary item) { return item.ScheduledTime; }));
 
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnExpirationTime,
-				delegate(WorkQueueItemSummary item) { return Format.DateTime(item.ExpirationTime); }));
+			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnExpirationTime,
+				delegate(WorkQueueItemSummary item) { return item.ExpirationTime; }));
 
 			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnUser,
 				delegate(WorkQueueItemSummary item) { return item.User; }));
@@ -62,8 +62,8 @@ namespace ClearCanvas.Ris.Client.Admin
 			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnStatus,
 				delegate(WorkQueueItemSummary item) { return item.Status.Value; }));
 
-			this.Columns.Add(new TableColumn<WorkQueueItemSummary, string>(SR.ColumnProcessedTime,
-				delegate(WorkQueueItemSummary item) { return Format.DateTime(item.ProcessedTime); }));
+			this.Columns.Add(new DateTimeTableColumn<WorkQueueItemSummary>(SR.ColumnProcessedTime,
+				delegate(WorkQueueItemSummary item) { return item.ProcessedTime; }));
 
 			this.Columns.Add(new TableColumn<WorkQueueItemSummary, int>(SR.ColumnFailureCount,
 				delegate(WorkQueueItemSummary item) { return item.FailureCount; }));

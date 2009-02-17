@@ -59,11 +59,11 @@ namespace ClearCanvas.Ris.Client.Admin
                 new TableColumn<HL7QueueItemSummary, string>(SR.ColumnStatusDescription,
                     delegate(HL7QueueItemSummary item) { return item.StatusDescription; }, 3.0f));
             this.Columns.Add(
-                new TableColumn<HL7QueueItemSummary, string>(SR.ColumnCreatedOn,
-                    delegate(HL7QueueItemSummary item) { return Format.Date(item.CreationTime); }, 1.5f));
+				new DateTableColumn<HL7QueueItemSummary>(SR.ColumnCreatedOn,
+                    delegate(HL7QueueItemSummary item) { return item.CreationTime; }, 1.5f));
             this.Columns.Add(
-                new TableColumn<HL7QueueItemSummary, string>(SR.ColumnUpdatedOn,
-                    delegate(HL7QueueItemSummary item) { return Format.DateTime(item.UpdateTime); }, 1.5f));
+                new DateTimeTableColumn<HL7QueueItemSummary>(SR.ColumnUpdatedOn,
+                    delegate(HL7QueueItemSummary item) { return item.UpdateTime; }, 1.5f));
         }
     }
 }

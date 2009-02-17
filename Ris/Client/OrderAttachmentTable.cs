@@ -29,7 +29,6 @@
 
 #endregion
 
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 
@@ -39,8 +38,8 @@ namespace ClearCanvas.Ris.Client
     {
         public OrderAttachmentTable()
         {
-            this.Columns.Add(new TableColumn<OrderAttachmentSummary, string>("Date",
-                delegate(OrderAttachmentSummary summary) { return Format.Date(summary.Document.CreationTime); }, 0.2f));
+            this.Columns.Add(new DateTableColumn<OrderAttachmentSummary>("Date",
+                delegate(OrderAttachmentSummary summary) { return summary.Document.CreationTime; }, 0.2f));
             this.Columns.Add(new TableColumn<OrderAttachmentSummary, string>("Category",
                 delegate(OrderAttachmentSummary summary) { return summary.Category.Value; }, 0.2f));
 

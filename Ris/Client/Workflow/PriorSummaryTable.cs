@@ -29,15 +29,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -50,8 +44,8 @@ namespace ClearCanvas.Ris.Client.Workflow
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Procedure",
                 delegate(PriorProcedureSummary item) { return ProcedureFormat.Format(item); }));
 
-            this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Performed Date",
-                delegate(PriorProcedureSummary item) { return item.PerformedDate == null ? null : Format.Date(item.PerformedDate.Value); }));
+            this.Columns.Add(new DateTableColumn<PriorProcedureSummary>("Performed Date",
+                delegate(PriorProcedureSummary item) { return item.PerformedDate.Value; }));
             this.Columns.Add(new TableColumn<PriorProcedureSummary, string>("Report Status",
                 delegate(PriorProcedureSummary item) { return item.ReportStatus.Value; }));
         }

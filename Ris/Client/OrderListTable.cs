@@ -10,10 +10,10 @@ namespace ClearCanvas.Ris.Client
 		public OrderListTable()
 			: base(3)
 		{
-			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnCreatedOn,
-				delegate(OrderListItem order) { return Format.DateTime(order.EnteredTime); }, 0.5f));
-			this.Columns.Add(new TableColumn<OrderListItem, string>("Scheduled For",
-				delegate(OrderListItem order) { return Format.DateTime(order.OrderScheduledStartTime); }, 0.5f));
+			this.Columns.Add(new DateTimeTableColumn<OrderListItem>(SR.ColumnCreatedOn,
+				delegate(OrderListItem order) { return order.EnteredTime; }, 0.5f));
+			this.Columns.Add(new DateTimeTableColumn<OrderListItem>("Scheduled For",
+				delegate(OrderListItem order) { return order.OrderScheduledStartTime; }, 0.5f));
 
 			this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnImagingService,
 				delegate(OrderListItem order) { return order.DiagnosticService.Name; }, 1.5f));
@@ -43,8 +43,8 @@ namespace ClearCanvas.Ris.Client
 			//this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnPriority,
 			//    delegate(OrderListItem order) { return order.OrderPriority.Value; }));
 
-			//this.Columns.Add(new TableColumn<OrderListItem, string>(SR.ColumnCreatedOn,
-			//    delegate(OrderListItem order) { return Format.DateTime(order.EnteredTime); }));
+			//this.Columns.Add(new DateTimeTableColumn<OrderListItem>(SR.ColumnCreatedOn,
+			//    delegate(OrderListItem order) { return order.EnteredTime; }));
 		}
 	}
 }

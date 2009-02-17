@@ -80,13 +80,13 @@ namespace ClearCanvas.Ris.Client
                 1.0f));
 
             //admit date/time
-            this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnAdmitDateTime,
-                delegate(VisitSummary v) { return Format.Date(v.AdmitTime); },
+            this.Columns.Add(new DateTableColumn<VisitSummary>(SR.ColumnAdmitDateTime,
+                delegate(VisitSummary v) { return v.AdmitTime; },
                 1.0f));
 
             //discharge datetime
-            this.Columns.Add(new TableColumn<VisitSummary, string>(SR.ColumnDischargeDateTime,
-                delegate(VisitSummary v) { return Format.Date(v.DischargeTime); },
+            this.Columns.Add(new DateTableColumn<VisitSummary>(SR.ColumnDischargeDateTime,
+                delegate(VisitSummary v) { return v.DischargeTime; },
                 1.0f));
         }
     }

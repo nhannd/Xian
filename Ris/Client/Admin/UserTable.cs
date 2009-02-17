@@ -49,24 +49,24 @@ namespace ClearCanvas.Ris.Client.Admin
                 delegate(UserSummary user) { return user.DisplayName; },
                 1.0f));
 
-            this.Columns.Add(new TableColumn<UserSummary, string>("Created On",
-                delegate(UserSummary user) { return Format.DateTime(user.CreationTime); },
+            this.Columns.Add(new DateTimeTableColumn<UserSummary>("Created On",
+                delegate(UserSummary user) { return user.CreationTime; },
                 0.75f));
 
             this.Columns.Add(new TableColumn<UserSummary, bool>("Enabled",
                delegate(UserSummary user) { return user.Enabled; },
                0.25f));
 
-            this.Columns.Add(new TableColumn<UserSummary, string>("Valid From",
-                delegate(UserSummary user) { return Format.DateTime(user.ValidFrom); },
+			this.Columns.Add(new DateTimeTableColumn<UserSummary>("Valid From",
+                delegate(UserSummary user) { return user.ValidFrom; },
                 0.75f));
 
-            this.Columns.Add(new TableColumn<UserSummary, string>("Valid Until",
-               delegate(UserSummary user) { return Format.DateTime(user.ValidUntil); },
+			this.Columns.Add(new DateTimeTableColumn<UserSummary>("Valid Until",
+               delegate(UserSummary user) { return user.ValidUntil; },
                0.75f));
 
-            this.Columns.Add(new TableColumn<UserSummary, string>("Last Login Time",
-               delegate(UserSummary user) { return Format.DateTime(user.LastLoginTime); },
+			this.Columns.Add(new DateTimeTableColumn<UserSummary>("Last Login Time",
+               delegate(UserSummary user) { return user.LastLoginTime; },
                0.75f));
         }
     }
