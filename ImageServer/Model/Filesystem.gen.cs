@@ -142,28 +142,29 @@ namespace ClearCanvas.ImageServer.Model
             Filesystem theObject = broker.Load(key);
             return theObject;
         }
-        static public Filesystem Insert(Filesystem table)
+        static public Filesystem Insert(Filesystem entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                Filesystem newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public Filesystem Insert(IUpdateContext update, Filesystem table)
+        static public Filesystem Insert(IUpdateContext update, Filesystem entity)
         {
             IFilesystemEntityBroker broker = update.GetBroker<IFilesystemEntityBroker>();
             FilesystemUpdateColumns updateColumns = new FilesystemUpdateColumns();
-            updateColumns.Description = table.Description;
-            updateColumns.Enabled = table.Enabled;
-            updateColumns.FilesystemPath = table.FilesystemPath;
-            updateColumns.FilesystemTierEnum = table.FilesystemTierEnum;
-            updateColumns.HighWatermark = table.HighWatermark;
-            updateColumns.LowWatermark = table.LowWatermark;
-            updateColumns.ReadOnly = table.ReadOnly;
-            updateColumns.WriteOnly = table.WriteOnly;
-            Filesystem theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Description = entity.Description;
+            updateColumns.Enabled = entity.Enabled;
+            updateColumns.FilesystemPath = entity.FilesystemPath;
+            updateColumns.FilesystemTierEnum = entity.FilesystemTierEnum;
+            updateColumns.HighWatermark = entity.HighWatermark;
+            updateColumns.LowWatermark = entity.LowWatermark;
+            updateColumns.ReadOnly = entity.ReadOnly;
+            updateColumns.WriteOnly = entity.WriteOnly;
+            Filesystem newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

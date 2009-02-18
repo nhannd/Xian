@@ -106,24 +106,25 @@ namespace ClearCanvas.ImageServer.Model
             FilesystemStudyStorage theObject = broker.Load(key);
             return theObject;
         }
-        static public FilesystemStudyStorage Insert(FilesystemStudyStorage table)
+        static public FilesystemStudyStorage Insert(FilesystemStudyStorage entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                FilesystemStudyStorage newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public FilesystemStudyStorage Insert(IUpdateContext update, FilesystemStudyStorage table)
+        static public FilesystemStudyStorage Insert(IUpdateContext update, FilesystemStudyStorage entity)
         {
             IFilesystemStudyStorageEntityBroker broker = update.GetBroker<IFilesystemStudyStorageEntityBroker>();
             FilesystemStudyStorageUpdateColumns updateColumns = new FilesystemStudyStorageUpdateColumns();
-            updateColumns.FilesystemKey = table.FilesystemKey;
-            updateColumns.ServerTransferSyntaxKey = table.ServerTransferSyntaxKey;
-            updateColumns.StudyFolder = table.StudyFolder;
-            updateColumns.StudyStorageKey = table.StudyStorageKey;
-            FilesystemStudyStorage theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.FilesystemKey = entity.FilesystemKey;
+            updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;
+            updateColumns.StudyFolder = entity.StudyFolder;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            FilesystemStudyStorage newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public StudyHistorySelectCriteria()
         : base("StudyHistory")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="ChangeDescription")]
         public ISearchCondition<System.Xml.XmlDocument> ChangeDescription
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["ChangeDescription"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="DestStudyStorageGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> DestStudyStorageKey
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["DestStudyStorageKey"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="InsertTime")]
         public ISearchCondition<System.DateTime> InsertTime
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.DateTime>)SubCriteria["InsertTime"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyData")]
         public ISearchCondition<System.Xml.XmlDocument> StudyData
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["StudyData"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyHistoryTypeEnum")]
         public ISearchCondition<StudyHistoryTypeEnum> StudyHistoryTypeEnum
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<StudyHistoryTypeEnum>)SubCriteria["StudyHistoryTypeEnum"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyStorageGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyStorageKey
         {
             get

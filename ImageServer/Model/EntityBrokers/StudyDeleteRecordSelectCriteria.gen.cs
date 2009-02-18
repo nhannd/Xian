@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public StudyDeleteRecordSelectCriteria()
         : base("StudyDeleteRecord")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="AccessionNumber")]
         public ISearchCondition<System.String> AccessionNumber
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["AccessionNumber"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ArchiveInfo")]
         public ISearchCondition<System.Xml.XmlDocument> ArchiveInfo
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["ArchiveInfo"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="BackupPath")]
         public ISearchCondition<System.String> BackupPath
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["BackupPath"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ExtendedInfo")]
         public ISearchCondition<System.String> ExtendedInfo
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["ExtendedInfo"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="FilesystemGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> FilesystemKey
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["FilesystemKey"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientId")]
         public ISearchCondition<System.String> PatientId
         {
             get
@@ -107,6 +113,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["PatientId"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientsName")]
         public ISearchCondition<System.String> PatientsName
         {
             get
@@ -118,6 +125,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["PatientsName"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Reason")]
         public ISearchCondition<System.String> Reason
         {
             get
@@ -129,6 +137,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Reason"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ServerPartitionAE")]
         public ISearchCondition<System.String> ServerPartitionAE
         {
             get
@@ -140,6 +149,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["ServerPartitionAE"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDate")]
         public ISearchCondition<System.String> StudyDate
         {
             get
@@ -151,6 +161,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["StudyDate"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDescription")]
         public ISearchCondition<System.String> StudyDescription
         {
             get
@@ -162,6 +173,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["StudyDescription"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyId")]
         public ISearchCondition<System.String> StudyId
         {
             get
@@ -173,6 +185,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["StudyId"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyInstanceUid")]
         public ISearchCondition<System.String> StudyInstanceUid
         {
             get
@@ -184,6 +197,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["StudyInstanceUid"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyTime")]
         public ISearchCondition<System.String> StudyTime
         {
             get
@@ -195,6 +209,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["StudyTime"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Timestamp")]
         public ISearchCondition<System.DateTime> Timestamp
         {
             get

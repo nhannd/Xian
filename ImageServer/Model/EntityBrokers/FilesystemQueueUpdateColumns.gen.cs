@@ -41,27 +41,33 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public FilesystemQueueUpdateColumns()
        : base("FilesystemQueue")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
         {
             set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemQueueTypeEnum")]
         public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
         {
             set { SubParameters["FilesystemQueueTypeEnum"] = new EntityUpdateColumn<FilesystemQueueTypeEnum>("FilesystemQueueTypeEnum", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="QueueXml")]
         public System.Xml.XmlDocument QueueXml
         {
             set { SubParameters["QueueXml"] = new EntityUpdateColumn<System.Xml.XmlDocument>("QueueXml", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="ScheduledTime")]
         public System.DateTime ScheduledTime
         {
             set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<System.DateTime>("ScheduledTime", value); }
         }
        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="SeriesInstanceUid")]
         public System.String SeriesInstanceUid
         {
             set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<System.String>("SeriesInstanceUid", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="StudyStorageGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
         {
             set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }

@@ -150,28 +150,29 @@ namespace ClearCanvas.ImageServer.Model
             Patient theObject = broker.Load(key);
             return theObject;
         }
-        static public Patient Insert(Patient table)
+        static public Patient Insert(Patient entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                Patient newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public Patient Insert(IUpdateContext update, Patient table)
+        static public Patient Insert(IUpdateContext update, Patient entity)
         {
             IPatientEntityBroker broker = update.GetBroker<IPatientEntityBroker>();
             PatientUpdateColumns updateColumns = new PatientUpdateColumns();
-            updateColumns.IssuerOfPatientId = table.IssuerOfPatientId;
-            updateColumns.NumberOfPatientRelatedInstances = table.NumberOfPatientRelatedInstances;
-            updateColumns.NumberOfPatientRelatedSeries = table.NumberOfPatientRelatedSeries;
-            updateColumns.NumberOfPatientRelatedStudies = table.NumberOfPatientRelatedStudies;
-            updateColumns.PatientId = table.PatientId;
-            updateColumns.PatientsName = table.PatientsName;
-            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
-            updateColumns.SpecificCharacterSet = table.SpecificCharacterSet;
-            Patient theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.IssuerOfPatientId = entity.IssuerOfPatientId;
+            updateColumns.NumberOfPatientRelatedInstances = entity.NumberOfPatientRelatedInstances;
+            updateColumns.NumberOfPatientRelatedSeries = entity.NumberOfPatientRelatedSeries;
+            updateColumns.NumberOfPatientRelatedStudies = entity.NumberOfPatientRelatedStudies;
+            updateColumns.PatientId = entity.PatientId;
+            updateColumns.PatientsName = entity.PatientsName;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.SpecificCharacterSet = entity.SpecificCharacterSet;
+            Patient newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

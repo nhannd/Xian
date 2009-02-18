@@ -115,25 +115,26 @@ namespace ClearCanvas.ImageServer.Model
             RestoreQueue theObject = broker.Load(key);
             return theObject;
         }
-        static public RestoreQueue Insert(RestoreQueue table)
+        static public RestoreQueue Insert(RestoreQueue entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                RestoreQueue newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public RestoreQueue Insert(IUpdateContext update, RestoreQueue table)
+        static public RestoreQueue Insert(IUpdateContext update, RestoreQueue entity)
         {
             IRestoreQueueEntityBroker broker = update.GetBroker<IRestoreQueueEntityBroker>();
             RestoreQueueUpdateColumns updateColumns = new RestoreQueueUpdateColumns();
-            updateColumns.ArchiveStudyStorageKey = table.ArchiveStudyStorageKey;
-            updateColumns.ProcessorId = table.ProcessorId;
-            updateColumns.RestoreQueueStatusEnum = table.RestoreQueueStatusEnum;
-            updateColumns.ScheduledTime = table.ScheduledTime;
-            updateColumns.StudyStorageKey = table.StudyStorageKey;
-            RestoreQueue theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.ArchiveStudyStorageKey = entity.ArchiveStudyStorageKey;
+            updateColumns.ProcessorId = entity.ProcessorId;
+            updateColumns.RestoreQueueStatusEnum = entity.RestoreQueueStatusEnum;
+            updateColumns.ScheduledTime = entity.ScheduledTime;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            RestoreQueue newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

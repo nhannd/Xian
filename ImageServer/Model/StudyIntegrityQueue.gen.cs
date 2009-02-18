@@ -133,27 +133,28 @@ namespace ClearCanvas.ImageServer.Model
             StudyIntegrityQueue theObject = broker.Load(key);
             return theObject;
         }
-        static public StudyIntegrityQueue Insert(StudyIntegrityQueue table)
+        static public StudyIntegrityQueue Insert(StudyIntegrityQueue entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                StudyIntegrityQueue newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public StudyIntegrityQueue Insert(IUpdateContext update, StudyIntegrityQueue table)
+        static public StudyIntegrityQueue Insert(IUpdateContext update, StudyIntegrityQueue entity)
         {
             IStudyIntegrityQueueEntityBroker broker = update.GetBroker<IStudyIntegrityQueueEntityBroker>();
             StudyIntegrityQueueUpdateColumns updateColumns = new StudyIntegrityQueueUpdateColumns();
-            updateColumns.Description = table.Description;
-            updateColumns.InsertTime = table.InsertTime;
-            updateColumns.QueueData = table.QueueData;
-            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
-            updateColumns.StudyData = table.StudyData;
-            updateColumns.StudyIntegrityReasonEnum = table.StudyIntegrityReasonEnum;
-            updateColumns.StudyStorageKey = table.StudyStorageKey;
-            StudyIntegrityQueue theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Description = entity.Description;
+            updateColumns.InsertTime = entity.InsertTime;
+            updateColumns.QueueData = entity.QueueData;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.StudyData = entity.StudyData;
+            updateColumns.StudyIntegrityReasonEnum = entity.StudyIntegrityReasonEnum;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            StudyIntegrityQueue newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

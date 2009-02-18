@@ -169,31 +169,32 @@ namespace ClearCanvas.ImageServer.Model
             Device theObject = broker.Load(key);
             return theObject;
         }
-        static public Device Insert(Device table)
+        static public Device Insert(Device entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                Device newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public Device Insert(IUpdateContext update, Device table)
+        static public Device Insert(IUpdateContext update, Device entity)
         {
             IDeviceEntityBroker broker = update.GetBroker<IDeviceEntityBroker>();
             DeviceUpdateColumns updateColumns = new DeviceUpdateColumns();
-            updateColumns.AeTitle = table.AeTitle;
-            updateColumns.AllowAutoRoute = table.AllowAutoRoute;
-            updateColumns.AllowQuery = table.AllowQuery;
-            updateColumns.AllowRetrieve = table.AllowRetrieve;
-            updateColumns.AllowStorage = table.AllowStorage;
-            updateColumns.Description = table.Description;
-            updateColumns.Dhcp = table.Dhcp;
-            updateColumns.Enabled = table.Enabled;
-            updateColumns.IpAddress = table.IpAddress;
-            updateColumns.Port = table.Port;
-            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
-            Device theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.AeTitle = entity.AeTitle;
+            updateColumns.AllowAutoRoute = entity.AllowAutoRoute;
+            updateColumns.AllowQuery = entity.AllowQuery;
+            updateColumns.AllowRetrieve = entity.AllowRetrieve;
+            updateColumns.AllowStorage = entity.AllowStorage;
+            updateColumns.Description = entity.Description;
+            updateColumns.Dhcp = entity.Dhcp;
+            updateColumns.Enabled = entity.Enabled;
+            updateColumns.IpAddress = entity.IpAddress;
+            updateColumns.Port = entity.Port;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            Device newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

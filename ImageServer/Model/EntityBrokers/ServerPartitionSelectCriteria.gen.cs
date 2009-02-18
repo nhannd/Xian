@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServerPartitionSelectCriteria()
         : base("ServerPartition")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptAnyDevice")]
         public ISearchCondition<System.Boolean> AcceptAnyDevice
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["AcceptAnyDevice"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AeTitle")]
         public ISearchCondition<System.String> AeTitle
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["AeTitle"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AuditDeleteStudy")]
         public ISearchCondition<System.Boolean> AuditDeleteStudy
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["AuditDeleteStudy"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AutoInsertDevice")]
         public ISearchCondition<System.Boolean> AutoInsertDevice
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["AutoInsertDevice"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DefaultRemotePort")]
         public ISearchCondition<System.Int32> DefaultRemotePort
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Int32>)SubCriteria["DefaultRemotePort"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Description")]
         public ISearchCondition<System.String> Description
         {
             get
@@ -107,6 +113,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Description"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DuplicateSopPolicyEnum")]
         public ISearchCondition<DuplicateSopPolicyEnum> DuplicateSopPolicyEnum
         {
             get
@@ -118,6 +125,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<DuplicateSopPolicyEnum>)SubCriteria["DuplicateSopPolicyEnum"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Enabled")]
         public ISearchCondition<System.Boolean> Enabled
         {
             get
@@ -129,6 +137,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchAccessionNumber")]
         public ISearchCondition<System.Boolean> MatchAccessionNumber
         {
             get
@@ -140,6 +149,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["MatchAccessionNumber"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchIssuerOfPatientId")]
         public ISearchCondition<System.Boolean> MatchIssuerOfPatientId
         {
             get
@@ -151,6 +161,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["MatchIssuerOfPatientId"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientId")]
         public ISearchCondition<System.Boolean> MatchPatientId
         {
             get
@@ -162,6 +173,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientId"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsBirthDate")]
         public ISearchCondition<System.Boolean> MatchPatientsBirthDate
         {
             get
@@ -173,6 +185,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientsBirthDate"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsName")]
         public ISearchCondition<System.Boolean> MatchPatientsName
         {
             get
@@ -184,6 +197,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientsName"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsSex")]
         public ISearchCondition<System.Boolean> MatchPatientsSex
         {
             get
@@ -195,6 +209,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientsSex"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="PartitionFolder")]
         public ISearchCondition<System.String> PartitionFolder
         {
             get
@@ -206,6 +221,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["PartitionFolder"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Port")]
         public ISearchCondition<System.Int32> Port
         {
             get
@@ -217,6 +233,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Int32>)SubCriteria["Port"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="StudyCount")]
         public ISearchCondition<System.Int32> StudyCount
         {
             get

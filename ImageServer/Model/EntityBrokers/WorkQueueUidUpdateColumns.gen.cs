@@ -41,32 +41,39 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public WorkQueueUidUpdateColumns()
        : base("WorkQueueUid")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Duplicate")]
         public System.Boolean Duplicate
         {
             set { SubParameters["Duplicate"] = new EntityUpdateColumn<System.Boolean>("Duplicate", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Extension")]
         public System.String Extension
         {
             set { SubParameters["Extension"] = new EntityUpdateColumn<System.String>("Extension", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Failed")]
         public System.Boolean Failed
         {
             set { SubParameters["Failed"] = new EntityUpdateColumn<System.Boolean>("Failed", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="FailureCount")]
         public System.Int16 FailureCount
         {
             set { SubParameters["FailureCount"] = new EntityUpdateColumn<System.Int16>("FailureCount", value); }
         }
        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SeriesInstanceUid")]
         public System.String SeriesInstanceUid
         {
             set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<System.String>("SeriesInstanceUid", value); }
         }
        [DicomField(DicomTags.SopInstanceUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SopInstanceUid")]
         public System.String SopInstanceUid
         {
             set { SubParameters["SopInstanceUid"] = new EntityUpdateColumn<System.String>("SopInstanceUid", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="WorkQueueGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey WorkQueueKey
         {
             set { SubParameters["WorkQueueKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("WorkQueueKey", value); }

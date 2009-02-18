@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public WorkQueueUidSelectCriteria()
         : base("WorkQueueUid")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Duplicate")]
         public ISearchCondition<System.Boolean> Duplicate
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Duplicate"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Extension")]
         public ISearchCondition<System.String> Extension
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Extension"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Failed")]
         public ISearchCondition<System.Boolean> Failed
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Failed"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="FailureCount")]
         public ISearchCondition<System.Int16> FailureCount
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Int16>)SubCriteria["FailureCount"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SeriesInstanceUid")]
         public ISearchCondition<System.String> SeriesInstanceUid
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["SeriesInstanceUid"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SopInstanceUid")]
         public ISearchCondition<System.String> SopInstanceUid
         {
             get
@@ -107,6 +113,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["SopInstanceUid"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="WorkQueueGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> WorkQueueKey
         {
             get

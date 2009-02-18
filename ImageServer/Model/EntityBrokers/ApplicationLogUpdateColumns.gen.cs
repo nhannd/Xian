@@ -40,26 +40,32 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ApplicationLogUpdateColumns()
        : base("ApplicationLog")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Exception")]
         public System.String Exception
         {
             set { SubParameters["Exception"] = new EntityUpdateColumn<System.String>("Exception", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Host")]
         public System.String Host
         {
             set { SubParameters["Host"] = new EntityUpdateColumn<System.String>("Host", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="LogLevel")]
         public System.String LogLevel
         {
             set { SubParameters["LogLevel"] = new EntityUpdateColumn<System.String>("LogLevel", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Message")]
         public System.String Message
         {
             set { SubParameters["Message"] = new EntityUpdateColumn<System.String>("Message", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Thread")]
         public System.String Thread
         {
             set { SubParameters["Thread"] = new EntityUpdateColumn<System.String>("Thread", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Timestamp")]
         public System.DateTime Timestamp
         {
             set { SubParameters["Timestamp"] = new EntityUpdateColumn<System.DateTime>("Timestamp", value); }

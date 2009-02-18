@@ -40,70 +40,87 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ServerPartitionUpdateColumns()
        : base("ServerPartition")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptAnyDevice")]
         public System.Boolean AcceptAnyDevice
         {
             set { SubParameters["AcceptAnyDevice"] = new EntityUpdateColumn<System.Boolean>("AcceptAnyDevice", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AeTitle")]
         public System.String AeTitle
         {
             set { SubParameters["AeTitle"] = new EntityUpdateColumn<System.String>("AeTitle", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AuditDeleteStudy")]
         public System.Boolean AuditDeleteStudy
         {
             set { SubParameters["AuditDeleteStudy"] = new EntityUpdateColumn<System.Boolean>("AuditDeleteStudy", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AutoInsertDevice")]
         public System.Boolean AutoInsertDevice
         {
             set { SubParameters["AutoInsertDevice"] = new EntityUpdateColumn<System.Boolean>("AutoInsertDevice", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DefaultRemotePort")]
         public System.Int32 DefaultRemotePort
         {
             set { SubParameters["DefaultRemotePort"] = new EntityUpdateColumn<System.Int32>("DefaultRemotePort", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Description")]
         public System.String Description
         {
             set { SubParameters["Description"] = new EntityUpdateColumn<System.String>("Description", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DuplicateSopPolicyEnum")]
         public DuplicateSopPolicyEnum DuplicateSopPolicyEnum
         {
             set { SubParameters["DuplicateSopPolicyEnum"] = new EntityUpdateColumn<DuplicateSopPolicyEnum>("DuplicateSopPolicyEnum", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
             set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchAccessionNumber")]
         public System.Boolean MatchAccessionNumber
         {
             set { SubParameters["MatchAccessionNumber"] = new EntityUpdateColumn<System.Boolean>("MatchAccessionNumber", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchIssuerOfPatientId")]
         public System.Boolean MatchIssuerOfPatientId
         {
             set { SubParameters["MatchIssuerOfPatientId"] = new EntityUpdateColumn<System.Boolean>("MatchIssuerOfPatientId", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientId")]
         public System.Boolean MatchPatientId
         {
             set { SubParameters["MatchPatientId"] = new EntityUpdateColumn<System.Boolean>("MatchPatientId", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsBirthDate")]
         public System.Boolean MatchPatientsBirthDate
         {
             set { SubParameters["MatchPatientsBirthDate"] = new EntityUpdateColumn<System.Boolean>("MatchPatientsBirthDate", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsName")]
         public System.Boolean MatchPatientsName
         {
             set { SubParameters["MatchPatientsName"] = new EntityUpdateColumn<System.Boolean>("MatchPatientsName", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsSex")]
         public System.Boolean MatchPatientsSex
         {
             set { SubParameters["MatchPatientsSex"] = new EntityUpdateColumn<System.Boolean>("MatchPatientsSex", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="PartitionFolder")]
         public System.String PartitionFolder
         {
             set { SubParameters["PartitionFolder"] = new EntityUpdateColumn<System.String>("PartitionFolder", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Port")]
         public System.Int32 Port
         {
             set { SubParameters["Port"] = new EntityUpdateColumn<System.Int32>("Port", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="StudyCount")]
         public System.Int32 StudyCount
         {
             set { SubParameters["StudyCount"] = new EntityUpdateColumn<System.Int32>("StudyCount", value); }

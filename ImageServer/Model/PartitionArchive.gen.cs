@@ -133,27 +133,28 @@ namespace ClearCanvas.ImageServer.Model
             PartitionArchive theObject = broker.Load(key);
             return theObject;
         }
-        static public PartitionArchive Insert(PartitionArchive table)
+        static public PartitionArchive Insert(PartitionArchive entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                PartitionArchive newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public PartitionArchive Insert(IUpdateContext update, PartitionArchive table)
+        static public PartitionArchive Insert(IUpdateContext update, PartitionArchive entity)
         {
             IPartitionArchiveEntityBroker broker = update.GetBroker<IPartitionArchiveEntityBroker>();
             PartitionArchiveUpdateColumns updateColumns = new PartitionArchiveUpdateColumns();
-            updateColumns.ArchiveDelayHours = table.ArchiveDelayHours;
-            updateColumns.ArchiveTypeEnum = table.ArchiveTypeEnum;
-            updateColumns.ConfigurationXml = table.ConfigurationXml;
-            updateColumns.Description = table.Description;
-            updateColumns.Enabled = table.Enabled;
-            updateColumns.ReadOnly = table.ReadOnly;
-            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
-            PartitionArchive theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.ArchiveDelayHours = entity.ArchiveDelayHours;
+            updateColumns.ArchiveTypeEnum = entity.ArchiveTypeEnum;
+            updateColumns.ConfigurationXml = entity.ConfigurationXml;
+            updateColumns.Description = entity.Description;
+            updateColumns.Enabled = entity.Enabled;
+            updateColumns.ReadOnly = entity.ReadOnly;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            PartitionArchive newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

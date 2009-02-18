@@ -40,26 +40,32 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public StudyHistoryUpdateColumns()
        : base("StudyHistory")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="ChangeDescription")]
         public System.Xml.XmlDocument ChangeDescription
         {
             set { SubParameters["ChangeDescription"] = new EntityUpdateColumn<System.Xml.XmlDocument>("ChangeDescription", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="DestStudyStorageGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey DestStudyStorageKey
         {
             set { SubParameters["DestStudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("DestStudyStorageKey", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="InsertTime")]
         public System.DateTime InsertTime
         {
             set { SubParameters["InsertTime"] = new EntityUpdateColumn<System.DateTime>("InsertTime", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyData")]
         public System.Xml.XmlDocument StudyData
         {
             set { SubParameters["StudyData"] = new EntityUpdateColumn<System.Xml.XmlDocument>("StudyData", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyHistoryTypeEnum")]
         public StudyHistoryTypeEnum StudyHistoryTypeEnum
         {
             set { SubParameters["StudyHistoryTypeEnum"] = new EntityUpdateColumn<StudyHistoryTypeEnum>("StudyHistoryTypeEnum", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyStorageGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
         {
             set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }

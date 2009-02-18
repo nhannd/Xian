@@ -196,34 +196,35 @@ namespace ClearCanvas.ImageServer.Model
             WorkQueue theObject = broker.Load(key);
             return theObject;
         }
-        static public WorkQueue Insert(WorkQueue table)
+        static public WorkQueue Insert(WorkQueue entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                WorkQueue newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public WorkQueue Insert(IUpdateContext update, WorkQueue table)
+        static public WorkQueue Insert(IUpdateContext update, WorkQueue entity)
         {
             IWorkQueueEntityBroker broker = update.GetBroker<IWorkQueueEntityBroker>();
             WorkQueueUpdateColumns updateColumns = new WorkQueueUpdateColumns();
-            updateColumns.Data = table.Data;
-            updateColumns.DeviceKey = table.DeviceKey;
-            updateColumns.ExpirationTime = table.ExpirationTime;
-            updateColumns.FailureCount = table.FailureCount;
-            updateColumns.FailureDescription = table.FailureDescription;
-            updateColumns.InsertTime = table.InsertTime;
-            updateColumns.ProcessorID = table.ProcessorID;
-            updateColumns.ScheduledTime = table.ScheduledTime;
-            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
-            updateColumns.StudyHistoryKey = table.StudyHistoryKey;
-            updateColumns.StudyStorageKey = table.StudyStorageKey;
-            updateColumns.WorkQueuePriorityEnum = table.WorkQueuePriorityEnum;
-            updateColumns.WorkQueueStatusEnum = table.WorkQueueStatusEnum;
-            updateColumns.WorkQueueTypeEnum = table.WorkQueueTypeEnum;
-            WorkQueue theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Data = entity.Data;
+            updateColumns.DeviceKey = entity.DeviceKey;
+            updateColumns.ExpirationTime = entity.ExpirationTime;
+            updateColumns.FailureCount = entity.FailureCount;
+            updateColumns.FailureDescription = entity.FailureDescription;
+            updateColumns.InsertTime = entity.InsertTime;
+            updateColumns.ProcessorID = entity.ProcessorID;
+            updateColumns.ScheduledTime = entity.ScheduledTime;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.StudyHistoryKey = entity.StudyHistoryKey;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            updateColumns.WorkQueuePriorityEnum = entity.WorkQueuePriorityEnum;
+            updateColumns.WorkQueueStatusEnum = entity.WorkQueueStatusEnum;
+            updateColumns.WorkQueueTypeEnum = entity.WorkQueueTypeEnum;
+            WorkQueue newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

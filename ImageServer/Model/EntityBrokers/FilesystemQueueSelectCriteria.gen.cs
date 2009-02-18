@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public FilesystemQueueSelectCriteria()
         : base("FilesystemQueue")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> FilesystemKey
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["FilesystemKey"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemQueueTypeEnum")]
         public ISearchCondition<FilesystemQueueTypeEnum> FilesystemQueueTypeEnum
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<FilesystemQueueTypeEnum>)SubCriteria["FilesystemQueueTypeEnum"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="QueueXml")]
         public ISearchCondition<System.Xml.XmlDocument> QueueXml
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["QueueXml"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="ScheduledTime")]
         public ISearchCondition<System.DateTime> ScheduledTime
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.DateTime>)SubCriteria["ScheduledTime"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="SeriesInstanceUid")]
         public ISearchCondition<System.String> SeriesInstanceUid
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["SeriesInstanceUid"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="StudyStorageGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyStorageKey
         {
             get

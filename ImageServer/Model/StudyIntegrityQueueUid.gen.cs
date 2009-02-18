@@ -110,24 +110,25 @@ namespace ClearCanvas.ImageServer.Model
             StudyIntegrityQueueUid theObject = broker.Load(key);
             return theObject;
         }
-        static public StudyIntegrityQueueUid Insert(StudyIntegrityQueueUid table)
+        static public StudyIntegrityQueueUid Insert(StudyIntegrityQueueUid entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                StudyIntegrityQueueUid newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public StudyIntegrityQueueUid Insert(IUpdateContext update, StudyIntegrityQueueUid table)
+        static public StudyIntegrityQueueUid Insert(IUpdateContext update, StudyIntegrityQueueUid entity)
         {
             IStudyIntegrityQueueUidEntityBroker broker = update.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
             StudyIntegrityQueueUidUpdateColumns updateColumns = new StudyIntegrityQueueUidUpdateColumns();
-            updateColumns.SeriesDescription = table.SeriesDescription;
-            updateColumns.SeriesInstanceUid = table.SeriesInstanceUid;
-            updateColumns.SopInstanceUid = table.SopInstanceUid;
-            updateColumns.StudyIntegrityQueueKey = table.StudyIntegrityQueueKey;
-            StudyIntegrityQueueUid theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.SeriesDescription = entity.SeriesDescription;
+            updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
+            updateColumns.SopInstanceUid = entity.SopInstanceUid;
+            updateColumns.StudyIntegrityQueueKey = entity.StudyIntegrityQueueKey;
+            StudyIntegrityQueueUid newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

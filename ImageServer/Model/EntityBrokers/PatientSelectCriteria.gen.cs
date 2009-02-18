@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public PatientSelectCriteria()
         : base("Patient")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="IssuerOfPatientId")]
         public ISearchCondition<System.String> IssuerOfPatientId
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["IssuerOfPatientId"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedInstances")]
         public ISearchCondition<System.Int32> NumberOfPatientRelatedInstances
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Int32>)SubCriteria["NumberOfPatientRelatedInstances"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedSeries")]
         public ISearchCondition<System.Int32> NumberOfPatientRelatedSeries
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Int32>)SubCriteria["NumberOfPatientRelatedSeries"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedStudies")]
         public ISearchCondition<System.Int32> NumberOfPatientRelatedStudies
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Int32>)SubCriteria["NumberOfPatientRelatedStudies"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="PatientId")]
         public ISearchCondition<System.String> PatientId
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["PatientId"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="PatientsName")]
         public ISearchCondition<System.String> PatientsName
         {
             get
@@ -107,6 +113,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["PatientsName"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="ServerPartitionGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
         {
             get
@@ -118,6 +125,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="SpecificCharacterSet")]
         public ISearchCondition<System.String> SpecificCharacterSet
         {
             get

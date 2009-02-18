@@ -40,30 +40,37 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public PartitionArchiveUpdateColumns()
        : base("PartitionArchive")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveDelayHours")]
         public System.Int32 ArchiveDelayHours
         {
             set { SubParameters["ArchiveDelayHours"] = new EntityUpdateColumn<System.Int32>("ArchiveDelayHours", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveTypeEnum")]
         public ArchiveTypeEnum ArchiveTypeEnum
         {
             set { SubParameters["ArchiveTypeEnum"] = new EntityUpdateColumn<ArchiveTypeEnum>("ArchiveTypeEnum", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ConfigurationXml")]
         public System.Xml.XmlDocument ConfigurationXml
         {
             set { SubParameters["ConfigurationXml"] = new EntityUpdateColumn<System.Xml.XmlDocument>("ConfigurationXml", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Description")]
         public System.String Description
         {
             set { SubParameters["Description"] = new EntityUpdateColumn<System.String>("Description", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
             set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ReadOnly")]
         public System.Boolean ReadOnly
         {
             set { SubParameters["ReadOnly"] = new EntityUpdateColumn<System.Boolean>("ReadOnly", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ServerPartitionGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }

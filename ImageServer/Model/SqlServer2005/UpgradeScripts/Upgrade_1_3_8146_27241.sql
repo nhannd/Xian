@@ -1,8 +1,3 @@
-/*
-Script created by SQL Compare version 7.1.0 from Red Gate Software Ltd at 2/11/2009 12:10:45 AM
-Run this script on AMYVISTA\SQLEXPRESS.ImageServer to make it the same as (local).ImageServer
-Please back up your database before running this script
-*/
 SET NUMERIC_ROUNDABORT OFF
 GO
 SET ANSI_PADDING, ANSI_WARNINGS, CONCAT_NULL_YIELDS_NULL, ARITHABORT, QUOTED_IDENTIFIER, ANSI_NULLS ON

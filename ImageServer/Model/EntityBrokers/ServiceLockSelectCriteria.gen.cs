@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServiceLockSelectCriteria()
         : base("ServiceLock")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Enabled")]
         public ISearchCondition<System.Boolean> Enabled
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="FilesystemGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> FilesystemKey
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["FilesystemKey"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Lock")]
         public ISearchCondition<System.Boolean> Lock
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Lock"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ProcessorId")]
         public ISearchCondition<System.String> ProcessorId
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["ProcessorId"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ScheduledTime")]
         public ISearchCondition<System.DateTime> ScheduledTime
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.DateTime>)SubCriteria["ScheduledTime"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ServiceLockTypeEnum")]
         public ISearchCondition<ServiceLockTypeEnum> ServiceLockTypeEnum
         {
             get
@@ -107,6 +113,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ServiceLockTypeEnum>)SubCriteria["ServiceLockTypeEnum"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="State")]
         public ISearchCondition<System.Xml.XmlDocument> State
         {
             get

@@ -97,23 +97,24 @@ namespace ClearCanvas.ImageServer.Model
             DevicePreferredTransferSyntax theObject = broker.Load(key);
             return theObject;
         }
-        static public DevicePreferredTransferSyntax Insert(DevicePreferredTransferSyntax table)
+        static public DevicePreferredTransferSyntax Insert(DevicePreferredTransferSyntax entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                DevicePreferredTransferSyntax newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public DevicePreferredTransferSyntax Insert(IUpdateContext update, DevicePreferredTransferSyntax table)
+        static public DevicePreferredTransferSyntax Insert(IUpdateContext update, DevicePreferredTransferSyntax entity)
         {
             IDevicePreferredTransferSyntaxEntityBroker broker = update.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
             DevicePreferredTransferSyntaxUpdateColumns updateColumns = new DevicePreferredTransferSyntaxUpdateColumns();
-            updateColumns.DeviceKey = table.DeviceKey;
-            updateColumns.ServerSopClassKey = table.ServerSopClassKey;
-            updateColumns.ServerTransferSyntaxKey = table.ServerTransferSyntaxKey;
-            DevicePreferredTransferSyntax theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.DeviceKey = entity.DeviceKey;
+            updateColumns.ServerSopClassKey = entity.ServerSopClassKey;
+            updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;
+            DevicePreferredTransferSyntax newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

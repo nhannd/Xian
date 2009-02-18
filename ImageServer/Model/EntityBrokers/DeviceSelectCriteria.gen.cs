@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public DeviceSelectCriteria()
         : base("Device")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
         public ISearchCondition<System.String> AeTitle
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["AeTitle"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowAutoRoute")]
         public ISearchCondition<System.Boolean> AllowAutoRoute
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["AllowAutoRoute"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowQuery")]
         public ISearchCondition<System.Boolean> AllowQuery
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["AllowQuery"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowRetrieve")]
         public ISearchCondition<System.Boolean> AllowRetrieve
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["AllowRetrieve"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowStorage")]
         public ISearchCondition<System.Boolean> AllowStorage
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["AllowStorage"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Description")]
         public ISearchCondition<System.String> Description
         {
             get
@@ -107,6 +113,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Description"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Dhcp")]
         public ISearchCondition<System.Boolean> Dhcp
         {
             get
@@ -118,6 +125,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Dhcp"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Enabled")]
         public ISearchCondition<System.Boolean> Enabled
         {
             get
@@ -129,6 +137,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="IpAddress")]
         public ISearchCondition<System.String> IpAddress
         {
             get
@@ -140,6 +149,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["IpAddress"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
         public ISearchCondition<System.Int32> Port
         {
             get
@@ -151,6 +161,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Int32>)SubCriteria["Port"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ServerPartitionGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
         {
             get

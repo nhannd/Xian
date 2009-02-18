@@ -133,27 +133,28 @@ namespace ClearCanvas.ImageServer.Model
             Alert theObject = broker.Load(key);
             return theObject;
         }
-        static public Alert Insert(Alert table)
+        static public Alert Insert(Alert entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                Alert newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public Alert Insert(IUpdateContext update, Alert table)
+        static public Alert Insert(IUpdateContext update, Alert entity)
         {
             IAlertEntityBroker broker = update.GetBroker<IAlertEntityBroker>();
             AlertUpdateColumns updateColumns = new AlertUpdateColumns();
-            updateColumns.AlertCategoryEnum = table.AlertCategoryEnum;
-            updateColumns.AlertLevelEnum = table.AlertLevelEnum;
-            updateColumns.Component = table.Component;
-            updateColumns.Content = table.Content;
-            updateColumns.InsertTime = table.InsertTime;
-            updateColumns.Source = table.Source;
-            updateColumns.TypeCode = table.TypeCode;
-            Alert theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.AlertCategoryEnum = entity.AlertCategoryEnum;
+            updateColumns.AlertLevelEnum = entity.AlertLevelEnum;
+            updateColumns.Component = entity.Component;
+            updateColumns.Content = entity.Content;
+            updateColumns.InsertTime = entity.InsertTime;
+            updateColumns.Source = entity.Source;
+            updateColumns.TypeCode = entity.TypeCode;
+            Alert newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

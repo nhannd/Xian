@@ -100,23 +100,24 @@ namespace ClearCanvas.ImageServer.Model
             RequestAttributes theObject = broker.Load(key);
             return theObject;
         }
-        static public RequestAttributes Insert(RequestAttributes table)
+        static public RequestAttributes Insert(RequestAttributes entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                RequestAttributes newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public RequestAttributes Insert(IUpdateContext update, RequestAttributes table)
+        static public RequestAttributes Insert(IUpdateContext update, RequestAttributes entity)
         {
             IRequestAttributesEntityBroker broker = update.GetBroker<IRequestAttributesEntityBroker>();
             RequestAttributesUpdateColumns updateColumns = new RequestAttributesUpdateColumns();
-            updateColumns.RequestedProcedureId = table.RequestedProcedureId;
-            updateColumns.ScheduledProcedureStepId = table.ScheduledProcedureStepId;
-            updateColumns.SeriesKey = table.SeriesKey;
-            RequestAttributes theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.RequestedProcedureId = entity.RequestedProcedureId;
+            updateColumns.ScheduledProcedureStepId = entity.ScheduledProcedureStepId;
+            updateColumns.SeriesKey = entity.SeriesKey;
+            RequestAttributes newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

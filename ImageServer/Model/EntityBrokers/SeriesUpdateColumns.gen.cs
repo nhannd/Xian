@@ -42,49 +42,59 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("Series")
        {}
        [DicomField(DicomTags.Modality, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="Modality")]
         public System.String Modality
         {
             set { SubParameters["Modality"] = new EntityUpdateColumn<System.String>("Modality", value); }
         }
        [DicomField(DicomTags.NumberOfSeriesRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="NumberOfSeriesRelatedInstances")]
         public System.Int32 NumberOfSeriesRelatedInstances
         {
             set { SubParameters["NumberOfSeriesRelatedInstances"] = new EntityUpdateColumn<System.Int32>("NumberOfSeriesRelatedInstances", value); }
         }
        [DicomField(DicomTags.PerformedProcedureStepStartDate, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="PerformedProcedureStepStartDate")]
         public System.String PerformedProcedureStepStartDate
         {
             set { SubParameters["PerformedProcedureStepStartDate"] = new EntityUpdateColumn<System.String>("PerformedProcedureStepStartDate", value); }
         }
        [DicomField(DicomTags.PerformedProcedureStepStartTime, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="PerformedProcedureStepStartTime")]
         public System.String PerformedProcedureStepStartTime
         {
             set { SubParameters["PerformedProcedureStepStartTime"] = new EntityUpdateColumn<System.String>("PerformedProcedureStepStartTime", value); }
         }
        [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesDescription")]
         public System.String SeriesDescription
         {
             set { SubParameters["SeriesDescription"] = new EntityUpdateColumn<System.String>("SeriesDescription", value); }
         }
        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesInstanceUid")]
         public System.String SeriesInstanceUid
         {
             set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<System.String>("SeriesInstanceUid", value); }
         }
        [DicomField(DicomTags.SeriesNumber, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesNumber")]
         public System.String SeriesNumber
         {
             set { SubParameters["SeriesNumber"] = new EntityUpdateColumn<System.String>("SeriesNumber", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="ServerPartitionGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
         }
        [DicomField(DicomTags.SourceApplicationEntityTitle, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SourceApplicationEntityTitle")]
         public System.String SourceApplicationEntityTitle
         {
             set { SubParameters["SourceApplicationEntityTitle"] = new EntityUpdateColumn<System.String>("SourceApplicationEntityTitle", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="StudyGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyKey
         {
             set { SubParameters["StudyKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyKey", value); }

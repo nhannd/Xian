@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServerRuleSelectCriteria()
         : base("ServerRule")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="DefaultRule")]
         public ISearchCondition<System.Boolean> DefaultRule
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["DefaultRule"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="Enabled")]
         public ISearchCondition<System.Boolean> Enabled
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ExemptRule")]
         public ISearchCondition<System.Boolean> ExemptRule
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["ExemptRule"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleName")]
         public ISearchCondition<System.String> RuleName
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["RuleName"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleXml")]
         public ISearchCondition<System.Xml.XmlDocument> RuleXml
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["RuleXml"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerPartitionGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
         {
             get
@@ -107,6 +113,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleApplyTimeEnum")]
         public ISearchCondition<ServerRuleApplyTimeEnum> ServerRuleApplyTimeEnum
         {
             get
@@ -118,6 +125,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ServerRuleApplyTimeEnum>)SubCriteria["ServerRuleApplyTimeEnum"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleTypeEnum")]
         public ISearchCondition<ServerRuleTypeEnum> ServerRuleTypeEnum
         {
             get

@@ -115,25 +115,26 @@ namespace ClearCanvas.ImageServer.Model
             ArchiveStudyStorage theObject = broker.Load(key);
             return theObject;
         }
-        static public ArchiveStudyStorage Insert(ArchiveStudyStorage table)
+        static public ArchiveStudyStorage Insert(ArchiveStudyStorage entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                ArchiveStudyStorage newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public ArchiveStudyStorage Insert(IUpdateContext update, ArchiveStudyStorage table)
+        static public ArchiveStudyStorage Insert(IUpdateContext update, ArchiveStudyStorage entity)
         {
             IArchiveStudyStorageEntityBroker broker = update.GetBroker<IArchiveStudyStorageEntityBroker>();
             ArchiveStudyStorageUpdateColumns updateColumns = new ArchiveStudyStorageUpdateColumns();
-            updateColumns.ArchiveTime = table.ArchiveTime;
-            updateColumns.ArchiveXml = table.ArchiveXml;
-            updateColumns.PartitionArchiveKey = table.PartitionArchiveKey;
-            updateColumns.ServerTransferSyntaxKey = table.ServerTransferSyntaxKey;
-            updateColumns.StudyStorageKey = table.StudyStorageKey;
-            ArchiveStudyStorage theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.ArchiveTime = entity.ArchiveTime;
+            updateColumns.ArchiveXml = entity.ArchiveXml;
+            updateColumns.PartitionArchiveKey = entity.PartitionArchiveKey;
+            updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            ArchiveStudyStorage newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

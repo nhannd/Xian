@@ -124,26 +124,27 @@ namespace ClearCanvas.ImageServer.Model
             ApplicationLog theObject = broker.Load(key);
             return theObject;
         }
-        static public ApplicationLog Insert(ApplicationLog table)
+        static public ApplicationLog Insert(ApplicationLog entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                ApplicationLog newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public ApplicationLog Insert(IUpdateContext update, ApplicationLog table)
+        static public ApplicationLog Insert(IUpdateContext update, ApplicationLog entity)
         {
             IApplicationLogEntityBroker broker = update.GetBroker<IApplicationLogEntityBroker>();
             ApplicationLogUpdateColumns updateColumns = new ApplicationLogUpdateColumns();
-            updateColumns.Exception = table.Exception;
-            updateColumns.Host = table.Host;
-            updateColumns.LogLevel = table.LogLevel;
-            updateColumns.Message = table.Message;
-            updateColumns.Thread = table.Thread;
-            updateColumns.Timestamp = table.Timestamp;
-            ApplicationLog theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Exception = entity.Exception;
+            updateColumns.Host = entity.Host;
+            updateColumns.LogLevel = entity.LogLevel;
+            updateColumns.Message = entity.Message;
+            updateColumns.Thread = entity.Thread;
+            updateColumns.Timestamp = entity.Timestamp;
+            ApplicationLog newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

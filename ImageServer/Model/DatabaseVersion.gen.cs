@@ -106,24 +106,25 @@ namespace ClearCanvas.ImageServer.Model
             DatabaseVersion theObject = broker.Load(key);
             return theObject;
         }
-        static public DatabaseVersion Insert(DatabaseVersion table)
+        static public DatabaseVersion Insert(DatabaseVersion entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                DatabaseVersion newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public DatabaseVersion Insert(IUpdateContext update, DatabaseVersion table)
+        static public DatabaseVersion Insert(IUpdateContext update, DatabaseVersion entity)
         {
             IDatabaseVersionEntityBroker broker = update.GetBroker<IDatabaseVersionEntityBroker>();
             DatabaseVersionUpdateColumns updateColumns = new DatabaseVersionUpdateColumns();
-            updateColumns.Build = table.Build;
-            updateColumns.Major = table.Major;
-            updateColumns.Minor = table.Minor;
-            updateColumns.Revision = table.Revision;
-            DatabaseVersion theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Build = entity.Build;
+            updateColumns.Major = entity.Major;
+            updateColumns.Minor = entity.Minor;
+            updateColumns.Revision = entity.Revision;
+            DatabaseVersion newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

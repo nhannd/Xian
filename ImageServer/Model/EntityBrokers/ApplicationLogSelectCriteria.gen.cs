@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ApplicationLogSelectCriteria()
         : base("ApplicationLog")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Exception")]
         public ISearchCondition<System.String> Exception
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Exception"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Host")]
         public ISearchCondition<System.String> Host
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Host"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="LogLevel")]
         public ISearchCondition<System.String> LogLevel
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["LogLevel"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Message")]
         public ISearchCondition<System.String> Message
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Message"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Thread")]
         public ISearchCondition<System.String> Thread
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Thread"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Timestamp")]
         public ISearchCondition<System.DateTime> Timestamp
         {
             get

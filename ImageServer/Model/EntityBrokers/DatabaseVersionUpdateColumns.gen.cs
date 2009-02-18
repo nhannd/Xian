@@ -40,18 +40,22 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public DatabaseVersionUpdateColumns()
        : base("DatabaseVersion_")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Build_")]
         public System.String Build
         {
             set { SubParameters["Build"] = new EntityUpdateColumn<System.String>("Build", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Major_")]
         public System.String Major
         {
             set { SubParameters["Major"] = new EntityUpdateColumn<System.String>("Major", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Minor_")]
         public System.String Minor
         {
             set { SubParameters["Minor"] = new EntityUpdateColumn<System.String>("Minor", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Revision_")]
         public System.String Revision
         {
             set { SubParameters["Revision"] = new EntityUpdateColumn<System.String>("Revision", value); }

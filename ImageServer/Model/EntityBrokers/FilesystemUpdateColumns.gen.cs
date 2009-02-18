@@ -40,34 +40,42 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public FilesystemUpdateColumns()
        : base("Filesystem")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Description")]
         public System.String Description
         {
             set { SubParameters["Description"] = new EntityUpdateColumn<System.String>("Description", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
             set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemPath")]
         public System.String FilesystemPath
         {
             set { SubParameters["FilesystemPath"] = new EntityUpdateColumn<System.String>("FilesystemPath", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemTierEnum")]
         public FilesystemTierEnum FilesystemTierEnum
         {
             set { SubParameters["FilesystemTierEnum"] = new EntityUpdateColumn<FilesystemTierEnum>("FilesystemTierEnum", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="HighWatermark")]
         public System.Decimal HighWatermark
         {
             set { SubParameters["HighWatermark"] = new EntityUpdateColumn<System.Decimal>("HighWatermark", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="LowWatermark")]
         public System.Decimal LowWatermark
         {
             set { SubParameters["LowWatermark"] = new EntityUpdateColumn<System.Decimal>("LowWatermark", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="ReadOnly")]
         public System.Boolean ReadOnly
         {
             set { SubParameters["ReadOnly"] = new EntityUpdateColumn<System.Boolean>("ReadOnly", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="WriteOnly")]
         public System.Boolean WriteOnly
         {
             set { SubParameters["WriteOnly"] = new EntityUpdateColumn<System.Boolean>("WriteOnly", value); }

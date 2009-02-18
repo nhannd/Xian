@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public AlertSelectCriteria()
         : base("Alert")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertCategoryEnum")]
         public ISearchCondition<AlertCategoryEnum> AlertCategoryEnum
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<AlertCategoryEnum>)SubCriteria["AlertCategoryEnum"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertLevelEnum")]
         public ISearchCondition<AlertLevelEnum> AlertLevelEnum
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<AlertLevelEnum>)SubCriteria["AlertLevelEnum"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Component")]
         public ISearchCondition<System.String> Component
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Component"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
         public ISearchCondition<System.Xml.XmlDocument> Content
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["Content"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="InsertTime")]
         public ISearchCondition<System.DateTime> InsertTime
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.DateTime>)SubCriteria["InsertTime"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Source")]
         public ISearchCondition<System.String> Source
         {
             get
@@ -107,6 +113,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Source"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="TypeCode")]
         public ISearchCondition<System.Int32> TypeCode
         {
             get

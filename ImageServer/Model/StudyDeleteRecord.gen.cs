@@ -214,35 +214,36 @@ namespace ClearCanvas.ImageServer.Model
             StudyDeleteRecord theObject = broker.Load(key);
             return theObject;
         }
-        static public StudyDeleteRecord Insert(StudyDeleteRecord table)
+        static public StudyDeleteRecord Insert(StudyDeleteRecord entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                StudyDeleteRecord newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public StudyDeleteRecord Insert(IUpdateContext update, StudyDeleteRecord table)
+        static public StudyDeleteRecord Insert(IUpdateContext update, StudyDeleteRecord entity)
         {
             IStudyDeleteRecordEntityBroker broker = update.GetBroker<IStudyDeleteRecordEntityBroker>();
             StudyDeleteRecordUpdateColumns updateColumns = new StudyDeleteRecordUpdateColumns();
-            updateColumns.AccessionNumber = table.AccessionNumber;
-            updateColumns.ArchiveInfo = table.ArchiveInfo;
-            updateColumns.BackupPath = table.BackupPath;
-            updateColumns.ExtendedInfo = table.ExtendedInfo;
-            updateColumns.FilesystemKey = table.FilesystemKey;
-            updateColumns.PatientId = table.PatientId;
-            updateColumns.PatientsName = table.PatientsName;
-            updateColumns.Reason = table.Reason;
-            updateColumns.ServerPartitionAE = table.ServerPartitionAE;
-            updateColumns.StudyDate = table.StudyDate;
-            updateColumns.StudyDescription = table.StudyDescription;
-            updateColumns.StudyId = table.StudyId;
-            updateColumns.StudyInstanceUid = table.StudyInstanceUid;
-            updateColumns.StudyTime = table.StudyTime;
-            updateColumns.Timestamp = table.Timestamp;
-            StudyDeleteRecord theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.AccessionNumber = entity.AccessionNumber;
+            updateColumns.ArchiveInfo = entity.ArchiveInfo;
+            updateColumns.BackupPath = entity.BackupPath;
+            updateColumns.ExtendedInfo = entity.ExtendedInfo;
+            updateColumns.FilesystemKey = entity.FilesystemKey;
+            updateColumns.PatientId = entity.PatientId;
+            updateColumns.PatientsName = entity.PatientsName;
+            updateColumns.Reason = entity.Reason;
+            updateColumns.ServerPartitionAE = entity.ServerPartitionAE;
+            updateColumns.StudyDate = entity.StudyDate;
+            updateColumns.StudyDescription = entity.StudyDescription;
+            updateColumns.StudyId = entity.StudyId;
+            updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
+            updateColumns.StudyTime = entity.StudyTime;
+            updateColumns.Timestamp = entity.Timestamp;
+            StudyDeleteRecord newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

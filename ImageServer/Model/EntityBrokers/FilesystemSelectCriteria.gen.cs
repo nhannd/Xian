@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public FilesystemSelectCriteria()
         : base("Filesystem")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Description")]
         public ISearchCondition<System.String> Description
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Description"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Enabled")]
         public ISearchCondition<System.Boolean> Enabled
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemPath")]
         public ISearchCondition<System.String> FilesystemPath
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["FilesystemPath"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemTierEnum")]
         public ISearchCondition<FilesystemTierEnum> FilesystemTierEnum
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<FilesystemTierEnum>)SubCriteria["FilesystemTierEnum"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="HighWatermark")]
         public ISearchCondition<System.Decimal> HighWatermark
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Decimal>)SubCriteria["HighWatermark"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="LowWatermark")]
         public ISearchCondition<System.Decimal> LowWatermark
         {
             get
@@ -107,6 +113,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Decimal>)SubCriteria["LowWatermark"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="ReadOnly")]
         public ISearchCondition<System.Boolean> ReadOnly
         {
             get
@@ -118,6 +125,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["ReadOnly"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="WriteOnly")]
         public ISearchCondition<System.Boolean> WriteOnly
         {
             get

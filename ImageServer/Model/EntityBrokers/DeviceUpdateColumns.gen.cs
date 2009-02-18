@@ -40,46 +40,57 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public DeviceUpdateColumns()
        : base("Device")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
         public System.String AeTitle
         {
             set { SubParameters["AeTitle"] = new EntityUpdateColumn<System.String>("AeTitle", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowAutoRoute")]
         public System.Boolean AllowAutoRoute
         {
             set { SubParameters["AllowAutoRoute"] = new EntityUpdateColumn<System.Boolean>("AllowAutoRoute", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowQuery")]
         public System.Boolean AllowQuery
         {
             set { SubParameters["AllowQuery"] = new EntityUpdateColumn<System.Boolean>("AllowQuery", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowRetrieve")]
         public System.Boolean AllowRetrieve
         {
             set { SubParameters["AllowRetrieve"] = new EntityUpdateColumn<System.Boolean>("AllowRetrieve", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowStorage")]
         public System.Boolean AllowStorage
         {
             set { SubParameters["AllowStorage"] = new EntityUpdateColumn<System.Boolean>("AllowStorage", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Description")]
         public System.String Description
         {
             set { SubParameters["Description"] = new EntityUpdateColumn<System.String>("Description", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Dhcp")]
         public System.Boolean Dhcp
         {
             set { SubParameters["Dhcp"] = new EntityUpdateColumn<System.Boolean>("Dhcp", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
             set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="IpAddress")]
         public System.String IpAddress
         {
             set { SubParameters["IpAddress"] = new EntityUpdateColumn<System.String>("IpAddress", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
         public System.Int32 Port
         {
             set { SubParameters["Port"] = new EntityUpdateColumn<System.Int32>("Port", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ServerPartitionGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }

@@ -41,31 +41,38 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public StudyStorageUpdateColumns()
        : base("StudyStorage")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="InsertTime")]
         public System.DateTime InsertTime
         {
             set { SubParameters["InsertTime"] = new EntityUpdateColumn<System.DateTime>("InsertTime", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="LastAccessedTime")]
         public System.DateTime LastAccessedTime
         {
             set { SubParameters["LastAccessedTime"] = new EntityUpdateColumn<System.DateTime>("LastAccessedTime", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="Lock")]
         public System.Boolean Lock
         {
             set { SubParameters["Lock"] = new EntityUpdateColumn<System.Boolean>("Lock", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="QueueStudyStateEnum")]
         public QueueStudyStateEnum QueueStudyStateEnum
         {
             set { SubParameters["QueueStudyStateEnum"] = new EntityUpdateColumn<QueueStudyStateEnum>("QueueStudyStateEnum", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="ServerPartitionGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
         }
        [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyInstanceUid")]
         public System.String StudyInstanceUid
         {
             set { SubParameters["StudyInstanceUid"] = new EntityUpdateColumn<System.String>("StudyInstanceUid", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyStatusEnum")]
         public StudyStatusEnum StudyStatusEnum
         {
             set { SubParameters["StudyStatusEnum"] = new EntityUpdateColumn<StudyStatusEnum>("StudyStatusEnum", value); }

@@ -142,28 +142,29 @@ namespace ClearCanvas.ImageServer.Model
             ServerRule theObject = broker.Load(key);
             return theObject;
         }
-        static public ServerRule Insert(ServerRule table)
+        static public ServerRule Insert(ServerRule entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                ServerRule newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public ServerRule Insert(IUpdateContext update, ServerRule table)
+        static public ServerRule Insert(IUpdateContext update, ServerRule entity)
         {
             IServerRuleEntityBroker broker = update.GetBroker<IServerRuleEntityBroker>();
             ServerRuleUpdateColumns updateColumns = new ServerRuleUpdateColumns();
-            updateColumns.DefaultRule = table.DefaultRule;
-            updateColumns.Enabled = table.Enabled;
-            updateColumns.ExemptRule = table.ExemptRule;
-            updateColumns.RuleName = table.RuleName;
-            updateColumns.RuleXml = table.RuleXml;
-            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
-            updateColumns.ServerRuleApplyTimeEnum = table.ServerRuleApplyTimeEnum;
-            updateColumns.ServerRuleTypeEnum = table.ServerRuleTypeEnum;
-            ServerRule theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.DefaultRule = entity.DefaultRule;
+            updateColumns.Enabled = entity.Enabled;
+            updateColumns.ExemptRule = entity.ExemptRule;
+            updateColumns.RuleName = entity.RuleName;
+            updateColumns.RuleXml = entity.RuleXml;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.ServerRuleApplyTimeEnum = entity.ServerRuleApplyTimeEnum;
+            updateColumns.ServerRuleTypeEnum = entity.ServerRuleTypeEnum;
+            ServerRule newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

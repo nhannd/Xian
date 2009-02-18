@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServerSopClassSelectCriteria()
         : base("ServerSopClass")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="Description")]
         public ISearchCondition<System.String> Description
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Description"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="NonImage")]
         public ISearchCondition<System.Boolean> NonImage
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Boolean>)SubCriteria["NonImage"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="SopClassUid")]
         public ISearchCondition<System.String> SopClassUid
         {
             get

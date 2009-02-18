@@ -40,22 +40,27 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ArchiveQueueUpdateColumns()
        : base("ArchiveQueue")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ArchiveQueueStatusEnum")]
         public ArchiveQueueStatusEnum ArchiveQueueStatusEnum
         {
             set { SubParameters["ArchiveQueueStatusEnum"] = new EntityUpdateColumn<ArchiveQueueStatusEnum>("ArchiveQueueStatusEnum", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="PartitionArchiveGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey PartitionArchiveKey
         {
             set { SubParameters["PartitionArchiveKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("PartitionArchiveKey", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ProcessorId")]
         public System.String ProcessorId
         {
             set { SubParameters["ProcessorId"] = new EntityUpdateColumn<System.String>("ProcessorId", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ScheduledTime")]
         public System.DateTime ScheduledTime
         {
             set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<System.DateTime>("ScheduledTime", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="StudyStorageGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
         {
             set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }

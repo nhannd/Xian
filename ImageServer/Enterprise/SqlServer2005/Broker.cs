@@ -30,14 +30,13 @@
 #endregion
 
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
-using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Xml;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
@@ -278,10 +277,45 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 }
 			}
 		}
-        protected static void PopulateEntity(SqlDataReader reader, ServerEntity entity, Type entityType)
-        {
-            PropertyDescriptorCollection props = TypeDescriptor.GetProperties(entity);
 
+		protected static Dictionary<string, string> GetColumnMap(Type entityType)
+		{
+			ObjectWalker walker = new ObjectWalker();
+			Dictionary<string, string> propMap = new Dictionary<string, string>();
+
+			foreach (IObjectMemberContext member in walker.Walk(entityType))
+			{
+				EntityFieldDatabaseMappingAttribute map =
+					AttributeUtils.GetAttribute<EntityFieldDatabaseMappingAttribute>(member.Member);
+				if (map != null)
+				{
+					propMap.Add(member.Member.Name, map.ColumnName);
+				}
+			}
+
+			return propMap;
+		}
+
+		protected static Dictionary<string,PropertyInfo> GetEntityMap(Type entityType)
+		{
+			ObjectWalker walker = new ObjectWalker();
+			Dictionary<string, PropertyInfo> propMap = new Dictionary<string, PropertyInfo>();
+
+			foreach (IObjectMemberContext member in walker.Walk(entityType))
+			{
+				EntityFieldDatabaseMappingAttribute map =
+					AttributeUtils.GetAttribute<EntityFieldDatabaseMappingAttribute>(member.Member);
+				if (map!=null)
+				{
+					propMap.Add(map.ColumnName, member.Member as PropertyInfo);
+				}
+			}
+
+			return propMap;
+		}
+
+        protected static void PopulateEntity(SqlDataReader reader, ServerEntity entity, Dictionary<string, PropertyInfo> propMap)
+        {
             for (int i = 0; i < reader.FieldCount; i++)
             {
                 String columnName = reader.GetName(i);
@@ -302,32 +336,33 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 if (columnName.Contains("GUID"))
                     columnName = columnName.Replace("GUID", "Key");
 
-                PropertyDescriptor prop = props[columnName];
+
+				PropertyInfo prop = propMap[columnName];
                 if (prop == null)
                     throw new EntityNotFoundException("Unable to match column to property: " + columnName, null);
 
                 if (reader.IsDBNull(i))
                 {
-                    prop.SetValue(entity, null);
+                    prop.SetValue(entity, null, null);
                     continue;
                 }
 
                 if (prop.PropertyType == typeof(String))
-                    prop.SetValue(entity, reader.GetString(i));
+					prop.SetValue(entity, reader.GetString(i), null);
                 else if (prop.PropertyType == typeof(Int32))
-                    prop.SetValue(entity, reader.GetInt32(i));
+					prop.SetValue(entity, reader.GetInt32(i), null);
                 else if (prop.PropertyType == typeof(Int16))
-                    prop.SetValue(entity, reader.GetInt16(i));
+					prop.SetValue(entity, reader.GetInt16(i), null);
                 else if (prop.PropertyType == typeof(double))
-                    prop.SetValue(entity, reader.GetDouble(i));
+					prop.SetValue(entity, reader.GetDouble(i), null);
                 else if (prop.PropertyType == typeof(Decimal))
-                    prop.SetValue(entity, reader.GetDecimal(i));
+					prop.SetValue(entity, reader.GetDecimal(i), null);
                 else if (prop.PropertyType == typeof(float))
-                    prop.SetValue(entity, reader.GetFloat(i));
+					prop.SetValue(entity, reader.GetFloat(i), null);
                 else if (prop.PropertyType == typeof(DateTime))
-                    prop.SetValue(entity, reader.GetDateTime(i));
+					prop.SetValue(entity, reader.GetDateTime(i), null);
                 else if (prop.PropertyType == typeof(bool))
-                    prop.SetValue(entity, reader.GetBoolean(i));
+					prop.SetValue(entity, reader.GetBoolean(i), null);
                 else if (prop.PropertyType == typeof(XmlDocument))
                 {
                     SqlXml xml = reader.GetSqlXml(i);
@@ -335,17 +370,17 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     {
                         XmlDocument xmlDoc = new XmlDocument();
                         xmlDoc.LoadXml(xml.Value);
-                        prop.SetValue(entity, xmlDoc);    
+						prop.SetValue(entity, xmlDoc, null);    
                     }
                     else
                     {
-                        prop.SetValue(entity, null);
+						prop.SetValue(entity, null, null);
                     }
                 }
                 else if (prop.PropertyType == typeof(ServerEntityKey))
                 {
                     Guid uid = reader.GetGuid(i);
-                    prop.SetValue(entity, new ServerEntityKey(columnName.Replace("Key", ""), uid));
+					prop.SetValue(entity, new ServerEntityKey(columnName.Replace("Key", ""), uid), null);
                 }
                 else if (typeof(ServerEnum).IsAssignableFrom(prop.PropertyType))
                 {
@@ -353,14 +388,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     ConstructorInfo construct = prop.PropertyType.GetConstructor(new Type[0]);
                     ServerEnum val = (ServerEnum)construct.Invoke(null);
                     val.SetEnum(enumVal);
-                    prop.SetValue(entity, val);
+					prop.SetValue(entity, val, null);
                 }
                 else
                     throw new EntityNotFoundException("Unsupported property type: " + prop.PropertyType, null);
             }
         }
-
-
-
     }
 }

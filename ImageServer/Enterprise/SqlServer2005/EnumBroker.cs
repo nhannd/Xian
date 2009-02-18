@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 
@@ -67,11 +68,13 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 {
                     if (myReader.HasRows)
                     {
+						Dictionary<string, PropertyInfo> propMap = GetEntityMap(typeof(TOutput));
+
                         while (myReader.Read())
                         {
                             TOutput row = new TOutput();
 
-                            PopulateEntity(myReader, row, typeof(TOutput));
+                            PopulateEntity(myReader, row, propMap);
 
                             list.Add(row);
                         }

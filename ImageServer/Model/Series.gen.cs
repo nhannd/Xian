@@ -169,30 +169,31 @@ namespace ClearCanvas.ImageServer.Model
             Series theObject = broker.Load(key);
             return theObject;
         }
-        static public Series Insert(Series table)
+        static public Series Insert(Series entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                Series newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public Series Insert(IUpdateContext update, Series table)
+        static public Series Insert(IUpdateContext update, Series entity)
         {
             ISeriesEntityBroker broker = update.GetBroker<ISeriesEntityBroker>();
             SeriesUpdateColumns updateColumns = new SeriesUpdateColumns();
-            updateColumns.Modality = table.Modality;
-            updateColumns.NumberOfSeriesRelatedInstances = table.NumberOfSeriesRelatedInstances;
-            updateColumns.PerformedProcedureStepStartDate = table.PerformedProcedureStepStartDate;
-            updateColumns.PerformedProcedureStepStartTime = table.PerformedProcedureStepStartTime;
-            updateColumns.SeriesDescription = table.SeriesDescription;
-            updateColumns.SeriesInstanceUid = table.SeriesInstanceUid;
-            updateColumns.SeriesNumber = table.SeriesNumber;
-            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
-            updateColumns.SourceApplicationEntityTitle = table.SourceApplicationEntityTitle;
-            updateColumns.StudyKey = table.StudyKey;
-            Series theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Modality = entity.Modality;
+            updateColumns.NumberOfSeriesRelatedInstances = entity.NumberOfSeriesRelatedInstances;
+            updateColumns.PerformedProcedureStepStartDate = entity.PerformedProcedureStepStartDate;
+            updateColumns.PerformedProcedureStepStartTime = entity.PerformedProcedureStepStartTime;
+            updateColumns.SeriesDescription = entity.SeriesDescription;
+            updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
+            updateColumns.SeriesNumber = entity.SeriesNumber;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.SourceApplicationEntityTitle = entity.SourceApplicationEntityTitle;
+            updateColumns.StudyKey = entity.StudyKey;
+            Series newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

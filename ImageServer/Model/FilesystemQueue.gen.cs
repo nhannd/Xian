@@ -126,26 +126,27 @@ namespace ClearCanvas.ImageServer.Model
             FilesystemQueue theObject = broker.Load(key);
             return theObject;
         }
-        static public FilesystemQueue Insert(FilesystemQueue table)
+        static public FilesystemQueue Insert(FilesystemQueue entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                FilesystemQueue newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public FilesystemQueue Insert(IUpdateContext update, FilesystemQueue table)
+        static public FilesystemQueue Insert(IUpdateContext update, FilesystemQueue entity)
         {
             IFilesystemQueueEntityBroker broker = update.GetBroker<IFilesystemQueueEntityBroker>();
             FilesystemQueueUpdateColumns updateColumns = new FilesystemQueueUpdateColumns();
-            updateColumns.FilesystemKey = table.FilesystemKey;
-            updateColumns.FilesystemQueueTypeEnum = table.FilesystemQueueTypeEnum;
-            updateColumns.QueueXml = table.QueueXml;
-            updateColumns.ScheduledTime = table.ScheduledTime;
-            updateColumns.SeriesInstanceUid = table.SeriesInstanceUid;
-            updateColumns.StudyStorageKey = table.StudyStorageKey;
-            FilesystemQueue theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.FilesystemKey = entity.FilesystemKey;
+            updateColumns.FilesystemQueueTypeEnum = entity.FilesystemQueueTypeEnum;
+            updateColumns.QueueXml = entity.QueueXml;
+            updateColumns.ScheduledTime = entity.ScheduledTime;
+            updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            FilesystemQueue newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

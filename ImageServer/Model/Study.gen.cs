@@ -249,38 +249,39 @@ namespace ClearCanvas.ImageServer.Model
             Study theObject = broker.Load(key);
             return theObject;
         }
-        static public Study Insert(Study table)
+        static public Study Insert(Study entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                Study newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public Study Insert(IUpdateContext update, Study table)
+        static public Study Insert(IUpdateContext update, Study entity)
         {
             IStudyEntityBroker broker = update.GetBroker<IStudyEntityBroker>();
             StudyUpdateColumns updateColumns = new StudyUpdateColumns();
-            updateColumns.AccessionNumber = table.AccessionNumber;
-            updateColumns.IssuerOfPatientId = table.IssuerOfPatientId;
-            updateColumns.NumberOfStudyRelatedInstances = table.NumberOfStudyRelatedInstances;
-            updateColumns.NumberOfStudyRelatedSeries = table.NumberOfStudyRelatedSeries;
-            updateColumns.PatientKey = table.PatientKey;
-            updateColumns.PatientId = table.PatientId;
-            updateColumns.PatientsAge = table.PatientsAge;
-            updateColumns.PatientsBirthDate = table.PatientsBirthDate;
-            updateColumns.PatientsName = table.PatientsName;
-            updateColumns.PatientsSex = table.PatientsSex;
-            updateColumns.ReferringPhysiciansName = table.ReferringPhysiciansName;
-            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
-            updateColumns.SpecificCharacterSet = table.SpecificCharacterSet;
-            updateColumns.StudyDate = table.StudyDate;
-            updateColumns.StudyDescription = table.StudyDescription;
-            updateColumns.StudyId = table.StudyId;
-            updateColumns.StudyInstanceUid = table.StudyInstanceUid;
-            updateColumns.StudyTime = table.StudyTime;
-            Study theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.AccessionNumber = entity.AccessionNumber;
+            updateColumns.IssuerOfPatientId = entity.IssuerOfPatientId;
+            updateColumns.NumberOfStudyRelatedInstances = entity.NumberOfStudyRelatedInstances;
+            updateColumns.NumberOfStudyRelatedSeries = entity.NumberOfStudyRelatedSeries;
+            updateColumns.PatientKey = entity.PatientKey;
+            updateColumns.PatientId = entity.PatientId;
+            updateColumns.PatientsAge = entity.PatientsAge;
+            updateColumns.PatientsBirthDate = entity.PatientsBirthDate;
+            updateColumns.PatientsName = entity.PatientsName;
+            updateColumns.PatientsSex = entity.PatientsSex;
+            updateColumns.ReferringPhysiciansName = entity.ReferringPhysiciansName;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.SpecificCharacterSet = entity.SpecificCharacterSet;
+            updateColumns.StudyDate = entity.StudyDate;
+            updateColumns.StudyDescription = entity.StudyDescription;
+            updateColumns.StudyId = entity.StudyId;
+            updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
+            updateColumns.StudyTime = entity.StudyTime;
+            Study newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

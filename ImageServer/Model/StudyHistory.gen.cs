@@ -124,26 +124,27 @@ namespace ClearCanvas.ImageServer.Model
             StudyHistory theObject = broker.Load(key);
             return theObject;
         }
-        static public StudyHistory Insert(StudyHistory table)
+        static public StudyHistory Insert(StudyHistory entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                StudyHistory newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public StudyHistory Insert(IUpdateContext update, StudyHistory table)
+        static public StudyHistory Insert(IUpdateContext update, StudyHistory entity)
         {
             IStudyHistoryEntityBroker broker = update.GetBroker<IStudyHistoryEntityBroker>();
             StudyHistoryUpdateColumns updateColumns = new StudyHistoryUpdateColumns();
-            updateColumns.ChangeDescription = table.ChangeDescription;
-            updateColumns.DestStudyStorageKey = table.DestStudyStorageKey;
-            updateColumns.InsertTime = table.InsertTime;
-            updateColumns.StudyData = table.StudyData;
-            updateColumns.StudyHistoryTypeEnum = table.StudyHistoryTypeEnum;
-            updateColumns.StudyStorageKey = table.StudyStorageKey;
-            StudyHistory theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.ChangeDescription = entity.ChangeDescription;
+            updateColumns.DestStudyStorageKey = entity.DestStudyStorageKey;
+            updateColumns.InsertTime = entity.InsertTime;
+            updateColumns.StudyData = entity.StudyData;
+            updateColumns.StudyHistoryTypeEnum = entity.StudyHistoryTypeEnum;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            StudyHistory newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

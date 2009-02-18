@@ -99,23 +99,24 @@ namespace ClearCanvas.ImageServer.Model
             ServerTransferSyntax theObject = broker.Load(key);
             return theObject;
         }
-        static public ServerTransferSyntax Insert(ServerTransferSyntax table)
+        static public ServerTransferSyntax Insert(ServerTransferSyntax entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                ServerTransferSyntax newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public ServerTransferSyntax Insert(IUpdateContext update, ServerTransferSyntax table)
+        static public ServerTransferSyntax Insert(IUpdateContext update, ServerTransferSyntax entity)
         {
             IServerTransferSyntaxEntityBroker broker = update.GetBroker<IServerTransferSyntaxEntityBroker>();
             ServerTransferSyntaxUpdateColumns updateColumns = new ServerTransferSyntaxUpdateColumns();
-            updateColumns.Description = table.Description;
-            updateColumns.Lossless = table.Lossless;
-            updateColumns.Uid = table.Uid;
-            ServerTransferSyntax theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Description = entity.Description;
+            updateColumns.Lossless = entity.Lossless;
+            updateColumns.Uid = entity.Uid;
+            ServerTransferSyntax newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

@@ -41,15 +41,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ServerTransferSyntaxUpdateColumns()
        : base("ServerTransferSyntax")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Description")]
         public System.String Description
         {
             set { SubParameters["Description"] = new EntityUpdateColumn<System.String>("Description", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Lossless")]
         public System.Boolean Lossless
         {
             set { SubParameters["Lossless"] = new EntityUpdateColumn<System.Boolean>("Lossless", value); }
         }
        [DicomField(DicomTags.Uid, DefaultValue = DicomFieldDefault.Null)]
+        [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Uid")]
         public System.String Uid
         {
             set { SubParameters["Uid"] = new EntityUpdateColumn<System.String>("Uid", value); }

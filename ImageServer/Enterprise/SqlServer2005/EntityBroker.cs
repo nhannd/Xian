@@ -562,12 +562,15 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
         private static String GetUpdateSetClause(SqlCommand command, EntityUpdateColumns parameters)
         {
+			Dictionary<string, string> columnMap = GetColumnMap(parameters.GetType());
+
             StringBuilder setClause = new StringBuilder();
             bool first = true;
             foreach (EntityColumnBase parm in parameters.SubParameters.Values)
             {
                 String text;
-                String sqlParmName = GetDbColumnName(parm);
+                //String sqlParmName = GetDbColumnName(parm);
+            	String sqlParmName = columnMap[parm.FieldName];
                 if (parm is EntityUpdateColumn<XmlDocument>)
                 {
                     EntityUpdateColumn<XmlDocument> p = parm as EntityUpdateColumn<XmlDocument>;
@@ -660,17 +663,16 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         /// <returns>The SQL string.</returns>
         private static string GetUpdateSql(TServerEntity entity, SqlCommand command)
         {
-            
-            StringBuilder set = new StringBuilder();
+			Dictionary<string, string> columnMap = GetColumnMap(entity.GetType());
+
+			StringBuilder set = new StringBuilder();
+			int fieldUpdated = 0;
+			
             PropertyInfo[] props = entity.GetType().GetProperties();
-            int fieldUpdated = 0;
             foreach (PropertyInfo prop in props)
             {
-                object[] attr = prop.GetCustomAttributes(typeof(EntityFieldDatabaseMappingAttribute), true);
-                if (attr!=null && attr.Length>0)
-                {
-                    EntityFieldDatabaseMappingAttribute map = attr[0] as EntityFieldDatabaseMappingAttribute;
-
+				if (columnMap.ContainsKey(prop.Name))
+				{
                     object value = prop.GetValue(entity, null);
 
                     if (value is ServerEntityKey)
@@ -706,13 +708,13 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                     if (fieldUpdated == 0)
                     {
-                       
-                        set.AppendFormat("{0}= @{1}", map.ColumnName, prop.Name);
+
+						set.AppendFormat("{0}= @{1}", columnMap[prop.Name], prop.Name);
                         command.Parameters.AddWithValue("@" + prop.Name, value ?? DBNull.Value);
                     }
                     else
                     {
-                        set.AppendFormat(", {0}=@{1}", map.ColumnName, prop.Name);
+						set.AppendFormat(", {0}=@{1}", columnMap[prop.Name], prop.Name);
                         command.Parameters.AddWithValue("@" + prop.Name, value ?? DBNull.Value);
                     }
 
@@ -900,8 +902,10 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     {
                         myReader.Read();
 
+						Dictionary<string, PropertyInfo> propMap = GetEntityMap(typeof(TServerEntity));
+
                         row = new TServerEntity();
-                        PopulateEntity(myReader, row, typeof (TServerEntity));
+                        PopulateEntity(myReader, row, propMap);
 
                         return row;
                     }
@@ -1186,10 +1190,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 {
                     if (reader.HasRows)
                     {
+						Dictionary<string, PropertyInfo> propMap = GetEntityMap(typeof(TServerEntity));
+
                         while (reader.Read())
                         {
                             entity = new TServerEntity();
-                            PopulateEntity(reader, entity, typeof (TServerEntity));
+							PopulateEntity(reader, entity, propMap);
                             break;
                         }
                     }
@@ -1274,11 +1280,13 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 {
                     if (myReader.HasRows)
                     {
+						Dictionary<string, PropertyInfo> propMap = GetEntityMap(typeof(TServerEntity));
+
                         while (myReader.Read())
                         {
                             TServerEntity row = new TServerEntity();
 
-                            PopulateEntity(myReader, row, typeof(TServerEntity));
+                            PopulateEntity(myReader, row, propMap);
 
                             callback(row);
                         }

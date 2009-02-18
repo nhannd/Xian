@@ -133,27 +133,28 @@ namespace ClearCanvas.ImageServer.Model
             ServiceLock theObject = broker.Load(key);
             return theObject;
         }
-        static public ServiceLock Insert(ServiceLock table)
+        static public ServiceLock Insert(ServiceLock entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                ServiceLock newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public ServiceLock Insert(IUpdateContext update, ServiceLock table)
+        static public ServiceLock Insert(IUpdateContext update, ServiceLock entity)
         {
             IServiceLockEntityBroker broker = update.GetBroker<IServiceLockEntityBroker>();
             ServiceLockUpdateColumns updateColumns = new ServiceLockUpdateColumns();
-            updateColumns.Enabled = table.Enabled;
-            updateColumns.FilesystemKey = table.FilesystemKey;
-            updateColumns.Lock = table.Lock;
-            updateColumns.ProcessorId = table.ProcessorId;
-            updateColumns.ScheduledTime = table.ScheduledTime;
-            updateColumns.ServiceLockTypeEnum = table.ServiceLockTypeEnum;
-            updateColumns.State = table.State;
-            ServiceLock theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Enabled = entity.Enabled;
+            updateColumns.FilesystemKey = entity.FilesystemKey;
+            updateColumns.Lock = entity.Lock;
+            updateColumns.ProcessorId = entity.ProcessorId;
+            updateColumns.ScheduledTime = entity.ScheduledTime;
+            updateColumns.ServiceLockTypeEnum = entity.ServiceLockTypeEnum;
+            updateColumns.State = entity.State;
+            ServiceLock newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

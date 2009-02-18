@@ -33,12 +33,12 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.IO;
-using System.Text;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise.SqlServer2005;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
@@ -53,22 +53,146 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 			{
 				cmdLine.Parse(args);
 
-				DatabaseVersion version = LoadVersion();
-				
+				DatabaseVersion databaseVersion = LoadDatabaseVersion();
+				DatabaseVersion assemblyVersion = LoadAssemblyVersion();
+
+				Console.WriteLine("The current database version is {0} and assembly version is {1}", databaseVersion.GetVersionString(),
+				                  assemblyVersion.GetVersionString());
+
+				if (databaseVersion.Equals(assemblyVersion))
+				{
+					Console.WriteLine("Database version is already correct.  Exiting upgrade application.");
+					return;
+				}
+
+				if (!UpgradeDatabase(databaseVersion, assemblyVersion))
+					Environment.ExitCode = -1;
+				else
+					Environment.ExitCode = 0;
+
 			}
 			catch (CommandLineException e)
 			{
 				Console.WriteLine(e.Message);
 				cmdLine.PrintUsage(Console.Out);
+				Environment.ExitCode = -1;
+			}
+			catch (Exception e)
+			{
+				Console.WriteLine("Unexpected exception when upgrading database: {0}",e.Message);
+				Environment.ExitCode = -1;	
 			}
 		}
 
-		DatabaseVersion LoadVersion()
+		bool UpgradeDatabase(DatabaseVersion startingVersion, DatabaseVersion assemblyVersion)
+		{
+			DatabaseVersion currentVersion = startingVersion;
+			
+			UpgradeScriptExtensionPoint ep = new UpgradeScriptExtensionPoint();
+			object[] extensions = ep.CreateExtensions();
+
+			while (!currentVersion.Equals(assemblyVersion))
+			{
+				bool found = false;
+				foreach (IUpgradeScript script in extensions)
+				{
+					if (script.UpgradeFromVersion.Equals(currentVersion))
+					{
+						if (!UpgradeVersion(script, assemblyVersion))
+						{
+							return false;
+						}
+
+						if (script.UpgradeToVersion == null)
+						{
+							Console.WriteLine("The database has been upgraded from version {0} to version {1}", currentVersion.GetVersionString(),
+							  assemblyVersion.GetVersionString());
+							currentVersion = assemblyVersion;
+						}
+						else
+						{
+							Console.WriteLine("The database has been upgraded from version {0} to version {1}", currentVersion.GetVersionString(),
+							  script.UpgradeToVersion.GetVersionString());
+							currentVersion = script.UpgradeToVersion;
+						}
+
+						found = true;
+						break;
+					}
+				}
+				if (!found)
+				{
+					Console.WriteLine("Unable to find upgrade script for {0}", currentVersion.GetVersionString());
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		bool UpgradeVersion(IUpgradeScript script, DatabaseVersion assemblyVersion)
+		{
+			using (
+				IUpdateContext updateContext =
+					PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				UpdateContext context = updateContext as UpdateContext;
+				if (context == null)
+				{
+					Console.WriteLine("Unexpected error opening connection to the database.");
+					return false;
+				}
+
+				ExecuteSql(context, script);
+
+				DatabaseVersionUpdateColumns columns = new DatabaseVersionUpdateColumns();
+				DatabaseVersionSelectCriteria criteria = new DatabaseVersionSelectCriteria();
+
+				if (script.UpgradeToVersion == null)
+				{
+					columns.Build = assemblyVersion.Build;
+					columns.Revision = assemblyVersion.Revision;
+					columns.Minor = assemblyVersion.Minor;
+					columns.Major = assemblyVersion.Major;
+				}
+				else
+				{
+					columns.Build = script.UpgradeToVersion.Build;
+					columns.Revision = script.UpgradeToVersion.Revision;
+					columns.Minor = script.UpgradeToVersion.Minor;
+					columns.Major = script.UpgradeToVersion.Major;
+				}
+
+				IDatabaseVersionEntityBroker broker = context.GetBroker<IDatabaseVersionEntityBroker>();
+				broker.Update(criteria, columns);
+
+				updateContext.Commit();
+			}
+			return true;
+		}
+
+		static DatabaseVersion LoadAssemblyVersion()
+		{
+			Version ver = Assembly.GetExecutingAssembly().GetName().Version;
+
+			DatabaseVersion assemblyVersion = new DatabaseVersion(ver.Build.ToString(),
+				ver.Major.ToString(),
+				ver.Minor.ToString(),
+				ver.Revision.ToString());
+			return assemblyVersion;
+		}
+
+		static DatabaseVersion LoadDatabaseVersion()
 		{
 			using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
 			{
 				IDatabaseVersionEntityBroker broker = read.GetBroker<IDatabaseVersionEntityBroker>();
 				DatabaseVersionSelectCriteria criteria = new DatabaseVersionSelectCriteria();
+				criteria.Major.SortDesc(0);
+				criteria.Minor.SortDesc(1);
+				criteria.Revision.SortDesc(2);
+				criteria.Build.SortDesc(3);
+
 				IList<DatabaseVersion> versions = broker.Find(criteria);
 				if (versions.Count == 0)
 					return null;
@@ -77,18 +201,17 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 			}
 		}
 
-		public void ExecuteSql(SqlConnection connection, IUpgradeScript script)
+		public void ExecuteSql(UpdateContext context, IUpgradeScript script)
 		{
 			string sql = script.GetScript();
 
 			Regex regex = new Regex("^\\s*GO\\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
 			string[] lines = regex.Split(sql);
 
-			SqlTransaction transaction = connection.BeginTransaction();
-			using (SqlCommand cmd = connection.CreateCommand())
+			using (SqlCommand cmd = context.Connection.CreateCommand())
 			{
-				cmd.Connection = connection;
-				cmd.Transaction = transaction;
+				cmd.Connection = context.Connection;
+				cmd.Transaction = context.Transaction;
 
 				foreach (string line in lines)
 				{
@@ -97,20 +220,10 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 						cmd.CommandText = line;
 						cmd.CommandType = CommandType.Text;
 
-						try
-						{
-							cmd.ExecuteNonQuery();
-						}
-						catch (SqlException)
-						{
-							transaction.Rollback();
-							throw;
-						}
+						cmd.ExecuteNonQuery();
 					}
 				}
 			}
-
-			transaction.Commit();
 		}
 	}
 }

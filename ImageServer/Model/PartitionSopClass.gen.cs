@@ -97,23 +97,24 @@ namespace ClearCanvas.ImageServer.Model
             PartitionSopClass theObject = broker.Load(key);
             return theObject;
         }
-        static public PartitionSopClass Insert(PartitionSopClass table)
+        static public PartitionSopClass Insert(PartitionSopClass entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                PartitionSopClass newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public PartitionSopClass Insert(IUpdateContext update, PartitionSopClass table)
+        static public PartitionSopClass Insert(IUpdateContext update, PartitionSopClass entity)
         {
             IPartitionSopClassEntityBroker broker = update.GetBroker<IPartitionSopClassEntityBroker>();
             PartitionSopClassUpdateColumns updateColumns = new PartitionSopClassUpdateColumns();
-            updateColumns.Enabled = table.Enabled;
-            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
-            updateColumns.ServerSopClassKey = table.ServerSopClassKey;
-            PartitionSopClass theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Enabled = entity.Enabled;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.ServerSopClassKey = entity.ServerSopClassKey;
+            PartitionSopClass newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

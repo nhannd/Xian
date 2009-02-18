@@ -115,25 +115,26 @@ namespace ClearCanvas.ImageServer.Model
             ArchiveQueue theObject = broker.Load(key);
             return theObject;
         }
-        static public ArchiveQueue Insert(ArchiveQueue table)
+        static public ArchiveQueue Insert(ArchiveQueue entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                ArchiveQueue newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public ArchiveQueue Insert(IUpdateContext update, ArchiveQueue table)
+        static public ArchiveQueue Insert(IUpdateContext update, ArchiveQueue entity)
         {
             IArchiveQueueEntityBroker broker = update.GetBroker<IArchiveQueueEntityBroker>();
             ArchiveQueueUpdateColumns updateColumns = new ArchiveQueueUpdateColumns();
-            updateColumns.ArchiveQueueStatusEnum = table.ArchiveQueueStatusEnum;
-            updateColumns.PartitionArchiveKey = table.PartitionArchiveKey;
-            updateColumns.ProcessorId = table.ProcessorId;
-            updateColumns.ScheduledTime = table.ScheduledTime;
-            updateColumns.StudyStorageKey = table.StudyStorageKey;
-            ArchiveQueue theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.ArchiveQueueStatusEnum = entity.ArchiveQueueStatusEnum;
+            updateColumns.PartitionArchiveKey = entity.PartitionArchiveKey;
+            updateColumns.ProcessorId = entity.ProcessorId;
+            updateColumns.ScheduledTime = entity.ScheduledTime;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
+            ArchiveQueue newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

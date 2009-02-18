@@ -40,14 +40,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public DevicePreferredTransferSyntaxUpdateColumns()
        : base("DevicePreferredTransferSyntax")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="DeviceGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey DeviceKey
         {
             set { SubParameters["DeviceKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("DeviceKey", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerSopClassGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerSopClassKey
         {
             set { SubParameters["ServerSopClassKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerSopClassKey", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerTransferSyntaxGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerTransferSyntaxKey
         {
             set { SubParameters["ServerTransferSyntaxKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerTransferSyntaxKey", value); }

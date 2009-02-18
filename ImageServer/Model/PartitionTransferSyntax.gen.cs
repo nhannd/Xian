@@ -97,23 +97,24 @@ namespace ClearCanvas.ImageServer.Model
             PartitionTransferSyntax theObject = broker.Load(key);
             return theObject;
         }
-        static public PartitionTransferSyntax Insert(PartitionTransferSyntax table)
+        static public PartitionTransferSyntax Insert(PartitionTransferSyntax entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                PartitionTransferSyntax newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public PartitionTransferSyntax Insert(IUpdateContext update, PartitionTransferSyntax table)
+        static public PartitionTransferSyntax Insert(IUpdateContext update, PartitionTransferSyntax entity)
         {
             IPartitionTransferSyntaxEntityBroker broker = update.GetBroker<IPartitionTransferSyntaxEntityBroker>();
             PartitionTransferSyntaxUpdateColumns updateColumns = new PartitionTransferSyntaxUpdateColumns();
-            updateColumns.Enabled = table.Enabled;
-            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
-            updateColumns.ServerTransferSyntaxKey = table.ServerTransferSyntaxKey;
-            PartitionTransferSyntax theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Enabled = entity.Enabled;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.ServerTransferSyntaxKey = entity.ServerTransferSyntaxKey;
+            PartitionTransferSyntax newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

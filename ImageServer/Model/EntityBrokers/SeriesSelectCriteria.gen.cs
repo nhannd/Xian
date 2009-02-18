@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public SeriesSelectCriteria()
         : base("Series")
         {}
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="Modality")]
         public ISearchCondition<System.String> Modality
         {
             get
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["Modality"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="NumberOfSeriesRelatedInstances")]
         public ISearchCondition<System.Int32> NumberOfSeriesRelatedInstances
         {
             get
@@ -63,6 +65,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.Int32>)SubCriteria["NumberOfSeriesRelatedInstances"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="PerformedProcedureStepStartDate")]
         public ISearchCondition<System.String> PerformedProcedureStepStartDate
         {
             get
@@ -74,6 +77,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["PerformedProcedureStepStartDate"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="PerformedProcedureStepStartTime")]
         public ISearchCondition<System.String> PerformedProcedureStepStartTime
         {
             get
@@ -85,6 +89,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["PerformedProcedureStepStartTime"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesDescription")]
         public ISearchCondition<System.String> SeriesDescription
         {
             get
@@ -96,6 +101,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["SeriesDescription"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesInstanceUid")]
         public ISearchCondition<System.String> SeriesInstanceUid
         {
             get
@@ -107,6 +113,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["SeriesInstanceUid"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesNumber")]
         public ISearchCondition<System.String> SeriesNumber
         {
             get
@@ -118,6 +125,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["SeriesNumber"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="ServerPartitionGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
         {
             get
@@ -129,6 +137,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SourceApplicationEntityTitle")]
         public ISearchCondition<System.String> SourceApplicationEntityTitle
         {
             get
@@ -140,6 +149,7 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<System.String>)SubCriteria["SourceApplicationEntityTitle"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="StudyGUID")]
         public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyKey
         {
             get

@@ -40,6 +40,13 @@
   </ItemGroup>
 
   <ItemGroup>
+	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Executable\app.config" />
+	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.config" />
+	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Dicom\app.config" />
+	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Common\app.config" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ShredHostService\app.config" />
     <ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Dicom\app.config" />
@@ -104,6 +111,11 @@
 	<CombineAppConfigs CheckDependency="false" SourceFiles="@(ShredHostAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.ImageServer.ShredHostService.exe.config"/>
   </Target>
 
+  <!-- ImageServer.Executable App Config -->
+  <Target Name="Copy ImageServer Executable App Config">
+	<CombineAppConfigs CheckDependency="false" SourceFiles="@(ExecutableAppConfigCreatorSourceFiles)" OutputFile="$(DistributionDirectory)\ClearCanvas.ImageServer.Executable.exe.config"/>
+  </Target>
+  
   <Target Name="Copy Project Files" >
 
     <!-- Copy Common files -->
@@ -125,7 +137,7 @@
     
     <CallTarget Condition="$(ShredHostBuild)" Targets="Copy Project Files;Copy ShredHost App Config" />
 	<CallTarget Condition="$(TestAppBuild)" Targets="Copy Project Files" />
-	<CallTarget Condition="$(ExecutableBuild)" Targets="Copy Project Files" />
+	<CallTarget Condition="$(ExecutableBuild)" Targets="Copy Project Files;Copy ImageServer Executable App Config" />
 
   </Target>
 

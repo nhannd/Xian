@@ -99,23 +99,24 @@ namespace ClearCanvas.ImageServer.Model
             ServerSopClass theObject = broker.Load(key);
             return theObject;
         }
-        static public ServerSopClass Insert(ServerSopClass table)
+        static public ServerSopClass Insert(ServerSopClass entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                ServerSopClass newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public ServerSopClass Insert(IUpdateContext update, ServerSopClass table)
+        static public ServerSopClass Insert(IUpdateContext update, ServerSopClass entity)
         {
             IServerSopClassEntityBroker broker = update.GetBroker<IServerSopClassEntityBroker>();
             ServerSopClassUpdateColumns updateColumns = new ServerSopClassUpdateColumns();
-            updateColumns.Description = table.Description;
-            updateColumns.NonImage = table.NonImage;
-            updateColumns.SopClassUid = table.SopClassUid;
-            ServerSopClass theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Description = entity.Description;
+            updateColumns.NonImage = entity.NonImage;
+            updateColumns.SopClassUid = entity.SopClassUid;
+            ServerSopClass newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

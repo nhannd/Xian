@@ -223,37 +223,38 @@ namespace ClearCanvas.ImageServer.Model
             ServerPartition theObject = broker.Load(key);
             return theObject;
         }
-        static public ServerPartition Insert(ServerPartition table)
+        static public ServerPartition Insert(ServerPartition entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                ServerPartition newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public ServerPartition Insert(IUpdateContext update, ServerPartition table)
+        static public ServerPartition Insert(IUpdateContext update, ServerPartition entity)
         {
             IServerPartitionEntityBroker broker = update.GetBroker<IServerPartitionEntityBroker>();
             ServerPartitionUpdateColumns updateColumns = new ServerPartitionUpdateColumns();
-            updateColumns.AcceptAnyDevice = table.AcceptAnyDevice;
-            updateColumns.AeTitle = table.AeTitle;
-            updateColumns.AuditDeleteStudy = table.AuditDeleteStudy;
-            updateColumns.AutoInsertDevice = table.AutoInsertDevice;
-            updateColumns.DefaultRemotePort = table.DefaultRemotePort;
-            updateColumns.Description = table.Description;
-            updateColumns.DuplicateSopPolicyEnum = table.DuplicateSopPolicyEnum;
-            updateColumns.Enabled = table.Enabled;
-            updateColumns.MatchAccessionNumber = table.MatchAccessionNumber;
-            updateColumns.MatchIssuerOfPatientId = table.MatchIssuerOfPatientId;
-            updateColumns.MatchPatientId = table.MatchPatientId;
-            updateColumns.MatchPatientsBirthDate = table.MatchPatientsBirthDate;
-            updateColumns.MatchPatientsName = table.MatchPatientsName;
-            updateColumns.MatchPatientsSex = table.MatchPatientsSex;
-            updateColumns.PartitionFolder = table.PartitionFolder;
-            updateColumns.Port = table.Port;
-            updateColumns.StudyCount = table.StudyCount;
-            ServerPartition theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.AcceptAnyDevice = entity.AcceptAnyDevice;
+            updateColumns.AeTitle = entity.AeTitle;
+            updateColumns.AuditDeleteStudy = entity.AuditDeleteStudy;
+            updateColumns.AutoInsertDevice = entity.AutoInsertDevice;
+            updateColumns.DefaultRemotePort = entity.DefaultRemotePort;
+            updateColumns.Description = entity.Description;
+            updateColumns.DuplicateSopPolicyEnum = entity.DuplicateSopPolicyEnum;
+            updateColumns.Enabled = entity.Enabled;
+            updateColumns.MatchAccessionNumber = entity.MatchAccessionNumber;
+            updateColumns.MatchIssuerOfPatientId = entity.MatchIssuerOfPatientId;
+            updateColumns.MatchPatientId = entity.MatchPatientId;
+            updateColumns.MatchPatientsBirthDate = entity.MatchPatientsBirthDate;
+            updateColumns.MatchPatientsName = entity.MatchPatientsName;
+            updateColumns.MatchPatientsSex = entity.MatchPatientsSex;
+            updateColumns.PartitionFolder = entity.PartitionFolder;
+            updateColumns.Port = entity.Port;
+            updateColumns.StudyCount = entity.StudyCount;
+            ServerPartition newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

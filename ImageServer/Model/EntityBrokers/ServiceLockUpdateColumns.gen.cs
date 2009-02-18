@@ -40,30 +40,37 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public ServiceLockUpdateColumns()
        : base("ServiceLock")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Enabled")]
         public System.Boolean Enabled
         {
             set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="FilesystemGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
         {
             set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Lock")]
         public System.Boolean Lock
         {
             set { SubParameters["Lock"] = new EntityUpdateColumn<System.Boolean>("Lock", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ProcessorId")]
         public System.String ProcessorId
         {
             set { SubParameters["ProcessorId"] = new EntityUpdateColumn<System.String>("ProcessorId", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ScheduledTime")]
         public System.DateTime ScheduledTime
         {
             set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<System.DateTime>("ScheduledTime", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ServiceLockTypeEnum")]
         public ServiceLockTypeEnum ServiceLockTypeEnum
         {
             set { SubParameters["ServiceLockTypeEnum"] = new EntityUpdateColumn<ServiceLockTypeEnum>("ServiceLockTypeEnum", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="State")]
         public System.Xml.XmlDocument State
         {
             set { SubParameters["State"] = new EntityUpdateColumn<System.Xml.XmlDocument>("State", value); }

@@ -135,27 +135,28 @@ namespace ClearCanvas.ImageServer.Model
             StudyStorage theObject = broker.Load(key);
             return theObject;
         }
-        static public StudyStorage Insert(StudyStorage table)
+        static public StudyStorage Insert(StudyStorage entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                StudyStorage newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public StudyStorage Insert(IUpdateContext update, StudyStorage table)
+        static public StudyStorage Insert(IUpdateContext update, StudyStorage entity)
         {
             IStudyStorageEntityBroker broker = update.GetBroker<IStudyStorageEntityBroker>();
             StudyStorageUpdateColumns updateColumns = new StudyStorageUpdateColumns();
-            updateColumns.InsertTime = table.InsertTime;
-            updateColumns.LastAccessedTime = table.LastAccessedTime;
-            updateColumns.Lock = table.Lock;
-            updateColumns.QueueStudyStateEnum = table.QueueStudyStateEnum;
-            updateColumns.ServerPartitionKey = table.ServerPartitionKey;
-            updateColumns.StudyInstanceUid = table.StudyInstanceUid;
-            updateColumns.StudyStatusEnum = table.StudyStatusEnum;
-            StudyStorage theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.InsertTime = entity.InsertTime;
+            updateColumns.LastAccessedTime = entity.LastAccessedTime;
+            updateColumns.Lock = entity.Lock;
+            updateColumns.QueueStudyStateEnum = entity.QueueStudyStateEnum;
+            updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
+            updateColumns.StudyStatusEnum = entity.StudyStatusEnum;
+            StudyStorage newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }

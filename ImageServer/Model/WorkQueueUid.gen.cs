@@ -136,27 +136,28 @@ namespace ClearCanvas.ImageServer.Model
             WorkQueueUid theObject = broker.Load(key);
             return theObject;
         }
-        static public WorkQueueUid Insert(WorkQueueUid table)
+        static public WorkQueueUid Insert(WorkQueueUid entity)
         {
             using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                return Insert(update, table);
+                WorkQueueUid newEntity = Insert(update, entity);
+                update.Commit();
+                return newEntity;
             }
         }
-        static public WorkQueueUid Insert(IUpdateContext update, WorkQueueUid table)
+        static public WorkQueueUid Insert(IUpdateContext update, WorkQueueUid entity)
         {
             IWorkQueueUidEntityBroker broker = update.GetBroker<IWorkQueueUidEntityBroker>();
             WorkQueueUidUpdateColumns updateColumns = new WorkQueueUidUpdateColumns();
-            updateColumns.Duplicate = table.Duplicate;
-            updateColumns.Extension = table.Extension;
-            updateColumns.Failed = table.Failed;
-            updateColumns.FailureCount = table.FailureCount;
-            updateColumns.SeriesInstanceUid = table.SeriesInstanceUid;
-            updateColumns.SopInstanceUid = table.SopInstanceUid;
-            updateColumns.WorkQueueKey = table.WorkQueueKey;
-            WorkQueueUid theObject = broker.Insert(updateColumns);
-            update.Commit();
-            return theObject;
+            updateColumns.Duplicate = entity.Duplicate;
+            updateColumns.Extension = entity.Extension;
+            updateColumns.Failed = entity.Failed;
+            updateColumns.FailureCount = entity.FailureCount;
+            updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
+            updateColumns.SopInstanceUid = entity.SopInstanceUid;
+            updateColumns.WorkQueueKey = entity.WorkQueueKey;
+            WorkQueueUid newEntity = broker.Insert(updateColumns);
+            return newEntity;
         }
         #endregion
     }
