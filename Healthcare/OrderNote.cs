@@ -81,27 +81,28 @@ namespace ClearCanvas.Healthcare {
             _order = order;
         }
 
-        /// <summary>
-        /// Overridden to validate that the order does not have any notes that are pending acknowledgement
-        /// that could be acknowledged by the author of this note.
-        /// </summary>
-        protected override void BeforePost()
-        {
-            // does the order have any notes, in the same category as this note,
-            // that could have been acknowledged by the author of this note but haven't been?
-        	IList<OrderNote> allNotes = GetNotesForOrder(_order, this.Category);
-			bool unAckedNotes = CollectionUtils.Contains(allNotes,
-                delegate(OrderNote note)
-                {
-					// ignore this note
-					return !Equals(this, note) && note.CanAcknowledge(this.Author);
-                });
+		/* Commented out for ticket #3709, where it is explicitly requested that user can post new notes without acknowledging previous notes. */
+		///// <summary>
+		///// Overridden to validate that the order does not have any notes that are pending acknowledgement
+		///// that could be acknowledged by the author of this note.
+		///// </summary>
+		//protected override void BeforePost()
+		//{
+		//    // does the order have any notes, in the same category as this note,
+		//    // that could have been acknowledged by the author of this note but haven't been?
+		//    IList<OrderNote> allNotes = GetNotesForOrder(_order, this.Category);
+		//    bool unAckedNotes = CollectionUtils.Contains(allNotes,
+		//        delegate(OrderNote note)
+		//        {
+		//            // ignore this note
+		//            return !Equals(this, note) && note.CanAcknowledge(this.Author);
+		//        });
 
-            if(unAckedNotes)
-                throw new NoteAcknowledgementException("Order has associated notes that must be acknowledged by this author prior to posting a new note.");
+		//    if (unAckedNotes)
+		//        throw new NoteAcknowledgementException("Order has associated notes that must be acknowledged by this author prior to posting a new note.");
 
-            base.BeforePost();
-        }
+		//    base.BeforePost();
+		//}
 
 
 		/// <summary>

@@ -98,6 +98,18 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public List<OrderNoteDetail> NotesJustAcknowledged
+		{
+			get
+			{
+				return CollectionUtils.Select(_context.OrderNotes,
+					delegate(OrderNoteDetail note)
+					{
+						return note.CanAcknowledge && _context.IsNoteAcknowledged(note);
+					});
+			}
+		}
+
 		public event EventHandler CheckedItemsChanged
 		{
 			add { _checkedItemsChanged += value; }

@@ -81,7 +81,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_groupRecipientAddButton.DataBindings.Add("Enabled", _component, "AddGroupRecipientEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_completeButton.DataBindings.Add("Text", _component, "CompleteLabel", true, DataSourceUpdateMode.OnPropertyChanged);
-			_completeButton.DataBindings.Add("Enabled", _component, "CompleteEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_replyCheckBox.Visible = !_component.IsCreatingNewNote;
 			_replyCheckBox.DataBindings.Add("Checked", _component, "Reply", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -105,9 +104,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			{
 				_recipients.Table = _component.Recipients;
 			}
-			else if (e.PropertyName == "AcknowledgeEnabled")
+			else if (e.PropertyName == "CompleteLabel")
 			{
-				_completeButton.Enabled = _component.CompleteEnabled;
+				_completeButton.Text = _component.CompleteLabel;
 			}
 		}
 

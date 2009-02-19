@@ -329,11 +329,11 @@ namespace ClearCanvas.Ris.Client
 			_recipientsActionModel.Delete.SetClickHandler(DeleteRecipient);
 
 			_orderNoteViewComponent = new OrderNoteViewComponent(orderNotes);
-			_orderNoteViewComponent.CheckedItemsChanged += delegate { NotifyPropertyChanged("CompleteEnabled"); };
+			_orderNoteViewComponent.CheckedItemsChanged += delegate { NotifyPropertyChanged("CompleteLabel"); };
 			_orderNotesComponentHost = new ChildComponentHost(this.Host, _orderNoteViewComponent);
 			_orderNotesComponentHost.StartComponent();
 
-			_reply = this.IsCreatingNewNote;
+			_reply = this.IsCreatingNewNote || !string.IsNullOrEmpty(_body);
 
 			base.Start();
 		}
@@ -465,7 +465,6 @@ namespace ClearCanvas.Ris.Client
 
 			_recipients.Add(_selectedStaff, true);
 			NotifyPropertyChanged("Recipients");
-			NotifyPropertyChanged("CompleteEnabled");
 		}
 
 		#endregion
@@ -494,7 +493,6 @@ namespace ClearCanvas.Ris.Client
 
 			_recipients.Add(_selectedStaffGroup, true);
 			NotifyPropertyChanged("Recipients");
-			NotifyPropertyChanged("CompleteEnabled");
 		}
 
 		#endregion
@@ -523,53 +521,13 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				if (_orderNoteViewComponent.HasNotesToBeAcknowledged)
+				if (_orderNoteViewComponent.NotesJustAcknowledged.Count > 0)
 				{
-					if (_reply)
-					{
-						return SR.TitleAcknowledgeAndPost;
-					}
-					else
-					{
-						return SR.TitleAcknowledge;
-					}
-				}
-				else return SR.TitlePost;
-			}
-		}
-
-		public bool CompleteEnabled
-		{
-			get
-			{
-				if (_orderNoteViewComponent.HasNotesToBeAcknowledged)
-				{
-					if (_orderNoteViewComponent.HasUnacknowledgedNotes)
-					{
-						return false;
-					}
-					else
-					{
-						if (_reply && string.IsNullOrEmpty(_body))
-						{
-							return false;
-						}
-						else
-						{
-							return true;
-						}
-					}
+					return string.IsNullOrEmpty(_body) ? SR.TitleAcknowledge : SR.TitleAcknowledgeAndPost;
 				}
 				else
 				{
-					if (string.IsNullOrEmpty(_body))
-					{
-						return false;
-					}
-					else
-					{
-						return true;
-					}
+					return string.IsNullOrEmpty(_body) ? SR.TitleDone : SR.TitlePost;
 				}
 			}
 		}
@@ -584,6 +542,12 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
+				if (_orderNoteViewComponent.HasNotesToBeAcknowledged)
+				{
+					if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(SR.MessageProceedWithUnacknowledgedNotes, MessageBoxActions.YesNo))
+						return;
+				}
+
 				SaveChanges();
 
 				this.Exit(ApplicationComponentExitCode.Accepted);
@@ -652,7 +616,7 @@ namespace ClearCanvas.Ris.Client
 		private void SaveChanges()
 		{
 			List<EntityRef> orderNoteRefsToBeAcknowledged = CollectionUtils.Map<OrderNoteDetail, EntityRef>(
-				_orderNoteViewComponent.NotesToBeAcknowledged,
+				_orderNoteViewComponent.NotesJustAcknowledged,
 				delegate(OrderNoteDetail note)
 					{
 						return note.OrderNoteRef;
