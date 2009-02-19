@@ -12,6 +12,7 @@ using NHibernate.Cfg;
 using Iesi.Collections;
 using ClearCanvas.Common.Utilities;
 using System.IO;
+using NHibernate.Dialect;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -77,15 +78,13 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
 			}
 
-			public ColumnInfo(Column column)
+			public ColumnInfo(Column column, Table ownerTable, Configuration config, Dialect dialect)
 			{
 				this.Name = column.Name;
 				this.Length = column.Length;
 				this.Nullable = column.IsNullable;
 				this.Unique = column.IsUnique;
-				this.ColumnType = GetSafeClassName(column.Type.GetType());
-				this.TypeIndex = column.TypeIndex;
-				this.SqlType = column.SqlType;
+				this.SqlType = column.GetSqlType(dialect, new Mapping(config));
 			}
 
 			[DataMember]
@@ -96,10 +95,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			public bool Nullable;
 			[DataMember]
 			public bool Unique;
-			[DataMember]
-			public int TypeIndex;
-			[DataMember]
-			public string ColumnType;
 			[DataMember]
 			public string SqlType;
 		}
@@ -175,10 +170,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// </summary>
 		public const string RootTag = "DatabaseSchema";
 		private readonly Configuration _config;
+		private readonly Dialect _dialect;
 
-		public XmlWriter(Configuration config)
+		public XmlWriter(Configuration config, Dialect dialect)
 		{
 			_config = config;
+			_dialect = dialect;
 		}
 
 		public void WriteModel(TextWriter tw)
@@ -216,7 +213,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
 			foreach (Collection collection in cfg.CollectionMappings)
 			{
-				tables.Add(collection.Table);
+				tables.Add(collection.CollectionTable);
 			}
 
 			return CollectionUtils.Sort<Table>(tables,
@@ -231,7 +228,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			return new TableInfo(
 				table.Name,
 				table.Schema,
-				CollectionUtils.Map<Column, ColumnInfo>(table.ColumnCollection, delegate (Column column) { return new ColumnInfo(column);}),
+				CollectionUtils.Map<Column, ColumnInfo>(table.ColumnCollection, delegate (Column column) { return new ColumnInfo(column, table, _config, _dialect);}),
 				new ConstraintInfo(table.PrimaryKey),
 				CollectionUtils.Map<Index, IndexInfo>(table.IndexCollection, delegate(Index index) { return new IndexInfo(index); }),
 				CollectionUtils.Map<ForeignKey, ForeignKeyInfo>(table.ForeignKeyCollection, delegate(ForeignKey fk) { return new ForeignKeyInfo(fk, _config); }),

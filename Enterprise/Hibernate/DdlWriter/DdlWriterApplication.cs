@@ -96,7 +96,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 						scriptWriter.WriteCreateScript(writer);
 						break;
 					case DdlWriterCommandLine.FormatOptions.xml:
-						XmlWriter xmlWriter = new XmlWriter(config);
+						XmlWriter xmlWriter = new XmlWriter(config, dialect);
 						xmlWriter.WriteModel(writer);
 						break;
 					default:

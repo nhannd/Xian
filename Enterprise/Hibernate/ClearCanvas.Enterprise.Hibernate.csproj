@@ -67,6 +67,7 @@
     <Compile Include="Ddl\IDdlPreProcessor.cs" />
     <Compile Include="Ddl\ForeignKeyIndexProcessor.cs" />
     <Compile Include="Ddl\IndexCreatorBase.cs" />
+    <Compile Include="Ddl\Mapping.cs" />
     <Compile Include="Ddl\PreProcessor.cs" />
     <Compile Include="Ddl\XmlWriter.cs" />
     <Compile Include="Ddl\ScriptWriter.cs" />
