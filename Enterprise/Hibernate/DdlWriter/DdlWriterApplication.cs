@@ -51,20 +51,18 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
             {
                 cmdLine.Parse(args);
 
-                Dialect dialect = new CustomSqlDialect();   // SQL Server 
-
                 // if a file name was supplied, write to the file
                 if (!string.IsNullOrEmpty(cmdLine.OutputFile))
                 {
                     using (StreamWriter sw = File.CreateText(cmdLine.OutputFile))
                     {
-                        WriteOutput(sw, dialect, cmdLine);
+                        WriteOutput(sw, cmdLine);
                     }
                 }
                 else
                 {
                     // by default write to stdout
-                    WriteOutput(Console.Out, dialect, cmdLine);
+                    WriteOutput(Console.Out, cmdLine);
                 }
             }
             catch (CommandLineException e)
@@ -74,7 +72,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
             }
         }
 
-        private void WriteOutput(TextWriter writer, Dialect dialect, DdlWriterCommandLine cmdLine)
+        private void WriteOutput(TextWriter writer, DdlWriterCommandLine cmdLine)
         {
             try
             {
@@ -85,6 +83,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 
 				Configuration config = store.Configuration;
 
+            	Dialect dialect = Dialect.GetDialect(config.Properties);
 
                 bool populateHardEnums = cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.all
                     || cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.hard;
