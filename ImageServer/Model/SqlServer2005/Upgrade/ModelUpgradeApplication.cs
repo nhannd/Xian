@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using ClearCanvas.Common;
@@ -46,9 +47,10 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 	[ExtensionOf(typeof(ApplicationRootExtensionPoint))]
 	public class ModelUpgradeApplication : IApplicationRoot
 	{
+		#region Public Methods
 		public void RunApplication(string[] args)
 		{
-			ModelUpgradeCommandLine cmdLine = new ModelUpgradeCommandLine();
+			CommandLine cmdLine = new CommandLine();
 			try
 			{
 				cmdLine.Parse(args);
@@ -56,20 +58,36 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 				DatabaseVersion databaseVersion = LoadDatabaseVersion();
 				DatabaseVersion assemblyVersion = LoadAssemblyVersion();
 
-				Console.WriteLine("The current database version is {0} and assembly version is {1}", databaseVersion.GetVersionString(),
+				if (cmdLine.Switches.ContainsKey("check") && cmdLine.Switches["check"])
+				{
+					CheckDatabaseStatus(databaseVersion, assemblyVersion);
+					return;
+				}
+
+				Console.WriteLine("The current database version is {0} and assembly version is {1}",
+				                  databaseVersion.GetVersionString(),
 				                  assemblyVersion.GetVersionString());
 
 				if (databaseVersion.Equals(assemblyVersion))
 				{
-					Console.WriteLine("Database version is already correct.  Exiting upgrade application.");
+					Console.WriteLine("Database version is up-to-date.  Upgrading the stored procedures.");
+					if (!RunEmbeddedScript("ClearCanvas.ImageServer.Model.SqlServer2005.Scripts.ImageServerStoredProcedures.sql"))
+						Environment.ExitCode = -1;
+					else
+						Environment.ExitCode = 0;
 					return;
 				}
 
-				if (!UpgradeDatabase(databaseVersion, assemblyVersion))
+				if (!UpdateDatabase(databaseVersion, assemblyVersion))
 					Environment.ExitCode = -1;
 				else
-					Environment.ExitCode = 0;
-
+				{
+					Console.WriteLine("Upgrading the stored procedures.");
+					if (!RunEmbeddedScript("ClearCanvas.ImageServer.Model.SqlServer2005.Scripts.ImageServerStoredProcedures.sql"))
+						Environment.ExitCode = -1;
+					else
+						Environment.ExitCode = 0;
+				}
 			}
 			catch (CommandLineException e)
 			{
@@ -79,12 +97,49 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 			}
 			catch (Exception e)
 			{
-				Console.WriteLine("Unexpected exception when upgrading database: {0}",e.Message);
-				Environment.ExitCode = -1;	
+				Console.WriteLine("Unexpected exception when upgrading database: {0}", e.Message);
+				Environment.ExitCode = -1;
+			}
+		}
+		#endregion
+
+		#region Private Static Methods
+		private static void CheckDatabaseStatus(DatabaseVersion databaseVersion, DatabaseVersion assemblyVersion)
+		{
+			if (databaseVersion.Equals(assemblyVersion))
+			{
+				Console.WriteLine("The database is up-to-date.");
+				Environment.ExitCode = 0;
+				return;
+			}
+
+			UpgradeScriptExtensionPoint ep = new UpgradeScriptExtensionPoint();
+			object[] extensions = ep.CreateExtensions();
+
+			bool found = false;
+			foreach (IUpgradeScript script in extensions)
+			{
+				if (script.UpgradeFromVersion.Equals(databaseVersion))
+				{
+					found = true;
+					break;
+				}
+			}
+
+			if (found)
+			{
+				Console.WriteLine("The database must be upgraded from {0} to {1}", databaseVersion.GetVersionString(),
+				                  assemblyVersion.GetVersionString());
+				Environment.ExitCode = 1;
+			}
+			else
+			{
+				Console.WriteLine("An unsupported version ({0}) is installed which cannot be upgraded from",databaseVersion.GetVersionString());
+				Environment.ExitCode = -1;
 			}
 		}
 
-		bool UpgradeDatabase(DatabaseVersion startingVersion, DatabaseVersion assemblyVersion)
+		private static bool UpdateDatabase(DatabaseVersion startingVersion, DatabaseVersion assemblyVersion)
 		{
 			DatabaseVersion currentVersion = startingVersion;
 			
@@ -130,8 +185,9 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 			return true;
 		}
 
-		bool UpgradeVersion(IUpgradeScript script, DatabaseVersion assemblyVersion)
+		private static bool UpgradeVersion(IUpgradeScript script, DatabaseVersion assemblyVersion)
 		{
+			// Wrap the upgrade in a single commit.
 			using (
 				IUpdateContext updateContext =
 					PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -143,7 +199,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 					return false;
 				}
 
-				ExecuteSql(context, script);
+				ExecuteSql(context, script.GetScript());
 
 				DatabaseVersionUpdateColumns columns = new DatabaseVersionUpdateColumns();
 				DatabaseVersionSelectCriteria criteria = new DatabaseVersionSelectCriteria();
@@ -171,42 +227,45 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 			return true;
 		}
 
-		static DatabaseVersion LoadAssemblyVersion()
+		bool RunEmbeddedScript(string embeddedScriptName)
 		{
-			Version ver = Assembly.GetExecutingAssembly().GetName().Version;
-
-			DatabaseVersion assemblyVersion = new DatabaseVersion(ver.Build.ToString(),
-				ver.Major.ToString(),
-				ver.Minor.ToString(),
-				ver.Revision.ToString());
-			return assemblyVersion;
-		}
-
-		static DatabaseVersion LoadDatabaseVersion()
-		{
-			using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+			using (
+				IUpdateContext updateContext =
+					PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-				IDatabaseVersionEntityBroker broker = read.GetBroker<IDatabaseVersionEntityBroker>();
-				DatabaseVersionSelectCriteria criteria = new DatabaseVersionSelectCriteria();
-				criteria.Major.SortDesc(0);
-				criteria.Minor.SortDesc(1);
-				criteria.Revision.SortDesc(2);
-				criteria.Build.SortDesc(3);
+				UpdateContext context = updateContext as UpdateContext;
+				if (context == null)
+				{
+					Console.WriteLine("Unexpected error opening connection to the database.");
+					return false;
+				}
 
-				IList<DatabaseVersion> versions = broker.Find(criteria);
-				if (versions.Count == 0)
-					return null;
+					
+				string sql;
 
-				return CollectionUtils.FirstElement(versions);
+				using (Stream stream = GetType().Assembly.GetManifestResourceStream(embeddedScriptName))
+				{
+					if (stream == null)
+					{
+						Console.WriteLine("Unable to load embedded script: {0}", embeddedScriptName);
+						return false;
+					}
+					StreamReader reader = new StreamReader(stream);
+					sql = reader.ReadToEnd();
+					stream.Close();
+				}
+
+				ExecuteSql(context, sql);
+
+				updateContext.Commit();
 			}
+			return true;
 		}
 
-		public void ExecuteSql(UpdateContext context, IUpgradeScript script)
+		private static void ExecuteSql(UpdateContext context, string rawSqlText)
 		{
-			string sql = script.GetScript();
-
 			Regex regex = new Regex("^\\s*GO\\s*$", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-			string[] lines = regex.Split(sql);
+			string[] lines = regex.Split(rawSqlText);
 
 			using (SqlCommand cmd = context.Connection.CreateCommand())
 			{
@@ -225,5 +284,36 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
 				}
 			}
 		}
+
+		private static DatabaseVersion LoadAssemblyVersion()
+		{
+			Version ver = Assembly.GetExecutingAssembly().GetName().Version;
+
+			DatabaseVersion assemblyVersion = new DatabaseVersion(ver.Build.ToString(),
+				ver.Major.ToString(),
+				ver.Minor.ToString(),
+				ver.Revision.ToString());
+			return assemblyVersion;
+		}
+
+		private static DatabaseVersion LoadDatabaseVersion()
+		{
+			using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+			{
+				IDatabaseVersionEntityBroker broker = read.GetBroker<IDatabaseVersionEntityBroker>();
+				DatabaseVersionSelectCriteria criteria = new DatabaseVersionSelectCriteria();
+				criteria.Major.SortDesc(0);
+				criteria.Minor.SortDesc(1);
+				criteria.Revision.SortDesc(2);
+				criteria.Build.SortDesc(3);
+
+				IList<DatabaseVersion> versions = broker.Find(criteria);
+				if (versions.Count == 0)
+					return null;
+
+				return CollectionUtils.FirstElement(versions);
+			}
+		}
+		#endregion
 	}
 }
