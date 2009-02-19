@@ -227,7 +227,9 @@ namespace ClearCanvas.Ris.Client
 							}));
 				});
 
-			_headerFooterSettings = new IEHeaderFooterSettings();
+			_headerFooterSettings = new IEHeaderFooterSettings(
+				PublishReportComponentSettings.Default.ReportHeader,
+				PublishReportComponentSettings.Default.ReportFooter);
 			_printBackgroundSettings = new IEPrintBackgroundSettings();
 
 			base.Start();

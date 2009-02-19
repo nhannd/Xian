@@ -143,6 +143,12 @@
     <Compile Include="FolderRefreshTool.cs" />
     <Compile Include="ProcedureTypeSummaryTable.cs" />
     <Compile Include="PublishReportComponent.cs" />
+    <Compile Include="PublishReportComponentSettings.cs" />
+    <Compile Include="PublishReportComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PublishReportComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="SearchResultsFolder.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SessionManagerTool.cs" />
@@ -352,6 +358,10 @@
     <None Include="PatientSearchComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PatientSearchComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PublishReportComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PublishReportComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="RandomUtilsSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
