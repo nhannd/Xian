@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Common.Utilities;
 using System.Diagnostics;
+using ClearCanvas.ImageViewer.Comparers;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -53,6 +54,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     	private List<string> _currentPathElements;
 		private int _actionNumber = 0;
     	private bool _showImageSetNames = false;
+		private IComparer<IImageSet> _comparer = new StudyDateComparer();
 
 		/// <summary>
         /// Constructor
@@ -105,8 +107,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					string basePath = StringUtilities.Combine(_currentPathElements, "/");
 
 					//not incredibly efficient, but there really aren't that many items.
-					List<IImageSet> orderedItems = CollectionUtils.Reject(_imageSetGroups.SourceCollection,
-								delegate(IImageSet imageSet){ return !group.Items.Contains(imageSet); });
+					List<IImageSet> orderedItems = new List<IImageSet>(group.Items);
+					orderedItems.Sort(_comparer);
 
 					foreach (IImageSet imageSet in orderedItems)
 					{

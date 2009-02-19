@@ -100,9 +100,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		{86CD94ED-BB4C-46C0-B54D-5F1EAE5A18D7} = {86CD94ED-BB4C-46C0-B54D-5F1EAE5A18D7}
 		{8517089B-809E-4A62-9AB2-CFF8C72E1AEB} = {8517089B-809E-4A62-9AB2-CFF8C72E1AEB}
 		{5C17A246-C4AB-4D66-8715-425192D88D6E} = {5C17A246-C4AB-4D66-8715-425192D88D6E}
-		{0D64751F-987E-415E-8CE7-069EA2763EC0} = {0D64751F-987E-415E-8CE7-069EA2763EC0}
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A} = {AD5F2F64-C37C-48D6-82F9-D2199873C24A}
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1} = {8F7353AF-1790-41E8-A906-AE0E4AADA3D1}
 		{7FD1F68D-E165-4D79-9863-FBAD8852D62E} = {7FD1F68D-E165-4D79-9863-FBAD8852D62E}
 		{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7} = {26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}
 	EndProjectSection
@@ -377,25 +374,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Cod
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Codec.Rle", "Codec\Rle\ClearCanvas.ImageViewer.Codec.Rle.csproj", "{0D64751F-987E-415E-8CE7-069EA2763EC0}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.StudyLoaders.Streaming", "StudyLoaders\Streaming\ClearCanvas.ImageViewer.StudyLoaders.Streaming.csproj", "{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Utilities.StudyComposer", "Utilities\StudyComposer\ClearCanvas.ImageViewer.Utilities.StudyComposer.csproj", "{AD5F2F64-C37C-48D6-82F9-D2199873C24A}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms", "Utilities\StudyComposer\View\WinForms\ClearCanvas.ImageViewer.Utilities.StudyComposer.View.WinForms.csproj", "{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -504,6 +483,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Too
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms", "Tools\Reporting\View\WinForms\ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms.csproj", "{D4305B6F-2BA6-47F3-A4BF-D18A93BDF622}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Volume.Mpr", "Volume\Mpr\ClearCanvas.ImageViewer.Volume.Mpr.csproj", "{AD8F67CF-0F30-412D-ACCD-80BACA332F22}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -691,22 +676,10 @@ Global
 		{56A4E7F8-000C-4FCF-ADB8-DEBB21F07E9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56A4E7F8-000C-4FCF-ADB8-DEBB21F07E9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56A4E7F8-000C-4FCF-ADB8-DEBB21F07E9C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0D64751F-987E-415E-8CE7-069EA2763EC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0D64751F-987E-415E-8CE7-069EA2763EC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0D64751F-987E-415E-8CE7-069EA2763EC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0D64751F-987E-415E-8CE7-069EA2763EC0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AD5F2F64-C37C-48D6-82F9-D2199873C24A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F7353AF-1790-41E8-A906-AE0E4AADA3D1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2C610983-DDA8-4BA3-AB78-2FBF4DABF57E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2C610983-DDA8-4BA3-AB78-2FBF4DABF57E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C610983-DDA8-4BA3-AB78-2FBF4DABF57E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -779,6 +752,10 @@ Global
 		{D4305B6F-2BA6-47F3-A4BF-D18A93BDF622}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4305B6F-2BA6-47F3-A4BF-D18A93BDF622}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4305B6F-2BA6-47F3-A4BF-D18A93BDF622}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD8F67CF-0F30-412D-ACCD-80BACA332F22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD8F67CF-0F30-412D-ACCD-80BACA332F22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD8F67CF-0F30-412D-ACCD-80BACA332F22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD8F67CF-0F30-412D-ACCD-80BACA332F22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

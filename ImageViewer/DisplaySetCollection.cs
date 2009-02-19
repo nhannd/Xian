@@ -53,18 +53,13 @@ namespace ClearCanvas.ImageViewer
 
 		internal static IComparer<IDisplaySet> GetDefaultComparer()
 		{
-			return new DefaultDisplaySetComparer();
+			return new DisplaySetNumberComparer();
 		}
 
 		internal IComparer<IDisplaySet> Comparer
 		{
 			get { return _comparer; }
 			set { _comparer = value; }
-		}
-
-		public void Sort()
-		{
-			Sort(_comparer ?? GetDefaultComparer());
 		}
 
 		/// <summary>

@@ -118,7 +118,7 @@
     <Compile Include="BaseTools\DefaultMouseToolButtonAttribute.cs" />
     <Compile Include="CloningExceptions.cs" />
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
-    <Compile Include="Comparers\DefaultDisplaySetComparer.cs" />
+    <Compile Include="Comparers\DisplaySetNumberComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
     <Compile Include="FilteredGroups.cs" />
     <Compile Include="Graphics\FlashOverlayController.cs" />

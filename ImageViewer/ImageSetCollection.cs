@@ -61,11 +61,6 @@ namespace ClearCanvas.ImageViewer
 			set { _comparer = value; }
 		}
 
-		public void Sort()
-		{
-			Sort(_comparer ?? GetDefaultComparer());
-		}
-
 		/// <summary>
 		/// Sorts the collection with the given comparer.
 		/// </summary>

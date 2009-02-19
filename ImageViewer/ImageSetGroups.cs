@@ -201,17 +201,17 @@ namespace ClearCanvas.ImageViewer
 	public class ImageSetGroups : IDisposable
 	{
 		private readonly PatientsImageSetGroup _root;
-		private ImageSetCollection _sourceCollection;
+		private ObservableList<IImageSet> _sourceImageSets;
 
 		public ImageSetGroups()
 		{
 			_root = new PatientsImageSetGroup();
 		}
 
-		public ImageSetGroups(ImageSetCollection sourceImageSets)
+		public ImageSetGroups(ObservableList<IImageSet> sourceImageSets)
 			: this()
 		{
-			SourceCollection = sourceImageSets;
+			SourceImageSets = sourceImageSets;
 		}
 
 		public PatientsImageSetGroup Root
@@ -219,37 +219,37 @@ namespace ClearCanvas.ImageViewer
 			get { return _root; }	
 		}
 
-		public ImageSetCollection SourceCollection
+		public ObservableList<IImageSet> SourceImageSets
 		{
 			set
 			{
-				if (_sourceCollection == value)
+				if (_sourceImageSets == value)
 					return;
 
-				if (_sourceCollection != null)
+				if (_sourceImageSets != null)
 				{
-					_sourceCollection.ItemAdded -= OnImageSetAdded;
-					_sourceCollection.ItemChanging -= OnImageSetChanging;
-					_sourceCollection.ItemChanged -= OnImageSetChanged;
-					_sourceCollection.ItemRemoved -= OnImageSetRemoved;
+					_sourceImageSets.ItemAdded -= OnImageSetAdded;
+					_sourceImageSets.ItemChanging -= OnImageSetChanging;
+					_sourceImageSets.ItemChanged -= OnImageSetChanged;
+					_sourceImageSets.ItemRemoved -= OnImageSetRemoved;
 
 					_root.Clear();
 				}
 
-				_sourceCollection = value;
-				if (_sourceCollection != null)
+				_sourceImageSets = value;
+				if (_sourceImageSets != null)
 				{
-					_root.Add(_sourceCollection);
+					_root.Add(_sourceImageSets);
 
-					_sourceCollection.ItemAdded += OnImageSetAdded;
-					_sourceCollection.ItemChanging += OnImageSetChanging;
-					_sourceCollection.ItemChanged += OnImageSetChanged;
-					_sourceCollection.ItemRemoved += OnImageSetRemoved;
+					_sourceImageSets.ItemAdded += OnImageSetAdded;
+					_sourceImageSets.ItemChanging += OnImageSetChanging;
+					_sourceImageSets.ItemChanged += OnImageSetChanged;
+					_sourceImageSets.ItemRemoved += OnImageSetRemoved;
 				}
 			}
 			get
 			{
-				return _sourceCollection;
+				return _sourceImageSets;
 			}
 		}
 
@@ -257,7 +257,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing)
 			{
-				SourceCollection = null;
+				SourceImageSets = null;
 			}
 		}
 

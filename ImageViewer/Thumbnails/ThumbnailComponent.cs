@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Trees;
 using System.Threading;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
 {
@@ -49,48 +50,37 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 	[AssociateView(typeof(ThumbnailComponentViewExtensionPoint))]
 	public partial class ThumbnailComponent : ApplicationComponent
 	{
-		private static readonly Dictionary<IImageViewer, ISelection> _imageSetTreeSelectionCache =
-			new Dictionary<IImageViewer, ISelection>();
+		private static readonly Dictionary<IImageViewer, ImageSetTreeInfo> 
+			_viewerTreeInfo = new Dictionary<IImageViewer, ImageSetTreeInfo>();
 
 		private readonly IDesktopWindow _desktopWindow;
 		private IImageViewer _activeViewer;
 
-		private readonly Tree<IImageSetTreeItem> _imageSetTree;
-		private ISelection _imageSetTreeSelection;
+		private readonly ImageSetTreeInfo _dummyTreeInfo;
+		private ImageSetTreeInfo _currentTreeInfo;
 
 		private readonly BindingList<IGalleryItem> _thumbnails;
 		private IEnumerator<IGalleryItem> _loadThumbnailIterator;
-		
+
 		public ThumbnailComponent(IDesktopWindow desktopWindow)
 		{
 			_desktopWindow = desktopWindow;
+			_dummyTreeInfo = new ImageSetTreeInfo(new ObservableList<IImageSet>(), null);
+			_currentTreeInfo = _dummyTreeInfo;
 			_thumbnails = new BindingList<IGalleryItem>();
-			_imageSetTree = new Tree<IImageSetTreeItem>(new ImageSetTreeItemBinding());
-			_imageSetTreeSelection = new Selection();
 		}
 
 		#region Presentation Model
 
-		public ITree ImageSetTree
+		public ITree Tree
 		{
-			get { return _imageSetTree; }
+			get { return _currentTreeInfo.Tree; }
 		}
 
-		public ISelection ImageSetTreeSelection
+		public ISelection TreeSelection
 		{
-			get { return _imageSetTreeSelection; }
-			set
-			{
-				value = value ?? new Selection();
-
-				if (_imageSetTreeSelection.Equals(value))
-					return;
-
-				_imageSetTreeSelection = value;
-				NotifyPropertyChanged("ImageSetTreeSelection");
-
-				RefreshThumbnails();
-			}
+			get { return _currentTreeInfo.Selection; }
+			set { _currentTreeInfo.Selection = value; }
 		}
 
 		public BindingList<IGalleryItem> Thumbnails
@@ -99,6 +89,48 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		}
 
 		#endregion
+
+		private void SetCurrentTreeInfo(ImageSetTreeInfo currentTreeInfo)
+		{
+			if (_currentTreeInfo == currentTreeInfo)
+				return;
+
+			if (_currentTreeInfo != null)
+			{
+				_currentTreeInfo.TreeChanged -= OnTreeChangedInternal;
+				_currentTreeInfo.TreeUpdated -= OnTreeUpdatedInternal;
+				_currentTreeInfo.SelectionChanged -= OnTreeSelectionChangedInternal;
+			}
+
+			_currentTreeInfo = currentTreeInfo;
+
+			if (_currentTreeInfo != null)
+			{
+				_currentTreeInfo.TreeChanged += OnTreeChangedInternal;
+				_currentTreeInfo.TreeUpdated += OnTreeUpdatedInternal;
+				_currentTreeInfo.SelectionChanged += OnTreeSelectionChangedInternal;
+
+				OnTreeChangedInternal(null, null);
+			}
+		}
+
+		private void OnTreeChangedInternal(object sender, EventArgs e)
+		{
+			NotifyPropertyChanged("Tree");
+			OnTreeSelectionChangedInternal(null, null);
+		}
+
+		private void OnTreeUpdatedInternal(object sender, EventArgs e)
+		{
+			//crappy hack - when things are added to the tree dynamically, the view seems to lose the selection.
+			NotifyPropertyChanged("TreeSelection");
+		}
+
+		private void OnTreeSelectionChangedInternal(object sender, EventArgs e)
+		{
+			NotifyPropertyChanged("TreeSelection");
+			RefreshThumbnails();
+		}
 
 		/// <summary>
 		/// Called by the host to initialize the application component.
@@ -115,6 +147,14 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 		public override void Stop()
 		{
+			SetCurrentTreeInfo(null);
+			_dummyTreeInfo.Dispose();
+
+			foreach (ImageSetTreeInfo info in _viewerTreeInfo.Values)
+				info.Dispose();
+
+			_viewerTreeInfo.Clear();
+
 			_desktopWindow.Workspaces.ItemActivationChanged -= OnActiveWorkspaceChanged;
 			_desktopWindow.Workspaces.ItemClosed -= OnWorkspaceClosed;
 
@@ -132,8 +172,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		private static void OnWorkspaceClosed(object sender, ClosedItemEventArgs<Workspace> e)
 		{
 			IImageViewer viewer = CastToImageViewer(e.Item);
-			if (viewer != null)
-				_imageSetTreeSelectionCache.Remove(viewer);
+			if (viewer != null && _viewerTreeInfo.ContainsKey(viewer))
+			{
+				ImageSetTreeInfo info = _viewerTreeInfo[viewer];
+				_viewerTreeInfo.Remove(viewer);
+				info.Dispose();
+			}
 		}
 
 		private static IImageViewer CastToImageViewer(Workspace workspace)
@@ -148,25 +192,24 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		private void SetImageViewer(Workspace workspace)
 		{
 			IImageViewer viewer = CastToImageViewer(workspace);
+			if (viewer == null)
+			{
+				_activeViewer = null;
+				SetCurrentTreeInfo(_dummyTreeInfo);
+			}
+			else if (viewer != _activeViewer)
+			{
+				_activeViewer = viewer;
+				if (!_viewerTreeInfo.ContainsKey(_activeViewer))
+				{
+					ObservableList<IImageSet> imageSets = _activeViewer.LogicalWorkspace.ImageSets;
+					string primaryStudyInstanceUid = GetPrimaryStudyInstanceUid(_activeViewer.StudyTree);
+					ImageSetTreeInfo info = new ImageSetTreeInfo(imageSets, primaryStudyInstanceUid);
+					_viewerTreeInfo.Add(_activeViewer, info);
+				}
 
-			if (_activeViewer == viewer)
-				return;
-
-			if (_activeViewer != null)
-				_imageSetTreeSelectionCache[_activeViewer] = this.ImageSetTreeSelection;
-
-			_activeViewer = viewer;
-
-			SynchronizationContext.Current.Post
-				(
-					delegate
-					{
-						//this is a bit cheap, but we do it because when a new ImageViewerComponent is
-						//created, it doesn't have any ImageSets or DisplaySets yet.
-						if (_activeViewer == viewer && this.IsStarted)
-							RefreshTree();
-
-					}, null);
+				SetCurrentTreeInfo(_viewerTreeInfo[_activeViewer]);
+			}
 		}
 
 		#region Thumbnail Methods
@@ -178,7 +221,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			if (_activeViewer == null)
 				return;
 
-			ImageSetTreeItem imageSetItem = ImageSetTreeSelection.Item as ImageSetTreeItem;
+			ImageSetTreeItem imageSetItem = TreeSelection.Item as ImageSetTreeItem;
 			if (imageSetItem == null)
 				return;
 
@@ -188,6 +231,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				_thumbnails.Add(thumbnail);
 			}
 
+			//TODO: account for display sets being added or removed?
 			_loadThumbnailIterator = _thumbnails.GetEnumerator();
 			_loadThumbnailIterator.Reset();
 
@@ -222,103 +266,28 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		private void ClearThumbnails()
 		{
 			List<IGalleryItem> thumbnails = new List<IGalleryItem>(_thumbnails);
-			thumbnails.ForEach(
-				delegate(IGalleryItem thumbnail)
-					{
-						_thumbnails.Remove(thumbnail);
-						((IDisposable)thumbnail).Dispose();
-					});
+			foreach (IGalleryItem thumbnail in thumbnails)
+			{
+				_thumbnails.Remove(thumbnail);
+				((IDisposable)thumbnail).Dispose();
+			}
 
 			_loadThumbnailIterator = null;
 		}
 
-		#endregion
-
-		#region ImageSet Tree Methods
-
-		private void RefreshTree()
+		private static string GetPrimaryStudyInstanceUid(StudyTree studyTree)
 		{
-			_imageSetTree.Items.Clear();
-
-			ImageSetTreeSelection = null;
-
-			if (_activeViewer != null && _activeViewer.LogicalWorkspace.ImageSets.Count > 0)
+			foreach (Patient patient in studyTree.Patients)
 			{
-				List<IImageSetTreeItem> tree = BuildTree();
-				ISelection initialSelection;
-				InitializeTree(tree, out initialSelection);
-
-				_imageSetTree.Items.AddRange(tree);
-				this.ImageSetTreeSelection = initialSelection;
+				foreach (Study study in patient.Studies)
+				{
+					return study.StudyInstanceUID;
+				}
 			}
+
+			return null;
 		}
 
-		private List<IImageSetTreeItem> BuildTree()
-		{
-			List<IImageSetTreeItem> tree = new List<IImageSetTreeItem>();
-
-			foreach (IImageSet imageSet in _activeViewer.LogicalWorkspace.ImageSets)
-			{
-				PatientTreeItem existingPatientItem = CollectionUtils.SelectFirst(tree,
-								   delegate(IImageSetTreeItem item)
-								   {
-									   return ((PatientTreeItem)item).PatientInfo == imageSet.PatientInfo;
-								   }) as PatientTreeItem;
-
-				if (existingPatientItem == null)
-				{
-					existingPatientItem = new PatientTreeItem(imageSet.PatientInfo);
-					tree.Add(existingPatientItem);
-				}
-
-				existingPatientItem.ImageSetSubTree.Items.Add(new ImageSetTreeItem(imageSet));
-			}
-
-			return tree;
-		}
-
-		private void InitializeTree(IList<IImageSetTreeItem> tree, out ISelection initialSelection)
-		{
-			initialSelection = null;
-
-			PatientTreeItem lastPatientItem = null;
-			ImageSetTreeItem lastImageSetItem = null;
-
-			if (_imageSetTreeSelectionCache.ContainsKey(_activeViewer))
-			{
-				ISelection lastSelection = _imageSetTreeSelectionCache[_activeViewer];
-				lastPatientItem = lastSelection.Item as PatientTreeItem;
-				lastImageSetItem = lastSelection.Item as ImageSetTreeItem;
-			}
-
-			if (lastPatientItem == null && lastImageSetItem == null)
-				lastImageSetItem = ((PatientTreeItem)tree[0]).ImageSetSubTree.Items[0] as ImageSetTreeItem;
-
-			foreach (PatientTreeItem patientItem in tree)
-			{
-				if (lastPatientItem != null && lastPatientItem.PatientInfo == patientItem.PatientInfo)
-				{
-					patientItem.IsIntiallyExpanded = true;
-					initialSelection = new Selection(patientItem);
-				}
-				else if (lastImageSetItem != null)
-				{
-					foreach (ImageSetTreeItem imageSetItem in patientItem.ImageSetSubTree.Items)
-					{
-						if (lastImageSetItem.ImageSet == imageSetItem.ImageSet)
-						{
-							patientItem.IsIntiallyExpanded = true;
-							initialSelection = new Selection(imageSetItem);
-							break;
-						}
-					}
-				}
-
-				if (initialSelection != null)
-					break;
-			}
-		}
-
-		#endregion
+#endregion
 	}
 }

@@ -33,6 +33,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using System;
 
 namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 {
@@ -57,26 +58,39 @@ namespace ClearCanvas.ImageViewer.Thumbnails.View.WinForms
 			_galleryView.DragReorder = false;
 			_galleryView.DragOutside = true;
 
-			PropertyChangedEventHandler setSelection = delegate
-			                              	{
-			                              		_imageSetTree.Selection = _component.ImageSetTreeSelection;
-			                              	};
-
         	_imageSetTree.SelectionChanged += 
 				delegate
             	{
-            		_component.ImageSetTreeSelection = _imageSetTree.Selection;
+            		_component.TreeSelection = _imageSetTree.Selection;
             	};
-
-        	_component.PropertyChanged += setSelection;
 
         	_imageSetTree.TreeBackColor = Color.FromKnownColor(KnownColor.Black);
 			_imageSetTree.TreeForeColor = Color.FromKnownColor(KnownColor.ControlLight);
 			_imageSetTree.TreeLineColor = Color.FromKnownColor(KnownColor.ControlLight);
 
-			_imageSetTree.Tree = _component.ImageSetTree;
+			_component.PropertyChanged += OnPropertyChanged;
 
-			setSelection(null, null);
+			_imageSetTree.Tree = _component.Tree;
+        	_imageSetTree.VisibleChanged += OnTreeVisibleChanged;
+		}
+
+		private void OnTreeVisibleChanged(object sender, EventArgs e)
+		{
+			_imageSetTree.VisibleChanged -= OnTreeVisibleChanged;
+			//the control isn't really visible until it's been drawn, so the selection can't be set until then.
+			_imageSetTree.Selection = _component.TreeSelection;
+		}
+
+    	private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "Tree")
+			{
+				_imageSetTree.Tree = _component.Tree;
+			}
+			else if (e.PropertyName == "TreeSelection")
+			{
+				_imageSetTree.Selection = _component.TreeSelection;
+			}
 		}
     }
 }
