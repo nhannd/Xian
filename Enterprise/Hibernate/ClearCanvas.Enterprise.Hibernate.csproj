@@ -68,6 +68,7 @@
     <Compile Include="Ddl\ForeignKeyIndexProcessor.cs" />
     <Compile Include="Ddl\IndexCreatorBase.cs" />
     <Compile Include="Ddl\PreProcessor.cs" />
+    <Compile Include="Ddl\XmlWriter.cs" />
     <Compile Include="Ddl\ScriptWriter.cs" />
     <Compile Include="Ddl\EnumValueInsertGenerator.cs" />
     <Compile Include="Ddl\RelationalSchemaGenerator.cs" />

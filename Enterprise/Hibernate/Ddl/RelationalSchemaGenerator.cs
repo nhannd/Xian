@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using NHibernate.Cfg;
 using NHibernate.Dialect;
 using ClearCanvas.Common.Utilities;
 
@@ -44,9 +45,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     {
         #region IDdlScriptGenerator Members
 
-        public string[] GenerateCreateScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
+        public string[] GenerateCreateScripts(Configuration config, Dialect dialect)
         {
-            List<string> scripts = new List<string>(store.Configuration.GenerateSchemaCreationScript(dialect));
+            List<string> scripts = new List<string>(config.GenerateSchemaCreationScript(dialect));
             List<string> createTables = CollectionUtils.Select(scripts,
                 delegate(string s) { return s.StartsWith("create table", StringComparison.InvariantCultureIgnoreCase); });
             List<string> alterTables = CollectionUtils.Select(scripts,
@@ -56,7 +57,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
             // for some reason, Hibernate does not qualify the table names when generating index scripts
             // need to qualify them using this hack
-            string schemaName = store.Configuration.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+            string schemaName = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
             string replacement = string.Format(" on {0}.", schemaName);
             createIndexes = CollectionUtils.Map<string, string>(createIndexes,
                 delegate(string s) { return s.Replace(" on ", replacement); });
@@ -74,7 +75,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             return sortedScripts.ToArray();
         }
 
-        public string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
+        public string[] GenerateDropScripts(Configuration config, Dialect dialect)
         {
             return new string[]{};
         }

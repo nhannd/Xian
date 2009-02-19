@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using NHibernate.Cfg;
 using NHibernate.Dialect;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
@@ -45,18 +46,18 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         /// Returns a set of scripts that will be executed as part of creating the database.  The scripts
         /// will be executed in the order they are returned.
         /// </summary>
-        /// <param name="store">The persistent store (database) that DDL should be generated for</param>
+        /// <param name="config">The persistent store (database) that DDL should be generated for</param>
         /// <param name="dialect">The database dialect</param>
         /// <returns>A set of scripts</returns>
-        string[] GenerateCreateScripts(PersistentStore store, Dialect dialect);
+        string[] GenerateCreateScripts(Configuration config, Dialect dialect);
 
         /// <summary>
         /// Returns a set of scripts that will be executed as part of dropping the database.  The scripts
         /// will be executed in the order they are returned.
         /// </summary>
-        /// <param name="store">The persistent store (database) that DDL should be generated for</param>
+        /// <param name="config">The persistent store (database) that DDL should be generated for</param>
         /// <param name="dialect">The database dialect</param>
         /// <returns>A set of scripts</returns>
-        string[] GenerateDropScripts(PersistentStore store, Dialect dialect);
+        string[] GenerateDropScripts(Configuration config, Dialect dialect);
     }
 }

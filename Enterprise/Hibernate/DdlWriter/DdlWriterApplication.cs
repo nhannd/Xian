@@ -37,6 +37,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Hibernate.Ddl;
 using NHibernate.Dialect;
 using ClearCanvas.Common.Utilities;
+using NHibernate.Cfg;
 
 namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 {
@@ -57,13 +58,13 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
                 {
                     using (StreamWriter sw = File.CreateText(cmdLine.OutputFile))
                     {
-                        WriteCreateScripts(sw, dialect, cmdLine);
+                        WriteOutput(sw, dialect, cmdLine);
                     }
                 }
                 else
                 {
                     // by default write to stdout
-                    WriteCreateScripts(Console.Out, dialect, cmdLine);
+                    WriteOutput(Console.Out, dialect, cmdLine);
                 }
             }
             catch (CommandLineException e)
@@ -71,35 +72,37 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
                 Console.WriteLine(e.Message);
                 cmdLine.PrintUsage(Console.Out);
             }
-
-            string outputFile = "";
-
-            if (args.Length > 0)
-            {
-                foreach (string arg in args)
-                {
-                    TryParseArg(arg, "out", ref outputFile);
-                }
-            }
-
         }
 
-        private void WriteCreateScripts(TextWriter writer, Dialect dialect, DdlWriterCommandLine cmdLine)
+        private void WriteOutput(TextWriter writer, Dialect dialect, DdlWriterCommandLine cmdLine)
         {
             try
             {
-                PersistentStore store = PersistentStoreRegistry.GetDefaultStore() as PersistentStore;
-                store.Initialize();
+				PersistentStore store = (PersistentStore)PersistentStoreRegistry.GetDefaultStore();
 
-                PreProcessor preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
-                preProcessor.Process(store);
+				PreProcessor preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
+				preProcessor.Process(store);
+
+				Configuration config = store.Configuration;
+
 
                 bool populateHardEnums = cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.all
                     || cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.hard;
                 bool populateSoftEnums = cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.all;
 
-                ScriptWriter scriptWriter = new ScriptWriter(store, dialect, populateHardEnums, populateSoftEnums);
-                scriptWriter.WriteCreateScript(writer);
+				switch(cmdLine.Format)
+				{
+					case DdlWriterCommandLine.FormatOptions.sql:
+						ScriptWriter scriptWriter = new ScriptWriter(config, dialect, populateHardEnums, populateSoftEnums, cmdLine.QualifyNames);
+						scriptWriter.WriteCreateScript(writer);
+						break;
+					case DdlWriterCommandLine.FormatOptions.xml:
+						XmlWriter xmlWriter = new XmlWriter(config);
+						xmlWriter.WriteModel(writer);
+						break;
+					default:
+						throw new NotSupportedException(string.Format("{0} is not a valid output format.", cmdLine.Format));
+				}
             }
             catch (Exception e)
             {
@@ -111,17 +114,6 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
         {
             Platform.Log(LogLevel.Error, obj);
             Console.WriteLine(obj);
-        }
-
-        private bool TryParseArg(string arg, string command, ref string val)
-        {
-            string lookFor = string.Format("/{0}:", command);
-            if (arg.IndexOf(lookFor) > -1)
-            {
-                val = arg.Replace(lookFor, "");
-                return true;
-            }
-            return false;
         }
     }
 }

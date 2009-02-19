@@ -37,6 +37,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using NHibernate.Cfg;
 using NHibernate.Dialect;
 using NHibernate.Mapping;
 
@@ -99,11 +100,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		protected abstract bool CanProcessEnum(Type enumValueClass);
 		protected abstract void ProcessEnum(Type enumValueClass, Table table, List<Insert> inserts);
 
-		public override string[] GenerateCreateScripts(PersistentStore store, Dialect dialect)
+		public override string[] GenerateCreateScripts(Configuration config, Dialect dialect)
 		{
 			// mapped enum classes
 			ICollection<PersistentClass> persistentEnumClasses = CollectionUtils.Select<PersistentClass>(
-				store.Configuration.ClassMappings,
+				config.ClassMappings,
 				delegate(PersistentClass c) { return typeof(EnumValue).IsAssignableFrom(c.MappedClass); });
 
 			List<Insert> inserts = new List<Insert>();
@@ -113,7 +114,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 					ProcessEnum(pclass.MappedClass, pclass.Table, inserts);
 			}
 
-			string defaultSchema = store.Configuration.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+			string defaultSchema = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
 
 			List<string> scripts = CollectionUtils.Map<Insert, string>(inserts,
 				delegate(Insert i) { return i.GetCreateScript(dialect, defaultSchema); });
@@ -121,7 +122,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			return scripts.ToArray();
 		}
 
-		public override string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
+		public override string[] GenerateDropScripts(Configuration config, Dialect dialect)
 		{
 			return new string[] { };    // nothing to do
 		}

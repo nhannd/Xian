@@ -87,13 +87,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                         // build a constraint for this column
                         Table constrainedTable = prop.Value.Table;
                         Column constrainedColumn = CollectionUtils.FirstElement<Column>(prop.ColumnCollection);
-                        Table referencedTable = GetTableForEnumClass(enumClass, store);
-
-                        // don't really know if this will be unique or not...
-                        int unique = constrainedTable.Name.GetHashCode() ^ constrainedColumn.Name.GetHashCode() ^ referencedTable.Name.GetHashCode();
-                        string fkName = string.Format("FK{0}", unique.ToString("X"));
-
-                        constrainedTable.CreateForeignKey(fkName, new Column[] { constrainedColumn }, enumClass);
+                        constrainedTable.CreateForeignKey(null, new Column[] { constrainedColumn }, enumClass);
                     }
                 }
             }

@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using NHibernate.Dialect;
+using NHibernate.Cfg;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -52,13 +53,20 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     public class ScriptWriter
     {
         private readonly List<IDdlScriptGenerator> _generators;
-        private readonly PersistentStore _store;
+        private readonly Configuration _config;
+    	private readonly string _qualifier;
+    	private readonly bool _qualifyNames;
         private readonly Dialect _dialect;
 
-        public ScriptWriter(PersistentStore store, Dialect dialect, bool populateHardEnums, bool populateSoftEnums)
+		public ScriptWriter(Configuration config, Dialect dialect, bool populateHardEnums, bool populateSoftEnums, bool qualifyNames)
         {
-            _store = store;
+            _config = config;
             _dialect = dialect;
+        	_qualifyNames = qualifyNames;
+
+			_qualifier = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+			if (!string.IsNullOrEmpty(_qualifier))
+				_qualifier += ".";
 
             _generators = new List<IDdlScriptGenerator>();
 
@@ -88,9 +96,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         {
             foreach (IDdlScriptGenerator gen in _generators)
             {
-                foreach (string script in gen.GenerateCreateScripts(_store, _dialect))
+                foreach (string script in gen.GenerateCreateScripts(_config, _dialect))
                 {
-                    sw.WriteLine(script);
+					sw.WriteLine(RewriteQualifiers(script));
                 }
             }
         }
@@ -103,11 +111,16 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         {
             foreach (IDdlScriptGenerator gen in _generators)
             {
-                foreach (string script in gen.GenerateDropScripts(_store, _dialect))
+                foreach (string script in gen.GenerateDropScripts(_config, _dialect))
                 {
-                    sw.WriteLine(script);
+					sw.WriteLine(RewriteQualifiers(script));
                 }
             }
         }
+
+		private string RewriteQualifiers(string script)
+		{
+			return _qualifyNames ? script : script.Replace(_qualifier, "");
+		}
     }
 }

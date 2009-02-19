@@ -32,6 +32,8 @@
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate.Ddl;
 using ClearCanvas.Enterprise.Hibernate;
+using NHibernate.Cfg;
+using NHibernate.Dialect;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -49,9 +51,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         {
             #region IDdlScriptGenerator Members
 
-            public string[] GenerateCreateScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
+            public string[] GenerateCreateScripts(Configuration config, Dialect dialect)
             {
-                string defaultSchema = store.Configuration.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+                string defaultSchema = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
                 string tableName = !string.IsNullOrEmpty(defaultSchema) ? defaultSchema + "." + TABLE_NAME : TABLE_NAME;
 
                 return new string[]
@@ -60,7 +62,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				};
             }
 
-            public string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
+            public string[] GenerateDropScripts(Configuration config, Dialect dialect)
             {
                 return new string[] { };    // nothing to do
             }

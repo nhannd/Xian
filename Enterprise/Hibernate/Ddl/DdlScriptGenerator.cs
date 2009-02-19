@@ -33,6 +33,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using NHibernate.Cfg;
+using NHibernate.Dialect;
 using NHibernate.Metadata;
 using ClearCanvas.Common.Utilities;
 
@@ -42,9 +44,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     {
         #region IDdlScriptGenerator Members
 
-        public abstract string[] GenerateCreateScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect);
+        public abstract string[] GenerateCreateScripts(Configuration config, Dialect dialect);
 
-        public abstract string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect);
+        public abstract string[] GenerateDropScripts(Configuration config, Dialect dialect);
 
         #endregion
 
