@@ -53,7 +53,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	/// </summary>
 	internal class VolumeBuilder
 	{
+		#region Private fields
+
+		private List<Frame> _frames;
+
+		#endregion
+
 		#region Public methods
+
+		public VolumeBuilder(List<Frame> frames)
+		{
+			_frames = frames;	
+		}
 
 		//ggerade ToDo: See Stewart's comments above
 		//  - Should give a reason for failure, hints or something
@@ -66,18 +77,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		//  - How to deal with overlaps? "holes" in the set? Uneven spacing?
 		//
 		// As a first prototype we just have a yay or nay interface with a simple reason to show to the user
-		public static bool ValidateFrames(List<Frame> frames, out string reason)
+		public bool ValidateFrames(out string reason)
 		{
 			// Ensure we have at least 3? frames
-			if (frames.Count < 3)
+			if (_frames.Count < 3)
 			{
 				reason = "Display Set must have at least 3 frames";
 				return false;
 			}
 
 			// Ensure all frames have the same orientation
-			ImageOrientationPatient orient = frames[0].ImageOrientationPatient;
-			foreach (Frame frame in frames)
+			ImageOrientationPatient orient = _frames[0].ImageOrientationPatient;
+			foreach (Frame frame in _frames)
 			{
 				if (frame.ImageOrientationPatient.IsNull)
 				{
@@ -92,12 +103,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 
 			// Ensure all frames are equally spaced
-			frames.Sort(new SliceLocationComparer());
+			_frames.Sort(new SliceLocationComparer());
 			float spacing = 0;
-			Frame lastFrame = frames[0];
-			for (int i = 1; i < frames.Count; i++)
+			Frame lastFrame = _frames[0];
+			for (int i = 1; i < _frames.Count; i++)
 			{
-				Frame currentFrame = frames[i];
+				Frame currentFrame = _frames[i];
 				float currentSpacing = CalcSpaceBetweenPlanes(currentFrame, lastFrame);
 				if (currentSpacing < 0.01f)
 				{
@@ -144,14 +155,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return frameGroups;
 		}
 
-		public static Volume BuildVolume(List<Frame> frames)
+		public Volume BuildVolume()
 		{
 			// Sort the frames by slice location to ensure coordinate consistency in our volumes.
 			// Sort by increasing location results in frames being added F to H, R to L, and A to P
-			frames.Sort(new SliceLocationComparer());
+			//ggerade ToRes: Does this stick with the caller's frame collection?
+			_frames.Sort(new SliceLocationComparer());
 
 			// Clone the first frame's dicom header info and use it as the volume model
-			IDicomMessageSopDataSource dataSource = (IDicomMessageSopDataSource) frames[0].ParentImageSop.DataSource;
+			IDicomMessageSopDataSource dataSource = (IDicomMessageSopDataSource) _frames[0].ParentImageSop.DataSource;
 			DicomMessageBase firstFrameDicom = dataSource.SourceMessage;
 
 			// Selectively copy from original headers
@@ -159,16 +171,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			                                                CreateVolumeDataSet(firstFrameDicom.DataSet));
 
 			// Use the first frame's orientation as our volume orientation
-			Matrix orientationPatient = ImageOrientationPatientToMatrix(frames[0].ImageOrientationPatient);
+			Matrix orientationPatient = ImageOrientationPatientToMatrix(_frames[0].ImageOrientationPatient);
 
-			bool dataUnsigned = frames[0].PixelRepresentation == 0;
+			bool dataUnsigned = _frames[0].PixelRepresentation == 0;
 
-			Vector3D originPatient = new Vector3D((float) frames[0].ImagePositionPatient.X,
-			                                      (float) frames[0].ImagePositionPatient.Y,
-			                                      (float) frames[0].ImagePositionPatient.Z);
+			Vector3D originPatient = new Vector3D((float) _frames[0].ImagePositionPatient.X,
+			                                      (float) _frames[0].ImagePositionPatient.Y,
+			                                      (float) _frames[0].ImagePositionPatient.Z);
 
-			Vector3D spacing = new Vector3D((float) frames[0].PixelSpacing.Column, (float) frames[0].PixelSpacing.Row,
-			                                CalcSliceSpacing(frames));
+			Vector3D spacing = new Vector3D((float) _frames[0].PixelSpacing.Column, (float) _frames[0].PixelSpacing.Row,
+			                                CalcSliceSpacing(_frames));
 
 			// Determine Gantry/Detector Tilt from orientation matrix
 			double tilt = GetGantryTiltRadians(orientationPatient);
@@ -177,21 +189,21 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			//	added to the volume to create a normalized cuboid volume that contains the tilted volume.
 			// This is the number of rows that we will pad for each frame, it affects the overall
 			//	dimensions of the volume.
-			int padRows = GetNumberOfRowsToPad(frames, spacing, tilt);
+			int padRows = GetNumberOfRowsToPad(_frames, spacing, tilt);
 
 			// Relying on the frames being uniform, so we'll base width/height off of first frame
-			Vector3D dimensions = new Vector3D(frames[0].Columns, frames[0].Rows + padRows, frames.Count);
+			Vector3D dimensions = new Vector3D(_frames[0].Columns, _frames[0].Rows + padRows, _frames.Count);
 
 			if (dataUnsigned)
 			{
-				ushort[] volumeArray = BuildVolumeUnsignedShortArray(frames, dimensions, spacing, orientationPatient);
+				ushort[] volumeArray = BuildVolumeUnsignedShortArray(_frames, dimensions, spacing, orientationPatient);
 
 				Volume vol = new Volume(volumeArray, dimensions, spacing, originPatient, orientationPatient, modelDicomFile);
 				return vol;
 			}
 			else
 			{
-				short[] volumeArray = BuildVolumeShortArray(frames, dimensions, spacing, orientationPatient);
+				short[] volumeArray = BuildVolumeShortArray(_frames, dimensions, spacing, orientationPatient);
 
 				Volume vol = new Volume(volumeArray, dimensions, spacing, originPatient, orientationPatient, modelDicomFile);
 				return vol;
@@ -355,7 +367,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				int start, end = 0;
 				int padTop = 0;
-				if (padRows > 0)  // Pad top
+				//if (padRows > 0)  // Pad top
 				{
 					float deltaMm = lastFramePos - (float) frame.ImagePositionPatient.Z;
 					double padTopMm = Math.Tan(tilt) * deltaMm;
@@ -407,7 +419,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				imageIndex++;
 
 
-				if (padRows > 0)  // Pad bottom
+				//if (padRows > 0)  // Pad bottom
 				{
 					int padBottom = padRows - padTop;
 					start = end;

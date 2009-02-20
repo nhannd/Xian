@@ -66,7 +66,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			IDesktopWindow desktop = Application.ActiveDesktopWindow;
 
 			string reasonValidateFailed;
-			if (VolumeBuilder.ValidateFrames(frames, out reasonValidateFailed) == false)
+			VolumeBuilder builder = new VolumeBuilder(frames);
+			if (builder.ValidateFrames(out reasonValidateFailed) == false)
 			{
 				desktop.ShowMessageBox("Unable to load Data Set as MPR.\n\nReason:\n" + reasonValidateFailed, MessageBoxActions.Ok);
 				//ggerade ToDo: Throw ex
@@ -81,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						BackgroundTaskProgress prog = new BackgroundTaskProgress(10, "Creating Volume...");
 						context.ReportProgress(prog);
 
-						volume = VolumeBuilder.BuildVolume(frames);
+						volume = builder.BuildVolume();
 
 						context.Complete(null);
 					}, true);
@@ -89,31 +90,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			ProgressDialog.Show(task, desktop, true, ProgressBarStyle.Blocks);
 
 			return volume;
-		}
-
-		// experimental utility method to split a displayset into MPR-able subsets
-		public static List<List<Frame>> SplitDisplaySet(IDisplaySet displaySet)
-		{
-			List<Frame> allFrames = new List<Frame>();
-			foreach (PresentationImage pi in displaySet.PresentationImages)
-			{
-				DicomGrayscalePresentationImage dgpi = (DicomGrayscalePresentationImage)pi;
-				foreach (Frame frame in dgpi.ImageSop.Frames)
-					allFrames.Add(frame);
-			}
-
-			List<List<Frame>> frameGroups = VolumeBuilder.SplitFrameGroups(allFrames);
-			List<List<Frame>> validatedGroups = new List<List<Frame>>();
-			foreach (List<Frame> group in frameGroups)
-			{
-				string reasonValidateFailed;
-				if (VolumeBuilder.ValidateFrames(group, out reasonValidateFailed))
-				{
-					validatedGroups.Add(group);
-				}
-			}
-
-			return validatedGroups;
 		}
 
 		#endregion
@@ -184,12 +160,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						BackgroundTaskProgress prog = new BackgroundTaskProgress(percentComplete, "Creating Volume...");
 						context.ReportProgress(prog);
 
-						volumeFailed = ! VolumeBuilder.ValidateFrames(_localFrames, out reasonVolumeFailed);
+						VolumeBuilder builder = new VolumeBuilder(_localFrames);
+						volumeFailed = ! builder.ValidateFrames(out reasonVolumeFailed);
 						//ggerade ToDo: Throw exception
 						if (volumeFailed)
 							return;
 
-						volume = VolumeBuilder.BuildVolume(_localFrames);
+						volume = builder.BuildVolume();
 
 						context.Complete(null);
 					}, true);
