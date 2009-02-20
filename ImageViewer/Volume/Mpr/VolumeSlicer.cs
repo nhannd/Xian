@@ -462,6 +462,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			reslicer.SetOutputDimensionality(2);
 
+			reslicer.SetBackgroundLevel(_volume.PadValue);
+
 			// Note: When the VTK docs state that the output spacing defaults to the input data,
 			//	apparently they mean the raw volume. Without this call the spacing that is provided in the
 			//	input volume is not taken into account.

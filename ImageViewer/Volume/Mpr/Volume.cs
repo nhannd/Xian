@@ -51,12 +51,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		//	This defines whether the data is signed or unsigned.
 		private readonly short[] _volShortArray;
 		private readonly ushort[] _volUnsignedShortArray;
-		//ggerade ToRef: Use a 3-tuple of ints instead of floats... (Size3D?)
-		private readonly Vector3D _arrayDimensions;
+		private readonly Size3D _arrayDimensions;
 		private readonly Vector3D _spacing;
 		private readonly Vector3D _originPatient;
 		private readonly Matrix _orientationPatientMatrix;
 		private readonly DicomMessageBase _modelDicom;
+		private readonly int _padValue;
 		// Decided to keep the volume origin at 0,0,0 and translate to patient coordinates
 		//	when needed. This mimics the typical image to patient coordintate transform.
 		private readonly Vector3D _origin = new Vector3D(0, 0, 0);
@@ -75,9 +75,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Initialization
 
-		internal Volume(short[] volShortArray, Vector3D arrayDimensions, Vector3D spacing, Vector3D originPatient,
-		                Matrix orientationPateintMatrix, DicomMessageBase modelDicom)
-			: this(arrayDimensions, spacing, originPatient, orientationPateintMatrix, modelDicom)
+		internal Volume(short[] volShortArray, Size3D arrayDimensions, Vector3D spacing, Vector3D originPatient,
+		                Matrix orientationPateintMatrix, DicomMessageBase modelDicom, int padValue)
+			: this(arrayDimensions, spacing, originPatient, orientationPateintMatrix, modelDicom, padValue)
 		{
 			_volShortArray = volShortArray;
 			//ggerade ToOpt: I think it would be better to pin these only while necessary. Consider refactoring
@@ -85,22 +85,23 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_volArrayPinnedHandle = GCHandle.Alloc(_volShortArray, GCHandleType.Pinned);
 		}
 
-		internal Volume(ushort[] volUnsignedShortArray, Vector3D arrayDimensions, Vector3D spacing, Vector3D originPatient,
-		                Matrix orientationPatientMatrix, DicomMessageBase modelDicom)
-			: this(arrayDimensions, spacing, originPatient, orientationPatientMatrix, modelDicom)
+		internal Volume(ushort[] volUnsignedShortArray, Size3D arrayDimensions, Vector3D spacing, Vector3D originPatient,
+		                Matrix orientationPatientMatrix, DicomMessageBase modelDicom, int padValue)
+			: this(arrayDimensions, spacing, originPatient, orientationPatientMatrix, modelDicom, padValue)
 		{
 			_volUnsignedShortArray = volUnsignedShortArray;
 			_volArrayPinnedHandle = GCHandle.Alloc(_volUnsignedShortArray, GCHandleType.Pinned);
 		}
 
-		private Volume(Vector3D arrayDimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatientMatrix,
-		               DicomMessageBase modelDicom)
+		private Volume(Size3D arrayDimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatientMatrix,
+		               DicomMessageBase modelDicom, int padValue)
 		{
 			_arrayDimensions = arrayDimensions;
 			_spacing = spacing;
 			_originPatient = originPatient;
 			_orientationPatientMatrix = orientationPatientMatrix;
 			_modelDicom = modelDicom;
+			_padValue = padValue;
 		}
 
 		#endregion
@@ -110,7 +111,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		// Effective volume dimensions (VTK output will take spacing into account for us)
 		public Vector3D Dimensions
 		{
-			get { return new Vector3D(ArrayDimensions.X * Spacing.X, ArrayDimensions.Y * Spacing.Y, ArrayDimensions.Z * Spacing.Z); }
+			get
+			{
+				return new Vector3D(ArrayDimensions.Width * Spacing.X, ArrayDimensions.Height * Spacing.Y,
+				                    ArrayDimensions.Depth * Spacing.Z);
+			}
 		}
 
 		public Vector3D Spacing
@@ -135,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public int SizeInVoxels
 		{
-			get { return (int) (ArrayDimensions.X * ArrayDimensions.Y * ArrayDimensions.Z); }
+			get { return ArrayDimensions.Size; }
 		}
 
 		public float MinXCoord
@@ -145,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public float MaxXCoord
 		{
-			get { return (Origin.X + Spacing.X * ArrayDimensions.X); }
+			get { return (Origin.X + Spacing.X * ArrayDimensions.Width); }
 		}
 
 		public float MinYCoord
@@ -155,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public float MaxYCoord
 		{
-			get { return (Origin.Y + Spacing.Y * ArrayDimensions.Y); }
+			get { return (Origin.Y + Spacing.Y * ArrayDimensions.Height); }
 		}
 
 		public float MinZCoord
@@ -165,7 +170,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public float MaxZCoord
 		{
-			get { return (Origin.Z + Spacing.Z * ArrayDimensions.Z); }
+			get { return (Origin.Z + Spacing.Z * ArrayDimensions.Depth); }
 		}
 
 		public float EffectiveSpacing
@@ -183,6 +188,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _origin; }
 		}
 
+		public int PadValue
+		{
+			get { return _padValue; }
+		}
+
 		#endregion
 
 		#region Public methods
@@ -192,9 +202,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get
 			{
 				// Volume center point
-				Vector3D center = new Vector3D(Origin.X + Spacing.X * 0.5f * ArrayDimensions.X,
-				                               Origin.Y + Spacing.Y * 0.5f * ArrayDimensions.Y,
-				                               Origin.Z + Spacing.Z * 0.5f * ArrayDimensions.Z);
+				Vector3D center = new Vector3D(Origin.X + Spacing.X * 0.5f * ArrayDimensions.Width,
+				                               Origin.Y + Spacing.Y * 0.5f * ArrayDimensions.Height,
+				                               Origin.Z + Spacing.Z * 0.5f * ArrayDimensions.Depth);
 				return center;
 			}
 		}
@@ -328,7 +338,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		// Decided to keep private for now, shouldn't be interesting to the outside world, and helps 
 		//	avoid confusion with dimensions that take spacing into account (which is useful to the outside world)
-		private Vector3D ArrayDimensions
+		private Size3D ArrayDimensions
 		{
 			get { return _arrayDimensions; }
 		}
@@ -344,7 +354,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			//ggerade ToRes: This attempt to capture vtkError OutputWindow failed...
 			//vtkVolume.AddObserver(123, VtkVolumeCallback);
 
-			vtkVolume.SetDimensions((int) ArrayDimensions.X, (int) ArrayDimensions.Y, (int) ArrayDimensions.Z);
+			vtkVolume.SetDimensions(ArrayDimensions.Width, ArrayDimensions.Height, ArrayDimensions.Depth);
 			vtkVolume.SetOrigin(Origin.X, Origin.Y, Origin.Z);
 			vtkVolume.SetSpacing(Spacing.X, Spacing.Y, Spacing.Z);
 

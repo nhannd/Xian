@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.ImageViewer.Mathematics
 {
@@ -78,30 +76,27 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
-		/// Gets or sets the x-component.
+		/// Gets the x-component.
 		/// </summary>
 		public float X
 		{
 			get { return _x; }
-			set { _x = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the y-component.
+		/// Gets the y-component.
 		/// </summary>
 		public float Y
 		{
 			get { return _y; }
-			set { _y = value; }
 		}
 
 		/// <summary>
-		/// Gets or sets the z-component.
+		/// Gets the z-component.
 		/// </summary>
 		public float Z
 		{
 			get { return _z; }
-			set { _z = value; }
 		}
 
 		/// <summary>
@@ -109,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// </summary>
 		public bool IsNull
 		{
-			get { return _x == 0F && _y == 0F && _z == 0F; }	
+			get { return _x == 0F && _y == 0F && _z == 0F; }
 		}
 
 		/// <summary>
@@ -119,8 +114,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		{
 			get
 			{
-				return (float)Math.Sqrt(_x*_x + _y*_y + _z*_z);
-			}	
+				return (float)Math.Sqrt(_x * _x + _y * _y + _z * _z);
+			}
 		}
 
 		/// <summary>
@@ -144,8 +139,6 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// </summary>
 		public Vector3D Cross(Vector3D right)
 		{
-			Vector3D cross = new Vector3D(0, 0, 0);
-
 			float x = _y * right.Z - _z * right.Y;
 			float y = -_x * right.Z + _z * right.X;
 			float z = _x * right.Y - _y * right.X;
@@ -216,8 +209,8 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public static Vector3D GetLinePlaneIntersection(
 			Vector3D planeNormal,
 			Vector3D pointInPlane,
-			Vector3D linePoint1, 
-			Vector3D linePoint2, 
+			Vector3D linePoint1,
+			Vector3D linePoint2,
 			bool isLineSegment)
 		{
 			if (Vector3D.AreEqual(planeNormal, Vector3D.Null))
@@ -252,7 +245,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// </summary>
 		public static Vector3D operator *(float scale, Vector3D vector)
 		{
-			return vector*scale;
+			return vector * scale;
 		}
 
 		/// <summary>
@@ -268,7 +261,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// </summary>
 		public static Vector3D operator /(float scale, Vector3D vector)
 		{
-			return vector/scale;
+			return vector / scale;
 		}
 
 		/// <summary>
@@ -319,7 +312,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		public static bool AreEqual(Vector3D left, Vector3D right)
 		{
 			return FloatComparer.AreEqual(left.X, right.X) &&
-					FloatComparer.AreEqual(left.Y, right.Y) && 
+					FloatComparer.AreEqual(left.Y, right.Y) &&
 					FloatComparer.AreEqual(left.Z, right.Z);
 		}
 
@@ -328,7 +321,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// </summary>
 		public override int GetHashCode()
 		{
-			return (int)(3 * _x.GetHashCode() + 5 * _y.GetHashCode() + 7 * _z.GetHashCode());
+			return 3 * _x.GetHashCode() + 5 * _y.GetHashCode() + 7 * _z.GetHashCode();
 		}
 
 		/// <summary>
