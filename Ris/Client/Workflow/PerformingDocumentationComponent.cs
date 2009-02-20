@@ -293,7 +293,7 @@ namespace ClearCanvas.Ris.Client.Workflow
         {
             try
             {
-                if (Save(false))
+                if (Save(_alreadyCompleted))
                 {
                     DocumentManager.InvalidateFolder(typeof(Folders.Performing.InProgressFolder));
                     DocumentManager.InvalidateFolder(typeof(Folders.Performing.UndocumentedFolder));
