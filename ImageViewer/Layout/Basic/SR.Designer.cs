@@ -106,6 +106,33 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} prior studies have failed to load.  Please check the logs for more details..
+        /// </summary>
+        public static string FormatXCompletePriorLoadFailures {
+            get {
+                return ResourceManager.GetString("FormatXCompletePriorLoadFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} complete and {1} partial failures have occurred while loading prior studies.  Please check the logs for more details..
+        /// </summary>
+        public static string FormatXCompleteYPartialPriorLoadFailures {
+            get {
+                return ResourceManager.GetString("FormatXCompleteYPartialPriorLoadFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} prior studies were only partially loaded.  Please check the logs for more details..
+        /// </summary>
+        public static string FormatXPartialPriorLoadFailures {
+            get {
+                return ResourceManager.GetString("FormatXPartialPriorLoadFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (Default).
         /// </summary>
         public static string LabelDefault {
@@ -156,6 +183,42 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         public static string MenuStandard {
             get {
                 return ResourceManager.GetString("MenuStandard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One prior study has failed to load.  Please check the logs for more details..
+        /// </summary>
+        public static string Message1CompletePriorLoadFailures {
+            get {
+                return ResourceManager.GetString("Message1CompletePriorLoadFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One prior study was only partially loaded.  Please check the logs for more details..
+        /// </summary>
+        public static string Message1PartialPriorLoadFailures {
+            get {
+                return ResourceManager.GetString("Message1PartialPriorLoadFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The search for prior studies has failed.  Try reopening the study or select a different default server..
+        /// </summary>
+        public static string MessageFailedToLoadAnyPriors {
+            get {
+                return ResourceManager.GetString("MessageFailedToLoadAnyPriors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An unexpected error has occurred while loading prior studies.  Please check the logs for more details..
+        /// </summary>
+        public static string MessageUnexpectedPriorLoadFailure {
+            get {
+                return ResourceManager.GetString("MessageUnexpectedPriorLoadFailure", resourceCulture);
             }
         }
         

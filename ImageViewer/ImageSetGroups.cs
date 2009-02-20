@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common;
@@ -11,11 +10,11 @@ namespace ClearCanvas.ImageViewer
 {
 	#region Basic Specifications
 
-	public class PatientIdSpecification : ImageSetSpecification
+	internal class PatientInfoSpecification : ImageSetSpecification
 	{
 		private readonly IImageSet _referenceImageSet;
 
-		public PatientIdSpecification(IImageSet referenceImageSet)
+		public PatientInfoSpecification(IImageSet referenceImageSet)
 		{
 			_referenceImageSet = referenceImageSet;
 		}
@@ -29,7 +28,7 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
-	public class ContainsModalitySpecification : ImageSetSpecification
+	internal class ContainsModalitySpecification : ImageSetSpecification
 	{
 		private readonly string _modality;
 
@@ -50,7 +49,7 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
-	public class StudyDateSpecification : ImageSetSpecification
+	internal class StudyDateSpecification : ImageSetSpecification
 	{
 		private readonly Predicate<DateTime> _innerTest;
 
@@ -172,7 +171,7 @@ namespace ClearCanvas.ImageViewer
 	public class PatientImageSetGroup : FilteredGroup<IImageSet>
 	{
 		internal PatientImageSetGroup(IImageSet sourceImageSet)
-			: base("Patient", sourceImageSet.PatientInfo, new PatientIdSpecification(sourceImageSet))
+			: base("Patient", sourceImageSet.PatientInfo, new PatientInfoSpecification(sourceImageSet))
 		{
 		}
 	}

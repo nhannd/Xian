@@ -3,9 +3,27 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using System;
 using ClearCanvas.Common;
 using System.Threading;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
+	public class PriorStudyLoaderException : Exception
+	{
+		internal PriorStudyLoaderException(bool findFailed, int totalFailures, int partialFailures, int totalQueryResults)
+			: base("A failure has occurred while loading prior studies.")
+		{
+			this.FindFailed = findFailed;
+			this.TotalFailures = totalFailures;
+			this.PartialFailures = partialFailures;
+			this.TotalQueryResults = totalQueryResults;
+		}
+
+		public readonly bool FindFailed;
+		public readonly int TotalFailures;
+		public readonly int PartialFailures;
+		public readonly int TotalQueryResults;
+	}
+
 	public partial class ImageViewerComponent
 	{
 		private class PriorStudyLoader
@@ -83,12 +101,13 @@ namespace ClearCanvas.ImageViewer
 			{
 				try
 				{
-					_queryResults = _priorStudyFinder.FindPriorStudies();
+					_queryResults = _priorStudyFinder.FindPriorStudies() ?? new StudyItemList();
 					if (_queryResults == null || _queryResults.Count == 0)
 						return;
 				}
 				catch(Exception e)
 				{
+					_queryResults = new StudyItemList();
 					_findFailed = true;
 					Platform.Log(LogLevel.Error, e, "The search for prior studies has failed.");
 					return;
@@ -135,16 +154,20 @@ namespace ClearCanvas.ImageViewer
 				if (_stop)
 					return;
 
-				//TODO: show messages to user
-				if (_findFailed || (totalFailedStudies == _queryResults.Count))
+				try
 				{
+					VerifyLoadPriors(totalFailedStudies, partialFailedStudies);
 				}
-				else if (totalFailedStudies > 0)
+				catch(Exception e)
 				{
+					ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
 				}
-				else if (partialFailedStudies > 0)
-				{
-				}
+			}
+
+			private void VerifyLoadPriors(int totalFailedStudies, int partialFailedStudies)
+			{
+				if (_findFailed || totalFailedStudies > 0 || partialFailedStudies > 0)
+					throw new PriorStudyLoaderException(_findFailed, totalFailedStudies, partialFailedStudies, _queryResults.Count);
 			}
 
 			private int GetTotalFailedStudies()

@@ -38,13 +38,11 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 
 				try
 				{
-					bool anySucceeded = false;
 					foreach (IStudyRootQuery query in GetQueryInterfaces())
 					{
 						try
 						{
 							IList<T> results = _query(queryCriteria, query);
-							anySucceeded = true;
 							foreach (T result in results)
 							{
 								string uid = _getUid(result);
@@ -54,22 +52,16 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 						}
 						catch (Exception e)
 						{
-							string message = string.Format("Query failed (server: {0}).", query);
-							Platform.Log(LogLevel.Error, e, message);
+							QueryFailedFault fault = new QueryFailedFault();
+							fault.Description = String.Format("Failed to query server {0}.", query);
+							Platform.Log(LogLevel.Error, e, fault.Description);
+							throw new FaultException<QueryFailedFault>(fault, fault.Description);
 						}
 						finally
 						{
 							if (query is IDisposable)
 								(query as IDisposable).Dispose();
 						}
-					}
-
-					if (!anySucceeded)
-					{
-						QueryFailedFault fault = new QueryFailedFault();
-						fault.Description = String.Format("Failed to query any of the default servers.");
-						Platform.Log(LogLevel.Error, fault.Description);
-						throw new FaultException<QueryFailedFault>(fault, fault.Description);
 					}
 				}
 				catch (FaultException)

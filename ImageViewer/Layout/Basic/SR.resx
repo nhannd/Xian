@@ -132,6 +132,15 @@
   <data name="ExceptionStudyNotLoaded" xml:space="preserve">
     <value>The specified study is not currently loaded (StudyInstanceUID={0}).</value>
   </data>
+  <data name="FormatXCompletePriorLoadFailures" xml:space="preserve">
+    <value>{0} prior studies have failed to load.  Please check the logs for more details.</value>
+  </data>
+  <data name="FormatXCompleteYPartialPriorLoadFailures" xml:space="preserve">
+    <value>{0} complete and {1} partial failures have occurred while loading prior studies.  Please check the logs for more details.</value>
+  </data>
+  <data name="FormatXPartialPriorLoadFailures" xml:space="preserve">
+    <value>{0} prior studies were only partially loaded.  Please check the logs for more details.</value>
+  </data>
   <data name="LabelDefault" xml:space="preserve">
     <value>(Default)</value>
   </data>
@@ -149,6 +158,18 @@
   </data>
   <data name="MenuStandard" xml:space="preserve">
     <value>Standard</value>
+  </data>
+  <data name="Message1CompletePriorLoadFailures" xml:space="preserve">
+    <value>One prior study has failed to load.  Please check the logs for more details.</value>
+  </data>
+  <data name="Message1PartialPriorLoadFailures" xml:space="preserve">
+    <value>One prior study was only partially loaded.  Please check the logs for more details.</value>
+  </data>
+  <data name="MessageFailedToLoadAnyPriors" xml:space="preserve">
+    <value>The search for prior studies has failed.  Try reopening the study or select a different default server.</value>
+  </data>
+  <data name="MessageUnexpectedPriorLoadFailure" xml:space="preserve">
+    <value>An unexpected error has occurred while loading prior studies.  Please check the logs for more details.</value>
   </data>
   <data name="TitleLayoutConfiguration" xml:space="preserve">
     <value>Layout</value>
