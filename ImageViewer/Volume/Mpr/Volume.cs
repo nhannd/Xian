@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -94,11 +93,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_volArrayPinnedHandle = GCHandle.Alloc(_volUnsignedShortArray, GCHandleType.Pinned);
 		}
 
-		private Volume(Vector3D dimensions, Vector3D arrayDimensions, Vector3D originPatient, Matrix orientationPatientMatrix,
+		private Volume(Vector3D arrayDimensions, Vector3D spacing, Vector3D originPatient, Matrix orientationPatientMatrix,
 		               DicomMessageBase modelDicom)
 		{
-			_arrayDimensions = dimensions;
-			_spacing = arrayDimensions;
+			_arrayDimensions = arrayDimensions;
+			_spacing = spacing;
 			_originPatient = originPatient;
 			_orientationPatientMatrix = orientationPatientMatrix;
 			_modelDicom = modelDicom;
@@ -202,10 +201,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public Vector3D CenterPointPatient
 		{
-			get
-			{
-				return ConvertToPatient(CenterPoint);
-			}
+			get { return ConvertToPatient(CenterPoint); }
 		}
 
 		public Vector3D ConvertToPatient(Vector3D volumePosition)
@@ -369,10 +365,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return vtkVolume;
 		}
 
-		private static void VtkVolumeCallback(vtkObject vtkObj, uint eid, object obj, IntPtr nativeSomethingOrOther)
-		{
-			Debug.WriteLine(eid);
-		}
+		// This didn't get called when errors occur, need to investigate handling of VTK errors further
+		//private static void VtkVolumeCallback(vtkObject vtkObj, uint eid, object obj, IntPtr nativeSomethingOrOther)
+		//{
+		//    Debug.WriteLine(eid);
+		//}
 
 		private static vtkShortArray CreateVtkShortArrayWrapper(short[] shortArray)
 		{

@@ -29,10 +29,6 @@
 
 #endregion
 
-// This switch causes the the Sag/Coronal/Axial DisplaySet's pixel data to get pre-generated when the
-//	DisplaySets are created, it's basically to test the public CreateSlice calls for now
-//#define PREGEN_PIXELDATA
-
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -97,18 +93,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				       		{0, 0, 0, 1}
 				       	});
 
-			Vector3D patientOrientationOrtho = sourceOrientationRowPatient.Cross(sourceOrientationColumnPatient);
-			Matrix srcPlanePatientOrientation = new Matrix
-				(4, 4, new float[4, 4]
-			            {
-			                {sourceOrientationRowPatient.X, sourceOrientationRowPatient.Y, sourceOrientationRowPatient.Z, 0},
-			                {sourceOrientationColumnPatient.X, sourceOrientationColumnPatient.Y, sourceOrientationColumnPatient.Z, 0},
-			                {patientOrientationOrtho.X, patientOrientationOrtho.Y, patientOrientationOrtho.Z, 0},
-			                {0, 0, 0, 1}
-			            });
-			
-			Matrix srcPlaneOrientation = _volume.RotateToVolumeOrientation(srcPlanePatientOrientation);
-
+			//Vector3D patientOrientationOrtho = sourceOrientationRowPatient.Cross(sourceOrientationColumnPatient);
+			//Matrix srcPlanePatientOrientation = new Matrix
+			//    (4, 4, new float[4, 4]
+			//            {
+			//                {sourceOrientationRowPatient.X, sourceOrientationRowPatient.Y, sourceOrientationRowPatient.Z, 0},
+			//                {sourceOrientationColumnPatient.X, sourceOrientationColumnPatient.Y, sourceOrientationColumnPatient.Z, 0},
+			//                {patientOrientationOrtho.X, patientOrientationOrtho.Y, patientOrientationOrtho.Z, 0},
+			//                {0, 0, 0, 1}
+			//            });
+			//Matrix srcPlaneOrientation = _volume.RotateToVolumeOrientation(srcPlanePatientOrientation);
 
 			_resliceAxes = _volume.RotateToVolumeOrientation(slicePlanePatientOrientation);
 
@@ -147,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			                {0, 0, 0, 1}
 			            });
 #else
-			//Vector3D sourceOrientationNormalPatient = sourceOrientationColumnPatient.Cross(sourceOrientationRowPatient);
+	//Vector3D sourceOrientationNormalPatient = sourceOrientationColumnPatient.Cross(sourceOrientationRowPatient);
 			Vector3D sourceOrientationNormalPatient = sourceOrientationRowPatient.Cross(sourceOrientationColumnPatient);
 			Vector3D normalLinePatient = (endPointPatient - startPointPatient).Normalize();
 			//Vector3D normalLinePatient = AbsoluteDelta(endPointPatient, startPointPatient).Normalize();
@@ -215,19 +209,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			                    Math.Abs(endPointPatient.Z - startPointPatient.Z));
 		}
 
-		public void SetSlicePlaneSagittal()
+		public void SetSlicePlaneIdentity()
 		{
-			_resliceAxes = CreateResliceAxesSagittal();
+			_resliceAxes = CreateResliceAxesIdentity();
 		}
 
-		public void SetSlicePlaneCoronal()
+		public void SetSlicePlaneOrthoX()
 		{
-			_resliceAxes = CreateResliceAxesCoronal();
+			_resliceAxes = CreateResliceAxesOrthoX();
 		}
 
-		public void SetSlicePlaneAxial()
+		public void SetSlicePlaneOrthoY()
 		{
-			_resliceAxes = CreateResliceAxesAxial();
+			_resliceAxes = CreateResliceAxesOrthoY();
 		}
 
 		public void SetSlicePlaneOblique(int rotateX, int rotateY, int rotateZ)
@@ -525,6 +519,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 
 			vtkExecutive exec = reslicer.GetExecutive();
+			//ggerade ToRes: Are these VTK observers useful?
 			//exec.AddObserver(123, VtkReslicerExecutiveCallback);
 			exec.Update();
 
@@ -540,10 +535,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return _volume.LargestOutputImageDimension;
 		}
 
-		private static void VtkReslicerExecutiveCallback(vtkObject vtkObj, uint eid, object obj, IntPtr nativeSomethingOrOther)
-		{
-			Debug.WriteLine(eid);
-		}
+		// Used by VTK ResliceImage observer
+		//private static void VtkReslicerExecutiveCallback(vtkObject vtkObj, uint eid, object obj, IntPtr nativeSomethingOrOther)
+		//{
+		//    Debug.WriteLine(eid);
+		//}
 
 		private DicomFile CreateSliceDicom()
 		{
@@ -661,7 +657,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_resliceAxes[3, 2] = point.Z;
 		}
 
-		private static Matrix CreateResliceAxesSagittal()
+		private static Matrix CreateResliceAxesOrthoY()
 		{
 			return new Matrix(4, 4, new float[4,4]
 			                        	{
@@ -672,7 +668,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			                        	});
 		}
 
-		private static Matrix CreateResliceAxesCoronal()
+		private static Matrix CreateResliceAxesOrthoX()
 		{
 			return new Matrix(4, 4, new float[4,4]
 			                        	{
@@ -683,7 +679,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			                        	});
 		}
 
-		private static Matrix CreateResliceAxesAxial()
+		private static Matrix CreateResliceAxesIdentity()
 		{
 			return new Matrix(4, 4, new float[4,4]
 			                        	{
@@ -700,16 +696,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Matrix aboutY = CalcRotateMatrixAboutY(rotateY);
 			Matrix aboutZ = CalcRotateMatrixAboutZ(rotateZ);
 
-			Matrix axial = new Matrix(4, 4, new float[4,4]
-			                                	{
-			                                		{1, 0, 0, 0},
-			                                		{0, 1, 0, 0},
-			                                		{0, 0, 1, 0},
-			                                		{0, 0, 0, 1}
-			                                	});
-
-
-			return aboutX * aboutY * aboutZ * axial;
+			return aboutX * aboutY * aboutZ;
 		}
 
 		private static Vector3D GetReslicePoint(Matrix resliceAxes)

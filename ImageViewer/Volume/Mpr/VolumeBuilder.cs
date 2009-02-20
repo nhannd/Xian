@@ -29,6 +29,8 @@
 
 #endregion
 
+#define ALLOW_UNSAFE
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -144,9 +146,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public static Volume BuildVolume(List<Frame> frames)
 		{
-			// Sort the frames by instance/frame number to determine first frame and
-			//	Instance vs Location directions
-			frames.Sort(new InstanceAndFrameNumberComparer());
+			// Sort the frames by slice location to ensure coordinate consistency in our volumes.
+			// Sort by increasing location results in frames being added F to H, R to L, and A to P
+			frames.Sort(new SliceLocationComparer());
 
 			// Clone the first frame's dicom header info and use it as the volume model
 			IDicomMessageSopDataSource dataSource = (IDicomMessageSopDataSource) frames[0].ParentImageSop.DataSource;
@@ -157,46 +159,41 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			                                                CreateVolumeDataSet(firstFrameDicom.DataSet));
 
 			// Use the first frame's orientation as our volume orientation
-			Matrix orientationPatientMatrix = ImageOrientationPatientToMatrix(frames[0].ImageOrientationPatient);
-
-			//ggerade ToDo: Going to deal with this elsewhere, still determine direction here I suppose
-			//  This is currently used by the slicer to ensure consistency of instance numbers,
-			//	I'm not sure it's really relevant in the end, but based on the current implementation it keeps the
-			//	"native" MPR DisplaySet in sync with the source DisplaySet.
-			//double direction = Math.Abs(volumeOrientation[2, 0]) *
-			//                   (frames[1].ImagePositionPatient.X - frames[0].ImagePositionPatient.X) +
-			//                   volumeOrientation[2, 1] * (frames[1].ImagePositionPatient.Y - frames[0].ImagePositionPatient.Y) +
-			//                   volumeOrientation[2, 2] * (frames[1].ImagePositionPatient.Z - frames[0].ImagePositionPatient.Z);
-			//bool instanceAndSliceLocationReversed = direction < 0;
+			Matrix orientationPatient = ImageOrientationPatientToMatrix(frames[0].ImageOrientationPatient);
 
 			bool dataUnsigned = frames[0].PixelRepresentation == 0;
 
-			// Currently relying on the frames being uniform, so we'll just use the first frame for width/height
-			Vector3D dimensions = new Vector3D(frames[0].Columns, frames[0].Rows, frames.Count);
-			int volumeSize = (int) (dimensions.X * dimensions.Y * dimensions.Z);
+			Vector3D originPatient = new Vector3D((float) frames[0].ImagePositionPatient.X,
+			                                      (float) frames[0].ImagePositionPatient.Y,
+			                                      (float) frames[0].ImagePositionPatient.Z);
 
-			// Sort the frames by slice location to ensure coordinate consistency in our volumes.
-			// Sort by increasing location results in frames being added F to H, R to L, and A to P
-			frames.Sort(new SliceLocationComparer());
-			Vector3D originPatient = new Vector3D((float)frames[0].ImagePositionPatient.X,
-								  (float)frames[0].ImagePositionPatient.Y,
-								  (float)frames[0].ImagePositionPatient.Z);
-
-			Vector3D spacingPatient = new Vector3D((float) frames[0].PixelSpacing.Column, (float) frames[0].PixelSpacing.Row,
+			Vector3D spacing = new Vector3D((float) frames[0].PixelSpacing.Column, (float) frames[0].PixelSpacing.Row,
 			                                CalcSliceSpacing(frames));
+
+			// Determine Gantry/Detector Tilt from orientation matrix
+			double tilt = GetGantryTiltRadians(orientationPatient);
+
+			// If the series was obtained with Gantry/Detector Tilt we will pad the frames as they're
+			//	added to the volume to create a normalized cuboid volume that contains the tilted volume.
+			// This is the number of rows that we will pad for each frame, it affects the overall
+			//	dimensions of the volume.
+			int padRows = GetNumberOfRowsToPad(frames, spacing, tilt);
+
+			// Relying on the frames being uniform, so we'll base width/height off of first frame
+			Vector3D dimensions = new Vector3D(frames[0].Columns, frames[0].Rows + padRows, frames.Count);
 
 			if (dataUnsigned)
 			{
-				ushort[] volumeArray = BuildVolumeUnsignedShortArray(frames, volumeSize);
+				ushort[] volumeArray = BuildVolumeUnsignedShortArray(frames, dimensions, spacing, orientationPatient);
 
-				Volume vol = new Volume(volumeArray, dimensions, spacingPatient, originPatient, orientationPatientMatrix, modelDicomFile);
+				Volume vol = new Volume(volumeArray, dimensions, spacing, originPatient, orientationPatient, modelDicomFile);
 				return vol;
 			}
 			else
 			{
-				short[] volumeArray = BuildVolumeShortArray(frames, volumeSize);
+				short[] volumeArray = BuildVolumeShortArray(frames, dimensions, spacing, orientationPatient);
 
-				Volume vol = new Volume(volumeArray, dimensions, spacingPatient, originPatient, orientationPatientMatrix, modelDicomFile);
+				Volume vol = new Volume(volumeArray, dimensions, spacing, originPatient, orientationPatient, modelDicomFile);
 				return vol;
 			}
 		}
@@ -291,61 +288,95 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return matrix;
 		}
 
-		private static Vector3D TransformPatientOrigin(ImagePositionPatient patientOrigin, Matrix volumeOrientation)
+		private static double GetGantryTiltRadians(Matrix orientationPatient)
 		{
-			//Matrix normalPatientOrigin = new Matrix(4, 4,
-			//                                        new float[4,4]
-			//                                            {
-			//                                                {1, 0, 0, 0},
-			//                                                {0, 1, 0, 0},
-			//                                                {0, 0, 1, 0},
-			//                                                {
-			//                                                    (float) patientOrigin.X, (float) patientOrigin.Y,
-			//                                                    (float) patientOrigin.Z, 1
-			//                                                }
-			//                                            });
-			//Matrix transformedOrigin = normalPatientOrigin * volumeOrientation;
-			//return new Vector3D(transformedOrigin[3, 0], transformedOrigin[3, 1], transformedOrigin[3, 2]);
+			double aboutXradians = GetRotateAboutXRadians(orientationPatient);
+			double aboutYradians = GetRotateAboutYRadians(orientationPatient);
+			//double aboutZradians = GetRotateAboutZRadians(orientationPatient);
 
-			Matrix normalPatientOrigin = new Matrix(4, 1,
-			                                        new float[4,1]
-			                                        	{
-			                                        		{(float) patientOrigin.X},
-			                                        		{(float) patientOrigin.Y},
-			                                        		{(float) patientOrigin.Z},
-			                                        		{1}
-			                                        	});
+			double tilt = 0d;
+			if (EqualWithinTolerance(aboutXradians, 0f, .001f) == false)
+			{
+				if (EqualWithinTolerance(aboutYradians, 0f, .001f) == false)
+					throw new Exception("Patient orientation is tilted about X and Y, not supported");
 
-			Matrix transformedOrigin = volumeOrientation * normalPatientOrigin;
-			return new Vector3D(transformedOrigin[0, 0], transformedOrigin[1, 0], transformedOrigin[2, 0]);
+				tilt = aboutXradians *
+				       orientationPatient[0, 0]; // This flips euler sign in prone position, so that tilt is correctly signed
+			}
+			else if (EqualWithinTolerance(aboutYradians, 0f, .001f) == false)
+			{
+				tilt = aboutYradians *
+				       orientationPatient[0, 1]; // This flips euler sign in Decubitus Left position
+			}
+			return tilt;
 		}
 
-		private static short[] BuildVolumeShortArray(IEnumerable<Frame> frames, int volumeSize)
+		private static int GetNumberOfRowsToPad(List<Frame> frames, Vector3D spacing, double aboutXradians)
 		{
+			double padRowsMm = Math.Tan(aboutXradians) *
+			                   (frames[frames.Count - 1].ImagePositionPatient.Z - frames[0].ImagePositionPatient.Z);
+			// ensure this pad is always positive for sizing calculations
+			return Math.Abs((int) (padRowsMm / spacing.Y + 0.5f));
+		}
+
+		private static double GetRotateAboutXRadians(Matrix orientationPatient)
+		{
+			return Math.Atan2(orientationPatient[2, 1], orientationPatient[2, 2]);
+		}
+
+		private static double GetRotateAboutYRadians(Matrix orientationPatient)
+		{
+			return -Math.Asin(orientationPatient[2, 0]);
+		}
+
+		// Unused for now, might be useful someday.
+		//private static double GetRotateAboutZRadians(Matrix orientationPatient)
+		//{
+		//    return Math.Atan2(orientationPatient[1, 0], orientationPatient[0, 0]);
+		//}
+
+		//ggerade ToRes: I'd like to templatize this and the unsigned version below, but I'm not sure
+		//	how to get the unsafe section templatized...
+		private static short[] BuildVolumeShortArray(List<Frame> frames, Vector3D dimensions, Vector3D spacing,
+		                                             Matrix orientationPatient)
+		{
+			int volumeSize = (int) (dimensions.X * dimensions.Y * dimensions.Z);
 			short[] volumeArray = new short[volumeSize];
+			float lastFramePos = (float) frames[frames.Count - 1].ImagePositionPatient.Z;
+			// Determine Gantry/Detector Tilt from orientation matrix
+			double tilt = GetGantryTiltRadians(orientationPatient);
+			// Determine the number of rows to pad per frame, a function of the Z extent and tilt angle
+			int padRows = GetNumberOfRowsToPad(frames, spacing, tilt);
 
 			int imageIndex = 0;
-
 			foreach (Frame frame in frames)
 			{
-				byte[] frameData = frame.GetNormalizedPixelData();
+				short padPixelValue = -1024; //ggerade ToDo: Make this min pixel or something smarter
 
-				int start = imageIndex * frameData.Length / sizeof (short);
-				int end = start + frameData.Length / sizeof (short);
-
-#if false // Safe code. Below, used unsafe code to work with shorts directly
-				int j = 0;
-				for (int i = start; i < end; i++)
+				int start, end = 0;
+				int padTop = 0;
+				if (padRows > 0)  // Pad top
 				{
-					ushort lowbyte = frameData[j];
-					ushort highbyte = frameData[j + 1];
+					float deltaMm = lastFramePos - (float) frame.ImagePositionPatient.Z;
+					double padTopMm = Math.Tan(tilt) * deltaMm;
+					padTop = (int) (padTopMm / spacing.Y + 0.5f);
+					// This accounts for the tilt in negative radians, we start padding from
+					//	the bottom first in that case
+					if (tilt < 0) padTop += padRows;
 
-					short val = (short)((highbyte << 8) | lowbyte);
-					volumeArray[i] = val;
-
-					j += 2;
+					start = imageIndex * (int) dimensions.X * (int) dimensions.Y;
+					end = start + padTop * (int) dimensions.X;
+					for (int i = start; i < end; i++)
+						volumeArray[i] = padPixelValue;
 				}
-#else
+
+				// Copy frame data
+				//
+				byte[] frameData = frame.GetNormalizedPixelData();
+				start = end;
+				end = start + frameData.Length / sizeof (short);
+
+#if ALLOW_UNSAFE
 				unsafe
 				{
 					// The fixed statement "pins" the frame data, ensuring the GC won't move the referenced data
@@ -360,39 +391,112 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						}
 					}
 				}
-#endif
+#else // Safe alternative. Never measured performance difference but I assume it's not insignificant.
+				int j = 0;
+				for (int i = start; i < end; i++)
+				{
+					ushort lowbyte = frameData[j];
+					ushort highbyte = frameData[j + 1];
 
+					short val = (short)((highbyte << 8) | lowbyte);
+					volumeArray[i] = val;
+
+					j += 2;
+				}
+#endif
 				imageIndex++;
+
+
+				if (padRows > 0)  // Pad bottom
+				{
+					int padBottom = padRows - padTop;
+					start = end;
+					end = start + (padBottom * (int) dimensions.X);
+					for (int i = start; i < end; i++)
+						volumeArray[i] = padPixelValue;
+				}
 			}
 			return volumeArray;
 		}
 
-		private static ushort[] BuildVolumeUnsignedShortArray(IEnumerable<Frame> frames, int volumeSize)
+		private static ushort[] BuildVolumeUnsignedShortArray(List<Frame> frames, Vector3D dimensions, Vector3D spacing,
+		                                                      Matrix orientationPatient)
 		{
+			int volumeSize = (int) (dimensions.X * dimensions.Y * dimensions.Z);
 			ushort[] volumeArray = new ushort[volumeSize];
+			float lastFramePos = (float) frames[frames.Count - 1].ImagePositionPatient.Z;
+			// Determine Gantry/Detector Tilt from orientation matrix
+			double tilt = GetGantryTiltRadians(orientationPatient);
+			// Determine the number of rows to pad per frame, a function of the Z extent and tilt angle
+			int padRows = GetNumberOfRowsToPad(frames, spacing, tilt);
 
 			int imageIndex = 0;
-
 			foreach (Frame frame in frames)
 			{
-				byte[] sliceData = frame.GetNormalizedPixelData();
+				ushort padPixelValue = 0; //ggerade ToDo: Make this min pixel or something smarter
 
-				int start = imageIndex * sliceData.Length / 2;
-				int end = start + sliceData.Length / 2;
+				// Pad top
+				//
+				float deltaMm = lastFramePos - (float) frame.ImagePositionPatient.Z;
+				double padTopMm = Math.Tan(tilt) * deltaMm;
+				int padTop = (int) (padTopMm / spacing.Y + 0.5f);
+				// This accounts for the tilt in negative radians, we start padding from
+				//	the bottom first in that case
+				if (tilt < 0) padTop += padRows;
 
+				int start = imageIndex * (int) dimensions.X * (int) dimensions.Y;
+				int end = start + padTop * (int) dimensions.X;
+				for (int i = start; i < end; i++)
+					volumeArray[i] = padPixelValue;
+
+				// Copy frame data
+				//
+				byte[] frameData = frame.GetNormalizedPixelData();
+				start = end;
+				end = start + frameData.Length / sizeof (ushort);
+
+#if ALLOW_UNSAFE
+				unsafe
+				{
+					// The fixed statement "pins" the frame data, ensuring the GC won't move the referenced data
+					fixed (byte* pbFrame = frameData)
+					{
+						ushort* pusFrame = (ushort*) pbFrame;
+						int j = 0;
+						for (int i = start; i < end; i++)
+						{
+							volumeArray[i] = pusFrame[j];
+							j++;
+						}
+					}
+				}
+#else // Safe code
 				int j = 0;
 
 				for (int i = start; i < end; i++)
 				{
-					ushort lowbyte = sliceData[j];
-					ushort highbyte = sliceData[j + 1];
+					ushort lowbyte = frameData[j];
+					ushort highbyte = frameData[j + 1];
 					volumeArray[i] = (ushort) ((highbyte << 8) | lowbyte);
 					j += 2;
 				}
-
+#endif
 				imageIndex++;
+
+				// Pad bottom
+				//
+				int padBottom = padRows - padTop;
+				start = end;
+				end = start + (padBottom * (int) dimensions.X);
+				for (int i = start; i < end; i++)
+					volumeArray[i] = padPixelValue;
 			}
 			return volumeArray;
+		}
+
+		private static bool EqualWithinTolerance(double d1, double d2, float tolerance)
+		{
+			return Math.Abs(d1 - d2) < tolerance;
 		}
 
 #if false // this may be useful for working with unmanaged memory instead of pinned managed memory

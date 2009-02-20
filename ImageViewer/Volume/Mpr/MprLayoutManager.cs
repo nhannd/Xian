@@ -31,8 +31,6 @@
 
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Mathematics;
-using System;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -70,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			//ggerade ToRes: I almost got rid of the displayset members... hacked this in so that
 			//	the workspace title would get set
 			VolumeSlicer slicer = new VolumeSlicer(volume);
-			slicer.SetSlicePlaneAxial();
+			slicer.SetSlicePlaneIdentity();
 			DisplaySet displaySet = slicer.CreateDisplaySet("Temporary");
 			layoutManager._tempSop = ((DicomGrayscalePresentationImage)displaySet.PresentationImages[0]).ImageSop;
 			imageViewer.StudyTree.AddSop(layoutManager._tempSop);
@@ -83,9 +81,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		#region Private fields
 
 		private readonly Volume _volume;
-		private readonly VolumeSlicer _sagittalSlicer;
-		private readonly VolumeSlicer _coronalSlicer;
-		private readonly VolumeSlicer _axialSlicer;
+		private readonly VolumeSlicer _identitySlicer;
+		private readonly VolumeSlicer _orthoXSlicer;
+		private readonly VolumeSlicer _orthoYSlicer;
 		private readonly VolumeSlicer _obliqueSlicer;
 
 		#endregion
@@ -95,9 +93,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public MprLayoutManager(Volume volume)
 		{
 			_volume = volume;
-			_sagittalSlicer = new VolumeSlicer(volume);
-			_coronalSlicer = new VolumeSlicer(volume);
-			_axialSlicer = new VolumeSlicer(volume);
+			_identitySlicer = new VolumeSlicer(volume);
+			_orthoXSlicer = new VolumeSlicer(volume);
+			_orthoYSlicer = new VolumeSlicer(volume);
 			_obliqueSlicer = new VolumeSlicer(volume);
 		}
 
@@ -120,20 +118,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		protected override void FillPhysicalWorkspace()
 		{
-			_sagittalSlicer.SetSlicePlaneSagittal();
-			DisplaySet sagittalDisplaySet = _sagittalSlicer.CreateOrthoDisplaySet("Sagittal");
-			_coronalSlicer.SetSlicePlaneCoronal();
-			DisplaySet coronalDisplaySet = _coronalSlicer.CreateOrthoDisplaySet("Coronal");
-#if true
-			_axialSlicer.SetSlicePlaneAxial();
-			DisplaySet axialDisplaySet = _axialSlicer.CreateOrthoDisplaySet("Axial");
-#else
-			_axialSlicer.SetSlicePlaneOblique(45, 0, 0);
-			Vector3D sliceThroughPatient = _volume.CenterPointPatient;
-			//_axialSlicer.SliceThroughPointPatient = sliceThroughPatient;
-			//_axialSlicer.SliceExtentMillimeters = 150;
-			DisplaySet axialDisplaySet = _axialSlicer.CreateDisplaySet("Oblique2");
-#endif
+			_identitySlicer.SetSlicePlaneIdentity();
+			DisplaySet identityDisplaySet = _identitySlicer.CreateOrthoDisplaySet("Identity");
+			_orthoXSlicer.SetSlicePlaneOrthoX();
+			DisplaySet orthoXDisplaySet = _orthoXSlicer.CreateOrthoDisplaySet("OrthoX");
+			_orthoYSlicer.SetSlicePlaneOrthoY();
+			DisplaySet orthoYDisplaySet = _orthoYSlicer.CreateOrthoDisplaySet("OrthoY");
 
 			// Hey, I said it was a hack!
 			_obliqueSlicer.SetSlicePlaneOblique(45, 0, 0);
@@ -147,19 +137,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			ImageViewer.StudyTree.RemoveSop(this._tempSop);
 
 			// Here we add the Mpr DisplaySets to the IVC's StudyTree, this keeps the framework happy
-			AddAllSopsToStudyTree(ImageViewer.StudyTree, sagittalDisplaySet);
-			AddAllSopsToStudyTree(ImageViewer.StudyTree, coronalDisplaySet);
-			AddAllSopsToStudyTree(ImageViewer.StudyTree, axialDisplaySet);
+			AddAllSopsToStudyTree(ImageViewer.StudyTree, identityDisplaySet);
+			AddAllSopsToStudyTree(ImageViewer.StudyTree, orthoXDisplaySet);
+			AddAllSopsToStudyTree(ImageViewer.StudyTree, orthoYDisplaySet);
 			AddAllSopsToStudyTree(ImageViewer.StudyTree, obliqueDisplaySet);
 
 			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
-			physicalWorkspace.ImageBoxes[0].DisplaySet = axialDisplaySet;
+			physicalWorkspace.ImageBoxes[0].DisplaySet = identityDisplaySet;
 			// Let's start out in the middle of each stack
-			physicalWorkspace.ImageBoxes[0].TopLeftPresentationImageIndex = axialDisplaySet.PresentationImages.Count / 2;
-			physicalWorkspace.ImageBoxes[1].DisplaySet = sagittalDisplaySet;
-			physicalWorkspace.ImageBoxes[1].TopLeftPresentationImageIndex = sagittalDisplaySet.PresentationImages.Count / 2;
-			physicalWorkspace.ImageBoxes[2].DisplaySet = coronalDisplaySet;
-			physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = coronalDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[0].TopLeftPresentationImageIndex = identityDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[1].DisplaySet = orthoYDisplaySet;
+			physicalWorkspace.ImageBoxes[1].TopLeftPresentationImageIndex = orthoYDisplaySet.PresentationImages.Count / 2;
+			physicalWorkspace.ImageBoxes[2].DisplaySet = orthoXDisplaySet;
+			physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = orthoXDisplaySet.PresentationImages.Count / 2;
 			physicalWorkspace.ImageBoxes[3].DisplaySet = obliqueDisplaySet;
 			physicalWorkspace.ImageBoxes[3].TopLeftPresentationImageIndex = obliqueDisplaySet.PresentationImages.Count / 2;
 
