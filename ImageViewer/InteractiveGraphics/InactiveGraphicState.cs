@@ -62,22 +62,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override bool Track(IMouseInformation mouseInformation)
 		{
 			// If mouse is over object, transition to focused state
-			if (this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
+			if (this.StatefulGraphic.HitTest(mouseInformation.Location))
 			{
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedState();
+				this.StatefulGraphic.State = this.StatefulGraphic.CreateFocussedState();
 				return true;
 			}
 
 			return false;
-		}
-
-		/// <summary>
-		/// Returns a string describing this graphic state.
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			return "InactiveGraphicState\n";
 		}
 	}
 }

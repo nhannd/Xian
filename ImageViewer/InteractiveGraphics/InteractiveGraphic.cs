@@ -35,20 +35,57 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	public interface IInteractiveGraphic : IGraphic, IMemorable, ICursorTokenProvider
+	{
+		/// <summary>
+		/// A group of control points.
+		/// </summary>
+		ControlPointGroup ControlPoints { get; }
+
+		/// <summary>
+		/// Gets or sets the colour of the <see cref="InteractiveGraphic"/>.
+		/// </summary>
+		Color Color { get; set; }
+
+		/// <summary>
+		/// Gets the graphic's tightest bounding box.
+		/// </summary>
+		RectangleF BoundingBox { get; }
+
+		/// <summary>
+		/// Gets or sets the <see cref="CursorToken"/> that should be shown when stretching
+		/// this graphic.
+		/// </summary>
+		CursorToken StretchingToken { get; set; }
+
+		/// <summary>
+		/// Gets or sets the <see cref="CursorToken"/> that should be shown to indicate
+		/// that the operation performed at a given point will be a stretch operation.
+		/// </summary>
+		StretchCursorTokenStrategy StretchCursorTokenStrategy { get; set; }
+
+		/// <summary>
+		/// Gets the point on the graphic closest to the specified point.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
+		PointF GetClosestPoint(PointF point);
+	}
+
 	/// <summary>
-	/// A base class graphic that has state and a set of control points
+	/// A base class graphic that has a set of control points
 	/// that can be manipulated by the user.
 	/// </summary>
 	[Cloneable]
-	public abstract class InteractiveGraphic
-		: StandardStatefulCompositeGraphic, IMemorable
+	public abstract class InteractiveGraphic : CompositeGraphic, IInteractiveGraphic
 	{
 		[CloneIgnore]
 		private ControlPointGroup _controlPointGroup;
-		
+
 		[CloneCopyReference]
 		private CursorToken _stretchingToken;
 		private StretchCursorTokenStrategy _stretchCursorTokenStrategy;
@@ -64,10 +101,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Initializes a new instance of <see cref="InteractiveGraphic"/>.
 		/// </summary>
-		/// <param name="userCreated"></param>
-		protected InteractiveGraphic(bool userCreated)
+		protected InteractiveGraphic()
 		{
-			Initialize(userCreated);
+			Initialize();
 		}
 
 		/// <summary>
@@ -75,10 +111,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public ControlPointGroup ControlPoints
 		{
-			get 
-			{
-				return _controlPointGroup; 
-			}
+			get { return _controlPointGroup; }
 		}
 
 		/// <summary>
@@ -87,8 +120,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public virtual Color Color
 		{
 			get { return _controlPointGroup.Color; }
-			set { _controlPointGroup.Color = value; }
+			set
+			{
+				if (_controlPointGroup.Color != value)
+				{
+					_controlPointGroup.Color = value;
+					OnColorChanged(new EventArgs());
+				}
+			}
 		}
+
+		protected virtual void OnColorChanged(EventArgs e) {}
 
 		/// <summary>
 		/// Gets the graphic's tightest bounding box.
@@ -115,11 +157,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _stretchCursorTokenStrategy = value; }
 		}
 
-		private bool Stretching
-		{
-			get { return (this.State is MoveControlPointGraphicState || this.State is CreateGraphicState); }
-		}
-
 		#region IMemorable Members
 
 		/// <summary>
@@ -137,11 +174,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#endregion
 
 		/// <summary>
-		/// Gets the cursor token to be shown at the current mouse position.
+		/// Gets the cursor token to be shown at the current mouse position.		
 		/// </summary>
 		/// <param name="point"></param>
 		/// <returns></returns>
-		public override CursorToken GetCursorToken(Point point)
+		public virtual CursorToken GetCursorToken(Point point)
 		{
 			CursorToken returnToken = null;
 
@@ -149,7 +186,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				returnToken = this.StretchingToken;
 
-				if (!this.Stretching && _stretchCursorTokenStrategy != null)
+				if (_stretchCursorTokenStrategy != null)
 				{
 					CursorToken indicatorToken = _stretchCursorTokenStrategy.GetCursorToken(point);
 					if (indicatorToken != null)
@@ -159,33 +196,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			return returnToken;
 		}
-
+		
 		/// <summary>
 		/// Gets the point on the graphic closest to the specified point.
 		/// </summary>
 		/// <param name="point"></param>
 		/// <returns></returns>
 		public abstract PointF GetClosestPoint(PointF point);
-
-		/// <summary>
-		/// Creates a focussed and selected <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		public override GraphicState CreateFocussedSelectedState()
-		{
-			return new FocussedSelectedInteractiveGraphicState(this);
-		}
-
-		/// <summary>
-		/// Creates a 'create state' object.
-		/// </summary>
-		/// <remarks>
-		/// This state is entered when a user first creates the
-		/// <see cref="InteractiveGraphic"/>. This factory method must be
-		/// overridden by a derived class.  
-		/// </remarks>
-		/// <returns></returns>
-		protected abstract GraphicState CreateCreateState();
 
 		/// <summary>
 		/// Executed when a the position of a control point has changed.
@@ -205,13 +222,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Dispose(disposing);
 		}
 
-		private void Initialize(bool userCreated)
+		private void Initialize()
 		{
-			if (userCreated)
-				base.State = CreateCreateState();
-			else
-				base.State = CreateInactiveState();
-
 			if (_controlPointGroup == null)
 			{
 				_controlPointGroup = new ControlPointGroup();
@@ -237,7 +249,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				delegate(IGraphic test) { return test is ControlPointGroup; }) as ControlPointGroup;
 
 			Platform.CheckForNullReference(_controlPointGroup, "_controlPointGroup");
-			Initialize(false);
+			Initialize();
 		}
 	}
 }

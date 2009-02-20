@@ -61,8 +61,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Initializes a new instance of <see cref="InteractiveGraphic"/>.
 		/// </summary>
-		/// <param name="userCreated"></param>
-		protected BoundableInteractiveGraphic(bool userCreated) : base(userCreated)
+		protected BoundableInteractiveGraphic()
 		{
 			Initialize();
 		}
@@ -251,15 +250,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 
 			return token;
-		}
-
-		/// <summary>
-		/// Creates a creation <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		protected override GraphicState CreateCreateState()
-		{
-			return new CreateBoundableGraphicState(this);
 		}
 
 		/// <summary>

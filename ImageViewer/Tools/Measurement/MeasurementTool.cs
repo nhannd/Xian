@@ -185,16 +185,19 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			RoiGraphic roiGraphic;
 			if (strategy == null)
-				roiGraphic = new RoiGraphic(interactiveGraphic, true);
+				roiGraphic = new RoiGraphic(interactiveGraphic);
 			else
-				roiGraphic = new RoiGraphic(interactiveGraphic, strategy, true);
+				roiGraphic = new RoiGraphic(interactiveGraphic, strategy);
 
 			roiGraphic.Name = this.ToString();
+			roiGraphic.State = this.CreateCreateState(roiGraphic);
 
 			return roiGraphic;
 		}
 
 		protected abstract InteractiveGraphic CreateInteractiveGraphic();
+
+		protected abstract GraphicState CreateCreateState(RoiGraphic roiGraphic);
 
 		protected virtual IRoiCalloutLocationStrategy CreateCalloutLocationStrategy()
 		{
@@ -213,9 +216,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected virtual void OnRoiChanged(RoiGraphic roiGraphic)
 		{
-			bool active = roiGraphic.Roi.State is MoveGraphicState ||
-			              roiGraphic.Roi.State is MoveControlPointGraphicState ||
-			              roiGraphic.Roi.State is CreateGraphicState;
+			//bool active = false;
+			bool active = roiGraphic.State is MoveGraphicState ||
+						  roiGraphic.State is MoveControlPointGraphicState ||
+						  roiGraphic.State is CreateGraphicState;
+
+			//return;
 
 			if (!active)
 			{
@@ -278,7 +284,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (_currentChangingRoi == null)
 			{
 				_currentChangingRoi = roi;
-				_currentChangingRoi.StateChanged += OnRoiStateChanged;
+				//_currentChangingRoi.StateChanged += OnRoiStateChanged;
 			}
 		}
 
@@ -286,7 +292,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			if (_currentChangingRoi != null)
 			{
-				_currentChangingRoi.StateChanged -= OnRoiStateChanged;
+				//_currentChangingRoi.StateChanged -= OnRoiStateChanged;
 				_currentChangingRoi = null;
 			}
 		}

@@ -125,17 +125,16 @@
     <Compile Include="Graphics\CurvePrimitive.cs" />
     <Compile Include="ImageSetGroups.cs" />
     <Compile Include="Imaging\DicomVoiLuts.cs" />
-    <Compile Include="InteractiveGraphics\CreateArrowGraphicState.cs" />
     <Compile Include="Graphics\ILineSegmentGraphic.cs" />
     <Compile Include="Graphics\InvariantArrowheadGraphic.cs" />
     <Compile Include="Graphics\InvariantLinePrimitive.cs" />
     <Compile Include="Graphics\ArrowGraphic.cs" />
-    <Compile Include="InteractiveGraphics\ArrowInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\CalloutGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RectangleInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RoiGraphicAnnotationSerializer.cs" />
+    <Compile Include="InteractiveGraphics\StandardStatefulInteractiveGraphic.cs" />
     <Compile Include="PresentationStates\DicomSoftcopyPresentationStateMaskLutBase.cs" />
     <Compile Include="SingleStudyLoader.cs" />
     <Compile Include="IPriorStudyFinder.cs" />
@@ -168,7 +167,6 @@
     <Compile Include="Imaging\SimpleDataLut.cs" />
     <Compile Include="Imaging\Tests\MiscellaneousLutTests.cs" />
     <Compile Include="InteractiveGraphics\BoundableInteractiveGraphic.cs" />
-    <Compile Include="InteractiveGraphics\CreatePolygonGraphicState.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\PolygonInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\StretchCursorTokenStrategy.cs" />
@@ -305,7 +303,6 @@
     <Compile Include="Imaging\ColorMap.cs" />
     <Compile Include="InteractiveGraphics\CompassStretchCursorTokenStrategy.cs" />
     <Compile Include="InteractiveGraphics\CreateGraphicState.cs" />
-    <Compile Include="InteractiveGraphics\GraphicStateManager.cs" />
     <Compile Include="IDrawable.cs" />
     <Compile Include="Graphics\ISpatialTransformProvider.cs" />
     <Compile Include="Graphics\ImageSpatialTransform.cs" />
@@ -402,9 +399,6 @@
     <Compile Include="InteractiveGraphics\CalloutGraphic.cs" />
     <Compile Include="InteractiveGraphics\ControlPoint.cs" />
     <Compile Include="InteractiveGraphics\ControlPointGroup.cs" />
-    <Compile Include="InteractiveGraphics\CreatePolyLineGraphicState.cs" />
-    <Compile Include="InteractiveGraphics\CreateBoundableGraphicState.cs" />
-    <Compile Include="InteractiveGraphics\CreateROIGraphicState.cs" />
     <Compile Include="InteractiveGraphics\FocussedGraphicState.cs" />
     <Compile Include="InteractiveGraphics\GraphicState.cs" />
     <Compile Include="InteractiveGraphics\GraphicStateChangedEventArgs.cs" />

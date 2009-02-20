@@ -37,39 +37,39 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	internal class PointsMemento : List<PointF>, IEquatable<PointsMemento>
 	{
-		public PointsMemento()
-		{
-		}
+		public PointsMemento() {}
 
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			int hashcode = -0x573C799C;
+			foreach (PointF point in this)
+			{
+				hashcode ^= point.GetHashCode();
+			}
+			return hashcode;
 		}
 
 		public override bool Equals(object obj)
 		{
-			if (obj == this)
-				return true;
-
-			return this.Equals(obj as PointsMemento);
+			if (obj is PointsMemento)
+				return this.Equals((PointsMemento)obj);
+			return false;
 		}
 
 		#region IEquatable<PointsMemento> Members
 
 		public bool Equals(PointsMemento other)
 		{
-			if (other == null)
+			if (this == other)
+				return true;
+			if (other == null || this.Count != other.Count)
 				return false;
 
-			if (Count != other.Count)
-				return false;
-
-			for(int i = 0; i < Count; ++i)
+			for(int i = 0; i < this.Count; i++)
 			{
 				if (this[i] != other[i])
 					return false;
 			}
-
 			return true;
 		}
 

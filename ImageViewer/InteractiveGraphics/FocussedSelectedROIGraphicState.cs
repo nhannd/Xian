@@ -33,74 +33,35 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class FocussedSelectedRoiGraphicState : FocussedSelectedGraphicState
+	internal class FocussedSelectedRoiGraphicState : FocussedSelectedInteractiveGraphicState
 	{
-		private StatefulCompositeGraphic _currentChildGraphic;
-
 		public FocussedSelectedRoiGraphicState(RoiGraphic roiGraphic)
 			: base(roiGraphic)
 		{
-			_currentChildGraphic = null;
 		}
 
-		protected RoiGraphic ROIGraphic
-		{
-			get { return this.StandardStatefulGraphic as RoiGraphic; }
+		protected RoiGraphic StatefulGraphic {
+			get { return (RoiGraphic)base.StatefulGraphic; }
 		}
 
-		public override bool Start(IMouseInformation mouseInformation)
-		{
-			_currentChildGraphic = this.ROIGraphic.Roi;
-			if (_currentChildGraphic.Start(mouseInformation))
+		public override bool Start(IMouseInformation mouseInformation) {
+			if (base.Start(mouseInformation))
 				return true;
 
-			_currentChildGraphic = this.ROIGraphic.Callout;
-			if(_currentChildGraphic.Start(mouseInformation))
+			if(this.StatefulGraphic.Callout.HitTest(mouseInformation.Location))
+			{
+				this.StatefulGraphic.State = new MoveRoiCalloutGraphicState(this.StatefulGraphic);
+				this.StatefulGraphic.State.Start(mouseInformation);
 				return true;
+			}
 
-			_currentChildGraphic = null;
 			return false;
 		}
+	}
 
-		public override bool Track(IMouseInformation mouseInformation)
-		{
-			if (_currentChildGraphic != null)
-				return _currentChildGraphic.Track(mouseInformation);
-
-			bool returnValue = this.ROIGraphic.Roi.Track(mouseInformation);
-			returnValue |= this.ROIGraphic.Callout.Track(mouseInformation);
-
-			if (returnValue)
-				return true;
-
-			this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateSelectedState();
-			return false;
-		}
-
-		public override bool Stop(IMouseInformation mouseInformation)
-		{
-			bool returnValue = false;
-
-			if (_currentChildGraphic != null)
-				returnValue = _currentChildGraphic.Stop(mouseInformation);
-
-			if (!returnValue)
-				_currentChildGraphic = null;
-
-			return returnValue;
-		}
-
-		public override void Cancel()
-		{
-			if (_currentChildGraphic != null)
-				_currentChildGraphic.Cancel();
-
-			_currentChildGraphic = null;
-		}
-
-		public override string ToString()
-		{
-			return "FocusSelectedROIGraphicState\n";
-		}
+	public class MoveRoiCalloutGraphicState : MoveGraphicState
+	{
+		public MoveRoiCalloutGraphicState(RoiGraphic roi)
+			: base(roi, roi.Callout) {}
 	}
 }

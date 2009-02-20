@@ -1,4 +1,7 @@
+using System;
+using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
@@ -19,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	public class TextCalloutTool : MouseImageViewerTool
 	{
 		private DrawableUndoableCommand _undoableCommand;
-		private ArrowInteractiveGraphic _arrow;
+		private TextCalloutGraphic _textCalloutGraphic;
 
 		public TextCalloutTool() : base(SR.TooltipTextCallout)
 		{
@@ -35,22 +38,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			base.Start(mouseInformation);
 
-			if (_arrow != null)
-				return _arrow.Start(mouseInformation);
+			if (_textCalloutGraphic != null)
+				return _textCalloutGraphic.Start(mouseInformation);
 
 			IPresentationImage image = mouseInformation.Tile.PresentationImage;
 			IOverlayGraphicsProvider provider = image as IOverlayGraphicsProvider;
 			if (provider == null)
 				return false;
 
-			_arrow = new ArrowInteractiveGraphic(true);
+			_textCalloutGraphic = new TextCalloutGraphic();
+			_textCalloutGraphic.State = new CreateTextCalloutGraphicState(_textCalloutGraphic);
 
 			_undoableCommand = new DrawableUndoableCommand(image);
-			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(_arrow, provider.OverlayGraphics, provider.OverlayGraphics.Count));
+			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(_textCalloutGraphic, provider.OverlayGraphics, provider.OverlayGraphics.Count));
 			_undoableCommand.Name = this.CreationCommandName;
 			_undoableCommand.Execute();
 
-			if (_arrow.Start(mouseInformation))
+			if (_textCalloutGraphic.Start(mouseInformation))
 				return true;
 
 			this.Cancel();
@@ -59,37 +63,37 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (_arrow != null)
-				return _arrow.Track(mouseInformation);
+			if (_textCalloutGraphic != null)
+				return _textCalloutGraphic.Track(mouseInformation);
 
 			return false;
 		}
 
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
-			if (_arrow == null)
+			if (_textCalloutGraphic == null)
 				return false;
 
-			if (_arrow.Stop(mouseInformation))
+			if (_textCalloutGraphic.Stop(mouseInformation))
 				return true;
 
-			_arrow.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
+			_textCalloutGraphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
 			_undoableCommand = null;
-			_arrow = null;
+			_textCalloutGraphic = null;
 			return false;
 		}
 
 		public override void Cancel()
 		{
-			if (_arrow == null)
+			if (_textCalloutGraphic == null)
 				return;
 
-			_arrow.Cancel();
+			_textCalloutGraphic.Cancel();
 
 			_undoableCommand.Unexecute();
 			_undoableCommand = null;
 
-			_arrow = null;
+			_textCalloutGraphic = null;
 		}
 	}
 }

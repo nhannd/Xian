@@ -29,29 +29,78 @@
 
 #endregion
 
-using System;
+using System.Diagnostics;
+using System.Drawing;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
-	/// A <see cref="StatefulCompositeGraphic"/> that has factory methods
-	/// that create standard graphic states.
+	/// A <see cref="StatefulCompositeGraphic"/> that is <see cref="ISelectableGraphic">selectable</see> and
+	/// <see cref="IFocussableGraphic">focusable</see>.
 	/// </summary>
 	/// <remarks>
 	/// Factory methods can be overridden so that customized graphic states
 	/// can be created.
 	/// </remarks>
 	[Cloneable(true)]
-	public abstract class StandardStatefulCompositeGraphic 
-		: StatefulCompositeGraphic, IStandardStatefulGraphic
+	public abstract class StandardStatefulCompositeGraphic : StatefulCompositeGraphic, IStandardStatefulGraphic, ISelectableGraphic, IFocussableGraphic
 	{
 		/// <summary>
-		/// Initializes a new instance of <see cref="StandardStatefulCompositeGraphic"/>.
+		/// Constructs a new instance of <see cref="StandardStatefulCompositeGraphic"/>.
 		/// </summary>
-		protected StandardStatefulCompositeGraphic()
-		{
-			
+		protected StandardStatefulCompositeGraphic() {}
+
+		protected override void OnStateChanged(GraphicStateChangedEventArgs e) {
+			base.OnStateChanged(e);
+
+			if (typeof(InactiveGraphicState).IsAssignableFrom(e.NewState.GetType()))
+				OnEnterInactiveState(e.MouseInformation);
+			else if (typeof(FocussedGraphicState).IsAssignableFrom(e.NewState.GetType()))
+				OnEnterFocusState(e.MouseInformation);
+			else if (typeof(SelectedGraphicState).IsAssignableFrom(e.NewState.GetType()))
+				OnEnterSelectedState(e.MouseInformation);
+			else if (typeof(FocussedSelectedGraphicState).IsAssignableFrom(e.NewState.GetType()))
+				OnEnterFocusSelectedState(e.MouseInformation);
+		}
+
+		protected virtual void OnEnterInactiveState(IMouseInformation mouseInformation) {
+			// If the currently selected graphic is this one,
+			// and we're about to go inactive, set the selected graphic
+			// to null, indicating that no graphic is currently selected
+			if (this.ParentPresentationImage != null) {
+				if (this.ParentPresentationImage.SelectedGraphic == this)
+					this.ParentPresentationImage.SelectedGraphic = null;
+
+				if (this.ParentPresentationImage.FocussedGraphic == this)
+					this.ParentPresentationImage.FocussedGraphic = null;
+			}
+
+			Trace.Write("EnterInactiveState\n");
+		}
+
+		protected virtual void OnEnterFocusState(IMouseInformation mouseInformation) {
+			this.Focussed = true;
+
+			Trace.Write("EnterFocusState\n");
+		}
+
+		protected virtual void OnEnterSelectedState(IMouseInformation mouseInformation) {
+			this.Selected = true;
+
+			if (this.ParentPresentationImage != null && this.ParentPresentationImage.FocussedGraphic == this)
+				this.ParentPresentationImage.FocussedGraphic = null;
+
+			Trace.Write("EnterSelectedState\n");
+		}
+
+		protected virtual void OnEnterFocusSelectedState(IMouseInformation mouseInformation) {
+			this.Selected = true;
+			this.Focussed = true;
+
+			Trace.Write("EnterFocusSelectedState\n");
 		}
 
 		#region IStandardStatefulGraphic Members
@@ -93,5 +142,86 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		#endregion
+
+		#region ISelectable Members
+
+		[CloneIgnore]
+		private bool _selected = false;
+
+		/// <summary>
+		/// Gets or set a value indicating whether the <see cref="RoiGraphic"/> is selected.
+		/// </summary>
+		public bool Selected
+		{
+			get { return _selected; }
+			set
+			{
+				if (_selected != value)
+				{
+					_selected = value;
+
+					if (_selected && this.ParentPresentationImage != null)
+						this.ParentPresentationImage.SelectedGraphic = this;
+
+					if (_focused)
+					{
+						if (_selected)
+							this.State = CreateFocussedSelectedState();
+						else
+							this.State = CreateFocussedState();
+					}
+					else
+					{
+						if (_selected)
+							this.State = CreateSelectedState();
+						else
+							this.State = CreateInactiveState();
+					}
+				}
+			}
+		}
+
+		#endregion
+
+		#region IFocussable Members
+
+		[CloneIgnore]
+		private bool _focused = false;
+
+		/// <summary>
+		/// Gets or set a value indicating whether the <see cref="RoiGraphic"/> is in focus.
+		/// </summary>
+		public bool Focussed
+		{
+			get { return _focused; }
+			set
+			{
+				if (_focused != value)
+				{
+					_focused = value;
+
+					if (_focused)
+					{
+						if (this.ParentPresentationImage != null)
+							this.ParentPresentationImage.FocussedGraphic = this;
+
+						if (this.Selected)
+							this.State = CreateFocussedSelectedState();
+						else
+							this.State = CreateFocussedState();
+					}
+					else
+					{
+						if (this.Selected)
+							this.State = CreateSelectedState();
+						else
+							this.State = CreateInactiveState();
+					}
+				}
+			}
+		}
+
+		#endregion
+
 	}
 }

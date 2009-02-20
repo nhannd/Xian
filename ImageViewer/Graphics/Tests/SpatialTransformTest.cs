@@ -492,7 +492,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			composite.Graphics.Add(leaf);
 			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
 
-			RoiGraphic roi = new RoiGraphic(new EllipseInteractiveGraphic(false), true);
+			RoiGraphic roi = new RoiGraphic(new EllipseInteractiveGraphic());
 			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
 			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(roi);
 

@@ -63,9 +63,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns></returns>
 		public override bool Start(IMouseInformation mouseInformation)
 		{
-			if (!this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
+			if (!this.StatefulGraphic.HitTest(mouseInformation.Location))
 			{
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateInactiveState();
+				this.StatefulGraphic.State = this.StatefulGraphic.CreateInactiveState();
 				return false;
 			}
 
@@ -82,22 +82,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns></returns>
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
+			if (this.StatefulGraphic.HitTest(mouseInformation.Location))
 			{
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
+				this.StatefulGraphic.State = this.StatefulGraphic.CreateFocussedSelectedState();
 				return true;
 			}
 
 			return false;
-		}
-
-		/// <summary>
-		/// Returns a string describing this graphic state.
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			return "SelectedGraphicState\n";
 		}
 	}
 }

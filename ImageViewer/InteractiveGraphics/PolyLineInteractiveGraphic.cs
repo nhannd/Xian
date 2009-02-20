@@ -63,13 +63,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Initializes a new instance of <see cref="PolyLineInteractiveGraphic"/>
 		/// </summary>
-		/// <param name="userCreated">Indicates whether the graphic was created
-		/// through user interaction.</param>
 		/// <param name="maximumAnchorPoints">The maximum number of points in
 		/// the <see cref="PolyLineInteractiveGraphic"/>.
 		/// </param>
-		public PolyLineInteractiveGraphic(bool userCreated, int maximumAnchorPoints)
-			: base(userCreated)
+		public PolyLineInteractiveGraphic(int maximumAnchorPoints)
 		{
 			_maxAnchorPoints = maximumAnchorPoints;
 			Initialize();
@@ -273,15 +270,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_anchorPointsGraphic.AnchorPointChangedEvent -= new EventHandler<ListEventArgs<PointF>>(OnAnchorPointChanged);
 
 			base.Dispose(disposing);
-		}
-
-		/// <summary>
-		/// Creates a creation <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		protected override GraphicState CreateCreateState()
-		{
-			return new CreatePolyLineGraphicState(this);
 		}
 
 		private void Initialize()

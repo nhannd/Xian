@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			context.CloneFields(source, this);
 		}
 
-		public ProtractorInteractiveGraphic() : base(true, 3)
+		public ProtractorInteractiveGraphic() : base(3)
 		{
 			base.Graphics.Add(_arc = new InvariantArcPrimitive());
 			_arc.Visible = false;

@@ -45,20 +45,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// </remarks>
 	public class MoveControlPointGraphicState : StandardGraphicState
 	{
+		private readonly int _controlPointIndex;
 		private PointF _currentPoint;
-		private PointF _startPoint;
-		private int _controlPointIndex;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="MoveControlPointGraphicState"/>.
 		/// </summary>
-		/// <param name="interactiveGraphic"></param>
+		/// <param name="standardStatefulInteractiveGraphic"></param>
 		/// <param name="controlPointIndex"></param>
 		public MoveControlPointGraphicState(
-			InteractiveGraphic interactiveGraphic, 
-			int controlPointIndex) : base(interactiveGraphic)
+			IStandardStatefulInteractiveGraphic standardStatefulInteractiveGraphic,
+			int controlPointIndex)
+			: base(standardStatefulInteractiveGraphic)
 		{
-			Platform.CheckForNullReference(interactiveGraphic, "interactiveGraphic");
+			Platform.CheckForNullReference(standardStatefulInteractiveGraphic, "interactiveGraphic");
 			Platform.CheckNonNegative(controlPointIndex, "controlPointIndex");
 
 			_controlPointIndex = controlPointIndex;
@@ -67,9 +67,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Gets the associated <see cref="InteractiveGraphic"/>.
 		/// </summary>
-		protected InteractiveGraphic InteractiveGraphic
+		protected IInteractiveGraphic InteractiveGraphic
 		{
-			get { return this.StandardStatefulGraphic as InteractiveGraphic; }
+			get { return base.StatefulGraphic as IInteractiveGraphic; }
 		}
 
 		/// <summary>
@@ -80,8 +80,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.LastPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
-			_startPoint = _currentPoint = base.LastPoint;
-
 			this.InteractiveGraphic.Draw();
 
 			return true;
@@ -127,16 +125,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public override void Cancel()
 		{
-			this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
-		}
-
-		/// <summary>
-		/// Returns a string describing this graphic state.
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			return "Move Control Point State\n";
+			this.StatefulGraphic.State = this.StatefulGraphic.CreateFocussedSelectedState();
 		}
 	}
 }

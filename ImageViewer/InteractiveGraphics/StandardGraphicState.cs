@@ -39,9 +39,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Initializes a new instance of <see cref="StandardGraphicState"/>.
 		/// </summary>
-		/// <param name="interactiveGraphic"></param>
-		protected StandardGraphicState(IStandardStatefulGraphic interactiveGraphic)
-			: base(interactiveGraphic)
+		/// <param name="standardStatefulGraphic"></param>
+		protected StandardGraphicState(IStandardStatefulGraphic standardStatefulGraphic)
+			: base(standardStatefulGraphic)
 		{
 
 		}
@@ -50,9 +50,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Gets the <see cref="IStandardStatefulGraphic"/> associated with
 		/// this state.
 		/// </summary>
-		protected IStandardStatefulGraphic StandardStatefulGraphic
+		protected new IStandardStatefulGraphic StatefulGraphic
 		{
-			get { return this.StatefulGraphic as IStandardStatefulGraphic; }
+			get { return (IStandardStatefulGraphic)base.StatefulGraphic; }
 		}
 	}
 }

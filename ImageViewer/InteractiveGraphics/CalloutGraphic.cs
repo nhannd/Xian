@@ -50,8 +50,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// </remarks>
 	[Cloneable]
 	[DicomSerializableGraphicAnnotation(typeof(CalloutGraphicAnnotationSerializer))]
-	public class CalloutGraphic 
-		: StandardStatefulCompositeGraphic, IMemorable
+	public class CalloutGraphic : InteractiveGraphic, IMemorable
 	{
 		#region Private fields
 
@@ -131,23 +130,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets the colour of the callout.
-		/// </summary>
-		public Color Color
-		{
-			get { return _lineGraphic.Color; }
-			set 
-			{ 
-				_lineGraphic.Color = value;
-				_textGraphic.Color = value;
-			}
-		}
-
 		public bool ShowArrow
 		{
 			get { return _lineGraphic.ShowArrowhead; }
 			set { _lineGraphic.ShowArrowhead = value; }
+		}
+
+		protected override void OnColorChanged(EventArgs e) {
+			base.OnColorChanged(e);
+
+			_lineGraphic.Color = base.Color;
+			_textGraphic.Color = base.Color;
 		}
 
 		/// <summary>
@@ -173,12 +166,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Creates a memento of this object.
 		/// </summary>
 		/// <returns></returns>
-		public virtual object CreateMemento()
+		public override object CreateMemento()
         {
 			// Must store source coordinates in memento
 			this.CoordinateSystem = CoordinateSystem.Source;
 			PointMemento memento = new PointMemento(this.Location);
-
 			this.ResetCoordinateSystem();
 
 			return memento;
@@ -188,10 +180,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Sets a memento for this object.
 		/// </summary>
 		/// <param name="memento"></param>
-        public virtual void SetMemento(object memento)
+        public override void SetMemento(object memento)
         {
-			PointMemento pointMemento = memento as PointMemento;
-			Platform.CheckForInvalidCast(pointMemento, "memento", "PointMemento");
+			PointMemento pointMemento = (PointMemento)memento;
 
 			this.CoordinateSystem = CoordinateSystem.Source;
 			this.Location = pointMemento.Point;
@@ -253,8 +244,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_lineGraphic.LineStyle = LineStyle.Dash;
 			}
 
-			base.State = new InactiveGraphicState(this);
-
 			if (_moveToken == null)
 				_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 		}
@@ -276,86 +265,53 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void SetCalloutLineStart()
 		{
-			_lineGraphic.CoordinateSystem = CoordinateSystem.Destination;
-			_lineGraphic.StartPoint = CalculateCalloutLineStartPoint();
-			_lineGraphic.ResetCoordinateSystem();
+			this.CoordinateSystem = CoordinateSystem.Destination;
+			this._lineGraphic.StartPoint = GetClosestPoint(this.EndPoint);
+			this.ResetCoordinateSystem();
 		}
 
-		private PointF CalculateCalloutLineStartPoint()
-		{
-			_textGraphic.CoordinateSystem = CoordinateSystem.Destination;
-			_lineGraphic.CoordinateSystem = CoordinateSystem.Destination;
-
+		/// <summary>
+		/// Gets the point on the graphic closest to the specified point in either source or destination coordinates.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
+		public override PointF GetClosestPoint(PointF point) {
 			RectangleF boundingBox = _textGraphic.BoundingBox;
 			boundingBox.Inflate(3, 3);
 
-			Point topLeft = new Point(
-				(int)boundingBox.Left,
-				(int)boundingBox.Top);
-			Point topRight = new Point(
-				(int)boundingBox.Right,
-				(int)boundingBox.Top);
-			Point bottomLeft = new Point(
-				(int)boundingBox.Left,
-				(int)boundingBox.Bottom);
-			Point bottomRight = new Point(
-				(int)boundingBox.Right,
-				(int)boundingBox.Bottom);
+			PointF topLeft = new PointF(boundingBox.Left, boundingBox.Top);
+			PointF topRight = new PointF(boundingBox.Right, boundingBox.Top);
+			PointF bottomLeft = new PointF(boundingBox.Left, boundingBox.Bottom);
+			PointF bottomRight = new PointF(boundingBox.Right, boundingBox.Bottom);
+			PointF geoCenter = Vector.Midpoint(topLeft, bottomRight);
+			PointF intersectionPoint;
 
-			Point center = Vector.Midpoint(topLeft, bottomRight);
-
-			Point intersectionPoint;
-			Point attachmentPoint = new Point((int) this.EndPoint.X, (int) this.EndPoint.Y);
-
-			_textGraphic.ResetCoordinateSystem();
-			_lineGraphic.ResetCoordinateSystem();
-
-			if (Vector.LineSegmentIntersection(
-				center,
-				attachmentPoint,
-				topLeft,
-				topRight,
-				out intersectionPoint) == Vector.LineSegments.Intersect)
-			{
+			if (Vector.LineSegmentIntersection(geoCenter, point, topLeft, topRight, out intersectionPoint) == Vector.LineSegments.Intersect)
 				return intersectionPoint;
-			}
 
-			if (Vector.LineSegmentIntersection(
-				center,
-				attachmentPoint,
-				bottomLeft,
-				bottomRight,
-				out intersectionPoint) == Vector.LineSegments.Intersect)
-			{
+			if (Vector.LineSegmentIntersection(geoCenter, point, bottomLeft, bottomRight, out intersectionPoint) == Vector.LineSegments.Intersect)
 				return intersectionPoint;
-			}
 
-			if (Vector.LineSegmentIntersection(
-				center,
-				attachmentPoint,
-				topLeft,
-				bottomLeft,
-				out intersectionPoint) == Vector.LineSegments.Intersect)
-			{
+			if (Vector.LineSegmentIntersection(geoCenter, point, topLeft, bottomLeft, out intersectionPoint) == Vector.LineSegments.Intersect)
 				return intersectionPoint;
-			}
 
-			if (Vector.LineSegmentIntersection(
-				center,
-				attachmentPoint,
-				topRight,
-				bottomRight,
-				out intersectionPoint) == Vector.LineSegments.Intersect)
-			{
+			if (Vector.LineSegmentIntersection(geoCenter, point, topRight, bottomRight, out intersectionPoint) == Vector.LineSegments.Intersect)
 				return intersectionPoint;
-			}
 
-			return attachmentPoint;
+			return point;
 		}
 
 		private void OnTextBoundingBoxChanged(object sender, RectangleChangedEventArgs e)
 		{
 			SetCalloutLineStart();
+		}
+
+		public override RectangleF BoundingBox {
+			get { return _textGraphic.BoundingBox; }
+		}
+
+		protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e) {
+			// do nothing - we don't have any control points
 		}
 	}
 }

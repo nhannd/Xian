@@ -30,6 +30,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -43,18 +45,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// A <see cref="CompositeGraphic"/> with state.
 	/// </summary>
 	[Cloneable(true)]
-	public abstract class StatefulCompositeGraphic 
-		: CompositeGraphic, IStatefulGraphic, IMouseButtonHandler, ICursorTokenProvider
+	public abstract class StatefulCompositeGraphic : CompositeGraphic, IStatefulGraphic, IMouseButtonHandler, ICursorTokenProvider
 	{
-		[CloneIgnore] 
-		private GraphicStateManager _graphicStateManager;
+		private event EventHandler<GraphicStateChangedEventArgs> _stateChangedEvent;
+
+		[CloneIgnore]
+		private GraphicState _state;
+
+		[CloneIgnore]
+		private IMouseInformation _mouseInformation;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="StatefulCompositeGraphic"/>.
 		/// </summary>
 		protected StatefulCompositeGraphic()
 		{
-			_graphicStateManager = new GraphicStateManager();
 		}
 
 		/// <summary>
@@ -62,8 +67,38 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public GraphicState State
 		{
-			get { return _graphicStateManager.State; }
-			set { _graphicStateManager.State = value; }
+			get { return _state; }
+			set
+			{
+				Platform.CheckForNullReference(value, "State");
+
+				// If it's the same state, then don't do anything
+				if (_state != null)
+					if (_state.GetType() == value.GetType())
+						return;
+
+				GraphicStateChangedEventArgs args = new GraphicStateChangedEventArgs();
+
+				// Old state *can* be null, i.e., we're assigning state for the first time,
+				// so there isn't an old state.
+				args.OldState = _state;
+
+				_state = value;
+
+				args.NewState = _state;
+				args.MouseInformation = _mouseInformation;
+				args.StatefulGraphic = _state.StatefulGraphic;
+
+				// If the old state is null, we're really just initializing the state variable,
+				// so don't tell anyone about it
+				if (args.OldState != null)
+				{
+					OnStateChanged(args);
+					EventsHelper.Fire(_stateChangedEvent, this, args);
+				}
+
+				Trace.Write(_state.ToString());
+			}
 		}
 
 		/// <summary>
@@ -71,8 +106,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public event EventHandler<GraphicStateChangedEventArgs> StateChanged
 		{
-			add { _graphicStateManager.StateChanged += value; }
-			remove { _graphicStateManager.StateChanged -= value; }
+			add { _stateChangedEvent += value; }
+			remove { _stateChangedEvent -= value; }
+		}
+
+		protected virtual void OnStateChanged(GraphicStateChangedEventArgs e) {}
+
+		private IEnumerable<InteractiveGraphic> GetChildInteractiveGraphics()
+		{
+			foreach (IGraphic graphic in base.Graphics)
+			{
+				if (graphic is InteractiveGraphic)
+					yield return (InteractiveGraphic)graphic;
+			}
 		}
 
 		#region IMouseButtonHandler Members
@@ -92,7 +138,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public virtual bool Start(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
-			_graphicStateManager.MouseInformation = mouseInformation;
+			_mouseInformation = mouseInformation;
 			return this.State.Start(mouseInformation);
 		}
 
@@ -107,7 +153,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public virtual bool Track(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
-			_graphicStateManager.MouseInformation = mouseInformation;
+			_mouseInformation = mouseInformation;
 			return this.State.Track(mouseInformation);
 		}
 
@@ -120,7 +166,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public virtual bool Stop(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
-			_graphicStateManager.MouseInformation = mouseInformation;
+			_mouseInformation = mouseInformation;
 			return this.State.Stop(mouseInformation);
 		}
 
@@ -152,9 +198,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Gets the cursor token to be shown at the current mouse position.
 		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public virtual CursorToken GetCursorToken(Point point)
 		{
-			return null;
+			CursorToken returnToken = null;
+
+			foreach (InteractiveGraphic graphic in GetChildInteractiveGraphics())
+			{
+				if ((returnToken = graphic.GetCursorToken(point)) != null)
+					break;
+			}
+
+			return returnToken;
 		}
 
 		#endregion

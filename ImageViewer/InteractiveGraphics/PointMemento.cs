@@ -40,20 +40,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public PointMemento(PointF point)
 		{
-			Point = point;
+			this.Point = point;
 		}
 
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return this.Point.GetHashCode() ^ 0x0BE4AD82;
 		}
 
 		public override bool Equals(object obj)
 		{
-			if (obj == this)
-				return true;
-
-			return this.Equals(obj as PointMemento);
+			if (obj is PointMemento)
+				return this.Equals((PointMemento)obj);
+			return false;
 		}
 
 		#region IEquatable<PointMemento> Members
@@ -62,7 +61,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			if (other == null)
 				return false;
-
 			return this.Point == other.Point;
 		}
 

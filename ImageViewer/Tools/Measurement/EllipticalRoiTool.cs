@@ -34,6 +34,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.Tools.Measurement.States;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -65,9 +66,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreateEllipiticalRoi; }
 		}
 
+		protected override GraphicState CreateCreateState(RoiGraphic roiGraphic)
+		{
+			return new CreateBoundableGraphicState(roiGraphic);
+		}
+
 		protected override InteractiveGraphic CreateInteractiveGraphic()
 		{
-			return new EllipseInteractiveGraphic(true);
+			return new EllipseInteractiveGraphic();
 		}
 	}
 }

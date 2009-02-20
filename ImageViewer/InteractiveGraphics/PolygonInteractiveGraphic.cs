@@ -59,9 +59,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Initializes a new instance of <see cref="PolygonInteractiveGraphic"/>
 		/// </summary>
-		/// <param name="userCreated">Indicates whether the graphic was created
-		/// through user interaction.</param>
-		public PolygonInteractiveGraphic(bool userCreated) : base(userCreated, int.MaxValue)
+		public PolygonInteractiveGraphic() : base(int.MaxValue)
 		{
 			_designToken = new CursorToken(CursorToken.SystemCursors.Cross);
 		}
@@ -171,15 +169,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				_moveInProgress = false;
 			}
-		}
-
-		/// <summary>
-		/// Creates a creation <see cref="GraphicState"/>.
-		/// </summary>
-		/// <returns></returns>
-		protected override GraphicState CreateCreateState()
-		{
-			return new CreatePolygonGraphicState(this);
 		}
 
 		/// <summary>

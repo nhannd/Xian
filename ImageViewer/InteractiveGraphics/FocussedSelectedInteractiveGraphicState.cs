@@ -31,37 +31,56 @@
 
 using System;
 using System.Diagnostics;
+using System.Drawing;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	internal class FocussedSelectedInteractiveGraphicState : FocussedSelectedGraphicState
 	{
-		public FocussedSelectedInteractiveGraphicState(InteractiveGraphic interactiveGraphic)
-			: base(interactiveGraphic)
+		public FocussedSelectedInteractiveGraphicState(IStandardStatefulInteractiveGraphic standardStatefulInteractiveGraphic)
+			: base(standardStatefulInteractiveGraphic)
 		{
+		}
+
+		protected new IStandardStatefulInteractiveGraphic StatefulGraphic
+		{
+			get { return (IStandardStatefulInteractiveGraphic)base.StatefulGraphic; }
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
-			InteractiveGraphic interactiveGraphic = base.StatefulGraphic as InteractiveGraphic;
-			int controlPointIndex = interactiveGraphic.ControlPoints.HitTestControlPoint(mouseInformation.Location);
+			int controlPointIndex = this.StatefulGraphic.ControlPoints.HitTestControlPoint(mouseInformation.Location);
 
 			// User has clicked a control point
 			if (controlPointIndex != -1)
 			{
 				Trace.Write(String.Format("Control Point {0}\n", controlPointIndex.ToString()));
-				base.StatefulGraphic.State = new MoveControlPointGraphicState(interactiveGraphic, controlPointIndex);
-				base.StatefulGraphic.State.Start(mouseInformation);
+				this.StatefulGraphic.State = new MoveControlPointGraphicState(this.StatefulGraphic, controlPointIndex);
+				this.StatefulGraphic.State.Start(mouseInformation);
 				return true;
 			}
 
-			return base.Start(mouseInformation);
-		}
+			// User has clicked the graphic body
+			if (this.StatefulGraphic.InteractiveGraphic.HitTest(mouseInformation.Location)) {
+				this.StatefulGraphic.State = new MoveInteractiveGraphicState(this.StatefulGraphic);
+				this.StatefulGraphic.State.Start(mouseInformation);
+				return true;
+			}
 
-		public override string ToString()
-		{
-			return "FocusSelectedInteractiveGraphicState\n";
+			//We should never actually get to here, but if we did, this should happen.
+			//this.StatefulGraphic.State = this.StatefulGraphic.CreateSelectedState();
+			return false;
+
+			//return base.Start(mouseInformation);
+		}
+	}
+
+	public class MoveInteractiveGraphicState : MoveGraphicState {
+		public MoveInteractiveGraphicState(IStandardStatefulInteractiveGraphic ssig)
+			: base(ssig, ssig.InteractiveGraphic) {
+
 		}
 	}
 }

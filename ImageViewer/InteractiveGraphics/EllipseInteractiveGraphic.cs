@@ -48,10 +48,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Initializes a new instance of <see cref="RectangleInteractiveGraphic"/>.
 		/// </summary>
-		/// <param name="userCreated">Indicates whether the graphic was created
-		/// through user interaction.</param>
-		public EllipseInteractiveGraphic(bool userCreated)
-			: base(userCreated)
+		public EllipseInteractiveGraphic()
 		{
 		}
 

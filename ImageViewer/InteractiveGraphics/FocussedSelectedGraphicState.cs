@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Called by the framework when the associated <see cref="ClearCanvas.ImageViewer.InteractiveGraphics.IStandardStatefulGraphic"/>
+		/// Called by the framework when the associated <see cref="IStandardStatefulGraphic"/>
 		/// is clicked on and results in a transition to the <see cref="MoveGraphicState"/>.
 		/// </summary>
 		/// <param name="mouseInformation"></param>
@@ -63,15 +63,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			// User has clicked the graphic body
-			if (this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
+			if (this.StatefulGraphic.HitTest(mouseInformation.Location))
 			{
-				this.StandardStatefulGraphic.State = new MoveGraphicState(this.StandardStatefulGraphic);
-				this.StandardStatefulGraphic.State.Start(mouseInformation);
+				this.StatefulGraphic.State = new MoveGraphicState(this.StatefulGraphic);
+				this.StatefulGraphic.State.Start(mouseInformation);
 				return true;
 			}
 
 			//We should never actually get to here, but if we did, this should happen.
-			this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateSelectedState();
+			this.StatefulGraphic.State = this.StatefulGraphic.CreateSelectedState();
 			return false;
 		}
 
@@ -83,22 +83,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (!this.StandardStatefulGraphic.HitTest(mouseInformation.Location))
+			if (!this.StatefulGraphic.HitTest(mouseInformation.Location))
 			{
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateSelectedState();
+				this.StatefulGraphic.State = this.StatefulGraphic.CreateSelectedState();
 				return false;
 			}
 
 			return true;
-		}
-
-		/// <summary>
-		/// Returns a string describing this graphic state.
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			return "FocusSelectedGraphicState\n";
 		}
 	}
 }

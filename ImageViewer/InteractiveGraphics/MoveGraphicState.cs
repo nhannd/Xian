@@ -45,16 +45,27 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// </remarks>
 	public class MoveGraphicState : StandardGraphicState
 	{
+		private readonly IGraphic _targetGraphic = null;
 		private PointF _currentPoint = new Point(0,0);
-		private PointF _startPoint;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="MoveGraphicState"/>.
 		/// </summary>
 		/// <param name="standardStatefulGraphic"></param>
 		public MoveGraphicState(IStandardStatefulGraphic standardStatefulGraphic)
+			: this(standardStatefulGraphic, standardStatefulGraphic)
+		{
+		}
+
+		public MoveGraphicState(IStandardStatefulGraphic standardStatefulGraphic, IGraphic targetGraphic)
 			: base(standardStatefulGraphic)
 		{
+			_targetGraphic = targetGraphic ?? standardStatefulGraphic;
+		}
+
+		protected IGraphic TargetGraphic
+		{
+			get { return _targetGraphic; }
 		}
 
 		/// <summary>
@@ -65,10 +76,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns></returns>
 		public override bool Start(IMouseInformation mouseInformation)
 		{
-			base.LastPoint = this.StandardStatefulGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
-			_startPoint = _currentPoint = base.LastPoint;
+			base.LastPoint = this.TargetGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 
-			this.StatefulGraphic.Draw();
+			this.TargetGraphic.Draw();
 			return true;
 		}
 
@@ -81,15 +91,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns></returns>
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			_currentPoint = this.StandardStatefulGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
+			PointF currentPoint = this.TargetGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
 
-			base.StatefulGraphic.CoordinateSystem = CoordinateSystem.Source;
-			SizeF delta = Vector.CalculatePositionDelta(base.LastPoint, _currentPoint);
-			base.StatefulGraphic.Move(delta);
-			base.StatefulGraphic.ResetCoordinateSystem();
-			base.StatefulGraphic.Draw();
-
-			base.LastPoint = _currentPoint;
+			this.TargetGraphic.CoordinateSystem = CoordinateSystem.Source;
+			SizeF delta = Vector.CalculatePositionDelta(base.LastPoint, currentPoint);
+			this.TargetGraphic.Move(delta);
+			this.TargetGraphic.ResetCoordinateSystem();
+			this.TargetGraphic.Draw();
+			this.LastPoint = currentPoint;
 
 			return true;
 		}
@@ -104,7 +113,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			Cancel();
 
-			this.StatefulGraphic.Draw();
+			this.TargetGraphic.Draw();
 			return false;
 		}
 
@@ -114,16 +123,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public override void Cancel()
 		{
-			this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
-		}
-
-		/// <summary>
-		/// Returns a string describing this graphic state.
-		/// </summary>
-		/// <returns></returns>
-		public override string ToString()
-		{
-			return "Move State\n";
+			this.StatefulGraphic.State = this.StatefulGraphic.CreateFocussedSelectedState();
 		}
 	}
 }

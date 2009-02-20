@@ -32,9 +32,10 @@
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
 
-namespace ClearCanvas.ImageViewer.InteractiveGraphics
+namespace ClearCanvas.ImageViewer.Tools.Measurement.States
 {
 	internal class CreatePolygonGraphicState : CreateGraphicState
 	{
@@ -43,14 +44,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private int _numberOfPointsAnchored = 0;
 
 		// Create a graphic object
-		public CreatePolygonGraphicState(PolygonInteractiveGraphic interactiveGraphic) : base(interactiveGraphic)
+		public CreatePolygonGraphicState(IStandardStatefulInteractiveGraphic standardStatefulInteractiveGraphic)
+			: base(standardStatefulInteractiveGraphic)
 		{
 			_controlPointIndex = 1;
 		}
 
 		private PolygonInteractiveGraphic InteractiveGraphic
 		{
-			get { return this.StandardStatefulGraphic as PolygonInteractiveGraphic; }
+			get { return ((IStandardStatefulInteractiveGraphic)base.StatefulGraphic).InteractiveGraphic as PolygonInteractiveGraphic; }
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
@@ -65,7 +67,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.InteractiveGraphic.ControlPoints[1] = mouseInformation.Location;
 				this.InteractiveGraphic.ResetCoordinateSystem();
 			}
-			// We're done creating
+				// We're done creating
 			else if (_numberOfPointsAnchored >= 5 && mouseInformation.ClickCount >= 2)
 			{
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
@@ -83,9 +85,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					this.InteractiveGraphic.ResetCoordinateSystem();
 				}
 
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
+				this.StatefulGraphic.State = this.StatefulGraphic.CreateFocussedSelectedState();
 			}
-			// We're done creating
+				// We're done creating
 			else if (_numberOfPointsAnchored >= 3 && AtOrigin(mouseInformation.Location) && mouseInformation.ClickCount == 1)
 			{
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
@@ -98,9 +100,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					this.InteractiveGraphic.ResetCoordinateSystem();
 				}
 
-				this.StandardStatefulGraphic.State = this.StandardStatefulGraphic.CreateFocussedSelectedState();
+				this.StatefulGraphic.State = this.StatefulGraphic.CreateFocussedSelectedState();
 			}
-			// We're in the middle of creating
+				// We're in the middle of creating
 			else if (_numberOfPointsAnchored >= 2 && this.InteractiveGraphic.MaximumAnchorPoints > 2 && mouseInformation.ClickCount == 1)
 			{
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
@@ -142,11 +144,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			return true;
-		}
-
-		public override string ToString()
-		{
-			return "CreatePolygonGraphicState\n";
 		}
 
 		private bool AtOrigin(PointF point)

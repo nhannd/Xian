@@ -37,6 +37,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.Tools.Measurement.States;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -98,7 +99,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected override InteractiveGraphic CreateInteractiveGraphic()
 		{
-			return new PolyLineInteractiveGraphic(true, 2);
+			return new PolyLineInteractiveGraphic(2);
+		}
+
+		protected override GraphicState CreateCreateState(RoiGraphic roiGraphic)
+		{
+			return new CreatePolyLineGraphicState(roiGraphic);
 		}
 	}
 }
