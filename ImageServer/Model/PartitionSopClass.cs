@@ -42,17 +42,20 @@ namespace ClearCanvas.ImageServer.Model
         private bool _nonImage;
         #endregion
 
-        public String SopClassUid
+		[EntityFieldDatabaseMappingAttribute(TableName = "PartitionSopClass", ColumnName = "SopClassUid")]
+		public String SopClassUid
         {
             get { return _sopClassUid; }
             set { _sopClassUid = value; }
         }
-        public String Description
+		[EntityFieldDatabaseMappingAttribute(TableName = "PartitionSopClass", ColumnName = "Description")]
+		public String Description
         {
             get { return _description; }
             set { _description = value; }
         }
-        public bool NonImage
+		[EntityFieldDatabaseMappingAttribute(TableName = "PartitionSopClass", ColumnName = "NonImage")]
+		public bool NonImage
         {
             get { return _nonImage; }
             set { _nonImage = value; }

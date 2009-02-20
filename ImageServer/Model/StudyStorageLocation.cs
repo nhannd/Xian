@@ -78,103 +78,122 @@ namespace ClearCanvas.ImageServer.Model
     	#endregion
 
         #region Public Properties
-        public ServerEntityKey ServerPartitionKey
-        {
-            get { return _serverPartitionKey; }
-            set { _serverPartitionKey = value; }
-        }
-        public ServerEntityKey FilesystemKey
-        {
-            get { return _filesystemKey; }
-            set { _filesystemKey = value; }
-        }
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "ServerPartitionGUID")]
+		public ServerEntityKey ServerPartitionKey
+		{
+			get { return _serverPartitionKey; }
+			set { _serverPartitionKey = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "FilesystemGUID")]
+		public ServerEntityKey FilesystemKey
+		{
+			get { return _filesystemKey; }
+			set { _filesystemKey = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "ServerTransferSyntaxGUID")]
 		public ServerEntityKey ServerTransferSyntaxKey
-        {
+		{
 			get { return _serverTransferSyntaxKey; }
 			set { _serverTransferSyntaxKey = value; }
-        }  		
-        public string StudyInstanceUid
-        {
-            get { return _studyInstanceUid; }
-            set { _studyInstanceUid = value; }
-        }
-        public DateTime LastAccessedTime
-        {
-            get { return _lastAccessed; }
-            set { _lastAccessed = value; }
-        }
-        public DateTime InsertTime
-        {
-            get { return _insertTime; }
-            set { _insertTime = value; }
-        }
-        public bool Lock
-        {
-            get { return _lock; }
-            set { _lock = value; }
-        }
-        public StudyStatusEnum StudyStatusEnum
-        {
-            get { return _statusEnum; }
-            set { _statusEnum = value; }
-        }
-        public string FilesystemPath
-        {
-            get { return _filesystemPath; }
-            set { _filesystemPath = value; }
-        }
-        public string PartitionFolder
-        {
-            get { return _serverPartitionFolder; }
-            set { _serverPartitionFolder = value; }
-        }
-        public string StudyFolder
-        {
-            get { return _storageFilesystemFolder; }
-            set { _storageFilesystemFolder = value; }
-        }
-        public bool Enabled
-        {
-            get { return _enabled; }
-            set { _enabled = value; }
-        }
-        public bool ReadOnly
-        {
-            get { return _readOnly; }
-            set { _readOnly = value; }
-        }
-        public bool WriteOnly
-        {
-            get { return _writeOnly; }
-            set { _writeOnly = value; }
-        }
-        public FilesystemTierEnum FilesystemTierEnum
-        {
-            get { return _filesystemTierEnum; }
-            set { _filesystemTierEnum = value; }
-        }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "StudyInstanceUid")]
+		public string StudyInstanceUid
+		{
+			get { return _studyInstanceUid; }
+			set { _studyInstanceUid = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "LastAccessedTime")]
+		public DateTime LastAccessedTime
+		{
+			get { return _lastAccessed; }
+			set { _lastAccessed = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "InsertTime")]
+		public DateTime InsertTime
+		{
+			get { return _insertTime; }
+			set { _insertTime = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "Lock")]
+		public bool Lock
+		{
+			get { return _lock; }
+			set { _lock = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "StudyStatusEnum")]
+		public StudyStatusEnum StudyStatusEnum
+		{
+			get { return _statusEnum; }
+			set { _statusEnum = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "FilesystemPath")]
+		public string FilesystemPath
+		{
+			get { return _filesystemPath; }
+			set { _filesystemPath = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "PartitionFolder")]
+		public string PartitionFolder
+		{
+			get { return _serverPartitionFolder; }
+			set { _serverPartitionFolder = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "StudyFolder")]
+		public string StudyFolder
+		{
+			get { return _storageFilesystemFolder; }
+			set { _storageFilesystemFolder = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "Enabled")]
+		public bool Enabled
+		{
+			get { return _enabled; }
+			set { _enabled = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "ReadOnly")]
+		public bool ReadOnly
+		{
+			get { return _readOnly; }
+			set { _readOnly = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "WriteOnly")]
+		public bool WriteOnly
+		{
+			get { return _writeOnly; }
+			set { _writeOnly = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "FilesystemTierEnum")]
+		public FilesystemTierEnum FilesystemTierEnum
+		{
+			get { return _filesystemTierEnum; }
+			set { _filesystemTierEnum = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "TransferSyntaxUid")]
 		public string TransferSyntaxUid
 		{
 			get { return _transferSyntaxUid; }
 			set { _transferSyntaxUid = value; }
 		}
-    	public ServerEntityKey FilesystemStudyStorageKey
-    	{
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "FilesystemStudyStorageGUID")]
+		public ServerEntityKey FilesystemStudyStorageKey
+		{
 			get { return _filesystemStudyStorageKey; }
 			set { _filesystemStudyStorageKey = value; }
-    	}
+		}
 
-    	public QueueStudyStateEnum QueueStudyStateEnum
-    	{
-    		get { return _queueStudyState; }
-    		set { _queueStudyState = value; }
-    	}
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "QueueStudyStateEnum")]
+		public QueueStudyStateEnum QueueStudyStateEnum
+		{
+			get { return _queueStudyState; }
+			set { _queueStudyState = value; }
+		}
 
-        public bool IsReconcileRequired
-        {
-            get { return _reconcileRequired; }
-            set { _reconcileRequired = value; }
-        }
+		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "IsReconcileRequired")]
+		public bool IsReconcileRequired
+		{
+			get { return _reconcileRequired; }
+			set { _reconcileRequired = value; }
+		}
     	#endregion
 
         #region Public Methods

@@ -53,41 +53,48 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
-        public ServerEntityKey ServerPartitionKey
-        {
-            get { return _serverPartitionKey; }
-            set { _serverPartitionKey = value; }
-        }
-        public ServerEntityKey PatientKey
-        {
-            get { return _patientKey; }
-            set { _patientKey = value; }
-        }
-        public ServerEntityKey StudyKey
-        {
-            get { return _studyKey; }
-            set { _studyKey = value; }
-        }
-        public ServerEntityKey SeriesKey
-        {
-            get { return _seriesKey; }
-            set { _seriesKey = value; }
-        }
-        public bool InsertPatient
-        {
-            get { return _insertPatient; }
-            set { _insertPatient = value; }
-        }
-        public bool InsertStudy
-        {
-            get { return _insertStudy; }
-            set { _insertStudy = value; }
-        }
-        public bool InsertSeries
-        {
-            get { return _insertSeries; }
-            set { _insertSeries = value; }
-        }
+		[EntityFieldDatabaseMappingAttribute(TableName = "InstanceKeys", ColumnName = "ServerPartitionGUID")]
+		public ServerEntityKey ServerPartitionKey
+		{
+			get { return _serverPartitionKey; }
+			set { _serverPartitionKey = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "InstanceKeys", ColumnName = "PatientGUID")]
+		public ServerEntityKey PatientKey
+		{
+			get { return _patientKey; }
+			set { _patientKey = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "InstanceKeys", ColumnName = "StudyGUID")]
+		public ServerEntityKey StudyKey
+		{
+			get { return _studyKey; }
+			set { _studyKey = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "InstanceKeys", ColumnName = "SeriesGUID")]
+		public ServerEntityKey SeriesKey
+		{
+			get { return _seriesKey; }
+			set { _seriesKey = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "InstanceKeys", ColumnName = "InsertPatient")]
+		public bool InsertPatient
+		{
+			get { return _insertPatient; }
+			set { _insertPatient = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "InstanceKeys", ColumnName = "InsertStudy")]
+		public bool InsertStudy
+		{
+			get { return _insertStudy; }
+			set { _insertStudy = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "InstanceKeys", ColumnName = "InsertSeries")]
+		public bool InsertSeries
+		{
+			get { return _insertSeries; }
+			set { _insertSeries = value; }
+		}
         #endregion
     }
 }

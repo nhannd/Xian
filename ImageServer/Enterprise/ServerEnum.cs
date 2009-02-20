@@ -66,7 +66,8 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// The enumerated value itself.
         /// </summary>
-        public short Enum
+		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Enum")]
+		public short Enum
         {
             get { return _enumValue; }
             set { _enumValue = value; }
@@ -75,6 +76,7 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// A lookup string.
         /// </summary>
+		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Lookup")]
         public string Lookup
         {
             get { return _lookup; }
@@ -84,7 +86,8 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// A short description of the enumerated value.
         /// </summary>
-        public string Description
+		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "Description")]
+		public string Description
         {
             get { return _description; }
             set { _description = value; }
@@ -93,7 +96,8 @@ namespace ClearCanvas.ImageServer.Enterprise
         /// <summary>
         /// A long description of the enumerated value.
         /// </summary>
-        public string LongDescription
+		[EntityFieldDatabaseMappingAttribute(TableName = "", ColumnName = "LongDescription")]
+		public string LongDescription
         {
             get { return _longDescription; }
             set { _longDescription = value; }

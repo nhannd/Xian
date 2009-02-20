@@ -333,13 +333,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                 if (columnName.Equals(entity.Name) && columnName.Contains("Enum"))
                     columnName = "Enum";
-                if (columnName.Contains("GUID"))
-                    columnName = columnName.Replace("GUID", "Key");
 
+				if (!propMap.ContainsKey(columnName))
+					throw new EntityNotFoundException("Unable to match column to property: " + columnName, null);
 
 				PropertyInfo prop = propMap[columnName];
-                if (prop == null)
-                    throw new EntityNotFoundException("Unable to match column to property: " + columnName, null);
+
+				if (columnName.Contains("GUID"))
+                    columnName = columnName.Replace("GUID", "Key");
 
                 if (reader.IsDBNull(i))
                 {

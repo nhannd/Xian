@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model
 {
@@ -42,17 +43,22 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+		[EntityFieldDatabaseMapping(TableName = "PartitionTransferSyntax", ColumnName = "Description")]
         public String Description
         {
         get { return _description; }
         set { _description = value; }
         }
+
+		[EntityFieldDatabaseMappingAttribute(TableName = "PartitionTransferSyntax", ColumnName = "Lossless")]
         public Boolean Lossless
         {
         get { return _lossless; }
         set { _lossless = value; }
         }
-        public String Uid
+
+		[EntityFieldDatabaseMappingAttribute(TableName = "PartitionTransferSyntax", ColumnName = "Uid")]
+		public String Uid
         {
         get { return _uid; }
         set { _uid = value; }
