@@ -71,6 +71,13 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 		private string _spaceUsedBytesDisplay;
         
 		private int _checkFrequency;
+
+    	private string _numberOfStudiesText;
+		private bool _enforceStudyLimit;
+    	private int _studyLimit;
+		private int _minStudyLimit;
+		private int _maxStudyLimit;
+
 		private bool _enabled;
 
         /// <summary>
@@ -102,6 +109,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 
 			try
 			{
+				serviceClient.Open();
 				DiskspaceManagerServiceInformation serviceInformation = serviceClient.GetServiceInformation();
 				serviceClient.Close();
 
@@ -122,6 +130,12 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 				
 				_checkFrequency = serviceInformation.CheckFrequency;
 
+				_numberOfStudiesText = serviceInformation.NumberOfStudies.ToString();
+
+				_enforceStudyLimit = serviceInformation.EnforceStudyLimit;
+				_studyLimit = serviceInformation.StudyLimit;
+				_minStudyLimit = serviceInformation.MinStudyLimit;
+				_maxStudyLimit = serviceInformation.MaxStudyLimit;
 				this.Enabled = true;
 			}
 			catch
@@ -143,6 +157,11 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 				_spaceUsedPercentDisplay = "";
 				_spaceUsedBytesDisplay = "";
 
+				_numberOfStudiesText = SR.MessageNumberOfStudiesUnavailable;
+				_enforceStudyLimit = false;
+				_studyLimit = 0;
+				_minStudyLimit = 0;
+				_maxStudyLimit = 0;
 				_checkFrequency = 10;
 
 				this.Enabled = false; 
@@ -179,8 +198,9 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
                 newConfiguration.LowWatermark = _lowWatermark;
                 newConfiguration.HighWatermark = _highWatermark;
                 newConfiguration.CheckFrequency = _checkFrequency;
-
-                serviceClient.UpdateServiceConfiguration(newConfiguration);
+				newConfiguration.EnforceStudyLimit = _enforceStudyLimit;
+				newConfiguration.StudyLimit = _studyLimit;
+				serviceClient.UpdateServiceConfiguration(newConfiguration);
                 serviceClient.Close();
             }
             catch
@@ -370,6 +390,49 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 				}
 
 				this.Modified = true;
+			}
+		}
+
+		public string NumberOfStudiesText
+		{
+			get { return _numberOfStudiesText; }
+		}
+
+		public int MinStudyLimit
+		{
+			get { return _minStudyLimit; }
+		}
+
+		public int MaxStudyLimit
+		{
+			get { return _maxStudyLimit; }
+		}
+		
+		public bool EnforceStudyLimit
+    	{
+			get { return _enforceStudyLimit; }
+			set
+			{
+				if (_enforceStudyLimit != value)
+				{
+					_enforceStudyLimit = value;
+					NotifyPropertyChanged("EnforceStudyLimit");
+					this.Modified = true;
+				}
+			}
+    	}
+
+		public int StudyLimit
+		{
+			get { return _studyLimit; }
+			set
+			{
+				if (_studyLimit != value)
+				{
+					_studyLimit = value;
+					NotifyPropertyChanged("StudyLimit");
+					this.Modified = true;
+				}
 			}
 		}
 

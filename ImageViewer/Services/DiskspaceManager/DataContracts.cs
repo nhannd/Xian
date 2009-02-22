@@ -40,6 +40,8 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
         private float _lowWatermark;
         private float _highWatermark;
         private int _checkFrequency;
+		private bool _enforceStudyLimit;
+		private int _studyLimit;
 
 		public DiskspaceManagerServiceConfiguration()
 		{
@@ -66,7 +68,20 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
             set { _checkFrequency = value; }
         }
 
-    }
+		[DataMember(IsRequired = false)]
+		public bool EnforceStudyLimit
+		{
+			get { return _enforceStudyLimit; }
+			set { _enforceStudyLimit = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public int StudyLimit
+		{
+			get { return _studyLimit; }
+			set { _studyLimit = value; }
+		}
+	}
 
 	[DataContract]
 	public class DiskspaceManagerServiceInformation
@@ -77,6 +92,11 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
 		private float _lowWatermark;
         private float _highWatermark;
         private int _checkFrequency;
+		private int _numberOfStudies;
+		private bool _enforceStudyLimit;
+		private int _studyLimit;
+		private int _maxStudyLimit;
+		private int _minStudyLimit;
 
 		public DiskspaceManagerServiceInformation()
 		{ 
@@ -123,5 +143,40 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
             get { return _checkFrequency; }
             set { _checkFrequency = value; }
         }
-    }
+
+		[DataMember(IsRequired = false)]
+		public int NumberOfStudies
+		{
+			get { return _numberOfStudies; }
+			set { _numberOfStudies = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public bool EnforceStudyLimit
+		{
+			get { return _enforceStudyLimit; }
+			set { _enforceStudyLimit = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public int StudyLimit
+		{
+			get { return _studyLimit; }
+			set { _studyLimit = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public int MinStudyLimit
+		{
+			get { return _minStudyLimit; }
+			set { _minStudyLimit = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public int MaxStudyLimit
+		{
+			get { return _maxStudyLimit; }
+			set { _maxStudyLimit = value; }
+		}
+	}
 }

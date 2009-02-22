@@ -250,7 +250,7 @@
     <value>Unrecoverable Error: unable to determine drive.</value>
   </data>
   <data name="FormatCheckUsage" xml:space="preserve">
-    <value>Checking disk usage - Used Space(%): {0:F2}, High Watermark(%): {1:F2}, Low Watermark(%): {2:F2}</value>
+    <value>Checking usage - Used Space(%): {0:F2}, High Watermark(%): {1:F2}, Low Watermark(%): {2:F2}, Studies: {3}</value>
   </data>
   <data name="FormatDeletionRequest" xml:space="preserve">
     <value>Requesting deletion of {0} studies; Expected space freed (bytes): {1}</value>

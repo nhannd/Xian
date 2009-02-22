@@ -55,6 +55,8 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			BindingSource bindingSource = new BindingSource();
 			bindingSource.DataSource = _component;
 
+        	_component.AllPropertiesChanged += delegate { bindingSource.ResetBindings(false); };
+
 			_txtDriveName.DataBindings.Add("Text", bindingSource, "DriveDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			Binding lowWatermarkBinding = new Binding("Value", bindingSource, "LowWatermark", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -88,7 +90,17 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			_upDownLowWatermark.DataBindings.Add("Enabled", bindingSource, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			_upDownHighWatermark.DataBindings.Add("Enabled", bindingSource, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_bnRefresh.Click += new System.EventHandler(OnRefreshClick);
+        	_enforceStudyLimit.DataBindings.Add("Checked", bindingSource, "EnforceStudyLimit", true, DataSourceUpdateMode.OnPropertyChanged);
+        	_enforceStudyLimit.DataBindings.Add("Enabled", bindingSource, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_numberOfStudies.DataBindings.Add("Text", bindingSource, "NumberOfStudiesText", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_studyLimit.DataBindings.Add("Value", bindingSource, "StudyLimit", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyLimit.DataBindings.Add("Enabled", bindingSource, "EnforceStudyLimit", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyLimit.DataBindings.Add("Maximum", bindingSource, "MaxStudyLimit", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyLimit.DataBindings.Add("Minimum", bindingSource, "MinStudyLimit", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_bnRefresh.Click += OnRefreshClick;
         }
 
 		private void FormatWatermarkBinding(object sender, ConvertEventArgs e)

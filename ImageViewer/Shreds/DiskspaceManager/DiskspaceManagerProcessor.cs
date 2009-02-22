@@ -31,69 +31,38 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Management;
+using System.ServiceModel;
 using System.Threading;
-
 using ClearCanvas.Common;
-using ClearCanvas.Server.ShredHost;
+using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.DiskspaceManager;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.ImageViewer.Services;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom.DataStore;
-using System.Collections.ObjectModel;
-using System.ServiceModel;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 {
     internal sealed class DiskspaceManagerProcessor : IDiskspaceManagerService
     {
-		private class StudySortComparer : IComparer<IStudy>
-		{
-			public StudySortComparer()
-			{
-			}
-
-			#region IComparer<IStudy> Members
-
-			public int Compare(IStudy x, IStudy y)
-			{
-				if (x == null)
-				{
-					if (y == null)
-						return 0;
-					else
-						return -1;
-				}
-				else
-				{
-					if (y == null)
-						return 1;
-				}
-
-				return (x.GetStoreTime() < y.GetStoreTime()) ? -1 : 1;
-			}
-
-			#endregion
-		}
-
 		#region Private Fields
 
 		private static DiskspaceManagerProcessor _instance;
 
-		private Thread _processingThread;
+		private volatile Thread _processingThread;
 		private volatile bool _stop;
 
-		private object _settingsSyncLock = new object();
-		private DMDriveInfo _currentDriveInfo;
-		private int _checkingFrequency;
-		private bool _settingsChanged;
+		private readonly object _settingsSyncLock = new object();
+		private volatile DMDriveInfo _currentDriveInfo;
+		private volatile int _checkingFrequency;
+
+    	private bool _enforceStudyLimit = false;
+		private volatile int _studyLimit = int.MaxValue;
+		private volatile int _lastStudyCount = 0;
+
+		private volatile bool _settingsChanged;
 
 		#endregion
 
-		public DiskspaceManagerProcessor()
+		private DiskspaceManagerProcessor()
         {
         }
 
@@ -116,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         {
 			_stop = false;
 			// start up processing thread
-			_processingThread = new Thread(new ThreadStart(StartDiskspaceManager));
+			_processingThread = new Thread(StartDiskspaceManager);
 			_processingThread.IsBackground = true;
 			_processingThread.Priority = ThreadPriority.BelowNormal;
 			_processingThread.Start();
@@ -172,12 +141,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 					if (_settingsChanged || _currentDriveInfo == null)
 						continue;
 
-					CheckDiskspace();
+					CheckUsage(true, Timeout.Infinite);
 
-					if (_currentDriveInfo.BytesOverHighWaterMark > 0)
+					if (_currentDriveInfo.BytesOverHighWaterMark > 0 || IsStudyLimitExceeded())
 					{
 						RemoveStudies();
-						CheckDiskspace();
+						CheckUsage(true, Timeout.Infinite);
 					}
 				}
 				catch (Exception e)
@@ -188,67 +157,88 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 			while (!_stop);
 		}
 
-		private void CheckDiskspace()
+		private bool IsStudyLimitExceeded()
 		{
-			_currentDriveInfo.Refresh();
-
-			Platform.Log(LogLevel.Info, String.Format(SR.FormatCheckUsage, _currentDriveInfo.UsedSpacePercentage, _currentDriveInfo.HighWatermark, _currentDriveInfo.LowWatermark));
+			return _lastStudyCount > _studyLimit;
 		}
 
-		private bool RemoveStudies()
+    	private void CheckUsage(bool log, int maxWaitMilliseconds)
+		{
+			try
+			{
+				_currentDriveInfo.Refresh(maxWaitMilliseconds);
+				_lastStudyCount = 0;
+				using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+				{
+					_lastStudyCount = (int)reader.GetStudyCount();
+				}
+
+				if (log)
+					Platform.Log(LogLevel.Info, String.Format(SR.FormatCheckUsage, _currentDriveInfo.UsedSpacePercentage, _currentDriveInfo.HighWatermark, _currentDriveInfo.LowWatermark, _lastStudyCount));
+			}
+			catch (DataStoreException e)
+			{
+				Platform.Log(LogLevel.Error, e, "Failed to retrieve number of studies from data store.");
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Failed to check current disk space usage.");
+			}
+		}
+
+		private void RemoveStudies()
 		{
 			Platform.Log(LogLevel.Info, SR.MessageBeginDeleting);
 
 			List<IStudy> studies = new List<IStudy>();
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 			{
-				studies.AddRange(reader.GetStudies());
+				studies.AddRange(reader.GetStudiesByStoreTime(false));
 			}
-
-			studies.Sort(new StudySortComparer());
 
 			long totalExpectedFreeSpace = 0;
 			List<string> deleteStudyUids = new List<string>();
 
 			foreach (IStudy study in studies)
 			{
+				long expectedFreeSpace = 0;
+
 				try
 				{
-					long expectedFreeSpace = 0;
 					foreach (ISopInstance sopInstance in study.GetSopInstances())
 					{
 						System.IO.FileInfo info;
-						try
-						{
-							info = new System.IO.FileInfo(sopInstance.GetLocationUri().LocalDiskPath);
-							if (info.Exists)
-								expectedFreeSpace += info.Length;
-						}
-						catch (Exception e)
-						{
-							Platform.Log(LogLevel.Error, e);
-						}
+						info = new System.IO.FileInfo(sopInstance.GetLocationUri().LocalDiskPath);
+						if (info.Exists)
+							expectedFreeSpace += info.Length;
 					}
-
-					totalExpectedFreeSpace += expectedFreeSpace;
-
-					deleteStudyUids.Add(study.StudyInstanceUid);
-
-					if (totalExpectedFreeSpace >= _currentDriveInfo.BytesOverLowWaterMark)
-						break;
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Error, e);
+					string formatMessage = "Failed to determine current disk space usage for study '{0}'; only studies processed up to this point will be deleted.";
+					Platform.Log(LogLevel.Error, e, formatMessage, study.StudyInstanceUid);
+					break;
 				}
-			}
 
-			studies = null; //let this get gc'ed.
+				totalExpectedFreeSpace += expectedFreeSpace;
+				deleteStudyUids.Add(study.StudyInstanceUid);
+
+				if (_enforceStudyLimit)
+				{
+					//keep adding studies to delete until the max# is reached.
+					int numberOfStudiesAfterDelete = _lastStudyCount - deleteStudyUids.Count;
+					if (numberOfStudiesAfterDelete > _studyLimit)
+						continue;
+				}
+
+				if (totalExpectedFreeSpace >= _currentDriveInfo.BytesOverLowWaterMark)
+					break;
+			}
 
 			if (deleteStudyUids.Count == 0)
 			{
 				Platform.Log(LogLevel.Info, SR.MessageNothingToDelete); 
-				return false;
+				return;
 			}
 
 			DeleteInstancesRequest request = new DeleteInstancesRequest();
@@ -258,22 +248,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 			Platform.Log(LogLevel.Info, String.Format(SR.FormatDeletionRequest, deleteStudyUids.Count, totalExpectedFreeSpace));
 
-			try
-			{
-				//we want to stop quickly, so have the callback poll us every 100 ms.
-				LocalDataStoreDeletionHelper.DeleteInstancesAndWait(request, 100,
-					delegate(LocalDataStoreDeletionHelper.DeletionProgressInformation progressInformation)
-					{
-						//only quit if we're stopping the service.
-						return !_stop;
-					});
-			}
-			catch
-			{
-				throw;
-			}
-
-			return true;
+			//we want to stop quickly, so have the callback poll us every 100 ms.
+			LocalDataStoreDeletionHelper.DeleteInstancesAndWait(request, 100, delegate 
+				{	//only quit if we're stopping the service.
+					return !_stop;
+				});
 		}
 
 		private void UpdateCurrentDriveInfo()
@@ -327,6 +306,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 					_currentDriveInfo.LowWatermark = DiskspaceManagerSettings.Instance.LowWatermark;
 					_currentDriveInfo.HighWatermark = DiskspaceManagerSettings.Instance.HighWatermark;
 				}
+
+				_enforceStudyLimit = DiskspaceManagerSettings.Instance.EnforceStudyLimit;
+				if (_enforceStudyLimit)
+					_studyLimit = DiskspaceManagerSettings.Instance.StudyLimit;
+				else
+					_studyLimit = int.MaxValue;
 			}
 		}
 
@@ -338,7 +323,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 			lock (_settingsSyncLock)
 			{
 				Platform.CheckMemberIsSet(_currentDriveInfo, "_currentDriveInfo");
-				_currentDriveInfo.Refresh();
+				CheckUsage(false, 5000);
 
 				DiskspaceManagerServiceInformation returnInformation = new DiskspaceManagerServiceInformation();
 				returnInformation.DriveName = _currentDriveInfo.DriveName;
@@ -347,6 +332,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				returnInformation.LowWatermark = DiskspaceManagerSettings.Instance.LowWatermark;
 				returnInformation.HighWatermark = DiskspaceManagerSettings.Instance.HighWatermark;
 				returnInformation.CheckFrequency = DiskspaceManagerSettings.Instance.CheckFrequency;
+				returnInformation.NumberOfStudies = _lastStudyCount;
+				returnInformation.MinStudyLimit = DiskspaceManagerSettings.Instance.MinStudyLimit;
+				returnInformation.MaxStudyLimit = DiskspaceManagerSettings.Instance.MaxStudyLimit;
+				returnInformation.EnforceStudyLimit = DiskspaceManagerSettings.Instance.EnforceStudyLimit;
+				returnInformation.StudyLimit = DiskspaceManagerSettings.Instance.StudyLimit;
 
 				return returnInformation;
 			}
@@ -359,6 +349,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				DiskspaceManagerSettings.Instance.LowWatermark = newConfiguration.LowWatermark;
 				DiskspaceManagerSettings.Instance.HighWatermark = newConfiguration.HighWatermark;
 				DiskspaceManagerSettings.Instance.CheckFrequency = newConfiguration.CheckFrequency;
+				DiskspaceManagerSettings.Instance.EnforceStudyLimit = newConfiguration.EnforceStudyLimit;
+				DiskspaceManagerSettings.Instance.StudyLimit = newConfiguration.StudyLimit;
 				DiskspaceManagerSettings.Save();
 
 				_settingsChanged = true;

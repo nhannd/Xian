@@ -50,6 +50,25 @@ namespace ClearCanvas.Dicom.DataStore
 
 			#region IDataStoreReader Members
 
+			public long GetStudyCount()
+			{
+				string queryString = "select count(*) from Study";
+				try
+				{
+					SessionManager.BeginReadTransaction();
+					IEnumerable results = SessionManager.Session.CreateQuery(queryString).Enumerable();
+					foreach (long number in results)
+						return number;
+
+					return 0;
+				}
+				catch (Exception e)
+				{
+					string message = String.Format("An error occurred while attempting to get the number of studies in the data store.");
+					throw new DataStoreException(message, e);
+				}
+			}
+
 			public IStudy GetStudy(string studyInstanceUid)
 			{
 				Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
@@ -79,7 +98,22 @@ namespace ClearCanvas.Dicom.DataStore
 				try
 				{
 					SessionManager.BeginReadTransaction();
-					IQuery query = Session.CreateQuery("FROM Study ORDER BY StoreTime_");
+					IQuery query = Session.CreateQuery("FROM Study");
+					return Convert.Cast<IStudy>(query.List());
+				}
+				catch (Exception e)
+				{
+					throw new DataStoreException("An error occurred while attempting to retrieve all studies from the data store.", e);
+				}
+			}
+
+			public IEnumerable<IStudy> GetStudiesByStoreTime(bool descending)
+			{
+				try
+				{
+					Order order = descending ? Order.Desc("StoreTime") : Order.Asc("StoreTime");
+					SessionManager.BeginReadTransaction();
+					ICriteria query = Session.CreateCriteria(typeof(Study)).AddOrder(order);
 					return Convert.Cast<IStudy>(query.List());
 				}
 				catch (Exception e)

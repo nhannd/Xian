@@ -36,8 +36,10 @@ namespace ClearCanvas.Dicom.DataStore
 {
 	public interface IDataStoreReader : IDisposable
     {
+		long GetStudyCount();
 		IStudy GetStudy(string studyInstanceUid);
         IEnumerable<IStudy> GetStudies();
+		IEnumerable<IStudy> GetStudiesByStoreTime(bool descending);
 		IEnumerable<DicomAttributeCollection> Query(DicomAttributeCollection queryCriteria);
     }
 }

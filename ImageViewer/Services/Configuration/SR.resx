@@ -200,6 +200,9 @@ Please choose another Server Group Name.</value>
   <data name="MessageNoServersSelected" xml:space="preserve">
     <value>No servers have been selected.  Please select at least one server and try again.</value>
   </data>
+  <data name="MessageNumberOfStudiesUnavailable" xml:space="preserve">
+    <value>Unavailable</value>
+  </data>
   <data name="MessagePortInvalid" xml:space="preserve">
     <value>The Port must be between 1 and 65535.</value>
   </data>

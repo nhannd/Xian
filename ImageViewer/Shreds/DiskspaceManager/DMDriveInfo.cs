@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using System.Management;
 using System.Diagnostics;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 {
@@ -44,17 +45,17 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
     {
 		#region Private Fields
 
-		private DriveInfo _driveInfo;
-		private string _driveName;
+		private readonly DriveInfo _driveInfo;
+		private readonly string _driveName;
 		
-		private float _highWatermark;
-		private float _lowWatermark;
-		private float _watermarkMinDifference;
+		private volatile float _highWatermark;
+		private volatile float _lowWatermark;
+		private volatile float _watermarkMinDifference;
 
-		private object _syncLock = new object();
+		private readonly object _syncLock = new object();
 		private long _usedSpace;
 		private long _driveSize;
-
+		private bool _refreshing = false;
 		#endregion
 
         public DMDriveInfo(string name)
@@ -149,10 +150,38 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 		public void Refresh()
 		{
+			Refresh(Timeout.Infinite);
+		}
+
+		public void Refresh(int waitMilliseconds)
+		{
 			lock (_syncLock)
 			{
-				_driveSize = _driveInfo.TotalSize;
-				_usedSpace = _driveSize - _driveInfo.AvailableFreeSpace;
+				if (!_refreshing)
+				{
+					_refreshing = true;
+					ThreadPool.QueueUserWorkItem(Refresh, null);
+				}
+
+				Monitor.Wait(_syncLock, waitMilliseconds);
+			}
+		}
+
+		private void Refresh(object nothing)
+		{
+			lock (_syncLock)
+			{
+				try
+				{
+					//these can take a while.
+					_driveSize = _driveInfo.TotalSize;
+					_usedSpace = _driveSize - _driveInfo.AvailableFreeSpace;
+				}
+				finally
+				{
+					_refreshing = false;
+					Monitor.PulseAll(_syncLock);
+				}
 			}
 		}
     }

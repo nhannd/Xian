@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Configuration;
 using ClearCanvas.Server.ShredHost;
 
@@ -42,6 +40,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 		public const float LowWaterMarkDefault = 60F;
 		public const float HighWaterMarkDefault = 80F;
 		public const int CheckFrequencyDefault = 10;
+    	public const int StudyLimitDefault = 500;
+    	public const int MinStudyLimitDefault = 30;
+		public const int MaxStudyLimitDefault = 10000;
 
         private static DiskspaceManagerSettings _instance;
 
@@ -100,7 +101,35 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             set { this["CheckFrequency"] = value; }
         }
 
-        #endregion
+        [ConfigurationProperty("EnforceStudyLimit", DefaultValue = false)]
+		public bool EnforceStudyLimit
+		{
+            get { return (bool)this["EnforceStudyLimit"]; }
+            set { this["EnforceStudyLimit"] = value; }
+		}
+
+		[ConfigurationProperty("MinStudyLimit", DefaultValue = MinStudyLimitDefault)]
+		public int MinStudyLimit
+		{
+			get { return (int)this["MinStudyLimit"]; }
+			set { this["MinStudyLimit"] = value; }
+		}
+
+		[ConfigurationProperty("MaxStudyLimit", DefaultValue = MaxStudyLimitDefault)]
+		public int MaxStudyLimit
+		{
+			get { return (int)this["MaxStudyLimit"]; }
+			set { this["MaxStudyLimit"] = value; }
+		}
+
+		[ConfigurationProperty("StudyLimit", DefaultValue = StudyLimitDefault)]
+		public int StudyLimit
+		{
+			get { return (int)this["StudyLimit"]; }
+			set { this["StudyLimit"] = Math.Min(Math.Max(value, MinStudyLimit), MaxStudyLimit); }
+		}
+		
+		#endregion
 
         public override object Clone()
         {
@@ -109,6 +138,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             clone.LowWatermark = _instance.LowWatermark;
             clone.HighWatermark = _instance.HighWatermark;
             clone.CheckFrequency = _instance.CheckFrequency;
+        	clone.EnforceStudyLimit = _instance.EnforceStudyLimit;
+			clone.MaxStudyLimit = _instance.MaxStudyLimit;
+			clone.MinStudyLimit = _instance.MinStudyLimit;
+			clone.StudyLimit = _instance.StudyLimit;
 
             return clone;
         }

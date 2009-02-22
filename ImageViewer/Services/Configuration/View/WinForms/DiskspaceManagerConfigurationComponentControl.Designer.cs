@@ -81,11 +81,18 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			this._txtLowWatermarkBytesDisplay = new System.Windows.Forms.TextBox();
 			this._upDownHighWatermark = new System.Windows.Forms.NumericUpDown();
 			this._upDownLowWatermark = new System.Windows.Forms.NumericUpDown();
+			this._studyLimitGroup = new System.Windows.Forms.GroupBox();
+			this.label7 = new System.Windows.Forms.Label();
+			this._studyLimit = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
+			this._numberOfStudies = new System.Windows.Forms.TextBox();
+			this._enforceStudyLimit = new System.Windows.Forms.CheckBox();
 			((System.ComponentModel.ISupportInitialize)(this._tbLowWatermark)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._tbHighWatermark)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._tbFrequency)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._upDownHighWatermark)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._upDownLowWatermark)).BeginInit();
+			this._studyLimitGroup.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this._studyLimit)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _tbLowWatermark
@@ -95,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			this._tbLowWatermark.Margin = new System.Windows.Forms.Padding(2);
 			this._tbLowWatermark.Maximum = 100000;
 			this._tbLowWatermark.Name = "_tbLowWatermark";
-			this._tbLowWatermark.Size = new System.Drawing.Size(171, 34);
+			this._tbLowWatermark.Size = new System.Drawing.Size(171, 45);
 			this._tbLowWatermark.SmallChange = 1000;
 			this._tbLowWatermark.TabIndex = 13;
 			this._tbLowWatermark.TickFrequency = 10000;
@@ -108,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			this._tbHighWatermark.Margin = new System.Windows.Forms.Padding(2);
 			this._tbHighWatermark.Maximum = 100000;
 			this._tbHighWatermark.Name = "_tbHighWatermark";
-			this._tbHighWatermark.Size = new System.Drawing.Size(171, 34);
+			this._tbHighWatermark.Size = new System.Drawing.Size(171, 45);
 			this._tbHighWatermark.SmallChange = 1000;
 			this._tbHighWatermark.TabIndex = 3;
 			this._tbHighWatermark.TickFrequency = 10000;
@@ -226,8 +233,8 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			this._tbFrequency.Margin = new System.Windows.Forms.Padding(2);
 			this._tbFrequency.Minimum = 1;
 			this._tbFrequency.Name = "_tbFrequency";
-			this._tbFrequency.Size = new System.Drawing.Size(171, 34);
-			this._tbFrequency.TabIndex = 17;
+			this._tbFrequency.Size = new System.Drawing.Size(171, 45);
+			this._tbFrequency.TabIndex = 18;
 			this._tbFrequency.Value = 1;
 			// 
 			// _txtFrequency
@@ -237,7 +244,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			this._txtFrequency.Name = "_txtFrequency";
 			this._txtFrequency.ReadOnly = true;
 			this._txtFrequency.Size = new System.Drawing.Size(65, 20);
-			this._txtFrequency.TabIndex = 18;
+			this._txtFrequency.TabIndex = 19;
 			// 
 			// label10
 			// 
@@ -246,16 +253,16 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			this.label10.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(24, 13);
-			this.label10.TabIndex = 19;
+			this.label10.TabIndex = 20;
 			this.label10.Text = "Min";
 			// 
 			// _bnRefresh
 			// 
-			this._bnRefresh.Location = new System.Drawing.Point(333, 228);
+			this._bnRefresh.Location = new System.Drawing.Point(333, 244);
 			this._bnRefresh.Margin = new System.Windows.Forms.Padding(2);
 			this._bnRefresh.Name = "_bnRefresh";
 			this._bnRefresh.Size = new System.Drawing.Size(68, 23);
-			this._bnRefresh.TabIndex = 20;
+			this._bnRefresh.TabIndex = 22;
 			this._bnRefresh.Text = "Refresh";
 			this._bnRefresh.UseVisualStyleBackColor = true;
 			// 
@@ -311,11 +318,76 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			this._upDownLowWatermark.Size = new System.Drawing.Size(65, 20);
 			this._upDownLowWatermark.TabIndex = 14;
 			// 
+			// _studyLimitGroup
+			// 
+			this._studyLimitGroup.Controls.Add(this.label7);
+			this._studyLimitGroup.Controls.Add(this._studyLimit);
+			this._studyLimitGroup.Controls.Add(this._numberOfStudies);
+			this._studyLimitGroup.Controls.Add(this._enforceStudyLimit);
+			this._studyLimitGroup.Location = new System.Drawing.Point(14, 228);
+			this._studyLimitGroup.Name = "_studyLimitGroup";
+			this._studyLimitGroup.Size = new System.Drawing.Size(314, 49);
+			this._studyLimitGroup.TabIndex = 21;
+			this._studyLimitGroup.TabStop = false;
+			// 
+			// label7
+			// 
+			this.label7.AutoSize = true;
+			this.label7.Location = new System.Drawing.Point(7, 20);
+			this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+			this.label7.Name = "label7";
+			this.label7.Size = new System.Drawing.Size(49, 13);
+			this.label7.TabIndex = 0;
+			this.label7.Text = "#Studies";
+			this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// _studyLimit
+			// 
+			this._studyLimit.Location = new System.Drawing.Point(233, 17);
+			this._studyLimit.Maximum = new decimal(new int[] {
+            100000,
+            0,
+            0,
+            0});
+			this._studyLimit.Minimum = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+			this._studyLimit.Name = "_studyLimit";
+			this._studyLimit.Size = new System.Drawing.Size(65, 20);
+			this._studyLimit.TabIndex = 3;
+			this._studyLimit.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+			// 
+			// _numberOfStudies
+			// 
+			this._numberOfStudies.Location = new System.Drawing.Point(67, 18);
+			this._numberOfStudies.Margin = new System.Windows.Forms.Padding(2);
+			this._numberOfStudies.Name = "_numberOfStudies";
+			this._numberOfStudies.ReadOnly = true;
+			this._numberOfStudies.Size = new System.Drawing.Size(65, 20);
+			this._numberOfStudies.TabIndex = 1;
+			// 
+			// _enforceStudyLimit
+			// 
+			this._enforceStudyLimit.AutoSize = true;
+			this._enforceStudyLimit.Location = new System.Drawing.Point(166, 19);
+			this._enforceStudyLimit.Name = "_enforceStudyLimit";
+			this._enforceStudyLimit.Size = new System.Drawing.Size(62, 17);
+			this._enforceStudyLimit.TabIndex = 20;
+			this._enforceStudyLimit.Text = "Limit to:";
+			this._enforceStudyLimit.UseVisualStyleBackColor = true;
+			// 
 			// DiskspaceManagerConfigurationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
+			this.Controls.Add(this._studyLimitGroup);
 			this.Controls.Add(this._upDownLowWatermark);
 			this.Controls.Add(this._upDownHighWatermark);
 			this.Controls.Add(this._txtLowWatermarkBytesDisplay);
@@ -340,12 +412,15 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			this.Controls.Add(this._tbLowWatermark);
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "DiskspaceManagerConfigurationComponentControl";
-			this.Size = new System.Drawing.Size(414, 262);
+			this.Size = new System.Drawing.Size(418, 296);
 			((System.ComponentModel.ISupportInitialize)(this._tbLowWatermark)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._tbHighWatermark)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._tbFrequency)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._upDownHighWatermark)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._upDownLowWatermark)).EndInit();
+			this._studyLimitGroup.ResumeLayout(false);
+			this._studyLimitGroup.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this._studyLimit)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -375,5 +450,10 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 		private System.Windows.Forms.TextBox _txtLowWatermarkBytesDisplay;
 		private System.Windows.Forms.NumericUpDown _upDownHighWatermark;
 		private System.Windows.Forms.NumericUpDown _upDownLowWatermark;
+		private System.Windows.Forms.GroupBox _studyLimitGroup;
+		private System.Windows.Forms.CheckBox _enforceStudyLimit;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _studyLimit;
+		private System.Windows.Forms.TextBox _numberOfStudies;
+		private System.Windows.Forms.Label label7;
     }
 }

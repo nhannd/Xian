@@ -40,6 +40,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using System.Threading;
 using ClearCanvas.Dicom.Utilities.Xml;
+using System.Text;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -562,5 +563,16 @@ namespace ClearCanvas.Dicom.DataStore
 		}
 
 		#endregion
+
+		public override string ToString()
+		{
+			string storeTime = StoreTime == null ? "" : StoreTime.ToString();
+
+			StringBuilder builder = new StringBuilder();
+			builder.AppendFormat("StoreTime: {0}, Patient: {1} {2}, A# {3}, Study Date: {4}",
+								 storeTime, PatientId ?? "", PatientsName ?? "", AccessionNumber ?? "", StudyDateRaw ?? "");
+
+			return builder.ToString();
+		}
 	}
 }

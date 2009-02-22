@@ -306,6 +306,15 @@ namespace ClearCanvas.ImageViewer.Services.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unavailable.
+        /// </summary>
+        internal static string MessageNumberOfStudiesUnavailable {
+            get {
+                return ResourceManager.GetString("MessageNumberOfStudiesUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Port must be between 1 and 65535..
         /// </summary>
         internal static string MessagePortInvalid {

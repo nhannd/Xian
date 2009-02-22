@@ -457,7 +457,7 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Checking disk usage - Used Space(%): {0:F2}, High Watermark(%): {1:F2}, Low Watermark(%): {2:F2}.
+        ///   Looks up a localized string similar to Checking usage - Used Space(%): {0:F2}, High Watermark(%): {1:F2}, Low Watermark(%): {2:F2}, Studies: {3}.
         /// </summary>
         internal static string FormatCheckUsage {
             get {
