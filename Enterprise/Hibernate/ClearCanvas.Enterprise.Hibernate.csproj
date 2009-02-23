@@ -68,6 +68,13 @@
     <Compile Include="Ddl\ForeignKeyIndexProcessor.cs" />
     <Compile Include="Ddl\IndexCreatorBase.cs" />
     <Compile Include="Ddl\Mapping.cs" />
+    <Compile Include="Ddl\Model\ColumnInfo.cs" />
+    <Compile Include="Ddl\Model\ConstraintInfo.cs" />
+    <Compile Include="Ddl\Model\DatabaseSchemaInfo.cs" />
+    <Compile Include="Ddl\Model\ElementInfo.cs" />
+    <Compile Include="Ddl\Model\ForeignKeyInfo.cs" />
+    <Compile Include="Ddl\Model\IndexInfo.cs" />
+    <Compile Include="Ddl\Model\TableInfo.cs" />
     <Compile Include="Ddl\PreProcessor.cs" />
     <Compile Include="Ddl\XmlWriter.cs" />
     <Compile Include="Ddl\ScriptWriter.cs" />
