@@ -21,11 +21,18 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
         {
             //note: the fk object has a ReferencedTable property, but it doesn't always seem to be set
             //the reference class property is always set, so we use it instead to get the referenced table 
-            ReferencedTable = config.GetClassMapping(fk.ReferencedClass).Table.Name;
-        }
+        	Table table = config.GetClassMapping(fk.ReferencedClass).Table;
+            this.ReferencedTable = table.Name;
+			this.ReferencedColumns = CollectionUtils.Map<Column, string>(
+				table.PrimaryKey.ColumnCollection,
+				delegate(Column column) { return column.Name; });
+		}
 
         [DataMember]
         public string ReferencedTable;
+
+		[DataMember]
+    	public List<string> ReferencedColumns;
 
         public override bool IsSame(ElementInfo other)
         {
@@ -33,20 +40,22 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
             if (that == null)
                 return false;
 
-            return Equals(this.ReferencedTable, that.ReferencedTable) &&
-                CollectionUtils.Equal<string>(this.Columns, that.Columns, false);
+        	return Equals(this.ReferencedTable, that.ReferencedTable)
+					&& CollectionUtils.Equal<string>(this.ReferencedColumns, that.ReferencedColumns, false)
+        			&& base.Equals(other);
         }
 
         public override bool IsIdentical(ElementInfo other)
         {
             ForeignKeyInfo that = (ForeignKeyInfo)other;
             return this.ReferencedTable == that.ReferencedTable
+				&& CollectionUtils.Equal<string>(this.ReferencedColumns, that.ReferencedColumns, false)
                 && base.IsIdentical(other);
         }
 
         public override string SortKey
         {
-            get { return this.ReferencedTable + base.SortKey; }
+            get { return this.ReferencedTable + StringUtilities.Combine(this.ReferencedColumns, "") + base.SortKey; }
         }
     }
 }

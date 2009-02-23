@@ -34,6 +34,7 @@ using System.IO;
 using ClearCanvas.Common;
 using NHibernate.Dialect;
 using NHibernate.Cfg;
+using ClearCanvas.Enterprise.Hibernate.Ddl.Model;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -52,49 +53,71 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     /// </summary>
     public class ScriptWriter
     {
-        private readonly List<IDdlScriptGenerator> _generators;
         private readonly Configuration _config;
-    	private readonly string _qualifier;
-    	private readonly bool _qualifyNames;
-        private readonly Dialect _dialect;
+		private readonly Dialect _dialect;
+		private readonly string _qualifier;
+    	private bool _qualifyNames;
+    	private bool _populateHardEnums;
+    	private bool _populateSoftEnums;
+    	private DatabaseSchemaInfo _upgradeFromModel;
 
-		public ScriptWriter(Configuration config, Dialect dialect, bool populateHardEnums, bool populateSoftEnums, bool qualifyNames)
+    	public ScriptWriter(Configuration config, Dialect dialect)
         {
             _config = config;
             _dialect = dialect;
-        	_qualifyNames = qualifyNames;
 
 			_qualifier = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
 			if (!string.IsNullOrEmpty(_qualifier))
 				_qualifier += ".";
-
-            _generators = new List<IDdlScriptGenerator>();
-
-            // the order of generator execution is important, so add the static generators first
-            _generators.Add(new RelationalSchemaGenerator());
-            if (populateHardEnums)
-            {
-                _generators.Add(new HardEnumValueInsertGenerator());
-            }
-            if (populateSoftEnums)
-            {
-                _generators.Add(new SoftEnumValueInsertGenerator());
-            }
-
-            // subsequently we can add extension generators, with uncontrolled ordering
-            foreach (IDdlScriptGenerator generator in (new DdlScriptGeneratorExtensionPoint().CreateExtensions()))
-            {
-                _generators.Add(generator);
-            }
         }
 
-        /// <summary>
+		/// <summary>
+		/// Gets or sets a value indicating whether names will be qualified in the output script.
+		/// </summary>
+    	public bool QualifyNames
+    	{
+			get { return _qualifyNames; }
+			set { _qualifyNames = value; }
+    	}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether scripts should be generated to populated hard enumerations.
+		/// </summary>
+    	public bool PopulateHardEnums
+    	{
+			get { return _populateHardEnums; }
+			set { _populateHardEnums = value; }
+    	}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether scripts should be generated to populated soft enumerations.
+		/// </summary>
+		public bool PopulateSoftEnums
+    	{
+			get { return _populateSoftEnums; }
+			set { _populateSoftEnums = value; }
+    	}
+
+		/// <summary>
+		/// Gets or sets the model to upgrade from.
+		/// </summary>
+		/// <remarks>
+		/// The default value is null, in which case scripts are generated to create the entire database from scratch.
+		/// If this property is set, scripts will be generated to upgrade from this model to the current model.
+		/// </remarks>
+    	public DatabaseSchemaInfo UpgradeFromModel
+    	{
+			get { return _upgradeFromModel; }
+			set { _upgradeFromModel = value; }
+    	}
+
+    	/// <summary>
         /// Writes a database creation script to the specified <see cref="TextWriter"/>
         /// </summary>
         /// <param name="sw"></param>
         public void WriteCreateScript(TextWriter sw)
         {
-            foreach (IDdlScriptGenerator gen in _generators)
+			foreach (IDdlScriptGenerator gen in GetGenerators())
             {
                 foreach (string script in gen.GenerateCreateScripts(_config, _dialect))
                 {
@@ -109,7 +132,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         /// <param name="sw"></param>
         public void WriteDropScript(StreamWriter sw)
         {
-            foreach (IDdlScriptGenerator gen in _generators)
+			foreach (IDdlScriptGenerator gen in GetGenerators())
             {
                 foreach (string script in gen.GenerateDropScripts(_config, _dialect))
                 {
@@ -117,6 +140,37 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 }
             }
         }
+
+		private List<IDdlScriptGenerator> GetGenerators()
+		{
+			List<IDdlScriptGenerator> generators = new List<IDdlScriptGenerator>();
+
+			// the order of generator execution is important, so add the static generators first
+
+			if(_upgradeFromModel == null)
+				generators.Add(new RelationalSchemaGenerator());
+			else 
+				generators.Add(new RelationalSchemaUpgradeGenerator(_upgradeFromModel));
+
+			if (_populateHardEnums)
+			{
+				// TODO: account for upgrades
+				generators.Add(new HardEnumValueInsertGenerator());
+			}
+			if (_populateSoftEnums)
+			{
+				// TODO: account for upgrades
+				generators.Add(new SoftEnumValueInsertGenerator());
+			}
+
+			// subsequently we can add extension generators, with uncontrolled ordering
+			// TODO: account for upgrades
+			foreach (IDdlScriptGenerator generator in (new DdlScriptGeneratorExtensionPoint().CreateExtensions()))
+			{
+				generators.Add(generator);
+			}
+			return generators;
+		}
 
 		private string RewriteQualifiers(string script)
 		{

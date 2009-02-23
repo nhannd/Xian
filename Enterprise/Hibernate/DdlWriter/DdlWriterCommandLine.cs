@@ -23,6 +23,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
         private string _outputFile;
     	private bool _qualifyNames = true;
     	private FormatOptions _format = FormatOptions.sql;
+    	private string _upgradeFromModelFile;
 
     	[CommandLineParameter("fki", "Specifies whether to auto-index all foreign keys.  Ignored unless /index is also specified.")]
         public bool AutoIndexForeignKeys
@@ -65,5 +66,12 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 			get { return _format; }
 			set { _format = value; }
     	}
+
+		[CommandLineParameter("upgrade", "u", "Specifies the name of a file that contains the model to upgrade from, in xml format.")]
+		public string UpgradeFromModelFile
+		{
+			get { return _upgradeFromModelFile; }
+			set { _upgradeFromModelFile = value; }
+		}
 	}
 }

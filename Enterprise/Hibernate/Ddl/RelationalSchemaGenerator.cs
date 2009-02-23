@@ -35,6 +35,7 @@ using System.Text;
 using NHibernate.Cfg;
 using NHibernate.Dialect;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Hibernate.Ddl.Model;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {

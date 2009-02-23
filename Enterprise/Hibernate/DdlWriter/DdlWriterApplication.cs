@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Hibernate.Ddl;
 using NHibernate.Dialect;
 using ClearCanvas.Common.Utilities;
 using NHibernate.Cfg;
+using ClearCanvas.Enterprise.Hibernate.Ddl.Model;
 
 namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 {
@@ -76,14 +77,24 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
         {
             try
             {
+				// load the persistent store defined by the current set of binaries
 				PersistentStore store = (PersistentStore)PersistentStoreRegistry.GetDefaultStore();
 
+				// run pre-processors
 				PreProcessor preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
 				preProcessor.Process(store);
 
+				// get config and dialect
 				Configuration config = store.Configuration;
-
             	Dialect dialect = Dialect.GetDialect(config.Properties);
+
+				// if this is an upgrade, load the model file
+            	DatabaseSchemaInfo upgradeFromModel = null;
+				if(!string.IsNullOrEmpty(cmdLine.UpgradeFromModelFile))
+				{
+					XmlWriter reader = new XmlWriter(config, dialect);
+					upgradeFromModel = reader.ReadModel(File.OpenText(cmdLine.UpgradeFromModelFile));
+				}
 
                 bool populateHardEnums = cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.all
                     || cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.hard;
@@ -92,13 +103,19 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 				switch(cmdLine.Format)
 				{
 					case DdlWriterCommandLine.FormatOptions.sql:
-						ScriptWriter scriptWriter = new ScriptWriter(config, dialect, populateHardEnums, populateSoftEnums, cmdLine.QualifyNames);
+						ScriptWriter scriptWriter = new ScriptWriter(config, dialect);
+						scriptWriter.PopulateHardEnums = populateHardEnums;
+						scriptWriter.PopulateSoftEnums = populateSoftEnums;
+						scriptWriter.QualifyNames = cmdLine.QualifyNames;
+						scriptWriter.UpgradeFromModel = upgradeFromModel;
 						scriptWriter.WriteCreateScript(writer);
 						break;
+
 					case DdlWriterCommandLine.FormatOptions.xml:
 						XmlWriter xmlWriter = new XmlWriter(config, dialect);
 						xmlWriter.WriteModel(writer);
 						break;
+
 					default:
 						throw new NotSupportedException(string.Format("{0} is not a valid output format.", cmdLine.Format));
 				}
