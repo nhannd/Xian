@@ -542,7 +542,7 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				if (_orderNoteViewComponent.HasNotesToBeAcknowledged)
+				if (_orderNoteViewComponent.HasUnacknowledgedNotes)
 				{
 					if (DialogBoxAction.No == this.Host.DesktopWindow.ShowMessageBox(SR.MessageProceedWithUnacknowledgedNotes, MessageBoxActions.YesNo))
 						return;
