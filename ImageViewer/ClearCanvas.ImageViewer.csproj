@@ -130,6 +130,10 @@
     <Compile Include="Graphics\InvariantLinePrimitive.cs" />
     <Compile Include="Graphics\ArrowGraphic.cs" />
     <Compile Include="InteractiveGraphics\CalloutGraphicAnnotationSerializer.cs" />
+    <Compile Include="InteractiveGraphics\CreateBoundableGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\CreateInteractiveGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\CreatePolygonGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\CreatePolyLineGraphicState.cs" />
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RectangleInteractiveGraphicAnnotationSerializer.cs" />

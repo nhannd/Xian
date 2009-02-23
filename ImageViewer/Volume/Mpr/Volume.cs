@@ -420,7 +420,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				//can only call Free once or it throws
 				_volArrayPinnedHandle.Free();
 				if (_cachedVtkVolume != null)
+				{
+					_cachedVtkVolume.GetPointData().Dispose();
 					_cachedVtkVolume.Dispose();
+				}
 			}
 		}
 

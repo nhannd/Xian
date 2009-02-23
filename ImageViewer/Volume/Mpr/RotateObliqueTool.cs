@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 	[GroupHint("activate", "Tools.Mpr.Manipulation.Rotate")]
 
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	//[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class RotateObliqueTool : MouseImageViewerTool
 	{
 		private MprImageViewerToolHelper _toolHelper;
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			_toolHelper = new MprImageViewerToolHelper(Context);
 
-			Visible = _toolHelper.GetMprLayoutManager() != null;
+			Visible = _toolHelper.GetObliqueDisplaySet() != null;
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
@@ -89,8 +89,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				PointF mouse = mouseInformation.Location;
 				double angle = Vector.SubtendedAngle(mouse, vertex, rotationAnchor);
 
-				int rotationX, rotationY, rotationZ;
-				_toolHelper.GetObliqueRotationAngles(out rotationX, out rotationY, out rotationZ);
+				MprDisplaySet obliqueDisplaySet = _toolHelper.GetObliqueDisplaySet();
+				int rotationX = obliqueDisplaySet.RotateAboutX;
+				int rotationY = obliqueDisplaySet.RotateAboutY;
+				int rotationZ = obliqueDisplaySet.RotateAboutZ;
 
 				if (_rotationAxis == 0)
 				{
@@ -111,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				_currentPinwheelGraphic.ResetCoordinateSystem();
 				_currentPinwheelGraphic.Draw();
 
-				_toolHelper.GetMprLayoutManager().RotateObliqueImage(_toolHelper.GetObliqueImage(), rotationX, rotationY, rotationZ);
+				obliqueDisplaySet.Rotate(rotationX, rotationY, rotationZ);
 				return true;
 			}
 
@@ -165,12 +167,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (selectedImage == null)
 				return;
 
-			if (!_toolHelper.IsAxialImage(selectedImage) && 
-				!_toolHelper.IsCoronalImage(selectedImage) && 
-				!_toolHelper.IsSaggittalImage(selectedImage))
-			{
+			if (!_toolHelper.IsMprImage(selectedImage))
 				return;
-			}
+
+			MprDisplaySet displaySet = (MprDisplaySet)selectedImage.ParentDisplaySet;
+			if (displaySet.Identifier == DisplaySetIdentifier.Oblique)
+				return;
 
 			IOverlayGraphicsProvider overlayProvider = selectedImage as IOverlayGraphicsProvider;
 			IImageGraphicProvider imageGraphicProvider = selectedImage as IImageGraphicProvider;
@@ -205,25 +207,30 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private void UpdateRotationAxis()
 		{
-			IPresentationImage selectedImage = base.Context.Viewer.SelectedPresentationImage;
-			MprLayoutManager layoutManager = _toolHelper.GetMprLayoutManager();
 			_rotationAxis = -1;
 
-			if (selectedImage != null && layoutManager != null)
-			{
-				if (_toolHelper.IsSaggittalImage(selectedImage))
-					_rotationAxis = 0; //x
-				else if (_toolHelper.IsCoronalImage(selectedImage))
-					_rotationAxis = 1; //y
-				else if (_toolHelper.IsAxialImage(selectedImage))
-					_rotationAxis = 2; //z
-			}
+			IPresentationImage selectedImage = base.Context.Viewer.SelectedPresentationImage;
+			if (selectedImage == null)
+				return;
+
+			MprDisplaySet displaySet = selectedImage.ParentDisplaySet as MprDisplaySet;
+			if (displaySet == null)
+				return;
+
+			if (displaySet.Identifier == DisplaySetIdentifier.Identity)
+				_rotationAxis = 0; //x
+			else if (displaySet.Identifier == DisplaySetIdentifier.OrthoX)
+				_rotationAxis = 1; //y
+			else if (displaySet.Identifier == DisplaySetIdentifier.OrthoY)
+				_rotationAxis = 2; //z
 		}
 
 		private int GetRotationAngle()
 		{
-			int rotationX, rotationY, rotationZ;
-			_toolHelper.GetObliqueRotationAngles(out rotationX, out rotationY, out rotationZ);
+			MprDisplaySet obliqueDisplaySet = _toolHelper.GetObliqueDisplaySet();
+			int rotationX = obliqueDisplaySet.RotateAboutX;
+			int rotationY = obliqueDisplaySet.RotateAboutY;
+			int rotationZ = obliqueDisplaySet.RotateAboutZ;
 
 			if (_rotationAxis == 0)
 				return rotationX;

@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// </remarks>
 	[DicomSerializableGraphicAnnotation(typeof(RoiGraphicAnnotationSerializer))]
 	[Cloneable]
-	public class RoiGraphic : StandardStatefulCompositeGraphic, IStandardStatefulInteractiveGraphic, IContextMenuProvider, IMemorable
+	public class RoiGraphic : StandardStatefulInteractiveGraphic, IContextMenuProvider, IMemorable
 	{
 		#region RoiGraphicMemento
 
@@ -102,19 +102,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region Private fields
 
-		private static readonly CursorToken _roiControlPointMoveCursor = new CursorToken(CursorToken.SystemCursors.Cross);
-		private static readonly Color _roiInactiveColor = Color.Yellow;
-		private static readonly Color _roiFocusedColor = Color.Orange;
-		private static readonly Color _roiSelectedColor = Color.Tomato;
-
 		[CloneIgnore]
 		private InteractiveGraphic _roiGraphic;
 		[CloneIgnore]
 		private CalloutGraphic _calloutGraphic;
-		[CloneIgnore]
-		private bool _selected = false;
-		[CloneIgnore]
-		private bool _focussed = false;
 		[CloneIgnore]
 		private bool _raiseRoiChangedEvent = true;
 		[CloneIgnore]
@@ -138,6 +129,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Initializes a new instance of <see cref="RoiGraphic"/> with the given <see cref="IRoiCalloutLocationStrategy"/>.
 		/// </summary>
 		public RoiGraphic(InteractiveGraphic graphic, IRoiCalloutLocationStrategy calloutLocationStrategy)
+			: base(graphic)
 		{
 			_roiGraphic = graphic;
 			Initialize(calloutLocationStrategy);
@@ -147,8 +139,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Cloning constructor.
 		/// </summary>
 		protected RoiGraphic(RoiGraphic source, ICloningContext context)
+			: base(source, context)
 		{
-			context.CloneFields(source, this);
 		}
 
 		/// <summary>
@@ -169,19 +161,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
         }
 
 		/// <summary>
-		/// Gets the colour of the <see cref="RoiGraphic"/>.
-		/// </summary>
-		public Color Color
-		{
-			get { return this.Roi.Color; }
-			private set 
-			{
-				this.Roi.Color = value;
-				this.Callout.Color = value;
-			}
-		}
-
-		/// <summary>
 		/// Occurs when the size or position of 
 		/// <see cref="RoiGraphic.Roi"/> has changed
 		/// </summary>
@@ -191,11 +170,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			remove { _roiChangedEvent -= value; }
 		}
 
-		protected bool IsStretching
-		{
-			get { return this.State is MoveControlPointGraphicState || this.State is CreateGraphicState; }
-		}
-
 		/// <summary>
 		/// Gets the cursor token to be shown at the current mouse position.
 		/// </summary>
@@ -203,18 +177,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns></returns>
 		public override CursorToken GetCursorToken(Point point)
 		{
-			CursorToken token = _roiGraphic.GetCursorToken(point);
-			if (token == null)
+			CursorToken returnToken = base.GetCursorToken(point);
+			if (returnToken == null)
 			{
-				token = _calloutGraphic.GetCursorToken(point);
-			}
-			else
-			{
-				if (this.IsStretching)
-					token = ((IInteractiveGraphic)this).StretchingToken;
+				if (_calloutGraphic.HitTest(point))
+					returnToken = MoveToken;
 			}
 
-			return token;
+			return returnToken;
 		}
 
 		/// <summary>
@@ -314,6 +284,36 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return new FocussedSelectedRoiGraphicState(this);
 		}
 
+		protected override void OnEnterCreateState(IMouseInformation mouseInformation)
+		{
+			_calloutGraphic.Color = FocusSelectedColor;
+			base.OnEnterFocusSelectedState(mouseInformation);
+		}
+
+		protected override void OnEnterFocusSelectedState(IMouseInformation mouseInformation)
+		{
+			_calloutGraphic.Color = FocusSelectedColor;
+			base.OnEnterFocusSelectedState(mouseInformation);
+		}
+
+		protected override void OnEnterFocusState(IMouseInformation mouseInformation)
+		{
+			_calloutGraphic.Color = FocusColor;
+			base.OnEnterFocusState(mouseInformation);
+		}
+
+		protected override void OnEnterInactiveState(IMouseInformation mouseInformation)
+		{
+			_calloutGraphic.Color = InactiveColor;
+			base.OnEnterInactiveState(mouseInformation);
+		}
+
+		protected override void OnEnterSelectedState(IMouseInformation mouseInformation)
+		{
+			_calloutGraphic.Color = SelectedColor;
+			base.OnEnterSelectedState(mouseInformation);
+		}
+
 		#endregion
 
 		private void Initialize(IRoiCalloutLocationStrategy calloutLocationStrategy)
@@ -357,7 +357,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Initialize(null);
 
 			//the roi and callout may have been selected, so we force the color to be yellow.
-			this.Color = _roiInactiveColor;
 			this.State = this.CreateInactiveState();
 		}
 
@@ -371,46 +370,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				if (!(compositeGraphic.SpatialTransform.ValidationPolicy is RoiTransformPolicy))
 					compositeGraphic.SpatialTransform.ValidationPolicy = new RoiTransformPolicy();
 			}
-		}
-
-		protected override void OnEnterInactiveState(IMouseInformation mouseInformation) {
-			base.OnEnterInactiveState(mouseInformation);
-
-			this.Color = _roiInactiveColor;
-			this.Roi.ControlPoints.Visible = false;
-			this.Draw();
-
-			Trace.Write("EnterInactiveState\n");
-		}
-
-		protected override void OnEnterFocusState(IMouseInformation mouseInformation) {
-			base.OnEnterFocusState(mouseInformation);
-
-			this.Color = _roiFocusedColor;
-			this.Roi.ControlPoints.Visible = true;
-			this.Draw();
-
-			Trace.Write("EnterFocusState\n");
-		}
-
-		protected override void OnEnterSelectedState(IMouseInformation mouseInformation) {
-			base.OnEnterSelectedState(mouseInformation);
-
-			this.Color = _roiSelectedColor;
-			this.Roi.ControlPoints.Visible = false;
-			this.Draw();
-
-			Trace.Write("EnterSelectedState\n");
-		}
-
-		protected override void OnEnterFocusSelectedState(IMouseInformation mouseInformation) {
-			base.OnEnterFocusSelectedState(mouseInformation);
-
-			this.Color = _roiSelectedColor;
-			this.Roi.ControlPoints.Visible = true;
-			this.Draw();
-
-			Trace.Write("EnterFocusSelectedState\n");
 		}
 
 		private void SetCalloutEndPoint()
@@ -484,41 +443,5 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			SetCalloutEndPoint();
 		}
-
-		#region IStandardStatefulInteractiveGraphic Members
-
-		InteractiveGraphic IStandardStatefulInteractiveGraphic.InteractiveGraphic {
-			get { return this.Roi; }
-		}
-
-		ControlPointGroup IInteractiveGraphic.ControlPoints {
-			get { return this.Roi.ControlPoints; }
-		}
-
-		Color IInteractiveGraphic.Color
-		{
-			get { return this.Color; }
-			set { throw new NotSupportedException("The color of a RoiGraphic is determined automatically by its state."); }
-		}
-
-		RectangleF IInteractiveGraphic.BoundingBox {
-			get { return this.Roi.BoundingBox; }
-		}
-
-		CursorToken IInteractiveGraphic.StretchingToken {
-			get { return this.Roi.StretchingToken ?? _roiControlPointMoveCursor; }
-			set { this.Roi.StretchingToken = value; }
-		}
-
-		StretchCursorTokenStrategy IInteractiveGraphic.StretchCursorTokenStrategy {
-			get { return this.Roi.StretchCursorTokenStrategy; }
-			set { this.Roi.StretchCursorTokenStrategy = value; }
-		}
-
-		PointF IInteractiveGraphic.GetClosestPoint(PointF point) {
-			return this.Roi.GetClosestPoint(point);
-		}
-
-		#endregion
 	}
 }

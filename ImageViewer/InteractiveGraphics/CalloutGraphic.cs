@@ -59,9 +59,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		[CloneIgnore]
 		private ArrowGraphic _lineGraphic;
 
-		[CloneCopyReference]
-		private CursorToken _moveToken;
-
 		#endregion
 
 		/// <summary>
@@ -136,20 +133,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _lineGraphic.ShowArrowhead = value; }
 		}
 
-		protected override void OnColorChanged(EventArgs e) {
-			base.OnColorChanged(e);
+		protected override void OnColorChanged() 
+		{
+			base.OnColorChanged();
 
 			_lineGraphic.Color = base.Color;
 			_textGraphic.Color = base.Color;
-		}
-
-		/// <summary>
-		/// Gets or sets the cursor token when the user moves the callout.
-		/// </summary>
-		public CursorToken MoveToken
-		{
-			get { return _moveToken; }
-			set { _moveToken = value; }
 		}
 
 		/// <summary>
@@ -214,19 +203,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return _textGraphic.HitTest(point) || _lineGraphic.HitTest(point);
         }
 
-		/// <summary>
-		/// This method overrides <see cref="StatefulCompositeGraphic.GetCursorToken"/>.
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-		public override CursorToken GetCursorToken(Point point)
-		{
-			if (this.HitTest(point))
-				return this.MoveToken;
-
-			return null;
-		}
-
 		private void Initialize()
 		{
 			if (_textGraphic == null)
@@ -243,9 +219,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.Graphics.Add(_lineGraphic);
 				_lineGraphic.LineStyle = LineStyle.Dash;
 			}
-
-			if (_moveToken == null)
-				_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 		}
 
 		[OnCloneComplete]

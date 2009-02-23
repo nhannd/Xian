@@ -1,42 +1,119 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 
-namespace ClearCanvas.ImageViewer.InteractiveGraphics {
-	public delegate GraphicState CreateGraphicStateDelegate(IStandardStatefulGraphic statefulGraphic);
-
-	public interface IStandardStatefulInteractiveGraphic : IStandardStatefulGraphic, IInteractiveGraphic {
+namespace ClearCanvas.ImageViewer.InteractiveGraphics
+{
+	public interface IStandardStatefulInteractiveGraphic : IStandardStatefulGraphic, IInteractiveGraphic
+	{
 		InteractiveGraphic InteractiveGraphic { get; }
 	}
 
+	// TODO: instead of this wrapping a single interactive graphic, can we make it a state controller for collections
+	// of interactive graphics?
+
+	//TODO: how do we set it's initial state (e.g. inactive).  Is it always up to client code?  Doing it in constructor wouldn't work right.
+	//TODO: how do we control the initial 'entry point' state?  Should it be restricted to Create or Inactive?
+
 	[Cloneable]
-	public class StandardStatefulInteractiveGraphic : StandardStatefulCompositeGraphic, IStandardStatefulInteractiveGraphic
+	public class StandardStatefulInteractiveGraphic : StandardStatefulCompositeGraphic, IStandardStatefulInteractiveGraphic, ICursorTokenProvider
 	{
+		protected static readonly Color DefaultFocusColor = Color.Orange;
+		protected static readonly Color DefaultFocusSelectedColor = Color.Tomato;
+		protected static readonly Color DefaultSelectedColor = Color.Tomato;
+		protected static readonly Color DefaultInactiveColor = Color.Yellow;
+
+		[CloneCopyReference]
+		private Color _focusColor = DefaultFocusColor;
+		[CloneCopyReference]
+		private Color _focusSelectedColor = DefaultFocusSelectedColor;
+		[CloneCopyReference]
+		private Color _selectedColor = DefaultSelectedColor;
+		[CloneCopyReference]
+		private Color _inactiveColor = DefaultInactiveColor;
+
+		[CloneCopyReference]
+		private CursorToken _moveToken;
+		[CloneCopyReference]
+		private CursorToken _stretchingToken;
+		private StretchCursorTokenStrategy _stretchCursorTokenStrategy;
+
 		[CloneIgnore]
 		private InteractiveGraphic _interactiveGraphic;
 
-		private CreateGraphicStateDelegate _createInactiveStateDelegate;
-		private CreateGraphicStateDelegate _createSelectedStateDelegate;
-		private CreateGraphicStateDelegate _createFocusedStateDelegate;
-		private CreateGraphicStateDelegate _createFocusedSelectedStateDelegate;
 
-		public StandardStatefulInteractiveGraphic(InteractiveGraphic interactiveGraphic) {
+		public StandardStatefulInteractiveGraphic(InteractiveGraphic interactiveGraphic)
+			: base()
+		{
 			base.Graphics.Add(_interactiveGraphic = interactiveGraphic);
+			Initialize();
 		}
 
-		protected StandardStatefulInteractiveGraphic(StandardStatefulInteractiveGraphic source, ICloningContext context) {
+		protected StandardStatefulInteractiveGraphic(StandardStatefulInteractiveGraphic source, ICloningContext context)
+			: base()
+		{
 			context.CloneFields(source, this);
 		}
 
 		[OnCloneComplete]
-		private void OnCloneComplete() {
+		private void OnCloneComplete()
+		{
 			_interactiveGraphic = FindInteractiveGraphic();
 
 			this.State = this.CreateInactiveState();
+
+			Initialize();
+		}
+
+		private void Initialize()
+		{
+			if (_moveToken == null)
+				_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
+
+			if (_stretchingToken == null)
+				_stretchingToken = new CursorToken(CursorToken.SystemCursors.Cross);
+
+			if (_stretchCursorTokenStrategy == null)
+				_stretchCursorTokenStrategy = new CompassStretchCursorTokenStrategy();
+
+			_stretchCursorTokenStrategy.TargetGraphic = this;
+		}
+
+		public Color FocusColor
+		{
+			get { return _focusColor; }
+			set { _focusColor = value; }
+		}
+
+		public Color SelectedColor
+		{
+			get { return _selectedColor; }
+			set { _selectedColor = value; }
+		}
+
+		public Color FocusSelectedColor
+		{
+			get { return _focusSelectedColor; }
+			set { _focusSelectedColor = value; }
+		}
+
+		public Color InactiveColor
+		{
+			get { return _inactiveColor; }
+			set { _inactiveColor = value; }
+		}
+
+		public InteractiveGraphic InteractiveGraphic
+		{
+			get { return _interactiveGraphic; }
+		}
+
+		protected bool IsStretching
+		{
+			get { return this.State is MoveControlPointGraphicState || this.State is CreateGraphicState; }
 		}
 
 		protected virtual InteractiveGraphic FindInteractiveGraphic()
@@ -44,124 +121,134 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics {
 			return CollectionUtils.SelectFirst(base.Graphics, delegate(IGraphic test) { return test is InteractiveGraphic; }) as InteractiveGraphic;
 		}
 
-		public InteractiveGraphic InteractiveGraphic {
-			get { return _interactiveGraphic; }
-		}
-
-		public CreateGraphicStateDelegate CreateInactiveStateDelegate
+		protected override void OnEnterInactiveState(IMouseInformation mouseInformation)
 		{
-			get { return _createInactiveStateDelegate; }
-			set { _createInactiveStateDelegate = value; }
-		}
-
-		public CreateGraphicStateDelegate CreateSelectedStateDelegate
-		{
-			get { return _createSelectedStateDelegate; }
-			set { _createSelectedStateDelegate = value; }
-		}
-
-		public CreateGraphicStateDelegate CreateFocusedStateDelegate
-		{
-			get { return _createFocusedStateDelegate; }
-			set { _createFocusedStateDelegate = value; }
-		}
-
-		public CreateGraphicStateDelegate CreateFocusedSelectedStateDelegate
-		{
-			get { return _createFocusedSelectedStateDelegate; }
-			set { _createFocusedSelectedStateDelegate = value; }
-		}
-
-		protected override void OnEnterInactiveState(IMouseInformation mouseInformation) {
 			_interactiveGraphic.ControlPoints.Visible = false;
-			_interactiveGraphic.Color = Color.Yellow;
+			_interactiveGraphic.Color = InactiveColor;
 
 			base.OnEnterInactiveState(mouseInformation);
 		}
 
-		protected override void OnEnterFocusState(IMouseInformation mouseInformation) {
+		protected override void OnEnterFocusState(IMouseInformation mouseInformation)
+		{
 			_interactiveGraphic.ControlPoints.Visible = true;
-			_interactiveGraphic.Color = Color.Orange;
+			_interactiveGraphic.Color = FocusColor;
 
 			base.OnEnterFocusState(mouseInformation);
 		}
 
-		protected override void OnEnterSelectedState(IMouseInformation mouseInformation) {
+		protected override void OnEnterSelectedState(IMouseInformation mouseInformation)
+		{
 			_interactiveGraphic.ControlPoints.Visible = false;
-			_interactiveGraphic.Color = Color.Tomato;
+			_interactiveGraphic.Color = FocusSelectedColor;
 
 			base.OnEnterSelectedState(mouseInformation);
 		}
 
-		protected override void OnEnterFocusSelectedState(IMouseInformation mouseInformation) {
+		protected override void OnEnterFocusSelectedState(IMouseInformation mouseInformation)
+		{
 			_interactiveGraphic.ControlPoints.Visible = true;
-			_interactiveGraphic.Color = Color.Tomato;
+			_interactiveGraphic.Color = FocusSelectedColor;
 
 			base.OnEnterFocusSelectedState(mouseInformation);
 		}
 
-		public override GraphicState CreateInactiveState() {
-			if (_createInactiveStateDelegate != null)
-				return _createInactiveStateDelegate(this);
-			return base.CreateInactiveState();
+		protected override void OnEnterCreateState(IMouseInformation mouseInformation)
+		{
+			_interactiveGraphic.ControlPoints.Visible = true;
+			_interactiveGraphic.Color = FocusSelectedColor;
+
+			base.OnEnterCreateState(mouseInformation);
 		}
 
-		public override GraphicState CreateSelectedState() {
-			if (_createSelectedStateDelegate != null)
-				return _createSelectedStateDelegate(this);
-			return base.CreateSelectedState();
+		public override GraphicState CreateFocussedSelectedState()
+		{
+			return new FocussedSelectedInteractiveGraphicState(this);
 		}
 
-		public override GraphicState CreateFocussedState() {
-			if (_createFocusedStateDelegate != null)
-				return _createFocusedStateDelegate(this);
-			return base.CreateFocussedState();
+		#region ICursorTokenProvider
+
+		/// <summary>
+		/// Gets the cursor token to be shown at the current mouse position.		
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
+		public virtual CursorToken GetCursorToken(Point point)
+		{
+			if (IsStretching)
+				return StretchingToken;
+
+			if (ControlPoints.HitTest(point))
+			{
+				if (StretchCursorTokenStrategy != null)
+					return StretchCursorTokenStrategy.GetCursorToken(point);
+			}
+
+			if (InteractiveGraphic.HitTest(point))
+				return MoveToken;
+
+			return null;
 		}
 
-		public override GraphicState CreateFocussedSelectedState() {
-			if (_createFocusedSelectedStateDelegate != null)
-				return _createFocusedSelectedStateDelegate(this);
-			return base.CreateFocussedSelectedState();
-		}
+		#endregion
 
 		#region IInteractiveGraphic Members
 
-		public ControlPointGroup ControlPoints {
+		public ControlPointGroup ControlPoints
+		{
 			get { return this.InteractiveGraphic.ControlPoints; }
 		}
 
-		public Color Color {
+		public Color Color
+		{
 			get { return this.InteractiveGraphic.Color; }
-			set { this.InteractiveGraphic.Color = value; }
 		}
 
-		public RectangleF BoundingBox {
+		Color IInteractiveGraphic.Color
+		{
+			get { return this.Color; }
+			set { throw new InvalidOperationException("The colour is set internally as the state changes."); }
+		}
+
+		public RectangleF BoundingBox
+		{
 			get { return this.InteractiveGraphic.BoundingBox; }
 		}
 
-		public ClearCanvas.Desktop.CursorToken StretchingToken {
-			get { return this.InteractiveGraphic.StretchingToken; }
-			set { this.InteractiveGraphic.StretchingToken = value; }
-		}
-
-		public StretchCursorTokenStrategy StretchCursorTokenStrategy {
-			get { return this.InteractiveGraphic.StretchCursorTokenStrategy; }
-			set { this.InteractiveGraphic.StretchCursorTokenStrategy = value; }
-		}
-
-		public PointF GetClosestPoint(PointF point) {
+		public PointF GetClosestPoint(PointF point)
+		{
 			return this.InteractiveGraphic.GetClosestPoint(point);
 		}
 
 		#endregion
 
+		public CursorToken MoveToken
+		{
+			get { return _moveToken; }
+			set { _moveToken = value; }
+		}
+
+		public CursorToken StretchingToken
+		{
+			get { return _stretchingToken; }
+			set { _stretchingToken = value; }
+		}
+
+		public StretchCursorTokenStrategy StretchCursorTokenStrategy
+		{
+			get { return _stretchCursorTokenStrategy; }
+			set { _stretchCursorTokenStrategy = value; }
+		}
+
 		#region IMemorable Members
 
-		public object CreateMemento() {
+		public object CreateMemento()
+		{
 			return this.InteractiveGraphic.CreateMemento();
 		}
 
-		public void SetMemento(object memento) {
+		public void SetMemento(object memento)
+		{
 			this.InteractiveGraphic.SetMemento(memento);
 		}
 
@@ -169,10 +256,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics {
 	}
 
 	[Cloneable]
-	public class StandardStatefulInteractiveGraphic<T> : StandardStatefulInteractiveGraphic, IStandardStatefulInteractiveGraphic where T : InteractiveGraphic, new() {
-		public StandardStatefulInteractiveGraphic() : base(new T()) {}
+	public class StandardStatefulInteractiveGraphic<T> : StandardStatefulInteractiveGraphic, IStandardStatefulInteractiveGraphic where T : InteractiveGraphic, new()
+	{
+		public StandardStatefulInteractiveGraphic() : base(new T()) { }
 
-		public StandardStatefulInteractiveGraphic(T interactiveGraphic) : base(interactiveGraphic) {}
+		public StandardStatefulInteractiveGraphic(T interactiveGraphic) : base(interactiveGraphic) { }
 
 		protected StandardStatefulInteractiveGraphic(StandardStatefulInteractiveGraphic<T> source, ICloningContext context)
 			: base(source, context)
@@ -180,7 +268,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics {
 			context.CloneFields(source, this);
 		}
 
-		public new T InteractiveGraphic {
+		public new T InteractiveGraphic
+		{
 			get { return (T)base.InteractiveGraphic; }
 		}
 
@@ -189,7 +278,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics {
 			get { return base.InteractiveGraphic; }
 		}
 
-		protected override InteractiveGraphic FindInteractiveGraphic() {
+		protected override InteractiveGraphic FindInteractiveGraphic()
+		{
 			return CollectionUtils.SelectFirst(base.Graphics, delegate(IGraphic test) { return test is T; }) as T;
 		}
 	}

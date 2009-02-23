@@ -18,21 +18,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
 
-	[GroupHint("activate", "Tools.Mpr.Creation")]
-
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class DefineObliqueTool : MouseImageViewerTool
 	{
 		private MprImageViewerToolHelper _toolHelper;
-		private PolyLineInteractiveGraphic _polyLine;
+		private StandardStatefulInteractiveGraphic _polyLine;
 		private CompositeUndoableCommand _undoableCommand;
+		private bool _visible;
 
 		public DefineObliqueTool()
 		{
 			base.Behaviour = MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
 
-		private bool _visible;
 		public event EventHandler VisibleChanged;
 
 		public bool Visible
@@ -54,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			_toolHelper = new MprImageViewerToolHelper(Context);
 
-			Visible = _toolHelper.GetMprLayoutManager() != null;
+			Visible = IsValidImage(this.SelectedPresentationImage);
 		}
 
 		private void RemoveGraphic()
@@ -81,11 +79,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
 			RemoveGraphic();
+			Visible = IsValidImage(this.SelectedPresentationImage);
 		}
 
 		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
 			RemoveGraphic();
+			Visible = IsValidImage(this.SelectedPresentationImage);
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
@@ -104,7 +104,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (provider == null)
 				return false;
 
-			_polyLine = new PolyLineInteractiveGraphic(true, 2);
+			_polyLine = new StandardStatefulInteractiveGraphic(new PolyLineInteractiveGraphic(2));
+			_polyLine.InactiveColor = Color.MediumBlue;
+			_polyLine.FocusColor = Color.LightBlue;
+			_polyLine.SelectedColor = Color.Blue;
+			_polyLine.FocusSelectedColor = Color.Blue;
+
+			_polyLine.State = new CreatePolyLineGraphicState(_polyLine);
+
 			_undoableCommand = new CompositeUndoableCommand();
 			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(_polyLine, provider.OverlayGraphics, provider.OverlayGraphics.Count));
 			_undoableCommand.Execute();
@@ -142,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnY,
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnZ);
 
-			_toolHelper.GetMprLayoutManager().SetObliqueCutLine(orientationColumn, orientationRow, startPatient, endPatient);
+			_toolHelper.GetObliqueDisplaySet().SetCutLine(orientationColumn, orientationRow, startPatient, endPatient);
 		}
 
 		public override bool Track(IMouseInformation mouseInformation)
@@ -161,6 +168,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (_polyLine.Stop(mouseInformation))
 				return true;
 
+			RemoveGraphic();
 			return false;
 		}
 
@@ -181,12 +189,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Select();
 		}
 
+		public override CursorToken GetCursorToken(Point point)
+		{
+			if (_polyLine != null)
+				return _polyLine.GetCursorToken(point);
+
+			return null;
+		}
+
 		private bool IsValidImage(IPresentationImage image)
 		{
-			return image != null && (
-			          	_toolHelper.IsAxialImage(image) ||
-			          	_toolHelper.IsCoronalImage(image) ||
-			          	_toolHelper.IsSaggittalImage(image));
+			return _toolHelper.IsIdentityImage(image);
 		}
 	}
 }

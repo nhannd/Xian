@@ -35,11 +35,10 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public interface IInteractiveGraphic : IGraphic, IMemorable, ICursorTokenProvider
+	public interface IInteractiveGraphic : IGraphic, IMemorable
 	{
 		/// <summary>
 		/// A group of control points.
@@ -55,18 +54,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Gets the graphic's tightest bounding box.
 		/// </summary>
 		RectangleF BoundingBox { get; }
-
-		/// <summary>
-		/// Gets or sets the <see cref="CursorToken"/> that should be shown when stretching
-		/// this graphic.
-		/// </summary>
-		CursorToken StretchingToken { get; set; }
-
-		/// <summary>
-		/// Gets or sets the <see cref="CursorToken"/> that should be shown to indicate
-		/// that the operation performed at a given point will be a stretch operation.
-		/// </summary>
-		StretchCursorTokenStrategy StretchCursorTokenStrategy { get; set; }
 
 		/// <summary>
 		/// Gets the point on the graphic closest to the specified point.
@@ -85,10 +72,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	{
 		[CloneIgnore]
 		private ControlPointGroup _controlPointGroup;
-
-		[CloneCopyReference]
-		private CursorToken _stretchingToken;
-		private StretchCursorTokenStrategy _stretchCursorTokenStrategy;
 
 		/// <summary>
 		/// Cloning constructor.
@@ -125,37 +108,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				if (_controlPointGroup.Color != value)
 				{
 					_controlPointGroup.Color = value;
-					OnColorChanged(new EventArgs());
+					OnColorChanged();
 				}
 			}
 		}
 
-		protected virtual void OnColorChanged(EventArgs e) {}
+		protected virtual void OnColorChanged()
+		{
+		}
 
 		/// <summary>
 		/// Gets the graphic's tightest bounding box.
 		/// </summary>
 		public abstract RectangleF BoundingBox { get; }
-
-		/// <summary>
-		/// Gets or sets the <see cref="CursorToken"/> that should be shown when stretching
-		/// this graphic.
-		/// </summary>
-		public CursorToken StretchingToken
-		{
-			get { return _stretchingToken; }
-			set { _stretchingToken = value; }
-		}
-
-		/// <summary>
-		/// Gets or sets the <see cref="CursorToken"/> that should be shown to indicate
-		/// that the operation performed at a given point will be a stretch operation.
-		/// </summary>
-		public StretchCursorTokenStrategy StretchCursorTokenStrategy
-		{
-			get { return _stretchCursorTokenStrategy; }
-			set { _stretchCursorTokenStrategy = value; }
-		}
 
 		#region IMemorable Members
 
@@ -173,29 +138,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
-		/// <summary>
-		/// Gets the cursor token to be shown at the current mouse position.		
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-		public virtual CursorToken GetCursorToken(Point point)
-		{
-			CursorToken returnToken = null;
-
-			if (_controlPointGroup.HitTest(point))
-			{
-				returnToken = this.StretchingToken;
-
-				if (_stretchCursorTokenStrategy != null)
-				{
-					CursorToken indicatorToken = _stretchCursorTokenStrategy.GetCursorToken(point);
-					if (indicatorToken != null)
-						returnToken = indicatorToken;
-				}
-			}
-
-			return returnToken;
-		}
 		
 		/// <summary>
 		/// Gets the point on the graphic closest to the specified point.
@@ -232,14 +174,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			// Make sure we know when the control points change
 			_controlPointGroup.ControlPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnControlPointChanged);
-
-			if (_stretchingToken == null)
-				_stretchingToken = new CursorToken(CursorToken.SystemCursors.Cross);
-
-			if (_stretchCursorTokenStrategy == null)
-				_stretchCursorTokenStrategy = new CompassStretchCursorTokenStrategy();
-
-			_stretchCursorTokenStrategy.TargetGraphic = this;
 		}
 
 		[OnCloneComplete]

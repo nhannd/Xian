@@ -55,9 +55,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	[GroupHint("activate", "Tools.Mpr.Manipulation.Rotate")]
 	// Note: I don't expect this to be a real tool in the long run, this was just an easy way to enable
 	//	and test oblique slicing
-	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
+	//[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class RotateMprTool : MouseImageViewerTool
 	{
+		private MprImageViewerToolHelper _toolHelper;
+
 		public RotateMprTool()
 		{
 			this.CursorToken = new CursorToken("Icons.RotateMprToolSmall.png", this.GetType().Assembly);
@@ -110,9 +112,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private Point _mouseDownLocation;
 		private bool _lockedIn;
 		private bool _lockedX; // otherwise Y
+		private MprDisplaySet _obliqueDisplaySet;
 		private static int _startRotateX;
 		private static int _startRotateY;
 		private static int _startRotateZ;
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			_toolHelper = new MprImageViewerToolHelper(Context);
+		}
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
@@ -121,13 +131,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_mouseDownLocation = mouseInformation.Location;
 			_lockedIn = false;
 
-			MprLayoutManager layout = GetMprLayoutManager();
-			if (layout == null)
-				return true;
-			_startRotateX = layout.GetObliqueImageRotationX(Context.Viewer.SelectedPresentationImage);
-			_startRotateY = layout.GetObliqueImageRotationY(Context.Viewer.SelectedPresentationImage);
-			_startRotateZ = layout.GetObliqueImageRotationZ(Context.Viewer.SelectedPresentationImage);
+			_obliqueDisplaySet = _toolHelper.GetObliqueDisplaySet();
+			if (_obliqueDisplaySet == null)
+				return false;
 
+			_startRotateX = _obliqueDisplaySet.RotateAboutX;
+			_startRotateY = _obliqueDisplaySet.RotateAboutY;
+			_startRotateZ = _obliqueDisplaySet.RotateAboutZ;
+			
 			return true;
 		}
 
@@ -135,9 +146,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			base.Track(mouseInformation);
 
-			MprLayoutManager layout = GetMprLayoutManager();
-			if (layout == null)
-				return true;
+			if (_obliqueDisplaySet == null)
+				return false;
 
 			Point Delta = new Point(mouseInformation.Location.X - _mouseDownLocation.X,
 			                        mouseInformation.Location.Y - _mouseDownLocation.Y);
@@ -148,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (shiftKeystate.IsPressed)
 			{
 				int currentRotateZ = Math.Max(Math.Min(_startRotateZ - Delta.Y / 4, 90), -90);
-				layout.RotateObliqueImage(Context.Viewer.SelectedPresentationImage, _startRotateX, _startRotateY, currentRotateZ);
+				_obliqueDisplaySet.Rotate(_startRotateX, _startRotateY, currentRotateZ);
 			}
 			else
 			{
@@ -166,12 +176,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					if (_lockedX)
 					{
 						int currentRotateX = Math.Max(Math.Min(_startRotateX + Delta.X / 4, 90), -90);
-						layout.RotateObliqueImage(Context.Viewer.SelectedPresentationImage, currentRotateX, _startRotateY, _startRotateZ);
+						_obliqueDisplaySet.Rotate(currentRotateX, _startRotateY, _startRotateZ);
 					}
 					else
 					{
 						int currentRotateY = Math.Max(Math.Min(_startRotateY + Delta.Y / 4, 90), -90);
-						layout.RotateObliqueImage(Context.Viewer.SelectedPresentationImage, _startRotateX, currentRotateY, _startRotateZ);
+						_obliqueDisplaySet.Rotate(_startRotateX, currentRotateY, _startRotateZ);
 					}
 				}
 #else
@@ -183,22 +193,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return true;
 		}
 
-		private MprLayoutManager GetMprLayoutManager()
-		{
-			IPresentationImage selectedImage = this.Context.Viewer.SelectedPresentationImage;
-
-			DicomGrayscalePresentationImage presImage = selectedImage as DicomGrayscalePresentationImage;
-			if (presImage == null) return null;
-			MprImageViewerComponent ivc = presImage.ImageViewer as MprImageViewerComponent;
-			if (ivc == null) return null;
-			MprLayoutManager layout = ivc.LayoutManager as MprLayoutManager;
-			return layout;
-		}
-
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
 			base.Stop(mouseInformation);
-
+			_obliqueDisplaySet = null;
 			return false;
 		}
 

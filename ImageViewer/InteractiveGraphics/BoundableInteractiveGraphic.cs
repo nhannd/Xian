@@ -53,8 +53,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		
 		[CloneIgnore]
 		private BoundableGraphic _boundableGraphic;
-		[CloneCopyReference]
-		private CursorToken _moveToken;
 
 		private bool _settingControlPoints;
 
@@ -162,16 +160,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets the <see cref="CursorToken"/> that should be shown
-		/// when moving this graphic.
-		/// </summary>
-		public CursorToken MoveToken
-		{
-			get { return _moveToken; }
-			set { _moveToken = value; }
-		}
-
 		private BoundableGraphic BoundableGraphic
 		{
 			get { return _boundableGraphic; }
@@ -231,25 +219,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.TopLeft += delta;
 			this.BottomRight += delta;
 #endif
-		}
-
-		/// <summary>
-		/// Gets the cursor token to be shown at the current mouse position.
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-		public override CursorToken GetCursorToken(Point point)
-		{
-			CursorToken token = base.GetCursorToken(point);
-			if (token == null)
-			{
-				if (this.HitTest(point))
-				{
-					token = this.MoveToken;
-				}
-			}
-
-			return token;
 		}
 
 		/// <summary>
@@ -354,9 +323,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				base.ControlPoints.Add(new PointF(0, 0));
 
 			_settingControlPoints = false;
-
-			if (_moveToken == null)
-				_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 
 			if (_boundableGraphic == null)
 			{

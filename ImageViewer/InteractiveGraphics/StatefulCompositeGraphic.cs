@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// A <see cref="CompositeGraphic"/> with state.
 	/// </summary>
 	[Cloneable(true)]
-	public abstract class StatefulCompositeGraphic : CompositeGraphic, IStatefulGraphic, IMouseButtonHandler, ICursorTokenProvider
+	public abstract class StatefulCompositeGraphic : CompositeGraphic, IStatefulGraphic, IMouseButtonHandler
 	{
 		private event EventHandler<GraphicStateChangedEventArgs> _stateChangedEvent;
 
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					EventsHelper.Fire(_stateChangedEvent, this, args);
 				}
 
-				Trace.Write(_state.ToString());
+				Trace.WriteLine(_state.ToString());
 			}
 		}
 
@@ -111,15 +111,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		protected virtual void OnStateChanged(GraphicStateChangedEventArgs e) {}
-
-		private IEnumerable<InteractiveGraphic> GetChildInteractiveGraphics()
-		{
-			foreach (IGraphic graphic in base.Graphics)
-			{
-				if (graphic is InteractiveGraphic)
-					yield return (InteractiveGraphic)graphic;
-			}
-		}
 
 		#region IMouseButtonHandler Members
 
@@ -189,28 +180,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public MouseButtonHandlerBehaviour Behaviour
 		{
 			get { return this.State.Behaviour; }
-		}
-
-		#endregion
-
-		#region ICursorTokenProvider Members
-
-		/// <summary>
-		/// Gets the cursor token to be shown at the current mouse position.
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-		public virtual CursorToken GetCursorToken(Point point)
-		{
-			CursorToken returnToken = null;
-
-			foreach (InteractiveGraphic graphic in GetChildInteractiveGraphics())
-			{
-				if ((returnToken = graphic.GetCursorToken(point)) != null)
-					break;
-			}
-
-			return returnToken;
 		}
 
 		#endregion

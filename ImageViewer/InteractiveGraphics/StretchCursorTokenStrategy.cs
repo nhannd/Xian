@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	public abstract class StretchCursorTokenStrategy : ICursorTokenProvider
 	{
 		[CloneIgnore]
-		private InteractiveGraphic _targetGraphic;
+		private IInteractiveGraphic _targetGraphic;
 
 		/// <summary>
 		/// Protected constructor.
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// The target <see cref="Graphic"/> for which the <see cref="CursorToken"/>
 		/// is to be determined.
 		/// </summary>
-		protected internal InteractiveGraphic TargetGraphic
+		protected internal IInteractiveGraphic TargetGraphic
 		{
 			get { return _targetGraphic; }
 			internal set { _targetGraphic = value; }

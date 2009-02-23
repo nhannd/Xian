@@ -50,9 +50,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		[CloneIgnore]
 		private SnapPointGraphic _snapPoint;
 
-		[CloneCopyReference]
-		private CursorToken _designToken;
-
 		private bool _polygonIsClosed = false;
 		private bool _moveInProgress = false;
 
@@ -61,7 +58,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public PolygonInteractiveGraphic() : base(int.MaxValue)
 		{
-			_designToken = new CursorToken(CursorToken.SystemCursors.Cross);
 		}
 
 		/// <summary>
@@ -79,15 +75,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			add { _polygonClosed += value; }
 			remove { _polygonClosed -= value; }
-		}
-
-		/// <summary>
-		/// Gets or sets a <see cref="CursorToken"/> to show when the polygon has not yet been completely defined.
-		/// </summary>
-		public CursorToken DesignToken
-		{
-			get { return _designToken; }
-			set { _designToken = value; }
 		}
 
 		/// <summary>
@@ -139,18 +126,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.PolyLine[this.PolyLine.Count - 1] = this.PolyLine[0];
 
 			EventsHelper.Fire(_polygonClosed, this, new EventArgs());
-		}
-
-		/// <summary>
-		/// Gets the cursor token to be shown at the current mouse position.
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-		public override CursorToken GetCursorToken(Point point)
-		{
-			if (!_polygonIsClosed)
-				return _designToken;
-			return base.GetCursorToken(point);
 		}
 
 		/// <summary>

@@ -29,47 +29,55 @@
 
 #endregion
 
-using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 
-namespace ClearCanvas.ImageViewer.Tools.Measurement.States
+namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class CreateBoundableGraphicState : CreateGraphicState
+	public class CreatePolyLineGraphicState : CreateInteractiveGraphicState
 	{
 		private int _controlPointIndex;
-		private int _numberOfPointsAnchored = 1;
+		private int _numberOfPointsAnchored = 0;
 
 		// Create a graphic object
-		public CreateBoundableGraphicState(IStandardStatefulInteractiveGraphic standardStatefulInteractiveGraphic)
+		public CreatePolyLineGraphicState(IStandardStatefulInteractiveGraphic standardStatefulInteractiveGraphic)
 			: base(standardStatefulInteractiveGraphic)
 		{
-			// This control point index corresponds to the bottom right control point
-			_controlPointIndex = 3;
+			_controlPointIndex = 1;
 		}
 
-		private BoundableInteractiveGraphic InteractiveGraphic
+		protected new PolyLineInteractiveGraphic InteractiveGraphic
 		{
-			get { return ((IStandardStatefulInteractiveGraphic)base.StatefulGraphic).InteractiveGraphic as BoundableInteractiveGraphic; }
+			get { return ((IStandardStatefulInteractiveGraphic)base.StatefulGraphic).InteractiveGraphic as PolyLineInteractiveGraphic; }
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
+			_numberOfPointsAnchored++;
+
 			// We just started creating
 			if (_numberOfPointsAnchored == 1)
 			{
 				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
 				this.InteractiveGraphic.ControlPoints[0] = mouseInformation.Location;
-				this.InteractiveGraphic.ControlPoints[3] = mouseInformation.Location;
+				this.InteractiveGraphic.ControlPoints[1] = mouseInformation.Location;
 				this.InteractiveGraphic.ResetCoordinateSystem();
-
-				_numberOfPointsAnchored++;
 			}
 				// We're done creating
-			else
+			else if (_numberOfPointsAnchored == this.InteractiveGraphic.MaximumAnchorPoints)
 			{
 				this.StatefulGraphic.State = this.StatefulGraphic.CreateFocussedSelectedState();
+			}
+				// We're in the middle of creating
+			else if (_numberOfPointsAnchored >= 2 && this.InteractiveGraphic.MaximumAnchorPoints > 2)
+			{
+				this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
+				this.InteractiveGraphic.PolyLine.Add(mouseInformation.Location);
+				this.InteractiveGraphic.ControlPoints.Add(mouseInformation.Location);
+				this.InteractiveGraphic.ResetCoordinateSystem();
+
+				_controlPointIndex = this.InteractiveGraphic.ControlPoints.Count - 1;
 			}
 
 			return true;

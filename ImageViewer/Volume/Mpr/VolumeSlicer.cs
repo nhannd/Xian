@@ -304,13 +304,21 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Create DisplaySet utilities
 
+		//TODO: resolve naming before plane is set.
 		public DisplaySet CreateDisplaySet(string displaySetName)
 		{
-			DisplaySet displaySet = new DisplaySet(String.Format("MPR ({0})", displaySetName),
-			                                       String.Format("{0}.{1}", displaySetName, Guid.NewGuid()));
+			string name = String.Format("MPR ({0})", displaySetName);
+			DisplaySet displaySet = new DisplaySet(name, Guid.NewGuid().ToString(), name);
+			PopulateDisplaySet(displaySet);
+			return displaySet;
+		}
 
-			// A new series UID for our new Sops
-			string seriesInstanceUid = DicomUid.GenerateUid().UID;
+		internal void PopulateDisplaySet(IDisplaySet displaySet)
+		{
+			foreach (IPresentationImage image in displaySet.PresentationImages)
+				image.Dispose();
+
+			displaySet.PresentationImages.Clear();
 
 			// Slice through this point
 			Vector3D throughPoint;
@@ -333,7 +341,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// This uses the diagonal of the largest ortho plane, was still a bit too much for my liking
 			//int numSlices = (int)(vol.LargestOrthogonalPlaneDiagonal / spacingVector.Magnitude);
 			// So I settled on just the longest axis, creates enough slices without going out of bounds too often
-			int numSlices = (int) (_volume.LongAxisMagnitude / spacingVector.Magnitude);
+			int numSlices = (int)(_volume.LongAxisMagnitude / spacingVector.Magnitude);
 
 			Vector3D startPoint = throughPoint + (numSlices / 2) * spacingVector;
 
@@ -343,13 +351,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				Vector3D point = startPoint - (sliceIndex * spacingVector);
 				ImageSop imageSop = CreateSliceImageSop(point);
 				DicomGrayscalePresentationImage presImage = new DicomGrayscalePresentationImage(imageSop.Frames[1]);
-				SetSeriesLevelDicomAttributes(presImage, sliceIndex, seriesInstanceUid, spacingVector.Magnitude);
+				SetSeriesLevelDicomAttributes(presImage, sliceIndex, displaySet.Uid, spacingVector.Magnitude);
 				displaySet.PresentationImages.Add(presImage);
+				imageSop.Dispose();
 			}
-
-			return displaySet;
 		}
 
+		
 		//ggerade ToRef: once generalized, this should be handled by CreateDisplaySet
 		internal DisplaySet CreateOrthoDisplaySet(string displaySetName)
 		{
@@ -378,11 +386,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			int sliceIndex;
 			for (sliceIndex = 0; sliceIndex < numSlices; sliceIndex++)
 			{
-				Vector3D point = startPoint - (sliceIndex * spacingVector);
+				Vector3D point = startPoint - (sliceIndex*spacingVector);
 				ImageSop imageSop = CreateSliceImageSop(point);
 				DicomGrayscalePresentationImage presImage = new DicomGrayscalePresentationImage(imageSop.Frames[1]);
 				SetSeriesLevelDicomAttributes(presImage, sliceIndex, seriesInstanceUid, spacingVector.Magnitude);
 				displaySet.PresentationImages.Add(presImage);
+				//use transient references to our advantage.
+				imageSop.Dispose();
 			}
 
 			return displaySet;

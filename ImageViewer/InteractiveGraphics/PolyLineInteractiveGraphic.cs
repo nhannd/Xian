@@ -54,10 +54,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private PolyLineGraphic _anchorPointsGraphic;
 		private int _maxAnchorPoints;
 		
-		[CloneCopyReference]
-		private CursorToken _moveToken;
-		private Color _color = Color.Yellow;
-
 		#endregion
 
 		/// <summary>
@@ -126,16 +122,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets the <see cref="CursorToken"/> that should be shown
-		/// when moving this graphic.
-		/// </summary>
-		public CursorToken MoveToken
-		{
-			get { return _moveToken; }
-			set { _moveToken = value; }
-		}
-
 		#region IMemorable Members
 
 		/// <summary>
@@ -165,15 +151,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="delta"></param>
 		public override void Move(SizeF delta)
 		{
-#if MONO
-			Size del = new Size((int)delta.Width, (int)delta.Height);
-			
-			for (int i = 0; i < this.AnchorPoints.Count; i++)
-				this.AnchorPoints[i] += del;
-#else
 			for (int i = 0; i < this.PolyLine.Count; i++)
 				this.PolyLine[i] += delta;
-#endif
 		}
 
 		/// <summary>
@@ -216,25 +195,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 
 			return closestPoint;
-		}
-
-		/// <summary>
-		/// Gets the cursor token to be shown at the current mouse position.
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-		public override CursorToken GetCursorToken(Point point)
-		{
-			CursorToken token = base.GetCursorToken(point);
-			if (token == null)
-			{
-				if (this.HitTest(point))
-				{
-					token = this.MoveToken;
-				}
-			}
-
-			return token;
 		}
 
 		/// <summary>
@@ -286,9 +246,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 
 			_anchorPointsGraphic.AnchorPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnAnchorPointChanged);
-
-			if (_moveToken == null)
-				_moveToken = new CursorToken(CursorToken.SystemCursors.SizeAll);
 		}
 
 		[OnCloneComplete]

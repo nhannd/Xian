@@ -22,61 +22,70 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return null;
 		}
 
-		public void GetObliqueRotationAngles(out int rotationX, out int rotationY, out int rotationZ)
+		public bool IsMprImage(IPresentationImage image)
 		{
-			rotationX = 0;
-			rotationY = 0;
-			rotationZ = 0;
+			return image.ParentDisplaySet is MprDisplaySet;
+		}
 
-			IPresentationImage obliqueImage = GetObliqueImage();
-			MprLayoutManager layoutManager = GetMprLayoutManager();
+		public bool IsIdentityImage(IPresentationImage image)
+		{
+			return IsMprImage(image, DisplaySetIdentifier.Identity);
+		}
 
-			if (obliqueImage != null && layoutManager != null)
+		public bool IsOrthoXImage(IPresentationImage image)
+		{
+			return IsMprImage(image, DisplaySetIdentifier.OrthoX);
+		}
+
+		public bool IsOrthoYImage(IPresentationImage image)
+		{
+			return IsMprImage(image, DisplaySetIdentifier.OrthoY);
+		}
+
+		public bool IsObliqueImage(IPresentationImage image)
+		{
+			return IsMprImage(image, DisplaySetIdentifier.Oblique);
+		}
+		
+		public MprDisplaySet GetIdentityDisplaySet()
+		{
+			return FindMprDisplaySet(DisplaySetIdentifier.Identity);
+		}
+
+		public MprDisplaySet GetOrthoYDisplaySet()
+		{
+			return FindMprDisplaySet(DisplaySetIdentifier.OrthoY);
+		}
+
+		public MprDisplaySet GetOrthoXDisplaySet()
+		{
+			return FindMprDisplaySet(DisplaySetIdentifier.OrthoX);
+		}
+
+		public MprDisplaySet GetObliqueDisplaySet()
+		{
+			return FindMprDisplaySet(DisplaySetIdentifier.Oblique);
+		}
+
+		private static bool IsMprImage(IPresentationImage image, DisplaySetIdentifier identifier)
+		{
+			if (image == null || image.ParentDisplaySet == null)
+				return false;
+
+			return image.ParentDisplaySet is MprDisplaySet && ((MprDisplaySet)image.ParentDisplaySet).Identifier == identifier;
+		}
+
+		private MprDisplaySet FindMprDisplaySet(DisplaySetIdentifier identifier)
+		{
+			IPhysicalWorkspace workspace = _context.Viewer.PhysicalWorkspace;
+			foreach (IImageBox imageBox in workspace.ImageBoxes)
 			{
-				rotationX = layoutManager.GetObliqueImageRotationX(obliqueImage);
-				rotationY = layoutManager.GetObliqueImageRotationY(obliqueImage);
-				rotationZ = layoutManager.GetObliqueImageRotationZ(obliqueImage);
+				MprDisplaySet displaySet = imageBox.DisplaySet as MprDisplaySet;
+				if (displaySet != null && displaySet.Identifier == identifier)
+					return displaySet;
 			}
+
+			return null;
 		}
-
-		public IPresentationImage GetObliqueImage()
-		{
-			return _context.Viewer.PhysicalWorkspace.ImageBoxes[3].TopLeftPresentationImage;
-		}
-
-		public bool IsAxialImage(IPresentationImage image)
-		{
-			return image.ParentDisplaySet.ImageBox == GetAxialImageBox();
-		}
-
-		public bool IsCoronalImage(IPresentationImage image)
-		{
-			return image.ParentDisplaySet.ImageBox == GetCoronalImageBox();
-		}
-
-		public bool IsSaggittalImage(IPresentationImage image)
-		{
-			return image.ParentDisplaySet.ImageBox == GetSagittalImageBox();
-		}
-
-		public IImageBox GetSagittalImageBox()
-		{
-			IPhysicalWorkspace workspace = _context.Viewer.PhysicalWorkspace;
-			return workspace.ImageBoxes[0];
-		}
-
-		public IImageBox GetCoronalImageBox()
-		{
-			IPhysicalWorkspace workspace = _context.Viewer.PhysicalWorkspace;
-			return workspace.ImageBoxes[1];
-		}
-
-		public IImageBox GetAxialImageBox()
-		{
-			IPhysicalWorkspace workspace = _context.Viewer.PhysicalWorkspace;
-			return workspace.ImageBoxes[2];
-		}
-
-
 	}
 }

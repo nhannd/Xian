@@ -38,7 +38,6 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.Tools.Measurement.States;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {

@@ -35,9 +35,9 @@ using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
 
-namespace ClearCanvas.ImageViewer.Tools.Measurement.States
+namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class CreatePolygonGraphicState : CreateGraphicState
+	public class CreatePolygonGraphicState : CreateInteractiveGraphicState
 	{
 		private const float SNAP_RADIUS = 15f;
 		private int _controlPointIndex;
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement.States
 			_controlPointIndex = 1;
 		}
 
-		private PolygonInteractiveGraphic InteractiveGraphic
+		protected new PolygonInteractiveGraphic InteractiveGraphic
 		{
 			get { return ((IStandardStatefulInteractiveGraphic)base.StatefulGraphic).InteractiveGraphic as PolygonInteractiveGraphic; }
 		}

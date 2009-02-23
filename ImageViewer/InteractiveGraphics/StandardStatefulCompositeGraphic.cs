@@ -32,6 +32,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 
@@ -51,9 +52,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Constructs a new instance of <see cref="StandardStatefulCompositeGraphic"/>.
 		/// </summary>
-		protected StandardStatefulCompositeGraphic() {}
+		protected StandardStatefulCompositeGraphic()
+		{
+			Initialize();
+		}
 
-		protected override void OnStateChanged(GraphicStateChangedEventArgs e) {
+		private void Initialize()
+		{
+			this.State = CreateInactiveState();
+		}
+
+		protected override void OnStateChanged(GraphicStateChangedEventArgs e)
+		{
 			base.OnStateChanged(e);
 
 			if (typeof(InactiveGraphicState).IsAssignableFrom(e.NewState.GetType()))
@@ -64,6 +74,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				OnEnterSelectedState(e.MouseInformation);
 			else if (typeof(FocussedSelectedGraphicState).IsAssignableFrom(e.NewState.GetType()))
 				OnEnterFocusSelectedState(e.MouseInformation);
+			else if (typeof(CreateGraphicState).IsAssignableFrom(e.NewState.GetType()))
+				OnEnterCreateState(e.MouseInformation);
 		}
 
 		protected virtual void OnEnterInactiveState(IMouseInformation mouseInformation) {
@@ -78,12 +90,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					this.ParentPresentationImage.FocussedGraphic = null;
 			}
 
+			Draw();
 			Trace.Write("EnterInactiveState\n");
 		}
 
 		protected virtual void OnEnterFocusState(IMouseInformation mouseInformation) {
 			this.Focussed = true;
-
+			Draw();
 			Trace.Write("EnterFocusState\n");
 		}
 
@@ -92,15 +105,24 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			if (this.ParentPresentationImage != null && this.ParentPresentationImage.FocussedGraphic == this)
 				this.ParentPresentationImage.FocussedGraphic = null;
+			Draw();
 
 			Trace.Write("EnterSelectedState\n");
 		}
 
-		protected virtual void OnEnterFocusSelectedState(IMouseInformation mouseInformation) {
+		protected virtual void OnEnterFocusSelectedState(IMouseInformation mouseInformation) 
+		{
 			this.Selected = true;
 			this.Focussed = true;
 
+			Draw();
 			Trace.Write("EnterFocusSelectedState\n");
+		}
+
+		protected virtual void OnEnterCreateState(IMouseInformation mouseInformation)
+		{
+			Draw();
+			Trace.Write("EnterCreateState\n");
 		}
 
 		#region IStandardStatefulGraphic Members
