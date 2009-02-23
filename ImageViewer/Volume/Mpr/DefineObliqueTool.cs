@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (_polyLine.Stop(mouseInformation))
 				return true;
 
-			RemoveGraphic();
+			//RemoveGraphic();
 			return false;
 		}
 
