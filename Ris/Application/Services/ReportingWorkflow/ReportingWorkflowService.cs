@@ -185,7 +185,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [UpdateOperation]
         [OperationEnablement("CanCancelReportingStep")]
         [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Create)]
-        public CancelReportingStepResponse CancelReportingStep(CancelReportingStepRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Report.Cancel)]
+		public CancelReportingStepResponse CancelReportingStep(CancelReportingStepRequest request)
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             Staff reassignStaff = request.ReassignedToStaff != null ? PersistenceContext.Load<Staff>(request.ReassignedToStaff, EntityLoadFlags.CheckVersion) : null;
@@ -462,7 +463,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             ProcedureStep newStep;
 
-            if (step is ReportingProcedureStep && !request.KeepReportPart)
+			if (step.Is<ReportingProcedureStep>() && !request.KeepReportPart)
             {
                 ReportingProcedureStep oldReportingStep = (ReportingProcedureStep)step;
                 if (oldReportingStep.ReportPart != null)
@@ -569,19 +570,26 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanCancelReportingStep(WorklistItemKey itemKey)
         {
-            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create))
-                return false;
-
             // if there is no proc step ref, operation is not available
             if (itemKey.ProcedureStepRef == null)
                 return false;
 
             ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
 
-            // cannot cancel a step that is assigned to someone else without the authority token
-            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Cancel) &&
-                (step.AssignedStaff != null && !Equals(step.AssignedStaff, this.CurrentUserStaff)))
-                return false;
+        	bool isAssignedToMe = step.AssignedStaff != null && Equals(step.AssignedStaff, this.CurrentUserStaff);
+			if (isAssignedToMe)
+			{
+				// Report is assigned to current user, allow cancel only if user has Create or Cancel token
+				if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Create) &&
+					!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Cancel))
+					return false;
+			}
+			else
+			{
+				// Report not assigned to current user, allow cancel only if user has Cancel token
+				if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Cancel))
+					return false;
+			}
 
             return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey, true);
         }
@@ -650,12 +658,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 return false;
 
             ProcedureStep step = PersistenceContext.Load<ProcedureStep>(itemKey.ProcedureStepRef);
-            if (step is ProtocolProcedureStep)
+            if (step.Is<ProtocolProcedureStep>())
                 return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Reassign);
-            else if (step is ReportingProcedureStep)
+			else if (step.Is<ReportingProcedureStep>())
                 return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Reassign)
-                    && !(step is VerificationStep)
-                    && !(step is PublicationStep);
+					&& !(step.Is<VerificationStep>())
+					&& !(step.Is<PublicationStep>());
             else
                 return false;
         }

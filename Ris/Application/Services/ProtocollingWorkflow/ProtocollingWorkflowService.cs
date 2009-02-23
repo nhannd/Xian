@@ -228,6 +228,7 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 		[UpdateOperation]
 		[OperationEnablement("CanDiscardProtocol")]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Create)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Protocol.Cancel)]
 		public DiscardProtocolResponse DiscardProtocol(DiscardProtocolRequest request)
 		{
 			ProtocolAssignmentStep assignmentStep = this.PersistenceContext.Load<ProtocolAssignmentStep>(request.ProtocolAssignmentStepRef);
@@ -360,20 +361,29 @@ namespace ClearCanvas.Ris.Application.Services.ProtocollingWorkflow
 
 		public bool CanDiscardProtocol(ProtocolOperationEnablementContext enablementContext)
 		{
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create))
-				return false;
-
 			// if there is no proc step ref, operation is not available
 			if (enablementContext.ProcedureStepRef == null)
 				return false;
 
 			ProcedureStep step = PersistenceContext.Load<ProcedureStep>(enablementContext.ProcedureStepRef);
 
-			// cannot cancel a protocol that is performed by someone else without the authority token
-			if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Cancel) &&
-				((step.State == ActivityStatus.SC && !Equals(step.AssignedStaff, this.CurrentUserStaff)) ||
-				(step.State == ActivityStatus.IP && !Equals(step.PerformingStaff, this.CurrentUserStaff))))
-				return false;
+			bool isAssignedToMe =
+				(step.State == ActivityStatus.SC && Equals(step.AssignedStaff, this.CurrentUserStaff)) ||
+				(step.State == ActivityStatus.IP && Equals(step.PerformingStaff, this.CurrentUserStaff));
+
+			if (isAssignedToMe)
+			{
+				// Protocol is assigned to current user, allow cancel only if user has Create or Cancel token
+				if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Create) &&
+					!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Cancel))
+					return false;
+			}
+			else
+			{
+				// Protocol not assigned to current user, allow cancel only if user has Cancel token
+				if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Cancel))
+					return false;
+			}
 
 			return CanExecuteOperation<ProtocolAssignmentStep>(new ProtocollingOperations.DiscardProtocolOperation(), enablementContext.ProcedureStepRef);
 		}
