@@ -76,5 +76,14 @@ namespace ClearCanvas.ImageServer.Common {
                 return ((int)(this["DbChangeDelaySeconds"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool UseReceiveDateAsFolder {
+            get {
+                return ((bool)(this["UseReceiveDateAsFolder"]));
+            }
+        }
     }
 }

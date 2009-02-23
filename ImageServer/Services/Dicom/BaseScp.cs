@@ -41,6 +41,7 @@ using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -54,14 +55,83 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// </summary>
     public abstract class BaseScp : IDicomScp<DicomScpContext>
     {
+        /// <summary>
+        /// Used for passing data into StorageHelper, extracting the data from a <see cref="DicomMessage"/>
+        /// </summary>
+        private class DataContext : StorageHelper.DataContext
+        {
+            #region Private Fields
+            private IPersistenceContext _context;
+            private readonly ServerPartition _partition;
+            private readonly DicomMessage _message;
+            #endregion
+
+            #region Constructors
+            public DataContext(ServerPartition partition, DicomMessage message)
+            {
+                _partition = partition;
+                _message = message;
+            }
+            #endregion
+
+            #region DataContext Members
+
+            public IPersistenceContext PersistenceContext
+            {
+                get { return _context; }
+                set { _context = value; }
+            }
+
+            public ServerPartition Partition
+            {
+                get { return _partition; }
+            }
+
+            public string GetDicomValue(uint tag)
+            {
+                return _message.DataSet[tag].GetString(0, null);
+            }
+
+            #endregion
+
+            #region DataContext Members
+
+
+            public string StudyInstanceUid
+            {
+                get { return GetDicomValue(DicomTags.StudyInstanceUid); }
+            }
+
+            #endregion
+        }
+
         #region Protected Members
         protected IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
     	private DicomScpContext _context;
         private Device _device;
         #endregion
 
+        #region Private Methods
+        /// <summary>
+        /// Returns the name of the directory in the filesytem
+        /// where the study referenced by the specified <see cref="DicomMessage"></see> will be stored.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="message"></param>
+        /// <param name="checkExisting"></param>
+        /// <returns></returns>
+        /// 
+        public string ResolveStorageFolder(IPersistenceContext context, DicomMessage message, bool checkExisting)
+        {
+            DataContext dataContext = new DataContext(Partition, message);
+            dataContext.PersistenceContext = context;
+            return StorageHelper.ResolveStorageFolder(dataContext, checkExisting);
+        }
+
+        #endregion
+
         #region Properties
-		/// <summary>
+        /// <summary>
 		/// The <see cref="ServerPartition"/> associated with the Scp.
 		/// </summary>
         protected ServerPartition Partition
@@ -228,7 +298,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         public StudyStorageLocation GetStudyStorageLocation(DicomMessage message)
         {
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-            String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, ImageServerCommonConfiguration.DefaultStudyRootFolder);
 
             ServerFilesystemInfo filesystem = Selector.SelectFilesystem(message);
             if (filesystem == null)
@@ -248,25 +317,18 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 if (studyLocationList.Count == 0)
                 {
-					IStudyStorageEntityBroker selectBroker = updateContext.GetBroker<IStudyStorageEntityBroker>();
-					StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
-
-					criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
-					criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
-
-					StudyStorage storage = selectBroker.FindOne(criteria);
-					if (storage != null)
+                    StudyStorage storage = StudyHelper.FindStorage(updateContext, studyInstanceUid, Partition);
+                    if (storage != null)
 					{
 						Platform.Log(LogLevel.Warn,"Received SOP Instances for Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
 						return null;
 					}
-
-
+                    
                     IInsertStudyStorage locInsert = _store.OpenReadContext().GetBroker<IInsertStudyStorage>();
                     InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
                     insertParms.ServerPartitionKey = Partition.GetKey();
                     insertParms.StudyInstanceUid = studyInstanceUid;
-                    insertParms.Folder = studyDate;
+                    insertParms.Folder = ResolveStorageFolder(updateContext, message, false /* set to false for optimization because we are sure it's not in the system */);
                     insertParms.FilesystemKey = filesystem.Filesystem.GetKey();
                 	insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
 

@@ -61,5 +61,10 @@ namespace ClearCanvas.ImageServer.Common
                 return Settings.Default.DefaultStudyRootFolder;
             }
         }
+
+        static public bool UseReceiveDateAsStudyFolder
+        {
+            get { return Settings.Default.UseReceiveDateAsFolder; }
+        }
     }
 }

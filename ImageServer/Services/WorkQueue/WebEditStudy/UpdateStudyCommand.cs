@@ -271,7 +271,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                     {
                         if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyDate)
                         {
-                            _newStudyFolder = imageLevelUpdate.GetStringValue();
+                        	// Update the folder name if the system is not currently using receiving date as the study folder
+                            if (!ImageServerCommonConfiguration.UseReceiveDateAsStudyFolder)
+                                _newStudyFolder = imageLevelUpdate.GetStringValue();
                         }
                         else if (imageLevelUpdate.TagPath.Tag.TagValue == DicomTags.StudyInstanceUid)
                         {
@@ -487,7 +489,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         private void Rearchive()
         {
-            Platform.Log(LogLevel.Info, "Scheduling/Update study archive..");
+            Platform.Log(LogLevel.Info, "Scheduling/Updating study archive..");
             _storage.Archive(UpdateContext);
         }
 
@@ -510,7 +512,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         private void UpdateCurrentPatient()
         {
-            Platform.Log(LogLevel.Info, "Update current patient record");
+            Platform.Log(LogLevel.Info, "Update current patient record...");
             IPatientEntityBroker patientUpdateBroker = UpdateContext.GetBroker<IPatientEntityBroker>();
             patientUpdateBroker.Update(_curPatient);
         }

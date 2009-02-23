@@ -61,6 +61,8 @@
     <Compile Include="CommandProcessor\UpdateDicomFileCommand.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="FilesystemSelector.cs" />
+    <Compile Include="Helpers\StorageHelper.cs" />
+    <Compile Include="Helpers\StudyHelper.cs" />
     <Compile Include="HttpServer.cs" />
     <Compile Include="IAlertService.cs" />
     <Compile Include="ICancelable.cs" />
@@ -87,6 +89,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServerPlatform.cs" />
+    <Compile Include="StudyHistoryRecordBase.cs" />
     <Compile Include="ThreadedService.cs" />
     <Compile Include="Utilities\DirectoryUtility.cs" />
     <Compile Include="Utilities\FilesystemInfo.cs" />
