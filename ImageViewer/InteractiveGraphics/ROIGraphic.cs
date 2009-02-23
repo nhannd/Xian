@@ -287,7 +287,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected override void OnEnterCreateState(IMouseInformation mouseInformation)
 		{
 			_calloutGraphic.Color = FocusSelectedColor;
-			base.OnEnterFocusSelectedState(mouseInformation);
+			base.OnEnterCreateState(mouseInformation);
 		}
 
 		protected override void OnEnterFocusSelectedState(IMouseInformation mouseInformation)
