@@ -10,9 +10,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
      /// <summary>
     /// "CreateStudy" xml parser.
     /// </summary>
-    class CreateStudyCommandXmlParser
+    public class CreateStudyCommandXmlParser
     {
-        public IList<BaseImageLevelUpdateCommand> ParseImageLevelCommands(XmlNode createStudyNode)
+        public List<BaseImageLevelUpdateCommand> ParseImageLevelCommands(XmlNode createStudyNode)
         {
             List<BaseImageLevelUpdateCommand> _commands = new List<BaseImageLevelUpdateCommand>();
 

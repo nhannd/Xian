@@ -246,4 +246,7 @@
   <data name="UserManagementPageTitle" xml:space="preserve">
     <value>User Management | Admin | ClearCanvas ImageServer</value>
   </data>
+  <data name="StudyHistory" xml:space="preserve">
+    <value>History</value>
+  </data>
 </root>

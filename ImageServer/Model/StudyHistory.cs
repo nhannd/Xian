@@ -21,6 +21,7 @@ namespace ClearCanvas.ImageServer.Model
             IStudyHistoryEntityBroker broker = readContext.GetBroker<IStudyHistoryEntityBroker>();
             StudyHistorySelectCriteria criteria = new StudyHistorySelectCriteria();
             criteria.StudyStorageKey.EqualTo(storageLocation.GetKey());
+            criteria.StudyHistoryTypeEnum.EqualTo(StudyHistoryTypeEnum.StudyReconciled);
             IList<StudyHistory> historyList = broker.Find(criteria);
             return historyList;
         }

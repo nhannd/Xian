@@ -123,6 +123,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 FSQueueGridView.Study = Study.TheStudy;
                 StudyStorageView.Study = Study.TheStudy;
                 ArchivePanel.Study = Study.TheStudy;
+                HistoryPanel.TheStudySummary = Study;
             }
 
             base.DataBind();

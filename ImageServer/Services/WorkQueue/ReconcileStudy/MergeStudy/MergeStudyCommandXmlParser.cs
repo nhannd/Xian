@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
     /// <summary>
     /// "MergeStudy" xml parser.
     /// </summary>
-    class MergeStudyCommandXmlParser
+    public class MergeStudyCommandXmlParser
     {
         /// <summary>
         /// Retrieves the list of <see cref="BaseImageLevelUpdateCommand"/> specified in the xml.

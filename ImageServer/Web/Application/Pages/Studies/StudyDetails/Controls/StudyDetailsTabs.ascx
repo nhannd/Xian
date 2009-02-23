@@ -7,6 +7,7 @@
 <%@ Register Src="FileSystemQueueGridView.ascx" TagName="FileSystemQueueGridView" TagPrefix="localAsp" %>
 <%@ Register Src="StudyStorageView.ascx" TagName="StudyStorageView" TagPrefix="localAsp" %>
 <%@ Register Src="ArchivePanel.ascx" TagName="ArchivePanel" TagPrefix="localAsp" %>
+<%@ Register Src="HistoryPanel.ascx" TagName="HistoryPanel" TagPrefix="localAsp" %>
 
 <aspAjax:TabContainer ID="StudyDetailsTabContainer" runat="server" ActiveTabIndex="0"
     CssClass="TabControl" Width="100%">
@@ -85,6 +86,17 @@
                 <tr>
                     <td>
                         <localAsp:ArchivePanel ID="ArchivePanel" runat="server" />
+                    </td>
+                </tr>
+            </table>
+        </ContentTemplate>
+    </aspAjax:TabPanel>
+    <aspAjax:TabPanel ID="TabPanel3" HeaderText="<%$Resources: Titles, StudyHistory %>" runat="server">
+        <ContentTemplate>
+            <table width="100%" cellpadding="8" cellspacing="0" style="background-color: #B8D8EE;">
+                <tr>
+                    <td>
+                        <localAsp:HistoryPanel ID="HistoryPanel" runat="server" />
                     </td>
                 </tr>
             </table>

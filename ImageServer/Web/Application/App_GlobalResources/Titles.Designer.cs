@@ -385,6 +385,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to History.
+        /// </summary>
+        internal static string StudyHistory {
+            get {
+                return ResourceManager.GetString("StudyHistory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Study Integrity Queue.
         /// </summary>
         internal static string StudyIntegrityQueue {
