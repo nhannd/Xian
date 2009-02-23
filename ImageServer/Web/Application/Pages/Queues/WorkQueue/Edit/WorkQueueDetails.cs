@@ -55,8 +55,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         private int _numSeriesPending;
         private int _numInstancesPending;
         private StudyDetails _study;
+    	private DateTime _insertTime;
 
-        #endregion Private members
+    	#endregion Private members
 
         #region Public Properties
 
@@ -71,6 +72,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             get { return _expirationTime; }
             set { _expirationTime = value; }
         }
+
+		public DateTime InsertTime
+		{
+			get { return _insertTime; }
+			set { _insertTime = value; }
+		}
 
         public int FailureCount
         {

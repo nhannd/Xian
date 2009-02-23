@@ -1388,43 +1388,6 @@
     <None Include="Pages\Help\.svn\text-base\Documentation.aspx.cs.svn-base" />
     <None Include="Pages\Help\.svn\text-base\Documentation.aspx.designer.cs.svn-base" />
     <None Include="Pages\Help\.svn\text-base\Documentation.aspx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\all-wcprops" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\entries" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\format" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetails.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\AutoRouteWorkQueueDetailsView.ascx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\DeleteWorkQueueDialog.ascx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\GeneralWorkQueueDetailsView.ascx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ResetWorkQueueDialog.ascx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ScheduleWorkQueueDialog.ascx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\StudyDetails.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\StudyDetailsAssembler.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\ViewEdit.aspx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetails.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WebMoveStudyWorkQueueDetailsView.ascx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueDetails.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueDetailsAssembler.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueDetailsViewBase.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueItemDetailsPanel.ascx.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.designer.cs.svn-base" />
-    <None Include="Pages\Queues\WorkQueue\Edit\.svn\text-base\WorkQueueSettingsPanel.ascx.svn-base" />
     <None Include="Pages\Queues\WorkQueue\WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
@@ -1522,11 +1485,6 @@
     <Folder Include="Pages\Help\.svn\tmp\prop-base\" />
     <Folder Include="Pages\Help\.svn\tmp\props\" />
     <Folder Include="Pages\Help\.svn\tmp\text-base\" />
-    <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\prop-base\" />
-    <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\props\" />
-    <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\tmp\prop-base\" />
-    <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\tmp\props\" />
-    <Folder Include="Pages\Queues\WorkQueue\Edit\.svn\tmp\text-base\" />
     <Folder Include="plugins\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

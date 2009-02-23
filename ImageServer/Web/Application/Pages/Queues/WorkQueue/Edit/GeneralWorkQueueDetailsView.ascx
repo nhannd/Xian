@@ -24,6 +24,13 @@
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
         </asp:TemplateField>
         
+        <asp:TemplateField HeaderText="Insert Date/Time">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
+            <ItemTemplate>
+                <ccUI:DateTimeLabel ID="InsertTime" runat="server"  Value='<%# Eval("InsertTime") %>' ></ccUI:DateTimeLabel>
+            </ItemTemplate>
+        </asp:TemplateField>
+        
         <asp:TemplateField HeaderText="Status">
             <ItemTemplate>
                 <asp:Label ID="Status" runat="server" Text='<%# Eval("Status.Description") %>'></asp:Label>

@@ -50,6 +50,13 @@
                 <ccUI:DateTimeLabel ID="ExpirationTime" runat="server"  Value='<%# Eval("ExpirationTime") %>' ></ccUI:DateTimeLabel>
             </ItemTemplate>
         </asp:TemplateField>
+
+        <asp:TemplateField HeaderText="Insert Date/Time">
+            <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
+            <ItemTemplate>
+                <ccUI:DateTimeLabel ID="InsertTime" runat="server"  Value='<%# Eval("InsertTime") %>' ></ccUI:DateTimeLabel>
+            </ItemTemplate>
+        </asp:TemplateField>
         
         <asp:TemplateField HeaderText="Status">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />

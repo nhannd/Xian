@@ -29,12 +29,10 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
@@ -75,6 +73,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             detail.Key = item.Key;
             detail.ScheduledDateTime = item.ScheduledTime;
             detail.ExpirationTime = item.ExpirationTime;
+        	detail.InsertTime = item.InsertTime;
             detail.FailureCount = item.FailureCount;
             detail.Type = item.WorkQueueTypeEnum;
             detail.Status = item.WorkQueueStatusEnum;
@@ -137,7 +136,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             detail.DestinationAE = deviceAdaptor.Get(item.DeviceKey).AeTitle;
             detail.ScheduledDateTime = item.ScheduledTime;
             detail.ExpirationTime = item.ExpirationTime;
-            detail.FailureCount = item.FailureCount;
+			detail.InsertTime = item.InsertTime;
+			detail.FailureCount = item.FailureCount;
             detail.Type = item.WorkQueueTypeEnum;
             detail.Status = item.WorkQueueStatusEnum;
             detail.Priority = item.WorkQueuePriorityEnum;
@@ -198,7 +198,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             detail.StudyInstanceUid = studyStorage==null? string.Empty:studyStorage.StudyInstanceUid;
             detail.ScheduledDateTime = item.ScheduledTime;
             detail.ExpirationTime = item.ExpirationTime;
-            detail.FailureCount = item.FailureCount;
+			detail.InsertTime = item.InsertTime;
+			detail.FailureCount = item.FailureCount;
             detail.Type = item.WorkQueueTypeEnum;
             detail.Status = item.WorkQueueStatusEnum;
             detail.Priority = item.WorkQueuePriorityEnum;
