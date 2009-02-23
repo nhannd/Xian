@@ -89,7 +89,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServerPlatform.cs" />
-    <Compile Include="StudyHistoryRecordBase.cs" />
     <Compile Include="ThreadedService.cs" />
     <Compile Include="Utilities\DirectoryUtility.cs" />
     <Compile Include="Utilities\FilesystemInfo.cs" />
