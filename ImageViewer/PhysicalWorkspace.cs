@@ -75,7 +75,6 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler _enabledChanged;
 		private event EventHandler _lockedChanged;
 
-
 		private Rectangle _screenRectangle;
 		private event EventHandler _screenRectangleChanged;
 
@@ -215,11 +214,8 @@ namespace ClearCanvas.ImageViewer
 			{
 				if (ImageBoxes.IsReadOnly == value)
 					return;
-
-				ImageBoxes.IsReadOnly = value;
-				foreach (IImageBox box in ImageBoxes)
-					((ImageBox)box).Locked = value;
-
+				
+				SetLocked(value);
 				EventsHelper.Fire(_lockedChanged, this, EventArgs.Empty);
 			}
 		}
@@ -326,6 +322,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing)
 			{
+				SetLocked(false);
 				DisposeImageBoxes();
 			}
 		}
@@ -339,6 +336,13 @@ namespace ClearCanvas.ImageViewer
 				imageBox.Dispose();
 
 			_imageBoxes = null;
+		}
+
+		private void SetLocked(bool value)
+		{
+			ImageBoxes.IsReadOnly = value;
+			foreach (IImageBox box in ImageBoxes)
+				((ImageBox)box).Locked = value;
 		}
 
 		#endregion

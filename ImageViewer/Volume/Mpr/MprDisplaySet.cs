@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	internal class MprDisplaySet : DisplaySet
 	{
 		private readonly MprDisplaySetIdentifier _identifier;
-		private readonly VolumeSlicer _slicer;
+		private VolumeSlicer _slicer;
 
 		private MprDisplaySet(string name, string uid, string description, MprDisplaySetIdentifier identifier, VolumeSlicer slicer)
 		: base(name, uid, description)
@@ -203,6 +203,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 
 			return closestImage;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+				_slicer = null;
+
+			base.Dispose(disposing);
 		}
 	}
 }

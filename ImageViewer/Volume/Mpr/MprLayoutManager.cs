@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Private fields
 
-		private readonly Volume _volume;
+		private Volume _volume;
 		private MprDisplaySet _identityDisplaySet;
 		private MprDisplaySet _orthoXDisplaySet;
 		private MprDisplaySet _orthoYDisplaySet;
@@ -131,9 +131,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			physicalWorkspace.ImageBoxes[2].TopLeftPresentationImageIndex = _orthoXDisplaySet.PresentationImages.Count / 2;
 			physicalWorkspace.ImageBoxes[3].DisplaySet = _obliqueDisplaySet;
 			physicalWorkspace.ImageBoxes[3].TopLeftPresentationImageIndex = _obliqueDisplaySet.PresentationImages.Count / 2;
-
-			//TODO: Add this property and use it to disable the Layout Components (in Layout.Basic).
-			//physicalWorkspace.IsReadOnly = true;
 		}
 
 		#endregion
@@ -169,7 +166,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				}
 
 				if (_volume != null)
+				{
 					_volume.Dispose();
+					_volume = null;
+				}
 			}
 
 			base.Dispose(disposing);

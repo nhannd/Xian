@@ -4,20 +4,29 @@ namespace ClearCanvas.ImageViewer
 {
 	public abstract class PriorStudyFinder : IPriorStudyFinder
 	{
-		private class NullPriorStudyFinder : PriorStudyFinder
+		private class NullPriorStudyFinder : IPriorStudyFinder
 		{
 			public NullPriorStudyFinder()
 			{
 			}
 
-			public override StudyItemList FindPriorStudies()
+			public StudyItemList FindPriorStudies()
 			{
 				return new StudyItemList();
 			}
 
-			public override void Cancel()
+
+			#region IPriorStudyFinder Members
+
+			public void SetImageViewer(IImageViewer viewer)
 			{
 			}
+
+			public void Cancel()
+			{
+			}
+
+			#endregion
 		}
 
 		public static readonly IPriorStudyFinder Null = new NullPriorStudyFinder();
