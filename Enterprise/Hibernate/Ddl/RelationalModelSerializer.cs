@@ -16,7 +16,7 @@ using ClearCanvas.Enterprise.Hibernate.Ddl.Model;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
-	public class XmlWriter
+	public class RelationalModelSerializer
 	{
 		/// <summary>
 		/// Defines the root XML tag under which data is exported.
@@ -24,7 +24,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private readonly Configuration _config;
 		private readonly Dialect _dialect;
 
-		public XmlWriter(Configuration config, Dialect dialect)
+		public RelationalModelSerializer(Configuration config, Dialect dialect)
 		{
 			_config = config;
 			_dialect = dialect;
@@ -36,18 +36,18 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			{
 				writer.Formatting = Formatting.Indented;
 
-				DatabaseSchemaInfo schemaInfo = new DatabaseSchemaInfo(_config, _dialect);
+				RelationalModelInfo modelInfo = new RelationalModelInfo(_config, _dialect);
 
-				Write(writer, schemaInfo);
+				Write(writer, modelInfo);
 			}
  		}
 
-		public DatabaseSchemaInfo ReadModel(TextReader tr)
+		public RelationalModelInfo ReadModel(TextReader tr)
 		{
 			using (XmlTextReader reader = new XmlTextReader(tr))
 			{
 				reader.WhitespaceHandling = WhitespaceHandling.None;
-				return (DatabaseSchemaInfo) Read(reader, typeof(DatabaseSchemaInfo));
+				return (RelationalModelInfo) Read(reader, typeof(RelationalModelInfo));
 			}
 		}
 

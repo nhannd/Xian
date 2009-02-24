@@ -5,20 +5,20 @@ using ClearCanvas.Enterprise.Hibernate.Ddl.Model;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
-    class ColumnPropertiesChange : Change
-    {
-    	private readonly ColumnInfo _column;
+	class AddPrimaryKeyChange : Change
+	{
+		private readonly ConstraintInfo _pk;
 
-		public ColumnPropertiesChange(TableInfo table, ColumnInfo initial, ColumnInfo desired)
-			: base(table)
+		public AddPrimaryKeyChange(TableInfo table, ConstraintInfo pk)
+			:base(table)
 		{
-			_column = initial;
-        }
+			_pk = pk;
+		}
 
-    	public ColumnInfo Column
-    	{
-			get { return _column; }
-    	}
+		public ConstraintInfo PrimaryKey
+		{
+			get { return _pk; }
+		}
 
 		public override Statement[] GetStatements(IRenderer renderer)
 		{

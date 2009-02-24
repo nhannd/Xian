@@ -59,7 +59,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     	private bool _qualifyNames;
     	private bool _populateHardEnums;
     	private bool _populateSoftEnums;
-    	private DatabaseSchemaInfo _upgradeFromModel;
+    	private RelationalModelInfo _baselineModel;
 
     	public ScriptWriter(Configuration config, Dialect dialect)
         {
@@ -99,16 +99,16 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     	}
 
 		/// <summary>
-		/// Gets or sets the model to upgrade from.
+		/// Gets or sets the baseline model to upgrade from.
 		/// </summary>
 		/// <remarks>
 		/// The default value is null, in which case scripts are generated to create the entire database from scratch.
 		/// If this property is set, scripts will be generated to upgrade from this model to the current model.
 		/// </remarks>
-    	public DatabaseSchemaInfo UpgradeFromModel
+    	public RelationalModelInfo BaselineModel
     	{
-			get { return _upgradeFromModel; }
-			set { _upgradeFromModel = value; }
+			get { return _baselineModel; }
+			set { _baselineModel = value; }
     	}
 
     	/// <summary>
@@ -147,10 +147,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
 			// the order of generator execution is important, so add the static generators first
 
-			if(_upgradeFromModel == null)
+			if(_baselineModel == null)
 				generators.Add(new RelationalSchemaGenerator());
 			else 
-				generators.Add(new RelationalSchemaUpgradeGenerator(_upgradeFromModel));
+				generators.Add(new RelationalSchemaUpgradeGenerator(_baselineModel));
 
 			if (_populateHardEnums)
 			{

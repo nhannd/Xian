@@ -6,14 +6,14 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
-	class SchemaComparer
+	class RelationalModelComparator
 	{
 		delegate IEnumerable<Change> ItemProcessor<T>(T item);
 		delegate IEnumerable<Change> CompareItemProcessor<T>(T initial, T desired);
 
 		private static readonly Dictionary<Type, int> _changeOrder = new Dictionary<Type, int>();
 
-		static SchemaComparer()
+		static RelationalModelComparator()
 		{
 			// define the order that changes should occur to avoid dependency issues
 			_changeOrder.Add(typeof(DropForeignKeyChange), 0);
@@ -21,7 +21,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			_changeOrder.Add(typeof(DropIndexChange), 1);
 			_changeOrder.Add(typeof(DropTableChange), 2);
 			_changeOrder.Add(typeof(DropColumnChange), 3);
-			_changeOrder.Add(typeof(ColumnPropertiesChange), 4);
+			_changeOrder.Add(typeof(ModifyColumnChange), 4);
 			_changeOrder.Add(typeof(AddColumnChange), 4);
 			_changeOrder.Add(typeof(AddTableChange), 5);
 			_changeOrder.Add(typeof(AddIndexChange), 6);
@@ -30,7 +30,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		}
 
 
-		public List<Change> CompareDatabases(DatabaseSchemaInfo initial, DatabaseSchemaInfo desired)
+		public List<Change> CompareDatabases(RelationalModelInfo initial, RelationalModelInfo desired)
 		{
 			IEnumerable<Change> changes = CompareSets(initial.Tables, desired.Tables,
 			                                          AddTable,
@@ -132,8 +132,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		private IEnumerable<Change> CompareColumns(TableInfo table, ColumnInfo initial, ColumnInfo desired)
 		{
 			List<Change> changes = new List<Change>();
-			if (!initial.IsIdentical(desired))
-				changes.Add(new ColumnPropertiesChange(table, initial, desired));
+			if (!initial.Matches(desired))
+				changes.Add(new ModifyColumnChange(table, initial, desired));
 			return changes;
 		}
 
@@ -150,7 +150,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		private IEnumerable<Change> CompareIndexes(TableInfo table, IndexInfo initial, IndexInfo desired)
 		{
 			List<Change> changes = new List<Change>();
-			// TODO
+			// TODO can indexes be altered or do they need to be dropped and recreated?
 			return changes;
 		}
 
@@ -167,7 +167,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		private IEnumerable<Change> CompareForeignKeys(TableInfo table, ForeignKeyInfo initial, ForeignKeyInfo desired)
 		{
 			List<Change> changes = new List<Change>();
-			// todo
+			// TODO can foreign keys be altered or do they need to be dropped and recreated?
 			return changes;
 		}
 
@@ -184,26 +184,24 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		private IEnumerable<Change> CompareUniqueConstraints(TableInfo table, ConstraintInfo initial, ConstraintInfo desired)
 		{
 			List<Change> changes = new List<Change>();
-			//todo
+			// TODO can constraints be altered or do they need to be dropped and recreated?
 			return changes;
 		}
 
 		private IEnumerable<Change> AddPrimaryKey(TableInfo table, ConstraintInfo item)
 		{
-			//todo
-			throw new Exception("The method or operation is not implemented.");
+			return new Change[] { new AddPrimaryKeyChange(table, item) };
 		}
 
 		private IEnumerable<Change> DropPrimaryKey(TableInfo table, ConstraintInfo item)
 		{
-			//todo
-			throw new Exception("The method or operation is not implemented.");
+			return new Change[] { new DropPrimaryKeyChange(table, item) };
 		}
 
 		private IEnumerable<Change> ComparePrimaryKeys(TableInfo table, ConstraintInfo initial, ConstraintInfo desired)
 		{
 			List<Change> changes = new List<Change>();
-			//todo
+			// TODO can constraints be altered or do they need to be dropped and recreated?
 			return changes;
 		}
 
@@ -218,12 +216,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			// partition desired set into those items that are contained in the initial set (true) and
 			// those that are not (false)
 			IDictionary<bool, List<T>> a = GroupBy<T, bool>(desired,
-											delegate(T x) { return CollectionUtils.Contains(initial, delegate(T y) { return x.IsSame(y); }); });
+					delegate(T x) { return CollectionUtils.Contains(initial, delegate(T y) { return x.Identity == y.Identity; }); });
 
 			// partition initial set into those items that are contained in the desired set (true) and
 			// those that are not (false)
 			IDictionary<bool, List<T>> b = GroupBy<T, bool>(initial,
-											delegate(T x) { return CollectionUtils.Contains(desired, delegate(T y) { return x.IsSame(y); }); });
+					delegate(T x) { return CollectionUtils.Contains(desired, delegate(T y) { return x.Identity == y.Identity; }); });
 
 			// these items need to be added
 			List<T> adds = a[false];
@@ -236,10 +234,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 				changes.AddRange(dropProcessor(drop));
 
 			// these items exist in both sets, so they need to be compared one by one
-			// first need to sort these vectors so that they are aligned
-			// TODO: this won't work for Constraints, which may have differeing sort keys even though they are the same object!!!
-			List<T> desiredCommon = CollectionUtils.Sort(a[true], delegate(T x, T y) { return x.SortKey.CompareTo(y.SortKey); });
-			List<T> initialCommon = CollectionUtils.Sort(b[true], delegate(T x, T y) { return x.SortKey.CompareTo(y.SortKey); });
+			// first need to sort these vectors by identity, so that they are aligned
+			List<T> desiredCommon = CollectionUtils.Sort(a[true], delegate(T x, T y) { return x.Identity.CompareTo(y.Identity); });
+			List<T> initialCommon = CollectionUtils.Sort(b[true], delegate(T x, T y) { return x.Identity.CompareTo(y.Identity); });
             
 			// compare each of the common items
 			for (int i = 0; i < initialCommon.Count; i++)

@@ -29,26 +29,22 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
         [DataMember]
         public List<string> Columns;
 
-        public override bool IsSame(ElementInfo other)
+		public bool Matches(IndexInfo that)
         {
-            IndexInfo that = other as IndexInfo;
-            if (that == null)
-                return false;
-
-            // indexes are sensitive to column ordering
-            return CollectionUtils.Equal<string>(this.Columns, that.Columns, true);
-        }
-
-        public override bool IsIdentical(ElementInfo other)
-        {
-            ConstraintInfo that = (ConstraintInfo)other;
             return this.Name == that.Name &&
                 CollectionUtils.Equal<string>(this.Columns, that.Columns, true);
         }
 
-        public override string SortKey
+        public override string Identity
         {
-            get { return StringUtilities.Combine(this.Columns, ""); }
+            get
+            {
+				// note that the identity is based entirely on the column names, not the name of the index
+				// the column names are *not* sorted because we want the identity to be dependent on column ordering,
+				// because the order of columns is important in an index, and multiple indexes may exist that differ
+				// only in the order of the columns
+            	return StringUtilities.Combine(this.Columns, "");
+            }
         }
     }
 }

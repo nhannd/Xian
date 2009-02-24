@@ -8,7 +8,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
 {
     [DataContract]
-    public class ConstraintInfo : ElementInfo
+	public class ConstraintInfo : ElementInfo
     {
         public ConstraintInfo()
         {
@@ -29,29 +29,20 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
         [DataMember]
         public List<string> Columns;
 
-        public override bool IsSame(ElementInfo other)
+        public bool Matches(ConstraintInfo that)
         {
-            ConstraintInfo that = other as ConstraintInfo;
-            if (that == null)
-                return false;
-
-            // the order of columns in constraints doesn't really matter, does it?
-            // for association/collection tables, the columns may be in arbitrary order,
-            // so we can't be sensitive to order
-            // for other tables, there should only every be one column in the PK
-            return CollectionUtils.Equal<string>(this.Columns, that.Columns, false);
-        }
-
-        public override bool IsIdentical(ElementInfo other)
-        {
-            ConstraintInfo that = (ConstraintInfo)other;
             return this.Name == that.Name &&
                 CollectionUtils.Equal<string>(this.Columns, that.Columns, false);
         }
 
-        public override string SortKey
+        public override string Identity
         {
-            get { return StringUtilities.Combine(this.Columns, ""); }
+            get
+            {
+				// note that the identity is based entirely on the column names, not the name of the constraint
+				// the column names are sorted because we want the identity to be independent of column ordering
+            	return StringUtilities.Combine(CollectionUtils.Sort(this.Columns), "");
+            }
         }
     }
 }

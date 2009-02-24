@@ -34,28 +34,23 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
 		[DataMember]
     	public List<string> ReferencedColumns;
 
-        public override bool IsSame(ElementInfo other)
+		public bool Matches(ForeignKeyInfo that)
         {
-            ForeignKeyInfo that = other as ForeignKeyInfo;
-            if (that == null)
-                return false;
-
-        	return Equals(this.ReferencedTable, that.ReferencedTable)
-					&& CollectionUtils.Equal<string>(this.ReferencedColumns, that.ReferencedColumns, false)
-        			&& base.Equals(other);
-        }
-
-        public override bool IsIdentical(ElementInfo other)
-        {
-            ForeignKeyInfo that = (ForeignKeyInfo)other;
             return this.ReferencedTable == that.ReferencedTable
 				&& CollectionUtils.Equal<string>(this.ReferencedColumns, that.ReferencedColumns, false)
-                && base.IsIdentical(other);
+				&& base.Matches(that);
         }
 
-        public override string SortKey
+        public override string Identity
         {
-            get { return this.ReferencedTable + StringUtilities.Combine(this.ReferencedColumns, "") + base.SortKey; }
+            get
+            {
+				// note that the identity is based entirely on the column names, not the name of the constraint
+				// the column names are sorted because we want the identity to be independent of column ordering
+				return this.ReferencedTable
+					+ StringUtilities.Combine(CollectionUtils.Sort(this.ReferencedColumns), "")
+					+ base.Identity;
+            }
         }
     }
 }

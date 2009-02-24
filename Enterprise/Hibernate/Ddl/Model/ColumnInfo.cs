@@ -36,15 +36,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
         [DataMember]
         public string SqlType;
 
-        public override bool IsSame(ElementInfo other)
+		public bool Matches(ColumnInfo that)
         {
-            ColumnInfo that = other as ColumnInfo;
-            return that != null && that.Name == this.Name;
-        }
-
-        public override bool IsIdentical(ElementInfo other)
-        {
-            ColumnInfo that = (ColumnInfo)other;
             return this.Name == that.Name
                 && this.Length == that.Length
                 && this.Nullable == that.Nullable
@@ -52,7 +45,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
                 && this.SqlType == that.SqlType;
         }
 
-        public override string SortKey
+        public override string Identity
         {
             get { return this.Name; }
         }

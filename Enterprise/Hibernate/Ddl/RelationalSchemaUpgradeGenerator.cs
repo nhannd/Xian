@@ -11,9 +11,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
 	class RelationalSchemaUpgradeGenerator : IDdlScriptGenerator
 	{
-		private readonly DatabaseSchemaInfo _upgradeFrom;
+		private readonly RelationalModelInfo _upgradeFrom;
 
-		public RelationalSchemaUpgradeGenerator(DatabaseSchemaInfo upgradeFrom)
+		public RelationalSchemaUpgradeGenerator(RelationalModelInfo upgradeFrom)
 		{
 			_upgradeFrom = upgradeFrom;
 		}
@@ -23,9 +23,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
 		public string[] GenerateCreateScripts(Configuration config, Dialect dialect)
 		{
-			DatabaseSchemaInfo currentModel = new DatabaseSchemaInfo(config, dialect);
+			RelationalModelInfo currentModel = new RelationalModelInfo(config, dialect);
 
-			SchemaComparer comparator = new SchemaComparer();
+			RelationalModelComparator comparator = new RelationalModelComparator();
 			List<Change> changes = comparator.CompareDatabases(_upgradeFrom, currentModel);
 
 			IRenderer renderer = Renderer.GetRenderer(dialect);

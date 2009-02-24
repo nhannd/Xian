@@ -88,12 +88,12 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 				Configuration config = store.Configuration;
             	Dialect dialect = Dialect.GetDialect(config.Properties);
 
-				// if this is an upgrade, load the model file
-            	DatabaseSchemaInfo upgradeFromModel = null;
-				if(!string.IsNullOrEmpty(cmdLine.UpgradeFromModelFile))
+				// if this is an upgrade, load the baseline model file
+            	RelationalModelInfo baselineModel = null;
+				if(!string.IsNullOrEmpty(cmdLine.BaselineModelFile))
 				{
-					XmlWriter reader = new XmlWriter(config, dialect);
-					upgradeFromModel = reader.ReadModel(File.OpenText(cmdLine.UpgradeFromModelFile));
+					RelationalModelSerializer serializer = new RelationalModelSerializer(config, dialect);
+					baselineModel = serializer.ReadModel(File.OpenText(cmdLine.BaselineModelFile));
 				}
 
                 bool populateHardEnums = cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.all
@@ -107,13 +107,13 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 						scriptWriter.PopulateHardEnums = populateHardEnums;
 						scriptWriter.PopulateSoftEnums = populateSoftEnums;
 						scriptWriter.QualifyNames = cmdLine.QualifyNames;
-						scriptWriter.UpgradeFromModel = upgradeFromModel;
+						scriptWriter.BaselineModel = baselineModel;
 						scriptWriter.WriteCreateScript(writer);
 						break;
 
 					case DdlWriterCommandLine.FormatOptions.xml:
-						XmlWriter xmlWriter = new XmlWriter(config, dialect);
-						xmlWriter.WriteModel(writer);
+						RelationalModelSerializer serializer = new RelationalModelSerializer(config, dialect);
+						serializer.WriteModel(writer);
 						break;
 
 					default:

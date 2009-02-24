@@ -39,19 +39,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
         [DataMember]
         public List<ConstraintInfo> UniqueKeys;
 
-        public override bool IsSame(ElementInfo other)
-        {
-            TableInfo that = other as TableInfo;
-            return that != null && that.Name == this.Name;
-        }
-
-        public override bool IsIdentical(ElementInfo other)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-
-        public override string SortKey
+        public override string Identity
         {
             get { return Name; }
         }

@@ -11,14 +11,14 @@ using NHibernate.Dialect;
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
 {
     [DataContract]
-    public class DatabaseSchemaInfo : ElementInfo
+    public class RelationalModelInfo : ElementInfo
     {
-        public DatabaseSchemaInfo()
+        public RelationalModelInfo()
         {
 
         }
 
-		public DatabaseSchemaInfo(Configuration config, Dialect dialect)
+		public RelationalModelInfo(Configuration config, Dialect dialect)
 		{
 			this.Tables = CollectionUtils.Map<Table, TableInfo>(GetTables(config),
 							delegate(Table table) { return BuildTableInfo(table, config, dialect); });
@@ -27,17 +27,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
         [DataMember]
         public List<TableInfo> Tables;
 
-        public override bool IsSame(ElementInfo other)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public override bool IsIdentical(ElementInfo other)
-        {
-            throw new Exception("The method or operation is not implemented.");
-        }
-
-        public override string SortKey
+        public override string Identity
         {
             get { throw new Exception("The method or operation is not implemented."); }
         }

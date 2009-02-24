@@ -100,6 +100,22 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			return new Statement[] { new Statement(sql) };
 		}
 
+		public Statement[] Render(AddPrimaryKeyChange change)
+		{
+			string sql = string.Format("alter table {0} add constraint {1} {2}",
+				GetQualifiedName(change.Table),
+				change.PrimaryKey.Name,
+				GetPrimaryKeyString(change.PrimaryKey));
+
+			return new Statement[] { new Statement(sql) };
+		}
+
+		public Statement[] Render(DropPrimaryKeyChange change)
+		{
+			string sql = "alter table " + GetQualifiedName(change.Table) + _dialect.GetDropIndexConstraintString(change.PrimaryKey.Name);
+			return new Statement[] { new Statement(sql) };
+		}
+
 		public virtual Statement[] Render(AddForeignKeyChange change)
 		{
 			ForeignKeyInfo fk = change.ForeignKey;
@@ -120,10 +136,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
 		public virtual Statement[] Render(AddUniqueConstraintChange change)
 		{
-			string sql = string.Format("alter table {0} add constraint {1} unique ({2})",
+			string sql = string.Format("alter table {0} add constraint {1} {2}",
 				GetQualifiedName(change.Table),
 				change.Constraint.Name,
-				StringUtilities.Combine(change.Constraint.Columns, ", "));
+				GetUniqueConstraintString(change.Constraint));
 
 			return new Statement[] { new Statement(sql) };
 		}
@@ -134,7 +150,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			return new Statement[] { new Statement(sql) };
 		}
 
-		public virtual Statement[] Render(ColumnPropertiesChange change)
+		public virtual Statement[] Render(ModifyColumnChange change)
 		{
 			string sql = string.Format("alter table {0} alter column {1}", GetQualifiedName(change.Table), GetColumnDefinitionString(change.Column));
 			return new Statement[] { new Statement(sql) };
