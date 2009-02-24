@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
@@ -38,12 +39,67 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class TileCollection : ObservableList<ITile>
 	{
+		private bool _isReadOnly;
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="TileCollection"/>.
 		/// </summary>
 		internal TileCollection()
 		{
 
+		}
+
+		internal new bool IsReadOnly
+		{
+			get { return _isReadOnly; }
+			set { _isReadOnly = value; }
+		}
+
+		public override void Add(ITile item)
+		{
+			if (_isReadOnly)
+				throw new InvalidOperationException("The tile collection is read-only.");
+
+			base.Add(item);
+		}
+
+		public override void Insert(int index, ITile item)
+		{
+			if (_isReadOnly)
+				throw new InvalidOperationException("The tile collection is read-only.");
+
+			base.Insert(index, item);
+		}
+
+		public override bool Remove(ITile item)
+		{
+			if (_isReadOnly)
+				throw new InvalidOperationException("The tile collection is read-only.");
+
+			return base.Remove(item);
+		}
+
+		public override void RemoveAt(int index)
+		{
+			if (_isReadOnly)
+				throw new InvalidOperationException("The tile collection is read-only.");
+
+			base.RemoveAt(index);
+		}
+
+		public override ITile this[int index]
+		{
+			get
+			{
+				return base[index];
+			}
+			set
+			{
+				if (_isReadOnly)
+					throw new InvalidOperationException("The tile collection is read-only.");
+
+				base[index] = value;
+			}
 		}
 	}
 }

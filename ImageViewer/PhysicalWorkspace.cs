@@ -72,6 +72,8 @@ namespace ClearCanvas.ImageViewer
 		private bool _enabled = true;
 		private event EventHandler _drawingEvent;
 		private event EventHandler _layoutCompletedEvent;
+		private event EventHandler _enabledChanged;
+		private event EventHandler _lockedChanged;
 
 
 		private Rectangle _screenRectangle;
@@ -196,7 +198,30 @@ namespace ClearCanvas.ImageViewer
 		public bool Enabled
 		{
 			get { return _enabled; }
-			set { _enabled = value; }
+			set
+			{
+				if (_enabled == value)
+					return;
+
+				_enabled = value;
+				EventsHelper.Fire(_enabledChanged, this, EventArgs.Empty);
+			}
+		}
+
+		public bool Locked
+		{
+			get { return ImageBoxes.IsReadOnly; }
+			set
+			{
+				if (ImageBoxes.IsReadOnly == value)
+					return;
+
+				ImageBoxes.IsReadOnly = value;
+				foreach (IImageBox box in ImageBoxes)
+					((ImageBox)box).Locked = value;
+
+				EventsHelper.Fire(_lockedChanged, this, EventArgs.Empty);
+			}
 		}
 
 		/// <summary>
@@ -227,6 +252,18 @@ namespace ClearCanvas.ImageViewer
 		{
 			add { _drawingEvent += value; }
 			remove { _drawingEvent -= value; }
+		}
+
+		public event EventHandler EnabledChanged
+		{
+			add { _enabledChanged += value; }
+			remove { _enabledChanged -= value; }
+		}
+
+		public event EventHandler LockedChanged
+		{
+			add { _lockedChanged += value; }
+			remove { _lockedChanged -= value; }
 		}
 
 		/// <summary>

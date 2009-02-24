@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common.Utilities;
 using System.Collections.Generic;
 
@@ -39,6 +40,8 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class ImageBoxCollection : ObservableList<IImageBox>
 	{
+		private bool _isReadOnly;
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageBoxCollection"/>.
 		/// </summary>
@@ -54,9 +57,62 @@ namespace ClearCanvas.ImageViewer
 		/// Creates a <i>shallow</i> copy.  That is, only references to objects
 		/// in the collection are copied.
 		/// </remarks>
-		internal ImageBoxCollection(IEnumerable<IImageBox> collection) 
+		internal ImageBoxCollection(IEnumerable<IImageBox> collection)
 			: base(collection)
 		{
+		}
+
+		internal new bool IsReadOnly
+		{
+			get { return _isReadOnly; }
+			set { _isReadOnly = value; }
+		}
+
+		public override void Add(IImageBox item)
+		{
+			if (_isReadOnly)
+				throw new InvalidOperationException("The image box collection is read-only.");
+
+			base.Add(item);
+		}
+
+		public override void Insert(int index, IImageBox item)
+		{
+			if (_isReadOnly)
+				throw new InvalidOperationException("The image box collection is read-only.");
+
+			base.Insert(index, item);
+		}
+
+		public override bool Remove(IImageBox item)
+		{
+			if (_isReadOnly)
+				throw new InvalidOperationException("The image box collection is read-only.");
+
+			return base.Remove(item);
+		}
+
+		public override void RemoveAt(int index)
+		{
+			if (_isReadOnly)
+				throw new InvalidOperationException("The image box collection is read-only.");
+
+			base.RemoveAt(index);
+		}
+
+		public override IImageBox this[int index]
+		{
+			get
+			{
+				return base[index];
+			}
+			set
+			{
+				if (_isReadOnly)
+					throw new InvalidOperationException("The image box collection is read-only.");
+
+				base[index] = value;
+			}
 		}
 	}
 }

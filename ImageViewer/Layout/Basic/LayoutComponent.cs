@@ -68,7 +68,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		public bool ImageBoxSectionEnabled
 		{
-			get { return this.ImageViewer != null && this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null; }
+			get
+			{
+				return this.ImageViewer != null &&
+				       this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null &&
+				       !this.ImageViewer.PhysicalWorkspace.Locked;
+			}
 		}
 
 		/// <summary>
@@ -76,7 +81,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// </summary>
 		public bool TileSectionEnabled
 		{
-			get { return this.ImageBoxSectionEnabled && this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null; }
+			get
+			{
+				return this.ImageBoxSectionEnabled &&
+				       this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null &&
+				       !this.ImageViewer.PhysicalWorkspace.SelectedImageBox.Locked;
+			}
 		}
 
 		/// <summary>
@@ -210,7 +220,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (this.ImageViewer == null)
 				return;
 
-		SetTileLayout(this.ImageViewer, this.TileRows, this.TileColumns);
+			SetTileLayout(this.ImageViewer, this.TileRows, this.TileColumns);
 
 			Update();
 		}
@@ -221,16 +231,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			// stop listening to the old image viewer, if one was set
 			if (e.DeactivatedImageViewer != null)
+			{
+				e.DeactivatedImageViewer.PhysicalWorkspace.LockedChanged -= OnPhysicalWorkspaceLockedChanged;
 				e.DeactivatedImageViewer.EventBroker.DisplaySetSelected -= OnDisplaySetSelected;
+			}
 
 			// start listening to the new image viewer, if one has been set
 			if (e.ActivatedImageViewer != null)
+			{
+				e.ActivatedImageViewer.PhysicalWorkspace.LockedChanged += OnPhysicalWorkspaceLockedChanged;
 				e.ActivatedImageViewer.EventBroker.DisplaySetSelected += OnDisplaySetSelected;
+			}
 
 			Update();
+		}
 
-			NotifyPropertyChanged("ImageBoxSectionEnabled");
-			NotifyPropertyChanged("TileSectionEnabled");
+		private void OnPhysicalWorkspaceLockedChanged(object sender, EventArgs e)
+		{
+			Update();
 		}
 
 		private void OnDisplaySetSelected(object sender, DisplaySetSelectedEventArgs e)
@@ -251,6 +269,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					TileColumns = this.ImageViewer.PhysicalWorkspace.SelectedImageBox.Columns;
 				}
 			}
+
+			NotifyPropertyChanged("ImageBoxSectionEnabled");
+			NotifyPropertyChanged("TileSectionEnabled");
 		}
 
 		public static void SetImageBoxLayout(IImageViewer imageViewer, int rows, int columns)
@@ -260,6 +281,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			Platform.CheckArgumentRange(columns, 1, LayoutConfigurationSettings.MaximumImageBoxColumns, "columns");
 
 			IPhysicalWorkspace physicalWorkspace = imageViewer.PhysicalWorkspace;
+			if (physicalWorkspace.Locked)
+				return;
 
 			int tileRows = Math.Max(1, physicalWorkspace.SelectedImageBox.Rows);
 			int tileColumns = Math.Max(1, physicalWorkspace.SelectedImageBox.Columns);
@@ -315,6 +338,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			Platform.CheckArgumentRange(columns, 1, LayoutConfigurationSettings.MaximumTileColumns, "columns");
 
 			IImageBox imageBox = imageViewer.PhysicalWorkspace.SelectedImageBox;
+			if (imageBox.Locked)
+				return;
+
 			MemorableUndoableCommand command = new MemorableUndoableCommand(imageBox);
 			command.Name = SR.CommandLayoutTiles;
 			command.BeginState = imageBox.CreateMemento();

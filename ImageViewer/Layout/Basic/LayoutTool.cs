@@ -34,7 +34,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
+using System;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -43,17 +45,20 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
 	[Tooltip("show", "TooltipLayoutManager")]
 	[GroupHint("show", "Application.Workspace.Layout.Basic")]
+	[EnabledStateObserver("show", "Enabled", "EnabledChanged")]
+
 	/// <summary>
 	/// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf and coordinates
 	/// it so that it reflects the state of the active workspace, as well as provides a dropdown custom action
 	/// that can directly change the layout in the active imageviewer.
 	/// </summary>
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class LayoutTool : ImageViewerTool
+	public class LayoutTool : Tool<IImageViewerToolContext>
 	{
 		private static readonly Dictionary<IDesktopWindow, IShelf> _shelves = new Dictionary<IDesktopWindow, IShelf>();
 		private IDesktopWindow _desktopWindow;
 		private ActionModelRoot _actionModel;
+		private bool _enabled;
 
 		/// <summary>
 		/// Constructor
@@ -62,6 +67,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			_desktopWindow = null;
 		}
+
+		public bool Enabled
+		{
+			get { return _enabled; }
+			set
+			{
+				if (value == _enabled)
+					return;
+
+				_enabled = value;
+				EventsHelper.Fire(EnabledChanged, this, EventArgs.Empty);
+			}
+		}
+
+		public event EventHandler EnabledChanged;
 
 		/// <summary>
 		/// Gets the action model for the layout drop down menu.
@@ -103,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// <param name="columns">The number of columns to show.</param>
 		public void SetImageBoxLayout(int rows, int columns)
 		{
-			LayoutComponent.SetImageBoxLayout(base.ImageViewer, rows, columns);
+			LayoutComponent.SetImageBoxLayout(base.Context.Viewer, rows, columns);
 		}
 
 		/// <summary>
@@ -113,7 +133,25 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// <param name="columns">The number of columns to show.</param>
 		public void SetTileLayout(int rows, int columns)
 		{
-			LayoutComponent.SetTileLayout(base.ImageViewer, rows, columns);
+			LayoutComponent.SetTileLayout(base.Context.Viewer, rows, columns);
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+			base.Context.Viewer.PhysicalWorkspace.LockedChanged += new System.EventHandler(OnLockedChanged);
+			Enabled = !base.Context.Viewer.PhysicalWorkspace.Locked;
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Context.Viewer.PhysicalWorkspace.LockedChanged -= new System.EventHandler(OnLockedChanged);
+			base.Dispose(disposing);
+		}
+		
+		private void OnLockedChanged(object sender, System.EventArgs e)
+		{
+			Enabled = !base.Context.Viewer.PhysicalWorkspace.Locked;
 		}
 
 		public void Show()

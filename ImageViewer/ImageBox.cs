@@ -478,6 +478,12 @@ namespace ClearCanvas.ImageViewer
 			set { _enabled = value; }
 		}
 
+		public bool Locked
+		{
+			get { return Tiles.IsReadOnly; }
+			internal set  { Tiles.IsReadOnly = value; }
+		}
+
 		#endregion
 
 		#region Public events

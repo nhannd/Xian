@@ -103,6 +103,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			foreach (IImageBox imageBox in ImageViewer.PhysicalWorkspace.ImageBoxes)
 				imageBox.SetTileGrid(1, 1);
+
+			ImageViewer.PhysicalWorkspace.Locked = true;
 		}
 
 		protected override void FillPhysicalWorkspace()
