@@ -303,6 +303,25 @@ namespace ClearCanvas.Dicom.Iod
 			return this.Equals(obj as ImageOrientationPatient);
 		}
 
+		public bool EqualsWithinTolerance(ImageOrientationPatient other, float withinTolerance)
+		{
+			if (other == null)
+				return false;
+
+			return EqualsWithinTolerance(other._rowX, _rowX, withinTolerance) && 
+					EqualsWithinTolerance(other._rowY, _rowY, withinTolerance) &&
+					EqualsWithinTolerance(other._rowZ, _rowZ, withinTolerance) &&
+					EqualsWithinTolerance(other._columnX, _columnX, withinTolerance) &&
+					EqualsWithinTolerance(other._columnY, _columnY, withinTolerance) &&
+					EqualsWithinTolerance(other._columnZ, _columnZ, withinTolerance);
+		}
+
+		//ggerade ToRes: Is there some utility already around like this? Where to put this?
+		private static bool EqualsWithinTolerance(double d1, double d2, float tolerance)
+		{
+			return Math.Abs(d1 - d2) < tolerance;
+		}
+
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();

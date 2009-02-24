@@ -79,14 +79,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_frameLoadedCallback = callback;
 		}
 
-		//ggerade ToDo: Do away with this old school interface, use exceptions ala the DICOM validator
-		//  - Should give a reason for failure, hints or something
-		//	- Allow for orientation and spacing allowable tolerances
+		//ggerade ToRef: Do away with this old school interface, use exceptions ala the DICOM validator
 		//  - Should have a way to add smarts to try to correct (not validate, but prepare maybe?) would need
 		//		to tie that into a UI that allowed user to have a say. So need a inclusion/exclusion state or something?
 		//  - Would be nice to have smarts to group likely candidates, maybe allow multiple MPRs to load. Need a volume
 		//		selection shelf or something.
-		//  - How to deal with overlaps? "holes" in the set? Uneven spacing?
+		//  - Deal with overlaps
 		//
 		// As a first prototype we just have a yay or nay interface with a simple reason to show to the user
 		public bool ValidateFrames(out string reason)
@@ -107,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					reason = "Each image in Display Set must have orientation set";
 					return false;
 				}
-				if (frame.ImageOrientationPatient.Equals(orient) == false)
+				if (frame.ImageOrientationPatient.EqualsWithinTolerance(orient, .01f) == false)
 				{
 					reason = "Each image in Display Set must have same orientation";
 					return false;
@@ -129,12 +127,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				}
 				if (spacing == 0f)
 					spacing = currentSpacing;
-				if (Math.Round(currentSpacing * 100) != Math.Round(spacing * 100))
+				if (EqualsWithinTolerance(currentSpacing, spacing, .01f) == false)
 				{
 					reason = "Inconsistent spacing betweeen images, MPR requires evenly spaced images";
 					return false;
 				}
 				lastFrame = currentFrame;
+			}
+
+			// Check for rotations about both X and Y (gantry correction only supports rotations about one
+			//	at a time, which is standard Gantry/Detector Tilt)
+			if (CheckForTwoTilts())
+			{
+				reason = "Images are tilted along multiple axes";
+				return false;
 			}
 
 			reason = string.Empty;
@@ -143,9 +149,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public Volume BuildVolume()
 		{
-			// Sort the frames by slice location to ensure coordinate consistency in our volumes.
-			// Sort by increasing location results in frames being added F to H, R to L, and A to P
-			//ggerade ToRes: Does this stick with the caller's frame collection?
 			_frames.Sort(new SliceLocationComparer());
 
 			// Clone the first frame's dicom header info and use it as the volume model
@@ -204,7 +207,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private void CheckDicomForPadValue(DicomMessageBase dicom)
 		{
 			DicomAttributeCollection dataSet = dicom.DataSet;
-			//ggerade ToRes: any other elements I should check? Ok with SmallestImage (seems like it would be close enough to me)?
 			// Note: If you add any additional checks for tags here, realize that the volume model dicom 
 			//	is what's currently passed in and therefore the tags should be included in CreateVolumeDataSet
 			if (dataSet.Contains(DicomTags.PixelPaddingValue))
@@ -352,6 +354,28 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return matrix;
 		}
 
+		//ggerade ToRef: this should share implementation with GetGantryTilt somehow. Also, the setting
+		//	of _orientationPatient both here and in BuildVolume should be cleaned up.
+		private bool CheckForTwoTilts()
+		{
+			bool twoTilts = false;
+
+			// Use the first frame's orientation as our volume orientation
+			_orientationPatient = ImageOrientationPatientToMatrix(_frames[0].ImageOrientationPatient);
+
+			double aboutXradians = GetRotateAboutXRadians(_orientationPatient);
+			double aboutYradians = GetRotateAboutYRadians(_orientationPatient);
+
+			if (EqualsWithinTolerance(aboutXradians, 0f, .1f) == false &&
+				EqualsWithinTolerance(Math.Abs(aboutXradians), Math.PI / 2, .1f) == false)
+			{
+				if (EqualsWithinTolerance(aboutYradians, 0f, .1f) == false &&
+					EqualsWithinTolerance(Math.Abs(aboutYradians), Math.PI / 2, .1f) == false)
+					twoTilts = true;
+			}
+			return twoTilts;
+		}
+
 		private double GetGantryTiltRadians()
 		{
 			double aboutXradians = GetRotateAboutXRadians(_orientationPatient);
@@ -359,15 +383,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			//double aboutZradians = GetRotateAboutZRadians(_orientationPatient);
 
 			double tilt = 0d;
-			if (EqualWithinTolerance(aboutXradians, 0f, .1f) == false)
+			if (EqualsWithinTolerance(aboutXradians, 0f, .1f) == false &&
+				EqualsWithinTolerance(Math.Abs(aboutXradians), Math.PI/2, .1f) == false)
 			{
-				if (EqualWithinTolerance(aboutYradians, 0f, .1f) == false)
+				if (EqualsWithinTolerance(aboutYradians, 0f, .1f) == false &&
+					EqualsWithinTolerance(Math.Abs(aboutYradians), Math.PI/2, .1f) == false)
 					throw new Exception("Patient orientation is tilted about X and Y, not supported");
 
 				tilt = aboutXradians *
 				       _orientationPatient[0, 0]; // This flips euler sign in prone position, so that tilt is correctly signed
 			}
-			else if (EqualWithinTolerance(aboutYradians, 0f, .1f) == false)
+			else if (EqualsWithinTolerance(aboutYradians, 0f, .1f) == false &&
+				EqualsWithinTolerance(Math.Abs(aboutYradians), Math.PI/2, .1f) == false)
 			{
 				tilt = aboutYradians *
 				       _orientationPatient[0, 1]; // This flips euler sign in Decubitus Left position
@@ -399,8 +426,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		//    return Math.Atan2(orientationPatient[1, 0], orientationPatient[0, 0]);
 		//}
 
-		//ggerade ToRes: I'd like to templatize this and the unsigned version below, but I'm not sure
-		//	how to get the unsafe section templatized...
 		private short[] BuildVolumeShortArray()
 		{
 			short[] volumeArray = new short[_dimensions.Size];
@@ -490,7 +515,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 							volumeArray[i] = pusFrame[j];
 					}
 				}
-#else // Safe code
+#else // Safe alternative
 				int j = 0;
 
 				for (int i = start; i < end; i++)
@@ -579,7 +604,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
-		private static bool EqualWithinTolerance(double d1, double d2, float tolerance)
+		//ggerade ToRes: Is there some utility already around like this? Where to put this?
+		private static bool EqualsWithinTolerance(double d1, double d2, float tolerance)
 		{
 			return Math.Abs(d1 - d2) < tolerance;
 		}

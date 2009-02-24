@@ -101,8 +101,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				//host component as workspace.
 				VolumeLoader loader = new VolumeLoader();
-				//ggerade ToDo: If DisplaySet does not contain all compatible images, use the selected pres image and find the
-				//	images that are compatible with it
 				Volume volume = loader.LoadFromDisplaySet(this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet);
 				if (volume == null)
 					return;

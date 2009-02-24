@@ -37,7 +37,6 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using vtk;
-using System.Runtime.InteropServices;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -203,13 +202,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			this.SetReslicePoint(sliceThroughPoint);
 		}
 
-		private static Vector3D AbsoluteDelta(Vector3D endPointPatient, Vector3D startPointPatient)
-		{
-			return new Vector3D(Math.Abs(endPointPatient.X - startPointPatient.X),
-			                    Math.Abs(endPointPatient.Y - startPointPatient.Y),
-			                    Math.Abs(endPointPatient.Z - startPointPatient.Z));
-		}
-
 		public void SetSlicePlaneIdentity()
 		{
 			_resliceAxes = CreateResliceAxesIdentity();
@@ -249,12 +241,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			get
 			{
-				Vector3D spacingVec = new Vector3D(_volume.Spacing.X, _volume.Spacing.Y, _volume.Spacing.Z);
-				spacingVec = _volume.RotateToPatientOrientation(spacingVec);
+				Vector3D normalVec = new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
 
-				Vector3D zVec = new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
-				float spacing = zVec.Dot(spacingVec);
-				return spacing * zVec;
+				// Normal components by spacing components
+				Vector3D actualSliceSpacingVector = new Vector3D(normalVec.X * _volume.Spacing.X,
+					normalVec.Y * _volume.Spacing.Y, normalVec.Z * _volume.Spacing.Z);
+
+				return actualSliceSpacingVector;
 			}
 		}
 
@@ -323,30 +316,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			else
 				throughPoint = _volume.CenterPoint;
 
+			// By default, adjust magnitude of vector by whole factor based on max volume spacing
 			Vector3D spacingVector = ActualSliceSpacingVector;
-
-			//TODO: this should never happen - this is just a hack to make it work.
-			if (Vector3D.AreEqual(spacingVector, Vector3D.Null))
-				throw new InvalidOperationException();
-
-			// Keep same spacing (2mm) for all as change in number of frames per DisplaySet causes weird behavior
-			spacingVector = spacingVector.Normalize();
-			spacingVector *= 2;
+			if (spacingVector.Magnitude < _volume.MaxSpacing / 2f)
+			{
+				int spacingFactor = (int)(_volume.MaxSpacing / spacingVector.Magnitude);
+				spacingVector *= spacingFactor;
+			}
 
 			//ggerade ToDo: Determine the length of the vector that passes through the volume
-			// Here are a few cheap ways to determine the number of slices
-			//
-			// This would ensure that we would include every slice along the longest diagonal in the volume,
-			//	a bit overkill I thought...
-			//int numSlices = (int)(vol.DiagonalMagnitude / spacingVector.Magnitude);
-			// This uses the diagonal of the largest ortho plane, was still a bit too much for my liking
-			//int numSlices = (int)(vol.LargestOrthogonalPlaneDiagonal / spacingVector.Magnitude);
-			// So I settled on just the longest axis, creates enough slices without going out of bounds too often
-			int numSlices = (int)(_volume.LongAxisMagnitude / spacingVector.Magnitude);
-
-			//TODO: this should never happen - this is just a hack to make it work.
-			if (numSlices < 1)
-				throw new InvalidOperationException();
+			// For now just use the longest axis by the spacingVector
+			int numSlices = (int)(_volume.LongAxisMagnitude / spacingVector.Magnitude + 0.5f);
 
 			Vector3D startPoint = throughPoint + (numSlices / 2) * spacingVector;
 
@@ -367,53 +347,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 		
-		//ggerade ToRef: once generalized, this should be handled by CreateDisplaySet
-		internal DisplaySet CreateOrthoDisplaySet(string displaySetName)
-		{
-			DisplaySet displaySet = new DisplaySet(String.Format("MPR ({0})", displaySetName),
-			                                       String.Format("{0}.{1}", displaySetName, Guid.NewGuid()));
-
-			// A new series UID for our new Sops
-			string seriesInstanceUid = DicomUid.GenerateUid().UID;
-
-			// Slice through this point, start with center
-			Vector3D centerPoint = _volume.CenterPoint;
-
-			Vector3D spacingVector = ActualSliceSpacingVector;
-			if (spacingVector.Magnitude < _volume.MaxSpacing / 2f)
-			{
-				int spacingFactor = (int) (_volume.MaxSpacing / spacingVector.Magnitude);
-				spacingVector *= spacingFactor;
-			}
-
-			//TODO: this should never happen - this is just a hack to make it work.
-			if (Vector3D.AreEqual(spacingVector, Vector3D.Null))
-				throw new InvalidOperationException();
-
-			//ggerade ToDo: Choose correct axis
-			int numSlices = (int) (_volume.LongAxisMagnitude / spacingVector.Magnitude);
-			//TODO: this should never happen - this is just a hack to make it work.
-			if (numSlices < 1)
-				throw new InvalidOperationException();
-
-			//ggerade ToDo: Start on actual slice boundaries
-			Vector3D startPoint = centerPoint + (numSlices / 2) * spacingVector;
-
-			int sliceIndex;
-			for (sliceIndex = 0; sliceIndex < numSlices; sliceIndex++)
-			{
-				Vector3D point = startPoint - (sliceIndex*spacingVector);
-				ImageSop imageSop = CreateSliceImageSop(point);
-				DicomGrayscalePresentationImage presImage = new DicomGrayscalePresentationImage(imageSop.Frames[1]);
-				SetSeriesLevelDicomAttributes(presImage, sliceIndex, seriesInstanceUid, spacingVector.Magnitude);
-				displaySet.PresentationImages.Add(presImage);
-				//use transient references to our advantage.
-				imageSop.Dispose();
-			}
-
-			return displaySet;
-		}
-
 		private static void SetSeriesLevelDicomAttributes(IImageSopProvider presImage, int sliceIndex,
 		                                                  string seriesInstanceUid, float increment)
 		{

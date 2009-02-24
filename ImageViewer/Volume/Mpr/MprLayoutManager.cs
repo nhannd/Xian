@@ -61,11 +61,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			MprImageViewerComponent imageViewer = new MprImageViewerComponent(layoutManager);
 
-			//ggerade ToRes: I almost got rid of the displayset members... hacked this in so that
-			//	the workspace title would get set
-			//VolumeSlicer slicer = new VolumeSlicer(volume);
-			//slicer.SetSlicePlaneIdentity();
-			
 			return imageViewer;
 		}
 

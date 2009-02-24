@@ -68,6 +68,7 @@ namespace ClearCanvas.ImageViewer
 		private static int _insetWidth = 5;
 		private static Color _selectedColor = Color.Orange;
 		private static Color _unselectedColor = Color.DarkGray;
+		private int _presetTopLeftPresentationImageIndex;
 
 		private event EventHandler _drawingEvent;
 		private event EventHandler<ItemEventArgs<IImageBox>> _selectionChangedEvent;
@@ -440,8 +441,10 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		//ggerade ToRes: Review with Stewart
-		private int _presetTopLeftPresentationImageIndex;
+		/// <summary>
+		/// Allows setting of presentation image index prior to having a DisplaySet, when
+		/// DisplaySet is set this index will be used to initialize <see cref="TopLeftPresentationImageIndex"/>
+		/// </summary>
 		public int PresetTopLeftPresentationImageIndex
 		{
 			set

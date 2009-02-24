@@ -151,8 +151,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public void RemoveSop(Sop sop)
 		{
-			//ggerade ToRes: Hmm, what's the right way to manage this? This whole study tree needs to get resolved
-			//	to deal with changing DisplaySets I suppose...
 			_sops[sop.SopInstanceUID] = null;
 		}
 
