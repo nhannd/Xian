@@ -36,6 +36,7 @@ using System.Threading;
 using System.Web.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Services.Login;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
@@ -45,6 +46,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 {
     public partial class _Default : BasePage
     {
+
         protected void Page_Load(object sender, EventArgs e)
         {
         }

@@ -847,7 +847,7 @@ GO
 
 -- ServiceLock Entries not associated with a Filesystem
 DECLARE @ArchiveApplicationLogServiceLockTypeEnum smallint
-SELECT @ArchiveApplicationLogServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = 'ArchiveApplicationLog'
+SELECT @ArchiveApplicationLogServiceLockTypeEnum = Enum FROM [ImageServer].[dbo].ServiceLockTypeEnum WHERE [Lookup] = 'ArchiveApplicationLog'
 
 INSERT INTO [ImageServer].[dbo].ServiceLock
 	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])

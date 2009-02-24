@@ -2,14 +2,14 @@
 	    text-align: center;
 	    min-width: 600px;
 	    margin: 0;
-	    margin-top: 75px;
 	    background-color: #c5dee7;
     }
 
 #LoginSplash
 {
     position: relative;
-    margin-left: auto;
+    margin-top: 75px;
+	margin-left: auto;
     margin-right: auto;
     width: 686px;
     height: 400px;
@@ -66,4 +66,14 @@ a.LoginLink:hover
 {
     color: #E1EFF8;
     text-decoration: underline;
+}
+
+#VersionInfoPanel
+{
+	font-size: x-small;
+	font-family: sans-serif;
+	text-align: right;
+	color: #9ba6af;
+	margin-right: 10px;
+	margin-top: 10px;
 }

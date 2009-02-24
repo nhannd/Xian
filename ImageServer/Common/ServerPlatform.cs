@@ -1,12 +1,35 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Common
 {
     static public class ServerPlatform
     {
+        #region Private Fields
+        private static string _dbVersion;
+        #endregion
+
+        #region Constructors
+        static ServerPlatform()
+        {
+            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+            using (IReadContext ctx = store.OpenReadContext())
+            {
+                IDatabaseVersionEntityBroker broker = ctx.GetBroker<IDatabaseVersionEntityBroker>();
+                IList<DatabaseVersion> versions = broker.Find(new DatabaseVersionSelectCriteria());
+                if (versions != null && versions.Count > 0)
+                    _dbVersion = versions[0].GetVersionString();
+                else
+                    _dbVersion = "Unknown";
+            }
+        }
+        #endregion
+
         /// <summary>
         /// Generates an alert message.
         /// </summary>
@@ -56,7 +79,13 @@ namespace ClearCanvas.ImageServer.Common
             return Path.Combine(Path.Combine(Path.GetPathRoot(Path.GetTempPath()), "temp"), Path.GetRandomFileName());
         }
 
-
+        public static String VersionString
+        {
+            get
+            {
+                return _dbVersion;
+            }
+        }
 
     }
 }

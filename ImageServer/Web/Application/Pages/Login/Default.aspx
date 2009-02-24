@@ -1,4 +1,5 @@
 <%@ Page Language="C#" AutoEventWireup="true" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login._Default" %>
+<%@ Import namespace="ClearCanvas.ImageServer.Common"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -9,13 +10,18 @@
     <title>ClearCanvas ImageServer - Login</title>
 </head>
 <body class="LoginBody">
-
+    
+    
     <form runat="server">
 
     <asp:ScriptManager ID="GlobalScriptManager" runat="server" EnableScriptGlobalization="true"
             EnableScriptLocalization="true">
     </asp:ScriptManager>    
-
+        
+    <div align="right" id="VersionInfoPanel">
+            DB Version: <%=ServerPlatform.VersionString%>
+    </div>
+    
     <div id="LoginSplash">
         <div id="LoginCredentials">
         <table>
@@ -34,13 +40,14 @@
                 <td colspan="2" align="right"><asp:Button runat="server" ID="LoginButton" OnClick="LoginClicked"  Text="Login" CssClass="LoginButton"/></td>
             </tr>               
             <tr>
-                <td colspan="2" align="right" ><asp:LinkButton runat="server" CssClass="LoginLink" OnClick="ChangePassword">Change Password</asp:LinkButton></td>            
-            </tr>   
+                <td colspan="2" align="right" ><asp:LinkButton ID="LinkButton1" runat="server" CssClass="LoginLink" OnClick="ChangePassword">Change Password</asp:LinkButton></td>            
+            </tr>
         </table>
+          
         </div>
                         
             
-    </div>
+    </div>         
     
     <asp:UpdatePanel runat="server">
         <ContentTemplate>
