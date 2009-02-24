@@ -70,10 +70,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 			else
 			{
-				slicer.SetSlicePlaneOblique(45, 0, 0); //just choose a default.
+				//ggerade ToRes: Ideally we wouldn't have to set this initially right? The imagebox
+				//	didn't want an empty display set so choose some reasonable default oblique
+				slicer.SetSlicePlaneOblique(90, 0, 45);
 				name = "MPR (Oblique)";
 			}
-			
+
 			MprDisplaySet displaySet = new MprDisplaySet(name, DicomUid.GenerateUid().UID, name, identifier, slicer);
 			slicer.PopulateDisplaySet(displaySet);
 			return displaySet;
@@ -95,16 +97,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (oldImage is IVoiLutProvider)
 				lut = (oldImage as IVoiLutProvider).VoiLutManager.GetLut();
 
-			try
-			{
-				_slicer.SetSlicePlanePatient(sourceOrientationColumn, sourceOrientationRow, startPoint, endPoint);
-				_slicer.PopulateDisplaySet(this);
-			}
-			catch
-			{
-				//SB: do this for now until we can handle things properly
-				return;
-			}
+			_slicer.SetSlicePlanePatient(sourceOrientationColumn, sourceOrientationRow, startPoint, endPoint);
+			_slicer.PopulateDisplaySet(this);
 
 			if (lut != null || transformMemento != null)
 			{

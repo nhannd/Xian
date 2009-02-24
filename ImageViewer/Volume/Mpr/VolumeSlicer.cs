@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private Vector3D _sliceThroughPointPatient;
 		private float _sliceExtentMm;
+		private float _sliceSpacing;
 
 		//ggerade ToRef: Switch from degrees to radians, allows finer control
 		private int _rotateAboutX;
@@ -235,20 +236,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			set { _sliceExtentMm = value; }
 		}
 
-		// This uses the slice plane and volume spacing to arrive at the actual spacing
-		//	vector along the orthogonal vector
-		public Vector3D ActualSliceSpacingVector
+		public float SliceSpacing
 		{
 			get
 			{
-				Vector3D normalVec = new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
-
-				// Normal components by spacing components
-				Vector3D actualSliceSpacingVector = new Vector3D(normalVec.X * _volume.Spacing.X,
-					normalVec.Y * _volume.Spacing.Y, normalVec.Z * _volume.Spacing.Z);
-
-				return actualSliceSpacingVector;
+				if (_sliceSpacing == 0f)
+					_sliceSpacing = GetDefaultSpacing();
+				return _sliceSpacing;
 			}
+			set { _sliceSpacing = value; }	
+		}
+
+		public float ActualSliceSpacing
+		{
+			get { return ActualSliceSpacingVector.Magnitude; }
 		}
 
 		public enum InterpolationModes
@@ -316,13 +317,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			else
 				throughPoint = _volume.CenterPoint;
 
-			// By default, adjust magnitude of vector by whole factor based on max volume spacing
-			Vector3D spacingVector = ActualSliceSpacingVector;
-			if (spacingVector.Magnitude < _volume.MaxSpacing / 2f)
-			{
-				int spacingFactor = (int)(_volume.MaxSpacing / spacingVector.Magnitude);
-				spacingVector *= spacingFactor;
-			}
+			Vector3D spacingVector = this.SliceSpacing * GetSliceNormalVector();
 
 			//ggerade ToDo: Determine the length of the vector that passes through the volume
 			// For now just use the longest axis by the spacingVector
@@ -346,7 +341,40 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				imageSop.Dispose();
 			}
 		}
-		
+
+		private float GetDefaultSpacing()
+		{
+			// By default, adjust magnitude of vector by whole factor based on max volume spacing
+			Vector3D spacingVector = ActualSliceSpacingVector;
+			if (spacingVector.Magnitude < _volume.MaxSpacing / 2f)
+			{
+				int spacingFactor = (int)(_volume.MaxSpacing / spacingVector.Magnitude);
+				spacingVector *= spacingFactor;
+			}
+			return spacingVector.Magnitude;
+		}
+
+		// This uses the slice plane and volume spacing to arrive at the actual spacing
+		//	vector along the orthogonal vector
+		private Vector3D ActualSliceSpacingVector
+		{
+			get
+			{
+				Vector3D normalVec = GetSliceNormalVector();
+
+				// Normal components by spacing components
+				Vector3D actualSliceSpacingVector = new Vector3D(normalVec.X * _volume.Spacing.X,
+					normalVec.Y * _volume.Spacing.Y, normalVec.Z * _volume.Spacing.Z);
+
+				return actualSliceSpacingVector;
+			}
+		}
+
+		private Vector3D GetSliceNormalVector()
+		{
+			return new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
+		}
+
 		private static void SetSeriesLevelDicomAttributes(IImageSopProvider presImage, int sliceIndex,
 		                                                  string seriesInstanceUid, float increment)
 		{

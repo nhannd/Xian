@@ -109,13 +109,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_orthoYDisplaySet = MprDisplaySet.Create(MprDisplaySetIdentifier.OrthoY, _volume);
 			_obliqueDisplaySet = MprDisplaySet.Create(MprDisplaySetIdentifier.Oblique, _volume);
 
-			// Hey, I said it was a hack!
-			//Vector3D sliceThroughPatient = _volume.CenterPointPatient;
-			//sliceThroughPatient.Y -= 100;
-			//sliceThroughPatient.Z += 100;
-			//_obliqueSlicer.SliceThroughPointPatient = sliceThroughPatient;
-			//_obliqueSlicer.SliceExtentMillimeters = 150;
-
 			IPhysicalWorkspace physicalWorkspace = ImageViewer.PhysicalWorkspace;
 			physicalWorkspace.ImageBoxes[0].DisplaySet = _identityDisplaySet;
 			// Let's start out in the middle of each stack
