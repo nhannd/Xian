@@ -587,6 +587,20 @@ namespace ClearCanvas.Common.Utilities
         }
 
 		/// <summary>
+		/// Returns a list of the items in the target collection, sorted using the default comparer.
+		/// </summary>
+		/// <remarks>
+		/// Does not modify the target collection, since it may not even be a sortable collection.
+		/// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
+		public static List<TItem> Sort<TItem>(IEnumerable target)
+		{
+			List<TItem> list = new List<TItem>(new TypeSafeEnumerableWrapper<TItem>(target));
+			list.Sort();
+			return list;
+		}
+
+		/// <summary>
 		/// Returns a list of the items in the target collection, sorted according to the specified comparison.
 		/// </summary>
 		/// <remarks>
@@ -597,6 +611,20 @@ namespace ClearCanvas.Common.Utilities
         {
             return Sort((IEnumerable)target, comparison);
         }
+
+		/// <summary>
+		/// Returns a list of the items in the target collection, sorted using the default comparer.
+		/// </summary>
+		/// <remarks>
+		/// Does not modify the target collection, since it may not even be a sortable collection.
+		/// If the collection may contain nulls, the comparison must handle nulls.
+		/// </remarks>
+		public static List<TItem> Sort<TItem>(IEnumerable<TItem> target)
+		{
+			List<TItem> list = new List<TItem>(target);
+			list.Sort();
+			return list;
+		}
 
         /// <summary>
         /// Converts the target enumerable to an array of the specified type.
