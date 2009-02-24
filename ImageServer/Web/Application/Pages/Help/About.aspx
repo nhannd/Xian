@@ -1,4 +1,5 @@
 <%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="About.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.About.About" Title="About ClearCanvas ImageServer" %>
+<%@ Import namespace="ClearCanvas.ImageServer.Common"%>
 
 <asp:Content ID="MainMenuContent" ContentPlaceHolderID="MainMenuPlaceHolder" runat="server">
     <asp:SiteMapDataSource ID="MainMenuSiteMapDataSource" runat="server" ShowStartingNode="False" />
@@ -9,6 +10,9 @@
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
 
+  <div id="VersionInfoPanel">
+            DB Version: <%=ServerPlatform.VersionString%>
+  </div>
   
   <table cellpadding="0" cellspacing="0" width="100%">
   <tr><td style="padding-top: 1px;">
