@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.OrderNotes;
@@ -9,20 +10,30 @@ namespace ClearCanvas.Ris.Client.Workflow
     static class PreliminaryDiagnosis
     {
         /// <summary>
-        /// Gets a value indicating whether a preliminary diagnosis conversation exists for the specified order.
+        /// Gets a value indicating whether a preliminary diagnosis dialog should appear.
         /// </summary>
         /// <param name="orderRef"></param>
-        /// <returns></returns>
-        public static bool ConversationExists(EntityRef orderRef)
+		/// <param name="patientClassCode"></param>
+		/// <returns></returns>
+        public static bool ShouldShowDialog(EntityRef orderRef, string patientClassCode)
         {
-            bool exists = false;
+            bool show = false;
             List<string> filters = new List<string>(new string[] { OrderNoteCategory.PreliminaryDiagnosis.Key });
             Platform.GetService<IOrderNoteService>(
                 delegate(IOrderNoteService service)
                 {
-                    exists = service.GetConversation(new GetConversationRequest(orderRef, filters, true)).NoteCount > 0;
+					show = service.GetConversation(new GetConversationRequest(orderRef, filters, true)).NoteCount > 0;
                 });
-            return exists;
+
+			string patientClassFilters = ReportingSettings.Default.PreliminaryDiagnosisReviewForPatientClass;
+			List<string> patientClassCodesForReview = string.IsNullOrEmpty(patientClassFilters)
+				? new List<string>()
+				: CollectionUtils.Map<string, string>(patientClassFilters.Split(','), delegate(string s) { return s.Trim(); });
+
+			if (patientClassCodesForReview.Contains(patientClassCode))
+				show = true;
+
+			return show;
         }
 
         /// <summary>
