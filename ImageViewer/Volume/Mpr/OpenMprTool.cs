@@ -36,6 +36,9 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Iod;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -105,8 +108,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					return;
 
 				ImageViewerComponent component = MprLayoutManager.CreateMprLayoutAndComponent(volume);
+				LaunchImageViewerArgs args = new LaunchImageViewerArgs(ViewerLaunchSettings.WindowBehaviour);
+				PersonName patientName = new PersonName(volume._ModelDicom.DataSet[DicomTags.PatientsName].ToString());
+				string patientId = volume._ModelDicom.DataSet[DicomTags.PatientId].ToString();
+				string displaySetDescription = this.Context.Viewer.SelectedPresentationImage.ParentDisplaySet.Description;
+				args.Title = String.Format("MPR {0} - {1} ({2})", patientName.FormattedName, patientId, displaySetDescription);
 
-				ImageViewerComponent.LaunchInActiveWindow(component, SR.MprWorkspaceTitlePrefix);
+				ImageViewerComponent.Launch(component, args);
 			}
 			catch (Exception e)
 			{
@@ -127,7 +135,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private void UpdateEnabled(IDisplaySet selectedDisplaySet)
 		{
-			if (selectedDisplaySet == null || selectedDisplaySet.PresentationImages.Count < 2)
+			if (base.Context.Viewer is MprImageViewerComponent)
+			{
+				//disable Mpr on Mpr.
+				OpenMprEnabled = false;
+			}
+			else if (selectedDisplaySet == null || selectedDisplaySet.PresentationImages.Count < 2)
 			{
 				OpenMprEnabled = false;
 			}

@@ -37,7 +37,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.Explorer.Local;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -100,7 +102,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				if (volume == null)
 					return;
 
-				ImageViewerComponent.LaunchInActiveWindow(component, SR.MprWorkspaceTitlePrefix);
+				LaunchImageViewerArgs args = new LaunchImageViewerArgs(ViewerLaunchSettings.WindowBehaviour);
+				args.Title = "MPR (Local Files)";
+				ImageViewerComponent.Launch(component, args);
 			}
 			catch (Exception e)
 			{

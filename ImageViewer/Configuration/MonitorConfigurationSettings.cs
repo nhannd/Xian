@@ -32,7 +32,6 @@
 using System.Configuration;
 using ClearCanvas.Common.Configuration;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {

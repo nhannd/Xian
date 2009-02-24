@@ -99,6 +99,40 @@ namespace ClearCanvas.ImageViewer
 	}
 
 	/// <summary>
+	/// Specifies window launch options for the <see cref="ImageViewerComponent"/>.
+	/// </summary>
+	public enum WindowBehaviour
+	{
+		/// <summary>
+		/// Same as <see cref="Single"/> currently.
+		/// </summary>
+		Auto,
+
+		/// <summary>
+		/// Specifies that the <see cref="ImageViewerComponent"/> should be launched
+		/// in a single (e.g. active) desktop window.
+		/// </summary>
+		Single,
+
+		/// <summary>
+		/// Specifies that the <see cref="ImageViewerComponent"/> should be launched
+		/// in a separate desktop window.
+		/// </summary>
+		Separate
+	}
+
+	public class LaunchImageViewerArgs
+	{
+		public LaunchImageViewerArgs(WindowBehaviour windowBehaviour)
+		{
+			this.WindowBehaviour = windowBehaviour;
+		}
+
+		public readonly WindowBehaviour WindowBehaviour;
+		public string Title;
+	}
+
+	/// <summary>
 	/// An <see cref="ApplicationComponent"/> capable of image display.
 	/// </summary>
 	/// <remarks>
@@ -494,7 +528,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				return ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-contextmenu", _toolSet.Actions);
+				return ActionModelRoot.CreateModel(typeof(ImageViewerComponent).FullName, "imageviewer-contextmenu", _toolSet.Actions);
 			}
 		}
 
@@ -502,7 +536,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				return ActionModelRoot.CreateModel(this.GetType().FullName, "imageviewer-keyboard", _toolSet.Actions);
+				return ActionModelRoot.CreateModel(typeof(ImageViewerComponent).FullName, "imageviewer-keyboard", _toolSet.Actions);
 			}
 		}
 
@@ -644,31 +678,42 @@ namespace ClearCanvas.ImageViewer
 			return workspace.Component as IImageViewer;
 		}
 
-		/// <summary>
-		/// Launches an <see cref="ImageViewerComponent"/> in the active desktop window.
-		/// </summary>
-		/// <param name="imageViewer"></param>
-		/// <remarks>
-		/// Subsequent <see cref="ImageViewerComponent"/>s will also be launched in workspaces in
-		/// the same window.
-		/// </remarks>
-		public static void LaunchInActiveWindow(ImageViewerComponent imageViewer)
+		public static void Launch(ImageViewerComponent imageViewer, LaunchImageViewerArgs launchArgs)
 		{
-			LaunchInWindow(imageViewer, Application.ActiveDesktopWindow);
+			IDesktopWindow window = GetLaunchWindow(launchArgs.WindowBehaviour);
+
+			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(window, imageViewer,
+				                                       launchArgs.Title ?? imageViewer.PatientsLoadedLabel);
+
+			workspace.Closed += delegate(object sender, ClosedEventArgs e)
+									{
+										imageViewer.Dispose();
+									};
+			try
+			{
+				imageViewer.Layout();
+				imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
+			}
+			catch (Exception)
+			{
+				workspace.Close();
+				throw;
+			}
+
 		}
 
 		/// <summary>
 		/// Launches an <see cref="ImageViewerComponent"/> in the active desktop window.
 		/// </summary>
 		/// <param name="imageViewer"></param>
-		/// <param name="titlePrefix">A string to be prepended to the standard workspace title</param>
 		/// <remarks>
 		/// Subsequent <see cref="ImageViewerComponent"/>s will also be launched in workspaces in
 		/// the same window.
 		/// </remarks>
-		public static void LaunchInActiveWindow(ImageViewerComponent imageViewer, string titlePrefix)
+		[Obsolete("Use Launch instead.")]
+		public static void LaunchInActiveWindow(ImageViewerComponent imageViewer)
 		{
-			LaunchInWindow(imageViewer, Application.ActiveDesktopWindow, titlePrefix);
+			Launch(imageViewer, new LaunchImageViewerArgs(WindowBehaviour.Single));
 		}
 
 		/// <summary>
@@ -680,8 +725,19 @@ namespace ClearCanvas.ImageViewer
 		/// Subsequent <see cref="ImageViewerComponent"/>s will also be launched in workspaces in
 		/// the same window.
 		/// </remarks>
+		[Obsolete("Use Launch instead.")]
 		public static void LaunchInSeparateWindow(ImageViewerComponent imageViewer)
 		{
+			Launch(imageViewer, new LaunchImageViewerArgs(WindowBehaviour.Separate));
+		}
+
+		private static IDesktopWindow GetLaunchWindow(WindowBehaviour windowBehaviour)
+		{
+			if (windowBehaviour == WindowBehaviour.Auto)
+				return Application.ActiveDesktopWindow;
+			else if (windowBehaviour == WindowBehaviour.Single)
+				return Application.ActiveDesktopWindow;
+
 			IDesktopWindow window;
 			string imageViewerWindow = "ImageViewer";
 
@@ -697,35 +753,7 @@ namespace ClearCanvas.ImageViewer
 				window = Application.DesktopWindows.AddNew(args);
 			}
 
-			LaunchInWindow(imageViewer, window);
-		}
-
-		private static void LaunchInWindow(ImageViewerComponent imageViewer, IDesktopWindow desktopWindow)
-		{
-			LaunchInWindow(imageViewer, desktopWindow, string.Empty);
-		}
-
-		private static void LaunchInWindow(ImageViewerComponent imageViewer, IDesktopWindow desktopWindow, string titlePrefix)
-		{
-			IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(
-				desktopWindow,
-				imageViewer,
-				titlePrefix + imageViewer.PatientsLoadedLabel);
-
-			workspace.Closed += delegate(object sender, ClosedEventArgs e)
-			                    	{
-			                    		imageViewer.Dispose();
-			                    	};
-			try
-			{
-				imageViewer.Layout();
-				imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
-			}
-			catch(Exception)
-			{
-				workspace.Close();
-				throw;
-			}
+			return window;
 		}
 
 		#endregion

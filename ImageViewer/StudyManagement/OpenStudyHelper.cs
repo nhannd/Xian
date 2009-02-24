@@ -38,29 +38,6 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
-	/// Specifies window launch options for the <see cref="OpenStudyHelper"/>.
-	/// </summary>
-	public enum WindowBehaviour
-	{
-		/// <summary>
-		/// Unused, currently.
-		/// </summary>
-		Auto,
-
-		/// <summary>
-		/// Specifies that the <see cref="ImageViewerComponent"/> should be launched
-		/// in a single (e.g. active) desktop window.
-		/// </summary>
-		Single,
-
-		/// <summary>
-		/// Specifies that the <see cref="ImageViewerComponent"/> should be launched
-		/// in a separate desktop window.
-		/// </summary>
-		Separate
-	}
-
-	/// <summary>
 	/// Holds the parameters that specify the studies to be opened using the <see cref="OpenStudyHelper"/>
 	/// </summary>
 	public class OpenStudyArgs

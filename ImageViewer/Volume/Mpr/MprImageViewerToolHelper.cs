@@ -29,45 +29,45 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public bool IsIdentityImage(IPresentationImage image)
 		{
-			return IsMprImage(image, DisplaySetIdentifier.Identity);
+			return IsMprImage(image, MprDisplaySetIdentifier.Identity);
 		}
 
 		public bool IsOrthoXImage(IPresentationImage image)
 		{
-			return IsMprImage(image, DisplaySetIdentifier.OrthoX);
+			return IsMprImage(image, MprDisplaySetIdentifier.OrthoX);
 		}
 
 		public bool IsOrthoYImage(IPresentationImage image)
 		{
-			return IsMprImage(image, DisplaySetIdentifier.OrthoY);
+			return IsMprImage(image, MprDisplaySetIdentifier.OrthoY);
 		}
 
 		public bool IsObliqueImage(IPresentationImage image)
 		{
-			return IsMprImage(image, DisplaySetIdentifier.Oblique);
+			return IsMprImage(image, MprDisplaySetIdentifier.Oblique);
 		}
 		
 		public MprDisplaySet GetIdentityDisplaySet()
 		{
-			return FindMprDisplaySet(DisplaySetIdentifier.Identity);
+			return FindMprDisplaySet(MprDisplaySetIdentifier.Identity);
 		}
 
 		public MprDisplaySet GetOrthoYDisplaySet()
 		{
-			return FindMprDisplaySet(DisplaySetIdentifier.OrthoY);
+			return FindMprDisplaySet(MprDisplaySetIdentifier.OrthoY);
 		}
 
 		public MprDisplaySet GetOrthoXDisplaySet()
 		{
-			return FindMprDisplaySet(DisplaySetIdentifier.OrthoX);
+			return FindMprDisplaySet(MprDisplaySetIdentifier.OrthoX);
 		}
 
 		public MprDisplaySet GetObliqueDisplaySet()
 		{
-			return FindMprDisplaySet(DisplaySetIdentifier.Oblique);
+			return FindMprDisplaySet(MprDisplaySetIdentifier.Oblique);
 		}
 
-		private static bool IsMprImage(IPresentationImage image, DisplaySetIdentifier identifier)
+		private static bool IsMprImage(IPresentationImage image, MprDisplaySetIdentifier identifier)
 		{
 			if (image == null || image.ParentDisplaySet == null)
 				return false;
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return image.ParentDisplaySet is MprDisplaySet && ((MprDisplaySet)image.ParentDisplaySet).Identifier == identifier;
 		}
 
-		private MprDisplaySet FindMprDisplaySet(DisplaySetIdentifier identifier)
+		private MprDisplaySet FindMprDisplaySet(MprDisplaySetIdentifier identifier)
 		{
 			IPhysicalWorkspace workspace = _context.Viewer.PhysicalWorkspace;
 			foreach (IImageBox imageBox in workspace.ImageBoxes)

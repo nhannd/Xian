@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			
 			if (frame.ParentImageSop.ParentSeries != null)
 			{
+				//TODO: figure out how to do this without the parent series!
 				str = String.Format("{0}/{1}", frame.ParentImageSop.InstanceNumber, frame.ParentImageSop.ParentSeries.Sops.Count);
 			}
 			else

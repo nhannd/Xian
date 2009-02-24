@@ -37,6 +37,7 @@ using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using vtk;
+using System.Runtime.InteropServices;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
@@ -315,11 +316,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		internal void PopulateDisplaySet(IDisplaySet displaySet)
 		{
-			foreach (IPresentationImage image in displaySet.PresentationImages)
-				image.Dispose();
-
-			displaySet.PresentationImages.Clear();
-
 			// Slice through this point
 			Vector3D throughPoint;
 			if (_sliceThroughPointPatient != null)
@@ -328,6 +324,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				throughPoint = _volume.CenterPoint;
 
 			Vector3D spacingVector = ActualSliceSpacingVector;
+
+			//TODO: this should never happen - this is just a hack to make it work.
+			if (Vector3D.AreEqual(spacingVector, Vector3D.Null))
+				throw new InvalidOperationException();
+
 			// Keep same spacing (2mm) for all as change in number of frames per DisplaySet causes weird behavior
 			spacingVector = spacingVector.Normalize();
 			spacingVector *= 2;
@@ -343,7 +344,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// So I settled on just the longest axis, creates enough slices without going out of bounds too often
 			int numSlices = (int)(_volume.LongAxisMagnitude / spacingVector.Magnitude);
 
+			//TODO: this should never happen - this is just a hack to make it work.
+			if (numSlices < 1)
+				throw new InvalidOperationException();
+
 			Vector3D startPoint = throughPoint + (numSlices / 2) * spacingVector;
+
+			foreach (IPresentationImage image in displaySet.PresentationImages)
+				image.Dispose();
+
+			displaySet.PresentationImages.Clear();
 
 			int sliceIndex;
 			for (sliceIndex = 0; sliceIndex < numSlices; sliceIndex++)
@@ -356,7 +366,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				imageSop.Dispose();
 			}
 		}
-
 		
 		//ggerade ToRef: once generalized, this should be handled by CreateDisplaySet
 		internal DisplaySet CreateOrthoDisplaySet(string displaySetName)
@@ -377,8 +386,15 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				spacingVector *= spacingFactor;
 			}
 
+			//TODO: this should never happen - this is just a hack to make it work.
+			if (Vector3D.AreEqual(spacingVector, Vector3D.Null))
+				throw new InvalidOperationException();
+
 			//ggerade ToDo: Choose correct axis
 			int numSlices = (int) (_volume.LongAxisMagnitude / spacingVector.Magnitude);
+			//TODO: this should never happen - this is just a hack to make it work.
+			if (numSlices < 1)
+				throw new InvalidOperationException();
 
 			//ggerade ToDo: Start on actual slice boundaries
 			Vector3D startPoint = centerPoint + (numSlices / 2) * spacingVector;
@@ -422,11 +438,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		// This method is used by the VolumeSliceSopDataSource to generate pixel data on demand
 		internal byte[] GenerateFrameNormalizedPixelData(Matrix resliceAxes)
 		{
-			vtkImageData vtkSlice = GenerateVtkSlice(resliceAxes);
+			using (vtkImageData vtkSlice = GenerateVtkSlice(resliceAxes))
+			{
+				byte[] pixelData = CreatePixelDataFromVtkSlice(vtkSlice);
+				vtkSlice.ReleaseData();
 
-			byte[] pixelData = CreatePixelDataFromVtkSlice(vtkSlice);
-
-			return pixelData;
+				return pixelData;
+			}
 		}
 
 		private static byte[] CreatePixelDataFromVtkSlice(vtkImageData sliceImageData)
@@ -434,7 +452,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			int[] sliceDimensions = sliceImageData.GetDimensions();
 			int sliceDataSize = sliceDimensions[0] * sliceDimensions[1] * sliceDimensions[2];
 			IntPtr sliceDataPtr = sliceImageData.GetScalarPointer();
-
 			byte[] pixelData = new byte[sliceDataSize * sizeof (short)];
 
 			CopySliceToFrame(pixelData, sliceDataPtr, sliceDataSize);
@@ -465,24 +482,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		// Extract slice in specified orientation
 		private vtkImageData GenerateVtkSlice(Matrix resliceAxes)
 		{
-			vtkImageReslice reslicer = new vtkImageReslice();
+			using (vtkImageReslice reslicer = new vtkImageReslice())
+			{
+				reslicer.SetInput(_volume._VtkVolume);
+				reslicer.SetInformationInput(_volume._VtkVolume);
 
-			reslicer.SetInput(_volume._VtkVolume);
-			reslicer.SetInformationInput(_volume._VtkVolume);
+				reslicer.SetOutputDimensionality(2);
 
-			reslicer.SetOutputDimensionality(2);
+				reslicer.SetBackgroundLevel(_volume.PadValue);
 
-			reslicer.SetBackgroundLevel(_volume.PadValue);
+				// Note: When the VTK docs state that the output spacing defaults to the input data,
+				//	apparently they mean the raw volume. Without this call the spacing that is provided in the
+				//	input volume is not taken into account.
+				reslicer.SetOutputSpacing(_volume.Spacing.X, _volume.Spacing.Y, _volume.Spacing.Z);
 
-			// Note: When the VTK docs state that the output spacing defaults to the input data,
-			//	apparently they mean the raw volume. Without this call the spacing that is provided in the
-			//	input volume is not taken into account.
-			reslicer.SetOutputSpacing(_volume.Spacing.X, _volume.Spacing.Y, _volume.Spacing.Z);
+				reslicer.SetResliceAxes(MatrixToVtkMatrix(resliceAxes));
 
-			reslicer.SetResliceAxes(MatrixToVtkMatrix(resliceAxes));
-
-			int sliceExtent = GetSliceExtent();
-			reslicer.SetOutputExtent(0, sliceExtent - 1, 0, sliceExtent - 1, 0, 0);
+				int sliceExtent = GetSliceExtent();
+				reslicer.SetOutputExtent(0, sliceExtent - 1, 0, sliceExtent - 1, 0, 0);
 
 #if false
 	// Determine the center image volume point
@@ -517,25 +534,28 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 #endif
 
-			switch (_interpolationMode)
-			{
-				case InterpolationModes.NearestNeighbor:
-					reslicer.SetInterpolationModeToNearestNeighbor();
-					break;
-				case InterpolationModes.Linear:
-					reslicer.SetInterpolationModeToLinear();
-					break;
-				case InterpolationModes.Cubic:
-					reslicer.SetInterpolationModeToCubic();
-					break;
+				switch (_interpolationMode)
+				{
+					case InterpolationModes.NearestNeighbor:
+						reslicer.SetInterpolationModeToNearestNeighbor();
+						break;
+					case InterpolationModes.Linear:
+						reslicer.SetInterpolationModeToLinear();
+						break;
+					case InterpolationModes.Cubic:
+						reslicer.SetInterpolationModeToCubic();
+						break;
+				}
+
+				using (vtkExecutive exec = reslicer.GetExecutive())
+				{
+					//ggerade ToRes: Are these VTK observers useful?
+					//exec.AddObserver(123, VtkReslicerExecutiveCallback);
+					exec.Update();
+
+					return reslicer.GetOutput();
+				}
 			}
-
-			vtkExecutive exec = reslicer.GetExecutive();
-			//ggerade ToRes: Are these VTK observers useful?
-			//exec.AddObserver(123, VtkReslicerExecutiveCallback);
-			exec.Update();
-
-			return reslicer.GetOutput();
 		}
 
 		// Derived frome either a specified extent in millimeters or from the volume dimensions (default)

@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Comparers;
@@ -42,6 +43,8 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
+	internal delegate void FrameLoadedDelegate(Frame frame);
+
 	/// <summary>
 	/// This utility class aids in creating a Volume (currently a VTK volume) from a collection of Frames
 	/// </summary>
@@ -60,6 +63,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private double _tilt;
 		private int _padRows;
 		private int _paddedTop;
+		private FrameLoadedDelegate _frameLoadedCallback;
 
 		#endregion
 
@@ -68,6 +72,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public VolumeBuilder(List<Frame> frames)
 		{
 			_frames = frames;
+		}
+
+		public void SetFrameLoadedCallback(FrameLoadedDelegate callback)
+		{
+			_frameLoadedCallback = callback;
 		}
 
 		//ggerade ToDo: Do away with this old school interface, use exceptions ala the DICOM validator
@@ -442,6 +451,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				imageIndex++;
 
 				PadBottom(volumeArray, end, (short) _padValue);
+
+				if (_frameLoadedCallback != null)
+					_frameLoadedCallback(frame);
 			}
 			return volumeArray;
 		}
@@ -492,6 +504,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				imageIndex++;
 
 				PadBottom(volumeArray, end, (ushort) _padValue);
+
+				if (_frameLoadedCallback != null)
+					_frameLoadedCallback(frame);
 			}
 			return volumeArray;
 		}

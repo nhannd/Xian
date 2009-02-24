@@ -12,14 +12,14 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[MenuAction("activate", "imageviewer-contextmenu/Rotate Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarsMpr/Rotate Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuVolume/Rotate Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
+	//[ButtonAction("activate", "global-toolbars/ToolbarsMpr/Rotate Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
 
 	[GroupHint("activate", "Tools.Mpr.Manipulation.Rotate")]
 
-	//[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class RotateObliqueTool : MouseImageViewerTool
 	{
 		private MprImageViewerToolHelper _toolHelper;
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			_toolHelper = new MprImageViewerToolHelper(Context);
 
-			Visible = _toolHelper.GetObliqueDisplaySet() != null;
+			Visible = _toolHelper.GetMprLayoutManager() != null;
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
@@ -171,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return;
 
 			MprDisplaySet displaySet = (MprDisplaySet)selectedImage.ParentDisplaySet;
-			if (displaySet.Identifier == DisplaySetIdentifier.Oblique)
+			if (displaySet.Identifier == MprDisplaySetIdentifier.Oblique)
 				return;
 
 			IOverlayGraphicsProvider overlayProvider = selectedImage as IOverlayGraphicsProvider;
@@ -217,11 +217,11 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (displaySet == null)
 				return;
 
-			if (displaySet.Identifier == DisplaySetIdentifier.Identity)
+			if (displaySet.Identifier == MprDisplaySetIdentifier.Identity)
 				_rotationAxis = 0; //x
-			else if (displaySet.Identifier == DisplaySetIdentifier.OrthoX)
+			else if (displaySet.Identifier == MprDisplaySetIdentifier.OrthoX)
 				_rotationAxis = 1; //y
-			else if (displaySet.Identifier == DisplaySetIdentifier.OrthoY)
+			else if (displaySet.Identifier == MprDisplaySetIdentifier.OrthoY)
 				_rotationAxis = 2; //z
 		}
 

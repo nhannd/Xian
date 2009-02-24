@@ -79,9 +79,22 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			BackgroundTask task = new BackgroundTask(
 				delegate(IBackgroundTaskContext context)
 					{
-						BackgroundTaskProgress prog = new BackgroundTaskProgress(10, "Creating Volume...");
-						context.ReportProgress(prog);
+						int totalSteps = frames.Count + 1;
+						int currentStep = 0;
 
+						FrameLoadedDelegate progressDelegate =
+							delegate
+								{
+									++currentStep;
+									int percent = Math.Min((int) (currentStep/(float) totalSteps*100), 100);
+									BackgroundTaskProgress prog = new BackgroundTaskProgress(percent, "Creating Volume...");
+									context.ReportProgress(prog);
+								};
+
+						//call it once.
+						progressDelegate(null);
+
+						builder.SetFrameLoadedCallback(progressDelegate);
 						volume = builder.BuildVolume();
 
 						context.Complete(null);

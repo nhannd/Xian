@@ -47,20 +47,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			get { return _layoutManager; }
 		}
-
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
-			{
-				//We don't actually add these to the component anywhere, so we have to dispose them ourselves.
-				foreach (IImageBox imageBox in base.PhysicalWorkspace.ImageBoxes)
-				{
-					imageBox.DisplaySet.Dispose();
-				}
-			}
-
-			base.Dispose(disposing);
-		}
 	}
 
 	internal class MprLayoutManager : LayoutManager
@@ -121,10 +107,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		protected override void FillPhysicalWorkspace()
 		{
-			_identityDisplaySet = MprDisplaySet.Create(DisplaySetIdentifier.Identity, _volume);
-			_orthoXDisplaySet = MprDisplaySet.Create(DisplaySetIdentifier.OrthoX, _volume);
-			_orthoYDisplaySet = MprDisplaySet.Create(DisplaySetIdentifier.OrthoY, _volume);
-			_obliqueDisplaySet = MprDisplaySet.Create(DisplaySetIdentifier.Oblique, _volume);
+			_identityDisplaySet = MprDisplaySet.Create(MprDisplaySetIdentifier.Identity, _volume);
+			_orthoXDisplaySet = MprDisplaySet.Create(MprDisplaySetIdentifier.OrthoX, _volume);
+			_orthoYDisplaySet = MprDisplaySet.Create(MprDisplaySetIdentifier.OrthoY, _volume);
+			_obliqueDisplaySet = MprDisplaySet.Create(MprDisplaySetIdentifier.Oblique, _volume);
 
 			// Hey, I said it was a hack!
 			//Vector3D sliceThroughPatient = _volume.CenterPointPatient;

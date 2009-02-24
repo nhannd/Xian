@@ -13,8 +13,8 @@ using ClearCanvas.ImageViewer.Mathematics;
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[MenuAction("activate", "imageviewer-contextmenu/Define Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarsMpr/Define Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuVolume/Define Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
+	//[ButtonAction("activate", "global-toolbars/ToolbarsMpr/Define Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
 
@@ -105,8 +105,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return false;
 
 			_polyLine = new StandardStatefulInteractiveGraphic(new PolyLineInteractiveGraphic(2));
-			_polyLine.InactiveColor = Color.MediumBlue;
-			_polyLine.FocusColor = Color.LightBlue;
+			_polyLine.InactiveColor = Color.CornflowerBlue;
+			_polyLine.FocusColor = Color.Cyan;
 			_polyLine.SelectedColor = Color.Blue;
 			_polyLine.FocusSelectedColor = Color.Blue;
 
@@ -139,6 +139,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Vector3D startPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(start);
 			Vector3D endPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(end);
 
+			if ((startPatient - endPatient).Magnitude < 5 * base.SelectedImageSopProvider.Frame.NormalizedPixelSpacing.Row)
+				return;
+
 			Vector3D orientationRow = new Vector3D(
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.RowX,
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.RowY,
@@ -149,7 +152,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnY,
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnZ);
 
+
 			_toolHelper.GetObliqueDisplaySet().SetCutLine(orientationColumn, orientationRow, startPatient, endPatient);
+
 		}
 
 		public override bool Track(IMouseInformation mouseInformation)

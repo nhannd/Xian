@@ -1,10 +1,14 @@
 using System;
+using System.Drawing;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	internal enum DisplaySetIdentifier
+	internal enum MprDisplaySetIdentifier
 	{
 		Identity,
 		OrthoX,
@@ -14,17 +18,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 	internal class MprDisplaySet : DisplaySet
 	{
-		private readonly DisplaySetIdentifier _identifier;
+		private readonly MprDisplaySetIdentifier _identifier;
 		private readonly VolumeSlicer _slicer;
 
-		private MprDisplaySet(string name, string uid, string description, DisplaySetIdentifier identifier, VolumeSlicer slicer)
+		private MprDisplaySet(string name, string uid, string description, MprDisplaySetIdentifier identifier, VolumeSlicer slicer)
 		: base(name, uid, description)
 		{
 			_identifier = identifier;
 			_slicer = slicer;
 		}
 
-		public DisplaySetIdentifier Identifier
+		public MprDisplaySetIdentifier Identifier
 		{
 			get { return _identifier; }	
 		}
@@ -44,22 +48,22 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			get { return _slicer.RotateAboutZ; }
 		}
 
-		public static MprDisplaySet Create(DisplaySetIdentifier identifier, Volume volume)
+		public static MprDisplaySet Create(MprDisplaySetIdentifier identifier, Volume volume)
 		{
 			VolumeSlicer slicer = new VolumeSlicer(volume);
 
 			string name;
-			if (identifier == DisplaySetIdentifier.Identity)
+			if (identifier == MprDisplaySetIdentifier.Identity)
 			{
 				slicer.SetSlicePlaneIdentity();
 				name = "MPR (Identity)";
 			}
-			else if (identifier == DisplaySetIdentifier.OrthoX)
+			else if (identifier == MprDisplaySetIdentifier.OrthoX)
 			{
 				slicer.SetSlicePlaneOrthoX();
 				name = "MPR (OrthoX)";
 			}
-			else if (identifier == DisplaySetIdentifier.OrthoY)
+			else if (identifier == MprDisplaySetIdentifier.OrthoY)
 			{
 				slicer.SetSlicePlaneOrthoY();
 				name = "MPR (OrthoY)";
@@ -77,34 +81,69 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public void SetCutLine(Vector3D sourceOrientationColumn, Vector3D sourceOrientationRow, Vector3D startPoint, Vector3D endPoint)
 		{
-			if (_identifier != DisplaySetIdentifier.Oblique)
+			if (_identifier != MprDisplaySetIdentifier.Oblique)
 				throw new InvalidOperationException("Display set must be oblique.");
 
-			int currentIndex = this.ImageBox.TopLeftPresentationImageIndex;
+			int currentIndex = ImageBox.TopLeftPresentationImageIndex;
 
-			//ggerade ToRes: What about other settings like Window/level? It is lost when the DisplaySets
-			// are swapped out.
+			object transformMemento = null;
+			IPresentationImage oldImage = this.ImageBox.TopLeftPresentationImage;
+			if (oldImage is ISpatialTransformProvider)
+				transformMemento = (oldImage as ISpatialTransformProvider).SpatialTransform.CreateMemento();
 
-			_slicer.SetSlicePlanePatient(sourceOrientationColumn, sourceOrientationRow, startPoint, endPoint);
-			_slicer.PopulateDisplaySet(this);
+			IComposableLut lut = null;
+			if (oldImage is IVoiLutProvider)
+				lut = (oldImage as IVoiLutProvider).VoiLutManager.GetLut();
 
-			// Hacked this in so that the Imagebox wouldn't jump to first image all the time
-			this.ImageBox.TopLeftPresentationImageIndex = currentIndex;
+			try
+			{
+				_slicer.SetSlicePlanePatient(sourceOrientationColumn, sourceOrientationRow, startPoint, endPoint);
+				_slicer.PopulateDisplaySet(this);
+			}
+			catch
+			{
+				//SB: do this for now until we can handle things properly
+				return;
+			}
+
+			if (lut != null || transformMemento != null)
+			{
+				// Hacked this in so that the Imagebox wouldn't jump to first image all the time
+				foreach (IPresentationImage image in PresentationImages)
+				{
+					if (lut != null && image is IVoiLutProvider)
+						(image as IVoiLutProvider).VoiLutManager.InstallLut(lut.Clone());
+					if (transformMemento != null && image is ISpatialTransformProvider)
+						(image as ISpatialTransformProvider).SpatialTransform.SetMemento(transformMemento);
+				}
+			}
+
+			//TODO: this seems a bit slow
+			IPresentationImage closestImage = GetClosestSlice(startPoint + (endPoint - startPoint)*2);
+			if (closestImage == null)
+				ImageBox.TopLeftPresentationImageIndex = currentIndex;
+			else
+				ImageBox.TopLeftPresentationImage = closestImage;
+
 			Draw();
 		}
 
 		public void Rotate(int rotateX, int rotateY, int rotateZ)
 		{
-			if (_identifier != DisplaySetIdentifier.Oblique)
+			if (_identifier != MprDisplaySetIdentifier.Oblique)
 				throw new InvalidOperationException("Display set must be oblique.");
 
 			// Hang on to the current index, we'll keep it the same with the new DisplaySet
 			int currentIndex = ImageBox.TopLeftPresentationImageIndex;
 
-			//ggerade ToRes: What about other settings like Window/level? It is lost when the DisplaySets
-			// are swapped out.
+			object transformMemento = null;
+			IPresentationImage oldImage = this.ImageBox.TopLeftPresentationImage;
+			if (oldImage is ISpatialTransformProvider)
+				transformMemento = (oldImage as ISpatialTransformProvider).SpatialTransform.CreateMemento();
 
-			_slicer.SetSlicePlaneOblique(rotateX, rotateY, rotateZ);
+			IComposableLut lut = null;
+			if (oldImage is IVoiLutProvider)
+				lut = (oldImage as IVoiLutProvider).VoiLutManager.GetLut();
 
 			//Vector3D sliceThroughPatient = _volume.CenterPointPatient;
 			//sliceThroughPatient.X = 0;
@@ -113,13 +152,57 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			//_obliqueSlicer.SliceThroughPointPatient = sliceThroughPatient;
 			//_obliqueSlicer.SliceExtentMillimeters = 150;
 
-			// Hacked this in so that the Imagebox wouldn't jump to first image all the time
+			try
+			{
+				_slicer.SetSlicePlaneOblique(rotateX, rotateY, rotateZ);
+				_slicer.PopulateDisplaySet(this);
+			}
+			catch
+			{
+				//SB: do this for now until we can handle things properly
+				return;
+			}
+
+			if (lut != null || transformMemento != null)
+			{
+				// Hacked this in so that the Imagebox wouldn't jump to first image all the time
+				foreach (IPresentationImage image in PresentationImages)
+				{
+					if (lut != null && image is IVoiLutProvider)
+						(image as IVoiLutProvider).VoiLutManager.InstallLut(lut.Clone());
+					if (transformMemento != null && image is ISpatialTransformProvider)
+						(image as ISpatialTransformProvider).SpatialTransform.SetMemento(transformMemento);
+				}
+			}
+
 			ImageBox.TopLeftPresentationImageIndex = currentIndex;
 
-			// Taken care of by hack above
-			//obliqueImageBox.TopLeftPresentationImageIndex = currentIndex;
-
 			Draw();
+		}
+
+		private IPresentationImage GetClosestSlice(Vector3D positionPatient)
+		{
+			float closestDistance = float.MaxValue;
+			IPresentationImage closestImage = null;
+
+			foreach (IPresentationImage image in PresentationImages)
+			{
+				if (image is IImageSopProvider)
+				{
+					Frame frame = (image as IImageSopProvider).Frame;
+					Vector3D positionCenterOfImage = frame.ImagePlaneHelper.ConvertToPatient(new PointF((frame.Columns - 1) / 2F, (frame.Rows - 1) / 2F));
+					Vector3D distanceVector = positionCenterOfImage - positionPatient;
+					float distance = distanceVector.Magnitude;
+
+					if (distance <= closestDistance)
+					{
+						closestDistance = distance;
+						closestImage = image;
+					}
+				}
+			}
+
+			return closestImage;
 		}
 	}
 }
