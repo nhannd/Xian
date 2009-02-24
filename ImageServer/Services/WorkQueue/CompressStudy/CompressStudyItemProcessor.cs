@@ -289,7 +289,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 			}
 
 			PostProcessing(item, WorkQueueProcessorStatus.Complete,
-				WorkQueueProcessorNumProcessed.None,
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 
 			return true;
@@ -318,8 +317,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				{
 					// No UIDs associated with the WorkQueue item.  Set the status back to idle
 					PostProcessing(item, 
-						WorkQueueProcessorStatus.Pending, 
-						WorkQueueProcessorNumProcessed.None, 
+						WorkQueueProcessorStatus.Idle, 
 						WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 					return;
 				}
@@ -362,7 +360,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
 					PostProcessing(item, 
 						WorkQueueProcessorStatus.Pending,
-						WorkQueueProcessorNumProcessed.Batch,
 						WorkQueueProcessorDatabaseUpdate.None); // batch processed, not complete
 				}
 			}

@@ -116,13 +116,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                         // Must go to Idle and come back again because more uid may have been added to this entry since it started.
                         BatchComplete();
                     }
-                }
-                
-                
-            }
-            
+                }                
+            }            
         }
-
         
         protected override bool CanStart()
         {
@@ -150,7 +146,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             DirectoryUtility.DeleteIfEmpty(_reconcileQueueData.StoragePath);
 			PostProcessing(WorkQueueItem, 
 				WorkQueueProcessorStatus.Complete, 
-				WorkQueueProcessorNumProcessed.None, 
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
             Platform.Log(LogLevel.Info, "Reconciliation completed");
         }
@@ -159,7 +154,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         {
 			PostProcessing(WorkQueueItem, 
 				WorkQueueProcessorStatus.Pending, 
-				WorkQueueProcessorNumProcessed.Batch, 
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
             Platform.Log(LogLevel.Info, "StudyReconcile processed.");
         }

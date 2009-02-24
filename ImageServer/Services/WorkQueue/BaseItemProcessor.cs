@@ -62,16 +62,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 	public enum WorkQueueProcessorStatus
 	{
 		Complete,
-		Pending
-	}
-
-	/// <summary>
-	/// Enum telling if a WorkQueue item has processed any DICOM objects.
-	/// </summary>
-	public enum WorkQueueProcessorNumProcessed
-	{
-		Batch,
-		None
+		Pending,
+		Idle,
+		IdleNoDelete
 	}
 
 	/// <summary>
@@ -374,10 +367,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		/// </para>
 		/// </remarks>
 		/// <param name="item">The <see cref="WorkQueue"/> item to set.</param>
-		/// <param name="complete">Indicates if complete.</param>
-		/// <param name="numProcessed">Tells if items were processed.</param>
+		/// <param name="status">Indicates if complete.</param>
 		/// <param name="resetQueueStudyState">Reset the queue study state back to Idle</param>
-		protected virtual void PostProcessing(Model.WorkQueue item, WorkQueueProcessorStatus complete, WorkQueueProcessorNumProcessed numProcessed, WorkQueueProcessorDatabaseUpdate resetQueueStudyState)
+		protected virtual void PostProcessing(Model.WorkQueue item, WorkQueueProcessorStatus status, WorkQueueProcessorDatabaseUpdate resetQueueStudyState)
 		{
 			DBUpdateTime.Add(
 				delegate
@@ -417,8 +409,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						if (scheduledTime > item.ExpirationTime)
 							scheduledTime = item.ExpirationTime;
 
-						if (complete == WorkQueueProcessorStatus.Complete 
-							|| (numProcessed == WorkQueueProcessorNumProcessed.None) && item.ExpirationTime < Platform.Time)
+						if (status == WorkQueueProcessorStatus.Complete
+							|| (status == WorkQueueProcessorStatus.Idle) && item.ExpirationTime < Platform.Time)
 						{
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Completed;
 							parms.FailureCount = item.FailureCount;
@@ -428,8 +420,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
 							parms.ExpirationTime = item.ExpirationTime; // Keep the same
 						}
-						// If the batch size is 0, switch to idle state.
-						else if (numProcessed == WorkQueueProcessorNumProcessed.None)
+						else if (status == WorkQueueProcessorStatus.Idle
+						      || status == WorkQueueProcessorStatus.IdleNoDelete)
 						{
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Idle;
 							parms.ScheduledTime = scheduledTime;

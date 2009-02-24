@@ -37,6 +37,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
 {
@@ -85,11 +86,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
             if (WorkQueueUidList.Count == 0)
             {
                 // No UIDs associated with the WorkQueue item.  Set the status back to idle
-				PostProcessing(item, 
-					WorkQueueProcessorStatus.Pending, 
-					WorkQueueProcessorNumProcessed.None, 
-					WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-                CheckEmptyStudy(item);
+				if (item.ExpirationTime <= Platform.Time)
+				{
+					Platform.Log(LogLevel.Info, "Applying rules engine to study being cleaned up to ensure disk management is applied.");
+
+					// Run Study / Series Rules Engine.
+					StudyRulesEngine engine = new StudyRulesEngine(StorageLocation);
+					engine.Apply();
+
+					PostProcessing(item,
+								   WorkQueueProcessorStatus.Complete,
+								   WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+				}
+				else
+				{
+					PostProcessing(item,
+					               WorkQueueProcessorStatus.IdleNoDelete,
+					               WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+				}
+
+				// This will just delete the study, if there's no images that have been sucessfully processed.
+            	CheckEmptyStudy(item);
                 return;
             }      
 
@@ -131,7 +148,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
 
 			PostProcessing(item, 
 				WorkQueueProcessorStatus.Pending, 
-				WorkQueueProcessorNumProcessed.Batch, 
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 
         }

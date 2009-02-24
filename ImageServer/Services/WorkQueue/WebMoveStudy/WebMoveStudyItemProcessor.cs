@@ -57,7 +57,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
 			{
 				Platform.Log(LogLevel.Debug, "Removing Idle WebMoveStudy WorkQueueEntry: {0}", item.Key);
 				base.PostProcessing(item, WorkQueueProcessorStatus.Complete, 
-									WorkQueueProcessorNumProcessed.None,
 				                    WorkQueueProcessorDatabaseUpdate.None);
 				return;
 			}

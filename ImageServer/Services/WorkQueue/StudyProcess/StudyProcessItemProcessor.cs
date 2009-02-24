@@ -129,8 +129,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     {
         #region Private Members
         private ServerRulesEngine _sopProcessedRulesEngine;
-        private ServerRulesEngine _studyProcessedRulesEngine;
-        private ServerRulesEngine _seriesProcessedRulesEngine;
 
         private StudyProcessStatistics _statistics;
         private InstanceStatistics _instanceStats;
@@ -151,77 +149,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #endregion Constructors
 
         #region Private Methods
-        /// <summary>
-        /// Method for applying rules when a new study has been inserted.
-        /// </summary>
-        /// <param name="item">The <see cref="WorkQueue"/> item being processed.</param>
-        /// <param name="file">The DICOM file being processed.</param>
-        private void ProcessStudyRules(Model.WorkQueue item, DicomFile file)
-        {
-
-            if (_studyProcessedRulesEngine == null)
-            {
-                _studyProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyProcessed, item.ServerPartitionKey);
-                _studyProcessedRulesEngine.Load();
-            }
-            else
-            {
-                _studyProcessedRulesEngine.Statistics.LoadTime.Reset();
-                _studyProcessedRulesEngine.Statistics.ExecutionTime.Reset();
-            }
-            ServerActionContext context = new ServerActionContext(file,StorageLocation.FilesystemKey, item.ServerPartitionKey,item.StudyStorageKey);
-
-			Platform.Log(LogLevel.Info, "Processing Study Level rules for study {0} on partition {1}",
-				StorageLocation.StudyInstanceUid, context.ServerPartition.Description);
-
-            context.CommandProcessor = new ServerCommandProcessor("Study Rule Processor");
-
-			_studyProcessedRulesEngine.Execute(context);
-
-			// This is a bit kludgy, but we had a problem with studies with only 1 image incorectlly
-			// having archive requests inserted when they were scheduled for deletion.  Calling
-			// this command here so that if a delete is inserted at the study level, we will remove
-			// the previously inserted archive request for the study.  Note also this has to be done
-			// after the rules engine is executed.
-			context.CommandProcessor.AddCommand(new InsertArchiveQueueCommand(item.ServerPartitionKey, item.StudyStorageKey));
-
-            if (false == context.CommandProcessor.Execute())
-            {
-				Platform.Log(LogLevel.Error, "Unexpected failure processing Study level rules for study {0}", StorageLocation.StudyInstanceUid);
-            }
-        }
-
-
-        /// <summary>
-        /// Method for applying rules when a new series has been inserted.
-        /// </summary>
-        /// <param name="item">The <see cref="WorkQueue"/> item being processed.</param>
-        /// <param name="file">The DICOM file being processed.</param>
-        private void ProcessSeriesRules(Model.WorkQueue item, DicomFile file)
-        {
-            if (_seriesProcessedRulesEngine == null)
-            {
-                _seriesProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SeriesProcessed, item.ServerPartitionKey);
-                _seriesProcessedRulesEngine.Load();
-            }
-            else
-            {
-                _seriesProcessedRulesEngine.Statistics.LoadTime.Reset();
-                _seriesProcessedRulesEngine.Statistics.ExecutionTime.Reset();
-            }
-           
-            ServerActionContext context = new ServerActionContext(file, StorageLocation.FilesystemKey, item.ServerPartitionKey, item.StudyStorageKey);
-
-            context.CommandProcessor = new ServerCommandProcessor("Series Rule Processor");
-
-            _seriesProcessedRulesEngine.Execute(context);
-
-            if (false == context.CommandProcessor.Execute())
-            {
-                Platform.Log(LogLevel.Error,"Error processing Series level rules StudyStorage {0}",item.StudyStorageKey);
-            }
-        }
-
+	
         private static void ProcessDuplicate(string basePath, string duplicatePath)
         {
             DicomFile dupFile = new DicomFile(duplicatePath);
@@ -349,8 +277,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             {
                 InsertInstanceCommand insertInstanceCommand = null;
                 InsertStudyXmlCommand insertStudyXmlCommand = null;
-                InstanceKeys keys = null;
-
+            
                 String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
                 String modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
 
@@ -394,24 +321,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     else
                     {
                         Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
-
-                        if (insertInstanceCommand != null)
-                            keys = insertInstanceCommand.InsertKeys;
-
-                        if (keys != null)
-                        {
-                            // We've inserted a new Study, process Study Rules
-                            if (keys.InsertStudy)
-                            {
-                                ProcessStudyRules(_context.WorkQueueItem, file);
-                            }
-
-                            // We've inserted a new Series, process Series Rules
-                            if (keys.InsertSeries)
-                            {
-                                ProcessSeriesRules(_context.WorkQueueItem, file);
-                            }
-                        }
                     }
                 }
                 catch (Exception e)
@@ -435,10 +344,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                     // Update the statistics
                     _statistics.NumInstances++;
-
                 }
-            }
-            
+            }            
         }
         
         /// <summary>
@@ -489,6 +396,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return successfulProcessCount > 0;
 
         }
+
         /// <summary>
         /// Process a specified <see cref="WorkQueueUid"/>
         /// </summary>
@@ -513,8 +421,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 path = basePath + ".dcm";
 
             try
-            {
-                
+            {                
                 // This is a bit trickly.  If the partition has the "AcceptLatest" policy configured, the 
                 // duplicate bit is set, and no extension is set.  In this case we want to process the 
                 // file as normal.  When the "CompareDuplicates" policy is set, we don't want to process,
@@ -609,29 +516,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _sopProcessedRulesEngine.Statistics.Reset();
             }
 
-            if (_studyProcessedRulesEngine != null)
-            {
-                if (_studyProcessedRulesEngine.Statistics.LoadTime.IsSet)
-                    _instanceStats.StudyRulesLoadTime.Add(_studyProcessedRulesEngine.Statistics.LoadTime);
-
-                if (_studyProcessedRulesEngine.Statistics.ExecutionTime.IsSet)
-                    _instanceStats.StudyEngineExecutionTime.Add(_studyProcessedRulesEngine.Statistics.ExecutionTime);
-
-                _studyProcessedRulesEngine.Statistics.Reset();
-            }
-
-            if (_seriesProcessedRulesEngine != null)
-            {
-
-                if (_seriesProcessedRulesEngine.Statistics.LoadTime.IsSet)
-                    _instanceStats.SeriesRulesLoadTime.Add(_seriesProcessedRulesEngine.Statistics.LoadTime);
-                if (_seriesProcessedRulesEngine.Statistics.ExecutionTime.IsSet)
-                    _instanceStats.SeriesEngineExecutionTime.Add(_seriesProcessedRulesEngine.Statistics.ExecutionTime);
-
-                _seriesProcessedRulesEngine.Statistics.Reset();
-            }
-
-            _instanceStats.ProcessTime.End();
+			_instanceStats.ProcessTime.End();
 
             _statistics.AddSubStats(_instanceStats);
         }
@@ -678,7 +563,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(StorageLocation, "StorageLocation");
             
             bool successful = false;
-        	WorkQueueProcessorNumProcessed batchProcessed = WorkQueueProcessorNumProcessed.Batch;
+        	bool idle = false;
             _statistics.TotalProcessTime.Add(
                     delegate
                     	{
@@ -688,7 +573,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                             if (WorkQueueUidList.Count == 0)
                             {
                                 successful = true;
-								batchProcessed = WorkQueueProcessorNumProcessed.None;
+                            	idle = true;
                             }
                             else
                             {
@@ -703,34 +588,51 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                 
                                 // Process the images in the list
                                 successful = ProcessUidList(item);
-
                             }
                         }
                 );
 
 			if (successful)
-				PostProcessing(item, 
-					WorkQueueProcessorStatus.Pending, 
-					batchProcessed, 
-					WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+			{
+				if (idle
+					&& item.ExpirationTime <= Platform.Time)
+				{
+					// Run Study / Series Rules Engine.
+					StudyRulesEngine engine = new StudyRulesEngine(StorageLocation);
+					engine.Apply();
+									
+					// Delete the queue entry.
+					PostProcessing(item,
+					               WorkQueueProcessorStatus.Complete,
+					               WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+				}
+				else if (idle)
+					PostProcessing(item,
+								   WorkQueueProcessorStatus.IdleNoDelete, // Don't delete, so we ensure the rules engine is run later.
+								   WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+				else
+					PostProcessing(item,
+								   WorkQueueProcessorStatus.Pending,
+								   WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+			}
 			else
 			{
-                bool allFailedDuplicate = CollectionUtils.TrueForAll(WorkQueueUidList, delegate(WorkQueueUid uid)
-                                                                               {
-                                                                                   return uid.Duplicate && uid.Failed;
-                                                                               });
+				bool allFailedDuplicate = CollectionUtils.TrueForAll(WorkQueueUidList, delegate(WorkQueueUid uid)
+																			   {
+																				   return uid.Duplicate && uid.Failed;
+																			   });
 
-                if (allFailedDuplicate)
-                {
-                    Platform.Log(LogLevel.Error, "All entries are duplicates");
-            
-                    PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
-                    return;
-                }
-                else
-                {
-                    PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal);
-                }
+				if (allFailedDuplicate)
+				{
+					Platform.Log(LogLevel.Error, "All entries are duplicates");
+
+					PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
+					return;
+				}
+				else
+				{
+					PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal);
+				}
 			}				
         }
 

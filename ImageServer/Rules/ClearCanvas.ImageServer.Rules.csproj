@@ -77,6 +77,7 @@
     <Compile Include="StudyDeleteAction\StudyDeleteActionItem.cs" />
     <Compile Include="StudyDeleteAction\StudyDeleteActionOperator.cs" />
     <Compile Include="StudyDeleteAction\Sample_StudyDelete.cs" />
+    <Compile Include="StudyRulesEngine.cs" />
     <Compile Include="Tier1RetentionAction\Sample_Tier1Retention.cs" />
     <Compile Include="Tier1RetentionAction\Tier1RetentionActionItem.cs" />
     <Compile Include="Tier1RetentionAction\Tier1RetentionActionOperator.cs" />

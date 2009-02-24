@@ -89,13 +89,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 && item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
             {
 				PostProcessing(item, 
-					WorkQueueProcessorStatus.Pending, 
-					WorkQueueProcessorNumProcessed.None, 
+					WorkQueueProcessorStatus.Idle, 
 					WorkQueueProcessorDatabaseUpdate.None);
                 return;
             }
 
-            // Load remote device information fromt he database.
+            // Load remote device information from the database.
             Device device = Device.Load(ReadContext, item.DeviceKey);
             if (device == null)
             {
@@ -203,14 +202,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 			else if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
 				PostProcessing(item,
 					WorkQueueProcessorStatus.Pending,
-					WorkQueueProcessorNumProcessed.Batch,
 					WorkQueueProcessorDatabaseUpdate.None); // no failures
 			else
 			{
 				item.ScheduledTime = item.ExpirationTime;
 				PostProcessing(item,
-				               WorkQueueProcessorStatus.Pending,
-				               WorkQueueProcessorNumProcessed.None, // Will force the entry to idle.
+				               WorkQueueProcessorStatus.Idle, // Will force the entry to idle.
 				               WorkQueueProcessorDatabaseUpdate.None); 
 			}
         }

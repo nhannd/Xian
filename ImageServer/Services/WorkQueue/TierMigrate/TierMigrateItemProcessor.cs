@@ -130,7 +130,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
                     DoMigrateStudy(StorageLocation);
 					PostProcessing(item, 
 						WorkQueueProcessorStatus.Complete, 
-						WorkQueueProcessorNumProcessed.None, 
 						WorkQueueProcessorDatabaseUpdate.ResetQueueState);
                 }
                 catch (Exception e)
@@ -278,7 +277,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
 			PostProcessing(item, 
 				WorkQueueProcessorStatus.Complete, 
-				WorkQueueProcessorNumProcessed.None,
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 			return true;
 		}
