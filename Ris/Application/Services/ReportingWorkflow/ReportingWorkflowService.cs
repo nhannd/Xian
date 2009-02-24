@@ -461,22 +461,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             ProcedureStep step = PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef, EntityLoadFlags.Proxy);
             Staff radiologist = PersistenceContext.Load<Staff>(request.ReassignedRadiologistRef, EntityLoadFlags.Proxy);
 
-            ProcedureStep newStep;
-
-			if (step.Is<ReportingProcedureStep>() && !request.KeepReportPart)
-            {
-                ReportingProcedureStep oldReportingStep = (ReportingProcedureStep)step;
-                if (oldReportingStep.ReportPart != null)
-                    oldReportingStep.ReportPart.Cancel();
-
-                newStep = step.Reassign(radiologist);
-                ReportingProcedureStep newReportingStep = (ReportingProcedureStep)newStep;
-                newReportingStep.ReportPart = null;
-            }
-            else
-            {
-                newStep = step.Reassign(radiologist);
-            }
+            ProcedureStep newStep = step.Reassign(radiologist);
 
             PersistenceContext.SynchState();
 
@@ -662,7 +647,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Protocol.Reassign);
 			else if (step.Is<ReportingProcedureStep>())
                 return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Workflow.Report.Reassign)
-					&& !(step.Is<VerificationStep>())
 					&& !(step.Is<PublicationStep>());
             else
                 return false;

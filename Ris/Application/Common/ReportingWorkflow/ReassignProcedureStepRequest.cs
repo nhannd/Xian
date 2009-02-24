@@ -7,15 +7,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 	public class ReassignProcedureStepRequest : DataContractBase
 	{
 		public ReassignProcedureStepRequest(EntityRef procedureStepRef, EntityRef reassignedRadiologistRef)
-			: this(procedureStepRef, reassignedRadiologistRef, false)
-		{
-		}
-
-		public ReassignProcedureStepRequest(EntityRef procedureStepRef, EntityRef reassignedRadiologistRef, bool keepReportPart)
 		{
 			this.ProcedureStepRef = procedureStepRef;
 			this.ReassignedRadiologistRef = reassignedRadiologistRef;
-			this.KeepReportPart = keepReportPart;
 		}
 
 		[DataMember]
@@ -23,8 +17,5 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
 		[DataMember]
 		public EntityRef ReassignedRadiologistRef;
-
-		[DataMember]
-		public bool KeepReportPart;
 	}
 }

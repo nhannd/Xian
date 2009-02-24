@@ -73,12 +73,6 @@
     <Compile Include="RadiologistAdminWorkflowFolderSystem.cs" />
     <Compile Include="RadiologistAdminWorkflowItemTools.cs" />
     <Compile Include="ReassignComponent.cs" />
-    <Compile Include="ReassignComponentSettings.cs" />
-    <Compile Include="ReassignComponentSettings.designer.cs">
-      <DependentUpon>ReassignComponentSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <Compile Include="ReportContent.cs" />
     <Compile Include="ReportEditorComponentBase.cs" />
     <Compile Include="ReportingOrderDetailViewComponent.cs" />
@@ -231,10 +225,6 @@
     <None Include="ProtocollingSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ProtocollingSettings.Designer.cs</LastGenOutput>
-    </None>
-    <None Include="ReassignComponentSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>ReassignComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ReportingSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

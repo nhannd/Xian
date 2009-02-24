@@ -73,6 +73,16 @@ namespace ClearCanvas.Healthcare {
             base.OnStateChanged(previousState, newState);
         }
 
+		public override void Assign(Staff performer)
+		{
+			// When reassigning a verification step to another staff, we should reassign the supervisor as well
+			// so the report part will be reviewed by the appropriate staff radiologist
+			if (this.ReportPart != null && this.ReportPart.Supervisor != null)
+				this.ReportPart.Supervisor = performer;
+
+			base.Assign(performer);
+		}
+
 		protected override ProcedureStep CreateScheduledCopy()
 		{
 			return new VerificationStep(this);
