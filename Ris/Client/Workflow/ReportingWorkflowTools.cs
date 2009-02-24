@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
@@ -252,8 +253,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected override bool Execute(ReportingWorklistItem item)
 		{
+			string patientClassFilters = ReportingSettings.Default.PreliminaryDiagnosisReviewForPatientClass;
+			List<string> patientClasses = string.IsNullOrEmpty(patientClassFilters)
+				? new List<string>()
+				: CollectionUtils.Map<string, string>(patientClassFilters.Split(','), delegate(string s) { return s.Trim(); });
+
 			// check for a prelim diagnosis
-			if (PreliminaryDiagnosis.ConversationExists(item.OrderRef))
+			if (PreliminaryDiagnosis.ConversationExists(item.OrderRef) || patientClasses.Contains(item.PatientClass.Code))
 			{
 				string title = string.Format(SR.FormatTitleContextDescriptionReviewOrderNoteConversation,
 					PersonNameFormat.Format(item.PatientName),
