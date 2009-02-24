@@ -161,8 +161,6 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		bool Enabled { get; set; }
 
-		bool Locked { get; }
-
 		/// <summary>
 		/// Creates a rectangular grid of tiles.
 		/// </summary>

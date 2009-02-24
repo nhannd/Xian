@@ -70,9 +70,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			get
 			{
-				return this.ImageViewer != null &&
-				       this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null &&
-				       !this.ImageViewer.PhysicalWorkspace.Locked;
+				return this.ImageViewer != null && !this.ImageViewer.PhysicalWorkspace.Locked;
 			}
 		}
 
@@ -83,9 +81,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			get
 			{
-				return this.ImageBoxSectionEnabled &&
-				       this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null &&
-				       !this.ImageViewer.PhysicalWorkspace.SelectedImageBox.Locked;
+				return this.ImageBoxSectionEnabled && this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null;
 			}
 		}
 
@@ -338,7 +334,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			Platform.CheckArgumentRange(columns, 1, LayoutConfigurationSettings.MaximumTileColumns, "columns");
 
 			IImageBox imageBox = imageViewer.PhysicalWorkspace.SelectedImageBox;
-			if (imageBox.Locked)
+			if (imageBox.ParentPhysicalWorkspace.Locked)
 				return;
 
 			MemorableUndoableCommand command = new MemorableUndoableCommand(imageBox);
