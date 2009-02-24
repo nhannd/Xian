@@ -211,7 +211,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Clears the list.
 		/// </summary>
-		public void Clear()
+		public virtual void Clear()
 		{
 			// If we don't have any subscribers to the ItemRemovedEvent, then
 			// make it faster and just call Clear().

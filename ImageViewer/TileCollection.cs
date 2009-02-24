@@ -87,6 +87,14 @@ namespace ClearCanvas.ImageViewer
 			base.RemoveAt(index);
 		}
 
+		public override void Clear()
+		{
+			if (_isReadOnly)
+				throw new InvalidOperationException("The tile collection is read-only.");
+			
+			base.Clear();
+		}
+
 		public override ITile this[int index]
 		{
 			get

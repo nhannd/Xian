@@ -100,6 +100,14 @@ namespace ClearCanvas.ImageViewer
 			base.RemoveAt(index);
 		}
 
+		public override void Clear()
+		{
+			if (_isReadOnly)
+				throw new InvalidOperationException("The image box collection is read-only.");
+
+			base.Clear();
+		}
+
 		public override IImageBox this[int index]
 		{
 			get
