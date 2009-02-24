@@ -1460,6 +1460,40 @@ CREATE NONCLUSTERED INDEX [IX_StudyDeleteRecord_Timestamp] ON [dbo].[StudyDelete
 GO
 
 
+GO
+/****** Object:  Table [dbo].[CannedText]    Script Date: 02/23/2009 20:02:56 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CannedText](
+	[GUID] [uniqueidentifier] NOT NULL,
+	[Name] [nvarchar](50)  NOT NULL,
+	[Category] [nvarchar](255)  NOT NULL,
+	[Text] [nvarchar](1024)  NOT NULL,
+ CONSTRAINT [PK_CannedText] PRIMARY KEY CLUSTERED 
+(
+	[GUID] ASC
+)WITH (IGNORE_DUP_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+
+/****** Object:  Index [IX_CannedText_Category]    Script Date: 02/23/2009 20:04:17 ******/
+CREATE NONCLUSTERED INDEX [IX_CannedText_Category] ON [dbo].[CannedText] 
+(
+	[Category] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+
+GO
+/****** Object:  Index [IX_CannedText_Name]    Script Date: 02/23/2009 20:04:33 ******/
+CREATE UNIQUE NONCLUSTERED INDEX [IX_CannedText_Name] ON [dbo].[CannedText] 
+(
+	[Name] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+
+
 /****** Object:  ForeignKey [FK_ArchiveQueue_ArchiveQueueStatusEnum]    Script Date: 07/17/2008 00:49:15 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_ArchiveQueue_ArchiveQueueStatusEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[ArchiveQueue]'))
 ALTER TABLE [dbo].[ArchiveQueue]  WITH CHECK ADD  CONSTRAINT [FK_ArchiveQueue_ArchiveQueueStatusEnum] FOREIGN KEY([ArchiveQueueStatusEnum])

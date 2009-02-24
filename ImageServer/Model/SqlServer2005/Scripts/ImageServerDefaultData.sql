@@ -786,7 +786,7 @@ INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[De
      VALUES(newid(),102,'DeleteScheduled','Delete Scheduled','The study is scheduled for deletion')
 GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
-     VALUES(newid(),103,'WebDeleteScheduled','Web Delete Scheduled','A web request is scheduled for deletion')
+     VALUES(newid(),103,'WebDeleteScheduled','Web Delete Scheduled','The study is scheduled for deletion.')
 GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES(newid(),104,'EditScheduled','Edit Scheduled','The study is scheduled for editing')
@@ -852,3 +852,10 @@ SELECT @ArchiveApplicationLogServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum
 INSERT INTO [ImageServer].[dbo].ServiceLock
 	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
 VALUES (newid(),@ArchiveApplicationLogServiceLockTypeEnum,0,getdate(),null,1)
+
+
+INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Name],[Category],[Text])
+     VALUES(newid(), 'Corrupted study', 'DeleteStudyReason', 'Study is corrupted.')
+
+INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Name],[Category],[Text])
+     VALUES(newid(), 'Invalid data', 'DeleteStudyReason', 'Study contains some invalid data.')

@@ -5,6 +5,40 @@
 
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Title="<%$ Resources:Titles, DeleteStudyConfirmDialogTitle %>" Width="800px">
     <ContentTemplate>
+    
+        <script language="javascript" type="text/javascript">
+            Sys.Application.add_load(page_load);
+            function page_load()
+            {            
+                $get('<%= ReasonSavePanel.ClientID %>').style.display = 'none';
+                var listbox = $get('<%= ReasonListBox.ClientID %>');
+                if (document.all) //IE6
+                {
+                    listbox.attachEvent('onchange', reasonSelectionChanged);
+                }
+                else //Firefox
+                {
+                    listbox.addEventListener('onchange', reasonSelectionChanged, false);
+                }
+            }
+            
+            function reasonSelectionChanged()
+            {
+                var listbox = $get('<%= ReasonListBox.ClientID %>');
+                var textbox = $get('<%= Reason.ClientID %>');
+                textbox.value = listbox.options[listbox.selectedIndex].value;
+                if (listbox.selectedIndex==listbox.options.length-1)
+                {
+                    textbox.select();
+                    $get('<%= ReasonSavePanel.ClientID %>').style.display = ''; // show
+                }
+                else
+                {
+                    $get('<%= ReasonSavePanel.ClientID %>').style.display = 'none';                
+                }
+            }
+        </script>
+    
         <div class="ContentPanel">
         <div class="DialogPanelContent">
         <table border="0" cellspacing="5" width="100%">
@@ -79,20 +113,18 @@
                                         <td>
                                             <asp:Label runat="server" CssClass="DialogTextBoxLabel" 
                                                 Text='<%$ Resources:Labels, DeleteStudyConfirmReasonLabel %>'></asp:Label> 
+                                            <asp:DropDownList runat="server" ID="ReasonListBox" />
                                         </td>
+                                        
                                         <td>
                                             <ccAsp:InvalidInputIndicator ID="InvalidReasonIndicator" runat="server" SkinID="InvalidInputIndicator" />
                                         </td>
                                     </tr>
                                 </table>
-                                <table width="100%">                                
-                                    
-                                    <tr>
-                                        
+                                <table width="100%">
+                                    <tr>                                        
                                         <td>
-                                                <asp:TextBox  Width="100%" Rows="3"
-                                                    ID="Reason" runat="server" TextMode="MultiLine"   />
-                                            
+                                            <asp:TextBox  Width="100%" Rows="3" ID="Reason" runat="server" TextMode="MultiLine"   />                                            
                                         </td>
                                     </tr>
                                     </table>
@@ -103,6 +135,9 @@
             </tr>
             <tr>
                 <td>
+                    <asp:Panel runat="server" ID="ReasonSavePanel">
+                    Save this reason as <asp:TextBox runat="server" ID="SaveReasonAsName" />
+                    </asp:Panel>
                 </td>
             </tr>
         </table>

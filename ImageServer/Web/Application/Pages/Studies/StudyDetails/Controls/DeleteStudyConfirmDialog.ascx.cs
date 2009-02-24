@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
@@ -114,6 +118,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
     public partial class DeleteStudyConfirmDialog : System.Web.UI.UserControl
     {
+        private const string REASON_CANNEDTEXT_CATEGORY = "DeleteStudyReason";
         private EventHandler<DeleteStudyConfirmDialogStudyDeletingEventArgs> _studyDeletingHandler;
         private EventHandler<DeleteStudyConfirmDialogStudyDeletedEventArgs> _studyDeletedHandler;
 
@@ -141,6 +146,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         public override void DataBind()
         {
             StudyListing.DataSource = DeletingStudies;
+
+            if (ReasonListBox.Items.Count==0)
+            {
+                IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+                using (IReadContext context = store.OpenReadContext())
+                {
+                    ICannedTextEntityBroker broker = context.GetBroker<ICannedTextEntityBroker>();
+                    CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
+                    criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
+                    IList<CannedText> list = broker.Find(criteria);
+                    ReasonListBox.Items.Add(new ListItem(" - Select one -", ""));
+                    foreach (CannedText text in list)
+                    {
+                        ReasonListBox.Items.Add(new ListItem(text.Name, text.Text));
+                    }
+                    ReasonListBox.Items.Add(new ListItem("Other (Specify)", "Enter the reason here"));
+                } 
+            }
+            
             base.DataBind();
         }
 
@@ -151,6 +175,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 try
                 {
+                    if (!String.IsNullOrEmpty(SaveReasonAsName.Text))
+                    {
+                        SaveCustomReason();
+                    }
+
                     OnDeletingStudies();
                     StudyController controller = new StudyController();
                     foreach (DeleteStudyInfo study in DeletingStudies)
@@ -177,6 +206,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             {
                 Show();
             }
+        }
+
+        private void SaveCustomReason()
+        {
+            if (ReasonListBox.Items.FindByText(SaveReasonAsName.Text)!=null)
+            {
+                // update
+                StudyDeleteReasonAdaptor adaptor = new StudyDeleteReasonAdaptor();
+                CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
+                criteria.Name.EqualTo(SaveReasonAsName.Text);
+                criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
+                IList<CannedText> reasons = adaptor.Get(criteria);
+                foreach(CannedText reason in reasons)
+                {
+                    CannedTextUpdateColumns rowColumns = new CannedTextUpdateColumns();
+                    rowColumns.Text = Reason.Text;
+                    adaptor.Update(reason.Key, rowColumns);
+                }
+                
+            }
+            else
+            {
+                // add 
+                StudyDeleteReasonAdaptor adaptor = new StudyDeleteReasonAdaptor();
+                CannedTextUpdateColumns rowColumns = new CannedTextUpdateColumns();
+                rowColumns.Category = REASON_CANNEDTEXT_CATEGORY;
+                rowColumns.Name = SaveReasonAsName.Text;
+                rowColumns.Text = Reason.Text;
+                adaptor.Add(rowColumns);
+            }
+            
         }
 
         protected void CancelButton_Clicked(object sender, ImageClickEventArgs e)

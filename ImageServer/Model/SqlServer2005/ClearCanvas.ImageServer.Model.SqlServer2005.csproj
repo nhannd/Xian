@@ -78,6 +78,7 @@
     <Compile Include="EntityBrokers\ArchiveQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveStudyStorageEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\ArchiveTypeEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\CannedTextEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\DatabaseVersionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\DeviceEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxEntityBroker.gen.cs" />
