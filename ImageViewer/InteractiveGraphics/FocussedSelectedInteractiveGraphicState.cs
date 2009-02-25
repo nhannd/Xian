@@ -37,7 +37,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class FocussedSelectedInteractiveGraphicState : FocussedSelectedGraphicState
+	public class FocussedSelectedInteractiveGraphicState : FocussedSelectedGraphicState
 	{
 		public FocussedSelectedInteractiveGraphicState(IStandardStatefulInteractiveGraphic standardStatefulInteractiveGraphic)
 			: base(standardStatefulInteractiveGraphic)
@@ -75,12 +75,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			//return base.Start(mouseInformation);
 		}
-	}
 
-	public class MoveInteractiveGraphicState : MoveGraphicState {
-		public MoveInteractiveGraphicState(IStandardStatefulInteractiveGraphic ssig)
-			: base(ssig, ssig.InteractiveGraphic) {
-
+		private class MoveInteractiveGraphicState : MoveGraphicState {
+			public MoveInteractiveGraphicState(IStandardStatefulInteractiveGraphic ssig)
+				: base(ssig, ssig.InteractiveGraphic) {}
 		}
 	}
 }

@@ -34,6 +34,7 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.PresentationStates;
@@ -54,36 +55,56 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	{
 		#region Private fields
 
+		private event EventHandler<PointChangedEventArgs> _locationChanged;
+		private event EventHandler<EventArgs> _textChanged;
+
 		[CloneIgnore]
 		private InvariantTextPrimitive _textGraphic;
 		[CloneIgnore]
 		private ArrowGraphic _lineGraphic;
+		private bool _enableControlPoint;
 
 		#endregion
 
 		/// <summary>
 		/// Instantiates a new instance of <see cref="CalloutGraphic"/>.
 		/// </summary>
-		public CalloutGraphic()
+		protected CalloutGraphic() : base()
         {
 			Initialize();
 		}
 
 		/// <summary>
+		/// Instantiates a new instance of <see cref="CalloutGraphic"/>.
+		/// </summary>
+		/// <param name="text">The label text to display on the callout.</param>
+		public CalloutGraphic(string text) : this()
+		{
+			_textGraphic.Text = text;
+		}
+
+		/// <summary>
 		/// Cloning constructor.
 		/// </summary>
-		protected CalloutGraphic(CalloutGraphic source, ICloningContext context)
+		protected CalloutGraphic(CalloutGraphic source, ICloningContext context) : base(source, context)
 		{
 			context.CloneFields(source, this);
 		}
 
 		/// <summary>
-		/// Gets or sets the text label.
+		/// Gets the text label.
 		/// </summary>
 		public string Text
 		{
 			get { return _textGraphic.Text; }
-			set { _textGraphic.Text = value; }
+			protected set
+			{
+				if (_textGraphic.Text != value)
+				{
+					_textGraphic.Text = value;
+					OnTextChanged(new EventArgs());
+				}
+			}
 		}
 
 		/// <summary>
@@ -91,11 +112,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public PointF Location
 		{
-			get { return _textGraphic.AnchorPoint; }
-			set 
-			{ 
-				_textGraphic.AnchorPoint = value;
-			}
+			get { return base.ControlPoints[0]; }
+			set { base.ControlPoints[0] = value; }
 		}
 
 		/// <summary>
@@ -108,10 +126,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </remarks>
 		public PointF StartPoint
 		{
-			get
-			{
-				return _lineGraphic.StartPoint;
-			}
+			get { return _lineGraphic.StartPoint; }
 		}
 
 		/// <summary>
@@ -125,6 +140,37 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_lineGraphic.EndPoint = value;
 				SetCalloutLineStart();
 			}
+		}
+
+		public bool EnableControlPoint
+		{
+			get { return _enableControlPoint; }
+			set
+			{
+				if (_enableControlPoint != value)
+				{
+					_enableControlPoint = value;
+					base.ControlPoints.Visible = _enableControlPoint && string.IsNullOrEmpty(_textGraphic.Text);
+				}
+			}
+		}
+
+		public string FontName
+		{
+			get { return _textGraphic.Font; }
+			set { _textGraphic.Font = value; }
+		}
+
+		public float FontSize
+		{
+			get { return _textGraphic.SizeInPoints; }
+			set { _textGraphic.SizeInPoints = value; }
+		}
+
+		public LineStyle LineStyle
+		{
+			get { return _lineGraphic.LineStyle; }
+			set { _lineGraphic.LineStyle = value; }
 		}
 
 		public bool ShowArrow
@@ -147,8 +193,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public event EventHandler<PointChangedEventArgs> LocationChanged
 		{
-			add { _textGraphic.AnchorPointChanged += value; }
-			remove { _textGraphic.AnchorPointChanged -= value; }
+			add { _locationChanged += value; }
+			remove { _locationChanged -= value; }
 		}
 
 		/// <summary>
@@ -210,8 +256,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_textGraphic = new InvariantTextPrimitive();
 				this.Graphics.Add(_textGraphic);
 			}
-			
-			_textGraphic.BoundingBoxChanged += new EventHandler<RectangleChangedEventArgs>(OnTextBoundingBoxChanged);
+
+			_textGraphic.AnchorPointChanged += OnTextAnchorPointChanged;
+			_textGraphic.BoundingBoxChanged += OnTextBoundingBoxChanged;
 
 			if (_lineGraphic == null)
 			{
@@ -219,6 +266,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				this.Graphics.Add(_lineGraphic);
 				_lineGraphic.LineStyle = LineStyle.Dash;
 			}
+
+			base.ControlPoints.Add(_textGraphic.AnchorPoint);
 		}
 
 		[OnCloneComplete]
@@ -274,17 +323,115 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return point;
 		}
 
+		private void OnTextAnchorPointChanged(object sender, PointChangedEventArgs e) {
+			if (!FloatComparer.AreEqual(base.ControlPoints[0], e.Point))
+			{
+				base.ControlPoints[0] = e.Point;
+				EventsHelper.Fire(_locationChanged, this, e);
+			}
+		}
+
 		private void OnTextBoundingBoxChanged(object sender, RectangleChangedEventArgs e)
 		{
 			SetCalloutLineStart();
 		}
 
-		public override RectangleF BoundingBox {
+		protected virtual void OnTextChanged(EventArgs e) {
+			base.ControlPoints.Visible = _enableControlPoint && string.IsNullOrEmpty(_textGraphic.Text);
+			EventsHelper.Fire(_textChanged, this, new EventArgs());
+		}
+
+		/// <summary>
+		/// Gets the bounding box for the text portion of the callout.
+		/// </summary>
+		public override RectangleF BoundingBox
+		{
 			get { return _textGraphic.BoundingBox; }
 		}
 
-		protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e) {
-			// do nothing - we don't have any control points
+		protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
+		{
+			if(!FloatComparer.AreEqual(_textGraphic.AnchorPoint, e.Item))
+			{
+				_textGraphic.AnchorPoint = e.Item;
+			}
+		}
+	}
+
+	[Cloneable]
+	public class UserCalloutGraphic : CalloutGraphic {
+
+		[CloneIgnore]
+		private EditBox _currentCalloutEditBox;
+
+		/// <summary>
+		/// Instantiates a new instance of <see cref="UserCalloutGraphic"/>.
+		/// </summary>
+		public UserCalloutGraphic() : base("") {}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected UserCalloutGraphic(UserCalloutGraphic source, ICloningContext context) : base(source, context)
+		{
+			context.CloneFields(source, this);
+		}
+
+		/// <summary>
+		/// Starts edit mode on the callout graphic by installing a <see cref="EditBox"/> on the
+		/// <see cref="Tile"/> of the <see cref="Graphic.ParentPresentationImage">parent PresentationImage</see>.
+		/// </summary>
+		/// <returns>True if edit mode was successfully started; False otherwise.</returns>
+		public bool StartEdit() {
+			// remove any pre-existing edit boxes
+			EndEdit();
+
+			bool result = false;
+			this.CoordinateSystem = CoordinateSystem.Destination;
+			try {
+				EditBox editBox = new EditBox(this.Text ?? string.Empty);
+				if (string.IsNullOrEmpty(this.Text))
+					editBox.Value = SR.StringEnterText;
+				editBox.Location = Point.Round(this.Location);
+				editBox.Size = Rectangle.Round(this.BoundingBox).Size;
+				editBox.FontName = this.FontName;
+				editBox.FontSize = this.FontSize;
+				editBox.ValueAccepted += OnEditBoxComplete;
+				editBox.ValueCancelled += OnEditBoxComplete;
+				InstallEditBox(_currentCalloutEditBox = editBox);
+				result = true;
+			} finally {
+				this.ResetCoordinateSystem();
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Ends edit mode on the callout graphic if it is currently being edited. Has no effect otherwise.
+		/// </summary>
+		public void EndEdit() {
+			if (_currentCalloutEditBox != null) {
+				_currentCalloutEditBox.ValueAccepted -= OnEditBoxComplete;
+				_currentCalloutEditBox.ValueCancelled -= OnEditBoxComplete;
+				_currentCalloutEditBox = null;
+			}
+			InstallEditBox(null);
+		}
+
+		private void InstallEditBox(EditBox editBox) {
+			if (base.ParentPresentationImage != null) {
+				if (base.ParentPresentationImage.Tile != null)
+					base.ParentPresentationImage.Tile.EditBox = editBox;
+			}
+		}
+
+		private void OnEditBoxComplete(object sender, EventArgs e) {
+			if (_currentCalloutEditBox != null) {
+				this.Text = _currentCalloutEditBox.LastAcceptedValue;
+				this.Draw();
+			}
+			EndEdit();
 		}
 	}
 }

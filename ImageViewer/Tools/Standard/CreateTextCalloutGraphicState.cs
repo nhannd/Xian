@@ -28,6 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
 			else if (clickIndex == 1)
 			{
 				this.StatefulGraphic.State = this.StatefulGraphic.CreateFocussedSelectedState();
+				this.StatefulGraphic.Callout.StartEdit();
 			}
 			else
 			{

@@ -120,6 +120,7 @@
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\DisplaySetNumberComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
+    <Compile Include="EditBox.cs" />
     <Compile Include="FilteredGroups.cs" />
     <Compile Include="Graphics\FlashOverlayController.cs" />
     <Compile Include="Graphics\CurvePrimitive.cs" />
@@ -137,7 +138,8 @@
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RectangleInteractiveGraphicAnnotationSerializer.cs" />
-    <Compile Include="InteractiveGraphics\RoiGraphicAnnotationSerializer.cs" />
+    <Compile Include="RoiGraphics\RoiGraphic.cs" />
+    <Compile Include="InteractiveGraphics\StandardAnnotationGraphicSerializer.cs" />
     <Compile Include="InteractiveGraphics\StandardStatefulInteractiveGraphic.cs" />
     <Compile Include="Mathematics\Size3D.cs" />
     <Compile Include="PresentationStates\DicomSoftcopyPresentationStateMaskLutBase.cs" />
@@ -175,9 +177,9 @@
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\PolygonInteractiveGraphic.cs" />
     <Compile Include="InteractiveGraphics\StretchCursorTokenStrategy.cs" />
-    <Compile Include="InteractiveGraphics\IRoiCalloutLocationStrategy.cs" />
-    <Compile Include="InteractiveGraphics\RoiCalloutLocationStrategy.cs" />
-    <Compile Include="InteractiveGraphics\RoiTransformPolicy.cs" />
+    <Compile Include="InteractiveGraphics\IAnnotationCalloutLocationStrategy.cs" />
+    <Compile Include="InteractiveGraphics\AnnotationCalloutLocationStrategy.cs" />
+    <Compile Include="RoiGraphics\RoiTransformPolicy.cs" />
     <Compile Include="InteractiveGraphics\Tests\EllipseIntersectionTests.cs" />
     <Compile Include="KeyObjects\KeyObjectSelectionCodeSequences.cs" />
     <Compile Include="PresentationStates\DicomSoftcopyPresentationStateGraphic.cs" />
@@ -324,7 +326,7 @@
     <Compile Include="ImageSet.cs" />
     <Compile Include="InteractiveGraphics\FocussedSelectedGraphicState.cs" />
     <Compile Include="InteractiveGraphics\FocussedSelectedInteractiveGraphicState.cs" />
-    <Compile Include="InteractiveGraphics\FocussedSelectedROIGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\FocussedSelectedAnnotationGraphicState.cs" />
     <Compile Include="InteractiveGraphics\SelectedGraphicState.cs" />
     <Compile Include="IImageSet.cs" />
     <Compile Include="ImageSetCollection.cs" />
@@ -415,7 +417,7 @@
     <Compile Include="InteractiveGraphics\MoveGraphicState.cs" />
     <Compile Include="InteractiveGraphics\PolyLineGraphic.cs" />
     <Compile Include="InteractiveGraphics\RectangleMemento.cs" />
-    <Compile Include="InteractiveGraphics\ROIGraphic.cs" />
+    <Compile Include="InteractiveGraphics\AnnotationGraphic.cs" />
     <Compile Include="InteractiveGraphics\StatefulCompositeGraphic.cs" />
     <Compile Include="EventBroker.cs" />
     <Compile Include="Annotations\IAnnotationItem.cs" />

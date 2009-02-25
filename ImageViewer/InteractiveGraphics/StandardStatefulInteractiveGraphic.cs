@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected override void OnEnterCreateState(IMouseInformation mouseInformation)
 		{
-			_interactiveGraphic.ControlPoints.Visible = true;
+			_interactiveGraphic.ControlPoints.Visible = false;
 			_interactiveGraphic.Color = FocusSelectedColor;
 
 			base.OnEnterCreateState(mouseInformation);
@@ -242,12 +242,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IMemorable Members
 
-		public object CreateMemento()
+		public virtual object CreateMemento()
 		{
 			return this.InteractiveGraphic.CreateMemento();
 		}
 
-		public void SetMemento(object memento)
+		public virtual void SetMemento(object memento)
 		{
 			this.InteractiveGraphic.SetMemento(memento);
 		}

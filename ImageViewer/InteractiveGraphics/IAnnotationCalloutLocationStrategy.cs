@@ -29,39 +29,47 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Common.Utilities;
+using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
-	/// Defines a <see cref="SpatialTransformValidationPolicy"/> for <see cref="RoiGraphic"/>s.
+	/// A strategy for automatically calculating the location of a <see cref="AnnotationGraphic"/>'s callout.
 	/// </summary>
-	[Cloneable(true)]
-	public class RoiTransformPolicy : SpatialTransformValidationPolicy
+	public interface IAnnotationCalloutLocationStrategy
 	{
 		/// <summary>
-		/// Default constructor.
+		/// Sets the <see cref="AnnotationGraphic"/> that owns this strategy.
 		/// </summary>
-		public RoiTransformPolicy()
-		{
-		}
+		void SetAnnotationGraphic(AnnotationGraphic annotationGraphic);
 
 		/// <summary>
-		/// Performs validation on the specified <see cref="ISpatialTransform"/>.
+		/// Called when the <see cref="AnnotationGraphic"/>'s callout location has been changed externally; for example, by the user.
 		/// </summary>
-		/// <param name="transform"></param>
+		void OnCalloutLocationChangedExternally();
+
+		/// <summary>
+		/// Called by the owning <see cref="AnnotationGraphic"/> to get the callout's new location.
+		/// </summary>
+		/// <param name="location">The new location of the callout.</param>
+		/// <param name="coordinateSystem">The <see cref="CoordinateSystem"/> of <paramref name="location"/>.</param>
+		/// <returns>True if the callout location needs to change, false otherwise.</returns>
+		bool CalculateCalloutLocation(out PointF location, out CoordinateSystem coordinateSystem);
+
+		/// <summary>
+		/// Called by the owning <see cref="AnnotationGraphic"/> to get the callout's end point.
+		/// </summary>
+		/// <param name="endPoint">The callout end point.</param>
+		/// <param name="coordinateSystem">The <see cref="CoordinateSystem"/> of <paramref name="endPoint"/>.</param>
+		void CalculateCalloutEndPoint(out PointF endPoint, out CoordinateSystem coordinateSystem);
+
+		/// <summary>
+		/// Creates a deep copy of this strategy object.
+		/// </summary>
 		/// <remarks>
-		/// At present, validation amounts to ensuring the rotation is always zero. 
-		/// <see cref="RoiGraphic"/>s are prohibited from being rotated
-		/// because calculation of ROI related statistics, such as mean and standard deviation,
-		/// currently only work with unrotated ROIs.
+		/// <see cref="IAnnotationCalloutLocationStrategy"/>s should not return null from this method.
 		/// </remarks>
-		public override void Validate(ISpatialTransform transform)
-		{
-			if (transform.RotationXY != 0)
-				throw new ArgumentException("ROIs cannot be rotated.");
-		}
+		IAnnotationCalloutLocationStrategy Clone();
 	}
 }

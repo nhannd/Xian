@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -44,31 +43,31 @@ using ClearCanvas.ImageViewer.PresentationStates;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
-	/// An interactive graphic that consists of region of interest
-	/// of some kind and a callout.
+	/// An stateful interactive graphic that consists of some <see cref="InteractiveGraphic">subject of interest</see>
+	/// and a <see cref="CalloutGraphic">text callout</see> that describes the subject.
 	/// </summary>
 	/// <remarks>
-	/// <see cref="RoiGraphic"/> essentially acts as a template for any kind
-	/// of interactive region of interest.  The type of region of interest
-	/// can be any <see cref="InteractiveGraphic"/>, such as a line, a rectangle, 
-	/// an ellipse, etc.; it is definable by the tool writer via the constructor.  
+	/// <see cref="AnnotationGraphic"/> essentially acts as a template for any kind
+	/// of interactive graphic defining some object of interest.  The type of region of interest
+	/// can be any <see cref="InteractiveGraphic"/> such as a line, a rectangle, 
+	/// an ellipse, etc.; it is defined by the tool writer via the constructor.  
 	/// By default, the callout line will snap to the
 	/// nearest point on the <see cref="InteractiveGraphic"/>.
 	/// </remarks>
-	[DicomSerializableGraphicAnnotation(typeof(RoiGraphicAnnotationSerializer))]
+	[DicomSerializableGraphicAnnotation(typeof (StandardAnnotationGraphicSerializer))]
 	[Cloneable]
-	public class RoiGraphic : StandardStatefulInteractiveGraphic, IContextMenuProvider, IMemorable
+	public class AnnotationGraphic : StandardStatefulInteractiveGraphic, IContextMenuProvider
 	{
-		#region RoiGraphicMemento
+		#region AnnotationGraphicMemento
 
-		private class RoiGraphicMemento : IEquatable<RoiGraphicMemento>
+		private class AnnotationGraphicMemento : IEquatable<AnnotationGraphicMemento>
 		{
-			public readonly object RoiMemento;
+			public readonly object SubjectMemento;
 			public readonly object CalloutMemento;
 
-			public RoiGraphicMemento(object roiMemento, object calloutMemento)
+			public AnnotationGraphicMemento(object subjectMemento, object calloutMemento)
 			{
-				RoiMemento = roiMemento;
+				SubjectMemento = subjectMemento;
 				CalloutMemento = calloutMemento;
 			}
 
@@ -82,17 +81,17 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				if (obj == this)
 					return true;
 
-				return this.Equals(obj as RoiGraphicMemento);
+				return this.Equals(obj as AnnotationGraphicMemento);
 			}
 
-			#region IEquatable<RoiGraphicMemento> Members
+			#region IEquatable<AnnotationGraphicMemento> Members
 
-			public bool Equals(RoiGraphicMemento other)
+			public bool Equals(AnnotationGraphicMemento other)
 			{
 				if (other == null)
 					return false;
 
-				return RoiMemento.Equals(other.RoiMemento) && CalloutMemento.Equals(other.CalloutMemento);
+				return SubjectMemento.Equals(other.SubjectMemento) && CalloutMemento.Equals(other.CalloutMemento);
 			}
 
 			#endregion
@@ -103,45 +102,44 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#region Private fields
 
 		[CloneIgnore]
-		private InteractiveGraphic _roiGraphic;
+		private InteractiveGraphic _subjectGraphic;
+
 		[CloneIgnore]
 		private CalloutGraphic _calloutGraphic;
-		[CloneIgnore]
-		private bool _raiseRoiChangedEvent = true;
+
 		[CloneIgnore]
 		private bool _settingCalloutLocation = false;
 
 		private ToolSet _toolSet;
-		private IRoiCalloutLocationStrategy _calloutLocationStrategy;
-		private event EventHandler _roiChangedEvent;
+		private IAnnotationCalloutLocationStrategy _calloutLocationStrategy;
 
 		#endregion
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="RoiGraphic"/>.
-		/// </summary>
-		public RoiGraphic(InteractiveGraphic graphic)
-			: this(graphic, null)
-		{
-		}
+		#region Constructors
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="RoiGraphic"/> with the given <see cref="IRoiCalloutLocationStrategy"/>.
+		/// Initializes a new instance of <see cref="AnnotationGraphic"/>.
 		/// </summary>
-		public RoiGraphic(InteractiveGraphic graphic, IRoiCalloutLocationStrategy calloutLocationStrategy)
-			: base(graphic)
+		public AnnotationGraphic(InteractiveGraphic subjectGraphic)
+			: this(subjectGraphic, null) {}
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="AnnotationGraphic"/> with the given <see cref="IAnnotationCalloutLocationStrategy"/>.
+		/// </summary>
+		public AnnotationGraphic(InteractiveGraphic subjectGraphic, IAnnotationCalloutLocationStrategy calloutLocationStrategy)
+			: base(subjectGraphic)
 		{
-			_roiGraphic = graphic;
+			_subjectGraphic = subjectGraphic;
 			Initialize(calloutLocationStrategy);
 		}
 
 		/// <summary>
 		/// Cloning constructor.
 		/// </summary>
-		protected RoiGraphic(RoiGraphic source, ICloningContext context)
-			: base(source, context)
-		{
-		}
+		protected AnnotationGraphic(AnnotationGraphic source, ICloningContext context)
+			: base(source, context) { }
+
+		#endregion
 
 		/// <summary>
 		/// Gets the <see cref="CalloutGraphic"/>.
@@ -153,22 +151,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		/// <summary>
 		/// Gets the <see cref="InteractiveGraphic"/> that defines
-		/// the ROI.
+		/// the subject.
 		/// </summary>
-        public InteractiveGraphic Roi
-        {
-            get { return _roiGraphic; }
-        }
-
-		/// <summary>
-		/// Occurs when the size or position of 
-		/// <see cref="RoiGraphic.Roi"/> has changed
-		/// </summary>
-		public event EventHandler RoiChanged
+		public InteractiveGraphic Subject
 		{
-			add { _roiChangedEvent += value; }
-			remove { _roiChangedEvent -= value; }
+			get { return _subjectGraphic; }
 		}
+
+		#region Overrides
 
 		/// <summary>
 		/// Gets the cursor token to be shown at the current mouse position.
@@ -188,42 +178,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Performs a hit test on both the ROI and callout.
+		/// Performs a hit test on both the subject and callout.
 		/// </summary>
 		/// <param name="point"></param>
 		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
-			return _roiGraphic.HitTest(point) || _calloutGraphic.HitTest(point);
+			return _subjectGraphic.HitTest(point) || _calloutGraphic.HitTest(point);
 		}
 
-		/// <summary>
-		/// Suspends the raising of the <see cref="RoiChanged"/> event.
-		/// </summary>
-		/// <remarks>
-		/// There are times when it is desirable to suspend the raising of the
-		/// <see cref="RoiChanged"/> event, such as when initializing 
-		/// control points.  To resume the raising of the event, call
-		/// <see cref="ResumeRoiChangedEvent"/>.
-		/// </remarks>
-		public void SuspendRoiChangedEvent()
-		{
-			_raiseRoiChangedEvent = false;
-		}
-
-		/// <summary>
-		/// Resumes the raising of the <see cref="RoiChanged"/> event.
-		/// </summary>
-		/// <param name="raiseEventNow">If <b>true</b>, the <see cref="RoiChanged"/>
-		/// event is raised immediately.
-		/// </param>
-		public void ResumeRoiChangedEvent(bool raiseEventNow)
-		{
-			_raiseRoiChangedEvent = true;
-			
-			if (raiseEventNow)
-				EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
-		}
+		#endregion
 
 		#region IContextMenuProvider Members
 
@@ -232,13 +196,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public virtual ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
 		{
-			if (!this.HitTest(mouseInformation.Location))
+			IGraphic hit;
+			if (_subjectGraphic.HitTest(mouseInformation.Location))
+				hit = _subjectGraphic;
+			else if (_calloutGraphic.HitTest(mouseInformation.Location))
+				hit = _calloutGraphic;
+			else
 				return null;
 
 			if (_toolSet == null)
-				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this, this.ImageViewer.DesktopWindow));
+				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this, hit, this.ImageViewer.DesktopWindow));
 
-			return ActionModelRoot.CreateModel(typeof(RoiGraphic).FullName, "basicgraphic-menu", _toolSet.Actions);
+			return ActionModelRoot.CreateModel(typeof (AnnotationGraphic).FullName, "basicgraphic-menu", _toolSet.Actions);
 		}
 
 		#endregion
@@ -248,9 +217,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Creates a memento that can be used to restore the current state.
 		/// </summary>
-		public virtual object CreateMemento()
+		public override object CreateMemento()
 		{
-			return new RoiGraphicMemento(_roiGraphic.CreateMemento(), _calloutGraphic.CreateMemento());
+			return new AnnotationGraphicMemento(_subjectGraphic.CreateMemento(), _calloutGraphic.CreateMemento());
 		}
 
 		/// <summary>
@@ -262,18 +231,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// The implementation of <see cref="IMemorable.SetMemento"/> should return the 
 		/// object to the original state captured by <see cref="IMemorable.CreateMemento"/>.
 		/// </remarks>
-		public virtual void SetMemento(object memento)
+		public override void SetMemento(object memento)
 		{
-			RoiGraphicMemento roiMemento = memento as RoiGraphicMemento;
-			Platform.CheckForInvalidCast(roiMemento, "memento", "RoiGraphicMemento");
-			
-			_calloutGraphic.SetMemento(roiMemento.CalloutMemento);
-			_roiGraphic.SetMemento(roiMemento.RoiMemento);
+			AnnotationGraphicMemento annotationMemento = (AnnotationGraphicMemento) memento;
+			_calloutGraphic.SetMemento(annotationMemento.CalloutMemento);
+			_subjectGraphic.SetMemento(annotationMemento.SubjectMemento);
 		}
 
 		#endregion
 
-		#region Overrides 
+		#region Create State Overrides
 
 		/// <summary>
 		/// Creates a focussed and selected <see cref="GraphicState"/>.
@@ -281,95 +248,136 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns></returns>
 		public override GraphicState CreateFocussedSelectedState()
 		{
-			return new FocussedSelectedRoiGraphicState(this);
+			return new FocussedSelectedAnnotationGraphicState(this);
 		}
 
 		protected override void OnEnterCreateState(IMouseInformation mouseInformation)
 		{
 			_calloutGraphic.Color = FocusSelectedColor;
+			SetCalloutControlPointVisibility(false);
 			base.OnEnterCreateState(mouseInformation);
 		}
 
 		protected override void OnEnterFocusSelectedState(IMouseInformation mouseInformation)
 		{
 			_calloutGraphic.Color = FocusSelectedColor;
+			SetCalloutControlPointVisibility(true);
 			base.OnEnterFocusSelectedState(mouseInformation);
 		}
 
 		protected override void OnEnterFocusState(IMouseInformation mouseInformation)
 		{
 			_calloutGraphic.Color = FocusColor;
+			SetCalloutControlPointVisibility(true);
 			base.OnEnterFocusState(mouseInformation);
 		}
 
 		protected override void OnEnterInactiveState(IMouseInformation mouseInformation)
 		{
 			_calloutGraphic.Color = InactiveColor;
+			SetCalloutControlPointVisibility(false);
 			base.OnEnterInactiveState(mouseInformation);
 		}
 
 		protected override void OnEnterSelectedState(IMouseInformation mouseInformation)
 		{
 			_calloutGraphic.Color = SelectedColor;
+			SetCalloutControlPointVisibility(false);
 			base.OnEnterSelectedState(mouseInformation);
+		}
+
+		protected class FocussedSelectedAnnotationGraphicState : FocussedSelectedInteractiveGraphicState
+		{
+			public FocussedSelectedAnnotationGraphicState(AnnotationGraphic annotationGraphic)
+				: base(annotationGraphic) {}
+
+			protected AnnotationGraphic StatefulGraphic
+			{
+				get { return (AnnotationGraphic) base.StatefulGraphic; }
+			}
+
+			public override bool Start(IMouseInformation mouseInformation)
+			{
+				if (base.Start(mouseInformation))
+					return true;
+
+				if (this.StatefulGraphic.Callout.HitTest(mouseInformation.Location))
+				{
+					this.StatefulGraphic.State = new MoveAnnotationCalloutGraphicState(this.StatefulGraphic);
+					this.StatefulGraphic.State.Start(mouseInformation);
+
+					return true;
+				}
+
+				return false;
+			}
+
+			private class MoveAnnotationCalloutGraphicState : MoveGraphicState
+			{
+				public MoveAnnotationCalloutGraphicState(AnnotationGraphic annotation)
+					: base(annotation, annotation.Callout) {}
+			}
 		}
 
 		#endregion
 
-		private void Initialize(IRoiCalloutLocationStrategy calloutLocationStrategy)
+		#region Protected Virtual Members
+
+		protected virtual void OnSubjectChanged() { }
+
+		protected virtual CalloutGraphic CreateCalloutGraphic()
 		{
-			if (!base.Graphics.Contains(_roiGraphic))
-				base.Graphics.Add(_roiGraphic);
+			return new UserCalloutGraphic();
+		}
+
+		#endregion
+
+		private void Initialize(IAnnotationCalloutLocationStrategy calloutLocationStrategy)
+		{
+			if (!base.Graphics.Contains(_subjectGraphic))
+				base.Graphics.Add(_subjectGraphic);
 
 			if (_calloutGraphic == null)
 			{
-				_calloutGraphic = new CalloutGraphic();
+				_calloutGraphic = this.CreateCalloutGraphic();
 				base.Graphics.Add(_calloutGraphic);
 			}
 
-			_roiGraphic.ControlPoints.ControlPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnControlPointChanged);
-			_roiGraphic.ControlPoints.Graphics.ItemAdded += new EventHandler<ListEventArgs<IGraphic>>(OnControlPointAdded);
-			_roiGraphic.ControlPoints.Graphics.ItemRemoved += new EventHandler<ListEventArgs<IGraphic>>(OnControlPointRemoved);
+			_subjectGraphic.ControlPoints.ControlPointChangedEvent += new EventHandler<ListEventArgs<PointF>>(OnControlPointChanged);
+			_subjectGraphic.ControlPoints.Graphics.ItemAdded += new EventHandler<ListEventArgs<IGraphic>>(OnControlPointAdded);
+			_subjectGraphic.ControlPoints.Graphics.ItemRemoved += new EventHandler<ListEventArgs<IGraphic>>(OnControlPointRemoved);
 			_calloutGraphic.LocationChanged += new EventHandler<PointChangedEventArgs>(OnCalloutLocationChanged);
 
-			SetTransformValidationPolicy(this);
-
-			Roi.ControlPoints.Visible = false;
+			Subject.ControlPoints.Visible = false;
 
 			if (_calloutLocationStrategy == null)
-				_calloutLocationStrategy = calloutLocationStrategy ?? new RoiCalloutLocationStrategy();
+				_calloutLocationStrategy = calloutLocationStrategy ?? new AnnotationCalloutLocationStrategy();
 
-			_calloutLocationStrategy.SetRoiGraphic(this);
+			_calloutLocationStrategy.SetAnnotationGraphic(this);
 		}
 
 		[OnCloneComplete]
 		private void OnCloneComplete()
 		{
-			_roiGraphic = CollectionUtils.SelectFirst(base.Graphics,
-				delegate(IGraphic test) { return test is InteractiveGraphic; }) as InteractiveGraphic;
+			_subjectGraphic = CollectionUtils.SelectFirst(base.Graphics,
+			                                              delegate(IGraphic test) { return test is InteractiveGraphic; }) as InteractiveGraphic;
 
 			_calloutGraphic = CollectionUtils.SelectFirst(base.Graphics,
-				delegate(IGraphic test) { return test is CalloutGraphic; }) as CalloutGraphic;
+			                                              delegate(IGraphic test) { return test is CalloutGraphic; }) as CalloutGraphic;
 
-			Platform.CheckForNullReference(_roiGraphic, "_roiGraphic");
+			Platform.CheckForNullReference(_subjectGraphic, "_subjectGraphic");
 			Platform.CheckForNullReference(_calloutGraphic, "_calloutGraphic");
 
 			this.Initialize(null);
 
-			//the roi and callout may have been selected, so we force the color to be yellow.
+			//the roi and callout may have been selected, so we force a state change
 			this.State = this.CreateInactiveState();
 		}
 
-		private static void SetTransformValidationPolicy(CompositeGraphic compositeGraphic)
+		private void SetCalloutControlPointVisibility(bool show)
 		{
-			foreach (IGraphic graphic in compositeGraphic.Graphics)
-			{
-				if (graphic is CompositeGraphic)
-					SetTransformValidationPolicy(graphic as CompositeGraphic);
-
-				if (!(compositeGraphic.SpatialTransform.ValidationPolicy is RoiTransformPolicy))
-					compositeGraphic.SpatialTransform.ValidationPolicy = new RoiTransformPolicy();
-			}
+			//_calloutGraphic.ControlPoints.Visible = false;
+			_calloutGraphic.EnableControlPoint = show;
 		}
 
 		private void SetCalloutEndPoint()
@@ -377,12 +385,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// We're attaching the callout to the ROI, so make sure the two
 			// graphics are in the same coordinate system before we do that.
 			// This sets all the graphics coordinate systems to be the same.
-			this.CoordinateSystem = Roi.CoordinateSystem;
-			
+			this.CoordinateSystem = Subject.CoordinateSystem;
+
 			PointF endPoint;
 			CoordinateSystem coordinateSystem;
 			_calloutLocationStrategy.CalculateCalloutEndPoint(out endPoint, out coordinateSystem);
-			
+
 			this.ResetCoordinateSystem();
 
 			_calloutGraphic.CoordinateSystem = coordinateSystem;
@@ -392,7 +400,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void SetCalloutLocation()
 		{
-			this.CoordinateSystem = Roi.CoordinateSystem;
+			this.CoordinateSystem = Subject.CoordinateSystem;
 
 			PointF location;
 			CoordinateSystem coordinateSystem;
@@ -415,32 +423,25 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private void OnControlPointAdded(object sender, ListEventArgs<IGraphic> e)
 		{
 			SetCalloutLocation();
-			
-			if (_raiseRoiChangedEvent)
-				EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
+			OnSubjectChanged();
 		}
 
 		private void OnControlPointRemoved(object sender, ListEventArgs<IGraphic> e)
 		{
 			SetCalloutLocation();
-
-			if (_raiseRoiChangedEvent)
-				EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
+			OnSubjectChanged();
 		}
 
 		private void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
 		{
 			SetCalloutLocation();
-			
-			if (_raiseRoiChangedEvent)
-				EventsHelper.Fire(_roiChangedEvent, this, EventArgs.Empty);
+			OnSubjectChanged();
 		}
 
 		private void OnCalloutLocationChanged(object sender, PointChangedEventArgs e)
 		{
 			if (!_settingCalloutLocation)
 				_calloutLocationStrategy.OnCalloutLocationChangedExternally();
-
 			SetCalloutEndPoint();
 		}
 	}

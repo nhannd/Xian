@@ -333,4 +333,7 @@
   <data name="SeparatorPatientsLoaded" xml:space="preserve">
     <value>::</value>
   </data>
+  <data name="StringEnterText" xml:space="preserve">
+    <value>Enter Text</value>
+  </data>
 </root>

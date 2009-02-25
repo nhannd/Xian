@@ -62,6 +62,7 @@ namespace ClearCanvas.ImageViewer
 		private bool _selected = false;
 		private bool _enabled = true;
 		private InformationBox _informationBox;
+		private EditBox _editBox;
 		private static int _borderWidth = 1;
 		private static int _insetWidth = 5;
 		private static Color _selectedColor = Color.Yellow;
@@ -71,7 +72,7 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler _drawingEvent;
 		private event EventHandler<ItemEventArgs<ITile>> _selectionChangedEvent;
 		private event EventHandler<PresentationImageChangedEventArgs> _presentationImageChangedEvent;
-
+		private event EventHandler _editBoxChanged;
 		private event EventHandler<InformationBoxChangedEventArgs> _informationBoxChanged;
 
 		#endregion
@@ -302,7 +303,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets or sets this <see cref="Tile"/>'s <see cref="InformationBox"/>.
+		/// Gets or sets this <see cref="Tile"/>'s <see cref="ClearCanvas.ImageViewer.InformationBox">InformationBox</see>.
 		/// </summary>
 		public InformationBox InformationBox
 		{
@@ -314,6 +315,22 @@ namespace ClearCanvas.ImageViewer
 
 				_informationBox = value;
 				EventsHelper.Fire(_informationBoxChanged, this, new InformationBoxChangedEventArgs(_informationBox));
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets this <see cref="Tile"/>'s <see cref="ClearCanvas.ImageViewer.EditBox">EditBox</see>.
+		/// </summary>
+		public EditBox EditBox
+		{
+			get { return _editBox; }
+			set
+			{
+				if (_editBox == value)
+					return;
+
+				_editBox = value;
+				EventsHelper.Fire(_editBoxChanged, this, new EventArgs());
 			}
 		}
 
@@ -377,6 +394,15 @@ namespace ClearCanvas.ImageViewer
 		{
 			add { _informationBoxChanged += value; }
 			remove { _informationBoxChanged -= value; }
+		}
+
+		/// <summary>
+		/// Occurs when the <see cref="EditBox"/> property has changed.
+		/// </summary>
+		public event EventHandler EditBoxChanged
+		{
+			add { _editBoxChanged += value; }
+			remove { _editBoxChanged -= value; }
 		}
 
 		#endregion

@@ -707,5 +707,14 @@ namespace ClearCanvas.ImageViewer {
                 return ResourceManager.GetString("SeparatorPatientsLoaded", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter Text.
+        /// </summary>
+        public static string StringEnterText {
+            get {
+                return ResourceManager.GetString("StringEnterText", resourceCulture);
+            }
+        }
     }
 }

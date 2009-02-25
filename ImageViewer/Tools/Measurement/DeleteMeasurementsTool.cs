@@ -38,7 +38,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -67,12 +67,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		public void Delete()
 		{
-			DeleteRoiGraphicsHelper.Delete(Context.Graphic as RoiGraphic);
+			DeleteRoiGraphicsHelper.Delete(Context.OwnerGraphic as RoiGraphic);
 		}
 
 		public void DeleteAll()
 		{
-			DeleteRoiGraphicsHelper.DeleteAll(Context.Graphic.ParentPresentationImage);
+			DeleteRoiGraphicsHelper.DeleteAll(Context.OwnerGraphic.ParentPresentationImage);
 		}
 	}
 

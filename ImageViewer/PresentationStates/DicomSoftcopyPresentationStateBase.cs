@@ -350,7 +350,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 				foreach (IGraphic graphic in image.OverlayGraphics)
 				{
-					if (graphic is RoiGraphic)
+					if (graphic is AnnotationGraphic)
 					{
 						if (!layerIndex.ContainsKey(_roiGraphicLayerId))
 						{

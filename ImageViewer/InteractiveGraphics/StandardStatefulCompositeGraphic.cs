@@ -171,7 +171,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private bool _selected = false;
 
 		/// <summary>
-		/// Gets or set a value indicating whether the <see cref="RoiGraphic"/> is selected.
+		/// Gets or set a value indicating whether the <see cref="StandardStatefulCompositeGraphic"/> is selected.
 		/// </summary>
 		public bool Selected
 		{
@@ -211,7 +211,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private bool _focused = false;
 
 		/// <summary>
-		/// Gets or set a value indicating whether the <see cref="RoiGraphic"/> is in focus.
+		/// Gets or set a value indicating whether the <see cref="StandardStatefulCompositeGraphic"/> is in focus.
 		/// </summary>
 		public bool Focussed
 		{

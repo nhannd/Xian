@@ -68,7 +68,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 					}
 				}
 
-				RectangleF annotationBounds = RectangleUtilities.ComputeBoundingRectangle(dataPoints.ToArray());
+				RectangleF annotationBounds = RectangleF.Empty;
+				if (dataPoints.Count > 0)
+					annotationBounds = RectangleUtilities.ComputeBoundingRectangle(dataPoints.ToArray());
 				if (graphicAnnotationSequenceItem.TextObjectSequence != null)
 				{
 					foreach (GraphicAnnotationSequenceItem.TextObjectSequenceItem textItem in graphicAnnotationSequenceItem.TextObjectSequence)
@@ -239,12 +241,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private static CalloutGraphic CreateCalloutText(RectangleF annotationBounds, RectangleF displayedArea, GraphicAnnotationSequenceItem.TextObjectSequenceItem textItem)
 		{
-			CalloutGraphic callout = new CalloutGraphic();
-			callout.Text = textItem.UnformattedTextValue;
+			CalloutGraphic callout = new CalloutGraphic(textItem.UnformattedTextValue);
 
+			PointF anchor = Point.Empty;
 			if (textItem.AnchorPoint.HasValue)
 			{
-				PointF anchor = textItem.AnchorPoint.Value;
+				anchor = textItem.AnchorPoint.Value;
 				if (textItem.AnchorPointAnnotationUnits == GraphicAnnotationSequenceItem.AnchorPointAnnotationUnits.Display)
 					anchor = GetPointInSourceCoordinates(displayedArea, anchor);
 
@@ -279,7 +281,19 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			else
 			{
 				callout.CoordinateSystem = CoordinateSystem.Destination;
-				callout.Location = annotationBounds.Location - new SizeF(30, 30);
+				if (annotationBounds.IsEmpty) 
+				{
+					if (anchor.IsEmpty)
+						callout.Location = Point.Empty;
+					else
+						callout.Location = anchor - new SizeF(30, 30);
+
+					callout.ShowArrow = true; // show arrowhead if graphic annotation bounds are empty
+				}
+				else 
+				{
+					callout.Location = annotationBounds.Location - new SizeF(30, 30);
+				}
 				callout.ResetCoordinateSystem();
 			}
 

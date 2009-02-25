@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation.Tests
 
 		private void NewTransform()
 		{
-			_transform = new ImageSpatialTransform(new CalloutGraphic(), 10,10,0,0,0,0);
+			_transform = new ImageSpatialTransform(new CalloutGraphic(""), 10,10,0,0,0,0);
 			_transform.ClientRectangle = new Rectangle(0, 0, 15, 25);
 		}
 

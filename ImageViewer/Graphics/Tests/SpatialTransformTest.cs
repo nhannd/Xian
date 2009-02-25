@@ -448,7 +448,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			CompositeGraphic primitiveOwner = (CompositeGraphic)imageComposite.Graphics[1];
 			Graphic primitive = (Graphic)primitiveOwner.Graphics[0];
 
-			RoiGraphic roi = (RoiGraphic)imageComposite.Graphics[2];
+			AnnotationGraphic annotation = (AnnotationGraphic)imageComposite.Graphics[2];
 
 			try
 			{
@@ -475,9 +475,9 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 				imageComposite.SpatialTransform.RotationXY = 90;
 			}
 			
-			roi.SpatialTransform.RotationXY = 100;
+			annotation.SpatialTransform.RotationXY = 100;
 			//should throw; no rotation allowed on a roi
-			cumulativeTransform = roi.SpatialTransform.CumulativeTransform;
+			cumulativeTransform = annotation.SpatialTransform.CumulativeTransform;
 		}
 
 		private static CompositeGraphic CreateTestSceneGraph()
@@ -492,9 +492,9 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			composite.Graphics.Add(leaf);
 			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
 
-			RoiGraphic roi = new RoiGraphic(new EllipseInteractiveGraphic());
+			AnnotationGraphic annotation = new AnnotationGraphic(new EllipseInteractiveGraphic());
 			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
-			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(roi);
+			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(annotation);
 
 			return sceneGraph;
 		}

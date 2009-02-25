@@ -38,16 +38,16 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	[Cloneable(true)]
-	internal class PolygonRoiCalloutLocationStrategy : RoiCalloutLocationStrategy
+	internal class PolygonRoiCalloutLocationStrategy : AnnotationCalloutLocationStrategy
 	{
 		private bool _initialLocationSet;
 
-		public override void SetRoiGraphic(RoiGraphic roiGraphic)
+		public override void SetAnnotationGraphic(AnnotationGraphic roiGraphic)
 		{
-			if (base.RoiGraphic != null)
+			if (base.AnnotationGraphic != null)
 				this.Roi.PolygonClosed -= OnPolygonInteractiveGraphicClosed;
 
-			base.SetRoiGraphic(roiGraphic);
+			base.SetAnnotationGraphic(roiGraphic);
 
 			if (roiGraphic != null)
 				this.Roi.PolygonClosed += OnPolygonInteractiveGraphicClosed;

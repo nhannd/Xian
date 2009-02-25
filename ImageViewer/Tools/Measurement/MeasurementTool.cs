@@ -40,6 +40,7 @@ using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -181,7 +182,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			InteractiveGraphic interactiveGraphic = CreateInteractiveGraphic();
 			_interactiveGraphicType = interactiveGraphic.GetType();
 
-			IRoiCalloutLocationStrategy strategy = CreateCalloutLocationStrategy();
+			IAnnotationCalloutLocationStrategy strategy = CreateCalloutLocationStrategy();
 
 			RoiGraphic roiGraphic;
 			if (strategy == null)
@@ -199,7 +200,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected abstract GraphicState CreateCreateState(RoiGraphic roiGraphic);
 
-		protected virtual IRoiCalloutLocationStrategy CreateCalloutLocationStrategy()
+		protected virtual IAnnotationCalloutLocationStrategy CreateCalloutLocationStrategy()
 		{
 			return null;
 		}

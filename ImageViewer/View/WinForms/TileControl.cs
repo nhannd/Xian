@@ -42,15 +42,16 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Rendering;
+using DrawMode=ClearCanvas.ImageViewer.Rendering.DrawMode;
 using MessageBox=ClearCanvas.Desktop.View.WinForms.MessageBox;
-using System.Collections;
+using Screen=System.Windows.Forms.Screen;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="TileComponent"/>
-    /// </summary>
-    public partial class TileControl : UserControl
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="TileComponent"/>
+	/// </summary>
+	public partial class TileControl : UserControl
 	{
 		#region Private fields
 
@@ -60,21 +61,29 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private InformationBox _currentInformationBox;
 
+		private EditBox _currentEditBox;
+		private TextBox _editBoxControl;
+
 		private IRenderingSurface _surface;
 		private IMouseButtonHandler _currentMouseButtonHandler;
 		private CursorWrapper _currentCursorWrapper;
 
-		[ThreadStatic] private static bool _drawing = false;
-		[ThreadStatic] private static bool _painting = false;
-		[ThreadStatic] private static readonly List<TileControl> _tilesToRepaint = new List<TileControl>();
+		[ThreadStatic]
+		private static bool _drawing = false;
+
+		[ThreadStatic]
+		private static bool _painting = false;
+
+		[ThreadStatic]
+		private static readonly List<TileControl> _tilesToRepaint = new List<TileControl>();
 
 		#endregion
 
 		/// <summary>
-        /// Constructor
-        /// </summary>
-        public TileControl(Tile tile, Rectangle parentRectangle, int parentImageBoxInsetWidth)
-        {
+		/// Constructor
+		/// </summary>
+		public TileControl(Tile tile, Rectangle parentRectangle, int parentImageBoxInsetWidth)
+		{
 			_tile = tile;
 			_tileController = new TileController(_tile, (_tile.ImageViewer as ImageViewerComponent).ShortcutManager);
 			_inputTranslator = new TileInputTranslator(this);
@@ -90,12 +99,27 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_tile.Drawing += new EventHandler(OnDrawing);
 			_tile.RendererChanged += new EventHandler(OnRendererChanged);
 			_tile.InformationBoxChanged += new EventHandler<InformationBoxChangedEventArgs>(OnInformationBoxChanged);
+			_tile.EditBoxChanged += new EventHandler(OnEditBoxChanged);
 
 			_contextMenuStrip.ImageScalingSize = new Size(24, 24);
 			_contextMenuStrip.Opening += new CancelEventHandler(OnContextMenuStripOpening);
 
 			_tileController.CursorTokenChanged += new EventHandler(OnCursorTokenChanged);
 			_tileController.CaptureChanging += new EventHandler<ItemEventArgs<IMouseButtonHandler>>(OnCaptureChanging);
+
+			_editBoxControl = new TextBox();
+			_editBoxControl.AcceptsReturn = false;
+			_editBoxControl.AcceptsTab = false;
+			_editBoxControl.BackColor = Color.Gray;
+			_editBoxControl.BorderStyle = BorderStyle.None;
+			_editBoxControl.Multiline = true;
+			_editBoxControl.Visible = false;
+			_editBoxControl.WordWrap = false;
+			_editBoxControl.KeyDown += new KeyEventHandler(OnEditBoxControlKeyDown);
+			_editBoxControl.LostFocus += new EventHandler(OnEditBoxControlLostFocus);
+			_editBoxControl.PreviewKeyDown += new PreviewKeyDownEventHandler(OnEditBoxControlPreviewKeyDown);
+			_editBoxControl.TextChanged += new EventHandler(OnEditBoxControlTextChanged);
+			this.Controls.Add(_editBoxControl);
 
 			this.DoubleBuffered = false;
 			this.SetStyle(ControlStyles.DoubleBuffer, false);
@@ -110,7 +134,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private IRenderingSurface Surface
 		{
-			get 
+			get
 			{
 				if (_surface == null)
 				{
@@ -122,7 +146,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 					if (this.Tile.PresentationImage == null)
 						return null;
 
-					IRenderer renderer = ((PresentationImage)Tile.PresentationImage).ImageRenderer;
+					IRenderer renderer = ((PresentationImage) Tile.PresentationImage).ImageRenderer;
 
 					// PresntationImage should *always* have a renderer
 					if (renderer == null)
@@ -131,21 +155,21 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 					_surface = renderer.GetRenderingSurface(this.Handle, this.Width, this.Height);
 				}
 
-				return _surface; 
+				return _surface;
 			}
 		}
 
 		public void SetParentImageBoxRectangle(
-			Rectangle parentImageBoxRectangle, 
+			Rectangle parentImageBoxRectangle,
 			int parentImageBoxBorderWidth)
 		{
-			int insetImageBoxWidth = parentImageBoxRectangle.Width - 2 * parentImageBoxBorderWidth;
-			int insetImageBoxHeight = parentImageBoxRectangle.Height - 2 * parentImageBoxBorderWidth;
+			int insetImageBoxWidth = parentImageBoxRectangle.Width - 2*parentImageBoxBorderWidth;
+			int insetImageBoxHeight = parentImageBoxRectangle.Height - 2*parentImageBoxBorderWidth;
 
-			int left = (int)(_tile.NormalizedRectangle.Left * insetImageBoxWidth + Tile.InsetWidth);
-			int top = (int)(_tile.NormalizedRectangle.Top * insetImageBoxHeight + Tile.InsetWidth);
-			int right = (int)(_tile.NormalizedRectangle.Right * insetImageBoxWidth - Tile.InsetWidth);
-			int bottom = (int)(_tile.NormalizedRectangle.Bottom * insetImageBoxHeight - Tile.InsetWidth);
+			int left = (int) (_tile.NormalizedRectangle.Left*insetImageBoxWidth + Tile.InsetWidth);
+			int top = (int) (_tile.NormalizedRectangle.Top*insetImageBoxHeight + Tile.InsetWidth);
+			int right = (int) (_tile.NormalizedRectangle.Right*insetImageBoxWidth - Tile.InsetWidth);
+			int bottom = (int) (_tile.NormalizedRectangle.Bottom*insetImageBoxHeight - Tile.InsetWidth);
 
 			this.SuspendLayout();
 
@@ -154,7 +178,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.ResumeLayout(false);
 		}
 
-    	public void Draw()
+		public void Draw()
 		{
 			CodeClock clock = new CodeClock();
 			clock.Start();
@@ -169,8 +193,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				this.Surface.ClipRectangle = this.ClientRectangle;
 
 				DrawArgs args = new DrawArgs(this.Surface,
-					new WinFormsScreenProxy(System.Windows.Forms.Screen.FromControl(this)),
-					ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
+				                             new WinFormsScreenProxy(Screen.FromControl(this)),
+				                             DrawMode.Render);
 
 				string errorMessage = null;
 
@@ -187,7 +211,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				finally
 				{
 					_drawing = false;
-					
+
 					graphics.ReleaseHdc(this.Surface.ContextID);
 					graphics.Dispose();
 
@@ -238,7 +262,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			return Environment.OSVersion.Version.Major >= 6;
 		}
 
-    	protected override void OnPaint(PaintEventArgs e)
+		protected override void OnPaint(PaintEventArgs e)
 		{
 			//Assume anything Vista or later has the same issues.
 			if (IsVistaOrLater())
@@ -286,8 +310,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				this.Surface.ClipRectangle = e.ClipRectangle;
 
 				DrawArgs args = new DrawArgs(this.Surface,
-					new WinFormsScreenProxy(System.Windows.Forms.Screen.FromControl(this)),
-					ClearCanvas.ImageViewer.Rendering.DrawMode.Refresh);
+				                             new WinFormsScreenProxy(Screen.FromControl(this)),
+				                             DrawMode.Refresh);
 
 				string errorMessage = null;
 
@@ -379,7 +403,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (message == null)
 				return;
 
-			if (_tileController != null) 
+			if (_tileController != null)
 				_tileController.ProcessMessage(message);
 		}
 
@@ -389,7 +413,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (message == null)
 				return;
 
-			if (_tileController != null) 
+			if (_tileController != null)
 				_tileController.ProcessMessage(message);
 		}
 
@@ -399,25 +423,25 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (message == null)
 				return;
 
-			if (_tileController != null) 
+			if (_tileController != null)
 				_tileController.ProcessMessage(message);
 		}
 
-    	protected override void OnMouseCaptureChanged(EventArgs e)
-    	{
-    		base.OnMouseCaptureChanged(e);
+		protected override void OnMouseCaptureChanged(EventArgs e)
+		{
+			base.OnMouseCaptureChanged(e);
 
-    		//This feels bad to me, but it's the only way to accomplish
-    		//keeping the capture when the mouse has come up.  .NET automatically handles
-    		//capture for you by turning it on on mouse down and off on mouse up, but
-    		//it does not allow you to keep capture when the mouse is not down.  Even
-    		// if you take out the calls to the base class OnMouseX handlers, it still
-    		// turns Capture back off although it has been turned on explicitly.
-    		if (this._currentMouseButtonHandler != null)
-    			this.Capture = true;
-    	}
+			//This feels bad to me, but it's the only way to accomplish
+			//keeping the capture when the mouse has come up.  .NET automatically handles
+			//capture for you by turning it on on mouse down and off on mouse up, but
+			//it does not allow you to keep capture when the mouse is not down.  Even
+			// if you take out the calls to the base class OnMouseX handlers, it still
+			// turns Capture back off although it has been turned on explicitly.
+			if (this._currentMouseButtonHandler != null)
+				this.Capture = true;
+		}
 
-    	protected override void OnKeyDown(KeyEventArgs e)
+		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			object message = _inputTranslator.OnKeyDown(e);
 			if (message == null)
@@ -447,28 +471,28 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			return true;
 		}
 
-    	public override bool PreProcessMessage(ref Message msg)
-    	{
-    		object message = _inputTranslator.PreProcessMessage(msg);
-    		if (message != null && _tileController != null)
-    			_tileController.ProcessMessage(message);
+		public override bool PreProcessMessage(ref Message msg)
+		{
+			object message = _inputTranslator.PreProcessMessage(msg);
+			if (message != null && _tileController != null)
+				_tileController.ProcessMessage(message);
 
-    		bool returnValue = base.PreProcessMessage(ref msg);
+			bool returnValue = base.PreProcessMessage(ref msg);
 
-    		message = _inputTranslator.PostProcessMessage(msg, returnValue);
-    		if (message != null && _tileController != null)
-    			_tileController.ProcessMessage(message);
+			message = _inputTranslator.PostProcessMessage(msg, returnValue);
+			if (message != null && _tileController != null)
+				_tileController.ProcessMessage(message);
 
-    		return returnValue;
-    	}
+			return returnValue;
+		}
 
-    	#endregion
+		#endregion
 
 		#region Drag/Drop Overrides
 
 		protected override void OnDragOver(DragEventArgs drgevent)
 		{
-			if (drgevent.Data.GetDataPresent(typeof(DisplaySet)))
+			if (drgevent.Data.GetDataPresent(typeof (DisplaySet)))
 				drgevent.Effect = DragDropEffects.Move;
 			else
 				drgevent.Effect = DragDropEffects.None;
@@ -496,7 +520,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		#endregion
 
-    	protected override void OnHandleDestroyed(EventArgs e)
+		protected override void OnHandleDestroyed(EventArgs e)
 		{
 			// Notify the surface that the tile control's window handle is
 			// about to be destroyed so that any objects using the handle have
@@ -563,7 +587,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			if (_tileController.ContextMenuEnabled)
 			{
-				ActionModelNode menuModel = _tileController.ContextMenuProvider.GetContextMenuModel(_tileController); 
+				ActionModelNode menuModel = _tileController.ContextMenuProvider.GetContextMenuModel(_tileController);
 				ToolStripBuilder.Clear(_contextMenuStrip.Items);
 				ToolStripBuilder.BuildMenu(_contextMenuStrip.Items, menuModel.ChildNodes);
 				e.Cancel = false;
@@ -578,7 +602,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				_currentInformationBox.Updated -= new EventHandler(OnUpdateInformationBox);
 
 			_currentInformationBox = e.InformationBox;
-			
+
 			_toolTip.Active = false;
 			_toolTip.Hide(this);
 
@@ -601,5 +625,75 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				_toolTip.Show(_currentInformationBox.Data, this, point);
 			}
 		}
-    }
+
+		private void OnEditBoxChanged(object sender, EventArgs e)
+		{
+			if (_currentEditBox != null)
+			{
+				_editBoxControl.Visible = false;
+			}
+
+			_currentEditBox = _tile.EditBox;
+
+			if (_currentEditBox != null)
+			{
+				_editBoxControl.Font = new Font(_currentEditBox.FontName, _currentEditBox.FontSize);
+				_editBoxControl.Text = _currentEditBox.Value;
+				_editBoxControl.Bounds = ComputeEditBoxControlBounds(_editBoxControl, _currentEditBox);
+				_editBoxControl.Visible = true;
+				_editBoxControl.Focus();
+				_editBoxControl.SelectAll();
+			}
+		}
+
+		private static Rectangle ComputeEditBoxControlBounds(Control control, EditBox editBox)
+		{
+			Size sz = control.GetPreferredSize(Size.Empty);
+			sz = new Size(Math.Max(sz.Width, editBox.Size.Width), Math.Max(sz.Height, editBox.Size.Height));
+			return ClearCanvas.ImageViewer.Mathematics.RectangleUtilities.ConvertToRectangle(editBox.Location, sz);
+		}
+
+		private void OnEditBoxControlTextChanged(object sender, EventArgs e)
+		{
+			if (_currentEditBox == null)
+				return;
+			_currentEditBox.Value = _editBoxControl.Text;
+			_editBoxControl.Bounds = ComputeEditBoxControlBounds(_editBoxControl, _currentEditBox);
+		}
+
+		private void OnEditBoxControlLostFocus(object sender, EventArgs e)
+		{
+			if (_currentEditBox == null)
+				return;
+			_currentEditBox.Accept();
+		}
+
+		private void OnEditBoxControlPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+		{
+			if (_currentEditBox == null)
+				return;
+
+			if (e.KeyCode == Keys.Escape || e.KeyCode == Keys.Enter)
+				e.IsInputKey = true;
+			else if (e.KeyCode == Keys.Tab)
+				e.IsInputKey = false;
+		}
+
+		private void OnEditBoxControlKeyDown(object sender, KeyEventArgs e)
+		{
+			if (_currentEditBox == null)
+				return;
+
+			if (e.KeyCode == Keys.Escape)
+			{
+				_currentEditBox.Cancel();
+				e.Handled = e.SuppressKeyPress = true;
+			}
+			else if (e.KeyCode == Keys.Enter && e.Modifiers == 0)
+			{
+				_currentEditBox.Accept();
+				e.Handled = e.SuppressKeyPress = true;
+			}
+		}
+	}
 }

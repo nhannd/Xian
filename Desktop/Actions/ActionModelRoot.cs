@@ -47,13 +47,13 @@ namespace ClearCanvas.Desktop.Actions
         /// does not exist, it will be created.  If it does exist, it will be used as guidance
         /// in constructing the action model tree.
         /// </remarks>
-        /// <param name="namespaze">A namespace to qualify the site, typically the class name of the calling class is a good choice.</param>
+        /// <param name="namespace">A namespace to qualify the site, typically the class name of the calling class is a good choice.</param>
         /// <param name="site">The site (<see cref="ActionPath.Site"/>).</param>
         /// <param name="actions">The set of actions from which to construct the model.</param>
         /// <returns>An action model tree.</returns>
-        public static ActionModelRoot CreateModel(string namespaze, string site, IActionSet actions)
+        public static ActionModelRoot CreateModel(string @namespace, string site, IActionSet actions)
         {
-			return ActionModelSettings.Default.BuildAndSynchronize(namespaze, site, actions.Select(delegate(IAction action) { return action.Path.Site == site; }));
+			return ActionModelSettings.Default.BuildAndSynchronize(@namespace, site, actions.Select(delegate(IAction action) { return action.Path.Site == site; }));
         }
 
         /// <summary>

@@ -38,6 +38,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -111,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			return new CreatePolygonGraphicState(roiGraphic);
 		}
 
-		protected override IRoiCalloutLocationStrategy CreateCalloutLocationStrategy()
+		protected override IAnnotationCalloutLocationStrategy CreateCalloutLocationStrategy()
 		{
 			return new PolygonRoiCalloutLocationStrategy();
 		}

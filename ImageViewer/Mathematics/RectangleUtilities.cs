@@ -436,5 +436,29 @@ namespace ClearCanvas.ImageViewer.Mathematics
 
 			return new Rectangle(rectangle.Location + locationOffset, rectangle.Size + sizeOffset);
 		}
+
+		/// <summary>
+		/// Computes a rectangle from a centroid and a set of dimensions.
+		/// </summary>
+		/// <param name="centroid">The centroid of the rectangle.</param>
+		/// <param name="dimensions">The dimensions of the rectangle.</param>
+		/// <returns>A rectangle of given dimensions centered around the centroid.</returns>
+		public static Rectangle ConvertToRectangle(Point centroid, Size dimensions)
+		{
+			return Rectangle.Round(ConvertToRectangle((PointF) centroid, dimensions));
+		}
+
+		/// <summary>
+		/// Computes a rectangle from a centroid and a set of dimensions.
+		/// </summary>
+		/// <param name="centroid">The centroid of the rectangle.</param>
+		/// <param name="dimensions">The dimensions of the rectangle.</param>
+		/// <returns>A rectangle of given dimensions centered around the centroid.</returns>
+		public static RectangleF ConvertToRectangle(PointF centroid, SizeF dimensions)
+		{
+			float halfWidth = dimensions.Width/2f;
+			float halfHeight = dimensions.Height/2f;
+			return RectangleF.FromLTRB(centroid.X - halfWidth, centroid.Y - halfHeight, centroid.X + halfWidth, centroid.Y + halfHeight);
+		}
 	}
 }

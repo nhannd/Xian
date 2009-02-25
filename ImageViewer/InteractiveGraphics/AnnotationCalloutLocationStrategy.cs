@@ -37,55 +37,55 @@ using ClearCanvas.ImageViewer.Graphics;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	/// <summary>
-	/// The default strategy for automatically calculating the location of a <see cref="RoiGraphic"/>'s callout.
+	/// The default strategy for automatically calculating the location of a <see cref="AnnotationGraphic"/>'s callout.
 	/// </summary>
 	[Cloneable(true)]
-	public class RoiCalloutLocationStrategy : IRoiCalloutLocationStrategy
+	public class AnnotationCalloutLocationStrategy : IAnnotationCalloutLocationStrategy
 	{
 		[CloneIgnore]
-		private RoiGraphic _roiGraphic;
+		private AnnotationGraphic _annotationGraphic;
 		private bool _initialLocationSet;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		internal protected RoiCalloutLocationStrategy()
+		internal protected AnnotationCalloutLocationStrategy()
 		{
 			_initialLocationSet = false;
 		}
 
 		/// <summary>
-		/// Gets the owning <see cref="RoiGraphic"/>.
+		/// Gets the owning <see cref="AnnotationGraphic"/>.
 		/// </summary>
-		protected RoiGraphic RoiGraphic
+		protected AnnotationGraphic AnnotationGraphic
 		{
-			get { return _roiGraphic; }
+			get { return _annotationGraphic; }
 		}
 
 		/// <summary>
-		/// Gets the <see cref="RoiGraphic"/>'s Roi.
+		/// Gets the <see cref="AnnotationGraphic"/>'s Subject.
 		/// </summary>
 		protected InteractiveGraphic Roi
 		{
-			get { return _roiGraphic.Roi; }
+			get { return _annotationGraphic.Subject; }
 		}
 
 		/// <summary>
-		/// Gets the <see cref="RoiGraphic"/>'s Callout.
+		/// Gets the <see cref="AnnotationGraphic"/>'s Callout.
 		/// </summary>
 		protected CalloutGraphic Callout
 		{
-			get { return _roiGraphic.Callout; }
+			get { return _annotationGraphic.Callout; }
 		}
 
 		#region IRoiCalloutLocationStrategy Members
 
 		/// <summary>
-		/// Sets the <see cref="InteractiveGraphics.RoiGraphic"/> that owns this strategy.
+		/// Sets the <see cref="InteractiveGraphics.AnnotationGraphic"/> that owns this strategy.
 		/// </summary>
-		public virtual void SetRoiGraphic(RoiGraphic roiGraphic)
+		public virtual void SetAnnotationGraphic(AnnotationGraphic annotationGraphic)
 		{
-			_roiGraphic = roiGraphic;
+			_annotationGraphic = annotationGraphic;
 		}
 
 		/// <summary>
@@ -125,19 +125,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public virtual void CalculateCalloutEndPoint(out PointF endPoint, out CoordinateSystem coordinateSystem)
 		{
-			coordinateSystem = this.RoiGraphic.CoordinateSystem;
-			endPoint = RoiGraphic.Roi.GetClosestPoint(RoiGraphic.Callout.StartPoint);
+			coordinateSystem = this.AnnotationGraphic.CoordinateSystem;
+			endPoint = AnnotationGraphic.Subject.GetClosestPoint(AnnotationGraphic.Callout.StartPoint);
 		}
 
 		/// <summary>
 		/// Creates a deep copy of this strategy object.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IRoiCalloutLocationStrategy"/>s should not return null from this method.
+		/// <see cref="IAnnotationCalloutLocationStrategy"/>s should not return null from this method.
 		/// </remarks>
-		public IRoiCalloutLocationStrategy Clone()
+		public IAnnotationCalloutLocationStrategy Clone()
 		{
-			return CloneBuilder.Clone(this) as IRoiCalloutLocationStrategy;
+			return CloneBuilder.Clone(this) as IAnnotationCalloutLocationStrategy;
 		}
 
 		#endregion

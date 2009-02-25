@@ -2,17 +2,16 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[Cloneable]
-	internal class TextCalloutGraphic : RoiGraphic
+	internal class TextCalloutGraphic : AnnotationGraphic
 	{
 		public TextCalloutGraphic() : base(new PointOfInterestInteractiveGraphic())
 		{
-			this.Callout.Text = "It's turtles all the way down!";
-			this.Callout.ShowArrow = true;
 		}
 
 		protected TextCalloutGraphic(TextCalloutGraphic source, ICloningContext context)
@@ -21,21 +20,79 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			context.CloneFields(source, this);
 		}
 
-		private new PointOfInterestInteractiveGraphic Roi
+		protected override CalloutGraphic CreateCalloutGraphic()
 		{
-			get { return (PointOfInterestInteractiveGraphic) base.Roi; }
+			UserCalloutGraphic callout = new UserCalloutGraphic();
+			callout.LineStyle = LineStyle.Solid;
+			callout.ShowArrow = true;
+			return callout;
+		}
+
+		private new PointOfInterestInteractiveGraphic Subject
+		{
+			get { return (PointOfInterestInteractiveGraphic) base.Subject; }
+		}
+
+		public new UserCalloutGraphic Callout
+		{
+			get { return (UserCalloutGraphic) base.Callout; }
 		}
 
 		public PointF PointOfInterest
 		{
-			get { return this.Roi.Location; }
-			set { this.Roi.Location = value; }
+			get { return this.Subject.Location; }
+			set { this.Subject.Location = value; }
 		}
 
 		public PointF TextLocation
 		{
 			get { return this.Callout.Location; }
 			set { this.Callout.Location = value; }
+		}
+
+		public override GraphicState CreateFocussedSelectedState()
+		{
+			//return base.CreateFocussedSelectedState();
+			return new FocussedSelectedTextCalloutGraphicState(this);
+		}
+
+		protected class FocussedSelectedTextCalloutGraphicState : FocussedSelectedAnnotationGraphicState
+		{
+			public FocussedSelectedTextCalloutGraphicState(TextCalloutGraphic annotationGraphic)
+				: base(annotationGraphic) {}
+
+			protected new TextCalloutGraphic StatefulGraphic
+			{
+				get { return (TextCalloutGraphic) base.StatefulGraphic; }
+			}
+
+			public override bool Start(IMouseInformation mouseInformation)
+			{
+				this.StatefulGraphic.CoordinateSystem = CoordinateSystem.Destination;
+				try
+				{
+					// Check for a single click action on the callout line (that is, not the point of interest nor the callout text)
+					if (mouseInformation.ClickCount == 1
+						&& !this.StatefulGraphic.Subject.HitTest(mouseInformation.Location)
+						&& !this.StatefulGraphic.Callout.BoundingBox.Contains(mouseInformation.Location)
+						&& this.StatefulGraphic.Callout.HitTest(mouseInformation.Location))
+					{
+							this.StatefulGraphic.State = new MoveGraphicState(this.StatefulGraphic, this.StatefulGraphic);
+							this.StatefulGraphic.State.Start(mouseInformation);
+
+							return true;
+					}
+				}
+				finally
+				{
+					this.StatefulGraphic.ResetCoordinateSystem();
+				}
+
+				if (base.Start(mouseInformation))
+					return true;
+
+				return false;
+			}
 		}
 
 		[Cloneable]
@@ -99,6 +156,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			public override PointF GetClosestPoint(PointF point)
 			{
 				return this.Location;
+			}
+
+			public override void Move(SizeF delta)
+			{
+				base.ControlPoints[0] += delta;
 			}
 
 			protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e) {}

@@ -49,6 +49,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 	public interface IGraphicToolContext : IToolContext
 	{
 		/// <summary>
+		/// Gets the top-level <see cref="IGraphic"/> that the tool applies to.
+		/// </summary>
+		IGraphic OwnerGraphic { get; }
+
+		/// <summary>
 		/// Gets the <see cref="IGraphic"/> that the tool applies to.
 		/// </summary>
 		IGraphic Graphic { get; }
@@ -64,16 +69,26 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public class GraphicToolContext : ToolContext, IGraphicToolContext
 	{
+		private readonly IGraphic _ownerGraphic;
 		private readonly IGraphic _graphic;
 		private readonly IDesktopWindow _desktopWindow;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public GraphicToolContext(IGraphic graphic, IDesktopWindow desktopWindow)
+		public GraphicToolContext(IGraphic owner, IGraphic graphic, IDesktopWindow desktopWindow)
 		{
+			_ownerGraphic = owner;
 			_graphic = graphic;
 			_desktopWindow = desktopWindow;
+		}
+
+		/// <summary>
+		/// Gets the top-level <see cref="IGraphic"/> that the tool applies to.
+		/// </summary>
+		public IGraphic OwnerGraphic
+		{
+			get { return _ownerGraphic; }
 		}
 
 		/// <summary>

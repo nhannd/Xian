@@ -39,7 +39,7 @@ using Matrix=System.Drawing.Drawing2D.Matrix;
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	[Cloneable(true)]
-	internal class ProtractorRoiCalloutLocationStrategy : RoiCalloutLocationStrategy
+	internal class ProtractorRoiCalloutLocationStrategy : AnnotationCalloutLocationStrategy
 	{
 		private bool _firstCalculation;
 		private PointF _lastVertexLocationSource;
@@ -51,9 +51,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			_userMovedCallout = false;
 		}
 
-		public override void SetRoiGraphic(RoiGraphic roiGraphic)
+		public override void SetAnnotationGraphic(AnnotationGraphic roiGraphic)
 		{
-			base.SetRoiGraphic(roiGraphic);
+			base.SetAnnotationGraphic(roiGraphic);
 			if (_firstCalculation)
 				base.Callout.Visible = false;
 		}
@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			SizeF calloutOffsetDestination = GetCalloutOffsetDestination();
 
 			coordinateSystem = CoordinateSystem.Destination;
-			base.RoiGraphic.CoordinateSystem = coordinateSystem;
+			base.AnnotationGraphic.CoordinateSystem = coordinateSystem;
 
 			// first, move the callout by the same amount the vertex moved (if it moved at all).
 			location = base.Callout.Location + calloutOffsetDestination;
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			PointF vertex = Roi.ControlPoints[1];
 			PointF end = Roi.ControlPoints[2];
 
-			base.RoiGraphic.ResetCoordinateSystem();
+			base.AnnotationGraphic.ResetCoordinateSystem();
 
 			double vectorAngle = -Vector.SubtendedAngle(start, vertex, end) / 2 + 180;
 
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		private SizeF GetCalloutOffsetDestination()
 		{
-			base.RoiGraphic.CoordinateSystem = CoordinateSystem.Source;
+			base.AnnotationGraphic.CoordinateSystem = CoordinateSystem.Source;
 
 			SizeF calloutOffsetDestination = SizeF.Empty;
 
@@ -155,7 +155,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			_lastVertexLocationSource = currentVertexLocationSource;
 
-			base.RoiGraphic.ResetCoordinateSystem();
+			base.AnnotationGraphic.ResetCoordinateSystem();
 
 			return calloutOffsetDestination;
 		}

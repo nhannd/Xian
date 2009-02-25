@@ -36,6 +36,7 @@ using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.RoiGraphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System;
 

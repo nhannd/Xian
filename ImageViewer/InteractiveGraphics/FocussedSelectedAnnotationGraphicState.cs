@@ -29,39 +29,10 @@
 
 #endregion
 
+using System.Drawing;
 using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class FocussedSelectedRoiGraphicState : FocussedSelectedInteractiveGraphicState
-	{
-		public FocussedSelectedRoiGraphicState(RoiGraphic roiGraphic)
-			: base(roiGraphic)
-		{
-		}
 
-		protected RoiGraphic StatefulGraphic {
-			get { return (RoiGraphic)base.StatefulGraphic; }
-		}
-
-		public override bool Start(IMouseInformation mouseInformation) {
-			if (base.Start(mouseInformation))
-				return true;
-
-			if(this.StatefulGraphic.Callout.HitTest(mouseInformation.Location))
-			{
-				this.StatefulGraphic.State = new MoveRoiCalloutGraphicState(this.StatefulGraphic);
-				this.StatefulGraphic.State.Start(mouseInformation);
-				return true;
-			}
-
-			return false;
-		}
-	}
-
-	public class MoveRoiCalloutGraphicState : MoveGraphicState
-	{
-		public MoveRoiCalloutGraphicState(RoiGraphic roi)
-			: base(roi, roi.Callout) {}
-	}
 }

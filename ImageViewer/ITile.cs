@@ -100,6 +100,16 @@ namespace ClearCanvas.ImageViewer
 		bool Enabled { get; set; }
 
 		/// <summary>
+		/// Gets or sets this <see cref="ITile"/>'s <see cref="ClearCanvas.ImageViewer.InformationBox">InformationBox</see>.
+		/// </summary>
+		InformationBox InformationBox { get; set; }
+
+		/// <summary>
+		/// Gets or sets this <see cref="ITile"/>'s <see cref="ClearCanvas.ImageViewer.EditBox">EditBox</see>.
+		/// </summary>
+		EditBox EditBox { get; set; }
+
+		/// <summary>
 		/// Selects the <see cref="ITile"/>.
 		/// </summary>
 		/// <remarks>
@@ -108,5 +118,15 @@ namespace ClearCanvas.ImageViewer
 		/// and <see cref="IImageBox"/>.
 		/// </remarks>
 		void Select();
+
+		/// <summary>
+		/// Occurs when the <see cref="InformationBox"/> property has changed.
+		/// </summary>
+		event EventHandler<InformationBoxChangedEventArgs> InformationBoxChanged;
+
+		/// <summary>
+		/// Occurs when the <see cref="EditBox"/> property has changed.
+		/// </summary>
+		event EventHandler EditBoxChanged;
 	}
 }
