@@ -122,7 +122,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			string[] cols = fk.Columns.ToArray();
 			string[] refcols = fk.ReferencedColumns.ToArray();
 
-			string sql = _dialect.GetAddForeignKeyConstraintString(fk.Name, cols, GetQualifiedName(change.Table.Schema, fk.ReferencedTable), refcols);
+			string sql = string.Format("alter table {0} {1}",
+				GetQualifiedName(change.Table),
+				_dialect.GetAddForeignKeyConstraintString(fk.Name, cols, GetQualifiedName(change.Table.Schema, fk.ReferencedTable), refcols));
+
 			return new Statement[] { new Statement(sql) };
 		}
 

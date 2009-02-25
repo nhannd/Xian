@@ -12,7 +12,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		public ModifyColumnChange(TableInfo table, ColumnInfo initial, ColumnInfo desired)
 			: base(table)
 		{
-			_column = initial;
+			_column = desired;
         }
 
     	public ColumnInfo Column

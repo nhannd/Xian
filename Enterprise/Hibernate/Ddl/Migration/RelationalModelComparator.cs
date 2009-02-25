@@ -16,17 +16,17 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		static RelationalModelComparator()
 		{
 			// define the order that changes should occur to avoid dependency issues
-			_changeOrder.Add(typeof(DropForeignKeyChange), 0);
-			_changeOrder.Add(typeof(DropUniqueConstraintChange), 0);
-			_changeOrder.Add(typeof(DropIndexChange), 1);
-			_changeOrder.Add(typeof(DropTableChange), 2);
-			_changeOrder.Add(typeof(DropColumnChange), 3);
-			_changeOrder.Add(typeof(ModifyColumnChange), 4);
-			_changeOrder.Add(typeof(AddColumnChange), 4);
-			_changeOrder.Add(typeof(AddTableChange), 5);
-			_changeOrder.Add(typeof(AddIndexChange), 6);
-			_changeOrder.Add(typeof(AddUniqueConstraintChange), 7);
-			_changeOrder.Add(typeof(AddForeignKeyChange), 7);
+			_changeOrder.Add(typeof(DropIndexChange), 0);
+			_changeOrder.Add(typeof(DropForeignKeyChange), 1);
+			_changeOrder.Add(typeof(DropUniqueConstraintChange), 2);
+			_changeOrder.Add(typeof(DropTableChange), 3);
+			_changeOrder.Add(typeof(DropColumnChange), 4);
+			_changeOrder.Add(typeof(ModifyColumnChange), 5);
+			_changeOrder.Add(typeof(AddColumnChange), 6);
+			_changeOrder.Add(typeof(AddTableChange), 7);
+			_changeOrder.Add(typeof(AddUniqueConstraintChange), 8);
+			_changeOrder.Add(typeof(AddForeignKeyChange), 9);
+			_changeOrder.Add(typeof(AddIndexChange), 10);
 		}
 
 
@@ -41,7 +41,14 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			return CollectionUtils.Sort(changes,
 						delegate(Change x, Change y)
 						{
-							return _changeOrder[x.GetType()].CompareTo(_changeOrder[y.GetType()]);
+							int changeOrderValue = _changeOrder[x.GetType()]
+								.CompareTo(_changeOrder[y.GetType()]);
+
+							if (changeOrderValue != 0)
+								return changeOrderValue;
+
+							// if two changes are of same type, then order by table name
+							return x.Table.Name.CompareTo(y.Table.Name);
 						});
 		}
 
@@ -57,10 +64,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 				    delegate(ConstraintInfo item) { return new AddUniqueConstraintChange(t, item); }));
 			changes.AddRange(
 				CollectionUtils.Map<ForeignKeyInfo, Change>(t.ForeignKeys,
-				    delegate(ForeignKeyInfo item)
-				    {
-				    	return new AddForeignKeyChange(t, item);
-				    }));
+				    delegate(ForeignKeyInfo item) { return new AddForeignKeyChange(t, item); }));
 			return changes;
 		}
 
@@ -224,19 +228,29 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 					delegate(T x) { return CollectionUtils.Contains(desired, delegate(T y) { return x.Identity == y.Identity; }); });
 
 			// these items need to be added
-			List<T> adds = a[false];
-			foreach (T add in adds)
-				changes.AddRange(addProcessor(add));
+			List<T> adds;
+			if(a.TryGetValue(false, out adds))
+			{
+				foreach (T add in adds)
+					changes.AddRange(addProcessor(add));
+			}
 
 			// these items need to be dropped
-			List<T> drops = b[false];
-			foreach (T drop in drops)
-				changes.AddRange(dropProcessor(drop));
+			List<T> drops;
+			if (b.TryGetValue(false, out drops))
+			{
+				foreach (T drop in drops)
+					changes.AddRange(dropProcessor(drop));
+			}
 
 			// these items exist in both sets, so they need to be compared one by one
-			// first need to sort these vectors by identity, so that they are aligned
-			List<T> desiredCommon = CollectionUtils.Sort(a[true], delegate(T x, T y) { return x.Identity.CompareTo(y.Identity); });
-			List<T> initialCommon = CollectionUtils.Sort(b[true], delegate(T x, T y) { return x.Identity.CompareTo(y.Identity); });
+			// these keys should either both exist, or both not exist
+			List<T> desiredCommon = a.ContainsKey(true) ? a[true] : new List<T>();
+			List<T> initialCommon = b.ContainsKey(true) ? b[true] : new List<T>();
+
+			// sort these vectors by identity, so that they are aligned
+			desiredCommon.Sort(delegate(T x, T y) { return x.Identity.CompareTo(y.Identity); });
+			initialCommon.Sort(delegate(T x, T y) { return x.Identity.CompareTo(y.Identity); });
             
 			// compare each of the common items
 			for (int i = 0; i < initialCommon.Count; i++)
