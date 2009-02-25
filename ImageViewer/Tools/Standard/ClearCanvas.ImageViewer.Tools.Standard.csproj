@@ -108,11 +108,14 @@
     <Compile Include="CineApplicationComponent.cs" />
     <Compile Include="CineTool.cs" />
     <Compile Include="CreateTextCalloutGraphicState.cs" />
+    <Compile Include="CreateTextOnlyGraphicState.cs" />
+    <Compile Include="EditTextCalloutTool.cs" />
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />
     <Compile Include="ScaleGraphic.cs" />
     <Compile Include="ScaleOverlayTool.cs" />
     <Compile Include="TextCalloutGraphic.cs" />
     <Compile Include="TextCalloutTool.cs" />
+    <Compile Include="ToolSettings.cs" />
     <Compile Include="ToolSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

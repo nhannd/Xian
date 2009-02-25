@@ -288,7 +288,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 					else
 						callout.Location = anchor - new SizeF(30, 30);
 
-					callout.ShowArrow = true; // show arrowhead if graphic annotation bounds are empty
+					callout.ShowArrowhead = true; // show arrowhead if graphic annotation bounds are empty
 				}
 				else 
 				{

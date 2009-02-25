@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private InvariantTextPrimitive _textGraphic;
 		[CloneIgnore]
 		private ArrowGraphic _lineGraphic;
-		private bool _enableControlPoint;
+		private bool _controlPointsEnabled;
 
 		#endregion
 
@@ -142,15 +142,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
-		public bool EnableControlPoint
+		public bool ControlPointsEnabled
 		{
-			get { return _enableControlPoint; }
+			get { return _controlPointsEnabled; }
 			set
 			{
-				if (_enableControlPoint != value)
+				if (_controlPointsEnabled != value)
 				{
-					_enableControlPoint = value;
-					base.ControlPoints.Visible = _enableControlPoint && string.IsNullOrEmpty(_textGraphic.Text);
+					_controlPointsEnabled = value;
+					base.ControlPoints.Visible = _controlPointsEnabled && string.IsNullOrEmpty(_textGraphic.Text);
 				}
 			}
 		}
@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _lineGraphic.LineStyle = value; }
 		}
 
-		public bool ShowArrow
+		public bool ShowArrowhead
 		{
 			get { return _lineGraphic.ShowArrowhead; }
 			set { _lineGraphic.ShowArrowhead = value; }
@@ -337,7 +337,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		protected virtual void OnTextChanged(EventArgs e) {
-			base.ControlPoints.Visible = _enableControlPoint && string.IsNullOrEmpty(_textGraphic.Text);
+			base.ControlPoints.Visible = _controlPointsEnabled && string.IsNullOrEmpty(_textGraphic.Text);
 			EventsHelper.Fire(_textChanged, this, new EventArgs());
 		}
 
@@ -355,83 +355,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				_textGraphic.AnchorPoint = e.Item;
 			}
-		}
-	}
-
-	[Cloneable]
-	public class UserCalloutGraphic : CalloutGraphic {
-
-		[CloneIgnore]
-		private EditBox _currentCalloutEditBox;
-
-		/// <summary>
-		/// Instantiates a new instance of <see cref="UserCalloutGraphic"/>.
-		/// </summary>
-		public UserCalloutGraphic() : base("") {}
-
-		/// <summary>
-		/// Cloning constructor.
-		/// </summary>
-		protected UserCalloutGraphic(UserCalloutGraphic source, ICloningContext context) : base(source, context)
-		{
-			context.CloneFields(source, this);
-		}
-
-		/// <summary>
-		/// Starts edit mode on the callout graphic by installing a <see cref="EditBox"/> on the
-		/// <see cref="Tile"/> of the <see cref="Graphic.ParentPresentationImage">parent PresentationImage</see>.
-		/// </summary>
-		/// <returns>True if edit mode was successfully started; False otherwise.</returns>
-		public bool StartEdit() {
-			// remove any pre-existing edit boxes
-			EndEdit();
-
-			bool result = false;
-			this.CoordinateSystem = CoordinateSystem.Destination;
-			try {
-				EditBox editBox = new EditBox(this.Text ?? string.Empty);
-				if (string.IsNullOrEmpty(this.Text))
-					editBox.Value = SR.StringEnterText;
-				editBox.Location = Point.Round(this.Location);
-				editBox.Size = Rectangle.Round(this.BoundingBox).Size;
-				editBox.FontName = this.FontName;
-				editBox.FontSize = this.FontSize;
-				editBox.ValueAccepted += OnEditBoxComplete;
-				editBox.ValueCancelled += OnEditBoxComplete;
-				InstallEditBox(_currentCalloutEditBox = editBox);
-				result = true;
-			} finally {
-				this.ResetCoordinateSystem();
-			}
-
-			return result;
-		}
-
-		/// <summary>
-		/// Ends edit mode on the callout graphic if it is currently being edited. Has no effect otherwise.
-		/// </summary>
-		public void EndEdit() {
-			if (_currentCalloutEditBox != null) {
-				_currentCalloutEditBox.ValueAccepted -= OnEditBoxComplete;
-				_currentCalloutEditBox.ValueCancelled -= OnEditBoxComplete;
-				_currentCalloutEditBox = null;
-			}
-			InstallEditBox(null);
-		}
-
-		private void InstallEditBox(EditBox editBox) {
-			if (base.ParentPresentationImage != null) {
-				if (base.ParentPresentationImage.Tile != null)
-					base.ParentPresentationImage.Tile.EditBox = editBox;
-			}
-		}
-
-		private void OnEditBoxComplete(object sender, EventArgs e) {
-			if (_currentCalloutEditBox != null) {
-				this.Text = _currentCalloutEditBox.LastAcceptedValue;
-				this.Draw();
-			}
-			EndEdit();
 		}
 	}
 }

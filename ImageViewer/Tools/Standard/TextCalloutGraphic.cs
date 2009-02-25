@@ -10,9 +10,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[Cloneable]
 	internal class TextCalloutGraphic : AnnotationGraphic
 	{
-		public TextCalloutGraphic() : base(new PointOfInterestInteractiveGraphic())
+		public static TextCalloutGraphic CreateTextCalloutGraphic()
 		{
+			return new TextCalloutGraphic(new PointOfInterestInteractiveGraphic());
 		}
+
+		public static TextCalloutGraphic CreateTextOnlyGraphic()
+		{
+			return new TextCalloutGraphic(new LocationOfInterestInteractiveGraphic());
+		}
+
+		protected TextCalloutGraphic(InteractiveGraphic interactiveGraphic) : base(interactiveGraphic) {}
 
 		protected TextCalloutGraphic(TextCalloutGraphic source, ICloningContext context)
 			: base(source, context)
@@ -24,13 +32,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			UserCalloutGraphic callout = new UserCalloutGraphic();
 			callout.LineStyle = LineStyle.Solid;
-			callout.ShowArrow = true;
+			callout.ShowArrowhead = true;
 			return callout;
 		}
 
-		private new PointOfInterestInteractiveGraphic Subject
+		private new LocationOfInterestInteractiveGraphic Subject
 		{
-			get { return (PointOfInterestInteractiveGraphic) base.Subject; }
+			get { return (LocationOfInterestInteractiveGraphic) base.Subject; }
 		}
 
 		public new UserCalloutGraphic Callout
@@ -41,7 +49,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public PointF PointOfInterest
 		{
 			get { return this.Subject.Location; }
-			set { this.Subject.Location = value; }
+			set
+			{
+				this.Subject.Location = value;
+				RecomputeCalloutLine();
+			}
 		}
 
 		public PointF TextLocation
@@ -52,7 +64,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override GraphicState CreateFocussedSelectedState()
 		{
-			//return base.CreateFocussedSelectedState();
 			return new FocussedSelectedTextCalloutGraphicState(this);
 		}
 
@@ -71,20 +82,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				this.StatefulGraphic.CoordinateSystem = CoordinateSystem.Destination;
 				try
 				{
-					PointOfInterestInteractiveGraphic poi = this.StatefulGraphic.Subject;
+					LocationOfInterestInteractiveGraphic poi = this.StatefulGraphic.Subject;
 					UserCalloutGraphic callout = this.StatefulGraphic.Callout;
 					RectangleF boundingBox = callout.BoundingBox;
 
-					if ( mouseInformation.ClickCount == 2
-						&& boundingBox.Contains(mouseInformation.Location))
+					if (mouseInformation.ClickCount == 2
+					    && boundingBox.Contains(mouseInformation.Location))
 					{
 						// double click action on the callout text: send into edit text mode
 						callout.StartEdit();
 					}
 					else if (mouseInformation.ClickCount == 1
-						&& !poi.HitTest(mouseInformation.Location)
-						&& !boundingBox.Contains(mouseInformation.Location)
-						&& callout.HitTest(mouseInformation.Location))
+					         && !poi.HitTest(mouseInformation.Location)
+					         && (!boundingBox.Contains(mouseInformation.Location) || !(poi is PointOfInterestInteractiveGraphic))
+					         && callout.HitTest(mouseInformation.Location))
 					{
 						// single click action on the callout line (that is, not the point of interest nor the callout text): move entire graphic
 						this.StatefulGraphic.State = new MoveGraphicState(this.StatefulGraphic, this.StatefulGraphic);
@@ -106,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		[Cloneable]
-		private class PointOfInterestInteractiveGraphic : InteractiveGraphic
+		private class PointOfInterestInteractiveGraphic : LocationOfInterestInteractiveGraphic
 		{
 			public PointOfInterestInteractiveGraphic() : base()
 			{
@@ -125,10 +136,40 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				base.ControlPoints.Add(new PointF(0, 0));
 			}
 
-			public PointF Location
+			public override PointF Location
 			{
 				get { return base.ControlPoints[0]; }
 				set { base.ControlPoints[0] = value; }
+			}
+		}
+
+		[Cloneable]
+		private class LocationOfInterestInteractiveGraphic : InteractiveGraphic
+		{
+			private PointF _location;
+
+			public LocationOfInterestInteractiveGraphic() : base() {}
+
+			protected LocationOfInterestInteractiveGraphic(LocationOfInterestInteractiveGraphic source, ICloningContext context)
+				: base(source, context)
+			{
+				context.CloneFields(source, this);
+			}
+
+			public virtual PointF Location
+			{
+				get
+				{
+					if (this.CoordinateSystem == CoordinateSystem.Source)
+						return _location;
+					return this.SpatialTransform.ConvertToDestination(_location);
+				}
+				set
+				{
+					if (this.CoordinateSystem == CoordinateSystem.Destination)
+						value = this.SpatialTransform.ConvertToSource(value);
+					_location = value;
+				}
 			}
 
 			public override RectangleF BoundingBox
@@ -170,7 +211,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			public override void Move(SizeF delta)
 			{
-				base.ControlPoints[0] += delta;
+				this.Location += delta;
 			}
 
 			protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e) {}

@@ -124,6 +124,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create Text.
+        /// </summary>
+        internal static string CommandCreateTextOnly {
+            get {
+                return ResourceManager.GetString("CommandCreateTextOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flip Horizontal.
         /// </summary>
         internal static string CommandFlipHorizontal {
@@ -801,6 +810,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Text &amp;Callout.
+        /// </summary>
+        internal static string MenuTextCallout {
+            get {
+                return ResourceManager.GetString("MenuTextCallout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add &amp;Text.
+        /// </summary>
+        internal static string MenuTextOnly {
+            get {
+                return ResourceManager.GetString("MenuTextOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo.
         /// </summary>
         internal static string MenuUndo {
@@ -1279,6 +1306,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Text Callout.
+        /// </summary>
+        internal static string ToolbarTextCallout {
+            get {
+                return ResourceManager.GetString("ToolbarTextCallout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Text.
+        /// </summary>
+        internal static string ToolbarTextOnly {
+            get {
+                return ResourceManager.GetString("ToolbarTextOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Undo.
         /// </summary>
         internal static string ToolbarUndo {
@@ -1473,6 +1518,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string TooltipTextCallout {
             get {
                 return ResourceManager.GetString("TooltipTextCallout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text Area.
+        /// </summary>
+        internal static string TooltipTextOnly {
+            get {
+                return ResourceManager.GetString("TooltipTextOnly", resourceCulture);
             }
         }
         

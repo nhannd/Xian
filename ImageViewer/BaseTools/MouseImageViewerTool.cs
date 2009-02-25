@@ -234,11 +234,19 @@ namespace ClearCanvas.ImageViewer.BaseTools
 					return;
 
 				_active = value;
-				EventsHelper.Fire(_activationChangedEvent, this, new EventArgs());
+				OnActivationChanged();
 			}
 		}
 
 		/// <summary>
+		/// Called when the <see cref="Active"/> property changes, thereby firing the <see cref="ActivationChanged"/> event.
+		/// </summary>
+    	protected virtual void OnActivationChanged()
+    	{
+    		EventsHelper.Fire(_activationChangedEvent, this, new EventArgs());
+    	}
+
+    	/// <summary>
 		/// Notifies observer(s) that the tooltip has changed.
 		/// </summary>
 		public virtual event EventHandler TooltipChanged

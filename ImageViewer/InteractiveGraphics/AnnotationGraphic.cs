@@ -321,13 +321,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
-		#region Protected Virtual Members
+		#region Virtual Members
 
 		protected virtual void OnSubjectChanged() { }
 
 		protected virtual CalloutGraphic CreateCalloutGraphic()
 		{
 			return new UserCalloutGraphic();
+		}
+
+		protected void RecomputeCalloutLine()
+		{
+			this.SetCalloutEndPoint();
 		}
 
 		#endregion
@@ -376,8 +381,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void SetCalloutControlPointVisibility(bool show)
 		{
-			//_calloutGraphic.ControlPoints.Visible = false;
-			_calloutGraphic.EnableControlPoint = show;
+			_calloutGraphic.ControlPointsEnabled = show;
 		}
 
 		private void SetCalloutEndPoint()

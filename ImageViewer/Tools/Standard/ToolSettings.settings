@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Tools.Standard.Config" GeneratedClassName="ToolSettings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Tools.Standard" GeneratedClassName="ToolSettings">
   <Profiles />
   <Settings>
     <Setting Name="ShowNonCTModPixelValue" Type="System.Boolean" Scope="User">
@@ -10,6 +10,9 @@
     </Setting>
     <Setting Name="ShowVOIPixelValue" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="TextCalloutMode" Type="System.String" Scope="User">
+      <Value Profile="(Default)">TextCallout</Value>
     </Setting>
   </Settings>
 </SettingsFile>

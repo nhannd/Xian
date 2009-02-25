@@ -138,6 +138,7 @@
     <Compile Include="InteractiveGraphics\EllipseInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RectangleInteractiveGraphicAnnotationSerializer.cs" />
+    <Compile Include="InteractiveGraphics\UserCalloutGraphic.cs" />
     <Compile Include="RoiGraphics\RoiGraphic.cs" />
     <Compile Include="InteractiveGraphics\StandardAnnotationGraphicSerializer.cs" />
     <Compile Include="InteractiveGraphics\StandardStatefulInteractiveGraphic.cs" />
@@ -326,7 +327,6 @@
     <Compile Include="ImageSet.cs" />
     <Compile Include="InteractiveGraphics\FocussedSelectedGraphicState.cs" />
     <Compile Include="InteractiveGraphics\FocussedSelectedInteractiveGraphicState.cs" />
-    <Compile Include="InteractiveGraphics\FocussedSelectedAnnotationGraphicState.cs" />
     <Compile Include="InteractiveGraphics\SelectedGraphicState.cs" />
     <Compile Include="IImageSet.cs" />
     <Compile Include="ImageSetCollection.cs" />

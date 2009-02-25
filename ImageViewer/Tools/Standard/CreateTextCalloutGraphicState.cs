@@ -1,19 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard {
-	internal class CreateTextCalloutGraphicState : CreateGraphicState {
+namespace ClearCanvas.ImageViewer.Tools.Standard
+{
+	internal class CreateTextCalloutGraphicState : CreateGraphicState
+	{
 		private int clickIndex = 0;
 
-		public CreateTextCalloutGraphicState(TextCalloutGraphic textCalloutGraphic) : base(textCalloutGraphic) { }
+		public CreateTextCalloutGraphicState(TextCalloutGraphic textCalloutGraphic) : base(textCalloutGraphic) {}
+
+		public static CreateTextCalloutGraphicState Create(TextCalloutGraphic textCalloutGraphic)
+		{
+			return new CreateTextCalloutGraphicState(textCalloutGraphic);
+		}
 
 		internal new TextCalloutGraphic StatefulGraphic
 		{
-			get { return (TextCalloutGraphic)base.StatefulGraphic; }
+			get { return (TextCalloutGraphic) base.StatefulGraphic; }
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
