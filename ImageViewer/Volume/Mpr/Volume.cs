@@ -49,8 +49,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		// Note: Constructors ensure that only one of these arrays is set.
 		//	This defines whether the data is signed or unsigned.
-		private readonly short[] _volShortArray;
-		private readonly ushort[] _volUnsignedShortArray;
+		private short[] _volShortArray;
+		private ushort[] _volUnsignedShortArray;
 		private readonly Size3D _arrayDimensions;
 		private readonly Vector3D _spacing;
 		private readonly Vector3D _originPatient;
@@ -419,11 +419,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				_disposed = true;
 				//can only call Free once or it throws
 				_volArrayPinnedHandle.Free();
+
 				if (_cachedVtkVolume != null)
 				{
 					_cachedVtkVolume.GetPointData().Dispose();
 					_cachedVtkVolume.Dispose();
+					_cachedVtkVolume = null;
 				}
+
+				_volShortArray = null;
+				_volUnsignedShortArray = null;
 			}
 		}
 
