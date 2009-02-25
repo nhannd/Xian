@@ -61,8 +61,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private InformationBox _currentInformationBox;
 
-		private EditBox _currentEditBox;
-		private TextBox _editBoxControl;
+		private EditBoxControl _editBoxControl;
 
 		private IRenderingSurface _surface;
 		private IMouseButtonHandler _currentMouseButtonHandler;
@@ -107,18 +106,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_tileController.CursorTokenChanged += new EventHandler(OnCursorTokenChanged);
 			_tileController.CaptureChanging += new EventHandler<ItemEventArgs<IMouseButtonHandler>>(OnCaptureChanging);
 
-			_editBoxControl = new TextBox();
-			_editBoxControl.AcceptsReturn = false;
-			_editBoxControl.AcceptsTab = false;
-			_editBoxControl.BackColor = Color.Gray;
-			_editBoxControl.BorderStyle = BorderStyle.None;
-			_editBoxControl.Multiline = true;
-			_editBoxControl.Visible = false;
-			_editBoxControl.WordWrap = false;
-			_editBoxControl.KeyDown += new KeyEventHandler(OnEditBoxControlKeyDown);
-			_editBoxControl.LostFocus += new EventHandler(OnEditBoxControlLostFocus);
-			_editBoxControl.PreviewKeyDown += new PreviewKeyDownEventHandler(OnEditBoxControlPreviewKeyDown);
-			_editBoxControl.TextChanged += new EventHandler(OnEditBoxControlTextChanged);
+			_editBoxControl = new EditBoxControl();
 			this.Controls.Add(_editBoxControl);
 
 			this.DoubleBuffered = false;
@@ -628,72 +616,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		private void OnEditBoxChanged(object sender, EventArgs e)
 		{
-			if (_currentEditBox != null)
-			{
-				_editBoxControl.Visible = false;
-			}
-
-			_currentEditBox = _tile.EditBox;
-
-			if (_currentEditBox != null)
-			{
-				_editBoxControl.Font = new Font(_currentEditBox.FontName, _currentEditBox.FontSize);
-				_editBoxControl.Text = _currentEditBox.Value;
-				_editBoxControl.Bounds = ComputeEditBoxControlBounds(_editBoxControl, _currentEditBox);
-				_editBoxControl.Visible = true;
-				_editBoxControl.Focus();
-				_editBoxControl.SelectAll();
-			}
-		}
-
-		private static Rectangle ComputeEditBoxControlBounds(Control control, EditBox editBox)
-		{
-			Size sz = control.GetPreferredSize(Size.Empty);
-			sz = new Size(Math.Max(sz.Width, editBox.Size.Width), Math.Max(sz.Height, editBox.Size.Height));
-			return ClearCanvas.ImageViewer.Mathematics.RectangleUtilities.ConvertToRectangle(editBox.Location, sz);
-		}
-
-		private void OnEditBoxControlTextChanged(object sender, EventArgs e)
-		{
-			if (_currentEditBox == null)
-				return;
-			_currentEditBox.Value = _editBoxControl.Text;
-			_editBoxControl.Bounds = ComputeEditBoxControlBounds(_editBoxControl, _currentEditBox);
-		}
-
-		private void OnEditBoxControlLostFocus(object sender, EventArgs e)
-		{
-			if (_currentEditBox == null)
-				return;
-			_currentEditBox.Accept();
-		}
-
-		private void OnEditBoxControlPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-		{
-			if (_currentEditBox == null)
-				return;
-
-			if (e.KeyCode == Keys.Escape || e.KeyCode == Keys.Enter)
-				e.IsInputKey = true;
-			else if (e.KeyCode == Keys.Tab)
-				e.IsInputKey = false;
-		}
-
-		private void OnEditBoxControlKeyDown(object sender, KeyEventArgs e)
-		{
-			if (_currentEditBox == null)
-				return;
-
-			if (e.KeyCode == Keys.Escape)
-			{
-				_currentEditBox.Cancel();
-				e.Handled = e.SuppressKeyPress = true;
-			}
-			else if (e.KeyCode == Keys.Enter && e.Modifiers == 0)
-			{
-				_currentEditBox.Accept();
-				e.Handled = e.SuppressKeyPress = true;
-			}
+			_editBoxControl.EditBox = _tile.EditBox;
 		}
 	}
 }

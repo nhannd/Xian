@@ -71,16 +71,26 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				this.StatefulGraphic.CoordinateSystem = CoordinateSystem.Destination;
 				try
 				{
-					// Check for a single click action on the callout line (that is, not the point of interest nor the callout text)
-					if (mouseInformation.ClickCount == 1
-						&& !this.StatefulGraphic.Subject.HitTest(mouseInformation.Location)
-						&& !this.StatefulGraphic.Callout.BoundingBox.Contains(mouseInformation.Location)
-						&& this.StatefulGraphic.Callout.HitTest(mouseInformation.Location))
-					{
-							this.StatefulGraphic.State = new MoveGraphicState(this.StatefulGraphic, this.StatefulGraphic);
-							this.StatefulGraphic.State.Start(mouseInformation);
+					PointOfInterestInteractiveGraphic poi = this.StatefulGraphic.Subject;
+					UserCalloutGraphic callout = this.StatefulGraphic.Callout;
+					RectangleF boundingBox = callout.BoundingBox;
 
-							return true;
+					if ( mouseInformation.ClickCount == 2
+						&& boundingBox.Contains(mouseInformation.Location))
+					{
+						// double click action on the callout text: send into edit text mode
+						callout.StartEdit();
+					}
+					else if (mouseInformation.ClickCount == 1
+						&& !poi.HitTest(mouseInformation.Location)
+						&& !boundingBox.Contains(mouseInformation.Location)
+						&& callout.HitTest(mouseInformation.Location))
+					{
+						// single click action on the callout line (that is, not the point of interest nor the callout text): move entire graphic
+						this.StatefulGraphic.State = new MoveGraphicState(this.StatefulGraphic, this.StatefulGraphic);
+						this.StatefulGraphic.State.Start(mouseInformation);
+
+						return true;
 					}
 				}
 				finally

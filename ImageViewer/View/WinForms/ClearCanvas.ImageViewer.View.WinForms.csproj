@@ -130,6 +130,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>TileControl.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="EditBoxControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ImageBoxView.cs" />
     <Compile Include="ImageBoxControl.cs">
       <SubType>UserControl</SubType>
