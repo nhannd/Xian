@@ -49,6 +49,7 @@ public partial class ServiceLockTypeEnum : ServerEnum
       private static readonly ServiceLockTypeEnum _FilesystemLosslessCompress = GetEnum("FilesystemLosslessCompress");
       private static readonly ServiceLockTypeEnum _FilesystemLossyCompress = GetEnum("FilesystemLossyCompress");
       private static readonly ServiceLockTypeEnum _ArchiveApplicationLog = GetEnum("ArchiveApplicationLog");
+      private static readonly ServiceLockTypeEnum _PurgeAlerts = GetEnum("PurgeAlerts");
       #endregion
 
       #region Public Static Properties
@@ -93,6 +94,13 @@ public partial class ServiceLockTypeEnum : ServerEnum
       public static ServiceLockTypeEnum ArchiveApplicationLog
       {
           get { return _ArchiveApplicationLog; }
+      }
+      /// <summary>
+      /// Purge Alerts after a configurable elapsed time or archive them to a filesystem if configured.
+      /// </summary>
+      public static ServiceLockTypeEnum PurgeAlerts
+      {
+          get { return _PurgeAlerts; }
       }
 
       #endregion

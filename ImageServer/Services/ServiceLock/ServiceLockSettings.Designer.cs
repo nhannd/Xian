@@ -125,5 +125,32 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock {
                 return ((int)(this["ApplicationLogRecheckDelay"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int AlertCachedDays {
+            get {
+                return ((int)(this["AlertCachedDays"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int AlertRecheckDelay {
+            get {
+                return ((int)(this["AlertRecheckDelay"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AlertDelete {
+            get {
+                return ((bool)(this["AlertDelete"]));
+            }
+        }
     }
 }

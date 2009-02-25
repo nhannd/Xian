@@ -36,13 +36,12 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using Alert=ClearCanvas.ImageServer.Model.Alert;
 
-namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
+namespace ClearCanvas.ImageServer.Services.ServiceLock.PurgeAlerts
 {
-	
-	public class ApplicationLogArchiveItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
+	class PurgeAlertsItemProcessor: BaseServiceLockItemProcessor, IServiceLockItemProcessor
 	{
 		
 		private static void UpdateFilesystemKey(Model.ServiceLock item)
@@ -70,7 +69,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 				archiveFilesystem = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
 				if (archiveFilesystem == null)
 				{
-					Platform.Log(LogLevel.Warn,"Filesystem for archiving logs is no longer valid.  Assigning new filesystem.");
+					Platform.Log(LogLevel.Warn,"Filesystem for archiving alerts is no longer valid.  Assigning new filesystem.");
 					item.FilesystemKey = null;
 					UpdateFilesystemKey(item);
 				}
@@ -104,22 +103,22 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 			DateTime scheduledTime;
 			if (!archiveFilesystem.Writeable)
 			{
-				Platform.Log(LogLevel.Info, "Filesystem {0} is not writeable. Unable to archive log files.", archiveFilesystem.Filesystem.Description);
-				scheduledTime = Platform.Time.AddMinutes(settings.ApplicationLogRecheckDelay);
+				Platform.Log(LogLevel.Info, "Filesystem {0} is not writeable. Unable to archive Alert log files.", archiveFilesystem.Filesystem.Description);
+				scheduledTime = Platform.Time.AddMinutes(settings.AlertRecheckDelay);
 			}
 			else
 			{
-				Platform.Log(LogLevel.Info, "Checking for logs to archive to: {0}",
+				Platform.Log(LogLevel.Info, "Checking for Alert logs to purge to: {0}",
 				             archiveFilesystem.Filesystem.Description);
 				if (!ArchiveLogs(archiveFilesystem))
-					scheduledTime = Platform.Time.AddMinutes(settings.ApplicationLogRecheckDelay);
+					scheduledTime = Platform.Time.AddMinutes(settings.AlertRecheckDelay);
 				else
 				{
 					DateTime tomorrow = Platform.Time.Date.AddDays(1);
 					// Set for 12:01 tomorrow morning
 					scheduledTime = new DateTime(tomorrow.Year, tomorrow.Month, tomorrow.Day, 0, 1, 0);
-					Platform.Log(LogLevel.Info, "Completed archival of logs, rescheduling log archive for {0}",
-								 scheduledTime.ToLongTimeString());
+					Platform.Log(LogLevel.Info, "Completed archival of Alert logs, rescheduling log archive for {0}",
+								  scheduledTime.ToLongTimeString());
 				}
 			}
 
@@ -128,37 +127,42 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 
 		private bool ArchiveLogs(ServerFilesystemInfo archiveFs)
 		{
-			string archivePath = Path.Combine(archiveFs.Filesystem.FilesystemPath, "ApplicationLog");
+			string archivePath = Path.Combine(archiveFs.Filesystem.FilesystemPath, "AlertLog");
 
-			DateTime cutOffTime = Platform.Time.Date.AddDays(ServiceLockSettings.Default.ApplicationLogCachedDays*-1);
-			ApplicationLogSelectCriteria criteria = new ApplicationLogSelectCriteria();
-			criteria.Timestamp.LessThan(cutOffTime);
-			criteria.Timestamp.SortAsc(0);
+			DateTime cutOffTime = Platform.Time.Date.AddDays(ServiceLockSettings.Default.AlertCachedDays*-1);
+			AlertSelectCriteria criteria = new AlertSelectCriteria();
+			criteria.InsertTime.LessThan(cutOffTime);
+			criteria.InsertTime.SortAsc(0);
 
-			IApplicationLogEntityBroker broker = ReadContext.GetBroker<IApplicationLogEntityBroker>();
+			IAlertEntityBroker broker = ReadContext.GetBroker<IAlertEntityBroker>();
 
-			ImageServerLogWriter<ApplicationLog> writer = new ImageServerLogWriter<ApplicationLog>(archivePath, "ApplicationLog");
+			ImageServerLogWriter<Alert> writer = new ImageServerLogWriter<Alert>(archivePath, "Alert");
+		
 			List<ServerEntityKey> keyList = new List<ServerEntityKey>(500);
 			try
 			{
-				broker.Find(criteria, delegate(ApplicationLog result)
+				broker.Find(criteria, delegate(Alert result)
 				                      	{
 				                      		keyList.Add(result.Key);
 
-				                      		if (writer.WriteLog(result,result.Timestamp))
-				                      		{
-												// The logs been flushed, delete the log entries cached.
-				                      			using (
-				                      				IUpdateContext update =
-				                      					PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-				                      			{
-				                      				IApplicationLogEntityBroker updateBroker = update.GetBroker<IApplicationLogEntityBroker>();
-													foreach (ServerEntityKey key in keyList)
-				                      					updateBroker.Delete(key);
-				                      				update.Commit();
-				                      			}
-												keyList = new List<ServerEntityKey>();
-				                      		}
+											// If configured, don't flush to disk.  We just delete the contents of keyList below.
+											if (!ServiceLockSettings.Default.AlertDelete)
+											{
+												if (writer.WriteLog(result, result.InsertTime))
+												{
+													// The logs been flushed, delete the log entries cached.
+													using (
+														IUpdateContext update =
+															PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+													{
+														IApplicationLogEntityBroker updateBroker = update.GetBroker<IApplicationLogEntityBroker>();
+														foreach (ServerEntityKey key in keyList)
+															updateBroker.Delete(key);
+														update.Commit();
+													}
+													keyList = new List<ServerEntityKey>();
+												}
+											}
 				                      	});
 
 				writer.FlushLog();
@@ -169,7 +173,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 						IUpdateContext update =
 							PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 					{
-						IApplicationLogEntityBroker updateBroker = update.GetBroker<IApplicationLogEntityBroker>();
+						IAlertEntityBroker updateBroker = update.GetBroker<IAlertEntityBroker>();
 						foreach (ServerEntityKey key in keyList)
 							updateBroker.Delete(key);
 						update.Commit();
@@ -178,7 +182,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Error,e,"Unexpected exception when purging log files.");
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when purging Alert log files.");
 				writer.Dispose();
 				return false;
 			}

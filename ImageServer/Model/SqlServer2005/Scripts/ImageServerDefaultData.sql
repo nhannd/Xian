@@ -289,6 +289,12 @@ INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            (newid(),200,'ArchiveApplicationLog','Archive Application Log','Archive the application log from the database to a filesystem')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),201,'PurgeAlerts','Purge Alerts','Purge Alerts after a configurable elapsed time or archive them to a filesystem if configured.')
+GO
+
 
 -- ServerSopClass inserts
 INSERT INTO [ImageServer].[dbo].[ServerSopClass] ([GUID],[SopClassUid],[Description],[NonImage])
@@ -852,6 +858,13 @@ SELECT @ArchiveApplicationLogServiceLockTypeEnum = Enum FROM [ImageServer].[dbo]
 INSERT INTO [ImageServer].[dbo].ServiceLock
 	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
 VALUES (newid(),@ArchiveApplicationLogServiceLockTypeEnum,0,getdate(),null,1)
+
+DECLARE @PurgeAlertsServiceLockTypeEnum smallint
+SELECT @PurgeAlertsServiceLockTypeEnum = Enum FROM [ImageServer].[dbo].ServiceLockTypeEnum WHERE [Lookup] = 'PurgeAlerts'
+
+INSERT INTO [ImageServer].[dbo].ServiceLock
+	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+VALUES (newid(),@PurgeAlertsServiceLockTypeEnum,0,getdate(),null,1)
 
 
 INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Name],[Category],[Text])

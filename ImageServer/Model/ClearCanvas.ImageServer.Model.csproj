@@ -44,9 +44,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Alert.cs" />
     <Compile Include="Alert.gen.cs" />
     <Compile Include="AlertCategoryEnum.gen.cs" />
     <Compile Include="AlertLevelEnum.gen.cs" />
+    <Compile Include="ApplicationLog.cs" />
     <Compile Include="ApplicationLog.gen.cs" />
     <Compile Include="ArchiveQueue.gen.cs" />
     <Compile Include="ArchiveQueueStatusEnum.gen.cs" />

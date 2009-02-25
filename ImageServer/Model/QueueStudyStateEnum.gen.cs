@@ -75,7 +75,7 @@ public partial class QueueStudyStateEnum : ServerEnum
           get { return _DeleteScheduled; }
       }
       /// <summary>
-      /// A web request is scheduled for deletion
+      /// The study is scheduled for deletion.
       /// </summary>
       public static QueueStudyStateEnum WebDeleteScheduled
       {

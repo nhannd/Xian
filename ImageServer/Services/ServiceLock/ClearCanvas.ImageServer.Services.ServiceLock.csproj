@@ -42,8 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PurgeAlerts\PurgeAlertsFactoryExtension.cs" />
+    <Compile Include="PurgeAlerts\PurgeAlertsItemProcessor.cs" />
     <Compile Include="ArchiveApplicationLog\ApplicationLogArchiveFactoryExtension.cs" />
-    <Compile Include="ArchiveApplicationLog\ArchivalLogWriter.cs" />
     <Compile Include="BaseServiceLockItemProcessor.cs" />
     <Compile Include="ArchiveApplicationLog\ApplicationLogArchiveItemProcessor.cs" />
     <Compile Include="FilesystemDelete\FilesystemDeleteFactoryExtension.cs" />

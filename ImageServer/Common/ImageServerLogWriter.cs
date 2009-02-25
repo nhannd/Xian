@@ -32,28 +32,19 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model;
 using Ionic.Utils.Zip;
 
-namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
+namespace ClearCanvas.ImageServer.Common
 {
 	/// <summary>
-	/// A log file for archiving
+	/// Class representing a log file being written.  The log file is ssaved in a MemoryStream in memory.
 	/// </summary>
-	class ArchiveLogFile : IDisposable
+	/// <typeparam name="TLogClass">The class type being written to the log file.</typeparam>
+	class ImageServerLogFile<TLogClass> : IDisposable
 	{
 		private MemoryStream _ms = null;
 		private StreamWriter _sw = null;
-	
-		public ArchiveLogFile(DateTime timestamp, string archivePath, int logSize)
-		{
-			FirstTimestamp = timestamp;
-			Date = timestamp.Date;
-			ZipDirectory = Path.Combine(archivePath, Date.ToString("yyyy-MM"));
-			ZipFile = Path.Combine(ZipDirectory, String.Format("ImageServerLog_{0}.zip", Date.ToString("yyyy-MM-dd")));
-			_ms = new MemoryStream(logSize + 3 * 1024);
-			_sw = new StreamWriter(_ms);
-		}
+		private readonly string _logType;
 
 		public DateTime FirstTimestamp;
 		public DateTime LastTimestamp;
@@ -61,43 +52,60 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 		public string ZipDirectory;
 		public DateTime Date;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="timestamp">The timestamp of the first log being written.</param>
+		/// <param name="archivePath">The path to place the log file in.</param>
+		/// <param name="logSize">The size of the log file.</param>
+		/// <param name="logType">A string representation of the type of logs being written.  Used for logging and naming purposes.</param>
+		public ImageServerLogFile(DateTime timestamp, string archivePath, int logSize, string logType)
+		{
+			_logType = logType;
+			FirstTimestamp = timestamp;
+			LastTimestamp = timestamp;
+			Date = timestamp.Date;
+			ZipDirectory = Path.Combine(archivePath, Date.ToString("yyyy-MM"));
+			ZipFile = Path.Combine(ZipDirectory, String.Format("{0}Log_{1}.zip", logType, Date.ToString("yyyy-MM-dd")));
+			_ms = new MemoryStream(logSize + 3 * 1024);
+			_sw = new StreamWriter(_ms);
+		}
+
+		/// <summary>
+		/// The name of the current log file.
+		/// </summary>
 		public string LogFileName
 		{
 			get
 			{
-				return String.Format("ImageServer_{0}_to_{1}.log", FirstTimestamp.ToString("yyyy-MM-dd_HH-mm-ss"),
+				return String.Format("ImageServer{0}_{1}_to_{2}.log", _logType, FirstTimestamp.ToString("yyyy-MM-dd_HH-mm-ss"),
 					LastTimestamp.ToString("HH-mm-ss"));
 			}
 		}
 	
+		/// <summary>
+		/// The memory stream being written to.
+		/// </summary>
 		public MemoryStream Stream
 		{
 			get { return _ms; }
 		}
 
-		public void Write(ApplicationLog log)
+		/// <summary>
+		/// Write a log to the file.
+		/// </summary>
+		/// <param name="log"></param>
+		/// <param name="timestamp"></param>
+		public void Write(TLogClass log, DateTime timestamp)
 		{
-			if (log.Exception != null && log.Exception.Length > 0)
-			{
-				_sw.WriteLine("{0} {1} [{2}]  {3} - Exception thrown",
-				              log.Host,
-				              log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-				              log.Thread,
-				              log.LogLevel);
-				_sw.WriteLine(log.Message);
-				_sw.WriteLine(log.Exception);
-			}
-			else
-				_sw.WriteLine("{0} {1} [{2}]  {3} - {4}",
-				              log.Host,
-				              log.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.fff"),
-				              log.Thread,
-				              log.LogLevel,
-				              log.Message);
+			_sw.WriteLine(log.ToString());
 			_sw.Flush();
-			LastTimestamp = log.Timestamp;
+			LastTimestamp = timestamp;
 		}
 
+		/// <summary>
+		/// Dispose.
+		/// </summary>
 		public void Dispose()
 		{
 			if (_sw != null)
@@ -123,35 +131,52 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 	/// write a max of 10MB to a specific log file, then create a new log file with the
 	/// name containing a time stamp.
 	/// </remarks>
-	public class ArchivalLogWriter : IDisposable
+	public class ImageServerLogWriter<TLogClass> : IDisposable
 	{
 		private readonly string _logDirectory;
-		private readonly int _logSize = 10*1024*1024;
-		private ArchiveLogFile _archiveLog;
+		private int _logSize = 10*1024*1024;
+		private ImageServerLogFile<TLogClass> _archiveLog;
+		private readonly string _logType;
 
-		public ArchivalLogWriter(string logDirectory)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="logDirectory">The filesystem directory to place the log files into.</param>
+		/// <param name="logType">A textual description of the type of log being archived.</param>
+		public ImageServerLogWriter(string logDirectory, string logType)
 		{
 			_logDirectory = logDirectory;
+			_logType = logType;
+		}
+
+		/// <summary>
+		/// The size of the log files to be generated.
+		/// </summary>
+		public int LogFileSize
+		{
+			get { return _logSize; }
+			set { _logSize = value; }
 		}
 
 		/// <summary>
 		/// Write to the log.
 		/// </summary>
-		/// <param name="log"></param>
+		/// <param name="log">The class instance to log.</param>
+		/// <param name="timestamp">The timestamp associated with the log.</param>
 		/// <returns>true, if the logs have been flushed.</returns>
-		public bool WriteLog(ApplicationLog log)
+		public bool WriteLog(TLogClass log, DateTime timestamp)
 		{
-			DateTime logDate = log.Timestamp.Date;
+			DateTime logDate = timestamp.Date;
 			if (_archiveLog == null)
 			{
-				_archiveLog = new ArchiveLogFile(log.Timestamp, _logDirectory, _logSize);
-				Platform.Log(LogLevel.Info, "Starting archival of logs for {0}", _archiveLog.FirstTimestamp.ToShortDateString());
+				_archiveLog = new ImageServerLogFile<TLogClass>(timestamp, _logDirectory, LogFileSize, _logType);
+				Platform.Log(LogLevel.Info, "Starting archival of {0} logs for {1}",_logType, _archiveLog.FirstTimestamp.ToShortDateString());
 			}
 
 			if (logDate.Equals(_archiveLog.Date))
 			{
-				_archiveLog.Write(log);
-				if (_archiveLog.Stream.Length > _logSize)
+				_archiveLog.Write(log, timestamp);
+				if (_archiveLog.Stream.Length > LogFileSize)
 				{
 					FlushLog();
 					return true;
@@ -159,22 +184,24 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 				return false;
 			}
 
-
 			// Flush the current log
 			FlushLog();
 		
 			// Simple recursive call to rewrite, since the log has been flushed, will only go 1 deep
-			// on the recursion.
-			WriteLog(log);
+			// on the recursion because FlushLog set _archiveLog = null.
+			WriteLog(log, timestamp);
 
 			return true;
 		}
 
+		/// <summary>
+		/// Routine for flushing the log file to the correct zip file.
+		/// </summary>
 		public void FlushLog()
 		{
 			if (_archiveLog == null) return;
 
-			Platform.Log(LogLevel.Info, "Flushing log for {0}", _archiveLog.FirstTimestamp.ToShortDateString());
+			Platform.Log(LogLevel.Info, "Flushing log of {0} for {1}", _logType, _archiveLog.FirstTimestamp.ToShortDateString());
 
 			if (!Directory.Exists(_logDirectory))
 				Directory.CreateDirectory(_logDirectory);
@@ -187,7 +214,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 			{
 				ZipEntry e = zip.AddFileStream(_archiveLog.LogFileName, string.Empty, _archiveLog.Stream);
 				e.Comment =
-					String.Format("Log from {0} to {1}", _archiveLog.FirstTimestamp.ToString("yyyy-MM-dd HH:mm:ss.fff"),
+					String.Format("Log of {0} from {1} to {2}", _logType, _archiveLog.FirstTimestamp.ToString("yyyy-MM-dd HH:mm:ss.fff"),
 					              _archiveLog.LastTimestamp.ToString("yyyy-MM-dd HH:mm:ss.fff"));
 
 				zip.Save();
@@ -197,6 +224,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 			_archiveLog = null;
 		}
 
+		/// <summary>
+		/// Dispose.
+		/// </summary>
 		public void Dispose()
 		{
 			if (_archiveLog != null)
