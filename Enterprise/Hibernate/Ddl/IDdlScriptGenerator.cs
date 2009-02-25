@@ -51,6 +51,16 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         /// <returns>A set of scripts</returns>
         string[] GenerateCreateScripts(Configuration config, Dialect dialect);
 
+		/// <summary>
+		/// Returns a set of scripts that will be executed to upgrade the database from a previous version.  The scripts
+		/// will be executed in the order they are returned.
+		/// </summary>
+		/// <param name="config"></param>
+		/// <param name="dialect"></param>
+		/// <param name="baselineModel"></param>
+		/// <returns></returns>
+    	string[] GenerateUpgradeScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel);
+
         /// <summary>
         /// Returns a set of scripts that will be executed as part of dropping the database.  The scripts
         /// will be executed in the order they are returned.

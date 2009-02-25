@@ -5,12 +5,15 @@ using System.Runtime.Serialization;
 using NHibernate.Mapping;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
+namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
     [DataContract]
     public class IndexInfo : ElementInfo
     {
-        public IndexInfo()
+		public string _name;
+		public List<string> _columns;
+
+		public IndexInfo()
         {
 
         }
@@ -23,11 +26,19 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
                 delegate(Column column) { return column.Name; });
         }
 
-        [DataMember]
-        public string Name;
+    	[DataMember]
+    	public string Name
+    	{
+			get { return _name; }
+			private set { _name = value; }
+    	}
 
-        [DataMember]
-        public List<string> Columns;
+    	[DataMember]
+    	public List<string> Columns
+    	{
+			get { return _columns; }
+			private set { _columns = value; }
+    	}
 
 		public bool Matches(IndexInfo that)
         {

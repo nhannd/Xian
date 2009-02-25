@@ -12,7 +12,6 @@ using Iesi.Collections;
 using ClearCanvas.Common.Utilities;
 using System.IO;
 using NHibernate.Dialect;
-using ClearCanvas.Enterprise.Hibernate.Ddl.Model;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {

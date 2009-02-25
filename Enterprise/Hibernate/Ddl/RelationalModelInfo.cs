@@ -8,31 +8,55 @@ using NHibernate.Cfg;
 using NHibernate.Mapping;
 using NHibernate.Dialect;
 
-namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
+namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
     [DataContract]
     public class RelationalModelInfo : ElementInfo
     {
+    	private List<TableInfo> _tables;
+    	private List<EnumerationInfo> _enumerations;
+
         public RelationalModelInfo()
         {
-
+			_tables = new List<TableInfo>();
+			_enumerations = new List<EnumerationInfo>();
         }
 
 		public RelationalModelInfo(Configuration config, Dialect dialect)
 		{
-			this.Tables = CollectionUtils.Map<Table, TableInfo>(GetTables(config),
+			_tables = CollectionUtils.Map<Table, TableInfo>(GetTables(config),
 							delegate(Table table) { return BuildTableInfo(table, config, dialect); });
+
+			_enumerations = new EnumMetadataReader().GetEnums(config);
 		}
 
-        [DataMember]
-        public List<TableInfo> Tables;
+    	[DataMember]
+    	public List<TableInfo> Tables
+    	{
+			get { return _tables; }
+
+			// for de-serialization
+			private set { _tables = value; }
+    	}
+
+		[DataMember]
+		public List<EnumerationInfo> Enumerations
+    	{
+			get { return _enumerations; }
+			private set { _enumerations = value; }
+    	}
+
+		public TableInfo GetTable(string table)
+		{
+			return CollectionUtils.SelectFirst(_tables, delegate(TableInfo t) { return t.Name == table; });
+		}
 
         public override string Identity
         {
             get { throw new Exception("The method or operation is not implemented."); }
         }
 
-		private List<Table> GetTables(Configuration cfg)
+		private static List<Table> GetTables(Configuration cfg)
 		{
 			// build set of all tables
 			HybridSet tables = new HybridSet();
@@ -53,7 +77,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
 				});
 		}
 
-		private TableInfo BuildTableInfo(Table table, Configuration config, Dialect dialect)
+		private static TableInfo BuildTableInfo(Table table, Configuration config, Dialect dialect)
 		{
 			return new TableInfo(
 				table.Name,

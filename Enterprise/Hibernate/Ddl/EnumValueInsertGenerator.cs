@@ -50,16 +50,21 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 	{
 		protected class Insert
 		{
-			public Table Table;
+			public string Table;
 			public string Code;
 			public string Value;
 			public string Description;
 			public float DisplayOrder;
 
+
+			public Insert()
+			{
+			}
+
 			public string GetCreateScript(Dialect dialect, string defaultSchema)
 			{
 				return string.Format("insert into {0} (Code_, Value_, Description_, DisplayOrder_, Deactivated_) values ({1}, {2}, {3}, {4}, {5})",
-					Table.GetQualifiedName(dialect, defaultSchema),
+					Table,	//TODO qualify table name
 					SqlFormat(Code),
 					SqlFormat(Value),
 					SqlFormat(Description),
@@ -122,10 +127,17 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			return scripts.ToArray();
 		}
 
+		public override string[] GenerateUpgradeScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel)
+		{
+			//todo
+			throw new Exception("The method or operation is not implemented.");
+		}
+
 		public override string[] GenerateDropScripts(Configuration config, Dialect dialect)
 		{
 			return new string[] { };    // nothing to do
 		}
+
 	}
 
 	class HardEnumValueInsertGenerator : EnumValueInsertGenerator
@@ -152,7 +164,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 				if (attr != null)
 				{
 					Insert insert = new Insert();
-					insert.Table = table;
+					//insert.Table = table;
 					insert.Code = code;
 					insert.Value = attr.Value;
 					insert.Description = attr.Description;
@@ -190,7 +202,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 						enumValueElement.GetAttribute("code");
 
 						Insert insert = new Insert();
-						insert.Table = table;
+						//insert.Table = table;
 						insert.Code = enumValueElement.GetAttribute("code");
 						XmlElement valueNode = CollectionUtils.FirstElement<XmlElement>(enumValueElement.GetElementsByTagName("value"));
 						if (valueNode != null)

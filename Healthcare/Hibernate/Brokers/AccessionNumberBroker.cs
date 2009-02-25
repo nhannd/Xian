@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Data;
 
-using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
@@ -72,7 +71,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				};
             }
 
-            public string[] GenerateDropScripts(Configuration config, Dialect dialect)
+        	public string[] GenerateUpgradeScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel)
+        	{
+				return new string[] { };    // nothing to do
+			}
+
+        	public string[] GenerateDropScripts(Configuration config, Dialect dialect)
             {
                 return new string[] { dialect.GetDropTableString(TABLE_NAME) };
             }

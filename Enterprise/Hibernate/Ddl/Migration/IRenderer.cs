@@ -19,5 +19,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		Statement[] Render(AddUniqueConstraintChange change);
 		Statement[] Render(DropUniqueConstraintChange change);
 		Statement[] Render(ModifyColumnChange change);
+		Statement[] Render(AddEnumValueChange change);
+		Statement[] Render(DropEnumValueChange change);
 	}
 }

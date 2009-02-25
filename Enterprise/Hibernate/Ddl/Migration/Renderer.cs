@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Hibernate.Ddl.Model;
 using NHibernate.Dialect;
 using ClearCanvas.Enterprise.Hibernate.Ddl.Migration.Renderers;
 
@@ -159,9 +158,40 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			return new Statement[] { new Statement(sql) };
 		}
 
+		public Statement[] Render(AddEnumValueChange change)
+		{
+			EnumerationMemberInfo e = change.Value;
+			string sql = string.Format("insert into {0} (Code_, Value_, Description_, DisplayOrder_, Deactivated_) values ({1}, {2}, {3}, {4}, {5})",
+				GetQualifiedName(change.Table),
+				FormatValue(e.Code),
+				FormatValue(e.Value),
+				FormatValue(e.Description),
+				e.DisplayOrder,
+				FormatValue(false.ToString()));
+			return new Statement[] { new Statement(sql) };
+		}
+
+		public Statement[] Render(DropEnumValueChange change)
+		{
+			string sql = string.Format("delete from {0} where Code_ = {1}",
+				GetQualifiedName(change.Table),
+				FormatValue(change.Value.Code));
+			return new Statement[] { new Statement(sql) };
+		}
+
 		#endregion
 
 		#region Helpers
+
+		private static string FormatValue(string str)
+		{
+			// todo: can we use dialect here?
+			if (str == null)
+				return "NULL";
+
+			// make sure to escape ' to ''
+			return string.Format("'{0}'", str.Replace("'", "''"));
+		}
 
 		/// <summary>
 		/// Gets the schema qualified name of the Table.

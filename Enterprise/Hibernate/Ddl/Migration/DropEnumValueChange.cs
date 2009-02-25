@@ -4,19 +4,19 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
-	class AddPrimaryKeyChange : Change
+	class DropEnumValueChange : Change
 	{
-		private readonly ConstraintInfo _pk;
+		private readonly EnumerationMemberInfo _value;
 
-		public AddPrimaryKeyChange(TableInfo table, ConstraintInfo pk)
+		public DropEnumValueChange(TableInfo table, EnumerationMemberInfo value)
 			:base(table)
 		{
-			_pk = pk;
+			_value = value;
 		}
 
-		public ConstraintInfo PrimaryKey
+		public EnumerationMemberInfo Value
 		{
-			get { return _pk; }
+			get { return _value; }
 		}
 
 		public override Statement[] GetStatements(IRenderer renderer)

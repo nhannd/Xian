@@ -32,11 +32,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Common;
 using NHibernate.Cfg;
 using NHibernate.Dialect;
-using NHibernate.Metadata;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -46,7 +43,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
         public abstract string[] GenerateCreateScripts(Configuration config, Dialect dialect);
 
-        public abstract string[] GenerateDropScripts(Configuration config, Dialect dialect);
+    	public abstract string[] GenerateUpgradeScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel);
+
+    	public abstract string[] GenerateDropScripts(Configuration config, Dialect dialect);
 
         #endregion
 

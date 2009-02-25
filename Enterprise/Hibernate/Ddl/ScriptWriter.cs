@@ -34,7 +34,6 @@ using System.IO;
 using ClearCanvas.Common;
 using NHibernate.Dialect;
 using NHibernate.Cfg;
-using ClearCanvas.Enterprise.Hibernate.Ddl.Model;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -57,8 +56,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private readonly Dialect _dialect;
 		private readonly string _qualifier;
     	private bool _qualifyNames;
-    	private bool _populateHardEnums;
-    	private bool _populateSoftEnums;
+    	private EnumOptions _enumOption;
     	private RelationalModelInfo _baselineModel;
 
     	public ScriptWriter(Configuration config, Dialect dialect)
@@ -81,21 +79,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     	}
 
 		/// <summary>
-		/// Gets or sets a value indicating whether scripts should be generated to populated hard enumerations.
+		/// Gets or sets a value indicating which enumerations should have scripts generated.
 		/// </summary>
-    	public bool PopulateHardEnums
+		public EnumOptions EnumOption
     	{
-			get { return _populateHardEnums; }
-			set { _populateHardEnums = value; }
-    	}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether scripts should be generated to populated soft enumerations.
-		/// </summary>
-		public bool PopulateSoftEnums
-    	{
-			get { return _populateSoftEnums; }
-			set { _populateSoftEnums = value; }
+			get { return _enumOption; }
+			set { _enumOption = value; }
     	}
 
 		/// <summary>
@@ -126,6 +115,21 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             }
         }
 
+		/// <summary>
+		/// Writes a database upgrade script to the specified <see cref="TextWriter"/>
+		/// </summary>
+		/// <param name="sw"></param>
+		public void WriteUpgradeScript(TextWriter sw)
+		{
+			foreach (IDdlScriptGenerator gen in GetGenerators())
+			{
+				foreach (string script in gen.GenerateUpgradeScripts(_config, _dialect, _baselineModel))
+				{
+					sw.WriteLine(RewriteQualifiers(script));
+				}
+			}
+		}
+
         /// <summary>
         /// Writes a database drop script to the specified <see cref="StreamWriter"/>
         /// </summary>
@@ -146,25 +150,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			List<IDdlScriptGenerator> generators = new List<IDdlScriptGenerator>();
 
 			// the order of generator execution is important, so add the static generators first
-
-			if(_baselineModel == null)
-				generators.Add(new RelationalSchemaGenerator());
-			else 
-				generators.Add(new RelationalSchemaUpgradeGenerator(_baselineModel));
-
-			if (_populateHardEnums)
-			{
-				// TODO: account for upgrades
-				generators.Add(new HardEnumValueInsertGenerator());
-			}
-			if (_populateSoftEnums)
-			{
-				// TODO: account for upgrades
-				generators.Add(new SoftEnumValueInsertGenerator());
-			}
+			generators.Add(new RelationalSchemaGenerator(_enumOption));
 
 			// subsequently we can add extension generators, with uncontrolled ordering
-			// TODO: account for upgrades
 			foreach (IDdlScriptGenerator generator in (new DdlScriptGeneratorExtensionPoint().CreateExtensions()))
 			{
 				generators.Add(generator);

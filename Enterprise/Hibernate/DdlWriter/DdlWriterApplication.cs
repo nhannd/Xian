@@ -38,7 +38,6 @@ using ClearCanvas.Enterprise.Hibernate.Ddl;
 using NHibernate.Dialect;
 using ClearCanvas.Common.Utilities;
 using NHibernate.Cfg;
-using ClearCanvas.Enterprise.Hibernate.Ddl.Model;
 
 namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 {
@@ -96,22 +95,30 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 					baselineModel = serializer.ReadModel(File.OpenText(cmdLine.BaselineModelFile));
 				}
 
-                bool populateHardEnums = cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.all
-                    || cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.hard;
-                bool populateSoftEnums = cmdLine.PopulateEnumerations == DdlWriterCommandLine.EnumOptions.all;
-
 				switch(cmdLine.Format)
 				{
 					case DdlWriterCommandLine.FormatOptions.sql:
+
+						// create script writer and set properties based on command line 
 						ScriptWriter scriptWriter = new ScriptWriter(config, dialect);
-						scriptWriter.PopulateHardEnums = populateHardEnums;
-						scriptWriter.PopulateSoftEnums = populateSoftEnums;
+						scriptWriter.EnumOption = cmdLine.EnumOption;
 						scriptWriter.QualifyNames = cmdLine.QualifyNames;
 						scriptWriter.BaselineModel = baselineModel;
-						scriptWriter.WriteCreateScript(writer);
+
+						// decide whether to write a creation or upgrade script, depending on if a baseline was supplied
+						if(baselineModel == null)
+							scriptWriter.WriteCreateScript(writer);
+						else
+							scriptWriter.WriteUpgradeScript(writer);
+
 						break;
 
 					case DdlWriterCommandLine.FormatOptions.xml:
+
+						// we don't currently support outputting upgrades in XML format
+						if(baselineModel != null)
+							throw new NotSupportedException("Upgrade is not compatible with XML output format.");
+
 						RelationalModelSerializer serializer = new RelationalModelSerializer(config, dialect);
 						serializer.WriteModel(writer);
 						break;

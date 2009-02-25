@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Enterprise.Hibernate.Ddl.Model;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
@@ -19,23 +18,50 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			_changeOrder.Add(typeof(DropIndexChange), 0);
 			_changeOrder.Add(typeof(DropForeignKeyChange), 1);
 			_changeOrder.Add(typeof(DropUniqueConstraintChange), 2);
-			_changeOrder.Add(typeof(DropTableChange), 3);
-			_changeOrder.Add(typeof(DropColumnChange), 4);
-			_changeOrder.Add(typeof(ModifyColumnChange), 5);
-			_changeOrder.Add(typeof(AddColumnChange), 6);
-			_changeOrder.Add(typeof(AddTableChange), 7);
-			_changeOrder.Add(typeof(AddUniqueConstraintChange), 8);
-			_changeOrder.Add(typeof(AddForeignKeyChange), 9);
-			_changeOrder.Add(typeof(AddIndexChange), 10);
+			_changeOrder.Add(typeof(DropPrimaryKeyChange), 3);
+			_changeOrder.Add(typeof(DropTableChange), 4);
+			_changeOrder.Add(typeof(DropColumnChange), 5);
+			_changeOrder.Add(typeof(ModifyColumnChange), 6);
+			_changeOrder.Add(typeof(AddColumnChange), 7);
+			_changeOrder.Add(typeof(AddTableChange), 8);
+			_changeOrder.Add(typeof(AddPrimaryKeyChange), 9);
+			_changeOrder.Add(typeof(AddUniqueConstraintChange), 10);
+			_changeOrder.Add(typeof(AddForeignKeyChange), 11);
+			_changeOrder.Add(typeof(AddIndexChange), 12);
+			_changeOrder.Add(typeof(DropEnumValueChange), 13);
+			_changeOrder.Add(typeof(AddEnumValueChange), 14);
+		}
+
+		private readonly EnumOptions _enumOption;
+
+		public RelationalModelComparator(EnumOptions enumOption)
+		{
+			_enumOption = enumOption;
 		}
 
 
 		public List<Change> CompareDatabases(RelationalModelInfo initial, RelationalModelInfo desired)
 		{
-			IEnumerable<Change> changes = CompareSets(initial.Tables, desired.Tables,
-			                                          AddTable,
-			                                          DropTable,
-			                                          CompareTables);
+			List<Change> changes = new List<Change>();
+
+			// compare tables
+			changes.AddRange(
+				CompareSets(initial.Tables, desired.Tables,
+							  AddTable,
+							  DropTable,
+							  CompareTables)
+			);
+
+			if(_enumOption != EnumOptions.none)
+			{
+				// compare enumeration values
+				changes.AddRange(
+					CompareSets(initial.Enumerations, desired.Enumerations,
+						delegate(EnumerationInfo item) { return AddEnumeration(desired.GetTable(item.Table), item); },
+						delegate(EnumerationInfo item) { return DropEnumeration(initial.GetTable(item.Table), item); },
+						delegate(EnumerationInfo x, EnumerationInfo y) { return CompareEnumerations(desired.GetTable(y.Table), x, y); })
+				);
+			}
 
 			// order changes correctly
 			return CollectionUtils.Sort(changes,
@@ -207,6 +233,63 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			List<Change> changes = new List<Change>();
 			// TODO can constraints be altered or do they need to be dropped and recreated?
 			return changes;
+		}
+
+		private IEnumerable<Change> AddEnumeration(TableInfo table, EnumerationInfo item)
+		{
+			if(_enumOption == EnumOptions.all || (_enumOption == EnumOptions.hard && item.IsHard))
+			{
+				return CollectionUtils.Map<EnumerationMemberInfo, Change>(
+					item.Members,
+					delegate(EnumerationMemberInfo member)
+					{
+						return new AddEnumValueChange(table, member);
+					});
+			}
+			else
+			{
+				// nothing to do 
+				return new Change[] { };
+			}
+		}
+
+		private IEnumerable<Change> DropEnumeration(TableInfo table, EnumerationInfo item)
+		{
+			// nothing to do - the table will be dropped
+			return new Change[] {};
+		}
+
+		private IEnumerable<Change> CompareEnumerations(TableInfo table, EnumerationInfo initial, EnumerationInfo desired)
+		{
+			// note: for soft enumerations, we don't do any updates, because they may have been customized already
+			// hence only hard enums should ever be compared (need to ensure what is in the database matches the C# enum definition)
+			if (_enumOption != EnumOptions.none && desired.IsHard)
+			{
+				return CompareSets(initial.Members, desired.Members,
+						   delegate(EnumerationMemberInfo item) { return AddEnumerationValue(table, item); },
+						   delegate(EnumerationMemberInfo item) { return DropEnumerationValue(table, item); },
+						   delegate(EnumerationMemberInfo x, EnumerationMemberInfo y) { return CompareEnumerationValues(table, x, y); });
+			}
+			else
+			{
+				return new Change[] { };
+			}
+		}
+
+		private IEnumerable<Change> AddEnumerationValue(TableInfo table, EnumerationMemberInfo item)
+		{
+			return new Change[] { new AddEnumValueChange(table, item) };
+		}
+
+		private IEnumerable<Change> DropEnumerationValue(TableInfo table, EnumerationMemberInfo item)
+		{
+			return new Change[] { new DropEnumValueChange(table, item) };
+		}
+
+		private IEnumerable<Change> CompareEnumerationValues(TableInfo table, EnumerationMemberInfo initial, EnumerationMemberInfo desired)
+		{
+			// nothing to do - once a value is populated, we do not update it, because it may have been customized
+			return new Change[] { };
 		}
 
 		private IEnumerable<Change> CompareSets<T>(IEnumerable<T> initial, IEnumerable<T> desired,

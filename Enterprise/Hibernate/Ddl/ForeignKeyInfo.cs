@@ -6,12 +6,15 @@ using NHibernate.Mapping;
 using NHibernate.Cfg;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
+namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
     [DataContract]
     public class ForeignKeyInfo : ConstraintInfo
     {
-        public ForeignKeyInfo()
+		private string _referencedTable;
+		private List<string> _referencedColumns;
+
+		public ForeignKeyInfo()
         {
 
         }
@@ -22,17 +25,25 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Model
             //note: the fk object has a ReferencedTable property, but it doesn't always seem to be set
             //the reference class property is always set, so we use it instead to get the referenced table 
         	Table table = config.GetClassMapping(fk.ReferencedClass).Table;
-            this.ReferencedTable = table.Name;
-			this.ReferencedColumns = CollectionUtils.Map<Column, string>(
+            _referencedTable = table.Name;
+			_referencedColumns = CollectionUtils.Map<Column, string>(
 				table.PrimaryKey.ColumnCollection,
 				delegate(Column column) { return column.Name; });
 		}
 
-        [DataMember]
-        public string ReferencedTable;
+    	[DataMember]
+    	public string ReferencedTable
+    	{
+			get { return _referencedTable; }
+			private set { _referencedTable = value; }
+    	}
 
-		[DataMember]
-    	public List<string> ReferencedColumns;
+    	[DataMember]
+    	public List<string> ReferencedColumns
+    	{
+			get { return _referencedColumns; }
+			private set { _referencedColumns = value; }
+    	}
 
 		public bool Matches(ForeignKeyInfo that)
         {

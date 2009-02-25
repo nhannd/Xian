@@ -31,7 +31,6 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate.Ddl;
-using ClearCanvas.Enterprise.Hibernate;
 using NHibernate.Cfg;
 using NHibernate.Dialect;
 
@@ -62,7 +61,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				};
             }
 
-            public string[] GenerateDropScripts(Configuration config, Dialect dialect)
+        	public string[] GenerateUpgradeScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel)
+        	{
+				return new string[] { };    // nothing to do
+			}
+
+        	public string[] GenerateDropScripts(Configuration config, Dialect dialect)
             {
                 return new string[] { };    // nothing to do
             }

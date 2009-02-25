@@ -1,16 +1,10 @@
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Hibernate.Ddl;
 
 namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 {
     class DdlWriterCommandLine : CommandLine
     {
-        public enum EnumOptions
-        {
-            all,
-            hard,
-            none
-        }
-
 		public enum FormatOptions
 		{
 			sql,
@@ -19,7 +13,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 
         private bool _autoIndexForeignKeys;
         private bool _createIndexes;
-        private EnumOptions _populateEnumerations = EnumOptions.all;
+        private EnumOptions _enumOption = EnumOptions.all;
         private string _outputFile;
     	private bool _qualifyNames = true;
     	private FormatOptions _format = FormatOptions.sql;
@@ -47,10 +41,10 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 		}
 
         [CommandLineParameter("enums", "e", "Specifies whether to populate enumerations.  Possible values are 'all', 'hard' or 'none'.  If omitted, the default is 'all'")]
-        public EnumOptions PopulateEnumerations
+        public EnumOptions EnumOption
         {
-            get { return _populateEnumerations; }
-            set { _populateEnumerations = value; }
+            get { return _enumOption; }
+            set { _enumOption = value; }
         }
 
         [CommandLineParameter("out", "Specifies the name of the ouput file.  If omitted, output is written to stdout.")]
