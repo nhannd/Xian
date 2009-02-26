@@ -230,7 +230,7 @@ namespace ClearCanvas.Ris.Client
                 ManagementObjectCollection moc = mc.GetInstances();
                 foreach (ManagementObject mo in moc)
                 {
-					id = mo.Properties["SerialNumber"].Value.ToString();
+					id = mo.Properties["SerialNumber"].Value.ToString().Trim();
 					if (!string.IsNullOrEmpty(id))
                         break;
                 }
