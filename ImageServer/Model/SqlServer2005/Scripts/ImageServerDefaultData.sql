@@ -204,7 +204,7 @@ GO
 INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),103,'StudyProcessed','Study Processed','Apply rule when a Study is initially processed')
+           (newid(),103,'StudyProcessed','Study Processed','Apply rule after a Study has been processed')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServerRuleApplyTimeEnum]
@@ -224,31 +224,31 @@ GO
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),100,'DeleteStudy','Delete Study','Delete a Study')
+           (newid(),100,'DeleteStudy','Delete Study','A record telling when a study is eligable for deletion.  The study will be completely removed from the system.')
 GO
            
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),101,'PurgeStudy','Purge Study','Purge an Online Study')
+           (newid(),101,'PurgeStudy','Purge Study','A record telling when a study can be purged from a filesystem.  Only archived studies can be purged.  The study will remain archived and can be restored.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),102,'TierMigrate','Tier Migrate','Migrate a Study to a Lower Tier')
+           (newid(),102,'TierMigrate','Tier Migrate','A record telling when a study is eligable to be migrated to a lower tier filesystem.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),103,'LosslessCompress','Lossless Compress','Lossless Compress a Study')
+           (newid(),103,'LosslessCompress','Lossless Compress','A record telling when a study is eligable for lossless compression and the type of compression to be performed on the study.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),104,'LossyCompress','Lossy Compress','Lossy Compress a Study')
+           (newid(),104,'LossyCompress','Lossy Compress','A record telling when a study is eligable for lossy compression and the type of compression to be performed.')
 GO
 
 
@@ -256,43 +256,43 @@ GO
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),100,'FilesystemDelete', 'Filesystem Watermark Check', 'Check watermark and schedule studies for tier migration, deletion, or purging if necessary')																		 
+           (newid(),100,'FilesystemDelete', 'Filesystem Watermark Check', 'This services checks if a filesystem is above its high watermark.  If the filesystem is above the high watermark it migrates studies, deletes studies, and purges studies until the low watermark is reached.')																		 
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),101,'FilesystemReinventory','Filesystem Reinventory','Re-inventory data within a Filesystem')
+           (newid(),101,'FilesystemReinventory','Filesystem Reinventory','This service re-inventories the studies stored on a filesystem.  It scans the contents of the filesystem, and if a study is not already stored in the database, it will insert records to process the study into the WorkQueue.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),102,'FilesystemStudyProcess','Filesystem Reprocess Studies','Reapply Study Processing rules within a Filesystem')
+           (newid(),102,'FilesystemStudyProcess','Filesystem Reprocess Studies','This service scans the contents of a filesystem and reapplies Study Processing rules to all studies on the filesystem.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),103,'FilesystemLosslessCompress','Filesystem Lossless Compress','Lossless compress studies within a Filesystem')
+           (newid(),103,'FilesystemLosslessCompress','Filesystem Lossless Compress','This service checks for studies that are eligable to be lossless compressed on a filesystem.  It works independently from the watermarks configured for the filesystem and will insert records into the WorkQueue to compress the studies as soon as they are eligable.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),104,'FilesystemLossyCompress','Filesystem Lossy Compress','Lossy compress studies within a Filesystem')
+           (newid(),104,'FilesystemLossyCompress','Filesystem Lossy Compress','This service checks for studies that are eligable to be lossy compressed on a filesystem.  It works independently from the watermarks configured for the filesystem and will insert records into the WorkQueue to compress the studies as soon as they are eligable.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),200,'ArchiveApplicationLog','Archive Application Log','Archive the application log from the database to a filesystem')
+           (newid(),200,'ArchiveApplicationLog','Archive Application Log','This service removes application log entries from the database and archives them in zip files to a filesystem.  When initially run, it selects a filesystem from the lowest filesystem tier configured on the system.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),201,'PurgeAlerts','Purge Alerts','Purge Alerts after a configurable elapsed time or archive them to a filesystem if configured.')
+           (newid(),201,'PurgeAlerts','Purge Alerts','This service by default removes Alert records from the database after a configurable time.  If configured it can save the alerts in zip files on a filesystem.  When initially run, it selects a filesystem from the lowest filesystem tier configured on the system to archive to.')
 GO
 
 
