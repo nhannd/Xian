@@ -108,7 +108,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
         public virtual Statement[] Render(AddPrimaryKeyChange change)
 		{
-			string sql = string.Format("alter table {0} add {2}",
+			string sql = string.Format("alter table {0} add {1}",
 				GetQualifiedName(change.Table),
 				GetPrimaryKeyString(change.PrimaryKey));
 

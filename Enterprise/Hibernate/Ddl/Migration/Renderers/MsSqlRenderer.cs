@@ -39,7 +39,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration.Renderers
                 }
             }
 
-            return base.PreFilter(changes);
+			return base.PreFilter(filtered);
         }
 
         private bool IsTableAdded(IEnumerable<Change> changes, TableInfo table)

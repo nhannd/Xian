@@ -5,6 +5,7 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
+	[DataContract]
 	public class EnumerationMemberInfo : ElementInfo
 	{
 		private string _code;
@@ -69,6 +70,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 	}
 
 
+	[DataContract]
 	public class EnumerationInfo : ElementInfo
 	{
 		private string _enumerationClass;
