@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 
@@ -294,25 +295,45 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <summary>
 		/// Computes the bounding rectangle of a collection of points.
 		/// </summary>
-		/// <param name="points">a collection of points.</param>
-		/// <returns>the bounding rectangle of all the points.</returns>
-		/// <exception cref="NullReferenceException">if the input array is null.</exception>
-		/// <exception cref="ArgumentException">if the input array is empty.</exception>
+		/// <param name="points">A collection of points.</param>
+		/// <returns>The bounding rectangle of all the points.</returns>
+		/// <exception cref="NullReferenceException">If the input array is null.</exception>
+		/// <exception cref="ArgumentException">If the input array is empty.</exception>
 		public static RectangleF ComputeBoundingRectangle(params PointF[] points)
 		{
+			return ComputeBoundingRectangle((IEnumerable<PointF>) points);
+		}
+
+		/// <summary>
+		/// Computes the bounding rectangle of a collection of points.
+		/// </summary>
+		/// <param name="points">A collection of points.</param>
+		/// <returns>The bounding rectangle of all the points.</returns>
+		/// <exception cref="NullReferenceException">If the input collection is null.</exception>
+		/// <exception cref="ArgumentException">If the input collection is empty.</exception>
+		public static RectangleF ComputeBoundingRectangle(IEnumerable<PointF> points)
+		{
 			Platform.CheckForNullReference(points, "points");
-			Platform.CheckPositive(points.Length, "points.Length");
 
-			PointF topLeft = points[0], bottomRight = points[0];
+			bool initialized = false;
+			PointF topLeft = PointF.Empty, bottomRight = PointF.Empty;
 
-			for (int i = 1; i < points.Length; ++i)
+			foreach(PointF point in points)
 			{
-				PointF point = points[i];
+				if(!initialized)
+				{
+					topLeft = bottomRight = point;
+					initialized = true;
+					continue;
+				}
+
 				topLeft.X = Math.Min(topLeft.X, point.X);
 				topLeft.Y = Math.Min(topLeft.Y, point.Y);
 				bottomRight.X = Math.Max(bottomRight.X, point.X);
 				bottomRight.Y = Math.Max(bottomRight.Y, point.Y);
 			}
+
+			Platform.CheckTrue(initialized, "At least one point.");
 
 			return RectangleF.FromLTRB(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y);
 		}
