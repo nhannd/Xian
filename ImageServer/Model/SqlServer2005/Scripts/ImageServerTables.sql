@@ -37,7 +37,7 @@ CREATE TABLE [dbo].[DuplicateSopPolicyEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_DuplicateSopPolicyEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -104,7 +104,7 @@ CREATE TABLE [dbo].[WorkQueueStatusEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_WorkQueueStatusEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -128,7 +128,7 @@ CREATE TABLE [dbo].[StudyStatusEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_StudyStatusEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -152,7 +152,7 @@ CREATE TABLE [dbo].[QueueStudyStateEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_QueueStudyStateEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -176,7 +176,7 @@ CREATE TABLE [dbo].[WorkQueueTypeEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_WorkQueueTypeEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -229,7 +229,7 @@ CREATE TABLE [dbo].[ServiceLockTypeEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_ServiceLockTypeEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -253,7 +253,7 @@ CREATE TABLE [dbo].[ServerRuleTypeEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_ServerRuleTypeEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -277,7 +277,7 @@ CREATE TABLE [dbo].[ServerRuleApplyTimeEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_ServerRuleApplyTimeEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -301,7 +301,7 @@ CREATE TABLE [dbo].[FilesystemTierEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_FilesystemTier] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -325,7 +325,7 @@ CREATE TABLE [dbo].[FilesystemQueueTypeEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_FilesystemQueueTypeEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -349,7 +349,7 @@ CREATE TABLE [dbo].[WorkQueuePriorityEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_WorkQueuePriorityEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -925,7 +925,7 @@ CREATE TABLE [dbo].[ArchiveTypeEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_ArchiveTypeEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -949,7 +949,7 @@ CREATE TABLE [dbo].[ArchiveQueueStatusEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_ArchiveQueueStatusEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -973,7 +973,7 @@ CREATE TABLE [dbo].[RestoreQueueStatusEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_RestoreQueueStatusEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -1122,7 +1122,7 @@ CREATE TABLE [dbo].[AlertCategoryEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_AlertCategoryEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -1146,7 +1146,7 @@ CREATE TABLE [dbo].[AlertLevelEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_AlertLevelEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -1198,7 +1198,7 @@ CREATE TABLE [dbo].[StudyIntegrityReasonEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_StudyIntegrityStatusEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC
@@ -1303,7 +1303,7 @@ CREATE TABLE [dbo].[StudyHistoryTypeEnum](
 	[Enum] [smallint] NOT NULL,
 	[Lookup] [varchar](32) NOT NULL,
 	[Description] [nvarchar](32) NOT NULL,
-	[LongDescription] [nvarchar](256) NOT NULL,
+	[LongDescription] [nvarchar](512) NOT NULL,
  CONSTRAINT [PK_StudyHistoryTypeEnum] PRIMARY KEY CLUSTERED 
 (
 	[Enum] ASC

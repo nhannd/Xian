@@ -126,6 +126,7 @@
     <Compile Include="Brokers\QueryWorkQueue.cs" />
     <Compile Include="Brokers\UpdateWorkQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UpgradeScripts\UpgradeFrom_1_35_8841_28852.cs" />
     <Compile Include="UpgradeScripts\UpgradeFrom_1_3_8146_27241.cs" />
     <Compile Include="Upgrade\BaseUpgradeScript.cs" />
     <Compile Include="Upgrade\IUpgradeScript.cs" />
@@ -163,6 +164,7 @@
     <None Include="Scripts\ImageServerDefaultData.sql" />
     <EmbeddedResource Include="Scripts\ImageServerStoredProcedures.sql" />
     <None Include="Scripts\ImageServerTables.sql" />
+    <None Include="UpgradeScripts\UpgradeFrom_1_35_8841_28852.sql" />
     <EmbeddedResource Include="UpgradeScripts\UpgradeFrom_1_3_8146_27241.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
