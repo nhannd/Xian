@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageServer.Utilities
                                                    {
                                                        try
                                                        {
-                                                           Console.WriteLine("Login on as {0}...", user);
+                                                           Console.WriteLine("Login as {0}...", user);
                                                            _session = service.Login(user, pwd);
                                                        }
                                                        catch(PasswordExpiredException ex)
