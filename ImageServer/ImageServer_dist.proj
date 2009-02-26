@@ -94,6 +94,7 @@
 	  <PluginFiles Include="$(SolutionDir)\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 	  <PluginFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
 	  <PluginFiles Include="$(SolutionDir)\..\Enterprise\Authentication\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.dll" />
+	  <PluginFiles Include="$(SolutionDir)\..\ImageServer\Common\Authentication\bin\$(Configuration)\ClearCanvas.ImageServer.Common.Authentication.dll" />
 
   </ItemGroup>
   

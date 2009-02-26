@@ -32,22 +32,24 @@ namespace ClearCanvas.ImageServer.Utilities
                                                    {
                                                        try
                                                        {
+                                                           Console.WriteLine("Login on as {0}...", user);
                                                            _session = service.Login(user, pwd);
                                                        }
                                                        catch(PasswordExpiredException ex)
                                                        {
-                                                           Console.WriteLine("Password expired. Reseting password..");
+                                                           Console.WriteLine("Password has expired. Reseting password..");
                                                            service.ChangePassword(user, pwd, "clearcanvas123");
                                                            service.ChangePassword(user, "clearcanvas123", pwd);
                                                            Console.WriteLine("Attempt to login again...");
                                                            _session = service.Login(user, pwd);
                                                        }
                                                    });
+            
             AuthorityTokenDefinition[] tokenDefs = AuthorityGroupSetup.GetAuthorityTokens();
             Import(tokenDefs);
         }
 
-        public IList<AuthorityToken> Import(IEnumerable<AuthorityTokenDefinition> tokenDefs)
+        private void Import(IEnumerable<AuthorityTokenDefinition> tokenDefs)
         {
             List<AuthorityTokenSummary> tokens = CollectionUtils.Map<AuthorityTokenDefinition, AuthorityTokenSummary>(
                 tokenDefs,
@@ -57,16 +59,18 @@ namespace ClearCanvas.ImageServer.Utilities
                         return token;
                     }
                 );
+
             Platform.GetService<IAuthorityAdminService>(
                 delegate(IAuthorityAdminService service)
                     {
                         service.Credentials = _session.Credentials;
-                        service.ImportAuthorityTokens(tokens);
+                        Console.WriteLine("Loading tokens into the server...");
+                        if (!service.ImportAuthorityTokens(tokens))
+                            Console.WriteLine("Unable to load tokens. See server log for more info.");
+                        else
+                            Console.WriteLine("Tokens are successfully loaded.");
                         
                     });
-            
-
-            return null;
         }
 
         #endregion
