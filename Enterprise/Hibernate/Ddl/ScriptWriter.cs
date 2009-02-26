@@ -53,16 +53,14 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     public class ScriptWriter
     {
         private readonly Configuration _config;
-		private readonly Dialect _dialect;
 		private readonly string _qualifier;
     	private bool _qualifyNames;
     	private EnumOptions _enumOption;
     	private RelationalModelInfo _baselineModel;
 
-    	public ScriptWriter(Configuration config, Dialect dialect)
+    	public ScriptWriter(Configuration config)
         {
             _config = config;
-            _dialect = dialect;
 
 			_qualifier = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
 			if (!string.IsNullOrEmpty(_qualifier))
@@ -108,7 +106,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         {
 			foreach (IDdlScriptGenerator gen in GetGenerators())
             {
-                foreach (string script in gen.GenerateCreateScripts(_config, _dialect))
+                foreach (string script in gen.GenerateCreateScripts(_config))
                 {
 					sw.WriteLine(RewriteQualifiers(script));
                 }
@@ -123,7 +121,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		{
 			foreach (IDdlScriptGenerator gen in GetGenerators())
 			{
-				foreach (string script in gen.GenerateUpgradeScripts(_config, _dialect, _baselineModel))
+				foreach (string script in gen.GenerateUpgradeScripts(_config, _baselineModel))
 				{
 					sw.WriteLine(RewriteQualifiers(script));
 				}
@@ -138,7 +136,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         {
 			foreach (IDdlScriptGenerator gen in GetGenerators())
             {
-                foreach (string script in gen.GenerateDropScripts(_config, _dialect))
+                foreach (string script in gen.GenerateDropScripts(_config))
                 {
 					sw.WriteLine(RewriteQualifiers(script));
                 }

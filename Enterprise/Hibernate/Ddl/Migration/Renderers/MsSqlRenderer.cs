@@ -10,8 +10,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration.Renderers
 {
     class MsSqlRenderer : Renderer
     {
-		public MsSqlRenderer(Configuration config, Dialect dialect)
-			:base(config, dialect)
+		public MsSqlRenderer(Configuration config)
+			:base(config)
 		{
 		}
 

@@ -21,12 +21,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// Defines the root XML tag under which data is exported.
 		/// </summary>
 		private readonly Configuration _config;
-		private readonly Dialect _dialect;
 
-		public RelationalModelSerializer(Configuration config, Dialect dialect)
+		public RelationalModelSerializer(Configuration config)
 		{
 			_config = config;
-			_dialect = dialect;
 		}
 
 		public void WriteModel(TextWriter tw)
@@ -35,7 +33,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			{
 				writer.Formatting = Formatting.Indented;
 
-				RelationalModelInfo modelInfo = new RelationalModelInfo(_config, _dialect);
+				RelationalModelInfo modelInfo = new RelationalModelInfo(_config);
 
 				Write(writer, modelInfo);
 			}

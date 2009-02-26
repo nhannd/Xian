@@ -22,10 +22,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			_enumerations = new List<EnumerationInfo>();
         }
 
-		public RelationalModelInfo(Configuration config, Dialect dialect)
+		public RelationalModelInfo(Configuration config)
 		{
 			_tables = CollectionUtils.Map<Table, TableInfo>(GetTables(config),
-							delegate(Table table) { return BuildTableInfo(table, config, dialect); });
+							delegate(Table table) { return BuildTableInfo(table, config); });
 
 			_enumerations = new EnumMetadataReader().GetEnums(config);
 		}
@@ -77,12 +77,13 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 				});
 		}
 
-		private static TableInfo BuildTableInfo(Table table, Configuration config, Dialect dialect)
+		private static TableInfo BuildTableInfo(Table table, Configuration config)
 		{
+			Dialect dialect = Dialect.GetDialect(config.Properties);
 			return new TableInfo(
 				table.Name,
 				table.Schema,
-				CollectionUtils.Map<Column, ColumnInfo>(table.ColumnCollection, delegate(Column column) { return new ColumnInfo(column, table, config, dialect); }),
+				CollectionUtils.Map<Column, ColumnInfo>(table.ColumnCollection, delegate(Column column) { return new ColumnInfo(column, config, dialect); }),
 				new ConstraintInfo(table.PrimaryKey),
 				CollectionUtils.Map<Index, IndexInfo>(table.IndexCollection, delegate(Index index) { return new IndexInfo(index); }),
 				CollectionUtils.Map<ForeignKey, ForeignKeyInfo>(table.ForeignKeyCollection, delegate(ForeignKey fk) { return new ForeignKeyInfo(fk, config); }),

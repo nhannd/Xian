@@ -55,30 +55,30 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// Extension to generate DDL to create and initialize the Accession Sequence table
         /// </summary>
         [ExtensionOf(typeof(DdlScriptGeneratorExtensionPoint))]
-        public class AccessionSequenceDdlScriptGenerator : IDdlScriptGenerator
+        public class AccessionSequenceDdlScriptGenerator : DdlScriptGenerator
         {
             #region IDdlScriptGenerator Members
 
-            public string[] GenerateCreateScripts(Configuration config, Dialect dialect)
+            public override string[] GenerateCreateScripts(Configuration config)
             {
                 string defaultSchema = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
                 string tableName = !string.IsNullOrEmpty(defaultSchema) ? defaultSchema + "." + TABLE_NAME : TABLE_NAME;
                     
                 return new string[]
 				{
-                    string.Format("create table {0} ( {1} {2} );", tableName, COLUMN_NAME, dialect.GetTypeName( NHibernate.SqlTypes.SqlTypeFactory.Int64 )),
+                    string.Format("create table {0} ( {1} {2} );", tableName, COLUMN_NAME, GetDialect(config).GetTypeName( NHibernate.SqlTypes.SqlTypeFactory.Int64 )),
 					string.Format("insert into {0} values ( {1} )", tableName, INITIAL_VALUE)
 				};
             }
 
-        	public string[] GenerateUpgradeScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel)
+        	public override string[] GenerateUpgradeScripts(Configuration config, RelationalModelInfo baselineModel)
         	{
 				return new string[] { };    // nothing to do
 			}
 
-        	public string[] GenerateDropScripts(Configuration config, Dialect dialect)
+        	public override string[] GenerateDropScripts(Configuration config)
             {
-                return new string[] { dialect.GetDropTableString(TABLE_NAME) };
+				return new string[] { GetDialect(config).GetDropTableString(TABLE_NAME) };
             }
 
             #endregion

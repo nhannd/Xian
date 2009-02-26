@@ -42,7 +42,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     /// <summary>
     /// Generates scripts to create the tables, foreign key constraints, and indexes.
     /// </summary>
-    class RelationalSchemaGenerator : IDdlScriptGenerator
+    class RelationalSchemaGenerator : DdlScriptGenerator
     {
     	private readonly EnumOptions _enumOption;
 
@@ -53,27 +53,27 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
         #region IDdlScriptGenerator Members
 
-        public string[] GenerateCreateScripts(Configuration config, Dialect dialect)
+        public override string[] GenerateCreateScripts(Configuration config)
         {
-			RelationalModelInfo currentModel = new RelationalModelInfo(config, dialect);
+			RelationalModelInfo currentModel = new RelationalModelInfo(config);
 			RelationalModelInfo baselineModel = new RelationalModelInfo();		// baseline model is empty
 
-            return GetScripts(config, dialect, baselineModel, currentModel);
+            return GetScripts(config, baselineModel, currentModel);
 		}
 
-    	public string[] GenerateUpgradeScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel)
+    	public override string[] GenerateUpgradeScripts(Configuration config, RelationalModelInfo baselineModel)
     	{
-    		RelationalModelInfo currentModel = new RelationalModelInfo(config, dialect);
+    		RelationalModelInfo currentModel = new RelationalModelInfo(config);
 
-    		return GetScripts(config, dialect, baselineModel, currentModel);
+    		return GetScripts(config, baselineModel, currentModel);
     	}
 
-        private string[] GetScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel, RelationalModelInfo currentModel)
+        private string[] GetScripts(Configuration config, RelationalModelInfo baselineModel, RelationalModelInfo currentModel)
     	{
     		RelationalModelComparator comparator = new RelationalModelComparator(_enumOption);
     		IEnumerable<Change> changes = comparator.CompareDatabases(baselineModel, currentModel);
 
-    		IRenderer renderer = Renderer.GetRenderer(config, dialect);
+    		IRenderer renderer = Renderer.GetRenderer(config);
 
 			// allow the renderer to modify the change set
         	changes = renderer.PreFilter(changes);
@@ -88,7 +88,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     				delegate(Statement s) { return s.Sql; }).ToArray();
     	}
 
-    	public string[] GenerateDropScripts(Configuration config, Dialect dialect)
+    	public override string[] GenerateDropScripts(Configuration config)
         {
             return new string[]{};
         }

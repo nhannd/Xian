@@ -47,27 +47,24 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         /// will be executed in the order they are returned.
         /// </summary>
         /// <param name="config">The persistent store (database) that DDL should be generated for</param>
-        /// <param name="dialect">The database dialect</param>
         /// <returns>A set of scripts</returns>
-        string[] GenerateCreateScripts(Configuration config, Dialect dialect);
+        string[] GenerateCreateScripts(Configuration config);
 
 		/// <summary>
 		/// Returns a set of scripts that will be executed to upgrade the database from a previous version.  The scripts
 		/// will be executed in the order they are returned.
 		/// </summary>
 		/// <param name="config"></param>
-		/// <param name="dialect"></param>
 		/// <param name="baselineModel"></param>
 		/// <returns></returns>
-    	string[] GenerateUpgradeScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel);
+    	string[] GenerateUpgradeScripts(Configuration config, RelationalModelInfo baselineModel);
 
         /// <summary>
         /// Returns a set of scripts that will be executed as part of dropping the database.  The scripts
         /// will be executed in the order they are returned.
         /// </summary>
         /// <param name="config">The persistent store (database) that DDL should be generated for</param>
-        /// <param name="dialect">The database dialect</param>
         /// <returns>A set of scripts</returns>
-        string[] GenerateDropScripts(Configuration config, Dialect dialect);
+        string[] GenerateDropScripts(Configuration config);
     }
 }

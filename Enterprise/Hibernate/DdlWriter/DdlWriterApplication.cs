@@ -83,15 +83,14 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 				PreProcessor preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
 				preProcessor.Process(store);
 
-				// get config and dialect
+				// get config
 				Configuration config = store.Configuration;
-            	Dialect dialect = Dialect.GetDialect(config.Properties);
 
 				// if this is an upgrade, load the baseline model file
             	RelationalModelInfo baselineModel = null;
 				if(!string.IsNullOrEmpty(cmdLine.BaselineModelFile))
 				{
-					RelationalModelSerializer serializer = new RelationalModelSerializer(config, dialect);
+					RelationalModelSerializer serializer = new RelationalModelSerializer(config);
 					baselineModel = serializer.ReadModel(File.OpenText(cmdLine.BaselineModelFile));
 				}
 
@@ -100,7 +99,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 					case DdlWriterCommandLine.FormatOptions.sql:
 
 						// create script writer and set properties based on command line 
-						ScriptWriter scriptWriter = new ScriptWriter(config, dialect);
+						ScriptWriter scriptWriter = new ScriptWriter(config);
 						scriptWriter.EnumOption = cmdLine.EnumOption;
 						scriptWriter.QualifyNames = cmdLine.QualifyNames;
 						scriptWriter.BaselineModel = baselineModel;
@@ -119,7 +118,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 						if(baselineModel != null)
 							throw new NotSupportedException("Upgrade is not compatible with XML output format.");
 
-						RelationalModelSerializer serializer = new RelationalModelSerializer(config, dialect);
+						RelationalModelSerializer serializer = new RelationalModelSerializer(config);
 						serializer.WriteModel(writer);
 						break;
 

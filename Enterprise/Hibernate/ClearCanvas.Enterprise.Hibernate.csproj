@@ -102,7 +102,6 @@
     <Compile Include="Ddl\PreProcessor.cs" />
     <Compile Include="Ddl\RelationalModelSerializer.cs" />
     <Compile Include="Ddl\ScriptWriter.cs" />
-    <Compile Include="Ddl\EnumValueInsertGenerator.cs" />
     <Compile Include="Ddl\RelationalSchemaGenerator.cs" />
     <Compile Include="EntityBroker.cs" />
     <Compile Include="EnumBroker.cs" />

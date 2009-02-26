@@ -11,24 +11,23 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 	class Renderer : IRenderer
 	{
 		/// <summary>
-		/// Gets the renderer implementation that corresponds to the specified dialect.
+		/// Gets the renderer implementation based on the dialect specified in the configuration.
 		/// </summary>
-		/// <param name="dialect"></param>
 		/// <returns></returns>
-		public static IRenderer GetRenderer(Configuration config, Dialect dialect)
+		public static IRenderer GetRenderer(Configuration config)
 		{
-			// TODO use dialect to choose renderer
-			return new MsSqlRenderer(config, dialect);
+			// TODO use config to choose renderer
+			return new MsSqlRenderer(config);
 		}
 
         private readonly Configuration _config;
 		private readonly Dialect _dialect;
         private readonly string _defaultSchema;
 
-        protected Renderer(Configuration config, Dialect dialect)
+        protected Renderer(Configuration config)
 		{
             _config = config;
-			_dialect = dialect;
+			_dialect = Dialect.GetDialect(config.Properties);
             _defaultSchema = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
 
 		}

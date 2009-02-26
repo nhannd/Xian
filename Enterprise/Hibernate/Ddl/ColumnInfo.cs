@@ -23,7 +23,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
         }
 
-        public ColumnInfo(Column column, Table ownerTable, Configuration config, Dialect dialect)
+        public ColumnInfo(Column column, Configuration config, Dialect dialect)
         {
             _name = column.Name;
             _length = column.Length;

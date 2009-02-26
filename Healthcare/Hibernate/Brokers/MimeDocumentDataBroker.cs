@@ -46,11 +46,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// Extension to generate DDL to create and initialize the Accession Sequence table
         /// </summary>
         [ExtensionOf(typeof(DdlScriptGeneratorExtensionPoint))]
-        public class MimeDocumentDataDdlScriptGenerator : IDdlScriptGenerator
+        public class MimeDocumentDataDdlScriptGenerator : DdlScriptGenerator
         {
             #region IDdlScriptGenerator Members
 
-            public string[] GenerateCreateScripts(Configuration config, Dialect dialect)
+            public override string[] GenerateCreateScripts(Configuration config)
             {
                 string defaultSchema = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
                 string tableName = !string.IsNullOrEmpty(defaultSchema) ? defaultSchema + "." + TABLE_NAME : TABLE_NAME;
@@ -61,12 +61,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				};
             }
 
-        	public string[] GenerateUpgradeScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel)
+        	public override string[] GenerateUpgradeScripts(Configuration config, RelationalModelInfo baselineModel)
         	{
 				return new string[] { };    // nothing to do
 			}
 
-        	public string[] GenerateDropScripts(Configuration config, Dialect dialect)
+        	public override string[] GenerateDropScripts(Configuration config)
             {
                 return new string[] { };    // nothing to do
             }
