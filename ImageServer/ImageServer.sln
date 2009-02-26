@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Shr
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1} = {DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C} = {CBFF8E87-2573-4CF9-91AF-54763084A80C}
 		{9A4EF57B-2702-4931-9E94-B194707E87FA} = {9A4EF57B-2702-4931-9E94-B194707E87FA}
 		{6863F5CE-F1D3-46A7-915C-DE02D1452EED} = {6863F5CE-F1D3-46A7-915C-DE02D1452EED}
 		{7C4EDB0A-B94C-4078-846A-DEA974348B2B} = {7C4EDB0A-B94C-4078-846A-DEA974348B2B}
@@ -72,7 +74,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Shr
 		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2} = {95FEA63F-7E51-4829-923E-8CD02C8DEAE2}
 		{90C91F02-8AD3-43D1-B8C3-C0469213E3E5} = {90C91F02-8AD3-43D1-B8C3-C0469213E3E5}
 		{BE27922C-C8D7-4190-8F24-5D7C1623CAFA} = {BE27922C-C8D7-4190-8F24-5D7C1623CAFA}
-		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1} = {DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Common", "..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj", "{B5EBFFD7-6641-4932-91C9-4C4322B41868}"
@@ -241,6 +242,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Exe
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C} = {CBFF8E87-2573-4CF9-91AF-54763084A80C}
 		{7C4EDB0A-B94C-4078-846A-DEA974348B2B} = {7C4EDB0A-B94C-4078-846A-DEA974348B2B}
 	EndProjectSection
 EndProject
@@ -251,6 +253,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Rul
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Rules.JpegCodec", "Rules\JpegCodec\ClearCanvas.ImageServer.Rules.JpegCodec.csproj", "{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Utilities.TokenImporter", "Utilities\TokenImporter\ClearCanvas.ImageServer.Utilities.TokenImporter.csproj", "{CBFF8E87-2573-4CF9-91AF-54763084A80C}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Authentication", "..\Enterprise\Authentication\ClearCanvas.Enterprise.Authentication.csproj", "{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -654,6 +668,26 @@ Global
 		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2BAF49AA-F872-4CC5-A3B0-4B7555DC3244}.Release|Win32.ActiveCfg = Release|Any CPU
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{CBFF8E87-2573-4CF9-91AF-54763084A80C}.Release|Win32.ActiveCfg = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}.Release|Win32.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common.Authorization;
 
-namespace ClearCanvas.ImageServer.Common.AuthorityTokens
+namespace ClearCanvas.ImageServer.Common.Authentication
 {
     public class AuthorityTokens
     {
@@ -75,25 +75,25 @@ namespace ClearCanvas.ImageServer.Common.AuthorityTokens
         /// Tokens that allow access to study functionalities.
         /// </summary>
         public static class Study
-            {
-                [AuthorityToken(Description = "Allow searching for studies.")]
-                public const string Search = "PACS/Study/Search";
+        {
+            [AuthorityToken(Description = "Allow searching for studies.")]
+            public const string Search = "PACS/Study/Search";
 
-                [AuthorityToken(Description = "Allow looking at study details.")]
-                public const string View = "PACS/Study/View";
+            [AuthorityToken(Description = "Allow looking at study details.")]
+            public const string View = "PACS/Study/View";
 
-                [AuthorityToken(Description = "Allow moving studies.")]
-                public const string Move = "PACS/Study/Move";
+            [AuthorityToken(Description = "Allow moving studies.")]
+            public const string Move = "PACS/Study/Move";
 
-                [AuthorityToken(Description = "Allow deleting studies.")]
-                public const string Delete = "PACS/Study/Delete";
+            [AuthorityToken(Description = "Allow deleting studies.")]
+            public const string Delete = "PACS/Study/Delete";
 
-                [AuthorityToken(Description = "Allow editing studies.")]
-                public const string Edit = "PACS/Study/Edit";
+            [AuthorityToken(Description = "Allow editing studies.")]
+            public const string Edit = "PACS/Study/Edit";
 
-                [AuthorityToken(Description = "Allow restoring studies.")]
-                public const string Restore = "PACS/Study/Restore";
-            }
+            [AuthorityToken(Description = "Allow restoring studies.")]
+            public const string Restore = "PACS/Study/Restore";
+        }
 
         /// <summary>
         /// Tokens that allow access to Work Queue functionalities.

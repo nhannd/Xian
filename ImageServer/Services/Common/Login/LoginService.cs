@@ -20,9 +20,22 @@ namespace ClearCanvas.ImageServer.Services.Common.Login
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
     public class LoginService : ICoreServiceLayer, ILoginService, IDisposable
     {
-        private AuthenticationClient _client = new AuthenticationClient();
+        private AuthenticationClient _client;
 
         #region ILoginService Members
+
+        public LoginService()
+        {
+            try
+            {
+                _client = new AuthenticationClient();
+            }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Error, ex); 
+                throw;
+            } 
+        }
 
         public SessionInfo Login(string userName, string password)
         {

@@ -47,7 +47,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alert.cs" />
-    <Compile Include="AuthorityTokens\AuthorityTokens.cs" />
     <Compile Include="CommandProcessor\CopyDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\CopyFileCommand.cs" />
     <Compile Include="CommandProcessor\CreateDirectoryCommand.cs" />

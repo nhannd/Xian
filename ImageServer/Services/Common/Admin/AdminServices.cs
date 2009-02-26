@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Admin
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
     public class AdminServices : ICoreServiceLayer, IUserAdminService, IDisposable
     {
-        private AdminServiceClient _client = new AdminServiceClient();
+        private AdminServiceClient _client;
         private LoginCredentials _credentials;
         private bool _clientCredentialsSet;
 
@@ -39,6 +39,19 @@ namespace ClearCanvas.ImageServer.Services.Common.Admin
             {
                 _client.Credentials = this.Credentials;
                 _clientCredentialsSet = true;
+            }
+        }
+
+        public AdminServices()
+        {
+            try
+            {
+                _client = new AdminServiceClient();
+            }
+            catch(Exception ex)
+            {
+                Platform.Log(LogLevel.Error,ex);
+                throw;
             }
         }
 
