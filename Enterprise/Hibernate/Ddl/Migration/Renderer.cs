@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Common.Utilities;
 using NHibernate.Dialect;
 using ClearCanvas.Enterprise.Hibernate.Ddl.Migration.Renderers;
+using NHibernate.Cfg;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
@@ -14,20 +15,31 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		/// </summary>
 		/// <param name="dialect"></param>
 		/// <returns></returns>
-		public static IRenderer GetRenderer(Dialect dialect)
+		public static IRenderer GetRenderer(Configuration config, Dialect dialect)
 		{
 			// TODO use dialect to choose renderer
-			return new MsSqlRenderer(dialect);
+			return new MsSqlRenderer(config, dialect);
 		}
 
+        private readonly Configuration _config;
 		private readonly Dialect _dialect;
+        private readonly string _defaultSchema;
 
-		protected Renderer(Dialect dialect)
+        protected Renderer(Configuration config, Dialect dialect)
 		{
+            _config = config;
 			_dialect = dialect;
+            _defaultSchema = config.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+
 		}
 
 		#region IRenderer Members
+
+        public virtual IEnumerable<Change> PreFilter(IEnumerable<Change> changes)
+        {
+            // don't filter any changes
+            return changes;
+        }
 
 		public virtual Statement[] Render(AddTableChange change)
 		{
@@ -49,11 +61,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			if (table.PrimaryKey != null)
 			{
 				buf.Append(',').Append(GetPrimaryKeyString(table.PrimaryKey));
-			}
-
-			foreach (ConstraintInfo uk in table.UniqueKeys)
-			{
-				buf.Append(',').Append(GetUniqueConstraintString(uk));
 			}
 
 			buf.Append(")");
@@ -99,18 +106,19 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			return new Statement[] { new Statement(sql) };
 		}
 
-		public Statement[] Render(AddPrimaryKeyChange change)
+        public virtual Statement[] Render(AddPrimaryKeyChange change)
 		{
-			string sql = string.Format("alter table {0} add constraint {1} {2}",
+			string sql = string.Format("alter table {0} add {2}",
 				GetQualifiedName(change.Table),
-				change.PrimaryKey.Name,
 				GetPrimaryKeyString(change.PrimaryKey));
 
 			return new Statement[] { new Statement(sql) };
 		}
 
-		public Statement[] Render(DropPrimaryKeyChange change)
+        public virtual Statement[] Render(DropPrimaryKeyChange change)
 		{
+            // TODO: change this so that it omits the name of the primary key (name isn't needed in SQL server),
+            // and it will  be incorrect because the pk name was auto-generated
 			string sql = "alter table " + GetQualifiedName(change.Table) + _dialect.GetDropIndexConstraintString(change.PrimaryKey.Name);
 			return new Statement[] { new Statement(sql) };
 		}
@@ -158,7 +166,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			return new Statement[] { new Statement(sql) };
 		}
 
-		public Statement[] Render(AddEnumValueChange change)
+        public virtual Statement[] Render(AddEnumValueChange change)
 		{
 			EnumerationMemberInfo e = change.Value;
 			string sql = string.Format("insert into {0} (Code_, Value_, Description_, DisplayOrder_, Deactivated_) values ({1}, {2}, {3}, {4}, {5})",
@@ -171,7 +179,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			return new Statement[] { new Statement(sql) };
 		}
 
-		public Statement[] Render(DropEnumValueChange change)
+        public virtual Statement[] Render(DropEnumValueChange change)
 		{
 			string sql = string.Format("delete from {0} where Code_ = {1}",
 				GetQualifiedName(change.Table),
@@ -183,7 +191,17 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
 		#region Helpers
 
-		private static string FormatValue(string str)
+        protected Configuration Config
+        {
+            get { return _config; }
+        }
+
+        protected string DefaultSchema
+        {
+            get { return _defaultSchema; }
+        }
+
+        protected static string FormatValue(string str)
 		{
 			// todo: can we use dialect here?
 			if (str == null)
@@ -203,7 +221,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
 		protected string GetQualifiedName(string schema, string table)
 		{
-			return schema == null ? table : schema + "." + table;
+            string qualifier = schema ?? _defaultSchema;
+            return qualifier == null ? table : qualifier + "." + table;
 		}
 
 		protected string GetPrimaryKeyString(ConstraintInfo pk)

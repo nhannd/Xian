@@ -5,6 +5,10 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
+    /// <summary>
+    /// Compares two instances of <see cref="RelationModelInfo"/> to determine the changes that are needed
+    /// to transform one to the other.
+    /// </summary>
 	class RelationalModelComparator
 	{
 		delegate IEnumerable<Change> ItemProcessor<T>(T item);
@@ -12,6 +16,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
 		private static readonly Dictionary<Type, int> _changeOrder = new Dictionary<Type, int>();
 
+        /// <summary>
+        /// Class constructor
+        /// </summary>
 		static RelationalModelComparator()
 		{
 			// define the order that changes should occur to avoid dependency issues
@@ -34,12 +41,22 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
 		private readonly EnumOptions _enumOption;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="enumOption"></param>
 		public RelationalModelComparator(EnumOptions enumOption)
 		{
 			_enumOption = enumOption;
 		}
 
-
+        /// <summary>
+        /// Returns an ordered list of <see cref="Change"/> objects that describe the changes
+        /// required to transform the initial model into the desired model.
+        /// </summary>
+        /// <param name="initial"></param>
+        /// <param name="desired"></param>
+        /// <returns></returns>
 		public List<Change> CompareDatabases(RelationalModelInfo initial, RelationalModelInfo desired)
 		{
 			List<Change> changes = new List<Change>();
@@ -63,20 +80,35 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 				);
 			}
 
-			// order changes correctly
-			return CollectionUtils.Sort(changes,
-						delegate(Change x, Change y)
-						{
-							int changeOrderValue = _changeOrder[x.GetType()]
-								.CompareTo(_changeOrder[y.GetType()]);
-
-							if (changeOrderValue != 0)
-								return changeOrderValue;
-
-							// if two changes are of same type, then order by table name
-							return x.Table.Name.CompareTo(y.Table.Name);
-						});
+            return OrderChanges(changes);
 		}
+
+        private List<Change> OrderChanges(List<Change> changes)
+        {
+            // the algorithm here tries to do 2 things:
+            // 1. Re-organize groups of changes so as to avoid any dependency problems.
+            // 2. Preserve the order of changes as much as possible, not re-ordering anything
+            // that doesn't need to be re-ordered to satisfy 1.  This *should* keep changes pertaining to the
+            // same table clustered together where possible, and also keep AddEnumValueChanges in order
+
+            // group changes by type
+            IDictionary<Type, List<Change>> groupedByType =
+                GroupBy<Change, Type>(changes, delegate(Change c) { return c.GetType(); });
+
+            // sort the types to avoid dependency issues
+            List<Type> sortedTypes = CollectionUtils.Sort(groupedByType.Keys,
+                        delegate(Type x, Type y)
+                        {
+                            return _changeOrder[x].CompareTo(_changeOrder[y]);
+                        });
+
+
+            // flatten changes back into a single list
+            return CollectionUtils.Concat<Change>(
+                    CollectionUtils.Map<Type, List<Change>>(sortedTypes,
+                        delegate(Type t) { return groupedByType[t]; }).ToArray()
+                   );
+        }
 
 		private IEnumerable<Change> AddTable(TableInfo t)
 		{
@@ -91,7 +123,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			changes.AddRange(
 				CollectionUtils.Map<ForeignKeyInfo, Change>(t.ForeignKeys,
 				    delegate(ForeignKeyInfo item) { return new AddForeignKeyChange(t, item); }));
-			return changes;
+            changes.AddRange(
+                CollectionUtils.Map<ConstraintInfo, Change>(new ConstraintInfo[] { t.PrimaryKey } ,
+                    delegate(ConstraintInfo item) { return new AddPrimaryKeyChange(t, item); }));
+            return changes;
 		}
 
 		private IEnumerable<Change> DropTable(TableInfo t)
@@ -106,7 +141,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			changes.AddRange(
 				CollectionUtils.Map<ForeignKeyInfo, Change>(t.ForeignKeys,
 					delegate(ForeignKeyInfo item) { return new DropForeignKeyChange(t, item); }));
-			changes.Add(new DropTableChange(t));
+            changes.AddRange(
+                CollectionUtils.Map<ConstraintInfo, Change>(new ConstraintInfo[] { t.PrimaryKey } ,
+                    delegate(ConstraintInfo item) { return new DropPrimaryKeyChange(t, item); }));
+            changes.Add(new DropTableChange(t));
 			return changes;
 		}
 
@@ -237,6 +275,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
 		private IEnumerable<Change> AddEnumeration(TableInfo table, EnumerationInfo item)
 		{
+            // check enum options to determine if this item should be considered
 			if(_enumOption == EnumOptions.all || (_enumOption == EnumOptions.hard && item.IsHard))
 			{
 				return CollectionUtils.Map<EnumerationMemberInfo, Change>(
@@ -292,6 +331,19 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			return new Change[] { };
 		}
 
+        /// <summary>
+        /// Compares the initial and desired sets of items, forwarding items to the appropriate
+        /// callback and returning the aggregate set of results.
+        /// </summary>
+        /// <remarks>
+        /// Items that appear in <paramref name="desired"/> but not in <paramref name="initial"/>
+        /// are passed to <paramref name="addProcessor"/>.
+        /// Items that appear in <paramref name="initial"/> but not in <paramref name="desired"/>
+        /// are passed to <paramref name="dropProcessor"/>.
+        /// Items that appear in both sets are passed to <paramref name="compareProcessor"/> for
+        /// comparison.
+        /// Results of all callbacks are aggregated and returned.
+        /// </remarks>
 		private IEnumerable<Change> CompareSets<T>(IEnumerable<T> initial, IEnumerable<T> desired,
 		                                           ItemProcessor<T> addProcessor,
 		                                           ItemProcessor<T> dropProcessor,
@@ -303,12 +355,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			// partition desired set into those items that are contained in the initial set (true) and
 			// those that are not (false)
 			IDictionary<bool, List<T>> a = GroupBy<T, bool>(desired,
-					delegate(T x) { return CollectionUtils.Contains(initial, delegate(T y) { return x.Identity == y.Identity; }); });
+					delegate(T x) { return CollectionUtils.Contains(initial, delegate(T y) { return Equals(x, y); }); });
 
 			// partition initial set into those items that are contained in the desired set (true) and
 			// those that are not (false)
 			IDictionary<bool, List<T>> b = GroupBy<T, bool>(initial,
-					delegate(T x) { return CollectionUtils.Contains(desired, delegate(T y) { return x.Identity == y.Identity; }); });
+                    delegate(T x) { return CollectionUtils.Contains(desired, delegate(T y) { return Equals(x, y); }); });
 
 			// these items need to be added
 			List<T> adds;

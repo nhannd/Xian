@@ -6,6 +6,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
 	interface IRenderer
 	{
+        IEnumerable<Change> PreFilter(IEnumerable<Change> changes);
+
 		Statement[] Render(AddTableChange change);
 		Statement[] Render(DropTableChange change);
 		Statement[] Render(AddColumnChange change);

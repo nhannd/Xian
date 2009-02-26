@@ -85,22 +85,22 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			RelationalModelInfo currentModel = new RelationalModelInfo(config, dialect);
 			RelationalModelInfo baselineModel = new RelationalModelInfo();		// baseline model is empty
 
-			return GetScripts(dialect, baselineModel, currentModel);
+            return GetScripts(config, dialect, baselineModel, currentModel);
 		}
 
     	public string[] GenerateUpgradeScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel)
     	{
     		RelationalModelInfo currentModel = new RelationalModelInfo(config, dialect);
 
-    		return GetScripts(dialect, baselineModel, currentModel);
+    		return GetScripts(config, dialect, baselineModel, currentModel);
     	}
 
-    	private string[] GetScripts(Dialect dialect, RelationalModelInfo baselineModel, RelationalModelInfo currentModel)
+        private string[] GetScripts(Configuration config, Dialect dialect, RelationalModelInfo baselineModel, RelationalModelInfo currentModel)
     	{
     		RelationalModelComparator comparator = new RelationalModelComparator(_enumOption);
     		List<Change> changes = comparator.CompareDatabases(baselineModel, currentModel);
 
-    		IRenderer renderer = Renderer.GetRenderer(dialect);
+    		IRenderer renderer = Renderer.GetRenderer(config, dialect);
 
     		List<Statement> statements = new List<Statement>();
     		foreach (Change change in changes)
