@@ -17,6 +17,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public static TextCalloutGraphic CreateTextOnlyGraphic()
 		{
+			// TODO: Split this usage into its own class so that it's not considered an AnnotationGraphic (by definition, a subject and associated callout)
 			return new TextCalloutGraphic(new LocationOfInterestInteractiveGraphic());
 		}
 
