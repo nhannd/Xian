@@ -33,6 +33,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Common.Shreds
 {
+	/// <summary>
+	/// Defines an extension point for shreds that can be loaded and executed by the shred-host.
+	/// </summary>
     [ExtensionPoint()]
 	public sealed class ShredExtensionPoint : ExtensionPoint<IShred>
     {

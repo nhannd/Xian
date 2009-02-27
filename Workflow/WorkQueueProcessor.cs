@@ -24,13 +24,13 @@ namespace ClearCanvas.Workflow
 		/// </remarks>
 		/// <param name="batchSize"></param>
 		/// <returns></returns>
-		protected override IList<WorkQueueItem> GetNextBatchCore(int batchSize)
+		protected override IList<WorkQueueItem> GetNextEntityBatch(int batchSize)
 		{
 			return PersistenceScope.CurrentContext.GetBroker<IWorkQueueItemBroker>().GetPendingItems(WorkQueueItemType, batchSize);
 		}
 
 		/// <summary>
-		/// Called when <see cref="QueueProcessor{TItem}.ActOnItem"/> succeeds.
+		/// Called when <see cref="QueueProcessor{TItem}.ProcessItem"/> succeeds.
 		/// </summary>
 		/// <remarks>
 		/// Subclasses should not need to override this method.
@@ -42,7 +42,7 @@ namespace ClearCanvas.Workflow
 		}
 
 		/// <summary>
-		/// Called when <see cref="QueueProcessor{TItem}.ActOnItem"/> throws an exception.
+		/// Called when <see cref="QueueProcessor{TItem}.ProcessItem"/> throws an exception.
 		/// </summary>
 		/// <remarks>
 		/// Subclasses should not need to override this method.

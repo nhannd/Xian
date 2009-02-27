@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			_settings = settings;
 		}
 
-		protected override IList<Procedure> GetNextBatchCore(int batchSize)
+		protected override IList<Procedure> GetNextEntityBatch(int batchSize)
 		{
 			// Find a list of procedures that match the criteria
 			ProcedureSearchCriteria criteria = new ProcedureSearchCriteria();
@@ -32,7 +32,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			return PersistenceScope.CurrentContext.GetBroker<IProcedureBroker>().Find(criteria, page);
 		}
 
-		protected override void ActOnItemCore(Procedure procedure)
+		protected override void ActOnItem(Procedure procedure)
 		{
 			// create the workqueue item
 			TimeSpan expirationTime = TimeSpan.FromHours(_settings.ExpirationTime);

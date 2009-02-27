@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Shreds.ImageAvailability
 			get { return ImageAvailabilityWorkQueue.WorkQueueItemType; }
 		}
 
-		protected override void ActOnItemCore(WorkQueueItem item)
+		protected override void ActOnItem(WorkQueueItem item)
 		{
 			Procedure procedure = ImageAvailabilityWorkQueue.GetProcedure(item, PersistenceScope.CurrentContext);
 			procedure.ImageAvailability = _imageAvailabilityStrategy.ComputeProcedureImageAvailability(procedure, PersistenceScope.CurrentContext);

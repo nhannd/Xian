@@ -7,8 +7,13 @@ namespace ClearCanvas.Common.Shreds
 {
     /// <summary>
 	/// Specialization of <see cref="Shred"/> for running code packaged in <see cref="QueueProcessor"/>
-    /// implementations.
+    /// derived classes.
     /// </summary>
+    /// <remarks>
+    /// This class must be sub-classed, and the <see cref="GetProcessors"/> method overridden
+    /// to return the set of processors to execute (a single instance of this class may run multiple
+    ///  queue processors in parallel).
+    /// </remarks>
 	public abstract class QueueProcessorShred : Shred
 	{
 		private bool _isStarted = false;
@@ -29,7 +34,10 @@ namespace ClearCanvas.Common.Shreds
 
 		#region Shred overrides
 
-		public override void Start()
+    	/// <summary>
+    	/// Called to start the shred.
+    	/// </summary>
+    	public override void Start()
 		{
             if (!_isStarted)
 			{
@@ -37,7 +45,10 @@ namespace ClearCanvas.Common.Shreds
 			}
 		}
 
-		public override void Stop()
+    	/// <summary>
+    	/// Called to stop the shred.
+    	/// </summary>
+    	public override void Stop()
 		{
             if (_isStarted)
 			{

@@ -22,14 +22,14 @@ namespace ClearCanvas.Enterprise.Core
 		}
 
 		/// <summary>
-		/// Gets the next batch of items from the queue.
+		/// Gets the next batch of entities from the queue.
 		/// </summary>
 		/// <remarks>
 		/// Subclasses can assume that a read-scope has been established.
 		/// </remarks>
 		/// <param name="batchSize"></param>
 		/// <returns></returns>
-		protected abstract IList<TItem> GetNextBatchCore(int batchSize);
+		protected abstract IList<TItem> GetNextEntityBatch(int batchSize);
 
 		/// <summary>
 		/// Called to act on a queue item.
@@ -39,10 +39,10 @@ namespace ClearCanvas.Enterprise.Core
 		/// the item cannot be fully acted on, an exception should be thrown.
 		/// </remarks>
 		/// <param name="item"></param>
-		protected abstract void ActOnItemCore(TItem item);
+		protected abstract void ActOnItem(TItem item);
 
 		/// <summary>
-		/// Called when <see cref="ActOnItemCore"/> succeeds.
+		/// Called when <see cref="ActOnItem"/> succeeds.
 		/// </summary>
 		/// <remarks>
 		/// This method is intended to update the item to indicate that the actions succeeded.
@@ -52,7 +52,7 @@ namespace ClearCanvas.Enterprise.Core
 		protected abstract void OnItemSucceeded(TItem item);
 
 		/// <summary>
-		/// Called when <see cref="ActOnItemCore"/> throws an exception.
+		/// Called when <see cref="ActOnItem"/> throws an exception.
 		/// </summary>
 		/// <remarks>
 		/// This method is intended to update the time to indicate that processing failed, with the 
@@ -68,14 +68,14 @@ namespace ClearCanvas.Enterprise.Core
 		{
 			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Read))
 			{
-				IList<TItem> items = GetNextBatchCore(batchSize);
+				IList<TItem> items = GetNextEntityBatch(batchSize);
 
 				scope.Complete();
 				return items;
 			}
 		}
 
-		protected override void ActOnItem(TItem item)
+		protected override void ProcessItem(TItem item)
 		{
 			Exception error = null;
 			using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
@@ -89,7 +89,7 @@ namespace ClearCanvas.Enterprise.Core
 				try
 				{
 					// take action base on item
-					ActOnItemCore(item);
+					ActOnItem(item);
 
 					// ensure that the commit will ultimately succeed
 					context.SynchState();

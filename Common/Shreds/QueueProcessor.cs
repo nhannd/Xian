@@ -5,17 +5,17 @@ using System.Threading;
 namespace ClearCanvas.Common.Shreds
 {
 	/// <summary>
-	/// Defines an abstract implementation of a processor that is executed by a shred.
+	/// Abstract base class for queue processor classes.
 	/// </summary>
 	/// <remarks>
-	/// The implementation should not make use of threads.  All threading is handled externally.
-	/// The <see cref="Run"/> method will be invoked on one thread, and the <see cref="RequestStop"/>
-	/// method invoked on another thread.
 	/// </remarks>
 	public abstract class QueueProcessor
 	{
 		private volatile bool _stopRequested;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
 		protected QueueProcessor()
 		{
 		}
@@ -66,13 +66,18 @@ namespace ClearCanvas.Common.Shreds
 	}
 
 	/// <summary>
-	/// A specialization of <see cref="QueueProcessor"/> that is designed to process a queue of items.
+	/// Abstract base class for queue processor classes.
 	/// </summary>
 	/// <typeparam name="TItem"></typeparam>
 	/// <remarks>
+	/// <para>
 	/// This class implements the logic to process a queue of items.  It polls the queue
 	/// for a batch of items to process, processes those items, and then polls the queue
 	/// again.  If the queue is empty, it sleeps for a preset amount of time.
+	/// </para>
+	/// <para>
+	/// All threading is handled externally by <see cref="QueueProcessorShred"/>.
+	/// </para>
 	/// </remarks>
 	public abstract class QueueProcessor<TItem> : QueueProcessor
 	{
@@ -100,10 +105,10 @@ namespace ClearCanvas.Common.Shreds
 		protected abstract IList<TItem> GetNextBatch(int batchSize);
 
 		/// <summary>
-		/// Called to act on a queue item.
+		/// Called to process a queue item.
 		/// </summary>
 		/// <param name="item"></param>
-		protected abstract void ActOnItem(TItem item);
+		protected abstract void ProcessItem(TItem item);
 
 		#region Override Methods
 
@@ -136,7 +141,7 @@ namespace ClearCanvas.Common.Shreds
 							break;
 
 						// process the item
-						ActOnItem(item);
+						ProcessItem(item);
 					}
 				}
 			}
