@@ -1054,7 +1054,7 @@ namespace ClearCanvas.Common.Utilities
 		/// <summary>
 		/// Partitions elements of the target collection into sub-groups based on the specified key generating function,
 		/// and returns a dictionary of the generated keys, where each value is a list of the items that produced that key.
-		/// It should be noted that the item appear in the sub-lists in the order in which they were enumerated from the target.
+		/// Items appear in the sub-lists in the order in which they were enumerated from the target.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <typeparam name="K"></typeparam>
