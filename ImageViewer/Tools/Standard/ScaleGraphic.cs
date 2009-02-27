@@ -251,7 +251,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// <summary>
 		/// Recomputes and reformats the graphics that comprise the scale.
 		/// </summary>
-		/// <exception cref="UncalibratedImageException">Thrown if the parent image does not provide pixel spacing information.</exception>
 		protected virtual void UpdateScale()
 		{
 			if (!_visible) // no point recomputing the scale if client code has made us invisible
@@ -273,6 +272,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				IList<PointF> majorTicks;
 				IList<PointF> minorTicks;
 				ComputeTickMarks(out majorTicks, out minorTicks, pt0, pt1, false);
+
+				if (majorTicks == null || minorTicks == null)
+				{
+					base.Visible = false;
+					return;
+				}
 
 				// draw tick marks
 				if (majorTicks.Count + minorTicks.Count > 1) // must be at least 2 ticks for this to be useful
@@ -329,16 +334,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// Computes positions of major and minor tick marks along the specified line segment.
 		/// </summary>
 		/// <remarks>
+		/// <para>
 		/// For performance reasons the arguments are <b>not</b> validated. In particular, the line segment specified by the two points
 		/// must be valid and non-trivial - specifying the same point (or close to the same point) for both end points produces indeterminate
 		/// results.
+		/// </para>
+		/// <para>
+		/// If the image is not calibrated and has no pixel spacing information, both
+		/// <paramref name="majorTicks"/> and <paramref name="minorTicks"/> return null.
+		/// </para>
 		/// </remarks>
 		/// <param name="majorTicks">Output variable to receive a list of major tick positions.</param>
 		/// <param name="minorTicks">Output variable to receive a list of minor tick positions.</param>
 		/// <param name="linePoint1">One endpoint of the line segment along which to compute tick positions.</param>
 		/// <param name="linePoint2">The other endpoint of the line segment along which to compute tick positions.</param>
 		/// <param name="allowOverlap">Specifies if minor ticks coincident with an existing major tick should be included in the results.</param>
-		/// <exception cref="UncalibratedImageException">Thrown if the parent image does not provide pixel spacing information.</exception>
 		protected void ComputeTickMarks(out IList<PointF> majorTicks, out IList<PointF> minorTicks, PointF linePoint1, PointF linePoint2, bool allowOverlap)
 		{
 			PointF p0 = base.SpatialTransform.ConvertToSource(linePoint1);
@@ -349,7 +359,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			double len;
 			double pxR, pxS;
 			double pxW, pxH;
-			GetPixelDimensions(out pxW, out pxH);
+			bool isCalibrated = TryGetPixelDimensions(out pxW, out pxH);
+			if (!isCalibrated)
+			{
+				majorTicks = null;
+				minorTicks = null;
+				return;
+			}
+
 			if (!FloatComparer.AreEqual(p0.X, p1.X, 0.001f))
 			{
 				pxR = Math.Abs((p0.Y - p1.Y)/(p0.X - p1.X));
@@ -444,8 +461,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		/// <param name="width">Output variable to receive the pixel millimetre width.</param>
 		/// <param name="height">Output variable to receive the pixel millimetre height.</param>
-		/// <exception cref="UncalibratedImageException">Thrown if the parent image does not provide pixel spacing information.</exception>
-		private void GetPixelDimensions(out double width, out double height)
+		private bool TryGetPixelDimensions(out double width, out double height)
 		{
 			if (base.ParentPresentationImage is IImageSopProvider)
 			{
@@ -454,10 +470,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				{
 					width = spacing.Column;
 					height = spacing.Row;
-					return;
+					return true;
 				}
 			}
-			throw new UncalibratedImageException();
+			width = 0;
+			height = 0;
+			return false;
 		}
 
 		private class TickOffset
