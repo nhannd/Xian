@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -29,12 +29,46 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer.Tools.Measurement
-{
-	public enum Units
-	{
-		Pixels,
-		Millimeters,
-		Centimeters
+#if	UNIT_TESTS
+
+#pragma warning disable 1591,0419,1574,1587
+
+using System;
+using System.Drawing;
+using NUnit.Framework;
+
+namespace ClearCanvas.ImageViewer.Mathematics.Tests {
+	[TestFixture]
+	public class PolygonFTests {
+		public PolygonFTests() {
+		}
+
+		[TestFixtureSetUp]
+		public void Init() {
+		}
+
+		[TestFixtureTearDown]
+		public void Cleanup() {
+		}
+
+		[Test]
+		public void Contains() {
+			PolygonF polygon = new PolygonF(new PointF[] {new PointF(0,0), new PointF(1,0), new PointF(1,1), new PointF(0, 1) });
+			Assert.IsTrue(polygon.Contains(new PointF(0.5f, 0.5f))); // inside
+			Assert.IsFalse(polygon.Contains(new PointF(0.5f, 1.5f))); // above
+			Assert.IsFalse(polygon.Contains(new PointF(0f, 1.5f))); // above
+
+			Assert.IsTrue(polygon.Contains(new PointF(0f, 0.5f))); // left edge
+			Assert.IsFalse(polygon.Contains(new PointF(1f, 0.5f))); // right edge
+			Assert.IsTrue(polygon.Contains(new PointF(0.5f, 0f))); // bottom edge
+			Assert.IsFalse(polygon.Contains(new PointF(0.5f, 1f))); // top edge
+
+			Assert.IsTrue(polygon.Contains(new PointF(0f, 0f))); // bottom left corner
+			Assert.IsFalse(polygon.Contains(new PointF(0f, 1f))); // top left corner
+			Assert.IsFalse(polygon.Contains(new PointF(1f, 0f))); // bottom right corner
+			Assert.IsFalse(polygon.Contains(new PointF(1f, 1f))); // top right corner
+		}
 	}
 }
+
+#endif

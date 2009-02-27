@@ -30,41 +30,50 @@
 #endregion
 
 using System.Drawing;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Tools.Measurement;
 
-namespace ClearCanvas.ImageViewer.Tools.Measurement
+namespace ClearCanvas.ImageViewer.RoiGraphics
 {
-	public abstract class RoiInfo
+	public abstract class Roi
 	{
-		private RoiAnalysisMode _mode;
+		private readonly int _imageRows;
+		private readonly int _imageColumns;
+		private readonly string _modality;
+		private readonly PixelData _pixelData;
+		private readonly PixelAspectRatio _pixelAspectRatio;
+		private readonly PixelSpacing _normalizedPixelSpacing;
+		private readonly IComposableLut _modalityLut;
 
-		private int _imageRows;
-		private int _imageColumns;
-		private string _modality;
-		private PixelData _pixelData;
-		private PixelAspectRatio _pixelAspectRatio;
-		private PixelSpacing _normalizedPixelSpacing;
-		private IComposableLut _modalityLut;
 		private RectangleF _boundingBox;
 
-		protected RoiInfo()
+		protected Roi(IPresentationImage presentationImage)
 		{
-		}
+			IImageGraphicProvider provider = presentationImage as IImageGraphicProvider;
+			if (provider == null)
+				return;
 
-		/// <summary>
-		/// Set by the <see cref="MeasurementTool{T}"/>.
-		/// </summary>
-		public RoiAnalysisMode Mode
-		{
-			get { return _mode; }
-			internal set { _mode = value; }
+			_imageRows = provider.ImageGraphic.Rows;
+			_imageColumns = provider.ImageGraphic.Columns;
+
+			_pixelData = provider.ImageGraphic.PixelData;
+			if (presentationImage is IModalityLutProvider)
+				_modalityLut = ((IModalityLutProvider) presentationImage).ModalityLut;
+
+			if (presentationImage is IImageSopProvider)
+			{
+				Frame frame = ((IImageSopProvider) presentationImage).Frame;
+				_normalizedPixelSpacing = frame.NormalizedPixelSpacing;
+				_pixelAspectRatio = frame.PixelAspectRatio;
+				_modality = frame.ParentImageSop.Modality;
+			}
+			else
+			{
+				_normalizedPixelSpacing = new PixelSpacing(0, 0);
+				_pixelAspectRatio = new PixelAspectRatio(0, 0);
+			}
 		}
 
 		public int ImageRows
@@ -97,55 +106,28 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return _modalityLut; }
 		}
 
-		public RectangleF BoundingBox
-		{
-			get { return _boundingBox; }
-		}
-
 		public string Modality
 		{
 			get { return _modality; }
 		}
 
-		public virtual bool IsValid()
+		public RectangleF BoundingBox
 		{
-			return this.PixelData != null;
+			get
+			{
+				if (_boundingBox.IsEmpty)
+					_boundingBox = ComputeBounds();
+				return _boundingBox;
+			}
 		}
 
-		/// <summary>
-		/// Convenience method for initializing a <see cref="RoiInfo"/> object
-		/// from an <see cref="InteractiveGraphic"/>.
-		/// </summary>
-		protected internal virtual void Initialize(InteractiveGraphic roi)
+		protected abstract RectangleF ComputeBounds();
+
+		public abstract bool Contains(PointF point);
+
+		public bool Contains(int x, int y)
 		{
-			IPresentationImage image = roi.ParentPresentationImage;
-			IImageGraphicProvider provider = image as IImageGraphicProvider;
-			if (provider == null)
-				return;
-
-			_imageRows = provider.ImageGraphic.Rows;
-			_imageColumns = provider.ImageGraphic.Columns;
-
-			_pixelData = provider.ImageGraphic.PixelData;
-			if (image is IModalityLutProvider)
-				_modalityLut = ((IModalityLutProvider)image).ModalityLut;
-
-			roi.CoordinateSystem = CoordinateSystem.Source;
-			_boundingBox = roi.BoundingBox;
-			roi.ResetCoordinateSystem();
-
-			if (image is IImageSopProvider)
-			{
-				Frame frame = ((IImageSopProvider)image).Frame;
-				_normalizedPixelSpacing = frame.NormalizedPixelSpacing;
-				_pixelAspectRatio = frame.PixelAspectRatio;
-				_modality = frame.ParentImageSop.Modality;
-			}
-			else
-			{
-				_normalizedPixelSpacing = new PixelSpacing(0, 0);
-				_pixelAspectRatio = new PixelAspectRatio(0, 0);
-			}
+			return this.Contains(new PointF(x, y));
 		}
 	}
 }

@@ -36,6 +36,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -121,6 +122,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 
 			return closestPoint;
+		}
+
+		public override Roi CreateRoiInformation()
+		{
+			return new RectangularRoi(this);
 		}
 	}
 }

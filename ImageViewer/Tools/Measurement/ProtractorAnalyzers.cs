@@ -34,13 +34,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.RoiGraphics;
+using ClearCanvas.ImageViewer.RoiGraphics.Analyzers;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint<ProtractorRoiInfo>))]
-	public class ProtractorAngleCalculator : IRoiAnalyzer<ProtractorRoiInfo>
+	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint))]
+	public class ProtractorAngleCalculator : IRoiAnalyzer
 	{
-		public string Analyze(ProtractorRoiInfo roiInfo)
+		public string Analyze(ProtractorRoiInfo roiInfo, RoiAnalysisMode mode)
 		{
 			// Don't show the callout until the second ray is drawn
 			if (roiInfo.Points.Count < 3)
@@ -72,6 +74,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				normalized.Add(new PointF(point.X, point.Y * aspectRatio));
 
 			return normalized;
+		}
+
+		public string Analyze(Roi roi, RoiAnalysisMode mode) {
+			return Analyze((ProtractorRoiInfo) roi, mode);
+		}
+
+		public bool SupportsRoi(Roi roi) {
+			return roi is ProtractorRoiInfo;
 		}
 	}
 }

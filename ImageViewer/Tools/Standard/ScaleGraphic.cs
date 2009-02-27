@@ -460,14 +460,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			throw new UncalibratedImageException();
 		}
 
-		/// <summary>
-		/// Exception indicating that the parent image does not provide pixel spacing information.
-		/// </summary>
-		public class UncalibratedImageException : Exception
-		{
-			internal UncalibratedImageException() : base("The image does not provide pixel spacing information, nor has it been calibrated.") {}
-		}
-
 		private class TickOffset
 		{
 			public readonly float X;

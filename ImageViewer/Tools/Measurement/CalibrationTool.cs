@@ -37,6 +37,7 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.RoiGraphics;
+using ClearCanvas.ImageViewer.RoiGraphics.Analyzers;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System;
 
@@ -102,8 +103,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			Units units = Units.Centimeters;
 
-			double length = RulerLengthCalculator.CalculateLength(
-				roiGraphic.Roi as PolyLineInteractiveGraphic,
+			double length = RoiLengthAnalyzer.CalculateLength(
+				roiGraphic.Subject as PolyLineInteractiveGraphic,
 			    image.Frame.NormalizedPixelSpacing, 
 				ref units);
 
@@ -136,7 +137,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				aspectRatio = image.Frame.PixelAspectRatio.Row / image.Frame.PixelAspectRatio.Column;
 			}
 
-			PolyLineInteractiveGraphic line = roiGraphic.Roi as PolyLineInteractiveGraphic;
+			PolyLineInteractiveGraphic line = roiGraphic.Subject as PolyLineInteractiveGraphic;
 
 			line.CoordinateSystem = CoordinateSystem.Source;
 			double widthInPixels = line.PolyLine[1].X - line.PolyLine[0].X;

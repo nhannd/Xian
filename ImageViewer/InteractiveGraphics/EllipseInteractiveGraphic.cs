@@ -35,6 +35,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -111,6 +112,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			PointF center = new PointF(x1,y1);
 
 			return IntersectEllipseAndLine(a, b, center, point);
+		}
+
+		public override Roi CreateRoiInformation()
+		{
+			return new EllipticalRoi(this);
 		}
 
 		/// <summary>

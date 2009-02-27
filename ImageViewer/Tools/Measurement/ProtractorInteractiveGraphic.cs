@@ -35,6 +35,7 @@ using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -153,6 +154,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				delegate(IGraphic test) { return test is InvariantArcPrimitive; }) as InvariantArcPrimitive;
 
 			Platform.CheckForNullReference(_arc, "_arc");
+		}
+
+		public override Roi CreateRoiInformation()
+		{
+			return new ProtractorRoiInfo(this);
 		}
 	}
 }

@@ -264,6 +264,15 @@
   <data name="FormatAdjustableDataLutDescription" xml:space="preserve">
     <value>{0} [C:{1:F2}% B:{2:F2}%]</value>
   </data>
+  <data name="FormatAreaPixels" xml:space="preserve">
+    <value>Area: {0:F0} pixels</value>
+  </data>
+  <data name="FormatAreaSquareCm" xml:space="preserve">
+    <value>Area: {0:F1} cm²</value>
+  </data>
+  <data name="FormatAreaSquareMm" xml:space="preserve">
+    <value>Area: {0:F0} mm²</value>
+  </data>
   <data name="FormatDescriptionBasicLinearLut" xml:space="preserve">
     <value>W:{0} L:{1}</value>
   </data>
@@ -276,6 +285,21 @@
   <data name="FormatDescriptionPresentationStateLinearLut" xml:space="preserve">
     <value>W:{0} L:{1} ({2})</value>
   </data>
+  <data name="FormatLengthCm" xml:space="preserve">
+    <value>Length: {0:F1} cm</value>
+  </data>
+  <data name="FormatLengthMm" xml:space="preserve">
+    <value>Length: {0:F0} mm</value>
+  </data>
+  <data name="FormatLengthPixels" xml:space="preserve">
+    <value>Length: {0:F0} pixels</value>
+  </data>
+  <data name="FormatMean" xml:space="preserve">
+    <value>Mean: {0}</value>
+  </data>
+  <data name="FormatMeanCT" xml:space="preserve">
+    <value>Mean: {0} HU</value>
+  </data>
   <data name="FormatMouseButtonShortcutDescription" xml:space="preserve">
     <value>{0} : {1}</value>
   </data>
@@ -287,6 +311,12 @@
   </data>
   <data name="FormatMouseWheelShortcutDescription" xml:space="preserve">
     <value>Wheel : {0}</value>
+  </data>
+  <data name="FormatStdDev" xml:space="preserve">
+    <value>Std Dev: {0}</value>
+  </data>
+  <data name="FormatStdDevCT" xml:space="preserve">
+    <value>Std Dev: {0} HU</value>
   </data>
   <data name="LabelError" xml:space="preserve">
     <value>Error:</value>
@@ -324,6 +354,10 @@
   <data name="MessagePresentationStateReadFailure" xml:space="preserve">
     <value>An error has occured while attempting to read a presentation state file. Please check the log for more details.</value>
   </data>
+  <data name="MessageRoiAnalysisError" xml:space="preserve">
+    <value>An error has occurred while analyzing the Roi.
+Please check the log for more details.</value>
+  </data>
   <data name="NamePrefetchingStrategyVisibleDisplaySet" xml:space="preserve">
     <value>Visible Display Set</value>
   </data>
@@ -335,5 +369,11 @@
   </data>
   <data name="StringEnterText" xml:space="preserve">
     <value>Enter Text</value>
+  </data>
+  <data name="StringNotApplicable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="StringNoValue" xml:space="preserve">
+    <value>---</value>
   </data>
 </root>

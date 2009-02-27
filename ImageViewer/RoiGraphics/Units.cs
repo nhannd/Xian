@@ -1,4 +1,4 @@
-#region License
+﻿#region License
 
 // Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
@@ -29,26 +29,12 @@
 
 #endregion
 
-using ClearCanvas.Common;
-
-namespace ClearCanvas.ImageViewer.Tools.Measurement
+namespace ClearCanvas.ImageViewer.RoiGraphics
 {
-	public enum RoiAnalysisMode
+	public enum Units
 	{
-		Normal = 0,
-
-		Responsive
-	}
-
-	public interface IRoiAnalyzer<T> where T : RoiInfo
-	{
-		string Analyze(T roiInfo);
-	}
-
-	public sealed class RoiAnalyzerExtensionPoint<T> : ExtensionPoint<IRoiAnalyzer<T>> where T : RoiInfo
-	{
-		public RoiAnalyzerExtensionPoint()
-		{
-		}
+		Pixels,
+		Millimeters,
+		Centimeters
 	}
 }

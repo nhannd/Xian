@@ -38,6 +38,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -120,6 +121,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 				return RectangleUtilities.ComputeBoundingRectangle(pointArray);
 			}
+		}
+
+		public override Roi CreateRoiInformation()
+		{
+			return new LinearRoi(this);
 		}
 
 		#region IMemorable Members

@@ -38,13 +38,6 @@ using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	public class RectangularRoiInfo : RoiInfo
-	{
-		public RectangularRoiInfo()
-		{
-		}
-	}
-
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRectangularRoi", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRectangularRoi", "Select", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
@@ -54,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class RectangularRoiTool : MeasurementTool<RectangularRoiInfo>
+	public class RectangularRoiTool : MeasurementTool
 	{
 		public RectangularRoiTool()
 			: base(SR.TooltipRectangularRoi)

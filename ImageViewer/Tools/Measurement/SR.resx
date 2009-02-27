@@ -132,18 +132,6 @@
   <data name="NotApplicable" xml:space="preserve">
     <value>N/A</value>
   </data>
-  <data name="ToolsMeasurementFormatAreaPixels" xml:space="preserve">
-    <value>Area: {0:F0} pixels</value>
-  </data>
-  <data name="ToolsMeasurementFormatAreaSquareCm" xml:space="preserve">
-    <value>Area: {0:F1} cm²</value>
-  </data>
-  <data name="ToolsMeasurementFormatLengthCm" xml:space="preserve">
-    <value>Length: {0:F1} cm</value>
-  </data>
-  <data name="ToolsMeasurementFormatLengthPixels" xml:space="preserve">
-    <value>Length: {0:F0} pixels</value>
-  </data>
   <data name="MenuMeasurement" xml:space="preserve">
     <value>Measurement</value>
   </data>
@@ -177,9 +165,6 @@
   <data name="TooltipEllipticalRoi" xml:space="preserve">
     <value>Elliptical ROI</value>
   </data>
-  <data name="ToolsMeasurementFormatAreaSquareMm" xml:space="preserve">
-    <value>Area: {0:F0} mm²</value>
-  </data>
   <data name="CommandCreateEllipiticalRoi" xml:space="preserve">
     <value>Create Elliptical ROI</value>
   </data>
@@ -191,21 +176,6 @@
   </data>
   <data name="CommandCreateRuler" xml:space="preserve">
     <value>Create Ruler</value>
-  </data>
-  <data name="ToolsMeasurementFormatLengthMm" xml:space="preserve">
-    <value>Length: {0:F0} mm</value>
-  </data>
-  <data name="ToolsMeasurementFormatMean" xml:space="preserve">
-    <value>Mean: {0}</value>
-  </data>
-  <data name="ToolsMeasurementFormatMeanCT" xml:space="preserve">
-    <value>Mean: {0} HU</value>
-  </data>
-  <data name="ToolsMeasurementFormatStdDev" xml:space="preserve">
-    <value>Std Dev: {0}</value>
-  </data>
-  <data name="ToolsMeasurementFormatStdDevCT" xml:space="preserve">
-    <value>Std Dev: {0} HU</value>
   </data>
   <data name="CalibrationDialogTitle" xml:space="preserve">
     <value>Calibrate</value>
@@ -219,9 +189,6 @@
   <data name="TooltipCalibrationTool" xml:space="preserve">
     <value>Calibrate</value>
   </data>
-  <data name="ToolsMeasurementNoValue" xml:space="preserve">
-    <value>---</value>
-  </data>
   <data name="ToolsMeasurementFormatDegrees" xml:space="preserve">
     <value>{0:F0}°</value>
   </data>
@@ -230,10 +197,6 @@
   </data>
   <data name="ErrorCannotCalibrateZeroLengthRuler" xml:space="preserve">
     <value>Cannot calibrate a ruler of zero-length.</value>
-  </data>
-  <data name="MessageRoiAnalysisError" xml:space="preserve">
-    <value>An error has occurred while analyzing the Roi.
-Please check the log for more details.</value>
   </data>
   <data name="MenuDeleteAllMeasurements" xml:space="preserve">
     <value>Delete All Measurements</value>

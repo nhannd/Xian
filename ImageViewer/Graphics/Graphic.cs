@@ -35,6 +35,7 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Rendering;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -297,6 +298,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 				ImageViewer.EventBroker.OnCloneCreated(new CloneCreatedEventArgs(this, clone));
 			
 			return clone;
+		}
+
+		/// <summary>
+		/// Creates an object describing the region of interest on the <see cref="Graphic.ParentPresentationImage"/> selected by this <see cref="Graphic"/>.
+		/// </summary>
+		/// <remarks>
+		/// Graphic objects that do not describe a region of interest may return null.
+		/// </remarks>
+		/// <returns>A <see cref="Roi"/> describing this region of interest, or null if the graphic does not describe a region of interest.</returns>
+		public virtual Roi CreateRoiInformation()
+		{
+			return null;
 		}
 
 		/// <summary>

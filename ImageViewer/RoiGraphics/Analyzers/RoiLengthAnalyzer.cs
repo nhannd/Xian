@@ -32,32 +32,41 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 
-namespace ClearCanvas.ImageViewer.Tools.Measurement
+namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 {
-	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint<RulerRoiInfo>))]
-	public class RulerLengthCalculator : IRoiAnalyzer<RulerRoiInfo>
+	[ExtensionOf(typeof (RoiAnalyzerExtensionPoint))]
+	public class RoiLengthAnalyzer : IRoiAnalyzer
 	{
-		public string Analyze(RulerRoiInfo roiInfo)
+		public bool SupportsRoi(Roi roi)
 		{
+			return roi is IRoiLengthProvider;
+		}
+
+		public string Analyze(Roi roi, RoiAnalysisMode mode)
+		{
+			if (!SupportsRoi(roi))
+				return null;
+
 			Units units = Units.Centimeters;
+
+			IRoiLengthProvider lengthProvider = (IRoiLengthProvider) roi;
 
 			string text;
 
-			double length = CalculateLength(roiInfo.Point1, roiInfo.Point2, roiInfo.NormalizedPixelSpacing, ref units);
-
-			if (units == Units.Pixels)
-				text = String.Format(SR.ToolsMeasurementFormatLengthPixels, length);
+			if (!lengthProvider.IsCalibrated || units == Units.Pixels)
+				text = String.Format(SR.FormatLengthPixels, lengthProvider.PixelLength);
 			else if (units == Units.Millimeters)
-				text = String.Format(SR.ToolsMeasurementFormatLengthMm, length);
+				text = String.Format(SR.FormatLengthMm, lengthProvider.Length);
 			else
-				text = String.Format(SR.ToolsMeasurementFormatLengthCm, length);
+				text = String.Format(SR.FormatLengthCm, lengthProvider.Length / 10);
 
 			return text;
 		}
+
+		#region Public Static Helpers
 
 		public static double CalculateLength(
 			PointF point1,
@@ -75,18 +84,18 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			if (units == Units.Pixels)
 			{
-				length = Math.Sqrt(widthInPixels * widthInPixels + heightInPixels * heightInPixels);
+				length = Math.Sqrt(widthInPixels*widthInPixels + heightInPixels*heightInPixels);
 			}
 			else
 			{
-				double widthInMm = widthInPixels * normalizedPixelSpacing.Column;
-				double heightInMm = heightInPixels * normalizedPixelSpacing.Row;
-				double lengthInMm = Math.Sqrt(widthInMm * widthInMm + heightInMm * heightInMm);
+				double widthInMm = widthInPixels*normalizedPixelSpacing.Column;
+				double heightInMm = heightInPixels*normalizedPixelSpacing.Row;
+				double lengthInMm = Math.Sqrt(widthInMm*widthInMm + heightInMm*heightInMm);
 
 				if (units == Units.Millimeters)
 					length = lengthInMm;
 				else
-					length = lengthInMm / 10;
+					length = lengthInMm/10;
 			}
 
 			return length;
@@ -102,5 +111,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				polyLineInteractiveGraphic.PolyLine[1],
 				normalizedPixelSpacing, ref units);
 		}
+
+		#endregion
 	}
 }

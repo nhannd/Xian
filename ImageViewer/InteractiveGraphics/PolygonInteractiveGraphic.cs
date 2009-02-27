@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -144,6 +145,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				_moveInProgress = false;
 			}
+		}
+
+		public override Roi CreateRoiInformation()
+		{
+			return new PolygonalRoi(this);
 		}
 
 		/// <summary>

@@ -502,6 +502,33 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Area: {0:F0} pixels.
+        /// </summary>
+        public static string FormatAreaPixels {
+            get {
+                return ResourceManager.GetString("FormatAreaPixels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Area: {0:F1} cm².
+        /// </summary>
+        public static string FormatAreaSquareCm {
+            get {
+                return ResourceManager.GetString("FormatAreaSquareCm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Area: {0:F0} mm².
+        /// </summary>
+        public static string FormatAreaSquareMm {
+            get {
+                return ResourceManager.GetString("FormatAreaSquareMm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W:{0} L:{1}.
         /// </summary>
         public static string FormatDescriptionBasicLinearLut {
@@ -538,6 +565,51 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Length: {0:F1} cm.
+        /// </summary>
+        public static string FormatLengthCm {
+            get {
+                return ResourceManager.GetString("FormatLengthCm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Length: {0:F0} mm.
+        /// </summary>
+        public static string FormatLengthMm {
+            get {
+                return ResourceManager.GetString("FormatLengthMm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Length: {0:F0} pixels.
+        /// </summary>
+        public static string FormatLengthPixels {
+            get {
+                return ResourceManager.GetString("FormatLengthPixels", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mean: {0}.
+        /// </summary>
+        public static string FormatMean {
+            get {
+                return ResourceManager.GetString("FormatMean", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mean: {0} HU.
+        /// </summary>
+        public static string FormatMeanCT {
+            get {
+                return ResourceManager.GetString("FormatMeanCT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} : {1}.
         /// </summary>
         public static string FormatMouseButtonShortcutDescription {
@@ -570,6 +642,24 @@ namespace ClearCanvas.ImageViewer {
         public static string FormatMouseWheelShortcutDescription {
             get {
                 return ResourceManager.GetString("FormatMouseWheelShortcutDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Std Dev: {0}.
+        /// </summary>
+        public static string FormatStdDev {
+            get {
+                return ResourceManager.GetString("FormatStdDev", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Std Dev: {0} HU.
+        /// </summary>
+        public static string FormatStdDevCT {
+            get {
+                return ResourceManager.GetString("FormatStdDevCT", resourceCulture);
             }
         }
         
@@ -682,6 +772,16 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error has occurred while analyzing the Roi.
+        ///Please check the log for more details..
+        /// </summary>
+        public static string MessageRoiAnalysisError {
+            get {
+                return ResourceManager.GetString("MessageRoiAnalysisError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Visible Display Set.
         /// </summary>
         public static string NamePrefetchingStrategyVisibleDisplaySet {
@@ -714,6 +814,24 @@ namespace ClearCanvas.ImageViewer {
         public static string StringEnterText {
             get {
                 return ResourceManager.GetString("StringEnterText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to N/A.
+        /// </summary>
+        public static string StringNotApplicable {
+            get {
+                return ResourceManager.GetString("StringNotApplicable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ---.
+        /// </summary>
+        public static string StringNoValue {
+            get {
+                return ResourceManager.GetString("StringNoValue", resourceCulture);
             }
         }
     }

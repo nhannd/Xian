@@ -29,70 +29,27 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	public class ProtractorRoiInfo : RoiInfo
-	{
-		private List<PointF> _points;
-
-		public ProtractorRoiInfo()
-		{
-			_points = new List<PointF>();
-		}
-
-		/// <summary>
-		/// Three points in destination coordinates that define the angle.
-		/// </summary>
-		public List<PointF> Points
-		{
-			get { return _points; }
-		}
-
-		protected internal override void Initialize(InteractiveGraphic graphic)
-		{
-			ProtractorInteractiveGraphic protractor = graphic as ProtractorInteractiveGraphic;
-			Platform.CheckForInvalidCast(protractor, "protractor", typeof(ProtractorInteractiveGraphic).FullName);
-
-			base.Initialize(graphic);
-
-			_points.Clear();
-
-			graphic.CoordinateSystem = CoordinateSystem.Source;
-
-			PolyLineGraphic line = protractor.PolyLine;
-			for (int i = 0; i < line.Count; ++i)
-				_points.Add(line[i]);
-
-			graphic.ResetCoordinateSystem();
-		}
-	}
-
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuProtractor", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarProtractor", "Select", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ProtractorToolSmall.png", "Icons.ProtractorToolMedium.png", "Icons.ProtractorToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Measurement.Angle")]
-
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ProtractorTool : MeasurementTool<ProtractorRoiInfo>
+	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
+	public class ProtractorTool : MeasurementTool
 	{
 		public ProtractorTool()
-			: base(SR.TooltipProtractor)
-		{
-		}
+			: base(SR.TooltipProtractor) {}
 
 		protected override string CreationCommandName
 		{

@@ -29,63 +29,26 @@
 
 #endregion
 
-using System;
-using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	public class RulerRoiInfo : RoiInfo
-	{
-		private PointF _point1;
-		private PointF _point2;
-
-		public RulerRoiInfo()
-		{
-		}
-
-		public PointF Point1
-		{
-			get { return _point1; }
-		}
-
-		public PointF Point2
-		{
-			get { return _point2; }
-		}
-
-		protected internal override void Initialize(InteractiveGraphic graphic)
-		{
-			PolyLineInteractiveGraphic line = (PolyLineInteractiveGraphic)graphic;
-
-			base.Initialize(graphic);
-
-			graphic.CoordinateSystem = CoordinateSystem.Source;
-
-			_point1 = line.PolyLine[0];
-			_point2 = line.PolyLine[1];
-
-			graphic.ResetCoordinateSystem();
-		}
-	}
-
 	[MenuAction("activate", "imageviewer-contextmenu/MenuRuler", "Select", Flags = ClickActionFlags.CheckAction)]
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRuler", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRuler", "Select", Flags = ClickActionFlags.CheckAction)]
-    [CheckedStateObserver("activate", "Active", "ActivationChanged")]
+	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.RulerToolSmall.png", "Icons.RulerToolMedium.png", "Icons.RulerToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Measurement.Roi.Linear")]
 
 	[MouseToolButton(XMouseButtons.Left, false)]
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class RulerTool : MeasurementTool<RulerRoiInfo>
+	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
+	public class RulerTool : MeasurementTool
 	{
 		public RulerTool()
 			: base(SR.TooltipRuler)

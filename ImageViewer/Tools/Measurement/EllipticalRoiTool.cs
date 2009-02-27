@@ -38,13 +38,6 @@ using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	public class EllipseRoiInfo : RoiInfo
-	{
-		public EllipseRoiInfo()
-		{
-		}
-	}
-
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuEllipticalRoi", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarEllipticalRoi", "Select", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
@@ -54,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MouseToolButton(XMouseButtons.Left, false)]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class EllipticalRoiTool : MeasurementTool<EllipseRoiInfo>
+	public class EllipticalRoiTool : MeasurementTool
 	{
 		public EllipticalRoiTool()
 			: base(SR.TooltipEllipticalRoi)

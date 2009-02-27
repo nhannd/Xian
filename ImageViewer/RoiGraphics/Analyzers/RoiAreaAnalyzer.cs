@@ -30,72 +30,48 @@
 #endregion
 
 using System;
-using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Iod;
 
-namespace ClearCanvas.ImageViewer.Tools.Measurement
+namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 {
-	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint<EllipseRoiInfo>))]
-	public class EllipseAreaCalculator : IRoiAnalyzer<EllipseRoiInfo>
+	[ExtensionOf(typeof (RoiAnalyzerExtensionPoint))]
+	public class RoiAreaAnalyzer : IRoiAnalyzer
 	{
-		public string Analyze(EllipseRoiInfo roiInfo)
+		public bool SupportsRoi(Roi roi)
 		{
+			return roi is IRoiAreaProvider;
+		}
+
+		public string Analyze(Roi roi, RoiAnalysisMode mode)
+		{
+			if (!SupportsRoi(roi))
+				return null;
+
 			Units units = Units.Centimeters;
 
-			double areaInPixels = Formula.AreaOfEllipse(roiInfo.BoundingBox.Width, roiInfo.BoundingBox.Height);
+			// performance enhancement to restrict excessive computation of polygon area.
+			if (mode == RoiAnalysisMode.Responsive)
+			{
+				if (units == Units.Pixels)
+					return String.Format(SR.FormatAreaPixels, SR.StringNoValue);
+				else if (units == Units.Millimeters)
+					return String.Format(SR.FormatAreaSquareMm, SR.StringNoValue);
+				else
+					return String.Format(SR.FormatAreaSquareCm, SR.StringNoValue);
+			}
 
-			PixelSpacing pixelSpacing = roiInfo.NormalizedPixelSpacing;
+			IRoiAreaProvider areaProvider = (IRoiAreaProvider) roi;
 
 			string text;
 
-			if (pixelSpacing.IsNull || units == Units.Pixels)
-			{
-				text = String.Format(SR.ToolsMeasurementFormatAreaPixels, areaInPixels);
-			}
+			if (!areaProvider.IsCalibrated || units == Units.Pixels)
+				text = String.Format(SR.FormatAreaPixels, areaProvider.PixelArea);
+			else if (units == Units.Millimeters)
+				text = String.Format(SR.FormatAreaSquareMm, areaProvider.Area);
 			else
-			{
-				double areaInMm = areaInPixels * pixelSpacing.Column * pixelSpacing.Row;
+				text = String.Format(SR.FormatAreaSquareCm, areaProvider.Area/100);
 
-				if (units == Units.Millimeters)
-					text = String.Format(SR.ToolsMeasurementFormatAreaSquareMm, areaInMm);
-				else
-					text = String.Format(SR.ToolsMeasurementFormatAreaSquareCm, areaInMm / 100);
-			}
 			return text;
-		}
-	}
-
-	[ExtensionOf(typeof(RoiAnalyzerExtensionPoint<EllipseRoiInfo>))]
-	public class EllipseStatisticsCalculator : IRoiAnalyzer<EllipseRoiInfo>
-	{
-		float a, b, a2, b2, h, k, xh, yk, r;
-
-		public string Analyze(EllipseRoiInfo roiInfo)
-		{
-			RectangleF boundingBox = roiInfo.BoundingBox;
-
-			a = boundingBox.Width / 2;
-			b = boundingBox.Height / 2;
-			a2 = a * a;
-			b2 = b * b;
-			h = boundingBox.Left + a;
-			k = boundingBox.Top + b;
-
-			return RoiStatisticsCalculator.Calculate(roiInfo, IsPointInRoi);
-		}
-
-		public bool IsPointInRoi(int x, int y)
-		{
-			xh = x - h;
-			yk = y - k;
-			r = (xh * xh /a2) + (yk * yk /b2);
-
-			if (r <= 1)
-				return true;
-			else
-				return false;
 		}
 	}
 }

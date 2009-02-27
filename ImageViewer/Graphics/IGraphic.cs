@@ -31,6 +31,7 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -130,5 +131,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Graphic objects that are not cloneable may return null.
 		/// </remarks>
 		IGraphic Clone();
+
+		/// <summary>
+		/// Creates an object describing the region of interest on the <see cref="ParentPresentationImage"/> selected by this <see cref="IGraphic"/>.
+		/// </summary>
+		/// <remarks>
+		/// Graphic objects that do not describe a region of interest may return null.
+		/// </remarks>
+		/// <returns>A <see cref="Roi"/> describing this region of interest, or null if the graphic does not describe a region of interest.</returns>
+		Roi CreateRoiInformation();
 	}
 }

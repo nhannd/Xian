@@ -29,62 +29,15 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	public class PolygonRoiInfo : RoiInfo
-	{
-		private PolygonF _polygon;
-
-		public PolygonRoiInfo() {}
-
-		/// <summary>
-		/// Gets an object representing the polygon.
-		/// </summary>
-		public PolygonF Polygon
-		{
-			get { return _polygon; }
-		}
-
-		/// <summary>
-		/// Initializes a <see cref="PolygonRoiInfo"/> object from a <see cref="PolygonInteractiveGraphic"/>.
-		/// </summary>
-		protected internal override void Initialize(InteractiveGraphic graphic)
-		{
-			PolygonInteractiveGraphic polygon = (PolygonInteractiveGraphic) graphic;
-
-			base.Initialize(graphic);
-
-			graphic.CoordinateSystem = CoordinateSystem.Source;
-
-			if (polygon.VertexCount >= 3)
-			{
-				List<PointF> vertices = new List<PointF>(polygon.VertexCount);
-				for (int n = 0; n < polygon.VertexCount; n++)
-				{
-					vertices.Add(polygon.PolyLine[n]);
-				}
-				_polygon = new PolygonF(vertices);
-			} 
-			else
-			{
-				_polygon = null;
-			}
-
-			graphic.ResetCoordinateSystem();
-		}
-	}
-
 	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuPolygonalRoi", "Select", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarPolygonalRoi", "Select", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
@@ -93,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	[GroupHint("activate", "Tools.Image.Measurement.Roi.Polygonal")]
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class PolygonalRoiTool : MeasurementTool<PolygonRoiInfo>
+	public class PolygonalRoiTool : MeasurementTool
 	{
 		public PolygonalRoiTool() : base(SR.TooltipPolygonalRoi) {}
 

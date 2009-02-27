@@ -8,6 +8,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -220,7 +221,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					_verticalScale.SetEndPoints(new PointF(vScaleBounds.Right, vScaleBounds.Top), new SizeF(0, vScaleBounds.Height));
 					_verticalScale.Visible = true;
 				}
-				catch (ScaleGraphic.UncalibratedImageException)
+				catch (UncalibratedImageException)
 				{
 					_horizontalScale.Visible = false;
 					_verticalScale.Visible = false;

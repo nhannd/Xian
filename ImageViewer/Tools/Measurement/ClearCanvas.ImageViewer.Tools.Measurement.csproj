@@ -102,24 +102,18 @@
     </Compile>
     <Compile Include="CalibrationComponent.cs" />
     <Compile Include="CalibrationTool.cs" />
-    <Compile Include="PolygonAnalyzers.cs" />
     <Compile Include="PolygonalRoiTool.cs" />
-    <Compile Include="EllipseAnalyzers.cs" />
     <Compile Include="EllipticalRoiTool.cs" />
     <Compile Include="Formula.cs" />
-    <Compile Include="IRoiAnalyzer.cs" />
     <Compile Include="MeasurementTool.cs" />
     <Compile Include="PolygonRoiCalloutLocationStrategy.cs" />
     <Compile Include="ProtractorAnalyzers.cs" />
     <Compile Include="ProtractorInteractiveGraphic.cs" />
     <Compile Include="ProtractorRoiCalloutLocationStrategy.cs" />
+    <Compile Include="ProtractorRoiInfo.cs" />
     <Compile Include="ProtractorTool.cs" />
     <Compile Include="DeleteMeasurementsTool.cs" />
-    <Compile Include="RectangleAnalyzers.cs" />
     <Compile Include="RectangularROITool.cs" />
-    <Compile Include="RoiInfo.cs" />
-    <Compile Include="RoiStatisticsCalculator.cs" />
-    <Compile Include="RulerAnalyzers.cs" />
     <Compile Include="RulerTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -127,7 +121,6 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="Tests\CalibrationTest.cs" />
-    <Compile Include="Units.cs" />
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

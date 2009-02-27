@@ -114,6 +114,13 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// <summary>
 		/// Tests if a point lies within the boundaries of the polygon.
 		/// </summary>
+		/// <remarks>
+		/// This method is indeterminate for points lying exactly on the
+		/// boundaries of the polygon, and may test either true or false
+		/// (but will not throw an exception either way). The distribution
+		/// of results is approximately even, and thus this method can be
+		/// used in statistical calculations.
+		/// </remarks>
 		/// <param name="point">The test point.</param>
 		/// <returns>True if the polygon contains the given point; False otherwise.</returns>
 		public bool Contains(PointF point)
@@ -125,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			{
 				fixed (PointF* vertices = _vertexArray)
 				{
-					return CountWindings(point, vertices, _vertexArray.Length) != 0; // TODO: should test true for points on the sides
+					return CountWindings(point, vertices, _vertexArray.Length) != 0;
 				}
 			}
 		}
