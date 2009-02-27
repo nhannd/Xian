@@ -15,9 +15,8 @@ namespace ClearCanvas.ImageServer.Web.Application
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
             //Test for authorization and redirect appropriately.
-            Response.Redirect("~/Pages/Admin/UserManagement/Users/Default.aspx");
+            Response.Redirect(ImageServerConstants.PageURLs.SearchPage);
         }
     }
 }

@@ -64,6 +64,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions
             }
         }
 
+        public static void ThrowException(AuthorizationException e)
+        {
+                context = HttpContext.Current;
+
+                context.Server.ClearError();
+
+                if (e.ErrorMessage != null && !e.ErrorMessage.Equals(string.Empty))
+                    context.Items.Add(ImageServerConstants.ContextKeys.ErrorMessage, e.ErrorMessage);
+                if (e.ErrorDescription != null && !e.ErrorDescription.Equals(string.Empty))
+                    context.Items.Add(ImageServerConstants.ContextKeys.ErrorDescription, e.ErrorDescription);
+
+                context.Server.Transfer(ImageServerConstants.PageURLs.AuthorizationErrorPage);
+        }
+
+
         public static string ThrowAJAXException(Exception e)
         {
             Exception baseException = e.GetBaseException();

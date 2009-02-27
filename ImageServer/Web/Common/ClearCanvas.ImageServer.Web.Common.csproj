@@ -111,6 +111,7 @@
     <Compile Include="Data\WorkQueueUidAdaptor.cs" />
     <Compile Include="DicomConstants.cs" />
     <Compile Include="Exceptions\AJAXErrorException.cs" />
+    <Compile Include="Exceptions\AuthorizationException.cs" />
     <Compile Include="Exceptions\WorkQueueItemNotFoundException.cs" />
     <Compile Include="Exceptions\PartitionNotFoundException.cs" />
     <Compile Include="Exceptions\StudyNotFoundException.cs" />

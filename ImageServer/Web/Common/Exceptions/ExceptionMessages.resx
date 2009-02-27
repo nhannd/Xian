@@ -123,6 +123,12 @@
   <data name="AJAXErrorDescription" xml:space="preserve">
     <value>This message is being displayed because in some cases the ImageServer refreshes part of the pages using a technology called "AJAX". Something happened on the server that prevented the page from updating properly.</value>
   </data>
+  <data name="AuthorizationRequired" xml:space="preserve">
+    <value>You are not authorized to view this page.</value>
+  </data>
+  <data name="AuthorizationRequiredDescription" xml:space="preserve">
+    <value>This message is being displayed because you attempted to access an ImageServer page that requires authorization that is not part of your user profile.</value>
+  </data>
   <data name="EmptyLogMessage" xml:space="preserve">
     <value>No Message Provided.</value>
   </data>

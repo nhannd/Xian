@@ -247,6 +247,13 @@
     <Compile Include="Pages\Admin\UserManagement\Users\UserPanel.ascx.designer.cs">
       <DependentUpon>UserPanel.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Error\AuthorizationErrorPage.aspx.cs">
+      <DependentUpon>AuthorizationErrorPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\AuthorizationErrorPage.aspx.designer.cs">
+      <DependentUpon>AuthorizationErrorPage.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Login\ChangePasswordDialog.ascx.cs">
       <DependentUpon>ChangePasswordDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1278,6 +1285,7 @@
     <EmbeddedResource Include="Pages\Admin\UserManagement\Users\UserPanel.js" />
     <Content Include="Pages\Admin\UserManagement\Users\UserGridPanel.ascx" />
     <Content Include="Pages\Admin\UserManagement\Users\UserPanel.ascx" />
+    <Content Include="Pages\Error\AuthorizationErrorPage.aspx" />
     <Content Include="Pages\Login\ChangePasswordDialog.ascx" />
     <Content Include="Pages\Login\PasswordExpiredDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\HistoryPanel.ascx" />
@@ -1498,6 +1506,10 @@
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
       <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Authentication\ClearCanvas.ImageServer.Common.Authentication.csproj">
+      <Project>{600584A7-4B78-4983-A21B-7F30023766A8}</Project>
+      <Name>ClearCanvas.ImageServer.Common.Authentication</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\ClearCanvas.ImageServer.Common.csproj">
       <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>

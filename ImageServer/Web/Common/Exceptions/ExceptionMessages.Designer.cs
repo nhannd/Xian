@@ -79,6 +79,24 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You are not authorized to view this page..
+        /// </summary>
+        internal static string AuthorizationRequired {
+            get {
+                return ResourceManager.GetString("AuthorizationRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This message is being displayed because you attempted to access an ImageServer page that requires authorization that is not part of your user profile..
+        /// </summary>
+        internal static string AuthorizationRequiredDescription {
+            get {
+                return ResourceManager.GetString("AuthorizationRequiredDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No Message Provided..
         /// </summary>
         internal static string EmptyLogMessage {

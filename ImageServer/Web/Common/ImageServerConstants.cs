@@ -37,6 +37,7 @@ public class ImageServerConstants
         public const string WebServices = "~/Services/webservice.htc";
         public const string NumberFormatScript = "~/Scripts/NumberFormat154.js";
         public const string ErrorPage = "~/Pages/Error/ErrorPage.aspx";
+        public const string AuthorizationErrorPage = "~/Pages/Error/AuthorizationErrorPage.aspx";
         
 	}
 

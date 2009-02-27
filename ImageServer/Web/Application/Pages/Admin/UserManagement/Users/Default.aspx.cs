@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Security.Permissions;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -17,6 +18,7 @@ using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Users
 {
+    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User)]
     public partial class Default : BasePage
     {
         UserManagementController _controller = new UserManagementController();
@@ -39,8 +41,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                            if (_controller.UpdateUser(user))
                                                            {
                                                                UserPanel.UpdateUI();
-                                                               AddEditUserDialog.Close();
+                                                               return true;
                                                            }
+                                                           return false;
                                                        }
                                                        else
                                                        {
@@ -50,11 +53,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                                {
                                                                    UserPanel.UpdateUI();
                                                                    AddEditUserDialog.Close();
+                                                                   return true;
                                                                }
+                                                               return false;
                                                            }catch(Exception e)
                                                            {
-                                                               AddEditUserDialog.UsernameIndicator.Show();
-                                                               AddEditUserDialog.UserNameValidator.Text = "Username already exists";
+                                                               return false;
                                                            }
                                                        }
                                                    };

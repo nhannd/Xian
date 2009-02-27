@@ -90,7 +90,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Modules
             {
             }
 
-            if (theException is HttpException)
+
+            if(theException != null && (theException.Message.Equals("Access is denied.") || theException.Message.Equals("Request for principal permission failed.")))
+            {
+                ExceptionHandler.ThrowException(new AuthorizationException());
+            } 
+            else if (theException is HttpException)
             {
                 HttpException exception = theException as HttpException;
                 Platform.Log(LogLevel.Error, "HTTP Error {0}: {0}", exception.ErrorCode, exception);

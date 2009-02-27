@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Security.Permissions;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -16,6 +17,7 @@ using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups
 {
+    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup)]
     public partial class Default : BasePage
     {
         UserManagementController _controller = new UserManagementController();

@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         /// Defines the event handler for <seealso cref="OKClicked"/>.
         /// </summary>
         /// <param name="user">The user being added.</param>
-        public delegate void OnOKClickedEventHandler(UserRowData user);
+        public delegate bool OnOKClickedEventHandler(UserRowData user);
 
         /// <summary>
         /// Occurs when users click on "OK".
@@ -122,13 +122,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         #endregion // public delegates
 
         #region Protected methods
-
-        protected override void OnInit(EventArgs e)
-        {
-            base.OnInit(e);
-
-        }
-
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -171,9 +164,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             {
                 SaveData();
 
-                if (OKClicked != null)
-                    OKClicked(User);
+                bool success = false;
 
+                if (OKClicked != null)
+                    success = OKClicked(User);
+
+                if (!success)
+                {
+                    UsernameIndicator.Show();
+                    UserNameValidator.Text = "Username already exists";
+                    Show(false);
+                } else
+                {
+                    Close();
+                }
             }
             else
             {
@@ -209,7 +213,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
 
             User.DisplayName = DisplayName.Text;
-            
+
+            User.UserGroups.Clear();
             foreach (ListItem item in UserGroupListBox.Items)
             {
                 if (item.Selected)

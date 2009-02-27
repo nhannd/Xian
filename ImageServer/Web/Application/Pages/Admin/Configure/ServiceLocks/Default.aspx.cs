@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Permissions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
@@ -38,9 +39,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks
 {
-    /// <summary>
-    /// ServiceLock Configuration Web Page.
-    /// </summary>
+    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.Configuration.ServiceLocks)]
     public partial class Default : BasePage
     {
         #region Private members

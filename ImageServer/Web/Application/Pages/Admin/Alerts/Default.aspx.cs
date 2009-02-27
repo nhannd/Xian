@@ -14,7 +14,7 @@ using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 {
-//    [PrincipalPermission(SecurityAction., )]
+    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.Alert.View)]
     public partial class Default : BasePage
     {
         protected void Page_Load(object sender, EventArgs e)

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Security.Permissions;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 
@@ -37,7 +38,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 {
     public partial class Default : BasePage
     {
-      
+        
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.ArchiveQueue.Search)]      
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);

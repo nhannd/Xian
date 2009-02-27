@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.Permissions;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
@@ -39,6 +40,7 @@ using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 {
+    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Search)]
     public partial class Default : BasePage
     {
         private readonly Dictionary<string, SearchPanel> _partitionPanelMap = new Dictionary<string,SearchPanel>();
