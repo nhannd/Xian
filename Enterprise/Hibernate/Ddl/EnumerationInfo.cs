@@ -5,6 +5,9 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
+	/// <summary>
+	/// Describes a member of an enumeration.
+	/// </summary>
 	[DataContract]
 	public class EnumerationMemberInfo : ElementInfo
 	{
@@ -14,12 +17,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private float _displayOrder;
 		private bool _deactivated;
 
-		public EnumerationMemberInfo()
+		internal EnumerationMemberInfo()
 		{
 		}
 
 
-		public EnumerationMemberInfo(string code, string value, string description, float displayOrder, bool deactivated)
+		internal EnumerationMemberInfo(string code, string value, string description, float displayOrder, bool deactivated)
 		{
 			_code = code;
 			_value = value;
@@ -69,7 +72,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		}
 	}
 
-
+	/// <summary>
+	/// Describes an enumeration that is defined as part of a relational model.
+	/// </summary>
 	[DataContract]
 	public class EnumerationInfo : ElementInfo
 	{
@@ -78,12 +83,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private bool _isHard;
 		private string _table;
 
-		public EnumerationInfo()
+		internal EnumerationInfo()
 		{
 
 		}
 
-		public EnumerationInfo(string enumerationClass, string table, bool isHard, List<EnumerationMemberInfo> members)
+		internal EnumerationInfo(string enumerationClass, string table, bool isHard, List<EnumerationMemberInfo> members)
 		{
 			_enumerationClass = enumerationClass;
 			_members = members;
@@ -91,6 +96,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			_table = table;
 		}
 
+		/// <summary>
+		/// Gets the .NET class name of the enumeration.
+		/// </summary>
 		[DataMember]
 		public string EnumerationClass
 		{
@@ -98,6 +106,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _enumerationClass = value; }
 		}
 
+		/// <summary>
+		/// Gets the name of the table that holds the enumeration values.
+		/// </summary>
 		[DataMember]
 		public string Table
 		{
@@ -105,6 +116,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _table = value; }
 		}
 
+		/// <summary>
+		/// Gets the set of member values of the enumeration.
+		/// </summary>
 		[DataMember]
 		public List<EnumerationMemberInfo> Members
 		{
@@ -112,6 +126,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _members = value; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether this enumeration is 'hard' vs. 'soft'.
+		/// </summary>
 		[DataMember]
 		public bool IsHard
 		{
@@ -119,6 +136,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _isHard = value; }
 		}
 
+		/// <summary>
+		/// Gets the unique identity of the element.
+		/// </summary>
+		/// <remarks>
+		/// The identity string must uniquely identify the element within a given set of elements, but need not be globally unique.
+		/// </remarks>
 		public override string Identity
 		{
 			get { return _enumerationClass; }

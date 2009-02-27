@@ -38,7 +38,7 @@ using NHibernate.Dialect;
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
     /// <summary>
-    /// Defines an interface for generating DDL scripts to create or drop database objects
+    /// Defines an interface for generating DDL scripts to create, upgrade or drop a relational database.
     /// </summary>
     public interface IDdlScriptGenerator
     {

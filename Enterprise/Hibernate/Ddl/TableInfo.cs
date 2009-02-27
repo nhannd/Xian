@@ -5,6 +5,9 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
+	/// <summary>
+	/// Describes a table in a relational database model.
+	/// </summary>
     [DataContract]
     public class TableInfo : ElementInfo
     {
@@ -16,12 +19,25 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     	private List<ForeignKeyInfo> _foreignKeys;
     	private List<ConstraintInfo> _uniqueKeys;
 
-    	public TableInfo()
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		internal TableInfo()
         {
 
         }
 
-        public TableInfo(string name, string schema, List<ColumnInfo> columns, ConstraintInfo primaryKey, List<IndexInfo> indexes, List<ForeignKeyInfo> foreignKeys, List<ConstraintInfo> uniqueKeys)
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="name"></param>
+		/// <param name="schema"></param>
+		/// <param name="columns"></param>
+		/// <param name="primaryKey"></param>
+		/// <param name="indexes"></param>
+		/// <param name="foreignKeys"></param>
+		/// <param name="uniqueKeys"></param>
+        internal TableInfo(string name, string schema, List<ColumnInfo> columns, ConstraintInfo primaryKey, List<IndexInfo> indexes, List<ForeignKeyInfo> foreignKeys, List<ConstraintInfo> uniqueKeys)
         {
             Name = name;
             Schema = schema;
@@ -32,6 +48,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             UniqueKeys = uniqueKeys;
         }
 
+		/// <summary>
+		/// Gets the name of the table.
+		/// </summary>
     	[DataMember]
     	public string Name
     	{
@@ -39,6 +58,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _name = value; }
     	}
 
+		/// <summary>
+		/// Gets the name of the schema to which the table belongs, if different from the default schema.
+		/// </summary>
         [DataMember]
         public string Schema
     	{
@@ -46,6 +68,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _schema = value; }
     	}
 
+		/// <summary>
+		/// Gets the set of columns in the table.
+		/// </summary>
         [DataMember]
         public List<ColumnInfo> Columns
     	{
@@ -53,6 +78,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _columns = value; }
     	}
 
+		/// <summary>
+		/// Gets the table's primary key.
+		/// </summary>
         [DataMember]
         public ConstraintInfo PrimaryKey
     	{
@@ -60,6 +88,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _primaryKey = value; }
     	}
 
+		/// <summary>
+		/// Gets the set of indexes defined on columns in this table.
+		/// </summary>
         [DataMember]
         public List<IndexInfo> Indexes
      	{
@@ -67,6 +98,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _indexes = value; }
     	}
 
+		/// <summary>
+		/// Gets the set of foreign key relationships defined on columns in this table.
+		/// </summary>
         [DataMember]
         public List<ForeignKeyInfo> ForeignKeys
     	{
@@ -74,6 +108,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _foreignKeys = value; }
     	}
 
+		/// <summary>
+		/// Gets the set of unique keys defined on columns in this table.
+		/// </summary>
         [DataMember]
         public List<ConstraintInfo> UniqueKeys
 	    {
@@ -82,7 +119,13 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     	}
 
 
-        public override string Identity
+		/// <summary>
+		/// Gets the unique identity of the element.
+		/// </summary>
+		/// <remarks>
+		/// The identity string must uniquely identify the element within a given set of elements, but need not be globally unique.
+		/// </remarks>
+		public override string Identity
         {
             get { return Name; }
         }

@@ -35,27 +35,27 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     {
         #region Overrides
 
-        public override void Process(PersistentStore store)
+        public override void Process(Configuration config)
         {
             // Rules:
             // 1. For entities, create indexes on all references to other entities and enums
-            foreach (PersistentClass pc in store.Configuration.ClassMappings)
+            foreach (PersistentClass pc in config.ClassMappings)
             {
-                CreateIndexes(store, pc.PropertyCollection);
+                CreateIndexes(config, pc.PropertyCollection);
             }
 
             // 2. For collections of values, create indexes only on the reference to the owner
             // 3. For many-to-many collection tables, create indexes on both columns together, going in both directions??
 
-            foreach (Collection collection in store.Configuration.CollectionMappings)
+            foreach (Collection collection in config.CollectionMappings)
             {
-                CreateIndexes(store, collection);
+                CreateIndexes(config, collection);
             }
         }
 
         #endregion
 
-        private void CreateIndexes(PersistentStore store, Collection collection)
+		private void CreateIndexes(Configuration config, Collection collection)
         {
             if(collection.Element is ManyToOne)
             {
@@ -98,7 +98,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             }
         }
 
-        private void CreateIndexes(PersistentStore store, ICollection properties)
+		private void CreateIndexes(Configuration config, ICollection properties)
         {
             foreach (Property prop in properties)
             {
@@ -106,7 +106,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 {
                     // recur on component properties
                     Component comp = (Component) prop.Value;
-                    CreateIndexes(store, comp.PropertyCollection);
+                    CreateIndexes(config, comp.PropertyCollection);
                 }
                 else
                 {

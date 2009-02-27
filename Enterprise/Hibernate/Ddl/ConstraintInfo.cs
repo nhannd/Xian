@@ -7,6 +7,9 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
+	/// <summary>
+	/// Describes a constraint in a relational database model.
+	/// </summary>
     [DataContract]
 	public class ConstraintInfo : ElementInfo
     {
@@ -14,12 +17,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private List<string> _columns;
 
 
-        public ConstraintInfo()
+        internal ConstraintInfo()
         {
 
         }
 
-        public ConstraintInfo(Constraint constraint)
+		internal ConstraintInfo(Constraint constraint)
         {
             _name = constraint.Name;
             _columns = CollectionUtils.Map<Column, string>(
@@ -27,6 +30,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 delegate(Column column) { return column.Name; });
         }
 
+		/// <summary>
+		/// Gets the name of the constraint.
+		/// </summary>
     	[DataMember]
     	public string Name
     	{
@@ -34,6 +40,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			protected set { _name = value; }
     	}
 
+		/// <summary>
+		/// Gets the names of the columns on which the constraint is defined.
+		/// </summary>
     	[DataMember]
     	public List<string> Columns
     	{
@@ -41,13 +50,24 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			protected set { _columns = value; }
     	}
 
+		/// <summary>
+		/// Returns true if this constraint matches that, property for property.
+		/// </summary>
+		/// <param name="that"></param>
+		/// <returns></returns>
         public bool Matches(ConstraintInfo that)
         {
             return this.Name == that.Name &&
                 CollectionUtils.Equal<string>(this.Columns, that.Columns, false);
         }
 
-        public override string Identity
+		/// <summary>
+		/// Gets the unique identity of the element.
+		/// </summary>
+		/// <remarks>
+		/// The identity string must uniquely identify the element within a given set of elements, but need not be globally unique.
+		/// </remarks>
+		public override string Identity
         {
             get
             {

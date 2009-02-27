@@ -48,7 +48,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     }
 
     /// <summary>
-    /// Utility class that generates a database creation and/or drop script and writes the script to a <see cref="StreamWriter"/>.
+    /// Utility class that generates a database creation, upgrade or drop script.
     /// </summary>
     public class ScriptWriter
     {
@@ -58,6 +58,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     	private EnumOptions _enumOption;
     	private RelationalModelInfo _baselineModel;
 
+		/// <summary>
+		/// Constructs a script writer based on the specified configuration.
+		/// </summary>
+		/// <param name="config"></param>
     	public ScriptWriter(Configuration config)
         {
             _config = config;

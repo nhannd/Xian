@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
-    class AddTableChange : Change
+    class AddTableChange : RelationalModelChange
     {
         public AddTableChange(TableInfo table)
 			: base(table)

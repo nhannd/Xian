@@ -4,11 +4,14 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
-    abstract class Change
+	/// <summary>
+	/// Abstract base class for classes that represent a discrete change to a relational model.
+	/// </summary>
+    abstract class RelationalModelChange
     {
     	private readonly TableInfo _table;
 
-		protected Change(TableInfo table)
+		protected RelationalModelChange(TableInfo table)
         {
         	_table = table;
         }

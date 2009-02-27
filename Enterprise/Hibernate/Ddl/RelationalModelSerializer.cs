@@ -1,44 +1,33 @@
 using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-using System.Text;
 using System.Xml;
-using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Core;
-using NHibernate.Mapping;
 using NHibernate.Cfg;
-using Iesi.Collections;
-using ClearCanvas.Common.Utilities;
 using System.IO;
-using NHibernate.Dialect;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
+	/// <summary>
+	/// Serializes/de-serializes a <see cref="RelationalModelInfo"/> object to XML.
+	/// </summary>
 	public class RelationalModelSerializer
 	{
 		/// <summary>
-		/// Defines the root XML tag under which data is exported.
+		/// Writes the specified model.
 		/// </summary>
-		private readonly Configuration _config;
-
-		public RelationalModelSerializer(Configuration config)
-		{
-			_config = config;
-		}
-
-		public void WriteModel(TextWriter tw)
+		public void WriteModel(RelationalModelInfo model, TextWriter tw)
 		{
 			using (XmlTextWriter writer = new XmlTextWriter(tw))
 			{
 				writer.Formatting = Formatting.Indented;
-
-				RelationalModelInfo modelInfo = new RelationalModelInfo(_config);
-
-				Write(writer, modelInfo);
+				Write(writer, model);
 			}
  		}
 
+		/// <summary>
+		/// Reads a model from the specified reader.
+		/// </summary>
+		/// <param name="tr"></param>
+		/// <returns></returns>
 		public RelationalModelInfo ReadModel(TextReader tr)
 		{
 			using (XmlTextReader reader = new XmlTextReader(tr))

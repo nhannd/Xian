@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
-    class DropForeignKeyChange : Change
+    class DropForeignKeyChange : RelationalModelChange
     {
     	private readonly ForeignKeyInfo _fk;
 

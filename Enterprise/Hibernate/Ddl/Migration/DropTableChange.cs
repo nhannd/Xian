@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
-    class DropTableChange : Change
+    class DropTableChange : RelationalModelChange
     {
         public DropTableChange(TableInfo table)
 			:base(table)

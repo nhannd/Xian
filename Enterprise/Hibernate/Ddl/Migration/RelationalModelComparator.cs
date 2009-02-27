@@ -6,38 +6,14 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
     /// <summary>
-    /// Compares two instances of <see cref="RelationModelInfo"/> to determine the changes that are needed
+    /// Compares two instances of <see cref="RelationalModelInfo"/> to determine the changes that are needed
     /// to transform one to the other.
     /// </summary>
 	class RelationalModelComparator
 	{
-		delegate IEnumerable<Change> ItemProcessor<T>(T item);
-		delegate IEnumerable<Change> CompareItemProcessor<T>(T initial, T desired);
+		delegate IEnumerable<RelationalModelChange> ItemProcessor<T>(T item);
+		delegate IEnumerable<RelationalModelChange> CompareItemProcessor<T>(T initial, T desired);
 
-		private static readonly Dictionary<Type, int> _changeOrder = new Dictionary<Type, int>();
-
-        /// <summary>
-        /// Class constructor
-        /// </summary>
-		static RelationalModelComparator()
-		{
-			// define the order that changes should occur to avoid dependency issues
-			_changeOrder.Add(typeof(DropIndexChange), 0);
-			_changeOrder.Add(typeof(DropForeignKeyChange), 1);
-			_changeOrder.Add(typeof(DropUniqueConstraintChange), 2);
-			_changeOrder.Add(typeof(DropPrimaryKeyChange), 3);
-			_changeOrder.Add(typeof(DropTableChange), 4);
-			_changeOrder.Add(typeof(DropColumnChange), 5);
-			_changeOrder.Add(typeof(ModifyColumnChange), 6);
-			_changeOrder.Add(typeof(AddColumnChange), 7);
-			_changeOrder.Add(typeof(AddTableChange), 8);
-			_changeOrder.Add(typeof(AddPrimaryKeyChange), 9);
-			_changeOrder.Add(typeof(AddUniqueConstraintChange), 10);
-			_changeOrder.Add(typeof(AddForeignKeyChange), 11);
-			_changeOrder.Add(typeof(AddIndexChange), 12);
-			_changeOrder.Add(typeof(DropEnumValueChange), 13);
-			_changeOrder.Add(typeof(AddEnumValueChange), 14);
-		}
 
 		private readonly EnumOptions _enumOption;
 
@@ -51,15 +27,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		}
 
         /// <summary>
-        /// Returns an ordered list of <see cref="Change"/> objects that describe the changes
+        /// Returns a <see cref="RelationalModelTransform"/> object that describe the changes
         /// required to transform the initial model into the desired model.
         /// </summary>
         /// <param name="initial"></param>
         /// <param name="desired"></param>
         /// <returns></returns>
-		public List<Change> CompareDatabases(RelationalModelInfo initial, RelationalModelInfo desired)
+		public RelationalModelTransform CompareModels(RelationalModelInfo initial, RelationalModelInfo desired)
 		{
-			List<Change> changes = new List<Change>();
+			List<RelationalModelChange> changes = new List<RelationalModelChange>();
 
 			// compare tables
 			changes.AddRange(
@@ -80,79 +56,53 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 				);
 			}
 
-            return OrderChanges(changes);
+			return new RelationalModelTransform(changes);
 		}
 
-        private List<Change> OrderChanges(List<Change> changes)
-        {
-            // the algorithm here tries to do 2 things:
-            // 1. Re-organize groups of changes so as to avoid any dependency problems.
-            // 2. Preserve the order of changes as much as possible, not re-ordering anything
-            // that doesn't need to be re-ordered to satisfy 1.  This *should* keep changes pertaining to the
-            // same table clustered together where possible, and also keep AddEnumValueChanges in order
 
-            // group changes by type
-            IDictionary<Type, List<Change>> groupedByType =
-                GroupBy<Change, Type>(changes, delegate(Change c) { return c.GetType(); });
-
-            // sort the types to avoid dependency issues
-            List<Type> sortedTypes = CollectionUtils.Sort(groupedByType.Keys,
-                        delegate(Type x, Type y)
-                        {
-                            return _changeOrder[x].CompareTo(_changeOrder[y]);
-                        });
-
-
-            // flatten changes back into a single list
-            return CollectionUtils.Concat<Change>(
-                    CollectionUtils.Map<Type, List<Change>>(sortedTypes,
-                        delegate(Type t) { return groupedByType[t]; }).ToArray()
-                   );
-        }
-
-		private IEnumerable<Change> AddTable(TableInfo t)
+		private IEnumerable<RelationalModelChange> AddTable(TableInfo t)
 		{
-			List<Change> changes = new List<Change>();
+			List<RelationalModelChange> changes = new List<RelationalModelChange>();
 			changes.Add(new AddTableChange(t));
 			changes.AddRange(
-				CollectionUtils.Map<IndexInfo, Change>(t.Indexes,
+				CollectionUtils.Map<IndexInfo, RelationalModelChange>(t.Indexes,
 				    delegate(IndexInfo item) { return new AddIndexChange(t, item); }));
 			changes.AddRange(
-				CollectionUtils.Map<ConstraintInfo, Change>(t.UniqueKeys,
+				CollectionUtils.Map<ConstraintInfo, RelationalModelChange>(t.UniqueKeys,
 				    delegate(ConstraintInfo item) { return new AddUniqueConstraintChange(t, item); }));
 			changes.AddRange(
-				CollectionUtils.Map<ForeignKeyInfo, Change>(t.ForeignKeys,
+				CollectionUtils.Map<ForeignKeyInfo, RelationalModelChange>(t.ForeignKeys,
 				    delegate(ForeignKeyInfo item) { return new AddForeignKeyChange(t, item); }));
             changes.AddRange(
-                CollectionUtils.Map<ConstraintInfo, Change>(new ConstraintInfo[] { t.PrimaryKey } ,
+                CollectionUtils.Map<ConstraintInfo, RelationalModelChange>(new ConstraintInfo[] { t.PrimaryKey } ,
                     delegate(ConstraintInfo item) { return new AddPrimaryKeyChange(t, item); }));
             return changes;
 		}
 
-		private IEnumerable<Change> DropTable(TableInfo t)
+		private IEnumerable<RelationalModelChange> DropTable(TableInfo t)
 		{
-			List<Change> changes = new List<Change>();
+			List<RelationalModelChange> changes = new List<RelationalModelChange>();
 			changes.AddRange(
-				CollectionUtils.Map<IndexInfo, Change>(t.Indexes,
+				CollectionUtils.Map<IndexInfo, RelationalModelChange>(t.Indexes,
 					delegate(IndexInfo item) { return new DropIndexChange(t, item); }));
 			changes.AddRange(
-				CollectionUtils.Map<ConstraintInfo, Change>(t.UniqueKeys,
+				CollectionUtils.Map<ConstraintInfo, RelationalModelChange>(t.UniqueKeys,
 					delegate(ConstraintInfo item) { return new DropUniqueConstraintChange(t, item); }));
 			changes.AddRange(
-				CollectionUtils.Map<ForeignKeyInfo, Change>(t.ForeignKeys,
+				CollectionUtils.Map<ForeignKeyInfo, RelationalModelChange>(t.ForeignKeys,
 					delegate(ForeignKeyInfo item) { return new DropForeignKeyChange(t, item); }));
             changes.AddRange(
-                CollectionUtils.Map<ConstraintInfo, Change>(new ConstraintInfo[] { t.PrimaryKey } ,
+                CollectionUtils.Map<ConstraintInfo, RelationalModelChange>(new ConstraintInfo[] { t.PrimaryKey } ,
                     delegate(ConstraintInfo item) { return new DropPrimaryKeyChange(t, item); }));
             changes.Add(new DropTableChange(t));
 			return changes;
 		}
 
-		private IEnumerable<Change> CompareTables(TableInfo initial, TableInfo desired)
+		private IEnumerable<RelationalModelChange> CompareTables(TableInfo initial, TableInfo desired)
 		{
 			TableInfo table = desired;
 
-			List<Change> changes = new List<Change>();
+			List<RelationalModelChange> changes = new List<RelationalModelChange>();
 			changes.AddRange(
 				CompareSets(initial.Columns, desired.Columns,
 				            delegate(ColumnInfo item) { return AddColumn(table, item); },
@@ -187,98 +137,98 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		}
 
 
-		private IEnumerable<Change> AddColumn(TableInfo table, ColumnInfo c)
+		private IEnumerable<RelationalModelChange> AddColumn(TableInfo table, ColumnInfo c)
 		{
-			return new Change[] { new AddColumnChange(table, c) };
+			return new RelationalModelChange[] { new AddColumnChange(table, c) };
 		}
 
-		private IEnumerable<Change> DropColumn(TableInfo table, ColumnInfo c)
+		private IEnumerable<RelationalModelChange> DropColumn(TableInfo table, ColumnInfo c)
 		{
-			return new Change[] { new DropColumnChange(table, c) };
+			return new RelationalModelChange[] { new DropColumnChange(table, c) };
 		}
 
-		private IEnumerable<Change> CompareColumns(TableInfo table, ColumnInfo initial, ColumnInfo desired)
+		private IEnumerable<RelationalModelChange> CompareColumns(TableInfo table, ColumnInfo initial, ColumnInfo desired)
 		{
-			List<Change> changes = new List<Change>();
+			List<RelationalModelChange> changes = new List<RelationalModelChange>();
 			if (!initial.Matches(desired))
 				changes.Add(new ModifyColumnChange(table, initial, desired));
 			return changes;
 		}
 
-		private IEnumerable<Change> AddIndex(TableInfo table, IndexInfo c)
+		private IEnumerable<RelationalModelChange> AddIndex(TableInfo table, IndexInfo c)
 		{
-			return new Change[] { new AddIndexChange(table, c) };
+			return new RelationalModelChange[] { new AddIndexChange(table, c) };
 		}
 
-		private IEnumerable<Change> DropIndex(TableInfo table, IndexInfo c)
+		private IEnumerable<RelationalModelChange> DropIndex(TableInfo table, IndexInfo c)
 		{
-			return new Change[] { new DropIndexChange(table, c) };
+			return new RelationalModelChange[] { new DropIndexChange(table, c) };
 		}
 
-		private IEnumerable<Change> CompareIndexes(TableInfo table, IndexInfo initial, IndexInfo desired)
+		private IEnumerable<RelationalModelChange> CompareIndexes(TableInfo table, IndexInfo initial, IndexInfo desired)
 		{
-			List<Change> changes = new List<Change>();
+			List<RelationalModelChange> changes = new List<RelationalModelChange>();
 			// TODO can indexes be altered or do they need to be dropped and recreated?
 			return changes;
 		}
 
-		private IEnumerable<Change> AddForeignKey(TableInfo table, ForeignKeyInfo c)
+		private IEnumerable<RelationalModelChange> AddForeignKey(TableInfo table, ForeignKeyInfo c)
 		{
-			return new Change[] { new AddForeignKeyChange(table, c) };
+			return new RelationalModelChange[] { new AddForeignKeyChange(table, c) };
 		}
 
-		private IEnumerable<Change> DropForeignKey(TableInfo table, ForeignKeyInfo c)
+		private IEnumerable<RelationalModelChange> DropForeignKey(TableInfo table, ForeignKeyInfo c)
 		{
-			return new Change[] { new DropForeignKeyChange(table, c) };
+			return new RelationalModelChange[] { new DropForeignKeyChange(table, c) };
 		}
 
-		private IEnumerable<Change> CompareForeignKeys(TableInfo table, ForeignKeyInfo initial, ForeignKeyInfo desired)
+		private IEnumerable<RelationalModelChange> CompareForeignKeys(TableInfo table, ForeignKeyInfo initial, ForeignKeyInfo desired)
 		{
-			List<Change> changes = new List<Change>();
+			List<RelationalModelChange> changes = new List<RelationalModelChange>();
 			// TODO can foreign keys be altered or do they need to be dropped and recreated?
 			return changes;
 		}
 
-		private IEnumerable<Change> AddUniqueConstraint(TableInfo table, ConstraintInfo c)
+		private IEnumerable<RelationalModelChange> AddUniqueConstraint(TableInfo table, ConstraintInfo c)
 		{
-			return new Change[] { new AddUniqueConstraintChange(table, c) };
+			return new RelationalModelChange[] { new AddUniqueConstraintChange(table, c) };
 		}
 
-		private IEnumerable<Change> DropUniqueConstraint(TableInfo table, ConstraintInfo c)
+		private IEnumerable<RelationalModelChange> DropUniqueConstraint(TableInfo table, ConstraintInfo c)
 		{
-			return new Change[] { new DropUniqueConstraintChange(table, c) };
+			return new RelationalModelChange[] { new DropUniqueConstraintChange(table, c) };
 		}
 
-		private IEnumerable<Change> CompareUniqueConstraints(TableInfo table, ConstraintInfo initial, ConstraintInfo desired)
+		private IEnumerable<RelationalModelChange> CompareUniqueConstraints(TableInfo table, ConstraintInfo initial, ConstraintInfo desired)
 		{
-			List<Change> changes = new List<Change>();
+			List<RelationalModelChange> changes = new List<RelationalModelChange>();
 			// TODO can constraints be altered or do they need to be dropped and recreated?
 			return changes;
 		}
 
-		private IEnumerable<Change> AddPrimaryKey(TableInfo table, ConstraintInfo item)
+		private IEnumerable<RelationalModelChange> AddPrimaryKey(TableInfo table, ConstraintInfo item)
 		{
-			return new Change[] { new AddPrimaryKeyChange(table, item) };
+			return new RelationalModelChange[] { new AddPrimaryKeyChange(table, item) };
 		}
 
-		private IEnumerable<Change> DropPrimaryKey(TableInfo table, ConstraintInfo item)
+		private IEnumerable<RelationalModelChange> DropPrimaryKey(TableInfo table, ConstraintInfo item)
 		{
-			return new Change[] { new DropPrimaryKeyChange(table, item) };
+			return new RelationalModelChange[] { new DropPrimaryKeyChange(table, item) };
 		}
 
-		private IEnumerable<Change> ComparePrimaryKeys(TableInfo table, ConstraintInfo initial, ConstraintInfo desired)
+		private IEnumerable<RelationalModelChange> ComparePrimaryKeys(TableInfo table, ConstraintInfo initial, ConstraintInfo desired)
 		{
-			List<Change> changes = new List<Change>();
+			List<RelationalModelChange> changes = new List<RelationalModelChange>();
 			// TODO can constraints be altered or do they need to be dropped and recreated?
 			return changes;
 		}
 
-		private IEnumerable<Change> AddEnumeration(TableInfo table, EnumerationInfo item)
+		private IEnumerable<RelationalModelChange> AddEnumeration(TableInfo table, EnumerationInfo item)
 		{
             // check enum options to determine if this item should be considered
 			if(_enumOption == EnumOptions.all || (_enumOption == EnumOptions.hard && item.IsHard))
 			{
-				return CollectionUtils.Map<EnumerationMemberInfo, Change>(
+				return CollectionUtils.Map<EnumerationMemberInfo, RelationalModelChange>(
 					item.Members,
 					delegate(EnumerationMemberInfo member)
 					{
@@ -288,17 +238,17 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			else
 			{
 				// nothing to do 
-				return new Change[] { };
+				return new RelationalModelChange[] { };
 			}
 		}
 
-		private IEnumerable<Change> DropEnumeration(TableInfo table, EnumerationInfo item)
+		private IEnumerable<RelationalModelChange> DropEnumeration(TableInfo table, EnumerationInfo item)
 		{
 			// nothing to do - the table will be dropped
-			return new Change[] {};
+			return new RelationalModelChange[] {};
 		}
 
-		private IEnumerable<Change> CompareEnumerations(TableInfo table, EnumerationInfo initial, EnumerationInfo desired)
+		private IEnumerable<RelationalModelChange> CompareEnumerations(TableInfo table, EnumerationInfo initial, EnumerationInfo desired)
 		{
 			// note: for soft enumerations, we don't do any updates, because they may have been customized already
 			// hence only hard enums should ever be compared (need to ensure what is in the database matches the C# enum definition)
@@ -311,24 +261,24 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			}
 			else
 			{
-				return new Change[] { };
+				return new RelationalModelChange[] { };
 			}
 		}
 
-		private IEnumerable<Change> AddEnumerationValue(TableInfo table, EnumerationMemberInfo item)
+		private IEnumerable<RelationalModelChange> AddEnumerationValue(TableInfo table, EnumerationMemberInfo item)
 		{
-			return new Change[] { new AddEnumValueChange(table, item) };
+			return new RelationalModelChange[] { new AddEnumValueChange(table, item) };
 		}
 
-		private IEnumerable<Change> DropEnumerationValue(TableInfo table, EnumerationMemberInfo item)
+		private IEnumerable<RelationalModelChange> DropEnumerationValue(TableInfo table, EnumerationMemberInfo item)
 		{
-			return new Change[] { new DropEnumValueChange(table, item) };
+			return new RelationalModelChange[] { new DropEnumValueChange(table, item) };
 		}
 
-		private IEnumerable<Change> CompareEnumerationValues(TableInfo table, EnumerationMemberInfo initial, EnumerationMemberInfo desired)
+		private IEnumerable<RelationalModelChange> CompareEnumerationValues(TableInfo table, EnumerationMemberInfo initial, EnumerationMemberInfo desired)
 		{
 			// nothing to do - once a value is populated, we do not update it, because it may have been customized
-			return new Change[] { };
+			return new RelationalModelChange[] { };
 		}
 
         /// <summary>
@@ -344,22 +294,22 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
         /// comparison.
         /// Results of all callbacks are aggregated and returned.
         /// </remarks>
-		private IEnumerable<Change> CompareSets<T>(IEnumerable<T> initial, IEnumerable<T> desired,
+		private IEnumerable<RelationalModelChange> CompareSets<T>(IEnumerable<T> initial, IEnumerable<T> desired,
 		                                           ItemProcessor<T> addProcessor,
 		                                           ItemProcessor<T> dropProcessor,
 												   CompareItemProcessor<T> compareProcessor)
 			where T : ElementInfo
 		{
-			List<Change> changes = new List<Change>();
+			List<RelationalModelChange> changes = new List<RelationalModelChange>();
 
 			// partition desired set into those items that are contained in the initial set (true) and
 			// those that are not (false)
-			IDictionary<bool, List<T>> a = GroupBy<T, bool>(desired,
+			Dictionary<bool, List<T>> a = CollectionUtils.GroupBy<T, bool>(desired,
 					delegate(T x) { return CollectionUtils.Contains(initial, delegate(T y) { return Equals(x, y); }); });
 
 			// partition initial set into those items that are contained in the desired set (true) and
 			// those that are not (false)
-			IDictionary<bool, List<T>> b = GroupBy<T, bool>(initial,
+			Dictionary<bool, List<T>> b = CollectionUtils.GroupBy<T, bool>(initial,
                     delegate(T x) { return CollectionUtils.Contains(desired, delegate(T y) { return Equals(x, y); }); });
 
 			// these items need to be added
@@ -394,22 +344,6 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			}
 
 			return changes;
-		}
-
-		public IDictionary<K, List<T>> GroupBy<T, K>(IEnumerable<T> items, Converter<T, K> keyFunc)
-		{
-			Dictionary<K, List<T>> results = new Dictionary<K, List<T>>();
-			foreach (T item in items)
-			{
-				K key = keyFunc(item);
-				List<T> group;
-				if (!results.TryGetValue(key, out group))
-				{
-					results[key] = group = new List<T>();
-				}
-				group.Add(item);
-			}
-			return results;
 		}
 	}
 }

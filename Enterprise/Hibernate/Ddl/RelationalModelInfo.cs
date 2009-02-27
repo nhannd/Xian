@@ -10,18 +10,29 @@ using NHibernate.Dialect;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
+	/// <summary>
+	/// Describes a relational database model.
+	/// </summary>
     [DataContract]
     public class RelationalModelInfo : ElementInfo
     {
     	private List<TableInfo> _tables;
     	private List<EnumerationInfo> _enumerations;
 
+		/// <summary>
+		/// Constructor that creates an empty model.
+		/// </summary>
         public RelationalModelInfo()
         {
 			_tables = new List<TableInfo>();
 			_enumerations = new List<EnumerationInfo>();
         }
 
+		/// <summary>
+		/// Constructor that creates a model from all NHibernate mappings and embedded enumeration information
+		/// in the set of installed plugins.
+		/// </summary>
+		/// <param name="config"></param>
 		public RelationalModelInfo(Configuration config)
 		{
 			_tables = CollectionUtils.Map<Table, TableInfo>(GetTables(config),
@@ -30,6 +41,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			_enumerations = new EnumMetadataReader().GetEnums(config);
 		}
 
+		/// <summary>
+		/// Gets the set of tables.
+		/// </summary>
     	[DataMember]
     	public List<TableInfo> Tables
     	{
@@ -39,6 +53,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _tables = value; }
     	}
 
+		/// <summary>
+		/// Gets the set of enumerations.
+		/// </summary>
 		[DataMember]
 		public List<EnumerationInfo> Enumerations
     	{
@@ -46,16 +63,34 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _enumerations = value; }
     	}
 
+		/// <summary>
+		/// Gets the table that matches the specified (unqualified) name, or null if no match.
+		/// </summary>
+		/// <param name="table"></param>
+		/// <returns></returns>
 		public TableInfo GetTable(string table)
 		{
 			return CollectionUtils.SelectFirst(_tables, delegate(TableInfo t) { return t.Name == table; });
 		}
 
-        public override string Identity
+		/// <summary>
+		/// Gets the unique identity of the element.
+		/// </summary>
+		/// <remarks>
+		/// The identity string must uniquely identify the element within a given set of elements, but need not be globally unique.
+		/// </remarks>
+		public override string Identity
         {
             get { throw new Exception("The method or operation is not implemented."); }
         }
 
+		#region Helpers
+
+		/// <summary>
+		/// Gets the set of NHibernate <see cref="Table"/> objects known to the specified configuration.
+		/// </summary>
+		/// <param name="cfg"></param>
+		/// <returns></returns>
 		private static List<Table> GetTables(Configuration cfg)
 		{
 			// build set of all tables
@@ -77,6 +112,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 				});
 		}
 
+		/// <summary>
+		/// Converts an NHibernate <see cref="Table"/> object to a <see cref="TableInfo"/> object.
+		/// </summary>
+		/// <param name="table"></param>
+		/// <param name="config"></param>
+		/// <returns></returns>
 		private static TableInfo BuildTableInfo(Table table, Configuration config)
 		{
 			Dialect dialect = Dialect.GetDialect(config.Properties);
@@ -90,5 +131,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 				CollectionUtils.Map<UniqueKey, ConstraintInfo>(table.UniqueKeyCollection, delegate(UniqueKey uk) { return new ConstraintInfo(uk); })
 				);
 		}
+
+		#endregion
 	}
 }

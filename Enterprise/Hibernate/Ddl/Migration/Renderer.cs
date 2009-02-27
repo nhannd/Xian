@@ -8,6 +8,9 @@ using NHibernate.Cfg;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
+	/// <summary>
+	/// Base implementation of <see cref="IRenderer"/>.
+	/// </summary>
 	class Renderer : IRenderer
 	{
 		/// <summary>
@@ -24,6 +27,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 		private readonly Dialect _dialect;
         private readonly string _defaultSchema;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="config"></param>
         protected Renderer(Configuration config)
 		{
             _config = config;
@@ -34,7 +41,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
 		#region IRenderer Members
 
-        public virtual IEnumerable<Change> PreFilter(IEnumerable<Change> changes)
+        public virtual IEnumerable<RelationalModelChange> PreFilter(IEnumerable<RelationalModelChange> changes)
         {
             // don't filter any changes
             return changes;
@@ -116,9 +123,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
         public virtual Statement[] Render(DropPrimaryKeyChange change)
 		{
-            // TODO: change this so that it omits the name of the primary key (name isn't needed in SQL server),
-            // and it will  be incorrect because the pk name was auto-generated
-			string sql = "alter table " + GetQualifiedName(change.Table) + _dialect.GetDropIndexConstraintString(change.PrimaryKey.Name);
+			string sql = string.Format("alter table {0} drop primary key", GetQualifiedName(change.Table));
 			return new Statement[] { new Statement(sql) };
 		}
 
@@ -190,16 +195,35 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 
 		#region Helpers
 
+		/// <summary>
+		/// Gets the configuration.
+		/// </summary>
         protected Configuration Config
         {
             get { return _config; }
         }
 
+		/// <summary>
+		/// Gets the default schema defined in the configuration.
+		/// </summary>
         protected string DefaultSchema
         {
             get { return _defaultSchema; }
         }
 
+		/// <summary>
+		/// Gets the dialect specified in the configuration.
+		/// </summary>
+		protected Dialect Dialect
+		{
+			get { return _dialect; }
+		}
+
+		/// <summary>
+		/// Formats the specified string for SQL.
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
         protected static string FormatValue(string str)
 		{
 			// todo: can we use dialect here?
@@ -218,22 +242,43 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 			return GetQualifiedName(table.Schema, table.Name);
 		}
 
+		/// <summary>
+		/// Gets the schema qualified name of the table.
+		/// </summary>
+		/// <param name="schema"></param>
+		/// <param name="table"></param>
+		/// <returns></returns>
 		protected string GetQualifiedName(string schema, string table)
 		{
             string qualifier = schema ?? _defaultSchema;
             return qualifier == null ? table : qualifier + "." + table;
 		}
 
+		/// <summary>
+		/// Gets the primary key definition string.
+		/// </summary>
+		/// <param name="pk"></param>
+		/// <returns></returns>
 		protected string GetPrimaryKeyString(ConstraintInfo pk)
 		{
 			return string.Format(" primary key ({0})", StringUtilities.Combine(pk.Columns, ", "));
 		}
 
+		/// <summary>
+		/// Gets the unique constraint definition string.
+		/// </summary>
+		/// <param name="uk"></param>
+		/// <returns></returns>
 		protected string GetUniqueConstraintString(ConstraintInfo uk)
 		{
 			return string.Format(" unique ({0})", StringUtilities.Combine(uk.Columns, ", "));
 		}
 
+		/// <summary>
+		/// Gets the column definition string.
+		/// </summary>
+		/// <param name="col"></param>
+		/// <returns></returns>
 		protected string GetColumnDefinitionString(ColumnInfo col)
 		{
 			StringBuilder colStr = new StringBuilder();
@@ -248,17 +293,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 				colStr.Append(" not null");
 			}
 
-			if (col.Unique)
+			if (col.Unique && _dialect.SupportsUnique)
 			{
-				if (_dialect.SupportsUnique)
-				{
-					colStr.Append(" unique");
-				}
-				else
-				{
-					// TODO: create an independent unique constraint instead
-					throw new NotSupportedException("Dialect does not support unique columns.");
-				}
+				colStr.Append(" unique");
 			}
 			return colStr.ToString();
 		}

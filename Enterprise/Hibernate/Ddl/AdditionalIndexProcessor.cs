@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using System.Xml;
 using Iesi.Collections.Generic;
+using NHibernate.Cfg;
 using NHibernate.Mapping;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
@@ -22,9 +23,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     /// </remarks>
     class AdditionalIndexProcessor : IndexCreatorBase
     {
-        public override void Process(PersistentStore store)
+        public override void Process(Configuration config)
         {
-            Dictionary<string, Table> tables = GetTables(store);
+            Dictionary<string, Table> tables = GetTables(config);
 
             // create a resource resolver that will scan all plugins
 			// TODO: we should only scan plugins that are tied to the specified PersistentStore, but there is currently no way to know this
@@ -74,16 +75,16 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             }
         }
 
-        private Dictionary<string, Table> GetTables(PersistentStore store)
+		private Dictionary<string, Table> GetTables(Configuration config)
         {
             // build a set of all tables known to NH
             Dictionary<string, Table> tableSet = new Dictionary<string, Table>();
-            foreach (PersistentClass c in store.Configuration.ClassMappings)
+            foreach (PersistentClass c in config.ClassMappings)
             {
                 tableSet[c.Table.Name] = c.Table;
             }
 
-            foreach (Collection mapping in store.Configuration.CollectionMappings)
+            foreach (Collection mapping in config.CollectionMappings)
             {
                 tableSet[mapping.CollectionTable.Name] = mapping.CollectionTable;
                 tableSet[mapping.Table.Name] = mapping.Table;

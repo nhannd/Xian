@@ -68,31 +68,22 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     		return GetScripts(config, baselineModel, currentModel);
     	}
 
-        private string[] GetScripts(Configuration config, RelationalModelInfo baselineModel, RelationalModelInfo currentModel)
-    	{
-    		RelationalModelComparator comparator = new RelationalModelComparator(_enumOption);
-    		IEnumerable<Change> changes = comparator.CompareDatabases(baselineModel, currentModel);
-
-    		IRenderer renderer = Renderer.GetRenderer(config);
-
-			// allow the renderer to modify the change set
-        	changes = renderer.PreFilter(changes);
-
-    		List<Statement> statements = new List<Statement>();
-    		foreach (Change change in changes)
-    		{
-    			statements.AddRange(change.GetStatements(renderer));
-    		}
-
-    		return CollectionUtils.Map<Statement, string>(statements,
-    				delegate(Statement s) { return s.Sql; }).ToArray();
-    	}
-
     	public override string[] GenerateDropScripts(Configuration config)
         {
             return new string[]{};
         }
 
         #endregion
-    }
+
+		private string[] GetScripts(Configuration config, RelationalModelInfo baselineModel, RelationalModelInfo currentModel)
+		{
+			RelationalModelComparator comparator = new RelationalModelComparator(_enumOption);
+			RelationalModelTransform transform = comparator.CompareModels(baselineModel, currentModel);
+
+			IRenderer renderer = Renderer.GetRenderer(config);
+			return CollectionUtils.Map<Statement, string>(transform.Render(renderer),
+					delegate(Statement s) { return s.Sql; }).ToArray();
+		}
+
+	}
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
-    class DropColumnChange : Change
+    class DropColumnChange : RelationalModelChange
     {
     	private readonly ColumnInfo _column;
 

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
-    class DropUniqueConstraintChange : Change
+    class DropUniqueConstraintChange : RelationalModelChange
     {
     	private readonly ConstraintInfo _constraint;
 

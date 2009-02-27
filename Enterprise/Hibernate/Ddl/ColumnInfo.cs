@@ -8,6 +8,9 @@ using NHibernate.Dialect;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
+	/// <summary>
+	/// Describes a column in a relational database model.
+	/// </summary>
     [DataContract]
     public class ColumnInfo : ElementInfo
     {
@@ -17,13 +20,21 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private bool _unique;
 		private string _sqlType;
 
-
-        public ColumnInfo()
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+        internal ColumnInfo()
         {
 
         }
 
-        public ColumnInfo(Column column, Configuration config, Dialect dialect)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="column"></param>
+		/// <param name="config"></param>
+		/// <param name="dialect"></param>
+		internal ColumnInfo(Column column, Configuration config, Dialect dialect)
         {
             _name = column.Name;
             _length = column.Length;
@@ -32,6 +43,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             _sqlType = column.GetSqlType(dialect, new Mapping(config));
         }
 
+		/// <summary>
+		/// Gets the column name.
+		/// </summary>
     	[DataMember]
     	public string Name
     	{
@@ -39,6 +53,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _name = value; }
     	}
 
+		/// <summary>
+		/// Gets the column length, or -1 if not applicable.
+		/// </summary>
     	[DataMember]
     	public int Length
     	{
@@ -46,6 +63,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _length = value; }
     	}
 
+		/// <summary>
+		/// Gets a value indicating whether the column is nullable.
+		/// </summary>
     	[DataMember]
     	public bool Nullable
     	{
@@ -53,6 +73,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _nullable = value; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether the column is defined as unique.
+		/// </summary>
     	[DataMember]
     	public bool Unique
     	{
@@ -60,6 +83,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _unique = value; }
     	}
 
+		/// <summary>
+		/// Gets the SQL data type of the column.
+		/// </summary>
     	[DataMember]
     	public string SqlType
     	{
@@ -67,6 +93,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 			private set { _sqlType = value; }
     	}
 
+		/// <summary>
+		/// Returns true if this column matches that, property for property.
+		/// </summary>
+		/// <param name="that"></param>
+		/// <returns></returns>
 		public bool Matches(ColumnInfo that)
         {
             return this.Name == that.Name
@@ -76,7 +107,13 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 && this.SqlType == that.SqlType;
         }
 
-        public override string Identity
+		/// <summary>
+		/// Gets the unique identity of the element.
+		/// </summary>
+		/// <remarks>
+		/// The identity string must uniquely identify the element within a given set of elements, but need not be globally unique.
+		/// </remarks>
+		public override string Identity
         {
             get { return this.Name; }
         }

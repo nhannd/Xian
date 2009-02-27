@@ -6,6 +6,9 @@ using NHibernate.Dialect;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
+	/// <summary>
+	/// Abstract base implementation of <see cref="IDdlScriptGenerator"/>.
+	/// </summary>
 	public abstract class DdlScriptGenerator : IDdlScriptGenerator
 	{
 		#region IDdlScriptGenerator Members
@@ -18,6 +21,11 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
 		#endregion
 
+		/// <summary>
+		/// Gets the dialect object specified by the configuration.
+		/// </summary>
+		/// <param name="config"></param>
+		/// <returns></returns>
 		protected static Dialect GetDialect(Configuration config)
 		{
 			return Dialect.GetDialect(config.Properties);

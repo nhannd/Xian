@@ -8,13 +8,16 @@ using NHibernate.Type;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
+	/// <summary>
+	/// For internal use.  Copied from NHibernate source.
+	/// </summary>
 	internal class Mapping : IMapping
 	{
 		private readonly Configuration _config;
 
-		public Mapping(Configuration config)
+		internal Mapping(Configuration config)
 		{
-			this._config = config;
+			_config = config;
 		}
 
 		private PersistentClass GetPersistentClass(System.Type type)

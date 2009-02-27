@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
-    class AddIndexChange : Change
+    class AddIndexChange : RelationalModelChange
     {
     	private readonly IndexInfo _index;
 

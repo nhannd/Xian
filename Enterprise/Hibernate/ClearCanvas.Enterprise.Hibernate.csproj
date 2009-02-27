@@ -60,7 +60,6 @@
     <Compile Include="Broker.cs" />
     <Compile Include="ChangeRecord.cs" />
     <Compile Include="ChangeTracker.cs" />
-    <Compile Include="CustomSqlDialect.cs" />
     <Compile Include="Ddl\AdditionalIndexProcessor.cs" />
     <Compile Include="Ddl\DdlScriptGenerator.cs" />
     <Compile Include="Ddl\EnumForeignKeyProcessor.cs" />
@@ -76,7 +75,7 @@
     <Compile Include="Ddl\Migration\AddForeignKeyChange.cs" />
     <Compile Include="Ddl\Migration\AddIndexChange.cs" />
     <Compile Include="Ddl\Migration\AddTableChange.cs" />
-    <Compile Include="Ddl\Migration\Change.cs" />
+    <Compile Include="Ddl\Migration\RelationalModelChange.cs" />
     <Compile Include="Ddl\Migration\DropPrimaryKeyChange.cs" />
     <Compile Include="Ddl\Migration\AddEnumValueChange.cs" />
     <Compile Include="Ddl\Migration\ModifyColumnChange.cs" />
@@ -86,6 +85,7 @@
     <Compile Include="Ddl\Migration\DropIndexChange.cs" />
     <Compile Include="Ddl\Migration\DropTableChange.cs" />
     <Compile Include="Ddl\Migration\IRenderer.cs" />
+    <Compile Include="Ddl\Migration\RelationalModelTransform.cs" />
     <Compile Include="Ddl\Migration\Renderer.cs" />
     <Compile Include="Ddl\Migration\Renderers\MsSqlRenderer.cs" />
     <Compile Include="Ddl\Migration\RelationalModelComparator.cs" />

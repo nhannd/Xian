@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration
 {
-	class AddEnumValueChange : Change
+	class AddEnumValueChange : RelationalModelChange
 	{
 		private readonly EnumerationMemberInfo _value;
 

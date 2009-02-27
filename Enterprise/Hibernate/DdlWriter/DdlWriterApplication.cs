@@ -79,18 +79,19 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 				// load the persistent store defined by the current set of binaries
 				PersistentStore store = (PersistentStore)PersistentStoreRegistry.GetDefaultStore();
 
-				// run pre-processors
-				PreProcessor preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
-				preProcessor.Process(store);
-
 				// get config
 				Configuration config = store.Configuration;
+
+				// run pre-processors
+				PreProcessor preProcessor = new PreProcessor(cmdLine.CreateIndexes, cmdLine.AutoIndexForeignKeys);
+				preProcessor.Process(config);
+
 
 				// if this is an upgrade, load the baseline model file
             	RelationalModelInfo baselineModel = null;
 				if(!string.IsNullOrEmpty(cmdLine.BaselineModelFile))
 				{
-					RelationalModelSerializer serializer = new RelationalModelSerializer(config);
+					RelationalModelSerializer serializer = new RelationalModelSerializer();
 					baselineModel = serializer.ReadModel(File.OpenText(cmdLine.BaselineModelFile));
 				}
 
@@ -118,8 +119,8 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 						if(baselineModel != null)
 							throw new NotSupportedException("Upgrade is not compatible with XML output format.");
 
-						RelationalModelSerializer serializer = new RelationalModelSerializer(config);
-						serializer.WriteModel(writer);
+						RelationalModelSerializer serializer = new RelationalModelSerializer();
+						serializer.WriteModel(new RelationalModelInfo(config), writer);
 						break;
 
 					default:

@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using NHibernate.Cfg;
 using NHibernate.Metadata;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
@@ -49,15 +50,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     /// </summary>
     class EnumForeignKeyProcessor : IDdlPreProcessor
     {
-        public void Process(PersistentStore store)
+        public void Process(Configuration config)
         {
-            foreach (PersistentClass pc in store.Configuration.ClassMappings)
+            foreach (PersistentClass pc in config.ClassMappings)
             {
-                CreateConstraints(store, pc.PropertyCollection);
+                CreateConstraints(config, pc.PropertyCollection);
             }
         }
 
-        private void CreateConstraints(PersistentStore store, ICollection properties)
+		private void CreateConstraints(Configuration config, ICollection properties)
         {
             foreach (Property prop in properties)
             {
@@ -65,7 +66,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 {
                     // recur on component properties
                     Component comp = prop.Value as Component;
-                    CreateConstraints(store, comp.PropertyCollection);
+                    CreateConstraints(config, comp.PropertyCollection);
                 }
                 else if (prop.Value is Collection)
                 {
@@ -74,7 +75,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                     if (coll.Element is Component)
                     {
                         Component comp = coll.Element as Component;
-                        CreateConstraints(store, comp.PropertyCollection);
+                        CreateConstraints(config, comp.PropertyCollection);
                     }
                 }
                 else

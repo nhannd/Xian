@@ -8,6 +8,9 @@ using NHibernate.Cfg;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration.Renderers
 {
+	/// <summary>
+	/// Implementation of <see cref="IRenderer"/> for MS-SQL 2000 and greater.
+	/// </summary>
     class MsSqlRenderer : Renderer
     {
 		public MsSqlRenderer(Configuration config)
@@ -15,10 +18,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration.Renderers
 		{
 		}
 
-        public override IEnumerable<Change> PreFilter(IEnumerable<Change> changes)
+        public override IEnumerable<RelationalModelChange> PreFilter(IEnumerable<RelationalModelChange> changes)
         {
-            List<Change> filtered = new List<Change>(changes);
-            foreach (Change change in changes)
+            List<RelationalModelChange> filtered = new List<RelationalModelChange>(changes);
+            foreach (RelationalModelChange change in changes)
             {
                 // if a primary key is being added
                 if (change is AddPrimaryKeyChange)
@@ -42,19 +45,19 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl.Migration.Renderers
 			return base.PreFilter(filtered);
         }
 
-        private bool IsTableAdded(IEnumerable<Change> changes, TableInfo table)
+        private bool IsTableAdded(IEnumerable<RelationalModelChange> changes, TableInfo table)
         {
             return CollectionUtils.Contains(changes,
-                delegate(Change c)
+                delegate(RelationalModelChange c)
                 {
                     return c is AddTableChange && Equals(c.Table, table);
                 });
         }
 
-        private bool IsTableDropped(IEnumerable<Change> changes, TableInfo table)
+        private bool IsTableDropped(IEnumerable<RelationalModelChange> changes, TableInfo table)
         {
             return CollectionUtils.Contains(changes,
-                delegate(Change c)
+                delegate(RelationalModelChange c)
                 {
                     return c is DropTableChange && Equals(c.Table, table);
                 });
