@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -65,6 +66,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				_undoableCommand = null;
 				
 				_polyLine.ControlPoints.ControlPointChangedEvent -= OnControlPointChanged;
+				_polyLine.Drawing -= OnPolyLineDrawing;
 				_polyLine.Dispose();
 				_polyLine = null;
 				image.Draw();
@@ -82,8 +84,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Visible = IsValidImage(this.SelectedPresentationImage);
 		}
 
+		//ggerade ToRef: This hack works around the problem where the OnTileSelected gets called in
+		//	situations where the DisplaySet has already been created. No need to recreate every time.
+		//  Ideally there would be a better way for the tool to know when to Create the full set.
+		private bool _fullSetCreated = false;
 		protected override void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
+			MprDisplaySet displaySet = _toolHelper.GetObliqueDisplaySet();
+			if (displaySet != null && _fullSetCreated == false)
+			{
+				displaySet.CreateFullObliqueDisplaySet();
+				_fullSetCreated = true;
+			}
 			RemoveGraphic();
 			Visible = IsValidImage(this.SelectedPresentationImage);
 		}
@@ -119,7 +131,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (_polyLine.Start(mouseInformation))
 			{
 				_polyLine.ControlPoints.ControlPointChangedEvent += OnControlPointChanged;
-				base.ActivationChanged += new EventHandler(OnActivationChanged);
+				_polyLine.Drawing += OnPolyLineDrawing;
+				base.ActivationChanged += OnActivationChanged;
 				return true;
 			}
 
@@ -127,8 +140,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return false;
 		}
 
-		private void OnControlPointChanged(object sender, ListEventArgs<System.Drawing.PointF> e)
+		//ggerade ToRes: Fix this hack. Ideally handling this event wouldn't be necessary. When the line is 
+		//	moved as a whole the OnControlPointChanged event seems to be fired as the control points are offset 
+		//	individually. This results in endpoint wierdness that makes the oblique viewport behave erraticly. 
+		//	So here I grab the endpoints and use them in OnControlPointChange.
+		private void OnPolyLineDrawing(object sender, EventArgs e)
 		{
+#if true
 			_polyLine.CoordinateSystem = CoordinateSystem.Destination;
 
 			PointF start = _polyLine.SpatialTransform.ConvertToSource(_polyLine.ControlPoints[0]);
@@ -136,10 +154,32 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			_polyLine.ResetCoordinateSystem();
 
-			Vector3D startPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(start);
-			Vector3D endPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(end);
+			_startPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(start);
+			_endPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(end);
+#endif
+		}
 
-			if ((startPatient - endPatient).Magnitude < 5 * base.SelectedImageSopProvider.Frame.NormalizedPixelSpacing.Row)
+		private Vector3D _startPatient;
+		private Vector3D _endPatient;
+
+		private void OnControlPointChanged(object sender, ListEventArgs<System.Drawing.PointF> e)
+		{
+#if false
+			_polyLine.CoordinateSystem = CoordinateSystem.Destination;
+
+			PointF start = _polyLine.SpatialTransform.ConvertToSource(_polyLine.ControlPoints[0]);
+			PointF end = _polyLine.SpatialTransform.ConvertToSource(_polyLine.ControlPoints[1]);
+
+			_polyLine.ResetCoordinateSystem();
+
+			_startPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(start);
+			_endPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(end);
+#else
+			if (_startPatient == null || _endPatient == null)
+				return;
+#endif
+	
+			if ((_startPatient - _endPatient).Magnitude < 5 * base.SelectedImageSopProvider.Frame.NormalizedPixelSpacing.Row)
 				return;
 
 			Vector3D orientationRow = new Vector3D(
@@ -152,9 +192,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnY,
 				(float)SelectedImageSopProvider.Frame.ImageOrientationPatient.ColumnZ);
 
-
-			_toolHelper.GetObliqueDisplaySet().SetCutLine(orientationColumn, orientationRow, startPatient, endPatient);
-
+			_toolHelper.GetObliqueDisplaySet().SetCutLine(orientationColumn, orientationRow, _startPatient, _endPatient);
+			_fullSetCreated = false;
 		}
 
 		public override bool Track(IMouseInformation mouseInformation)
@@ -204,7 +243,13 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private bool IsValidImage(IPresentationImage image)
 		{
-			return _toolHelper.IsIdentityImage(image);
+			return _toolHelper.IsIdentityImage(image) 
+#if DEBUG
+				//ggerade ToDo: Decide if we want to enable these, they still suffer from orientation wierdness
+				|| _toolHelper.IsOrthoXImage(image)
+				|| _toolHelper.IsOrthoYImage(image)
+#endif
+				;
 		}
 	}
 }

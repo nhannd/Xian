@@ -72,135 +72,38 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Slicer Settings
 
+		private Vector3D _startPointPatient, _endPointPatient;
 		public void SetSlicePlanePatient(Vector3D sourceOrientationColumnPatient, Vector3D sourceOrientationRowPatient,
 		                                 Vector3D startPointPatient, Vector3D endPointPatient)
 		{
-#if true
 			Vector3D sourceOrientationNormalPatient = sourceOrientationColumnPatient.Cross(sourceOrientationRowPatient);
 			Vector3D normalLinePatient = (endPointPatient - startPointPatient).Normalize();
-			//Vector3D normalLinePatient = AbsoluteDelta(endPointPatient, startPointPatient).Normalize();
 			Vector3D normalPerpLinePatient = sourceOrientationNormalPatient.Cross(normalLinePatient);
 
-			Vector3D slicePlanePatientXNormal = normalLinePatient;
-			Vector3D slicePlanePatientYNormal = sourceOrientationNormalPatient;
-			Vector3D slicePlanePatientZNormal = normalPerpLinePatient;
+			Vector3D slicePlanePatientX = normalLinePatient;
+			Vector3D slicePlanePatientY = sourceOrientationNormalPatient;
+			Vector3D slicePlanePatientZ = normalPerpLinePatient;
 
 			Matrix slicePlanePatientOrientation = new Matrix
 				(4, 4, new float[4,4]
 				       	{
-				       		{slicePlanePatientXNormal.X, slicePlanePatientXNormal.Y, slicePlanePatientXNormal.Z, 0},
-				       		{slicePlanePatientYNormal.X, slicePlanePatientYNormal.Y, slicePlanePatientYNormal.Z, 0},
-				       		{slicePlanePatientZNormal.X, slicePlanePatientZNormal.Y, slicePlanePatientZNormal.Z, 0},
+				       		{slicePlanePatientX.X, slicePlanePatientX.Y, slicePlanePatientX.Z, 0},
+				       		{slicePlanePatientY.X, slicePlanePatientY.Y, slicePlanePatientY.Z, 0},
+				       		{slicePlanePatientZ.X, slicePlanePatientZ.Y, slicePlanePatientZ.Z, 0},
 				       		{0, 0, 0, 1}
 				       	});
-
-			//Vector3D patientOrientationOrtho = sourceOrientationRowPatient.Cross(sourceOrientationColumnPatient);
-			//Matrix srcPlanePatientOrientation = new Matrix
-			//    (4, 4, new float[4, 4]
-			//            {
-			//                {sourceOrientationRowPatient.X, sourceOrientationRowPatient.Y, sourceOrientationRowPatient.Z, 0},
-			//                {sourceOrientationColumnPatient.X, sourceOrientationColumnPatient.Y, sourceOrientationColumnPatient.Z, 0},
-			//                {patientOrientationOrtho.X, patientOrientationOrtho.Y, patientOrientationOrtho.Z, 0},
-			//                {0, 0, 0, 1}
-			//            });
-			//Matrix srcPlaneOrientation = _volume.RotateToVolumeOrientation(srcPlanePatientOrientation);
 
 			_resliceAxes = _volume.RotateToVolumeOrientation(slicePlanePatientOrientation);
+			_startPointPatient = startPointPatient;
+			_endPointPatient = endPointPatient;
+			Vector3D lineMiddlePointPatient = new Vector3D(
+			    (startPointPatient.X + endPointPatient.X) / 2,
+			    (startPointPatient.Y + endPointPatient.Y) / 2,
+			    (startPointPatient.Z + endPointPatient.Z) / 2);
 
-#elif false
-			Vector3D patientOrientationOrtho = sourceOrientationColumnPatient.Cross(sourceOrientationRowPatient);
+			this.SliceThroughPointPatient = lineMiddlePointPatient;
 
-			Matrix srcPlanePatientOrientation = new Matrix
-				(4, 4, new float[4, 4]
-				       	{
-				       		{sourceOrientationColumnPatient.X, sourceOrientationColumnPatient.Y, sourceOrientationColumnPatient.Z, 0},
-				       		{sourceOrientationRowPatient.X, sourceOrientationRowPatient.Y, sourceOrientationRowPatient.Z, 0},
-				       		{patientOrientationOrtho.X, patientOrientationOrtho.Y, patientOrientationOrtho.Z, 0},
-				       		{0, 0, 0, 1}
-				       	});
-
-			Matrix srcPlaneOrientation = _volume.RotateToVolumeOrientation(srcPlanePatientOrientation);
-			//Vector3D srcPlaneXNormal = new Vector3D(srcPlaneOrientation[0, 0], srcPlaneOrientation[0, 1], srcPlaneOrientation[0, 2]);
-			//Vector3D srcPlaneYNormal = new Vector3D(srcPlaneOrientation[1, 0], srcPlaneOrientation[1, 1], srcPlaneOrientation[1, 2]);
-			Vector3D srcPlaneZNormal = new Vector3D(srcPlaneOrientation[2, 0], srcPlaneOrientation[2, 1], srcPlaneOrientation[2, 2]);
-
-			Vector3D startPoint = _volume.ConvertToVolume(startPointPatient);
-			Vector3D endPoint = _volume.ConvertToVolume(endPointPatient);
-
-			Vector3D slicePlaneXNormal = srcPlaneZNormal;
-			Vector3D slicePlaneYNormal = (endPoint - startPoint).Normalize();
-			//Vector3D slicePlaneYNormal = AbsoluteDelta(endPoint, startPoint).Normalize();
-			Vector3D slicePlaneZNormal = slicePlaneXNormal.Cross(slicePlaneYNormal);
-
-			_resliceAxes =
-				new Matrix
-				(4, 4, new float[4, 4]
-			            {
-			                {slicePlaneXNormal.X, slicePlaneXNormal.Y, slicePlaneXNormal.Z, 0},
-			                {slicePlaneYNormal.X, slicePlaneYNormal.Y, slicePlaneYNormal.Z, 0},
-			                {slicePlaneZNormal.X, slicePlaneZNormal.Y, slicePlaneZNormal.Z, 0},
-			                {0, 0, 0, 1}
-			            });
-#else
-	//Vector3D sourceOrientationNormalPatient = sourceOrientationColumnPatient.Cross(sourceOrientationRowPatient);
-			Vector3D sourceOrientationNormalPatient = sourceOrientationRowPatient.Cross(sourceOrientationColumnPatient);
-			Vector3D normalLinePatient = (endPointPatient - startPointPatient).Normalize();
-			//Vector3D normalLinePatient = AbsoluteDelta(endPointPatient, startPointPatient).Normalize();
-			//Vector3D normalPerpLinePatient = sourceOrientationNormalPatient.Cross(normalLinePatient);
-			//Vector3D normalPerpLinePatient = normalLinePatient.Cross(sourceOrientationNormalPatient);
-			//Vector3D slicePlanePatientXNormal = sourceOrientationNormalPatient;
-			//Vector3D slicePlanePatientYNormal = normalLinePatient;
-			//Vector3D slicePlanePatientZNormal = normalPerpLinePatient;
-
-
-
-			Vector3D patientOrientationOrtho = sourceOrientationColumnPatient.Cross(sourceOrientationRowPatient);
-
-			Matrix srcPlanePatientOrientation = new Matrix
-				(4, 4, new float[4, 4]
-			            {
-			                {sourceOrientationColumnPatient.X, sourceOrientationColumnPatient.Y, sourceOrientationColumnPatient.Z, 0},
-			                {sourceOrientationRowPatient.X, sourceOrientationRowPatient.Y, sourceOrientationRowPatient.Z, 0},
-			                {patientOrientationOrtho.X, patientOrientationOrtho.Y, patientOrientationOrtho.Z, 0},
-			                {0, 0, 0, 1}
-			            });
-
-			Matrix srcPlaneOrientation = _volume.RotateToVolumeOrientation(srcPlanePatientOrientation);
-			Matrix normal = new Matrix(4, 1);
-			normal.SetColumn(0, sourceOrientationNormalPatient.X, sourceOrientationNormalPatient.Y, sourceOrientationNormalPatient.Z, 1F);
-			Matrix rotatedNormal = srcPlaneOrientation * normal;
-			Matrix line = new Matrix(4,1);
-			normal.SetColumn(0, normalLinePatient.X,normalLinePatient.Y,normalLinePatient.Z,1f);
-			Matrix rotatedLine = srcPlaneOrientation * line;
-
-			Vector3D slicePlanePatientXNormal = new Vector3D(rotatedNormal[0,0],rotatedNormal[1,0],rotatedNormal[2,0]);
-			Vector3D slicePlanePatientYNormal = new Vector3D(rotatedLine[0, 0], rotatedLine[1, 0], rotatedLine[2, 0]);
-			Vector3D slicePlanePatientZNormal = slicePlanePatientXNormal.Cross(slicePlanePatientYNormal);
-		
-
-			Matrix slicePlanePatientOrientation = new Matrix
-				(4, 4, new float[4,4]
-				       	{
-				       		{slicePlanePatientXNormal.X, slicePlanePatientXNormal.Y, slicePlanePatientXNormal.Z, 0},
-				       		{slicePlanePatientYNormal.X, slicePlanePatientYNormal.Y, slicePlanePatientYNormal.Z, 0},
-				       		{slicePlanePatientZNormal.X, slicePlanePatientZNormal.Y, slicePlanePatientZNormal.Z, 0},
-				       		{0, 0, 0, 1}
-				       	});
-
-
-
-
-			_resliceAxes = _volume.RotateToVolumeOrientation(slicePlanePatientOrientation);
-#endif
-
-			Vector3D centerPointPatient = new Vector3D(
-				startPointPatient.X + (endPointPatient.X - startPointPatient.X) / 2,
-				startPointPatient.Y + (endPointPatient.X - startPointPatient.Y) / 2,
-				startPointPatient.Z + (endPointPatient.X - startPointPatient.Z) / 2);
-
-			Vector3D sliceThroughPoint = _volume.ConvertToVolume(centerPointPatient);
-
-			this.SetReslicePoint(sliceThroughPoint);
+			this.SliceExtentMillimeters = (endPointPatient - startPointPatient).Magnitude;
 		}
 
 		public void SetSlicePlaneIdentity()
@@ -304,16 +207,19 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			string name = String.Format("MPR ({0})", displaySetName);
 			DisplaySet displaySet = new DisplaySet(name, Guid.NewGuid().ToString(), name);
-			PopulateDisplaySet(displaySet);
+			PopulateDisplaySet(displaySet, false);
 			return displaySet;
 		}
 
-		internal void PopulateDisplaySet(IDisplaySet displaySet)
+		internal void PopulateDisplaySet(IDisplaySet displaySet, bool singleSlice)
 		{
 			// Slice through this point
 			Vector3D throughPoint;
 			if (_sliceThroughPointPatient != null)
-				throughPoint = _volume.ConvertToVolume(_sliceThroughPointPatient);
+			{
+				//ggerade ToRes: Things that make me go hmmm...
+				throughPoint = _volume.ConvertToVolume(_sliceThroughPointPatient) + _volume.CenterPoint;
+			}
 			else
 				throughPoint = _volume.CenterPoint;
 
@@ -321,7 +227,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			//ggerade ToDo: Determine the length of the vector that passes through the volume
 			// For now just use the longest axis by the spacingVector
-			int numSlices = (int)(_volume.LongAxisMagnitude / spacingVector.Magnitude + 0.5f);
+			int numSlices = 1;
+			//ggerade ToRef: find a better way to encapsulate generating one vs the whole set
+			if (!singleSlice)
+				numSlices = (int)(_volume.LongAxisMagnitude / spacingVector.Magnitude + 0.5f);
 
 			Vector3D startPoint = throughPoint + (numSlices / 2) * spacingVector;
 
@@ -436,10 +345,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
-		#endregion
-
-		#region Dicom Slice Generation
-
 		// Extract slice in specified orientation
 		private vtkImageData GenerateVtkSlice(Matrix resliceAxes)
 		{
@@ -459,41 +364,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				reslicer.SetResliceAxes(MatrixToVtkMatrix(resliceAxes));
 
-				int sliceExtent = GetSliceExtent();
-				reslicer.SetOutputExtent(0, sliceExtent - 1, 0, sliceExtent - 1, 0, 0);
+				int sliceExtentX = GetSliceExtentX();
+				reslicer.SetOutputExtent(0, sliceExtentX - 1, 0, _volume.LargestOutputImageDimension - 1, 0, 0);
 
-#if false
-	// Determine the center image volume point
-	//
-			Vector3D reslicePoint = GetReslicePoint(_resliceAxes);
-			Vector3D xVec = new Vector3D(_resliceAxes[0, 0], _resliceAxes[0, 1], _resliceAxes[0, 2]);
-			Vector3D yVec = new Vector3D(_resliceAxes[1, 0], _resliceAxes[1, 1], _resliceAxes[1, 2]);
-			Vector3D n = xVec.Cross(yVec); // or zVec
-			Vector3D w = reslicePoint - _volume.CenterPoint;
-			Vector3D centerImageVolumePoint = n.Dot(w) * n;
+				float originX = - sliceExtentX * _volume.EffectiveSpacing / 2;
+				float originY = - _volume.LargestOutputImageDimension * _volume.EffectiveSpacing / 2;
 
-			Vector3D delta = reslicePoint - centerImageVolumePoint;
-			float deltaX = delta.Dot(xVec);
-			float deltaY = delta.Dot(yVec);
-
-			reslicer.SetOutputOrigin(deltaX, deltaY, 0);
-#elif false
-			if (_sliceThroughPointPatient != null)
-			{
-				//Vector3D reslicePoint = GetReslicePoint(_resliceAxes);
-				//Matrix inputPoint = new Matrix(4, 1, new float[4, 1] { { reslicePoint.X }, { reslicePoint.Y }, { reslicePoint.Z }, { 1 } });
-				//Matrix outputPoint = resliceAxes.Transpose() * inputPoint;
-				//reslicer.SetOutputOrigin(outputPoint[0, 0], outputPoint[1, 0], 0);
-								
-				//Matrix inputOrigin = new Matrix(4, 1, new float[4, 1] { { 0 }, { 0 }, { 0 }, { 1 } });
-				//Matrix outputOrigin = resliceAxes.Transpose() * inputOrigin;
-				//reslicer.SetOutputOrigin(outputOrigin[0, 0], outputOrigin[1, 0], 0);
-				
-				Matrix inputOrigin = new Matrix(1, 4, new float[1, 4] { { 0, 0, 0, 1 } });
-				Matrix outputOrigin = inputOrigin * resliceAxes;
-				reslicer.SetOutputOrigin(-outputOrigin[0, 2], -outputOrigin[0, 1], 0);
-			}
-#endif
+				reslicer.SetOutputOrigin(originX, originY, 0);
+				//reslicer.SetOutputOrigin(0, originY, 0);
 
 				switch (_interpolationMode)
 				{
@@ -520,10 +398,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		}
 
 		// Derived frome either a specified extent in millimeters or from the volume dimensions (default)
-		private int GetSliceExtent()
+		private int GetSliceExtentX()
 		{
 			if (_sliceExtentMm != 0f)
-				return (int) (_sliceExtentMm / _volume.EffectiveSpacing);
+				return (int)(_sliceExtentMm / _volume.EffectiveSpacing + 0.5f);
 			else
 				return _volume.LargestOutputImageDimension;
 		}
@@ -533,6 +411,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		//{
 		//    Debug.WriteLine(eid);
 		//}
+
+		#endregion
+
+		#region Dicom Slice Generation
 
 		private DicomFile CreateSliceDicom()
 		{
@@ -546,7 +428,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			// Update rows and columns to reflect actual output size
 			int columns, rows;
-			columns = rows = GetSliceExtent();
+			columns = GetSliceExtentX();
+			rows = _volume.LargestOutputImageDimension;
 			sliceDataSet[DicomTags.Columns].SetUInt16(0, (ushort) columns);
 			sliceDataSet[DicomTags.Rows].SetUInt16(0, (ushort) rows);
 
@@ -571,7 +454,16 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			// Update Image Position (patient)
 			//
-			Vector3D topLeftOfSlicePatient = ConvertSliceCoordToPatient(new PointF(0, 0), columns, rows);
+			//ggerade ToDo: Fix this hack...
+			Vector3D topLeftOfSlicePatient;
+			//if (_startPointPatient != null)
+			//{
+			//    topLeftOfSlicePatient = new Vector3D(_startPointPatient.X, _startPointPatient.Y, _startPointPatient.Z);
+			//    // One time use... 
+			//    _startPointPatient = null;
+			//}
+			//else
+				topLeftOfSlicePatient = ConvertSliceCoordToPatient(new PointF(0, 0), columns, rows);
 
 			sliceDataSet[DicomTags.ImagePositionPatient].SetFloat32(0, topLeftOfSlicePatient.X);
 			sliceDataSet[DicomTags.ImagePositionPatient].SetFloat32(1, topLeftOfSlicePatient.Y);
@@ -583,7 +475,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private Vector3D ConvertSliceCoordToPatient(PointF sliceCoord, int columns,
 		                                            int rows)
 		{
-			Vector3D reslicePoint = GetReslicePoint(_resliceAxes);
+			Vector3D reslicePoint = GetReslicePoint();
 
 			// Convert 2D slice coord to 3D volume point
 			//
@@ -596,16 +488,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			float spacingX = xVec.Dot(spacingVec);
 			float spacingY = yVec.Dot(spacingVec);
 
-#if true
 			// Determine the center image volume point
 			//
 			Vector3D n = xVec.Cross(yVec); // or zVec
 			Vector3D w = reslicePoint - _volume.CenterPoint;
 
 			Vector3D centerImageVolumePoint = n.Dot(w) * n;
-#else
-			Vector3D centerImageVolumePoint = new Vector3D(reslicePoint);
-#endif
 
 			PointF centerPlaneCoord = new PointF(columns / 2f, rows / 2f);
 
@@ -690,12 +578,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Matrix aboutZ = CalcRotateMatrixAboutZ(rotateZ);
 
 			return aboutX * aboutY * aboutZ;
-		}
-
-		private static Vector3D GetReslicePoint(Matrix resliceAxes)
-		{
-			return new Vector3D(resliceAxes[3, 0],
-			                    resliceAxes[3, 1], resliceAxes[3, 2]);
 		}
 
 		private static readonly Matrix _identityMatrix = new Matrix(4, 4, new float[4,4]

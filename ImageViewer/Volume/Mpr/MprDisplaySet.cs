@@ -77,14 +77,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 
 			MprDisplaySet displaySet = new MprDisplaySet(name, DicomUid.GenerateUid().UID, name, identifier, slicer);
-			slicer.PopulateDisplaySet(displaySet);
+			slicer.PopulateDisplaySet(displaySet, false);
 			return displaySet;
 		}
 
+		private Vector3D _startPoint, _endPoint;
 		public void SetCutLine(Vector3D sourceOrientationColumn, Vector3D sourceOrientationRow, Vector3D startPoint, Vector3D endPoint)
 		{
 			if (_identifier != MprDisplaySetIdentifier.Oblique)
 				throw new InvalidOperationException("Display set must be oblique.");
+
+			_startPoint = startPoint;
+			_endPoint = endPoint;
 
 			int currentIndex = ImageBox.TopLeftPresentationImageIndex;
 
@@ -98,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				lut = (oldImage as IVoiLutProvider).VoiLutManager.GetLut();
 
 			_slicer.SetSlicePlanePatient(sourceOrientationColumn, sourceOrientationRow, startPoint, endPoint);
-			_slicer.PopulateDisplaySet(this);
+			_slicer.PopulateDisplaySet(this, true);
 
 			if (lut != null || transformMemento != null)
 			{
@@ -113,9 +117,47 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 
 			//TODO: this seems a bit slow
-			IPresentationImage closestImage = GetClosestSlice(startPoint + (endPoint - startPoint)*2);
+			IPresentationImage closestImage = GetClosestSlice(startPoint + (endPoint - startPoint) * 2);
 			if (closestImage == null)
 				ImageBox.TopLeftPresentationImageIndex = currentIndex;
+			else
+				ImageBox.TopLeftPresentationImage = closestImage;
+
+			Draw();
+		}
+
+		public void CreateFullObliqueDisplaySet()
+		{
+			if (_startPoint == null || _endPoint == null)
+				return;
+
+			object transformMemento = null;
+			IPresentationImage oldImage = this.ImageBox.TopLeftPresentationImage;
+			if (oldImage is ISpatialTransformProvider)
+				transformMemento = (oldImage as ISpatialTransformProvider).SpatialTransform.CreateMemento();
+
+			IComposableLut lut = null;
+			if (oldImage is IVoiLutProvider)
+				lut = (oldImage as IVoiLutProvider).VoiLutManager.GetLut();
+
+			_slicer.PopulateDisplaySet(this, false);
+
+			if (lut != null || transformMemento != null)
+			{
+				// Hacked this in so that the Imagebox wouldn't jump to first image all the time
+				foreach (IPresentationImage image in PresentationImages)
+				{
+					if (lut != null && image is IVoiLutProvider)
+						(image as IVoiLutProvider).VoiLutManager.InstallLut(lut.Clone());
+					if (transformMemento != null && image is ISpatialTransformProvider)
+						(image as ISpatialTransformProvider).SpatialTransform.SetMemento(transformMemento);
+				}
+			}
+
+			//TODO: this seems a bit slow
+			IPresentationImage closestImage = GetClosestSlice(_startPoint + (_endPoint - _startPoint) * 2);
+			if (closestImage == null)
+				ImageBox.TopLeftPresentationImageIndex = 0;
 			else
 				ImageBox.TopLeftPresentationImage = closestImage;
 
@@ -149,7 +191,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			try
 			{
 				_slicer.SetSlicePlaneOblique(rotateX, rotateY, rotateZ);
-				_slicer.PopulateDisplaySet(this);
+				_slicer.PopulateDisplaySet(this, false);
 			}
 			catch
 			{
