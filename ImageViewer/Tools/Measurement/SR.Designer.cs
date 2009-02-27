@@ -250,6 +250,42 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ellipse.
+        /// </summary>
+        public static string StringEllipse {
+            get {
+                return ResourceManager.GetString("StringEllipse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Polygon.
+        /// </summary>
+        public static string StringPolygon {
+            get {
+                return ResourceManager.GetString("StringPolygon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rectangle.
+        /// </summary>
+        public static string StringRectangle {
+            get {
+                return ResourceManager.GetString("StringRectangle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ruler.
+        /// </summary>
+        public static string StringRuler {
+            get {
+                return ResourceManager.GetString("StringRuler", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Elliptical ROI.
         /// </summary>
         public static string ToolbarEllipticalRoi {

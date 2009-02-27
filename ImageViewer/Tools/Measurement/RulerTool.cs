@@ -60,6 +60,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreateRuler; }
 		}
 
+		protected override string RoiBaseName
+		{
+			get { return SR.StringRuler; }
+		}
+
 		protected override InteractiveGraphic CreateInteractiveGraphic()
 		{
 			return new PolyLineInteractiveGraphic(2);

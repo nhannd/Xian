@@ -219,4 +219,16 @@
   <data name="TooltipPolygonalRoi" xml:space="preserve">
     <value>Polygonal ROI</value>
   </data>
+  <data name="StringEllipse" xml:space="preserve">
+    <value>Ellipse</value>
+  </data>
+  <data name="StringPolygon" xml:space="preserve">
+    <value>Polygon</value>
+  </data>
+  <data name="StringRectangle" xml:space="preserve">
+    <value>Rectangle</value>
+  </data>
+  <data name="StringRuler" xml:space="preserve">
+    <value>Ruler</value>
+  </data>
 </root>

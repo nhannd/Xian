@@ -41,6 +41,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	public abstract class MeasurementTool : MouseImageViewerTool
 	{
+		private int _serialNumber;
 		private RoiGraphic _createRoiGraphic;
 
 		private DrawableUndoableCommand _undoableCommand;
@@ -54,6 +55,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			this.Behaviour |= MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
+
+		protected abstract string RoiBaseName { get; }
 
 		protected abstract string CreationCommandName { get; }
 
@@ -142,7 +145,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			else
 				roiGraphic = new RoiGraphic(interactiveGraphic, strategy);
 
-			roiGraphic.Name = this.ToString();
+			if(!string.IsNullOrEmpty(this.RoiBaseName))
+				roiGraphic.Name = string.Format("{0}{1}", this.RoiBaseName, ++_serialNumber);
+			else
+				roiGraphic.Name = "";
+
 			roiGraphic.State = this.CreateCreateState(roiGraphic);
 
 			return roiGraphic;

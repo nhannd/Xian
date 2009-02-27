@@ -43,6 +43,10 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			{
 				StringBuilder builder = new StringBuilder();
 
+				RoiGraphic parent = base.ParentGraphic as RoiGraphic;
+				if (parent != null && !string.IsNullOrEmpty(parent.Name))
+					builder.AppendLine(parent.Name);
+
 				try
 				{
 					foreach (IRoiAnalyzer analyzer in _roiAnalyzers)
