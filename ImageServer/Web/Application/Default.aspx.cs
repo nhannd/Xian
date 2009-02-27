@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageServer.Web.Application
         {
 
             //Test for authorization and redirect appropriately.
-            Response.Redirect("~/Pages/Admin/Users/Default.aspx");
+            Response.Redirect("~/Pages/Admin/UserManagement/Users/Default.aspx");
         }
     }
 }

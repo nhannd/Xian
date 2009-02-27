@@ -3,7 +3,7 @@
 
 <%-- Header and Menu Images --%>
 
-<asp:Image runat="server" SkinID="Logo" ImageUrl="images/Header/ClearCanvasLogo.png" Height="68" Width="199" />
+<asp:Image runat="server" SkinID="Logo" ImageUrl="images/Header/ClearCanvasLogo.png" Height="68" Width="210" />
 <asp:Image runat="server" SkinID="MenuEdge" ImageUrl="images/Header/MenuEdge.png" Height="39" Width="22"/>
 <asp:Image runat="server" SkinID="MainContentBottomLeftCorner" ImageUrl="images/MainContent/MainContentBottomLeftCorner.png" Height="10" Width="7"/>
 <asp:Image runat="server" SkinID="MainContentBottomRightCorner" ImageUrl="images/MainContent/MainContentBottomRightCorner.png" Height="10" Width="7" /> 

@@ -1,0 +1,22 @@
+.TokenTextArea
+{
+    font-size: 12px;
+    font-family: sans-serif;    
+    margin-right: 10px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.UserGroupTextArea
+{
+    font-size: 12px;
+    font-family: sans-serif;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+
+.TokenNameLabel
+{
+    font-size: 12px;
+    font-family: sans-serif;
+}

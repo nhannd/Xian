@@ -373,9 +373,39 @@
     <value>Log Found</value>
   </data>
   <data name="GridPagerUserMultipleItemsFound" xml:space="preserve">
-    <value>Users Found.</value>
+    <value>Users Found</value>
   </data>
   <data name="GridPagerUserSingleItemFound" xml:space="preserve">
-    <value>User Found.</value>
+    <value>User Found</value>
+  </data>
+  <data name="GridPagerUserGroupsMultipleItemsFound" xml:space="preserve">
+    <value>User Groups Found</value>
+  </data>
+  <data name="GridPagerUserGroupsSingleItemFound" xml:space="preserve">
+    <value>User Group Found</value>
+  </data>
+  <data name="GridPagerAuthorityTokenMultipleItemsFound" xml:space="preserve">
+    <value>Authority Tokens Found</value>
+  </data>
+  <data name="GridPagerAuthorityTokenSingleItemFound" xml:space="preserve">
+    <value>Authority Token Found</value>
+  </data>
+  <data name="DialogAddTokenTitle" xml:space="preserve">
+    <value>Add Token</value>
+  </data>
+  <data name="DialogAddUserGroupTitle" xml:space="preserve">
+    <value>Add User Group</value>
+  </data>
+  <data name="DialogAddUserTitle" xml:space="preserve">
+    <value>Add User</value>
+  </data>
+  <data name="DialogEditTokenTitle" xml:space="preserve">
+    <value>Edit Token</value>
+  </data>
+  <data name="DialogEditUserGroupTitle" xml:space="preserve">
+    <value>Edit User Group</value>
+  </data>
+  <data name="DialogEditUserTitle" xml:space="preserve">
+    <value>Edit User</value>
   </data>
 </root>

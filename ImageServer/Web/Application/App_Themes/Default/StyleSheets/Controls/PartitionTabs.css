@@ -2,6 +2,7 @@
 {
     background: #B8D9EE url(../../../../PersistantImage.ashx?key=SearchPanelBackground) repeat-x top;
     padding-top: 4px;
+    border-top: solid 1px #205F87;
 }
 
 

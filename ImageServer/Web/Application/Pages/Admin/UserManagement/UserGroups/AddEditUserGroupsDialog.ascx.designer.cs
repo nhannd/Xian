@@ -8,96 +8,96 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Pages.Login {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups {
     
     
     /// <summary>
-    /// _Default class.
+    /// AddEditUserGroupsDialog class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class _Default {
+    public partial class AddEditUserGroupsDialog {
         
         /// <summary>
-        /// GlobalScriptManager control.
+        /// ModalDialog1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.ScriptManager GlobalScriptManager;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog ModalDialog1;
         
         /// <summary>
-        /// LoginErrorPanel control.
+        /// Label1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel LoginErrorPanel;
+        protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// LoginError control.
+        /// GroupName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LoginError;
+        protected global::System.Web.UI.WebControls.TextBox GroupName;
         
         /// <summary>
-        /// UserName control.
+        /// GroupNameHelpId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox UserName;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator GroupNameHelpId;
         
         /// <summary>
-        /// Password control.
+        /// RequiredFieldValidator2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox Password;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator RequiredFieldValidator2;
         
         /// <summary>
-        /// LoginButton control.
+        /// Label3 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button LoginButton;
+        protected global::System.Web.UI.WebControls.Label Label3;
         
         /// <summary>
-        /// LinkButton1 control.
+        /// TokenCheckBoxList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton1;
+        protected global::System.Web.UI.WebControls.CheckBoxList TokenCheckBoxList;
         
         /// <summary>
-        /// ChangePasswordDialog control.
+        /// OKButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Login.ChangePasswordDialog ChangePasswordDialog;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OKButton;
         
         /// <summary>
-        /// PasswordExpiredDialog control.
+        /// CancelButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Login.PasswordExpiredDialog PasswordExpiredDialog;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton CancelButton;
     }
 }

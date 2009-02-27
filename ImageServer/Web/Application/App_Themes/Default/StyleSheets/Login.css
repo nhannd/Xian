@@ -56,6 +56,15 @@
     color: #205F87;
 }
 
+.PasswordExpiredMessage
+{
+    font-family: Arial, Sans-Serif;
+    font-size: 14px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+}
+
 a.LoginLink:link, a.LoginLink:visited
 {
     color: #E1EFF8;

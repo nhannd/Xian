@@ -6,7 +6,8 @@ Global.css - Defines the global styles for the entire web application relating
 /* Global styles for the body */
 .GlobalBody
 {
-	background-color: #c5dee7;
+/*	background-color: #c5dee7; */
+    background-color: #e3eaee;
 	margin:5px 5px 5px 5px;
 	font-family: Sans-Serif;
 	font-size: 14px;
@@ -294,7 +295,6 @@ Global.css - Defines the global styles for the entire web application relating
 .SearchPanelContent
 {
     background: #B8D9EE url(../../../PersistantImage.ashx?key=SearchPanelBackground) repeat-x bottom;
-    border-top: solid 1px white;
     border-bottom: solid 1px #3D98D1;
     padding: 6px 4px 6px 4px;
 }

@@ -112,10 +112,14 @@
                     </asp:TableCell></asp:TableRow>
             </asp:Table>
         </asp:Panel>
+        
+        <asp:ContentPlaceHolder ID="DialogsPlaceHolder" runat="server" />
     </form>
     
     <script type="text/javascript">
         UserInformationLink_Hover("<%= LogoutButton.ClientID %>");    
     </script>
+    
+    
 </body>
 </html>

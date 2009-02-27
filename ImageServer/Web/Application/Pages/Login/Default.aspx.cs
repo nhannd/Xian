@@ -64,9 +64,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                     }
                     catch (PasswordExpiredException)
                     {
-                        service.ChangePassword(UserName.Text, Password.Text, ConfigurationManager.AppSettings["DefaultPassword"]);
-                        SessionInfo session = service.Login(UserName.Text, ConfigurationManager.AppSettings["DefaultPassword"]);
-                        SessionManager.InitializeSession(session);
+                        PasswordExpiredDialog.Show(UserName.Text, Password.Text);
                     }
 					catch (FaultException x)
 					{
@@ -83,6 +81,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
         {
             ChangePasswordDialog.Show(true);
         }
-
     }
 }

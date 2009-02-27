@@ -191,18 +191,60 @@
     <Compile Include="GlobalMasterPage.master.designer.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Admin\Users\UserGridPanel.ascx.cs">
+    <Compile Include="Pages\Admin\UserManagement\UserGroups\AddEditUserGroupsDialog.ascx.cs">
+      <DependentUpon>AddEditUserGroupsDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\UserGroups\AddEditUserGroupsDialog.ascx.designer.cs">
+      <DependentUpon>AddEditUserGroupsDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\UserGroups\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\UserGroups\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\UserGroups\UserGroupsGridPanel.ascx.cs">
+      <DependentUpon>UserGroupsGridPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\UserGroups\UserGroupsGridPanel.ascx.designer.cs">
+      <DependentUpon>UserGroupsGridPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.ascx.cs">
+      <DependentUpon>UserGroupsPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.ascx.designer.cs">
+      <DependentUpon>UserGroupsPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\Users\AddEditUserDialog.ascx.cs">
+      <DependentUpon>AddEditUserDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\Users\AddEditUserDialog.ascx.designer.cs">
+      <DependentUpon>AddEditUserDialog.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\Users\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\Users\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Admin\UserManagement\Users\UserGridPanel.ascx.cs">
       <DependentUpon>UserGridPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Admin\Users\UserGridPanel.ascx.designer.cs">
+    <Compile Include="Pages\Admin\UserManagement\Users\UserGridPanel.ascx.designer.cs">
       <DependentUpon>UserGridPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Admin\Users\UserPanel.ascx.cs">
+    <Compile Include="Pages\Admin\UserManagement\Users\UserPanel.ascx.cs">
       <DependentUpon>UserPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Admin\Users\UserPanel.ascx.designer.cs">
+    <Compile Include="Pages\Admin\UserManagement\Users\UserPanel.ascx.designer.cs">
       <DependentUpon>UserPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Login\ChangePasswordDialog.ascx.cs">
@@ -212,6 +254,13 @@
     <Compile Include="Pages\Login\ChangePasswordDialog.ascx.designer.cs">
       <DependentUpon>ChangePasswordDialog.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Login\PasswordExpiredDialog.ascx.cs">
+      <DependentUpon>PasswordExpiredDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Login\PasswordExpiredDialog.ascx.designer.cs">
+      <DependentUpon>PasswordExpiredDialog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Login\Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -220,13 +269,6 @@
     <Compile Include="Helpers\HtmlEncoder.cs" />
     <Compile Include="Helpers\ScriptHelper.cs" />
     <Compile Include="Pages\Login\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Admin\Users\Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Admin\Users\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Code\DefaultStudyHistoryRendererFactory.cs" />
@@ -1180,6 +1222,7 @@
     <Content Include="App_Themes\Default\images\MainContent\SearchTextBoxBackground.png" />
     <Content Include="App_Themes\Default\images\MainContent\ToolbarButtonPanelBackground.png" />
     <Content Include="App_Themes\Default\images\Indicators\Watermark.gif" />
+    <Content Include="App_Themes\Default\StyleSheets\Admin.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\PartitionTabs.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\DeleteStudyConfirmDialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\GridView.css" />
@@ -1225,10 +1268,18 @@
     <Content Include="Controls\TimedDialog.ascx" />
     <Content Include="Default.aspx" />
     <Content Include="Images\ImageServerLogo.png" />
-    <Content Include="Pages\Admin\Users\Default.aspx" />
-    <Content Include="Pages\Admin\Users\UserGridPanel.ascx" />
-    <Content Include="Pages\Admin\Users\UserPanel.ascx" />
+    <Content Include="Pages\Admin\UserManagement\UserGroups\AddEditUserGroupsDialog.ascx" />
+    <Content Include="Pages\Admin\UserManagement\UserGroups\Default.aspx" />
+    <Content Include="Pages\Admin\UserManagement\UserGroups\UserGroupsGridPanel.ascx" />
+    <Content Include="Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.ascx" />
+    <EmbeddedResource Include="Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.js" />
+    <Content Include="Pages\Admin\UserManagement\Users\AddEditUserDialog.ascx" />
+    <Content Include="Pages\Admin\UserManagement\Users\Default.aspx" />
+    <EmbeddedResource Include="Pages\Admin\UserManagement\Users\UserPanel.js" />
+    <Content Include="Pages\Admin\UserManagement\Users\UserGridPanel.ascx" />
+    <Content Include="Pages\Admin\UserManagement\Users\UserPanel.ascx" />
     <Content Include="Pages\Login\ChangePasswordDialog.ascx" />
+    <Content Include="Pages\Login\PasswordExpiredDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\HistoryPanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyHistoryChangeDescPanel.ascx" />
     <Content Include="Test\AuthorityGroup.aspx" />

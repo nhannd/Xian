@@ -205,6 +205,33 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Token.
+        /// </summary>
+        internal static string DialogAddTokenTitle {
+            get {
+                return ResourceManager.GetString("DialogAddTokenTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add User Group.
+        /// </summary>
+        internal static string DialogAddUserGroupTitle {
+            get {
+                return ResourceManager.GetString("DialogAddUserGroupTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add User.
+        /// </summary>
+        internal static string DialogAddUserTitle {
+            get {
+                return ResourceManager.GetString("DialogAddUserTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Device.
         /// </summary>
         internal static string DialogEditDeviceTitle {
@@ -237,6 +264,33 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string DialogEditServerRuleTitle {
             get {
                 return ResourceManager.GetString("DialogEditServerRuleTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Token.
+        /// </summary>
+        internal static string DialogEditTokenTitle {
+            get {
+                return ResourceManager.GetString("DialogEditTokenTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit User Group.
+        /// </summary>
+        internal static string DialogEditUserGroupTitle {
+            get {
+                return ResourceManager.GetString("DialogEditUserGroupTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit User.
+        /// </summary>
+        internal static string DialogEditUserTitle {
+            get {
+                return ResourceManager.GetString("DialogEditUserTitle", resourceCulture);
             }
         }
         
@@ -291,6 +345,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string GridPagerApplicationLogSingleItem {
             get {
                 return ResourceManager.GetString("GridPagerApplicationLogSingleItem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authority Tokens Found.
+        /// </summary>
+        internal static string GridPagerAuthorityTokenMultipleItemsFound {
+            get {
+                return ResourceManager.GetString("GridPagerAuthorityTokenMultipleItemsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authority Token Found.
+        /// </summary>
+        internal static string GridPagerAuthorityTokenSingleItemFound {
+            get {
+                return ResourceManager.GetString("GridPagerAuthorityTokenSingleItemFound", resourceCulture);
             }
         }
         
@@ -430,7 +502,25 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Users Found..
+        ///   Looks up a localized string similar to User Groups Found.
+        /// </summary>
+        internal static string GridPagerUserGroupsMultipleItemsFound {
+            get {
+                return ResourceManager.GetString("GridPagerUserGroupsMultipleItemsFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Group Found.
+        /// </summary>
+        internal static string GridPagerUserGroupsSingleItemFound {
+            get {
+                return ResourceManager.GetString("GridPagerUserGroupsSingleItemFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Users Found.
         /// </summary>
         internal static string GridPagerUserMultipleItemsFound {
             get {
@@ -439,7 +529,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Found..
+        ///   Looks up a localized string similar to User Found.
         /// </summary>
         internal static string GridPagerUserSingleItemFound {
             get {

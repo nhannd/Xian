@@ -151,6 +151,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Authority Tokens.
+        /// </summary>
+        internal static string AuthorityTokens {
+            get {
+                return ResourceManager.GetString("AuthorityTokens", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure.
         /// </summary>
         internal static string Configure {
@@ -421,6 +430,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to User Groups.
+        /// </summary>
+        internal static string UserGroups {
+            get {
+                return ResourceManager.GetString("UserGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to User Management.
         /// </summary>
         internal static string UserManagement {
@@ -435,6 +453,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string UserManagementPageTitle {
             get {
                 return ResourceManager.GetString("UserManagementPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Users.
+        /// </summary>
+        internal static string Users {
+            get {
+                return ResourceManager.GetString("Users", resourceCulture);
             }
         }
         

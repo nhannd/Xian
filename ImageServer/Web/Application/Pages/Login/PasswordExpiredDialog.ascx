@@ -1,7 +1,7 @@
-<%@ Control Language="C#" AutoEventWireup="true" Codebehind="ChangePasswordDialog.ascx.cs"
-    Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login.ChangePasswordDialog" %>
+<%@ Control Language="C#" AutoEventWireup="true" Codebehind="PasswordExpiredDialog.ascx.cs"
+    Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Login.PasswordExpiredDialog" %>
 
-<ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="500px" Title="Change Password">
+<ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="500px" Title="Password Expired">
     <ContentTemplate>
     
     <asp:Panel runat="server" Visible="false" ID="ErrorMessagePanel" CssClass="ErrorMessage" style="margin-bottom: 10px;">
@@ -9,14 +9,16 @@
     </asp:Panel>
     
     <asp:Panel ID="Panel1" runat="server" width="100%" CssClass="DialogPanelContent">
+
+        <asp:Panel runat="server" CssClass="PasswordExpiredMessage"><asp:Label runat="server" ID="Label1" Text="Your password has expired, or this is your first login to the ImageServer. Please enter a new password below." /></asp:Panel>
     
         <table style="margin-top: 10px; margin-bottom: 10px;">
-        <tr><td class="ChangePasswordLabel">Username:</td><td><asp:TextBox runat="server" Width="150px" ID="ChangePasswordUsername"/></td></tr>
-        <tr><td class="ChangePasswordLabel">Original Password:</td><td><asp:TextBox TextMode="Password" runat="server" Width="150px" ID="OriginalPassword"/></td></tr>
+        <tr><td class="ChangePasswordLabel">Username:</td><td><asp:TextBox runat="server" Width="150px" ID="Username"/></td></tr>
         <tr><td class="ChangePasswordLabel">New Password:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="NewPassword"/></td></tr>
         <tr><td class="ChangePasswordLabel">Retype New Password:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="ConfirmNewPassword"/></td></tr>
-        <tr><td colspan="2" style="padding-top: 10px; font-family: Arial; font-size: 12px;" align="right">Login after password change: <asp:CheckBox runat="server" Checked="true" id="LoginPasswordChange"/></td></tr>
         </table>
+        
+        <input type="hidden" runat="server" id="OriginalPassword" />
            
     </asp:Panel>
     
@@ -25,7 +27,6 @@
                         <td align="right">
                             <asp:Panel ID="Panel2" runat="server" CssClass="DefaultModalDialogButtonPanel">
                                 <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="OKButton" OnClick="ChangePassword_Click" />
-                                <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="Cancel_Click"/>
                             </asp:Panel>
                         </td>
                     </tr>

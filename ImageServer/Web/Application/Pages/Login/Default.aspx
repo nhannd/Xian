@@ -4,6 +4,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <%@ Register Src="ChangePasswordDialog.ascx" TagName="ChangePasswordDialog" TagPrefix="localAsp" %>
+<%@ Register Src="PasswordExpiredDialog.ascx" TagName="PasswordExpiredDialog" TagPrefix="localAsp" %>
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
@@ -52,6 +53,7 @@
     <asp:UpdatePanel runat="server">
         <ContentTemplate>
             <localAsp:ChangePasswordDialog runat="server" id="ChangePasswordDialog" />
+            <localAsp:PasswordExpiredDialog runat="server" id="PasswordExpiredDialog" />
         </ContentTemplate>
     </asp:UpdatePanel>
     

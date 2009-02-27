@@ -110,6 +110,7 @@
     font-size: 14px;
     font-weight: normal;
     color: #16425D;
+    
 }
 
 .DialogDropDownList
@@ -119,6 +120,19 @@
 	font-family: Sans-Serif;
 	font-size: 11px;
 	border: solid 1px #618FAD;
+}
+
+.DialogCheckBoxList
+{
+    border: solid 1px #618FAD;
+    overflow: auto; 
+    height: 200px;
+    background: white;
+    padding-left: 2px;
+	margin-left: 3px;
+	margin-right: 3px;
+	font-weight: normal;
+	color: Black;
 }
 
 .DialogLinkButton

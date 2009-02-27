@@ -1,10 +1,12 @@
 <%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ErrorPage.aspx.cs" MasterPageFile="ErrorPageMaster.Master" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Error.ErrorPage" %>
+<%@ Import namespace="System.Threading"%>
 
 <asp:Content runat="server" ContentPlaceHolderID="ErrorMessagePlaceHolder">
 	    <asp:label ID="ErrorMessageLabel" Text="Something happened that the ImageServer was unprepared for." runat="server" />
 </asp:Content>
 
 <asp:Content ID="Content1" runat="server" ContentPlaceHolderID="DescriptionPlaceHolder">
+
     <asp:Label ID = "DescriptionLabel" runat="server">
         This message is being displayed because the ClearCanvas ImageServer encountered a 
         situation that was unexpected. The resulting error has been recorded for future analysis.
