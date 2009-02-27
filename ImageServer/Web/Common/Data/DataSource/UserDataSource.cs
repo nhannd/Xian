@@ -33,16 +33,20 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using IUserAdminService=ClearCanvas.ImageServer.Common.Services.Admin.IUserAdminService;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
-    public class UserDataSource
+    public class UserDataSource : BaseDataSource
     {
         #region Private Members
 
     	private int _resultCount;
+        private string _displayName;
+        private string _userName;
         #endregion Private Members
 
         #region Public Members
@@ -55,6 +59,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         {
             get { return _resultCount; }
             set { _resultCount = value; }
+        }
+
+        public string DisplayName
+        {
+            get { return _displayName; }
+            set { _displayName = value; }
+        }
+
+        public string UserName
+        {
+            get { return _userName; }
+            set { _userName = value; }
         }
         #endregion
 
@@ -72,26 +88,35 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             Platform.GetService<IUserAdminService>(
                             delegate(IUserAdminService services)
                             {
-                                List<UserSummary> users = services.ListUsers(new ListUsersRequest());
+                                ListUsersRequest filter = new ListUsersRequest();
+                                filter.UserName = UserName;
+                                filter.DisplayName = DisplayName;
+
+                                List<UserSummary> users = services.ListUsers(filter);
 
                                 List<UserRowData> rows = CollectionUtils.Map<UserSummary, UserRowData>(
                                     users, delegate(UserSummary summary)
                                                {
-                                                   UserRowData row = new UserRowData(summary);
+                                                   UserRowData row = new UserRowData(summary, services.GetUserDetail(summary.UserName));
                                                    return row;
                                                });
                                 
                                 userRowData = CollectionUtils.ToArray(rows);
 
-                            	Array.Copy(userRowData, startRowIndex, userRowDataRange, 0,
-                            	           userRowData.Length < maximumRows ? userRowData.Length : maximumRows);
+                                int copyLength = adjustCopyLength(startRowIndex, maximumRows, userRowData.Length);
+
+                            	Array.Copy(userRowData, startRowIndex, userRowDataRange, 0, copyLength);
+
+                                if(copyLength < userRowDataRange.Length)
+                                {
+                                    userRowData = resizeArray(userRowDataRange, copyLength);
+                                }
                             });
 
             if (userRowData != null)
             {
                 resultCount = userRowData.Length;
             }
-
 
             return CollectionUtils.Cast<UserRowData>(userRowDataRange);
         }
@@ -123,12 +148,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         #endregion Public Methods
     }
 
+    [Serializable]
     public class UserRowData
     {
         private string _userName;
         private string _displayName;
         private bool _enabled;
         private DateTime? _lastLoginTime;
+        private List<UserGroup> _userGroups = new List<UserGroup>();
+
+        public List<UserGroup> UserGroups
+        {
+            get { return _userGroups; }
+            set { _userGroups = value; }
+        }
+
         public string UserName
         {
             get { return _userName; }
@@ -153,12 +187,47 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             set { _lastLoginTime = value; }
         }
 
-        public UserRowData(UserSummary summary)
+        public UserRowData(UserSummary summary, UserDetail user)
         {
             UserName = summary.UserName;
             DisplayName = summary.DisplayName;
             Enabled = summary.Enabled;
             LastLoginTime = summary.LastLoginTime;
+
+            foreach (AuthorityGroupSummary authorityGroup in user.AuthorityGroups)
+            {
+                UserGroups.Add(new UserGroup(
+                        authorityGroup.AuthorityGroupRef.Serialize(), authorityGroup.Name));
+            }
         }
+
+        public UserRowData()
+        {
+        }
+    }
+
+    [Serializable]
+    public class UserGroup
+    {
+        private string _authorityGroupRef;
+        private string _name;
+        
+        public UserGroup(string authorityGroupRef, string name)
+        {
+            _authorityGroupRef = authorityGroupRef;
+            _name = name;
+        }
+
+        public string UserGroupRef
+        {
+            get { return _authorityGroupRef;  }
+            set { _authorityGroupRef = value;  }
+        }
+
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }       
     }
 }

@@ -31,186 +31,207 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
+using ClearCanvas.ImageServer.Common.Services.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
-	public class GroupSummary
+
+	public class UserGroupDataSource : BaseDataSource
 	{
-        private string _userName;
-        private string _displayName;
-        private bool _enabled;
-        private DateTime? _lastLoginTime;
-        public string UserName
+        #region Private Members
+        private UserManagementController _controller = new UserManagementController();
+        private IList<UserGroupRowData> _list = null;
+	    private string _groupName;
+
+        private int _resultCount;
+
+        #endregion Private Members
+
+        #region Public Members
+        public delegate void UserGroupFoundSetDelegate(IList<UserGroupRowData> list);
+        public UserGroupFoundSetDelegate UserGroupFoundSet;
+        #endregion Public Members
+
+        #region Properties
+        public int ResultCount
         {
-            get { return _userName; }
-            set { _userName = value; }
+            get { return _resultCount; }
+            set { _resultCount = value; }
         }
 
-        public string DisplayName
+	    public string GroupName
+	    {
+            get { return _groupName; }
+            set { _groupName = value; }	        
+	    }
+
+        #endregion
+
+        #region Private Methods
+
+        private IList<UserGroupRowData> InternalSelect(int startRowIndex, int maximumRows, out int resultCount)
         {
-            get { return _displayName; }
-            set { _displayName = value; }
+            Array authorityRowData = null;
+            Array authorityRowDataRange = Array.CreateInstance(typeof(UserGroupRowData), maximumRows);
+
+            resultCount = 0;
+
+            if (maximumRows == 0) return new List<UserGroupRowData>();
+
+            Platform.GetService<IAuthorityAdminService>(
+                delegate(IAuthorityAdminService services)
+                    {
+                        IList<AuthorityGroupSummary> list = services.ListAllAuthorityGroups();
+                        IList<AuthorityGroupSummary> filteredList = new List<AuthorityGroupSummary>();
+
+                        if(GroupName != null)
+                        {
+                            foreach(AuthorityGroupSummary group in list)
+                            {
+                                if(group.Name.ToLower().Contains(GroupName.ToLower()) || group.Name.ToLower().Equals(GroupName.ToLower()))
+                                {
+                                    filteredList.Add(group);
+                                }
+                            }
+                        } else
+                        {
+                            filteredList = list;
+                        }
+
+                        List<UserGroupRowData> rows = CollectionUtils.Map<AuthorityGroupSummary, UserGroupRowData>(
+                            filteredList, delegate(AuthorityGroupSummary group)
+                                      {
+                                          UserGroupRowData row =
+                                              new UserGroupRowData(services.LoadAuthorityGroupDetail(group));
+                                          return row;
+                                      });
+
+                        authorityRowData = CollectionUtils.ToArray(rows);
+
+                        int copyLength = adjustCopyLength(startRowIndex, maximumRows, authorityRowData.Length);
+
+                        Array.Copy(authorityRowData, startRowIndex, authorityRowDataRange, 0, copyLength);
+
+                        if (copyLength < authorityRowDataRange.Length)
+                        {
+                            authorityRowDataRange = resizeArray(authorityRowDataRange, copyLength);
+                        }
+                    });
+
+            if (authorityRowData != null)
+            {
+                resultCount = authorityRowData.Length;
+            }
+
+
+            return CollectionUtils.Cast<UserGroupRowData>(authorityRowDataRange);
         }
 
-        public bool Enabled
+        #endregion Private Methods
+
+        #region Public Methods
+        public IEnumerable<UserGroupRowData> Select(int startRowIndex, int maximumRows)
         {
-            get { return _enabled; }
-            set { _enabled = value; }
+            IList<UserGroupRowData> _list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
+
+            if (UserGroupFoundSet != null)
+                UserGroupFoundSet(_list);
+
+            return _list;
+
         }
 
-        public DateTime? LastLoginTime
+        public int SelectCount()
         {
-            get { return _lastLoginTime; }
-            set { _lastLoginTime = value; }
+            if (ResultCount != 0) return ResultCount;
+
+            // Ignore the search results
+            InternalSelect(0, 1, out _resultCount);
+
+            return ResultCount;
         }
-	}
 
-	public class UserGroupDataSource
-	{
-		#region Public Delegates
-		public delegate void AlertFoundSetDelegate(IList<AlertSummary> list);
-		public AlertFoundSetDelegate AlertFoundSet;
-		#endregion
+        #endregion Public Methods
+    }
 
-		#region Private Members
-		private AlertController _alertController = new AlertController();
-		private string _insertTime;
-		private string _component;
-		private AlertLevelEnum _level;
-		private AlertCategoryEnum _category;
-		private string _dateFormats;
-		private int _resultCount;
-		private IList<AlertSummary> _list = new List<AlertSummary>();
-		private IList<ServerEntityKey> _searchKeys;
-		#endregion
+    [Serializable]
+    public class UserGroupRowData
+    {
+        private string _name;
+        private string _ref;
+        private int _tokenCount;
+        private List<TokenSummary> _tokens = new List<TokenSummary>();
 
-		#region Public Properties
-		public string InsertTime
-		{
-			get { return _insertTime; }
-			set { _insertTime = value; }
-		}
-		public string Component
-		{
-			get { return _component; }
-			set { _component = value; }
-		}
-		public AlertLevelEnum Level
-		{
-			get { return _level; }
-			set { _level = value; }
-		}
+        public UserGroupRowData() {}
+        
+        public UserGroupRowData(AuthorityGroupDetail group)
+        {
+            this.Ref = group.AuthorityGroupRef.Serialize();
+            this.Name = group.Name;
 
-		public AlertCategoryEnum Category
-		{
-			get { return _category; }
-			set { _category = value; }
-		}
-	
-		public IList<AlertSummary> List
-		{
-			get { return _list; }
-		}
-		public int ResultCount
-		{
-			get { return _resultCount; }
-			set { _resultCount = value; }
-		}
-		public IList<ServerEntityKey> SearchKeys
-		{
-			get { return _searchKeys; }
-			set { _searchKeys = value; }
-		}
+            foreach(AuthorityTokenSummary token in group.AuthorityTokens)
+            {
+                Tokens.Add(new TokenSummary(token.Name, token.Description));
+            }
 
-		public string DateFormats
-		{
-			get { return _dateFormats; }
-			set { _dateFormats = value; }
-		}
+            TokenCount = group.AuthorityTokens.Count;
+        }
 
-		#endregion
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
 
-		#region Private Methods
-		private IList<Alert> InternalSelect(int startRowIndex, int maximumRows, out int resultCount)
-		{
-			resultCount = 0;
+        public string Ref
+        {
+            get { return _ref; }
+            set { _ref = value; }
+        }
 
-			if (maximumRows == 0) return new List<Alert>();
+        public int TokenCount
+        {
+            get { return _tokenCount; }
+            set { _tokenCount = value; }
+        }
 
-			if (SearchKeys != null)
-			{
-				IList<Alert> alertList = new List<Alert>();
-				foreach (ServerEntityKey key in SearchKeys)
-					alertList.Add(Alert.Load(key));
+        public List<TokenSummary> Tokens
+        {
+            get { return _tokens; }
+            set { _tokens = value; }
+        }
+    }
 
-				resultCount = alertList.Count;
+    [Serializable]
+    public class TokenSummary
+    {
+        private string _name;
+        private string _description;
 
-				return alertList;
-			}
+        public TokenSummary(string name, string description)
+        {
+            _name = name;
+            _description = description;
+        }
 
-			AlertSelectCriteria criteria = new AlertSelectCriteria();
+        public string Name
+        {
+            get { return _name; }
+            set { _name = value; }
+        }
 
-			if (Component != null)
-				criteria.Component.Like(Component);
-
-			if (!String.IsNullOrEmpty(InsertTime))
-			{
-				DateTime lowerDate = DateTime.ParseExact(InsertTime, DateFormats, null);
-				DateTime upperDate = DateTime.ParseExact(InsertTime, DateFormats, null).Add(new TimeSpan(23, 59, 59));
-				criteria.InsertTime.Between(lowerDate, upperDate);
-			}
-
-			if (Level != null)
-				criteria.AlertLevelEnum.EqualTo(Level);
-			if (Category != null)
-				criteria.AlertCategoryEnum.EqualTo(Category);
-
-			IList<Alert> list = _alertController.GetRangeAlerts(criteria, startRowIndex, maximumRows);
-
-			resultCount = list.Count;
-
-			return list;
-		}
-		#endregion
-
-		#region Public Methods
-		public IEnumerable<AlertSummary> Select(int startRowIndex, int maximumRows)
-		{
-			IList<Alert> list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
-
-			_list = new List<AlertSummary>();
-			foreach (Alert item in list)
-				_list.Add(CreateAlertSummary(item));
-
-			if (AlertFoundSet != null)
-				AlertFoundSet(_list);
-
-			return _list;
-		}
-
-		public int SelectCount()
-		{
-			if (ResultCount != 0) return ResultCount;
-
-			// Ignore the search results
-			InternalSelect(0, 1, out _resultCount);
-
-			return ResultCount;
-		}
-		#endregion
-
-		#region Private Methods
-
-		private AlertSummary CreateAlertSummary(Alert item)
-		{
-			AlertSummary summary = new AlertSummary();
-			summary.TheAlertItem = item;
-
-			return summary;
-		}
-		#endregion
-	}
+        public string Description
+        {
+            get { return _description; }
+            set { _description = value; }
+        }     
+    }
 }
+
+
+
+
+
