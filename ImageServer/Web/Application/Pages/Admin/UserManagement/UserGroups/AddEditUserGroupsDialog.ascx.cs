@@ -204,9 +204,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
 
             // Update the rest of the fields
-            if (UserGroup == null)
+            if (UserGroup == null || EditMode == false) 
             {
-
+                GroupName.Text = string.Empty;
+                TokenCheckBoxList.SelectedIndex = -1;
             }
             else if (Page.IsValid)
             {

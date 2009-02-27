@@ -39,6 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                            if (_controller.UpdateUser(user))
                                                            {
                                                                UserPanel.UpdateUI();
+                                                               AddEditUserDialog.Close();
                                                            }
                                                        }
                                                        else
