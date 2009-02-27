@@ -1050,5 +1050,31 @@ namespace ClearCanvas.Common.Utilities
 			}
 			return result;
 		}
-    }
+
+		/// <summary>
+		/// Partitions elements of the target collection into sub-groups based on the specified key generating function,
+		/// and returns a dictionary of the generated keys, where each value is a list of the items that produced that key.
+		/// It should be noted that the item appear in the sub-lists in the order in which they were enumerated from the target.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <typeparam name="K"></typeparam>
+		/// <param name="target"></param>
+		/// <param name="keyFunc"></param>
+		/// <returns></returns>
+		public static Dictionary<K, List<T>> GroupBy<T, K>(IEnumerable<T> target, Converter<T, K> keyFunc)
+		{
+			Dictionary<K, List<T>> results = new Dictionary<K, List<T>>();
+			foreach (T item in target)
+			{
+				K key = keyFunc(item);
+				List<T> group;
+				if (!results.TryGetValue(key, out group))
+				{
+					results[key] = group = new List<T>();
+				}
+				group.Add(item);
+			}
+			return results;
+		}
+	}
 }

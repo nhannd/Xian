@@ -34,6 +34,7 @@
 #pragma warning disable 1591
 
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace ClearCanvas.Common.Utilities.Tests
@@ -178,7 +179,32 @@ namespace ClearCanvas.Common.Utilities.Tests
                 return -1;
             return x.Number.CompareTo(y.Number);
         }
-    }
+
+		[Test]
+		public void TestGroupBy()
+		{
+			string[] names = {"Ana", "Bill", "Cara", "Avalon", "Bonita"};
+
+			Dictionary<char, List<string>> groups = 
+				CollectionUtils.GroupBy<string, char>(names,
+					delegate (string name) { return Char.ToLower(name[0]);});
+
+			Assert.IsTrue(groups.ContainsKey('a'));
+			Assert.IsTrue(groups.ContainsKey('b'));
+			Assert.IsTrue(groups.ContainsKey('c'));
+
+			Assert.AreEqual(2, groups['a'].Count);
+			Assert.AreEqual(2, groups['b'].Count);
+			Assert.AreEqual(1, groups['c'].Count);
+
+			// note: each group list must contain items in order they first appeared
+			Assert.AreEqual("Ana", groups['a'][0]);
+			Assert.AreEqual("Avalon", groups['a'][1]);
+			Assert.AreEqual("Bill", groups['b'][0]);
+			Assert.AreEqual("Bonita", groups['b'][1]);
+			Assert.AreEqual("Cara", groups['c'][0]);
+		}
+	}
 }
 
 #endif
