@@ -117,11 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CommandExplodeTile" xml:space="preserve">
+    <value>Explode Tile</value>
+  </data>
   <data name="CommandLayoutImageBoxes" xml:space="preserve">
     <value>Layout image boxes</value>
   </data>
   <data name="CommandLayoutTiles" xml:space="preserve">
     <value>Layout tiles</value>
+  </data>
+  <data name="CommandSurveyExplode" xml:space="preserve">
+    <value>Survey/Explode</value>
   </data>
   <data name="ExceptionImageNotLoaded" xml:space="preserve">
     <value>The specified image is not currently loaded (SopInstanceUID={0}).</value>
@@ -146,6 +152,9 @@
   </data>
   <data name="LabelLoadingPriors" xml:space="preserve">
     <value>Loading Priors ...</value>
+  </data>
+  <data name="MenuExplodeImageBox" xml:space="preserve">
+    <value>Survey/Explode</value>
   </data>
   <data name="MenuLayoutManager" xml:space="preserve">
     <value>Layout Manager</value>
@@ -191,6 +200,9 @@
   </data>
   <data name="ToolbarPreviousDisplaySet" xml:space="preserve">
     <value>Previous Display Set</value>
+  </data>
+  <data name="TooltipExplodeImageBox" xml:space="preserve">
+    <value>Survey/Explode</value>
   </data>
   <data name="TooltipLayoutManager" xml:space="preserve">
     <value>Layout Manager</value>

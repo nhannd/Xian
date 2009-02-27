@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			: base()
 		{
 			_tooltipPrefix = tooltipPrefix;
-
+			_mousebuttonBehaviour = MouseButtonHandlerBehaviour.Default;
 			_mouseButton = XMouseButtons.None;
 			_defaultMouseButtonShortcut = null;
 			_mouseWheelShortcut = null;

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
 using System.Threading;
@@ -190,6 +191,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private MemorableUndoableCommand _command;
 		private IMouseButtonHandler _captureHandler;
+		private int _startCount = 0;
 		private CursorToken _cursorToken;
 		
 		private bool _contextMenuEnabled; 
@@ -257,7 +259,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				if (_captureHandler != null && _captureHandler is IMemorable)
 				{
 					IMemorable originator = (IMemorable) _captureHandler;
-					ITile tile = _tile;
 					_command = new MemorableUndoableCommand(originator);
 					_command.BeginState = originator.CreateMemento();
 				}
@@ -282,6 +283,21 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		#region Private Methods
 
+		private static bool CanStartOnDoubleClick(IMouseButtonHandler handler)
+		{
+			return false == CancelStartOnDoubleClick(handler);
+		}
+
+		private static bool IgnoreDoubleClicks(IMouseButtonHandler handler)
+		{
+			return (handler.Behaviour & MouseButtonHandlerBehaviour.IgnoreDoubleClicks) == MouseButtonHandlerBehaviour.IgnoreDoubleClicks;
+		}
+
+		private static bool CancelStartOnDoubleClick(IMouseButtonHandler handler)
+		{
+			return (handler.Behaviour & MouseButtonHandlerBehaviour.CancelStartOnDoubleClick) == MouseButtonHandlerBehaviour.CancelStartOnDoubleClick;
+		}
+
 		private static bool SuppressContextMenu(IMouseButtonHandler handler)
 		{
 			return (handler.Behaviour & MouseButtonHandlerBehaviour.SuppressContextMenu) == MouseButtonHandlerBehaviour.SuppressContextMenu;
@@ -297,6 +313,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			return (handler.Behaviour & MouseButtonHandlerBehaviour.SuppressOnTileActivate) == MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
 
+		#region Mouse Message Processing
+
 		private void SetCursorToken(IMouseButtonHandler handler, Point location)
 		{
 			if (handler is ICursorTokenProvider)
@@ -309,10 +327,37 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			}
 		}
 
+		private void SetCursorToken(IMouseButtonHandler handler)
+		{
+			SetCursorToken(handler, Location);
+		}
+
+		private void SetCursorToken()
+		{
+			SetCursorToken(CaptureHandler, Location);
+		}
+
+		private void SetCapture(IMouseButtonHandler handler)
+		{
+			Trace.WriteLine(String.Format("Setting capture: {0}", handler.GetType().FullName));
+
+			this.CaptureHandler = handler;
+
+			if (SuppressContextMenu(this.CaptureHandler))
+				_contextMenuEnabled = false;
+
+			SetCursorToken();
+			//tools can't have context menus
+			if (handler is IGraphic)
+				this.ContextMenuProvider = handler as IContextMenuProvider;
+		}
+
 		private void ReleaseCapture(bool cancel)
 		{
 			if (this.CaptureHandler != null && cancel)
 				this.CaptureHandler.Cancel();
+
+			_startCount = 0;
 
 			this.CaptureHandler = null;
 			this.CursorToken = null;
@@ -358,6 +403,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			return false;
 		}
 
+		#region Mouse Button Down
+
 		private bool ProcessMouseButtonDownMessage(MouseButtonMessage buttonMessage)
 		{
 			this.CaptureMouseWheelHandler = null;
@@ -372,17 +419,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			_activeButton = buttonMessage.Shortcut.MouseButton;
 			_clickCount = buttonMessage.ClickCount;
 
-			if (this.CaptureHandler != null)
-			{
-				if (SuppressContextMenu(this.CaptureHandler))
-					_contextMenuEnabled = false;
-
-				StartHandler(this.CaptureHandler);
-				SetCursorToken(this.CaptureHandler, buttonMessage.Location);
-
-				//we only release capture on button up, so just consume.
+			if (StartCaptureHandler(buttonMessage))
 				return true;
-			}
 
 			_tile.Select();
 			_contextMenuEnabled = (buttonMessage.Shortcut.MouseButton == XMouseButtons.Right);
@@ -395,35 +433,91 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			//give unfocused graphics a chance to focus (in the case of going straight from context menu to a graphic).
 			FindHandlingGraphic(TrackHandler);
 
-			IMouseButtonHandler handler = FindHandlingGraphic(StartHandler);
-			if (handler != null)
+			return StartNewHandler(buttonMessage);
+		}
+
+		private bool StartCaptureHandler(MouseButtonMessage buttonMessage)
+		{
+			if (this.CaptureHandler == null)
+				return false;
+
+			if (SuppressContextMenu(this.CaptureHandler))
+				_contextMenuEnabled = false;
+
+			if (CancelStartDueToDoubleClick())
 			{
-				this.CaptureHandler = handler;
+				Trace.WriteLine(String.Format("Double-click release {0}", this.CaptureHandler.GetType()));
+				ReleaseCapture(true);
 
-				if (SuppressContextMenu(this.CaptureHandler))
-					_contextMenuEnabled = false;
-
-				SetCursorToken(handler, buttonMessage.Location);
-				this.ContextMenuProvider = handler as IContextMenuProvider;
-
-				return true;
+				StartNewHandler(buttonMessage);
+			}
+			else
+			{
+				Trace.WriteLine(String.Format("Start (Clicks: {0}, Count: {1})", _clickCount, _startCount));
+				StartHandler(this.CaptureHandler);
+				SetCursorToken();
 			}
 
-			handler = _shortcutManager.GetMouseButtonHandler(buttonMessage.Shortcut);
-			if (handler != null && StartHandler(handler))
-			{
-				this.CaptureHandler = handler;
+			//we only release capture on button up, so just consume.
+			return true;
+		}
 
-				if (SuppressContextMenu(handler))
-					_contextMenuEnabled = false;
-
-				SetCursorToken(handler, buttonMessage.Location); 
-
+		private bool StartNewHandler(MouseButtonMessage buttonMessage)
+		{
+			if (StartNewGraphicHandler())
 				return true;
+			else 
+				return StartNewToolHandler(buttonMessage);
+		}
+
+		private bool StartNewGraphicHandler()
+		{
+			if (_tile.PresentationImage is PresentationImage)
+			{
+				CompositeGraphic sceneGraph = ((PresentationImage)_tile.PresentationImage).SceneGraph;
+				foreach (IMouseButtonHandler handler in GetHandlerGraphics(sceneGraph))
+				{
+					if (CanStartNewHandler(handler) && StartHandler(handler))
+					{
+						SetCapture(handler);
+						return true;
+					}
+				}
 			}
 
 			return false;
 		}
+
+		private bool StartNewToolHandler(MouseButtonMessage buttonMessage)
+		{
+			foreach (IMouseButtonHandler handler in _shortcutManager.GetMouseButtonHandlers(buttonMessage.Shortcut))
+			{
+				if (CanStartNewHandler(handler) && StartHandler(handler))
+				{
+					SetCapture(handler);
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private bool CanStartNewHandler(IMouseButtonHandler handler)
+		{
+			if (_clickCount < 2)
+				return true;
+			else if (CanStartOnDoubleClick(handler))
+				return true;
+			else
+				return false;
+		}
+
+		private bool CancelStartDueToDoubleClick()
+		{
+			return (_clickCount > 1 && _startCount == 1 && CancelStartOnDoubleClick(this.CaptureHandler));
+		}
+
+		#endregion
 
 		private bool ProcessMouseButtonUpMessage(MouseButtonMessage buttonMessage)
 		{
@@ -437,6 +531,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			{
 				if (StopHandler(this.CaptureHandler))
 					return true;
+
+				Trace.WriteLine(String.Format("Release capture {0}", this.CaptureHandler.GetType()));
 
 				ReleaseCapture(false);
 				return true;
@@ -481,13 +577,13 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			{
 				if (ConstrainToTile(this.CaptureHandler) && !this.TileClientRectangle.Contains(this.Location))
 				{
-					SetCursorToken(null, trackMessage.Location);
+					SetCursorToken(null);
 					return true;
 				}
 
 				if (this.CaptureHandler.Track(this))
 				{
-					SetCursorToken(this.CaptureHandler, trackMessage.Location);
+					SetCursorToken();
 					return true;
 				}
 			}
@@ -496,7 +592,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				return true;
 
 			IMouseButtonHandler handler = FindHandlingGraphic(TrackHandler);
-			SetCursorToken(handler, trackMessage.Location);
+			SetCursorToken(handler);
 			return (handler != null);
 		}
 
@@ -505,7 +601,14 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			if (_selectedOnThisClick && SuppressOnTileActivate(handler))
 				return false;
 
-			return handler.Start(this);
+			if (_clickCount > 1 && IgnoreDoubleClicks(handler))
+				return false;
+
+			bool start = handler.Start(this);
+			if (start)
+				++_startCount;
+
+			return start;
 		}
 
 		private bool TrackHandler(IMouseButtonHandler handler)
@@ -521,19 +624,29 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private bool StopHandler(IMouseButtonHandler handler)
 		{
-			return handler.Stop(this);
+			bool handled = handler.Stop(this);
+			if (!handled)
+				_startCount = 0;
+
+			return handled;
 		}
 
 		private IMouseButtonHandler FindHandlingGraphic(CallHandlerMethodDelegate handlerDelegate)
 		{
-			PresentationImage image = this.Tile.PresentationImage as PresentationImage;
-			if (image == null)
-				return null;
+			if (_tile.PresentationImage is PresentationImage)
+			{
+				CompositeGraphic sceneGraph = ((PresentationImage) _tile.PresentationImage).SceneGraph;
+				foreach (IMouseButtonHandler handler in GetHandlerGraphics(sceneGraph))
+				{
+					if (handlerDelegate(handler))
+						return handler;
+				}
+			}
 
-			return FindHandlingGraphic(image.SceneGraph, handlerDelegate);
+			return null;
 		}
 
-		private IMouseButtonHandler FindHandlingGraphic(CompositeGraphic compositeGraphic, CallHandlerMethodDelegate handlerDelegate)
+		private IEnumerable<IMouseButtonHandler> GetHandlerGraphics(CompositeGraphic compositeGraphic)
 		{
 			for (int graphicIndex = compositeGraphic.Graphics.Count - 1; graphicIndex >= 0; --graphicIndex)
 			{
@@ -544,21 +657,17 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 				if (graphic is IMouseButtonHandler)
 				{
-					IMouseButtonHandler handler = (IMouseButtonHandler)graphic;
-					if (handlerDelegate(handler))
-						return handler;
+					yield return graphic as IMouseButtonHandler;
 				}
 				else if (graphic is CompositeGraphic)
 				{
-					IMouseButtonHandler handler = FindHandlingGraphic(graphic as CompositeGraphic, handlerDelegate);
-					if (handler != null)
-						return handler;
+					foreach (IMouseButtonHandler handler in GetHandlerGraphics(graphic as CompositeGraphic))
+						yield return handler;
 				}
 			}
-
-			return null;
 		}
 
+		#endregion
 		#endregion
 
 		#region Public Properties

@@ -606,6 +606,12 @@ Please check the log for more details.</value>
   <data name="MenuTextCallout" xml:space="preserve">
     <value>Add Text &amp;Callout</value>
   </data>
+  <data name="CommandColorMap" xml:space="preserve">
+    <value>Color Map</value>
+  </data>
+  <data name="CommandInvert" xml:space="preserve">
+    <value>Invert</value>
+  </data>
   <data name="MenuTextOnly" xml:space="preserve">
     <value>Add &amp;Text</value>
   </data>

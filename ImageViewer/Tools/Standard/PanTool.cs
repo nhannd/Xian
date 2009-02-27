@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	public class PanTool : MouseImageViewerTool
 	{
 		private readonly SpatialTransformImageOperation _operation;
-		private MemorableUndoableCommand _command;
+		private MemorableUndoableCommand _memorableCommand;
 		private ImageOperationApplicator _applicator;
 
 		public PanTool()
@@ -80,9 +80,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			remove { base.TooltipChanged -= value; }
 		}
 
+		private ISpatialTransform GetSelectedImageTransform()
+		{
+			return _operation.GetOriginator(this.SelectedPresentationImage) as ISpatialTransform;
+		}
+
 		private bool CanPan()
 		{
-			return _operation.GetOriginator(this.SelectedPresentationImage) is SpatialTransform;
+			return GetSelectedImageTransform() != null;
 		}
 
 		private void CaptureBeginState()
@@ -91,24 +96,32 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			_applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
-			_command = new MemorableUndoableCommand(_applicator);
-			_command.Name = SR.CommandPan;
-			_command.BeginState = _applicator.CreateMemento();
+			IMemorable originator = GetSelectedImageTransform();
+			_memorableCommand = new MemorableUndoableCommand(originator);
+			_memorableCommand.BeginState = originator.CreateMemento();
 		}
 
 		private void CaptureEndState()
 		{
-			if (!CanPan() || _command == null)
+			if (!CanPan() || _memorableCommand == null)
 				return;
 
-			_applicator.ApplyToLinkedImages();
+			_memorableCommand.EndState = GetSelectedImageTransform().CreateMemento();
+			CompositeUndoableCommand applicatorCommand = _applicator.ApplyToLinkedImages();
+			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(this.SelectedPresentationImage);
 
-			_command.EndState = _applicator.CreateMemento();
+			if (!_memorableCommand.EndState.Equals(_memorableCommand.BeginState))
+				historyCommand.Enqueue(_memorableCommand);
+			if (applicatorCommand != null)
+				historyCommand.Enqueue(applicatorCommand);
 
-			if (!_command.EndState.Equals(_command.BeginState))
-				this.Context.Viewer.CommandHistory.AddCommand(_command);
+			if (historyCommand.Count > 0)
+			{
+				historyCommand.Name = SR.CommandPan;
+				this.Context.Viewer.CommandHistory.AddCommand(historyCommand);
+			}
 
-			_command = null;
+			_memorableCommand = null;
 		}
 
 		private void PanLeft()

@@ -120,6 +120,7 @@
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\DisplaySetNumberComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
+    <Compile Include="DrawableUndoableOperation.cs" />
     <Compile Include="EditBox.cs" />
     <Compile Include="FilteredGroups.cs" />
     <Compile Include="Graphics\FlashOverlayController.cs" />
@@ -139,6 +140,8 @@
     <Compile Include="InteractiveGraphics\PolyLineInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\RectangleInteractiveGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\UserCalloutGraphic.cs" />
+    <Compile Include="IUndoableOperation.cs" />
+    <Compile Include="LinkedImageEnumerator.cs" />
     <Compile Include="RoiGraphics\RoiGraphic.cs" />
     <Compile Include="InteractiveGraphics\StandardAnnotationGraphicSerializer.cs" />
     <Compile Include="InteractiveGraphics\StandardStatefulInteractiveGraphic.cs" />
@@ -498,6 +501,7 @@
     <Compile Include="TileMemento.cs" />
     <Compile Include="TileSelectedEventArgs.cs" />
     <Compile Include="DrawableUndoableCommand.cs" />
+    <Compile Include="UndoableOperation.cs" />
     <Compile Include="ViewerShortcutManager.cs" />
   </ItemGroup>
   <ItemGroup>

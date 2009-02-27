@@ -69,14 +69,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			private void Apply()
 			{
 				ImageOperationApplicator applicator = new ImageOperationApplicator(_ownerTool.SelectedPresentationImage, this);
-				MemorableUndoableCommand command = new MemorableUndoableCommand(applicator);
-				command.BeginState = applicator.CreateMemento();
-
-				applicator.ApplyToAllImages();
-
-				command.EndState = applicator.CreateMemento();
-				if (!command.EndState.Equals(command.BeginState))
-					_ownerTool.Context.Viewer.CommandHistory.AddCommand(command);
+				CompositeUndoableCommand historyCommand = applicator.ApplyToAllImages();
+				if (historyCommand != null)
+				{
+					historyCommand.Name = SR.CommandColorMap;
+					_ownerTool.Context.Viewer.CommandHistory.AddCommand(historyCommand);
+				}
 			}
 
 			public override IMemorable GetOriginator(IPresentationImage image)

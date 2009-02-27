@@ -745,7 +745,9 @@ namespace ClearCanvas.ImageViewer
 			if (imageBoxMemento.TopLeftPresentationImageIndex != -1)
 				this.TopLeftPresentationImageIndex = imageBoxMemento.TopLeftPresentationImageIndex;
 
-			Draw();
+			//NOTE:  why was this not at the end?  doesn't seem to have matter - tested it and it seems fine.
+			//SetMemento should not draw anything - the command in the command history or a tool should.
+			//Draw();
 
 			if (imageBoxMemento.IndexOfSelectedTile != -1)
 			{

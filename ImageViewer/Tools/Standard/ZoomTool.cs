@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		internal static readonly float DefaultMaximumZoom = 64F;
 
 		private readonly ImageSpatialTransformImageOperation _operation; 
-		private MemorableUndoableCommand _command;
+		private MemorableUndoableCommand _memorableCommand;
 		private ImageOperationApplicator _applicator;
 
 		public ZoomTool()
@@ -94,6 +94,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}	
 		}
 
+		private ImageSpatialTransform GetSelectedImageTransform()
+		{
+			return _operation.GetOriginator(this.SelectedPresentationImage) as ImageSpatialTransform;
+		}
+
+		private bool CanZoom()
+		{
+			return GetSelectedImageTransform() != null;
+		}
+
 		private void AddFixedZoomAction(SimpleActionModel actionModel, int scale)
 		{
 			string label = String.Format(SR.FormatLabelZoomFixed, scale);
@@ -102,29 +112,36 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void CaptureBeginState()
 		{
-			if (!_operation.AppliesTo(this.SelectedPresentationImage))
+			if (!CanZoom())
 				return;
 
+			ImageSpatialTransform originator = GetSelectedImageTransform();
 			_applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
-			_command = new MemorableUndoableCommand(_applicator);
-			_command.Name = SR.CommandZoom;
-			_command.BeginState = _applicator.CreateMemento();
+			_memorableCommand = new MemorableUndoableCommand(originator);
+			_memorableCommand.BeginState = originator.CreateMemento();
 		}
 
 		private void CaptureEndState()
 		{
-			if (!_operation.AppliesTo(this.SelectedPresentationImage) || _command == null)
+			if (!CanZoom() || _memorableCommand == null)
 				return;
 
-			_applicator.ApplyToLinkedImages();
+			_memorableCommand.EndState = GetSelectedImageTransform().CreateMemento();
+			CompositeUndoableCommand applicatorCommand = _applicator.ApplyToLinkedImages();
+			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(this.SelectedPresentationImage);
 
-			_command.EndState = _applicator.CreateMemento();
+			if (!_memorableCommand.EndState.Equals(_memorableCommand.BeginState))
+				historyCommand.Enqueue(_memorableCommand);
+			if (applicatorCommand != null)
+				historyCommand.Enqueue(applicatorCommand);
 
-			// If the state hasn't changed since MouseDown just return
-			if (!_command.EndState.Equals(_command.BeginState))
-				this.Context.Viewer.CommandHistory.AddCommand(_command);
+			if (historyCommand.Count > 0)
+			{
+				historyCommand.Name = SR.CommandZoom;
+				this.Context.Viewer.CommandHistory.AddCommand(historyCommand);
+			}
 
-			_command = null;
+			_memorableCommand = null;
 		}
 		
 		private void ZoomIn()
@@ -154,10 +171,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			CaptureBeginState();
 
-			if (!_operation.AppliesTo(this.SelectedPresentationImage))
+			if (!CanZoom())
 				return;
 
-			IImageSpatialTransform transform = (IImageSpatialTransform)this.SelectedSpatialTransformProvider.SpatialTransform;
+			IImageSpatialTransform transform = GetSelectedImageTransform();
 			if (scale <= 0)
 			{
 				transform.ScaleToFit = true;
@@ -175,10 +192,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		
 		private void IncrementScale(float scaleIncrement)
 		{
-			if (!_operation.AppliesTo(this.SelectedPresentationImage))
+			if (!CanZoom())
 				return;
 
-			IImageSpatialTransform transform = (IImageSpatialTransform)this.SelectedSpatialTransformProvider.SpatialTransform;
+			IImageSpatialTransform transform = GetSelectedImageTransform();
 
 			float currentScale = transform.Scale;
 

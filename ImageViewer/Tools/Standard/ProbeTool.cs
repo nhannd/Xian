@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			: base(SR.TooltipProbe)
 		{
 			this.CursorToken = new CursorToken("ProbeCursor.png", this.GetType().Assembly);
-			this.Behaviour = MouseButtonHandlerBehaviour.ConstrainToTile;
+			Behaviour |= MouseButtonHandlerBehaviour.ConstrainToTile;
 		}
 
 		public override event EventHandler TooltipChanged

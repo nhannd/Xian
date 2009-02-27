@@ -30,11 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
+	//TODO: this class doesn't appear to be used.  Can we delete it?
     public class LayoutToolViewEventArgs : EventArgs
     {
         private int _imageBoxRows;

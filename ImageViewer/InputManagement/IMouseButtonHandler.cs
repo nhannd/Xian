@@ -40,10 +40,15 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	public enum MouseButtonHandlerBehaviour
 	{
 		/// <summary>
-		/// Indicates to the framework that the default behaviour should be applied to this <see cref="IMouseButtonHandler"/>.
+		/// Indicates to the framework that no special behaviour, not event the defaults, should be applied.
 		/// </summary>
-		None = 0,
+		None = 0x0,
 
+		/// <summary>
+		/// Indicates to the framework that the default behaviour should be applied.
+		/// </summary>
+		Default = CancelStartOnDoubleClick,
+		
 		/// <summary>
 		/// Indicates to the framework that the context menu should be suppressed, usually because this 
 		/// object is going to return true from <see cref="IMouseButtonHandler.Stop"/> and keep capture 
@@ -62,7 +67,19 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// when a tile is first activated.  If this flag is not specified, then the <see cref="IMouseButtonHandler"/>
 		/// will <b>not</b> be ignored on tile activation.
 		/// </summary>
-		SuppressOnTileActivate = 0x4
+		SuppressOnTileActivate = 0x4,
+
+		/// <summary>
+		/// Because a click must happen before a double-click, this allows an <see cref="IMouseButtonHandler"/> to opt-out
+		/// after gaining initial capture (via <see cref="IMouseButtonHandler.Start"/>) and have the framework 
+		/// call <see cref="IMouseButtonHandler.Cancel"/> in order to allow another handler to process the double-click.
+		/// </summary>
+		CancelStartOnDoubleClick = 0x8,
+
+		/// <summary>
+		/// Indicates to the framework that the tool does not want to receive double-click notifications.
+		/// </summary>
+		IgnoreDoubleClicks = 0x10
 	}
 
 	/// <summary>

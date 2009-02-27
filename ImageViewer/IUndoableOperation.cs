@@ -1,6 +1,9 @@
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Desktop
+namespace ClearCanvas.ImageViewer
 {
+	//TODO: redo documentation
+
 	/// <summary>
 	/// Models an undoable operation applied to an item of type <typeparamref name="T"/>, to
 	/// be used in conjuction with the <see cref="UndoableOperationApplicator{T}"/>.

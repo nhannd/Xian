@@ -492,16 +492,18 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		{
 			_tile.Select();
 
-			MemorableUndoableCommand command = new MemorableUndoableCommand(_tile.ParentImageBox);
-			command.BeginState = _tile.ParentImageBox.CreateMemento();
+			MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(_tile.ParentImageBox);
+			memorableCommand.BeginState = _tile.ParentImageBox.CreateMemento();
 
 			IDisplaySet displaySet = (IDisplaySet) drgevent.Data.GetData(typeof (DisplaySet));
 			_tile.ParentImageBox.DisplaySet = displaySet.CreateFreshCopy();
 			_tile.ParentImageBox.Draw();
 
-			command.EndState = _tile.ParentImageBox.CreateMemento();
+			memorableCommand.EndState = _tile.ParentImageBox.CreateMemento();
 
-			_tile.ImageViewer.CommandHistory.AddCommand(command);
+			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(_tile.ParentImageBox);
+			historyCommand.Enqueue(memorableCommand);
+			_tile.ImageViewer.CommandHistory.AddCommand(historyCommand);
 
 			base.OnDragDrop(drgevent);
 		}

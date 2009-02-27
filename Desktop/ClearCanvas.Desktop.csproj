@@ -125,8 +125,6 @@
     <Compile Include="Tables\DateTimeTableColumn.cs" />
     <Compile Include="Tables\FilteredItemCollection.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
-    <Compile Include="UndaobleOperationApplicator.cs" />
-    <Compile Include="IUndoableOperation.cs" />
     <Compile Include="UndoableCommand.cs" />
     <Compile Include="UserInteraction.cs" />
     <Compile Include="PrincipalPermissionSpecification.cs" />

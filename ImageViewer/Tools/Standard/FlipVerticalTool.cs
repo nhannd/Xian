@@ -65,17 +65,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!_operation.AppliesTo(this.SelectedPresentationImage))
 				return;
 
-			// Save the old state
 			ImageOperationApplicator applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
-			MemorableUndoableCommand command = new MemorableUndoableCommand(applicator);
-			command.Name = SR.CommandFlipVertical;
-			command.BeginState = applicator.CreateMemento();
+			CompositeUndoableCommand historyCommand = applicator.ApplyToAllImages();
 
-			applicator.ApplyToAllImages();
-
-			// Save the new state
-			command.EndState = applicator.CreateMemento();
-			this.Context.Viewer.CommandHistory.AddCommand(command);
+			if (historyCommand != null)
+			{
+				historyCommand.Name = SR.CommandFlipVertical; 
+				this.Context.Viewer.CommandHistory.AddCommand(historyCommand);
+			}
 		}
 
 		public void Apply(IPresentationImage image)

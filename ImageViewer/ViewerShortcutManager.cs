@@ -136,14 +136,7 @@ namespace ClearCanvas.ImageViewer
 			_setRegisteredTools[tool] = tool;
 		}
 
-		#region IViewerShortcutManager Members
-
-		/// <summary>
-		/// Gets the <see cref="IMouseButtonHandler"/> associated with a shortcut.
-		/// </summary>
-		/// <param name="shortcut">The shortcut for which an <see cref="IMouseButtonHandler"/> is to be found.</param>
-		/// <returns>An <see cref="IMouseButtonHandler"/> or null.</returns>
-		public IMouseButtonHandler GetMouseButtonHandler(MouseButtonShortcut shortcut)
+		private IMouseButtonHandler GetRegisteredMouseButtonHandler(MouseButtonShortcut shortcut)
 		{
 			if (shortcut == null)
 				return null;
@@ -159,17 +152,26 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
+			return null;
+		}
+
+		#region IViewerShortcutManager Members
+
+		public IEnumerable<IMouseButtonHandler> GetMouseButtonHandlers(MouseButtonShortcut shortcut)
+		{
+			IMouseButtonHandler registeredHandler = GetRegisteredMouseButtonHandler(shortcut);
+			if (registeredHandler != null)
+				yield return registeredHandler;
+
 			foreach (ITool tool in _setRegisteredTools.Keys)
 			{
 				MouseImageViewerTool mouseButtonHandler = tool as MouseImageViewerTool;
 				if (mouseButtonHandler != null)
 				{
 					if (shortcut.Equals(mouseButtonHandler.DefaultMouseButtonShortcut))
-						return mouseButtonHandler;
+						yield return mouseButtonHandler;
 				}
 			}
-
-			return null;
 		}
 
 		/// <summary>

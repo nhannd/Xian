@@ -63,8 +63,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	public partial class WindowLevelTool : MouseImageViewerTool
 	{
 		private readonly VoiLutImageOperation _operation;
-
-		private MemorableUndoableCommand _command;
+		private MemorableUndoableCommand _memorableCommand;
 		private ImageOperationApplicator _applicator;
 
 		public WindowLevelTool()
@@ -80,9 +79,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			remove { base.TooltipChanged -= value; }
 		}
 
+		private IVoiLutManager GetSelectedImageVoiLutManager()
+		{
+			return _operation.GetOriginator(this.SelectedPresentationImage) as IVoiLutManager;
+		}
+
 		private bool CanWindowLevel()
 		{
-			IVoiLutManager manager = _operation.GetOriginator(this.SelectedPresentationImage) as IVoiLutManager;
+			IVoiLutManager manager = GetSelectedImageVoiLutManager();
 			return manager != null && manager.GetLut() is IVoiLutLinear;
 		}
 
@@ -91,26 +95,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!CanWindowLevel())
 				return;
 
+			IVoiLutManager originator = GetSelectedImageVoiLutManager();
 			_applicator = new ImageOperationApplicator(this.SelectedPresentationImage, _operation);
-			_command = new MemorableUndoableCommand(_applicator);
-			_command.Name = SR.CommandWindowLevel;
-			_command.BeginState = _applicator.CreateMemento();
+			_memorableCommand = new MemorableUndoableCommand(originator);
+			_memorableCommand.BeginState = originator.CreateMemento();
 		}
 
 		private void CaptureEndState()
 		{
-			if (!CanWindowLevel() || _command == null)
+			if (!CanWindowLevel() || _memorableCommand == null)
 				return;
 
 			if (this.SelectedVoiLutProvider.VoiLutManager.GetLut() is IBasicVoiLutLinear)
 			{
-				_applicator.ApplyToLinkedImages();
-				_command.EndState = _applicator.CreateMemento();
+				_memorableCommand.EndState = GetSelectedImageVoiLutManager().CreateMemento();
+				CompositeUndoableCommand applicatorCommand = _applicator.ApplyToLinkedImages();
+				DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(this.SelectedPresentationImage);
 
-				if (!_command.EndState.Equals(_command.BeginState)) 
-					this.Context.Viewer.CommandHistory.AddCommand(_command);
-				
-				_command = null;
+				if (!_memorableCommand.EndState.Equals(_memorableCommand.BeginState))
+					historyCommand.Enqueue(_memorableCommand);
+				if (applicatorCommand != null)
+					historyCommand.Enqueue(applicatorCommand);
+
+				if (historyCommand.Count > 0)
+				{
+					historyCommand.Name = SR.CommandWindowLevel;
+					this.Context.Viewer.CommandHistory.AddCommand(historyCommand);
+				}
 			}
 		}
 

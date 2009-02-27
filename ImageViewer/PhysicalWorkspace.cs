@@ -64,8 +64,8 @@ namespace ClearCanvas.ImageViewer
 	{
 		#region Private Fields
 
+		private readonly IImageViewer _imageViewer;
 		private ImageBoxCollection _imageBoxes;
-		private IImageViewer _imageViewer;
 		private ImageBox _selectedImageBox;
 		private int _rows;
 		private int _columns;
@@ -332,6 +332,8 @@ namespace ClearCanvas.ImageViewer
 			if (this.ImageBoxes == null)
 				return;
 
+			SetLocked(false);
+
 			foreach (ImageBox imageBox in this.ImageBoxes)
 				imageBox.Dispose();
 
@@ -467,6 +469,10 @@ namespace ClearCanvas.ImageViewer
 			PhysicalWorkspaceMemento workspaceMemento = memento as PhysicalWorkspaceMemento;
 			Platform.CheckForInvalidCast(workspaceMemento, "memento", "PhysicalWorkspaceMemento");
 
+			//locked is not part of the memento.
+			bool locked = Locked;
+			SetLocked(false);
+
 			this.ImageBoxes.Clear();
 			
 			for (int i = 0; i < workspaceMemento.ImageBoxes.Count; i++)
@@ -482,9 +488,14 @@ namespace ClearCanvas.ImageViewer
 			_columns = workspaceMemento.Columns;
 
 			SetImageBoxGrid();
+
+			//restore locked state.
+			SetLocked(locked);
+
 			OnLayoutCompleted();
 
-			Draw();
+			//The command in the command history should be drawable.
+			//Draw();
 		}
 
 		#endregion

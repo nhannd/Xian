@@ -30,6 +30,8 @@
 #endregion
 
 using ClearCanvas.Desktop.Actions;
+using System.Collections.Generic;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
@@ -64,12 +66,13 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		IClickAction GetKeyboardAction(KeyboardButtonShortcut shortcut);
 
 		/// <summary>
-		/// Gets the <see cref="IMouseButtonHandler"/> associated with the input <paramref name="shortcut"/>.
+		/// Gets the <see cref="IMouseButtonHandler"/>s assigned to the given shortcut.
 		/// </summary>
 		/// <remarks>
-		/// Will return null if there is no <see cref="IMouseButtonHandler"/> associated with the <paramref name="shortcut"/>.
+		/// In the case of <see cref="MouseImageViewerTool"/>s, the tool assigned to the specified shortcut
+		/// is returned first, followed by any whose default shortcut matches the one specified.
 		/// </remarks>
-		IMouseButtonHandler GetMouseButtonHandler(MouseButtonShortcut shortcut);
+		IEnumerable<IMouseButtonHandler> GetMouseButtonHandlers(MouseButtonShortcut shortcut);
 
 		/// <summary>
 		/// Gets the <see cref="IMouseWheelHandler"/> associated with the input <paramref name="shortcut"/>.

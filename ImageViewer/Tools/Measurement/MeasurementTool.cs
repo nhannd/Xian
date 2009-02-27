@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		protected MeasurementTool(string tooltipPrefix)
 			: base(tooltipPrefix)
 		{
-			this.Behaviour = MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
+			this.Behaviour |= MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
 
 		protected abstract string CreationCommandName { get; }

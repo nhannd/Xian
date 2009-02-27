@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public partial class StackTool : MouseImageViewerTool
 	{
-		private MemorableUndoableCommand _command;
+		private MemorableUndoableCommand _memorableCommand;
 		private int _initialPresentationImageIndex;
 		private IImageBox _currentImageBox;
 
@@ -117,7 +117,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			IPresentationImage topLeftImage = imageBox.TopLeftPresentationImage;
 
 			MemorableUndoableCommand command = new MemorableUndoableCommand(imageBox);
-			command.Name = SR.CommandSortImages;
 			command.BeginState = imageBox.CreateMemento();
 
 			displaySet.PresentationImages.Sort(sortMenuItem.Comparer);
@@ -126,16 +125,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			command.EndState = imageBox.CreateMemento();
 			if (!command.BeginState.Equals(command.EndState))
-				this.Context.Viewer.CommandHistory.AddCommand(command);
+			{
+				DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(imageBox);
+				historyCommand.Enqueue(command);
+				historyCommand.Name = SR.CommandSortImages;
+				this.Context.Viewer.CommandHistory.AddCommand(historyCommand);
+			}
 		}
 
 		private void CaptureBeginState(IImageBox imageBox)
 		{
-			_command = new MemorableUndoableCommand(imageBox);
-			_command.Name = SR.CommandStack;
-
+			_memorableCommand = new MemorableUndoableCommand(imageBox);
 			// Capture state before stack
-			_command.BeginState = imageBox.CreateMemento();
+			_memorableCommand.BeginState = imageBox.CreateMemento();
 			_currentImageBox = imageBox;
 
 			_initialPresentationImageIndex = imageBox.SelectedTile.PresentationImageIndex;
@@ -143,26 +145,27 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void CaptureEndState()
 		{
-			if (_command == null || _currentImageBox == null)
+			if (_memorableCommand == null || _currentImageBox == null)
 			{
 				_currentImageBox = null;
 				return;
 			}
 
 			// If nothing's changed then just return
-			if (_initialPresentationImageIndex == _currentImageBox.SelectedTile.PresentationImageIndex)
+			if (_initialPresentationImageIndex != _currentImageBox.SelectedTile.PresentationImageIndex)
 			{
-				_command = null;
-				_currentImageBox = null;
-				return;
+				// Capture state after stack
+				_memorableCommand.EndState = _currentImageBox.CreateMemento();
+				if (!_memorableCommand.EndState.Equals(_memorableCommand.BeginState))
+				{
+					DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(_currentImageBox);
+					historyCommand.Name = SR.CommandStack; 
+					historyCommand.Enqueue(_memorableCommand);
+					this.Context.Viewer.CommandHistory.AddCommand(historyCommand);
+				}
 			}
 
-			// Capture state after stack
-			_command.EndState = _currentImageBox.CreateMemento();
-			if (!_command.EndState.Equals(_command.BeginState)) 
-				this.Context.Viewer.CommandHistory.AddCommand(_command);
-
-			_command = null;
+			_memorableCommand = null;
 			_currentImageBox = null;
 		}
 
@@ -273,7 +276,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override void StartWheel()
 		{
+			if (this.Context.Viewer.SelectedTile == null)
+				return;
+
 			IImageBox imageBox = this.Context.Viewer.SelectedTile.ParentImageBox;
+			if (imageBox == null)
+				return;
+
 			CaptureBeginState(imageBox);
 		}
 

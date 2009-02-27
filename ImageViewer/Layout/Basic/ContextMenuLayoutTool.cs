@@ -228,21 +228,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private void AssignDisplaySetToImageBox(IDisplaySet displaySet)
 		{
-			MemorableUndoableCommand command = new MemorableUndoableCommand(this.ImageViewer.SelectedImageBox);
-			command.BeginState = this.ImageViewer.SelectedImageBox.CreateMemento();
+			IImageBox imageBox = this.ImageViewer.SelectedImageBox;
+			MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(imageBox);
+			memorableCommand.BeginState = imageBox.CreateMemento();
 
 			// always create a 'fresh copy' to show in the image box.  We never want to show
 			// the 'originals' (e.g. the ones in IImageSet.DisplaySets) because we want them 
 			// to remain clean and unaltered - consider them to be templates for what actually
 			// gets shown.
-			this.ImageViewer.SelectedImageBox.DisplaySet = displaySet.CreateFreshCopy();
+			imageBox.DisplaySet = displaySet.CreateFreshCopy();
 
-			this.ImageViewer.SelectedImageBox.Draw();
+			imageBox.Draw();
 			//this.ImageViewer.SelectedImageBox[0, 0].Select();
 
-			command.EndState = this.ImageViewer.SelectedImageBox.CreateMemento();
+			memorableCommand.EndState = imageBox.CreateMemento();
 
-			this.ImageViewer.CommandHistory.AddCommand(command);
+			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(imageBox);
+			historyCommand.Enqueue(memorableCommand);
+			this.ImageViewer.CommandHistory.AddCommand(historyCommand);
 		}
 
 #if TRACEGROUPS

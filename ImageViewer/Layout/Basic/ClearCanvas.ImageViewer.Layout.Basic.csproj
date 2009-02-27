@@ -108,6 +108,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ContextMenuLayoutTool.cs" />
+    <Compile Include="ExplodeTileTool.cs" />
     <Compile Include="LayoutChangerAction.cs" />
     <Compile Include="LayoutComponent.cs" />
     <Compile Include="LayoutConfigurationPageProvider.cs" />
@@ -134,6 +135,8 @@
     </Compile>
     <Compile Include="StoredLayoutConfiguration.cs" />
     <Compile Include="DisplaySetNavigationTool.cs" />
+    <Compile Include="ExplodeImageBoxTool.cs" />
+    <Compile Include="ListObserver.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\LayoutToolLarge.png" />
@@ -172,6 +175,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\PreviousDisplaySetToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ExplodeImageBoxLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ExplodeImageBoxToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ExplodeImageBoxMedium.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

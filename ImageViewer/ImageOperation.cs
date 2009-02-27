@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
@@ -36,7 +37,7 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// Abstract base class for an undoable operation performed on an <see cref="IPresentationImage"/>.
 	/// </summary>
-	public abstract class ImageOperation : IUndoableOperation<IPresentationImage>
+	public abstract class ImageOperation : UndoableOperation<IPresentationImage>
 	{
 		/// <summary>
 		/// Default protected constructor.
@@ -45,51 +46,14 @@ namespace ClearCanvas.ImageViewer
 		{
 		}
 
-		#region IUndoableOperation{T} Members
-
-		/// <summary>
-		/// Gets the object whose state is to be captured or restored.
-		/// </summary>
-		/// <param name="image">An <see cref="IPresentationImage"/> that contains
-		/// the object whose state is to be captured or restored.</param>
-		/// <remarks>
-		/// <para>
-		/// Typically, operations are applied to some aspect of the presentation image,
-		/// such as zoom, pan, window/level, etc. That aspect will usually be 
-		/// encapsulated as an object that is owned by the
-		/// by <see cref="IPresentationImage"/>.  <see cref="IUndoableOperation{T}.GetOriginator"/> allows
-		/// the plugin developer to define what that object is.
-		/// </para>
-		/// <para>
-		/// <see cref="IUndoableOperation{T}.AppliesTo"/> should not return true if <see cref="IUndoableOperation{T}.GetOriginator"/> has returned null.
-		/// However, it is valid for <see cref="IUndoableOperation{T}.GetOriginator"/> to return a non-null value and <see cref="IUndoableOperation{T}.AppliesTo"/>
-		/// to return false.
-		/// </para>
-		/// </remarks>
-		/// <returns>
-		/// The appropriate originator for the input <see cref="IPresentationImage"/>, or null if one doesn't exist.
-		/// </returns>
-		public abstract IMemorable GetOriginator(IPresentationImage image);
-
-		/// <summary>
-		/// Gets whether or not the operation is applicable for the input <see cref="IPresentationImage"/>.
-		/// </summary>
-		/// <remarks>
-		/// <see cref="IUndoableOperation{T}.AppliesTo"/> should never return true if <see cref="IUndoableOperation{T}.GetOriginator"/> has returned null.
-		/// </remarks>
-		/// <returns>
-		/// Unless overridden, returns true if <see cref="GetOriginator"/> returns a non-null value, otherwise false.
-		/// </returns>
-		public virtual bool AppliesTo(IPresentationImage image)
+		public static DrawableUndoableCommand Apply(IUndoableOperation<IPresentationImage> operation, IPresentationImage image)
 		{
-			return GetOriginator(image) != null;
+			return DrawableUndoableOperation<IPresentationImage>.Apply(operation, image);
 		}
 
-		/// <summary>
-		/// Applies the operation to the input <see cref="IPresentationImage"/>.
-		/// </summary>
-		public abstract void Apply(IPresentationImage image);
-
-		#endregion
+		public static CompositeUndoableCommand Apply(IUndoableOperation<IPresentationImage> operation, IEnumerable<IPresentationImage> images)
+		{
+			return DrawableUndoableOperation<IPresentationImage>.Apply(operation, images);
+		}
 	}
 }

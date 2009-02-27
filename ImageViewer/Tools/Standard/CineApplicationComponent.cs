@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private IImageBox _selectedImageBox;
 
-		private MemorableUndoableCommand _command;
+		private MemorableUndoableCommand _memorableCommand;
 
 		private volatile bool _stopThread;
 		private readonly object _threadLock;
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_currentScaleValue = 50;
 
 			_selectedImageBox = null;
-			_command = null;
+			_memorableCommand = null;
 
 			_threadLock = new object();
 			_stopThread = false;
@@ -277,9 +277,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (CanStart())
 			{
 				_selectedImageBox = ImageViewer.SelectedImageBox;
-				_command = new MemorableUndoableCommand(_selectedImageBox);
-				_command.Name = SR.CommandCine;
-				_command.BeginState = _selectedImageBox.CreateMemento();
+				_memorableCommand = new MemorableUndoableCommand(_selectedImageBox);
+				_memorableCommand.BeginState = _selectedImageBox.CreateMemento();
 
 				return true;
 			}
@@ -289,25 +288,30 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void CommitEndState()
 		{
-			if (_command != null)
+			if (_memorableCommand != null)
 			{
 				_selectedImageBox.ImageViewer.CommandHistory.CurrentCommandChanging -= OnCommandChanging;
 
-				if (!_command.BeginState.Equals(_command.EndState))
-					_selectedImageBox.ImageViewer.CommandHistory.AddCommand(_command);
+				if (!_memorableCommand.BeginState.Equals(_memorableCommand.EndState))
+				{
+					DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(_selectedImageBox);
+					historyCommand.Name = SR.CommandCine;
+					historyCommand.Enqueue(_memorableCommand);
+					_selectedImageBox.ImageViewer.CommandHistory.AddCommand(historyCommand);
+				}
 
 				_selectedImageBox.ImageViewer.CommandHistory.CurrentCommandChanging += OnCommandChanging;
 			}
 
 			_selectedImageBox = null;
-			_command = null;
+			_memorableCommand = null;
 		}
 
 		private void AdvanceImage()
 		{
 			if (!_stopThread)
 			{
-				if (_command == null)
+				if (_memorableCommand == null)
 				{
 					if (!CaptureBeginState())
 					{
@@ -339,7 +343,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					}
 				}
 
-				_command.EndState = _selectedImageBox.CreateMemento();
+				_memorableCommand.EndState = _selectedImageBox.CreateMemento();
 				_selectedImageBox.Draw();
 			}
 

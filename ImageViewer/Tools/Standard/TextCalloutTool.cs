@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public TextCalloutTool() : base(SR.TooltipTextCallout)
 		{
-			this.Behaviour = MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
+			Behaviour |= MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
 
 		#region Tool Mode Support

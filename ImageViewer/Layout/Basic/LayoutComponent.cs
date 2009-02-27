@@ -283,9 +283,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			int tileRows = Math.Max(1, physicalWorkspace.SelectedImageBox.Rows);
 			int tileColumns = Math.Max(1, physicalWorkspace.SelectedImageBox.Columns);
 
-			MemorableUndoableCommand command = new MemorableUndoableCommand(physicalWorkspace);
-			command.Name = SR.CommandLayoutImageBoxes;
-			command.BeginState = physicalWorkspace.CreateMemento();
+			MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(physicalWorkspace);
+			memorableCommand.BeginState = physicalWorkspace.CreateMemento();
 
 			int oldRows = physicalWorkspace.Rows;
 			int oldColumns = physicalWorkspace.Columns;
@@ -322,9 +321,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			physicalWorkspace.Draw();
 			physicalWorkspace.SelectDefaultImageBox();
 
-			command.EndState = physicalWorkspace.CreateMemento();
+			memorableCommand.EndState = physicalWorkspace.CreateMemento();
+			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(physicalWorkspace);
+			historyCommand.Name = SR.CommandLayoutImageBoxes;
+			historyCommand.Enqueue(memorableCommand);
 
-			imageViewer.CommandHistory.AddCommand(command);
+			imageViewer.CommandHistory.AddCommand(historyCommand);
 		}
 
 		public static void SetTileLayout(IImageViewer imageViewer, int rows, int columns)
@@ -337,9 +339,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (imageBox.ParentPhysicalWorkspace.Locked)
 				return;
 
-			MemorableUndoableCommand command = new MemorableUndoableCommand(imageBox);
-			command.Name = SR.CommandLayoutTiles;
-			command.BeginState = imageBox.CreateMemento();
+			MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(imageBox);
+			memorableCommand.BeginState = imageBox.CreateMemento();
 
 			int index = imageBox.TopLeftPresentationImageIndex;
 
@@ -348,9 +349,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			imageBox.Draw();
 			imageBox.SelectDefaultTile();
 
-			command.EndState = imageBox.CreateMemento();
+			memorableCommand.EndState = imageBox.CreateMemento();
 
-			imageViewer.CommandHistory.AddCommand(command);
+			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(imageBox);
+			historyCommand.Name = SR.CommandLayoutTiles; 
+			historyCommand.Enqueue(memorableCommand);
+			imageViewer.CommandHistory.AddCommand(historyCommand);
 		}
 	}
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
@@ -52,22 +51,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!AppliesTo(ReferenceImage))
 				return;
 
-			UndoableOperationApplicator<IPresentationImage> applicator = 
-				new UndoableOperationApplicator<IPresentationImage>(this, GetAllImages());
-
-			applicator.AppliedOperation += RedrawImage;
-			applicator.ItemMementoSet += RedrawImage;
-
-			MemorableUndoableCommand command = new MemorableUndoableCommand(applicator);
-			command.Name = SR.CommandMatchScale;
-			command.BeginState = applicator.CreateMemento();
-
 			CalculateReferenceDisplayValues();
-			applicator.Apply();
+			CompositeUndoableCommand historyCommand = ImageOperation.Apply(this, GetAllImages());
 
-			command.EndState = applicator.CreateMemento();
-			if (!command.BeginState.Equals(command.EndState))
-				base.ImageViewer.CommandHistory.AddCommand(command);
+			if (historyCommand != null)
+			{
+				historyCommand.Name = SR.CommandMatchScale;
+				base.ImageViewer.CommandHistory.AddCommand(historyCommand);
+			}
 		}
 
 		#endregion
@@ -184,11 +175,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				foreach (IPresentationImage image in imageBox.DisplaySet.PresentationImages)
 					yield return image;
 			}
-		}
-
-		private static void RedrawImage(object sender, ItemEventArgs<IPresentationImage> e)
-		{
-			e.Item.Draw();
 		}
 
 		#endregion

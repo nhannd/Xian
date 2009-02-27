@@ -65,15 +65,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_operation.GetOriginator(this.Context.Viewer.SelectedPresentationImage) == null)
 				return;
 
-			ImageOperationApplicator applicator = new ImageOperationApplicator(this.Context.Viewer.SelectedPresentationImage, _operation);
-			MemorableUndoableCommand command = new MemorableUndoableCommand(applicator);
-			command.Name = "Invert";
-			command.BeginState = applicator.CreateMemento();
-
-			applicator.ApplyToAllImages();
-
-			command.EndState = applicator.CreateMemento();
-			this.Context.Viewer.CommandHistory.AddCommand(command);
+			ImageOperationApplicator applicator = new ImageOperationApplicator(SelectedPresentationImage, _operation);
+			CompositeUndoableCommand historyCommand = applicator.ApplyToAllImages();
+			if (historyCommand != null)
+			{
+				historyCommand.Name = SR.CommandInvert;
+				Context.Viewer.CommandHistory.AddCommand(historyCommand);
+			}
 		}
 
 		private void Invert(IPresentationImage image)

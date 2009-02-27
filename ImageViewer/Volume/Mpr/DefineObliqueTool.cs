@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public DefineObliqueTool()
 		{
-			base.Behaviour = MouseButtonHandlerBehaviour.SuppressOnTileActivate;
+			Behaviour |= MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
 
 		public event EventHandler VisibleChanged;

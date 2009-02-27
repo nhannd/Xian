@@ -183,14 +183,17 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			else if (sourceDisplaySetIndex >= parentImageSet.DisplaySets.Count)
 				sourceDisplaySetIndex = 0;
 
-			MemorableUndoableCommand command = new MemorableUndoableCommand(imageBox);
-			command.BeginState = imageBox.CreateMemento();
+			MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(imageBox);
+			memorableCommand.BeginState = imageBox.CreateMemento();
 
 			imageBox.DisplaySet = parentImageSet.DisplaySets[sourceDisplaySetIndex].CreateFreshCopy();
 			imageBox.Draw();
 
-			command.EndState = imageBox.CreateMemento();
-			base.Context.Viewer.CommandHistory.AddCommand(command);
+			memorableCommand.EndState = imageBox.CreateMemento();
+
+			DrawableUndoableCommand historyCommand = new DrawableUndoableCommand(imageBox);
+			historyCommand.Enqueue(memorableCommand);
+			base.Context.Viewer.CommandHistory.AddCommand(historyCommand);
 		}
 	}
 }
