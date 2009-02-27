@@ -55,9 +55,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreatePolygonalRoi; }
 		}
 
-		protected override string RoiBaseName
+		protected override string RoiNameFormat
 		{
-			get { return SR.StringPolygon; }
+			get { return SR.FormatPolygonName; }
 		}
 
 		protected override InteractiveGraphic CreateInteractiveGraphic()

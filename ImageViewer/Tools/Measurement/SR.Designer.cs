@@ -142,6 +142,42 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ellipse {0}.
+        /// </summary>
+        public static string FormatEllipseName {
+            get {
+                return ResourceManager.GetString("FormatEllipseName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Polygon {0}.
+        /// </summary>
+        public static string FormatPolygonName {
+            get {
+                return ResourceManager.GetString("FormatPolygonName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rectangle {0}.
+        /// </summary>
+        public static string FormatRectangleName {
+            get {
+                return ResourceManager.GetString("FormatRectangleName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ruler {0}.
+        /// </summary>
+        public static string FormatRulerName {
+            get {
+                return ResourceManager.GetString("FormatRulerName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calibrate.
         /// </summary>
         public static string MenuCalibrationTool {
@@ -246,42 +282,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string NotApplicable {
             get {
                 return ResourceManager.GetString("NotApplicable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ellipse.
-        /// </summary>
-        public static string StringEllipse {
-            get {
-                return ResourceManager.GetString("StringEllipse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Polygon.
-        /// </summary>
-        public static string StringPolygon {
-            get {
-                return ResourceManager.GetString("StringPolygon", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Rectangle.
-        /// </summary>
-        public static string StringRectangle {
-            get {
-                return ResourceManager.GetString("StringRectangle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Ruler.
-        /// </summary>
-        public static string StringRuler {
-            get {
-                return ResourceManager.GetString("StringRuler", resourceCulture);
             }
         }
         

@@ -59,9 +59,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreateEllipiticalRoi; }
 		}
 
-		protected override string RoiBaseName
+		protected override string RoiNameFormat
 		{
-			get { return SR.StringEllipse; }
+			get { return SR.FormatEllipseName; }
 		}
 
 		protected override GraphicState CreateCreateState(RoiGraphic roiGraphic)

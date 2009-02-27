@@ -59,9 +59,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreateRectangleRoi; }
 		}
 
-		protected override string RoiBaseName
+		protected override string RoiNameFormat
 		{
-			get { return SR.StringRectangle; }
+			get { return SR.FormatRectangleName; }
 		}
 
 		protected override InteractiveGraphic CreateInteractiveGraphic()

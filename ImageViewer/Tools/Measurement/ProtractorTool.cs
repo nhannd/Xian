@@ -56,9 +56,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.CommandCreateProtractor; }
 		}
 
-		protected override string RoiBaseName
+		protected override string RoiNameFormat
 		{
-			get { return null; }
+			get { return string.Empty; }
 		}
 
 		protected override InteractiveGraphic CreateInteractiveGraphic()

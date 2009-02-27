@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			this.Behaviour |= MouseButtonHandlerBehaviour.SuppressContextMenu | MouseButtonHandlerBehaviour.SuppressOnTileActivate;
 		}
 
-		protected abstract string RoiBaseName { get; }
+		protected abstract string RoiNameFormat { get; }
 
 		protected abstract string CreationCommandName { get; }
 
@@ -145,8 +145,8 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			else
 				roiGraphic = new RoiGraphic(interactiveGraphic, strategy);
 
-			if(!string.IsNullOrEmpty(this.RoiBaseName))
-				roiGraphic.Name = string.Format("{0}{1}", this.RoiBaseName, ++_serialNumber);
+			if(!string.IsNullOrEmpty(this.RoiNameFormat))
+				roiGraphic.Name = string.Format(this.RoiNameFormat, ++_serialNumber);
 			else
 				roiGraphic.Name = "";
 
