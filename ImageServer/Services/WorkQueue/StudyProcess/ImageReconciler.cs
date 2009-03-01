@@ -34,6 +34,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -58,9 +59,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private ServerPartition _partition;
         private Study _existingStudy;
         private StudyStorageLocation _existingStudyLocation;
-    	private bool _duplicate;
+    	private string _sopInstanceUid;
+        private IList<StudyHistory> _historyList;
 
-    	#endregion
+        #endregion
+
 
         #region Public Properties
 
@@ -91,12 +94,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             set { _existingStudy = value; }
         }
 
-    	public bool Duplicate
-    	{
-			get { return _duplicate; }
-			set { _duplicate = value; }
-    	}
-
         #endregion
 
         #region Private Methods
@@ -114,12 +111,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             ImageSetDescriptor fileDesc = ImageSetDescriptor.Parse(file);
             XmlNode node = XmlUtils.Serialize(fileDesc);
-
-#if DEBUG
-            // This is important: Make sure the serialize and deserialization are correct. 
-            ImageSetDescriptor deserializeDesc = XmlUtils.Deserialize<ImageSetDescriptor>(node);
-            Debug.Assert(deserializeDesc.Equals(fileDesc));
-#endif
 
             if (histories == null || histories.Count == 0)
                 return null;
@@ -190,43 +181,50 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #endregion
 
         #region Public Methods
-        public void ReconcileImage(DicomFile file)
+        public void ReconcileImage(DicomFile file, bool isDuplicate)
         {
             Platform.CheckForNullReference(Partition, "Partition");
             Platform.CheckForNullReference(ExistingStudy, "ExistingStudy");
             Platform.CheckForNullReference(ExistingStudyLocation, "ExistingStudyLocation");
 
-            String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
-            String modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
-            String studyDescription = file.DataSet[DicomTags.StudyDescription].GetString(0, String.Empty);
+            _sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
+            
+            //TODO: optimization: use previously loaded history list if possible
+            _historyList = FindHistory(file, StudyHistoryTypeEnum.StudyReconciled);
 
             ReconcileImageContext reconcileContext = new ReconcileImageContext();
             reconcileContext.Partition = _partition;
             reconcileContext.CurrentStudyLocation = ExistingStudyLocation;
             reconcileContext.File = file;
+            reconcileContext.IsDuplicate = isDuplicate;
             reconcileContext.CurrentStudy = ExistingStudy;
+            reconcileContext.History = _historyList == null || _historyList.Count==0? null : _historyList[0];
 
-            IList<StudyHistory> historyList = FindHistory(file, StudyHistoryTypeEnum.StudyReconciled);
 
-            if (historyList == null || historyList.Count==0 )
+            LogDebugInfo(reconcileContext);
+            
+            
+            if (_historyList == null || _historyList.Count == 0)
             {
+                Platform.Log(LogLevel.Debug, "Scheduling new manual reconciliation...");
                 using (ServerCommandProcessor processor = new ServerCommandProcessor("Schedule new reconciliation"))
                 {
-                    MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext, Duplicate);
+                    MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
                     InsertReconcileQueueCommand updateQueueCommand = new InsertReconcileQueueCommand(reconcileContext);
+                    
                     processor.AddCommand(updateQueueCommand);
                     processor.AddCommand(moveFileCommand);
-                    Platform.Log(LogLevel.Info, "Scheduling manual reconciliation. Image contents: Patient={0}, Study={1} ({2})", patientsName, studyDescription, modality);
+                    processor.AddCommand(new OpValidationCommand(reconcileContext));
                     if (processor.Execute() == false)
                     {
                         throw new ApplicationException(String.Format("Unable to schedule image reconcilation : {0}", processor.FailureReason));
                     }
                 }
-                
+                Platform.Log(LogLevel.Info, "SOP {0} has been scheduled for manual reconciliation.", _sopInstanceUid);
             }
             else
             {
-                reconcileContext.History = historyList[0]; 
+                Platform.Log(LogLevel.Debug, "Scheduling Auto Reconciliation...");
                 if (reconcileContext.History.DestStudyStorageKey != null)
                 {
                     StudyStorage destStorage = StudyStorage.Load(reconcileContext.History.DestStudyStorageKey);
@@ -237,16 +235,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                     Study destStudy = Study.Find(destStorage.StudyInstanceUid, _partition); // note: assuming destination partition is the same as the current one
                     Debug.Assert(destStudy != null);
-
-                    Platform.Log(LogLevel.Info, "Auto reconciliation: Patient={0}, Study={1} ({2}). Target Study: StorageGUID={3}, UID={4}, A#={5}.  Referenced history: GUID={6}",
-                            patientsName, studyDescription, modality, reconcileContext.DestinationStudyLocation.GetKey(), destStudy.StudyInstanceUid, destStudy.AccessionNumber, reconcileContext.History.GetKey());
-
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Info, "Auto reconciliation: Patient={0}, Study={1} ({2}). Referenced history: GUID={3}",
-                           patientsName, studyDescription, modality, reconcileContext.History.GetKey());
-
                 }
 
                 // Insert 'ReconcileStudy' in the work queue
@@ -254,11 +242,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 using (ServerCommandProcessor processor = new ServerCommandProcessor("Schedule ReconcileStudy request based on histrory"))
                 {
                     InsertReconcileStudyCommand insertCommand = new InsertReconcileStudyCommand(reconcileContext);
-
-                    MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext, Duplicate);
+                    MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
+                    
                     processor.AddCommand(insertCommand);
                     processor.AddCommand(moveFileCommand);
-
+                    processor.AddCommand(new OpValidationCommand(reconcileContext));
+                    
                     if (processor.Execute() == false)
                     {
                         throw new ApplicationException(String.Format("Unable to create ReconcileStudy request: {0}", processor.FailureReason));
@@ -266,10 +255,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                     Debug.Assert(insertCommand.ReconcileStudyWorkQueueItem != null);
                 }
-                
-
+                Platform.Log(LogLevel.Info, "SOP {0} has been scheduled for auto reconciliation.", _sopInstanceUid);
                 
             }
+        }
+
+        private void LogDebugInfo(ReconcileImageContext context)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("Image To Be Reconciled:\n");
+            sb.AppendFormat("\tSOP={0}\n", _sopInstanceUid);
+            sb.AppendFormat("\tDuplicate={0}\n", context.IsDuplicate);
+            sb.AppendFormat("\tExisting Patient={0}\n", ExistingStudy.PatientsName);
+            sb.AppendFormat("\tExisting Study={0}\n", ExistingStudy.StudyInstanceUid);
+            sb.AppendFormat("\tReferenced History record to be used: {0}\n", context.History == null ? "N/A" : context.History.Key.ToString());
+            sb.AppendFormat("\tCan reconcile automatically? {0}\n", (_historyList != null && _historyList.Count > 0) ? "Yes" : "No");
+            
+            Platform.Log(LogLevel.Info, sb.ToString());
+
         }
 
         #endregion

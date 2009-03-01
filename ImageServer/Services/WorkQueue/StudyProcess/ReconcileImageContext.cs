@@ -17,6 +17,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private StudyIntegrityQueue _studyIntegrityQueue;
         private StudyHistory _history;
         private StudyStorageLocation _destinationStudyLocation;
+        private bool _isDuplicate;
 
         private string _storagePath;
         #endregion
@@ -87,6 +88,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             get { return _storagePath; }
             set { _storagePath = value; }
+        }
+
+        public bool IsDuplicate
+        {
+            get { return _isDuplicate; }
+            set { _isDuplicate = value; }
         }
 
         #endregion

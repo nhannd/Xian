@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
@@ -203,9 +204,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             else
             {
                 StudyComparer comparer = new StudyComparer();
-                IList<DicomAttribute> list = comparer.Compare(message, _context.Study, GetComparisonOptions());
-                return list != null && list.Count > 0;
+                IList<Difference> list = comparer.Compare(message, _context.Study, GetComparisonOptions());
+
+                if (list != null && list.Count > 0)
+                {
+                    LogDifferences(message, list);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
+        }
+
+        private void LogDifferences(DicomMessageBase message, IList<Difference> list)
+        {
+            string sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("Found {0} issue(s) in SOP {1}", list.Count, sopInstanceUid);
+            foreach(Difference diff in list)
+            {
+                sb.AppendFormat("\n\t{0}: Expected='{1}'    In Image='{2}'", diff.Description, diff.ExpectValue, diff.RealValue);
+            }
+            sb.AppendLine();
+            Platform.Log(LogLevel.Info, sb.ToString());
         }
 
         /// <summary>
@@ -359,8 +382,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             reconciler.ExistingStudy = _context.Study;
             reconciler.ExistingStudyLocation = StorageLocation;
             reconciler.Partition = _context.Partition;
-			reconciler.Duplicate = queueUid.Duplicate;
-            reconciler.ReconcileImage(file);
+            reconciler.ReconcileImage(file, queueUid.Duplicate);
         }
 
 

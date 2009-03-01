@@ -1,13 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Common
 {
+    public delegate void ErrorDelegate();
+
     static public class ServerPlatform
     {
         #region Private Fields
@@ -76,7 +81,41 @@ namespace ClearCanvas.ImageServer.Common
 
         public static String GetTempPath()
         {
-            return Path.Combine(Path.Combine(Path.GetPathRoot(Path.GetTempPath()), "temp"), Path.GetRandomFileName());
+            return Path.Combine(GetTempFolder(), Path.GetRandomFileName());
+        }
+
+        public static String GetTempFolder()
+        {
+            return Path.Combine(Path.GetPathRoot(Path.GetTempPath()), "temp");
+        }
+
+        public static String GetTempFolder(string operation, params string[] references)
+        {
+            Platform.CheckForEmptyString(operation, "operation");
+            string path = Path.Combine(GetTempFolder(), operation);
+            if (references!=null)
+            {
+                foreach(string subFolder in references)
+                {
+                    path = Path.Combine(path, subFolder);
+                }
+            }
+            return path;
+        }
+
+        [Conditional("DEBUG")]
+        public static void SimulateError(string description, ErrorDelegate del)
+        {
+            Random ran = new Random();
+            if (ran.Next() % (ran.Next(10)+1) == 0)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendFormat("\n\n\t**********************************************************************************************************\n");
+                sb.AppendFormat("\t                 SIMULATING ERROR: {0}\n", description);
+                sb.AppendFormat("\t**********************************************************************************************************\n");
+                Platform.Log(LogLevel.Info, sb.ToString());
+                del();
+            } 
         }
 
         public static String VersionString

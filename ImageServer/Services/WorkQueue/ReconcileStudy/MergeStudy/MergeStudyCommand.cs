@@ -64,7 +64,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
         private ServerCommandProcessor _processor;
         private StudyStorageLocation _destStudyStorage = null;
         private readonly Dictionary<string, WorkQueueUid> _fileToUidMap = new Dictionary<string, WorkQueueUid>();
-        private readonly string _workingDir = ServerPlatform.GetTempPath();
+        private string _tempDir; 
+        private string _workingDir;
 
         private Study _study;
         private readonly List<BaseImageLevelUpdateCommand> _imageLevelCommands = new List<BaseImageLevelUpdateCommand>();
@@ -121,7 +122,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
         {
             Platform.CheckForNullReference(_reconcileContext, "_reconcileContext");
             Platform.CheckForNullReference(DestStudyStorage, "DestStudyStorage");
-            
+
+            _tempDir = ServerPlatform.GetTempFolder("Reconcile", DestStudyStorage.StudyInstanceUid);
+            _workingDir = Path.Combine(_tempDir, _reconcileContext.WorkQueueItem.Key.ToString());
+
             if (_updateDestination)
                 UpdateExistingStudy();
             
@@ -241,7 +245,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
         
         private void CleanupWorkingFolder()
         {
-            DirectoryUtility.DeleteIfExists(_workingDir);
+            DirectoryUtility.DeleteIfExists(_tempDir);
         }
 
         private void SaveFile(DicomFile file)

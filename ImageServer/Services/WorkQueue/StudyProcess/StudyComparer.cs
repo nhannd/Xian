@@ -53,50 +53,68 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
     }
 
+    class Difference
+    {
+        public string Description;
+        public string ExpectValue;
+        public string RealValue;
+
+        public Difference(string description, string expected, string actual)
+        {
+            Description = description;
+            ExpectValue = expected;
+            RealValue = actual;
+        }
+    }
+
     class StudyComparer
     {
-        public IList<DicomAttribute> Compare(DicomMessageBase message, Study study, StudyCompareOptions options)
+        void InternalCompare(string name, string expected, string actual, List<Difference> list)
         {
-            
-            List<DicomAttribute> list = new List<DicomAttribute>();
+            if(!StringUtils.AreEqual(expected, actual))
+                list.Add(new Difference(name, expected, actual));
+        }
 
+        public IList<Difference> Compare(DicomMessageBase message, Study study, StudyCompareOptions options)
+        {
+            List<Difference> list = new List<Difference>();
 
             if (options.MatchIssuerOfPatientId)
             {
-                if (!StringUtils.AreEqual(study.IssuerOfPatientId,message.DataSet[DicomTags.IssuerOfPatientId].GetString(0, String.Empty)))
-                    list.Add(message.DataSet[DicomTags.IssuerOfPatientId]);
+                InternalCompare("Issuer Of Patient Id", study.IssuerOfPatientId,
+                                message.DataSet[DicomTags.IssuerOfPatientId].ToString(), list);
             }
 
             if (options.MatchPatientId)
             {
-                if (!StringUtils.AreEqual(study.PatientId, message.DataSet[DicomTags.PatientId].GetString(0, String.Empty)))
-                    list.Add(message.DataSet[DicomTags.PatientId]);
+                InternalCompare("Patient Id", study.PatientId,
+                                message.DataSet[DicomTags.PatientId].ToString(), list);
             }
 
 
             if (options.MatchPatientsName)
             {
-                if (!StringUtils.AreEqual(study.PatientsName, message.DataSet[DicomTags.PatientsName].GetString(0, String.Empty)))
-                    list.Add(message.DataSet[DicomTags.PatientsName]);
+                InternalCompare("Patient's Name", study.PatientsName,
+                                 message.DataSet[DicomTags.PatientsName].ToString(), list);
             }
 
             if (options.MatchPatientsBirthDate)
             {
-                if (!StringUtils.AreEqual(study.PatientsBirthDate, message.DataSet[DicomTags.PatientsBirthDate].GetString(0, String.Empty)))
-                    list.Add(message.DataSet[DicomTags.PatientsBirthDate]);
+                InternalCompare("Patient's BirthDate", study.PatientsBirthDate,
+                                 message.DataSet[DicomTags.PatientsBirthDate].ToString(), list);
             }
 
             if (options.MatchPatientsSex)
             {
-                if (!StringUtils.AreEqual(study.PatientsSex, message.DataSet[DicomTags.PatientsSex].GetString(0, String.Empty)))
-                    list.Add(message.DataSet[DicomTags.PatientsSex]);
+                InternalCompare("Patient's Sex", study.PatientsSex,
+                                message.DataSet[DicomTags.PatientsSex].ToString(), list);
             }
 
 
             if (options.MatchAccessionNumber)
             {
-                if (!StringUtils.AreEqual(study.AccessionNumber, message.DataSet[DicomTags.AccessionNumber].GetString(0, String.Empty)))
-                    list.Add(message.DataSet[DicomTags.AccessionNumber]);
+                InternalCompare("Accession Number", study.AccessionNumber,
+                                message.DataSet[DicomTags.AccessionNumber].ToString(), list);
             }
 
             return list;

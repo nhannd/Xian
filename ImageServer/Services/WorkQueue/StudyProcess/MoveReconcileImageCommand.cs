@@ -30,24 +30,51 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
-    class MoveReconcileImageCommand : ServerCommand
+    class OpValidationCommand:ServerCommand
+    {
+        private readonly ReconcileImageContext _context;
+        public OpValidationCommand(ReconcileImageContext context)
+            : base("Validating result of the operation", true)
+        {
+            _context = context;
+        }
+
+        protected override void OnExecute()
+        {
+            string reconcileImagePath =
+                Path.Combine(_context.StoragePath, _context.File.DataSet[DicomTags.SopInstanceUid].ToString() + ".dcm");
+
+            Platform.CheckTrue(File.Exists(reconcileImagePath), "File was not copied to Reconcile folder properly");
+
+        }
+
+        protected override void OnUndo()
+        {
+            
+        }
+    }
+
+
+    class MoveReconcileImageCommand : ServerCommand, IDisposable
     {
         private readonly ReconcileImageContext _context;
         private ServerCommandProcessor _processor;
-    	private readonly bool _duplicate;
+        private string _src;
+        private string _dest;
 
-        public MoveReconcileImageCommand(ReconcileImageContext context, bool duplicate)
+        public MoveReconcileImageCommand(ReconcileImageContext context)
             : base("MoveReconcileImageCommand", true)
         {
             _context = context;
-			_duplicate = duplicate;
         }
 
         private string GetReconcileImageTempPath(DicomFile file)
@@ -63,26 +90,28 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(_context.StoragePath, "_context.StoragePath");
 
             _processor = new ServerCommandProcessor("Move Reconcile Image Processor");
-
-            string src = _context.File.Filename;
-            string dest = GetReconcileImageTempPath(_context.File);
-            CreateDirectoryCommand mkdirCommand = new CreateDirectoryCommand(Directory.GetParent(dest).FullName);
+            
+            _src = _context.File.Filename;
+            _dest = GetReconcileImageTempPath(_context.File);
+            CreateDirectoryCommand mkdirCommand = new CreateDirectoryCommand(Directory.GetParent(_dest).FullName);
             _processor.AddCommand(mkdirCommand);
-			if (_duplicate)
-			{
-				CopyFileCommand copyCommand = new CopyFileCommand(src, dest);
-				_processor.AddCommand(copyCommand);
-			}
-			else
-			{
-				RenameFileCommand moveCommand = new RenameFileCommand(src, dest);
-				_processor.AddCommand(moveCommand);
-			}
-        	if (!_processor.Execute())
+            if (_context.IsDuplicate)
+            {
+                CopyFileCommand copyCommand = new CopyFileCommand(_src, _dest);
+                _processor.AddCommand(copyCommand);
+            }
+            else
+            {
+                RenameFileCommand moveCommand = new RenameFileCommand(_src, _dest);
+                _processor.AddCommand(moveCommand);
+            }
+            if (!_processor.Execute())
             {
                 throw new ApplicationException(
-                    String.Format("Unable to move reconcile image to temporary folder: {0}", _processor.FailureReason));
+                    String.Format("Unable to process image. Unable to move image to Reconcile folder: {0}", _processor.FailureReason));
             }
+
+            SimulatePostOperationError();
         }
 
         protected override void OnUndo()
@@ -94,5 +123,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _processor = null;
             }
         }
+
+        [Conditional("DEBUG")]
+        private void SimulatePostOperationError()
+        {
+            ServerPlatform.SimulateError("Post MoveReconcileImageCommand error : file is deleted by another process", delegate() { File.Delete(_dest); });
+            ServerPlatform.SimulateError("Post MoveReconcileImageCommand Exception", delegate() { throw new Exception("Faked Exception"); });
+        }
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (_processor != null)
+            {
+                _processor.Dispose();
+                _processor = null;
+            }
+        }
+
+        #endregion
     }
 }

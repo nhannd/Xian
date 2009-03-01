@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -44,6 +45,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		#region Private Members
 		private readonly string _sourceFile;
 		private readonly string _destinationFile;
+        private string _srcBackupFile; 
         private string _destBackupFile;
         private bool _renamed =false;
 		#endregion
@@ -53,11 +55,10 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		{
 			Platform.CheckForNullReference(sourceFile, "Source filename");
 			Platform.CheckForNullReference(destinationFile, "Destination filename");
+		    Platform.CheckTrue(File.Exists(sourceFile), "Source file doesn't exist");
 
 			_sourceFile = sourceFile;
 			_destinationFile = destinationFile;
-
-            
 		}
 
 		protected override void OnExecute()
@@ -69,34 +70,48 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			{
 				File.Delete(_destinationFile);
 			}
+
             File.Move(_sourceFile, _destinationFile);
-            _renamed = true;
-            
+
+		    SimulatePostOperationError();
 		}
 
-        private void Backup()
+        [Conditional("DEBUG")]
+        private void SimulatePostOperationError()
+	    {
+            ServerPlatform.SimulateError("Post File Rename Error", delegate() { File.Delete(_destinationFile); });
+            ServerPlatform.SimulateError("Post File Rename Exception", delegate() { throw new Exception("Faked Exception"); });
+	    }
+
+	    private void Backup()
         {
+            //backup source
+            _srcBackupFile = String.Format("{0}.bak", _sourceFile);
+            File.Copy(_sourceFile, _srcBackupFile, true);
+
             if (File.Exists(_destinationFile))
             {
                 Random random = new Random();
-                _destBackupFile = String.Format("{0}.bak.{1}", _destinationFile, random.Next());
+                _destBackupFile = String.Format("{0}.bak", _destinationFile, random.Next());
 
-                File.Copy(_destinationFile, _destBackupFile);
+                File.Copy(_destinationFile, _destBackupFile, true);
             }
         }
 
 		protected override void OnUndo()
 		{
             // restore the source
-            if (_renamed)
+            if (false == String.IsNullOrEmpty(_srcBackupFile) && File.Exists(_srcBackupFile))
             {
-                File.Move(_destinationFile, _sourceFile);
-            }				
+                Platform.Log(LogLevel.Error, "Restoring {0}", _sourceFile);
+                File.Copy(_srcBackupFile, _sourceFile);
+            }
 
-            // restore destination
+		    // restore destination
             if (false == String.IsNullOrEmpty(_destBackupFile) && File.Exists(_destBackupFile))
             {
-                File.Move(_destBackupFile, _destinationFile);
+                Platform.Log(LogLevel.Error, "Restoring {0}", _destinationFile);
+                File.Copy(_destBackupFile, _destinationFile);
             }
 			
 		}
@@ -105,8 +120,13 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         public void Dispose()
         {
+
+            if (File.Exists(_srcBackupFile))
+                File.Delete(_srcBackupFile); 
+            
             if (File.Exists(_destBackupFile))
                 File.Delete(_destBackupFile);
+
         }
 
         #endregion
