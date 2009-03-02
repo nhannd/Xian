@@ -33,7 +33,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthorityGroups.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
