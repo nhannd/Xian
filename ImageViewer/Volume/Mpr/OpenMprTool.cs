@@ -45,7 +45,7 @@ using ClearCanvas.Dicom.Iod;
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
 	[MenuAction("openMpr", "imageviewer-contextmenu/MenuVolume/MenuOpenMpr", "OpenMpr")]
-	[IconSet("OpenMpr", IconScheme.Colour, "Icons.OpenToolSmall.png", "Icons.OpenToolMedium.png", "Icons.OpenToolLarge.png")]
+	[IconSet("openMpr", IconScheme.Colour, "Icons.OpenMprToolLarge.png", "Icons.OpenMprToolMedium.png", "Icons.OpenMprToolSmall.png")]
 	[EnabledStateObserver("openMpr", "OpenMprEnabled", "OpenMprEnabledChanged")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

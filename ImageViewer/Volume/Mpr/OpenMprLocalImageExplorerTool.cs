@@ -43,10 +43,10 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	[MenuAction("OpenMpr", "explorerlocal-contextmenu/MenuOpenMpr", "OpenMpr")]
-	[Tooltip("OpenMpr", "OpenDicomFilesVerbose")]
-	[IconSet("OpenMpr", IconScheme.Colour, "Icons.OpenToolSmall.png", "Icons.OpenToolMedium.png", "Icons.OpenToolLarge.png")]
-	[EnabledStateObserver("OpenMpr", "Enabled", "EnabledChanged")]
+	[MenuAction("openMpr", "explorerlocal-contextmenu/MenuOpenMpr", "OpenMpr")]
+	[Tooltip("openMpr", "OpenDicomFilesVerbose")]
+	[IconSet("openMpr", IconScheme.Colour, "Icons.OpenMprToolLarge.png", "Icons.OpenMprToolMedium.png", "Icons.OpenMprToolSmall.png")]
+	[EnabledStateObserver("openMpr", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof (LocalImageExplorerToolExtensionPoint))]
 	public class OpenMprLocalImageExplorerTool : Tool<ILocalImageExplorerToolContext>
 	{

@@ -14,6 +14,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[MenuAction("activate", "imageviewer-contextmenu/MenuVolume/Rotate Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
 	//[ButtonAction("activate", "global-toolbars/ToolbarsMpr/Rotate Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
+	[IconSet("activate", IconScheme.Colour, "Icons.RotateObliqueToolLarge.png", "Icons.RotateObliqueToolMedium.png", "Icons.RotateObliqueToolSmall.png")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
 

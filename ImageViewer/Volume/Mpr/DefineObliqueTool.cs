@@ -16,6 +16,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[MenuAction("activate", "imageviewer-contextmenu/MenuVolume/Define Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
 	//[ButtonAction("activate", "global-toolbars/ToolbarsMpr/Define Oblique", "Apply", Flags = ClickActionFlags.CheckAction)]
+	[IconSet("activate", IconScheme.Colour, "Icons.DefineObliqueToolLarge.png", "Icons.DefineObliqueToolMedium.png", "Icons.DefineObliqueToolSmall.png")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[VisibleStateObserver("activate", "Visible", "VisibleChanged")]
 
