@@ -54,6 +54,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 		}
 
+		public RectangularRoi(RectangleF rectangle, IPresentationImage presentationImage) : base(presentationImage)
+		{
+			_rectangle = rectangle;
+		}
+
 		public RectangleF Rectangle
 		{
 			get { return _rectangle; }
@@ -62,6 +67,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		protected override RectangleF ComputeBounds()
 		{
 			return _rectangle;
+		}
+
+		public override Roi Copy(IPresentationImage presentationImage)
+		{
+			return new RectangularRoi(_rectangle, presentationImage);
 		}
 
 		public override bool Contains(PointF point)

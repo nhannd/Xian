@@ -90,6 +90,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return RectangleUtilities.ComputeBoundingRectangle(_points);
 		}
 
+		public override Roi Copy(IPresentationImage presentationImage)
+		{
+			return new LinearRoi(_points, presentationImage);
+		}
+
 		public override bool Contains(PointF point)
 		{
 			PointF topLeft = new PointF((float) Math.Floor(point.X), (float) Math.Floor(point.Y));

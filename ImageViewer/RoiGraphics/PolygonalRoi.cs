@@ -88,6 +88,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return _polygon.BoundingRectangle;
 		}
 
+		public override Roi Copy(IPresentationImage presentationImage)
+		{
+			return new PolygonalRoi(_polygon.Vertices, presentationImage);
+		}
+
 		public override bool Contains(PointF point)
 		{
 			return _polygon != null && _polygon.Contains(point);

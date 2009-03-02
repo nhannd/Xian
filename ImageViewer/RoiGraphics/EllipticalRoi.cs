@@ -40,7 +40,20 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 	public class EllipticalRoi : Roi, IRoiAreaProvider, IRoiStatisticsProvider
 	{
 		private readonly RectangleF _bounds;
-		private float a, b, a2, b2, h, k, xh, yk, r;
+		private readonly float a, b, a2, b2, h, k;
+
+		public EllipticalRoi(RectangleF boundingBox, IPresentationImage presentationImage)
+			: base(presentationImage)
+		{
+			_bounds = boundingBox;
+
+			a = _bounds.Width/2;
+			b = _bounds.Height/2;
+			a2 = a*a;
+			b2 = b*b;
+			h = _bounds.Left + a;
+			k = _bounds.Top + b;
+		}
 
 		public EllipticalRoi(EllipseInteractiveGraphic ellipse) : base(ellipse.ParentPresentationImage)
 		{
@@ -67,11 +80,16 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return _bounds;
 		}
 
+		public override Roi Copy(IPresentationImage presentationImage)
+		{
+			return new EllipticalRoi(_bounds, presentationImage);
+		}
+
 		public override bool Contains(PointF point)
 		{
-			xh = point.X - h;
-			yk = point.Y - k;
-			r = (xh*xh/a2) + (yk*yk/b2);
+			float xh = point.X - h;
+			float yk = point.Y - k;
+			float r = (xh*xh/a2) + (yk*yk/b2);
 
 			if (r <= 1)
 				return true;

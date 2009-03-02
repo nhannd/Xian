@@ -27,6 +27,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 		}
 
+		internal ProtractorRoiInfo(PointF point1, PointF vertex, PointF point2, IPresentationImage presentationImage)
+			: base(presentationImage)
+		{
+			_points = new List<PointF>();
+			_points.Add(point1);
+			_points.Add(vertex);
+			_points.Add(point2);
+		}
+
 		/// <summary>
 		/// Three points in destination coordinates that define the angle.
 		/// </summary>
@@ -38,6 +47,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		protected override RectangleF ComputeBounds()
 		{
 			return RectangleF.Empty;
+		}
+
+		public override Roi Copy(IPresentationImage presentationImage)
+		{
+			return new ProtractorRoiInfo(_points[0], _points[1], _points[2], presentationImage);
 		}
 
 		public override bool Contains(PointF point)
