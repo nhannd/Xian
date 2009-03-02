@@ -88,6 +88,14 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return base.Subject.CreateRoiInformation();
 		}
 
+		protected override void OnNameChanged()
+		{
+			//TODO: prevent draw before initialization if the next 2 lines are uncommented
+			//Analyze(true);
+			//this.OnRoiChanged();
+			base.OnNameChanged();
+		}
+
 		protected override sealed void OnSubjectChanged()
 		{
 			bool active = this.State is MoveGraphicState ||

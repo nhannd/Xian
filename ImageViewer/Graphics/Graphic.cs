@@ -174,8 +174,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public string Name
 		{
 			get { return _name; }
-			set { _name = value; }
+			set
+			{
+				if (_name != value)
+				{
+					_name = value;
+					OnNameChanged();
+				}
+			}
 		}
+
+		/// <summary>
+		/// Called when the value of the <see cref="Name"/> property changes.
+		/// </summary>
+		protected virtual void OnNameChanged() {}
 
 		/// <summary>
 		/// Gets or sets a value indicating whether this <see cref="Graphic"/> is visible.
