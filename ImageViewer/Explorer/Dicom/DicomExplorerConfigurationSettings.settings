@@ -8,5 +8,8 @@
     <Setting Name="ShowPhoneticName" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="NameSeparator" Type="System.Char" Scope="Application">
+      <Value Profile="(Default)">,</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

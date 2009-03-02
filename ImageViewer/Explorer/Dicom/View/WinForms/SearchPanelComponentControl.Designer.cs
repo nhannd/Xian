@@ -62,8 +62,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchPanelComponentControl));
 			this._patientID = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._accessionNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._lastName = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._firstName = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._patientsName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._studyDateFrom = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._studyDateTo = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._studyDescription = new ClearCanvas.Desktop.View.WinForms.TextField();
@@ -91,88 +90,75 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// _accessionNumber
 			// 
 			this._accessionNumber.LabelText = "Accession#";
-			this._accessionNumber.Location = new System.Drawing.Point(499, 46);
+			this._accessionNumber.Location = new System.Drawing.Point(359, 46);
 			this._accessionNumber.Margin = new System.Windows.Forms.Padding(2);
 			this._accessionNumber.Mask = "";
 			this._accessionNumber.Name = "_accessionNumber";
 			this._accessionNumber.PasswordChar = '\0';
 			this._accessionNumber.Size = new System.Drawing.Size(156, 41);
-			this._accessionNumber.TabIndex = 15;
+			this._accessionNumber.TabIndex = 2;
 			this._accessionNumber.ToolTip = null;
 			this._accessionNumber.Value = null;
 			// 
-			// _lastName
+			// _patientsName
 			// 
-			this._lastName.LabelText = "Last Name";
-			this._lastName.Location = new System.Drawing.Point(179, 46);
-			this._lastName.Margin = new System.Windows.Forms.Padding(2);
-			this._lastName.Mask = "";
-			this._lastName.Name = "_lastName";
-			this._lastName.PasswordChar = '\0';
-			this._lastName.Size = new System.Drawing.Size(156, 41);
-			this._lastName.TabIndex = 5;
-			this._lastName.ToolTip = null;
-			this._lastName.Value = null;
-			// 
-			// _firstName
-			// 
-			this._firstName.LabelText = "First Name";
-			this._firstName.Location = new System.Drawing.Point(339, 46);
-			this._firstName.Margin = new System.Windows.Forms.Padding(2);
-			this._firstName.Mask = "";
-			this._firstName.Name = "_firstName";
-			this._firstName.PasswordChar = '\0';
-			this._firstName.Size = new System.Drawing.Size(156, 41);
-			this._firstName.TabIndex = 10;
-			this._firstName.ToolTip = null;
-			this._firstName.Value = null;
+			this._patientsName.LabelText = "Name";
+			this._patientsName.Location = new System.Drawing.Point(188, 46);
+			this._patientsName.Margin = new System.Windows.Forms.Padding(2);
+			this._patientsName.Mask = "";
+			this._patientsName.Name = "_patientsName";
+			this._patientsName.PasswordChar = '\0';
+			this._patientsName.Size = new System.Drawing.Size(156, 41);
+			this._patientsName.TabIndex = 1;
+			this._patientsName.ToolTip = null;
+			this._patientsName.Value = null;
 			// 
 			// _studyDateFrom
 			// 
 			this._studyDateFrom.LabelText = "Study Date (From)";
-			this._studyDateFrom.Location = new System.Drawing.Point(19, 95);
+			this._studyDateFrom.Location = new System.Drawing.Point(17, 95);
 			this._studyDateFrom.Margin = new System.Windows.Forms.Padding(2);
 			this._studyDateFrom.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._studyDateFrom.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._studyDateFrom.Name = "_studyDateFrom";
 			this._studyDateFrom.Nullable = true;
-			this._studyDateFrom.Size = new System.Drawing.Size(156, 41);
-			this._studyDateFrom.TabIndex = 20;
+			this._studyDateFrom.Size = new System.Drawing.Size(154, 41);
+			this._studyDateFrom.TabIndex = 4;
 			this._studyDateFrom.Value = null;
 			// 
 			// _studyDateTo
 			// 
 			this._studyDateTo.LabelText = "Study Date (To)";
-			this._studyDateTo.Location = new System.Drawing.Point(179, 95);
+			this._studyDateTo.Location = new System.Drawing.Point(188, 95);
 			this._studyDateTo.Margin = new System.Windows.Forms.Padding(2);
 			this._studyDateTo.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._studyDateTo.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._studyDateTo.Name = "_studyDateTo";
 			this._studyDateTo.Nullable = true;
-			this._studyDateTo.Size = new System.Drawing.Size(156, 41);
-			this._studyDateTo.TabIndex = 25;
+			this._studyDateTo.Size = new System.Drawing.Size(155, 41);
+			this._studyDateTo.TabIndex = 5;
 			this._studyDateTo.Value = null;
 			// 
 			// _studyDescription
 			// 
 			this._studyDescription.LabelText = "Study Description";
-			this._studyDescription.Location = new System.Drawing.Point(339, 95);
+			this._studyDescription.Location = new System.Drawing.Point(530, 46);
 			this._studyDescription.Margin = new System.Windows.Forms.Padding(2);
 			this._studyDescription.Mask = "";
 			this._studyDescription.Name = "_studyDescription";
 			this._studyDescription.PasswordChar = '\0';
 			this._studyDescription.Size = new System.Drawing.Size(156, 41);
-			this._studyDescription.TabIndex = 30;
+			this._studyDescription.TabIndex = 3;
 			this._studyDescription.ToolTip = null;
 			this._studyDescription.Value = null;
 			// 
 			// _searchButton
 			// 
 			this._searchButton.Image = ((System.Drawing.Image)(resources.GetObject("_searchButton.Image")));
-			this._searchButton.Location = new System.Drawing.Point(660, 63);
+			this._searchButton.Location = new System.Drawing.Point(710, 63);
 			this._searchButton.Name = "_searchButton";
 			this._searchButton.Size = new System.Drawing.Size(90, 22);
-			this._searchButton.TabIndex = 40;
+			this._searchButton.TabIndex = 7;
 			this._searchButton.Text = "Search";
 			this._searchButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._searchButton.UseVisualStyleBackColor = true;
@@ -181,10 +167,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// _searchLastWeekButton
 			// 
 			this._searchLastWeekButton.Image = ((System.Drawing.Image)(resources.GetObject("_searchLastWeekButton.Image")));
-			this._searchLastWeekButton.Location = new System.Drawing.Point(756, 93);
+			this._searchLastWeekButton.Location = new System.Drawing.Point(806, 93);
 			this._searchLastWeekButton.Name = "_searchLastWeekButton";
 			this._searchLastWeekButton.Size = new System.Drawing.Size(90, 22);
-			this._searchLastWeekButton.TabIndex = 55;
+			this._searchLastWeekButton.TabIndex = 10;
 			this._searchLastWeekButton.Text = "Last 7 days";
 			this._searchLastWeekButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._searchLastWeekButton.UseVisualStyleBackColor = true;
@@ -193,10 +179,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// _clearButton
 			// 
 			this._clearButton.Image = ((System.Drawing.Image)(resources.GetObject("_clearButton.Image")));
-			this._clearButton.Location = new System.Drawing.Point(660, 93);
+			this._clearButton.Location = new System.Drawing.Point(710, 93);
 			this._clearButton.Name = "_clearButton";
 			this._clearButton.Size = new System.Drawing.Size(90, 22);
-			this._clearButton.TabIndex = 45;
+			this._clearButton.TabIndex = 9;
 			this._clearButton.Text = "Clear";
 			this._clearButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._clearButton.UseVisualStyleBackColor = true;
@@ -205,10 +191,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// _searchTodayButton
 			// 
 			this._searchTodayButton.Image = ((System.Drawing.Image)(resources.GetObject("_searchTodayButton.Image")));
-			this._searchTodayButton.Location = new System.Drawing.Point(756, 63);
+			this._searchTodayButton.Location = new System.Drawing.Point(806, 63);
 			this._searchTodayButton.Name = "_searchTodayButton";
 			this._searchTodayButton.Size = new System.Drawing.Size(90, 22);
-			this._searchTodayButton.TabIndex = 50;
+			this._searchTodayButton.TabIndex = 8;
 			this._searchTodayButton.Text = "Today";
 			this._searchTodayButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
 			this._searchTodayButton.UseVisualStyleBackColor = true;
@@ -222,7 +208,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._titleBar.Location = new System.Drawing.Point(0, 0);
 			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
-			this._titleBar.Size = new System.Drawing.Size(913, 30);
+			this._titleBar.Size = new System.Drawing.Size(925, 30);
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this._titleBar.TabIndex = 20;
 			this._titleBar.Text = "Search";
@@ -231,11 +217,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			this._modalityPicker.AutoSize = true;
 			this._modalityPicker.LabelText = "Modality";
-			this._modalityPicker.Location = new System.Drawing.Point(499, 95);
+			this._modalityPicker.Location = new System.Drawing.Point(359, 95);
 			this._modalityPicker.Margin = new System.Windows.Forms.Padding(2);
 			this._modalityPicker.Name = "_modalityPicker";
 			this._modalityPicker.Size = new System.Drawing.Size(156, 41);
-			this._modalityPicker.TabIndex = 35;
+			this._modalityPicker.TabIndex = 6;
 			// 
 			// SearchPanelComponentControl
 			// 
@@ -244,8 +230,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.Controls.Add(this._titleBar);
 			this.Controls.Add(this._patientID);
-			this.Controls.Add(this._lastName);
-			this.Controls.Add(this._firstName);
+			this.Controls.Add(this._patientsName);
 			this.Controls.Add(this._accessionNumber);
 			this.Controls.Add(this._studyDateFrom);
 			this.Controls.Add(this._studyDateTo);
@@ -256,7 +241,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this.Controls.Add(this._searchLastWeekButton);
 			this.Controls.Add(this._clearButton);
 			this.Name = "SearchPanelComponentControl";
-			this.Size = new System.Drawing.Size(913, 151);
+			this.Size = new System.Drawing.Size(925, 151);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -272,10 +257,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private System.Windows.Forms.Button _searchTodayButton;
 		private ClearCanvas.Desktop.View.WinForms.DateTimeField _studyDateFrom;
 		private ClearCanvas.Desktop.View.WinForms.TextField _patientID;
-		private ClearCanvas.Desktop.View.WinForms.TextField _lastName;
+		private ClearCanvas.Desktop.View.WinForms.TextField _patientsName;
 		private ClearCanvas.Desktop.View.WinForms.TextField _studyDescription;
 		private ClearCanvas.Desktop.View.WinForms.TextField _accessionNumber;
-		private ClearCanvas.Desktop.View.WinForms.TextField _firstName;
 		private ModalityPicker _modalityPicker;
     }
 }

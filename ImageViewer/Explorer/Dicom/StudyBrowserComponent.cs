@@ -46,6 +46,7 @@ using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using System.Collections.ObjectModel;
 using ClearCanvas.ImageViewer.Services.ServerTree;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -352,7 +353,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 							&& queryParams["StudyDate"].Length == 0 &&
 							queryParams["StudyInstanceUid"].Length == 0);
 
-
 			if (!_selectedServerGroup.IsLocalDatastore && isOpenSearchQuery)
 			{
 				if (this.Host.DesktopWindow.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
@@ -414,32 +414,45 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
 
-			string firstName = _searchPanelComponent.AllowFirstName ? _searchPanelComponent.FirstName : "";
-
-			// create patient's name query key
-			// LastName   FirstName   Result
-			//    X           X        <Blank>
-			//    V           X        LastName*
-			//    V           V        LastName*FirstName*
-			//    X           V        *FirstName*
 			string patientsName = "";
-			if (_searchPanelComponent.LastName.Length > 0 && firstName.Length == 0)
-				patientsName = _searchPanelComponent.LastName + "*";
-			if (_searchPanelComponent.LastName.Length > 0 && firstName.Length > 0)
-				patientsName = _searchPanelComponent.LastName + "*" + firstName + "*";
-			if (_searchPanelComponent.LastName.Length == 0 && firstName.Length > 0)
-				patientsName = "*" + firstName + "*";
+
+			string[] patientsNameComponents = _searchPanelComponent.GetPatientsNameComponents();
+			if (patientsNameComponents.Length == 1)
+			{
+				//Open name search
+				patientsName = String.Format("*{0}*", patientsNameComponents[0].Trim());
+			}
+			else if (patientsNameComponents.Length > 1)
+			{
+				if (String.IsNullOrEmpty(patientsNameComponents[0]))
+				{
+					//Open name search - should never get here
+					patientsName = String.Format("*{0}*", patientsNameComponents[1].Trim());
+				}
+				else if (String.IsNullOrEmpty(patientsNameComponents[1]))
+				{
+					//Pure Last Name search
+					patientsName = String.Format("{0}*", patientsNameComponents[0].Trim());
+				}
+				else
+				{
+					//Last Name, First Name search
+					patientsName = String.Format("{0}*{1}*", patientsNameComponents[0].Trim(), patientsNameComponents[1].Trim());
+				}
+			}
+
+			Trace.WriteLine(String.Format("Patient's Name Search: {0}", patientsName));
 
 			string patientId = "";
-			if (_searchPanelComponent.PatientID.Length > 0)
+			if (!String.IsNullOrEmpty(_searchPanelComponent.PatientID))
 				patientId = _searchPanelComponent.PatientID + "*";
 
 			string accessionNumber = "";
-			if (_searchPanelComponent.AccessionNumber.Length > 0)
+			if (!String.IsNullOrEmpty(_searchPanelComponent.AccessionNumber))
 				accessionNumber = _searchPanelComponent.AccessionNumber + "*";
 
 			string studyDescription = "";
-			if (_searchPanelComponent.StudyDescription.Length > 0)
+			if (!String.IsNullOrEmpty(_searchPanelComponent.StudyDescription))
 				studyDescription = _searchPanelComponent.StudyDescription + "*";
 
 			string dateRangeQuery = DateRangeHelper.GetDicomDateRangeQueryString(_searchPanelComponent.StudyDateFrom, _searchPanelComponent.StudyDateTo);
@@ -449,7 +462,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
 			//or by running multiple queries, one per modality specified (for example).
 
-			string modalityFilter = DicomStringHelper.GetDicomStringArray<string>(_searchPanelComponent.SearchModalities);
+			string modalityFilter = DicomStringHelper.GetDicomStringArray(_searchPanelComponent.SearchModalities);
 
 			QueryParameters queryParams = new QueryParameters();
 			queryParams.Add("PatientsName", patientsName);

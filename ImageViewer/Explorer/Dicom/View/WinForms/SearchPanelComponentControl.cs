@@ -39,15 +39,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="SearchPanelComponent"/>
     /// </summary>
-    public partial class SearchPanelComponentControl : CustomUserControl
+    public partial class SearchPanelComponentControl : ApplicationComponentUserControl
     {
-        private SearchPanelComponent _component;
-		private BindingSource _bindingSource;
+        private readonly SearchPanelComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public SearchPanelComponentControl(SearchPanelComponent component)
+			: base(component)
         {
             InitializeComponent();
 
@@ -58,24 +58,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 			_modalityPicker.SetAvailableModalities(_component.AvailableSearchModalities);
 
-			_bindingSource = new BindingSource();
-			_bindingSource.DataSource = _component;
+			_patientsName.DataBindings.Add("Value", component, "PatientsName", true, DataSourceUpdateMode.OnPropertyChanged);
+			_accessionNumber.DataBindings.Add("Value", component, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+			_patientID.DataBindings.Add("Value", component, "PatientID", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyDescription.DataBindings.Add("Value", component, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
+			_titleBar.DataBindings.Add("Text", component, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_lastName.DataBindings.Add("Value", _bindingSource, "LastName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_firstName.DataBindings.Add("Value", _bindingSource, "FirstName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_firstName.DataBindings.Add("Enabled", _bindingSource, "AllowFirstName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_accessionNumber.DataBindings.Add("Value", _bindingSource, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
-			_patientID.DataBindings.Add("Value", _bindingSource, "PatientID", true, DataSourceUpdateMode.OnPropertyChanged);
-			_studyDescription.DataBindings.Add("Value", _bindingSource, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
-			_titleBar.DataBindings.Add("Text", _bindingSource, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyDateFrom.DataBindings.Add("Maximum", component, "MaximumStudyDateFrom", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyDateTo.DataBindings.Add("Maximum", component, "MaximumStudyDateTo", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_studyDateFrom.DataBindings.Add("Maximum", _bindingSource, "MaximumStudyDateFrom", true, DataSourceUpdateMode.OnPropertyChanged);
-			_studyDateTo.DataBindings.Add("Maximum", _bindingSource, "MaximumStudyDateTo", true, DataSourceUpdateMode.OnPropertyChanged);
-
-			_studyDateFrom.DataBindings.Add("Value", _bindingSource, "StudyDateFrom", true, DataSourceUpdateMode.OnPropertyChanged);
-			_studyDateTo.DataBindings.Add("Value", _bindingSource, "StudyDateTo", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyDateFrom.DataBindings.Add("Value", component, "StudyDateFrom", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyDateTo.DataBindings.Add("Value", component, "StudyDateTo", true, DataSourceUpdateMode.OnPropertyChanged);
 			
-			_modalityPicker.DataBindings.Add("CheckedModalities", _bindingSource, "SearchModalities", true, DataSourceUpdateMode.OnPropertyChanged);
+			_modalityPicker.DataBindings.Add("CheckedModalities", component, "SearchModalities", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		private void OnSearchButtonClicked(object sender, EventArgs e)

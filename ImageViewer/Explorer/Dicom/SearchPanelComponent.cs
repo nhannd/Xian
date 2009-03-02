@@ -33,6 +33,8 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Validation;
+using System.Text.RegularExpressions;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -50,12 +52,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[AssociateView(typeof(SearchPanelComponentViewExtensionPoint))]
 	public class SearchPanelComponent : ApplicationComponent
 	{
-		private StudyBrowserComponent _studyBrowserComponent;
+		private const string _disallowedCharacters = @"\r\n\e\f\\";
+		private const string _disallowedCharactersPattern = @"[" + _disallowedCharacters + @"]+";
+
+		private readonly StudyBrowserComponent _studyBrowserComponent;
 
 		private string _title;
 
-		private string _lastName = "";
-		private string _firstName = "";
+		private string _name = "";
 		private string _patientID = "";
 		private string _accessionNumber = "";
 		private string _studyDescription = "";
@@ -63,8 +67,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private DateTime? _studyDateFrom = null;
 		private DateTime? _studyDateTo = null;
 
-		private List<string> _searchModalities;
-		private ICollection<string> _availableModalities;
+		private readonly Regex _openNameSearchRegex;
+		private readonly Regex _lastNameFirstNameRegex;
+
+		private readonly List<string> _searchModalities;
+		private readonly ICollection<string> _availableModalities;
 		
 		/// <summary>
 		/// Constructor
@@ -79,6 +86,37 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_availableModalities = StandardModalities.Modalities;
 
 			InternalClearDates();
+
+			char separator = DicomExplorerConfigurationSettings.Default.NameSeparator;
+			string allowedExceptSeparator = @"[^" + _disallowedCharacters + separator + @"]";
+			string allowedExceptSeparatorAndWhitespace = @"[^" + _disallowedCharacters + separator + @"\s]";
+
+			// Last Name, First Name search
+			// \A\s*[^\r\n\e\f\\,\s]+\s*,{1}[^\r\n\e\f\\,]*\Z
+			//
+			// Examples of matches:
+			// Doe, John
+			// Doe,
+			//
+			// Examples of non-matches:
+			// ,
+			// Doe, John,
+
+			_lastNameFirstNameRegex = new Regex(@"\A\s*" + allowedExceptSeparatorAndWhitespace + @"+\s*"
+				+ separator + @"{1}" + allowedExceptSeparator + @"*\Z");
+
+			// Open search
+			// \A\s*[^\r\n\e\f\\,]+\s*\Z
+			//
+			// John
+			// Doe
+			//
+			// Examples of non-matches:
+			// ,
+			// Doe,
+			// John
+
+			_openNameSearchRegex = new Regex(@"\A\s*" + allowedExceptSeparator + @"+\s*\Z");
 		}
 
 		public IDesktopWindow DesktopWindow
@@ -96,6 +134,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
+		[ValidateRegex(_disallowedCharactersPattern, SuccessOnMatch = false, Message = "ValidationInvalidCharacters")]
 		public string AccessionNumber
 		{
 			get { return _accessionNumber; }
@@ -106,6 +145,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
+		[ValidateRegex(_disallowedCharactersPattern, SuccessOnMatch = false, Message = "ValidationInvalidCharacters")]
 		public string PatientID
 		{
 			get { return _patientID; }
@@ -116,31 +156,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public string FirstName
+		public string PatientsName
 		{
-			get { return _firstName; }
+			get { return _name; }
 			set
 			{
-				_firstName = value ?? "";
-				NotifyPropertyChanged("FirstName");
+				_name = value ?? "";
+				NotifyPropertyChanged("PatientsName");
 			}
 		}
 
-		public bool AllowFirstName
-		{
-			get { return !String.IsNullOrEmpty(this.LastName); }
-		}
-
-		public string LastName
-		{
-			get { return _lastName; }
-			set
-			{
-				_lastName = value ?? "";
-				NotifyPropertyChanged("LastName");
-			}
-		}
-
+		[ValidateRegex(_disallowedCharactersPattern, SuccessOnMatch = false, Message = "ValidationInvalidCharacters")]
 		public string StudyDescription
 		{
 			get { return _studyDescription; }
@@ -213,16 +239,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			base.Start();
 		}
 
-		public override void Stop()
-		{
-			base.Stop();
-		}
-
 		public void Clear()
 		{
 			this.PatientID = "";
-			this.FirstName = "";
-			this.LastName = "";
+			this.PatientsName = "";
 			this.AccessionNumber = "";
 			this.StudyDescription = "";
 			this.SearchModalities = new List<string>(); //clear the checked modalities.
@@ -232,8 +252,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void Search()
 		{
-			if (!ValidateDateRange())
+			if (base.HasValidationErrors)
+			{
+				base.ShowValidation(true);
 				return;
+			}
+			else
+			{
+				base.ShowValidation(false);
+			}
 
 			BlockingOperation.Run(_studyBrowserComponent.Search);
 		}
@@ -281,21 +308,60 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return minimumDate;
 		}
 
-		private bool ValidateDateRange()
+		internal string[] GetPatientsNameComponents()
 		{
-			if (this.StudyDateFrom != null && this.StudyDateTo != null)
+			char separator = DicomExplorerConfigurationSettings.Default.NameSeparator;
+			string patientsName = PatientsName.Trim();
+			if (String.IsNullOrEmpty(patientsName))
+				return new string[0];
+
+			return patientsName.Split(new char[] { separator }, StringSplitOptions.None);
+		}
+
+		[ValidationMethodFor("StudyDateFrom")]
+		private ValidationResult ValidateStudyDateFrom()
+		{
+			return ValidateDateRange();
+		}
+
+		[ValidationMethodFor("StudyDateTo")]
+		private ValidationResult ValidateStudyDateTo()
+		{
+			return ValidateDateRange();
+		}
+
+		[ValidationMethodFor("PatientsName")]
+		private ValidationResult ValidatePatientsName()
+		{
+			if (String.IsNullOrEmpty(PatientsName))
 			{
-				DateTime dateFrom = (DateTime)this.StudyDateFrom;
-				DateTime dateTo = (DateTime)this.StudyDateTo;
+				return new ValidationResult(true, "");
+			}
+			else if (_openNameSearchRegex.IsMatch(PatientsName) || _lastNameFirstNameRegex.IsMatch(PatientsName))
+			{
+				return new ValidationResult(true, "");
+			}
+			else if (PatientsName.Contains(DicomExplorerConfigurationSettings.Default.NameSeparator.ToString()))
+			{
+				return new ValidationResult(false, SR.ValidationInvalidLastNameSearch);
+			}
+			else
+			{
+				return new ValidationResult(false, SR.ValidationInvalidCharacters);
+			}
+		}
 
-				if (dateFrom <= dateTo)
-					return true;
+		private ValidationResult ValidateDateRange()
+		{
+			if (this.StudyDateFrom.HasValue && this.StudyDateTo.HasValue)
+			{
+				if (this.StudyDateFrom.Value <= this.StudyDateTo.Value)
+					return new ValidationResult(true, "");
 
-				this.Host.DesktopWindow.ShowMessageBox(SR.MessageFromDateIsGreaterThanToDate, MessageBoxActions.Ok);
-				return false;
+				return new ValidationResult(false, SR.MessageFromDateCannotBeAfterToDate);
 			}
 
-			return true;
+			return new ValidationResult(true, "");
 		}
     }
 }

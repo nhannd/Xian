@@ -163,9 +163,15 @@
     <value>This query could take a long time to complete because you have not specified any filters.
 Are you sure you want to continue?</value>
   </data>
-  <data name="MessageFromDateIsGreaterThanToDate" xml:space="preserve">
-    <value>The date range you have selected is invalid because the 'from date' is after the 'to date'.
-Please change the dates and try again.</value>
+  <data name="MessageFromDateCannotBeAfterToDate" xml:space="preserve">
+    <value>From date cannot be after To date.</value>
+  </data>
+  <data name="MessageInvalidPatientsName" xml:space="preserve">
+    <value>Invalid format.  Valid formats are:
+- Partial Name
+- Last, First
+- , First
+- Last,</value>
   </data>
   <data name="TitleDicomExplorer" xml:space="preserve">
     <value>DICOM</value>
@@ -190,5 +196,11 @@ Please change the dates and try again.</value>
   </data>
   <data name="TooltipOpenStudy" xml:space="preserve">
     <value>Open study</value>
+  </data>
+  <data name="ValidationInvalidCharacters" xml:space="preserve">
+    <value>Contains invalid characters.</value>
+  </data>
+  <data name="ValidationInvalidLastNameSearch" xml:space="preserve">
+    <value>The value contains invalid characters or is incorrectly formatted (Example: Doe, J)</value>
   </data>
 </root>

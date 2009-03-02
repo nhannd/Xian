@@ -197,12 +197,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The date range you have selected is invalid because the &apos;from date&apos; is after the &apos;to date&apos;.
-        ///Please change the dates and try again..
+        ///   Looks up a localized string similar to From date cannot be after To date..
         /// </summary>
-        internal static string MessageFromDateIsGreaterThanToDate {
+        internal static string MessageFromDateCannotBeAfterToDate {
             get {
-                return ResourceManager.GetString("MessageFromDateIsGreaterThanToDate", resourceCulture);
+                return ResourceManager.GetString("MessageFromDateCannotBeAfterToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid format.  Valid formats are:
+        ///- Partial Name
+        ///- Last, First
+        ///- , First
+        ///- Last,.
+        /// </summary>
+        internal static string MessageInvalidPatientsName {
+            get {
+                return ResourceManager.GetString("MessageInvalidPatientsName", resourceCulture);
             }
         }
         
@@ -275,6 +287,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string TooltipOpenStudy {
             get {
                 return ResourceManager.GetString("TooltipOpenStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contains invalid characters..
+        /// </summary>
+        internal static string ValidationInvalidCharacters {
+            get {
+                return ResourceManager.GetString("ValidationInvalidCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value contains invalid characters or is incorrectly formatted (Example: Doe, J).
+        /// </summary>
+        internal static string ValidationInvalidLastNameSearch {
+            get {
+                return ResourceManager.GetString("ValidationInvalidLastNameSearch", resourceCulture);
             }
         }
     }
