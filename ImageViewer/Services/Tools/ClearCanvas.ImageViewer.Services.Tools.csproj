@@ -37,7 +37,7 @@
     <Compile Include="DeleteStudyTool.cs" />
     <Compile Include="DicomFileImportActivityTool.cs" />
     <Compile Include="DicomFileImportApplicationComponent.cs" />
-    <Compile Include="DicomFileImportCancelTool.cs" />
+    <Compile Include="DicomFileImportTools.cs" />
     <Compile Include="DicomFileImportTool.cs" />
     <Compile Include="DicomSendReceiveActivityTool.cs" />
     <Compile Include="LocalDataStoreActivityMonitorComponentManager.cs" />
@@ -123,6 +123,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\OpenStudiesToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ShowBackgroundSendsToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ShowBackgroundImportsToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		event EventHandler SelectionUpdated;
 
+		bool ShowBackgroundImports { get; set; }
 		bool CanCancelSelected();
 		bool CanClearSelected();
 		bool CanClearInactive();
@@ -99,6 +100,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				get { return _component._importTable.Items.Count; }
 			}
 
+			public bool ShowBackgroundImports
+			{
+				get { return _component.ShowBackgroundImports; }
+				set { _component.ShowBackgroundImports = value; }
+			}
+
 			public bool CanCancelSelected()
 			{
 				return _component.SelectedCancelEnabled;
@@ -134,10 +141,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private ToolSet _toolSet;
 		private Table<ImportProgressItem> _importTable;
+		private FilteredGroups<ImportProgressItem> _filteredItems;
 		private ISelection _selection;
 		private ImportProgressItem _selectedProgressItem;
 		private event EventHandler _selectionUpdated;
 
+		private bool _showBackgroundImports;
 		private string _selectedStatusMessage;
 		private int _selectedTotalProcessed;
 		private int _selectedTotalToProcess;
@@ -164,6 +173,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			InitializeTable();
 
+			_filteredItems = new FilteredGroups<ImportProgressItem>();
+			_filteredItems.ItemAdded += FilteredItemAdded;
+			_filteredItems.ItemRemoved += FilteredItemRemoved;
+
+			UpdateTable();
+
 			_toolSet = new ToolSet(new DicomFileImportComponentToolExtensionPoint(), new DicomFileImportComponentToolContext(this));
 
 			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
@@ -176,6 +191,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				this.SelectedStatusMessage = SR.MessageActivityMonitorServiceUnavailable;
 			else
 				this.SelectedStatusMessage = SR.MessageNothingSelected;
+		}
+
+		private void FilteredItemAdded(object sender, ItemEventArgs<ImportProgressItem> e)
+		{
+			_importTable.Items.Add(e.Item);
+		}
+
+		private void FilteredItemRemoved(object sender, ItemEventArgs<ImportProgressItem> e)
+		{
+			_importTable.Items.Remove(e.Item);
 		}
 
 		public override void Stop()
@@ -196,41 +221,36 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void OnLostConnection(object sender, EventArgs e)
 		{
-			this._importTable.Items.Clear();
+			_filteredItems.Clear();
 			Clear();
 			this.SelectedStatusMessage = SR.MessageActivityMonitorServiceUnavailable;
 		}
 
 		private void OnImportProgressUpdate(object sender, ItemEventArgs<ImportProgressItem> e)
 		{
-			int index = _importTable.Items.FindIndex(delegate(ImportProgressItem testItem)
+			ImportProgressItem existingItem = CollectionUtils.SelectFirst(_filteredItems.GetAllItems(), delegate(ImportProgressItem testItem)
 				{
 					return testItem.Identifier.Equals(e.Item.Identifier);
 				});
 
-			ImportProgressItem existingItem = null;
-			if (index >= 0)
+			if (existingItem != null)
 			{
-				existingItem = _importTable.Items[index];
-
 				if (e.Item.Removed)
 				{
-					_importTable.Items.Remove(existingItem);
+					_filteredItems.Remove(existingItem);
 				}
 				else
 				{
 					existingItem.CopyFrom(e.Item);
-					_importTable.Items.NotifyItemUpdated(index);
+					if (_importTable.Items.Contains(existingItem))
+						_importTable.Items.NotifyItemUpdated(existingItem);
 				}
 			}
 			else
 			{
 				existingItem = e.Item;
-
 				if (!e.Item.Removed)
-				{
-					_importTable.Items.Add(e.Item);
-				}
+					_filteredItems.Add(e.Item);
 			}
 
 			UpdateSelectedItemStats();
@@ -267,6 +287,22 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private string FormatString(string input)
 		{
 			return String.IsNullOrEmpty(input) ? "" : input;
+		}
+
+		private void UpdateTable()
+		{
+			if (_showBackgroundImports)
+			{
+				_filteredItems.ChildGroups.Clear();
+			}
+			else
+			{
+				if (_filteredItems.ChildGroups.Count > 0)
+					return;
+
+				_filteredItems.ChildGroups.Add(new FilteredGroup<ImportProgressItem>("Background", "Background",
+												delegate(ImportProgressItem item) { return item.IsBackground; }));
+			}
 		}
 
 		private void InitializeTable()
@@ -474,6 +510,21 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		public bool ClearInactiveEnabled
 		{
 			get { return _importTable.Items.Count > 0; }
+		}
+
+		public bool ShowBackgroundImports
+		{
+			get { return _showBackgroundImports; }	
+			set
+			{
+				if (_showBackgroundImports == value)
+					return;
+
+				_showBackgroundImports = value;
+				UpdateTable();
+
+				this.NotifyPropertyChanged("ShowBackgroundImports");
+			}
 		}
 
 		public void CancelSelected()

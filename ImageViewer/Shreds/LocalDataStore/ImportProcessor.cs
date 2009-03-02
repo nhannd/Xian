@@ -254,6 +254,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				progressItem.StartTime = Platform.Time;
 				progressItem.LastActive = progressItem.StartTime;
 				progressItem.StatusMessage = SR.MessagePending;
+				progressItem.IsBackground = request.IsBackground;
 
 				FileImportJobInformation jobInformation = new FileImportJobInformation(progressItem, request.FileImportBehaviour, request.BadFileBehaviour);
 

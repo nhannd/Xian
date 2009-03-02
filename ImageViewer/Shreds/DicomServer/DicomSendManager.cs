@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 	internal interface ISendOperation
 	{
-		Guid Identifier { get; }
+		SendOperationReference Reference { get; }
 		bool Canceled { get; }
 
 		int RemainingSubOperations { get; }
@@ -33,12 +33,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 	//TODO: Later, remove IDicomServerService and replace with something like this.
 	internal interface ISendService
 	{
-		Guid SendStudies(SendStudiesRequest request, SendOperationProgressCallback callback);
-		Guid SendSeries(SendSeriesRequest request, SendOperationProgressCallback callback);
-		Guid SendSopInstances(SendSopInstancesRequest request, SendOperationProgressCallback callback);
-		Guid SendFiles(SendFilesRequest request, SendOperationProgressCallback callback);
+		SendOperationReference SendStudies(SendStudiesRequest request, SendOperationProgressCallback callback);
+		SendOperationReference SendSeries(SendSeriesRequest request, SendOperationProgressCallback callback);
+		SendOperationReference SendSopInstances(SendSopInstancesRequest request, SendOperationProgressCallback callback);
+		SendOperationReference SendFiles(SendFilesRequest request, SendOperationProgressCallback callback);
 
-		void Cancel(Guid operationIdentifier);
+		void Cancel(SendOperationReference sendOperation);
 	}
 
 	internal class DicomSendManager : ISendService
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		{
 			#region Private Fields
 
-			private Guid _identifier;
+			private SendOperationReference _reference;
 			private Dictionary<string, SendStudyInformation> _studies;
 			private Thread _thread;
 			private SendFilesRequest _sendFilesRequest;
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			private void Initialize(SendOperationProgressCallback callback)
 			{
 				_studies = new Dictionary<string, SendStudyInformation>();
-				_identifier = Guid.NewGuid();
+				_reference = new SendOperationReference(Guid.NewGuid());
 
 				_thread = new Thread(DoSend);
 				_thread.Name = String.Format("Send to {0}/{1}:{2}", base.RemoteHost, base.RemoteAE, base.RemotePort);
@@ -122,6 +122,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					return;
 
 				SendStudyInformation info = new SendStudyInformation();
+				info.SendOperationReference = Reference;
 				info.ToAETitle = RemoteAE;
 
 				info.StudyInformation = new StudyInformation();
@@ -143,6 +144,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					return;
 				
 				SendStudyInformation info = new SendStudyInformation();
+				info.SendOperationReference = Reference;
 				info.ToAETitle = RemoteAE;
 
 				info.StudyInformation = new StudyInformation();
@@ -227,8 +229,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				DicomFile file = storageInstance.LoadFile();
 				file.DataSet.LoadDicomFields(exchanger);
 				info.StudyInformation = exchanger;
+
 				info.ToAETitle = RemoteAE;
 				info.FileName = storageInstance.Filename;
+				info.SendOperationReference = Reference;
 				
 				LocalDataStoreEventPublisher.Instance.FileSent(info);
 			}
@@ -377,6 +381,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				if (_studies.Count == 0)
 				{
 					SendErrorInformation dummyError = new SendErrorInformation();
+					dummyError.SendOperationReference = Reference;
 					dummyError.ToAETitle = RemoteAE;
 					dummyError.StudyInformation = new StudyInformation();
 					dummyError.ErrorMessage = message;
@@ -387,6 +392,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					foreach (SendStudyInformation info in _studies.Values)
 					{
 						SendErrorInformation error = new SendErrorInformation();
+						error.SendOperationReference = Reference;
 						error.ToAETitle = info.ToAETitle;
 						error.StudyInformation = info.StudyInformation;
 						error.ErrorMessage = message;
@@ -397,9 +403,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			#region IStorageScu Members
 
-			public Guid Identifier
+			public SendOperationReference Reference
 			{
-				get { return _identifier; }	
+				get { return _reference; }	
 			}
 
 			public ICollection<StorageInstance> StorageInstances
@@ -510,7 +516,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-		private Guid Send(SendFilesRequest request, SendOperationProgressCallback callback)
+		private SendOperationReference Send(SendFilesRequest request, SendOperationProgressCallback callback)
 		{
 			lock (_syncLock)
 			{
@@ -519,13 +525,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 				DicomServerConfiguration configuration = DicomServerManager.Instance.GetServerConfiguration();
 				SendScu scu = new SendScu(configuration.AETitle, request, callback);
+				scu.Reference.IsBackground = request.IsBackground;
 				_scus.Add(scu);
 				scu.Send();
-				return scu.Identifier;
+				return scu.Reference;
 			}
 		}
 
-		private Guid Send(AEInformation destinationAEInformation, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
+		private SendOperationReference Send(AEInformation destinationAEInformation, bool isBackground, IEnumerable<ISopInstance> instancesToSend, SendOperationProgressCallback callback)
 		{
 			lock (_syncLock)
 			{
@@ -534,9 +541,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 				DicomServerConfiguration configuration = DicomServerManager.Instance.GetServerConfiguration();
 				SendScu scu = new SendScu(configuration.AETitle, destinationAEInformation, instancesToSend, callback);
+				scu.Reference.IsBackground = isBackground;
 				_scus.Add(scu);
 				scu.Send();
-				return scu.Identifier;
+
+				return scu.Reference;
 			}
 		}
 
@@ -577,34 +586,34 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region ISendService Members
 
-		public Guid SendStudies(SendStudiesRequest request, SendOperationProgressCallback callback)
+		public SendOperationReference SendStudies(SendStudiesRequest request, SendOperationProgressCallback callback)
 		{
-			return Send(request.DestinationAEInformation, 
+			return Send(request.DestinationAEInformation, request.IsBackground,
 				GetStudySopInstances(request.StudyInstanceUids), callback);
 		}
 
-		public Guid SendSeries(SendSeriesRequest request, SendOperationProgressCallback callback)
+		public SendOperationReference SendSeries(SendSeriesRequest request, SendOperationProgressCallback callback)
 		{
-			return Send(request.DestinationAEInformation, 
+			return Send(request.DestinationAEInformation, request.IsBackground,
 				GetSeriesSopInstances(request.StudyInstanceUid, request.SeriesInstanceUids), callback);
 		}
 
-		public Guid SendSopInstances(SendSopInstancesRequest request, SendOperationProgressCallback callback)
+		public SendOperationReference SendSopInstances(SendSopInstancesRequest request, SendOperationProgressCallback callback)
 		{
-			return Send(request.DestinationAEInformation,
+			return Send(request.DestinationAEInformation, request.IsBackground,
 				GetSopInstances(request.StudyInstanceUid, request.SeriesInstanceUid, request.SopInstanceUids), callback);
 		}
 
-		public Guid SendFiles(SendFilesRequest request, SendOperationProgressCallback callback)
+		public SendOperationReference SendFiles(SendFilesRequest request, SendOperationProgressCallback callback)
 		{
 			return Send(request, callback);
 		}
-		
-		public void Cancel(Guid operationIdentifier)
+
+		public void Cancel(SendOperationReference sendOperation)
 		{
 			lock (_syncLock)
 			{
-				SendScu scu = _scus.Find(delegate(SendScu test) { return test.Identifier == operationIdentifier; });
+				SendScu scu = _scus.Find(delegate(SendScu test) { return test.Reference == sendOperation; });
 				if (scu != null)
 					scu.Cancel(false);
 			}

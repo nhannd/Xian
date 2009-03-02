@@ -30,15 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -53,6 +50,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[IconSet("clearAll", IconScheme.Colour, "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png")]
 	[EnabledStateObserver("clearAll", "ClearAllEnabled", "ClearAllEnabledChanged")]
 
+	[ButtonAction("showBackground", "send-queue-toolbar/ShowBackgroundSends", "ToggleShowBackground", Flags = ClickActionFlags.CheckAction)]
+	[Tooltip("showBackground", "TooltipShowBackgroundSends")]
+	[IconSet("showBackground", IconScheme.Colour, "Icons.ShowBackgroundSendsToolSmall.png", "Icons.ShowBackgroundSendsToolSmall.png", "Icons.ShowBackgroundSendsSmall.png")]
+	[CheckedStateObserver("showBackground", "ShowBackground", "ShowBackgroundChanged")]
+
 	[ExtensionOf(typeof(SendQueueApplicationComponentToolExtensionPoint))]
 	public class SendQueueTools : Tool<ISendQueueApplicationComponentToolContext>
 	{
@@ -61,7 +63,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private event EventHandler _clearSelectedEnabledChanged;
 		private event EventHandler _clearAllEnabledChanged;
-
+		private event EventHandler _showBackgroundChanged;
+		
 		public SendQueueTools()
 		{
 			_clearSelectedEnabled = false;
@@ -107,6 +110,19 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 		}
 
+		public bool ShowBackground
+		{
+			get { return base.Context.ShowBackgroundSends; }
+			set
+			{
+				if (base.Context.ShowBackgroundSends != value)
+				{
+					base.Context.ShowBackgroundSends = value;
+					EventsHelper.Fire(_showBackgroundChanged, this, EventArgs.Empty);
+				}
+			}
+		}
+
 		public event EventHandler ClearSelectedEnabledChanged
 		{
 			add { _clearSelectedEnabledChanged += value; }
@@ -115,8 +131,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public event EventHandler ClearAllEnabledChanged
 		{
-			add { _clearAllEnabledChanged += value; }
+				add { _clearAllEnabledChanged += value; }
 			remove { _clearAllEnabledChanged -= value; }
+		}
+
+		public event EventHandler ShowBackgroundChanged
+		{
+			add { _showBackgroundChanged += value; }
+			remove { _showBackgroundChanged -= value; }
 		}
 
 		private void ClearSelected()
@@ -143,6 +165,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				ExceptionHandler.Report(e, SR.MessageCancelFailed, this.Context.DesktopWindow);
 			}
+		}
+
+		private void ToggleShowBackground()
+		{
+			ShowBackground = !ShowBackground;
 		}
 	}
 }

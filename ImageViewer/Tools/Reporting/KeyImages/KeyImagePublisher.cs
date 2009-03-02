@@ -216,7 +216,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 					destination.Port = pair.Key.Port;
 					destinationServers.Add(destination);
 
-					DicomFilePublisher.PublishRemote(pair.Value, destination);
+					DicomFilePublisher.PublishRemote(pair.Value, destination, true);
 				}
 				catch (EndpointNotFoundException)
 				{
@@ -235,7 +235,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			bool localPublishFailed = true;
 			try
 			{
-				DicomFilePublisher.PublishLocal(_localPublishingInfo);
+				DicomFilePublisher.PublishLocal(_localPublishingInfo, true);
 				localPublishFailed = false;
 			}
 			catch (EndpointNotFoundException)

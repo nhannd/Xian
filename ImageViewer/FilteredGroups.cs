@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer
 
 		public TestResult Test(object obj)
 		{
-			if (_test is T && _test(obj as T))
+			if (obj is T && _test(obj as T))
 				return new TestResult(true);
 			else
 				return new TestResult(false);
@@ -54,6 +54,7 @@ namespace ClearCanvas.ImageViewer
 
 	#endregion
 	
+	//TODO: write more unit tests.
 	#region Root Group Class
 
 	public class FilteredGroups<T> : FilteredGroup<T> where T : class
@@ -333,8 +334,7 @@ namespace ClearCanvas.ImageViewer
 
 		protected virtual void Clear()
 		{
-			List<T> items = new List<T>(Items);
-			foreach (T item in items)
+			foreach (T item in GetItems())
 				RemoveItem(item);
 		}
 
@@ -342,7 +342,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			Clear();
 			if (ParentGroup != null)
-				AddItems(ParentGroup.Items);
+				AddItems(ParentGroup.GetItems());
 		}
 
 		protected virtual void AddItems(IEnumerable<T> items)

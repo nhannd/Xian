@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
@@ -42,6 +43,10 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		Cancel = 1,
 		Clear = 2
 	}
+
+	//TODO: One of these days clean up the services and contracts to be in the right places(s).
+	//Some of the 'local data store' contracts really belong in the Dicom Server.
+	#region Send / Receive contracts
 
 	[DataContract]
 	public class RetrieveStudyInformation
@@ -106,6 +111,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	{
 		private string _toAETitle;
 		private StudyInformation _studyInformation;
+		private SendOperationReference _sendOperationReference;
 
 		public SendStudyInformation()
 		{
@@ -124,6 +130,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			get { return _studyInformation; }
 			set { _studyInformation = value; }
 		}
+
+		[DataMember(IsRequired = false)]
+		public SendOperationReference SendOperationReference
+		{
+			get { return _sendOperationReference; }
+			set { _sendOperationReference = value; }
+		}
 	}
 
 	[DataContract]
@@ -132,6 +145,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private string _toAETitle;
 		private StudyInformation _studyInformation;
 		private string _errorMessage;
+		private SendOperationReference _sendOperationReference;
 
 		public SendErrorInformation()
 		{
@@ -156,6 +170,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			get { return _errorMessage; }
 			set { _errorMessage = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public SendOperationReference SendOperationReference
+		{
+			get { return _sendOperationReference; }
+			set { _sendOperationReference = value; }
 		}
 	}
 
@@ -189,8 +210,8 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	{
 		private string _toAETitle;
 		private string _fileName;
-
 		private StudyInformation _studyInformation;
+		private SendOperationReference _sendOperationReference;
 
 		public StoreScuSentFileInformation()
 		{
@@ -216,7 +237,16 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			get { return _fileName; }
 			set { _fileName = value; }
 		}
+
+		[DataMember(IsRequired = false)]
+		public SendOperationReference SendOperationReference
+		{
+			get { return _sendOperationReference; }
+			set { _sendOperationReference = value; }
+		}
 	}
+
+	#endregion
 
 	[DataContract]
 	public abstract class FileOperationProgressItem
@@ -228,6 +258,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private DateTime _startTime;
 		private DateTime _lastActive;
 		private string _statusMessage;
+		private bool _isBackground;
 
 		public FileOperationProgressItem()
 		{ 
@@ -282,6 +313,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			set { _statusMessage = value; }
 		}
 
+		[DataMember(IsRequired = false)]
+		public bool IsBackground
+		{
+			get { return _isBackground; }
+			set { _isBackground = value; }
+		}
+
 		public void CopyTo(FileOperationProgressItem progressItem)
 		{
 			progressItem.Identifier = this.Identifier;
@@ -291,6 +329,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			progressItem.StartTime = this.StartTime;
 			progressItem.LastActive = this.LastActive;
 			progressItem.StatusMessage = this.StatusMessage;
+			progressItem.IsBackground = this.IsBackground;
 		}
 
 		public void CopyFrom(FileOperationProgressItem progressItem)
@@ -302,6 +341,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			this.StartTime = progressItem.StartTime;
 			this.LastActive = progressItem.LastActive;
 			this.StatusMessage = progressItem.StatusMessage;
+			this.IsBackground = progressItem.IsBackground;
 		}
 	}
 
@@ -568,6 +608,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	{
 		private string _toAETitle;
 		private StudyInformation _studyInformation;
+		private SendOperationReference _sendOperationReference;
 
 		public SendProgressItem()
 		{
@@ -587,9 +628,17 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			set { _studyInformation = value; }
 		}
 
+		[DataMember(IsRequired = false)]
+		public SendOperationReference SendOperationReference
+		{
+			get { return _sendOperationReference; }
+			set { _sendOperationReference = value; }
+		}
+
 		public void CopyTo(SendProgressItem progressItem)
 		{
 			progressItem.ToAETitle = this.ToAETitle;
+			progressItem.SendOperationReference = SendOperationReference;
 
 			if (this.StudyInformation != null)
 				progressItem.StudyInformation = this.StudyInformation.Clone();
@@ -602,6 +651,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		public void CopyFrom(SendProgressItem progressItem)
 		{
 			this.ToAETitle = progressItem.ToAETitle;
+			SendOperationReference = progressItem.SendOperationReference;
 
 			if (progressItem.StudyInformation != null)
 				this.StudyInformation = progressItem.StudyInformation.Clone();
@@ -721,6 +771,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private IEnumerable<string> _fileExtensions;
 		private IEnumerable<string> _filePaths;
 		private FileImportBehaviour _fileImportBehaviour;
+		private bool _isBackground;
 
 		public FileImportRequest()
 		{
@@ -759,6 +810,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			get { return _fileImportBehaviour; }
 			set { _fileImportBehaviour = value; }
+		}
+
+		[DataMember(IsRequired = false)]
+		public bool IsBackground
+		{
+			get { return _isBackground; }
+			set { _isBackground = value; }
 		}
 	}
 

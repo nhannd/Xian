@@ -803,5 +803,23 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
                 return ResourceManager.GetString("TooltipSendStudy", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show background imports.
+        /// </summary>
+        internal static string TooltipShowBackgroundImports {
+            get {
+                return ResourceManager.GetString("TooltipShowBackgroundImports", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show background sends.
+        /// </summary>
+        internal static string TooltipShowBackgroundSends {
+            get {
+                return ResourceManager.GetString("TooltipShowBackgroundSends", resourceCulture);
+            }
+        }
     }
 }

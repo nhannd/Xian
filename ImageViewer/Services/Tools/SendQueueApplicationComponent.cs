@@ -57,7 +57,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		bool ItemsSelected { get; }
 		bool AnyItems { get; }
-		
+		bool ShowBackgroundSends { get; set; }
+
 		void ClearSelected();
 		void ClearAll();
 	}
@@ -163,6 +164,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				get { return _component._sendTable.Items.Count > 0; }
 			}
 
+			public bool ShowBackgroundSends
+			{
+				get { return _component.ShowBackgroundSends; }
+				set { _component.ShowBackgroundSends = value; }
+			}
+
 			public event EventHandler Updated
 			{
 				add { _component.SelectionUpdated += value; }
@@ -185,6 +192,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private string _title;
 		private ToolSet _toolSet;
 		private Table<SendQueueItem> _sendTable;
+		private FilteredGroups<SendQueueItem> _filteredItems;
+		private bool _showBackgroundSends;
 		private ISelection _selection;
 		private event EventHandler _selectionUpdated;
 
@@ -206,7 +215,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		
 		public override void Start()
 		{
+			_filteredItems = new FilteredGroups<SendQueueItem>();
+			_filteredItems.ItemAdded += FilteredItemAdded;
+			_filteredItems.ItemRemoved += FilteredItemRemoved;
+
 			InitializeTable();
+			UpdateTable();
+
 			base.Start();
 
 			_toolSet = new ToolSet(new SendQueueApplicationComponentToolExtensionPoint(), new SendQueueApplicationComponentToolContext(this));
@@ -221,6 +236,32 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_localDataStoreEventBroker.SendProgressUpdate += OnSendProgressUpdate;
 
 			SetTitle();
+		}
+
+		private void FilteredItemAdded(object sender, ItemEventArgs<SendQueueItem> e)
+		{
+			_sendTable.Items.Add(e.Item);
+		}
+
+		private void FilteredItemRemoved(object sender, ItemEventArgs<SendQueueItem> e)
+		{
+			_sendTable.Items.Remove(e.Item);
+		}
+
+		private void UpdateTable()
+		{
+			if (_showBackgroundSends)
+			{
+				_filteredItems.ChildGroups.Clear();
+			}
+			else
+			{
+				if (_filteredItems.ChildGroups.Count > 0)
+					return;
+
+				_filteredItems.ChildGroups.Add(new FilteredGroup<SendQueueItem>("Background", "Background",
+												delegate(SendQueueItem item) { return item.IsBackground; }));
+			}
 		}
 
 		public override void Stop()
@@ -250,7 +291,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void OnLostConnection(object sender, EventArgs e)
 		{
-			_sendTable.Items.Clear();
+			_filteredItems.Clear();
 			SetTitle();
 		}
 
@@ -268,28 +309,30 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void OnSendProgressUpdate(object sender, ItemEventArgs<SendProgressItem> e)
 		{
-			int index = _sendTable.Items.FindIndex(delegate(SendQueueItem testItem)
+			SendQueueItem foundItem = CollectionUtils.SelectFirst(_filteredItems.GetAllItems(), delegate(SendQueueItem testItem)
 				{
-					return testItem.Identifier.Equals(e.Item.Identifier);
+					return (testItem.SendOperationReference != null && testItem.SendOperationReference == e.Item.SendOperationReference) ||
+						testItem.Identifier == e.Item.Identifier;
 				});
 
-			if (index >= 0)
+			if (foundItem != null)
 			{
 				if (e.Item.Removed)
 				{
-					_sendTable.Items.Remove(_sendTable.Items[index]);
+					_filteredItems.Remove(foundItem);
 				}
 				else
 				{
-					_sendTable.Items[index].UpdateFromProgressItem(e.Item);
-					_sendTable.Items.NotifyItemUpdated(index);
+					foundItem.UpdateFromProgressItem(e.Item);
+					if (_sendTable.Items.Contains(foundItem))
+						_sendTable.Items.NotifyItemUpdated(foundItem);
 				}
 			}
 			else
 			{
 				if (!e.Item.Removed)
 				{
-					_sendTable.Items.Add(new SendQueueItem(e.Item));
+					_filteredItems.Add(new SendQueueItem(e.Item));
 				}
 			}
 		}
@@ -433,6 +476,20 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			get { return _sendTable; }
 		}
 
+		public bool ShowBackgroundSends
+		{
+			get { return _showBackgroundSends; }
+			set
+			{
+				if (_showBackgroundSends == value)
+					return;
+
+				_showBackgroundSends = value;
+				UpdateTable();
+				NotifyPropertyChanged("ShowBackgroundSends");
+			}
+		}
+
 		public void SetSelection(ISelection selection)
 		{
 			_selection = selection;
@@ -456,7 +513,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		public void ClearAll()
 		{
 			List<Guid> progressIdentifiers = new List<Guid>();
-			foreach (SendQueueItem item in _sendTable.Items)
+			foreach (SendQueueItem item in _filteredItems.GetAllItems())
 			{
 				progressIdentifiers.Add(item.Identifier);
 			}

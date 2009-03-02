@@ -18,15 +18,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private class SendOperationInfo
 		{
-			public SendOperationInfo(Guid identifier, ushort messageId, byte presentationId, Dicom.Network.DicomServer server)
+			public SendOperationInfo(SendOperationReference reference, ushort messageId, byte presentationId, Dicom.Network.DicomServer server)
 			{
 				this.PresentationId = presentationId;
 				this.Server = server;
-				this.Identifier = identifier;
+				this.Reference = reference;
 				this.MessageId = messageId;
 			}
 
-			public readonly Guid Identifier;
+			public readonly SendOperationReference Reference;
 
 			public readonly ushort MessageId;
 			public readonly byte PresentationId;
@@ -60,12 +60,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			yield return sop;
 		}
 
-		private SendOperationInfo GetSendOperationInfo(Guid operationIdentifier)
+		private SendOperationInfo GetSendOperationInfo(SendOperationReference reference)
 		{
 			lock (_syncLock)
 			{
 				return CollectionUtils.SelectFirst(_sendOperations,
-					delegate(SendOperationInfo info) { return info.Identifier == operationIdentifier; });
+					delegate(SendOperationInfo info) { return info.Reference == reference; });
 			}
 		}
 
@@ -88,10 +88,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private void UpdateProgress(ISendOperation operation)
 		{
-			SendOperationInfo sendOperationInfo = GetSendOperationInfo(operation.Identifier);
+			SendOperationInfo sendOperationInfo = GetSendOperationInfo(operation.Reference);
 			if (sendOperationInfo == null)
 			{
-				Platform.Log(LogLevel.Warn, "Received progress update for unknown send operation {0}", operation.Identifier);
+				Platform.Log(LogLevel.Warn, "Received progress update for unknown send operation {0}", operation.Reference.Identifier);
 				return;
 			}
 
@@ -140,8 +140,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			request.DestinationAEInformation = remoteAEInfo;
 			lock (_syncLock)
 			{
-				Guid sendOperationIdentifier = DicomSendManager.Instance.SendStudies(request, UpdateProgress);
-				_sendOperations.Add(new SendOperationInfo(sendOperationIdentifier, message.MessageId, presentationID, server));
+				SendOperationReference reference = DicomSendManager.Instance.SendStudies(request, UpdateProgress);
+				_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
 			}
 		}
 
@@ -156,8 +156,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			lock (_syncLock)
 			{
-				Guid sendOperationIdentifier = DicomSendManager.Instance.SendSeries(request, UpdateProgress);
-				_sendOperations.Add(new SendOperationInfo(sendOperationIdentifier, message.MessageId, presentationID, server));
+				SendOperationReference reference = DicomSendManager.Instance.SendSeries(request, UpdateProgress);
+				_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
 			}
 		}
 
@@ -174,8 +174,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			lock (_syncLock)
 			{
-				Guid sendOperationIdentifier = DicomSendManager.Instance.SendSopInstances(request, UpdateProgress);
-				_sendOperations.Add(new SendOperationInfo(sendOperationIdentifier, message.MessageId, presentationID, server));
+				SendOperationReference reference = DicomSendManager.Instance.SendSopInstances(request, UpdateProgress);
+				_sendOperations.Add(new SendOperationInfo(reference, message.MessageId, presentationID, server));
 			}
 		}
 
@@ -187,7 +187,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				if (sendOperationInfo != null)
 				{
 					RemoveSendOperationInfo(sendOperationInfo);
-					DicomSendManager.Instance.Cancel(sendOperationInfo.Identifier);
+					DicomSendManager.Instance.Cancel(sendOperationInfo.Reference);
 				}
 				else
 				{

@@ -30,15 +30,12 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -56,8 +53,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[IconSet("clearInactive", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 	[EnabledStateObserver("clearInactive", "ClearInactiveEnabled", "ClearInactiveEnabledChanged")]
 
+	[ButtonAction("showBackground", "dicom-file-import-toolbar/ShowBackgroundImports", "ToggleShowBackground", Flags = ClickActionFlags.CheckAction)]
+	[Tooltip("showBackground", "TooltipShowBackgroundImports")]
+	[IconSet("showBackground", IconScheme.Colour, "Icons.ShowBackgroundImportsToolSmall.png", "Icons.ShowBackgroundImportsToolSmall.png", "Icons.ShowBackgroundImportsToolSmall.png")]
+	[CheckedStateObserver("showBackground", "ShowBackground", "ShowBackgroundChanged")]
+
 	[ExtensionOf(typeof(DicomFileImportComponentToolExtensionPoint))]
-	public class DicomFileImportCancelTool : Tool<IDicomFileImportComponentToolContext>
+	public class DicomFileImportTools : Tool<IDicomFileImportComponentToolContext>
 	{
 		private bool _cancelEnabled;
 		private bool _clearEnabled;
@@ -65,8 +67,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private event EventHandler _cancelEnabledChanged;
 		private event EventHandler _clearEnabledChanged;
 		private event EventHandler _clearInactiveEnabledChanged;
+		private event EventHandler _showBackgroundChanged;
 
-		public DicomFileImportCancelTool()
+		public DicomFileImportTools()
 		{
 			_clearEnabled = false;
 			_cancelEnabled = false;
@@ -125,6 +128,19 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 		}
 
+		public bool ShowBackground
+		{
+			get { return base.Context.ShowBackgroundImports; }
+			set
+			{
+				if (base.Context.ShowBackgroundImports != value)
+				{
+					base.Context.ShowBackgroundImports = value;
+					EventsHelper.Fire(_showBackgroundChanged, this, EventArgs.Empty);
+				}
+			}
+		}
+
 		public event EventHandler CancelEnabledChanged
 		{
 			add { _cancelEnabledChanged += value; }
@@ -141,6 +157,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			add { _clearInactiveEnabledChanged += value; }
 			remove { _clearInactiveEnabledChanged -= value; }
+		}
+
+		public event EventHandler ShowBackgroundChanged
+		{
+			add { _showBackgroundChanged += value; }
+			remove { _showBackgroundChanged -= value; }
 		}
 
 		private void Cancel()
@@ -178,6 +200,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				ExceptionHandler.Report(e, SR.MessageClearInactiveFailed, this.Context.DesktopWindow);
 			}
+		}
+
+		private void ToggleShowBackground()
+		{
+			ShowBackground = !ShowBackground;
 		}
 	}
 }

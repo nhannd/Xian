@@ -59,7 +59,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
 			this._sendTable = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this.SuspendLayout();
@@ -68,14 +67,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// 
 			this._sendTable.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._sendTable.Location = new System.Drawing.Point(0, 31);
-			this._sendTable.MenuModel = null;
 			this._sendTable.Name = "_sendTable";
 			this._sendTable.ReadOnly = false;
-			this._sendTable.Selection = selection1;
 			this._sendTable.Size = new System.Drawing.Size(687, 389);
 			this._sendTable.TabIndex = 1;
-			this._sendTable.Table = null;
-			this._sendTable.ToolbarModel = null;
 			// 
 			// _titleBar
 			// 

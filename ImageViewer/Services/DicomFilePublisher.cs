@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Services
 			}
 		}
 
-		public static void PublishLocal(ICollection<DicomFile> files)
+		public static void PublishLocal(ICollection<DicomFile> files, bool isBackground)
 		{
 			if (files.Count == 0)
 				return;
@@ -107,6 +107,7 @@ namespace ClearCanvas.ImageViewer.Services
 				request.FilePaths = new string[] { tempFileDirectory };
 				request.Recursive = true;
 				request.FileImportBehaviour = FileImportBehaviour.Move;
+				request.IsBackground = isBackground;
 				client.Import(request);
 				client.Close();
 			}
@@ -120,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Services
 			}
 		}
 
-		public static void PublishRemote(ICollection<DicomFile> files, AEInformation destinationServer)
+		public static void PublishRemote(ICollection<DicomFile> files, AEInformation destinationServer, bool isBackground)
 		{
 			if (files.Count == 0)
 				return;
@@ -138,6 +139,7 @@ namespace ClearCanvas.ImageViewer.Services
 				request.Recursive = true;
 				request.DeletionBehaviour = DeletionBehaviour.DeleteOnSuccess;
 				request.DestinationAEInformation = destinationServer;
+				request.IsBackground = isBackground;
 				client.SendFiles(request);
 				client.Close();
 			}

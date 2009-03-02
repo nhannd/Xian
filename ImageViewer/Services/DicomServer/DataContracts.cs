@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 	public class SendOperationReference
 	{
 		private Guid _identifier;
+		private bool _isBackground;
 
 		public SendOperationReference(Guid identifier)
 		{
@@ -63,18 +64,42 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 			set { _identifier = value; }
 		}
 
-		public static implicit operator SendOperationReference(Guid identifier)
+		[DataMember(IsRequired = true)]
+		public bool IsBackground
 		{
-			return new SendOperationReference(identifier);
+			get { return _isBackground; }
+			set { _isBackground = value; }
 		}
 
-		//TODO: steps remaining, steps completed, failed, warning.
+		public override bool Equals(object obj)
+		{
+			if (obj is SendOperationReference)
+				return ((SendOperationReference) obj).Identifier == Identifier;
+
+			return base.Equals(obj);
+		}
+
+		public override int GetHashCode()
+		{
+			return Identifier.GetHashCode();
+		}
+
+		public static bool operator == (SendOperationReference ref1, SendOperationReference ref2)
+		{
+			return Object.Equals(ref1, ref2);
+		}
+
+		public static bool operator !=(SendOperationReference ref1, SendOperationReference ref2)
+		{
+			return !Object.Equals(ref1, ref2);
+		}
 	}
 
 	[DataContract]
 	public abstract class SendInstancesRequest
 	{
 		private AEInformation _destinationAEInformation;
+		private bool _isBackground;
 
 		public SendInstancesRequest()
 		{
@@ -85,6 +110,13 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		{
 			get { return _destinationAEInformation; }
 			set { _destinationAEInformation = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public bool IsBackground
+		{
+			get { return _isBackground; }
+			set { _isBackground = value; }
 		}
 	}
 

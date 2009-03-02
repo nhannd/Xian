@@ -36,6 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -130,19 +131,37 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				return studyInformation;
 			}
 
-			private SendProgressItem GetProgressItem(string toAETitle, StudyInformation studyInformation)
+			private SendProgressItem GetProgressItem(SendOperationReference reference, string toAETitle, StudyInformation studyInformation)
 			{
 				//no synclock required, since only the single thread pool thread is accessing the items.
 				SendProgressItem progressItem = _sendProgressItems.Find(delegate(SendProgressItem testItem)
 					{
-						return testItem.ToAETitle == toAETitle &&
+						if (reference == null)
+						{
+							return testItem.SendOperationReference == null && testItem.ToAETitle == toAETitle &&
 							testItem.StudyInformation.StudyInstanceUid == studyInformation.StudyInstanceUid;
+						}
+						else
+						{
+							return testItem.SendOperationReference == reference;
+						}
 					});
 
 				if (progressItem == null)
 				{
 					progressItem = new SendProgressItem();
-					progressItem.Identifier = Guid.NewGuid();
+					progressItem.SendOperationReference = reference;
+
+					if (reference != null)
+					{
+						progressItem.Identifier = reference.Identifier;
+						progressItem.IsBackground = reference.IsBackground;
+					}
+					else
+					{
+						 progressItem.Identifier = Guid.NewGuid();
+					}
+
 					progressItem.StartTime = Platform.Time;
 					progressItem.LastActive = progressItem.StartTime;
 					progressItem.ToAETitle = toAETitle;
@@ -166,7 +185,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							try
 							{
 								StudyInformation studyInformation = GetStudyInformation(sentFileInformation);
-								SendProgressItem progressItem = GetProgressItem(sentFileInformation.ToAETitle, studyInformation);
+								SendProgressItem progressItem = GetProgressItem(sentFileInformation.SendOperationReference, sentFileInformation.ToAETitle, studyInformation);
+								progressItem.SendOperationReference = sentFileInformation.SendOperationReference;
 								progressItem.StudyInformation = studyInformation;
 
 								if (progressItem.StatusMessage == SR.MessagePending)
@@ -191,10 +211,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					(
 						delegate()
 						{
-							SendProgressItem progressItem = GetProgressItem(information.ToAETitle, information.StudyInformation);
+							SendProgressItem progressItem = GetProgressItem(information.SendOperationReference, information.ToAETitle, information.StudyInformation);
 							progressItem.StudyInformation = information.StudyInformation;
 							progressItem.LastActive = Platform.Time; 
 							progressItem.StatusMessage = SR.MessagePending;
+							progressItem.SendOperationReference = information.SendOperationReference;
 							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());
 						}
 					);
@@ -207,10 +228,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					(
 						delegate()
 						{
-							SendProgressItem progressItem = GetProgressItem(errorInformation.ToAETitle, errorInformation.StudyInformation);
+							SendProgressItem progressItem = GetProgressItem(errorInformation.SendOperationReference, errorInformation.ToAETitle, errorInformation.StudyInformation);
 							progressItem.StudyInformation = errorInformation.StudyInformation;
 							progressItem.LastActive = Platform.Time;
 							progressItem.StatusMessage = errorInformation.ErrorMessage;
+							progressItem.SendOperationReference = errorInformation.SendOperationReference;
 							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());
 						}
 					);

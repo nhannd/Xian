@@ -16,5 +16,7 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 
 		[OperationContract]
 		SendOperationReference SendFiles(SendFilesRequest request);
+
+		//TODO: add cancel
 	}
 }
