@@ -129,12 +129,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				: base(source, context)
 			{
 				context.CloneFields(source, this);
-				Initialize();
 			}
 
 			private void Initialize()
 			{
 				base.ControlPoints.Add(new PointF(0, 0));
+			}
+
+			[OnCloneComplete]
+			private void OnCloneComplete()
+			{
+				Initialize();
 			}
 
 			public override PointF Location
