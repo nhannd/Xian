@@ -72,7 +72,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Slicer Settings
 
-		private Vector3D _startPointPatient, _endPointPatient;
 		public void SetSlicePlanePatient(Vector3D sourceOrientationColumnPatient, Vector3D sourceOrientationRowPatient,
 		                                 Vector3D startPointPatient, Vector3D endPointPatient)
 		{
@@ -94,8 +93,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				       	});
 
 			_resliceAxes = _volume.RotateToVolumeOrientation(slicePlanePatientOrientation);
-			_startPointPatient = startPointPatient;
-			_endPointPatient = endPointPatient;
 			Vector3D lineMiddlePointPatient = new Vector3D(
 			    (startPointPatient.X + endPointPatient.X) / 2,
 			    (startPointPatient.Y + endPointPatient.Y) / 2,
@@ -216,16 +213,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// Slice through this point
 			Vector3D throughPoint;
 			if (_sliceThroughPointPatient != null)
-			{
-				//ggerade ToRes: Things that make me go hmmm...
-				throughPoint = _volume.ConvertToVolume(_sliceThroughPointPatient) + _volume.CenterPoint;
-			}
+				throughPoint = _volume.ConvertToVolume(_sliceThroughPointPatient);
 			else
 				throughPoint = _volume.CenterPoint;
 
 			Vector3D spacingVector = this.SliceSpacing * GetSliceNormalVector();
 
-			//ggerade ToDo: Determine the length of the vector that passes through the volume
+			//ggerade ToDo: Determine the length of the vector that passes through the volume. Or
+			//  stop when throughPoint is outside volume, which seems easier.
 			// For now just use the longest axis by the spacingVector
 			int numSlices = 1;
 			//ggerade ToRef: find a better way to encapsulate generating one vs the whole set
@@ -371,7 +366,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				float originY = - _volume.LargestOutputImageDimension * _volume.EffectiveSpacing / 2;
 
 				reslicer.SetOutputOrigin(originX, originY, 0);
-				//reslicer.SetOutputOrigin(0, originY, 0);
 
 				switch (_interpolationMode)
 				{
@@ -454,16 +448,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			// Update Image Position (patient)
 			//
-			//ggerade ToDo: Fix this hack...
-			Vector3D topLeftOfSlicePatient;
-			//if (_startPointPatient != null)
-			//{
-			//    topLeftOfSlicePatient = new Vector3D(_startPointPatient.X, _startPointPatient.Y, _startPointPatient.Z);
-			//    // One time use... 
-			//    _startPointPatient = null;
-			//}
-			//else
-				topLeftOfSlicePatient = ConvertSliceCoordToPatient(new PointF(0, 0), columns, rows);
+			Vector3D topLeftOfSlicePatient = GetTopLeftOfSlicePatient(columns, rows);
 
 			sliceDataSet[DicomTags.ImagePositionPatient].SetFloat32(0, topLeftOfSlicePatient.X);
 			sliceDataSet[DicomTags.ImagePositionPatient].SetFloat32(1, topLeftOfSlicePatient.Y);
@@ -472,41 +457,31 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return sliceDicom;
 		}
 
-		private Vector3D ConvertSliceCoordToPatient(PointF sliceCoord, int columns,
-		                                            int rows)
+		private Vector3D GetTopLeftOfSlicePatient(int columns, int rows)
 		{
 			Vector3D reslicePoint = GetReslicePoint();
 
-			// Convert 2D slice coord to 3D volume point
-			//
 			Vector3D xVec = new Vector3D(_resliceAxes[0, 0], _resliceAxes[0, 1], _resliceAxes[0, 2]);
 			Vector3D yVec = new Vector3D(_resliceAxes[1, 0], _resliceAxes[1, 1], _resliceAxes[1, 2]);
-
-			// Determine spacing along our vectors, we'll use this to adjust our coordinates to
-			//	account for the "fence-post" rule
-			Vector3D spacingVec = new Vector3D(_volume.Spacing.X, _volume.Spacing.Y, _volume.Spacing.Z);
-			float spacingX = xVec.Dot(spacingVec);
-			float spacingY = yVec.Dot(spacingVec);
-
-			// Determine the center image volume point
-			//
-			Vector3D n = xVec.Cross(yVec); // or zVec
-			Vector3D w = reslicePoint - _volume.CenterPoint;
-
-			Vector3D centerImageVolumePoint = n.Dot(w) * n;
+			Vector3D zVec = new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
 
 			PointF centerPlaneCoord = new PointF(columns / 2f, rows / 2f);
 
 			// These offsets define the x and y vector magnitudes to arrive at our point
-			float offsetX = (centerPlaneCoord.X - sliceCoord.X) * _volume.EffectiveSpacing + spacingX;
-			float offsetY = (centerPlaneCoord.Y - sliceCoord.Y) * _volume.EffectiveSpacing + spacingY;
+			float offsetX = centerPlaneCoord.X * _volume.EffectiveSpacing;
+			float offsetY = centerPlaneCoord.Y * _volume.EffectiveSpacing;
 
-			Vector3D volumePoint = centerImageVolumePoint - (offsetX * xVec + offsetY * yVec);
+			Vector3D volumePoint = reslicePoint - (offsetX * xVec + offsetY * yVec);
+
+			//ggerade ToRes: This adjusts the coordinate such that it is in the middle of the slice spacing,
+			//	I need to figure out how to get the direction (sign) correctly for all cases.
+			//Vector3D zVec = new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
+			//volumePoint += zVec * (this.SliceSpacing / 2);
 
 			// Convert 3D volume point to patient point
 			return _volume.ConvertToPatient(volumePoint);
 		}
-
+		
 		#endregion
 
 		#region Reslice Matrix helpers

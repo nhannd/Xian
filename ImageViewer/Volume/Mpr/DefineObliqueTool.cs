@@ -174,10 +174,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			_startPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(start);
 			_endPatient = base.SelectedImageSopProvider.Frame.ImagePlaneHelper.ConvertToPatient(end);
-#else
+#endif
 			if (_startPatient == null || _endPatient == null)
 				return;
-#endif
 	
 			if ((_startPatient - _endPatient).Magnitude < 5 * base.SelectedImageSopProvider.Frame.NormalizedPixelSpacing.Row)
 				return;
