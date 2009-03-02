@@ -40,7 +40,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive
 {
-    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.Configuration.PartitionArchive]
+    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.Configuration.PartitionArchive)]
     public partial class Default : BasePage
     {
         #region Private Members

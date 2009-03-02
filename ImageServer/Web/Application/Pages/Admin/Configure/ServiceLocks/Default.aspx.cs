@@ -39,7 +39,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks
 {
-    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.Configuration.ServiceLocks)]
+    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.Configuration.ServiceScheduling)]
     public partial class Default : BasePage
     {
         #region Private members

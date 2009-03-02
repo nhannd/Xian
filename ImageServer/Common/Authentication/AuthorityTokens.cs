@@ -31,6 +31,9 @@ namespace ClearCanvas.ImageServer.Common.Authentication
 
                 [AuthorityToken(Description = "Allow configuration of service scheduling.")]
                 public const string ServiceScheduling = "PACS/Configure/ServiceScheduling";
+
+                [AuthorityToken(Description = "Allow configuration of partition archive.")]
+                public const string PartitionArchive = "PACS/Configure/PartitionArchive";
             }
 
             /// <summary>
