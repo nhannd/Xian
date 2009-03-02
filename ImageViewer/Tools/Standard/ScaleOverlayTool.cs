@@ -13,48 +13,54 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideScaleOverlay", "ShowHide")]
-	[ButtonAction("showHide", "global-toolbars/ToolbarStandard/ToolbarShowHideScaleOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideScaleOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.Scale.ShowHide")]
 	[IconSet("showHide", IconScheme.Colour, "Icons.ScaleOverlayToolSmall.png", "Icons.ScaleOverlayToolMedium.png", "Icons.ScaleOverlayToolLarge.png")]
+	//
+	[ButtonAction("toggle", "overlays-dropdown/ToolbarScaleOverlay", "ShowHide")]
+	[CheckedStateObserver("toggle", "Checked", "CheckedChanged")]
+	[Tooltip("toggle", "TooltipScaleOverlay")]
+	[GroupHint("toggle", "Tools.Image.Overlays.Scale.ShowHide")]
+	[IconSet("toggle", IconScheme.Colour, "Icons.ScaleOverlayToolSmall.png", "Icons.ScaleOverlayToolMedium.png", "Icons.ScaleOverlayToolLarge.png")]
+	//
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class ScaleOverlayTool : ImageViewerTool
 	{
-		private event EventHandler _visibleChanged;
-		private bool _visible;
+		private event EventHandler _checkedChanged;
+		private bool _checked;
 
 		public ScaleOverlayTool()
 		{
-			_visible = true;
+			_checked = true;
 		}
 
-		public bool Visible
+		public bool Checked
 		{
-			get { return _visible; }
+			get { return _checked; }
 			set
 			{
-				if (_visible != value)
+				if (_checked != value)
 				{
-					_visible = value;
-					OnVisibleChanged();
+					_checked = value;
+					OnCheckedChanged();
 				}
 			}
 		}
 
-		public event EventHandler VisibleChanged
+		public event EventHandler CheckedChanged
 		{
-			add { _visibleChanged += value; }
-			remove { _visibleChanged -= value; }
+			add { _checkedChanged += value; }
+			remove { _checkedChanged -= value; }
 		}
 
 		public void ShowHide()
 		{
-			this.Visible = !this.Visible;
+			this.Checked = !this.Checked;
 		}
 
 		private void RefreshGraphics()
 		{
-			if (_visible)
+			if (_checked)
 			{
 				foreach (IPresentationImage image in EnumerateVisiblePresentationImages(base.ImageViewer))
 				{
@@ -80,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void RefreshGraphic(IPresentationImage image)
 		{
-			if (_visible)
+			if (_checked)
 			{
 				CompositeScaleGraphic scale = GetCompositeScaleGraphic(image, true);
 				if (scale != null)
@@ -112,10 +118,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			base.Dispose(disposing);
 		}
 
-		private void OnVisibleChanged()
+		private void OnCheckedChanged()
 		{
 			RefreshGraphics();
-			EventsHelper.Fire(_visibleChanged, this, new EventArgs());
+			EventsHelper.Fire(_checkedChanged, this, new EventArgs());
 		}
 
 		private void OnDisplaySetChanged(object sender, DisplaySetChangedEventArgs e)

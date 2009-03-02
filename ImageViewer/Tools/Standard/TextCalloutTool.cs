@@ -49,9 +49,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public const string SmallTextCalloutIcon = "Icons.TextCalloutToolSmall.png";
 		public const string MediumTextCalloutIcon = "Icons.TextCalloutToolMedium.png";
 		public const string LargeTextCalloutIcon = "Icons.TextCalloutToolLarge.png";
-		public const string SmallTextOnlyIcon = "Icons.TextOverlayToolSmall.png";
-		public const string MediumTextOnlyIcon = "Icons.TextOverlayToolMedium.png";
-		public const string LargeTextOnlyIcon = "Icons.TextOverlayToolLarge.png";
+		public const string SmallTextOnlyIcon = "Icons.TextAreaToolSmall.png";
+		public const string MediumTextOnlyIcon = "Icons.TextAreaToolMedium.png";
+		public const string LargeTextOnlyIcon = "Icons.TextAreaToolLarge.png";
 
 		#endregion
 

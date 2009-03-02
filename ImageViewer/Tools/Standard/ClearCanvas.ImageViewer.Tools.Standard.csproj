@@ -113,6 +113,7 @@
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />
     <Compile Include="ScaleGraphic.cs" />
     <Compile Include="ScaleOverlayTool.cs" />
+    <Compile Include="ShowHideOverlaysTool.cs" />
     <Compile Include="TextCalloutGraphic.cs" />
     <Compile Include="TextCalloutTool.cs" />
     <Compile Include="ToolSettings.cs" />
@@ -314,6 +315,16 @@
     <EmbeddedResource Include="Icons\TextCalloutToolLarge.png" />
     <EmbeddedResource Include="Icons\TextCalloutToolMedium.png" />
     <EmbeddedResource Include="Icons\TextCalloutToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ShowHideOverlaysToolLarge.png" />
+    <EmbeddedResource Include="Icons\ShowHideOverlaysToolMedium.png" />
+    <EmbeddedResource Include="Icons\ShowHideOverlaysToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\TextAreaToolLarge.png" />
+    <EmbeddedResource Include="Icons\TextAreaToolMedium.png" />
+    <EmbeddedResource Include="Icons\TextAreaToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

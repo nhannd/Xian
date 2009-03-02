@@ -512,8 +512,8 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="MenuShowHideTextOverlay" xml:space="preserve">
     <value>Show/Hide Text Overlay</value>
   </data>
-  <data name="ToolbarShowHideTextOverlay" xml:space="preserve">
-    <value>Show/Hide Text Overlay</value>
+  <data name="ToolbarTextOverlay" xml:space="preserve">
+    <value>Text Overlay</value>
   </data>
   <data name="TooltipShowHideTextOverlay" xml:space="preserve">
     <value>Show/Hide Text Overlay</value>
@@ -588,8 +588,8 @@ Please check the log for more details.</value>
   <data name="MenuShowHideScaleOverlay" xml:space="preserve">
     <value>Show/Hide Scale Overlay</value>
   </data>
-  <data name="ToolbarShowHideScaleOverlay" xml:space="preserve">
-    <value>Show/Hide Scale Overlay</value>
+  <data name="ToolbarScaleOverlay" xml:space="preserve">
+    <value>Scale Overlay</value>
   </data>
   <data name="TooltipShowHideScaleOverlay" xml:space="preserve">
     <value>Show/Hide Scale Overlay</value>
@@ -623,5 +623,17 @@ Please check the log for more details.</value>
   </data>
   <data name="TooltipTextOnly" xml:space="preserve">
     <value>Text Area</value>
+  </data>
+  <data name="ToolbarShowHideOverlays" xml:space="preserve">
+    <value>Show/Hide Overlays</value>
+  </data>
+  <data name="TooltipScaleOverlay" xml:space="preserve">
+    <value>Scale Overlay</value>
+  </data>
+  <data name="TooltipShowHideOverlays" xml:space="preserve">
+    <value>Show/Hide Overlays</value>
+  </data>
+  <data name="TooltipTextOverlay" xml:space="preserve">
+    <value>Text Overlay</value>
   </data>
 </root>

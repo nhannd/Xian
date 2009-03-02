@@ -29,7 +29,9 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -41,19 +43,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideTextOverlay", "ShowHide")]
 	[KeyboardAction("showHide", "imageviewer-keyboard/ToolsStandardShowHideTextOverlay", "ShowHide", KeyStroke = XKeys.O)]
-	[ButtonAction("showHide", "global-toolbars/ToolbarStandard/ToolbarShowHideTextOverlay", "ShowHide")]
 	[Tooltip("showHide", "TooltipShowHideTextOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.Text.ShowHide")]
 	[IconSet("showHide", IconScheme.Colour, "Icons.TextOverlayToolSmall.png", "Icons.TextOverlayToolMedium.png", "Icons.TextOverlayToolLarge.png")]
-
+	//
+	[ButtonAction("toggle", "overlays-dropdown/ToolbarTextOverlay", "ShowHide")]
+	[CheckedStateObserver("toggle", "Checked", "CheckedChanged")]
+	[Tooltip("toggle", "TooltipTextOverlay")]
+	[GroupHint("toggle", "Tools.Image.Overlays.Text.ShowHide")]
+	[IconSet("toggle", IconScheme.Colour, "Icons.TextOverlayToolSmall.png", "Icons.TextOverlayToolMedium.png", "Icons.TextOverlayToolLarge.png")]
+	//
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class TextOverlayTool : Tool<IImageViewerToolContext>
 	{
-		private bool _visible;
+		private event EventHandler _checkedChanged;
+		private bool _checked;
 
 		public TextOverlayTool()
 		{
-			_visible = true;
+			_checked = true;
 		}
 
 		public override void Initialize()
@@ -70,9 +78,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			base.Dispose(disposing);
 		}
 
+		public bool Checked
+		{
+			get { return _checked; }
+			set
+			{
+				if (_checked != value)
+				{
+					_checked = value;
+					OnCheckedChanged();
+				}
+			}
+		}
+
+		protected virtual void OnCheckedChanged()
+		{
+			EventsHelper.Fire(_checkedChanged, this, new EventArgs());
+		}
+
+		public event EventHandler CheckedChanged
+		{
+			add { _checkedChanged += value; }
+			remove { _checkedChanged -= value; }
+		}
+
 		public void ShowHide()
 		{
-			_visible = !_visible;
+			this.Checked = !this.Checked;
 			this.Context.Viewer.PhysicalWorkspace.Draw();
 		}
 
@@ -81,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (e.PresentationImage is IAnnotationLayoutProvider)
 			{
 				foreach (AnnotationBox box in ((IAnnotationLayoutProvider)e.PresentationImage).AnnotationLayout.AnnotationBoxes)
-					box.Visible = _visible;
+					box.Visible = this.Checked;
 			}
 		}
 	}
