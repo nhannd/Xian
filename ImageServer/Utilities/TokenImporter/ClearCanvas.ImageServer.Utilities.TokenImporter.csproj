@@ -34,7 +34,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorityGroupImporter.cs" />
     <Compile Include="AuthorityTokenImporter.cs" />
+    <Compile Include="DefaultAuthorityGroups.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -53,6 +55,10 @@
     <ProjectReference Include="..\..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Authentication\ClearCanvas.ImageServer.Common.Authentication.csproj">
+      <Project>{600584A7-4B78-4983-A21B-7F30023766A8}</Project>
+      <Name>ClearCanvas.ImageServer.Common.Authentication</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\ClearCanvas.ImageServer.Common.csproj">
       <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
