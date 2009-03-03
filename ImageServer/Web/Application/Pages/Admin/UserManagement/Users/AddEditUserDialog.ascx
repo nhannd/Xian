@@ -4,9 +4,13 @@
 <script type="text/javascript">
 function ValidationUsernameParams()
 {
-    input = document.getElementById('<%= UserLoginId.ClientID %>');
     params = new Array();
+    input = document.getElementById('<%= UserLoginId.ClientID %>');
     params.username=input.value;
+    
+    
+    input = document.getElementById('<%= OriginalUserLoginId.ClientID %>');
+    params.originalUsername = input.value;
     return params;
 }
 </script>    
@@ -19,7 +23,7 @@ function ValidationUsernameParams()
         <asp:Table runat="server" skinID="NoSkin" CellSpacing="3" CellPadding="3">
        
             <asp:TableRow runat="server" ID="UserNameRow">
-                <asp:TableCell runat="server"><asp:Label ID="Label2" runat="server" Text="Username" CssClass="DialogTextBoxLabel" /></asp:TableCell><asp:TableCell><asp:TextBox runat="server" ID="UserLoginId" CssClass="DialogTextBox"></asp:TextBox></asp:TableCell>
+                <asp:TableCell runat="server"><asp:Label ID="Label2" runat="server" Text="Username" CssClass="DialogTextBoxLabel" /></asp:TableCell><asp:TableCell><asp:TextBox runat="server" ID="UserLoginId" CssClass="DialogTextBox"></asp:TextBox><asp:HiddenField ID="OriginalUserLoginId" runat="server" /></asp:TableCell>
                 <asp:TableCell runat="server" HorizontalAlign="left" width="100%">
                     <ccAsp:InvalidInputIndicator ID="UserLoginHelpId" runat="server" SkinID="InvalidInputIndicator" />
                     <ccValidator:ConditionalRequiredFieldValidator ID="UserNameRequiredFieldValidator" runat="server"

@@ -235,8 +235,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 ModalDialog1.Title = App_GlobalResources.SR.DialogEditUserTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
-                UserNameRow.Visible = false;
+                UserLoginId.ReadOnly = true;
                 EnabledRow.Visible = true;
+                UserLoginId.Text = User.UserName;
+                OriginalUserLoginId.Value = User.UserName;
+                DisplayName.Text = User.DisplayName;
+                UserEnabledCheckbox.Checked = User.Enabled;
+
+                List<UserGroup> groups = User.UserGroups;
+
+                foreach (UserGroup group in groups)
+                {
+                    UserGroupListBox.Items.FindByText(group.Name).Selected = true;
+                }
             }
             else
             {
@@ -244,29 +255,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.AddButtonEnabled;
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.AddButtonHover;
                 EnabledRow.Visible = false;
-                UserNameRow.Visible = true;
+                UserLoginId.ReadOnly = false;
             }
 
             // Update the rest of the fields
             if (User == null || EditMode == false)
             {
                 UserLoginId.Text = string.Empty;
+                OriginalUserLoginId.Value = string.Empty;
                 DisplayName.Text = string.Empty;
                 UserEnabledCheckbox.Checked = false;
                 UserGroupListBox.SelectedIndex = -1;
-            }
-            else if (Page.IsValid)
-            {
-                UserLoginId.Text = User.UserName;
-                DisplayName.Text = User.DisplayName;
-                UserEnabledCheckbox.Checked = User.Enabled;
-
-                List<UserGroup> groups = User.UserGroups;
-
-                foreach(UserGroup group in groups)
-                {
-                    UserGroupListBox.Items.FindByText(group.Name).Selected = true;
-                }
             }
         }
 

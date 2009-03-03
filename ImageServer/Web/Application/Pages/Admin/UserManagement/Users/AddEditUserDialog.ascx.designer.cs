@@ -56,6 +56,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         protected global::System.Web.UI.WebControls.TextBox UserLoginId;
         
         /// <summary>
+        /// OriginalUserLoginId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField OriginalUserLoginId;
+        
+        /// <summary>
         /// UserLoginHelpId control.
         /// </summary>
         /// <remarks>

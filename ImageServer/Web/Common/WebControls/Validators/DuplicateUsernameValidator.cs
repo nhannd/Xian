@@ -31,6 +31,7 @@
 
 using System;
 using System.ServiceModel;
+using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
@@ -88,6 +89,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         protected override bool OnServerSideEvaluate()
         {
             String username = GetControlValidationValue("UserLoginId");
+            String originalUsername = ((HiddenField)FindControl("OriginalUserLoginId")).Value;
 
             if (String.IsNullOrEmpty(username))
             {
@@ -97,7 +99,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             UserManagementController controller = new UserManagementController();
 
-            if (controller.ExistsUsername(username))
+            if (controller.ExistsUsername(username) && !username.Equals(originalUsername))
             {
                 ErrorMessage = "Username already exists.";
                 return false;

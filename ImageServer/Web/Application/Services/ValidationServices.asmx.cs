@@ -116,11 +116,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
         /// Validate the existence of a user name.
         /// </summary>
         /// <param name="username"></param>
+        /// <param name="originalUsername"></param>/// 
         /// <returns></returns>
         /// <remarks>
         /// </remarks>
         [WebMethod]
-        public ValidationResult ValidateUsername(string username)
+        public ValidationResult ValidateUsername(string username, string originalUsername)
         {
             // This web service in turns call a WCF service which resides on the same or different systems.
 
@@ -135,7 +136,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
 
             UserManagementController controller = new UserManagementController();
 
-            if(controller.ExistsUsername(username))
+            if (controller.ExistsUsername(username) && !username.Equals(originalUsername))
             {
                 result.Success = false;
                 result.ErrorCode = -1;
