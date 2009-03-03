@@ -171,8 +171,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
 
                 if (!success)
                 {
-                    UsernameIndicator.Show();
-                    UserNameValidator.Text = "Username already exists";
                     Show(false);
                 } else
                 {

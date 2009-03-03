@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
 
         #region Events
 
-        public delegate void OnOKClickedEventHandler(UserGroupRowData user);
+        public delegate bool OnOKClickedEventHandler(UserGroupRowData user);
         public event OnOKClickedEventHandler OKClicked;
 
         #endregion Events
@@ -163,10 +163,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             if (Page.IsValid){
                 SaveData();
 
-                if (OKClicked != null)
-                    OKClicked(UserGroup);
+                bool success = false;
 
-                Close();
+                if (OKClicked != null)
+                    success = OKClicked(UserGroup);
+
+                if (!success)
+                {
+                    Show(false);
+                }
+                else
+                {
+                    Close();
+                }
             }
             else
             {
@@ -195,6 +204,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 ModalDialog1.Title = App_GlobalResources.SR.DialogEditUserGroupTitle;
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
+                GroupName.Text = UserGroup.Name;
+                OriginalGroupName.Value = UserGroup.Name;
+                foreach (TokenSummary token in UserGroup.Tokens)
+                {
+                    TokenCheckBoxList.Items.FindByValue(token.Name).Selected = true;
+                }
             }
             else
             {
@@ -208,15 +223,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             {
                 GroupName.Text = string.Empty;
                 TokenCheckBoxList.SelectedIndex = -1;
-            }
-            else if (Page.IsValid)
-            {
-                GroupName.Text = UserGroup.Name;
-
-                foreach(TokenSummary token in UserGroup.Tokens)
-                {
-                    TokenCheckBoxList.Items.FindByValue(token.Name).Selected = true;
-                }
             }
         }
 

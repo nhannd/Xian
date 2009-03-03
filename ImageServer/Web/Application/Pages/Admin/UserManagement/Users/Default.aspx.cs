@@ -52,7 +52,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                                if (_controller.AddUser(user))
                                                                {
                                                                    UserPanel.UpdateUI();
-                                                                   AddEditUserDialog.Close();
                                                                    return true;
                                                                }
                                                                return false;
@@ -95,6 +94,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             DeleteConfirmation.MessageType = MessageBox.MessageTypeEnum.YESNO;
             DeleteConfirmation.Data = userRowData;
             DeleteConfirmation.Show();
+        }
+
+        public void OnResetPassword(UserRowData userRowData)
+        {
+            if (_controller.ResetPassword(userRowData))
+            {
+                PasswordResetConfirmation.Message = string.Format("Password for {0} has been reset.", userRowData.UserName);
+            } else {
+                PasswordResetConfirmation.Message =
+                    string.Format("An error occurred resetting the password. Password has not been changed.");
+                }
+            PasswordResetConfirmation.Title = "Password Reset";
+            PasswordResetConfirmation.MessageType = MessageBox.MessageTypeEnum.INFORMATION;
+            PasswordResetConfirmation.Show();
         }
     }
 }

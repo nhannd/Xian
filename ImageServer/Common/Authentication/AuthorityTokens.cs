@@ -32,8 +32,9 @@ namespace ClearCanvas.ImageServer.Common.Authentication
                 [AuthorityToken(Description = "Allow configuration of service scheduling.")]
                 public const string ServiceScheduling = "PACS/Configure/ServiceScheduling";
 
-                [AuthorityToken(Description = "Allow configuration of partition archive.")]
+                [AuthorityToken(Description = "Allow configuration of partition archives.")]
                 public const string PartitionArchive = "PACS/Configure/PartitionArchive";
+
             }
 
             /// <summary>
@@ -65,7 +66,7 @@ namespace ClearCanvas.ImageServer.Common.Authentication
                 [AuthorityToken(Description = "Allow searching for study delete history.")]
                 public const string Search = "PACS/StudyDeleteHistory/Search";
 
-                [AuthorityToken(Description = "Allow looking at the details of the study deletion record.")]
+                [AuthorityToken(Description = "Allow viewing details of the study deletion record.")]
                 public const string View = "PACS/StudyDeleteHistory/View";
 
                 [AuthorityToken(Description = "Allow deleting study delete history records.")]
@@ -82,7 +83,7 @@ namespace ClearCanvas.ImageServer.Common.Authentication
             [AuthorityToken(Description = "Allow searching for studies.")]
             public const string Search = "PACS/Study/Search";
 
-            [AuthorityToken(Description = "Allow looking at study details.")]
+            [AuthorityToken(Description = "Allow viewing study details.")]
             public const string View = "PACS/Study/View";
 
             [AuthorityToken(Description = "Allow moving studies.")]
@@ -106,7 +107,7 @@ namespace ClearCanvas.ImageServer.Common.Authentication
             [AuthorityToken(Description = "Allow searching for work queue items.")]
             public const string Search = "PACS/WorkQueue/Search";
 
-            [AuthorityToken(Description = "Allow looking at work queue entry details.")]
+            [AuthorityToken(Description = "Allow viewing work queue entry details.")]
             public const string View = "PACS/WorkQueue/View";
 
             [AuthorityToken(Description = "Allow rescheduling work queue items.")]

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.ServiceModel;
@@ -37,8 +38,14 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Services;
 using System.Web.Services;
 using System.Xml;
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
+using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
+using ClearCanvas.ImageServer.Common.Services.Admin;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
+using IUserAdminService=ClearCanvas.Enterprise.Common.Admin.UserAdmin.IUserAdminService;
 
 namespace ClearCanvas.ImageServer.Web.Application.Services
 {
@@ -100,6 +107,83 @@ namespace ClearCanvas.ImageServer.Web.Application.Services
             {
                 if (client.State == CommunicationState.Opened)
                     client.Close();
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Validate the existence of a user name.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// </remarks>
+        [WebMethod]
+        public ValidationResult ValidateUsername(string username)
+        {
+            // This web service in turns call a WCF service which resides on the same or different systems.
+
+            ValidationResult result = new ValidationResult();
+            if (String.IsNullOrEmpty(username))
+            {
+                result.Success = false;
+                result.ErrorCode = -1;
+                result.ErrorText = "Username is required.";
+                return result;
+            }
+
+            UserManagementController controller = new UserManagementController();
+
+            if(controller.ExistsUsername(username))
+            {
+                result.Success = false;
+                result.ErrorCode = -1;
+                result.ErrorText = "Username already exists.";
+                return result;
+                
+            } else
+            {
+                result.Success = true;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Validate the existence of a user group.
+        /// </summary>
+        /// <param name="userGroupName"></param>
+        /// <param name="originalGroupName"></param>
+        /// <returns></returns>
+        /// <remarks>
+        /// </remarks>
+        [WebMethod]
+        public ValidationResult ValidateUserGroupName(string userGroupName, string originalGroupName)
+        {
+            // This web service in turns call a WCF service which resides on the same or different systems.
+
+            ValidationResult result = new ValidationResult();
+            if (String.IsNullOrEmpty(userGroupName))
+            {
+                result.Success = false;
+                result.ErrorCode = -1;
+                result.ErrorText = "User Group is required.";
+                return result;
+            }
+
+            UserManagementController controller = new UserManagementController();
+
+            if (controller.ExistsUsergroup(userGroupName) && !userGroupName.Equals(originalGroupName))
+            {
+                result.Success = false;
+                result.ErrorCode = -1;
+                result.ErrorText = "User Group already exists.";
+                return result;
+            }
+            else
+            {
+                result.Success = true;
             }
 
             return result;

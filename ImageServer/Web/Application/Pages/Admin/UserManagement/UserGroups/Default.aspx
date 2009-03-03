@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups.Default" Title="Users | Admin | ClearCanvas ImageServer"%>
+<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups.Default" Title="User Groups | User Management | ClearCanvas ImageServer"%>
 
 <%@ Register Src="UserGroupsPanel.ascx" TagName="UserGroupsPanel" TagPrefix="localAsp" %>
 <%@ Register Src="~/Pages/Admin/UserManagement/UserGroups/AddEditUserGroupsDialog.ascx" TagName="AddEditUserGroupsDialog" TagPrefix="localAsp" %>

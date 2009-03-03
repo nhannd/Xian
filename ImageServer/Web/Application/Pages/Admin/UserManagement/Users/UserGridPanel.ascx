@@ -8,7 +8,7 @@
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetUserDataSource"
 				OnObjectDisposing="DisposeUserDataSource"/>
             <ccUI:GridView ID="UserGridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
-                Width="100%" AllowSorting="True" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#eeeeee"
+                Width="100%" AllowSorting="True" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#D5FFCA"
                 PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" 
                 BorderWidth="0px" HorizontalAlign="left" DataSourceID="UserDataSourceObject" OnRowDataBound="UserGridView_RowDataBound"
                 OnSelectedIndexChanged="UserGridView_SelectedIndexChanged" SelectionMode="Single">

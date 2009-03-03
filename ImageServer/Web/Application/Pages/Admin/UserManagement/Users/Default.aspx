@@ -18,4 +18,5 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="DialogsPlaceHolder" runat="server">
     <localAsp:AddEditUserDialog ID="AddEditUserDialog" runat="server" />
     <ccAsp:MessageBox ID="DeleteConfirmation" runat="server" />   
+    <ccAsp:MessageBox ID="PasswordResetConfirmation" runat="server" />   
 </asp:Content>

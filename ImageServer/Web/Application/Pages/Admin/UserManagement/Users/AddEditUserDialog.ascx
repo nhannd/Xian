@@ -1,6 +1,16 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Users.AddEditUserDialog"
     Codebehind="AddEditUserDialog.ascx.cs" %>
 
+<script type="text/javascript">
+function ValidationUsernameParams()
+{
+    input = document.getElementById('<%= UserLoginId.ClientID %>');
+    params = new Array();
+    params.username=input.value;
+    return params;
+}
+</script>    
+
 <ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="450px">
     <ContentTemplate>
     
@@ -16,10 +26,14 @@
                                                         ControlToValidate="UserLoginId" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
                                                         InvalidInputIndicatorID="UserLoginHelpId" Text="Username is required" Display="None"
                                                         RequiredWhenChecked="False"/>
+                    <ccValidator:DuplicateUsernameValidator ID="DuplicateUserNameValidator" runat="server"
+                                                        ControlToValidate="UserLoginId" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        InvalidInputIndicatorID="UserLoginHelpId" Text="Username already exists." Display="None"
+                                                        ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateUsername"
+                                                        ParamsFunction="ValidationUsernameParams"/>                                                        
                 </asp:TableCell>
             </asp:TableRow>
-            
-            
+                   
             <asp:TableRow>
                 <asp:TableCell CssClass="DialogTextBoxLabel" Wrap="false"><asp:Label ID="Label1" runat="server" Text="Display Name" CssClass="DialogTextBoxLabel" /></asp:TableCell><asp:TableCell><asp:TextBox runat="server" ID="DisplayName" CssClass="DialogTextBox"></asp:TextBox></asp:TableCell>
                 <asp:TableCell HorizontalAlign="left" width="100%">
@@ -30,6 +44,7 @@
                                                         RequiredWhenChecked="False"/>
                 </asp:TableCell>
             </asp:TableRow>
+                        
             <asp:TableRow><asp:TableCell VerticalAlign="top" CssClass="DialogTextBoxLabel"><asp:Label ID="Label3" runat="server" Text="Groups" CssClass="DialogTextBoxLabel" /></asp:TableCell><asp:TableCell ColumnSpan="2">
             <div  class="DialogCheckBoxList">
             <asp:CheckBoxList runat="server" ID="UserGroupListBox" />

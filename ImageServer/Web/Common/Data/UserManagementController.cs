@@ -147,6 +147,49 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return success;
         }
 
+        public bool ExistsUsername(string username)
+        {
+            bool exists = false;
+
+            Platform.GetService<IUserAdminService>(
+        delegate(IUserAdminService services)
+        {
+            ListUsersRequest filter = new ListUsersRequest();
+            filter.ExactMatchOnly = true;
+            filter.UserName = username;
+
+            List<UserSummary> users = services.ListUsers(filter);
+
+            if (users.Count > 0)
+            {
+                exists = true;
+            }
+        });
+
+            return exists;
+        }
+
+        public bool ResetPassword(UserRowData user)
+        {
+            bool success = false;
+
+            Platform.GetService<IUserAdminService>(
+                delegate(IUserAdminService service)
+                {
+                    try
+                    {
+                        service.ResetPassword(user.UserName);
+                        success = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        //TODO: Handle Exception
+                    }
+                });
+
+            return success;
+        }
+
         public bool DeleteUser(UserRowData user)
         {
             bool success = false;
@@ -166,6 +209,32 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 });
 
             return success;
+        }
+
+        public bool ExistsUsergroup(string usergroupName)
+        {
+            bool exists = false;
+
+            Platform.GetService<IAuthorityAdminService>(
+                            delegate(IAuthorityAdminService services)
+                            {
+                                IList<AuthorityGroupSummary> list = services.ListAllAuthorityGroups();
+                                IList<AuthorityGroupSummary> filteredList = new List<AuthorityGroupSummary>();
+
+                                if (usergroupName != null)
+                                {
+                                    foreach (AuthorityGroupSummary group in list)
+                                    {
+                                        if (group.Name.ToLower().Equals(usergroupName.ToLower()))
+                                        {
+                                            exists = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            });
+
+            return exists;
         }
 
         public bool AddUserGroup(UserGroupRowData userGroup)

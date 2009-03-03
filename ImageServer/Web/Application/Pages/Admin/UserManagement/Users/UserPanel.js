@@ -85,6 +85,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
                       
             this._enableEditButton(false);
             this._enableDeleteButton(false);
+            this._enableResetPasswordButton(false);
                                
             if (userlist!=null )
             {
@@ -93,6 +94,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
                 if(rows != null && rows.length > 0) {
                     this._enableEditButton(true);
                     this._enableDeleteButton(true);
+                    this._enableResetPasswordButton(true);
                 }
             }
         },
@@ -108,6 +110,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
             var editButton = $find(this._EditButtonClientID);
             editButton.set_enable(en);
         },       
+
+        _enableResetPasswordButton : function(en)
+        {
+            var resetPasswordButton = $find(this._ResetPasswordButtonClientID);
+            resetPasswordButton.set_enable(en);
+        },               
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         //
@@ -139,6 +147,15 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
         set_EditButtonClientID : function(value) {
             this._EditButtonClientID = value;
             this.raisePropertyChanged('EditButtonClientID');
+        },
+        
+        get_ResetPasswordButtonClientID : function() {
+            return this._ResetPasswordButtonClientID;
+        },
+
+        set_ResetPasswordButtonClientID : function(value) {
+            this._ResetPasswordButtonClientID = value;
+            this.raisePropertyChanged('ResetPasswordButtonClientID');
         },
         
         get_UserListClientID : function() {

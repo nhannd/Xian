@@ -74,6 +74,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator UserNameRequiredFieldValidator;
         
         /// <summary>
+        /// DuplicateUserNameValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.DuplicateUsernameValidator DuplicateUserNameValidator;
+        
+        /// <summary>
         /// Label1 control.
         /// </summary>
         /// <remarks>

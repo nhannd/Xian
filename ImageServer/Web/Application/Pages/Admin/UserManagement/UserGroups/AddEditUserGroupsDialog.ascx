@@ -1,6 +1,21 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups.AddEditUserGroupsDialog"
     Codebehind="AddEditUserGroupsDialog.ascx.cs" %>
 
+<script type="text/javascript">
+function ValidationUserGroupNameParams()
+{
+    params = new Array();
+    
+    input = document.getElementById('<%= GroupName.ClientID %>');
+    params.userGroupName=input.value;
+    
+    input = document.getElementById('<%= OriginalGroupName.ClientID %>');
+    params.originalGroupName=input.value;
+    
+    return params;
+}
+</script>
+
 <ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="750px">
     <ContentTemplate>
     
@@ -8,13 +23,19 @@
     
         <table cellpadding="5">           
             <tr>
-                <td class="DialogTextBoxLabel" nowrap="nowrap"><asp:Label ID="Label1" runat="server" Text="Group Name" CssClass="DialogTextBoxLabel" /></td><td><asp:TextBox runat="server" ID="GroupName" CssClass="DialogTextBox"></asp:TextBox></td>
+                <td class="DialogTextBoxLabel" nowrap="nowrap"><asp:Label ID="Label1" runat="server" Text="Group Name" CssClass="DialogTextBoxLabel" /></td><td><asp:TextBox runat="server" ID="GroupName" CssClass="DialogTextBox"></asp:TextBox><asp:HiddenField ID="OriginalGroupName" runat="server" /></td>
                 <td width="100%">
                     <ccAsp:InvalidInputIndicator ID="GroupNameHelpId" runat="server" SkinID="InvalidInputIndicator" />
                     <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
                                                         ControlToValidate="GroupName" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
                                                         InvalidInputIndicatorID="GroupNameHelpId" Text="Group name is required" Display="None"
                                                         RequiredWhenChecked="False"/>
+                    <ccValidator:DuplicateUsergroupValidator ID="DuplicateUsergroupValidator" runat="server"
+                                                        ControlToValidate="GroupName" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
+                                                        InvalidInputIndicatorID="GroupNameHelpId" Text="User Group already exists." Display="None"
+                                                        ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateUserGroupName"
+                                                        ParamsFunction="ValidationUserGroupNameParams"/>                                                        
+                                                            
                 </td>
             </tr>
             <tr>

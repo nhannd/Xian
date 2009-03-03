@@ -32,13 +32,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                            if (_controller.UpdateUserGroup(userGroup))
                                                            {
                                                                UserGroupsPanel.UpdateUI();
+                                                               return true;
                                                            }
+                                                           return false;
                                                        }
                                                        else
                                                        {
-                                                           if (_controller.AddUserGroup(userGroup))
+                                                           try
                                                            {
-                                                               UserGroupsPanel.UpdateUI();
+                                                               if (_controller.AddUserGroup(userGroup))
+                                                               {
+                                                                   UserGroupsPanel.UpdateUI();
+                                                                   return true;
+                                                               }
+                                                               return false;
+                                                           }
+                                                           catch (Exception ex)
+                                                           {
+                                                               return false;
                                                            }
                                                        }
                                                    };

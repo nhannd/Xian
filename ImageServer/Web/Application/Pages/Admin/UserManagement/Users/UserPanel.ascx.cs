@@ -28,6 +28,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         }
 
         [ExtenderControlProperty]
+        [ClientPropertyName("ResetPasswordButtonClientID")]
+        public string ResetPasswordButtonClientID
+        {
+            get { return ResetPasswordButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
         [ClientPropertyName("UserListClientID")]
         public string UserListClientID
         {
@@ -79,11 +86,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 // no device being selected
                 EditUserButton.Enabled = false;
                 DeleteUserButton.Enabled = false;
+                ResetPasswordButton.Enabled = false;
             }
             else
             {
                 EditUserButton.Enabled = true;
                 DeleteUserButton.Enabled = true;
+                ResetPasswordButton.Enabled = true;
             }
 
             // UpdatePanel UpdateMode must be set to "conditional"
@@ -107,6 +116,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {            
             UserRowData user = UserGridPanel.SelectedUser;
             if (user != null) ((Default)Page).OnDeleteUser(user);
+        }
+
+        protected void ResetPasswordButton_Click(object sender, ImageClickEventArgs e)
+        {
+            UserRowData user = UserGridPanel.SelectedUser;
+            if (user != null) ((Default)Page).OnResetPassword(user);
         }
 
     }

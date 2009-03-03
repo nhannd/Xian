@@ -39,6 +39,7 @@
                                         <ccUI:ToolbarButton ID="AddUserButton" runat="server" SkinID="AddButton" onClick="AddUserButton_Click" />
                                         <ccUI:ToolbarButton ID="EditUserButton" runat="server" SkinID="EditButton" onClick="EditUserButton_Click" />
                                         <ccUI:ToolbarButton ID="DeleteUserButton" runat="server" SkinID="DeleteButton" onClick="DeleteUserButton_Click" />
+                                        <ccUI:ToolbarButton ID="ResetPasswordButton" runat="server" SkinID="ResetPasswordButton" onClick="ResetPasswordButton_Click" />                                        
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  

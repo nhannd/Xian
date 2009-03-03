@@ -47,6 +47,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         protected global::System.Web.UI.WebControls.TextBox GroupName;
         
         /// <summary>
+        /// OriginalGroupName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HiddenField OriginalGroupName;
+        
+        /// <summary>
         /// GroupNameHelpId control.
         /// </summary>
         /// <remarks>
@@ -63,6 +72,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator RequiredFieldValidator2;
+        
+        /// <summary>
+        /// DuplicateUsergroupValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.DuplicateUsergroupValidator DuplicateUsergroupValidator;
         
         /// <summary>
         /// Label3 control.
