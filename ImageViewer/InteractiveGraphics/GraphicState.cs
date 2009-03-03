@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private IStatefulGraphic _statefulGraphic;
 		private PointF _lastPoint;
-		private MouseButtonHandlerBehaviour _mousebuttonBehaviour = MouseButtonHandlerBehaviour.Default;
+		private MouseButtonHandlerBehaviour _mousebuttonBehaviour = MouseButtonHandlerBehaviour.None;
 		#endregion
 
 		/// <summary>
