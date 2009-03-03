@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return _bounds;
 		}
 
-		public override Roi Copy(IPresentationImage presentationImage)
+		public override Roi CopyTo(IPresentationImage presentationImage)
 		{
 			return new EllipticalRoi(_bounds, presentationImage);
 		}

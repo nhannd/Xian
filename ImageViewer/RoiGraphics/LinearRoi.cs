@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return RectangleUtilities.ComputeBoundingRectangle(_points);
 		}
 
-		public override Roi Copy(IPresentationImage presentationImage)
+		public override Roi CopyTo(IPresentationImage presentationImage)
 		{
 			return new LinearRoi(_points, presentationImage);
 		}

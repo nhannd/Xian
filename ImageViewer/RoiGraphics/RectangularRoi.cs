@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return _rectangle;
 		}
 
-		public override Roi Copy(IPresentationImage presentationImage)
+		public override Roi CopyTo(IPresentationImage presentationImage)
 		{
 			return new RectangularRoi(_rectangle, presentationImage);
 		}

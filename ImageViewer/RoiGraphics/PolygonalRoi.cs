@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			return _polygon.BoundingRectangle;
 		}
 
-		public override Roi Copy(IPresentationImage presentationImage)
+		public override Roi CopyTo(IPresentationImage presentationImage)
 		{
 			return new PolygonalRoi(_polygon.Vertices, presentationImage);
 		}

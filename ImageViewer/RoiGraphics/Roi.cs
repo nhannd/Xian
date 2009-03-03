@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		protected abstract RectangleF ComputeBounds();
 
-		public abstract Roi Copy(IPresentationImage presentationImage);
+		public abstract Roi CopyTo(IPresentationImage presentationImage);
 
 		public abstract bool Contains(PointF point);
 

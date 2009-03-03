@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			return RectangleF.Empty;
 		}
 
-		public override Roi Copy(IPresentationImage presentationImage)
+		public override Roi CopyTo(IPresentationImage presentationImage)
 		{
 			return new ProtractorRoiInfo(_points[0], _points[1], _points[2], presentationImage);
 		}
