@@ -3,18 +3,20 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 
-[assembly:Plugin]
+[assembly: ClearCanvas.Common.Plugin]
+
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TokenImporter")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("ClearCanvas.ImageServer.Utilities.TokenImporter")]
+[assembly: AssemblyDescription("ClearCanvas Image Server Authority Token Importer")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TokenImporter")]
-[assembly: AssemblyCopyright("Copyright ©  2009")]
+[assembly: AssemblyCompany("ClearCanvas Inc.")]
+[assembly: AssemblyProduct("ImageServer")]
+[assembly: AssemblyCopyright("Copyright (c) 2006-2008")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
