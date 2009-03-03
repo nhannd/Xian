@@ -10,6 +10,7 @@ using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Security;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using MessageBox=ClearCanvas.ImageServer.Web.Application.Controls.MessageBox;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
@@ -18,7 +19,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
     {
         public void Show(bool updateUI)
         {
-            ChangePasswordUsername.Text = "";
+            ChangePasswordUsername.Text = ((System.Web.UI.WebControls.TextBox)Page.FindControl("UserName")).Text;
             LoginPasswordChange.Checked = true;
             
             ModalDialog1.Show();
