@@ -236,7 +236,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			// Set orientation transform
 			Matrix patientVolumeTransform = new Matrix(OrientationPatientMatrix.Transpose());
 			// Set origin translation
-			patientVolumeTransform.SetRow(3, -OriginPatient.X, -OriginPatient.Y, -OriginPatient.Z, 1);
+			Vector3D rotatedOrigin = RotateToVolumeOrientation(OriginPatient);
+			patientVolumeTransform.SetRow(3, -rotatedOrigin.X, -rotatedOrigin.Y, -rotatedOrigin.Z, 1);
 
 			// Transform patient position to volume position
 			Matrix patientPositionMatrix = new Matrix(1, 4);
@@ -262,10 +263,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public Vector3D RotateToPatientOrientation(Vector3D volumeVec)
 		{
-			Matrix volumePos = new Matrix(4, 1);
-			volumePos.SetColumn(0, volumeVec.X, volumeVec.Y, volumeVec.Z, 1F);
-			Matrix patientPos = OrientationPatientMatrix * volumePos;
-			return new Vector3D(patientPos[0, 0], patientPos[1, 0], patientPos[2, 0]);
+			Matrix volumePos = new Matrix(1, 4);
+			volumePos.SetRow(0, volumeVec.X, volumeVec.Y, volumeVec.Z, 1F);
+			Matrix patientPos = volumePos * OrientationPatientMatrix;
+			return new Vector3D(patientPos[0, 0], patientPos[0, 1], patientPos[0, 2]);
+		}
+
+		public Vector3D RotateToVolumeOrientation(Vector3D patientVec)
+		{
+			Matrix patientPos = new Matrix(1, 4);
+			patientPos.SetRow(0, patientVec.X, patientVec.Y, patientVec.Z, 1F);
+			Matrix volumePos = patientPos * OrientationPatientMatrix.Transpose();
+			return new Vector3D(volumePos[0, 0], volumePos[0, 1], volumePos[0, 2]);
 		}
 
 		public float LongAxisMagnitude

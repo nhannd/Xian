@@ -345,26 +345,33 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			using (vtkImageReslice reslicer = new vtkImageReslice())
 			{
+				// The volume has everything it needs to init the vtkImageData wrapper that VTK requires
 				reslicer.SetInput(_volume._VtkVolume);
 				reslicer.SetInformationInput(_volume._VtkVolume);
 
+				// Must instruct reslicer to output 2D images
+				//ggerade ToRes: Can we get 3D output for slabs? How to specify thickness? Not sure it's possible, need to research.
 				reslicer.SetOutputDimensionality(2);
 
+				// Use the volume's padding value for all pixels that are outside the volume
 				reslicer.SetBackgroundLevel(_volume.PadValue);
 
-				// Note: When the VTK docs state that the output spacing defaults to the input data,
-				//	apparently they mean the raw volume. Without this call the spacing that is provided in the
-				//	input volume is not taken into account.
+				// This ensures VTK obeys the real spacing, results in all VTK slices being isotropic.
+				//	Effective spacing is the minimum of these three.
 				reslicer.SetOutputSpacing(_volume.Spacing.X, _volume.Spacing.Y, _volume.Spacing.Z);
 
 				reslicer.SetResliceAxes(MatrixToVtkMatrix(resliceAxes));
 
+				// Clamp the output based on the slice extent
+				//ggerade ToRes: Should extent always be X here? need to think about other viewports.
 				int sliceExtentX = GetSliceExtentX();
 				reslicer.SetOutputExtent(0, sliceExtentX - 1, 0, _volume.LargestOutputImageDimension - 1, 0, 0);
 
-				float originX = - sliceExtentX * _volume.EffectiveSpacing / 2;
-				float originY = - _volume.LargestOutputImageDimension * _volume.EffectiveSpacing / 2;
-
+				// Set the output origin to reflect the slice through point. The slice extent is
+				//	centered on the slice through point.
+				// VTK output origin is derived from the center image being 0,0
+				float originX = -sliceExtentX * _volume.EffectiveSpacing / 2;
+				float originY = -_volume.LargestOutputImageDimension * _volume.EffectiveSpacing / 2;
 				reslicer.SetOutputOrigin(originX, originY, 0);
 
 				switch (_interpolationMode)
@@ -424,7 +431,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			int columns, rows;
 			columns = GetSliceExtentX();
 			rows = _volume.LargestOutputImageDimension;
-			sliceDataSet[DicomTags.Columns].SetUInt16(0, (ushort) columns);
+			sliceDataSet[DicomTags.Columns].SetUInt16(0, (ushort)columns);
 			sliceDataSet[DicomTags.Rows].SetUInt16(0, (ushort) rows);
 
 			// Update Image Orientation (patient)
