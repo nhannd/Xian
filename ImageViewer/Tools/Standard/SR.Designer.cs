@@ -1333,7 +1333,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Text.
+        ///   Looks up a localized string similar to Add Text Area.
         /// </summary>
         internal static string ToolbarTextOnly {
             get {

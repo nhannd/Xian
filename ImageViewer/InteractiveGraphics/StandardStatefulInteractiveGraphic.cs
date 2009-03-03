@@ -121,9 +121,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return CollectionUtils.SelectFirst(base.Graphics, delegate(IGraphic test) { return test is InteractiveGraphic; }) as InteractiveGraphic;
 		}
 
+		protected virtual void SetControlPointVisibility(bool visible)
+		{
+			_interactiveGraphic.ControlPoints.Visible = visible;
+		}
+
 		protected override void OnEnterInactiveState(IMouseInformation mouseInformation)
 		{
-			_interactiveGraphic.ControlPoints.Visible = false;
+			SetControlPointVisibility(false);
 			_interactiveGraphic.Color = InactiveColor;
 
 			base.OnEnterInactiveState(mouseInformation);
@@ -131,7 +136,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected override void OnEnterFocusState(IMouseInformation mouseInformation)
 		{
-			_interactiveGraphic.ControlPoints.Visible = true;
+			SetControlPointVisibility(true);
 			_interactiveGraphic.Color = FocusColor;
 
 			base.OnEnterFocusState(mouseInformation);
@@ -139,7 +144,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected override void OnEnterSelectedState(IMouseInformation mouseInformation)
 		{
-			_interactiveGraphic.ControlPoints.Visible = false;
+			SetControlPointVisibility(false);
 			_interactiveGraphic.Color = FocusSelectedColor;
 
 			base.OnEnterSelectedState(mouseInformation);
@@ -147,7 +152,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected override void OnEnterFocusSelectedState(IMouseInformation mouseInformation)
 		{
-			_interactiveGraphic.ControlPoints.Visible = true;
+			SetControlPointVisibility(true);
 			_interactiveGraphic.Color = FocusSelectedColor;
 
 			base.OnEnterFocusSelectedState(mouseInformation);
@@ -155,7 +160,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected override void OnEnterCreateState(IMouseInformation mouseInformation)
 		{
-			_interactiveGraphic.ControlPoints.Visible = false;
+			SetControlPointVisibility(false);
 			_interactiveGraphic.Color = FocusSelectedColor;
 
 			base.OnEnterCreateState(mouseInformation);
@@ -178,7 +183,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			if (IsStretching)
 				return StretchingToken;
 
-			if (ControlPoints.HitTest(point))
+			if (this.ControlPoints.Visible && this.ControlPoints.HitTest(point))
 			{
 				if (StretchCursorTokenStrategy != null)
 					return StretchCursorTokenStrategy.GetCursorToken(point);

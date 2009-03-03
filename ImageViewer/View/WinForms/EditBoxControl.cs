@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 		private static Rectangle ComputeEditBoxControlBounds(Control control, EditBox editBox)
 		{
 			Size sz = control.GetPreferredSize(Size.Empty);
-			sz = new Size(Math.Max(sz.Width, editBox.Size.Width), Math.Max(sz.Height, editBox.Size.Height));
+			sz = new Size(Math.Max(Math.Max(sz.Width, editBox.Size.Width), 50), Math.Max(Math.Max(sz.Height, editBox.Size.Height), 21));
 			return RectangleUtilities.ConvertToRectangle(editBox.Location, sz);
 		}
 	}

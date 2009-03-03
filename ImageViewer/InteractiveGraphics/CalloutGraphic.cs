@@ -62,7 +62,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private InvariantTextPrimitive _textGraphic;
 		[CloneIgnore]
 		private ArrowGraphic _lineGraphic;
-		private bool _controlPointsEnabled;
 
 		#endregion
 
@@ -139,19 +138,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				_lineGraphic.EndPoint = value;
 				SetCalloutLineStart();
-			}
-		}
-
-		public bool ControlPointsEnabled
-		{
-			get { return _controlPointsEnabled; }
-			set
-			{
-				if (_controlPointsEnabled != value)
-				{
-					_controlPointsEnabled = value;
-					base.ControlPoints.Visible = _controlPointsEnabled && string.IsNullOrEmpty(_textGraphic.Text);
-				}
 			}
 		}
 
@@ -336,8 +322,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			SetCalloutLineStart();
 		}
 
-		protected virtual void OnTextChanged(EventArgs e) {
-			base.ControlPoints.Visible = _controlPointsEnabled && string.IsNullOrEmpty(_textGraphic.Text);
+		protected virtual void OnTextChanged(EventArgs e)
+		{
 			EventsHelper.Fire(_textChanged, this, new EventArgs());
 		}
 

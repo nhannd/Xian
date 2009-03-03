@@ -187,6 +187,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return _subjectGraphic.HitTest(point) || _calloutGraphic.HitTest(point);
 		}
 
+		protected override void SetControlPointVisibility(bool visible)
+		{
+			base.SetControlPointVisibility(visible);
+			_calloutGraphic.ControlPoints.Visible = visible && string.IsNullOrEmpty(_calloutGraphic.Text);
+		}
+
 		#endregion
 
 		#region IContextMenuProvider Members
@@ -254,35 +260,30 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected override void OnEnterCreateState(IMouseInformation mouseInformation)
 		{
 			_calloutGraphic.Color = FocusSelectedColor;
-			SetCalloutControlPointVisibility(false);
 			base.OnEnterCreateState(mouseInformation);
 		}
 
 		protected override void OnEnterFocusSelectedState(IMouseInformation mouseInformation)
 		{
 			_calloutGraphic.Color = FocusSelectedColor;
-			SetCalloutControlPointVisibility(true);
 			base.OnEnterFocusSelectedState(mouseInformation);
 		}
 
 		protected override void OnEnterFocusState(IMouseInformation mouseInformation)
 		{
 			_calloutGraphic.Color = FocusColor;
-			SetCalloutControlPointVisibility(true);
 			base.OnEnterFocusState(mouseInformation);
 		}
 
 		protected override void OnEnterInactiveState(IMouseInformation mouseInformation)
 		{
 			_calloutGraphic.Color = InactiveColor;
-			SetCalloutControlPointVisibility(false);
 			base.OnEnterInactiveState(mouseInformation);
 		}
 
 		protected override void OnEnterSelectedState(IMouseInformation mouseInformation)
 		{
 			_calloutGraphic.Color = SelectedColor;
-			SetCalloutControlPointVisibility(false);
 			base.OnEnterSelectedState(mouseInformation);
 		}
 
@@ -377,11 +378,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 			//the roi and callout may have been selected, so we force a state change
 			this.State = this.CreateInactiveState();
-		}
-
-		private void SetCalloutControlPointVisibility(bool show)
-		{
-			_calloutGraphic.ControlPointsEnabled = show;
 		}
 
 		private void SetCalloutEndPoint()

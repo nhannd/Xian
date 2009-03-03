@@ -96,7 +96,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					else if (mouseInformation.ClickCount == 1
 					         && !poi.HitTest(mouseInformation.Location)
 					         && (!boundingBox.Contains(mouseInformation.Location) || !(poi is PointOfInterestInteractiveGraphic))
-					         && callout.HitTest(mouseInformation.Location))
+					         && callout.HitTest(mouseInformation.Location)
+							 && !callout.ControlPoints.HitTest(mouseInformation.Location))
 					{
 						// single click action on the callout line (that is, not the point of interest nor the callout text): move entire graphic
 						this.StatefulGraphic.State = new MoveGraphicState(this.StatefulGraphic, this.StatefulGraphic);

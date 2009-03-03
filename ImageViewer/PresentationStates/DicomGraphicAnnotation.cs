@@ -239,7 +239,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			return ellipse;
 		}
 
-		private static CalloutGraphic CreateCalloutText(RectangleF annotationBounds, RectangleF displayedArea, GraphicAnnotationSequenceItem.TextObjectSequenceItem textItem)
+		private static IGraphic CreateCalloutText(RectangleF annotationBounds, RectangleF displayedArea, GraphicAnnotationSequenceItem.TextObjectSequenceItem textItem)
 		{
 			CalloutGraphic callout = new CalloutGraphic(textItem.UnformattedTextValue);
 
@@ -297,7 +297,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				callout.ResetCoordinateSystem();
 			}
 
-			return callout;
+			return new DeserializedInteractiveCallout(callout);
 		}
 
 		private static ILineSegmentGraphic GetCalloutLine(CalloutGraphic callout)
@@ -306,6 +306,24 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		}
 
 		#endregion
+
+		private class DeserializedInteractiveCallout : StandardStatefulInteractiveGraphic
+		{
+			public DeserializedInteractiveCallout(CalloutGraphic callout) : base(callout) 
+			{
+				base.ControlPoints.Visible = false;
+			}
+
+			public CalloutGraphic CalloutGraphic
+			{
+				get { return (CalloutGraphic) base.InteractiveGraphic; }
+			}
+
+			protected override void SetControlPointVisibility(bool visible)
+			{
+				base.SetControlPointVisibility(false);
+			}
+		}
 
 		private class DicomGraphicAnnotationSerializer : GraphicAnnotationSerializer<DicomGraphicAnnotation>
 		{

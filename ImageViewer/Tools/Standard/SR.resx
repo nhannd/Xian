@@ -619,7 +619,7 @@ Please check the log for more details.</value>
     <value>Add Text Callout</value>
   </data>
   <data name="ToolbarTextOnly" xml:space="preserve">
-    <value>Add Text</value>
+    <value>Add Text Area</value>
   </data>
   <data name="TooltipTextOnly" xml:space="preserve">
     <value>Text Area</value>
