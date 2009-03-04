@@ -38,8 +38,6 @@ using vtk;
 
 namespace ClearCanvas.ImageViewer.Volume.Mpr
 {
-	//ggerade ToRef: I envision this being the general volume class for all of our 3D needs. It should
-	//  probably live in a more general assembly (e.g. ImageViewer.Volume)
 	/// <summary>
 	/// The Volume class encapsulates 3 dimensional pixel data. Use the VolumeBuilder class to create a Volume.
 	/// </summary>
@@ -360,8 +358,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			vtkImageData vtkVolume = new vtkImageData();
 
-			//ggerade ToRes: This attempt to capture vtkError OutputWindow failed...
-			//vtkVolume.AddObserver(123, VtkVolumeCallback);
+			VolumeSlicer.RegisterVtkErrorEvents(vtkVolume);
 
 			vtkVolume.SetDimensions(ArrayDimensions.Width, ArrayDimensions.Height, ArrayDimensions.Depth);
 			vtkVolume.SetOrigin(Origin.X, Origin.Y, Origin.Z);
@@ -383,12 +380,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			return vtkVolume;
 		}
-
-		// This didn't get called when errors occur, need to investigate handling of VTK errors further
-		//private static void VtkVolumeCallback(vtkObject vtkObj, uint eid, object obj, IntPtr nativeSomethingOrOther)
-		//{
-		//    Debug.WriteLine(eid);
-		//}
 
 		private static vtkShortArray CreateVtkShortArrayWrapper(short[] shortArray)
 		{

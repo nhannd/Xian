@@ -72,37 +72,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Slicer Settings
 
-		public void SetSlicePlanePatient(Vector3D sourceOrientationColumnPatient, Vector3D sourceOrientationRowPatient,
-		                                 Vector3D startPointPatient, Vector3D endPointPatient)
-		{
-			Vector3D sourceOrientationNormalPatient = sourceOrientationColumnPatient.Cross(sourceOrientationRowPatient);
-			Vector3D normalLinePatient = (endPointPatient - startPointPatient).Normalize();
-			Vector3D normalPerpLinePatient = sourceOrientationNormalPatient.Cross(normalLinePatient);
-
-			Vector3D slicePlanePatientX = normalLinePatient;
-			Vector3D slicePlanePatientY = sourceOrientationNormalPatient;
-			Vector3D slicePlanePatientZ = normalPerpLinePatient;
-
-			Matrix slicePlanePatientOrientation = new Matrix
-				(4, 4, new float[4,4]
-				       	{
-				       		{slicePlanePatientX.X, slicePlanePatientX.Y, slicePlanePatientX.Z, 0},
-				       		{slicePlanePatientY.X, slicePlanePatientY.Y, slicePlanePatientY.Z, 0},
-				       		{slicePlanePatientZ.X, slicePlanePatientZ.Y, slicePlanePatientZ.Z, 0},
-				       		{0, 0, 0, 1}
-				       	});
-
-			_resliceAxes = _volume.RotateToVolumeOrientation(slicePlanePatientOrientation);
-			Vector3D lineMiddlePointPatient = new Vector3D(
-			    (startPointPatient.X + endPointPatient.X) / 2,
-			    (startPointPatient.Y + endPointPatient.Y) / 2,
-			    (startPointPatient.Z + endPointPatient.Z) / 2);
-
-			this.SliceThroughPointPatient = lineMiddlePointPatient;
-
-			this.SliceExtentMillimeters = (endPointPatient - startPointPatient).Magnitude;
-		}
-
 		public void SetSlicePlaneIdentity()
 		{
 			_resliceAxes = CreateResliceAxesIdentity();
@@ -118,12 +87,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_resliceAxes = CreateResliceAxesOrthoY();
 		}
 
-		public void SetSlicePlaneOblique(int rotateX, int rotateY, int rotateZ)
+		public void SetSlicePlaneRotateDegrees(int rotateX, int rotateY, int rotateZ)
 		{
 			RotateAboutX = rotateX;
 			RotateAboutY = rotateY;
 			RotateAboutZ = rotateZ;
-			_resliceAxes = CreateResliceAxesOblique(rotateX, rotateY, rotateZ);
+			_resliceAxes = CreateResliceAxesRotateDegrees(rotateX, rotateY, rotateZ);
 		}
 
 		public Vector3D SliceThroughPointPatient
@@ -136,6 +105,44 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			set { _sliceExtentMm = value; }
 		}
 
+		/// <summary>
+		/// Allows specification of the slice plane, through point, and extent via two points in patient space
+		/// </summary>
+		/// <param name="sourceOrientationColumnPatient"></param>
+		/// <param name="sourceOrientationRowPatient"></param>
+		/// <param name="startPointPatient"></param>
+		/// <param name="endPointPatient"></param>
+		public void SetSlicePlanePatient(Vector3D sourceOrientationColumnPatient, Vector3D sourceOrientationRowPatient,
+										 Vector3D startPointPatient, Vector3D endPointPatient)
+		{
+			Vector3D sourceOrientationNormalPatient = sourceOrientationColumnPatient.Cross(sourceOrientationRowPatient);
+			Vector3D normalLinePatient = (endPointPatient - startPointPatient).Normalize();
+			Vector3D normalPerpLinePatient = sourceOrientationNormalPatient.Cross(normalLinePatient);
+
+			Vector3D slicePlanePatientX = normalLinePatient;
+			Vector3D slicePlanePatientY = sourceOrientationNormalPatient;
+			Vector3D slicePlanePatientZ = normalPerpLinePatient;
+
+			Matrix slicePlanePatientOrientation = new Matrix
+				(4, 4, new float[4, 4]
+				       	{
+				       		{slicePlanePatientX.X, slicePlanePatientX.Y, slicePlanePatientX.Z, 0},
+				       		{slicePlanePatientY.X, slicePlanePatientY.Y, slicePlanePatientY.Z, 0},
+				       		{slicePlanePatientZ.X, slicePlanePatientZ.Y, slicePlanePatientZ.Z, 0},
+				       		{0, 0, 0, 1}
+				       	});
+
+			_resliceAxes = _volume.RotateToVolumeOrientation(slicePlanePatientOrientation);
+			Vector3D lineMiddlePointPatient = new Vector3D(
+				(startPointPatient.X + endPointPatient.X) / 2,
+				(startPointPatient.Y + endPointPatient.Y) / 2,
+				(startPointPatient.Z + endPointPatient.Z) / 2);
+
+			this.SliceThroughPointPatient = lineMiddlePointPatient;
+
+			this.SliceExtentMillimeters = (endPointPatient - startPointPatient).Magnitude;
+		}
+
 		public float SliceSpacing
 		{
 			get
@@ -145,11 +152,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return _sliceSpacing;
 			}
 			set { _sliceSpacing = value; }	
-		}
-
-		public float ActualSliceSpacing
-		{
-			get { return ActualSliceSpacingVector.Magnitude; }
 		}
 
 		public enum InterpolationModes
@@ -185,6 +187,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#endregion
 
+		#region Create Slice interface
+
 		public ImageSop CreateSliceImageSop(Vector3D point)
 		{
 			// You must first call one of the SetSlicePlane methods before calling this.
@@ -197,7 +201,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return new ImageSop(new VolumeSliceSopDataSource(sliceDicom, this, _resliceAxes));
 		}
 
-		#region Create DisplaySet utilities
+		#endregion
+
+		#region Create DisplaySet interface
 
 		//TODO: resolve naming before plane is set.
 		public DisplaySet CreateDisplaySet(string displaySetName)
@@ -208,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return displaySet;
 		}
 
-		internal void PopulateDisplaySet(IDisplaySet displaySet, bool singleSlice)
+		public void PopulateDisplaySet(IDisplaySet displaySet, bool singleSlice)
 		{
 			// Slice through this point
 			Vector3D throughPoint;
@@ -246,17 +252,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
-		private float GetDefaultSpacing()
+		/// <summary>
+		/// This should be useful for implementing external spacing controls. Actual slice spacing
+		/// is tied to actual volume resolution and can be useful in determing spacing values.
+		/// E.g. you can use the actual spacing (or multiples of) to establish defaults. You also 
+		/// might only allow spacing values that are multiples of the actual spacing.
+		/// </summary>
+		public float ActualSliceSpacing
 		{
-			// By default, adjust magnitude of vector by whole factor based on max volume spacing
-			Vector3D spacingVector = ActualSliceSpacingVector;
-			if (spacingVector.Magnitude < _volume.MaxSpacing / 2f)
-			{
-				int spacingFactor = (int)(_volume.MaxSpacing / spacingVector.Magnitude);
-				spacingVector *= spacingFactor;
-			}
-			return spacingVector.Magnitude;
+			get { return ActualSliceSpacingVector.Magnitude; }
 		}
+
+		#endregion
+
+		#endregion
+
+		#region Implementation
+
+		#region Slice Spacing
 
 		// This uses the slice plane and volume spacing to arrive at the actual spacing
 		//	vector along the orthogonal vector
@@ -274,31 +287,21 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 		}
 
-		private Vector3D GetSliceNormalVector()
+		private float GetDefaultSpacing()
 		{
-			return new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
-		}
-
-		private static void SetSeriesLevelDicomAttributes(IImageSopProvider presImage, int sliceIndex,
-		                                                  string seriesInstanceUid, float increment)
-		{
-			IDicomMessageSopDataSource dicomData = (IDicomMessageSopDataSource) presImage.ImageSop.DataSource;
-			dicomData.SourceMessage.DataSet[DicomTags.SeriesInstanceUid].SetString(0, seriesInstanceUid);
-			dicomData.SourceMessage.DataSet[DicomTags.InstanceNumber].SetString(0, Convert.ToString(sliceIndex + 1));
-
-			// Note: These are required by the spatial locator
-			float thicknessAndSpacing = Math.Abs(increment);
-			dicomData.SourceMessage.DataSet[DicomTags.SliceThickness].SetFloat32(0, thicknessAndSpacing);
-			dicomData.SourceMessage.DataSet[DicomTags.SpacingBetweenSlices].SetFloat32(0, thicknessAndSpacing);
+			// By default, adjust magnitude of vector by whole factor based on max volume spacing
+			Vector3D spacingVector = ActualSliceSpacingVector;
+			if (spacingVector.Magnitude < _volume.MaxSpacing / 2f)
+			{
+				int spacingFactor = (int)(_volume.MaxSpacing / spacingVector.Magnitude);
+				spacingVector *= spacingFactor;
+			}
+			return spacingVector.Magnitude;
 		}
 
 		#endregion
 
-		#endregion
-
-		#region Implementation
-
-		#region Pixel Data generation
+		#region Pixel Data Generation
 
 		// This method is used by the VolumeSliceSopDataSource to generate pixel data on demand
 		internal byte[] GenerateFrameNormalizedPixelData(Matrix resliceAxes)
@@ -345,6 +348,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			using (vtkImageReslice reslicer = new vtkImageReslice())
 			{
+				RegisterVtkErrorEvents(reslicer);
+
 				// The volume has everything it needs to init the vtkImageData wrapper that VTK requires
 				reslicer.SetInput(_volume._VtkVolume);
 				reslicer.SetInformationInput(_volume._VtkVolume);
@@ -389,8 +394,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				using (vtkExecutive exec = reslicer.GetExecutive())
 				{
-					//ggerade ToRes: Are these VTK observers useful?
-					//exec.AddObserver(123, VtkReslicerExecutiveCallback);
+					RegisterVtkErrorEvents(exec);
+
 					exec.Update();
 
 					return reslicer.GetOutput();
@@ -407,15 +412,22 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				return _volume.LargestOutputImageDimension;
 		}
 
-		// Used by VTK ResliceImage observer
-		//private static void VtkReslicerExecutiveCallback(vtkObject vtkObj, uint eid, object obj, IntPtr nativeSomethingOrOther)
-		//{
-		//    Debug.WriteLine(eid);
-		//}
-
 		#endregion
 
-		#region Dicom Slice Generation
+		#region Slice Dicom Generation
+
+		private static void SetSeriesLevelDicomAttributes(IImageSopProvider presImage, int sliceIndex,
+														  string seriesInstanceUid, float increment)
+		{
+			IDicomMessageSopDataSource dicomData = (IDicomMessageSopDataSource)presImage.ImageSop.DataSource;
+			dicomData.SourceMessage.DataSet[DicomTags.SeriesInstanceUid].SetString(0, seriesInstanceUid);
+			dicomData.SourceMessage.DataSet[DicomTags.InstanceNumber].SetString(0, Convert.ToString(sliceIndex + 1));
+
+			// Note: These are required by the spatial locator
+			float thicknessAndSpacing = Math.Abs(increment);
+			dicomData.SourceMessage.DataSet[DicomTags.SliceThickness].SetFloat32(0, thicknessAndSpacing);
+			dicomData.SourceMessage.DataSet[DicomTags.SpacingBetweenSlices].SetFloat32(0, thicknessAndSpacing);
+		}
 
 		private DicomFile CreateSliceDicom()
 		{
@@ -464,29 +476,35 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return sliceDicom;
 		}
 
+		// VTK treats the reslice point as the center of the output image. Given the plane orientaiton
+		//	and size of the output image, we can derive the top left of the output image in patient space
 		private Vector3D GetTopLeftOfSlicePatient(int columns, int rows)
 		{
+			// The reslice point is sourced from this slicer's resliceAxes matrix
 			Vector3D reslicePoint = GetReslicePoint();
 
-			Vector3D xVec = new Vector3D(_resliceAxes[0, 0], _resliceAxes[0, 1], _resliceAxes[0, 2]);
-			Vector3D yVec = new Vector3D(_resliceAxes[1, 0], _resliceAxes[1, 1], _resliceAxes[1, 2]);
-			Vector3D zVec = new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
-
-			PointF centerPlaneCoord = new PointF(columns / 2f, rows / 2f);
+			// This is the center of the output image
+			PointF centerImageCoord = new PointF(columns / 2f, rows / 2f);
 
 			// These offsets define the x and y vector magnitudes to arrive at our point
-			float offsetX = centerPlaneCoord.X * _volume.EffectiveSpacing;
-			float offsetY = centerPlaneCoord.Y * _volume.EffectiveSpacing;
+			float offsetX = centerImageCoord.X * _volume.EffectiveSpacing;
+			float offsetY = centerImageCoord.Y * _volume.EffectiveSpacing;
 
-			Vector3D volumePoint = reslicePoint - (offsetX * xVec + offsetY * yVec);
+			// To determine top left of slice in volume, subtract offset vectors along x and y
+			//
+			// Our reslice place x and y vectors
+			Vector3D xVec = GetSliceXVector();
+			Vector3D yVec = GetSliceYVector();
+			// Offset along x and y from reslicePoint
+			Vector3D topLeftOfSliceVolume = reslicePoint - (offsetX * xVec + offsetY * yVec);
 
 			//ggerade ToRes: This adjusts the coordinate such that it is in the middle of the slice spacing,
 			//	I need to figure out how to get the direction (sign) correctly for all cases.
-			//Vector3D zVec = new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
-			//volumePoint += zVec * (this.SliceSpacing / 2);
+			//Vector3D zVec = GetSliceNormalVector();
+			//topLeftOfSliceVolume -= zVec * (this.SliceSpacing / 2);
 
-			// Convert 3D volume point to patient point
-			return _volume.ConvertToPatient(volumePoint);
+			// Convert volume point to patient space
+			return _volume.ConvertToPatient(topLeftOfSliceVolume);
 		}
 		
 		#endregion
@@ -506,11 +524,26 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return vtkMatrix;
 		}
 
+		private Vector3D GetSliceXVector()
+		{
+			return new Vector3D(_resliceAxes[0, 0], _resliceAxes[0, 1], _resliceAxes[0, 2]);
+		}
+
+		private Vector3D GetSliceYVector()
+		{
+			return new Vector3D(_resliceAxes[1, 0], _resliceAxes[1, 1], _resliceAxes[1, 2]);
+		}
+		
+		private Vector3D GetSliceNormalVector()
+		{
+			return new Vector3D(_resliceAxes[2, 0], _resliceAxes[2, 1], _resliceAxes[2, 2]);
+		}
+
 		private Vector3D GetReslicePoint()
 		{
 			return new Vector3D(_resliceAxes[3, 0],
-			                    _resliceAxes[3, 1],
-			                    _resliceAxes[3, 2]);
+								_resliceAxes[3, 1],
+								_resliceAxes[3, 2]);
 		}
 
 		private void SetReslicePoint(Vector3D point)
@@ -518,6 +551,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_resliceAxes[3, 0] = point.X;
 			_resliceAxes[3, 1] = point.Y;
 			_resliceAxes[3, 2] = point.Z;
+		}
+
+		private static Matrix CreateResliceAxesIdentity()
+		{
+			return new Matrix(4, 4, new float[4, 4]
+			                        	{
+			                        		{1, 0, 0, 0},
+			                        		{0, 1, 0, 0},
+			                        		{0, 0, 1, 0},
+			                        		{0, 0, 0, 1}
+			                        	});
 		}
 
 		private static Matrix CreateResliceAxesOrthoY()
@@ -542,18 +586,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			                        	});
 		}
 
-		private static Matrix CreateResliceAxesIdentity()
-		{
-			return new Matrix(4, 4, new float[4,4]
-			                        	{
-			                        		{1, 0, 0, 0},
-			                        		{0, 1, 0, 0},
-			                        		{0, 0, 1, 0},
-			                        		{0, 0, 0, 1}
-			                        	});
-		}
+		#region Slice Rotation stuff
 
-		private static Matrix CreateResliceAxesOblique(int rotateX, int rotateY, int rotateZ)
+		private static Matrix CreateResliceAxesRotateDegrees(int rotateX, int rotateY, int rotateZ)
 		{
 			Matrix aboutX = CalcRotateMatrixAboutX(rotateX);
 			Matrix aboutY = CalcRotateMatrixAboutY(rotateY);
@@ -634,6 +669,37 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				aboutZ = _identityMatrix;
 
 			return aboutZ;
+		}
+
+		#endregion
+
+		#endregion
+
+		//ggerade ToDo: Move to vtk helper class, used here and by Volume
+		#region VTK error handling stuff
+
+		public static void RegisterVtkErrorEvents(vtkObject obj)
+		{
+			obj.AddObserver((uint)EventIds.ErrorEvent, VtkEventCallback);
+			obj.AddObserver((uint)EventIds.WarningEvent, VtkEventCallback);
+		}
+
+		public static void VtkEventCallback(vtkObject vtkObj, uint eventId, object obj, IntPtr ptr)
+		{
+			switch ((EventIds)eventId)
+			{
+				case EventIds.ErrorEvent:
+				case EventIds.WarningEvent:
+					{
+						string explanation = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(ptr);
+						Debug.WriteLine(explanation);
+						//ggerade ToDo: Hook into CC logging/exception framework
+					}
+					break;
+				default:
+					Debug.Fail("Unexpected VTK event received");
+					break;
+			}
 		}
 
 		#endregion

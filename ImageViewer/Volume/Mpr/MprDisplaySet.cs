@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			{
 				//ggerade ToRes: Ideally we wouldn't have to set this initially right? The imagebox
 				//	didn't want an empty display set so choose some reasonable default oblique
-				slicer.SetSlicePlaneOblique(90, 0, 45);
+				slicer.SetSlicePlaneRotateDegrees(90, 0, 45);
 				name = "MPR (Oblique)";
 			}
 
@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			try
 			{
-				_slicer.SetSlicePlaneOblique(rotateX, rotateY, rotateZ);
+				_slicer.SetSlicePlaneRotateDegrees(rotateX, rotateY, rotateZ);
 				_slicer.PopulateDisplaySet(this, false);
 			}
 			catch

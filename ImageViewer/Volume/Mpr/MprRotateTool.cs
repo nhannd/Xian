@@ -55,7 +55,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	[GroupHint("activate", "Tools.Mpr.Manipulation.Rotate")]
 	// Note: I don't expect this to be a real tool in the long run, this was just an easy way to enable
 	//	and test oblique slicing
-	//[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
+#if DEBUG
+	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
+#endif
 	public class RotateMprTool : MouseImageViewerTool
 	{
 		private MprImageViewerToolHelper _toolHelper;
