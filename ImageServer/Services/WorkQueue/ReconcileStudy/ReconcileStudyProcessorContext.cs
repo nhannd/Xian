@@ -16,8 +16,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         private ServerPartition _partition;
         private StudyHistory _history;
         private StudyStorageLocation _destStudyStorageLocation;
+        private Study _destStudy;
         private ServerFilesystemInfo _targetFilesystem;
-        private string _destStudyInstanceUid;
         private IList<WorkQueueUid> _workQueueUidList;
         private DicomFile _reconcileImage;
         #endregion
@@ -74,12 +74,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             set { _targetFilesystem = value; }
         }
 
-        public string DestStudyInstanceUid
-        {
-            get { return _destStudyInstanceUid; }
-            set { _destStudyInstanceUid = value; }
-        }
-
         public IList<WorkQueueUid> WorkQueueUidList
         {
             get { return _workQueueUidList; }
@@ -90,6 +84,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         {
             get { return _reconcileImage; }
             set { _reconcileImage = value; }
+        }
+
+        public Study DestStudy
+        {
+            get { return _destStudy; }
+            set { _destStudy = value; }
         }
 
         #endregion

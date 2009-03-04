@@ -41,6 +41,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
@@ -134,6 +135,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private StudyProcessStatistics _statistics;
         private InstanceStatistics _instanceStats;
         private StudyProcessorContext _context;
+        private WorkQueueUid _workQueueUid;
+
         #endregion
 
         #region Public Properties
@@ -190,6 +193,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(message, "message");
 
             string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, String.Empty);
+            string sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
+
             if (_context.Study == null || _context.Study.StudyInstanceUid != studyInstanceUid)
             {
                 _context.Study = Study.Find(studyInstanceUid, _context.Partition);
@@ -203,12 +208,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
             else
             {
-                StudyComparer comparer = new StudyComparer();
-                IList<Difference> list = comparer.Compare(message, _context.Study, GetComparisonOptions());
+                DifferenceCollection list = StudyHelper.Compare(message,  StorageLocation);
 
                 if (list != null && list.Count > 0)
                 {
                     LogDifferences(message, list);
+                    
                     return true;
                 }
                 else
@@ -218,16 +223,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
         }
 
-        private void LogDifferences(DicomMessageBase message, IList<Difference> list)
+        private void LogDifferences(DicomMessageBase message, DifferenceCollection list)
         {
             string sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Found {0} issue(s) in SOP {1}", list.Count, sopInstanceUid);
-            foreach(Difference diff in list)
-            {
-                sb.AppendFormat("\n\t{0}: Expected='{1}'    In Image='{2}'", diff.Description, diff.ExpectValue, diff.RealValue);
-            }
-            sb.AppendLine();
+            sb.AppendFormat("Found {0} issue(s) in SOP {1}\n", list.Count, sopInstanceUid);
+            sb.Append(list.ToString());
             Platform.Log(LogLevel.Info, sb.ToString());
         }
 
@@ -260,6 +261,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private void ProcessFile(WorkQueueUid queueUid, string path, StudyXml stream)
         {
             DicomFile file;
+
+            _workQueueUid = queueUid;
 
             long fileSize;
             FileInfo fileInfo = new FileInfo(path);

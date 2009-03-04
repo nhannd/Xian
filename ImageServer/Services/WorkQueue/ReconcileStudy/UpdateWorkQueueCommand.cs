@@ -75,6 +75,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             parms.ScheduledTime = Platform.Time;
             parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
             parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
+            parms.Extension = _extension;
             
             if (insert.FindOne(parms) == null)
                 throw new ApplicationException("UpdateWorkQueueCommand failed");

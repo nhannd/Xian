@@ -2,12 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Common.Helpers
 {
+
     /// <summary>
     /// Helper class for handling studies
     /// </summary>
@@ -31,6 +34,19 @@ namespace ClearCanvas.ImageServer.Common.Helpers
 
             return broker.FindOne(criteria);
             
+        }
+
+        /// <summary>
+        /// Verifies the contents of a <see cref="DicomMessageBase"/> against a given <see cref="StudyStorageLocation"/>
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="studyStorage"></param>
+        /// <returns></returns>
+        static public DifferenceCollection Compare(DicomMessageBase message, StudyStorageLocation studyStorage)
+        {
+            StudyComparer comparer = new StudyComparer();
+            Study theStudy = Study.Find(studyStorage.StudyInstanceUid, studyStorage.ServerPartition);
+            return comparer.Compare(message, theStudy, studyStorage.ServerPartition.GetComparisonOptions());
         }
     }
 }

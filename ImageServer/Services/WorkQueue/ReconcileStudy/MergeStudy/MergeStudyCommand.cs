@@ -46,6 +46,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
@@ -123,6 +124,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             Platform.CheckForNullReference(_reconcileContext, "_reconcileContext");
             Platform.CheckForNullReference(DestStudyStorage, "DestStudyStorage");
 
+            Platform.Log(LogLevel.Info, "Merging images into study {0} for patient {1}...",
+                         DestStudyStorage.StudyInstanceUid, DestStudyStorage.Study.PatientsName);
+
             _tempDir = ServerPlatform.GetTempFolder("Reconcile", DestStudyStorage.StudyInstanceUid);
             _workingDir = Path.Combine(_tempDir, _reconcileContext.WorkQueueItem.Key.ToString());
 
@@ -164,16 +168,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                 log.AppendFormat("{0} images failed to be reconciled.", _failedUidList.Count);
                 log.AppendLine();
             }
-            if (_processedUidList.Count > 0)
-            {
-                log.AppendFormat("{0} images have been reconciled and will be processed.", _processedUidList.Count);
-                log.AppendLine();
-            }
             if (_duplicateList.Count > 0)
             {
                 log.AppendFormat("{0} images are duplicate.", _duplicateList.Count);
                 log.AppendLine();
             }
+            
+            log.AppendFormat("{0} images have been reconciled and will be processed.", _processedUidList.Count);
+            log.AppendLine();
             Platform.Log(LogLevel.Info, log);
         }
 
@@ -245,7 +247,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
         
         private void CleanupWorkingFolder()
         {
-            DirectoryUtility.DeleteIfExists(_tempDir);
+            DirectoryUtility.DeleteIfExists(_workingDir);
+            DirectoryUtility.DeleteIfEmpty(_tempDir);
         }
 
         private void SaveFile(DicomFile file)
@@ -261,7 +264,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Update file system"))
             {
                 String destPath = _destStudyStorage.FilesystemPath;
-                String extension = ".dcm";
+                String extension = "dcm";
 
                 processor.AddCommand(new CreateDirectoryCommand(destPath));
 
@@ -278,7 +281,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                 processor.AddCommand(new CreateDirectoryCommand(destPath));
 
                 destPath = Path.Combine(destPath, sopInstanceUid);
-                destPath += extension;
+                destPath += "."+ extension;
 
                 bool duplicate = File.Exists(destPath);
 
@@ -316,8 +319,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 
         }
 
-       
-
         private string GetUidPath(WorkQueueUid sop)
         {
             string imagePath = Path.Combine(_reconcileContext.ReconcileWorkQueueData.StoragePath, sop.SopInstanceUid + ".dcm");
@@ -333,7 +334,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             {
                 string imagePath = GetUidPath(uid);
                 string destPath = Path.Combine(_workingDir, uid.SopInstanceUid + ".dcm");
-                File.Copy(imagePath, destPath);
+                File.Copy(imagePath, destPath, true /* overwrite what's in temp */);
 
                 _fileToUidMap.Add(destPath, uid);
             }
@@ -347,11 +348,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                                   {
                                       DicomFile file = new DicomFile(path);
                                       file.Load(DicomReadOptions.StorePixelDataReferences);
+                                      
                                       Platform.Log(LogLevel.Info, "Processing {0}", path);
                                       foreach (BaseImageLevelUpdateCommand command in updateCommandList)
                                       {
                                           command.File = file;
                                           command.Execute();
+                                      }
+
+                                      
+                                      DifferenceCollection diff = StudyHelper.Compare(file, DestStudyStorage);
+                                      if (diff!=null && diff.Count>0)
+                                      {
+                                          throw new ApplicationException(String.Format("Found {0} the issue(s) in SOP {1}:\r\n{2}", diff.Count, file.MediaStorageSopInstanceUid, diff.ToString()));
                                       }
 
                                       // work around a bug in dicom toolkit

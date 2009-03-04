@@ -179,6 +179,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                                    ? StudyHistory.Load(WorkQueueItem.StudyHistoryKey)
                                    : null;
 
+            _context.DestStudy = base.Study;
 
             if (_context.History != null)
             {

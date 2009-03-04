@@ -44,6 +44,8 @@ namespace ClearCanvas.ImageServer.Model
 {
     public class StudyStorageLocation : ServerEntity
     {
+        
+        
         #region Constructors
         public StudyStorageLocation()
             : base("StudyStorageLocation")
@@ -52,6 +54,7 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
+        private object _syncRoot = new object();
         static private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private ServerEntityKey _serverPartitionKey;
         private ServerEntityKey _filesystemKey;
@@ -74,6 +77,9 @@ namespace ClearCanvas.ImageServer.Model
         private bool _reconcileRequired;
         private Object _integrityQueueItemsLock = new Object();
         private IList<StudyIntegrityQueue> _integrityQueueItems;
+
+        private ServerPartition _partition;
+        private Study _study;
 
     	#endregion
 
@@ -195,6 +201,39 @@ namespace ClearCanvas.ImageServer.Model
 			set { _reconcileRequired = value; }
 		}
     	#endregion
+
+        #region Public Properties
+
+        public ServerPartition ServerPartition
+        {
+            get
+            {
+                lock (_syncRoot)
+                {
+                    if (_partition == null)
+                    {
+                        _partition = ServerPartition.Load(this.ServerPartitionKey);
+                    }
+                }
+                return _partition;
+            }
+        }
+
+        public Study Study
+        {
+            get
+            {
+                lock (_syncRoot)
+                {
+                    if (_study == null)
+                    {
+                        _study = Study.Find(StudyInstanceUid, ServerPartition);
+                    }
+                }
+                return _study;
+            }
+        }
+        #endregion
 
         #region Public Methods
         public string GetStudyPath()

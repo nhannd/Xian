@@ -94,6 +94,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private StudyStorageLocation _storageLocation;
         private IList<WorkQueueUid> _uidList;
         private ServerPartition _partition;
+        private Study _theStudy;
     	private bool _cancelPending = false;
     	private readonly object _syncRoot = new object();   
 
@@ -176,6 +177,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     	{
 			get { lock (_syncRoot) return _cancelPending; }
     	}
+
+        protected Study Study
+        {
+            get
+            {
+                lock(_syncRoot)
+                {
+                    if (_theStudy==null)
+                    {
+                        _theStudy = Study.Find(StorageLocation.StudyInstanceUid, this.ServerPartition);
+                    }
+                }
+                return _theStudy;
+            }
+        }
+
         #endregion
 
         #region Contructors

@@ -96,6 +96,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupReconcile
 
         private void Complete()
         {
+            DirectoryUtility.DeleteIfEmpty(_reconcileQueueData.StoragePath);
+
             Platform.Log(LogLevel.Info, "Reconcile Cleanup is completed. GUID={0}.", WorkQueueItem.GetKey());
 			PostProcessing(WorkQueueItem, 
 				WorkQueueProcessorStatus.Complete, 
