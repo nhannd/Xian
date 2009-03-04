@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (builder.ValidateFrames(out reasonValidateFailed) == false)
 			{
 				desktop.ShowMessageBox("Unable to load Data Set as MPR.\n\nReason:\n" + reasonValidateFailed, MessageBoxActions.Ok);
-				//ggerade ToDo: Throw ex
+				//ggerade ToDo: Throw exception
 				return null;
 			}
 

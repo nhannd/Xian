@@ -70,14 +70,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 			else
 			{
-				//ggerade ToRes: Ideally we wouldn't have to set this initially right? The imagebox
+				//ggerade ToRef: Ideally we wouldn't have to set this initially right? The imagebox
 				//	didn't want an empty display set so choose some reasonable default oblique
 				slicer.SetSlicePlaneRotateDegrees(90, 0, 45);
 				name = "MPR (Oblique)";
 			}
 
 			MprDisplaySet displaySet = new MprDisplaySet(name, DicomUid.GenerateUid().UID, name, identifier, slicer);
-			slicer.PopulateDisplaySet(displaySet, false);
+			slicer.PopulateDisplaySetFull(displaySet);
 			return displaySet;
 		}
 
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				lut = (oldImage as IVoiLutProvider).VoiLutManager.GetLut();
 
 			_slicer.SetSlicePlanePatient(sourceOrientationColumn, sourceOrientationRow, startPoint, endPoint);
-			_slicer.PopulateDisplaySet(this, true);
+			_slicer.PopulateDisplaySetOneImage(this);
 
 			if (lut != null || transformMemento != null)
 			{
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (oldImage is IVoiLutProvider)
 				lut = (oldImage as IVoiLutProvider).VoiLutManager.GetLut();
 
-			_slicer.PopulateDisplaySet(this, false);
+			_slicer.PopulateDisplaySetFull(this);
 
 			if (lut != null || transformMemento != null)
 			{
@@ -181,17 +181,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (oldImage is IVoiLutProvider)
 				lut = (oldImage as IVoiLutProvider).VoiLutManager.GetLut();
 
-			//Vector3D sliceThroughPatient = _volume.CenterPointPatient;
-			//sliceThroughPatient.X = 0;
-			//sliceThroughPatient.Y = 0;
-			//sliceThroughPatient.Z = 0;
-			//_obliqueSlicer.SliceThroughPointPatient = sliceThroughPatient;
-			//_obliqueSlicer.SliceExtentMillimeters = 150;
-
 			try
 			{
 				_slicer.SetSlicePlaneRotateDegrees(rotateX, rotateY, rotateZ);
-				_slicer.PopulateDisplaySet(this, false);
+				_slicer.PopulateDisplaySetFull(this);
 			}
 			catch
 			{

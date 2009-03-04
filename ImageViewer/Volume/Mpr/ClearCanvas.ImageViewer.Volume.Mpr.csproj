@@ -72,6 +72,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VolumeSliceSopDataSource.cs" />
+    <Compile Include="VtkHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

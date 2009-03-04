@@ -29,12 +29,9 @@
 
 #endregion
 
-#define ALLOW_UNSAFE
-
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Comparers;
@@ -147,8 +144,14 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return true;
 		}
 
+		/// <summary>
+		/// Create and populate a Volume from the frames associated with this builder. It is expected that
+		/// the Validate call has been made prior to calling this.
+		/// </summary>
+		/// <returns></returns>
 		public Volume BuildVolume()
 		{
+			// This ensures slices are sorted consistently
 			_frames.Sort(new SliceLocationComparer());
 
 			// Clone the first frame's dicom header info and use it as the volume model
@@ -212,24 +215,26 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (dataSet.Contains(DicomTags.PixelPaddingValue))
 			{
 				if (_dataUnsigned)
-					_padValue = (ushort)dataSet[DicomTags.PixelPaddingValue].GetInt32(0, 0);
+					_padValue = (ushort) dataSet[DicomTags.PixelPaddingValue].GetInt32(0, 0);
 				else
-					_padValue = (short)dataSet[DicomTags.PixelPaddingValue].GetInt32(0, 0);
+					_padValue = (short) dataSet[DicomTags.PixelPaddingValue].GetInt32(0, 0);
 			}
 			else if (dataSet.Contains(DicomTags.SmallestPixelValueInSeries))
 			{
 				if (_dataUnsigned)
-					_padValue = (ushort)dataSet[DicomTags.SmallestPixelValueInSeries].GetInt32(0, 0);
+					_padValue = (ushort) dataSet[DicomTags.SmallestPixelValueInSeries].GetInt32(0, 0);
 				else
-					_padValue = (short)dataSet[DicomTags.SmallestPixelValueInSeries].GetInt32(0, 0);
+					_padValue = (short) dataSet[DicomTags.SmallestPixelValueInSeries].GetInt32(0, 0);
 			}
 			else if (dataSet.Contains(DicomTags.SmallestImagePixelValue))
 			{
 				if (_dataUnsigned)
-					_padValue = (ushort)dataSet[DicomTags.SmallestImagePixelValue].GetInt32(0, 0);
+					_padValue = (ushort) dataSet[DicomTags.SmallestImagePixelValue].GetInt32(0, 0);
 				else
-					_padValue = (short)dataSet[DicomTags.SmallestImagePixelValue].GetInt32(0, 0);
+					_padValue = (short) dataSet[DicomTags.SmallestImagePixelValue].GetInt32(0, 0);
 			}
+
+			// It's ok if _padValue is not set here, it will be calculated later on
 		}
 
 		// Test out idea of grouping compatible frames (would need some serious hardening if we like the idea...)
@@ -262,7 +267,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		#region Implementation
 
-		private static DicomAttributeCollection CreateVolumeDataSet(DicomAttributeCollection srcDataSet)
+		private static DicomAttributeCollection CreateVolumeDataSet(IDicomAttributeProvider srcDataSet)
 		{
 			DicomAttributeCollection volumeDataSet = new DicomAttributeCollection();
 
@@ -341,7 +346,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private static Matrix ImageOrientationPatientToMatrix(ImageOrientationPatient orientation)
 		{
 			Vector3D xOrient = new Vector3D((float) orientation.RowX, (float) orientation.RowY, (float) orientation.RowZ);
-			Vector3D yOrient = new Vector3D((float) orientation.ColumnX, (float) orientation.ColumnY, (float) orientation.ColumnZ);
+			Vector3D yOrient =
+				new Vector3D((float) orientation.ColumnX, (float) orientation.ColumnY, (float) orientation.ColumnZ);
 			Vector3D zOrient = xOrient.Cross(yOrient);
 
 			Matrix matrix = new Matrix(4, 4, new float[4,4]
@@ -367,10 +373,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			double aboutYradians = GetRotateAboutYRadians(_orientationPatient);
 
 			if (EqualsWithinTolerance(aboutXradians, 0f, .1f) == false &&
-				EqualsWithinTolerance(Math.Abs(aboutXradians), Math.PI / 2, .1f) == false)
+			    EqualsWithinTolerance(Math.Abs(aboutXradians), Math.PI / 2, .1f) == false)
 			{
 				if (EqualsWithinTolerance(aboutYradians, 0f, .1f) == false &&
-					EqualsWithinTolerance(Math.Abs(aboutYradians), Math.PI / 2, .1f) == false)
+				    EqualsWithinTolerance(Math.Abs(aboutYradians), Math.PI / 2, .1f) == false)
 					twoTilts = true;
 			}
 			return twoTilts;
@@ -380,21 +386,20 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			double aboutXradians = GetRotateAboutXRadians(_orientationPatient);
 			double aboutYradians = GetRotateAboutYRadians(_orientationPatient);
-			//double aboutZradians = GetRotateAboutZRadians(_orientationPatient);
 
 			double tilt = 0d;
 			if (EqualsWithinTolerance(aboutXradians, 0f, .1f) == false &&
-				EqualsWithinTolerance(Math.Abs(aboutXradians), Math.PI/2, .1f) == false)
+			    EqualsWithinTolerance(Math.Abs(aboutXradians), Math.PI / 2, .1f) == false)
 			{
 				if (EqualsWithinTolerance(aboutYradians, 0f, .1f) == false &&
-					EqualsWithinTolerance(Math.Abs(aboutYradians), Math.PI/2, .1f) == false)
+				    EqualsWithinTolerance(Math.Abs(aboutYradians), Math.PI / 2, .1f) == false)
 					throw new Exception("Patient orientation is tilted about X and Y, not supported");
 
 				tilt = aboutXradians *
 				       _orientationPatient[0, 0]; // This flips euler sign in prone position, so that tilt is correctly signed
 			}
 			else if (EqualsWithinTolerance(aboutYradians, 0f, .1f) == false &&
-				EqualsWithinTolerance(Math.Abs(aboutYradians), Math.PI/2, .1f) == false)
+			         EqualsWithinTolerance(Math.Abs(aboutYradians), Math.PI / 2, .1f) == false)
 			{
 				tilt = aboutYradians *
 				       _orientationPatient[0, 1]; // This flips euler sign in Decubitus Left position
@@ -449,7 +454,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				int start = end;
 				end = start + frameData.Length / sizeof (short);
 
-#if ALLOW_UNSAFE
+//ggerade ToDo: The BlockCopy call is noticeably faster than the unsafe code, after some testing do
+// away with the unsafe code.
+#if true
+				// BlockCopy start and length are in src buffer type size (bytes)
+				Buffer.BlockCopy(frameData, 0, volumeArray, start * sizeof (short), frameData.Length);
+#else 
 				unsafe
 				{
 					// The fixed statement "pins" the frame data, ensuring the GC won't move the referenced data
@@ -459,18 +469,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						for (int i = start, j = 0; i < end; i++, j++)
 							volumeArray[i] = psFrame[j];
 					}
-				}
-#else // Safe alternative. Never measured performance difference but I assume it's not insignificant.
-				int j = 0;
-				for (int i = start; i < end; i++)
-				{
-					ushort lowbyte = frameData[j];
-					ushort highbyte = frameData[j + 1];
-
-					short val = (short)((highbyte << 8) | lowbyte);
-					volumeArray[i] = val;
-
-					j += 2;
 				}
 #endif
 				imageIndex++;
@@ -504,7 +502,12 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 				int start = end;
 				end = start + frameData.Length / sizeof (ushort);
 
-#if ALLOW_UNSAFE
+//ggerade ToDo: The BlockCopy call is noticeably faster than the unsafe code, after some testing do
+// away with the unsafe code.
+#if true
+				// BlockCopy start and length are in src buffer type size (bytes)
+				Buffer.BlockCopy(frameData, 0, volumeArray, start * sizeof (short), frameData.Length);
+#else 
 				unsafe
 				{
 					// The fixed statement "pins" the frame data, ensuring the GC won't move the referenced data
@@ -514,16 +517,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						for (int i = start, j = 0; i < end; i++, j++)
 							volumeArray[i] = pusFrame[j];
 					}
-				}
-#else // Safe alternative
-				int j = 0;
-
-				for (int i = start; i < end; i++)
-				{
-					ushort lowbyte = frameData[j];
-					ushort highbyte = frameData[j + 1];
-					volumeArray[i] = (ushort) ((highbyte << 8) | lowbyte);
-					j += 2;
 				}
 #endif
 				imageIndex++;

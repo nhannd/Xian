@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return false;
 		}
 
-		//ggerade ToRes: Fix this hack. Ideally handling this event wouldn't be necessary. When the line is 
+		//ggerade ToRes: Fix this hack? Ideally handling this event wouldn't be necessary. When the line is 
 		//	moved as a whole the OnControlPointChanged event seems to be fired as the control points are offset 
 		//	individually. This results in endpoint wierdness that makes the oblique viewport behave erraticly. 
 		//	So here I grab the endpoints and use them in OnControlPointChange.
@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			return _toolHelper.IsIdentityImage(image) 
 #if DEBUG
-				//ggerade ToDo: Decide if we want to enable these, they still suffer from orientation wierdness
+				//ggerade ToDo: Fix the orientation wierdness
 				|| _toolHelper.IsOrthoXImage(image)
 				|| _toolHelper.IsOrthoYImage(image)
 #endif
