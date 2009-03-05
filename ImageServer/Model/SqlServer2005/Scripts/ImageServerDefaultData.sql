@@ -224,7 +224,7 @@ GO
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),100,'DeleteStudy','Delete Study','A record telling when a study is eligable for deletion.  The study will be completely removed from the system.')
+           (newid(),100,'DeleteStudy','Delete Study','A record telling when a study is eligible for deletion.  The study will be completely removed from the system.')
 GO
            
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
@@ -236,19 +236,19 @@ GO
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),102,'TierMigrate','Tier Migrate','A record telling when a study is eligable to be migrated to a lower tier filesystem.')
+           (newid(),102,'TierMigrate','Tier Migrate','A record telling when a study is eligible to be migrated to a lower tier filesystem.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),103,'LosslessCompress','Lossless Compress','A record telling when a study is eligable for lossless compression and the type of compression to be performed on the study.')
+           (newid(),103,'LosslessCompress','Lossless Compress','A record telling when a study is eligible for lossless compression and the type of compression to be performed on the study.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[FilesystemQueueTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),104,'LossyCompress','Lossy Compress','A record telling when a study is eligable for lossy compression and the type of compression to be performed.')
+           (newid(),104,'LossyCompress','Lossy Compress','A record telling when a study is eligible for lossy compression and the type of compression to be performed.')
 GO
 
 
@@ -274,13 +274,13 @@ GO
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),103,'FilesystemLosslessCompress','Filesystem Lossless Compress','This service checks for studies that are eligable to be lossless compressed on a filesystem.  It works independently from the watermarks configured for the filesystem and will insert records into the WorkQueue to compress the studies as soon as they are eligable.')
+           (newid(),103,'FilesystemLosslessCompress','Filesystem Lossless Compress','This service checks for studies that are eligible to be lossless compressed on a filesystem.  It works independently from the watermarks configured for the filesystem and will insert records into the WorkQueue to compress the studies as soon as they are eligible.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),104,'FilesystemLossyCompress','Filesystem Lossy Compress','This service checks for studies that are eligable to be lossy compressed on a filesystem.  It works independently from the watermarks configured for the filesystem and will insert records into the WorkQueue to compress the studies as soon as they are eligable.')
+           (newid(),104,'FilesystemLossyCompress','Filesystem Lossy Compress','This service checks for studies that are eligible to be lossy compressed on a filesystem.  It works independently from the watermarks configured for the filesystem and will insert records into the WorkQueue to compress the studies as soon as they are eligible.')
 GO
 
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
@@ -294,6 +294,15 @@ INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
      VALUES
            (newid(),201,'PurgeAlerts','Purge Alerts','This service by default removes Alert records from the database after a configurable time.  If configured it can save the alerts in zip files on a filesystem.  When initially run, it selects a filesystem from the lowest filesystem tier configured on the system to archive to.')
 GO
+
+-- ServiceLock Entries not associated with a Filesystem
+INSERT INTO [ImageServer].[dbo].ServiceLock
+	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+VALUES (newid(),200,0,getdate(),null,1)
+
+INSERT INTO [ImageServer].[dbo].ServiceLock
+	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+VALUES (newid(),201,0,getdate(),null,1)
 
 
 -- ServerSopClass inserts
@@ -851,22 +860,7 @@ INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
 GO
 
 
--- ServiceLock Entries not associated with a Filesystem
-DECLARE @ArchiveApplicationLogServiceLockTypeEnum smallint
-SELECT @ArchiveApplicationLogServiceLockTypeEnum = Enum FROM [ImageServer].[dbo].ServiceLockTypeEnum WHERE [Lookup] = 'ArchiveApplicationLog'
-
-INSERT INTO [ImageServer].[dbo].ServiceLock
-	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
-VALUES (newid(),@ArchiveApplicationLogServiceLockTypeEnum,0,getdate(),null,1)
-
-DECLARE @PurgeAlertsServiceLockTypeEnum smallint
-SELECT @PurgeAlertsServiceLockTypeEnum = Enum FROM [ImageServer].[dbo].ServiceLockTypeEnum WHERE [Lookup] = 'PurgeAlerts'
-
-INSERT INTO [ImageServer].[dbo].ServiceLock
-	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
-VALUES (newid(),@PurgeAlertsServiceLockTypeEnum,0,getdate(),null,1)
-
-
+-- Canned Text
 INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Name],[Category],[Text])
      VALUES(newid(), 'Corrupted study', 'DeleteStudyReason', 'Study is corrupted.')
 
