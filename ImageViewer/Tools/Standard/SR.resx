@@ -600,8 +600,8 @@ Please check the log for more details.</value>
   <data name="TooltipTextCallout" xml:space="preserve">
     <value>Text Callout</value>
   </data>
-  <data name="CommandCreateTextOnly" xml:space="preserve">
-    <value>Create Text</value>
+  <data name="CommandCreateTextArea" xml:space="preserve">
+    <value>Create Text Area</value>
   </data>
   <data name="MenuTextCallout" xml:space="preserve">
     <value>Add Text &amp;Callout</value>
@@ -612,16 +612,16 @@ Please check the log for more details.</value>
   <data name="CommandInvert" xml:space="preserve">
     <value>Invert</value>
   </data>
-  <data name="MenuTextOnly" xml:space="preserve">
+  <data name="MenuTextArea" xml:space="preserve">
     <value>Add &amp;Text</value>
   </data>
   <data name="ToolbarTextCallout" xml:space="preserve">
     <value>Add Text Callout</value>
   </data>
-  <data name="ToolbarTextOnly" xml:space="preserve">
+  <data name="ToolbarTextArea" xml:space="preserve">
     <value>Add Text Area</value>
   </data>
-  <data name="TooltipTextOnly" xml:space="preserve">
+  <data name="TooltipTextArea" xml:space="preserve">
     <value>Text Area</value>
   </data>
   <data name="ToolbarShowHideOverlays" xml:space="preserve">

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod.Sequences;
@@ -241,32 +242,47 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private static IGraphic CreateCalloutText(RectangleF annotationBounds, RectangleF displayedArea, GraphicAnnotationSequenceItem.TextObjectSequenceItem textItem)
 		{
-			CalloutGraphic callout = new CalloutGraphic(textItem.UnformattedTextValue);
-
-			PointF anchor = Point.Empty;
 			if (textItem.AnchorPoint.HasValue)
 			{
-				anchor = textItem.AnchorPoint.Value;
+				CalloutGraphic callout = new CalloutGraphic(textItem.UnformattedTextValue);
+
+				PointF anchor = textItem.AnchorPoint.Value;
 				if (textItem.AnchorPointAnnotationUnits == GraphicAnnotationSequenceItem.AnchorPointAnnotationUnits.Display)
 					anchor = GetPointInSourceCoordinates(displayedArea, anchor);
 
 				callout.EndPoint = anchor;
-			}
-			else
-			{
-				ILineSegmentGraphic calloutLine = GetCalloutLine(callout);
-				if (calloutLine != null)
-				{
-					calloutLine.Visible = false;
-				}
-			}
+				callout.ShowArrowhead = annotationBounds.IsEmpty; // show arrowhead if graphic annotation bounds are empty
 
-			if (textItem.BoundingBoxTopLeftHandCorner.HasValue && textItem.BoundingBoxBottomRightHandCorner.HasValue)
+				if (textItem.BoundingBoxTopLeftHandCorner.HasValue && textItem.BoundingBoxBottomRightHandCorner.HasValue)
+				{
+					PointF topLeft = textItem.BoundingBoxTopLeftHandCorner.Value;
+					PointF bottomRight = textItem.BoundingBoxBottomRightHandCorner.Value;
+
+					if (textItem.BoundingBoxAnnotationUnits == GraphicAnnotationSequenceItem.BoundingBoxAnnotationUnits.Display)
+					{
+						topLeft = GetPointInSourceCoordinates(displayedArea, topLeft);
+						bottomRight = GetPointInSourceCoordinates(displayedArea, bottomRight);
+					}
+
+					callout.Location = Vector.Midpoint(topLeft, bottomRight);
+				}
+				else
+				{
+					if (!annotationBounds.IsEmpty)
+						callout.Location = annotationBounds.Location - new SizeF(30, 30);
+					else
+						callout.Location = anchor - new SizeF(30, 30);
+				}
+
+				return new DeserializedInteractiveCallout(callout);
+			}
+			else if (textItem.BoundingBoxTopLeftHandCorner.HasValue && textItem.BoundingBoxBottomRightHandCorner.HasValue)
 			{
+				InvariantTextPrimitive text = new InvariantTextPrimitive(textItem.UnformattedTextValue);
 				PointF topLeft = textItem.BoundingBoxTopLeftHandCorner.Value;
 				PointF bottomRight = textItem.BoundingBoxBottomRightHandCorner.Value;
 
-				if(textItem.BoundingBoxAnnotationUnits == GraphicAnnotationSequenceItem.BoundingBoxAnnotationUnits.Display)
+				if (textItem.BoundingBoxAnnotationUnits == GraphicAnnotationSequenceItem.BoundingBoxAnnotationUnits.Display)
 				{
 					topLeft = GetPointInSourceCoordinates(displayedArea, topLeft);
 					bottomRight = GetPointInSourceCoordinates(displayedArea, bottomRight);
@@ -276,40 +292,21 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				// RectangleF boundingBox = RectangleF.FromLTRB(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y);
 				// boundingBox = RectangleUtilities.ConvertToPositiveRectangle(boundingBox);
 				// boundingBox.Location = boundingBox.Location - new SizeF(1, 1);
-				callout.Location = Vector.Midpoint(topLeft, bottomRight);
+				text.AnchorPoint = Vector.Midpoint(topLeft, bottomRight);
+
+				return text;
 			}
 			else
 			{
-				callout.CoordinateSystem = CoordinateSystem.Destination;
-				if (annotationBounds.IsEmpty) 
-				{
-					if (anchor.IsEmpty)
-						callout.Location = Point.Empty;
-					else
-						callout.Location = anchor - new SizeF(30, 30);
-
-					callout.ShowArrowhead = true; // show arrowhead if graphic annotation bounds are empty
-				}
-				else 
-				{
-					callout.Location = annotationBounds.Location - new SizeF(30, 30);
-				}
-				callout.ResetCoordinateSystem();
+				throw new InvalidDataException("The GraphicAnnotationSequenceItem must define either an anchor point or a bounding box.");
 			}
-
-			return new DeserializedInteractiveCallout(callout);
-		}
-
-		private static ILineSegmentGraphic GetCalloutLine(CalloutGraphic callout)
-		{
-			return CollectionUtils.SelectFirst(callout.Graphics, delegate(IGraphic graphic) { return graphic is ILineSegmentGraphic; }) as ILineSegmentGraphic;
 		}
 
 		#endregion
 
 		private class DeserializedInteractiveCallout : StandardStatefulInteractiveGraphic
 		{
-			public DeserializedInteractiveCallout(CalloutGraphic callout) : base(callout) 
+			public DeserializedInteractiveCallout(CalloutGraphic callout) : base(callout)
 			{
 				base.ControlPoints.Visible = false;
 			}

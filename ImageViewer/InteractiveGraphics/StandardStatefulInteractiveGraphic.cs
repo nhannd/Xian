@@ -2,8 +2,10 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -18,6 +20,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	//TODO: how do we set it's initial state (e.g. inactive).  Is it always up to client code?  Doing it in constructor wouldn't work right.
 	//TODO: how do we control the initial 'entry point' state?  Should it be restricted to Create or Inactive?
 
+	/// <summary>
+	/// The default serializer for a <see cref="StandardStatefulInteractiveGraphic"/> simply attempts to serialize the contained <see cref="InteractiveGraphic"/>.
+	/// </summary>
+	internal class StandardStatefulInteractiveGraphicAnnotationSerializer : GraphicAnnotationSerializer<StandardStatefulInteractiveGraphic>
+	{
+		protected override void Serialize(StandardStatefulInteractiveGraphic graphic, GraphicAnnotationSequenceItem serializationState)
+		{
+			SerializeGraphic(graphic.InteractiveGraphic, serializationState);
+		}
+	}
+
+	[DicomSerializableGraphicAnnotation(typeof(StandardStatefulInteractiveGraphicAnnotationSerializer))]
 	[Cloneable]
 	public class StandardStatefulInteractiveGraphic : StandardStatefulCompositeGraphic, IStandardStatefulInteractiveGraphic, ICursorTokenProvider
 	{

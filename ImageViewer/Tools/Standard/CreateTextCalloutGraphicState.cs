@@ -10,11 +10,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public CreateTextCalloutGraphicState(TextCalloutGraphic textCalloutGraphic) : base(textCalloutGraphic) {}
 
-		public static CreateTextCalloutGraphicState Create(TextCalloutGraphic textCalloutGraphic)
-		{
-			return new CreateTextCalloutGraphicState(textCalloutGraphic);
-		}
-
 		internal new TextCalloutGraphic StatefulGraphic
 		{
 			get { return (TextCalloutGraphic) base.StatefulGraphic; }

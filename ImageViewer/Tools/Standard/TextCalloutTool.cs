@@ -22,17 +22,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[IconSet("selectTextCallout", IconScheme.Colour, SmallTextCalloutIcon, MediumTextCalloutIcon, LargeTextCalloutIcon)]
 	[GroupHint("selectTextCallout", "Tools.Image.Standard.TextCallout")]
 	//
-	[MenuAction("activateTextOnly", "global-menus/MenuTools/MenuStandard/MenuTextOnly", "SelectTextOnly")]
-	[CheckedStateObserver("activateTextOnly", "IsTextOnlyModeActive", "ModeOrActiveChanged")]
-	[Tooltip("activateTextOnly", "TooltipTextOnly")]
-	[IconSet("activateTextOnly", IconScheme.Colour, SmallTextOnlyIcon, MediumTextOnlyIcon, LargeTextOnlyIcon)]
-	[GroupHint("activateTextOnly", "Tools.Image.Standard.TextCallout")]
+	[MenuAction("activateTextArea", "global-menus/MenuTools/MenuStandard/MenuTextArea", "SelectTextArea")]
+	[CheckedStateObserver("activateTextArea", "IsTextAreaModeActive", "ModeOrActiveChanged")]
+	[Tooltip("activateTextArea", "TooltipTextArea")]
+	[IconSet("activateTextArea", IconScheme.Colour, SmallTextAreaIcon, MediumTextAreaIcon, LargeTextAreaIcon)]
+	[GroupHint("activateTextArea", "Tools.Image.Standard.TextCallout")]
 	//
-	[ButtonAction("selectTextOnly", "textcallouttool-dropdown/ToolbarTextOnly", "SelectTextOnly", Flags = ClickActionFlags.CheckAction)]
-	[CheckedStateObserver("selectTextOnly", "IsTextOnlyModeSelected", "ModeChanged")]
-	[Tooltip("selectTextOnly", "TooltipTextOnly")]
-	[IconSet("selectTextOnly", IconScheme.Colour, SmallTextOnlyIcon, MediumTextOnlyIcon, LargeTextOnlyIcon)]
-	[GroupHint("selectTextOnly", "Tools.Image.Standard.TextCallout")]
+	[ButtonAction("selectTextArea", "textcallouttool-dropdown/ToolbarTextArea", "SelectTextArea", Flags = ClickActionFlags.CheckAction)]
+	[CheckedStateObserver("selectTextArea", "IsTextAreaModeSelected", "ModeChanged")]
+	[Tooltip("selectTextArea", "TooltipTextArea")]
+	[IconSet("selectTextArea", IconScheme.Colour, SmallTextAreaIcon, MediumTextAreaIcon, LargeTextAreaIcon)]
+	[GroupHint("selectTextArea", "Tools.Image.Standard.TextCallout")]
 	//
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarAnnotation/ToolbarTextCallout", "Select", "DropDownMenuModel", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
@@ -49,14 +49,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public const string SmallTextCalloutIcon = "Icons.TextCalloutToolSmall.png";
 		public const string MediumTextCalloutIcon = "Icons.TextCalloutToolMedium.png";
 		public const string LargeTextCalloutIcon = "Icons.TextCalloutToolLarge.png";
-		public const string SmallTextOnlyIcon = "Icons.TextAreaToolSmall.png";
-		public const string MediumTextOnlyIcon = "Icons.TextAreaToolMedium.png";
-		public const string LargeTextOnlyIcon = "Icons.TextAreaToolLarge.png";
+		public const string SmallTextAreaIcon = "Icons.TextAreaToolSmall.png";
+		public const string MediumTextAreaIcon = "Icons.TextAreaToolMedium.png";
+		public const string LargeTextAreaIcon = "Icons.TextAreaToolLarge.png";
 
 		#endregion
 
 		private DrawableUndoableCommand _undoableCommand;
-		private TextCalloutGraphic _textCalloutGraphic;
+		private IStandardStatefulInteractiveGraphic _textCalloutGraphic;
 
 		public TextCalloutTool() : base(SR.TooltipTextCallout)
 		{
@@ -65,9 +65,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		#region Tool Mode Support
 
-		private delegate CreateGraphicState CreateCreateTextCalloutGraphicStateDelegate(TextCalloutGraphic textCalloutGraphic);
+		private delegate CreateGraphicState CreateCreateStateDelegate(IStandardStatefulInteractiveGraphic graphic);
 
-		private delegate TextCalloutGraphic CreateTextCalloutGraphic();
+		private delegate IStandardStatefulInteractiveGraphic CreateGraphic();
 
 		/// <summary>
 		/// Fired when the tool's <see cref="Mode"/> changes.
@@ -82,13 +82,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private ActionModelNode _actionModel;
 		private ToolSettings _settings;
 		private IconSet _textCalloutIconSet;
-		private IconSet _textOnlyIconSet;
+		private IconSet _textAreaIconSet;
 
 		// fields specific to a particular mode
 		private TextCalloutMode _mode = TextCalloutMode.TextCallout;
 		private IconSet _iconSet = null;
-		private CreateCreateTextCalloutGraphicStateDelegate _stateCreatorDelegate;
-		private CreateTextCalloutGraphic _graphicCreatorDelegate;
+		private CreateCreateStateDelegate _stateCreatorDelegate;
+		private CreateGraphic _graphicCreatorDelegate;
 		private string _commandCreationName = "";
 
 		/// <summary>
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		protected virtual void InitializeMode()
 		{
 			_textCalloutIconSet = new IconSet(IconScheme.Colour, SmallTextCalloutIcon, MediumTextCalloutIcon, LargeTextCalloutIcon);
-			_textOnlyIconSet = new IconSet(IconScheme.Colour, SmallTextOnlyIcon, MediumTextOnlyIcon, LargeTextOnlyIcon);
+			_textAreaIconSet = new IconSet(IconScheme.Colour, SmallTextAreaIcon, MediumTextAreaIcon, LargeTextAreaIcon);
 
 			_settings = ToolSettings.Default;
 
@@ -169,11 +169,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		/// <summary>
-		/// Gets a value indicating if the tool is <see cref="MouseImageViewerTool.Active"/> and is in the <see cref="TextCalloutMode.TextOnly"/> mode.
+		/// Gets a value indicating if the tool is <see cref="MouseImageViewerTool.Active"/> and is in the <see cref="TextCalloutMode.TextArea"/> mode.
 		/// </summary>
-		public bool IsTextOnlyModeActive
+		public bool IsTextAreaModeActive
 		{
-			get { return this.IsTextOnlyModeSelected && this.Active; }
+			get { return this.IsTextAreaModeSelected && this.Active; }
 		}
 
 		/// <summary>
@@ -185,11 +185,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		/// <summary>
-		/// Gets a value indicating if the tool is in the <see cref="TextCalloutMode.TextOnly"/> mode.
+		/// Gets a value indicating if the tool is in the <see cref="TextCalloutMode.TextArea"/> mode.
 		/// </summary>
-		public bool IsTextOnlyModeSelected
+		public bool IsTextAreaModeSelected
 		{
-			get { return _mode == TextCalloutMode.TextOnly; }
+			get { return _mode == TextCalloutMode.TextArea; }
 		}
 
 		/// <summary>
@@ -202,11 +202,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		/// <summary>
-		/// Switches the tool's mode to <see cref="TextCalloutMode.TextOnly"/> and invokes <see cref="MouseImageViewerTool.Select"/>.
+		/// Switches the tool's mode to <see cref="TextCalloutMode.TextArea"/> and invokes <see cref="MouseImageViewerTool.Select"/>.
 		/// </summary>
-		public void SelectTextOnly()
+		public void SelectTextArea()
 		{
-			this.Mode = TextCalloutMode.TextOnly;
+			this.Mode = TextCalloutMode.TextArea;
 			this.Select();
 		}
 
@@ -221,15 +221,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					this.TooltipPrefix = SR.TooltipTextCallout;
 					this._commandCreationName = SR.CommandCreateTextCallout;
 					this._iconSet = _textCalloutIconSet;
-					this._stateCreatorDelegate = CreateTextCalloutGraphicState.Create;
-					this._graphicCreatorDelegate = TextCalloutGraphic.CreateTextCalloutGraphic;
+					this._stateCreatorDelegate = CreateCreateTextCalloutGraphicState;
+					this._graphicCreatorDelegate = CreateTextCalloutGraphic;
 					break;
-				case TextCalloutMode.TextOnly:
-					this.TooltipPrefix = SR.TooltipTextOnly;
-					this._commandCreationName = SR.CommandCreateTextOnly;
-					this._iconSet = _textOnlyIconSet;
-					this._stateCreatorDelegate = CreateTextOnlyGraphicState.Create;
-					this._graphicCreatorDelegate = TextCalloutGraphic.CreateTextOnlyGraphic;
+				case TextCalloutMode.TextArea:
+					this.TooltipPrefix = SR.TooltipTextArea;
+					this._commandCreationName = SR.CommandCreateTextArea;
+					this._iconSet = _textAreaIconSet;
+					this._stateCreatorDelegate = CreateCreateTextAreaGraphicState;
+					this._graphicCreatorDelegate = CreateTextAreaGraphic;
 					break;
 			}
 			_settings.TextCalloutMode = _mode.ToString();
@@ -263,7 +263,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			base.Start(mouseInformation);
 
 			if (_textCalloutGraphic != null)
-				return _textCalloutGraphic.Start(mouseInformation);
+				return _textCalloutGraphic.State.Start(mouseInformation);
 
 			IPresentationImage image = mouseInformation.Tile.PresentationImage;
 			IOverlayGraphicsProvider provider = image as IOverlayGraphicsProvider;
@@ -278,7 +278,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_undoableCommand.Name = this.CreationCommandName;
 			_undoableCommand.Execute();
 
-			if (_textCalloutGraphic.Start(mouseInformation))
+			if (_textCalloutGraphic.State.Start(mouseInformation))
 				return true;
 
 			this.Cancel();
@@ -288,7 +288,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override bool Track(IMouseInformation mouseInformation)
 		{
 			if (_textCalloutGraphic != null)
-				return _textCalloutGraphic.Track(mouseInformation);
+				return _textCalloutGraphic.State.Track(mouseInformation);
 
 			return false;
 		}
@@ -298,7 +298,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_textCalloutGraphic == null)
 				return false;
 
-			if (_textCalloutGraphic.Stop(mouseInformation))
+			if (_textCalloutGraphic.State.Stop(mouseInformation))
 				return true;
 
 			_textCalloutGraphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
@@ -312,12 +312,32 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_textCalloutGraphic == null)
 				return;
 
-			_textCalloutGraphic.Cancel();
+			_textCalloutGraphic.State.Cancel();
 
 			_undoableCommand.Unexecute();
 			_undoableCommand = null;
 
 			_textCalloutGraphic = null;
+		}
+
+		private static TextCalloutGraphic CreateTextCalloutGraphic()
+		{
+			return new TextCalloutGraphic();
+		}
+
+		private static CreateGraphicState CreateCreateTextCalloutGraphicState(IStandardStatefulInteractiveGraphic graphic)
+		{
+			return new CreateTextCalloutGraphicState((TextCalloutGraphic) graphic);
+		}
+
+		private static TextAreaGraphic CreateTextAreaGraphic()
+		{
+			return new TextAreaGraphic();
+		}
+
+		private static CreateGraphicState CreateCreateTextAreaGraphicState(IStandardStatefulInteractiveGraphic graphic)
+		{
+			return new CreateTextAreaGraphicState((TextAreaGraphic) graphic);
 		}
 	}
 
@@ -334,6 +354,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// <summary>
 		/// Specifies that the tool should create a standalone text annotation graphic.
 		/// </summary>
-		TextOnly
+		TextArea
 	}
 }

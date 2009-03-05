@@ -10,18 +10,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[Cloneable]
 	internal class TextCalloutGraphic : AnnotationGraphic
 	{
-		public static TextCalloutGraphic CreateTextCalloutGraphic()
-		{
-			return new TextCalloutGraphic(new PointOfInterestInteractiveGraphic());
-		}
-
-		public static TextCalloutGraphic CreateTextOnlyGraphic()
-		{
-			// TODO: Split this usage into its own class so that it's not considered an AnnotationGraphic (by definition, a subject and associated callout)
-			return new TextCalloutGraphic(new LocationOfInterestInteractiveGraphic());
-		}
-
-		protected TextCalloutGraphic(InteractiveGraphic interactiveGraphic) : base(interactiveGraphic) {}
+		public TextCalloutGraphic() : base(new PointOfInterestInteractiveGraphic()) {}
 
 		protected TextCalloutGraphic(TextCalloutGraphic source, ICloningContext context)
 			: base(source, context)
@@ -37,9 +26,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			return callout;
 		}
 
-		private new LocationOfInterestInteractiveGraphic Subject
+		private new PointOfInterestInteractiveGraphic Subject
 		{
-			get { return (LocationOfInterestInteractiveGraphic) base.Subject; }
+			get { return (PointOfInterestInteractiveGraphic) base.Subject; }
 		}
 
 		public new UserCalloutGraphic Callout
@@ -83,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				this.StatefulGraphic.CoordinateSystem = CoordinateSystem.Destination;
 				try
 				{
-					LocationOfInterestInteractiveGraphic poi = this.StatefulGraphic.Subject;
+					PointOfInterestInteractiveGraphic poi = this.StatefulGraphic.Subject;
 					UserCalloutGraphic callout = this.StatefulGraphic.Callout;
 					RectangleF boundingBox = callout.BoundingBox;
 
@@ -95,9 +84,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					}
 					else if (mouseInformation.ClickCount == 1
 					         && !poi.HitTest(mouseInformation.Location)
-					         && (!boundingBox.Contains(mouseInformation.Location) || !(poi is PointOfInterestInteractiveGraphic))
+					         && !boundingBox.Contains(mouseInformation.Location)
 					         && callout.HitTest(mouseInformation.Location)
-							 && !callout.ControlPoints.HitTest(mouseInformation.Location))
+					         && !callout.ControlPoints.HitTest(mouseInformation.Location))
 					{
 						// single click action on the callout line (that is, not the point of interest nor the callout text): move entire graphic
 						this.StatefulGraphic.State = new MoveGraphicState(this.StatefulGraphic, this.StatefulGraphic);
@@ -119,8 +108,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		[Cloneable]
-		private class PointOfInterestInteractiveGraphic : LocationOfInterestInteractiveGraphic
+		private class PointOfInterestInteractiveGraphic : InteractiveGraphic
 		{
+			private PointF _location;
+
 			public PointOfInterestInteractiveGraphic() : base()
 			{
 				Initialize();
@@ -143,40 +134,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				Initialize();
 			}
 
-			public override PointF Location
+			public PointF Location
 			{
 				get { return base.ControlPoints[0]; }
 				set { base.ControlPoints[0] = value; }
-			}
-		}
-
-		[Cloneable]
-		private class LocationOfInterestInteractiveGraphic : InteractiveGraphic
-		{
-			private PointF _location;
-
-			public LocationOfInterestInteractiveGraphic() : base() {}
-
-			protected LocationOfInterestInteractiveGraphic(LocationOfInterestInteractiveGraphic source, ICloningContext context)
-				: base(source, context)
-			{
-				context.CloneFields(source, this);
-			}
-
-			public virtual PointF Location
-			{
-				get
-				{
-					if (this.CoordinateSystem == CoordinateSystem.Source)
-						return _location;
-					return this.SpatialTransform.ConvertToDestination(_location);
-				}
-				set
-				{
-					if (this.CoordinateSystem == CoordinateSystem.Destination)
-						value = this.SpatialTransform.ConvertToSource(value);
-					_location = value;
-				}
 			}
 
 			public override RectangleF BoundingBox

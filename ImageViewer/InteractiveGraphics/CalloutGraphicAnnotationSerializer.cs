@@ -11,20 +11,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	{
 		protected override void Serialize(CalloutGraphic calloutGraphic, GraphicAnnotationSequenceItem serializationState)
 		{
+			// if the callout is not visible, don't serialize it!
 			if (!calloutGraphic.Visible)
-				return; // if the callout is not visible, don't serialize it!
+				return;
 
 			GraphicAnnotationSequenceItem.TextObjectSequenceItem text = new GraphicAnnotationSequenceItem.TextObjectSequenceItem();
 
 			calloutGraphic.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				//InvariantTextPrimitive textGraphic = (InvariantTextPrimitive)CollectionUtils.SelectFirst(calloutGraphic.Graphics, delegate(IGraphic graphic) { return graphic is InvariantTextPrimitive; });
-				//RectangleF boundingBox = RectangleUtilities.ConvertToPositiveRectangle(textGraphic.BoundingBox);
-				//text.BoundingBoxAnnotationUnits = GraphicAnnotationSequenceItem.BoundingBoxAnnotationUnits.Pixel;
-				//text.BoundingBoxTextHorizontalJustification = GraphicAnnotationSequenceItem.BoundingBoxTextHorizontalJustification.Left;
-				//text.BoundingBoxTopLeftHandCorner = boundingBox.Location;
-				//text.BoundingBoxBottomRightHandCorner = boundingBox.Location + boundingBox.Size;
+				InvariantTextPrimitive textGraphic = (InvariantTextPrimitive)CollectionUtils.SelectFirst(calloutGraphic.Graphics, delegate(IGraphic graphic) { return graphic is InvariantTextPrimitive; });
+				RectangleF boundingBox = RectangleUtilities.ConvertToPositiveRectangle(textGraphic.BoundingBox);
+				text.BoundingBoxAnnotationUnits = GraphicAnnotationSequenceItem.BoundingBoxAnnotationUnits.Pixel;
+				text.BoundingBoxTextHorizontalJustification = GraphicAnnotationSequenceItem.BoundingBoxTextHorizontalJustification.Left;
+				text.BoundingBoxTopLeftHandCorner = boundingBox.Location;
+				text.BoundingBoxBottomRightHandCorner = boundingBox.Location + boundingBox.Size;
 
 				text.AnchorPoint = calloutGraphic.EndPoint;
 				text.AnchorPointAnnotationUnits = GraphicAnnotationSequenceItem.AnchorPointAnnotationUnits.Pixel;
