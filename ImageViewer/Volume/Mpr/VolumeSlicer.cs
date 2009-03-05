@@ -35,6 +35,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using vtk;
@@ -129,14 +130,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Vector3D slicePlanePatientY = sourceOrientationNormalPatient;
 			Vector3D slicePlanePatientZ = normalPerpLinePatient;
 
-			Matrix slicePlanePatientOrientation = new Matrix
-				(4, 4, new float[4, 4]
-				       	{
-				       		{slicePlanePatientX.X, slicePlanePatientX.Y, slicePlanePatientX.Z, 0},
-				       		{slicePlanePatientY.X, slicePlanePatientY.Y, slicePlanePatientY.Z, 0},
-				       		{slicePlanePatientZ.X, slicePlanePatientZ.Y, slicePlanePatientZ.Z, 0},
-				       		{0, 0, 0, 1}
-				       	});
+			Matrix slicePlanePatientOrientation = VolumeHelper.OrientationMatrixFromVectors(slicePlanePatientX, slicePlanePatientY, slicePlanePatientZ);
 
 			_resliceAxes = _volume.RotateToVolumeOrientation(slicePlanePatientOrientation);
 			Vector3D lineMiddlePointPatient = new Vector3D(
@@ -146,8 +140,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			this.SliceThroughPointPatient = lineMiddlePointPatient;
 
-			this.SliceExtentXMillimeters = this.SliceExtentYMillimeters = 
-				(endPointPatient - startPointPatient).Magnitude;
+			this.SliceExtentXMillimeters = (endPointPatient - startPointPatient).Magnitude;
 		}
 
 		public float SliceSpacing
@@ -235,13 +228,17 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			// Determine spacing vector along which we will slice
 			Vector3D spacingVector = SliceSpacing * GetSliceNormalVector();
+			//ggerade ToDo: Add note about why this should be 2* this amount
 			int maxSlices = (int)(_volume.DiagonalMagnitude / SliceSpacing + 0.5f);
 
-			// Start slicing half way in one direction
+			// Start slicing half way in one direction. Chose to start positive and step
+			//	negative as it creates a DisplaySet that is sorted such that the MPR sort
+			//	order is consistent with the default 2D sort order. Perhaps in the future
+			//	it could be based off of the order of the source DisplaySet.
 			Vector3D startPoint = initialThroughPoint + (maxSlices / 2) * spacingVector;
 
 			// Walk along trying to create maxSlices, if a point is outside the volume we'll
-			//	skip that slice.
+			//	skip it, ensuring that all slices are from through points that are in the volume.
 			int pointIndex = 0, sliceIndex = 0;
 			while(sliceIndex < maxSlices)
 			{
@@ -364,33 +361,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			IntPtr sliceDataPtr = sliceImageData.GetScalarPointer();
 			byte[] pixelData = new byte[sliceDataSize * sizeof (short)];
 
-			CopySliceToFrame(pixelData, sliceDataPtr, sliceDataSize);
+			Marshal.Copy(sliceDataPtr, pixelData, 0, sliceDataSize * sizeof(short));
 			return pixelData;
-		}
-
-		private static void CopySliceToFrame(byte[] pixelData, IntPtr sliceDataPtr, int sliceDataSize)
-		{
-//ggerade ToDo: This Copy appears to perform at least as well as the unsafe code below, do away with
-//	the unsafe code after some additional testing. Probably can inline this method as well.
-#if true
-			Marshal.Copy(sliceDataPtr, pixelData, 0, sliceDataSize*sizeof(short));
-#else
-			unsafe 
-			{
-				short* psSlice = (short*)sliceDataPtr;
-
-				// The fixed statement "pins" the frame data, ensuring the GC won't move the referenced data
-				fixed (byte* pbFrame = pixelData)
-				{
-					short* psFrame = (short*) pbFrame;
-
-					for (int i = 0; i < sliceDataSize; ++i)
-					{
-						psFrame[i] = psSlice[i];
-					}
-				}
-			}
-#endif
 		}
 
 		// Extract slice in specified orientation
@@ -444,6 +416,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 						break;
 				}
 
+				vtkImageData slab;
 				using (vtkExecutive exec = reslicer.GetExecutive())
 				{
 					VtkHelper.RegisterVtkErrorEvents(exec);
@@ -452,8 +425,21 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 					_volume.ReleasePinnedVtkVolume();
 
-					return reslicer.GetOutput();
+					slab = reslicer.GetOutput();
 				}
+
+				return slab;
+
+				//vtkVolumeRayCastMIPFunction mip = new vtkVolumeRayCastMIPFunction();
+				//vtkVolumeRayCastMapper mapper = new vtkVolumeRayCastMapper();
+				//mapper.SetVolumeRayCastFunction(mip);
+				//mapper.SetInput(slab);
+				//using (vtkExecutive exec = mapper.GetExecutive())
+				//{
+				//    VtkHelper.RegisterVtkErrorEvents(exec);
+				//    exec.Update();
+				//    return mapper.GetOutputDataObject(0);
+				//}
 			}
 		}
 
@@ -583,11 +569,6 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Vector3D yVec = GetSliceYVector();
 			// Offset along x and y from reslicePoint
 			Vector3D topLeftOfSliceVolume = reslicePoint - (offsetX * xVec + offsetY * yVec);
-
-			//ggerade ToRes: This attempts to adjust the coordinate such that it is in the middle of the slice spacing,
-			//	I need to figure out how to get the direction (sign) correctly for all cases.
-			//Vector3D zVec = GetSliceNormalVector();
-			//topLeftOfSliceVolume -= zVec * (this.SliceSpacing / 2);
 
 			// Convert volume point to patient space
 			return _volume.ConvertToPatient(topLeftOfSliceVolume);

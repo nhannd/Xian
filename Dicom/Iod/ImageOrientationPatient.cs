@@ -316,7 +316,6 @@ namespace ClearCanvas.Dicom.Iod
 					EqualsWithinTolerance(other._columnZ, _columnZ, withinTolerance);
 		}
 
-		//ggerade ToRes: Is there some utility already around like this? Where to put this?
 		private static bool EqualsWithinTolerance(double d1, double d2, float tolerance)
 		{
 			return Math.Abs(d1 - d2) < tolerance;

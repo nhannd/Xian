@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			Visible = IsValidImage(this.SelectedPresentationImage);
 		}
 
-		//ggerade ToRef: This hack works around the problem where the OnTileSelected gets called in
+		// This hack works around the problem where the OnTileSelected gets called in
 		//	situations where the DisplaySet has already been created. No need to recreate every time.
 		//  Ideally there would be a better way for the tool to know when to Create the full set.
 		private bool _fullSetCreated = false;
@@ -141,9 +141,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return false;
 		}
 
-		//ggerade ToRes: Fix this hack? Ideally handling this event wouldn't be necessary. When the line is 
-		//	moved as a whole the OnControlPointChanged event seems to be fired as the control points are offset 
-		//	individually. This results in endpoint wierdness that makes the oblique viewport behave erraticly. 
+		//TODO: Ideally handling this event wouldn't be necessary. Perhaps a Move event would solve the issue.
+		//	When the line is moved as a whole the OnControlPointChanged event is fired as the control points 
+		//	are offset individually. This results in endpoint wierdness that makes the oblique viewport behave erraticly. 
 		//	So here I grab the endpoints and use them in OnControlPointChange.
 		private void OnPolyLineDrawing(object sender, EventArgs e)
 		{
@@ -165,7 +165,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		private void OnControlPointChanged(object sender, ListEventArgs<System.Drawing.PointF> e)
 		{
-#if false
+#if false  // Code moved to OnPolyLineDrawing above, enable this to see the erratic behavior
 			_polyLine.CoordinateSystem = CoordinateSystem.Destination;
 
 			PointF start = _polyLine.SpatialTransform.ConvertToSource(_polyLine.ControlPoints[0]);

@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 					{
 						string explanation = System.Runtime.InteropServices.Marshal.PtrToStringAnsi(ptr);
 						Debug.WriteLine(explanation);
-						//ggerade ToDo: Hook into CC logging/exception framework
+						//TODO: Hook into CC logging/exception framework
 					}
 					break;
 				default:

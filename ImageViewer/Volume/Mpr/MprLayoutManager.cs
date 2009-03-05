@@ -53,8 +53,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	{
 		#region ImageViewerComponent, LayoutManager creation method
 
-		//ggerade ToRef: We're thinking we may introduce an MprImageViewerComponent that will own the volume
-		//	and take care of the layout creation and such. For now I just needed a place to put this
+		//TODO: Refactor this somehow, We were thinking we may introduce an MprImageViewerComponent that will 
+		//	own the volume and take care of the layout creation and such. I just needed a place to put this.
 		public static ImageViewerComponent CreateMprLayoutAndComponent(Volume volume)
 		{
 			MprLayoutManager layoutManager = new MprLayoutManager(volume);

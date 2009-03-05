@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			}
 			else
 			{
-				//ggerade ToRef: Ideally we wouldn't have to set this initially right? The imagebox
+				//TODO: Ideally we wouldn't have to set this initially right? The imagebox
 				//	didn't want an empty display set so choose some reasonable default oblique
 				slicer.SetSlicePlaneRotateDegrees(90, 0, 45);
 				name = "MPR (Oblique)";

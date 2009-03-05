@@ -49,6 +49,14 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkImagingDotNet.dll</HintPath>
     </Reference>
+    <Reference Include="vtkRenderingDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkRenderingDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="vtkVolumeRenderingDotNet, Version=0.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\Vtk\vtkVolumeRenderingDotNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DefineObliqueTool.cs" />
@@ -65,6 +73,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="VolumeBuilder.cs" />
+    <Compile Include="VolumeHelper.cs" />
     <Compile Include="VolumeSlicer.cs" />
     <Compile Include="MprLayoutManager.cs" />
     <Compile Include="Volume.cs" />
