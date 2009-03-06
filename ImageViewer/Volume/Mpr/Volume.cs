@@ -399,7 +399,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		/// operating on the volume, call <see cref="ReleasePinnedVtkVolume"/>.
 		/// </summary>
 		/// <returns></returns>
-		//ggerade ToRef: Wrap with object
+		//TODO: Wrap with disposable object and have released on Dispose
 		internal vtkImageData ObtainPinnedVtkVolume()
 		{
 			// Create the VTK volume wrapper if it doesn't exist

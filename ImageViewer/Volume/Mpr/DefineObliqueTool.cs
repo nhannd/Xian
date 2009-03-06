@@ -244,12 +244,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private bool IsValidImage(IPresentationImage image)
 		{
 			return _toolHelper.IsIdentityImage(image) 
-#if DEBUG
-				//ggerade ToDo: Fix the orientation wierdness
 				|| _toolHelper.IsOrthoXImage(image)
-				|| _toolHelper.IsOrthoYImage(image)
-#endif
-				;
+				|| _toolHelper.IsOrthoYImage(image);
 		}
 	}
 }

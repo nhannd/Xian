@@ -220,7 +220,28 @@
     <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkCommonDotNet.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkFilteringDotNet.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkImagingDotNet.dll" />
+<!-- Slab dependencies. Note: I used DependencyWalker to chase down implicitly linked DLLs, 
+     unfortunately the VolumeRendering pulls in a bunch of stuff...
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkftgl.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkfreetype.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkverdict.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkGraphics.dll" />
+   
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkDicomParser.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkNetCDF.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkMetaIO.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkPNG.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkZlib.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkJpeg.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkTiff.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkExpat.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkIO.dll" />
 
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkRendering.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkRenderingDotNet.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkVolumeRendering.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkVolumeRenderingDotNet.dll" />
+-->
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">
