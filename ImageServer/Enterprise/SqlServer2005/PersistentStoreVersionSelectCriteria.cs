@@ -29,42 +29,62 @@
 
 #endregion
 
-using System.IO;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
+namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
-	public class BaseUpgradeScript : IUpgradeScript
+	public class PersistentStoreVersionSelectCriteria : EntitySelectCriteria
 	{
-		private readonly DatabaseVersion _upgradeFromVersion;
-		private readonly DatabaseVersion _upgradeToVersion;
-		private readonly string _scriptName;
-		public BaseUpgradeScript(DatabaseVersion upgradeFromVersion, DatabaseVersion upgradeToVersion, string scriptName)
+		public PersistentStoreVersionSelectCriteria()
+			: base("DatabaseVersion_")
+		{ }
+		[EntityFieldDatabaseMappingAttribute(TableName = "DatabaseVersion_", ColumnName = "Build_")]
+		public ISearchCondition<System.String> Build
 		{
-			_upgradeToVersion = upgradeToVersion;
-			_upgradeFromVersion = upgradeFromVersion;
-			_scriptName = scriptName;
-		}
-		public string GetScript()
-		{
-			string sql;
-
-			using (Stream stream = GetType().Assembly.GetManifestResourceStream(GetType(), _scriptName))
+			get
 			{
-				StreamReader reader = new StreamReader(stream);
-				sql = reader.ReadToEnd();
-				stream.Close();
+				if (!SubCriteria.ContainsKey("Build_"))
+				{
+					SubCriteria["Build_"] = new SearchCondition<System.String>("Build_");
+				}
+				return (ISearchCondition<System.String>)SubCriteria["Build_"];
 			}
-			return sql;
 		}
-
-		public DatabaseVersion UpgradeFromVersion
+		[EntityFieldDatabaseMappingAttribute(TableName = "DatabaseVersion_", ColumnName = "Major_")]
+		public ISearchCondition<System.String> Major
 		{
-			get {return _upgradeFromVersion;}
+			get
+			{
+				if (!SubCriteria.ContainsKey("Major_"))
+				{
+					SubCriteria["Major_"] = new SearchCondition<System.String>("Major_");
+				}
+				return (ISearchCondition<System.String>)SubCriteria["Major_"];
+			}
 		}
-
-		public DatabaseVersion UpgradeToVersion
+		[EntityFieldDatabaseMappingAttribute(TableName = "DatabaseVersion_", ColumnName = "Minor_")]
+		public ISearchCondition<System.String> Minor
 		{
-			get { return _upgradeToVersion; }
+			get
+			{
+				if (!SubCriteria.ContainsKey("Minor_"))
+				{
+					SubCriteria["Minor_"] = new SearchCondition<System.String>("Minor_");
+				}
+				return (ISearchCondition<System.String>)SubCriteria["Minor_"];
+			}
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "DatabaseVersion_", ColumnName = "Revision_")]
+		public ISearchCondition<System.String> Revision
+		{
+			get
+			{
+				if (!SubCriteria.ContainsKey("Revision_"))
+				{
+					SubCriteria["Revision_"] = new SearchCondition<System.String>("Revision_");
+				}
+				return (ISearchCondition<System.String>)SubCriteria["Revision_"];
+			}
 		}
 	}
 }

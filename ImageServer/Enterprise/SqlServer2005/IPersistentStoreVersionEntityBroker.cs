@@ -29,18 +29,8 @@
 
 #endregion
 
-using System;
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core.Upgrade;
-
-namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
+namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
-	[ExtensionOf(typeof(PersistentStoreUpgradeScriptExtensionPoint))]
-	class UpgradeFrom_1_3_8146_27241 : BaseUpgradeScript
-	{
-		public UpgradeFrom_1_3_8146_27241()
-			: base(new Version(1, 3, 8146, 27241), new Version(1, 35, 8841, 28852), "UpgradeFrom_1_3_8146_27241.sql")
-		{
-		}
-	}
+	public interface IPersistentStoreVersionEntityBroker : IEntityBroker<PersistentStoreVersion, PersistentStoreVersionSelectCriteria, PersistentStoreVersionUpdateColumns>
+	{ }
 }

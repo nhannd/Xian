@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -66,5 +64,10 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <returns>a update context</returns>
         IUpdateContext OpenUpdateContext(UpdateContextSyncMode mode);
+
+		/// <summary>
+		/// The version associated with the persistent store.
+		/// </summary>
+		Version Version { get; }
     }
 }

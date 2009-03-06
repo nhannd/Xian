@@ -30,11 +30,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Reflection;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
@@ -49,6 +51,34 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         private ITransactionNotifier _transactionNotifier;
 
         #region IPersistentStore Members
+
+		public Version Version
+		{
+			get
+			{
+				using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+				{
+					IPersistentStoreVersionEntityBroker broker = read.GetBroker<IPersistentStoreVersionEntityBroker>();
+					PersistentStoreVersionSelectCriteria criteria = new PersistentStoreVersionSelectCriteria();
+					criteria.Major.SortDesc(0);
+					criteria.Minor.SortDesc(1);
+					criteria.Revision.SortDesc(2);
+					criteria.Build.SortDesc(3);
+
+					IList<PersistentStoreVersion> versions = broker.Find(criteria);
+					if (versions.Count == 0)
+						return null;
+
+					PersistentStoreVersion ver = CollectionUtils.FirstElement(versions);
+
+					return new Version(
+						int.Parse(ver.Major),
+						int.Parse(ver.Minor),
+						int.Parse(ver.Revision),
+						int.Parse(ver.Build));
+				}
+			}
+		}
 
         public void Initialize()
         {
@@ -105,6 +135,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             }
             }
 
-        #endregion
+
+    	#endregion
     }
 }

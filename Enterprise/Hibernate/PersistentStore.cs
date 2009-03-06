@@ -29,7 +29,9 @@
 
 #endregion
 
+using System;
 using System.Collections;
+using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using NHibernate;
@@ -51,6 +53,14 @@ namespace ClearCanvas.Enterprise.Hibernate
         }
 
         #region IPersistentStore members
+
+		public Version Version
+		{
+			get
+			{
+				return Assembly.GetExecutingAssembly().GetName().Version;
+			}
+		}
 
         public void Initialize()
         {

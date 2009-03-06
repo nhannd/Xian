@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -30,15 +30,33 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade
+namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 {
-	public interface IUpgradeScript
+	public class PersistentStoreVersionUpdateColumns : EntityUpdateColumns
 	{
-		string GetScript();
-		DatabaseVersion UpgradeFromVersion { get; }
-		DatabaseVersion UpgradeToVersion { get; }
+		public PersistentStoreVersionUpdateColumns()
+			: base("DatabaseVersion_")
+		{ }
+		[EntityFieldDatabaseMappingAttribute(TableName = "DatabaseVersion_", ColumnName = "Build_")]
+		public String Build
+		{
+			set { SubParameters["Build"] = new EntityUpdateColumn<String>("Build", value); }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "DatabaseVersion_", ColumnName = "Major_")]
+		public String Major
+		{
+			set { SubParameters["Major"] = new EntityUpdateColumn<String>("Major", value); }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "DatabaseVersion_", ColumnName = "Minor_")]
+		public String Minor
+		{
+			set { SubParameters["Minor"] = new EntityUpdateColumn<String>("Minor", value); }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "DatabaseVersion_", ColumnName = "Revision_")]
+		public String Revision
+		{
+			set { SubParameters["Revision"] = new EntityUpdateColumn<String>("Revision", value); }
+		}
 	}
 }

@@ -29,16 +29,17 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Model.SqlServer2005.Upgrade;
+using ClearCanvas.Enterprise.Core.Upgrade;
 
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 {
-	[ExtensionOf(typeof(UpgradeScriptExtensionPoint))]
+	[ExtensionOf(typeof(PersistentStoreUpgradeScriptExtensionPoint))]
 	class UpgradeFrom_1_35_8841_28852 : BaseUpgradeScript
 	{
 		public UpgradeFrom_1_35_8841_28852()
-			: base(new DatabaseVersion("28852", "1", "35", "8841"), null, "UpgradeFrom_1_35_8841_28852.sql")
+			: base(new Version(1, 35, 8841, 28852), null, "UpgradeFrom_1_35_8841_28852.sql")
 		{
 		}
 	}
