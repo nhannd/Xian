@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -85,14 +86,18 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                                 message.DataSet[DicomTags.AccessionNumber].ToString(), list);
             }
 
-            ServerPlatform.SimulateError("Some unknown difference detected in the image", 
-                delegate()
-                  {
-                      list.Add(new ComparisionDifference("Fake difference","12345","12283"));
-                  });
-
+            SimulateUnknownErrors(list);
             return list;
         }
 
+        [Conditional("DEBUG_SIMULATE_ERRORS")]
+        private void SimulateUnknownErrors(DifferenceCollection list)
+        {
+            ServerPlatform.SimulateError("Some unknown difference detected in the image",
+                                         delegate()
+                                             {
+                                                 list.Add(new ComparisionDifference("Fake difference", "12345", "12283"));
+                                             });
+        }
     }
 }
