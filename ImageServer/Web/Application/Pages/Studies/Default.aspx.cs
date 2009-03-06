@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         protected void ShowDeletedDialog(IList<StudySummary> studyList)
         {
-            DeleteStudyConfirmDialog.DeletingStudies = CollectionUtils.Map<StudySummary, DeleteStudyInfo>(
+            DeleteStudyConfirmDialog.Initialize(CollectionUtils.Map<StudySummary, DeleteStudyInfo>(
                 studyList,
                 delegate(StudySummary study)
                 {
@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                     info.StudyInstanceUid = study.StudyInstanceUid;
                     return info;
                 }
-                );
+                ));
             DeleteStudyConfirmDialog.Show();
         }
 

@@ -143,11 +143,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             set { ViewState["DeletedStudies"] = value; }
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+        }
+
+        private void ClearInputs()
+        {
+            Reason.Text = "";
+            SaveReasonAsName.Text = "";
+            ReasonListBox.Items.Clear();
+        }
+
         public override void DataBind()
         {
             StudyListing.DataSource = DeletingStudies;
 
-            if (ReasonListBox.Items.Count==0)
+            EnsurePredefinedReasonsLoaded();
+            
+            base.DataBind();
+        }
+
+        private void EnsurePredefinedReasonsLoaded()
+        {
+            if (ReasonListBox.Items.Count == 0)
             {
                 IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
                 using (IReadContext context = store.OpenReadContext())
@@ -162,10 +181,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                         ReasonListBox.Items.Add(new ListItem(text.Name, text.Text));
                     }
                     ReasonListBox.Items.Add(new ListItem("Other (Specify)", "Enter the reason here"));
-                } 
+                }
             }
-            
-            base.DataBind();
         }
 
         protected void DeleteButton_Clicked(object sender, ImageClickEventArgs e)
@@ -204,7 +221,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             }
             else
             {
-                Show();
+                EnsureDialogVisible();
             }
         }
 
@@ -260,9 +277,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             EventsHelper.Fire(_studyDeletingHandler, this, args);
         }
 
-        public void Show()
+        internal void EnsureDialogVisible()
         {
-            DataBind();
             ModalDialog.Show();
         }
 
@@ -271,6 +287,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             ModalDialog.Hide();
         }
 
-        
+        public void Initialize(List<DeleteStudyInfo> list)
+        {
+            ClearInputs(); 
+            DeletingStudies = list;
+        }
+
+        internal void Show()
+        {
+            DataBind();
+            EnsureDialogVisible();
+        }
     }
 }

@@ -114,8 +114,7 @@
                                             <asp:Label runat="server" CssClass="DialogTextBoxLabel" 
                                                 Text='<%$ Resources:Labels, DeleteStudyConfirmReasonLabel %>'></asp:Label> 
                                             <asp:DropDownList runat="server" ID="ReasonListBox" />
-                                        </td>
-                                        
+                                        </td>                                        
                                         <td>
                                             <ccAsp:InvalidInputIndicator ID="InvalidReasonIndicator" runat="server" SkinID="InvalidInputIndicator" />
                                         </td>
@@ -124,7 +123,7 @@
                                 <table width="100%">
                                     <tr>                                        
                                         <td>
-                                            <asp:TextBox  Width="100%" Rows="3" ID="Reason" runat="server" TextMode="MultiLine"   />                                            
+                                            <asp:TextBox  Width="100%" Rows="3" ID="Reason" runat="server" TextMode="MultiLine" />                                            
                                         </td>
                                     </tr>
                                     </table>
