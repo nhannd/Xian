@@ -1457,20 +1457,6 @@
     <Content Include="Pages\Common\MainContentSection.Master" />
     <Content Include="Pages\Error\ErrorPageMaster.Master" />
     <None Include="Builds\PostBuild.proj" />
-    <None Include="Helpers\.svn\text-base\DialogHelper.cs.svn-base" />
-    <None Include="Helpers\.svn\text-base\ScriptHelper.cs.svn-base" />
-    <None Include="Pages\Help\.svn\all-wcprops" />
-    <None Include="Pages\Help\.svn\entries" />
-    <None Include="Pages\Help\.svn\format" />
-    <None Include="Pages\Help\.svn\text-base\About.aspx.cs.svn-base" />
-    <None Include="Pages\Help\.svn\text-base\About.aspx.designer.cs.svn-base" />
-    <None Include="Pages\Help\.svn\text-base\About.aspx.svn-base" />
-    <None Include="Pages\Help\.svn\text-base\Default.aspx.cs.svn-base" />
-    <None Include="Pages\Help\.svn\text-base\Default.aspx.designer.cs.svn-base" />
-    <None Include="Pages\Help\.svn\text-base\Default.aspx.svn-base" />
-    <None Include="Pages\Help\.svn\text-base\Documentation.aspx.cs.svn-base" />
-    <None Include="Pages\Help\.svn\text-base\Documentation.aspx.designer.cs.svn-base" />
-    <None Include="Pages\Help\.svn\text-base\Documentation.aspx.svn-base" />
     <None Include="Pages\Queues\WorkQueue\WorkQueueSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WorkQueueSettings.Designer.cs</LastGenOutput>
@@ -1566,13 +1552,6 @@
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Pages\Help\.svn\prop-base\" />
-    <Folder Include="Pages\Help\.svn\props\" />
-    <Folder Include="Pages\Help\.svn\tmp\prop-base\" />
-    <Folder Include="Pages\Help\.svn\tmp\props\" />
-    <Folder Include="Pages\Help\.svn\tmp\text-base\" />
-  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v8.0\WebApplications\Microsoft.WebApplication.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -1588,7 +1567,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>4771</DevelopmentServerPort>
+          <DevelopmentServerPort>3938</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

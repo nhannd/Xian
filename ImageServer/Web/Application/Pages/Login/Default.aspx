@@ -20,7 +20,7 @@
     </asp:ScriptManager>    
         
     <div align="right" id="VersionInfoPanel">
-            DB Version: <%=ServerPlatform.VersionString%>
+            Version: <%=ServerPlatform.VersionString%>
     </div>
     
     <div id="LoginSplash">

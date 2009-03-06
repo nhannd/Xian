@@ -11,7 +11,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
 
   <div id="VersionInfoPanel">
-            DB Version: <%=ServerPlatform.VersionString%>
+            Version: <%=ServerPlatform.VersionString%>
   </div>
   
   <table cellpadding="0" cellspacing="0" width="100%">
