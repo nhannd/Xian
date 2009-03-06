@@ -29,6 +29,9 @@
 
 #endregion
 
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
@@ -50,5 +53,18 @@ namespace ClearCanvas.ImageServer.Model
         }
 
         #endregion
+
+
+        public int GetConcurrentMoveCount(IPersistenceContext context)
+        {
+            Platform.CheckForNullReference(context, "context");
+
+            IWorkQueueEntityBroker broker = context.GetBroker<IWorkQueueEntityBroker>();
+            WorkQueueSelectCriteria criteria = new WorkQueueSelectCriteria();
+            criteria.DeviceKey.EqualTo(this.GetKey());
+            criteria.WorkQueueStatusEnum.EqualTo(WorkQueueStatusEnum.InProgress);
+            return broker.Count(criteria);
+        }
+        
     }
 }

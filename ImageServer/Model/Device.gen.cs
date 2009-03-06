@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageServer.Model
             ,System.String _ipAddress_
             ,System.Int32 _port_
             ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
+            ,System.Int16 _throttleMaxConnections_
             ):base("Device")
         {
             _aeTitle = _aeTitle_;
@@ -69,6 +70,7 @@ namespace ClearCanvas.ImageServer.Model
             _ipAddress = _ipAddress_;
             _port = _port_;
             _serverPartitionKey = _serverPartitionKey_;
+            _throttleMaxConnections = _throttleMaxConnections_;
         }
         #endregion
 
@@ -84,6 +86,7 @@ namespace ClearCanvas.ImageServer.Model
         private System.String _ipAddress;
         private System.Int32 _port;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
+        private System.Int16 _throttleMaxConnections;
         #endregion
 
         #region Public Properties
@@ -153,6 +156,12 @@ namespace ClearCanvas.ImageServer.Model
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ThrottleMaxConnections")]
+        public System.Int16 ThrottleMaxConnections
+        {
+        get { return _throttleMaxConnections; }
+        set { _throttleMaxConnections = value; }
+        }
         #endregion
 
         #region Static Methods
@@ -193,6 +202,7 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.IpAddress = entity.IpAddress;
             updateColumns.Port = entity.Port;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;
+            updateColumns.ThrottleMaxConnections = entity.ThrottleMaxConnections;
             Device newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

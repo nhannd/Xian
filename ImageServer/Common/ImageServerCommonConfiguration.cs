@@ -66,5 +66,13 @@ namespace ClearCanvas.ImageServer.Common
         {
             get { return Settings.Default.UseReceiveDateAsFolder; }
         }
+
+        static public int TooManyStudyMoveWarningThreshold
+        {
+            get
+            {
+                return Settings.Default.TooManyStudyMoveWarningThreshold;
+            }
+        }
     }
 }

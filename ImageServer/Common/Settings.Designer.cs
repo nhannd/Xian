@@ -85,5 +85,14 @@ namespace ClearCanvas.ImageServer.Common {
                 return ((bool)(this["UseReceiveDateAsFolder"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public int TooManyStudyMoveWarningThreshold {
+            get {
+                return ((int)(this["TooManyStudyMoveWarningThreshold"]));
+            }
+        }
     }
 }

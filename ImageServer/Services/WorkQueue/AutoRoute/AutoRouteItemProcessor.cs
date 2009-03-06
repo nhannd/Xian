@@ -46,6 +46,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
     /// </summary>
     public class AutoRouteItemProcessor : BaseItemProcessor, ICancelable
     {
+        #region Private Members
+        private object _syncRoot = new object();
+        private Device _device;
+        private const short UNLIMITED = -1;
+        #endregion
+
         #region Protected Methods
         /// <summary>
         /// Add the UIDs scheduled to be transfered to the SCU
@@ -54,13 +60,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         /// <param name="scu">The Storage SCU component doing an autoroute.</param>
         protected virtual void AddWorkQueueUidsToSendList(Model.WorkQueue item, ImageServerStorageScu scu)
         {
-			if (!LoadStorageLocation(item))
-			{
-				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing AutoRoute WorkQueue item, rescheduling");
-				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
-				return;
-			}
-
 			string studyPath = StorageLocation.GetStudyPath();
 
             StudyXml studyXml = LoadStudyXml(StorageLocation);
@@ -73,13 +72,41 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         #endregion
 
+        #region Protected Properties
+        protected Device DestinationDevice
+        {
+            get
+            {
+                lock(_syncRoot)
+                {
+                    if (_device==null)
+                    {
+                        _device = Device.Load(ReadContext, WorkQueueItem.DeviceKey);
+                    }
+                }
+
+                return _device;
+            }
+        }
+        #endregion
+
         #region Overridden Protected Method
+
+        protected override void Initialize(ClearCanvas.ImageServer.Model.WorkQueue item)
+        {
+            base.Initialize(item);
+
+            LoadStorageLocation(item);
+        }
 
         /// <summary>
         /// Process a <see cref="WorkQueue"/> item of type AutoRoute.
         /// </summary>
         protected override void ProcessItem(Model.WorkQueue item)
         {
+            Platform.Log(LogLevel.Info, "Moving study {0} for patient {1} to {2}...",
+                         base.Study.StudyInstanceUid, base.Study.PatientsName, DestinationDevice.AeTitle);
+
             // Load related rows form the WorkQueueUid table
             LoadUids(item);
 
@@ -95,7 +122,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             }
 
             // Load remote device information from the database.
-            Device device = Device.Load(ReadContext, item.DeviceKey);
+            Device device = DestinationDevice;
             if (device == null)
             {
                 item.FailureDescription = String.Format("Unknown auto-route destination \"{0}\"", item.DeviceKey);
@@ -215,7 +242,38 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         protected override bool CanStart()
         {
-            return true; // can start anytime
+            int currentConnectionCounter = DestinationDevice.GetConcurrentMoveCount(ReadContext);
+            if (DestinationDevice.ThrottleMaxConnections == UNLIMITED)
+            {
+                if (currentConnectionCounter >= ImageServerCommonConfiguration.TooManyStudyMoveWarningThreshold)
+                {
+                    RaisePotentialTooManyConnectionAlert(currentConnectionCounter);
+                }
+            }
+            else if (currentConnectionCounter > DestinationDevice.ThrottleMaxConnections)
+            {
+                RaiseConnectionLimitReachedAlert();
+                return false;
+            }
+
+            return true;
         }
+
+        private void RaiseConnectionLimitReachedAlert()
+        {
+            Platform.Log(LogLevel.Warn, "Connection limit on device {0} has been reached. Max = {1}.", DestinationDevice.AeTitle, DestinationDevice.ThrottleMaxConnections);
+        }
+
+        private void RaisePotentialTooManyConnectionAlert(int currentConnectionCounter)
+        {
+            Platform.GetService<IAlertService>(delegate(IAlertService service)
+                                                   {
+                                                       Common.Alert alert = new Common.Alert(new AlertSource("Auto-route/Move"), AlertCategory.Application,AlertLevel.Warning);
+                                                       alert.Data =
+                                                           String.Format("Number of current connections to {0} : {1}", DestinationDevice.AeTitle, currentConnectionCounter);
+                                                       service.GenerateAlert(alert);
+                                                   });
+        }
+
     }
 }

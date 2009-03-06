@@ -95,5 +95,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ThrottleMaxConnections")]
+        public System.Int16 ThrottleMaxConnections
+        {
+            set { SubParameters["ThrottleMaxConnections"] = new EntityUpdateColumn<System.Int16>("ThrottleMaxConnections", value); }
+        }
     }
 }

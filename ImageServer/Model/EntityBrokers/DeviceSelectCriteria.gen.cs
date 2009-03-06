@@ -173,5 +173,17 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ThrottleMaxConnections")]
+        public ISearchCondition<System.Int16> ThrottleMaxConnections
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("ThrottleMaxConnections"))
+              {
+                 SubCriteria["ThrottleMaxConnections"] = new SearchCondition<System.Int16>("ThrottleMaxConnections");
+              }
+              return (ISearchCondition<System.Int16>)SubCriteria["ThrottleMaxConnections"];
+            } 
+        }
     }
 }
