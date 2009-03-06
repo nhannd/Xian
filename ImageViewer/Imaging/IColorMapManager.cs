@@ -68,6 +68,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		void InstallColorMap(ColorMapDescriptor descriptor);
 
 		/// <summary>
+		/// Installs a color map.
+		/// </summary>
+		/// <param name="colorMap">The color map to install.</param>
+		void InstallColorMap(IDataLut colorMap);
+
+		/// <summary>
 		/// Gets all available color maps in the form of <see cref="ColorMapDescriptor"/>s.
 		/// </summary>
 		IEnumerable<ColorMapDescriptor> AvailableColorMaps { get; }

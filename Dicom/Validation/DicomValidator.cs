@@ -165,7 +165,7 @@ namespace ClearCanvas.Dicom.Validation
 			int sizeInBytes = rows * columns * bitsPerPixel / 8;
 
 			if (pixelData.Length != sizeInBytes)
-				throw new DicomDataException(SR.ExceptionInvalidPixelData);
+				throw new DicomDataException(string.Format(SR.ExceptionInvalidPixelData, pixelData.Length, sizeInBytes));
 		}
 
 		/// <summary>

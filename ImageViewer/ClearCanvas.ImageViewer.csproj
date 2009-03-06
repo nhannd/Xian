@@ -131,6 +131,9 @@
     <Compile Include="Graphics\InvariantArrowheadGraphic.cs" />
     <Compile Include="Graphics\InvariantLinePrimitive.cs" />
     <Compile Include="Graphics\ArrowGraphic.cs" />
+    <Compile Include="Imaging\DicomOverlayPlanes.cs" />
+    <Compile Include="Imaging\DicomOverlayPlane.cs" />
+    <Compile Include="Imaging\OverlayData.cs" />
     <Compile Include="InteractiveGraphics\CalloutGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\UserTextGraphic.cs" />
     <Compile Include="InteractiveGraphics\CreateBoundableGraphicState.cs" />

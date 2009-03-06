@@ -30,8 +30,12 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
@@ -40,8 +44,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 	/// </summary>
 	/// <seealso cref="OverlayPlaneModuleIod.this"/>
 	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.9.2 (Table C.9-2)</remarks>
-	public class OverlayPlaneModuleIod : IodBase
+	public class OverlayPlaneModuleIod : IodBase, IEnumerable<OverlayPlane>
 	{
+		private bool _convertToOverlayData = true;
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OverlayPlaneModuleIod"/> class.
 		/// </summary>	
@@ -69,8 +75,28 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			get
 			{
 				Platform.CheckArgumentRange(index, 0, 15, "index");
-				return new OverlayPlane((uint) index*2*0x10000, this.DicomAttributeProvider);
+				return new OverlayPlane(ComputeTagOffset(index), this.DicomAttributeProvider);
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating that any overlay planes encoded using the unused
+		/// bits of <see cref="DicomTags.PixelData"/> should be converted to use <see cref="DicomTags.OverlayData"/>.
+		/// </summary>
+		public bool ConvertToOverlayData
+		{
+			get { return _convertToOverlayData; }
+			set { _convertToOverlayData = value; }
+		}
+
+		public bool HasOverlayPlane(int index)
+		{
+			return !this.DicomAttributeProvider[ComputeTagOffset(index) + DicomTags.OverlayBitPosition].IsEmpty;
+		}
+
+		private static uint ComputeTagOffset(int index)
+		{
+			return (uint) index*2*0x10000;
 		}
 
 		/// <summary>
@@ -82,7 +108,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			{
 				for (int n = 0; n < 16; n++)
 				{
-					uint tagOffset = (uint) n*2*0x10000;
+					uint tagOffset = ComputeTagOffset(n);
 					yield return tagOffset + DicomTags.OverlayBitPosition;
 					yield return tagOffset + DicomTags.OverlayBitsAllocated;
 					yield return tagOffset + DicomTags.OverlayColumns;
@@ -99,6 +125,24 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				}
 			}
 		}
+
+		#region IEnumerable<OverlayPlane> Members
+
+		public IEnumerator<OverlayPlane> GetEnumerator()
+		{
+			for (int n = 0; n < 1; n++) // TODO make it 16 again
+			{
+				if (this.HasOverlayPlane(n))
+					yield return this[n];
+			}
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return this.GetEnumerator();
+		}
+
+		#endregion
 	}
 
 	/// <summary>
@@ -135,11 +179,21 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OverlayPlane"/> class.
 		/// </summary>
-		/// <param name="tagOffset"></param>
+		/// <param name="tagOffset">The tag offset for this overlay.</param>
 		/// <param name="dicomAttributeProvider">The underlying collection.</param>
 		internal OverlayPlane(uint tagOffset, IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
 		{
 			_tagOffset = tagOffset;
+		}
+
+		public uint TagOffset
+		{
+			get { return _tagOffset; }
+		}
+
+		public bool IsBigEndianOW
+		{
+			get { return ByteBuffer.LocalMachineEndian == Endian.Big && base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayData] is DicomAttributeOW; }
 		}
 
 		/// <summary>
@@ -177,14 +231,24 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Gets or sets the value of OverlayOrigin in the underlying collection. Type 1.
 		/// </summary>
-		public string OverlayOrigin
+		public Point? OverlayOrigin
 		{
-			get { return base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayOrigin].ToString(); }
+			get
+			{
+				DicomAttribute attribute = base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayOrigin];
+				int[] result = new int[2];
+				if (attribute.TryGetInt32(0, out result[0]))
+					if (attribute.TryGetInt32(1, out result[1]))
+						return new Point(result[0], result[1]);
+				return null;
+			}
 			set
 			{
-				if (string.IsNullOrEmpty(value))
+				if (!value.HasValue)
 					throw new ArgumentNullException("value", "OverlayOrigin is Type 1 Required.");
-				base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayOrigin].SetStringValue(value);
+				DicomAttribute attribute = base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayOrigin];
+				attribute.SetInt32(0, value.Value.X);
+				attribute.SetInt32(1, value.Value.Y);
 			}
 		}
 
@@ -194,7 +258,12 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public int OverlayBitsAllocated
 		{
 			get { return base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayBitsAllocated].GetInt32(0, 0); }
-			set { base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayBitsAllocated].SetInt32(0, value); }
+			set
+			{
+				if (value != 1)
+					throw new ArgumentOutOfRangeException("value", "OverlayBitsAllocated must be 1. Encoding overlay data in the unused bits of PixelData is not supported.");
+				base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayBitsAllocated].SetInt32(0, value);
+			}
 		}
 
 		/// <summary>
@@ -203,7 +272,11 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		public int OverlayBitPosition
 		{
 			get { return base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayBitPosition].GetInt32(0, 0); }
-			set { base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayBitPosition].SetInt32(0, value); }
+			set {
+				if (value != 0)
+					throw new ArgumentOutOfRangeException("value", "OverlayBitPosition must be 0. Encoding overlay data in the unused bits of PixelData is not supported.");
+				base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayBitPosition].SetInt32(0, value);
+			}
 		}
 
 		/// <summary>

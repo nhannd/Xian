@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	[Cloneable]
 	public class DicomGrayscalePresentationImage
-		: GrayscalePresentationImage, IImageSopProvider, IDicomSoftcopyPresentationStateProvider, IDicomVoiLutsProvider
+		: GrayscalePresentationImage, IImageSopProvider, IDicomSoftcopyPresentationStateProvider, IDicomVoiLutsProvider, IDicomOverlayPlanesProvider
 	{
 		[CloneIgnore]
 		private IFrameReference _frameReference;
@@ -85,6 +85,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			_frameReference = frameReference;
 			_dicomVoiLuts = new DicomVoiLuts(this);
+			_dicomOverlayPlanes = new DicomOverlayPlanes(this);
+			Initialize();
 		}
 
 		/// <summary>
@@ -96,6 +98,19 @@ namespace ClearCanvas.ImageViewer
 			Frame frame = source.Frame;
 			_frameReference = frame.CreateTransientReference();
 			_dicomVoiLuts = new DicomVoiLuts(this);
+			_dicomOverlayPlanes = new DicomOverlayPlanes(this);
+		}
+
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			Initialize();
+		}
+
+		private void Initialize()
+		{
+			// populate the overlay planes
+			Imaging.DicomOverlayPlanes.PopulateOverlayPlanes(_dicomOverlayPlanes);
 		}
 
 		/// <summary>
@@ -163,6 +178,18 @@ namespace ClearCanvas.ImageViewer
 		public IDicomVoiLuts DicomVoiLuts
 		{
 			get { return _dicomVoiLuts; }
+		}
+
+		#endregion
+
+		#region IDicomOverlayPlanesProvider Members
+
+		[CloneIgnore]
+		private readonly DicomOverlayPlanes _dicomOverlayPlanes;
+
+		public IDicomOverlayPlanes DicomOverlayPlanes
+		{
+			get { return _dicomOverlayPlanes; }
 		}
 
 		#endregion

@@ -1,7 +1,10 @@
+using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -12,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
 	public class ShowHideOverlaysTool : ImageViewerTool
 	{
-		private ActionModelNode _dropDown;
+		private ActionModelNode _mainDropDownActionModel;
 
 		public ShowHideOverlaysTool() {}
 
@@ -20,11 +23,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			get
 			{
-				if (_dropDown == null)
+				if (_mainDropDownActionModel == null)
 				{
-					_dropDown = ActionModelRoot.CreateModel("ClearCanvas.ImageViewer.Tools.Standard", "overlays-dropdown", this.ImageViewer.ExportedActions);
+					_mainDropDownActionModel = ActionModelRoot.CreateModel("ClearCanvas.ImageViewer.Tools.Standard", "overlays-dropdown", this.ImageViewer.ExportedActions);
 				}
-				return _dropDown;
+
+				ActionModelRoot model = new ActionModelRoot();
+				model.Merge(_mainDropDownActionModel);
+				if (base.SelectedPresentationImage is IDicomOverlayPlanesProvider)
+				{
+					ActionModelRoot root = new ActionModelRoot();
+					ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+
+					IDicomOverlayPlanesProvider prov = (IDicomOverlayPlanesProvider) base.SelectedPresentationImage;
+					foreach (DicomOverlayPlane overlay in prov.DicomOverlayPlanes)
+					{
+						// temporary actions to toggle view
+						MenuAction action = new MenuAction(Guid.NewGuid().ToString(), new ActionPath("overlays/" + overlay.Name, null), ClickActionFlags.None, resolver);
+						action.SetClickHandler(delegate
+						                       	{
+						                       		overlay.Visible = !overlay.Visible;
+						                       		overlay.Graphic.Draw();
+						                       	});
+						root.InsertAction(action);
+					}
+					model.Merge(root);
+				}
+				return model;
 			}
 		}
 	}

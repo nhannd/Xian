@@ -66,6 +66,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_grayscaleImageGraphic.InstallColorMap(descriptor.Name);
 		}
 
+		public void InstallColorMap(IDataLut colorMap)
+		{
+			_grayscaleImageGraphic.InstallColorMap(colorMap);
+		}
+
 		public IEnumerable<ColorMapDescriptor> AvailableColorMaps
 		{
 			get
