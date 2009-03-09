@@ -8,10 +8,10 @@
 				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.RestoreQueueSummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetRestoreQueueDataSource"
 				OnObjectDisposing="DisposeRestoreQueueDataSource"/>
-				<ccUI:GridView ID="RestoreQueueGridView" runat="server" SkinID="CustomGlobalGridView"
+				<ccUI:GridView ID="RestoreQueueGridView" runat="server"
 					OnSelectedIndexChanged="RestoreQueueGridView_SelectedIndexChanged"
 					OnPageIndexChanging="RestoreQueueGridView_PageIndexChanging"
-					SelectionMode="Multiple" DataSourceID="RestoreQueueDataSourceObject">
+					SelectionMode="Multiple">
 					<Columns>
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>

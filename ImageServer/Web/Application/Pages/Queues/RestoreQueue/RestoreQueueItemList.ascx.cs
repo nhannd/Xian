@@ -183,12 +183,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
         #endregion // Events
         
         #region protected methods
-
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-			RestoreQueueGridView.DataBind();
-        }
         
         protected override void OnInit(EventArgs e)
         {
@@ -201,6 +195,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
             RestoreQueueGridView.SelectedIndexChanged += new EventHandler(RestoreQueueGridView_SelectedIndexChanged);
+
+            RestoreQueueGridView.DataSource = RestoreQueueDataSourceObject;
         }
 
         protected void RestoreQueueGridView_SelectedIndexChanged(object sender, EventArgs e)
@@ -248,18 +244,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
         #endregion
 
         #region public methods
-        /// <summary>
-        /// Binds the list to the control.
-        /// </summary>
-        /// <remarks>
-        /// This method must be called after setting <seeaslo cref="Study"/> to update the grid with the list.
-        /// </remarks>
-        public override void DataBind()
+
+        public void Refresh()
         {
-            RestoreQueueGridView.DataBind();
+            RestoreQueueGrid.ClearSelections();
+            RestoreQueueGrid.PageIndex = 0;
+            RestoreQueueGrid.DataBind();
         }
 
-        #endregion // public methods
+        public void RefreshCurrentPage()
+        {
+            RestoreQueueGrid.DataBind(); 
+        }
+
+        #endregion public methods
 
     }
 

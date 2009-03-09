@@ -94,13 +94,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             StatusFilter.SelectedIndex = 0;
         }
 
-        public override void DataBind()
-        {
-            RestoreQueueItemList.Partition = ServerPartition;
-            base.DataBind();
-            RestoreQueueItemList.DataBind();
-        }
-
         #endregion Public Methods
 
         #region Protected Methods
@@ -113,7 +106,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                           
             // setup child controls
             GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid, delegate { return RestoreQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, RestoreQueueItemList.RestoreQueueGrid, delegate { return RestoreQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.bottom);
 
             MessageBox.Confirmed += delegate(object data)
                             {
@@ -132,7 +124,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                                 }
 
                                 DataBind();
-                                UpdatePanel.Update(); // force refresh
+                                SearchUpdatePanel.Update(); // force refresh
 
                             };
 
@@ -169,10 +161,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                 StatusFilter.Items.Add(new ListItem(s.Description, s.Lookup));
             StatusFilter.SelectedIndex = prevSelectedIndex;
 
-			if (RestoreQueueItemList.IsPostBack)
-			{
-				DataBind();
-			} 
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -189,13 +177,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
         
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
-            RestoreQueueItemList.RestoreQueueGrid.ClearSelections();
-        	RestoreQueueItemList.RestoreQueueGrid.PageIndex = 0;
-			DataBind();
+            RestoreQueueItemList.Refresh();
         }
 
         protected void DeleteItemButton_Click(object sender, EventArgs e)
         {
+            RestoreQueueItemList.RefreshCurrentPage();
+            
             IList<Model.RestoreQueue> items = RestoreQueueItemList.SelectedItems;
 
             if (items != null && items.Count>0)
