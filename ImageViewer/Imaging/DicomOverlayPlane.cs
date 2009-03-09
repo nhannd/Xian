@@ -116,9 +116,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		#region ColorMap
+		#region Color Map
 
-		public class OverlayColorMap : ColorMap
+		/// <summary>
+		/// Simple 2-value color map for DICOM overlays.
+		/// </summary>
+		private class OverlayColorMap : ColorMap
 		{
 			private Color _color = Color.Gray;
 

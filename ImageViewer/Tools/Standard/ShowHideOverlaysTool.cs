@@ -30,13 +30,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 				ActionModelRoot model = new ActionModelRoot();
 				model.Merge(_mainDropDownActionModel);
-				if (base.SelectedPresentationImage is IDicomOverlayPlanesProvider)
+				if (base.SelectedPresentationImage is IDicomPresentationImage)
 				{
 					ActionModelRoot root = new ActionModelRoot();
 					ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
 
-					IDicomOverlayPlanesProvider prov = (IDicomOverlayPlanesProvider) base.SelectedPresentationImage;
-					foreach (DicomOverlayPlane overlay in prov.DicomOverlayPlanes)
+					IDicomPresentationImage image = (IDicomPresentationImage)base.SelectedPresentationImage;
+					foreach (DicomOverlayPlane overlay in image.DicomOverlayPlanes)
 					{
 						// temporary actions to toggle view
 						MenuAction action = new MenuAction(Guid.NewGuid().ToString(), new ActionPath("overlays/" + overlay.Name, null), ClickActionFlags.None, resolver);

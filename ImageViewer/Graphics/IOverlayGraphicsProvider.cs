@@ -34,9 +34,13 @@ using ClearCanvas.ImageViewer.BaseTools;
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
-	/// Provides access to a <see cref="GraphicCollection"/>.
+	/// Provides access to a <see cref="GraphicCollection"/> containing user-level graphics.
 	/// </summary>
 	/// <remarks>
+	/// <para>
+	/// User-level graphics are rendered after any domain-level graphics and after any
+	/// application-level graphics.
+	/// </para>
 	/// <para>
 	/// If you have subclassed <see cref="PresentationImage"/> and want to expose
 	/// a <see cref="GraphicCollection"/> to <see cref="ImageViewerTool"/> objects, 
@@ -50,10 +54,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// any type of <see cref="PresentationImage"/> that implements the provider interface.
 	/// </para>
 	/// </remarks>
+	/// <seealso cref="IApplicationGraphicsProvider"/>
 	public interface IOverlayGraphicsProvider
 	{
 		/// <summary>
-		/// Gets a <see cref="GraphicCollection"/>.
+		/// Gets a <see cref="GraphicCollection"/> of user-level graphics.
 		/// </summary>
 		GraphicCollection OverlayGraphics { get; }
 	}

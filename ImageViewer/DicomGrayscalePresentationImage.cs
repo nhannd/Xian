@@ -36,6 +36,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -47,10 +48,16 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	[Cloneable]
 	public class DicomGrayscalePresentationImage
-		: GrayscalePresentationImage, IImageSopProvider, IDicomSoftcopyPresentationStateProvider, IDicomVoiLutsProvider, IDicomOverlayPlanesProvider
+		: GrayscalePresentationImage, IDicomPresentationImage, IDicomSoftcopyPresentationStateProvider, IDicomVoiLutsProvider
 	{
 		[CloneIgnore]
 		private IFrameReference _frameReference;
+
+		[CloneIgnore]
+		private CompositeGraphic _dicomGraphics;
+
+		[CloneIgnore]
+		private readonly DicomOverlayPlanes _dicomOverlayPlanes;
 
 		private bool _presentationStateApplied = false;
 
@@ -104,13 +111,27 @@ namespace ClearCanvas.ImageViewer
 		[OnCloneComplete]
 		private void OnCloneComplete()
 		{
+			_dicomGraphics = CollectionUtils.SelectFirst(base.GraphicalLayers,
+				delegate(IGraphic test) { return test.Name == "DICOM"; }) as CompositeGraphic;
+
 			Initialize();
 		}
 
 		private void Initialize()
 		{
+			if (_dicomGraphics == null)
+			{
+				_dicomGraphics = new CompositeGraphic();
+				_dicomGraphics.Name = "DICOM";
+
+				// insert the DICOM graphics layer right after the image graphic (both contain domain-level graphics)
+				IGraphic imageGraphic = CollectionUtils.SelectFirst(base.GraphicalLayers,
+					delegate(IGraphic test) { return test is ImageGraphic; });
+				base.GraphicalLayers.Insert(base.GraphicalLayers.IndexOf(imageGraphic) + 1, _dicomGraphics);
+			}
+
 			// populate the overlay planes
-			Imaging.DicomOverlayPlanes.PopulateOverlayPlanes(_dicomOverlayPlanes);
+			_dicomOverlayPlanes.Populate();
 		}
 
 		/// <summary>
@@ -156,7 +177,8 @@ namespace ClearCanvas.ImageViewer
 		[CloneCopyReference]
 		private DicomSoftcopyPresentationState _presentationState;
 
-		public DicomSoftcopyPresentationState PresentationState {
+		public DicomSoftcopyPresentationState PresentationState
+		{
 			get { return _presentationState; }
 			set
 			{
@@ -182,10 +204,12 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		#region IDicomOverlayPlanesProvider Members
+		#region IDicomPresentationImage Members
 
-		[CloneIgnore]
-		private readonly DicomOverlayPlanes _dicomOverlayPlanes;
+		public GraphicCollection DicomGraphics
+		{
+			get { return _dicomGraphics.Graphics; }
+		}
 
 		public IDicomOverlayPlanes DicomOverlayPlanes
 		{

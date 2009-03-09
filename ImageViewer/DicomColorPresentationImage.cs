@@ -34,6 +34,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -44,10 +46,16 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	[Cloneable]
 	public class DicomColorPresentationImage
-		: ColorPresentationImage, IImageSopProvider, IDicomSoftcopyPresentationStateProvider
+		: ColorPresentationImage, IDicomPresentationImage, IDicomSoftcopyPresentationStateProvider
 	{
 		[CloneIgnore]
 		private IFrameReference _frameReference;
+
+		[CloneIgnore]
+		private CompositeGraphic _dicomGraphics;
+
+		[CloneIgnore]
+		private readonly DicomOverlayPlanes _dicomOverlayPlanes;
 
 		private bool _presentationStateApplied = false;
 
@@ -74,6 +82,8 @@ namespace ClearCanvas.ImageViewer
 				   frameReference.Frame.GetNormalizedPixelData)
 		{
 			_frameReference = frameReference;
+			_dicomOverlayPlanes = new DicomOverlayPlanes(this);
+			Initialize();
 		}
 
 		/// <summary>
@@ -84,6 +94,33 @@ namespace ClearCanvas.ImageViewer
 		{
 			Frame frame = source.Frame;
 			_frameReference = frame.CreateTransientReference();
+			_dicomOverlayPlanes = new DicomOverlayPlanes(this);
+		}
+
+		[OnCloneComplete]
+		private void OnCloneComplete()
+		{
+			_dicomGraphics = CollectionUtils.SelectFirst(base.GraphicalLayers,
+				delegate(IGraphic test) { return test.Name == "DICOM"; }) as CompositeGraphic;
+
+			Initialize();
+		}
+
+		private void Initialize()
+		{
+			if (_dicomGraphics == null)
+			{
+				_dicomGraphics = new CompositeGraphic();
+				_dicomGraphics.Name = "DICOM";
+
+				// insert the DICOM graphics layer right after the image graphic (both contain domain-level graphics)
+				IGraphic imageGraphic = CollectionUtils.SelectFirst(base.GraphicalLayers,
+					delegate(IGraphic test) { return test is ImageGraphic; });
+				base.GraphicalLayers.Insert(base.GraphicalLayers.IndexOf(imageGraphic) + 1, _dicomGraphics);
+			}
+
+			// populate the overlay planes
+			_dicomOverlayPlanes.Populate();
 		}
 
 		/// <summary>
@@ -129,14 +166,31 @@ namespace ClearCanvas.ImageViewer
 		[CloneCopyReference]
 		private DicomSoftcopyPresentationState _presentationState;
 
-		public DicomSoftcopyPresentationState PresentationState {
+		public DicomSoftcopyPresentationState PresentationState
+		{
 			get { return _presentationState; }
-			set {
-				if (_presentationState != value) {
+			set
+			{
+				if (_presentationState != value)
+				{
 					_presentationState = value;
 					_presentationStateApplied = false;
 				}
 			}
+		}
+
+		#endregion
+
+		#region IDicomPresentationImage Members
+
+		public GraphicCollection DicomGraphics
+		{
+			get { return _dicomGraphics.Graphics; }
+		}
+
+		public IDicomOverlayPlanes DicomOverlayPlanes
+		{
+			get { return _dicomOverlayPlanes; }
 		}
 
 		#endregion

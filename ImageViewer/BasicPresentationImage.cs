@@ -69,6 +69,7 @@ namespace ClearCanvas.ImageViewer
 		PresentationImage, 
 		IImageGraphicProvider,
 		ISpatialTransformProvider,
+		IApplicationGraphicsProvider,
 		IOverlayGraphicsProvider,
 		IAnnotationLayoutProvider
 	{
@@ -82,6 +83,8 @@ namespace ClearCanvas.ImageViewer
 		private CompositeGraphic _compositeImageGraphic;
 		[CloneIgnore]
 		private ImageGraphic _imageGraphic;
+		[CloneIgnore]
+		private CompositeGraphic _applicationGraphics;
 		[CloneIgnore]
 		private CompositeGraphic _overlayGraphics;
 		private IAnnotationLayout _annotationLayout;
@@ -162,17 +165,39 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		#region IApplicationGraphicsProvider members
+
+		/// <summary>
+		/// Gets this presentation image's collection of application graphics.
+		/// </summary>
+		/// <remarks>
+		/// Use <see cref="ApplicationGraphics"/> to add graphics that you want to
+		/// overlay the image at the application-level. These graphics are rendered
+		/// before any <see cref="OverlayGraphics"/>.
+		/// </remarks>
+		public GraphicCollection ApplicationGraphics
+		{
+			get { return _applicationGraphics.Graphics; }
+		}
+
+		#endregion
+
+		#region IOverlayGraphicsProvider members
+
 		/// <summary>
 		/// Gets this presentation image's collection of overlay graphics.
 		/// </summary>
 		/// <remarks>
 		/// Use <see cref="OverlayGraphics"/> to add graphics that you want to
-		/// overlay the image.
+		/// overlay the image at the user-level. These graphics are rendered
+		/// after any <see cref="ApplicationGraphics"/>.
 		/// </remarks>
 		public GraphicCollection OverlayGraphics
 		{
 			get { return _overlayGraphics.Graphics; }
 		}
+
+		#endregion
 
 		#endregion
 
@@ -277,6 +302,14 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 
 		/// <summary>
+		/// Gets a collection of all the top-level graphical layers.
+		/// </summary>
+		protected GraphicCollection GraphicalLayers
+		{
+			get { return _compositeImageGraphic.Graphics; }
+		}
+
+		/// <summary>
 		/// Creates an empty <see cref="AnnotationLayout"/> unless overridden.
 		/// </summary>
 		protected virtual IAnnotationLayout CreateAnnotationLayout()
@@ -312,10 +345,14 @@ namespace ClearCanvas.ImageViewer
 				pixelAspectRatioX,
 				pixelAspectRatioY);
 
+			_applicationGraphics = new CompositeGraphic();
+			_applicationGraphics.Name = "Application";
+
 			_overlayGraphics = new CompositeGraphic();
 			_overlayGraphics.Name = "Overlay";
 
 			_compositeImageGraphic.Graphics.Add(_imageGraphic);
+			_compositeImageGraphic.Graphics.Add(_applicationGraphics);
 			_compositeImageGraphic.Graphics.Add(_overlayGraphics);
 			this.SceneGraph.Graphics.Add(_compositeImageGraphic);
 		}
@@ -331,10 +368,14 @@ namespace ClearCanvas.ImageViewer
 			_imageGraphic = CollectionUtils.SelectFirst(_compositeImageGraphic.Graphics,
 				delegate(IGraphic test) { return test is ImageGraphic; }) as ImageGraphic;
 
+			_applicationGraphics = CollectionUtils.SelectFirst(_compositeImageGraphic.Graphics,
+				delegate(IGraphic test) { return test.Name == "Application"; }) as CompositeGraphic;
+
 			_overlayGraphics = CollectionUtils.SelectFirst(_compositeImageGraphic.Graphics,
 				delegate(IGraphic test) { return test.Name == "Overlay"; }) as CompositeGraphic;
 
 			Platform.CheckForNullReference(_imageGraphic, "_imageGraphic");
+			Platform.CheckForNullReference(_applicationGraphics, "_applicationGraphics");
 			Platform.CheckForNullReference(_overlayGraphics, "_overlayGraphics");
 		}
 	}

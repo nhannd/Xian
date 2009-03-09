@@ -8,11 +8,6 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public interface IDicomOverlayPlanesProvider
-	{
-		IDicomOverlayPlanes DicomOverlayPlanes { get; }
-	}
-
 	public interface IDicomOverlayPlanes : IEnumerable<DicomOverlayPlane>
 	{
 		DicomOverlayPlane this[int index] { get; }
@@ -20,37 +15,36 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 	internal class DicomOverlayPlanes : IDicomOverlayPlanes, IList<DicomOverlayPlane>
 	{
-		private readonly IOverlayGraphicsProvider _overlayGraphicsProvider;
+		private readonly IDicomPresentationImage _dicomPresentationImage;
 		private readonly OverlayPlanesGraphic _overlayPlanesGraphic;
 		private readonly List<DicomOverlayPlane> _overlayPlanes;
 
-		public DicomOverlayPlanes(IOverlayGraphicsProvider overlayGraphicsProvider)
+		public DicomOverlayPlanes(IDicomPresentationImage dicomPresentationImage)
 		{
-			Platform.CheckForNullReference(overlayGraphicsProvider, "overlayGraphicsProvider");
+			Platform.CheckForNullReference(dicomPresentationImage, "overlayGraphicsProvider");
 			_overlayPlanes = new List<DicomOverlayPlane>();
 			_overlayPlanesGraphic = new OverlayPlanesGraphic();
-			_overlayGraphicsProvider = overlayGraphicsProvider;
-			_overlayGraphicsProvider.OverlayGraphics.Add(_overlayPlanesGraphic);
+			_dicomPresentationImage = dicomPresentationImage;
 		}
 
-		public static void PopulateOverlayPlanes(DicomOverlayPlanes dicomOverlayPlanes)
+		internal void Populate()
 		{
-			IImageSopProvider sopProvider = dicomOverlayPlanes._overlayGraphicsProvider as IImageSopProvider;
-			if (sopProvider != null)
+			if (!_dicomPresentationImage.DicomGraphics.Contains(_overlayPlanesGraphic))
 			{
-				OverlayPlaneModuleIod overlays = new OverlayPlaneModuleIod(sopProvider.ImageSop.DataSource);
+				OverlayPlaneModuleIod overlays = new OverlayPlaneModuleIod(_dicomPresentationImage.ImageSop.DataSource);
 				foreach (OverlayPlane overlay in overlays)
 				{
 					try
 					{
 						DicomOverlayPlane dop = new DicomOverlayPlane(overlay);
-						dicomOverlayPlanes.Add(dop);
+						this.Add(dop);
 					}
 					catch (Exception ex)
 					{
-						Platform.Log(LogLevel.Warn, ex, "Failed to render image overlay plane at offset {0}.", overlay.TagOffset.ToString("x8"));
+						Platform.Log(LogLevel.Warn, ex, "Failed to render image overlay plane at offset 0x{0:x8}.", overlay.TagOffset);
 					}
 				}
+				_dicomPresentationImage.DicomGraphics.Add(_overlayPlanesGraphic);
 			}
 		}
 
