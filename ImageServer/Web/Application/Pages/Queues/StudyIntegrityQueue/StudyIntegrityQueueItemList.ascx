@@ -8,10 +8,10 @@
 				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.StudyIntegrityQueueSummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetStudyIntegrityQueueDataSource"
 				OnObjectDisposing="DisposeStudyIntegrityQueueDataSource"/>
-				<ccUI:GridView ID="StudyIntegrityQueueGridView" runat="server" SkinID="CustomGlobalGridView"
+				<ccUI:GridView ID="StudyIntegrityQueueGridView" runat="server"
 					OnSelectedIndexChanged="StudyIntegrityQueueGridView_SelectedIndexChanged"
 					OnPageIndexChanging="StudyIntegrityQueueGridView_PageIndexChanging"
-					SelectionMode="Single" DataSourceID="StudyIntegrityQueueDataSourceObject"
+					SelectionMode="Single" 
 					OnRowDataBound="StudyIntegrityQueueItemList_RowDataBound">
 					<Columns>
 					    <asp:BoundField DataField="StudyInstanceUID" HeaderText="Study Instance UID" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left">

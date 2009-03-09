@@ -90,17 +90,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             ReceivedDate.Text = string.Empty;
         }
 
-        public override void DataBind()
-        {
-            StudyIntegrityQueueItemList.Partition = ServerPartition;
-            base.DataBind();
-            StudyIntegrityQueueItemList.DataBind();
-        }
-
         public void UpdateUI()
         {
-            StudyIntegrityQueueItemList.DataBind();
-            SearchPanelUpdatePanel.Update();
+            SearchUpdatePanel.Update();
         }
 
         #endregion Public Methods
@@ -119,13 +111,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                                              delegate{return StudyIntegrityQueueItemList.ResultCount;},
                                              ImageServerConstants.GridViewPagerPosition.top);
 
-
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, 
-                                                App_GlobalResources.Labels.GridPagerQueueMultipleItems, 
-                                                StudyIntegrityQueueItemList.StudyIntegrityQueueGrid,
-                                                delegate { return StudyIntegrityQueueItemList.ResultCount; },
-                                                ImageServerConstants.GridViewPagerPosition.bottom);
-
 			StudyIntegrityQueueItemList.DataSourceCreated += delegate(StudyIntegrityQueueDataSource source)
 										{
 											source.Partition = ServerPartition;
@@ -141,14 +126,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 										};
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-			if (StudyIntegrityQueueItemList.IsPostBack)
-			{
-				DataBind();
-			} 
-        }
-
         protected override void OnPreRender(EventArgs e)
         {
             UpdateToolbarButtons();
@@ -157,6 +134,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         protected void UpdateToolbarButtons()
         {
+            StudyIntegrityQueueItemList.RefreshCurrentPage();
+
             ReconcileButton.Enabled = (StudyIntegrityQueueItemList.SelectedItems != null)
                 && CollectionUtils.TrueForAll<StudyIntegrityQueueSummary>(StudyIntegrityQueueItemList.SelectedItems,
                 delegate(StudyIntegrityQueueSummary item)
@@ -167,9 +146,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
        
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
-            StudyIntegrityQueueItemList.StudyIntegrityQueueGrid.ClearSelections();
-        	StudyIntegrityQueueItemList.StudyIntegrityQueueGrid.PageIndex = 0;
-			DataBind();
+            StudyIntegrityQueueItemList.Refresh();
         }
 
         protected void ReconcileButton_Click(object sender, EventArgs e)

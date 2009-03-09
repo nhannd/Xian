@@ -54,7 +54,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         #region Private members
         // list of studies to display
         private IList<StudyIntegrityQueueSummary> _queueItems;
-        private ServerPartition _partition;
         private Unit _height;
     	private StudyIntegrityQueueDataSource _dataSource;
         #endregion Private members
@@ -94,13 +93,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         public Web.Common.WebControls.UI.GridView StudyIntegrityQueueGrid
         {
             get { return StudyIntegrityQueueGridView; }
-        }
-
-
-        public ServerPartition Partition
-        {
-            set { _partition = value; }
-            get { return _partition; }
         }
 
         /// <summary>
@@ -185,13 +177,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         #endregion // Events
         
         #region protected methods
-
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            StudyIntegrityQueueGridView.DataBind();
-        }
-        
+       
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -203,6 +189,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
             StudyIntegrityQueueGridView.SelectedIndexChanged += StudyIntegrityQueueGridView_SelectedIndexChanged;
+
+            StudyIntegrityQueueGridView.DataSource = StudyIntegrityQueueDataSourceObject;
         }
 
         protected void StudyIntegrityQueueGridView_SelectedIndexChanged(object sender, EventArgs e)
@@ -315,16 +303,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         #endregion
 
         #region public methods
-        /// <summary>
-        /// Binds the list to the control.
-        /// </summary>
-        /// <remarks>
-        /// This method must be called after setting <seeaslo cref="Study"/> to update the grid with the list.
-        /// </remarks>
-        public override void DataBind()
+
+        public void Refresh()
         {
-            // TODO: Is this call redundant?
-            StudyIntegrityQueueGridView.DataBind();
+            StudyIntegrityQueueGrid.ClearSelections();
+            StudyIntegrityQueueGrid.PageIndex = 0;
+            StudyIntegrityQueueGrid.DataBind();
+        }
+
+        public void RefreshCurrentPage()
+        {
+            StudyIntegrityQueueGrid.DataBind();
         }
 
 
