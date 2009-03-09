@@ -8,12 +8,10 @@
 				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.StudySummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetStudyDataSource"
 				OnObjectDisposing="DisposeStudyDataSource"/>
-				<ccUI:GridView ID="StudyListControl" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
-					Width="100%" EmptyDataText=""
-					CellPadding="0" OnSelectedIndexChanged="StudyListControl_SelectedIndexChanged"
+				<ccUI:GridView ID="StudyListControl" runat="server" 
+					OnSelectedIndexChanged="StudyListControl_SelectedIndexChanged"
 					OnPageIndexChanging="StudyListControl_PageIndexChanging"
-					SelectionMode="Multiple" PageSize="25" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
-					BorderWidth="0px" HorizontalAlign="Left" DataSourceID="StudyDataSourceObject">
+					SelectionMode="Multiple">
 					<Columns>
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>

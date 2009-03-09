@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.JQuery JQuery1;
         
         /// <summary>
-        /// UpdatePanel control.
+        /// SearchUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
@@ -182,15 +182,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SearchButton;
         
         /// <summary>
-        /// UpdateProgress1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdateProgress UpdateProgress1;
-        
-        /// <summary>
         /// StudyDateCalendarExtender control.
         /// </summary>
         /// <remarks>
@@ -279,15 +270,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyListGridView StudyListGridView;
-        
-        /// <summary>
-        /// GridPagerBottom control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerBottom;
         
         /// <summary>
         /// MessageBox control.

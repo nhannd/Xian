@@ -139,7 +139,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             ClearStudyDateButton.OnClientClick = ScriptHelper.ClearDate(StudyDate.ClientID, StudyDateCalendarExtender.ClientID);
             
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerStudySingleItem, App_GlobalResources.SR.GridPagerStudyMultipleItems, StudyListGridView.StudyListGrid, delegate { return StudyListGridView.ResultCount; }, ImageServerConstants.GridViewPagerPosition.bottom);
             
             RestoreMessageBox.Confirmed += delegate(object data)
                             {
@@ -221,13 +220,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             StudyDate.Text = string.Empty;
         }
 
-        public override void DataBind()
-        {
-            StudyListGridView.Partition = ServerPartition;
-            base.DataBind();
-            StudyListGridView.DataBind();
-        }
-
         #endregion Public Methods
 
         #region Protected Methods
@@ -246,18 +238,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 StudyDateCalendarExtender.SelectedDate = DateTime.ParseExact(StudyDate.Text, StudyDateCalendarExtender.Format, null);
             else
                 StudyDateCalendarExtender.SelectedDate = null;
-
-			if (StudyListGridView.IsPostBack)
-			{
-				DataBind();
-			}
         }
 
         public void Refresh()
         {
-            StudyListGridView.StudyListGrid.ClearSelections();
-            StudyListGridView.StudyListGrid.PageIndex = 0;
-            DataBind();
+            StudyListGridView.Refresh();
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
@@ -292,6 +277,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
         protected void DeleteStudyButton_Click(object sender, ImageClickEventArgs e)
         {
+            StudyListGridView.RefreshCurrentPage();
             SearchPanelDeleteButtonClickedEventArgs args = new SearchPanelDeleteButtonClickedEventArgs();
             args.SelectedStudies = StudyListGridView.SelectedStudies;
             EventsHelper.Fire(_deleteButtonClickedHandler, this, args);

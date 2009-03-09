@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
@@ -179,14 +180,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         #endregion // Events
         
         #region protected methods
-
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-			StudyListControl.DataBind();
-
-        }
-        
+     
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -198,6 +192,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
             StudyListControl.SelectedIndexChanged += StudyListControl_SelectedIndexChanged;
+
+            if(IsPostBack)
+            {
+                StudyListGrid.DataSource = StudyDataSourceObject;    
+            }
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -271,6 +270,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 				DataSourceCreated(_dataSource);
 
 		}
+
+        public void Refresh()
+        {
+            StudyListGrid.ClearSelections();
+            StudyListGrid.PageIndex = 0;
+            DataBind();
+        }
+
+        public void RefreshCurrentPage()
+        {
+            DataBind();
+        }
+
+
         #endregion
     }
 
