@@ -52,7 +52,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         #region Private members
         // list of studies to display
         private IList<ArchiveQueueSummary> _queueItems;
-        private ServerPartition _partition;
         private Unit _height;
     	private ArchiveQueueDataSource _dataSource;
         #endregion Private members
@@ -94,12 +93,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             get { return ArchiveQueueGridView; }
         }
 
-
-        public ServerPartition Partition
-        {
-            set { _partition = value; }
-            get { return _partition; }
-        }
 
         /// <summary>
         /// Gets/Sets the current selected device.
@@ -183,12 +176,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         #endregion // Events
         
         #region protected methods
-
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-			ArchiveQueueGridView.DataBind();
-        }
         
         protected override void OnInit(EventArgs e)
         {
@@ -201,6 +188,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
             ArchiveQueueGridView.SelectedIndexChanged += new EventHandler(ArchiveQueueGridView_SelectedIndexChanged);
+
+            ArchiveQueueGridView.DataSource = ArchiveQueueDataSourceObject;
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -276,6 +265,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 		}
         #endregion
 
+
+        public void Refresh()
+        {
+            ArchiveQueueGrid.ClearSelections();
+            ArchiveQueueGrid.PageIndex = 0;
+            DataBind();
+        }
+
+        public void RefreshCurrentPage()
+        {
+            DataBind();
+        }
     }
 
 }

@@ -8,10 +8,10 @@
 				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.ArchiveQueueSummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetArchiveQueueDataSource"
 				OnObjectDisposing="DisposeArchiveQueueDataSource"/>
-				<ccUI:GridView ID="ArchiveQueueGridView" runat="server" SkinID="CustomGlobalGridView"
+				<ccUI:GridView ID="ArchiveQueueGridView" runat="server"
 					OnSelectedIndexChanged="ArchiveQueueGridView_SelectedIndexChanged"
 					OnPageIndexChanging="ArchiveQueueGridView_PageIndexChanging"
-					SelectionMode="Multiple" DataSourceID="ArchiveQueueDataSourceObject">
+					SelectionMode="Multiple">
 					<Columns>
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>

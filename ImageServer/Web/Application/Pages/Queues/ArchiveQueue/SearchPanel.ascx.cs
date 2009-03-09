@@ -94,13 +94,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             StatusFilter.SelectedIndex = 0;
         }
 
-        public override void DataBind()
-        {
-            ArchiveQueueItemList.Partition = ServerPartition;
-            base.DataBind();
-            ArchiveQueueItemList.DataBind();
-        }
-
         #endregion Public Methods
 
         #region Protected Methods
@@ -113,7 +106,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                            
             // setup child controls
             GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, ArchiveQueueItemList.ArchiveQueueGrid, delegate { return ArchiveQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, ArchiveQueueItemList.ArchiveQueueGrid, delegate { return ArchiveQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.bottom);
 
             MessageBox.Confirmed += delegate(object data)
                             {
@@ -131,8 +123,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                                     _controller.DeleteArchiveQueueItem(item);
                                 }
 
-                                DataBind();
-                                UpdatePanel.Update(); // force refresh
+                                ArchiveQueueItemList.RefreshCurrentPage();
+                                SearchUpdatePanel.Update(); // force refresh
 
                             };
 
@@ -156,7 +148,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         {
             ScheduleDate.Text = Request[ScheduleDate.UniqueID];
             if (!String.IsNullOrEmpty(ScheduleDate.Text))
-                ScheduleDateCalendarExtender.SelectedDate = DateTime.ParseExact(ScheduleDate.Text, ScheduleDateCalendarExtender.Format, null);
+                ScheduleDateCalendarExtender.SelectedDate =
+                    DateTime.ParseExact(ScheduleDate.Text, ScheduleDateCalendarExtender.Format, null);
             else
                 ScheduleDateCalendarExtender.SelectedDate = null;
 
@@ -168,11 +161,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             foreach (ArchiveQueueStatusEnum s in statusItems)
                 StatusFilter.Items.Add(new ListItem(s.Description, s.Lookup));
             StatusFilter.SelectedIndex = prevSelectedIndex;
-
-			if (ArchiveQueueItemList.IsPostBack)
-			{
-				DataBind();
-			} 
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -189,13 +177,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
-            ArchiveQueueItemList.ArchiveQueueGrid.ClearSelections();
-        	ArchiveQueueItemList.ArchiveQueueGrid.PageIndex = 0;
-			DataBind();
+            ArchiveQueueItemList.Refresh();
         }
 
         protected void DeleteItemButton_Click(object sender, EventArgs e)
         {
+            ArchiveQueueItemList.RefreshCurrentPage();
+            
             IList<Model.ArchiveQueue> items = ArchiveQueueItemList.SelectedItems;
 
             if (items != null && items.Count>0)
