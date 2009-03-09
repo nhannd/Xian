@@ -33,9 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ionic.Utils.Zip, Version=1.5.0.11, Culture=neutral, PublicKeyToken=c551e179877da246, processorArchitecture=MSIL">
+    <Reference Include="Ionic.Zip, Version=1.7.2.11, Culture=neutral, PublicKeyToken=edbe51ad942a3f5c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\ReferencedAssemblies\Ionic.Utils.Zip.dll</HintPath>
+      <HintPath>..\..\..\ReferencedAssemblies\Ionic.Zip.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />

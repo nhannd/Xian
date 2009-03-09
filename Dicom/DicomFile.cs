@@ -638,6 +638,8 @@ namespace ClearCanvas.Dicom
 
             dsw.Write(TransferSyntax, _dataSet, options);
 
+			iStream.Flush();
+
             return true;
         }
 

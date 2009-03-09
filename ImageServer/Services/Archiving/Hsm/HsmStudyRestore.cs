@@ -41,7 +41,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Rules;
-using Ionic.Utils.Zip;
+using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
@@ -262,7 +262,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 					using (ZipFile zip = new ZipFile(zipFile))
 					{
-						foreach (string file in zip.EntryFilenames)
+						foreach (string file in zip.EntryFileNames)
 						{
 							processor.AddCommand(new ExtractZipFileAndReplaceCommand(zipFile, file, destinationFolder, tempCommand));
 						}

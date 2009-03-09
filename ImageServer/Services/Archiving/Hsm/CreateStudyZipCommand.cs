@@ -33,7 +33,7 @@ using System;
 using System.IO;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using Ionic.Utils.Zip;
+using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		{
 			using (ZipFile zip = new ZipFile(_zipFile))
 			{
-				zip.ForceNoCompression = true;
+				zip.ForceNoCompression = !HsmSettings.Default.CompressZipFiles;
 				zip.Comment = String.Format("Archive for study {0}", _studyXml.StudyInstanceUid);
 
 				// Add the studyXml file

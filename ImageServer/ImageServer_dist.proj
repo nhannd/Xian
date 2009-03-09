@@ -37,6 +37,8 @@
 
   <ItemGroup>
 	<DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
+	<DicomAssemblyFiles Include="$(SolutionDir)\..\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
+	<DicomAssemblyFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
   </ItemGroup>
 
   <ItemGroup>
@@ -63,7 +65,7 @@
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NHibernate1.2\Castle.DynamicProxy.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\log4net.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\nunit.framework.dll" />
-	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Ionic.Utils.Zip.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Ionic.Zip.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Model\bin\$(Configuration)\ClearCanvas.ImageServer.Model.dll" />

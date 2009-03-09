@@ -441,27 +441,48 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				}
             }
 
+			IEnumerator<DicomAttribute> baseIterator = null;
+        	bool validIterator = false;
+			if (baseCollection != null)
+			{
+				baseIterator = baseCollection.GetEnumerator();
+				validIterator = baseIterator.MoveNext();
+			}
 
             foreach (DicomAttribute attribute in collection)
             {
 				bool isInBase = false;
-                if (baseCollection != null)
+				if (baseIterator != null && validIterator)
                 {
-                	DicomAttribute attribBase;
-                	if (baseCollection.TryGetAttribute(attribute.Tag, out attribBase))
-                	{
-						//The attribute exists in the base and it is not empty.
-                		isInBase = true;
+					while (baseIterator.Current.Tag < attribute.Tag && validIterator)
+					{
+						XmlElement emptyAttributeElement = CreateDicomAttributeElement(theDocument, baseIterator.Current, "EmptyAttribute");
+						instance.AppendChild(emptyAttributeElement);
 
-                		if (!(attribute is DicomAttributeOB)
-                		    && !(attribute is DicomAttributeOW)
-                		    && !(attribute is DicomAttributeOF)
-                		    && !(attribute is DicomFragmentSequence))
-                		{
-                			if (attribute.Equals(attribBase))
-                				continue; // Skip the attribute, its the same as in the base!
-                		}
-                	}
+						validIterator = baseIterator.MoveNext();
+					}
+					if (validIterator)
+					{
+						if (baseIterator.Current.Tag == attribute.Tag)
+						{
+							//The attribute exists in the base and it is not empty.
+							isInBase = true;
+
+							if (!(attribute is DicomAttributeOB)
+								&& !(attribute is DicomAttributeOW)
+								&& !(attribute is DicomAttributeOF)
+								&& !(attribute is DicomFragmentSequence))
+							{
+								if (attribute.Equals(baseIterator.Current))
+								{
+									validIterator = baseIterator.MoveNext();
+									continue; // Skip the attribute, its the same as in the base!
+								}
+							}
+							// Move to the next attribute for the next time through the loop
+							validIterator = baseIterator.MoveNext();
+						}
+					}
                 }
 
 				//Only store an empty attribute when:

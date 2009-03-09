@@ -2,7 +2,7 @@ using System;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using Ionic.Utils.Zip;
+using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
 {
@@ -21,27 +21,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
             _dest = dest;
         }
 
-        protected override void OnExecute()
-        {
-            if (RequiresRollback)
-            {
-                Backup();
-            }
+		protected override void OnExecute()
+		{
+			if (RequiresRollback)
+			{
+				Backup();
+			}
 
+			using (ZipFile zip = new ZipFile(_dest))
+			{
+				zip.AddDirectory(_source, String.Empty);
+				zip.Save();
+			}
+		}
 
-            using (FileStream output = File.Create(_dest))
-            {
-                using (ZipFile zip = new ZipFile(output))
-                {
-                    zip.AddDirectory(_source, String.Empty);
-                    zip.Save();
-                }
-            }
-
-
-        }
-
-        private void Backup()
+    	private void Backup()
         {
             if (File.Exists(_dest))
             {

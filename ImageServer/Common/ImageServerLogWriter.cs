@@ -32,7 +32,7 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
-using Ionic.Utils.Zip;
+using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Common
 {

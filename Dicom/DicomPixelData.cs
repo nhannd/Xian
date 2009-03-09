@@ -124,13 +124,19 @@ namespace ClearCanvas.Dicom
 		private string _derivationDescription = "";
 
 		#endregion
+
 		#region Modality Lut
 
 		private Decimal _rescaleSlope = 1;
     	private Decimal _rescapeIntercept = 0;
+
+    	private string _rescaleSlopeString = "1";
+    	private string _rescaleInterceptString = "0";
+
     	private readonly bool _hasDataModalityLut = false;
 
 		#endregion
+		
 		#region Voi Lut
 
 		private List<Window> _linearVoiLuts = new List<Window>();
@@ -168,8 +174,6 @@ namespace ClearCanvas.Dicom
                 return new DicomUncompressedPixelData(message);
         }
         #endregion
-
-
 
         #region Constructors
 
@@ -385,35 +389,50 @@ namespace ClearCanvas.Dicom
 
 		public string RescaleSlope
 		{
-			get { return _rescaleSlope.ToString(); }
+			get { return _rescaleSlopeString; }
 			set
 			{
+				
 				decimal rescaleSlope;
 				if (decimal.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out rescaleSlope))
+				{
+					_rescaleSlopeString = value;
 					_rescaleSlope = rescaleSlope;
+				}
 			}
 		}
 
 		public string RescaleIntercept
 		{
-			get { return _rescapeIntercept.ToString(); }
+			get { return _rescaleInterceptString; }
 			set
 			{
 				decimal rescapeIntercept;
 				if (decimal.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out rescapeIntercept))
+				{
+					_rescaleInterceptString = value;
 					_rescapeIntercept = rescapeIntercept;
+				}
 			}
 		}
 
 		public decimal DecimalRescaleSlope
 		{
 			get { return _rescaleSlope; }
-			set { _rescaleSlope = value; }
+			set
+			{
+				_rescaleSlope = value;
+				_rescaleSlopeString = _rescaleSlope.ToString("G10");
+			}
 		}
 		public decimal DecimalRescaleIntercept
 		{
 			get { return _rescapeIntercept; }
-			set { _rescapeIntercept = value; }
+			set
+			{
+				_rescapeIntercept = value;
+				_rescaleInterceptString = _rescapeIntercept.ToString("G10");
+			}
 		}
 
     	public bool HasDataModalityLut

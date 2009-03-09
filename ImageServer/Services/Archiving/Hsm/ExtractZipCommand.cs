@@ -31,7 +31,7 @@
 
 using System.IO;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using Ionic.Utils.Zip;
+using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {

@@ -74,10 +74,9 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				    || (attrib1 is DicomAttributeOF))
 					continue;
 
-				if (collect2.Contains(attrib1.Tag))
+				DicomAttribute attrib2;
+				if (collect2.TryGetAttribute(attrib1.Tag, out attrib2))
 				{
-					DicomAttribute attrib2 = collect2[attrib1.Tag];
-
 					if (!attrib1.IsEmpty && attrib1.Equals(attrib2)) //don't store empty tags in the base collection.
 					{
 						Collection[attrib1.Tag] = attrib1.Copy();
