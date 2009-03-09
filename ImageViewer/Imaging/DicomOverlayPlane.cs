@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private readonly OverlayPlaneIod _dicomIod;
 		private readonly string _name;
 
-		private Color _color = Color.Red;
+		private Color _color = Color.Gray;
 		private OverlayColorMap _colorMap;
 		private GrayscaleImageGraphic _overlay;
 
@@ -18,10 +18,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			_dicomIod = dicomIod;
 
+			int index = (int)_dicomIod.TagOffset / 0x10000;
+
+			_color = GetDefaultColor(index);
+
 			if (string.IsNullOrEmpty(_dicomIod.OverlayLabel))
-				_name = string.Format("Overlay Plane #{0}", (_dicomIod.TagOffset/0x10000) + 1);
+				_name = string.Format("Overlay Plane #{0}", index + 1);
 			else
 				_name = _dicomIod.OverlayLabel;
+		}
+
+		private static Color GetDefaultColor(int index)
+		{
+			// TODO perhaps implement some mechanism for configurable colours
+			return Color.PeachPuff;
 		}
 
 		public string Name
@@ -31,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public string Description
 		{
-			get { return _dicomIod.OverlayDescription; }
+			get { return _dicomIod.OverlayDescription ?? string.Empty; }
 		}
 
 		public Color Color
@@ -106,6 +116,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 				}
 				return _overlay;
 			}
+		}
+
+		public void DrawGraphic()
+		{
+			if (_overlay == null)
+				return;
+			_overlay.Draw();
 		}
 
 		protected virtual void OnColorChanged()

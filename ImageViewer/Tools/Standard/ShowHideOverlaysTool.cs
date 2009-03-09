@@ -32,24 +32,44 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				model.Merge(_mainDropDownActionModel);
 				if (base.SelectedPresentationImage is IDicomPresentationImage)
 				{
-					ActionModelRoot root = new ActionModelRoot();
-					ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
-
-					IDicomPresentationImage image = (IDicomPresentationImage)base.SelectedPresentationImage;
-					foreach (DicomOverlayPlane overlay in image.DicomOverlayPlanes)
+					IDicomPresentationImage image = (IDicomPresentationImage) base.SelectedPresentationImage;
+					if (image.DicomOverlayPlanes.Count > 0)
 					{
-						// temporary actions to toggle view
-						MenuAction action = new MenuAction(Guid.NewGuid().ToString(), new ActionPath("overlays/" + overlay.Name, null), ClickActionFlags.None, resolver);
-						action.SetClickHandler(delegate
-						                       	{
-						                       		overlay.Visible = !overlay.Visible;
-						                       		overlay.Graphic.Draw();
-						                       	});
-						root.InsertAction(action);
+						ActionModelRoot overlaysModel = new ActionModelRoot();
+						overlaysModel.InsertSeparator(new ActionPath("overlays/separator", null));
+						foreach (DicomOverlayPlane overlay in image.DicomOverlayPlanes)
+						{
+							overlaysModel.InsertAction(new OverlayToggleMenuAction(overlay));
+						}
+						model.Merge(overlaysModel);
 					}
-					model.Merge(root);
 				}
 				return model;
+			}
+		}
+
+		private class OverlayToggleMenuAction : MenuAction
+		{
+			private static readonly ResourceResolver _resourceResolver = new ResourceResolver(typeof (OverlayToggleMenuAction).Assembly);
+
+			private readonly DicomOverlayPlane _overlay;
+
+			public OverlayToggleMenuAction(DicomOverlayPlane overlay)
+				: base(Guid.NewGuid().ToString(), new ActionPath("overlays/" + overlay.Name, null), ClickActionFlags.CheckAction, _resourceResolver)
+			{
+				_overlay = overlay;
+
+				this.Checked = overlay.Visible;
+				this.Label = overlay.Name;
+				this.Persistent = false;
+				this.GroupHint = new GroupHint("Tools.Image.Overlays.DicomOverlayPlanes.ShowHide");
+				this.SetClickHandler(this.Toggle);
+			}
+
+			private void Toggle()
+			{
+				_overlay.Visible = this.Checked = !this.Checked;
+				_overlay.DrawGraphic();
 			}
 		}
 	}

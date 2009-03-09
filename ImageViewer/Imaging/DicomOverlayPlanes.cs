@@ -11,6 +11,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public interface IDicomOverlayPlanes : IEnumerable<DicomOverlayPlane>
 	{
 		DicomOverlayPlane this[int index] { get; }
+
+		int Count { get; }
 	}
 
 	internal class DicomOverlayPlanes : IDicomOverlayPlanes, IList<DicomOverlayPlane>
