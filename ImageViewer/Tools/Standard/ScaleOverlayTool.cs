@@ -136,9 +136,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private static CompositeScaleGraphic GetCompositeScaleGraphic(IPresentationImage image, bool createIfNull)
 		{
-			if (image is IOverlayGraphicsProvider)
+			if (image is IApplicationGraphicsProvider)
 			{
-				GraphicCollection overlayGraphics = ((IOverlayGraphicsProvider) image).OverlayGraphics;
+				GraphicCollection overlayGraphics = ((IApplicationGraphicsProvider)image).ApplicationGraphics;
 				CompositeScaleGraphic scale = CollectionUtils.SelectFirst(overlayGraphics,
 				                                                          delegate(IGraphic graphic) { return graphic is CompositeScaleGraphic; }
 				                              	) as CompositeScaleGraphic;

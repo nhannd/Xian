@@ -161,9 +161,9 @@ namespace ClearCanvas.ImageViewer.Tools.Synchronization
 
 		private static SynchronizationToolCompositeGraphic GetSynchronizationToolCompositeGraphic(IPresentationImage image)
 		{
-			if (image is IOverlayGraphicsProvider)
+			if (image is IApplicationGraphicsProvider)
 			{
-				GraphicCollection overlayGraphics = ((IOverlayGraphicsProvider)image).OverlayGraphics;
+				GraphicCollection overlayGraphics = ((IApplicationGraphicsProvider)image).ApplicationGraphics;
 				SynchronizationToolCompositeGraphic container = CollectionUtils.SelectFirst(overlayGraphics,
 																	delegate(IGraphic graphic)
 																	{
