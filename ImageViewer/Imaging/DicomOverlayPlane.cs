@@ -97,8 +97,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 						1, 0, // overlays have no rescale
 						overlayData); // the overlay data, or the pixel data if overlay data doesn't exist
 
-					// TODO install this color map when it gets working again
-					//_overlay.ColorMapManager.InstallColorMap(_colorMap = new OverlayColorMap(_color));
+					_overlay.VoiLutManager.InstallLut(new MinMaxPixelCalculatedLinearLut(_overlay.PixelData));
+					_overlay.ColorMapManager.InstallColorMap(_colorMap = new OverlayColorMap(_color));
 					_overlay.Name = this.Name;
 
 					_overlay.SpatialTransform.TranslationX = origin.X;

@@ -1,3 +1,5 @@
+using System;
+
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class OverlayData
@@ -23,31 +25,36 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Converts this OverlayData chunk into a PixelData chunk.
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>A greyscale PixelData chunk containing 8-bit overlay data (1 bit stored).</returns>
 		public GrayscalePixelData ToPixelData()
 		{
 			return new GrayscalePixelData(_rows, _columns, 8, 1, 1, false, Unpack(_rawOverlayData, _rows*_columns, _bigEndianWords));
 		}
 
-		//public static OverlayData FromPixelData(PixelData pixelData)
-		//{
-
-		//}
+		/// <summary>
+		/// Converts a PixelData chunk into an OverlayData chunk.
+		/// </summary>
+		/// <param name="pixelData">The pixel data to convert.</param>
+		/// <returns>An OverlayData chunk containing packed 1-bit overlay data.</returns>
+		public static OverlayData FromPixelData(PixelData pixelData)
+		{
+			throw new NotImplementedException("Conversion of PixelData to OverlayData has not been implemented yet.");
+		}
 
 		#region Private Bit Packing Code
 
 		private unsafe static byte[] Unpack(byte[] packedBits, int length, bool bigEndianWords)
 		{
-			const byte ONE = 0xFF;
+			const byte ONE = 0x01;
 			const byte ZERO = 0x00;
 
 			byte[] unpackedBits = new byte[length];
 			int outPos = 0;
 			int inLen = packedBits.Length;
 
-			fixed (byte* input = packedBits) // byte[] input = packedBits;
+			fixed (byte* input = packedBits)
 			{
-				fixed (byte* output = unpackedBits) //byte[] output = unpackedBits;
+				fixed (byte* output = unpackedBits)
 				{
 					byte window;
 					if (bigEndianWords)
