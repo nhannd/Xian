@@ -33,6 +33,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -85,7 +86,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         updateColumns.AllowQuery = true;
                         updateColumns.AllowRetrieve = true;
                         updateColumns.AllowStorage = true;
-
+                        updateColumns.ThrottleMaxConnections = ImageServerCommonConfiguration.Device.MaxConnections;
                         IDeviceEntityBroker insert = updateContext.GetBroker<IDeviceEntityBroker>();
 
                         device = insert.Insert(updateColumns);

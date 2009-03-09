@@ -110,7 +110,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             template.Replace("@@MIN_LENGTH@@", MinLength.ToString());
             template.Replace("@@MAX_LENGTH@@", MaxLength.ToString());
-
+            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@", ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
+            template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
+            template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
+            
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }
     }

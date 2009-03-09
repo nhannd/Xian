@@ -26,5 +26,8 @@
     <Setting Name="TooManyStudyMoveWarningThreshold" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">15</Value>
     </Setting>
+    <Setting Name="DeviceConfig_MaxConnections" Type="System.Int16" Scope="Application">
+      <Value Profile="(Default)">15</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

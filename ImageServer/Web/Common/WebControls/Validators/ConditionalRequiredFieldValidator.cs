@@ -64,41 +64,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     {
         #region Private Members
 
-        // the control, if checked, "enables" this validation control
-        private string _conditionalCheckBoxID;
-        // specify when the validation should be enabled: when the condition control is checked or unchecked
-        private bool _requiredWhenChecked;
 
         #endregion Private members
 
         #region Public Properties
-
-        /// <summary>
-        /// Sets or gets the ID of the condition control.
-        /// </summary>
-        /// <remarks>
-        /// The condition control indicates whether the input control associated with the validator
-        /// control must contain a value.
-        /// 
-        /// If <seealso cref="ConditionalCheckBoxID"/> is not specified, <seealso cref="ConditionalRequiredFieldValidator"/>
-        /// behaves the same as <seealso cref="RequiredFieldValidator"/> (ie, the input field must always contains value).
-        /// </remarks>
-        public string ConditionalCheckBoxID
-        {
-            get { return _conditionalCheckBoxID; }
-            set { _conditionalCheckBoxID = value; }
-        }
-
-        /// <summary>
-        /// Indicates whether the input control must contain a value 
-        /// when the checkbox specified by <seealso cref="ConditionalCheckBoxID"/>
-        /// is checked or is unchecked.
-        /// </summary>
-        public bool RequiredWhenChecked
-        {
-            get { return _requiredWhenChecked; }
-            set { _requiredWhenChecked = value; }
-        }
 
         #endregion Public Properties
 
@@ -137,36 +106,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
         protected override bool OnServerSideEvaluate()
         {
-            CheckBox chkbox = String.IsNullOrEmpty(ConditionalCheckBoxID)
-                                  ? null
-                                  : FindControl(ConditionalCheckBoxID) as CheckBox;
-
             string value = GetControlValidationValue(ControlToValidate);
 
-            if (chkbox != null)
+            if (String.IsNullOrEmpty(value))
             {
-                if (RequiredWhenChecked)
-                {
-                    if (chkbox.Checked)
-                    {
-                        return !String.IsNullOrEmpty(value);
-                    }
-                }
-                else // Required when unchecked
-                {
-                    if (chkbox.Checked == false)
-                    {
-                        return !String.IsNullOrEmpty(value);
-                    }
-                }
+                return false;
             }
-            else // always required
-            {
-                if (String.IsNullOrEmpty(value))
-                {
-                    return false;
-                }
-            }
+            
 
             return true;
         }
@@ -181,10 +127,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 new ScriptTemplate(this,
                                    "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator.js");
 
-            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@",
-                             ConditionalCheckBoxID == null ? null : GetControlRenderID(ConditionalCheckBoxID));
-            template.Replace("@@REQUIRED_WHEN_CHECKED@@", RequiredWhenChecked ? "true" : "false");
-
+            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@", ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
+            template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
+            template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
+            
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }
     }

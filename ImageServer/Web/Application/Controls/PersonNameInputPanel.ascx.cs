@@ -107,8 +107,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID, script.Script, true);
 
-            PersonGivenNameValidator.Required = Required;
-            PersonLastNameValidator.Required = Required;
+            PersonGivenNameValidator.IgnoreEmptyValue = !Required;
+            PersonLastNameValidator.IgnoreEmptyValue = !Required;
         }
 
         public override void DataBind()

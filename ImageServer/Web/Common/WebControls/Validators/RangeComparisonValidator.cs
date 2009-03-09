@@ -188,7 +188,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             template.Replace("@@MAX_VALUE@@", MaxValue.ToString());
             template.Replace("@@COMPARISON_OP@@", comparison);
             template.Replace("@@COMPARE_TO_INPUT_NAME@@", CompareToInputName);
-
+            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@", ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
+            template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
+            template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
+            
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }

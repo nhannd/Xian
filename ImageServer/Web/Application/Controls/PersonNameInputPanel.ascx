@@ -161,19 +161,20 @@
 </asp:Table>
 <ccValidator:RegularExpressionFieldValidator ID="PersonTitleValidator"
     runat="server" ControlToValidate="PersonTitle" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
-    InvalidInputIndicatorID="PersonTitleIndicator" ValidationExpression="^([^\\]){0,64}$"
+    IgnoreEmptyValue="true"
+    InvalidInputIndicatorID="PersonTitleIndicator" ValidationExpression="^([^\\]){1,64}$"
     Text="Invalid Person Name. Each field may contain up to 64 characters, excluding &quot;\\&quot;"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonGivenNameValidator"
     runat="server" ControlToValidate="PersonGivenName" InvalidInputColor="#FAFFB5"
     ValidationGroup="vg1" InvalidInputIndicatorID="PersonGivenNameIndicator"
-    ValidationExpression="^([^\\]){0,64}$" Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
+    ValidationExpression="^([^\\]){1,64}$" Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonMiddleNameValidator"
     runat="server" ControlToValidate="PersonMiddleName" InvalidInputColor="#FAFFB5"
-    ValidationGroup="vg1" InvalidInputIndicatorID="PersonMiddleNameIndicator" ValidationExpression="^([^\\]){0,64}$"
+    IgnoreEmptyValue="true" ValidationGroup="vg1" InvalidInputIndicatorID="PersonMiddleNameIndicator" ValidationExpression="^([^\\]){0,64}$"
     Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;"
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>
@@ -185,7 +186,7 @@
 </ccValidator:RegularExpressionFieldValidator>
 <ccValidator:RegularExpressionFieldValidator ID="PersonSuffixValidator"
     runat="server" ControlToValidate="PersonSuffix" InvalidInputColor="#FAFFB5"
-    ValidationGroup="vg1" InvalidInputIndicatorID="PersonSuffixIndicator" ValidationExpression="^([^\\]){0,64}$"
+    IgnoreEmptyValue="true" ValidationGroup="vg1" InvalidInputIndicatorID="PersonSuffixIndicator" ValidationExpression="^([^\\]){0,64}$"
     Text="Invalid Person Name. Each field may contain up to 64 characters, excluiding &quot;\\&quot;."
     Display="None">
 </ccValidator:RegularExpressionFieldValidator>

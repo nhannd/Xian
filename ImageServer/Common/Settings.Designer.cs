@@ -94,5 +94,14 @@ namespace ClearCanvas.ImageServer.Common {
                 return ((int)(this["TooManyStudyMoveWarningThreshold"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15")]
+        public short DeviceConfig_MaxConnections {
+            get {
+                return ((short)(this["DeviceConfig_MaxConnections"]));
+            }
+        }
     }
 }

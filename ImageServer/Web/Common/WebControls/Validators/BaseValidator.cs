@@ -54,10 +54,52 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         private bool _validateWhenDisabled = false;
         private bool _ignoreEmptyValue = false;
         private string _inputName;
+        private string _conditionalCheckBoxID;
+        private bool _validateWhenUnchecked = false;
 
         #endregion Private members
 
         #region Public Properties
+
+        /// <summary>
+        /// Sets or gets the ID of the condition control.
+        /// </summary>
+        /// <remarks>
+        /// The condition control indicates whether the input control associated with the validator
+        /// control must contain a value.
+        /// 
+        /// If <seealso cref="ConditionalCheckBoxID"/> is not specified, <seealso cref="ConditionalRequiredFieldValidator"/>
+        /// behaves the same as <seealso cref="RequiredFieldValidator"/> (ie, the input field must always contains value).
+        /// </remarks>
+        public string ConditionalCheckBoxID
+        {
+            get { return _conditionalCheckBoxID; }
+            set { _conditionalCheckBoxID = value; }
+        }
+
+        /// <summary>
+        /// Gets the reference to the control that contains the input to be validated
+        /// </summary>
+        public WebControl ConditionalCheckBox
+        {
+            get
+            {
+                if (ConditionalCheckBoxID == null)
+                    return null;
+                return FindControl(ConditionalCheckBoxID) as WebControl;
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether the input control must contain a value 
+        /// when the checkbox specified by <seealso cref="ConditionalCheckBoxID"/>
+        /// is checked or is unchecked.
+        /// </summary>
+        public bool ValidateWhenUnchecked
+        {
+            get { return _validateWhenUnchecked; }
+            set { _validateWhenUnchecked = value; }
+        }
 
         /// <summary>
         /// Gets the reference to the control that contains the input to be validated
@@ -284,9 +326,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             template.Replace("@@INPUT_NORMAL_BORDERCOLOR@@", ColorTranslator.ToHtml(InputNormalBorderColor));
             template.Replace("@@INPUT_INVALID_BORDERCOLOR@@", ColorTranslator.ToHtml(InvalidInputBorderColor));
             template.Replace("@@CLIENT_EVALUATION_CLASS@@", ClientSideOnValidateFunctionName);
-
+            template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue? "true":"false");
+            
             Page.ClientScript.RegisterClientScriptBlock(GetType(), "BaseValidationScripts", template.Script, true);
-
 
             template =
                 new ScriptTemplate(this,
@@ -301,6 +343,25 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
         {
             if (Enabled || ValidateWhenDisabled)
             {
+                if (ConditionalCheckBox!=null)
+                {
+                    bool skip = false;
+                        
+                    if (ConditionalCheckBox is RadioButton)
+                    {
+                        bool isChecked = (ConditionalCheckBox as RadioButton).Checked;
+                        skip = (ValidateWhenUnchecked && isChecked) || (!ValidateWhenUnchecked && !isChecked);
+                    }
+                    else if (ConditionalCheckBox is CheckBox)
+                    {
+                        bool isChecked = (ConditionalCheckBox as CheckBox).Checked;
+                        skip = (ValidateWhenUnchecked && isChecked) || (!ValidateWhenUnchecked && !isChecked);
+                    }
+
+                    if (skip)
+                        return true;
+                }
+
                 string value = GetControlValidationValue(ControlToValidate);
 
                 if (String.IsNullOrEmpty(value) && IgnoreEmptyValue)

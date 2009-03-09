@@ -110,24 +110,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices 
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator AETitleHelp;
         
         /// <summary>
-        /// RequiredFieldValidator2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator RequiredFieldValidator2;
-        
-        /// <summary>
-        /// RegularExpressionFieldValidator2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionFieldValidator RegularExpressionFieldValidator2;
-        
-        /// <summary>
         /// Td2 control.
         /// </summary>
         /// <remarks>
@@ -209,15 +191,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices 
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator IPAddressHelp;
         
         /// <summary>
-        /// ConditionalRequiredFieldValidator1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator ConditionalRequiredFieldValidator1;
-        
-        /// <summary>
         /// Td6 control.
         /// </summary>
         /// <remarks>
@@ -290,15 +263,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices 
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.InvalidInputIndicator PortHelp;
         
         /// <summary>
-        /// PortValidator1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeValidator PortValidator1;
-        
-        /// <summary>
         /// Td9 control.
         /// </summary>
         /// <remarks>
@@ -315,6 +279,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices 
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox ActiveCheckBox;
+        
+        /// <summary>
+        /// AETitleTextBoxValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionFieldValidator AETitleTextBoxValidator;
+        
+        /// <summary>
+        /// IPAddressValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.ConditionalRequiredFieldValidator IPAddressValidator;
+        
+        /// <summary>
+        /// PortValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RangeValidator PortValidator;
         
         /// <summary>
         /// TabPanel2 control.
@@ -360,6 +351,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices 
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.CheckBox AllowRetrieveCheckBox;
+        
+        /// <summary>
+        /// TabPanel3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::AjaxControlToolkit.TabPanel TabPanel3;
+        
+        /// <summary>
+        /// ThrottleSettingsTab control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.ThrottleSettingsTab ThrottleSettingsTab;
         
         /// <summary>
         /// OKButton control.

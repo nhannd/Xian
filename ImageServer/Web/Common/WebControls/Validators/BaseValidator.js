@@ -18,6 +18,7 @@ ClassHelper.extend = function(subClass, baseClass) {
 function ValidationResult()
 {
     this.OK = false;
+    this.Skipped = false;
     this.Message = null;
     this.ErrorCode = 0;
 }
@@ -32,7 +33,10 @@ function BaseClientValidator(
     errorIndicator,
     errorIndicatorTooltip,
     errorIndicatorTooltipPanel,
-    ignoreEmptyValue)
+    ignoreEmptyValue,
+    conditionalCtrl,
+    validateWhenUnchecked
+    )
 {
     //alert('BaseClientValidator constructor');
     //alert('inputID='+inputID);
@@ -64,23 +68,56 @@ function BaseClientValidator(
     
     this.ignoreEmptyValue = ignoreEmptyValue;
     
+    this.conditionalCtrl = conditionalCtrl;
+    this.validateWhenUnchecked = validateWhenUnchecked;
+}
+
+BaseClientValidator.prototype.ShouldSkip = function()
+{
+    var val = this.input.value;
+    
+    if (this.conditionalCtrl!=null)
+    {
+        if (this.validateWhenUnchecked)
+        {
+            // SKIP IF CHECKED
+            if (this.conditionalCtrl.checked)
+                return true;
+        }
+        else
+        {   
+            // SKIP IF UNCHECKED
+            if (!this.conditionalCtrl.checked)
+                return true;
+        }
+    }
+    
+    if (val==null || val=='')
+        return this.ignoreEmptyValue;
+    
+    return false;
 }
 
 BaseClientValidator.prototype.OnEvaluate = function()
 {
     var result = new ValidationResult();
-    if (this.ignoreEmptyValue)
+    result.OK = true; // init
+    
+    if (this.ShouldSkip())
     {
+        result.Skipped = true;
         result.OK = true;
+        return result;
     }
-    else
+    
+    if (this.input.value==null || this.input.value=='')
     {
-        result.OK = this.input.value!=null && this.input.value!='';
-        
-        if (result.OK==false)
+        if (!this.ignoreEmptyValue)
         {
-            result.Message = 'This field is required';   
+            result.OK = false;
+            result.Message = 'This field is required';
         }
+        
     }
     
     return result;

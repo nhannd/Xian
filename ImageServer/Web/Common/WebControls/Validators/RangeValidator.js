@@ -19,7 +19,9 @@ function @@CLIENTID@@_ClientSideEvaluator()
             '@@INVALID_INPUT_INDICATOR_CLIENTID@@'=='null'? null:document.getElementById('@@INVALID_INPUT_INDICATOR_CLIENTID@@'),
             '@@INVALID_INPUT_INDICATOR_TOOLTIP_CLIENTID@@'=='null'? null:document.getElementById('@@INVALID_INPUT_INDICATOR_TOOLTIP_CLIENTID@@'),
             '@@INVALID_INPUT_INDICATOR_TOOLTIP_CONTAINER_CLIENTID@@'=='null'? null:document.getElementById('@@INVALID_INPUT_INDICATOR_TOOLTIP_CONTAINER_CLIENTID@@'),
-            '@@IGNORE_EMPTY_VALUE@@'
+            @@IGNORE_EMPTY_VALUE@@,
+            '@@CONDITION_CHECKBOX_CLIENTID@@'=='null'? null:document.getElementById('@@CONDITION_CHECKBOX_CLIENTID@@'),
+            @@VALIDATE_WHEN_UNCHECKED@@
     );
     
 }
@@ -30,7 +32,7 @@ function @@CLIENTID@@_ClientSideEvaluator()
 {
     result = BaseClientValidator.prototype.OnEvaluate.call(this);
     
-    if (result.OK==false)
+    if (!result.OK || result.Skipped)
     {
         return result;
     }

@@ -1,6 +1,8 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.AddEditDeviceDialog"
     Codebehind="AddEditDeviceDialog.ascx.cs" %>
 
+<%@ Register Src="ThrottleSettingsTab.ascx" TagName="ThrottleSettingsTab" TagPrefix="localAsp" %>
+
 <ccAsp:ModalDialog ID="ModalDialog1" runat="server" Width="450px">
     <ContentTemplate>
 <asp:ValidationSummary ID="EditDeviceValidationSummary" ShowMessageBox="false" ShowSummary="true" DisplayMode="SingleParagraph"
@@ -19,15 +21,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                                                 </td>
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="AETitleHelp" runat="server" SkinID="InvalidInputIndicator" />
-                                                    <ccValidator:ConditionalRequiredFieldValidator ID="RequiredFieldValidator2" runat="server"
-                                                        ControlToValidate="AETitleTextBox" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
-                                                        InvalidInputIndicatorID="AETitleHelp" Text="AE Title is required" Display="None"
-                                                        RequiredWhenChecked="False">
-                                                    </ccValidator:ConditionalRequiredFieldValidator><ccValidator:RegularExpressionFieldValidator
-                                                        ID="RegularExpressionFieldValidator2" runat="server" ControlToValidate="AETitleTextBox"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp"
-                                                        ValidationExpression="^([^\\]){1,16}$" Text="Invalid AE Title" Display="None"></ccValidator:RegularExpressionFieldValidator>
-                                                </td>
+                                                    </td>
                                             </tr>
                                         </table>
                                     </td>
@@ -57,12 +51,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                                                 <td align="left" valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="IPAddressHelp" runat="server" SkinID="InvalidInputIndicator">
                                                     </ccAsp:InvalidInputIndicator>
-                                                    <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1"
-                                                        runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
-                                                        ConditionalCheckBoxID="DHCPCheckBox" RequiredWhenChecked="False" ValidationGroup="vg1"
-                                                        Text="Device IP address is required if it uses static IP" InvalidInputIndicatorID="IPAddressHelp"
-                                                        Display="None"></ccValidator:ConditionalRequiredFieldValidator>
-                                                </td>
+                                                   </td>
                                             </tr>
                                         </table>
                                     </td>
@@ -90,11 +79,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                                                 </td>
                                                 <td valign="bottom">
                                                     <ccAsp:InvalidInputIndicator ID="PortHelp" runat="server" SkinID="InvalidInputIndicator"></ccAsp:InvalidInputIndicator>
-                                                    <ccValidator:RangeValidator ID="PortValidator1" runat="server" ControlToValidate="PortTextBox"
-                                                        InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
-                                                        Text="Device Port must be between 1 and 65535" InvalidInputIndicatorID="PortHelp"
-                                                        Display="None"></ccValidator:RangeValidator>                                                    
-                                                </td>
+                                                    </td>
                                             </tr>
                                         </table>
                                     </td>
@@ -111,6 +96,19 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                                     </td>
                                 </tr>
                             </table>
+                            <ccValidator:RegularExpressionFieldValidator
+                                    ID="AETitleTextBoxValidator" runat="server" ControlToValidate="AETitleTextBox"
+                                    InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="AETitleHelp"
+                                    ValidationExpression="^([^\\]){1,16}$" Text="Invalid AE Title" Display="None"></ccValidator:RegularExpressionFieldValidator>
+                            <ccValidator:ConditionalRequiredFieldValidator ID="IPAddressValidator"
+                                    runat="server" ControlToValidate="IPAddressTextBox" InvalidInputColor="#FAFFB5"
+                                    ConditionalCheckBoxID="DHCPCheckBox" ValidateWhenUnchecked="true"
+                                    ValidationGroup="vg1" Text="Device IP address is required if it uses static IP" InvalidInputIndicatorID="IPAddressHelp"
+                                    Display="None"></ccValidator:ConditionalRequiredFieldValidator>
+                            <ccValidator:RangeValidator ID="PortValidator" runat="server" ControlToValidate="PortTextBox"
+                                    InvalidInputColor="#FAFFB5" ValidationGroup="vg1" MinValue="1" MaxValue="65535"
+                                    Text="Device Port must be between 1 and 65535" InvalidInputIndicatorID="PortHelp"
+                                    Display="None"></ccValidator:RangeValidator>            
                     </ContentTemplate>
                     <HeaderTemplate>General</HeaderTemplate>
                 </aspAjax:TabPanel>
@@ -153,6 +151,13 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                     </ContentTemplate>
                     <HeaderTemplate>Features</HeaderTemplate>
                 </aspAjax:TabPanel>
+                
+                <aspAjax:TabPanel ID="TabPanel3" runat="server" HeaderText="TabPanel2" Height="200px">
+                    <ContentTemplate>
+                         <localAsp:ThrottleSettingsTab runat="server" ID="ThrottleSettingsTab"/>
+                    </ContentTemplate>
+                    <HeaderTemplate>Throttle</HeaderTemplate>
+                </aspAjax:TabPanel>
             </aspAjax:TabContainer>
 
                 <table cellpadding="0" cellspacing="0" width="100%">
@@ -165,5 +170,9 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="DialogV
                         </td>
                     </tr>
                 </table>
+
+                                             
+    
+
     </ContentTemplate>
 </ccAsp:ModalDialog>

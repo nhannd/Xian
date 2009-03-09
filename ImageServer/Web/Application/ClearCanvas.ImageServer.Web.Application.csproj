@@ -191,6 +191,13 @@
     <Compile Include="GlobalMasterPage.master.designer.cs">
       <DependentUpon>GlobalMasterPage.master</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Admin\Configure\Devices\ThrottleSettingsTab.ascx.cs">
+      <DependentUpon>ThrottleSettingsTab.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Admin\Configure\Devices\ThrottleSettingsTab.ascx.designer.cs">
+      <DependentUpon>ThrottleSettingsTab.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Admin\UserManagement\UserGroups\AddEditUserGroupsDialog.ascx.cs">
       <DependentUpon>AddEditUserGroupsDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1278,6 +1285,7 @@
     <Content Include="Controls\TimedDialog.ascx" />
     <Content Include="Default.aspx" />
     <Content Include="Images\ImageServerLogo.png" />
+    <Content Include="Pages\Admin\Configure\Devices\ThrottleSettingsTab.ascx" />
     <Content Include="Pages\Admin\UserManagement\UserGroups\AddEditUserGroupsDialog.ascx" />
     <Content Include="Pages\Admin\UserManagement\UserGroups\Default.aspx" />
     <Content Include="Pages\Admin\UserManagement\UserGroups\UserGroupsGridPanel.ascx" />

@@ -76,11 +76,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
             set { _regEx = value; }
         }
 
-        public bool Required
-        {
-            get { return _required; }
-            set { _required = value; }
-        }
 
         #endregion Public Properties
 
@@ -107,7 +102,10 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
                 new ScriptTemplate(this, "ClearCanvas.ImageServer.Web.Common.WebControls.Validators.RegularExpressionValidator.js");
             template.Replace("@@REQUIRED@@", _required? "true":"false");
             template.Replace("@@REGULAR_EXPRESSION@@", ValidationExpression.Replace("\\", "\\\\").Replace("'", "\\'"));
-
+            template.Replace("@@CONDITION_CHECKBOX_CLIENTID@@", ConditionalCheckBox != null ? ConditionalCheckBox.ClientID : "null");
+            template.Replace("@@VALIDATE_WHEN_UNCHECKED@@", ValidateWhenUnchecked ? "true" : "false");
+            template.Replace("@@IGNORE_EMPTY_VALUE@@", IgnoreEmptyValue ? "true" : "false");
+            
 
             Page.ClientScript.RegisterClientScriptBlock(GetType(), ClientID + "_ValidatorClass", template.Script, true);
         }

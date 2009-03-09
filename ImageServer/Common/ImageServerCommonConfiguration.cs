@@ -74,5 +74,17 @@ namespace ClearCanvas.ImageServer.Common
                 return Settings.Default.TooManyStudyMoveWarningThreshold;
             }
         }
+
+        public static class Device
+        {
+            public static short MaxConnections
+            {
+                get
+                {
+                    return Settings.Default.DeviceConfig_MaxConnections;
+                }
+            }
+        }
+        
     }
 }

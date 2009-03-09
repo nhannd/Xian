@@ -35,6 +35,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
@@ -215,6 +216,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             Device.AllowQuery = AllowQueryCheckBox.Checked;
             Device.AllowRetrieve = AllowRetrieveCheckBox.Checked;
             Device.AllowAutoRoute = AllowAutoRouteCheckBox.Checked;
+            Device.ThrottleMaxConnections = ThrottleSettingsTab.MaxConnections;
+
         }
 
         #endregion Protected methods
@@ -260,8 +263,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                 AllowQueryCheckBox.Checked = true;
                 AllowRetrieveCheckBox.Checked = true;
                 AllowAutoRouteCheckBox.Checked = true;
-
-
+                ThrottleSettingsTab.MaxConnections = UICommonSettings.Admin.Device.MaxConnections;
                 ServerPartitionDropDownList.SelectedIndex = 0;
             }
             else if (Page.IsValid)
@@ -277,7 +279,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                 AllowQueryCheckBox.Checked = Device.AllowQuery;
                 AllowRetrieveCheckBox.Checked = Device.AllowRetrieve;
                 AllowAutoRouteCheckBox.Checked = Device.AllowAutoRoute;
-
+                ThrottleSettingsTab.MaxConnections = Device.ThrottleMaxConnections;
                 ServerPartitionDropDownList.SelectedValue = Device.ServerPartitionKey.Key.ToString();
             }
         }

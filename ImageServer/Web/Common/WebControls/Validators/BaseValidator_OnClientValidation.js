@@ -3,7 +3,7 @@ function @@CLIENTID@@_OnClientSideValidation()
     validator = new @@CLIENTID@@_ClientSideEvaluator();
     result = validator.OnEvaluate();
     
-    if (result.OK ==true)
+    if (result.OK)
     {
         validator.OnValidationPassed();
         return true;

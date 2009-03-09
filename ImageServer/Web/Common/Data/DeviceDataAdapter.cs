@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             param.AllowRetrieve = dev.AllowRetrieve;
             param.AllowStorage = dev.AllowStorage;
             param.AllowAutoRoute = dev.AllowAutoRoute;
-
+            param.ThrottleMaxConnections = dev.ThrottleMaxConnections;
             Update(dev.Key, param);
 
             return ok;
@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             param.AllowRetrieve = newDev.AllowRetrieve;
             param.AllowStorage = newDev.AllowStorage;
             param.AllowAutoRoute = newDev.AllowAutoRoute;
-
+            param.ThrottleMaxConnections = newDev.ThrottleMaxConnections;
             return Add(param);
         }
     }
