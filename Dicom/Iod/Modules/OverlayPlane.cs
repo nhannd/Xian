@@ -46,8 +46,6 @@ namespace ClearCanvas.Dicom.Iod.Modules
 	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.9.2 (Table C.9-2)</remarks>
 	public class OverlayPlaneModuleIod : IodBase, IEnumerable<OverlayPlane>
 	{
-		private bool _convertToOverlayData = true;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OverlayPlaneModuleIod"/> class.
 		/// </summary>	
@@ -77,16 +75,6 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				Platform.CheckArgumentRange(index, 0, 15, "index");
 				return new OverlayPlane(ComputeTagOffset(index), this.DicomAttributeProvider);
 			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating that any overlay planes encoded using the unused
-		/// bits of <see cref="DicomTags.PixelData"/> should be converted to use <see cref="DicomTags.OverlayData"/>.
-		/// </summary>
-		public bool ConvertToOverlayData
-		{
-			get { return _convertToOverlayData; }
-			set { _convertToOverlayData = value; }
 		}
 
 		public bool HasOverlayPlane(int index)
