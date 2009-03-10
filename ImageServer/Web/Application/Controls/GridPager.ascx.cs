@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         /// <summary>
         /// Sets/Retrieves the name for the more than one items in the list.
         /// </summary>
-        public string PuralItemName
+        public string PluralItemName
         {
             get { return _puralItemName; }
             set { _puralItemName = value; }
@@ -156,6 +156,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 case ImageServerConstants.Next:
                     Target.PageIndex = intCurIndex + 1;
                     break;
+/* TODO: Add these lines for supporting first/last paging.
+                case ImageServerConstants.First:
+                    Target.PageIndex = 0;
+                    break;
+                case ImageServerConstants.Last:
+                    Target.PageIndex = Target.PageCount - 1;
+                    break;
+ */
                 default:
 
                     if (CurrentPage.Text.Equals(string.Empty))
@@ -209,28 +217,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         /// </summary>
         public void UpdateUI()
         {
-            if (_target != null)
+            if (_target != null && _target.DataSource != null)
             {
-                if (GetRecordCountMethod != null)
-                {
-                    int numRows = GetRecordCountMethod();
-                    ItemCountLabel.Text = string.Format("{0} {1}", numRows, numRows == 1 ? ItemName : PuralItemName);
-                }
-
                 CurrentPage.Text = AdjustCurrentPageForDisplay(_target.PageIndex).ToString();
 
                 PageCountLabel.Text =
                     string.Format(" of {0}", AdjustCurrentPageForDisplay(_target.PageCount));
 
+                if (GetRecordCountMethod != null && _target.PageCount != 0)
+                {
+                    int numRows = GetRecordCountMethod();
+                    ItemCountLabel.Text = string.Format("{0} {1}", numRows, numRows == 1 ? ItemName : PluralItemName);
+                } else
+                {
+                    ItemCountLabel.Text = string.Format("0 {0}", PluralItemName);
+                }
+
                 if (_target.PageIndex > 0)
                 {
                     PrevPageButton.Enabled = true;
                     PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousEnabled;
+/*
+                    FirstPageButton.Enabled = true;
+                    FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstEnabled;
+ */ 
                 }
                 else
                 {
                     PrevPageButton.Enabled = false;
                     PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousDisabled;
+                    /*
+                    FirstPageButton.Enabled = false;
+                    FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstDisabled;
+                     */
                 }
 
 
@@ -238,12 +257,35 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 {
                     NextPageButton.Enabled = true;
                     NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextEnabled;
+/*                    
+                    LastPageButton.Enabled = true;
+                    LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastEnabled;
+ */
                 }
                 else
                 {
                     NextPageButton.Enabled = false;
                     NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextDisabled;
+/*
+                    LastPageButton.Enabled = false;
+                    LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastDisabled;
+ */ 
                 }
+            } else
+            {
+                ItemCountLabel.Text = string.Format("0 {0}", PluralItemName);
+                CurrentPage.Text = "0";
+                PageCountLabel.Text = string.Format(" of 0");
+                PrevPageButton.Enabled = false;
+                PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousDisabled;
+                NextPageButton.Enabled = false;
+                NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextDisabled;
+                /*
+                FirstPageButton.Enabled = false;
+                FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstDisabled;
+                LastPageButton.Enabled = false;
+                LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastDisabled;
+                 */ 
             }
         }
 
@@ -251,7 +293,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             _position = position;
             ItemName = singleItemLabel;
-            PuralItemName = multipleItemLabel;
+            PluralItemName = multipleItemLabel;
             Target = grid;
             GetRecordCountMethod = recordCount;
         }

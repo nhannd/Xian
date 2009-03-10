@@ -47,6 +47,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls {
         protected global::System.Web.UI.UpdateProgress SearchUpdateProgress;
         
         /// <summary>
+        /// FirstPageButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton FirstPageButton;
+        
+        /// <summary>
         /// PrevPageButton control.
         /// </summary>
         /// <remarks>
@@ -99,6 +108,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.ImageButton NextPageButton;
+        
+        /// <summary>
+        /// LastPageButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton LastPageButton;
         
         /// <summary>
         /// ChangePageButton control.
