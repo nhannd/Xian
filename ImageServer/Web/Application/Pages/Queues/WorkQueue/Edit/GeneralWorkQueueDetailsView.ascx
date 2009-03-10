@@ -65,7 +65,7 @@
         <asp:TemplateField HeaderText="Failure Description">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="False" />
             <ItemTemplate>
-                <asp:Label runat="server" ID="PatientID" Text='<%# HtmlUtility.Encode(Eval("FailureDescription").ToString()) %>' />
+                <asp:Label runat="server" ID="PatientID" Text='<%# HtmlUtility.Encode(Eval("FailureDescription") as String) %>' />
             </ItemTemplate>
         </asp:TemplateField>
         

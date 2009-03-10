@@ -20,13 +20,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
     public partial class SearchPanel {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// SearchUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.UpdatePanel SearchUpdatePanel;
         
         /// <summary>
         /// JQuery1 control.
@@ -281,22 +281,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
         protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerTop;
         
         /// <summary>
-        /// workQueueItemListPanel control.
+        /// workQueueItemList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.WorkQueueItemListPanel workQueueItemListPanel;
-        
-        /// <summary>
-        /// GridPagerBottom control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerBottom;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.WorkQueueItemList workQueueItemList;
         
         /// <summary>
         /// MessageBox control.

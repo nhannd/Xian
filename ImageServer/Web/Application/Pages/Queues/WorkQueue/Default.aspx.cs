@@ -55,12 +55,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         #region Protected Methods
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            if (Page.IsPostBack)
-                DataBind();
-        }
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -155,7 +149,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             }
         }
 
-
         public void ResetWorkQueueItem(ServerEntityKey itemKey)
         {
             if (itemKey != null)
@@ -214,9 +207,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             }
         }
 
-        
-
-
         void ResetWorkQueueDialog_WorkQueueItemReseted(Model.WorkQueue item)
         {
             ServerEntityKey partitionKey = item.ServerPartitionKey;
@@ -228,7 +218,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             ServerEntityKey partitionKey = item.ServerPartitionKey;
             ServerPartitionTabs.Update(partitionKey);
         }
-
 
         void ConfirmationContinueDialog_Confirmed(object data)
         {

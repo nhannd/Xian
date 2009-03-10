@@ -1,7 +1,7 @@
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.WebControls.UI" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="SearchPanel.ascx.cs"
     Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.SearchPanel" %>
-<%@ Register Src="WorkQueueGridView.ascx" TagName="WorkQueueSearchResultPanel" TagPrefix="localAsp" %>
+<%@ Register Src="WorkQueueItemList.ascx" TagName="WorkQueueItemList" TagPrefix="localAsp" %>
     
    
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
@@ -92,8 +92,7 @@ function MultiSelect(){
                          <asp:Panel ID="Panel2" runat="server" style="border: solid 1px #3d98d1; ">
                             <table width="100%" cellpadding="0" cellspacing="0">
                                  <tr><td style="border-bottom: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerTop" runat="server" /></td></tr>                        
-                                <tr><td style="background-color: white;"><localAsp:WorkQueueSearchResultPanel ID="workQueueItemListPanel" Height="500px" runat="server"></localAsp:WorkQueueSearchResultPanel></td></tr>
-                                <tr><td style="border-top: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerBottom" runat="server" /></td></tr>                    
+                                <tr><td style="background-color: white;"><localAsp:WorkQueueItemList ID="workQueueItemList" Height="500px" runat="server"></localAsp:WorkQueueItemList></td></tr>
                             </table>
                          
                         </asp:Panel>

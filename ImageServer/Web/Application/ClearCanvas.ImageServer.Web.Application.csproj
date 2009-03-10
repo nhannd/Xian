@@ -1056,12 +1056,12 @@
       <DependentUpon>SearchPanel.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\WorkQueueItemCollection.cs" />
-    <Compile Include="Pages\Queues\WorkQueue\WorkQueueGridView.ascx.cs">
-      <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
+    <Compile Include="Pages\Queues\WorkQueue\WorkQueueItemList.ascx.cs">
+      <DependentUpon>WorkQueueItemList.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="Pages\Queues\WorkQueue\WorkQueueGridView.ascx.designer.cs">
-      <DependentUpon>WorkQueueGridView.ascx</DependentUpon>
+    <Compile Include="Pages\Queues\WorkQueue\WorkQueueItemList.ascx.designer.cs">
+      <DependentUpon>WorkQueueItemList.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\WorkQueueSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -1132,6 +1132,10 @@
     <Content Include="App_Themes\Default\images\Buttons\ResetPasswordDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ResetPasswordEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ResetPasswordHover.png" />
+    <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerFirstDisabled.png" />
+    <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerFirstEnabled.png" />
+    <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerLastDisabled.png" />
+    <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerLastEnabled.png" />
     <Content Include="App_Themes\Default\images\Controls\GridView\GridViewPagerNextEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\NoDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\NoEnabled.png" />
@@ -1429,8 +1433,8 @@
     <Content Include="Pages\Queues\WorkQueue\Edit\WorkQueueSettingsPanel.ascx" />
     <Content Include="Pages\Queues\WorkQueue\Default.aspx" />
     <Content Include="Pages\Queues\WorkQueue\SearchPanel.ascx" />
-    <Content Include="Pages\Queues\WorkQueue\SearchPanel.js" />
-    <Content Include="Pages\Queues\WorkQueue\WorkQueueGridView.ascx" />
+    <EmbeddedResource Include="Pages\Queues\WorkQueue\SearchPanel.js" />
+    <Content Include="Pages\Queues\WorkQueue\WorkQueueItemList.ascx" />
     <Content Include="Scripts\ClearCanvas.js" />
     <Content Include="Scripts\CodeMirror\css\csscolors.css" />
     <Content Include="Scripts\CodeMirror\css\docs.css" />

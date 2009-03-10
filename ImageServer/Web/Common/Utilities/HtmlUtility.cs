@@ -13,6 +13,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
     	/// Also ensure all Xml escape characters are encoded properly.
         public static string Encode(string text)
         {
+            if (text == null) return string.Empty;
             String encodedText = new SecurityElement("dummy", text).Text; //decode any escaped xml characters.
             return HttpUtility.HtmlEncode(encodedText).Replace(Environment.NewLine, "<BR/>");
             

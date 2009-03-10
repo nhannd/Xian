@@ -66,5 +66,5 @@
 
 <%-- Custom Controls --%>
 <ccAsp:InvalidInputIndicator SkinID="InvalidInputIndicator" runat="server" ImageUrl="~/App_Themes/Default/images/Indicators/HelpSmall.png" Visible="true" />
-<ccUI:GridView SkinID="CustomGlobalGridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView" CaptionAlign="Top" Width="100%" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#eeeeee" GridLines="Horizontal" BackColor="White" AllowSorting="True" PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" BorderWidth="0px" HorizontalAlign="left" />
+<ccUI:GridView runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView" CaptionAlign="Top" Width="100%" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#d6f2ce" GridLines="Horizontal" BackColor="White" AllowSorting="True" PageSize="25" CellPadding="0" CellSpacing="0" AllowPaging="True" BorderWidth="0px" HorizontalAlign="left" />
 

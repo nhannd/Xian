@@ -33,10 +33,14 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.SearchPanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 {
@@ -44,7 +48,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
     /// <summary>
     /// Work Queue Search Panel
     /// </summary>
-    public partial class SearchPanel : UserControl
+
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.SearchPanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.SearchPanel.js")]
+    public partial class SearchPanel : AJAXScriptControl
     {
         #region Private Members
 
@@ -74,6 +80,48 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             set { _enclosingPage = value; }
         }
 
+        [ExtenderControlProperty]
+        [ClientPropertyName("ItemListClientID")]
+        public string ItemListClientID
+        {
+            get { return workQueueItemList.WorkQueueItemGridView.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("ViewDetailsButtonClientID")]
+        public string ViewDetailsButtonClientID
+        {
+            get { return ViewItemDetailsButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("RescheduleButtonClientID")]
+        public string RescheduleButtonClientID
+        {
+            get { return RescheduleItemButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("ResetButtonClientID")]
+        public string ResetButtonClientID
+        {
+            get { return ResetItemButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("DeleteButtonClientID")]
+        public string DeleteButtonClientID
+        {
+            get { return DeleteItemButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("ReprocessButtonClientID")]
+        public string ReprocessButtonClientID
+        {
+            get { return ReprocessItemButton.ClientID; }
+        }
+
         #endregion Public Properties
 
         #region Protected Methods
@@ -86,10 +134,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             ClearScheduleDateButton.OnClientClick = ScriptHelper.ClearDate(ScheduleDate.ClientID, ScheduleCalendarExtender.ClientID);
 
             // setup child controls
-            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerWorkQueueSingleItem, App_GlobalResources.SR.GridPagerWorkQueueMultipleItems, workQueueItemListPanel.WorkQueueItemListControl, delegate { return workQueueItemListPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerWorkQueueSingleItem, App_GlobalResources.SR.GridPagerWorkQueueMultipleItems, workQueueItemListPanel.WorkQueueItemListControl, delegate { return workQueueItemListPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.bottom);
+            GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerWorkQueueSingleItem, App_GlobalResources.SR.GridPagerWorkQueueMultipleItems, workQueueItemList.WorkQueueItemGridView, delegate { return workQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
 
-            workQueueItemListPanel.DataSourceCreated += delegate(WorkQueueDataSource source)
+            workQueueItemList.DataSourceCreated += delegate(WorkQueueDataSource source)
                                                             {
                                                                 source.PatientsName = PatientName.Text;
                                                                 source.Partition = ServerPartition;
@@ -145,8 +192,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         /// <param name="e"></param>
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
-            workQueueItemListPanel.WorkQueueItemListControl.PageIndex = 0;
-            DataBind();
+            workQueueItemList.Refresh();
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -219,48 +265,43 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected void ViewItemButton_Click(object sender, ImageClickEventArgs e)
         {
-            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem.TheWorkQueueItem;
-            if (item != null)
+            if (workQueueItemList.SelectedItems[0] != null)
             {
-                EnclosingPage.ViewWorkQueueItem(item.Key);
+                EnclosingPage.ViewWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
             }
         }
 
 
         protected void ResetItemButton_Click(object sender, EventArgs arg)
         {
-            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem.TheWorkQueueItem;
-            if (item != null)
+            if (workQueueItemList.SelectedItems[0] != null)
             {
-                EnclosingPage.ResetWorkQueueItem(item.Key);
+                EnclosingPage.ResetWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
             }
         }
 
         protected void DeleteItemButton_Click(object sender, EventArgs arg)
         {
-            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem.TheWorkQueueItem;
-            if (item != null)
+            if (workQueueItemList.SelectedItems[0] != null)
             {
-                EnclosingPage.DeleteWorkQueueItem(item.Key);
+                EnclosingPage.DeleteWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
             }
         }
 
         protected void ReprocessItemButton_Click(object sender, EventArgs arg)
         {
-            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem.TheWorkQueueItem;
-            if (item != null)
+            if (workQueueItemList.SelectedItems[0] != null)
             {
-                EnclosingPage.ReprocessWorkQueueItem(item.Key);
+                EnclosingPage.ReprocessWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
             }
         }
 
 
         protected void RescheduleItemButton_Click(object sender, ImageClickEventArgs e)
         {
-            Model.WorkQueue item = workQueueItemListPanel.SelectedWorkQueueItem.TheWorkQueueItem;
-            if (item != null)
+            if (workQueueItemList.SelectedItems[0] != null)
             {
-                EnclosingPage.RescheduleWorkQueueItem(item.Key);
+                EnclosingPage.RescheduleWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
             }
             else
             {
@@ -272,24 +313,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                     Web.Application.Controls.MessageBox.MessageTypeEnum.ERROR;
                 MessageBox.Show();
             }
-        }
-
-        protected override void OnPreRender(EventArgs e)
-        {
-            UpdateToolBarButtons();
-
-            base.OnPreRender(e);
-        }
-
-        protected void UpdateToolBarButtons()
-        {
-            WorkQueueSummary selectedItem = workQueueItemListPanel.SelectedWorkQueueItem;
-
-            ViewItemDetailsButton.Enabled = selectedItem != null;
-            RescheduleItemButton.Enabled = selectedItem != null && WorkQueueController.CanReschedule(selectedItem.TheWorkQueueItem);
-            DeleteItemButton.Enabled = selectedItem != null && WorkQueueController.CanDelete(selectedItem.TheWorkQueueItem);
-            ResetItemButton.Enabled = selectedItem != null && WorkQueueController.CanReset(selectedItem.TheWorkQueueItem);
-            ReprocessItemButton.Enabled = selectedItem != null && WorkQueueController.CanReprocess(selectedItem.TheWorkQueueItem);
         }
 
         #endregion Protected Methods

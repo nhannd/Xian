@@ -329,6 +329,8 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                     row.Attributes["isdatarow"] = "true";
                     row.Attributes["rowIndex"] = (row.RowIndex).ToString();
 
+                    row.Style["cursor"] = "hand";
+
                     if (_selectedRows.ContainsKey(row.RowIndex))
                     {
                         row.RowState = DataControlRowState.Selected;

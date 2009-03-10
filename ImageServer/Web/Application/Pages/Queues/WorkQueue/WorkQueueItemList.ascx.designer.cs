@@ -12,12 +12,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
     
     
     /// <summary>
-    /// WorkQueueItemListPanel class.
+    /// WorkQueueItemList class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class WorkQueueItemListPanel {
+    public partial class WorkQueueItemList {
         
         /// <summary>
         /// UpdatePanel control.
@@ -56,13 +56,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
         protected global::System.Web.UI.WebControls.ObjectDataSource WorkQueueDataSourceObject;
         
         /// <summary>
-        /// WorkQueueListView control.
+        /// WorkQueueGridView control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView WorkQueueListView;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView WorkQueueGridView;
         
         /// <summary>
         /// RefreshTimer control.

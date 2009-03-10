@@ -132,9 +132,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             PreOpenConfirmDialog.Confirmed += PreOpenConfirmDialog_Confirmed;
             PreApplyChangeConfirmDialog.Confirmed += PreApplyChangeConfirmDialog_Confirmed;
 
-            WorkQueueItemListPanel.WorkQueueItemListControl.SelectedIndexChanged += WorkQueueListControl_SelectedIndexChanged;
+            WorkQueueItemList.WorkQueueItemGridView.SelectedIndexChanged += WorkQueueListControl_SelectedIndexChanged;
 
-			WorkQueueItemListPanel.DataSourceCreated += delegate(WorkQueueDataSource source)
+			WorkQueueItemList.DataSourceCreated += delegate(WorkQueueDataSource source)
 														{
 															source.SearchKeys = WorkQueueKeys;
 														};       
@@ -142,9 +142,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         protected override void OnPreRender(EventArgs e)
         {
-            WorkQueueItemListPanel.AutoRefresh = Visible 
+            WorkQueueItemList.AutoRefresh = Visible 
                             && ModalDialog.State == ModalDialog.ShowState.Show
-                            && WorkQueueKeys!=null && WorkQueueItemListPanel.WorkQueueItems != null;
+                            && WorkQueueKeys!=null && WorkQueueItemList.WorkQueueItems != null;
 
             base.OnPreRender(e);
         }
@@ -153,8 +153,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             if (WorkQueueKeys!=null)
             {
-                if (WorkQueueItemListPanel.WorkQueueItems!=null && 
-                    WorkQueueItemListPanel.WorkQueueItems.Count != WorkQueueKeys.Count)
+                if (WorkQueueItemList.WorkQueueItems!=null && 
+                    WorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
                 {
                     MessageDialog.Message = App_GlobalResources.SR.WorkQueueNoLongerAvailable;
                     MessageDialog.MessageType =
@@ -346,7 +346,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             if (WorkQueues == null)
                 return;
 
-            if (WorkQueueItemListPanel.WorkQueueItems.Count != WorkQueueKeys.Count)
+            if (WorkQueueItemList.WorkQueueItems.Count != WorkQueueKeys.Count)
             {
                 MessageDialog.Message = App_GlobalResources.SR.WorkQueueNoLongerAvailable;
                 MessageDialog.MessageType =

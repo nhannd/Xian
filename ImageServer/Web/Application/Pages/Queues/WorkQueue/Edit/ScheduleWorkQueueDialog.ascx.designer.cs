@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.WorkQueueItemListPanel WorkQueueItemListPanel;
+        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.WorkQueueItemList WorkQueueItemList;
         
         /// <summary>
         /// WorkQueueSettingsPanel control.

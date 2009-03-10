@@ -35,6 +35,7 @@ using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using GridView=System.Web.UI.WebControls.GridView;
@@ -45,7 +46,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
     /// A specialized panel that displays a list of <see cref="WorkQueue"/> entries.
     /// </summary>
     /// <remarks>
-    /// <see cref="WorkQueueItemListPanel"/> wraps around <see cref="System.Web.UI.WebControls.GridView"/> control to specifically display
+    /// <see cref="WorkQueueItemList"/> wraps around <see cref="System.Web.UI.WebControls.GridView"/> control to specifically display
     /// <see cref="WorkQueue"/> entries on a web page. The <see cref="WorkQueue"/> entries are set through <see cref="WorkQueueItems"/>. 
     /// User of this control can set the <see cref="Height"/> of the panel. The panel always expands to fit the width of the
     /// parent control. 
@@ -54,7 +55,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
     /// exists in the system will not be rendered on the screen.
     /// 
     /// </remarks>
-    public partial class WorkQueueItemListPanel : System.Web.UI.UserControl
+    public partial class WorkQueueItemList : System.Web.UI.UserControl
 	{
 		#region Delegates
 		public delegate void WorkQueueDataSourceCreated(WorkQueueDataSource theSource);
@@ -100,9 +101,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         /// <summary>
         /// Gets a reference to the work queue item list <see cref="System.Web.UI.WebControls.GridView"/>
         /// </summary>
-        public GridView WorkQueueItemListControl
+        public GridView WorkQueueItemGridView
         {
-            get { return WorkQueueListView; }
+            get { return WorkQueueGridView; }
         }
 
         /// <summary>
@@ -132,7 +133,34 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
 
                 SelectedWorkQueueItemKey = value.Key;
-                WorkQueueListView.SelectedIndex = WorkQueueItems.RowIndexOf(SelectedWorkQueueItemKey, WorkQueueListView);
+                WorkQueueGridView.SelectedIndex = WorkQueueItems.RowIndexOf(SelectedWorkQueueItemKey, WorkQueueGridView);
+            }
+        }
+
+        /// <summary>
+        /// Gets/Sets the current selected device.
+        /// </summary>
+        public IList<WorkQueueSummary> SelectedItems
+        {
+            get
+            {
+                if (WorkQueueItems == null || WorkQueueItems.Count == 0)
+                    return null;
+
+                int[] rows = WorkQueueGridView.SelectedIndices;
+                if (rows == null || rows.Length == 0)
+                    return null;
+
+                IList<WorkQueueSummary> queueItems = new List<WorkQueueSummary>();
+                for (int i = 0; i < rows.Length; i++)
+                {
+                    if (rows[i] < WorkQueueItems.Count)
+                    {
+                        queueItems.Add(WorkQueueItems[rows[i]]);
+                    }
+                }
+
+                return queueItems;
             }
         }
 
@@ -158,25 +186,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            WorkQueueListView.DataKeyNames = new string[] { "Key" };
+            WorkQueueGridView.DataKeyNames = new string[] { "Key" };
 
             RefreshTimer.Interval = Math.Max(WorkQueueSettings.Default.NormalRefreshIntervalSeconds*1000, 5000);// min refresh rate: every 5 sec 
 
             if (_height!=Unit.Empty)
                 ListContainerTable.Height = _height;
-        }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+            WorkQueueGridView.DataSource = WorkQueueDataSourceObject;
 
-            if (!Page.IsPostBack)
+            if(!IsPostBack)
             {
-                DataBind();
+                WorkQueueGridView.DataBind();
             }
         }
-
-        
+      
         protected ServerEntityKey SelectedWorkQueueItemKey
         {
             set
@@ -212,7 +236,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected override void OnPreRender(EventArgs e)
         {
-			RefreshTimer.Enabled = AutoRefresh && Visible;
+			//RefreshTimer.Enabled = AutoRefresh && Visible;
+            RefreshTimer.Enabled = false;
             if (RefreshTimer.Enabled)
             {
                 if (WorkQueueItems!=null)
@@ -235,20 +260,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         {
             GridViewRow row = e.Row;
 
-            if (WorkQueueListView.EditIndex != e.Row.RowIndex)
+            if (WorkQueueGridView.EditIndex != e.Row.RowIndex)
             {
                 if (row.RowType == DataControlRowType.DataRow)
                 {
-                    // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
-                    // This method when posted back will be handled by the grid
-                    row.Attributes["OnClick"] =
-                        Page.ClientScript.GetPostBackEventReference(WorkQueueListView, "Select$" + e.Row.RowIndex);
-                    row.Style["cursor"] = "hand";
-
                     WorkQueueSummary item = WorkQueueItems[GetRowItemKey(row.RowIndex)];
 					row.Attributes["uid"] = item.Key.ToString();
 
                     CustomizeColumns(e.Row);
+                    CustomizeRowAttribute(e.Row);
                 }
             }
             
@@ -266,6 +286,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             }
         }
 
+        private void CustomizeRowAttribute(GridViewRow row)
+        {
+            WorkQueueSummary item = row.DataItem as WorkQueueSummary;
+            row.Attributes["canreschedule"] = WorkQueueController.CanReschedule(item.TheWorkQueueItem).ToString().ToLower();
+            row.Attributes["canreset"] = WorkQueueController.CanReset(item.TheWorkQueueItem).ToString().ToLower();
+            row.Attributes["candelete"] = WorkQueueController.CanDelete(item.TheWorkQueueItem).ToString().ToLower();
+            row.Attributes["canreprocess"] = WorkQueueController.CanReprocess(item.TheWorkQueueItem).ToString().ToLower();
+        }
+
         protected void WorkQueueListView_PageIndexChanged(object sender, EventArgs e)
         {
             DataBind();
@@ -276,14 +305,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             // reselect the row based on the new order
             if (SelectedWorkQueueItemKey != null)
             {
-                WorkQueueListView.SelectedIndex = WorkQueueItems.RowIndexOf(SelectedWorkQueueItemKey, WorkQueueListView);
+                WorkQueueGridView.SelectedIndex = WorkQueueItems.RowIndexOf(SelectedWorkQueueItemKey, WorkQueueGridView);
             }
         }
 
         protected void WorkQueueListView_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (WorkQueueListView.SelectedDataKey!=null)
-                SelectedWorkQueueItemKey = WorkQueueListView.SelectedDataKey.Value as ServerEntityKey;
+            if (WorkQueueGridView.SelectedDataKey!=null)
+                SelectedWorkQueueItemKey = WorkQueueGridView.SelectedDataKey.Value as ServerEntityKey;
 
             DataBind();
         }
@@ -291,11 +320,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected void RefreshTimer_Tick(object sender, EventArgs e)
         {
             DataBind();
-        }
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
         }
 
     	protected void GetWorkQueueDataSource(object sender, ObjectDataSourceEventArgs e)
@@ -321,5 +345,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
     		e.Cancel = true;
 		}
 		#endregion Protected Methods
+
+        public void Refresh()
+        {
+            WorkQueueGridView.PageIndex = 0;
+            DataBind();
+        }
+
+        public void RefreshCurrentPage()
+        {
+            DataBind();
+        }
     }
 }
