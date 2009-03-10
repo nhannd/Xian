@@ -265,7 +265,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected void ViewItemButton_Click(object sender, ImageClickEventArgs e)
         {
-            if (workQueueItemList.SelectedItems[0] != null)
+			if (workQueueItemList.SelectedItems == null)
+				DataBind();
+
+			if (workQueueItemList.SelectedItems[0] != null)
             {
                 EnclosingPage.ViewWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
             }
@@ -274,6 +277,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected void ResetItemButton_Click(object sender, EventArgs arg)
         {
+			if (workQueueItemList.SelectedItems == null)
+				DataBind();
+
             if (workQueueItemList.SelectedItems[0] != null)
             {
                 EnclosingPage.ResetWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
@@ -282,7 +288,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected void DeleteItemButton_Click(object sender, EventArgs arg)
         {
-            if (workQueueItemList.SelectedItems[0] != null)
+			if (workQueueItemList.SelectedItems == null)
+				DataBind();
+
+			if (workQueueItemList.SelectedItems[0] != null)
             {
                 EnclosingPage.DeleteWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
             }
@@ -290,7 +299,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected void ReprocessItemButton_Click(object sender, EventArgs arg)
         {
-            if (workQueueItemList.SelectedItems[0] != null)
+			if (workQueueItemList.SelectedItems == null)
+				DataBind();
+
+			if (workQueueItemList.SelectedItems[0] != null)
             {
                 EnclosingPage.ReprocessWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
             }
@@ -299,6 +311,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected void RescheduleItemButton_Click(object sender, ImageClickEventArgs e)
         {
+			if (workQueueItemList.SelectedItems == null)
+				DataBind();
+
             if (workQueueItemList.SelectedItems[0] != null)
             {
                 EnclosingPage.RescheduleWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
