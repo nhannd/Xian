@@ -236,8 +236,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected override void OnPreRender(EventArgs e)
         {
-			//RefreshTimer.Enabled = AutoRefresh && Visible;
-            RefreshTimer.Enabled = false;
+			RefreshTimer.Enabled = AutoRefresh && Visible;
             if (RefreshTimer.Enabled)
             {
                 if (WorkQueueItems!=null)
