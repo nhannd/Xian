@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		    SimulatePostOperationError();
 		}
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG_SIM_ERRORS")]
         private void SimulatePostOperationError()
 	    {
             ServerPlatform.SimulateError("Post File Rename Error", delegate() { File.Delete(_destinationFile); });

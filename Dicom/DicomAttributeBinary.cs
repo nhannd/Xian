@@ -185,7 +185,13 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                return _values[index];
+				if (_values == null && _reference != null)
+				{
+					_values = Load();
+					_reference = null;
+				}
+
+            	return _values[index];
             }
         }
 
@@ -303,6 +309,8 @@ namespace ClearCanvas.Dicom
             if (obj == null || GetType() != obj.GetType()) return false;
 
             DicomAttributeBinary<T> a = (DicomAttributeBinary<T>)obj;
+
+			// Reference to Values will force the values to be loaded from disk, if only a reference is stored
             T[] destArray = (T[])a.Values;
             T[] sourceArray = (T[]) Values;
 
@@ -322,6 +330,9 @@ namespace ClearCanvas.Dicom
 
         public override int GetHashCode()
         {
+			if (_reference != null)
+				return _reference.GetHashCode();
+
             if (_values == null)
                 return 0; // TODO
             else
@@ -354,6 +365,12 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public override bool TryGetString(int index, out String value)
         {
+			if (_reference != null)
+			{
+				_values = Load();
+				_reference = null;
+			}
+
             if (_values == null || _values.Length <= index)
             {
                 value = "";
@@ -440,6 +457,12 @@ namespace ClearCanvas.Dicom
         /// 
         public void SetValue(int index, T value)
         {
+			if (_reference != null)
+			{
+				_values = Load();
+				_reference = null;
+			}
+
             if (index == Count)
             {
             	AppendValue(value);
@@ -460,10 +483,18 @@ namespace ClearCanvas.Dicom
 
         public override string ToString()
         {
-            if (_values == null)
-                return "";
+			// Handle pixel data reference case
+			if (_values == null)
+			{
+				if (_reference != null)
+					return
+						String.Format("Binary tag {0} of length {1} at offset {2} stored in file", Tag, _reference.Length,
+						              _reference.Offset);
 
-            StringBuilder val = null;
+				return String.Empty;
+			}
+
+        	StringBuilder val = null;
             foreach (T index in _values)
             {
                 if (val == null)
@@ -482,20 +513,24 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if ((_values != null) && (_values.Length == 0))
+				if ((_reference != null) && _reference.Length == 0)
+					return true;
+                if ((_values != null) && (_values.Length == 0) && (_reference == null))
                     return true;
                 return false;
             }
         }
+
         public override bool IsEmpty
         {
             get
             {
-                if ((Count == 0) && (_values == null))
+                if ((Count == 0) && (_values == null) && (_reference == null))
                     return true;
                 return false;
             }
         }
+
         /// <summary>
         /// Abstract property for setting or getting the values associated with the attribute.
         /// </summary>

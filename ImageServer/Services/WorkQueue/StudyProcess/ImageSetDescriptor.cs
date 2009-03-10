@@ -50,16 +50,30 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _value = String.Empty;
             else
             {
-                // Make sure the value is Xml compatible.
-                _value = XmlUtils.EncodeValue(attr.ToString());
+                _value = RemoveEscapeChars(attr.ToString());
             }
         }
-
+        
         #region IEquatable<ImageSetField> Members
 
         public bool Equals(ImageSetField other)
         {
             return DicomTag.Equals(other.DicomTag) && _value.Equals(other.Value);
+        }
+
+        #endregion
+
+        #region Private Methods
+        private string RemoveEscapeChars(string text)
+        {
+            if (String.IsNullOrEmpty(text))
+                return text;
+
+            // Remove escape characters
+            string escape = String.Format("{0}", (char)0x1B);
+            string replacement = "";
+            text = text.Replace(escape, replacement);
+            return text;
         }
 
         #endregion

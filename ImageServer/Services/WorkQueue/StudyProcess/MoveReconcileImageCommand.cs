@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG_SIM_ERRORS")]
         private void SimulatePostOperationError()
         {
             ServerPlatform.SimulateError("Post MoveReconcileImageCommand error : file is deleted by another process", delegate() { File.Delete(_dest); });

@@ -406,6 +406,52 @@ namespace ClearCanvas.Dicom.Tests
 			dicomAttributeCollection[DicomTags.PatientId].SetNullValue();
 			Assert.IsFalse(dicomAttributeCollection[DicomTags.PatientId].IsEmpty, "Dicom Tag is empty, won't be written in DicomStreamWriter.Write()");
 		}
+
+		[Test]
+		public void ReadPixelDataReferencesTest()
+		{
+			DicomFile file = new DicomFile("LittleEndianReadFileTest2.dcm");
+
+			DicomAttributeCollection dataSet = file.DataSet;
+
+			SetupMR(dataSet);
+
+			SetupMetaInfo(file);
+
+			// Little Endian Tests
+			file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+			DicomReadOptions readOptions = DicomReadOptions.StorePixelDataReferences;
+			bool result = file.Save(DicomWriteOptions.Default);
+
+			Assert.AreEqual(result, true);
+
+			DicomFile newFile = new DicomFile(file.Filename);
+
+			newFile.Load(readOptions);
+
+			DicomAttribute attrib = newFile.DataSet[DicomTags.PixelData];
+
+			Assert.IsFalse(attrib.IsEmpty);
+			Assert.IsFalse(attrib.IsNull);
+			Assert.AreEqual(attrib.StreamLength, dataSet[DicomTags.PixelData].StreamLength);
+
+			// Set the pixel data to null and re-read
+			dataSet[DicomTags.PixelData].SetNullValue();
+			
+			result = file.Save(DicomWriteOptions.Default);
+			Assert.AreEqual(result, true);
+
+			newFile = new DicomFile(file.Filename);
+
+			newFile.Load(readOptions);
+
+			attrib = newFile.DataSet[DicomTags.PixelData];
+
+			Assert.IsFalse(attrib.IsEmpty);
+			Assert.IsTrue(attrib.IsNull);
+			Assert.AreEqual(attrib.StreamLength, dataSet[DicomTags.PixelData].StreamLength);
+		}
     }
 }
 #endif

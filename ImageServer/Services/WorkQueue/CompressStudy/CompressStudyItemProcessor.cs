@@ -395,7 +395,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
         }
 
 
-        [Conditional("DEBUG")] 
+        [Conditional("DEBUG_SIM_ERRORS")] 
         private void PerformSanityCheck(StudyXml studyXml)
         {
             string[] files = Directory.GetFiles(StorageLocation.GetStudyPath(), "*.dcm", SearchOption.AllDirectories);
