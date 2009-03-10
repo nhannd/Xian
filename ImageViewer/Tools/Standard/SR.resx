@@ -636,4 +636,16 @@ Please check the log for more details.</value>
   <data name="TooltipTextOverlay" xml:space="preserve">
     <value>Text Overlay</value>
   </data>
+  <data name="MenuShowHideDicomOverlay" xml:space="preserve">
+    <value>Show/Hide DICOM Overlay(s)</value>
+  </data>
+  <data name="ToolbarDicomOverlay" xml:space="preserve">
+    <value>DICOM Overlay(s)</value>
+  </data>
+  <data name="TooltipDicomOverlay" xml:space="preserve">
+    <value>DICOM Overlay(s)</value>
+  </data>
+  <data name="TooltipShowHideDicomOverlay" xml:space="preserve">
+    <value>Show/Hide DICOM Overlay(s)</value>
+  </data>
 </root>

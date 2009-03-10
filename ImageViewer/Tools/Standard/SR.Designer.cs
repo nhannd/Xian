@@ -792,6 +792,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show/Hide DICOM Overlay(s).
+        /// </summary>
+        internal static string MenuShowHideDicomOverlay {
+            get {
+                return ResourceManager.GetString("MenuShowHideDicomOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show/Hide Scale Overlay.
         /// </summary>
         internal static string MenuShowHideScaleOverlay {
@@ -1207,6 +1216,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DICOM Overlay(s).
+        /// </summary>
+        internal static string ToolbarDicomOverlay {
+            get {
+                return ResourceManager.GetString("ToolbarDicomOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flip horizontal.
         /// </summary>
         internal static string ToolbarFlipHorizontal {
@@ -1396,6 +1414,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DICOM Overlay(s).
+        /// </summary>
+        internal static string TooltipDicomOverlay {
+            get {
+                return ResourceManager.GetString("TooltipDicomOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flip horizontal.
         /// </summary>
         internal static string TooltipFlipHorizontal {
@@ -1500,6 +1527,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string TooltipShowCTPix {
             get {
                 return ResourceManager.GetString("TooltipShowCTPix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show/Hide DICOM Overlay(s).
+        /// </summary>
+        internal static string TooltipShowHideDicomOverlay {
+            get {
+                return ResourceManager.GetString("TooltipShowHideDicomOverlay", resourceCulture);
             }
         }
         

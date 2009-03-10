@@ -109,6 +109,7 @@
     <Compile Include="CineTool.cs" />
     <Compile Include="CreateTextCalloutGraphicState.cs" />
     <Compile Include="CreateTextAreaGraphicState.cs" />
+    <Compile Include="DicomOverlayTool.cs" />
     <Compile Include="EditTextCalloutTool.cs" />
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />
     <Compile Include="ScaleGraphic.cs" />
