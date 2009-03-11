@@ -42,11 +42,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
             {
                 case ReconcileAction.Merge:
                     {
-                        //MergeStudyCommandXmlParser parser = new MergeStudyCommandXmlParser();
-                        //record.UpdateDescription.UpdateCommands = parser.ParseImageLevelCommands(historyRecord.ChangeDescription);
-                        ReconcileDescription desc = XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescription>(historyRecord.ChangeDescription);
-                        record.UpdateDescription.UpdateCommands = desc.Commands;
-                        record.Automatic = desc.Automatic;
+                        MergeStudyCommandXmlParser parser = new MergeStudyCommandXmlParser();
+                        record.UpdateDescription.UpdateCommands = parser.ParseImageLevelCommands(historyRecord.ChangeDescription.DocumentElement);
+                        //ReconcileDescription desc = XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescription>(historyRecord.ChangeDescription);
+                        //record.UpdateDescription.UpdateCommands = desc.Commands;
+                        //record.Automatic = desc.Automatic;
                         break;
                     }
 

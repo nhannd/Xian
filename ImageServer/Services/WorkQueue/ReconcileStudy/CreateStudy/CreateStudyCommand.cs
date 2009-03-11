@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
         private string GetNewStudyInstanceUid()
         {
-            if (_newStudyInstanceUid!=null)
+            if (_newStudyInstanceUid==null)
             {
                 foreach (BaseImageLevelUpdateCommand cmd in ImageLevelCommands)
                 {

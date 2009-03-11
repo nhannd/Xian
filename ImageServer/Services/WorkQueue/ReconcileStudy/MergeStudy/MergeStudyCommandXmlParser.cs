@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
         /// </summary>
         /// <param name="rootNode"></param>
         /// <returns></returns>
-        public List<BaseImageLevelUpdateCommand> ParseImageLevelCommands(XmlNode rootNode)
+        private List<BaseImageLevelUpdateCommand> ParseImageLevelCommands(XmlNode rootNode)
         {
             List<BaseImageLevelUpdateCommand> _commands = new List<BaseImageLevelUpdateCommand>();
 
@@ -60,5 +60,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             return _commands;
         }
 
+        public ReconcileMergeToExistingStudyDescription Parse(XmlDocument doc)
+        {
+            if (doc == null)
+                return null;
+
+            if (doc.DocumentElement.Name == "ReconcileMergeToExistingStudy")
+            {
+                return XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescription>(doc.DocumentElement);
+            }
+            else
+            {
+                ReconcileMergeToExistingStudyDescription desc = new ReconcileMergeToExistingStudyDescription();
+                desc.Action = ReconcileAction.Merge;
+                desc.Automatic = false;
+                desc.Commands = ParseImageLevelCommands(doc.DocumentElement);
+                desc.ExistingStudy = new StudyInformation();
+                desc.ImageSetData = new ImageSetDescriptor();
+                return desc;
+            }
+        }
     }
 }

@@ -814,7 +814,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 {
                     ServerEntityKey key = (ServerEntityKey) parm.Value;
                     valuesText.AppendFormat(", @{0}", sqlParmName);
-                    command.Parameters.AddWithValue("@" + sqlParmName, key.Key);
+                    if (key != null)
+                    {
+                        command.Parameters.AddWithValue("@" + sqlParmName, key.Key);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@" + sqlParmName, DBNull.Value);
+                    }
                 }
                 else if (parm is EntityUpdateColumn<XmlDocument>)
                 {

@@ -84,20 +84,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             desc.ImageSetData = fileDesc;
             desc.Action = ReconcileAction.Merge;
             string newPatientName = GetUnifiedPatientName(desc.ExistingStudy.PatientInfo.Name, fileDesc[DicomTags.PatientsName].Value);
-            SetTagCommand cmd = new SetTagCommand();
-            cmd.File = _context.File;
-            cmd.UpdateEntry = new ImageLevelUpdateEntry();
-            cmd.UpdateEntry.TagPath = new ClearCanvas.ImageServer.Common.Helpers.DicomTagPath();
-            cmd.UpdateEntry.TagPath.Tag = DicomTagDictionary.GetDicomTag(DicomTags.PatientsName);
-            cmd.UpdateEntry.Value = newPatientName;
-            desc.Commands = new List<BaseImageLevelUpdateCommand>();
-            desc.Commands.Add(cmd);
+
+            if (!desc.ExistingStudy.PatientInfo.Name.Equals(newPatientName))
+            {
+                SetTagCommand cmd = new SetTagCommand();
+                cmd.File = _context.File;
+                cmd.UpdateEntry = new ImageLevelUpdateEntry();
+                cmd.UpdateEntry.TagPath = new ClearCanvas.ImageServer.Common.Helpers.DicomTagPath();
+                cmd.UpdateEntry.TagPath.Tag = DicomTagDictionary.GetDicomTag(DicomTags.PatientsName);
+                cmd.UpdateEntry.Value = newPatientName;
+                desc.Commands = new List<BaseImageLevelUpdateCommand>();
+                desc.Commands.Add(cmd);
+            }
+            
             desc.Automatic = true;
 
             IStudyHistoryEntityBroker broker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
             StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns();
             columns.StudyStorageKey = _context.CurrentStudyLocation.GetKey();
-            //columns.DestStudyStorageKey = null; // _context.CurrentStudyLocation.GetKey();
+            columns.DestStudyStorageKey = null;
             columns.InsertTime = Platform.Time;
             columns.StudyHistoryTypeEnum = StudyHistoryTypeEnum.StudyReconciled;
             columns.StudyData = XmlUtils.SerializeAsXmlDoc(fileDesc);
