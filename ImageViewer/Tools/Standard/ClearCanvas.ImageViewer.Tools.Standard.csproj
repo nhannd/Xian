@@ -109,7 +109,7 @@
     <Compile Include="CineTool.cs" />
     <Compile Include="CreateTextCalloutGraphicState.cs" />
     <Compile Include="CreateTextAreaGraphicState.cs" />
-    <Compile Include="DicomOverlayTool.cs" />
+    <Compile Include="DicomOverlaysTool.cs" />
     <Compile Include="EditTextCalloutTool.cs" />
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />
     <Compile Include="ScaleGraphic.cs" />
@@ -327,6 +327,11 @@
     <EmbeddedResource Include="Icons\TextAreaToolLarge.png" />
     <EmbeddedResource Include="Icons\TextAreaToolMedium.png" />
     <EmbeddedResource Include="Icons\TextAreaToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DicomOverlaysToolLarge.png" />
+    <EmbeddedResource Include="Icons\DicomOverlaysToolMedium.png" />
+    <EmbeddedResource Include="Icons\DicomOverlaysToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,6 +1,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Imaging;
@@ -11,23 +12,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[EnabledStateObserver("showHide", "Available", "AvailableChanged")]
 	[Tooltip("showHide", "TooltipShowHideDicomOverlay")]
 	[GroupHint("showHide", "Tools.Image.Overlays.DicomOverlay.ShowHide")]
-	//[IconSet("showHide", IconScheme.Colour, "Icons.ScaleOverlayToolSmall.png", "Icons.ScaleOverlayToolMedium.png", "Icons.ScaleOverlayToolLarge.png")]
+	[IconSet("showHide", IconScheme.Colour, "Icons.DicomOverlaysToolSmall.png", "Icons.DicomOverlaysToolMedium.png", "Icons.DicomOverlaysToolLarge.png")]
 	//
 	[ButtonAction("toggle", "overlays-dropdown/ToolbarDicomOverlay", "ShowHide")]
 	[CheckedStateObserver("toggle", "Checked", "CheckedChanged")]
 	[VisibleStateObserver("toggle", "Available", "AvailableChanged")]
 	[Tooltip("toggle", "TooltipDicomOverlay")]
 	[GroupHint("toggle", "Tools.Image.Overlays.DicomOverlay.ShowHide")]
-	//[IconSet("toggle", IconScheme.Colour, "Icons.ScaleOverlayToolSmall.png", "Icons.ScaleOverlayToolMedium.png", "Icons.ScaleOverlayToolLarge.png")]
+	[IconSet("toggle", IconScheme.Colour, "Icons.DicomOverlaysToolSmall.png", "Icons.DicomOverlaysToolMedium.png", "Icons.DicomOverlaysToolLarge.png")]
 	//
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class DicomOverlayTool : ImageViewerTool
+	public class DicomOverlaysTool : ImageViewerTool
 	{
 		private event EventHandler _availableChanged;
 		private event EventHandler _checkedChanged;
 		private bool _checked;
 
-		public DicomOverlayTool()
+		public DicomOverlaysTool()
 		{
 			_checked = true;
 		}
