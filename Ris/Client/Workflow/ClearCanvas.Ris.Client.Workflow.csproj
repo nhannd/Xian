@@ -181,6 +181,7 @@
     <Compile Include="PerformingWorkflowFolderSystem.cs" />
     <Compile Include="PerformingWorkflowFolderSystemBase.cs" />
     <Compile Include="PerformingWorklistTable.cs" />
+    <Compile Include="WorkflowHistoryTool.cs" />
     <Compile Include="WorklistItemManager.cs" />
   </ItemGroup>
   <ItemGroup>

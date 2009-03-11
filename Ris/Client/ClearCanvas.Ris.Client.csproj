@@ -169,6 +169,7 @@
     <Compile Include="VisitSummaryComponent.cs" />
     <Compile Include="VisitSummaryTable.cs" />
     <Compile Include="WeakSearchCriteriaException.cs" />
+    <Compile Include="WorkflowHistoryComponent.cs" />
     <Compile Include="WorklistItemPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />
     <Compile Include="IFolderSystemContext.cs" />

@@ -247,7 +247,18 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("biography/workflow-history.htm")]
+		public string WorkflowHistoryPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["WorkflowHistoryPageUrl"]));
+			}
+		}
+
 		#endregion
+
 
 		#region Reporting Settings
 

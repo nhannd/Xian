@@ -378,6 +378,13 @@
       <DependentUpon>StaffSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffSummaryComponentView.cs" />
+    <Compile Include="WorkflowHistoryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorkflowHistoryComponentControl.Designer.cs">
+      <DependentUpon>WorkflowHistoryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorkflowHistoryComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -616,6 +623,10 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorkflowHistoryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WorkflowHistoryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
