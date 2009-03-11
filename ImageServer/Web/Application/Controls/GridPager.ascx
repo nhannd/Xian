@@ -37,12 +37,11 @@
         <td align="right" style="padding-right: 6px; padding-bottom: 2px; padding-top: 0px;">
             <table cellspacing="0" cellpadding="0">
                 <tr>
-<!--                
+
                     <td valign="top" style="padding-top: 1px;">
                         <asp:ImageButton ID="FirstPageButton" runat="server" CommandArgument="First" CommandName="Page"
                             OnCommand="PageButtonClick" CssClass="GlobalGridPagerLink" />
                     </td>                
--->                    
                     <td valign="top" style="padding-top: 1px;">
                         <asp:ImageButton ID="PrevPageButton" runat="server" CommandArgument="Prev" CommandName="Page"
                             OnCommand="PageButtonClick" CssClass="GlobalGridPagerLink" />
@@ -59,16 +58,14 @@
                                 MessageValidatorTip="false" AcceptNegative="None" InputDirection="LeftToRight" />
                         </div>
                     </td>
-                    <td valign="top" style="padding-right: 1px; padding-top: 1px;">
+                    <td valign="top" style="padding-top: 1px;">
                         <asp:ImageButton ID="NextPageButton" runat="server" CommandArgument="Next" CommandName="Page"
                             OnCommand="PageButtonClick" CssClass="GlobalGridPagerLink" />
                     </td>
-<!--                    
-                    <td valign="top" style="padding-top: 1px;">
+                    <td valign="top" style="padding-right: 1px; padding-top: 1px;">
                         <asp:ImageButton ID="LastPageButton" runat="server" CommandArgument="Last" CommandName="Page"
                             OnCommand="PageButtonClick" CssClass="GlobalGridPagerLink" />
-                    </td>       
--->                                                 
+                    </td>     
                     <td>
                         <%-- This Link Button is used to submit the Page from the TextBox when the user clicks enter on the text box. --%>
                         <asp:LinkButton ID="ChangePageButton" runat="server" CommandArgument="ChangePage"

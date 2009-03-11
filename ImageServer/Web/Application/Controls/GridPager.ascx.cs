@@ -160,14 +160,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 case ImageServerConstants.Next:
                     Target.PageIndex = intCurIndex + 1;
                     break;
-/* TODO: Add these lines for supporting first/last paging.
                 case ImageServerConstants.First:
                     Target.PageIndex = 0;
                     break;
                 case ImageServerConstants.Last:
                     Target.PageIndex = Target.PageCount - 1;
                     break;
- */
                 default:
 
                     if (CurrentPage.Text.Equals(string.Empty))
@@ -241,19 +239,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 {
                     PrevPageButton.Enabled = true;
                     PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousEnabled;
-/*
+
                     FirstPageButton.Enabled = true;
                     FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstEnabled;
- */ 
+ 
                 }
                 else
                 {
                     PrevPageButton.Enabled = false;
                     PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousDisabled;
-                    /*
+
                     FirstPageButton.Enabled = false;
                     FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstDisabled;
-                     */
+
                 }
 
 
@@ -261,19 +259,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 {
                     NextPageButton.Enabled = true;
                     NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextEnabled;
-/*                    
+
                     LastPageButton.Enabled = true;
                     LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastEnabled;
- */
                 }
                 else
                 {
                     NextPageButton.Enabled = false;
                     NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextDisabled;
-/*
+
                     LastPageButton.Enabled = false;
                     LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastDisabled;
- */ 
+
                 }
             } else
             {
@@ -284,12 +281,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 PrevPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerPreviousDisabled;
                 NextPageButton.Enabled = false;
                 NextPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerNextDisabled;
-                /*
+
                 FirstPageButton.Enabled = false;
                 FirstPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerFirstDisabled;
                 LastPageButton.Enabled = false;
                 LastPageButton.ImageUrl = ImageServerConstants.ImageURLs.GridPagerLastDisabled;
-                 */ 
+
             }
         }
 
