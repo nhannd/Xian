@@ -72,6 +72,8 @@
     <Compile Include="ReconcileStudy\Discard\DiscardImageCommandProcessor.cs" />
     <Compile Include="ReconcileStudy\UpdateWorkQueueCommand.cs" />
     <Compile Include="StudyProcess\ImageReconciler.cs" />
+    <Compile Include="StudyProcess\InsertMergeHistoryCommand.cs" />
+    <Compile Include="StudyProcess\ReconcileDescription.cs" />
     <Compile Include="WebEditStudy\IWebEditStudyCommandCompiler.cs" />
     <Compile Include="WebEditStudy\StudyInformation.cs" />
     <Compile Include="WebEditStudy\WebEditStudyHistoryRecord.cs" />
@@ -100,7 +102,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StudyProcess\InsertReconcileQueueCommand.cs" />
+    <Compile Include="StudyProcess\InsertSIQReconcileStudyCommand.cs" />
     <Compile Include="StudyProcess\InsertReconcileStudyCommand.cs" />
     <Compile Include="StudyProcess\MoveReconcileImageCommand.cs" />
     <Compile Include="StudyProcess\ReconcileImageContext.cs" />

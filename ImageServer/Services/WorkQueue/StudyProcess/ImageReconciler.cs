@@ -35,16 +35,24 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
+    enum AutoReconcileMethod
+    {
+        MergeToExistingStudy
+    }
+
     /// <summary>
     /// Reconcile a Dicom image against a study.
     /// </summary>
@@ -61,6 +69,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private StudyStorageLocation _existingStudyLocation;
     	private string _sopInstanceUid;
         private IList<StudyHistory> _historyList;
+        private ReconcileImageContext _reconcileContext;
 
         #endregion
 
@@ -178,7 +187,84 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         }
 
+
+        private bool TryAutoCorrection(DicomMessageBase message)
+        {
+            Platform.CheckForNullReference(ExistingStudyLocation, "ExistingStudyLocation");
+
+            DifferenceCollection list = StudyHelper.Compare(message, ExistingStudyLocation);
+
+            if (list.Count == 1)
+            {
+                ComparisionDifference different = list[0];
+                if (different.DicomTag.TagValue == DicomTags.PatientsName)
+                {
+                    if (DifferentOnlyByCarets(different.ExpectValue, different.RealValue))
+                    {
+                        AutoCorrectPatientsName(message, AutoReconcileMethod.MergeToExistingStudy);
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        static bool DifferentOnlyByCarets(string s1, string s2)
+        {
+            s1 = DicomNameUtils.Normalize(s1,DicomNameUtils.NormalizeOptions.TrimEmptyEndingComponents | DicomNameUtils.NormalizeOptions.TrimSpaces);
+            s2 = DicomNameUtils.Normalize(s2, DicomNameUtils.NormalizeOptions.TrimEmptyEndingComponents | DicomNameUtils.NormalizeOptions.TrimSpaces);
+            
+            if (s1.Length != s2.Length) return false;
+
+            for (int i = 0; i < s1.Length; i++ )
+            {
+                if (s1[i]!=s2[i])
+                {
+                    if (s1[i] == '^' && s2[i] != ' ') return false;
+                    if (s2[i] == '^' && s1[i] != ' ') return false;
+                }
+            }
+            return true;
+        }
+
+        private void AutoCorrectPatientsName(DicomMessageBase message, AutoReconcileMethod method)
+        {
+            Platform.Log(LogLevel.Info, "Scheduling auto reconciliation to correct patient name...");
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Schedule ReconcileStudy request"))
+            {
+                _reconcileContext.StoragePath = GetSuggestedTemporaryReconcileFolderPath();
+                
+                switch(method)
+                {
+                    case AutoReconcileMethod.MergeToExistingStudy:
+                        {
+                            processor.AddCommand(new InsertMergeToExistingStudyHistoryCommand(_reconcileContext));
+                            break;
+                        }
+                    default:
+                        {
+                            throw new NotImplementedException();
+                        }
+                }
+                
+                InsertReconcileStudyCommand insertReconcileStudyCommand = new InsertReconcileStudyCommand(_reconcileContext);
+                MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(_reconcileContext);
+
+                processor.AddCommand(insertReconcileStudyCommand);
+                processor.AddCommand(moveFileCommand);
+                
+                if (processor.Execute() == false)
+                {
+                    throw new ApplicationException(String.Format("Unable to create ReconcileStudy request: {0}", processor.FailureReason));
+                }
+                Platform.Log(LogLevel.Info, "SOP {0} has been scheduled for auto reconciliation.", _sopInstanceUid);
+            }
+        }
+
         #endregion
+
+
 
         #region Public Methods
         public void ReconcileImage(DicomFile file, bool isDuplicate)
@@ -192,29 +278,33 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             //TODO: optimization: use previously loaded history list if possible
             _historyList = FindHistory(file, StudyHistoryTypeEnum.StudyReconciled);
 
-            ReconcileImageContext reconcileContext = new ReconcileImageContext();
-            reconcileContext.Partition = _partition;
-            reconcileContext.CurrentStudyLocation = ExistingStudyLocation;
-            reconcileContext.File = file;
-            reconcileContext.IsDuplicate = isDuplicate;
-            reconcileContext.CurrentStudy = ExistingStudy;
-            reconcileContext.History = _historyList == null || _historyList.Count==0? null : _historyList[0];
+            _reconcileContext = new ReconcileImageContext();
+            _reconcileContext.Partition = _partition;
+            _reconcileContext.CurrentStudyLocation = ExistingStudyLocation;
+            _reconcileContext.File = file;
+            _reconcileContext.IsDuplicate = isDuplicate;
+            _reconcileContext.CurrentStudy = ExistingStudy;
+            _reconcileContext.History = _historyList == null || _historyList.Count==0? null : _historyList[0];
 
+            LogDebugInfo(_reconcileContext);
 
-            LogDebugInfo(reconcileContext);
-            
             
             if (_historyList == null || _historyList.Count == 0)
             {
+                if (ImageServerCommonConfiguration.EnablePatientsNameAutoCorrection && TryAutoCorrection(file))
+                {
+                    return;
+                }
+            
                 Platform.Log(LogLevel.Debug, "Scheduling new manual reconciliation...");
                 using (ServerCommandProcessor processor = new ServerCommandProcessor("Schedule new reconciliation"))
                 {
-                    MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
-                    InsertReconcileQueueCommand updateQueueCommand = new InsertReconcileQueueCommand(reconcileContext);
+                    MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(_reconcileContext);
+                    InsertSIQReconcileStudyCommand updateStudyCommand = new InsertSIQReconcileStudyCommand(_reconcileContext);
                     
-                    processor.AddCommand(updateQueueCommand);
+                    processor.AddCommand(updateStudyCommand);
                     processor.AddCommand(moveFileCommand);
-                    processor.AddCommand(new OpValidationCommand(reconcileContext));
+                    processor.AddCommand(new OpValidationCommand(_reconcileContext));
                     if (processor.Execute() == false)
                     {
                         throw new ApplicationException(String.Format("Unable to schedule image reconcilation : {0}", processor.FailureReason));
@@ -225,28 +315,29 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             else
             {
                 Platform.Log(LogLevel.Debug, "Scheduling Auto Reconciliation...");
-                if (reconcileContext.History.DestStudyStorageKey != null)
+                
+                if (_reconcileContext.History.DestStudyStorageKey != null)
                 {
-                    StudyStorage destStorage = StudyStorage.Load(reconcileContext.History.DestStudyStorageKey);
+                    StudyStorage destStorage = StudyStorage.Load(_reconcileContext.History.DestStudyStorageKey);
                     Debug.Assert(destStorage != null);
 
-                    reconcileContext.DestinationStudyLocation = StudyStorageLocation.FindStorageLocations(destStorage)[0];
-                    Debug.Assert(reconcileContext.DestinationStudyLocation != null);
+                    _reconcileContext.DestinationStudyLocation = StudyStorageLocation.FindStorageLocations(destStorage)[0];
+                    Debug.Assert(_reconcileContext.DestinationStudyLocation != null);
 
                     Study destStudy = Study.Find(destStorage.StudyInstanceUid, _partition); // note: assuming destination partition is the same as the current one
                     Debug.Assert(destStudy != null);
                 }
 
                 // Insert 'ReconcileStudy' in the work queue
-                reconcileContext.StoragePath = GetSuggestedTemporaryReconcileFolderPath(); // since we no longer have the record in the Study Integrity Queue
+                _reconcileContext.StoragePath = GetSuggestedTemporaryReconcileFolderPath(); // since we no longer have the record in the Study Integrity Queue
                 using (ServerCommandProcessor processor = new ServerCommandProcessor("Schedule ReconcileStudy request based on histrory"))
                 {
-                    InsertReconcileStudyCommand insertCommand = new InsertReconcileStudyCommand(reconcileContext);
-                    MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(reconcileContext);
+                    InsertReconcileStudyCommand insertCommand = new InsertReconcileStudyCommand(_reconcileContext);
+                    MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(_reconcileContext);
                     
                     processor.AddCommand(insertCommand);
                     processor.AddCommand(moveFileCommand);
-                    processor.AddCommand(new OpValidationCommand(reconcileContext));
+                    processor.AddCommand(new OpValidationCommand(_reconcileContext));
                     
                     if (processor.Execute() == false)
                     {

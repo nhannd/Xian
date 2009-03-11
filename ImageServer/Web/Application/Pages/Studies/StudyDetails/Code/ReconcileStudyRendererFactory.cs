@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -23,7 +24,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
             Label lb = new Label();
             ReconcileHistoryRecord desc = StudyHistoryRecordDecoder.ReadReconcileRecord(historyRecord);
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Action = {0}", desc.UpdateDescription.ReconcileAction);
+            sb.AppendLine(String.Format("Action = {0}", desc.UpdateDescription.ReconcileAction));
+            sb.AppendLine(String.Format("Automatic = {0}", desc.Automatic ? "Yes" : "No"));
+
             sb.AppendLine();
             foreach (BaseImageLevelUpdateCommand cmd in desc.UpdateDescription.UpdateCommands)
             {
@@ -50,17 +53,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
             get { return _updateDescription; }
             set { _updateDescription = value; }
         }
+
         #endregion
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Method = {0}", UpdateDescription.ReconcileAction);
-            sb.AppendLine();
+            sb.AppendLine(String.Format("Method = {0}", UpdateDescription.ReconcileAction));
+            sb.AppendLine(String.Format("Automatic = {0}", Automatic? "Yes":"No"));
             foreach (BaseImageLevelUpdateCommand cmd in UpdateDescription.UpdateCommands)
             {
-                sb.AppendFormat("{0}", cmd);
-                sb.AppendLine();
+                sb.AppendLine(cmd.ToString());
             }
 
             return sb.ToString();

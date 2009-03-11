@@ -15,14 +15,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     
 
     /// <summary>
-    /// Command for inserting a Reconcile Queue entry for a dicom file.
+    /// Command for inserting an entry for a dicom file in the Study Integrity Queue
     /// </summary>
-    class InsertReconcileQueueCommand : ServerDatabaseCommand
+    class InsertSIQReconcileStudyCommand : ServerDatabaseCommand
     {
         private readonly ReconcileImageContext _context;
 
-        public InsertReconcileQueueCommand(ReconcileImageContext context)
-            : base("InsertReconcileQueueCommand", true)
+        public InsertSIQReconcileStudyCommand(ReconcileImageContext context)
+            : base("InsertSIQReconcileStudyCommand", true)
         {
             Platform.CheckForNullReference(context, "context");
             _context = context;

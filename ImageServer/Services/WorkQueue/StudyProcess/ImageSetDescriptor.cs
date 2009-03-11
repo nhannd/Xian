@@ -184,7 +184,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     AddField(field);
                 } while (reader.ReadToNextSibling("Field"));
             }
-
+            reader.Read();
         }
 
         public void WriteXml(XmlWriter writer)

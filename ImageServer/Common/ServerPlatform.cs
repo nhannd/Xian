@@ -103,11 +103,12 @@ namespace ClearCanvas.ImageServer.Common
             return path;
         }
 
-        [Conditional("DEBUG")]
+        [Conditional("DEBUG_SIM_ERRORS")]
         public static void SimulateError(string description, ErrorDelegate del)
         {
             Random ran = new Random();
-            if (ran.Next() % (ran.Next(10)+1) == 0)
+            bool simulate = ran.Next() % (ran.Next(10) + 1) == 0;
+            if (simulate)
             {
                 StringBuilder sb = new StringBuilder();
                 sb.AppendFormat("\n\n\t**********************************************************************************************************\n");

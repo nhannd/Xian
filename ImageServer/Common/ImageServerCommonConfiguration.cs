@@ -75,6 +75,14 @@ namespace ClearCanvas.ImageServer.Common
             }
         }
 
+        static public bool EnablePatientsNameAutoCorrection
+        {
+            get
+            {
+                return Settings.Default.EnablePatientsNameAutoCorrection;
+            }
+        }
+
         public static class Device
         {
             public static short MaxConnections

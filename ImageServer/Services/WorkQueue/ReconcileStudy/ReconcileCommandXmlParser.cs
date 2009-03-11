@@ -61,9 +61,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                 {
                     return new DiscardImageCommandProcessor();
                 }
+                else if (doc.DocumentElement.Name == "ReconcileMergeToExistingStudy")
+                {
+                    return new MergeStudyCommandProcessor();
+                }
                 else
                 {
-                    throw new NotSupportedException(String.Format("Unsupported reconcile operator: {0}", doc.DocumentElement.Name));
+                    throw new NotSupportedException(String.Format("Command: {0}", doc.DocumentElement.Name));
                 }
                 
             }

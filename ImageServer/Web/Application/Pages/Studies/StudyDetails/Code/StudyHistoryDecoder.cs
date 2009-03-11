@@ -4,6 +4,7 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
+using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code
@@ -31,14 +32,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
             {
                 record.UpdateDescription.ReconcileAction = ReconcileAction.SplitStudies;
             }
+            else if (historyRecord.ChangeDescription.DocumentElement.Name == "ReconcileMergeToExistingStudy")
+            {
+                record.UpdateDescription.ReconcileAction = ReconcileAction.Merge;
+            }
                 
             
             switch(record.UpdateDescription.ReconcileAction )
             {
                 case ReconcileAction.Merge:
                     {
-                        MergeStudyCommandXmlParser parser = new MergeStudyCommandXmlParser();
-                        record.UpdateDescription.UpdateCommands = parser.ParseImageLevelCommands(historyRecord.ChangeDescription.DocumentElement);
+                        //MergeStudyCommandXmlParser parser = new MergeStudyCommandXmlParser();
+                        //record.UpdateDescription.UpdateCommands = parser.ParseImageLevelCommands(historyRecord.ChangeDescription);
+                        ReconcileDescription desc = XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescription>(historyRecord.ChangeDescription);
+                        record.UpdateDescription.UpdateCommands = desc.Commands;
+                        record.Automatic = desc.Automatic;
                         break;
                     }
 
@@ -74,6 +82,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
     {
         public DateTime InsertTime;
         public StudyStorageLocation StudyStorageLocation;
+        private bool _automatic;
 
+        public bool Automatic
+        {
+            get { return _automatic; }
+            set { _automatic = value; }
+        }
     }
 }

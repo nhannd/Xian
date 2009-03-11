@@ -42,8 +42,10 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
+using StringDiff=ClearCanvas.Common.Utilities.StringDiff;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
@@ -197,8 +199,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             if (_context.Study == null || _context.Study.StudyInstanceUid != studyInstanceUid)
             {
-                _context.Study = Study.Find(studyInstanceUid, _context.Partition);
-                // Note: if this is the first image in the study, _study will still be null at point
+                _context.Study = base.Study;
+                // Note: if this is the first image in the study, _study will still be null at this point
             }
 
             if (_context.Study == null )
@@ -213,7 +215,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 if (list != null && list.Count > 0)
                 {
                     LogDifferences(message, list);
-                    
                     return true;
                 }
                 else
@@ -232,25 +233,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.Log(LogLevel.Info, sb.ToString());
         }
 
-        /// <summary>
-        /// Gets the <see cref="StudyCompareOptions"/> based on the server partition settings.
-        /// </summary>
-        /// <returns></returns>
-        private StudyCompareOptions GetComparisonOptions()
-        {
-            Platform.CheckForNullReference(_context, "_context");
-            Platform.CheckForNullReference(_context.Partition, "_context.Partition");
-
-            StudyCompareOptions options = new StudyCompareOptions();
-            options.MatchAccessionNumber = _context.Partition.MatchAccessionNumber;
-            options.MatchIssuerOfPatientId = _context.Partition.MatchIssuerOfPatientId;
-            options.MatchPatientId = _context.Partition.MatchPatientId;
-            options.MatchPatientsBirthDate = _context.Partition.MatchPatientsBirthDate;
-            options.MatchPatientsName = _context.Partition.MatchPatientsName;
-            options.MatchPatientsSex = _context.Partition.MatchPatientsSex;
-
-            return options;
-        }
 
         /// <summary>
         /// Process a specific DICOM file related to a <see cref="WorkQueue"/> request.
@@ -260,10 +242,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
         private void ProcessFile(WorkQueueUid queueUid, string path, StudyXml stream)
         {
+            DicomFile file = LoadDicomFile(path);
+        
+            if (ShouldReconcile(file))
+            {
+                ScheduleReconcile(queueUid, file);
+            }
+            else
+            {
+                InsertInstance(file, stream, queueUid);
+            } 
+            
+        }
+
+        private DicomFile LoadDicomFile(string path)
+        {
             DicomFile file;
-
-            _workQueueUid = queueUid;
-
             long fileSize;
             FileInfo fileInfo = new FileInfo(path);
             fileSize = fileInfo.Length;
@@ -273,19 +267,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             file.Load(DicomReadOptions.StorePixelDataReferences);
             _instanceStats.FileLoadTime.End();
             _instanceStats.FileSize = (ulong) fileSize;
-
             string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:"+fileInfo.Name);
-            
             _instanceStats.Description = sopInstanceUid;
-
-            if (ShouldReconcile(file))
-            {
-                ScheduleReconcile(queueUid, file);
-            }
-            else
-            {
-                InsertInstance(file, stream, queueUid);
-            }
+            return file;
         }
 
         /// <summary>
@@ -517,6 +501,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             _instanceStats = new InstanceStatistics();
             _instanceStats.ProcessTime.Start();
+
+            _workQueueUid = uid;
         }
 
         /// <summary>
@@ -688,4 +674,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
         #endregion        
     }
+
+
 }

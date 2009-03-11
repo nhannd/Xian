@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             foreach (SearchCriteria parm in parms.SubCriteria.Values)
             {
                 String sqlParmName = "@" + parm.GetKey();
-
+                
                 if (parm is ProcedureParameter<DateTime?>)
                 {
                     ProcedureParameter<DateTime?> parm2 = (ProcedureParameter<DateTime?>)parm;
@@ -105,7 +105,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     ProcedureParameter<ServerEntityKey> parm2 = (ProcedureParameter<ServerEntityKey>)parm;
 
 					if (!parm2.Output)
-						command.Parameters.AddWithValue(sqlParmName, parm2.Value.Key);
+					{
+                        if (parm2.Value!=null)
+                            command.Parameters.AddWithValue(sqlParmName, parm2.Value.Key);   
+                        else
+                        {
+                            command.Parameters.AddWithValue(sqlParmName, DBNull.Value);   
+                        }
+					}
 					else
 					{
 						SqlParameter sqlParm = command.Parameters.Add(sqlParmName, SqlDbType.UniqueIdentifier);
