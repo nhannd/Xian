@@ -79,6 +79,14 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         }
 
 
+        private bool _isDataBound = false;
+
+        public bool IsDataBound
+        {
+            get { return _isDataBound;  }
+            set { _isDataBound = value; }
+        }
+
         /// <summary>
         /// Sets or gets the client-side script function that will be called on the client when a row in selected.
         /// </summary>
@@ -415,6 +423,13 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 e.Row.Attributes.Add("onmouseover", onMouseOver);
                 e.Row.Attributes.Add("onmouseout", onMouseOut);
             }
+        }
+
+        protected override void OnDataBound(EventArgs e)
+        {
+            base.OnDataBound(e);
+
+            IsDataBound = true;
         }
 
         public void PageIndexChangedHandler(object sender, EventArgs e)

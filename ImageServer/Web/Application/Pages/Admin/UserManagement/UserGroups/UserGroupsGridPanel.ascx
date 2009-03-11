@@ -7,11 +7,7 @@
 				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.UserGroupRowData" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetUserGroupDataSource"
 				OnObjectDisposing="DisposeUserGroupsDataSource"/>
-            <ccUI:GridView ID="UserGroupsGridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
-                Width="100%" AllowSorting="True" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#eeeeee"
-                PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" 
-                BorderWidth="0px" HorizontalAlign="left" DataSourceID="UserGroupDataSourceObject" OnRowDataBound="UserGroupsGridView_RowDataBound"
-                OnSelectedIndexChanged="UserGroupsGridView_SelectedIndexChanged">
+            <ccUI:GridView ID="UserGroupsGridView" runat="server" OnRowDataBound="UserGroupsGridView_RowDataBound">
                 <Columns>
                     <asp:BoundField DataField="Name" HeaderText="Group Name" HeaderStyle-HorizontalAlign="Left" />
                     <asp:TemplateField HeaderText="Tokens" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left">

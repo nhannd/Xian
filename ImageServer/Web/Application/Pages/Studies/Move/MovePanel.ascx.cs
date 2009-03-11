@@ -62,9 +62,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
             GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerDeviceSingleItem, App_GlobalResources.SR.GridPagerDeviceMultipleItems, DeviceGridPanel.TheGrid, delegate { return DeviceGridPanel.Devices.Count; }, ImageServerConstants.GridViewPagerPosition.bottom);
 
             MoveConfirmation.Confirmed += delegate(object data)
-                 {
-                     Response.Redirect(ImageServerConstants.PageURLs.SearchPage); 
-                 };
+                                              {
+                    Page.ClientScript.RegisterStartupScript(this.GetType(), "myCloseScript", "close = true;", true);                                                  
+                    
+                                              };
 
         }
         /// <summary>

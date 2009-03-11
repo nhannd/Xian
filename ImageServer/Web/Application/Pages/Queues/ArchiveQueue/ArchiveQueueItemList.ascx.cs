@@ -101,6 +101,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         {
             get
             {
+                if (!ArchiveQueueGridView.IsDataBound) ArchiveQueueGridView.DataBind();
+
                 if (Items==null || Items.Count == 0)
                     return null;
 

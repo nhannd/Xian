@@ -50,10 +50,14 @@ public class ImageServerConstants
         public const string UpdateButtonDisabled = "images/Buttons/UpdateDisabled.png";
         public const string UpdateButtonEnabled = "images/Buttons/UpdateEnabled.png";
         public const string UpdateButtonHover = "images/Buttons/UpdateHover.png";
+        public static readonly string GridPagerFirstEnabled = string.Format("~/App_Themes/{0}/images/Controls/GridView/GridViewPagerFirstEnabled.png", Theme);
+        public static readonly string GridPagerFirstDisabled = string.Format("~/App_Themes/{0}/images/Controls/GridView/GridViewPagerFirstDisabled.png", Theme);
         public static readonly string GridPagerNextEnabled = string.Format("~/App_Themes/{0}/images/Controls/GridView/GridViewPagerNextEnabled.png", Theme);
         public static readonly string GridPagerNextDisabled = string.Format("~/App_Themes/{0}/images/Controls/GridView/GridViewPagerNextDisabled.png", Theme);
         public static readonly string GridPagerPreviousEnabled = string.Format("~/App_Themes/{0}/images/Controls/GridView/GridViewPagerPreviousEnabled.png", Theme);
         public static readonly string GridPagerPreviousDisabled = string.Format("~/App_Themes/{0}/images/Controls/GridView/GridViewPagerPreviousDisabled.png", Theme);
+        public static readonly string GridPagerLastEnabled = string.Format("~/App_Themes/{0}/images/Controls/GridView/GridViewPagerLastEnabled.png", Theme);
+        public static readonly string GridPagerLastDisabled = string.Format("~/App_Themes/{0}/images/Controls/GridView/GridViewPagerLastDisabled.png", Theme);
         public static readonly string AutoRouteFeature = string.Format("~/App_Themes/{0}/images/Indicators/AutoRouteFeature.png", Theme);
         public static readonly string Blank = string.Format("~/App_Themes/{0}/images/blank.gif", Theme);
         public static readonly string Checked = string.Format("~/App_Themes/{0}/images/Indicators/checked.png", Theme);

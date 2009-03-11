@@ -35,8 +35,8 @@ using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
@@ -102,6 +102,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         {
             get
             {
+                if(!AlertGridView.IsDataBound) AlertGridView.DataBind();
+                
                 if (AlertItems == null || AlertItems.Count == 0)
                     return null;
 
@@ -121,21 +123,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                 return queueItems;
             }
         }
-
-        /// <summary>
-        /// Gets/Sets the list of devices rendered on the screen.
-        /// </summary>
-/*        public IList<AlertSummary> AlertItems
-        {
-            get
-            {
-                return _alertItems;
-            }
-            set
-            {
-                _alertItems = value;
-            }
-        }*/
 
         /// <summary>
         /// Gets/Sets the list of Alert Items
@@ -209,12 +196,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
         #region protected methods
 
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            AlertGridView.DataBind();
-        }
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -222,6 +203,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             // Set up the grid
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
+
+            AlertGridView.DataSource = AlertDataSourceObject;
         }
 
         protected void AlertGridView_DataBound(object sender, EventArgs e)
@@ -232,6 +215,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                 AlertGridView.SelectedIndex = AlertItems.RowIndexOf(SelectedAlertKey, AlertGridView);
             }
         }
+
 
         protected void AlertGridView_SelectedIndexChanged(object sender, EventArgs e)
         {

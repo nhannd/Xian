@@ -29,21 +29,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
         protected global::System.Web.UI.WebControls.Table ContainerTable;
         
         /// <summary>
-        /// StudyDataSourceObject control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.ObjectDataSource StudyDataSourceObject;
-        
-        /// <summary>
         /// GridView1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView GridView1;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView GridView1;
     }
 }

@@ -1289,6 +1289,7 @@
     <Content Include="Controls\TimedDialog.ascx" />
     <Content Include="Default.aspx" />
     <Content Include="Images\ImageServerLogo.png" />
+    <EmbeddedResource Include="Pages\Admin\Alerts\AlertsPanel.js" />
     <Content Include="Pages\Admin\Configure\Devices\ThrottleSettingsTab.ascx" />
     <Content Include="Pages\Admin\UserManagement\UserGroups\AddEditUserGroupsDialog.ascx" />
     <Content Include="Pages\Admin\UserManagement\UserGroups\Default.aspx" />
@@ -1303,6 +1304,7 @@
     <Content Include="Pages\Error\AuthorizationErrorPage.aspx" />
     <Content Include="Pages\Login\ChangePasswordDialog.ascx" />
     <Content Include="Pages\Login\PasswordExpiredDialog.ascx" />
+    <EmbeddedResource Include="Pages\Studies\Move\MovePanel.js" />
     <Content Include="Pages\Studies\StudyDetails\Controls\HistoryPanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyHistoryChangeDescPanel.ascx" />
     <Content Include="Test\AuthorityGroup.aspx" />

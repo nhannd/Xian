@@ -41,11 +41,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             get { return UserGridPanel.UserGrid.ClientID; }
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -58,11 +53,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                      return UserGridPanel.ResultCount;
                                                  },
                                              ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerUserSingleItemFound,
-                                                App_GlobalResources.SR.GridPagerUserMultipleItemsFound,
-                                                UserGridPanel.UserGrid,
-                                                delegate { return UserGridPanel.ResultCount; },
-                                                ImageServerConstants.GridViewPagerPosition.bottom);
 
             UserGridPanel.DataSourceCreated += delegate(UserDataSource source)
                             {
@@ -98,7 +88,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             // UpdatePanel UpdateMode must be set to "conditional"
             // Calling UpdatePanel.Update() will force the client to refresh the screen
             SearchUpdatePanel.Update();
-            UserGridPanel.DataBind();
         }
 
         protected void AddUserButton_Click(object sender, ImageClickEventArgs e)

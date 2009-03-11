@@ -34,6 +34,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks

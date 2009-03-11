@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 {
@@ -93,14 +94,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 		{
 			base.OnInit(e);
 
-			// The embeded grid control will show pager control if "allow paging" is set to true
-			// We want to use our own pager control instead so let's hide it.
-			ApplicationLogListControl.SelectedIndexChanged += ApplicationLogListControl_SelectedIndexChanged;
-		}
-
-		protected void Page_Load(object sender, EventArgs e)
-		{
-			//ApplicationLogListControl.DataBind();
+		    ApplicationLogListControl.DataSource = ApplicationLogDataSourceObject;
 		}
 
 		protected void GetApplicationLogDataSource(object sender, ObjectDataSourceEventArgs e)
@@ -124,14 +118,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 		protected void DisposeApplicationLogDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
 		{
 			e.Cancel = true;
-		}
-
-		protected void ApplicationLogListControl_SelectedIndexChanged(object sender, EventArgs e)
-		{
-		//	IList<Model.ApplicationLog> studies = SelectedStudies;
-		//	if (studies != null)
-		//		if (OnStudySelectionChanged != null)
-		//			OnStudySelectionChanged(this, studies);  
 		}
 
 		protected void ApplicationLogListControl_PageIndexChanging(object sender, GridViewPageEventArgs e)

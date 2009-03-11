@@ -12,13 +12,9 @@
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetApplicationLogDataSource"
 				OnObjectDisposing="DisposeApplicationLogDataSource"/>
 			
-            <ccUI:GridView ID="ApplicationLogListControl" runat="server" AutoGenerateColumns="False" 
-				CssClass="GlobalGridView"
-                Width="100%" OnSelectedIndexChanged="ApplicationLogListControl_SelectedIndexChanged"
+            <ccUI:GridView ID="ApplicationLogListControl" runat="server"
 				OnPageIndexChanging="ApplicationLogListControl_PageIndexChanging" 
-				EmptyDataText="No logs found (Please check the filters!)"
-                PageSize="25" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
-                BorderWidth="0px" DataSourceID="ApplicationLogDataSourceObject">
+				EmptyDataText="No logs found (Please check the filters.)">
                 <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
                 <Columns>
                     <asp:BoundField DataField="Host" HeaderText="Host" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center"/>

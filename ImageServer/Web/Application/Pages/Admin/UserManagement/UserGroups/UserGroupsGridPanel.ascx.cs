@@ -56,11 +56,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
         }
         
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            DataBind();
-        }
-
         /// <summary>
         /// Retrieve reference to the grid control being used to display the devices.
         /// </summary>
@@ -116,6 +111,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             get
             {
+                if(!UserGroupGrid.IsDataBound) UserGroupGrid.DataBind();
+
                 if (UserGroups.Count == 0 || UserGroupGrid.SelectedIndex < 0)
                     return null;
 
@@ -135,35 +132,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             }
         }
 
-        public override void DataBind()
+        protected override void OnInit(EventArgs e)
         {
-            LoginCredentials credential = SessionManager.Current.Credentials;
-/*            CurrentUser.Text = String.Format("{0}: {1} expire at: {2}",
-                Thread.CurrentPrincipal,
-                    credential.DisplayName,
-                    credential.SessionToken.ExpiryTime
-                );
-            */
+            base.OnInit(e);
 
-            base.DataBind();
-
-        }
-
-        protected void UserGroupsGridView_DataBound(object sender, EventArgs e)
-        {
-            // reselect the row based on the new order
-//            if (SelectedAlertKey != null)
-//            {
-//                UserGridView.SelectedIndex = _userRows.RowIndexOf(SelectedAlertKey, AlertGridView);
-//            }
-        }
-
-        protected void UserGroupsGridView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-//            if (AlertGridView.SelectedDataKey != null)
-                //SelectedAlertKey = AlertGridView.SelectedDataKey.Value as ServerEntityKey;
-
-            DataBind();
+            UserGroupGrid.DataSource = UserGroupDataSourceObject;
         }
 
         protected void UserGroupsGridView_PageIndexChanged(object sender, EventArgs e)

@@ -10,11 +10,8 @@
 				DataObjectTypeName="ClearCanvas.ImageServer.Web.Common.Data.DataSource.AlertSummary" EnablePaging="true"
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetAlertDataSource"
 				OnObjectDisposing="DisposeAlertDataSource"/>
-            <ccUI:GridView ID="AlertGridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
-                Width="100%" AllowSorting="True" MouseHoverRowHighlightEnabled="true" RowHighlightColor="#eeeeee"
-                PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" 
-                BorderWidth="0px" HorizontalAlign="left" DataSourceID="AlertDataSourceObject" OnRowDataBound="AlertGridView_RowDataBound"
-                OnSelectedIndexChanged="AlertGridView_SelectedIndexChanged" DataKeyNames="Key">
+            <ccUI:GridView ID="AlertGridView" runat="server" OnRowDataBound="AlertGridView_RowDataBound" SelectionMode="Single"
+                DataKeyNames="Key" OnSelectedIndexChanged="AlertGridView_SelectedIndexChanged">
                 <Columns>
                     <asp:BoundField DataField="Content" HeaderText="Content" HeaderStyle-HorizontalAlign="Left" />
                     <asp:BoundField DataField="Component" HeaderText="Component" HeaderStyle-HorizontalAlign="Left" />

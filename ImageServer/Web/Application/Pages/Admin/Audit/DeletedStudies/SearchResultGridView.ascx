@@ -14,11 +14,8 @@
 				MaximumRowsParameterName="maxRows"
 				SelectCountMethod="SelectCount" />
 				
-				<ccUI:GridView ID="ListControl" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
-					Width="100%" EmptyDataText=""
-					CellPadding="0"  DataSourceID="DataSource"
-					SelectionMode="Single" PageSize="25" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
-					BorderWidth="0px" HorizontalAlign="Left" DataKeyNames="RowKey">
+				<ccUI:GridView ID="ListControl" runat="server"
+					SelectionMode="Single" DataKeyNames="RowKey">
 					<Columns>
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
 							<itemtemplate>

@@ -9,7 +9,7 @@
     <asp:TableRow VerticalAlign="top">
         <asp:TableCell VerticalAlign="top">
         
-            <asp:GridView ID="GridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
+            <ccUI:GridView ID="GridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
                 Width="100%" OnRowDataBound="GridView_RowDataBound" OnDataBound="GridView_DataBound"
                 OnSelectedIndexChanged="GridView_SelectedIndexChanged"
                 EmptyDataText="" OnPageIndexChanging="GridView_PageIndexChanging" CellPadding="0" PagerSettings-Visible="false"
@@ -69,7 +69,7 @@
                 <HeaderStyle CssClass="GlobalGridViewHeader" />
                 <PagerTemplate>
                 </PagerTemplate>
-            </asp:GridView>
+            </ccUI:GridView>
 
         </asp:TableCell>
     </asp:TableRow>

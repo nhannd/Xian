@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         protected global::System.Web.UI.WebControls.Panel ToolbarButtons;
         
         /// <summary>
-        /// AddUserButton control.
+        /// AddUserGroupButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton AddUserGroupButton;
         
         /// <summary>
-        /// EditUserButton control.
+        /// EditUserGroupButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton EditUserGroupButton;
         
         /// <summary>
-        /// DeleteUserButton control.
+        /// DeleteUserGroupButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
@@ -153,14 +153,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.UserGroups.UserGroupsGridPanel UserGroupsGridPanel;
-        
-        /// <summary>
-        /// GridPagerBottom control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerBottom;
     }
 }

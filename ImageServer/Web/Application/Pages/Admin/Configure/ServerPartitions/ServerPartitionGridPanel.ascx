@@ -6,7 +6,7 @@
     Width="100%">
     <asp:TableRow VerticalAlign="top">
         <asp:TableCell VerticalAlign="top">   
-            <asp:GridView ID="PartitionGridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
+            <ccUI:GridView ID="PartitionGridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
                 Width="100%" OnRowDataBound="PartitionGridView_RowDataBound" AllowSorting="True"
                 PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
                 BorderWidth="0px" HorizontalAlign="left">
@@ -54,7 +54,7 @@
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
-            </asp:GridView>
+            </ccUI:GridView>
         </asp:TableCell>
     </asp:TableRow>
 </asp:Table>

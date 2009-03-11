@@ -102,6 +102,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             get
             {
+                if(!StudyIntegrityQueueGridView.IsDataBound) StudyIntegrityQueueGridView.DataBind();
+
                 if (Items==null || Items.Count == 0)
                     return null;
 

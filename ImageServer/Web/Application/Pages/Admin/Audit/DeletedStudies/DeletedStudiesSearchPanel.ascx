@@ -71,7 +71,6 @@
                                     <asp:Panel ID="ToolbarButtons" runat="server" CssClass="ToolbarButtons">
                                         <ccUI:ToolbarButton ID="ViewStudyDetailsButton" runat="server" SkinID="ViewDetailsButton" OnClick="ViewDetailsButtonClicked" />
                                         <ccUI:ToolbarButton ID="DeleteButton" runat="server" SkinID="DeleteButton" OnClick="DeleteButtonClicked" />
-                                        
                                     </asp:Panel>
                              </ContentTemplate>
                           </asp:UpdatePanel>                  
@@ -86,7 +85,6 @@
                                     <localAsp:SearchResultGridView ID="SearchResultGridView1" runat="server" />
                                 
                                 </td></tr>
-                                <tr><td style="border-top: solid 1px #3d98d1"><ccAsp:GridPager ID="GridPagerBottom" runat="server"  TargetControlID="SearchResultGridView1" /></td></tr>                    
                             </table>                        
                         </asp:Panel>
                         </td>

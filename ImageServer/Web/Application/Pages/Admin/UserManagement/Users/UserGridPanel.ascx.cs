@@ -21,16 +21,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         private IList<UserRowData> _userRows;
         #endregion Private members
         
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            DataBind();
-        }
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
             UserGridView.SelectedIndexChanged += UserGridView_SelectedIndexChanged;
+
+            UserGridView.DataSource = UserDataSourceObject;
         }
 
         /// <summary>
@@ -84,6 +81,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             get
             {
+                if(!UserGrid.IsDataBound) UserGrid.DataBind();
+
                 if (Users.Count == 0 || UserGrid.SelectedIndex < 0)
                     return null;
 
@@ -111,20 +110,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 _userRows = value;
                 UserGrid.DataSource = _userRows; // must manually call DataBind() later
             }
-        }
-
-        public override void DataBind()
-        {
-            UserGrid.DataBind();
-        }
-
-        protected void UserGridView_DataBound(object sender, EventArgs e)
-        {
-            // reselect the row based on the new order
-//            if (SelectedAlertKey != null)
-//            {
-//                UserGridView.SelectedIndex = _userRows.RowIndexOf(SelectedAlertKey, AlertGridView);
-//            }
         }
 
         protected void UserGridView_SelectedIndexChanged(object sender, EventArgs e)

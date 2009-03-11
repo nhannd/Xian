@@ -38,7 +38,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
-using GridView=System.Web.UI.WebControls.GridView;
+using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 {
@@ -144,6 +144,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         {
             get
             {
+                if(!WorkQueueGridView.IsDataBound) WorkQueueGridView.DataBind();
+
                 if (WorkQueueItems == null || WorkQueueItems.Count == 0)
                     return null;
 

@@ -3,7 +3,8 @@
     font-family: Sans-Serif;
     font-size: 12px;
     background: #ffffff;
-    border: solid 1px #3D98D1;
+    border-top: solid 1px #3D98D1;
+    border-bottom: solid 1px #3D98D1;
 }
 
 .GlobalGridViewHeader

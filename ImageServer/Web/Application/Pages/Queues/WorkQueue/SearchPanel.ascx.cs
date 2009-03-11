@@ -283,6 +283,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             if (workQueueItemList.SelectedItems[0] != null)
             {
                 EnclosingPage.ResetWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+                workQueueItemList.RefreshCurrentPage();
             }
         }
 
@@ -294,6 +295,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 			if (workQueueItemList.SelectedItems[0] != null)
             {
                 EnclosingPage.DeleteWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+                workQueueItemList.RefreshCurrentPage();
             }
         }
 
@@ -305,6 +307,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 			if (workQueueItemList.SelectedItems[0] != null)
             {
                 EnclosingPage.ReprocessWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+                workQueueItemList.RefreshCurrentPage();
             }
         }
 
@@ -317,6 +320,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             if (workQueueItemList.SelectedItems[0] != null)
             {
                 EnclosingPage.RescheduleWorkQueueItem(workQueueItemList.SelectedItems[0].Key);
+                workQueueItemList.RefreshCurrentPage();
             }
             else
             {

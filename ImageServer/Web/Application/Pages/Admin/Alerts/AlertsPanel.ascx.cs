@@ -33,15 +33,20 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts.AlertsPanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 {
-    public partial class AlertsPanel : UserControl
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts.AlertsPanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts.AlertsPanel.js")]
+    public partial class AlertsPanel : AJAXScriptControl
     {
         #region Private Members
 
@@ -51,6 +56,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         #endregion Private Members
 
         #region Public Properties
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("DeleteButtonClientID")]
+        public string DeleteButtonClientID
+        {
+            get { return DeleteAlertButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("AlertListClientID")]
+        public string AlertListClientID
+        {
+            get { return AlertsGridPanel.AlertGrid.ClientID; }
+        }
 
         // Sets/Gets the controller used to retrieve load partitions.
         public AlertController Controller
@@ -62,10 +81,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         #endregion Public Properties
 
         #region Protected Methods
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-        }
 
         /// <summary>
         /// Determines if filters are being specified.
@@ -91,7 +106,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             base.OnInit(e);
 
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerAlertSingleItemFound, App_GlobalResources.SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, delegate { return AlertsGridPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerAlertSingleItemFound, App_GlobalResources.SR.GridPagerAlertMultipleItemsFound, AlertsGridPanel.AlertGrid, delegate { return AlertsGridPanel.ResultCount; }, ImageServerConstants.GridViewPagerPosition.bottom);
 
             ClearInsertDateButton.OnClientClick = ScriptHelper.ClearDate(InsertDateFilter.ClientID, InsertDateCalendarExtender.ClientID);
             

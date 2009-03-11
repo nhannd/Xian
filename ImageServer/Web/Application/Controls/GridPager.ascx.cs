@@ -32,6 +32,7 @@
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
 namespace ClearCanvas.ImageServer.Web.Application.Controls
 {
@@ -122,7 +123,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 
                 CurrentPage.Attributes.Add("onkeydown", script);
 
-                Target.DataBind();
+                if(!Target.IsDataBound)
+                {
+                    Target.DataBind();    
+                }
             }
         }
 

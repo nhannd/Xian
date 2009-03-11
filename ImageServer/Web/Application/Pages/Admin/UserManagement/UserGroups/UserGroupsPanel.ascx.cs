@@ -33,11 +33,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             get { return UserGroupsGridPanel.UserGroupGrid.ClientID; }
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-
-        }
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -50,16 +45,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                      return UserGroupsGridPanel.ResultCount;
                                                  },
                                              ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerUserGroupsSingleItemFound,
-                                                App_GlobalResources.SR.GridPagerUserGroupsMultipleItemsFound,
-                                                UserGroupsGridPanel.UserGroupGrid,
-                                                delegate { return UserGroupsGridPanel.ResultCount; },
-                                                ImageServerConstants.GridViewPagerPosition.bottom);
 
             UserGroupsGridPanel.DataSourceCreated += delegate(UserGroupDataSource source)
                             {
                                 source.GroupName = GroupName.Text;
                             };
+
         }
 
         public void UpdateUI()

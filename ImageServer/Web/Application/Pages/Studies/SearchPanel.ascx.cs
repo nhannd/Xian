@@ -249,7 +249,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {
             Refresh();
         }
-
         
 		protected void RestoreStudyButton_Click(object sender, ImageClickEventArgs e)
 		{
