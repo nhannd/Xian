@@ -48,7 +48,8 @@
   <Choose>
     <When Condition="'$(Options)' == ''">
       <PropertyGroup>
-        <OptionsFlags>ExcludeStudyComposer</OptionsFlags>
+        <!--<OptionsFlags>ExcludeStudyComposer</OptionsFlags>-->
+        <OptionsFlags>ExcludeStudyComposer+ExcludeEnterprise</OptionsFlags>
       </PropertyGroup>
     </When>
     <Otherwise>
@@ -173,6 +174,13 @@
     <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyFinders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.dll" />
     <LocalDataStoreClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\LocalDataStore\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore.dll" />
   </ItemGroup>
+
+  <ItemGroup>
+    <EnterpriseClientFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+    <EnterpriseClientFiles Include="$(TrunkDirectory)\ImageViewer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageViewer.Enterprise.dll" />
+    <EnterpriseClientFiles Include="$(TrunkDirectory)\ImageViewer\Enterprise\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Enterprise.View.WinForms.dll" />
+  </ItemGroup>
+
   <ItemGroup>
     <StreamingClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\Streaming\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.Streaming.dll" />
   </ItemGroup>
@@ -306,6 +314,9 @@
   <Target Name="Copy Local DataStore Client Files">
     <Copy SourceFiles="@(LocalDataStoreClientFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
+  <Target Name="Copy Enterprise Client Files">
+    <Copy SourceFiles="@(EnterpriseClientFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
   <Target Name="Copy Dicom Remote Client Files">
     <Copy SourceFiles="@(DicomRemoteClientFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
@@ -343,6 +354,10 @@
       <Output TaskParameter="IsMatch" PropertyName="ExcludeStreaming" />
     </RegexIsMatch>
 
+    <RegexIsMatch Pattern="ExcludeEnterprise" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeEnterprise" />
+    </RegexIsMatch>
+
     <CallTarget Condition="!$(ExcludeStudyBrowser)" Targets="Copy Study Browser" />
     <CallTarget Condition="!$(ExcludeDesktopServices)" Targets="Copy Desktop Services" />
     <CallTarget Condition="!$(ExcludeStudyComposer)" Targets="Copy Study Composer" />
@@ -352,6 +367,7 @@
     <CallTarget Condition="!$(ExcludeDicomRemote)" Targets="Copy Dicom Remote Client Files" />
     <CallTarget Condition="!$(ExcludeStreaming)" Targets="Copy Streaming Client Files" />
     <CallTarget Condition="!$(ExcludeDatabase)" Targets="Copy Local DataStore Client Files" />
+    <CallTarget Condition="!$(ExcludeEnterprise)" Targets="Copy Enterprise Client Files" />
 
   </Target>
 

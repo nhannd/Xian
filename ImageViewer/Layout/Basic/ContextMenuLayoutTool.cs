@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Common.Utilities;
 using System.Diagnostics;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Comparers;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic

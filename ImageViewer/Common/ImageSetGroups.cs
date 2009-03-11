@@ -6,10 +6,8 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.Utilities;
 
-namespace ClearCanvas.ImageViewer
+namespace ClearCanvas.ImageViewer.Common
 {
-	#region Basic Specifications
-
 	internal class PatientInfoSpecification : ImageSetSpecification
 	{
 		private readonly IImageSet _referenceImageSet;
@@ -164,10 +162,6 @@ namespace ClearCanvas.ImageViewer
 		public abstract TestResult Test(IImageSet imageSet);
 	}
 
-	#endregion
-
-	#region Specialized Groups
-
 	public class PatientImageSetGroup : FilteredGroup<IImageSet>
 	{
 		internal PatientImageSetGroup(IImageSet sourceImageSet)
@@ -192,10 +186,6 @@ namespace ClearCanvas.ImageViewer
 			remove = true;
 		}
 	}
-
-	#endregion
-
-	#region Filtered Image Set Groups
 
 	public class ImageSetGroups : IDisposable
 	{
@@ -294,6 +284,4 @@ namespace ClearCanvas.ImageViewer
 			_root.Remove(e.Item);
 		}
 	}
-
-	#endregion
 }

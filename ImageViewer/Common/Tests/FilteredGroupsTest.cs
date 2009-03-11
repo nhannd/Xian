@@ -1,12 +1,13 @@
 #if UNIT_TESTS
 
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.StudyManagement.Tests;
 using NUnit.Framework;
 using ClearCanvas.Dicom.Tests;
 
-namespace ClearCanvas.ImageViewer.Tests
+namespace ClearCanvas.ImageViewer.Common.Tests
 {
 	[TestFixture]
 	public class FilteredGroupsTest : AbstractTest

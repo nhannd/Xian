@@ -6,10 +6,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageViewer
+namespace ClearCanvas.ImageViewer.Common
 {
-	#region Simple Specifications
-
 	internal class SimpleSpecification<T> : ISpecification where T : class
 	{
 		private readonly Predicate<T> _test;
@@ -41,21 +39,12 @@ namespace ClearCanvas.ImageViewer
 		}
 	}
 
-	#endregion
-
-	#region List of Groups
-
 	public class FilteredGroupList<T> : ObservableList<FilteredGroup<T>> where T : class
 	{
 		public FilteredGroupList()
 		{
 		}
 	}
-
-	#endregion
-	
-	//TODO: write more unit tests.
-	#region Root Group Class
 
 	public class FilteredGroups<T> : FilteredGroup<T> where T : class
 	{
@@ -89,8 +78,6 @@ namespace ClearCanvas.ImageViewer
 			base.Clear();
 		}
 	}
-
-	#endregion
 
 	public class FilteredGroup<T> where T : class 
 	{

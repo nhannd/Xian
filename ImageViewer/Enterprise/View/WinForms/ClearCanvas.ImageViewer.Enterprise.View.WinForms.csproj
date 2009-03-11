@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{AD9F87CF-0F30-442D-ACCD-80FACC339F22}</ProjectGuid>
+    <ProjectGuid>{25AC834B-D1BC-427B-8BA3-6528A2970DD8}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.ImageViewer.Explorer.Local</RootNamespace>
-    <AssemblyName>ClearCanvas.ImageViewer.Explorer.Local</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageViewer.Enterprise.View.WinForms</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageViewer.Enterprise.View.WinForms</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -18,7 +18,6 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -27,21 +26,28 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>1591, 0419, 1574, 1587</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthorityTokens.cs" />
-    <Compile Include="DicomImageLoaderTool.cs" />
-    <Compile Include="LocalImageExplorer.cs" />
-    <Compile Include="LocalImageExplorerComponent.cs">
+    <Compile Include="ChangePasswordDialog.cs" />
+    <Compile Include="ChangePasswordForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChangePasswordForm.Designer.cs">
+      <DependentUpon>ChangePasswordForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoginDialog.cs" />
+    <Compile Include="LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
@@ -49,30 +55,35 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
+    <ProjectReference Include="..\..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Desktop\ClearCanvas.Desktop.csproj">
-      <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
-      <Name>ClearCanvas.Desktop</Name>
+    <ProjectReference Include="..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
+      <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
+      <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Desktop\Explorer\ClearCanvas.Desktop.Explorer.csproj">
-      <Project>{085823EA-DDAE-4DAF-A99D-17F75A03CF23}</Project>
-      <Name>ClearCanvas.Desktop.Explorer</Name>
+    <ProjectReference Include="..\..\..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
+      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
+      <Name>ClearCanvas.Enterprise.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
-      <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
-      <Name>ClearCanvas.ImageViewer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Configuration\ClearCanvas.ImageViewer.Configuration.csproj">
-      <Project>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</Project>
-      <Name>ClearCanvas.ImageViewer.Configuration</Name>
+    <ProjectReference Include="..\..\ClearCanvas.ImageViewer.Enterprise.csproj">
+      <Project>{DDAB9D5C-4705-4216-B863-91EEF219A8DD}</Project>
+      <Name>ClearCanvas.ImageViewer.Enterprise</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ChangePasswordForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ChangePasswordForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LoginForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -80,19 +91,18 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+    <None Include="Resources\UserText.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\OpenToolLarge.png" />
+    <None Include="Resources\Splash.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\OpenToolMedium.png" />
+    <None Include="Resources\PasswordText.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\OpenToolSmall.png" />
+    <None Include="Resources\FacilityText.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\..\..\Common\ClearCanvas.Strings.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
