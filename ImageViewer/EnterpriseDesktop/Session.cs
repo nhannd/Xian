@@ -1,9 +1,9 @@
 using System.Security.Principal;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.ImageViewer.Enterprise
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 {
-	internal class Session
+	public class Session
 	{
 		private Session(string userName, string displayName, string[] authorityTokens, SessionToken sessionToken)
 		{
@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Enterprise
 
 		private static Session _current;
 
-		public static void Create(string userName, string displayName, string[] authorityTokens, SessionToken sessionToken)
+		internal static void Create(string userName, string displayName, string[] authorityTokens, SessionToken sessionToken)
 		{
 			_current = new Session(userName, displayName, authorityTokens, sessionToken);
 		}

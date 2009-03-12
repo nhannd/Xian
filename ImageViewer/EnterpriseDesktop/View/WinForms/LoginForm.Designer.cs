@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms
 {
 	partial class LoginForm
 	{
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms
 			// pictureBox1
 			// 
 			this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
-			this.pictureBox1.BackgroundImage = global::ClearCanvas.ImageViewer.Enterprise.View.WinForms.SR.UserText;
+			this.pictureBox1.BackgroundImage = global::ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.SR.UserText;
 			this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.pictureBox1.Location = new System.Drawing.Point(406, 303);
 			this.pictureBox1.Name = "pictureBox1";
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms
 			// pictureBox2
 			// 
 			this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
-			this.pictureBox2.BackgroundImage = global::ClearCanvas.ImageViewer.Enterprise.View.WinForms.SR.PasswordText;
+			this.pictureBox2.BackgroundImage = global::ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.SR.PasswordText;
 			this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.pictureBox2.Location = new System.Drawing.Point(370, 331);
 			this.pictureBox2.Name = "pictureBox2";
@@ -142,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms
 			this.AcceptButton = this._loginButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.BackgroundImage = global::ClearCanvas.ImageViewer.Enterprise.View.WinForms.SR.Splash;
+			this.BackgroundImage = global::ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.SR.Splash;
 			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.CancelButton = this._cancelButton;
 			this.ClientSize = new System.Drawing.Size(673, 385);

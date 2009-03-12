@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.ImageViewer.Enterprise
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 {
 	public interface IChangePasswordDialog : IDisposable
 	{

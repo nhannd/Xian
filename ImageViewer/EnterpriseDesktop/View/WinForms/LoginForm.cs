@@ -30,21 +30,53 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
+using System.Drawing;
 
-namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms
 {
-	public partial class ChangePasswordForm : Form
+	public partial class LoginForm : Form
 	{
-		public ChangePasswordForm()
+		private string[] _facilityChoices;
+		private Point _refPoint;
+
+		public LoginForm()
 		{
+			// Need to explicitely dismiss the splash screen here, as the login dialog is shown before the desktop window, which is normally
+			// responsible for dismissing it.
+#if !MONO
+			SplashScreenManager.DismissSplashScreen(this);
+#endif
+
 			InitializeComponent();
 		}
+
+		public void SetMode(LoginDialogMode mode)
+		{
+			_userName.Enabled = mode == LoginDialogMode.InitialLogin;
+			//_domain.Enabled = mode == LoginDialogMode.InitialLogin;
+		}
+
+		//public string[] FacilityChoices
+		//{
+		//    get { return _facilityChoices; }
+		//    set
+		//    {
+		//        _facilityChoices = value;
+		//        _domain.Items.Clear();
+		//        _domain.Items.AddRange(_facilityChoices);
+		//    }
+		//}
+
+		//public string SelectedFacility
+		//{
+		//    get { return (string)_domain.SelectedItem; }
+		//    set
+		//    {
+		//        _domain.SelectedItem = value;
+		//    }
+		//}
 
 		public string UserName
 		{
@@ -55,15 +87,11 @@ namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms
 		public string Password
 		{
 			get { return _password.Text; }
-			set { _password.Text = value; }
 		}
 
-		public string NewPassword
-		{
-			get { return _newPassword.Text; }
-		}
 
-		private void _okButton_Click(object sender, EventArgs e)
+
+		private void _loginButton_Click(object sender, EventArgs e)
 		{
 			this.DialogResult = DialogResult.OK;
 		}
@@ -73,45 +101,48 @@ namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms
 			this.DialogResult = DialogResult.Cancel;
 		}
 
+		private void LoginForm_Load(object sender, EventArgs e)
+		{
+			// depending on use-case, the username may already be filled in
+			if (string.IsNullOrEmpty(_userName.Text))
+				_userName.Select();
+			else
+				_password.Select();
+		}
+
+		private void _userName_TextChanged(object sender, EventArgs e)
+		{
+			UpdateButtonStates();
+		}
+
 		private void _password_TextChanged(object sender, EventArgs e)
 		{
 			UpdateButtonStates();
 		}
 
-		private void _newPassword_TextChanged(object sender, EventArgs e)
-		{
-			UpdateButtonStates();
-		}
-
-		private void _newPasswordConfirm_TextChanged(object sender, EventArgs e)
+		private void _facility_SelectedValueChanged(object sender, EventArgs e)
 		{
 			UpdateButtonStates();
 		}
 
 		private void UpdateButtonStates()
 		{
-			_errorProvider.SetError(_newPassword,
-			                        _newPassword.Text == _password.Text ?
-			                                                            	"New password must be different from previous" : null);
-
-			_errorProvider.SetError(_newPasswordConfirm,
-			                        _newPassword.Text != _newPasswordConfirm.Text ?
-			                                                                      	"New passwords do not match" : null);
-
-			bool ok = !string.IsNullOrEmpty(_userName.Text) && !string.IsNullOrEmpty(_password.Text) &&
-			          !string.IsNullOrEmpty(_newPassword.Text) && !string.IsNullOrEmpty(_newPasswordConfirm.Text) &&
-			          _newPassword.Text.Equals(_newPasswordConfirm.Text);
-
-			_okButton.Enabled = ok;
+			bool ok = !string.IsNullOrEmpty(_userName.Text) && !string.IsNullOrEmpty(_password.Text);
+			_loginButton.Enabled = ok;
 		}
 
-		private void ChangePasswordForm_Load(object sender, EventArgs e)
+		private void LoginForm_MouseDown(object sender, MouseEventArgs e)
 		{
-			// depending on use-case, the old password may already be filled in
-			if (string.IsNullOrEmpty(_password.Text))
-				_password.Select();
-			else
-				_newPassword.Select();
+			_refPoint = new Point(e.X, e.Y);
+		}
+
+		private void LoginForm_MouseMove(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				this.Left += (e.X - _refPoint.X);
+				this.Top += (e.Y - _refPoint.Y);
+			}
 		}
 	}
 }

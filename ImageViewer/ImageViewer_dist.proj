@@ -48,8 +48,8 @@
   <Choose>
     <When Condition="'$(Options)' == ''">
       <PropertyGroup>
-        <!--<OptionsFlags>ExcludeStudyComposer</OptionsFlags>-->
-        <OptionsFlags>ExcludeStudyComposer+ExcludeEnterprise</OptionsFlags>
+        <OptionsFlags>ExcludeStudyComposer</OptionsFlags>
+        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeEnterprise</OptionsFlags>-->
       </PropertyGroup>
     </When>
     <Otherwise>
@@ -99,11 +99,11 @@
     <DicomToolkitFiles Include="$(TrunkDirectory)\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
-    <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.config" />
-  </ItemGroup>
-
+      <ItemGroup>
+        <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Desktop\Executable\app.config" />
+        <ImageViewerAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_dist.config" />
+      </ItemGroup>
+  
   <ItemGroup>
     <ShredHostAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\Server\ShredHostService\app.config" />
     <ShredHostAppConfigCreatorSourceFiles Include="$(TrunkDirectory)\ImageViewer\ImageViewer_Shreds_dist.config" />
@@ -177,8 +177,8 @@
 
   <ItemGroup>
     <EnterpriseClientFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
-    <EnterpriseClientFiles Include="$(TrunkDirectory)\ImageViewer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageViewer.Enterprise.dll" />
-    <EnterpriseClientFiles Include="$(TrunkDirectory)\ImageViewer\Enterprise\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Enterprise.View.WinForms.dll" />
+    <EnterpriseClientFiles Include="$(TrunkDirectory)\ImageViewer\EnterpriseDesktop\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.dll" />
+    <EnterpriseClientFiles Include="$(TrunkDirectory)\ImageViewer\EnterpriseDesktop\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup>

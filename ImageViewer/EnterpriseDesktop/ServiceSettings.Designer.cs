@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageViewer.Enterprise {
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

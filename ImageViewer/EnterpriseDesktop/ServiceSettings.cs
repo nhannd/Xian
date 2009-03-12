@@ -29,79 +29,17 @@
 
 #endregion
 
-using ClearCanvas.Common;
+using System.Configuration;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 {
-	[ExtensionOf(typeof(LoginDialogExtensionPoint))]
-	public class LoginDialog : ILoginDialog
+	[SettingsGroupDescription("Provides enterprise service configuration for the ImageViewer client.")]
+	internal sealed partial class ServiceSettings
 	{
-		private LoginForm _form;
-		private LoginDialogMode _mode;
-
-		public LoginDialog()
+		private ServiceSettings()
 		{
-			_form = new LoginForm();
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
-
-		#region ILoginDialog Members
-
-		public bool Show()
-		{
-			System.Windows.Forms.Application.EnableVisualStyles();
-
-			if (_form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		public LoginDialogMode Mode
-		{
-			get { return _mode; }
-			set
-			{
-				_mode = value;
-				_form.SetMode(_mode);
-			}
-		}
-
-		public string UserName
-		{
-			get { return _form.UserName; }
-			set { _form.UserName = value; }
-		}
-
-		public string Password
-		{
-			get { return _form.Password; }
-		}
-
-		//public string Domain
-		//{
-		//    get { return null; }
-		//    set { ; }
-		//}
-
-		//public string[] DomainChoices
-		//{
-		//    get { return new string[0]; }
-		//    set { ; }
-		//}
-
-		#endregion
-
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			// nothing to do
-		}
-
-		#endregion
 	}
 }

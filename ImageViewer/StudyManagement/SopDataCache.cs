@@ -13,6 +13,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		ISopDataCacheItemReference Clone();
 	}
 
+	//TODO: consider periodically using a thread pool thread to clean up inactive items in case they are not properly disposed.
+	//TODO: implement memory manager for the cache.
 	internal static class SopDataCache
 	{
 		#region Cache Item

@@ -23,6 +23,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		IMemorable GetOriginator(T item);
 
+		//TODO: consider changing interface to:
+		// object Apply(T item), where the object returned is a memento
 		/// <summary>
 		/// Gets whether or not this operation applies to the given <paramref name="item"/>.
 		/// </summary>

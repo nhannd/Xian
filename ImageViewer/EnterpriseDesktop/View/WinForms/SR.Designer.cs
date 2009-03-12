@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms {
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.Enterprise.View.WinForms.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

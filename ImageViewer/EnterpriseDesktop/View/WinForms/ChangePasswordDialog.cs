@@ -30,24 +30,64 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Enterprise
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms
 {
-	public enum LoginDialogMode
+	[ExtensionOf(typeof(ChangePasswordDialogExtensionPoint))]
+	public class ChangePasswordDialog : IChangePasswordDialog
 	{
-		InitialLogin,
-		RenewLogin
-	}
+		private ChangePasswordForm _form;
 
-	public interface ILoginDialog : IDisposable
-	{
-		bool Show();
+		public ChangePasswordDialog()
+		{
+			_form = new ChangePasswordForm();
+		}
 
-		LoginDialogMode Mode { get; set; }
-		//string[] DomainChoices { get; set; }
-		//string Domain { get; set; }
+		#region IChangePasswordDialog Members
 
-		string UserName { get; set; }
-		string Password { get; }
+		public bool Show()
+		{
+			System.Windows.Forms.Application.EnableVisualStyles();
+
+			if (_form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		public string UserName
+		{
+			get { return _form.UserName; }
+			set { _form.UserName = value; }
+		}
+
+		public string Password
+		{
+			get { return _form.Password; }
+			set { _form.Password = value; }
+		}
+
+		public string NewPassword
+		{
+			get { return _form.NewPassword; }
+		}
+
+		#endregion
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			// nothing to do
+		}
+
+		#endregion
 	}
 }

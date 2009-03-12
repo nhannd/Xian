@@ -38,7 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Authentication;
 
-namespace ClearCanvas.ImageViewer.Enterprise
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 {
 	[ExtensionPoint]
 	public class LoginDialogExtensionPoint : ExtensionPoint<ILoginDialog>

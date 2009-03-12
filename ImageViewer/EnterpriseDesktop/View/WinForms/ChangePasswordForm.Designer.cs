@@ -29,7 +29,7 @@
 
 #endregion
 
-namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms
 {
 	partial class ChangePasswordForm
 	{

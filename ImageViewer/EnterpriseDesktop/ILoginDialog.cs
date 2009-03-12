@@ -29,17 +29,25 @@
 
 #endregion
 
-using System.Configuration;
-using ClearCanvas.Desktop;
+using System;
 
-namespace ClearCanvas.ImageViewer.Enterprise
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 {
-	[SettingsGroupDescription("Provides enterprise service configuration for the ImageViewer client.")]
-	internal sealed partial class ServiceSettings
+	public enum LoginDialogMode
 	{
-		private ServiceSettings()
-		{
-			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
-		}
+		InitialLogin,
+		RenewLogin
+	}
+
+	public interface ILoginDialog : IDisposable
+	{
+		bool Show();
+
+		LoginDialogMode Mode { get; set; }
+		//string[] DomainChoices { get; set; }
+		//string Domain { get; set; }
+
+		string UserName { get; set; }
+		string Password { get; }
 	}
 }

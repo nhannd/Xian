@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2007, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,42 +29,26 @@
 
 #endregion
 
-using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.ImageViewer.Enterprise
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 {
-	/// <summary>
-	/// Extension of the <see cref="ServiceProviderExtensionPoint"/> that allows the client to obtain RIS application
-	/// services.
-	/// </summary>
-	[ExtensionOf(typeof(ServiceProviderExtensionPoint))]
-	internal class ServiceProvider : RemoteServiceProviderBase<EnterpriseCoreServiceAttribute>
+	[MenuAction("changePassword", "global-menus/MenuTools/MenuChangePassword", "ChangePassword")]
+	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
+	public class SessionManagerTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
 	{
-		public ServiceProvider()
-			: base(GetSettings())
+		public SessionManagerTool()
 		{
 		}
 
-		protected override string UserName
+		public void ChangePassword()
 		{
-			get { return Session.Current.Principal.Identity.Name; }
-		}
-
-		protected override string Password
-		{
-			get { return Session.Current.Token.Id; }
-		}
-
-		private static RemoteServiceProviderArgs GetSettings()
-		{
-			return new RemoteServiceProviderArgs(
-				ServiceSettings.Default.ApplicationServicesBaseUrl,
-				ServiceSettings.Default.ConfigurationClass,
-				ServiceSettings.Default.MaxReceivedMessageSize,
-				ServiceSettings.Default.CertificateValidationMode,
-				ServiceSettings.Default.RevocationMode);
+			if (SessionManager.ChangePassword())
+			{
+				this.Context.DesktopWindow.ShowMessageBox(SR.MessagePasswordChanged, MessageBoxActions.Ok);
+			}
 		}
 	}
 }

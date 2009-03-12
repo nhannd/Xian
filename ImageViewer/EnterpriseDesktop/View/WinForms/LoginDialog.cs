@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2007, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -30,25 +30,78 @@
 #endregion
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
 
-namespace ClearCanvas.ImageViewer.Enterprise
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop.View.WinForms
 {
-	[MenuAction("changePassword", "global-menus/MenuTools/MenuChangePassword", "ChangePassword")]
-	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-	public class SessionManagerTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+	[ExtensionOf(typeof(LoginDialogExtensionPoint))]
+	public class LoginDialog : ILoginDialog
 	{
-		public SessionManagerTool()
+		private LoginForm _form;
+		private LoginDialogMode _mode;
+
+		public LoginDialog()
 		{
+			_form = new LoginForm();
 		}
 
-		public void ChangePassword()
+		#region ILoginDialog Members
+
+		public bool Show()
 		{
-			if (SessionManager.ChangePassword())
+			System.Windows.Forms.Application.EnableVisualStyles();
+
+			if (_form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
 			{
-				this.Context.DesktopWindow.ShowMessageBox(SR.MessagePasswordChanged, MessageBoxActions.Ok);
+				return true;
+			}
+			else
+			{
+				return false;
 			}
 		}
+
+		public LoginDialogMode Mode
+		{
+			get { return _mode; }
+			set
+			{
+				_mode = value;
+				_form.SetMode(_mode);
+			}
+		}
+
+		public string UserName
+		{
+			get { return _form.UserName; }
+			set { _form.UserName = value; }
+		}
+
+		public string Password
+		{
+			get { return _form.Password; }
+		}
+
+		//public string Domain
+		//{
+		//    get { return null; }
+		//    set { ; }
+		//}
+
+		//public string[] DomainChoices
+		//{
+		//    get { return new string[0]; }
+		//    set { ; }
+		//}
+
+		#endregion
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			// nothing to do
+		}
+
+		#endregion
 	}
 }

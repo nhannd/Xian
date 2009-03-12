@@ -29,65 +29,42 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.ImageViewer.Enterprise.View.WinForms
+namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 {
-	[ExtensionOf(typeof(ChangePasswordDialogExtensionPoint))]
-	public class ChangePasswordDialog : IChangePasswordDialog
+	/// <summary>
+	/// Extension of the <see cref="ServiceProviderExtensionPoint"/> that allows the client to obtain RIS application
+	/// services.
+	/// </summary>
+	[ExtensionOf(typeof(ServiceProviderExtensionPoint))]
+	internal class ServiceProvider : RemoteServiceProviderBase<EnterpriseCoreServiceAttribute>
 	{
-		private ChangePasswordForm _form;
-
-		public ChangePasswordDialog()
+		public ServiceProvider()
+			: base(GetSettings())
 		{
-			_form = new ChangePasswordForm();
 		}
 
-		#region IChangePasswordDialog Members
-
-		public bool Show()
+		protected override string UserName
 		{
-			System.Windows.Forms.Application.EnableVisualStyles();
-
-			if (_form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			get { return Session.Current.Principal.Identity.Name; }
 		}
 
-		public string UserName
+		protected override string Password
 		{
-			get { return _form.UserName; }
-			set { _form.UserName = value; }
+			get { return Session.Current.Token.Id; }
 		}
 
-		public string Password
+		private static RemoteServiceProviderArgs GetSettings()
 		{
-			get { return _form.Password; }
-			set { _form.Password = value; }
+			return new RemoteServiceProviderArgs(
+				ServiceSettings.Default.ApplicationServicesBaseUrl,
+				ServiceSettings.Default.ConfigurationClass,
+				ServiceSettings.Default.MaxReceivedMessageSize,
+				ServiceSettings.Default.CertificateValidationMode,
+				ServiceSettings.Default.RevocationMode);
 		}
-
-		public string NewPassword
-		{
-			get { return _form.NewPassword; }
-		}
-
-		#endregion
-
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			// nothing to do
-		}
-
-		#endregion
 	}
 }
