@@ -69,7 +69,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommandXmlParser.cs" />
+    <Compile Include="ReconcileStudy\CreateStudy\ReconcileCreateStudyDescription.cs" />
     <Compile Include="ReconcileStudy\Discard\DiscardImageCommandProcessor.cs" />
+    <Compile Include="ReconcileStudy\Discard\DiscardImagesCommandXmlParser.cs" />
+    <Compile Include="ReconcileStudy\Discard\DiscardImagesDescription.cs" />
+    <Compile Include="ReconcileStudy\ReconcileDescriptionParser.cs" />
     <Compile Include="ReconcileStudy\UpdateWorkQueueCommand.cs" />
     <Compile Include="StudyProcess\ImageReconciler.cs" />
     <Compile Include="StudyProcess\InsertMergeHistoryCommand.cs" />

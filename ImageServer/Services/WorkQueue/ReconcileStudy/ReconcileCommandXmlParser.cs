@@ -4,9 +4,11 @@ using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
+using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
@@ -34,7 +36,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
         #region Public Methods
         /// <summary>
-        /// Extract a list of <see cref="IReconcileServerCommand"/> in the specified Xml.
         /// </summary>
         /// <param name="doc"></param>
         /// <returns></returns>
@@ -48,30 +49,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
             if (doc.DocumentElement!=null)
             {
-                //TODO: use plugin?
-                if (doc.DocumentElement.Name == "MergeStudy")
+                ReconcileDescriptionParser parser = new ReconcileDescriptionParser();
+                ReconcileDescription desc = parser.Parse(doc);
+                switch(desc.Action)
                 {
-                    return new MergeStudyCommandProcessor();
-                }
-                else if (doc.DocumentElement.Name == "CreateStudy")
-                {
-                    return new ReconcileCreateStudyProcessor();
-                }
-                else if (doc.DocumentElement.Name == "Discard")
-                {
-                    return new DiscardImageCommandProcessor();
-                }
-                else if (doc.DocumentElement.Name == "ReconcileMergeToExistingStudy")
-                {
-                    return new MergeStudyCommandProcessor();
-                }
-                else
-                {
-                    throw new NotSupportedException(String.Format("Command: {0}", doc.DocumentElement.Name));
+                    case ReconcileAction.CreateNewStudy: return new ReconcileCreateStudyProcessor();
+                    case ReconcileAction.Discard: return new DiscardImageCommandProcessor();
+                    case ReconcileAction.Merge: return new MergeStudyCommandProcessor();
+
+                    default:
+                        throw new NotSupportedException(String.Format("Reconcile Action: {0}", desc.Action));
                 }
                 
             }
-            
+
             return null;
         }
         #endregion

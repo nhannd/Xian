@@ -4,7 +4,9 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
+using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code
@@ -13,20 +15,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
     /// Helper class used in rendering the information encoded of a "WebEdit"
     /// StudyHistory record.
     /// </summary>
-    internal class StudyEditRendererFactory : IStudyHistoryColumnRendererFactory
+    internal class StudyEditRendererFactory : IStudyHistoryColumnControlFactory
     {
-        public Control GetChangeDescColumnControl(StudyHistory historyRecord)
+        public Control GetChangeDescColumnControl(Control parent, StudyHistory historyRecord)
         {
-            WebEditStudyHistoryRecord desc = StudyHistoryRecordDecoder.ReadEditRecord(historyRecord);
-            Label lb = new Label();
-            StringBuilder sb = new StringBuilder();
-            foreach (BaseImageLevelUpdateCommand cmd in desc.UpdateDescription.UpdateCommands)
-            {
-                sb.AppendFormat("{0}", cmd.ToString());
-                sb.AppendLine();
-            }
-            lb.Text = HtmlUtility.Encode(sb.ToString());
-            return lb;
+            EditHistoryDetailsColumn control = parent.Page.LoadControl("~/Pages/Studies/StudyDetails/Controls/EditHistoryDetailsColumn.ascx") as EditHistoryDetailsColumn;
+            control.HistoryRecord = historyRecord;
+            return control;
         }
     }
 
@@ -87,42 +82,4 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
         #endregion
     }
 
-
-    /// <summary>
-    /// Decoded information of the ChangeDescription field of a <see cref="StudyHistory"/> record 
-    /// </summary>
-    class ReconcileHistoryChangeDescription
-    {
-        #region Private Fields
-        private List<BaseImageLevelUpdateCommand> _commands;
-        private ReconcileAction _action;
-        #endregion
-
-        #region Public Properties
-
-        /// <summary>
-        /// Type of the edit operation occured on the study.
-        /// </summary>
-        public ReconcileAction ReconcileAction
-        {
-            get { return _action; }
-            set { _action = value; }
-        }
-
-        public List<BaseImageLevelUpdateCommand> UpdateCommands
-        {
-            get
-            {
-                return _commands;
-            }
-            set
-            {
-                _commands = value;
-            }
-        }
-
-        #endregion
-
-
-    }
 }

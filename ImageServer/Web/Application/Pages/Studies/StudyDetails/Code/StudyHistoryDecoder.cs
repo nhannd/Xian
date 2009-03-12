@@ -2,6 +2,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
 using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
@@ -22,46 +23,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
             ReconcileHistoryRecord record = new ReconcileHistoryRecord();
             record.InsertTime = historyRecord.InsertTime;
             record.StudyStorageLocation = StudyStorageLocation.FindStorageLocations(StudyStorage.Load(historyRecord.StudyStorageKey))[0];
-            record.UpdateDescription = new ReconcileHistoryChangeDescription();
-
-            if (historyRecord.ChangeDescription.DocumentElement.Name == "MergeStudy")
-            {
-                record.UpdateDescription.ReconcileAction = ReconcileAction.Merge;
-            }
-            else if (historyRecord.ChangeDescription.DocumentElement.Name == "CreateStudy")
-            {
-                record.UpdateDescription.ReconcileAction = ReconcileAction.SplitStudies;
-            }
-            else if (historyRecord.ChangeDescription.DocumentElement.Name == "ReconcileMergeToExistingStudy")
-            {
-                record.UpdateDescription.ReconcileAction = ReconcileAction.Merge;
-            }
-                
-            
-            switch(record.UpdateDescription.ReconcileAction )
-            {
-                case ReconcileAction.Merge:
-                    {
-                        MergeStudyCommandXmlParser parser = new MergeStudyCommandXmlParser();
-                        record.UpdateDescription.UpdateCommands = parser.ParseImageLevelCommands(historyRecord.ChangeDescription.DocumentElement);
-                        //ReconcileDescription desc = XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescription>(historyRecord.ChangeDescription);
-                        //record.UpdateDescription.UpdateCommands = desc.Commands;
-                        //record.Automatic = desc.Automatic;
-                        break;
-                    }
-
-                case ReconcileAction.SplitStudies:
-                    {
-                        CreateStudyCommandXmlParser parser = new CreateStudyCommandXmlParser();
-                        record.UpdateDescription.UpdateCommands = parser.ParseImageLevelCommands(historyRecord.ChangeDescription.DocumentElement);
-                        break;
-                    }
-                case ReconcileAction.Discard:
-                    {
-                        break;
-                    }
-            }
-
+            ReconcileDescriptionParser parser = new ReconcileDescriptionParser();
+            record.UpdateDescription = parser.Parse(historyRecord.ChangeDescription);
             return record;
         }
 
@@ -82,12 +45,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
     {
         public DateTime InsertTime;
         public StudyStorageLocation StudyStorageLocation;
-        private bool _automatic;
-
-        public bool Automatic
-        {
-            get { return _automatic; }
-            set { _automatic = value; }
-        }
     }
 }

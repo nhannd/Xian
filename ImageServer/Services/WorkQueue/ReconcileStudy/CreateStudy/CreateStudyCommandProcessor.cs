@@ -46,10 +46,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             if (_context.History.DestStudyStorageKey == null)
             {
                 CreateStudyCommandXmlParser parser = new CreateStudyCommandXmlParser();
+                ReconcileCreateStudyDescription desc = parser.Parse(_context.History.ChangeDescription);
+                
                 CreateStudyCommand command = new CreateStudyCommand();
                 command.SetContext(_context);
-                command.ImageLevelCommands.AddRange(
-                    parser.ParseImageLevelCommands(_context.History.ChangeDescription.DocumentElement));
+                command.ImageLevelCommands.AddRange(desc.Commands);
 
                 command.DestStudyStorage = null; // to be created
                 

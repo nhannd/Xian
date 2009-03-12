@@ -9,9 +9,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
     /// Helper class used in rendering the information encoded in the ChangeDescription column
     /// of a StudyHistory record.
     /// </summary>
-    internal class DefaultStudyHistoryRendererFactory : IStudyHistoryColumnRendererFactory
+    internal class DefaultStudyHistoryRendererFactory : IStudyHistoryColumnControlFactory
     {
-        public Control GetChangeDescColumnControl(StudyHistory historyRecord)
+        public Control GetChangeDescColumnControl(Control parent, StudyHistory historyRecord)
         {
             Label lb = new Label();
             lb.Text = XmlUtils.GetXmlDocumentAsString(historyRecord.ChangeDescription, true);

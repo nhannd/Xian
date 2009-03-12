@@ -7,7 +7,8 @@ using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
-    public abstract class ReconcileDescription
+    [XmlRoot("Reconcile")]
+    public class ReconcileDescription
     {
         public ReconcileDescription()
         {
@@ -19,12 +20,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private ReconcileAction _action;
         private StudyInformation _existingStudyInfo;
         private ImageSetDescriptor _imageSet;
+        private string _description;
 
         public ReconcileAction Action
         {
             get { return _action; }
             set { _action = value; }
         }
+
+        public string Description
+        {
+            get { return _description; }
+            set { _description = value; }
+        }
+
+        public bool Automatic
+        {
+            get { return _auto; }
+            set { _auto = value; }
+        }
+
+        
 
         public StudyInformation ExistingStudy
         {
@@ -46,11 +62,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             set { _commands = value; }
         }
 
-        public bool Automatic
-        {
-            get { return _auto; }
-            set { _auto = value; }
-        }
     }
 }
 

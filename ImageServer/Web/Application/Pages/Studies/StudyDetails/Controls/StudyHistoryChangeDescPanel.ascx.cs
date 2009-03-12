@@ -29,14 +29,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             if (_historyRecord != null)
             {
                 // Use different control to render the content of the ChangeDescription column.
-                IStudyHistoryColumnRendererFactory render = GetRenderer(_historyRecord);
-                Control ctrl = render.GetChangeDescColumnControl(_historyRecord);
+                IStudyHistoryColumnControlFactory render = GetColumnControlFactory(_historyRecord);
+                Control ctrl = render.GetChangeDescColumnControl(this, _historyRecord);
                 SummaryPlaceHolder.Controls.Add(ctrl);
             }
             base.DataBind();
         } 
 
-        private IStudyHistoryColumnRendererFactory GetRenderer(StudyHistory record)
+        private IStudyHistoryColumnControlFactory GetColumnControlFactory(StudyHistory record)
         {
             if (record.StudyHistoryTypeEnum == StudyHistoryTypeEnum.StudyReconciled)
                 return new ReconcileStudyRendererFactory();

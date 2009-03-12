@@ -20,10 +20,27 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// **** For serialization purpose. ****
+        /// </summary>
         public SetTagCommand()
             : base("SetTag")
         {
             Description = "Update Dicom Tag";
+        }
+
+        /// <summary>
+        /// Creates an instance of <see cref="SetTagCommand"/> that can be used to update the specified dicom tag with the specified value
+        /// </summary>
+        /// <remarks>
+        /// <see cref="BaseImageLevelUpdateCommand.File"/> must be set prior to <see cref="BaseImageLevelUpdateCommand.OnExecute"></see>
+        /// </remarks>
+        public SetTagCommand(uint tag, string value)
+            : this()
+        {
+            UpdateEntry.TagPath = new DicomTagPath();
+            UpdateEntry.TagPath.Tag = DicomTagDictionary.GetDicomTag(tag);
+            UpdateEntry.Value = value;
         }
         #endregion
 

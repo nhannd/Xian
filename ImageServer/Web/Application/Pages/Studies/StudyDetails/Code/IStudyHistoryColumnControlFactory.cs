@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
     /// <see cref="StudyHistory"/> record.
     /// 
     /// </summary>
-    internal interface IStudyHistoryColumnRendererFactory
+    internal interface IStudyHistoryColumnControlFactory
     {
         /// <summary>
         /// Returns the <see cref="Control"/> that displays the content of 
@@ -17,6 +17,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
         /// </summary>
         /// <param name="historyRecord"></param>
         /// <returns></returns>
-        Control GetChangeDescColumnControl(StudyHistory historyRecord);
+        Control GetChangeDescColumnControl(Control parent, StudyHistory historyRecord);
     }
 }

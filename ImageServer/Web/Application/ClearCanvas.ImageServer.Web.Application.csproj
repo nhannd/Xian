@@ -286,16 +286,30 @@
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Code\DefaultStudyHistoryRendererFactory.cs" />
-    <Compile Include="Pages\Studies\StudyDetails\Code\IStudyHistoryColumnRendererFactory.cs" />
+    <Compile Include="Pages\Studies\StudyDetails\Code\IStudyHistoryColumnControlFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\ReconcileStudyRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\StudyEditRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\StudyHistoryDecoder.cs" />
+    <Compile Include="Pages\Studies\StudyDetails\Controls\EditHistoryDetailsColumn.ascx.cs">
+      <DependentUpon>EditHistoryDetailsColumn.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\EditHistoryDetailsColumn.ascx.designer.cs">
+      <DependentUpon>EditHistoryDetailsColumn.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Controls\HistoryPanel.ascx.cs">
       <DependentUpon>HistoryPanel.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Controls\HistoryPanel.ascx.designer.cs">
       <DependentUpon>HistoryPanel.ascx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\ReconcileHistoryDetailsColumn.ascx.cs">
+      <DependentUpon>ReconcileHistoryDetailsColumn.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\ReconcileHistoryDetailsColumn.ascx.designer.cs">
+      <DependentUpon>ReconcileHistoryDetailsColumn.ascx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Controls\StudyHistoryChangeDescPanel.ascx.cs">
       <DependentUpon>StudyHistoryChangeDescPanel.ascx</DependentUpon>
@@ -1305,7 +1319,9 @@
     <Content Include="Pages\Login\ChangePasswordDialog.ascx" />
     <Content Include="Pages\Login\PasswordExpiredDialog.ascx" />
     <EmbeddedResource Include="Pages\Studies\Move\MovePanel.js" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\EditHistoryDetailsColumn.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\HistoryPanel.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\ReconcileHistoryDetailsColumn.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyHistoryChangeDescPanel.ascx" />
     <Content Include="Test\AuthorityGroup.aspx" />
     <Content Include="Test\ListUsers.aspx" />

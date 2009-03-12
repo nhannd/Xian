@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
@@ -12,7 +14,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
     /// </summary>
     public class CreateStudyCommandXmlParser
     {
-        public List<BaseImageLevelUpdateCommand> ParseImageLevelCommands(XmlNode createStudyNode)
+        private List<BaseImageLevelUpdateCommand> ParseImageLevelCommands(XmlNode createStudyNode)
         {
             List<BaseImageLevelUpdateCommand> _commands = new List<BaseImageLevelUpdateCommand>();
 
@@ -35,6 +37,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             }
 
             return _commands;
+        }
+
+        public ReconcileCreateStudyDescription Parse(XmlDocument doc)
+        {
+            if (doc == null)
+                return null;
+
+            if (doc.DocumentElement.Name == "Reconcile")
+            {
+                return XmlUtils.Deserialize<ReconcileCreateStudyDescription>(doc.DocumentElement);
+            }
+            else
+            {
+                ReconcileCreateStudyDescription desc = new ReconcileCreateStudyDescription();
+                desc.Action = ReconcileAction.CreateNewStudy;
+                desc.Automatic = false;
+                desc.Commands = ParseImageLevelCommands(doc.DocumentElement);
+                desc.ExistingStudy = new StudyInformation();
+                desc.ImageSetData = new ImageSetDescriptor();
+                return desc;
+            }
         }
     }
 

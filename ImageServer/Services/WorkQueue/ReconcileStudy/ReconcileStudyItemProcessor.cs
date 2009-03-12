@@ -191,8 +191,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         }
 
         #endregion
-
-
     }
 
     /// <summary>

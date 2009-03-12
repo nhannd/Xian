@@ -15,7 +15,7 @@ using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
-    [XmlRoot("ReconcileMergeToExistingStudy")]
+    [XmlRoot("Reconcile")]
     public class ReconcileMergeToExistingStudyDescription : ReconcileDescription
     {
         public ReconcileMergeToExistingStudyDescription() : base()
@@ -87,17 +87,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             if (!desc.ExistingStudy.PatientInfo.Name.Equals(newPatientName))
             {
-                SetTagCommand cmd = new SetTagCommand();
-                cmd.File = _context.File;
-                cmd.UpdateEntry = new ImageLevelUpdateEntry();
-                cmd.UpdateEntry.TagPath = new ClearCanvas.ImageServer.Common.Helpers.DicomTagPath();
-                cmd.UpdateEntry.TagPath.Tag = DicomTagDictionary.GetDicomTag(DicomTags.PatientsName);
-                cmd.UpdateEntry.Value = newPatientName;
+                SetTagCommand cmd = new SetTagCommand(DicomTags.PatientsName,newPatientName);
                 desc.Commands = new List<BaseImageLevelUpdateCommand>();
                 desc.Commands.Add(cmd);
             }
             
             desc.Automatic = true;
+            desc.Description = "Patient Name Auto-Correction";
 
             IStudyHistoryEntityBroker broker = updateContext.GetBroker<IStudyHistoryEntityBroker>();
             StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns();

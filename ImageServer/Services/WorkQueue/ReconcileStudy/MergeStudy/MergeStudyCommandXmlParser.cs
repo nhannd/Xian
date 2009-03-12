@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             if (doc == null)
                 return null;
 
-            if (doc.DocumentElement.Name == "ReconcileMergeToExistingStudy")
+            if (doc.DocumentElement.Name == "Reconcile")
             {
                 return XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescription>(doc.DocumentElement);
             }

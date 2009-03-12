@@ -136,3 +136,14 @@
 	font-weight: bold;
 	width: 200px;
 }
+
+/*======================================
+    History tab
+========================================*/
+.HistoryDetailContainer
+{
+	padding-right: 0px;
+	padding-left: 0px;
+	padding-bottom: 10px;
+	padding-top: 10px;
+}

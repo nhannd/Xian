@@ -17,6 +17,7 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -50,6 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             StudyHistoryeAdaptor adaptor = new StudyHistoryeAdaptor();
             StudyHistorySelectCriteria criteria = new StudyHistorySelectCriteria();
             criteria.StudyStorageKey.EqualTo(TheStudySummary.TheStudyStorage.GetKey());
+            criteria.InsertTime.SortDesc(0);
             _historyList = CollectionUtils.Select<StudyHistory>(adaptor.Get(criteria),
                         delegate(StudyHistory history)
                             {
@@ -57,7 +59,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                                 if (history.StudyHistoryTypeEnum==StudyHistoryTypeEnum.StudyReconciled)
                                 {
                                     ReconcileHistoryRecord desc = StudyHistoryRecordDecoder.ReadReconcileRecord(history);
-                                    return desc.UpdateDescription.ReconcileAction == ReconcileAction.Merge;
+                                    return desc.UpdateDescription.Action == ReconcileAction.Merge;
                                 }
                                 return true;
                             });

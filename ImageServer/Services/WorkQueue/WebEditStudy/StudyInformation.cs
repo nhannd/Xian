@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private string _studyInstanceUid;
         private string _studyDescription;
         private string _referringPhysician;
-        private PatientInformation _patientInfo;
+        private PatientInformation _patientInfo = new PatientInformation();
         #endregion
 
         #region Public Properties
