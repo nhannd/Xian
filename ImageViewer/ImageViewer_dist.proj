@@ -48,8 +48,8 @@
   <Choose>
     <When Condition="'$(Options)' == ''">
       <PropertyGroup>
-        <OptionsFlags>ExcludeStudyComposer</OptionsFlags>
-        <!--<OptionsFlags>ExcludeStudyComposer+ExcludeEnterprise</OptionsFlags>-->
+        <!--<OptionsFlags>ExcludeStudyComposer</OptionsFlags>-->
+        <OptionsFlags>ExcludeStudyComposer+ExcludeEnterprise</OptionsFlags>
       </PropertyGroup>
     </When>
     <Otherwise>
