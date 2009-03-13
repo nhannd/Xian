@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Security;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace ClearCanvas.ImageServer.Web.Common.Utilities

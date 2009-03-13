@@ -1,3 +1,4 @@
+<%@ Import namespace="ClearCanvas.ImageServer.Common.Data"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 <%@ Import namespace="ClearCanvas.ImageServer.Common.CommandProcessor"%>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="ReconcileHistoryDetailsColumn.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.ReconcileHistoryDetailsColumn" %>
@@ -12,14 +13,28 @@
 <asp:TableCell VerticalAlign="top">Action</asp:TableCell>
 <asp:TableCell ><%# ReconcileHistory.Action %> (<%# ReconcileHistory.Automatic? "Auto":"Manual" %>)</asp:TableCell>
 </asp:TableRow>
+
 <asp:TableRow BorderWidth="1px">
-<asp:TableCell BorderWidth="0px" VerticalAlign="top">Changes</asp:TableCell>
+<asp:TableCell VerticalAlign="top">Reconciled Images</asp:TableCell>
+<asp:TableCell >
+<% foreach(ImageSetField field in ReconcileHistory.ImageSetData.Fields) { %>
+        <%= HtmlUtility.Encode(field.DicomTag.Name)%> = <%= field.Value %><br />
+<%} %>
+</asp:TableCell>
+</asp:TableRow>
+
+<asp:TableRow BorderWidth="1px">
+<asp:TableCell BorderWidth="0px" VerticalAlign="top">Modifications:</asp:TableCell>
 <asp:TableCell BorderWidth="0px">
-<% foreach(BaseImageLevelUpdateCommand cmd in ReconcileHistory.Commands)
+<% if (ReconcileHistory.Commands == null || ReconcileHistory.Commands.Count == 0)
  {%>
-    <%= HtmlUtility.Encode(cmd.ToString()) %><br />
-<%
- }%>
+    N/A    
+<%} else {
+        foreach (BaseImageLevelUpdateCommand cmd in ReconcileHistory.Commands)
+        {%>
+            <%= HtmlUtility.Encode(cmd.ToString()) %><br />
+        <%}%>
+<%}%>
 </asp:TableCell>
 </asp:TableRow></asp:Table>
 </asp:Panel>
