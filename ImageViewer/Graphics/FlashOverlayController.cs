@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	{
 		private readonly byte[] _pixelData;
 		private readonly int _rows, _columns;
-		private int _flashSpeed = 300;
+		private int _flashSpeed = 500;
 
 		private SynchronizationContext _syncContext;
 
