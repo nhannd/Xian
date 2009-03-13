@@ -94,7 +94,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				for (int n = 0; n < 16; n++)
+				for (int n = 0; n < 1; n++) // TODO make it 16 again
 				{
 					uint tagOffset = ComputeTagOffset(n);
 					yield return tagOffset + DicomTags.OverlayBitPosition;
