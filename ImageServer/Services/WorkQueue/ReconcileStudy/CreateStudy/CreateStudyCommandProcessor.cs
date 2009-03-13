@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
 
@@ -46,7 +47,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             if (_context.History.DestStudyStorageKey == null)
             {
                 CreateStudyCommandXmlParser parser = new CreateStudyCommandXmlParser();
-                ReconcileCreateStudyDescription desc = parser.Parse(_context.History.ChangeDescription);
+                ReconcileCreateStudyDescriptor desc = parser.Parse(_context.History.ChangeDescription);
                 
                 CreateStudyCommand command = new CreateStudyCommand();
                 command.SetContext(_context);

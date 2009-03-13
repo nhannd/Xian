@@ -2,6 +2,7 @@ using System;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -42,14 +43,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy.Extensions.Log
         
         public void OnStudyEdited(WebEditStudyContext context)
         {
-            StudyHistory entry = null;
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
             using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 Platform.Log(LogLevel.Info, "Logging study history record...");
                 IStudyHistoryEntityBroker broker = ctx.GetBroker<IStudyHistoryEntityBroker>();
                 StudyHistoryUpdateColumns recordColumns = CreateStudyHistoryRecord(context);
-                entry = broker.Insert(recordColumns);
+                StudyHistory entry = broker.Insert(recordColumns);
                 if (entry != null)
                     ctx.Commit();
                 else

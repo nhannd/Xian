@@ -53,6 +53,11 @@
     <Compile Include="CommandProcessor\CreateTempDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DeleteDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
+    <Compile Include="Data\ImageSetDescriptor.cs" />
+    <Compile Include="Data\PatientInformation.cs" />
+    <Compile Include="Data\StudyInformation.cs" />
+    <Compile Include="Data\StudyReconcileAction.cs" />
+    <Compile Include="Data\StudyReconcileDescriptor.cs" />
     <Compile Include="Helpers\DicomTagPath.cs" />
     <Compile Include="CommandProcessor\FileDeleteCommand.cs" />
     <Compile Include="CommandProcessor\BaseImageLevelUpdateCommand.cs" />

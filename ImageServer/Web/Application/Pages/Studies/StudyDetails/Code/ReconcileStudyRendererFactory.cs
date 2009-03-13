@@ -1,13 +1,7 @@
-using System;
-using System.Text;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Xml;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code
 {
@@ -25,12 +19,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
     {
         #region Private Fields
 
-        private ReconcileDescription _updateDescription;
+        private StudyReconcileDescriptor _updateDescription;
         #endregion
 
         #region Public Properties
 
-        public ReconcileDescription UpdateDescription
+        public StudyReconcileDescriptor UpdateDescription
         {
             get { return _updateDescription; }
             set { _updateDescription = value; }

@@ -42,16 +42,13 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
-    enum AutoReconcileMethod
-    {
-        MergeToExistingStudy
-    }
 
     /// <summary>
     /// Reconcile a Dicom image against a study.
@@ -201,7 +198,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 {
                     if (DifferentOnlyByCarets(different.ExpectValue, different.RealValue))
                     {
-                        AutoCorrectPatientsName(message, AutoReconcileMethod.MergeToExistingStudy);
+                        AutoCorrectPatientsName(message, StudyReconcileAction.Merge);
                         return true;
                     }
                 }
@@ -228,7 +225,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             return true;
         }
 
-        private void AutoCorrectPatientsName(DicomMessageBase message, AutoReconcileMethod method)
+        private void AutoCorrectPatientsName(DicomMessageBase message, StudyReconcileAction method)
         {
             Platform.Log(LogLevel.Info, "Scheduling auto reconciliation to correct patient name...");
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Schedule ReconcileStudy request"))
@@ -237,7 +234,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 
                 switch(method)
                 {
-                    case AutoReconcileMethod.MergeToExistingStudy:
+                    case StudyReconcileAction.Merge:
                         {
                             processor.AddCommand(new InsertMergeToExistingStudyHistoryCommand(_reconcileContext));
                             break;

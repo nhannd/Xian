@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
@@ -39,19 +40,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             return _commands;
         }
 
-        public ReconcileCreateStudyDescription Parse(XmlDocument doc)
+        public ReconcileCreateStudyDescriptor Parse(XmlDocument doc)
         {
             if (doc == null)
                 return null;
 
             if (doc.DocumentElement.Name == "Reconcile")
             {
-                return XmlUtils.Deserialize<ReconcileCreateStudyDescription>(doc.DocumentElement);
+                return XmlUtils.Deserialize<ReconcileCreateStudyDescriptor>(doc.DocumentElement);
             }
             else
             {
-                ReconcileCreateStudyDescription desc = new ReconcileCreateStudyDescription();
-                desc.Action = ReconcileAction.CreateNewStudy;
+                ReconcileCreateStudyDescriptor desc = new ReconcileCreateStudyDescriptor();
+                desc.Action = StudyReconcileAction.CreateNewStudy;
                 desc.Automatic = false;
                 desc.Commands = ParseImageLevelCommands(doc.DocumentElement);
                 desc.ExistingStudy = new StudyInformation();

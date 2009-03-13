@@ -1,28 +1,13 @@
 using System;
-using System.Data;
-using System.Configuration;
 using System.Collections.Generic;
-using System.Security;
-using System.Text;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -52,14 +37,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             StudyHistorySelectCriteria criteria = new StudyHistorySelectCriteria();
             criteria.StudyStorageKey.EqualTo(TheStudySummary.TheStudyStorage.GetKey());
             criteria.InsertTime.SortDesc(0);
-            _historyList = CollectionUtils.Select<StudyHistory>(adaptor.Get(criteria),
+            _historyList = CollectionUtils.Select(adaptor.Get(criteria),
                         delegate(StudyHistory history)
                             {
                                 // only include reconciliation records that result in updating the current study
                                 if (history.StudyHistoryTypeEnum==StudyHistoryTypeEnum.StudyReconciled)
                                 {
                                     ReconcileHistoryRecord desc = StudyHistoryRecordDecoder.ReadReconcileRecord(history);
-                                    return desc.UpdateDescription.Action == ReconcileAction.Merge;
+                                    return desc.UpdateDescription.Action == StudyReconcileAction.Merge;
                                 }
                                 return true;
                             });

@@ -2,26 +2,25 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
+namespace ClearCanvas.ImageServer.Common.Data
 {
 
     public class ImageSetField : IEquatable<ImageSetField>
     {
         private DicomTag _tag;
         private string _value;
-        
+
         public DicomTag DicomTag
         {
             get { return _tag; }
             set
             {
-                Debug.Assert(value!=null);
+                Debug.Assert(value != null);
                 _tag = value;
             }
         }
@@ -29,9 +28,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         public string Tag
         {
             get { return _tag.HexString; }
-            set {
+            set
+            {
                 Debug.Assert(!String.IsNullOrEmpty(value));
-                _tag = DicomTagDictionary.GetDicomTag(uint.Parse(value, NumberStyles.HexNumber)); 
+                _tag = DicomTagDictionary.GetDicomTag(uint.Parse(value, NumberStyles.HexNumber));
             }
         }
 
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _value = RemoveEscapeChars(attr.ToString());
             }
         }
-        
+
         #region IEquatable<ImageSetField> Members
 
         public bool Equals(ImageSetField other)
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
     [Serializable]
     [XmlRoot("ImageSetDescriptor")]
-    public class ImageSetDescriptor : IEquatable<ImageSetDescriptor> , IXmlSerializable
+    public class ImageSetDescriptor : IEquatable<ImageSetDescriptor>, IXmlSerializable
     {
 
         private Dictionary<DicomTag, ImageSetField> _fields = new Dictionary<DicomTag, ImageSetField>();
@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 {
                     ImageSetField field = new ImageSetField();
                     field.Tag = reader["Tag"];
-                    field.Value = String.IsNullOrEmpty(reader["Value"])? String.Empty:reader["Value"];
+                    field.Value = String.IsNullOrEmpty(reader["Value"]) ? String.Empty : reader["Value"];
                     AddField(field);
                 } while (reader.ReadToNextSibling("Field"));
             }
@@ -189,7 +189,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         public void WriteXml(XmlWriter writer)
         {
-            foreach(ImageSetField field in _fields.Values)
+            foreach (ImageSetField field in _fields.Values)
             {
                 writer.WriteStartElement("Field");
                 writer.WriteAttributeString("Tag", field.Tag);

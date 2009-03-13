@@ -3,9 +3,6 @@ using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy;
-using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy;
-using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
-using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code
@@ -23,7 +20,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
             ReconcileHistoryRecord record = new ReconcileHistoryRecord();
             record.InsertTime = historyRecord.InsertTime;
             record.StudyStorageLocation = StudyStorageLocation.FindStorageLocations(StudyStorage.Load(historyRecord.StudyStorageKey))[0];
-            ReconcileDescriptionParser parser = new ReconcileDescriptionParser();
+            StudyReconcileDescriptorParser parser = new StudyReconcileDescriptorParser();
             record.UpdateDescription = parser.Parse(historyRecord.ChangeDescription);
             return record;
         }

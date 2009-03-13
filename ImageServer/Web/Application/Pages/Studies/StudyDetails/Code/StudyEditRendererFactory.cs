@@ -1,13 +1,11 @@
-using System.Collections.Generic;
 using System.Text;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
-using ClearCanvas.ImageServer.Web.Common.Utilities;
+
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code
 {
@@ -58,8 +56,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Cod
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Trigger: {0}",
-                            this.UpdateDescription.EditType == EditType.WebEdit ? "Manual (Web UI)" : "Unknown");
+            sb.AppendFormat("Trigger: {0}", UpdateDescription.EditType == EditType.WebEdit ? "Manual (Web UI)" : "Unknown");
             sb.AppendLine();
             sb.AppendFormat("Updates:");
             sb.AppendLine();

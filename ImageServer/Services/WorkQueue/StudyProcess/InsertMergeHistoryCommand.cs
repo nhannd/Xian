@@ -8,22 +8,14 @@ using System.Xml.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
-    [XmlRoot("Reconcile")]
-    public class ReconcileMergeToExistingStudyDescription : ReconcileDescription
-    {
-        public ReconcileMergeToExistingStudyDescription() : base()
-        {
-            Action = ReconcileAction.Merge;
-        }
-    }
-
+    
     class InsertMergeToExistingStudyHistoryCommand:ServerDatabaseCommand
     {
         private ReconcileImageContext _context;
@@ -79,10 +71,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         protected override void OnExecute(ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
         {
             ImageSetDescriptor fileDesc = ImageSetDescriptor.Parse(_context.File);
-            ReconcileDescription desc = new ReconcileMergeToExistingStudyDescription();
+            ReconcileMergeToExistingStudyDescriptor desc = new ReconcileMergeToExistingStudyDescriptor();
             desc.ExistingStudy = StudyInformation.CreateFrom(_context.CurrentStudy);
             desc.ImageSetData = fileDesc;
-            desc.Action = ReconcileAction.Merge;
+            desc.Action = StudyReconcileAction.Merge;
             string newPatientName = GetUnifiedPatientName(desc.ExistingStudy.PatientInfo.Name, fileDesc[DicomTags.PatientsName].Value);
 
             if (!desc.ExistingStudy.PatientInfo.Name.Equals(newPatientName))

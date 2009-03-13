@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
-using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
-using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 {
@@ -24,8 +23,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 
             if (rootNode.Name == "ReconcileMergeToExistingStudy")
             {
-                ReconcileDescription desc =
-                    XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescription>(rootNode);
+                ReconcileMergeToExistingStudyDescriptor desc =
+                    XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescriptor>(rootNode);
                 
                 _commands = desc.Commands;
             }
@@ -39,18 +38,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                         //TODO: Use plugin?
                         if (subNode.Name == "SetTag")
                         {
-                            SetTagCommandCompiler compiler = new SetTagCommandCompiler();
-
-                            _commands.Add(compiler.Compile(new XmlNodeReader(subNode)));
+                            SetTagCommand command = XmlUtils.Deserialize<SetTagCommand>(subNode);
+                            _commands.Add(command);
                         }
                         else
                         {
                             throw new NotSupportedException(String.Format("Unsupported operator {0}", subNode.Name));
                         }
                     }
-
                 }
-
             }
             else
             {
@@ -60,19 +56,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
             return _commands;
         }
 
-        public ReconcileMergeToExistingStudyDescription Parse(XmlDocument doc)
+        public ReconcileMergeToExistingStudyDescriptor Parse(XmlDocument doc)
         {
             if (doc == null)
                 return null;
 
             if (doc.DocumentElement.Name == "Reconcile")
             {
-                return XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescription>(doc.DocumentElement);
+                return XmlUtils.Deserialize<ReconcileMergeToExistingStudyDescriptor>(doc.DocumentElement);
             }
             else
             {
-                ReconcileMergeToExistingStudyDescription desc = new ReconcileMergeToExistingStudyDescription();
-                desc.Action = ReconcileAction.Merge;
+                ReconcileMergeToExistingStudyDescriptor desc = new ReconcileMergeToExistingStudyDescriptor();
+                desc.Action = StudyReconcileAction.Merge;
                 desc.Automatic = false;
                 desc.Commands = ParseImageLevelCommands(doc.DocumentElement);
                 desc.ExistingStudy = new StudyInformation();

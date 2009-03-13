@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard;
@@ -10,9 +11,9 @@ using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
-    public class ReconcileDescriptionParser
+    public class StudyReconcileDescriptorParser
     {
-        public ReconcileDescription Parse(XmlDocument doc)
+        public StudyReconcileDescriptor Parse(XmlDocument doc)
         {
             if (doc.DocumentElement != null)
             {
@@ -34,7 +35,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                 }
                 else if (doc.DocumentElement.Name == "Reconcile")
                 {
-                    return XmlUtils.Deserialize<ReconcileDescription>(doc.DocumentElement);
+                    return XmlUtils.Deserialize<StudyReconcileDescriptor>(doc.DocumentElement);
                 }
                 else
                 {
@@ -43,7 +44,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
             }
             return null;
-            
+
         }
     }
 }

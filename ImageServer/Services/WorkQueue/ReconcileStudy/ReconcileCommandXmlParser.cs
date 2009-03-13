@@ -1,14 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
-using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
@@ -49,13 +45,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 
             if (doc.DocumentElement!=null)
             {
-                ReconcileDescriptionParser parser = new ReconcileDescriptionParser();
-                ReconcileDescription desc = parser.Parse(doc);
+                StudyReconcileDescriptorParser parser = new StudyReconcileDescriptorParser();
+                StudyReconcileDescriptor desc = parser.Parse(doc);
                 switch(desc.Action)
                 {
-                    case ReconcileAction.CreateNewStudy: return new ReconcileCreateStudyProcessor();
-                    case ReconcileAction.Discard: return new DiscardImageCommandProcessor();
-                    case ReconcileAction.Merge: return new MergeStudyCommandProcessor();
+                    case StudyReconcileAction.CreateNewStudy: return new ReconcileCreateStudyProcessor();
+                    case StudyReconcileAction.Discard: return new DiscardImageCommandProcessor();
+                    case StudyReconcileAction.Merge: return new MergeStudyCommandProcessor();
 
                     default:
                         throw new NotSupportedException(String.Format("Reconcile Action: {0}", desc.Action));
