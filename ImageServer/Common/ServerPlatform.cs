@@ -17,22 +17,7 @@ namespace ClearCanvas.ImageServer.Common
     {
         #region Private Fields
         private static string _dbVersion;
-        #endregion
-
-        #region Constructors
-        static ServerPlatform()
-        {
-            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-            using (IReadContext ctx = store.OpenReadContext())
-            {
-                IDatabaseVersionEntityBroker broker = ctx.GetBroker<IDatabaseVersionEntityBroker>();
-                IList<DatabaseVersion> versions = broker.Find(new DatabaseVersionSelectCriteria());
-                if (versions != null && versions.Count > 0)
-                    _dbVersion = versions[0].GetVersionString();
-                else
-                    _dbVersion = "Unknown";
-            }
-        }
+        private static object _mutex = new object();
         #endregion
 
         /// <summary>
@@ -93,9 +78,9 @@ namespace ClearCanvas.ImageServer.Common
         {
             Platform.CheckForEmptyString(operation, "operation");
             string path = Path.Combine(GetTempFolder(), operation);
-            if (references!=null)
+            if (references != null)
             {
-                foreach(string subFolder in references)
+                foreach (string subFolder in references)
                 {
                     path = Path.Combine(path, subFolder);
                 }
@@ -116,13 +101,40 @@ namespace ClearCanvas.ImageServer.Common
                 sb.AppendFormat("\t**********************************************************************************************************\n");
                 Platform.Log(LogLevel.Info, sb.ToString());
                 del();
-            } 
+            }
         }
 
+        /// <summary>
+        /// Returns the version info in the database.
+        /// </summary>
         public static String VersionString
         {
             get
             {
+                lock (_mutex)
+                {
+                    if (String.IsNullOrEmpty(_dbVersion))
+                    {
+                        try
+                        {
+                            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+                            using (IReadContext ctx = store.OpenReadContext())
+                            {
+                                IDatabaseVersionEntityBroker broker = ctx.GetBroker<IDatabaseVersionEntityBroker>();
+                                IList<DatabaseVersion> versions = broker.Find(new DatabaseVersionSelectCriteria());
+                                if (versions != null && versions.Count > 0)
+                                    _dbVersion = versions[0].GetVersionString();
+                                else
+                                    _dbVersion = String.Empty;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Platform.Log(LogLevel.Error, ex);
+                        }
+                    }
+                }
+
                 return _dbVersion;
             }
         }
