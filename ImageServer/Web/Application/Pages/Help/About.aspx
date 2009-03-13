@@ -11,7 +11,7 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
 
   <div id="VersionInfoPanel">
-            Version: <%=ServerPlatform.VersionString%>
+            Version: <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>
   </div>
   
   <table cellpadding="0" cellspacing="0" width="100%">

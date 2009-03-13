@@ -20,7 +20,7 @@
     </asp:ScriptManager>    
         
     <div align="right" id="VersionInfoPanel">
-            Version: <%=ServerPlatform.VersionString%>
+            Version: <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>
     </div>
     
     <div id="LoginSplash">
