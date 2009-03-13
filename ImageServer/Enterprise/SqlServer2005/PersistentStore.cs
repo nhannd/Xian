@@ -111,17 +111,18 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 					connection.Open();
 					return connection;
 				}
-				catch
+				catch (SqlException e)
 				{
-					// The connection failed.  If we have never connected, then we eat the first 9 failures.
-					if (i >= 10)
+					// The connection failed.  Check the Sql error class 0x14 is for connection failure, let the 
+					// other error types through.
+					if ((i >= 10) || e.Class != 0x14)
 						throw;
 
 					if (rand == null) rand = new Random();
 
-					int sleepTime = rand.Next(5*1000, 10*1000);
-					Platform.Log(LogLevel.Warn,"Failure connecting to the database, sleeping {0} milliseconds and retrying", sleepTime);
 					// Sleep a random amount between 5 and 10 seconds
+					int sleepTime = rand.Next(5 * 1000, 10 * 1000);
+					Platform.Log(LogLevel.Warn,"Failure connecting to the database, sleeping {0} milliseconds and retrying", sleepTime);
 					Thread.Sleep(sleepTime);
 				}
 			}
