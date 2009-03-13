@@ -147,31 +147,23 @@ namespace ClearCanvas.Enterprise.Core.Upgrade
 					{
 						try
 						{
-							script.Execute(assemblyVersion);
+							script.Execute();
 						}
-						catch(Exception e)
+						catch (Exception e)
 						{
 							Console.WriteLine("Unexpected Exception when executing upgrade script :");
 							Console.WriteLine("Call stack : {0}", e.StackTrace);
 							return false;
 						}
-						if (script.DestinationVersion == null)
-						{
-							Console.WriteLine("The database has been upgraded from version {0} to version {1}", currentVersion.ToString(4),
-							  assemblyVersion.ToString(4));
-							currentVersion = assemblyVersion;
-						}
-						else
-						{
-							Console.WriteLine("The database has been upgraded from version {0} to version {1}", currentVersion.ToString(4),
-							  script.DestinationVersion.ToString(4));
-							currentVersion = script.DestinationVersion;
-						}
+						Console.WriteLine("The database has been upgraded from version {0} to version {1}", currentVersion.ToString(4),
+						                  script.DestinationVersion.ToString(4));
+						currentVersion = script.DestinationVersion;
 
 						found = true;
 						break;
 					}
 				}
+
 				if (!found)
 				{
 					Console.WriteLine("Unable to find upgrade script for {0}", currentVersion.ToString(4));

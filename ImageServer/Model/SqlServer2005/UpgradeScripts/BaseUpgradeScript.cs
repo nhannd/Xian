@@ -33,6 +33,7 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using System.IO;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Upgrade;
@@ -46,9 +47,16 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 		private readonly Version _upgradeFromVersion;
 		private readonly Version _upgradeToVersion;
 		private readonly string _scriptName;
+		private readonly bool _upgradeStoredProcs = false;
 		public BaseUpgradeScript(Version upgradeFromVersion, Version upgradeToVersion, string scriptName)
 		{
-			_upgradeToVersion = upgradeToVersion;
+			if (upgradeToVersion == null)
+			{
+				_upgradeToVersion = Assembly.GetExecutingAssembly().GetName().Version;
+				_upgradeStoredProcs = true;
+			}
+			else
+				_upgradeToVersion = upgradeToVersion;
 			_upgradeFromVersion = upgradeFromVersion;
 			_scriptName = scriptName;
 		}
@@ -78,10 +86,8 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 			get { return _upgradeToVersion; }
 		}
 
-		public void Execute(Version currentVersion)
+		public void Execute()
 		{
-			bool upgradeStoredProcs = false;
-
 			// Wrap the upgrade in a single commit.
 			using (
 				IUpdateContext updateContext =
@@ -99,23 +105,11 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 				DatabaseVersionUpdateColumns columns = new DatabaseVersionUpdateColumns();
 				DatabaseVersionSelectCriteria criteria = new DatabaseVersionSelectCriteria();
 
-				if (DestinationVersion == null)
-				{
-					// Build & Revision are switched, due to how we do revisions in the DB table!!
-					columns.Build = currentVersion.Revision.ToString();
-					columns.Revision = currentVersion.Build.ToString();
-					columns.Minor = currentVersion.Minor.ToString();
-					columns.Major = currentVersion.Major.ToString();
-					upgradeStoredProcs = true;
-				}
-				else
-				{
-					// Build & Revision are switched, due to how we do revisions in the DB table!!
-					columns.Build = DestinationVersion.Revision.ToString();
-					columns.Revision = DestinationVersion.Build.ToString();
-					columns.Minor = DestinationVersion.Minor.ToString();
-					columns.Major = DestinationVersion.Major.ToString();
-				}
+				// Build & Revision are switched, due to how we do revisions in the DB table!!
+				columns.Build = DestinationVersion.Revision.ToString();
+				columns.Revision = DestinationVersion.Build.ToString();
+				columns.Minor = DestinationVersion.Minor.ToString();
+				columns.Major = DestinationVersion.Major.ToString();
 
 				IDatabaseVersionEntityBroker broker = context.GetBroker<IDatabaseVersionEntityBroker>();
 				broker.Update(criteria, columns);
@@ -123,7 +117,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 				updateContext.Commit();
 			}
 
-			if (upgradeStoredProcs)
+			if (_upgradeStoredProcs)
 			{
 				RunSqlScriptApplication app = new RunSqlScriptApplication();
 				app.RunApplication(new string[] {"-storedprocedures"});
@@ -145,10 +139,19 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 				{
 					if (line.Length > 0)
 					{
-						cmd.CommandText = line;
-						cmd.CommandType = CommandType.Text;
+						try
+						{
+							cmd.CommandText = line;
+							cmd.CommandType = CommandType.Text;
 
-						cmd.ExecuteNonQuery();
+							cmd.ExecuteNonQuery();
+						}
+						catch (Exception e)
+						{
+							Console.WriteLine("Unexpected error with line in upgrade script: {0}", line);
+							Console.WriteLine("Error: {0}", e.Message);
+							throw;
+						}
 					}
 				}
 			}

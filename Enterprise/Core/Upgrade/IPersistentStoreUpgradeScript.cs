@@ -33,11 +33,22 @@ using System;
 
 namespace ClearCanvas.Enterprise.Core.Upgrade
 {
+	/// <summary>
+	/// Interface representing an upgrade script for a PersistentStore.
+	/// </summary>
 	public interface IPersistentStoreUpgradeScript
 	{
-		string GetScript();
+		/// <summary>
+		/// The PersistentStore version for which the script upgrades from.
+		/// </summary>
 		Version SourceVersion { get; }
+		/// <summary>
+		/// The resultant PersistentStore version after the script has been run.
+		/// </summary>
 		Version DestinationVersion { get; }
-		void Execute(Version finalVersion);
+		/// <summary>
+		/// Execute the upgrade script.
+		/// </summary>
+		void Execute();
 	}
 }

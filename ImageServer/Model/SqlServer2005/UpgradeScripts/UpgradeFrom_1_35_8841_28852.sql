@@ -527,8 +527,8 @@ DECLARE @PurgeAlertsServiceLockTypeEnum smallint
 SELECT @PurgeAlertsServiceLockTypeEnum = Enum FROM [dbo].ServiceLockTypeEnum WHERE [Lookup] = 'PurgeAlerts'
 
 INSERT INTO [dbo].[ServiceLock]
-	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
-VALUES (newid(),@PurgeAlertsServiceLockTypeEnum,0,getdate(),null,1)
+	([ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+VALUES (@PurgeAlertsServiceLockTypeEnum,0,getdate(),null,1)
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO

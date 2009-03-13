@@ -33,7 +33,10 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Enterprise.Core.Upgrade
 {
-	[ExtensionPoint()]
+	/// <summary>
+	/// Extension point for PersistentStore upgrade scripts that implement <see cref="IPersistentStoreUpgradeScript"/>.
+	/// </summary>
+	[ExtensionPoint]
 	public class PersistentStoreUpgradeScriptExtensionPoint : ExtensionPoint<IPersistentStoreUpgradeScript>
 	{
 	}
