@@ -66,6 +66,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 		private WorkQueueItemCollection _workQueueItems;
         private Unit _height;
     	private WorkQueueDataSource _dataSource;
+        private ServerPartition _serverPartition;
         #endregion Private Members
 
         #region Public Properties
@@ -99,6 +100,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         }
 
         /// <summary>
+        /// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
+        /// </summary>
+        public ServerPartition ServerPartition
+        {
+            get { return _serverPartition; }
+            set { _serverPartition = value; }
+        }
+
+        /// <summary>
         /// Gets a reference to the work queue item list <see cref="System.Web.UI.WebControls.GridView"/>
         /// </summary>
         public GridView WorkQueueItemGridView
@@ -113,6 +123,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         {
             get { return _workQueueItems; }
             set { _workQueueItems = value; }
+        }
+
+        public bool OverrideUserRefresh
+        {
+            get
+            {
+                if (ViewState["OverrideUserRefresh"] == null)
+                    return false;
+                else
+                    return (bool)ViewState["OverrideUserRefresh"];
+            }
+            set { ViewState["OverrideUserRefresh"] = value; }
         }
 
         /// <summary>
@@ -166,21 +188,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             }
         }
 
-        /// <summary>
-        /// Sets/Gets a value which indicates whether auto refresh is on
-        /// </summary>
-        public bool AutoRefresh
-        {
-            get
-            {
-                if (ViewState[ "AutoRefresh"] == null)
-                    return true;
-                else
-                    return (bool)ViewState[ "AutoRefresh"];
-            }
-            set { ViewState[ "AutoRefresh"] = value; }
-        }
-
         #endregion Public Properties
 
         #region Protected Methods
@@ -196,11 +203,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 ListContainerTable.Height = _height;
 
             WorkQueueGridView.DataSource = WorkQueueDataSourceObject;
-
-            if(!IsPostBack)
-            {
-                WorkQueueGridView.DataBind();
-            }
         }
       
         protected ServerEntityKey SelectedWorkQueueItemKey
@@ -217,9 +219,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected int GetRefreshInterval()
         {
-            int interval = WorkQueueSettings.Default.NormalRefreshIntervalSeconds * 1000;
-
-            if (WorkQueueItems!=null)
+            int interval = ((Default) Page).RefreshRate*1000;
+                
+            if (WorkQueueItems!=null && OverrideUserRefresh)
             {
                 // the refresh rate should be high if the item was scheduled to start soon..
                 foreach(WorkQueueSummary item in WorkQueueItems.Values)
@@ -238,9 +240,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected override void OnPreRender(EventArgs e)
         {
-			RefreshTimer.Enabled = AutoRefresh && Visible;
+			RefreshTimer.Enabled = ((Default)Page).AutoRefresh && Visible;
             if (RefreshTimer.Enabled)
             {
+                if(!WorkQueueGridView.IsDataBound) WorkQueueGridView.DataBind();
                 if (WorkQueueItems!=null)
                 {
                     RefreshTimer.Interval = GetRefreshInterval();
@@ -328,6 +331,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 			if (_dataSource == null)
 			{
 				_dataSource = new WorkQueueDataSource();
+			    _dataSource.Partition = ServerPartition;
 				_dataSource.WorkQueueFoundSet += delegate(IList<WorkQueueSummary> newlist)
 				                                 	{
 				                                 		WorkQueueItems = new WorkQueueItemCollection(newlist);
@@ -356,6 +360,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         public void RefreshCurrentPage()
         {
             DataBind();
+        }
+
+        public void DisableRefresh()
+        {
+            ((Default) Page).AutoRefresh = false;
         }
     }
 }

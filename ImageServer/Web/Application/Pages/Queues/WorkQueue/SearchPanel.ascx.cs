@@ -136,6 +136,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             // setup child controls
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerWorkQueueSingleItem, App_GlobalResources.SR.GridPagerWorkQueueMultipleItems, workQueueItemList.WorkQueueItemGridView, delegate { return workQueueItemList.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
 
+            workQueueItemList.ServerPartition = _serverPartition;
+
             workQueueItemList.DataSourceCreated += delegate(WorkQueueDataSource source)
                                                             {
                                                                 source.PatientsName = PatientName.Text;

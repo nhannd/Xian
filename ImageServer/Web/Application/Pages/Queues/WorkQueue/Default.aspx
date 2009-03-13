@@ -6,7 +6,39 @@
 <%@ Register Src="Edit/ResetWorkQueueDialog.ascx" TagName="ResetWorkQueueDialog"    TagPrefix="localAsp" %>        
 <%@ Register Src="Edit/DeleteWorkQueueDialog.ascx" TagName="DeleteWorkQueueDialog"    TagPrefix="localAsp" %>        
 
-<asp:Content ID="ContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server">Work Queue</asp:Content>
+<asp:Content ID="ContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server">
+
+<script type="text/javascript">
+    function Submit() {
+        var isEnter = window.event == null ? e.keyCode == 13 : window.event.keyCode == 13;
+        if(isEnter) {
+            __doPostBack('<%=RefreshRateTextBox.ClientID %>','<%=RefreshRateTextBox.Text %>');     
+        }
+    }
+</script>
+
+
+<asp:Panel runat="server" style="position: relative">
+<table width="100%" cellspacing="0" cellpadding="0">
+<tr>
+    <td>Work Queue</td>
+    <td>
+                                            <div style="position: absolute; right: 5px; top: 1px; font-size: 12px; width: 200px; text-align: right;">
+                                                <span class="SearchTextBoxLabel" style="color: white">Refresh:</span>
+                                                <asp:DropDownList ID="RefreshRateEnabled" runat="server" CssClass="SearchDropDownList" OnSelectedIndexChanged="RefreshRate_IndexChanged" AutoPostBack="true">
+                                                    <asp:ListItem Selected="True" Value="Y" Text="Yes"/>
+                                                    <asp:ListItem Value="N" Text="No" />
+                                                </asp:DropDownList> 
+                                                <asp:TextBox ID="RefreshRateTextBox" runat="server" Width="30" Text="20" CssClass="SearchTextBoxLabel" onkeypress="javascript: Submit()" style="padding-left: 2px;" /><span class="SearchTextBoxLabel" style="color: white">s</span>
+                                        </div> 
+    </td>
+</tr>
+</table>
+
+</asp:Panel>
+
+
+</asp:Content>
   
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <table cellpadding="0" cellspacing="0" width="100%">

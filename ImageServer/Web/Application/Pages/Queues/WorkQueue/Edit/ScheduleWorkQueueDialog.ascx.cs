@@ -142,9 +142,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         protected override void OnPreRender(EventArgs e)
         {
-            WorkQueueItemList.AutoRefresh = Visible 
+            if(Visible 
                             && ModalDialog.State == ModalDialog.ShowState.Show
-                            && WorkQueueKeys!=null && WorkQueueItemList.WorkQueueItems != null;
+                            && WorkQueueKeys!=null && WorkQueueItemList.WorkQueueItems != null)
+            {
+                WorkQueueItemList.OverrideUserRefresh = true;
+            }
 
             base.OnPreRender(e);
         }
@@ -166,7 +169,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         protected void OnApplyButtonClicked(object sender, EventArgs arg)
         {
-            ModalDialog.Hide();
+            Hide();
             
             bool prompt = false;
             
@@ -294,7 +297,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         protected void OnCancelButtonClicked(object sender, EventArgs arg)
         {
-            ModalDialog.Hide();
+            Hide();
         }
 
         #endregion Protected Methods
@@ -333,6 +336,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public void Hide()
         {
+            WorkQueueItemList.OverrideUserRefresh = false;
             ModalDialog.Hide();
         }
 

@@ -221,6 +221,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             if (_target != null && _target.DataSource != null)
             {
+                if (!_target.IsDataBound) _target.DataBind();
+                
                 CurrentPage.Text = AdjustCurrentPageForDisplay(_target.PageIndex).ToString();
 
                 PageCountLabel.Text =

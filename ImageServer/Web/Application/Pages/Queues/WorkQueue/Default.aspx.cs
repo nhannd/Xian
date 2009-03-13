@@ -53,7 +53,46 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             get { return this.ScheduleWorkQueueDialog; }
         }
 
+        /// <summary>
+        /// Sets/Gets a value which indicates whether auto refresh is on
+        /// </summary>
+        public bool AutoRefresh
+        {
+            get
+            {
+                if (ViewState["AutoRefresh"] == null)
+                    return true;
+                else
+                    return (bool)ViewState["AutoRefresh"];
+            }
+            set { ViewState["AutoRefresh"] = value; }
+        }
+
+        public int RefreshRate
+        {
+            get
+            {
+                if (ViewState["RefreshRate"] == null)
+                    return WorkQueueSettings.Default.NormalRefreshIntervalSeconds;
+                else
+                    return (int)ViewState["RefreshRate"];
+            }
+            set { ViewState["RefreshRate"] = value; }
+        }
+
+
         #region Protected Methods
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string controlName = Request.Params.Get("__EVENTTARGET");
+            if(controlName != null && controlName.Equals(RefreshRateTextBox.ClientID))
+            {
+                ((Default)Page).RefreshRate = Int32.Parse(RefreshRateTextBox.Text);                
+            }
+
+        }
+
 
         protected override void OnInit(EventArgs e)
         {
@@ -74,6 +113,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
                                                                return panel;
                                                            });
+
+            if (!Page.IsPostBack)
+            {
+                RefreshRateTextBox.Text = WorkQueueSettings.Default.NormalRefreshIntervalSeconds.ToString();
+            }
         }
 
        
@@ -226,5 +270,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         }
 
         #endregion Private Methods
+
+        protected void RefreshRate_IndexChanged(Object sender, EventArgs arg)
+        {
+            if (RefreshRateEnabled.SelectedItem.Value.Equals("Y"))
+            {
+                ((Default)Page).AutoRefresh = true;
+                ((Default)Page).RefreshRate = Int32.Parse(RefreshRateTextBox.Text);
+                RefreshRateTextBox.Enabled = true;
+            }
+            else
+            {
+                ((Default)Page).AutoRefresh = false;
+                RefreshRateTextBox.Enabled = false;
+            }
+        }
     }
 }

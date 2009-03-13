@@ -55,7 +55,7 @@
 				</asp:TableCell>
 			</asp:TableRow>
 		</asp:Table>
-		<asp:Timer ID="RefreshTimer" runat="server" OnTick="RefreshTimer_Tick" Interval="30000">
+		<asp:Timer ID="RefreshTimer" runat="server" OnTick="RefreshTimer_Tick">
 		</asp:Timer>
 	</ContentTemplate>
 </asp:UpdatePanel>
