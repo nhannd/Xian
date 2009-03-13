@@ -313,6 +313,30 @@ IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION
 GO
 IF EXISTS (SELECT * FROM #tmpErrors) ROLLBACK TRANSACTION
 GO
+
+PRINT N'Inserting new row into [dbo].[ServiceLockTypeEnum]'
+GO
+INSERT INTO [dbo].[ServiceLockTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),105,'FilesystemRebuildXml','Filesystem Rebuild Study XML','Rebuild the Study XML file for each study stored on the Filesystem')
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+PRINT N'Inserting Filesystem Rebuild Study XML for existing filesystems'
+GO
+INSERT INTO [ImageServer].[dbo].ServiceLock
+	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+select newid(),105, 0, getdate(), GUID, 0 from Filesystem
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
 IF @@TRANCOUNT>0 BEGIN
 PRINT 'The database update succeeded'
 COMMIT TRANSACTION

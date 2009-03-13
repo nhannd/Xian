@@ -48,6 +48,7 @@ public partial class ServiceLockTypeEnum : ServerEnum
       private static readonly ServiceLockTypeEnum _FilesystemStudyProcess = GetEnum("FilesystemStudyProcess");
       private static readonly ServiceLockTypeEnum _FilesystemLosslessCompress = GetEnum("FilesystemLosslessCompress");
       private static readonly ServiceLockTypeEnum _FilesystemLossyCompress = GetEnum("FilesystemLossyCompress");
+      private static readonly ServiceLockTypeEnum _FilesystemRebuildXml = GetEnum("FilesystemRebuildXml");
       private static readonly ServiceLockTypeEnum _ArchiveApplicationLog = GetEnum("ArchiveApplicationLog");
       private static readonly ServiceLockTypeEnum _PurgeAlerts = GetEnum("PurgeAlerts");
       #endregion
@@ -87,6 +88,13 @@ public partial class ServiceLockTypeEnum : ServerEnum
       public static ServiceLockTypeEnum FilesystemLossyCompress
       {
           get { return _FilesystemLossyCompress; }
+      }
+      /// <summary>
+      /// Rebuild the Study XML file for each study stored on the Filesystem
+      /// </summary>
+      public static ServiceLockTypeEnum FilesystemRebuildXml
+      {
+          get { return _FilesystemRebuildXml; }
       }
       /// <summary>
       /// Archive the application log from the database to a filesystem

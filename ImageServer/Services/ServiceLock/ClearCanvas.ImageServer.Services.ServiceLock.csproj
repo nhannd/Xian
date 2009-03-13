@@ -53,6 +53,10 @@
     <Compile Include="FilesystemLosslessCompress\FilesystemLosslessCompressItemProcessor.cs" />
     <Compile Include="FilesystemLossyCompress\FilesystemLossyCompressFactoryExtension.cs" />
     <Compile Include="FilesystemLossyCompress\FilesystemLossyCompressItemProcessor.cs" />
+    <Compile Include="FilesystemRebuildXml\FilesystemRebuildXmlFactoryExtension.cs" />
+    <Compile Include="FilesystemRebuildXml\FilesystemRebuildXmlItemProcessor.cs" />
+    <Compile Include="FilesystemRebuildXml\InsertInstanceXmlCommand.cs" />
+    <Compile Include="FilesystemRebuildXml\SaveXmlCommand.cs" />
     <Compile Include="FilesystemReinventory\FilesystemReinventoryFactoryExtension.cs" />
     <Compile Include="FilesystemReinventory\FilesystemReinventoryItemProcessor.cs" />
     <Compile Include="FilesystemStudyProcess\DeleteFilesystemQueueCommand.cs" />

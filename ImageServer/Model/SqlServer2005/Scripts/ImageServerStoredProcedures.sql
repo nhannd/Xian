@@ -1123,10 +1123,9 @@ BEGIN
 			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
 				@WorkQueueGUID = WorkQueue.GUID 
 			FROM WorkQueue WITH (READPAST)
-			JOIN
-				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 			WHERE
 				ScheduledTime < getdate() 
+				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
 				AND (  WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)  )
 			ORDER BY WorkQueue.ScheduledTime
 		END
@@ -1135,10 +1134,9 @@ BEGIN
 			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
 				@WorkQueueGUID = WorkQueue.GUID 
 			FROM WorkQueue WITH (READPAST)
-			JOIN
-				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 			WHERE
 				ScheduledTime < getdate() 
+				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
 				AND (  WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)  )
 				AND WorkQueuePriorityEnum = @WorkQueuePriorityEnum
 			ORDER BY WorkQueue.ScheduledTime
@@ -1180,6 +1178,7 @@ BEGIN
 				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 			WHERE
 				ScheduledTime < getdate() 
+				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
 				AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
 				AND WorkQueue.WorkQueueTypeEnum in (select Enum from @TempList)
 			ORDER BY WorkQueue.ScheduledTime
@@ -1193,6 +1192,7 @@ BEGIN
 				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 			WHERE
 				ScheduledTime < getdate() 
+				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
 				AND WorkQueue.WorkQueueStatusEnum in (@PendingStatusEnum,@IdleStatusEnum)
 				AND WorkQueue.WorkQueueTypeEnum in (select Enum from @TempList)
 				AND WorkQueuePriorityEnum = @WorkQueuePriorityEnum
@@ -1347,6 +1347,7 @@ BEGIN
 	DECLARE @FilesystemStudyProcessServiceLockTypeEnum smallint
 	DECLARE @FilesystemLosslessCompressServiceLockTypeEnum smallint
 	DECLARE @FilesystemLossyCompressServiceLockTypeEnum smallint
+	DECLARE @FilesystemRebuildXmlServiceLockTypeEnum smallint
 
 	SET @GUID = newid()
 	SELECT @FilesystemDeleteServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemDelete''
@@ -1354,6 +1355,7 @@ BEGIN
 	SELECT @FilesystemStudyProcessServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemStudyProcess''
 	SELECT @FilesystemLosslessCompressServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemLosslessCompress''
 	SELECT @FilesystemLossyCompressServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemLossyCompress''
+	SELECT @FilesystemRebuildXmlServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemRebuildXml''
 
     -- Insert statements
 	BEGIN TRANSACTION
@@ -1381,6 +1383,10 @@ BEGIN
 	INSERT INTO [ImageServer].[dbo].ServiceLock
 		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
 	VALUES (newid(),@FilesystemLossyCompressServiceLockTypeEnum,0,getdate(),@GUID,1)
+
+	INSERT INTO [ImageServer].[dbo].ServiceLock
+		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+	VALUES (newid(),@FilesystemRebuildXmlServiceLockTypeEnum,0,getdate(),@GUID,0)
 
 	COMMIT TRANSACTION
 

@@ -1,6 +1,6 @@
 #region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2006-2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -32,26 +32,26 @@
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
+namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 {
-    /// <summary>
-    /// Plugin for creating processors for 'FilesystemReinventory' <see cref="Model.ServiceLock"/> items.
-    /// </summary>
-    [ExtensionOf(typeof(ServiceLockFactoryExtensionPoint))]
-    public class FilesystemReinventoryFactoryExtension : IServiceLockProcessorFactory
-    {
-        #region IServiceLockProcessorFactory Members
+	/// <summary>
+	/// Plugin for creating processors for 'FilesystemRebuildXml' <see cref="Model.ServiceLock"/> items.
+	/// </summary>
+	[ExtensionOf(typeof(ServiceLockFactoryExtensionPoint))]
+	class FilesystemRebuildXmlFactoryExtension : IServiceLockProcessorFactory
+	{
+		#region IServiceLockProcessorFactory Members
 
-        public ServiceLockTypeEnum GetServiceLockType()
-        {
-            return ServiceLockTypeEnum.FilesystemReinventory;
-        }
+		public ServiceLockTypeEnum GetServiceLockType()
+		{
+			return ServiceLockTypeEnum.FilesystemRebuildXml;
+		}
 
-        public IServiceLockItemProcessor GetItemProcessor()
-        {
-            return new FilesystemReinventoryItemProcessor();
-        }
+		public IServiceLockItemProcessor GetItemProcessor()
+		{
+			return new FilesystemRebuildXmlItemProcessor();
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

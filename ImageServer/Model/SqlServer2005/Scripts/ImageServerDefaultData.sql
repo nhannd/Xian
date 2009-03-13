@@ -286,6 +286,11 @@ GO
 INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
+           (newid(),105,'FilesystemRebuildXml','Filesystem Rebuild Study XML','Rebuild the Study XML file for each study stored on the Filesystem')
+GO
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
            (newid(),200,'ArchiveApplicationLog','Archive Application Log','This service removes application log entries from the database and archives them in zip files to a filesystem.  When initially run, it selects a filesystem from the lowest filesystem tier configured on the system.')
 GO
 
