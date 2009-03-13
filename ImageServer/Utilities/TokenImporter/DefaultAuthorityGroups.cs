@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageServer.Utilities
                         AuthorityTokens.Admin.Configuration.ServerPartitions,
                         AuthorityTokens.Admin.Configuration.ServerRules,
                         AuthorityTokens.Admin.Configuration.ServiceScheduling,
+                        AuthorityTokens.Admin.Configuration.PartitionArchive,
 
                         AuthorityTokens.ArchiveQueue.Delete,
                         AuthorityTokens.ArchiveQueue.Search,
