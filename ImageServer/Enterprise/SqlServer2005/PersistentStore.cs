@@ -33,8 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlClient;
-using System.Diagnostics;
-using System.Reflection;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -99,14 +98,41 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             _transactionNotifier = transactionNotifier;
         }
 
-        public IReadContext OpenReadContext()
+		private SqlConnection OpenConnection()
+		{
+			// Needed for retries;
+			Random rand = null;
+
+			for (int i = 1;; i++)
+			{
+				try
+				{
+					SqlConnection connection = new SqlConnection(_connectionString);
+					connection.Open();
+					return connection;
+				}
+				catch
+				{
+					// The connection failed.  If we have never connected, then we eat the first 9 failures.
+					if (i >= 10)
+						throw;
+
+					if (rand == null) rand = new Random();
+
+					int sleepTime = rand.Next(5*1000, 10*1000);
+					Platform.Log(LogLevel.Warn,"Failure connecting to the database, sleeping {0} milliseconds and retrying", sleepTime);
+					// Sleep a random amount between 5 and 10 seconds
+					Thread.Sleep(sleepTime);
+				}
+			}
+		}
+
+    	public IReadContext OpenReadContext()
         {
             try
             {
-                SqlConnection connection = new SqlConnection(_connectionString);
+            	SqlConnection connection = OpenConnection();
                 
-                connection.Open();
-
                 return new ReadContext(connection, _transactionNotifier);
             }
             catch (Exception e)
@@ -121,9 +147,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         {
             try
             {
-                SqlConnection connection = new SqlConnection(_connectionString);
-
-                connection.Open();
+				SqlConnection connection = OpenConnection();
 
                 return new UpdateContext(connection, _transactionNotifier, mode);
             }
