@@ -106,7 +106,6 @@
     <Compile Include="StudyProcess\InsertReconcileStudyCommand.cs" />
     <Compile Include="StudyProcess\MoveReconcileImageCommand.cs" />
     <Compile Include="StudyProcess\ReconcileImageContext.cs" />
-    <Compile Include="StudyProcess\StudyComparer.cs" />
     <Compile Include="TierMigrate\TierMigrateStudyFactoryExtension.cs" />
     <Compile Include="TierMigrate\TierMigrateDatabaseUpdateCommand.cs" />
     <Compile Include="TierMigrate\TierMigrateItemProcessor.cs" />

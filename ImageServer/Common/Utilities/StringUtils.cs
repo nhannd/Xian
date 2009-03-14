@@ -12,14 +12,14 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
-        public static bool AreEqual(string x, string y)
+        public static bool AreEqual(string x, string y, StringComparison options)
         {
             if (String.IsNullOrEmpty(x))
             {
                 return String.IsNullOrEmpty(y);   
             }
             else
-                return x.Equals(y);
+                return x.Equals(y, options);
         }
     }
 }

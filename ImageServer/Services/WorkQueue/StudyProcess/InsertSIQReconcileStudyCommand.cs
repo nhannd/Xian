@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Data;
@@ -68,8 +69,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 
                 ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
                 data.StoragePath = _context.StoragePath;
-                XmlDocument xmlQueueData = new XmlDocument();
-                xmlQueueData.AppendChild(xmlQueueData.ImportNode(XmlUtils.Serialize(data), true));
+                XmlDocument xmlQueueData = XmlUtils.SerializeAsXmlDoc(data);
 
                 item.QueueData = xmlQueueData;
 
@@ -99,6 +99,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             desc.ExistingPatientId = _context.CurrentStudy.PatientId;
             desc.ExistingPatientName = _context.CurrentStudy.PatientsName;
             desc.ExistingAccessionNumber = _context.CurrentStudy.AccessionNumber;
+            
             desc.ConflictingPatientName = _context.File.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
             desc.ConflictingPatientId = _context.File.DataSet[DicomTags.PatientId].GetString(0, String.Empty);
             desc.ConflictingAccessionNumber = _context.File.DataSet[DicomTags.AccessionNumber].GetString(0, String.Empty);

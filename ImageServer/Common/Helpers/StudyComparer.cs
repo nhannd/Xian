@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
     {
         static void InternalCompare(uint tag, string expected, string actual, List<ComparisionDifference> list)
         {
-            if (!StringUtils.AreEqual(expected, actual))
+            if (!StringUtils.AreEqual(expected, actual, StringComparison.InvariantCultureIgnoreCase))
                 list.Add(new ComparisionDifference(tag, expected, actual));
         }
 

@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             StringBuilder value = new StringBuilder();
             for (int i = 0; i < name1.Length; i++ )
             {
-                if (name1[i] == name2[i])
+                if (Char.ToUpper(name1[i]) == Char.ToUpper(name2[i]))
                 {
                     value.Append(name1[i]);
                 }

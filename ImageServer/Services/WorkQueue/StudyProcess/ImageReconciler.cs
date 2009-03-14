@@ -214,6 +214,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             
             if (s1.Length != s2.Length) return false;
 
+            s1 = s1.ToUpper();
+            s2 = s2.ToUpper();
+
             for (int i = 0; i < s1.Length; i++ )
             {
                 if (s1[i]!=s2[i])
