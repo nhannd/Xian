@@ -1,10 +1,12 @@
 using System;
+using System.Security.Permissions;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies
 {
+    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.StudyDeleteHistory.Search)]
     public partial class Default : BaseAdminPage
     {
         #region Protected Methods

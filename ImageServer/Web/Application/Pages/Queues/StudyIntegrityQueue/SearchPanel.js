@@ -112,7 +112,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
         _enableReconcileButton : function(en)
         {
             var reconcileButton = $find(this._ReconcileButtonClientID);
-            reconcileButton.set_enable(en);
+            if(reconcileButton != null) reconcileButton.set_enable(en);
         },
         
         _canReconcileStudy:function(row)

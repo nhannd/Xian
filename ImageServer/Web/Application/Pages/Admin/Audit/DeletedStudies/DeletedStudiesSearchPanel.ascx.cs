@@ -127,6 +127,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
             GridPagerTop.InitializeGridPager(App_GlobalResources.Labels.GridPagerQueueSingleItem, App_GlobalResources.Labels.GridPagerQueueMultipleItems, SearchResultGridView1.GridViewControl, delegate { return SearchResultGridView1.ResultCount; }, ImageServerConstants.GridViewPagerPosition.top);
 
             SearchResultGridView1.DataSourceContainer.ObjectCreated += DataSource_ObjectCreated;
+
+            DeleteButton.Roles =
+                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.StudyDeleteHistory.Delete;
+            ViewStudyDetailsButton.Roles =
+                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.StudyDeleteHistory.View;
         }
         #endregion
 

@@ -161,6 +161,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             foreach (ArchiveQueueStatusEnum s in statusItems)
                 StatusFilter.Items.Add(new ListItem(s.Description, s.Lookup));
             StatusFilter.SelectedIndex = prevSelectedIndex;
+
+            DeleteItemButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.ArchiveQueue.Delete;
         }
 
         protected override void OnPreRender(EventArgs e)

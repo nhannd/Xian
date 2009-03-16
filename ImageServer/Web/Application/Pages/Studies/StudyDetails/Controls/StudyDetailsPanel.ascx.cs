@@ -98,6 +98,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         }
 
+        public void Page_Load(Object sender, EventArgs e)
+        {
+            DeleteStudyButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Delete;
+            EditStudyButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Edit;
+        }
+
         protected override void OnPreRender(EventArgs e)
         {
             UpdateUI(); 

@@ -69,10 +69,10 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
             // because NEW instances of the button and the study list components
             // may have been created as the result of the post-back
             var openButton = $find(this._OpenButtonClientID);
-            openButton.add_onClientClick( this._OnOpenButtonClickedHandler );   
+            if(openButton != null) openButton.add_onClientClick( this._OnOpenButtonClickedHandler );   
 
             var sendButton = $find(this._SendButtonClientID);
-            sendButton.add_onClientClick( this._OnSendButtonClickedHandler );   
+            if(sendButton != null) sendButton.add_onClientClick( this._OnSendButtonClickedHandler );   
                  
             var studylist = $find(this._StudyListClientID);
             studylist.add_onClientRowClick(this._OnStudyListRowClickedHandler);
@@ -255,25 +255,25 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         _enableDeleteButton : function(en)
         {
             var deleteButton = $find(this._DeleteButtonClientID);
-            deleteButton.set_enable(en);
+            if(deleteButton != null) deleteButton.set_enable(en);
         },
         
         _enableOpenStudyButton : function(en)
         {
             var openButton = $find(this._OpenButtonClientID);
-            openButton.set_enable(en);
+            if(openButton != null) openButton.set_enable(en);
         },
         
         _enableSendStudyButton : function(en)
         {
             var sendButton = $find(this._SendButtonClientID);
-            sendButton.set_enable(en);
+            if(sendButton != null) sendButton.set_enable(en);
         },
         
         _enableRestoreButton : function(en)
         {
             var deleteButton = $find(this._RestoreButtonClientID);
-            deleteButton.set_enable(en);
+            if(deleteButton != null) deleteButton.set_enable(en);
         },
         
 

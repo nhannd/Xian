@@ -52,6 +52,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                                                            });
 
             Page.Title = App_GlobalResources.Titles.RestoreQueuePageTitle;
+
+            
         }
     }
 }

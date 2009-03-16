@@ -126,6 +126,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                 CategoryFilter.Items.Add(new ListItem(ace.Description, ace.Lookup));
             CategoryFilter.SelectedIndex = prevSelectedIndex;
 
+            DeleteAllAlertsButton.Roles =
+                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.Alert.Delete;
+
             SetupEventHandlers();
         }
 

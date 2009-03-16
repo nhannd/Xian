@@ -109,13 +109,13 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
         _enableDetailsButton : function(en)
         {
             var button = $find(this._ViewDetailsButtonClientID);
-            button.set_enable(en);
+            if(button != null) button.set_enable(en);
         },
         
         _enableDeleteButton : function(en)
         {
             var button = $find(this._DeleteButtonClientID);
-            button.set_enable(en);
+            if(button != null) button.set_enable(en);
         },
         
 

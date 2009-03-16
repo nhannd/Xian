@@ -263,6 +263,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 PriorityDropDownList.Items.Add(new ListItem(p.Description, p.Lookup));
             PriorityDropDownList.SelectedIndex = prevSelectedIndex;
 
+            ViewItemDetailsButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.View;
+            DeleteItemButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Delete;
+            ReprocessItemButton.Roles =
+                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reprocess;
+            ResetItemButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reset;
+            RescheduleItemButton.Roles =
+                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reschedule;
+
         }
 
         protected void ViewItemButton_Click(object sender, ImageClickEventArgs e)

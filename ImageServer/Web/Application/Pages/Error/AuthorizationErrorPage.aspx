@@ -19,5 +19,5 @@
 </asp:Content>
 
 <asp:Content runat="server" ContentPlaceHolderID="UserEscapePlaceHolder">
-    <table width="100%" class="UserEscapeTable"><tr><td style="border-right: solid 1px white; height: 30px; width: 50%;"><a href="javascript:history.back()" class="UserEscapeLink">Back</a></td><td style="height: 30px; width: 50%"><a href="javascript:window.close()" class="UserEscapeLink">Close</a></td></tr></table>
+    <table width="100%" class="UserEscapeTable"><tr><td class="UserEscapeCell"><a href="javascript:history.back()" class="UserEscapeLink">Back</a></td><td class="UserEscapeCell"><asp:LinkButton ID="LogoutButton" runat="server" CssClass="UserEscapeLink" OnClick="Logout_Click">Logout</asp:LinkButton></td><td><a href="javascript:window.close()" class="UserEscapeLink">Close</a></td></tr></table>
 </asp:Content>

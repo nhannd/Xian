@@ -124,6 +124,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                                             if (!String.IsNullOrEmpty(ReceivedDate.Text))
                                                 source.InsertTime =ReceivedDate.Text;
 										};
+
+            ReconcileButton.Roles =
+                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.StudyIntegrityQueue.Reconcile;
         }
 
         protected override void OnPreRender(EventArgs e)

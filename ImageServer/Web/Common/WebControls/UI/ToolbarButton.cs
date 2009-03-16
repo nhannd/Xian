@@ -228,7 +228,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 if (!allow)
                 {
                     Enabled = false;
-                    Visible = NoPermissionVisibilityMode==NoPermissionVisibility.Visible;
+                    Visible = NoPermissionVisibilityMode==NoPermissionVisibility.Invisible;
                 }
             }
 

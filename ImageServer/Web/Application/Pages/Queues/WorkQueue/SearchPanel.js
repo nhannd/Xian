@@ -149,31 +149,31 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
         _enableViewDetailsButton : function(en)
         {
             var viewDetailsButton = $find(this._ViewDetailsButtonClientID);
-            viewDetailsButton.set_enable(en);
+            if(viewDetailsButton != null) viewDetailsButton.set_enable(en);
         },
         
         _enableRescheduleButton : function(en)
         {
             var rescheduleButton = $find(this._RescheduleButtonClientID);
-            rescheduleButton.set_enable(en);
+            if(rescheduleButton != null) rescheduleButton.set_enable(en);
         },
         
         _enableDeleteButton : function(en)
         {
             var deleteButton = $find(this._DeleteButtonClientID);
-            deleteButton.set_enable(en);
+            if(deleteButton != null) deleteButton.set_enable(en);
         },
         
         _enableReprocessButton : function(en)
         {
             var reprocessButton = $find(this._ReprocessButtonClientID);
-            reprocessButton.set_enable(en);
+            if(reprocessButton != null) reprocessButton.set_enable(en);
         },
         
         _enableResetButton : function(en)
         {
             var resetButton = $find(this._ResetButtonClientID);
-            resetButton.set_enable(en);
+            if(resetButton != null) resetButton.set_enable(en);
         },
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -110,7 +110,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
         _enableDeleteButton : function(en)
         {
             var deleteButton = $find(this._DeleteButtonClientID);
-            deleteButton.set_enable(en);
+            if(deleteButton != null) deleteButton.set_enable(en);
         },
                      
         /////////////////////////////////////////////////////////////////////////////////////////////////////////

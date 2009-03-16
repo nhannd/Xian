@@ -197,6 +197,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                                 source.Modalities = modalities.ToArray();
                                             }
                                         };
+
+            //Set Roles
+            ViewStudyDetailsButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.View;
+            MoveStudyButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Move;
+            DeleteStudyButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Delete;
+            RestoreStudyButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Restore;
         }
 
         void DeleteStudyConfirmDialog_StudyDeleted(object sender, DeleteStudyConfirmDialogStudyDeletedEventArgs e)
