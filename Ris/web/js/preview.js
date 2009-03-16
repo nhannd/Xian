@@ -187,6 +187,9 @@ Preview.ProceduresTableHelper = function () {
 		
 		formatProcedureStatus: function(status, scheduledStartTime, startTime, checkInTime, checkOutTime)
 		{
+			if (status.Code == 'CA')
+				return status.Value;  // show status instead of "Unscheduled" for unscheduled procedure that are cancelled
+				
 			if (!scheduledStartTime && !startTime)
 				return "Unscheduled";
 
