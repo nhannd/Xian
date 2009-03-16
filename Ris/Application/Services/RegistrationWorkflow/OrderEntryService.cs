@@ -173,9 +173,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     return -x.IsDefaultContactPoint.CompareTo(y.IsDefaultContactPoint);
                 });
 
+			List<ExternalPractitionerContactPoint> responseContactPoints = sortedContactPoints;
+			if (!request.IncludeDeactivated)
+			{
+				responseContactPoints = CollectionUtils.Select(sortedContactPoints,
+					delegate(ExternalPractitionerContactPoint cp)
+					{
+						return !cp.Deactivated;
+					});
+			}
+
             return new GetExternalPractitionerContactPointsResponse(
                 CollectionUtils.Map<ExternalPractitionerContactPoint, ExternalPractitionerContactPointDetail>(
-                    sortedContactPoints,
+                    responseContactPoints,
                     delegate(ExternalPractitionerContactPoint cp)
                     {
                         return assembler.CreateExternalPractitionerContactPointDetail(cp, PersistenceContext);

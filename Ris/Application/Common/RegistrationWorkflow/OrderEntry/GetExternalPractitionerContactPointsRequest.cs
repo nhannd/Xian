@@ -50,5 +50,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// </summary>
         [DataMember]
         public EntityRef PractitionerRef;
+
+		/// <summary>
+		/// Specifies whether to include de-activated items in the results.
+		/// </summary>
+		[DataMember]
+		public bool IncludeDeactivated;
     }
 }
