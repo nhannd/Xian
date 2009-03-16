@@ -198,7 +198,8 @@ namespace ClearCanvas.Ris.Application.Services
 				}));
 
 			// build criteria against Staff ID identifiers
-			string[] ids = ParseIdentifiers(query);
+			// bug #3952: use ParseTerms instead of ParseIdentifiers, because a Staff ID might only contain letters
+			string[] ids = ParseTerms(query);
 
 			// scheduled performer
 			criteria.AddRange(CollectionUtils.Map<string, WorklistItemSearchCriteria>(ids,
