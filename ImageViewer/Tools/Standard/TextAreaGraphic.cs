@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public TextAreaGraphic() : base() {}
 
 		protected TextAreaGraphic(TextAreaGraphic source, ICloningContext context)
-			: base()
+			: base(source, context)
 		{
 			context.CloneFields(source, this);
 		}

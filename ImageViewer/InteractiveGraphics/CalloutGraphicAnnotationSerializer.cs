@@ -30,7 +30,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				text.AnchorPoint = calloutGraphic.EndPoint;
 				text.AnchorPointAnnotationUnits = GraphicAnnotationSequenceItem.AnchorPointAnnotationUnits.Pixel;
 				text.AnchorPointVisibility = GraphicAnnotationSequenceItem.AnchorPointVisibility.Y;
-				text.UnformattedTextValue = calloutGraphic.Text.Trim();
+
+				if (string.IsNullOrEmpty(calloutGraphic.Text))
+					text.UnformattedTextValue = " ";
+				else
+					text.UnformattedTextValue = calloutGraphic.Text;
 			}
 			finally
 			{

@@ -370,9 +370,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
     <value>Send Study</value>
   </data>
   <data name="TooltipShowBackgroundImports" xml:space="preserve">
-    <value>Show background imports</value>
+    <value>Show Background Imports</value>
   </data>
   <data name="TooltipShowBackgroundSends" xml:space="preserve">
-    <value>Show background sends</value>
+    <value>Show Background Sends</value>
   </data>
 </root>

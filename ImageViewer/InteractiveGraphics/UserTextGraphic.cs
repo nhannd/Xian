@@ -52,6 +52,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			if (!textGraphic.Visible)
 				return;
 
+			if (string.IsNullOrEmpty(textGraphic.Text))
+				return;
+
 			GraphicAnnotationSequenceItem.TextObjectSequenceItem text = new GraphicAnnotationSequenceItem.TextObjectSequenceItem();
 
 			textGraphic.CoordinateSystem = CoordinateSystem.Source;
@@ -62,7 +65,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				text.BoundingBoxTextHorizontalJustification = GraphicAnnotationSequenceItem.BoundingBoxTextHorizontalJustification.Left;
 				text.BoundingBoxTopLeftHandCorner = boundingBox.Location;
 				text.BoundingBoxBottomRightHandCorner = boundingBox.Location + boundingBox.Size;
-				text.UnformattedTextValue = textGraphic.Text.Trim();
+				text.UnformattedTextValue = textGraphic.Text;
 			}
 			finally
 			{

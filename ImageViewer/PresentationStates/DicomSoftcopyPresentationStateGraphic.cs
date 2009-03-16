@@ -16,7 +16,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		public LayerGraphic this[string layerId]
 		{
-			get { return _layers[layerId.ToUpperInvariant()]; }
+			get
+			{
+				if (!_layers.ContainsKey(layerId))
+					this.AddLayer(layerId);
+				return _layers[layerId.ToUpperInvariant()];
+			}
 		}
 
 		public bool HasLayer(string layerId)

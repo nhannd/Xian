@@ -79,6 +79,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
 		public bool HasOverlayPlane(int index)
 		{
+			if (index < 0 || index >= 16)
+				return false;
 			return !this.DicomAttributeProvider[ComputeTagOffset(index) + DicomTags.OverlayBitPosition].IsEmpty;
 		}
 
