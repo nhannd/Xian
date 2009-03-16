@@ -1469,7 +1469,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[CannedText](
 	[GUID] [uniqueidentifier] NOT NULL,
-	[Name] [nvarchar](50)  NOT NULL,
+	[Label] [nvarchar](50)  NOT NULL,
 	[Category] [nvarchar](255)  NOT NULL,
 	[Text] [nvarchar](1024)  NOT NULL,
  CONSTRAINT [PK_CannedText] PRIMARY KEY CLUSTERED 
@@ -1490,7 +1490,7 @@ GO
 /****** Object:  Index [IX_CannedText_Name]    Script Date: 02/23/2009 20:04:33 ******/
 CREATE UNIQUE NONCLUSTERED INDEX [IX_CannedText_Name] ON [dbo].[CannedText] 
 (
-	[Name] ASC
+	[Label] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 
 

@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageServer.Utilities
                                                            Console.WriteLine("Login as {0}...", user);
                                                            _session = service.Login(user, pwd);
                                                        }
-                                                       catch (PasswordExpiredException ex)
+                                                       catch (PasswordExpiredException)
                                                        {
                                                            Console.WriteLine("Password has expired. Reseting password..");
                                                            service.ChangePassword(user, pwd, "clearcanvas123");

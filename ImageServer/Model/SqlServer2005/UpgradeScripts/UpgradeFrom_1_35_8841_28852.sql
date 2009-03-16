@@ -301,7 +301,7 @@ GO
 CREATE TABLE [dbo].[CannedText]
 (
 [GUID] [uniqueidentifier] NOT NULL,
-[Name] [nvarchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+[Label] [nvarchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [Category] [nvarchar] (255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [Text] [nvarchar] (1024) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 )
@@ -318,9 +318,9 @@ IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
-PRINT N'Creating index [IX_CannedText_Name] on [dbo].[CannedText]'
+PRINT N'Creating index [IX_CannedText_Label] on [dbo].[CannedText]'
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_CannedText_Name] ON [dbo].[CannedText] ([Name])
+CREATE UNIQUE NONCLUSTERED INDEX [IX_CannedText_Name] ON [dbo].[CannedText] ([Label])
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
@@ -537,7 +537,7 @@ GO
 
 PRINT N'Inserting new row into [dbo].[CannedText]'
 GO
-INSERT INTO [dbo].[CannedText]([GUID],[Name],[Category],[Text])
+INSERT INTO [dbo].[CannedText]([GUID],[Label],[Category],[Text])
      VALUES(newid(), 'Corrupted study', 'DeleteStudyReason', 'Study is corrupted.')
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
@@ -547,7 +547,7 @@ GO
 
 PRINT N'Inserting new row into [dbo].[CannedText]'
 GO
-INSERT INTO [dbo].[CannedText]([GUID],[Name],[Category],[Text])
+INSERT INTO [dbo].[CannedText]([GUID],[Label],[Category],[Text])
      VALUES(newid(), 'Invalid data', 'DeleteStudyReason', 'Study contains some invalid data.')
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION

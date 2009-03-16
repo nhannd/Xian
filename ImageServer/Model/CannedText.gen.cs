@@ -46,19 +46,19 @@ namespace ClearCanvas.ImageServer.Model
         {}
         public CannedText(
              System.String _category_
-            ,System.String _name_
+            ,System.String _label_
             ,System.String _text_
             ):base("CannedText")
         {
             _category = _category_;
-            _name = _name_;
+            _label = _label_;
             _text = _text_;
         }
         #endregion
 
         #region Private Members
         private System.String _category;
-        private System.String _name;
+        private System.String _label;
         private System.String _text;
         #endregion
 
@@ -69,11 +69,11 @@ namespace ClearCanvas.ImageServer.Model
         get { return _category; }
         set { _category = value; }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Name")]
-        public System.String Name
+        [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Label")]
+        public System.String Label
         {
-        get { return _name; }
-        set { _name = value; }
+        get { return _label; }
+        set { _label = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Text")]
         public System.String Text
@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageServer.Model
             ICannedTextEntityBroker broker = update.GetBroker<ICannedTextEntityBroker>();
             CannedTextUpdateColumns updateColumns = new CannedTextUpdateColumns();
             updateColumns.Category = entity.Category;
-            updateColumns.Name = entity.Name;
+            updateColumns.Label = entity.Label;
             updateColumns.Text = entity.Text;
             CannedText newEntity = broker.Insert(updateColumns);
             return newEntity;

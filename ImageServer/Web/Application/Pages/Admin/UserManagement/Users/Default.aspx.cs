@@ -58,7 +58,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                                    return true;
                                                                }
                                                                return false;
-                                                           }catch(Exception e)
+                                                           }
+														   catch(Exception)
                                                            {
                                                                return false;
                                                            }

@@ -45,10 +45,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["Category"] = new EntityUpdateColumn<System.String>("Category", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Name")]
-        public System.String Name
+        [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Label")]
+        public System.String Label
         {
-            set { SubParameters["Name"] = new EntityUpdateColumn<System.String>("Name", value); }
+            set { SubParameters["Label"] = new EntityUpdateColumn<System.String>("Label", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Text")]
         public System.String Text

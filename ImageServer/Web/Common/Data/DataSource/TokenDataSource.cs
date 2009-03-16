@@ -41,9 +41,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	public class TokenDataSource : BaseDataSource
 	{
         #region Private Members
-        private UserManagementController _controller = new UserManagementController();
-        private IList<TokenRowData> _list = null;
-        private int _resultCount;
+
+		private int _resultCount;
         #endregion Private Members
 
         #region Public Members

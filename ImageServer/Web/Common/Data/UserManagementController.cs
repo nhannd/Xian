@@ -36,15 +36,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Services.Admin;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
-using IUserAdminService = ClearCanvas.ImageServer.Common.Services.Admin.IUserAdminService;
+using IUserAdminService=ClearCanvas.ImageServer.Common.Services.Admin.IUserAdminService;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -104,7 +98,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     }
                     catch (Exception ex)
                     {
-                        throw ex;
+                    	Platform.Log(LogLevel.Error, ex, "Unexpected exception adding user: {0}", user.DisplayName);
                     }
                 });
 
@@ -140,7 +134,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     }
                     catch (Exception ex)
                     {
-                        //TODO: Handle Exception
+                    	Platform.Log(LogLevel.Error, ex, "Unexpected exception updating user: {0}", user.DisplayName);
                     }
                 });
 
@@ -183,7 +177,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     }
                     catch (Exception ex)
                     {
-                        //TODO: Handle Exception
+                    	Platform.Log(LogLevel.Error, ex, "Unexpected exception resetting password for user: {0}",
+                    	             user.DisplayName);
                     }
                 });
 
@@ -204,7 +199,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     }
                     catch (Exception ex)
                     {
-                        //TODO: Handle Exception
+						Platform.Log(LogLevel.Error, ex, "Unexpected exception deleting user: {0}",
+									 user.DisplayName);
                     }
                 });
 
@@ -219,9 +215,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                             delegate(IAuthorityAdminService services)
                             {
                                 IList<AuthorityGroupSummary> list = services.ListAllAuthorityGroups();
-                                IList<AuthorityGroupSummary> filteredList = new List<AuthorityGroupSummary>();
 
-                                if (usergroupName != null)
+                            	if (usergroupName != null)
                                 {
                                     foreach (AuthorityGroupSummary group in list)
                                     {
@@ -295,7 +290,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     }
                     catch (Exception ex)
                     {
-                        //TODO: Handle Exception
+                    	Platform.Log(LogLevel.Error, ex, "Unexpected exception deleting user group: {0}.", userGroup.Name);
                     }
                 });
 

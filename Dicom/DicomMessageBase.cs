@@ -200,6 +200,24 @@ namespace ClearCanvas.Dicom
         }
         #endregion
 
+		/// <summary>
+		/// Hash override that sums the hashes of the attributes within the message.
+		/// </summary>
+		/// <returns>The sum of the hashes of the attributes in the message.</returns>
+		public override int GetHashCode()
+		{
+			if (_metaInfo.Count > 0 || _dataSet.Count > 0)
+			{
+				int hash = 0;
+				foreach (DicomAttribute attrib in _metaInfo)
+					hash += attrib.GetHashCode();
+				foreach (DicomAttribute attrib in _dataSet)
+					hash += attrib.GetHashCode();
+				return hash;
+			}
+			return base.GetHashCode();
+		}
+
 		public override bool Equals(object obj)
 		{
 			string failureReason;

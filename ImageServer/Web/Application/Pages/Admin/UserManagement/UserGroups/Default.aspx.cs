@@ -1,16 +1,6 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
 using System.Security.Permissions;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Web.Application.Controls;
-using ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Users;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
@@ -20,7 +10,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
     [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup)]
     public partial class Default : BasePage
     {
-        UserManagementController _controller = new UserManagementController();
+    	readonly UserManagementController _controller = new UserManagementController();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -47,7 +37,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                                                }
                                                                return false;
                                                            }
-                                                           catch (Exception ex)
+                                                           catch (Exception)
                                                            {
                                                                return false;
                                                            }

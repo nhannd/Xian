@@ -1,17 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Web.Security;
 using System.Web.UI;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Services.Login;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Security;
-using MessageBox=ClearCanvas.ImageServer.Web.Application.Controls.MessageBox;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 {
@@ -55,7 +48,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                         {
                             ErrorMessage.Text = "Invalid Password. Password must be 8 - 16 characters long.";
                             ErrorMessagePanel.Visible = true;
-                        }
+							// May want to elimiate this.
+							Platform.Log(LogLevel.Error, ex, "Unexpected exception changing password: {0}.", ex.Message);
+						}
                     });
         }
     }

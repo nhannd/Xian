@@ -866,8 +866,8 @@ GO
 
 
 -- Canned Text
-INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Name],[Category],[Text])
+INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
      VALUES(newid(), 'Corrupted study', 'DeleteStudyReason', 'Study is corrupted.')
 
-INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Name],[Category],[Text])
+INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])
      VALUES(newid(), 'Invalid data', 'DeleteStudyReason', 'Study contains some invalid data.')

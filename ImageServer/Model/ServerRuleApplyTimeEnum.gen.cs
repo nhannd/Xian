@@ -74,7 +74,7 @@ public partial class ServerRuleApplyTimeEnum : ServerEnum
           get { return _SeriesProcessed; }
       }
       /// <summary>
-      /// Apply rule when a Study is initially processed
+      /// Apply rule after a Study has been processed
       /// </summary>
       public static ServerRuleApplyTimeEnum StudyProcessed
       {

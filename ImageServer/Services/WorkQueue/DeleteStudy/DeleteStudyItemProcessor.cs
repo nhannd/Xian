@@ -45,19 +45,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
     public class DeleteStudyItemProcessor : BaseItemProcessor
     {
         #region Private Members
-
         private IList<IDeleteStudyProcessorExtension> _extensions;
-        private ServerPartition _partition;
-        private Study _study;
-        protected ServerPartition Partition
-        {
-            get { return _partition; }
-        }
-        protected Study Study
-        {
-            get { return _study; }
-        }
-
         #endregion
 
         #region Private Methods
@@ -87,15 +75,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                 if (false == delete.Execute(parms))
                 {
                     Platform.Log(LogLevel.Error, "Unexpected error when trying to delete study: {0} on partition {1}",
-                                 StorageLocation.StudyInstanceUid, Partition.Description);
+                                 StorageLocation.StudyInstanceUid, ServerPartition.Description);
                 }
             }
-        }
-
-        private void LoadEntities()
-        {
-            _partition = ServerPartition.Load(WorkQueueItem.ServerPartitionKey);
-            _study = Study.Find(StorageLocation.StudyInstanceUid, _partition);
         }
 
         private IList<IDeleteStudyProcessorExtension> LoadExtensions()
@@ -110,7 +92,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                 {
                     DeleteStudyContext context = new DeleteStudyContext();
                     context.WorkQueueItem = WorkQueueItem;
-                    context.ServerPartition = Partition;
+                    context.ServerPartition = ServerPartition;
                     context.Study = Study;
                     context.StorageLocation = StorageLocation;
                     context.Filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
@@ -149,16 +131,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
                         WorkQueueItem.WorkQueueTypeEnum.Description,
                         WorkQueueItem.Key.Key); 
                     
-                    LoadEntities();
-
                     LoadExtensions();
 
                     OnDeletingStudy();
                     
-                    
                     Platform.Log(LogLevel.Info, "Deleting study '{0}' from partition '{1}'",
                                  StorageLocation.StudyInstanceUid,
-                                 Partition.Description);
+                                 ServerPartition.Description);
                     
                     RemoveFilesystem();
 

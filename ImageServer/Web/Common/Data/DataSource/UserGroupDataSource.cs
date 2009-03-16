@@ -42,9 +42,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	public class UserGroupDataSource : BaseDataSource
 	{
         #region Private Members
-        private UserManagementController _controller = new UserManagementController();
-        private IList<UserGroupRowData> _list = null;
-	    private string _groupName;
+
+		private string _groupName;
 
         private int _resultCount;
 
@@ -169,8 +168,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         
         public UserGroupRowData(AuthorityGroupDetail group)
         {
-            this.Ref = group.AuthorityGroupRef.Serialize();
-            this.Name = group.Name;
+            Ref = group.AuthorityGroupRef.Serialize();
+            Name = group.Name;
 
             foreach(AuthorityTokenSummary token in group.AuthorityTokens)
             {

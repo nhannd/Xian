@@ -52,35 +52,35 @@ public partial class FilesystemQueueTypeEnum : ServerEnum
 
       #region Public Static Properties
       /// <summary>
-      /// Delete a Study
+      /// A record telling when a study is eligible for deletion.  The study will be completely removed from the system.
       /// </summary>
       public static FilesystemQueueTypeEnum DeleteStudy
       {
           get { return _DeleteStudy; }
       }
       /// <summary>
-      /// Purge an Online Study
+      /// A record telling when a study can be purged from a filesystem.  Only archived studies can be purged.  The study will remain archived and can be restored.
       /// </summary>
       public static FilesystemQueueTypeEnum PurgeStudy
       {
           get { return _PurgeStudy; }
       }
       /// <summary>
-      /// Migrate a Study to a Lower Tier
+      /// A record telling when a study is eligible to be migrated to a lower tier filesystem.
       /// </summary>
       public static FilesystemQueueTypeEnum TierMigrate
       {
           get { return _TierMigrate; }
       }
       /// <summary>
-      /// Lossless Compress a Study
+      /// A record telling when a study is eligible for lossless compression and the type of compression to be performed on the study.
       /// </summary>
       public static FilesystemQueueTypeEnum LosslessCompress
       {
           get { return _LosslessCompress; }
       }
       /// <summary>
-      /// Lossy Compress a Study
+      /// A record telling when a study is eligible for lossy compression and the type of compression to be performed.
       /// </summary>
       public static FilesystemQueueTypeEnum LossyCompress
       {

@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private readonly string _destinationFile;
         private string _srcBackupFile; 
         private string _destBackupFile;
-        private bool _renamed =false;
+
 		#endregion
 
 		public RenameFileCommand(string sourceFile, string destinationFile)
@@ -79,20 +79,21 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         [Conditional("DEBUG_SIM_ERRORS")]
         private void SimulatePostOperationError()
 	    {
-            ServerPlatform.SimulateError("Post File Rename Error", delegate() { File.Delete(_destinationFile); });
-            ServerPlatform.SimulateError("Post File Rename Exception", delegate() { throw new Exception("Faked Exception"); });
+            ServerPlatform.SimulateError("Post File Rename Error", delegate { File.Delete(_destinationFile); });
+            ServerPlatform.SimulateError("Post File Rename Exception", delegate { throw new Exception("Faked Exception"); });
 	    }
 
 	    private void Backup()
         {
-            //backup source
-            _srcBackupFile = String.Format("{0}.bak", _sourceFile);
+			Random random = new Random();
+
+			//backup source
+			_srcBackupFile = String.Format("{0}.bak.{1}", _sourceFile, random.Next());
             File.Copy(_sourceFile, _srcBackupFile, true);
 
             if (File.Exists(_destinationFile))
             {
-                Random random = new Random();
-                _destBackupFile = String.Format("{0}.bak", _destinationFile, random.Next());
+				_destBackupFile = String.Format("{0}.bak.{1}", _destinationFile, random.Next());
 
                 File.Copy(_destinationFile, _destBackupFile, true);
             }

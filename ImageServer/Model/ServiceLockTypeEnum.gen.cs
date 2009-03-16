@@ -55,35 +55,35 @@ public partial class ServiceLockTypeEnum : ServerEnum
 
       #region Public Static Properties
       /// <summary>
-      /// Check watermark and schedule studies for tier migration, deletion, or purging if necessary
+      /// This services checks if a filesystem is above its high watermark.  If the filesystem is above the high watermark it migrates studies, deletes studies, and purges studies until the low watermark is reached.
       /// </summary>
       public static ServiceLockTypeEnum FilesystemDelete
       {
           get { return _FilesystemDelete; }
       }
       /// <summary>
-      /// Re-inventory data within a Filesystem
+      /// This service re-inventories the studies stored on a filesystem.  It scans the contents of the filesystem, and if a study is not already stored in the database, it will insert records to process the study into the WorkQueue.
       /// </summary>
       public static ServiceLockTypeEnum FilesystemReinventory
       {
           get { return _FilesystemReinventory; }
       }
       /// <summary>
-      /// Reapply Study Processing rules within a Filesystem
+      /// This service scans the contents of a filesystem and reapplies Study Processing rules to all studies on the filesystem.
       /// </summary>
       public static ServiceLockTypeEnum FilesystemStudyProcess
       {
           get { return _FilesystemStudyProcess; }
       }
       /// <summary>
-      /// Lossless compress studies within a Filesystem
+      /// This service checks for studies that are eligible to be lossless compressed on a filesystem.  It works independently from the watermarks configured for the filesystem and will insert records into the WorkQueue to compress the studies as soon as they are eligible.
       /// </summary>
       public static ServiceLockTypeEnum FilesystemLosslessCompress
       {
           get { return _FilesystemLosslessCompress; }
       }
       /// <summary>
-      /// Lossy compress studies within a Filesystem
+      /// This service checks for studies that are eligible to be lossy compressed on a filesystem.  It works independently from the watermarks configured for the filesystem and will insert records into the WorkQueue to compress the studies as soon as they are eligible.
       /// </summary>
       public static ServiceLockTypeEnum FilesystemLossyCompress
       {
@@ -97,14 +97,14 @@ public partial class ServiceLockTypeEnum : ServerEnum
           get { return _FilesystemRebuildXml; }
       }
       /// <summary>
-      /// Archive the application log from the database to a filesystem
+      /// This service removes application log entries from the database and archives them in zip files to a filesystem.  When initially run, it selects a filesystem from the lowest filesystem tier configured on the system.
       /// </summary>
       public static ServiceLockTypeEnum ArchiveApplicationLog
       {
           get { return _ArchiveApplicationLog; }
       }
       /// <summary>
-      /// Purge Alerts after a configurable elapsed time or archive them to a filesystem if configured.
+      /// This service by default removes Alert records from the database after a configurable time.  If configured it can save the alerts in zip files on a filesystem.  When initially run, it selects a filesystem from the lowest filesystem tier configured on the system to archive to.
       /// </summary>
       public static ServiceLockTypeEnum PurgeAlerts
       {

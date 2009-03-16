@@ -178,7 +178,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     ReasonListBox.Items.Add(new ListItem(" - Select one -", ""));
                     foreach (CannedText text in list)
                     {
-                        ReasonListBox.Items.Add(new ListItem(text.Name, text.Text));
+                        ReasonListBox.Items.Add(new ListItem(text.Label, text.Text));
                     }
                     ReasonListBox.Items.Add(new ListItem("Other (Specify)", "Enter the reason here"));
                 }
@@ -232,7 +232,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 // update
                 StudyDeleteReasonAdaptor adaptor = new StudyDeleteReasonAdaptor();
                 CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
-                criteria.Name.EqualTo(SaveReasonAsName.Text);
+                criteria.Label.EqualTo(SaveReasonAsName.Text);
                 criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
                 IList<CannedText> reasons = adaptor.Get(criteria);
                 foreach(CannedText reason in reasons)
@@ -249,7 +249,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                 StudyDeleteReasonAdaptor adaptor = new StudyDeleteReasonAdaptor();
                 CannedTextUpdateColumns rowColumns = new CannedTextUpdateColumns();
                 rowColumns.Category = REASON_CANNEDTEXT_CATEGORY;
-                rowColumns.Name = SaveReasonAsName.Text;
+                rowColumns.Label = SaveReasonAsName.Text;
                 rowColumns.Text = Reason.Text;
                 adaptor.Add(rowColumns);
             }
