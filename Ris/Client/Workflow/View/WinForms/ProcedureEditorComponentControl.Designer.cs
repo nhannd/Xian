@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._okButton.Margin = new System.Windows.Forms.Padding(2);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
-			this._okButton.TabIndex = 6;
+			this._okButton.TabIndex = 7;
 			this._okButton.Text = "OK";
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 7;
+			this._cancelButton.TabIndex = 8;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._laterality.Margin = new System.Windows.Forms.Padding(2);
 			this._laterality.Name = "_laterality";
 			this._laterality.Size = new System.Drawing.Size(150, 41);
-			this._laterality.TabIndex = 5;
+			this._laterality.TabIndex = 6;
 			this._laterality.Value = null;
 			// 
 			// _portable
@@ -143,7 +143,7 @@ namespace ClearCanvas.Ris.Client.Workflow.View.WinForms
 			this._checkedIn.Margin = new System.Windows.Forms.Padding(2);
 			this._checkedIn.Name = "_checkedIn";
 			this._checkedIn.Size = new System.Drawing.Size(125, 17);
-			this._checkedIn.TabIndex = 8;
+			this._checkedIn.TabIndex = 5;
 			this._checkedIn.Text = "Patient is checked-in";
 			this._checkedIn.UseVisualStyleBackColor = true;
 			// 
