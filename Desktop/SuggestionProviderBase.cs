@@ -157,8 +157,15 @@ namespace ClearCanvas.Desktop
 				_owner = owner;
 			}
 
-
+			/// <summary>
+			/// Called when a state is first instantiated, to "begin" that state.
+			/// </summary>
 			public abstract void Begin();
+
+			/// <summary>
+			/// Called when the user updates the query string.
+			/// </summary>
+			/// <param name="query"></param>
 			public abstract void Update(string query);
 
 			protected void BeginRequest(string query)
@@ -259,7 +266,7 @@ namespace ClearCanvas.Desktop
 						// has the query been updated in the interim? if so, is it a refinement of the query that obtained the shortlist?
 						if (_currentQuery == _query || _owner.IsQueryRefinement(_currentQuery, _query))
 						{
-							_owner.ChangeState(new ShortlistKnownState(_owner, _query, shortlist));
+							_owner.ChangeState(new ShortlistKnownState(_owner, _currentQuery, shortlist));
 						}
 						else
 						{
