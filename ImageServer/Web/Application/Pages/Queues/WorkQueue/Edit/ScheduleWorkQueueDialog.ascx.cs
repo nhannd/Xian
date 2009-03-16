@@ -137,16 +137,25 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 			WorkQueueItemList.DataSourceCreated += delegate(WorkQueueDataSource source)
 														{
 															source.SearchKeys = WorkQueueKeys;
-														};       
+														};
+            RefreshTimer.Enabled = false;
         }
 
         protected override void OnPreRender(EventArgs e)
         {
-            if(Visible 
-                            && ModalDialog.State == ModalDialog.ShowState.Show
-                            && WorkQueueKeys!=null && WorkQueueItemList.WorkQueueItems != null)
+
+            if (WorkQueueItemList.WorkQueueItems != null)
             {
-                WorkQueueItemList.OverrideUserRefresh = true;
+                // the refresh rate should be high if the item was scheduled to start soon..
+                foreach (WorkQueueSummary item in WorkQueueItemList.WorkQueueItems.Values)
+                {
+                    TimeSpan span = item.TheWorkQueueItem.ScheduledTime.Subtract(Platform.Time);
+                    if (span < TimeSpan.FromMinutes(1))
+                    {
+                        RefreshTimer.Interval = WorkQueueSettings.Default.FastRefreshIntervalSeconds*1000;
+                        break;
+                    }
+                }
             }
 
             base.OnPreRender(e);
@@ -336,7 +345,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public void Hide()
         {
-            WorkQueueItemList.OverrideUserRefresh = false;
             ModalDialog.Hide();
         }
 
@@ -359,9 +367,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             }
 
             WorkQueueSettingsPanel.ScheduleNow = false;
+
+            RefreshTimer.Enabled = true;
             
             Display();
 
+        }
+
+        protected void RefreshTimer_Tick(object sender, EventArgs e)
+        {
+            DataBind();
         }
 
         #endregion Public Methods

@@ -97,6 +97,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
                                                 if (oldPanel != null)
                                                     oldPanel.UpdateUI();
                                             };
+            Page.Title = App_GlobalResources.Titles.DevicesPageTitle;
+
         }
 
 

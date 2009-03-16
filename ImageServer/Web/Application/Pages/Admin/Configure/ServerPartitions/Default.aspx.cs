@@ -56,6 +56,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
 
             ServerPartitionPanel.Controller = _controller;
 
+            Page.Title = App_GlobalResources.Titles.ServerPartitionsPageTitle;
+
             SetupEventHandlers();
         }
 

@@ -50,6 +50,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                                                                panel.ID = "SearchPanel_" + partition.AeTitle;
                                                                return panel;
                                                            });
+
+            Page.Title = App_GlobalResources.Titles.StudyIntegrityQueuePageTitle;
         }
 
         public void OnReconcileItem(ReconcileDetails details)

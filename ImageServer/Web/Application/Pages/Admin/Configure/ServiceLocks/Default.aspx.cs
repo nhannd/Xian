@@ -66,7 +66,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
         protected void Page_Load(object sender, EventArgs e)
         {
             DataBind();
-            
+
+            Page.Title = App_GlobalResources.Titles.ServiceSchedulingPageTitle;           
         }
 
         #endregion  Protected methods

@@ -22,10 +22,12 @@
                             <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="UpdateButton" OnClick="OnApplyButtonClicked" />
                             <ccUI:ToolbarButton ID="Cancel" runat="server" SkinID="CancelButton" OnClick="OnCancelButtonClicked" />
                         </asp:Panel>
-
                     </td>
                 </tr>
             </table>
+    
+    <asp:Timer ID="RefreshTimer" runat="server" OnTick="RefreshTimer_Tick"></asp:Timer>
+        
     
 </ContentTemplate>
 </ccAsp:ModalDialog>

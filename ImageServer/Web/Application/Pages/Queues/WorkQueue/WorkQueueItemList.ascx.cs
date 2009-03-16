@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Enterprise;
@@ -50,9 +51,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
     /// <see cref="WorkQueue"/> entries on a web page. The <see cref="WorkQueue"/> entries are set through <see cref="WorkQueueItems"/>. 
     /// User of this control can set the <see cref="Height"/> of the panel. The panel always expands to fit the width of the
     /// parent control. 
-    /// 
-    /// By default, <see cref="AutoRefresh"/> is on. The panel periodically refreshes the list automatically. Any item that no longer
-    /// exists in the system will not be rendered on the screen.
     /// 
     /// </remarks>
     public partial class WorkQueueItemList : System.Web.UI.UserControl
@@ -125,18 +123,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             set { _workQueueItems = value; }
         }
 
-        public bool OverrideUserRefresh
-        {
-            get
-            {
-                if (ViewState["OverrideUserRefresh"] == null)
-                    return false;
-                else
-                    return (bool)ViewState["OverrideUserRefresh"];
-            }
-            set { ViewState["OverrideUserRefresh"] = value; }
-        }
-
         /// <summary>
         /// Gets/Sets a key of the selected work queue item.
         /// </summary>
@@ -195,9 +181,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            WorkQueueGridView.DataKeyNames = new string[] { "Key" };
-
-            RefreshTimer.Interval = Math.Max(WorkQueueSettings.Default.NormalRefreshIntervalSeconds*1000, 5000);// min refresh rate: every 5 sec 
+            WorkQueueGridView.DataKeyNames = new string[] { "Key" };           
 
             if (_height!=Unit.Empty)
                 ListContainerTable.Height = _height;
@@ -215,42 +199,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
                 return ViewState[ "_SelectedWorkQueueItemKey"] as ServerEntityKey;
             }
-        }
-
-        protected int GetRefreshInterval()
-        {
-            int interval = ((Default) Page).RefreshRate*1000;
-                
-            if (WorkQueueItems!=null && OverrideUserRefresh)
-            {
-                // the refresh rate should be high if the item was scheduled to start soon..
-                foreach(WorkQueueSummary item in WorkQueueItems.Values)
-                {
-                    TimeSpan span = item.TheWorkQueueItem.ScheduledTime.Subtract(Platform.Time);
-                    if (span < TimeSpan.FromMinutes(1))
-                    {
-                        interval = WorkQueueSettings.Default.FastRefreshIntervalSeconds * 1000; 
-                        break;
-                    }
-                }
-            }
-
-            return interval;
-        }
-
-        protected override void OnPreRender(EventArgs e)
-        {
-			RefreshTimer.Enabled = ((Default)Page).AutoRefresh && Visible;
-            if (RefreshTimer.Enabled)
-            {
-                if(!WorkQueueGridView.IsDataBound) WorkQueueGridView.DataBind();
-                if (WorkQueueItems!=null)
-                {
-                    RefreshTimer.Interval = GetRefreshInterval();
-                }
-            }
-
-            base.OnPreRender(e);
         }
 
         protected ServerEntityKey GetRowItemKey(int rowIndex)
@@ -321,11 +269,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             DataBind();
         }
 
-        protected void RefreshTimer_Tick(object sender, EventArgs e)
-        {
-            DataBind();
-        }
-
     	protected void GetWorkQueueDataSource(object sender, ObjectDataSourceEventArgs e)
     	{
 			if (_dataSource == null)
@@ -364,7 +307,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         public void DisableRefresh()
         {
-            ((Default) Page).AutoRefresh = false;
+                ((Default) Page).AutoRefresh = false;
         }
     }
 }

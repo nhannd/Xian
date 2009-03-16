@@ -2,7 +2,7 @@
     EnableEventValidation="false" Codebehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue.Default"
     Title="ClearCanvas ImageServer : Archive Queue" %>
 
-<asp:Content runat="server" ID="MainContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder">Archive Queue</asp:Content>
+<asp:Content runat="server" ID="MainContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder"><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,ArchiveQueue%>" /></asp:Content>
     
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <asp:Panel runat="server" ID="PageContent">

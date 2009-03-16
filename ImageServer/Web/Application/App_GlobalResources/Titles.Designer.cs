@@ -70,6 +70,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string AboutPageTitle {
+            get {
+                return ResourceManager.GetString("AboutPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Partition Archive.
         /// </summary>
         internal static string AddPartitionArchiveTitle {
@@ -111,6 +120,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string ApplicationLog {
             get {
                 return ResourceManager.GetString("ApplicationLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application Log | Admin | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string ApplicationLogPageTitle {
+            get {
+                return ResourceManager.GetString("ApplicationLogPageTitle", resourceCulture);
             }
         }
         
@@ -178,6 +196,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deleted Studies | Audit | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string DeletedStudiesPageTitle {
+            get {
+                return ResourceManager.GetString("DeletedStudiesPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Confirmation.
         /// </summary>
         internal static string DeleteStudyConfirmation {
@@ -201,6 +228,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string Devices {
             get {
                 return ResourceManager.GetString("Devices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Devices | Configure | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string DevicesPageTitle {
+            get {
+                return ResourceManager.GetString("DevicesPageTitle", resourceCulture);
             }
         }
         
@@ -241,6 +277,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to File Systems | Configure | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string FileSystemsPageTitle {
+            get {
+                return ResourceManager.GetString("FileSystemsPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move Studies | ClearCanvas ImageServer.
         /// </summary>
         internal static string MoveStudiesPageTitle {
@@ -255,6 +300,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string PartitionArchive {
             get {
                 return ResourceManager.GetString("PartitionArchive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Partition Archives | Configure | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string PartitionArchivesPageTitle {
+            get {
+                return ResourceManager.GetString("PartitionArchivesPageTitle", resourceCulture);
             }
         }
         
@@ -349,6 +403,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Server Partitions | Configure | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string ServerPartitionsPageTitle {
+            get {
+                return ResourceManager.GetString("ServerPartitionsPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Server Rules.
         /// </summary>
         internal static string ServerRules {
@@ -358,11 +421,29 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Server Rules | Configure | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string ServerRulesPageTitle {
+            get {
+                return ResourceManager.GetString("ServerRulesPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Service Scheduling.
         /// </summary>
         internal static string ServiceScheduling {
             get {
                 return ResourceManager.GetString("ServiceScheduling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service Scheduling | Configure | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string ServiceSchedulingPageTitle {
+            get {
+                return ResourceManager.GetString("ServiceSchedulingPageTitle", resourceCulture);
             }
         }
         
@@ -435,6 +516,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string UserGroups {
             get {
                 return ResourceManager.GetString("UserGroups", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Groups | User Management | ClearCanvas ImageServer.
+        /// </summary>
+        internal static string UserGroupsPageTitle {
+            get {
+                return ResourceManager.GetString("UserGroupsPageTitle", resourceCulture);
             }
         }
         

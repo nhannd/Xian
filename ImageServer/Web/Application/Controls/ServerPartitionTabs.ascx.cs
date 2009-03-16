@@ -178,6 +178,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             Update(partition.GetKey());
         }
 
+        public void Update(bool current)
+        {
+            if (_partitionList == null || _partitionList.Count == 0)
+                return;
+
+            if(current)
+            {
+                Update(PartitionTabContainer.ActiveTabIndex);
+            } else
+            {
+                for (int i = 0; i < PartitionTabContainer.Tabs.Count; i++)
+                {
+                    Update(i);
+                }
+            }
+        }
+
         #endregion Public Methods
     }
 }

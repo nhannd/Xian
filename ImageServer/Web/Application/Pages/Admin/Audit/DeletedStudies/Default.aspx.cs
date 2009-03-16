@@ -18,6 +18,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
+
+            Page.Title = App_GlobalResources.Titles.DeletedStudiesPageTitle;
+
             DataBind();
         }
 

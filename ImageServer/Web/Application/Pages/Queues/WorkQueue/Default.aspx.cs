@@ -117,9 +117,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             if (!Page.IsPostBack)
             {
                 RefreshRateTextBox.Text = WorkQueueSettings.Default.NormalRefreshIntervalSeconds.ToString();
+                RefreshTimer.Interval = Math.Max(WorkQueueSettings.Default.NormalRefreshIntervalSeconds * 1000, 5000);// min refresh rate: every 5 sec 
+                DataBind();
             }
+
+            Page.Title = App_GlobalResources.Titles.WorkQueuePageTitle;
         }
 
+        protected override void OnPreRender(EventArgs e)
+        {
+            RefreshTimer.Enabled = ((Default)Page).AutoRefresh && Visible;
+            if (RefreshTimer.Enabled)
+            {
+                RefreshTimer.Interval = RefreshRate * 1000;
+            }
+
+            base.OnPreRender(e);
+        }
        
         #endregion Protected Methods
 
@@ -284,6 +298,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 ((Default)Page).AutoRefresh = false;
                 RefreshRateTextBox.Enabled = false;
             }
+        }
+
+        protected void RefreshTimer_Tick(object sender, EventArgs e)
+        {
+            ServerPartitionTabs.Update(true);
         }
     }
 }

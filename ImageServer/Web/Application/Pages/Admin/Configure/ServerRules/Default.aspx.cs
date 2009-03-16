@@ -106,6 +106,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
                                                    ServerPartitionTabs.Update(rule.ServerPartitionKey);
                                                };
             
+
+            Page.Title = App_GlobalResources.Titles.ServerRulesPageTitle;
+
             base.OnInit(e);
         }
 

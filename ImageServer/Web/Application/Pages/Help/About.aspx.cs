@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Web.Application.About
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            Page.Title = App_GlobalResources.Titles.AboutPageTitle;
         }
     }
 }

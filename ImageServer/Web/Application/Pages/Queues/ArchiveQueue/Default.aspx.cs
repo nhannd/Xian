@@ -51,6 +51,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                                                                panel.ID = "SearchPanel_" + partition.AeTitle;
                                                                return panel;
                                                            });
+
+            Page.Title = App_GlobalResources.Titles.ArchiveQueuePageTitle;
         }
     }
 }

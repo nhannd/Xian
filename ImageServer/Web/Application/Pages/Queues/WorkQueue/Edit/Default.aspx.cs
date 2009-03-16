@@ -76,6 +76,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             set { ViewState[ "ItemNotAvailableAlertShown"] = value; }
         }
 
+
+        /// <summary>
+        /// Sets/Gets a value which indicates whether auto refresh is on
+        /// </summary>
+        public bool AutoRefresh
+        {
+            get
+            {
+                if (ViewState["AutoRefresh"] == null)
+                    return true;
+                else
+                    return (bool)ViewState["AutoRefresh"];
+            }
+            set { ViewState["AutoRefresh"] = value; }
+        }
+
+
         #endregion Protected Properties
 
         #region Protected Methods
@@ -96,6 +113,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             ResetWorkQueueDialog.WorkQueueItemReseted += ResetWorkQueueDialog_WorkQueueItemReseted;
             
             LoadWorkQueueItemKey();
+
+            Page.Title = App_GlobalResources.Titles.WorkQueuePageTitle;
         }
 
         

@@ -50,6 +50,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
 
             ServerPartitionTabs.SetupLoadPartitionTabs(CreatePartitionTab);
             DeleteStudyConfirmDialog.StudyDeleted += DeleteStudyConfirmDialog_StudyDeleted;
+
+            Page.Title = App_GlobalResources.Titles.StudiesPageTitle;
         }
 
         private SearchPanel CreatePartitionTab(ServerPartition partition)

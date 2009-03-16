@@ -1,9 +1,9 @@
-<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Users.Default" Title="Users | User Management | ClearCanvas ImageServer"%>
+<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Users.Default" %>
 
 <%@ Register Src="UserPanel.ascx" TagName="UserPanel" TagPrefix="localAsp" %>
 <%@ Register Src="~/Pages/Admin/UserManagement/Users/AddEditUserDialog.ascx" TagName="AddEditUserDialog" TagPrefix="localAsp" %>
 
-<asp:Content runat="server" ID="MainContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder">User Management</asp:Content>
+<asp:Content runat="server" ID="MainContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder"><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,UserManagement%>" /></asp:Content>
     
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
     <asp:Panel runat="server" ID="PageContent">

@@ -258,4 +258,34 @@
   <data name="StudyHistory" xml:space="preserve">
     <value>History</value>
   </data>
+  <data name="AboutPageTitle" xml:space="preserve">
+    <value>About | ClearCanvas ImageServer</value>
+  </data>
+  <data name="ApplicationLogPageTitle" xml:space="preserve">
+    <value>Application Log | Admin | ClearCanvas ImageServer</value>
+  </data>
+  <data name="DeletedStudiesPageTitle" xml:space="preserve">
+    <value>Deleted Studies | Audit | ClearCanvas ImageServer</value>
+  </data>
+  <data name="UserGroupsPageTitle" xml:space="preserve">
+    <value>User Groups | User Management | ClearCanvas ImageServer</value>
+  </data>
+  <data name="DevicesPageTitle" xml:space="preserve">
+    <value>Devices | Configure | ClearCanvas ImageServer</value>
+  </data>
+  <data name="FileSystemsPageTitle" xml:space="preserve">
+    <value>File Systems | Configure | ClearCanvas ImageServer</value>
+  </data>
+  <data name="PartitionArchivesPageTitle" xml:space="preserve">
+    <value>Partition Archives | Configure | ClearCanvas ImageServer</value>
+  </data>
+  <data name="ServerPartitionsPageTitle" xml:space="preserve">
+    <value>Server Partitions | Configure | ClearCanvas ImageServer</value>
+  </data>
+  <data name="ServerRulesPageTitle" xml:space="preserve">
+    <value>Server Rules | Configure | ClearCanvas ImageServer</value>
+  </data>
+  <data name="ServiceSchedulingPageTitle" xml:space="preserve">
+    <value>Service Scheduling | Configure | ClearCanvas ImageServer</value>
+  </data>
 </root>

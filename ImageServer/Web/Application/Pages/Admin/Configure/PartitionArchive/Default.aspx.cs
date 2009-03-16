@@ -87,6 +87,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         protected void Page_Load(object sender, EventArgs e)
         {
             UpdateUI();
+
+            Page.Title = App_GlobalResources.Titles.PartitionArchivesPageTitle;
         }
 
         #endregion Protected Methods

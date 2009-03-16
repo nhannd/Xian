@@ -21,7 +21,7 @@
 <asp:Panel runat="server" style="position: relative">
 <table width="100%" cellspacing="0" cellpadding="0">
 <tr>
-    <td>Work Queue</td>
+    <td><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,WorkQueue%>" /></td>
     <td>
                                             <div style="position: absolute; right: 5px; top: 1px; font-size: 12px; width: 200px; text-align: right;">
                                                 <span class="SearchTextBoxLabel" style="color: white">Refresh:</span>
@@ -61,4 +61,8 @@
     <localAsp:ScheduleWorkQueueDialog runat="server" ID="ScheduleWorkQueueDialog"/>
     <localAsp:ResetWorkQueueDialog ID="ResetWorkQueueDialog" runat="server" />
     <localAsp:DeleteWorkQueueDialog ID="DeleteWorkQueueDialog" runat="server" />
+    
+    <asp:Timer ID="RefreshTimer" runat="server" OnTick="RefreshTimer_Tick"></asp:Timer>
+    
+    
 </asp:Content>

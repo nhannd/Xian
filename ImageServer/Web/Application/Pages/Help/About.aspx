@@ -1,4 +1,4 @@
-<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="About.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.About.About" Title="About ClearCanvas ImageServer" %>
+<%@ Page Language="C#" MasterPageFile="~/GlobalMasterPage.master" AutoEventWireup="true" CodeBehind="About.aspx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.About.About" %>
 <%@ Import namespace="ClearCanvas.ImageServer.Common"%>
 
 <asp:Content ID="MainMenuContent" ContentPlaceHolderID="MainMenuPlaceHolder" runat="server">
@@ -6,7 +6,7 @@
     <asp:Menu runat="server" ID="MainMenu" SkinID="MainMenu" DataSourceID="MainMenuSiteMapDataSource" style="font-family: Sans-Serif"></asp:Menu>
 </asp:Content>
 
-<asp:Content ID="ContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server">About ClearCanvas ImageServer</asp:Content>
+<asp:Content ID="ContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server"><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,About%>" /></asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContentPlaceHolder" runat="server">
 

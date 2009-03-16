@@ -26,7 +26,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         protected void Page_Load(object sender, EventArgs e)
         {
             SetupEventHandlers();
+
+            Page.Title = App_GlobalResources.Titles.UserManagementPageTitle;
         }
+
 
         /// <summary>
         /// Set up the event handlers for child controls.
