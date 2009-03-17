@@ -623,7 +623,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 							new SaveTranscriptionRequest(
 							this.WorklistItem.ProcedureStepRef,
 							_reportPartExtendedProperties,
-							_supervisor.StaffRef));
+							_supervisor == null ? null : _supervisor.StaffRef));
 					});
 
 				// Source Folders
