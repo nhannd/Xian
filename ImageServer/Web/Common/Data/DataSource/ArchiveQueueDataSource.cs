@@ -47,6 +47,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private ServerPartition _thePartition;
 		private ArchiveQueue _theArchiveQueueItem;
 		private string _notes;
+		private StudyStorage _studyStorage;
+
 		#endregion Private members
 
 		#region Public Properties
@@ -96,6 +98,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		{
 			get { return _notes; }
 			set { _notes = value; }
+		}
+		public StudyStorage StudyStorage
+		{
+			get { return _studyStorage; }
+			set { _studyStorage = value; }
 		}
 		#endregion Public Properties
 	}
@@ -269,8 +276,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			// Fetch the patient info:
 			StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
-			StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
-			if (storages == null)
+			summary.StudyStorage = ssAdaptor.Get(item.StudyStorageKey);
+			if (summary.StudyStorage == null)
 			{
 				summary.PatientId = "N/A";
 				summary.PatientsName = "N/A";
@@ -278,19 +285,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			}
 			StudyAdaptor studyAdaptor = new StudyAdaptor();
 			StudySelectCriteria studycriteria = new StudySelectCriteria();
-			studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
-			studycriteria.ServerPartitionKey.EqualTo(storages.ServerPartitionKey);
-			IList<Study> studyList = studyAdaptor.Get(studycriteria);
+			studycriteria.StudyInstanceUid.EqualTo(summary.StudyStorage.StudyInstanceUid);
+			studycriteria.ServerPartitionKey.EqualTo(summary.StudyStorage.ServerPartitionKey);
+			Study theStudy = studyAdaptor.GetFirst(studycriteria);
 
-			if (studyList == null || studyList.Count == 0)
+			if (theStudy == null)
 			{
 				summary.PatientId = "N/A";
 				summary.PatientsName = "N/A";
 			}
 			else
 			{
-				summary.PatientId = studyList[0].PatientId;
-				summary.PatientsName = studyList[0].PatientsName;
+				summary.PatientId = theStudy.PatientId;
+				summary.PatientsName = theStudy.PatientsName;
 			}
 
 			return summary;

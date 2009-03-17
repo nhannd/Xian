@@ -64,12 +64,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             get { return DeleteItemButton.ClientID; }
         }
 
+		[ExtenderControlProperty]
+		[ClientPropertyName("OpenButtonClientID")]
+		public string OpenButtonClientID
+		{
+			get { return ViewStudyDetailsButton.ClientID; }
+		}
+
         [ExtenderControlProperty]
         [ClientPropertyName("ItemListClientID")]
         public string ItemListClientID
         {
             get { return ArchiveQueueItemList.ArchiveQueueGrid.ClientID; }
         }
+
+		[ExtenderControlProperty]
+		[ClientPropertyName("OpenStudyPageUrl")]
+		public string OpenStudyPageUrl
+		{
+			get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.StudyDetailsPage); }
+		}
 
 		/// <summary>
 		/// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
@@ -163,11 +177,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             StatusFilter.SelectedIndex = prevSelectedIndex;
 
             DeleteItemButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.ArchiveQueue.Delete;
+        	ViewStudyDetailsButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.View;
         }
 
         protected override void OnPreRender(EventArgs e)
         {
-
 			UpdateUI();
 			base.OnPreRender(e);
         }
@@ -215,10 +229,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             if (items != null)
             {
 				DeleteItemButton.Enabled = true;
+            	ViewStudyDetailsButton.Enabled = true;
             }
             else
             {
                 DeleteItemButton.Enabled = false;
+				ViewStudyDetailsButton.Enabled = false;
             }
         }
 

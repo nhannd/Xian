@@ -30,12 +30,9 @@
 #endregion
 
 using System;
-using System.Web.UI.WebControls;
 using System.Collections.Generic;
-
-using ClearCanvas.ImageServer.Model;
+using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 {
@@ -161,7 +158,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
         #region Events
         /// <summary>
-        /// Defines the handler for <seealso cref="OnStudySelectionChanged"/> event.
+		/// Defines the handler for <seealso cref="OnQueueItemSelectionChanged"/> event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="selectedStudies"></param>
@@ -189,7 +186,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
-            ArchiveQueueGridView.SelectedIndexChanged += new EventHandler(ArchiveQueueGridView_SelectedIndexChanged);
+            ArchiveQueueGridView.SelectedIndexChanged += ArchiveQueueGridView_SelectedIndexChanged;
 
             ArchiveQueueGridView.DataSource = ArchiveQueueDataSourceObject;
         }
@@ -209,14 +206,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                     
                     if (item!=null)
                     {
-                        //row.Attributes.Add("instanceuid", item.TheStudy.StudyInstanceUid);
-                        //row.Attributes.Add("serverae", item.ThePartition.AeTitle);
-                        //StudyController controller = new StudyController();
-                        //bool deleted = controller.IsScheduledForDelete(study.TheStudy);
-                        //if (deleted)
-                        //    row.Attributes.Add("deleted", "true");
-                        //if (study.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
-                        //    row.Attributes.Add("nearline", "true");
+                        row.Attributes.Add("instanceuid", item.StudyStorage.StudyInstanceUid);
+                        row.Attributes.Add("serverae", item.ThePartition.AeTitle);
                     }
                 }
             }

@@ -48,6 +48,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private ServerPartition _thePartition;
 		private RestoreQueue _theRestoreQueueItem;
 		private string _notes;
+		private StudyStorage _studyStorage;
+
 		#endregion Private members
 
 		#region Public Properties
@@ -97,6 +99,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		{
 			get { return _notes; }
 			set { _notes = value; }
+		}
+		public StudyStorage StudyStorage
+		{
+			get { return _studyStorage; }
+			set { _studyStorage = value; }
 		}
 		#endregion Public Properties
 	}
@@ -270,8 +277,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			// Fetch the patient info:
 			StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
-			StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
-			if (storages == null)
+			summary.StudyStorage = ssAdaptor.Get(item.StudyStorageKey);
+			if (summary.StudyStorage == null)
 			{
 				summary.PatientId = "N/A";
 				summary.PatientsName = "N/A";
@@ -279,8 +286,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			}
 			StudyAdaptor studyAdaptor = new StudyAdaptor();
 			StudySelectCriteria studycriteria = new StudySelectCriteria();
-			studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
-			studycriteria.ServerPartitionKey.EqualTo(storages.ServerPartitionKey);
+			studycriteria.StudyInstanceUid.EqualTo(summary.StudyStorage.StudyInstanceUid);
+			studycriteria.ServerPartitionKey.EqualTo(summary.StudyStorage.ServerPartitionKey);
 			IList<Study> studyList = studyAdaptor.Get(studycriteria);
 
 			if (studyList == null || studyList.Count == 0)

@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 
         #region Events
         /// <summary>
-        /// Defines the handler for <seealso cref="OnStudySelectionChanged"/> event.
+		/// Defines the handler for <seealso cref="OnQueueItemSelectionChanged"/> event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="selectedStudies"></param>
@@ -185,7 +185,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
         #endregion // Events
         
         #region protected methods
-        
+
+		protected override void OnPreRender(EventArgs e)
+		{
+			base.OnPreRender(e);
+
+			if (Items == null)
+				return;
+
+			foreach (GridViewRow row in RestoreQueueGridView.Rows)
+			{
+				if (row.RowType == DataControlRowType.DataRow)
+				{
+					RestoreQueueSummary item = Items[row.RowIndex];
+
+					if (item != null)
+					{
+						row.Attributes.Add("instanceuid", item.StudyStorage.StudyInstanceUid);
+						row.Attributes.Add("serverae", item.ThePartition.AeTitle);
+					}
+				}
+			}
+		}
+
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -196,7 +218,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 
             // The embeded grid control will show pager control if "allow paging" is set to true
             // We want to use our own pager control instead so let's hide it.
-            RestoreQueueGridView.SelectedIndexChanged += new EventHandler(RestoreQueueGridView_SelectedIndexChanged);
+            RestoreQueueGridView.SelectedIndexChanged += RestoreQueueGridView_SelectedIndexChanged;
 
             RestoreQueueGridView.DataSource = RestoreQueueDataSourceObject;
         }

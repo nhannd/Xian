@@ -71,6 +71,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             get { return RestoreQueueItemList.RestoreQueueGrid.ClientID; }
         }
 
+		[ExtenderControlProperty]
+		[ClientPropertyName("OpenButtonClientID")]
+		public string OpenButtonClientID
+		{
+			get { return ViewStudyDetailsButton.ClientID; }
+		}
+
 		/// <summary>
 		/// Gets the <see cref="Model.ServerPartition"/> associated with this search panel.
 		/// </summary>
@@ -78,6 +85,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 		{
 			get { return _serverPartition; }
 			set { _serverPartition = value; }
+		}
+
+		[ExtenderControlProperty]
+		[ClientPropertyName("OpenStudyPageUrl")]
+		public string OpenStudyPageUrl
+		{
+			get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.StudyDetailsPage); }
 		}
         #endregion Public Properties  
 
@@ -162,7 +176,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             StatusFilter.SelectedIndex = prevSelectedIndex;
 
             DeleteItemButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.RestoreQueue.Delete;
-
+			ViewStudyDetailsButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.View;
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -215,10 +229,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             if (items != null)
             {
 				DeleteItemButton.Enabled = true;
+				ViewStudyDetailsButton.Enabled = true;
             }
             else
             {
                 DeleteItemButton.Enabled = false;
+				ViewStudyDetailsButton.Enabled = false;
             }
         }
 
