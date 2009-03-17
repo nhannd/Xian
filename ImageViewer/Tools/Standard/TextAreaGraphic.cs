@@ -7,9 +7,9 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[Cloneable]
-	internal class TextAreaGraphic : StandardStatefulInteractiveGraphic<UserTextGraphic>
+	internal class TextAreaGraphic : AnnotationGraphic
 	{
-		public TextAreaGraphic() : base() {}
+		public TextAreaGraphic() : base(new UserTextGraphic()) {}
 
 		protected TextAreaGraphic(TextAreaGraphic source, ICloningContext context)
 			: base(source, context)
@@ -17,20 +17,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			context.CloneFields(source, this);
 		}
 
+		public UserTextGraphic UserTextGraphic
+		{
+			get { return (UserTextGraphic)base.InteractiveGraphic; }	
+		}
+
 		public PointF Location
 		{
-			get { return base.InteractiveGraphic.Location; }
-			set { base.InteractiveGraphic.Location = value; }
+			get { return UserTextGraphic.Location; }
+			set { UserTextGraphic.Location = value; }
 		}
 
 		public bool StartEdit()
 		{
-			return base.InteractiveGraphic.StartEdit();
+			return UserTextGraphic.StartEdit();
 		}
 
 		public void EndEdit()
 		{
-			base.InteractiveGraphic.EndEdit();
+			UserTextGraphic.EndEdit();
 		}
 
 		public override GraphicState CreateFocussedSelectedState()
@@ -49,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			public override bool Start(IMouseInformation mouseInformation)
 			{
-				UserTextGraphic userTextGraphic = this.StatefulGraphic.InteractiveGraphic;
+				UserTextGraphic userTextGraphic = (UserTextGraphic)this.StatefulGraphic.InteractiveGraphic;
 
 				this.StatefulGraphic.CoordinateSystem = CoordinateSystem.Destination;
 				try

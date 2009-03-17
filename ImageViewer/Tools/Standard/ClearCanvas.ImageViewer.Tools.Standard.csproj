@@ -109,6 +109,7 @@
     <Compile Include="CineTool.cs" />
     <Compile Include="CreateTextCalloutGraphicState.cs" />
     <Compile Include="CreateTextAreaGraphicState.cs" />
+    <Compile Include="DeleteAnnotationsTool.cs" />
     <Compile Include="DicomOverlaysTool.cs" />
     <Compile Include="EditTextCalloutTool.cs" />
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />
@@ -332,6 +333,24 @@
     <EmbeddedResource Include="Icons\DicomOverlaysToolLarge.png" />
     <EmbeddedResource Include="Icons\DicomOverlaysToolMedium.png" />
     <EmbeddedResource Include="Icons\DicomOverlaysToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteAllAnnotationsToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteAllAnnotationsToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteAllAnnotationsToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteAnnotationToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteAnnotationToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteAnnotationToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

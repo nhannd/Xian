@@ -8,7 +8,7 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[Cloneable]
-	internal class TextCalloutGraphic : AnnotationGraphic
+	internal class TextCalloutGraphic : StandardAnnotationGraphic
 	{
 		public TextCalloutGraphic() : base(new PointOfInterestInteractiveGraphic()) {}
 

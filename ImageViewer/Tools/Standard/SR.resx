@@ -648,4 +648,19 @@ Please check the log for more details.</value>
   <data name="TooltipShowHideDicomOverlay" xml:space="preserve">
     <value>Show/Hide DICOM Overlay(s)</value>
   </data>
+  <data name="CommandDeleteAllAnnotations" xml:space="preserve">
+    <value>Delete All Annotations</value>
+  </data>
+  <data name="CommandDeleteAnnotation" xml:space="preserve">
+    <value>Delete Annotation</value>
+  </data>
+  <data name="MenuDeleteAllAnnotations" xml:space="preserve">
+    <value>Delete All Annotations</value>
+  </data>
+  <data name="MenuDeleteAnnotation" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="MenuClose" xml:space="preserve">
+    <value>Close Menu</value>
+  </data>
 </root>

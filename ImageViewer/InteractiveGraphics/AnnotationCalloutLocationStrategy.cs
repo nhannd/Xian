@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	public class AnnotationCalloutLocationStrategy : IAnnotationCalloutLocationStrategy
 	{
 		[CloneIgnore]
-		private AnnotationGraphic _annotationGraphic;
+		private StandardAnnotationGraphic _annotationGraphic;
 		private bool _initialLocationSet;
 
 		/// <summary>
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Gets the owning <see cref="AnnotationGraphic"/>.
 		/// </summary>
-		protected AnnotationGraphic AnnotationGraphic
+		protected StandardAnnotationGraphic AnnotationGraphic
 		{
 			get { return _annotationGraphic; }
 		}
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Sets the <see cref="InteractiveGraphics.AnnotationGraphic"/> that owns this strategy.
 		/// </summary>
-		public virtual void SetAnnotationGraphic(AnnotationGraphic annotationGraphic)
+		public virtual void SetAnnotationGraphic(StandardAnnotationGraphic annotationGraphic)
 		{
 			_annotationGraphic = annotationGraphic;
 		}

@@ -7,7 +7,7 @@ using ClearCanvas.ImageViewer.RoiGraphics.Analyzers;
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
 	[Cloneable]
-	public class RoiGraphic : AnnotationGraphic
+	public class RoiGraphic : StandardAnnotationGraphic
 	{
 		private event EventHandler _roiChanged;
 

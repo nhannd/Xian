@@ -115,24 +115,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete All Measurements.
-        /// </summary>
-        public static string CommandDeleteAllMeasurements {
-            get {
-                return ResourceManager.GetString("CommandDeleteAllMeasurements", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete Measurement.
-        /// </summary>
-        public static string CommandDeleteMeasurement {
-            get {
-                return ResourceManager.GetString("CommandDeleteMeasurement", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cannot calibrate a ruler of zero-length..
         /// </summary>
         public static string ErrorCannotCalibrateZeroLengthRuler {
@@ -183,33 +165,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string MenuCalibrationTool {
             get {
                 return ResourceManager.GetString("MenuCalibrationTool", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Close Menu.
-        /// </summary>
-        public static string MenuClose {
-            get {
-                return ResourceManager.GetString("MenuClose", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete All Measurements.
-        /// </summary>
-        public static string MenuDeleteAllMeasurements {
-            get {
-                return ResourceManager.GetString("MenuDeleteAllMeasurements", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete.
-        /// </summary>
-        public static string MenuDeleteMeasurement {
-            get {
-                return ResourceManager.GetString("MenuDeleteMeasurement", resourceCulture);
             }
         }
         

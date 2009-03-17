@@ -5,6 +5,8 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.PresentationStates
 {
+	//TODO: call this DicomGraphicAnnotationSerializerAttribute to be consistent w/ the corresponding abstract class?
+
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public class DicomSerializableGraphicAnnotationAttribute : Attribute
 	{

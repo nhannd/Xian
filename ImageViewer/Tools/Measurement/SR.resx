@@ -123,12 +123,6 @@
   <data name="TooltipRuler" xml:space="preserve">
     <value>Ruler</value>
   </data>
-  <data name="MenuClose" xml:space="preserve">
-    <value>Close Menu</value>
-  </data>
-  <data name="MenuDeleteMeasurement" xml:space="preserve">
-    <value>Delete</value>
-  </data>
   <data name="NotApplicable" xml:space="preserve">
     <value>N/A</value>
   </data>
@@ -197,15 +191,6 @@
   </data>
   <data name="ErrorCannotCalibrateZeroLengthRuler" xml:space="preserve">
     <value>Cannot calibrate a ruler of zero-length.</value>
-  </data>
-  <data name="MenuDeleteAllMeasurements" xml:space="preserve">
-    <value>Delete All Measurements</value>
-  </data>
-  <data name="CommandDeleteAllMeasurements" xml:space="preserve">
-    <value>Delete All Measurements</value>
-  </data>
-  <data name="CommandDeleteMeasurement" xml:space="preserve">
-    <value>Delete Measurement</value>
   </data>
   <data name="CommandCreatePolygonalRoi" xml:space="preserve">
     <value>Create Polygonal ROI</value>

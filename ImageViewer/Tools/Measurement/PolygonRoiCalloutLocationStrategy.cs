@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	{
 		private bool _initialLocationSet;
 
-		public override void SetAnnotationGraphic(AnnotationGraphic roiGraphic)
+		public override void SetAnnotationGraphic(StandardAnnotationGraphic roiGraphic)
 		{
 			if (base.AnnotationGraphic != null)
 				this.Roi.PolygonClosed -= OnPolygonInteractiveGraphicClosed;

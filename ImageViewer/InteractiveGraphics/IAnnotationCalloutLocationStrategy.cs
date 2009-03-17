@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Sets the <see cref="AnnotationGraphic"/> that owns this strategy.
 		/// </summary>
-		void SetAnnotationGraphic(AnnotationGraphic annotationGraphic);
+		void SetAnnotationGraphic(StandardAnnotationGraphic annotationGraphic);
 
 		/// <summary>
 		/// Called when the <see cref="AnnotationGraphic"/>'s callout location has been changed externally; for example, by the user.

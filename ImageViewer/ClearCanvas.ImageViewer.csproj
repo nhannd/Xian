@@ -138,6 +138,7 @@
     <Compile Include="Imaging\DicomOverlayPlanes.cs" />
     <Compile Include="Imaging\DicomOverlayPlane.cs" />
     <Compile Include="Imaging\OverlayData.cs" />
+    <Compile Include="InteractiveGraphics\AnnotationGraphic.cs" />
     <Compile Include="InteractiveGraphics\CalloutGraphicAnnotationSerializer.cs" />
     <Compile Include="InteractiveGraphics\UserTextGraphic.cs" />
     <Compile Include="InteractiveGraphics\CreateBoundableGraphicState.cs" />
@@ -445,7 +446,7 @@
     <Compile Include="InteractiveGraphics\MoveGraphicState.cs" />
     <Compile Include="InteractiveGraphics\PolyLineGraphic.cs" />
     <Compile Include="InteractiveGraphics\RectangleMemento.cs" />
-    <Compile Include="InteractiveGraphics\AnnotationGraphic.cs" />
+    <Compile Include="InteractiveGraphics\StandardAnnotationGraphic.cs" />
     <Compile Include="InteractiveGraphics\StatefulCompositeGraphic.cs" />
     <Compile Include="EventBroker.cs" />
     <Compile Include="Annotations\IAnnotationItem.cs" />

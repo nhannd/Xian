@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -38,60 +37,67 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.RoiGraphics;
 
-namespace ClearCanvas.ImageViewer.Tools.Measurement
+namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	#region Delete Measurements Graphic Tool
-
 	[MenuAction("closemenu", "basicgraphic-menu/MenuClose")]
-	[GroupHint("closemenu", "Tools.Image.Measurement.MenuClose")]
-	[Tooltip("closemenu", "MenuClose")]
 
-	[MenuAction("delete", "basicgraphic-menu/MenuDeleteMeasurement", "Delete")]
-	[IconSet("delete", IconScheme.Colour, "DeleteMeasurementToolSmall.png", "DeleteMeasurementToolMedium.png", "DeleteMeasurementToolLarge.png")]
-	[GroupHint("delete", "Tools.Image.Measurement.Delete")]
-	[Tooltip("delete", "MenuDeleteMeasurement")]
+	[MenuAction("delete", "basicgraphic-menu/MenuDeleteAnnotation", "Delete")]
+	[IconSet("delete", IconScheme.Colour, "DeleteAnnotationToolSmall.png", "DeleteAnnotationToolMedium.png", "DeleteAnnotationToolLarge.png")]
 
-	[MenuAction("deleteall", "basicgraphic-menu/MenuDeleteAllMeasurements", "DeleteAll")]
-	[IconSet("deleteall", IconScheme.Colour, "DeleteAllMeasurementsToolSmall.png", "DeleteAllMeasurementsToolMedium.png", "DeleteAllMeasurementsToolLarge.png")]
-	[GroupHint("deleteall", "Tools.Image.Measurement.Delete.All")]
-	[Tooltip("deleteall", "MenuDeleteAllMeasurements")]
+	[MenuAction("deleteall", "basicgraphic-menu/MenuDeleteAllAnnotations", "DeleteAll")]
+	[IconSet("deleteall", IconScheme.Colour, "DeleteAllAnnotationsToolSmall.png", "DeleteAllAnnotationsToolMedium.png", "DeleteAllAnnotationsToolLarge.png")]
 
 	[ExtensionOf(typeof(GraphicToolExtensionPoint))]
-	public class DeleteMeasurementsTool : GraphicTool
+	public class DeleteAnnotationsTool : GraphicTool
 	{
-		public DeleteMeasurementsTool()
+		public DeleteAnnotationsTool()
 		{
 		}
 
 		public void Delete()
 		{
-			DeleteRoiGraphicsHelper.Delete(Context.OwnerGraphic as RoiGraphic);
+			IGraphic graphic = base.Context.OwnerGraphic;
+			if (graphic == null)
+				return;
+
+			IPresentationImage image = graphic.ParentPresentationImage;
+			if (image == null)
+				return;
+
+			DrawableUndoableCommand command = new DrawableUndoableCommand(graphic.ParentPresentationImage);
+			command.Enqueue(new RemoveGraphicUndoableCommand(graphic));
+
+			command.Execute();
+			command.Name = SR.CommandDeleteAnnotation;
+			image.ImageViewer.CommandHistory.AddCommand(command);
 		}
 
 		public void DeleteAll()
 		{
-			DeleteRoiGraphicsHelper.DeleteAll(Context.OwnerGraphic.ParentPresentationImage);
+			IGraphic graphic = base.Context.OwnerGraphic;
+			if (graphic == null)
+				return;
+
+			IPresentationImage image = graphic.ParentPresentationImage;
+			if (image == null)
+				return;
+
+			DeleteAllAnnotationsTool.DeleteAll(image);
 		}
 	}
 
-	#endregion
-
-	#region Delete All Measurement Graphics Tool (ImageViewerTool)
-
-	[MenuAction("deleteall", "imageviewer-contextmenu/MenuDeleteAllMeasurements", "DeleteAll")]
+	[MenuAction("deleteall", "imageviewer-contextmenu/MenuDeleteAllAnnotations", "DeleteAll")]
 	[VisibleStateObserver("deleteall", "DeleteAllVisible", "DeleteAllVisibleChanged")]
-	[IconSet("deleteall", IconScheme.Colour, "DeleteAllMeasurementsToolSmall.png", "DeleteAllMeasurementsToolMedium.png", "DeleteAllMeasurementsToolLarge.png")]
-	[GroupHint("deleteall", "Tools.Image.Measurement.DeleteAll")]
-	[Tooltip("deleteall", "MenuDeleteAllMeasurements")]
+	[IconSet("deleteall", IconScheme.Colour, "DeleteAllAnnotationsToolSmall.png", "DeleteAllAnnotationsToolMedium.png", "DeleteAllAnnotationsToolLarge.png")]
+	[GroupHint("deleteall", "Tools.Image.Annotations.DeleteAll")]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class DeleteAllMeasurementsTool : ImageViewerTool
+	public class DeleteAllAnnotationsTool : ImageViewerTool
 	{
 		private bool _deleteAllVisible;
 		private IOverlayGraphicsProvider _currentOverlayProvider;
 
-		public DeleteAllMeasurementsTool()
+		public DeleteAllAnnotationsTool()
 		{
 		}
 
@@ -108,6 +114,26 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 					EventsHelper.Fire(DeleteAllVisibleChanged, this, new EventArgs());
 				}
 			}
+		}
+
+		public void DeleteAll()
+		{
+			if (base.SelectedPresentationImage != null)
+				DeleteAll(this.SelectedPresentationImage);
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			SetCurrentOverlayGraphicsProvider(null);
+			UpdateDeleteAllVisible();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			SetCurrentOverlayGraphicsProvider(null);
+			base.Dispose(disposing);
 		}
 
 		private void OnOverlayGraphicsChanged(object sender, EventArgs e)
@@ -139,7 +165,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		private void UpdateDeleteAllVisible()
 		{
-			DeleteAllVisible = DeleteRoiGraphicsHelper.HasRoiGraphics(base.Context.Viewer.SelectedPresentationImage);
+			DeleteAllVisible = _currentOverlayProvider != null && _currentOverlayProvider.OverlayGraphics.Count > 0;
 		}
 
 		protected override void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
@@ -158,94 +184,19 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			base.OnTileSelected(sender, e);
 		}
 
-		public override void Initialize()
+		internal static void DeleteAll(IPresentationImage image)
 		{
-			base.Initialize();
-			SetCurrentOverlayGraphicsProvider(null);
-			UpdateDeleteAllVisible();
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			SetCurrentOverlayGraphicsProvider(null);
-			base.Dispose(disposing);
-		}
-
-		public void DeleteAll()
-		{
-			DeleteRoiGraphicsHelper.DeleteAll(base.SelectedPresentationImage);
-		}
-	}
-
-	#endregion
-
-	#region Delete Graphics Helper
-
-	internal static class DeleteRoiGraphicsHelper
-	{
-		public static void DeleteAll(IPresentationImage image)
-		{
-			if (image == null || !(image is IOverlayGraphicsProvider))
-				return;
-
-			IOverlayGraphicsProvider provider = (IOverlayGraphicsProvider) image;
-
-			List<RoiGraphic> roiGraphics = GetRoiGraphics(provider.OverlayGraphics);
-			if (roiGraphics.Count == 0)
+			IOverlayGraphicsProvider provider = image as IOverlayGraphicsProvider;
+			if (provider == null)
 				return;
 
 			DrawableUndoableCommand command = new DrawableUndoableCommand(image);
-			command.Name = SR.CommandDeleteAllMeasurements;
-
-			foreach (RoiGraphic graphic in roiGraphics)
+			foreach (IGraphic graphic in provider.OverlayGraphics)
 				command.Enqueue(new RemoveGraphicUndoableCommand(graphic));
-			
+		
 			command.Execute();
-
+			command.Name = SR.CommandDeleteAllAnnotations;
 			image.ImageViewer.CommandHistory.AddCommand(command);
-		}
-
-		public static void Delete(RoiGraphic roiGraphic)
-		{
-			if (roiGraphic == null || roiGraphic.ParentPresentationImage == null)
-				return;
-
-			IPresentationImage image = roiGraphic.ParentPresentationImage;
-
-			DrawableUndoableCommand command = new DrawableUndoableCommand(image);
-			command.Enqueue(new RemoveGraphicUndoableCommand(roiGraphic));
-			command.Name = SR.CommandDeleteMeasurement;
-			command.Execute();
-
-			image.ImageViewer.CommandHistory.AddCommand(command);
-		}
-
-		public static bool HasRoiGraphics(IPresentationImage image)
-		{
-			if (image != null && image is IOverlayGraphicsProvider)
-				return HasRoiGraphics(((IOverlayGraphicsProvider) image).OverlayGraphics);
-
-			return false;
-		}
-
-		private static bool HasRoiGraphics(IEnumerable<IGraphic> graphics)
-		{
-			return GetRoiGraphics(graphics).Count > 0;
-		}
-
-		private static List<RoiGraphic> GetRoiGraphics(IEnumerable<IGraphic> graphics)
-		{
-			List<RoiGraphic> roiGraphics = new List<RoiGraphic>();
-
-			foreach (Graphic graphic in graphics)
-			{
-				if (graphic is RoiGraphic)
-					roiGraphics.Add((RoiGraphic)graphic);
-			}
-
-			return roiGraphics;
 		}
 	}
-
-	#endregion
 }

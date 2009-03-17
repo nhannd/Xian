@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			_userMovedCallout = false;
 		}
 
-		public override void SetAnnotationGraphic(AnnotationGraphic roiGraphic)
+		public override void SetAnnotationGraphic(StandardAnnotationGraphic roiGraphic)
 		{
 			base.SetAnnotationGraphic(roiGraphic);
 			if (_firstCalculation)

@@ -112,7 +112,6 @@
     <Compile Include="ProtractorRoiCalloutLocationStrategy.cs" />
     <Compile Include="ProtractorRoiInfo.cs" />
     <Compile Include="ProtractorTool.cs" />
-    <Compile Include="DeleteMeasurementsTool.cs" />
     <Compile Include="RectangularROITool.cs" />
     <Compile Include="RulerTool.cs" />
     <Compile Include="SR.Designer.cs">
@@ -154,16 +153,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagrams\MeasurementTools.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DeleteAllMeasurementsToolLarge.png" />
-    <EmbeddedResource Include="Icons\DeleteAllMeasurementsToolMedium.png" />
-    <EmbeddedResource Include="Icons\DeleteAllMeasurementsToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DeleteMeasurementToolLarge.png" />
-    <EmbeddedResource Include="Icons\DeleteMeasurementToolMedium.png" />
-    <EmbeddedResource Include="Icons\DeleteMeasurementToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\PolygonalRoiToolLarge.png" />

@@ -273,33 +273,4 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 	}
-
-	[Cloneable]
-	public class StandardStatefulInteractiveGraphic<T> : StandardStatefulInteractiveGraphic, IStandardStatefulInteractiveGraphic where T : InteractiveGraphic, new()
-	{
-		public StandardStatefulInteractiveGraphic() : base(new T()) { }
-
-		public StandardStatefulInteractiveGraphic(T interactiveGraphic) : base(interactiveGraphic) { }
-
-		protected StandardStatefulInteractiveGraphic(StandardStatefulInteractiveGraphic<T> source, ICloningContext context)
-			: base(source, context)
-		{
-			context.CloneFields(source, this);
-		}
-
-		public new T InteractiveGraphic
-		{
-			get { return (T)base.InteractiveGraphic; }
-		}
-
-		InteractiveGraphic IStandardStatefulInteractiveGraphic.InteractiveGraphic
-		{
-			get { return base.InteractiveGraphic; }
-		}
-
-		protected override InteractiveGraphic FindInteractiveGraphic()
-		{
-			return CollectionUtils.SelectFirst(base.Graphics, delegate(IGraphic test) { return test is T; }) as T;
-		}
-	}
 }

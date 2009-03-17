@@ -448,7 +448,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			CompositeGraphic primitiveOwner = (CompositeGraphic)imageComposite.Graphics[1];
 			Graphic primitive = (Graphic)primitiveOwner.Graphics[0];
 
-			AnnotationGraphic annotation = (AnnotationGraphic)imageComposite.Graphics[2];
+			StandardAnnotationGraphic annotation = (StandardAnnotationGraphic)imageComposite.Graphics[2];
 
 			try
 			{
@@ -492,7 +492,7 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			composite.Graphics.Add(leaf);
 			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
 
-			AnnotationGraphic annotation = new AnnotationGraphic(new EllipseInteractiveGraphic());
+			StandardAnnotationGraphic annotation = new StandardAnnotationGraphic(new EllipseInteractiveGraphic());
 			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(composite);
 			((CompositeImageGraphic)imageTransform.OwnerGraphic).Graphics.Add(annotation);
 
