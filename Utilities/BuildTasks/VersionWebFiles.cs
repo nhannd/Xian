@@ -49,7 +49,7 @@ namespace ClearCanvas.Utilities.BuildTasks
 
             foreach (string line in lines)
             {
-                if (line.StartsWith(@"<html"))
+                if (line.StartsWith(@"<html") && line.EndsWith(@">"))
                 {
                     lines.Insert(lines.IndexOf(line) + 1, htmlVersionLine);
                     break;
