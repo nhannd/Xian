@@ -215,7 +215,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void UpdateArrowheadAngle()
 		{
-			_arrowhead.Angle = (int) Vector.SubtendedAngle(_shaft.Pt2, _shaft.Pt1, _shaft.Pt1 + new SizeF(1, 0));
+			this.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				// the arrowhead is invariant, but the angle part isn't! must be computed with source coordinates!
+				_arrowhead.Angle = (int)Vector.SubtendedAngle(_shaft.Pt2, _shaft.Pt1, _shaft.Pt1 + new SizeF(1, 0));
+			}
+			finally
+			{
+				this.ResetCoordinateSystem();
+			}
 			UpdateArrowheadVisibility();
 		}
 
