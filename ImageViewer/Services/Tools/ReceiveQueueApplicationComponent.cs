@@ -225,7 +225,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ReceiveQueueApplicationComponent()
+		internal ReceiveQueueApplicationComponent()
 		{
 		}
 

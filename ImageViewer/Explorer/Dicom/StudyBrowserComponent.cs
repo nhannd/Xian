@@ -31,11 +31,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel.Security;
 using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -47,6 +49,8 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using System.Collections.ObjectModel;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.Diagnostics;
+using System.Threading;
+using System.Security.Policy;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -340,6 +344,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void Search()
 		{
+			if (!PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.Search))
+				throw new PolicyException(SR.MessageSearchStudyPermissionDenied);
+
 			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalDatastore)
 				_setStudiesArrived.Clear();
 

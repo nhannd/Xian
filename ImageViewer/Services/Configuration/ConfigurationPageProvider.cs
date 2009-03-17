@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
+using System.Threading;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {
@@ -17,8 +19,12 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomServerConfiguration"));
-			listPages.Add(new ConfigurationPage<DiskspaceManagerConfigurationComponent>("DiskspaceManagerConfiguration"));
+			if (PermissionsHelper.IsInRole(ImageViewer.Services.AuthorityTokens.Admin.System.DicomServer))
+				listPages.Add(new ConfigurationPage<DicomServerConfigurationComponent>("DicomServerConfiguration"));
+
+			if (PermissionsHelper.IsInRole(ImageViewer.Services.AuthorityTokens.Admin.System.DiskspaceManagement))
+				listPages.Add(new ConfigurationPage<DiskspaceManagerConfigurationComponent>("DiskspaceManagerConfiguration"));
+
 			listPages.Add(new ConfigurationPage<DefaultServersConfigurationComponent>("DefaultServerConfiguration"));
 
 			return listPages.AsReadOnly();

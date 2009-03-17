@@ -2,6 +2,8 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.DicomServer
 {
+	//TODO: add IDicomRetrieveService
+	//TODO: move to Dicom service model?
 	[ServiceContract(ConfigurationName = "IDicomSendService")]
 	public interface IDicomSendService
 	{

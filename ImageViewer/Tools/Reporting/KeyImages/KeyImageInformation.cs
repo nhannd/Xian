@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		internal readonly BindingList<IClipboardItem> ClipboardItems;
 
-		public KeyImageInformation()
+		internal KeyImageInformation()
 		{
 			_description = "";
 			_seriesDescription = "KEY IMAGES";

@@ -36,8 +36,10 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Common.Utilities;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -61,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 
-		public LocalDataStoreReindexApplicationComponent()
+		internal LocalDataStoreReindexApplicationComponent()
 		{
 			_reindexProgress = new ReindexProgressItem();
 			Reset();
@@ -104,11 +106,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			this.TotalToProcess = _reindexProgress.TotalFilesToImport;
 			this.AvailableCount = _reindexProgress.NumberOfFilesCommittedToDataStore;
 			this.FailedSteps = _reindexProgress.TotalDataStoreCommitFailures;
-			this.CancelEnabled = (_reindexProgress.AllowedCancellationOperations & CancellationFlags.Cancel) == CancellationFlags.Cancel;
-			this.ReindexEnabled = 
-				(_reindexProgress.AllowedCancellationOperations & CancellationFlags.Clear) == CancellationFlags.Clear &&
-					(_reindexProgress.IsComplete() || 
-						(_reindexProgress.Cancelled && _reindexProgress.TotalImportsProcessed == _reindexProgress.TotalDataStoreCommitsProcessed));
+				this.CancelEnabled = (_reindexProgress.AllowedCancellationOperations & CancellationFlags.Cancel) == CancellationFlags.Cancel;
+				this.ReindexEnabled =
+					(_reindexProgress.AllowedCancellationOperations & CancellationFlags.Clear) == CancellationFlags.Clear &&
+						(_reindexProgress.IsComplete() ||
+							(_reindexProgress.Cancelled && _reindexProgress.TotalImportsProcessed == _reindexProgress.TotalDataStoreCommitsProcessed));
 		}
 
 		public override void Start()

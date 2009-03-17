@@ -219,6 +219,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Permission to view a study is denied..
+        /// </summary>
+        internal static string MessageOpenStudyPermissionDenied {
+            get {
+                return ResourceManager.GetString("MessageOpenStudyPermissionDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Permission to search studies is denied..
+        /// </summary>
+        internal static string MessageSearchStudyPermissionDenied {
+            get {
+                return ResourceManager.GetString("MessageSearchStudyPermissionDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DICOM.
         /// </summary>
         internal static string TitleDicomExplorer {

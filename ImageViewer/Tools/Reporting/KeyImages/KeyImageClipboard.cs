@@ -1,10 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.ServiceModel.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Clipboard;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.Threading;
+using System.Security.Policy;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
@@ -117,6 +121,9 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			Platform.CheckForNullReference(image, "image");
 			Platform.CheckForNullReference(image.ImageViewer, "image.ImageViewer");
 
+			if (!PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.Modify))
+				throw new PolicyException(SR.ExceptionCreateKeyImagePermissionDenied);
+
 			KeyImageInformation info = GetKeyImageInformation(image.ImageViewer);
 			if (info == null)
 				throw new ArgumentException("The specified image's viewer is not valid.", "image");
@@ -149,6 +156,9 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			if (shelf == null)
 				return null;
 
+			if (!PermissionsHelper.IsInRole(ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify))
+				throw new PolicyException(SR.ExceptionViewKeyImagePermissionDenied);
+
 			KeyImageClipboardComponent component = shelf.Component as KeyImageClipboardComponent;
 			if (component != null)
 				return component.KeyImageInformation;
@@ -158,6 +168,9 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		public static void Show(IDesktopWindow desktopWindow)
 		{
+			if (!PermissionsHelper.IsInRole(ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify))
+				throw new PolicyException(SR.ExceptionViewKeyImagePermissionDenied);
+
 			IShelf shelf = GetClipboardShelf(desktopWindow);
 			if (shelf != null)
 			{

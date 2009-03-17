@@ -30,11 +30,13 @@
 #endregion
 
 using System;
+using System.Security.Policy;
+using System.ServiceModel.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Services.Configuration;
 using ClearCanvas.ImageViewer.Services.Configuration.ServerTree;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -65,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				if (_splitComponentContainer == null)
 					CreateComponentContainer();
 
-				return _splitComponentContainer as IApplicationComponent;
+				return _splitComponentContainer;
 			}
 		}
 
@@ -86,7 +88,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_studyBrowser.SelectServerGroup(_serverTreeComponent.SelectedServers);
 
-			_studyBrowser.Search();
+			try
+			{
+				_studyBrowser.Search();
+			}
+			catch (PolicyException)
+			{
+				//TODO: ignore this on startup or show message?
+			}
+			catch(Exception e)
+			{
+				ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
+			}
 
 			SplitPane leftPane = new SplitPane(SR.TitleServerTreePane, _serverTreeComponent, 0.25f);
 			SplitPane rightPane = new SplitPane(SR.TitleStudyBrowserPane, _studyBrowser, 0.75f);

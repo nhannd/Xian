@@ -262,7 +262,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				base.ShowValidation(false);
 			}
 
-			BlockingOperation.Run(_studyBrowserComponent.Search);
+			try
+			{
+				BlockingOperation.Run(_studyBrowserComponent.Search);
+			}
+			catch(Exception e)
+			{
+				ExceptionHandler.Report(e, this.Host.DesktopWindow);
+			}
 		}
 
 		public void SearchToday()

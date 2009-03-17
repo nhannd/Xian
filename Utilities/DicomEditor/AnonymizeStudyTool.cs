@@ -51,6 +51,8 @@ namespace ClearCanvas.Utilities.DicomEditor
 	[Tooltip("activate", "TooltipAnonymizeStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png")]
 
+	[ActionPermission("activate", ImageViewer.Common.AuthorityTokens.Workflow.Study.Create)]
+
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class AnonymizeStudyTool : StudyBrowserTool
 	{

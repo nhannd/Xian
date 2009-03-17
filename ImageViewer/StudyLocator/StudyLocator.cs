@@ -80,6 +80,10 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 			}
 		}
 
+		public StudyLocator()
+		{
+		}
+
 		#region IStudyRootQuery Members
 
 		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)

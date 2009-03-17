@@ -184,6 +184,39 @@
   <ItemGroup>
     <StreamingClientFiles Include="$(TrunkDirectory)\ImageViewer\StudyLoaders\Streaming\bin\$(Configuration)\ClearCanvas.ImageViewer.StudyLoaders.Streaming.dll" />
   </ItemGroup>
+
+  <ItemGroup>
+    <MprPluginFiles Include="$(TrunkDirectory)\ImageViewer\Volume\Mpr\bin\$(Configuration)\ClearCanvas.ImageViewer.Volume.Mpr.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtksys.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkCommon.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkFiltering.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkImaging.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkCommonDotNet.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkFilteringDotNet.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkImagingDotNet.dll" />
+    <!-- Slab dependencies. Note: I used DependencyWalker to chase down implicitly linked DLLs, 
+     unfortunately the VolumeRendering pulls in a bunch of stuff...
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkftgl.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkfreetype.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkverdict.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkGraphics.dll" />
+   
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkDicomParser.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkNetCDF.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkMetaIO.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkPNG.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkZlib.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkJpeg.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkTiff.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkExpat.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkIO.dll" />
+
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkRendering.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkRenderingDotNet.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkVolumeRendering.dll" />
+    <MprPluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkVolumeRenderingDotNet.dll" />
+-->
+  </ItemGroup>
   
   <ItemGroup Condition="$(DesktopBuild)">
     <!-- Core Viewer -->
@@ -219,37 +252,6 @@
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Reporting\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Reporting.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Reporting.View.WinForms.dll" />
 
-    <!-- Volume -->
-    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Volume\Mpr\bin\$(Configuration)\ClearCanvas.ImageViewer.Volume.Mpr.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtksys.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkCommon.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkFiltering.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkImaging.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkCommonDotNet.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkFilteringDotNet.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkImagingDotNet.dll" />
-<!-- Slab dependencies. Note: I used DependencyWalker to chase down implicitly linked DLLs, 
-     unfortunately the VolumeRendering pulls in a bunch of stuff...
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkftgl.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkfreetype.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkverdict.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkGraphics.dll" />
-   
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkDicomParser.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkNetCDF.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkMetaIO.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkPNG.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkZlib.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkJpeg.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkTiff.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkExpat.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkIO.dll" />
-
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkRendering.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkRenderingDotNet.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkVolumeRendering.dll" />
-    <PluginFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Vtk\vtkVolumeRenderingDotNet.dll" />
--->
   </ItemGroup>
 
   <ItemGroup Condition="$(ShredHostBuild)">
@@ -323,6 +325,9 @@
   <Target Name="Copy Streaming Client Files">
     <Copy SourceFiles="@(StreamingClientFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
+  <Target Name="Copy Mpr Files">
+    <Copy SourceFiles="@(MprPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+  </Target>
 
   <Target Name="Copy Optional Viewer Plugins" Condition="$(DesktopBuild)">
 
@@ -353,9 +358,11 @@
     <RegexIsMatch Pattern="ExcludeStreaming" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeStreaming" />
     </RegexIsMatch>
-
     <RegexIsMatch Pattern="ExcludeEnterprise" Input="$(OptionsFlags)" >
       <Output TaskParameter="IsMatch" PropertyName="ExcludeEnterprise" />
+    </RegexIsMatch>
+    <RegexIsMatch Pattern="ExcludeMpr" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeMpr" />
     </RegexIsMatch>
 
     <CallTarget Condition="!$(ExcludeStudyBrowser)" Targets="Copy Study Browser" />
@@ -366,6 +373,7 @@
     <CallTarget Condition="!$(ExcludeHelpUpdate)" Targets="Copy Help Update" />
     <CallTarget Condition="!$(ExcludeDicomRemote)" Targets="Copy Dicom Remote Client Files" />
     <CallTarget Condition="!$(ExcludeStreaming)" Targets="Copy Streaming Client Files" />
+    <CallTarget Condition="!$(ExcludeMpr)" Targets="Copy Mpr Files" />
     <CallTarget Condition="!$(ExcludeDatabase)" Targets="Copy Local DataStore Client Files" />
     <CallTarget Condition="!$(ExcludeEnterprise)" Targets="Copy Enterprise Client Files" />
 
@@ -375,11 +383,13 @@
 
     <!-- Copy plugins -->
     <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+    <Copy SourceFiles="@(ImageViewerServicesFiles)" DestinationFolder="$(PluginsDirectory)" />
+
     <Copy SourceFiles="@(CodecFiles)" DestinationFolder="$(PluginsDirectory)" />
-	
-	<!-- The Jpeg assembly must go into the common directory so its not treated as a plugin -->
-	<Copy SourceFiles="@(CodecCommonFiles)" DestinationFolder="$(CommonDirectory)" />
-	
+
+    <!-- The Jpeg assembly must go into the common directory so its not treated as a plugin -->
+    <Copy SourceFiles="@(CodecCommonFiles)" DestinationFolder="$(CommonDirectory)" />
+
   </Target>
 
   <Target Name="Copy Project Files" DependsOnTargets="Copy Plugin Files">
@@ -389,7 +399,6 @@
     </RegexIsMatch>
 
     <Copy SourceFiles="@(DicomToolkitFiles)" DestinationFolder="$(CommonDirectory)" />
-    <Copy SourceFiles="@(ImageViewerServicesFiles)" DestinationFolder="$(CommonDirectory)" />
 
     <!-- Always copy database for shred host -->
     <CallTarget Condition="$(ShredHostBuild) Or !$(ExcludeDatabase)" Targets="Copy Database Files" />

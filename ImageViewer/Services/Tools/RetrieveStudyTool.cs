@@ -48,6 +48,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipRetrieveStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png", "Icons.RetrieveStudyToolSmall.png")]
+
+	[ActionPermission("activate", ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify)]
+	
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class RetrieveStudyTool : StudyBrowserTool
 	{

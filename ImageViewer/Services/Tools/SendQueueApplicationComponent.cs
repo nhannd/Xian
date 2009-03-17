@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public SendQueueApplicationComponent()
+		internal SendQueueApplicationComponent()
 		{
 		}
 

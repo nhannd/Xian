@@ -174,7 +174,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private static ImageViewerComponent OpenFilesInternal(string[] localFileList)
 		{
-			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+			//don't find priors for files loaded off the local disk.
+			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended, null);
 
 			bool cancelled = false;
 			bool anyFailures = false;

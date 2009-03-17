@@ -44,7 +44,6 @@
     </Compile>
     <Compile Include="StudyLocator.cs" />
     <Compile Include="LocalDataStoreQueryClient.cs" />
-    <Compile Include="StudyLocatorServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread
 			// that the service is hosted on (the main UI thread) will cause a deadlock.
-			if (SynchronizationContext.Current == ViewerAutomationHostTool.HostSynchronizationContext)
+			if (SynchronizationContext.Current == ViewerAutomationServiceHostTool.HostSynchronizationContext)
 			{
 				return new ViewerAutomation().GetActiveViewers();
 			}
@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread
 			// that the service is hosted on (the main UI thread) will cause a deadlock.
-			if (SynchronizationContext.Current == ViewerAutomationHostTool.HostSynchronizationContext)
+			if (SynchronizationContext.Current == ViewerAutomationServiceHostTool.HostSynchronizationContext)
 			{
 				return new ViewerAutomation().GetViewerInfo(request);
 			}
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread
 			// that the service is hosted on (the main UI thread) will cause a deadlock.
-			if (SynchronizationContext.Current == ViewerAutomationHostTool.HostSynchronizationContext)
+			if (SynchronizationContext.Current == ViewerAutomationServiceHostTool.HostSynchronizationContext)
 			{
 				return new ViewerAutomation().OpenStudies(request);
 			}
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread
 			// that the service is hosted on (the main UI thread) will cause a deadlock.
-			if (SynchronizationContext.Current == ViewerAutomationHostTool.HostSynchronizationContext)
+			if (SynchronizationContext.Current == ViewerAutomationServiceHostTool.HostSynchronizationContext)
 			{
 				new ViewerAutomation().ActivateViewer(request);
 			}
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		{
 			// Done for reasons of speed, as well as the fact that a call to the service from the same thread
 			// that the service is hosted on (the main UI thread) will cause a deadlock.
-			if (SynchronizationContext.Current == ViewerAutomationHostTool.HostSynchronizationContext)
+			if (SynchronizationContext.Current == ViewerAutomationServiceHostTool.HostSynchronizationContext)
 			{
 				new ViewerAutomation().CloseViewer(request);
 			}

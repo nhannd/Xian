@@ -6,7 +6,8 @@
 
   <PropertyGroup>
     <TrunkDirectory>$(MSBuildProjectDirectory)\..\..\</TrunkDirectory>
-    <DefaultOptions>ExcludeEFilmAutomation+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeServiceConfiguration+ExcludeHelpUpdate+ExcludeDicomRemote+ExcludeDatabase</DefaultOptions>
+    <DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeServiceConfiguration+ExcludeHelpUpdate+ExcludeDicomRemote+ExcludeDatabase</DefaultOptions>
+    <!--<DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeMpr</DefaultOptions>-->
   </PropertyGroup>
     
   <PropertyGroup Condition ="'$(ProjectName)' == 'ClearCanvas.Oto.Executable'">

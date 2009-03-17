@@ -38,7 +38,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthorityTokens.cs" />
     <Compile Include="DicomExplorerConfigurationApplicationComponent.cs" />
     <Compile Include="DicomExplorerConfigurationSettings.cs" />
     <Compile Include="DicomExplorerConfigurationSettings.Designer.cs">

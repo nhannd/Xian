@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.InputManagement;
 using System;
 

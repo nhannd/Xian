@@ -1,6 +1,7 @@
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.ServiceModel.Security;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -14,18 +15,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.StudyLocator
 	/// </summary>
 	//[ButtonAction("test", "global-menus/Test/Test Study Locator Client", "TestClient")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class StudyLocatorHostTool : DesktopHostTool
+	[DesktopServiceHostPermission(new string[] { Common.AuthorityTokens.Workflow.Study.Search })]
+	public class StudyLocatorServiceHostTool : DesktopServiceHostTool
 	{
-		internal static SynchronizationContext HostSynchronizationContext;
-
-		public StudyLocatorHostTool()
+		public StudyLocatorServiceHostTool()
 		{
 		}
 
 		protected override ServiceHost CreateServiceHost()
 		{
-			HostSynchronizationContext = SynchronizationContext.Current;
-
 			ServiceHost host = new ServiceHost(typeof(ClearCanvas.ImageViewer.StudyLocator.StudyLocator));
 			foreach (ServiceEndpoint endpoint in host.Description.Endpoints)
 				endpoint.Binding.Namespace = QueryNamespace.Value;
@@ -44,7 +42,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.StudyLocator
 
 				base.Context.DesktopWindow.ShowMessageBox("Success!", MessageBoxActions.Ok);
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				base.Context.DesktopWindow.ShowMessageBox(e.Message, MessageBoxActions.Ok);
 			}

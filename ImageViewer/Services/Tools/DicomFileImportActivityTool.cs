@@ -30,11 +30,7 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -45,6 +41,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	//[IconSet("activate", IconScheme.Colour, "", "Icons.DicomFileImportActivityMedium.png", "Icons.DicomFileImportActivityLarge.png")]
 
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
+	[ActionPermission("activate", Common.AuthorityTokens.Workflow.Study.Modify)]
+	[ActionPermission("activate", Services.AuthorityTokens.Management.DataStore)]
+
 	public class DicomFileImportActivityTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
 	{
 		public DicomFileImportActivityTool()

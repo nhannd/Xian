@@ -1,6 +1,7 @@
 using System;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.ServiceModel.Security;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -20,18 +21,15 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 	//[ButtonAction("test", "global-menus/Test/Test Automation Client", "TestClient")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class ViewerAutomationHostTool : DesktopHostTool
+	[DesktopServiceHostPermission(new string[] { Common.AuthorityTokens.Workflow.Study.View })]
+	public class ViewerAutomationServiceHostTool : DesktopServiceHostTool
 	{
-		internal static SynchronizationContext HostSynchronizationContext;
-
-		public ViewerAutomationHostTool()
+		public ViewerAutomationServiceHostTool()
 		{
 		}
 
 		protected override ServiceHost CreateServiceHost()
 		{
-			HostSynchronizationContext = SynchronizationContext.Current;
-
 			ServiceHost host = new ServiceHost(typeof(ViewerAutomation));
 			foreach (ServiceEndpoint endpoint in host.Description.Endpoints)
 				endpoint.Binding.Namespace = AutomationNamespace.Value;
@@ -45,7 +43,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 			//Have to test client on another thread, otherwise there is a deadlock b/c the service is hosted on the main thread.
 			ThreadPool.QueueUserWorkItem(delegate
-			                                {
+											{
 												try
 												{
 													using (ViewerAutomationServiceClient client = new ViewerAutomationServiceClient())
@@ -54,9 +52,9 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 													}
 
 													context.Post(delegate
-											             			{
-											             				base.Context.DesktopWindow.ShowMessageBox("Success!", MessageBoxActions.Ok);
-											             			}, null);
+																	{
+																		base.Context.DesktopWindow.ShowMessageBox("Success!", MessageBoxActions.Ok);
+																	}, null);
 												}
 												catch (Exception e)
 												{

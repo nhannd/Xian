@@ -44,6 +44,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 	[IconSet("export", IconScheme.Colour, "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png")]
 	[EnabledStateObserver("export", "Enabled", "EnabledChanged")]
 
+	[ActionPermission("export", Common.AuthorityTokens.Workflow.Study.Export)]
 	[ExtensionOf(typeof(ClipboardToolExtensionPoint))]
 	public class ExportToVideoTool : ClipboardTool
 	{

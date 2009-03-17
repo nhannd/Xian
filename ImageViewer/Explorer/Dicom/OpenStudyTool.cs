@@ -30,11 +30,15 @@
 #endregion
 
 using System;
+using System.Security.Policy;
+using System.ServiceModel.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -43,6 +47,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipOpenStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png")]
+
+	[ActionPermission("activate", Common.AuthorityTokens.Workflow.Study.View)]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class OpenStudyTool : StudyBrowserTool
 	{
@@ -62,6 +68,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			try
 			{
+				if (!PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.View))
+					return;
+
 				if (this.Context.SelectedServerGroup.IsLocalDatastore)
 					OpenStudyHelper.OpenStudies(new OpenStudyArgs(GetStudyInstanceUids(), null, "DICOM_LOCAL", ViewerLaunchSettings.WindowBehaviour));
 				else

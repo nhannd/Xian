@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[Tooltip("openStudies", "TooltipOpenStudies")]
 	[IconSet("openStudies", IconScheme.Colour, "Icons.OpenStudiesToolSmall.png", "Icons.OpenStudiesToolSmall.png", "Icons.OpenStudiesToolSmall.png")]
 	[EnabledStateObserver("openStudies", "OpenStudiesEnabled", "OpenStudiesEnabledChanged")]
+	[ActionPermission("openStudies", ImageViewer.Common.AuthorityTokens.Workflow.Study.View)]
 
 	[ExtensionOf(typeof(ReceiveQueueApplicationComponentToolExtensionPoint))]
 	public class ReceiveQueueTools : Tool<IReceiveQueueApplicationComponentToolContext>

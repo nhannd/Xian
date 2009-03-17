@@ -12,6 +12,7 @@ using System.ServiceModel;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
@@ -205,31 +206,38 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			BuildPublishingInfo();
 
 			bool remotePublishFailed = false;
-			foreach (KeyValuePair<Server, List<DicomFile>> pair in _remotePublishingInfo)
+			if (PermissionsHelper.IsInRole(ImageViewer.Common.AuthorityTokens.Workflow.Study.Export))
 			{
-				try
+				foreach (KeyValuePair<Server, List<DicomFile>> pair in _remotePublishingInfo)
 				{
-					List<AEInformation> destinationServers = new List<AEInformation>();
-					AEInformation destination = new AEInformation();
-					destination.AETitle = pair.Key.AETitle;
-					destination.HostName = pair.Key.Host;
-					destination.Port = pair.Key.Port;
-					destinationServers.Add(destination);
+					try
+					{
+						List<AEInformation> destinationServers = new List<AEInformation>();
+						AEInformation destination = new AEInformation();
+						destination.AETitle = pair.Key.AETitle;
+						destination.HostName = pair.Key.Host;
+						destination.Port = pair.Key.Port;
+						destinationServers.Add(destination);
 
-					DicomFilePublisher.PublishRemote(pair.Value, destination, true);
+						DicomFilePublisher.PublishRemote(pair.Value, destination, true);
+					}
+					catch (EndpointNotFoundException)
+					{
+						remotePublishFailed = true;
+						Platform.Log(LogLevel.Error,
+						             "Unable to publish key images to default servers; the local dicom server does not appear to be running.");
+					}
+					catch (Exception e)
+					{
+						remotePublishFailed = true;
+						Platform.Log(LogLevel.Error, e,
+						             "An error occurred while attempting to publish key images to server {0}.", pair.Key.AETitle);
+					}
 				}
-				catch (EndpointNotFoundException)
-				{
-					remotePublishFailed = true;
-					Platform.Log(LogLevel.Error,
-					             "Unable to publish key images to default servers; the local dicom server does not appear to be running.");
-				}
-				catch (Exception e)
-				{
-					remotePublishFailed = true;
-					Platform.Log(LogLevel.Error, e,
-					             "An error occurred while attempting to publish key images to server {0}.", pair.Key.AETitle);
-				}
+			}
+			else
+			{
+				Platform.Log(LogLevel.Info, "Skipping remote key image publishing step; user does not have Export permissions.");
 			}
 
 			bool localPublishFailed = true;

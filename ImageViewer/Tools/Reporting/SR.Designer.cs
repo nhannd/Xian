@@ -61,6 +61,24 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Permission to create key images (Study Append) is denied..
+        /// </summary>
+        internal static string ExceptionCreateKeyImagePermissionDenied {
+            get {
+                return ResourceManager.GetString("ExceptionCreateKeyImagePermissionDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Permission to view key images (Study View) is denied..
+        /// </summary>
+        internal static string ExceptionViewKeyImagePermissionDenied {
+            get {
+                return ResourceManager.GetString("ExceptionViewKeyImagePermissionDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Key Images (current).
         /// </summary>
         internal static string LabelKeyImageCurrentDisplaySet {

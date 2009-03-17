@@ -108,7 +108,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Compile Include="DesktopHostTool.cs" />
+    <Compile Include="DesktopServiceHostTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -118,10 +118,12 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="Automation\ViewerAutomation.cs" />
-    <Compile Include="Automation\ViewerAutomationHostTool.cs" />
+    <Compile Include="Automation\ViewerAutomationServiceHostTool.cs" />
     <Compile Include="Automation\ViewerAutomationTool.cs" />
     <Compile Include="Automation\ViewerAutomationServiceProvider.cs" />
-    <Compile Include="StudyLocator\StudyLocatorHostTool.cs" />
+    <Compile Include="DesktopServiceHostPermissionAttribute.cs" />
+    <Compile Include="StudyLocator\StudyLocatorServiceHostTool.cs" />
+    <Compile Include="StudyLocator\StudyLocatorServiceProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

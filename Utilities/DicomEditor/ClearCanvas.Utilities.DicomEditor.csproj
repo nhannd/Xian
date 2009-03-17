@@ -42,7 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AuthorityTokens.cs" />
     <Compile Include="DicomEditorTag.cs" />
     <Compile Include="DisplayedDumpChangedEventArgs.cs" />
     <Compile Include="ShowDicomEditorTool.cs" />

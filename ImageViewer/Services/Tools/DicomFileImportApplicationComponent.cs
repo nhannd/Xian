@@ -32,7 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private ILocalDataStoreEventBroker _localDataStoreEventBroker;
 
-		public DicomFileImportApplicationComponent()
+		internal DicomFileImportApplicationComponent()
 		{
 		}
 

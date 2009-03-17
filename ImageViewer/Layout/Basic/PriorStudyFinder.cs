@@ -89,15 +89,13 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					break;
 
 				//TODO: add option for trimming last word and/or using wildcards?
-				StudyRootQueryServiceClient studyLocator = new StudyRootQueryServiceClient();
-				studyLocator.Open();
-
-				StudyRootQueryBridge bridge = new StudyRootQueryBridge(studyLocator);
-
-				IList<StudyRootStudyIdentifier> studies = bridge.QueryByPatientId(patient.PatientId);
-				foreach (StudyRootStudyIdentifier study in studies)
+				using (StudyRootQueryBridge bridge = new StudyRootQueryBridge(Platform.GetService<IStudyRootQuery>()))
 				{
-					results.Add(ConvertToStudyItem(study));
+					IList<StudyRootStudyIdentifier> studies = bridge.QueryByPatientId(patient.PatientId);
+					foreach (StudyRootStudyIdentifier study in studies)
+					{
+						results.Add(ConvertToStudyItem(study));
+					}
 				}
 			}
 

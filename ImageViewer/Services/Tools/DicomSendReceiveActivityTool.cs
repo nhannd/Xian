@@ -30,19 +30,19 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuDicomSendReceiveActivity", "Activate")]
 	//[IconSet("activate", IconScheme.Colour, "", "Icons.DicomSendReceiveActivityMedium.png", "Icons.DicomSendReceiveActivityLarge.png")]
+	[ActionPermission("activate", ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify)]
+	[ActionPermission("activate", ImageViewer.Common.AuthorityTokens.Workflow.Study.Export)]
+	[ActionPermission("activate", Services.AuthorityTokens.Management.DicomServer)]
 
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
 	public class DicomSendReceiveActivityTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>

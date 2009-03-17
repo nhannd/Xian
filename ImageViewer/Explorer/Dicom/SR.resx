@@ -173,6 +173,12 @@ Are you sure you want to continue?</value>
 - , First
 - Last,</value>
   </data>
+  <data name="MessageOpenStudyPermissionDenied" xml:space="preserve">
+    <value>Permission to view a study is denied.</value>
+  </data>
+  <data name="MessageSearchStudyPermissionDenied" xml:space="preserve">
+    <value>Permission to search studies is denied.</value>
+  </data>
   <data name="TitleDicomExplorer" xml:space="preserve">
     <value>DICOM</value>
   </data>

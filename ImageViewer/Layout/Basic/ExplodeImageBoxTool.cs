@@ -5,6 +5,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
