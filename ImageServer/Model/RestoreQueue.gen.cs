@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageServer.Model
         {}
         public RestoreQueue(
              ClearCanvas.ImageServer.Enterprise.ServerEntityKey _archiveStudyStorageKey_
+            ,System.String _failureDescription_
             ,System.String _processorId_
             ,RestoreQueueStatusEnum _restoreQueueStatusEnum_
             ,System.DateTime _scheduledTime_
@@ -53,6 +54,7 @@ namespace ClearCanvas.ImageServer.Model
             ):base("RestoreQueue")
         {
             _archiveStudyStorageKey = _archiveStudyStorageKey_;
+            _failureDescription = _failureDescription_;
             _processorId = _processorId_;
             _restoreQueueStatusEnum = _restoreQueueStatusEnum_;
             _scheduledTime = _scheduledTime_;
@@ -62,6 +64,7 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _archiveStudyStorageKey;
+        private System.String _failureDescription;
         private System.String _processorId;
         private RestoreQueueStatusEnum _restoreQueueStatusEnum;
         private System.DateTime _scheduledTime;
@@ -74,6 +77,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _archiveStudyStorageKey; }
         set { _archiveStudyStorageKey = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="FailureDescription")]
+        public System.String FailureDescription
+        {
+        get { return _failureDescription; }
+        set { _failureDescription = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ProcessorId")]
         public System.String ProcessorId
@@ -129,6 +138,7 @@ namespace ClearCanvas.ImageServer.Model
             IRestoreQueueEntityBroker broker = update.GetBroker<IRestoreQueueEntityBroker>();
             RestoreQueueUpdateColumns updateColumns = new RestoreQueueUpdateColumns();
             updateColumns.ArchiveStudyStorageKey = entity.ArchiveStudyStorageKey;
+            updateColumns.FailureDescription = entity.FailureDescription;
             updateColumns.ProcessorId = entity.ProcessorId;
             updateColumns.RestoreQueueStatusEnum = entity.RestoreQueueStatusEnum;
             updateColumns.ScheduledTime = entity.ScheduledTime;

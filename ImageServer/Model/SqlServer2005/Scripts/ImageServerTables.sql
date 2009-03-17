@@ -1023,6 +1023,7 @@ CREATE TABLE [dbo].[RestoreQueue](
 	[ScheduledTime] [datetime] NOT NULL,
 	[RestoreQueueStatusEnum] [smallint] NOT NULL,
 	[ProcessorId] [varchar](128) NULL,
+	[FailureDescription] [nvarchar](512) NULL,
  CONSTRAINT [PK_RestoreQueue] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
@@ -1087,7 +1088,8 @@ CREATE TABLE [dbo].[ArchiveQueue](
 	[StudyStorageGUID] [uniqueidentifier] NOT NULL,
 	[ArchiveQueueStatusEnum] [smallint] NOT NULL,
 	[ProcessorId] [varchar](128) NULL,
- CONSTRAINT [PK_ArchiveQueue] PRIMARY KEY NONCLUSTERED 
+ 	[FailureDescription] [nvarchar](512) NULL,
+CONSTRAINT [PK_ArchiveQueue] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]

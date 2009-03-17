@@ -296,6 +296,27 @@ IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
+
+PRINT N'Altering [dbo].[ArchiveQueue], adding FailureDescription column'
+GO
+ALTER TABLE [dbo].[ArchiveQueue] ADD [FailureDescription] [nvarchar] (512) NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+
+PRINT N'Altering [dbo].[RestoreQueue], adding FailureDescription column'
+GO
+ALTER TABLE [dbo].[RestoreQueue] ADD [FailureDescription] [nvarchar] (512) NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+
 PRINT N'Creating [dbo].[CannedText]'
 GO
 CREATE TABLE [dbo].[CannedText]

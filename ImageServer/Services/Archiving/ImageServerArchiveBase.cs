@@ -172,6 +172,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 				parms.ArchiveQueueStatusEnum = status;
 				parms.ScheduledTime = scheduledTime;
 				parms.StudyStorageKey = item.StudyStorageKey;
+				if (!String.IsNullOrEmpty(item.FailureDescription))
+					parms.FailureDescription = item.FailureDescription;
 
 				IUpdateArchiveQueue broker = updateContext.GetBroker<IUpdateArchiveQueue>();
 
@@ -213,7 +215,9 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 			parms.RestoreQueueStatusEnum = status;
 			parms.ScheduledTime = scheduledTime;
 			parms.StudyStorageKey = item.StudyStorageKey;
-
+			if (!String.IsNullOrEmpty(item.FailureDescription))
+				parms.FailureDescription = item.FailureDescription;
+				
 			IUpdateRestoreQueue broker = updateContext.GetBroker<IUpdateRestoreQueue>();
 
 			if (broker.Execute(parms))

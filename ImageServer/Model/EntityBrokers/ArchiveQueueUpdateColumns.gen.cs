@@ -45,6 +45,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["ArchiveQueueStatusEnum"] = new EntityUpdateColumn<ArchiveQueueStatusEnum>("ArchiveQueueStatusEnum", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="FailureDescription")]
+        public System.String FailureDescription
+        {
+            set { SubParameters["FailureDescription"] = new EntityUpdateColumn<System.String>("FailureDescription", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="PartitionArchiveGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey PartitionArchiveKey
         {

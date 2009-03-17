@@ -109,11 +109,13 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				if (!GetStudyStorageLocation(queueItem))
 				{
 					Platform.Log(LogLevel.Error,
-					             "Unable to find reading study storage location for archival queue request {0}.  Delaying request.",
+					             "Unable to find readable study storage location for archival queue request {0}.  Delaying request.",
 					             queueItem.Key);
+					queueItem.FailureDescription = "Unable to find readable study storage location for archival queue request."; 
 					_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Pending, Platform.Time.AddMinutes(2));
 					return;
 				}
+
 				Platform.Log(LogLevel.Info, "Starting archival of study {0} on partition {1} to archive {2}", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description,
 					_hsmArchive.PartitionArchive.Description);
 
@@ -121,6 +123,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				if (!_storageLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
 				{
 					Platform.Log(LogLevel.Info,"Study {0} on partition {1} is currently locked, delaying archival.", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description);
+					queueItem.FailureDescription = "Study is currently locked, delaying archival."; 
 					_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Pending, Platform.Time.AddMinutes(2));
 					return;
 				}
@@ -135,6 +138,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					if (!parms.Successful || !retVal)
 					{
 						Platform.Log(LogLevel.Info, "Study {0} on partition {1} is failed to lock, delaying archival.", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description);
+						queueItem.FailureDescription = "Study failed to lock, delaying archival.";
 						_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Pending, Platform.Time.AddMinutes(2));
 						return;						
 					}
@@ -199,10 +203,10 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
                     if (!commandProcessor.Execute())
                     {
-                        Platform.Log(LogLevel.Error, "Unexpected failure archiving study");
+                        Platform.Log(LogLevel.Error, "Unexpected failure archiving study: {0}", commandProcessor.FailureReason);
 
+                    	queueItem.FailureDescription = commandProcessor.FailureReason;
                         _hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
-
                     }
                     else
                         Platform.Log(LogLevel.Info, "Successfully archived study {0} on {1}", _storageLocation.StudyInstanceUid,
@@ -217,7 +221,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				             _storageLocation.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
 
 			    Platform.Log(LogLevel.Error, e, msg);
-
+				queueItem.FailureDescription = msg;
 				_hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Failed, Platform.Time);
 			}
 			finally

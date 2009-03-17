@@ -108,6 +108,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 						DateTime scheduleTime = Platform.Time.AddMinutes(5);
 						Platform.Log(LogLevel.Error, "No writeable filesystem for restore, rescheduling restore request to {0}",
 						             scheduleTime);
+						queueItem.FailureDescription = "No writeable filesystem for restore, rescheduling request.";
 						_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Pending, scheduleTime);
 						return;
 					}
@@ -167,6 +168,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				Platform.Log(LogLevel.Error, e, "Unexpected exception processing restore request for {0} on archive {1}",
 					_studyStorage == null ? (_location == null ? string.Empty : _location.StudyInstanceUid) : _studyStorage.StudyInstanceUid, 
 					_hsmArchive.PartitionArchive.Description);
+				queueItem.FailureDescription = e.Message;
 				_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
 			}
 		}
@@ -178,6 +180,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			{
 				DateTime scheduleTime = Platform.Time.AddMinutes(5);
 				Platform.Log(LogLevel.Error, "No writeable filesystem for restore, rescheduling restore request to {0}", scheduleTime);
+				queueItem.FailureDescription = "No writeable filesystem for restore, rescheduling restore request";
 				_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Pending, scheduleTime);
 				return;
 			}
@@ -212,6 +215,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					{
 						Platform.Log(LogLevel.Error, "Unexpected error processing restore request for {0} on archive {1}",
 						             _studyStorage.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
+						queueItem.FailureDescription = processor.FailureReason;
 						_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
 					}
 					else
@@ -282,6 +286,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					{
 						Platform.Log(LogLevel.Error, "Unexpected error processing restore request for {0} on archive {1}",
 									 _location.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
+						queueItem.FailureDescription = processor.FailureReason;
 						_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
 					}
 					else
@@ -313,6 +318,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			{
 				Platform.Log(LogLevel.Error, e, "Unexpected exception processing restore request for {0} on archive {1}",
 							 _location.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
+				queueItem.FailureDescription = e.Message;
 				_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
 			}
 		}

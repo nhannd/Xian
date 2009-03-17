@@ -47,6 +47,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private string _patientName;
 		private ServerPartition _thePartition;
 		private RestoreQueue _theRestoreQueueItem;
+		private string _notes;
 		#endregion Private members
 
 		#region Public Properties
@@ -92,6 +93,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _thePartition; }
 			set { _thePartition = value; }
 		}
+		public String Notes
+		{
+			get { return _notes; }
+			set { _notes = value; }
+		}
 		#endregion Public Properties
 	}
 
@@ -103,7 +109,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		#endregion
 
 		#region Private Members
-		private RestoreQueueController _searchController = new RestoreQueueController();
+		private readonly RestoreQueueController _searchController = new RestoreQueueController();
 		private string _accessionNumber;
 		private string _patientId;
 		private string _patientName;
@@ -256,6 +262,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			RestoreQueueSummary summary = new RestoreQueueSummary();
 			summary.TheRestoreQueueItem = item;
 			summary.ThePartition = Partition;
+
+			if (item.FailureDescription == null)
+				summary.Notes = String.Empty;
+			else
+				summary.Notes = item.FailureDescription;
 
 			// Fetch the patient info:
 			StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();

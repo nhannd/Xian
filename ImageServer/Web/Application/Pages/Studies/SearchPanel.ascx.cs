@@ -205,12 +205,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             RestoreStudyButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Restore;
         }
 
-        void DeleteStudyConfirmDialog_StudyDeleted(object sender, DeleteStudyConfirmDialogStudyDeletedEventArgs e)
-        {
-            Refresh();
-        }
-
-        #endregion Private Methods
+    	#endregion Private Methods
 
         #region Public Methods
 
@@ -258,6 +253,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         
 		protected void RestoreStudyButton_Click(object sender, ImageClickEventArgs e)
 		{
+			Refresh();
+
 			IList<StudySummary> studies = StudyListGridView.SelectedStudies;
 
 			if (studies != null && studies.Count > 0)

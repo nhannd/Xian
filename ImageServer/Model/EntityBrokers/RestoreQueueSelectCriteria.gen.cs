@@ -53,6 +53,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ArchiveStudyStorageKey"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="FailureDescription")]
+        public ISearchCondition<System.String> FailureDescription
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("FailureDescription"))
+              {
+                 SubCriteria["FailureDescription"] = new SearchCondition<System.String>("FailureDescription");
+              }
+              return (ISearchCondition<System.String>)SubCriteria["FailureDescription"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ProcessorId")]
         public ISearchCondition<System.String> ProcessorId
         {

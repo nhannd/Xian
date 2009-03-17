@@ -740,7 +740,7 @@ CREATE PROCEDURE [dbo].[UpdateWorkQueue]
 	@FailureCount int,
 	@ExpirationTime datetime = null,
 	@ScheduledTime datetime = null,
-	@FailureDescription nvarchar(256) = null,
+	@FailureDescription nvarchar(512) = null,
 	@QueueStudyStateEnum smallint = null
 AS
 BEGIN
@@ -2451,7 +2451,8 @@ CREATE PROCEDURE [dbo].[UpdateArchiveQueue]
 	@ArchiveQueueGUID uniqueidentifier, 
 	@StudyStorageGUID uniqueidentifier,
 	@ScheduledTime datetime = null,
-	@ArchiveQueueStatusEnum smallint
+	@ArchiveQueueStatusEnum smallint,
+	@FailureDescription nvarchar(512) = null
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -2478,11 +2479,20 @@ BEGIN
 	END
 	ELSE 
 	BEGIN
-		UPDATE ArchiveQueue
-		SET ArchiveQueueStatusEnum = @ArchiveQueueStatusEnum, ScheduledTime = @ScheduledTime,
-			ProcessorID = Null
-		WHERE GUID = @ArchiveQueueGUID
-		
+		IF @FailureDescription is NULL
+		BEGIN
+			UPDATE ArchiveQueue
+			SET ArchiveQueueStatusEnum = @ArchiveQueueStatusEnum, ScheduledTime = @ScheduledTime,
+				ProcessorID = Null
+			WHERE GUID = @ArchiveQueueGUID
+		END
+		ELSE
+		BEGIN
+			UPDATE ArchiveQueue
+			SET ArchiveQueueStatusEnum = @ArchiveQueueStatusEnum, ScheduledTime = @ScheduledTime,
+				ProcessorID = Null, FailureDescription = @FailureDescription
+			WHERE GUID = @ArchiveQueueGUID
+		END
 		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 		WHERE GUID = @StudyStorageGUID AND Lock = 1
 	END
@@ -2697,7 +2707,8 @@ CREATE PROCEDURE [dbo].[UpdateRestoreQueue]
 	@RestoreQueueGUID uniqueidentifier, 
 	@StudyStorageGUID uniqueidentifier,
 	@ScheduledTime datetime = null,
-	@RestoreQueueStatusEnum smallint
+	@RestoreQueueStatusEnum smallint,
+	@FailureDescription nvarchar(512) = null
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -2724,11 +2735,21 @@ BEGIN
 	END
 	ELSE 
 	BEGIN
-		UPDATE RestoreQueue
-		SET RestoreQueueStatusEnum = @RestoreQueueStatusEnum, ScheduledTime = @ScheduledTime,
-			ProcessorID = Null
-		WHERE GUID = @RestoreQueueGUID
-		
+		IF @FailureDescription is NULL
+		BEGIN
+			UPDATE RestoreQueue
+			SET RestoreQueueStatusEnum = @RestoreQueueStatusEnum, ScheduledTime = @ScheduledTime,
+				ProcessorID = Null
+			WHERE GUID = @RestoreQueueGUID
+		END
+		ELSE
+		BEGIN
+			UPDATE RestoreQueue
+			SET RestoreQueueStatusEnum = @RestoreQueueStatusEnum, ScheduledTime = @ScheduledTime,
+				ProcessorID = Null, FailureDescription = @FailureDescription
+			WHERE GUID = @RestoreQueueGUID
+		END
+
 		UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
 		WHERE GUID = @StudyStorageGUID AND Lock = 1
 	END

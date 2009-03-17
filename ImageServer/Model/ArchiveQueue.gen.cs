@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageServer.Model
         {}
         public ArchiveQueue(
              ArchiveQueueStatusEnum _archiveQueueStatusEnum_
+            ,System.String _failureDescription_
             ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _partitionArchiveKey_
             ,System.String _processorId_
             ,System.DateTime _scheduledTime_
@@ -53,6 +54,7 @@ namespace ClearCanvas.ImageServer.Model
             ):base("ArchiveQueue")
         {
             _archiveQueueStatusEnum = _archiveQueueStatusEnum_;
+            _failureDescription = _failureDescription_;
             _partitionArchiveKey = _partitionArchiveKey_;
             _processorId = _processorId_;
             _scheduledTime = _scheduledTime_;
@@ -62,6 +64,7 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private ArchiveQueueStatusEnum _archiveQueueStatusEnum;
+        private System.String _failureDescription;
         private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _partitionArchiveKey;
         private System.String _processorId;
         private System.DateTime _scheduledTime;
@@ -74,6 +77,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _archiveQueueStatusEnum; }
         set { _archiveQueueStatusEnum = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="FailureDescription")]
+        public System.String FailureDescription
+        {
+        get { return _failureDescription; }
+        set { _failureDescription = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="PartitionArchiveGUID")]
         public ClearCanvas.ImageServer.Enterprise.ServerEntityKey PartitionArchiveKey
@@ -129,6 +138,7 @@ namespace ClearCanvas.ImageServer.Model
             IArchiveQueueEntityBroker broker = update.GetBroker<IArchiveQueueEntityBroker>();
             ArchiveQueueUpdateColumns updateColumns = new ArchiveQueueUpdateColumns();
             updateColumns.ArchiveQueueStatusEnum = entity.ArchiveQueueStatusEnum;
+            updateColumns.FailureDescription = entity.FailureDescription;
             updateColumns.PartitionArchiveKey = entity.PartitionArchiveKey;
             updateColumns.ProcessorId = entity.ProcessorId;
             updateColumns.ScheduledTime = entity.ScheduledTime;

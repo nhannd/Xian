@@ -46,6 +46,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private string _patientName;
 		private ServerPartition _thePartition;
 		private ArchiveQueue _theArchiveQueueItem;
+		private string _notes;
 		#endregion Private members
 
 		#region Public Properties
@@ -90,6 +91,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		{
 			get { return _thePartition; }
 			set { _thePartition = value; }
+		}
+		public String Notes
+		{
+			get { return _notes; }
+			set { _notes = value; }
 		}
 		#endregion Public Properties
 	}
@@ -255,6 +261,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			ArchiveQueueSummary summary = new ArchiveQueueSummary();
 			summary.TheArchiveQueueItem = item;
 			summary.ThePartition = Partition;
+
+			if (item.FailureDescription == null)
+				summary.Notes = String.Empty;
+			else 
+				summary.Notes = item.FailureDescription;
 
 			// Fetch the patient info:
 			StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();

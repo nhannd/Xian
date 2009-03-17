@@ -27,6 +27,8 @@
 						</asp:TemplateField>
 						<asp:BoundField DataField="StatusString" HeaderText="Status" HeaderStyle-HorizontalAlign="Center"
 							ItemStyle-HorizontalAlign="Center" />
+						<asp:BoundField DataField="Notes" HeaderText="Notes" HeaderStyle-HorizontalAlign="Left">
+						</asp:BoundField>
 					</Columns>
 					<EmptyDataTemplate>
                         <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No items were found using the provided criteria." />
