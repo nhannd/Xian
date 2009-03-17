@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Data;
@@ -37,9 +36,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(_context.CurrentStudyLocation, "_context.CurrentStudyLocation");
             Platform.CheckForNullReference(_context.File, "_context.File");
 
-            ImageSetDescriptor desc = ImageSetDescriptor.Parse(_context.File);
-            XmlDocument descXml = new XmlDocument();
-            descXml.AppendChild(descXml.ImportNode(XmlUtils.Serialize(desc), true));
+            XmlDocument descXml = XmlUtils.SerializeAsXmlDoc(_context.ImageSet);
 
             ReconcileStudyQueueDescription queueDesc = GetQueueEntryDescription();
 
@@ -69,6 +66,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 
                 ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
                 data.StoragePath = _context.StoragePath;
+                data.Details = new ImageSetDetails(_context.File.DataSet);
                 XmlDocument xmlQueueData = XmlUtils.SerializeAsXmlDoc(data);
 
                 item.QueueData = xmlQueueData;
@@ -81,6 +79,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             	// Need to re-use the path that's already assigned for this entry
                 ReconcileStudyWorkQueueData data = XmlUtils.Deserialize < ReconcileStudyWorkQueueData>(item.QueueData);
                 _context.StoragePath = data.StoragePath;
+
+                data.Details.InsertFile(_context.File);
+                
+                XmlDocument updatedQueueDataXml = XmlUtils.SerializeAsXmlDoc(data);
+                IStudyIntegrityQueueEntityBroker updateBroker = updateContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
+                StudyIntegrityQueueUpdateColumns columns = new StudyIntegrityQueueUpdateColumns();
+                columns.QueueData = updatedQueueDataXml;
+                updateBroker.Update(item.GetKey(), columns);
+
             }
         }
 

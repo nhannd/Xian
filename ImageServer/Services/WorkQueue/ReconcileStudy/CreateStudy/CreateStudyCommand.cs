@@ -54,7 +54,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
     {
         #region Private Members
         private ReconcileStudyProcessorContext _context;
-        private ServerCommandProcessor _processor;
         private readonly List<WorkQueueUid> _processedUidList = new List<WorkQueueUid>();
         private readonly List<WorkQueueUid> _failedUidList = new List<WorkQueueUid>();
         private readonly List<WorkQueueUid> _duplicateList = new List<WorkQueueUid>(); 
@@ -108,7 +107,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             _workingDir = Path.Combine(_tempDir, _context.WorkQueueItem.Key.ToString());
             
             PrintChangeList();
-            PrepareWorkingFolder();
+            //PrepareWorkingFolder();
             UpdateFilesystems();
             UpdateHistory();
             LogResult();
@@ -128,10 +127,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
         protected override void OnUndo()
         {
-            if (_processor != null)
-            {
-                _processor.Rollback();
-            }
         }
 
 
@@ -220,20 +215,28 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
         private void UpdateFilesystems()
         {
-            
-            FileProcessor.Process(_workingDir, "*.dcm",
-                                  delegate(string path)
-                                      {
-                                          // this should be the updated study instance
-                                          DicomFile file = new DicomFile(path);
-                                          file.Load(DicomReadOptions.StorePixelDataReferences);
-                      
-                                          InitializeStorage(file);
+            int counter = 0;
+            Platform.Log(LogLevel.Info, "Populating images into study folder.. {0} to go", _context.WorkQueueUidList.Count);
+            foreach (WorkQueueUid uid in _context.WorkQueueUidList)
+            {
+                // this should be the updated study instance
+                string path = GetUidPath(uid);
+                DicomFile file = new DicomFile(path);
+                file.Load(DicomReadOptions.StorePixelDataReferences);
+                foreach (BaseImageLevelUpdateCommand command in _imageLevelCommands)
+                {
+                    command.File = file;
+                    command.Execute();
+                }
 
-                                          SaveFile(file, DestStudyStorage);
+                InitializeStorage(file);
 
-                                      }, true);
-            
+                SaveFile(uid, file, DestStudyStorage);
+
+                counter++;
+                Platform.Log(LogLevel.Info, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, _context.WorkQueueUidList.Count);
+
+            }
         }
 
         private StudyStorageLocation GetStudyStorageLocation(DicomFile file)
@@ -331,13 +334,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             }
         }
 
-
-
-        private void SaveFile(DicomFile file, StudyStorageLocation destStudyStorage)
+        private void SaveFile(WorkQueueUid uid, DicomFile file, StudyStorageLocation destStudyStorage)
         {
-            WorkQueueUid uid = _fileToUidMap[file.Filename];
-            
-            _processor = new ServerCommandProcessor("Save images");
 
             string workingImagePath = file.Filename;
 
@@ -385,6 +383,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
 
                 processor.AddCommand(new SaveDicomFileCommand(destPath, file, false));
                 processor.AddCommand(new UpdateWorkQueueCommand(file, destStudyStorage, extension, false));
+                processor.AddCommand(new FileDeleteCommand(GetUidPath(uid), true));
+                processor.AddCommand(new DeleteUidCommand(uid));
                 processor.AddCommand(new ValidateCommand(destPath));
                 
                 if (!processor.Execute())
@@ -392,13 +392,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                     FailUid(uid, true);
                     throw new ApplicationException(String.Format("Unable to reconcile image {0} : {1}", file.Filename, processor.FailureReason));
                 }
-            }
-            
 
-            if (_fileToUidMap.ContainsKey(workingImagePath))
-            {
-                DeleteUid(uid);
-                File.Delete(GetUidPath(uid));
                 _processedUidList.Add(uid);
             }
         }
@@ -535,12 +529,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
         public void Dispose()
         {
             CleanupWorkingFolder();
-
-            if (_processor != null)
-            {
-                _processor.Dispose();
-                _processor = null;
-            }
         }
 
         #endregion

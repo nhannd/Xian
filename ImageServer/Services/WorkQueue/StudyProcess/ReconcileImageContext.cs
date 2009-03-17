@@ -1,5 +1,7 @@
 using System;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageServer.Common.Data;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
@@ -18,11 +20,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private StudyHistory _history;
         private StudyStorageLocation _destinationStudyLocation;
         private bool _isDuplicate;
+        private ImageSetDescriptor _imageSetDesc;
 
         private string _storagePath;
         #endregion
 
         #region Public Properties
+
+        public ImageSetDescriptor ImageSet
+        {
+            get
+            {
+                if (_imageSetDesc==null)
+                {
+                    if (_file!=null)
+                    {
+                        _imageSetDesc = new ImageSetDescriptor(_file.DataSet);
+                    }
+                }
+                return _imageSetDesc;
+            }
+        }
 
         /// <summary>
         /// The dicom file to be reconciled

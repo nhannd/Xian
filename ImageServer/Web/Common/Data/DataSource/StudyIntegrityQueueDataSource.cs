@@ -31,6 +31,8 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.ImageServer.Common.Data;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -54,8 +56,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		private StudyIntegrityQueue _studyIntegrityQueueItem;
 		private ServerPartition _partition;
 		private StudySummary _study;
+	    private string[] _conflictingModalities;
+	    private ReconcileStudyWorkQueueData _queueData;
 
-		#endregion Private members
+	    #endregion Private members
 
 		#region Public Properties
 
@@ -111,6 +115,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			set { _conflictingPatientId = value; }
 		}
 
+	    public string[] ConflictingModalities
+	    {
+            get { return _conflictingModalities; }
+            set { _conflictingModalities = value; }
+	    }
+
 		public DateTime ReceivedTime
 		{
 			get { return _receivedTime; }
@@ -121,6 +131,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			get { return _studyInstanceUID; }
 			set { _studyInstanceUID = value; }
 		}
+
+
+	    public ReconcileStudyWorkQueueData QueueData
+	    {
+            get
+            {
+                if (_queueData==null)
+                {
+                    _queueData = XmlUtils.Deserialize < ReconcileStudyWorkQueueData>(_studyIntegrityQueueItem.QueueData);
+                }
+                return _queueData;
+            }
+	    }
 
 		public bool CanReconcile
 		{
@@ -293,6 +316,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			summary.ConflictingPatientName = queueDescription.ConflictingPatientName;
 			summary.ConflictingAccessionNumber = queueDescription.ConflictingAccessionNumber;
 			summary.ReceivedTime = item.InsertTime;
+
+            ReconcileStudyWorkQueueData queueData =
+                XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
+
+		    List<string> modalities = new List<string>();
+		    List<SeriesInformation> seriesList = queueData.Details.StudyInfo.Series;
+            foreach (SeriesInformation series in seriesList)
+            {
+                if (!modalities.Contains(series.Modality))
+                    modalities.Add(series.Modality);
+            }
+		    summary.ConflictingModalities = modalities.ToArray();
 
 			return summary;
 		}

@@ -34,6 +34,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Common.Data;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -62,30 +65,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             details.ExistingPatient.IssuerOfPatientID = study.IssuerOfPatientId;
             details.ExistingPatient.BirthDate = study.PatientsBirthDate;
 
-            SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
-            SeriesSelectCriteria seriesCriteria = new SeriesSelectCriteria();
-            seriesCriteria.StudyKey.EqualTo(study.GetKey());
-            seriesCriteria.ServerPartitionKey.EqualTo(item.StudySummary.ThePartition.GetKey());
+            details.ExistingStudy = new ReconcileDetails.StudyInfo();
+            details.ExistingStudy.StudyDate = study.StudyDate;
+            details.ExistingStudy.Series = CollectionUtils.Map<Model.Series, ReconcileDetails.SeriesDetails>(
+                study.Series,
+                delegate(Model.Series theSeries)
+                    {
+                        ReconcileDetails.SeriesDetails seriesDetails = new ReconcileDetails.SeriesDetails();
+                        seriesDetails.Description = theSeries.SeriesDescription;
+                        seriesDetails.Modalitiy = theSeries.Modality;
+                        seriesDetails.NumberOfInstances = theSeries.NumberOfSeriesRelatedInstances;
+                        return seriesDetails;
+                    });
 
-            IList<Series> series = seriesAdaptor.Get(seriesCriteria);
-
-            List<ReconcileDetails.SeriesDetails> existingSeriesList = new List<ReconcileDetails.SeriesDetails>();
-            if (series != null)
-            {
-                foreach (Series seriesItem in series)
-                {
-                    ReconcileDetails.SeriesDetails seriesDetails = new ReconcileDetails.SeriesDetails();
-                    seriesDetails.Description = seriesItem.SeriesDescription;
-                    seriesDetails.NumberOfInstances = seriesItem.NumberOfSeriesRelatedInstances;
-
-                    existingSeriesList.Add(seriesDetails);
-                }
-            }
-
-            details.ExistingPatient.Series = existingSeriesList.ToArray();
-        
 
             ReconcileStudyQueueDescription description = ParseDescription(item.TheStudyIntegrityQueueItem.Description);
+            ReconcileStudyWorkQueueData workQueueData =
+                XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.TheStudyIntegrityQueueItem.QueueData);
+            
 
             details.ExistingPatient.Name = description.ExistingPatientName;
             details.ConflictingPatient.Name = description.ConflictingPatientName;
@@ -101,6 +98,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             details.ConflictingPatient.Sex = GetConflictingPatientSex(studyData);
             details.ConflictingPatient.IssuerOfPatientID = GetConflictingIssuerOfPatientID(studyData);
             details.ConflictingPatient.BirthDate = GetConflictingPatientBirthDate(studyData);
+
+            details.ConflictingImageSet = workQueueData.Details;
 
             StudyIntegrityQueueUidAdaptor uidAdaptor = new StudyIntegrityQueueUidAdaptor();
             StudyIntegrityQueueUidSelectCriteria uidCriteria = new StudyIntegrityQueueUidSelectCriteria();
@@ -146,6 +145,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 }
             }
 
+
             List<ReconcileDetails.SeriesDetails> seriesList = new List<ReconcileDetails.SeriesDetails>();
             foreach (string uid in seriesInstanceUid)
             {
@@ -154,11 +154,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 ReconcileDetails.SeriesDetails seriesDetails = new ReconcileDetails.SeriesDetails();
                 seriesDetails.Description = seriesDescription[index];
                 seriesDetails.NumberOfInstances = seriesCount[index];
+                SeriesInformation seriesInfo = workQueueData.Details.StudyInfo.Series.Find(
+                    delegate(SeriesInformation theSeries) { return theSeries.SeriesInstanceUid.Equals(uid); });
+                if (seriesInfo != null)
+                {
+                    seriesDetails.Modalitiy = seriesInfo.Modality;
+                }
+
                 seriesList.Add(seriesDetails);
             }
 
-            details.ConflictingPatient.Series = seriesList.ToArray();
-
+            
             return details;
         }
 

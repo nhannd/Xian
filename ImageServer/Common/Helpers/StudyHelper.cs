@@ -45,8 +45,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
         static public DifferenceCollection Compare(DicomMessageBase message, StudyStorageLocation studyStorage)
         {
             StudyComparer comparer = new StudyComparer();
-            Study theStudy = Study.Find(studyStorage.StudyInstanceUid, studyStorage.ServerPartition);
-            return comparer.Compare(message, theStudy, studyStorage.ServerPartition.GetComparisonOptions());
+            return comparer.Compare(message, studyStorage.Study, studyStorage.ServerPartition.GetComparisonOptions());
         }
     }
 }

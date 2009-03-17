@@ -34,6 +34,7 @@ using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard;

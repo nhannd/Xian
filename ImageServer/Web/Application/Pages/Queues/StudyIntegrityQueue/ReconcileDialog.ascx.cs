@@ -172,6 +172,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             ExistingPatientSex.Text = ReconcileDetails.ExistingPatient.Sex;
             ExistingPatientIssuerOfPatientID.Text = ReconcileDetails.ExistingPatient.IssuerOfPatientID;
             ExistingAccessionNumber.Text = ReconcileDetails.ExistingPatient.AccessionNumber;
+            ExistingStudyDate.Text = ReconcileDetails.ExistingStudy.StudyDate;
 
             ConflictingNameLabel.Text = ReconcileDetails.ConflictingPatient.Name;
             ConflictingPatientID.Text = ReconcileDetails.ConflictingPatient.PatientID;
@@ -180,7 +181,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             PatientSexValidator.Validate();
             ConflictingPatientSex.BackColor = Color.Transparent;
             ConflictingPatientSex.BorderStyle = BorderStyle.None;
-
+            
             ConflictingPatientIssuerOfPatientID.Text = ReconcileDetails.ConflictingPatient.IssuerOfPatientID;
             ConflictingAccessionNumber.Text = ReconcileDetails.ConflictingPatient.AccessionNumber;
 
@@ -228,11 +229,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 if (ConflictingAccessionNumber.Text.Equals(string.Empty)) ConflictingAccessionNumber.Text = "Not Specified";                
             }
 
+            ConflictingStudyDate.Text = ReconcileDetails.ConflictingImageSet.StudyInfo.StudyDate;
 
-            ExistingPatientSeriesGridView.DataSource = ReconcileDetails.ExistingPatient.Series;
+            ExistingPatientSeriesGridView.DataSource = ReconcileDetails.ExistingStudy.Series;
             ExistingPatientSeriesGridView.DataBind();
 
-            ConflictingPatientSeriesGridView.DataSource = ReconcileDetails.ConflictingPatient.Series;
+            ConflictingPatientSeriesGridView.DataSource = ReconcileDetails.ConflictingImageSet.StudyInfo.Series;
             ConflictingPatientSeriesGridView.DataBind();
         }
 

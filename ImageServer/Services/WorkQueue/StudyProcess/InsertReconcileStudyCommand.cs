@@ -4,6 +4,7 @@ using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -53,7 +54,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             parameters.SeriesInstanceUid = _context.File.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             parameters.SopInstanceUid = _context.File.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
 			parameters.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
-            parameters.Extension = ".dcm";
+            parameters.Extension = "dcm";
 
             ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
             data.StoragePath = _context.StoragePath;

@@ -1,3 +1,5 @@
+<%@ Import namespace="ClearCanvas.Common.Utilities"%>
+<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Data.DataSource"%>
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.StudyIntegrityQueueItemList"
 	Codebehind="StudyIntegrityQueueItemList.ascx.cs" %>
 <asp:Table runat="server" ID="ContainerTable" Height="100%" CellPadding="0" CellSpacing="0"
@@ -18,12 +20,44 @@
 						</asp:BoundField>
 						<asp:TemplateField HeaderText="Existing Study" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
-                                <asp:Label ID="ExistingPatientId" runat="server"></asp:Label> / <asp:Label ID="ExistingPatientName" runat="server"></asp:Label> / <asp:Label ID="ExistingAccessionNumber" runat="server"></asp:Label>
+							    <table width="100%">
+							    <tr>
+							        <td style="border:none; vertical-align:top"></td>
+							        <td style="border:none; vertical-align:top; text-align:left">
+							            <asp:Label ID="ExistingPatientId" runat="server"></asp:Label> / <asp:Label ID="ExistingPatientName" runat="server"></asp:Label> / <%# Eval("ExistingAccessionNumber")%>
+							        </td>
+							        
+							    </tr>
+							    <tr >
+							        <td style="border:none; vertical-align:top"></td>
+							        <td style="border:none; vertical-align:top; text-align:left; font-size:80%;">
+							            <%# Eval("StudySummary.StudyDescription")%> / 
+							            <%# Eval("StudySummary.StudyDate")%> / 
+							            <%# Eval("StudySummary.ModalitiesInStudy")%>
+							        </td>
+							    </tr>
+							    </table>                                
                             </itemtemplate>
 						</asp:TemplateField>
 		                <asp:TemplateField HeaderText="Conflicting Study" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
 							<itemtemplate>
-                                <asp:Label ID="ConflictingPatientId" runat="server"></asp:Label> / <asp:Label ID="ConflictingPatientName" runat="server"></asp:Label> / <asp:Label ID="ConflictingAccessionNumber" runat="server"></asp:Label>
+                               
+                               <table width="100%">
+							    <tr>
+							        <td style="border:none; vertical-align:top"></td>
+							        <td style="border:none; vertical-align:top; text-align:left;">
+							            <asp:Label ID="ConflictingPatientId" runat="server"></asp:Label> / <asp:Label ID="ConflictingPatientName" runat="server"></asp:Label> / <%# Eval("ExistingAccessionNumber")%>
+                                    </td>							        
+							    </tr>
+							    <tr >
+							        <td style="border:none; vertical-align:top"></td>
+							        <td style="border:none; vertical-align:top; text-align:left; font-size:80%;">
+							            <%# Eval("QueueData.Details.StudyInfo.StudyDescription") %> / 
+							            <%# Eval("QueueData.Details.StudyInfo.StudyDate") %> / 
+							            <%# StringUtilities.Combine(Eval("ConflictingModalities") as string[], ",") %>							            
+							        </td>
+							    </tr>
+							    </table>    
                             </itemtemplate>
 						</asp:TemplateField>
 			            <asp:TemplateField HeaderText="Time Received" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">

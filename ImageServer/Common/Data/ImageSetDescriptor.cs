@@ -9,7 +9,6 @@ using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Common.Data
 {
-
     public class ImageSetField : IEquatable<ImageSetField>
     {
         private DicomTag _tag;
@@ -79,13 +78,53 @@ namespace ClearCanvas.ImageServer.Common.Data
         #endregion
     }
 
+    /// <summary>
+    /// Represents a serializable descriptor of an image set.
+    /// </summary>
     [Serializable]
     [XmlRoot("ImageSetDescriptor")]
     public class ImageSetDescriptor : IEquatable<ImageSetDescriptor>, IXmlSerializable
     {
-
+        #region Private Method
         private Dictionary<DicomTag, ImageSetField> _fields = new Dictionary<DicomTag, ImageSetField>();
+        #endregion
 
+        #region Constructors
+        public ImageSetDescriptor()
+        {
+        }
+
+        public ImageSetDescriptor(IDicomAttributeProvider attributeProvider)
+        {
+            PopulateField(DicomTags.PatientId, attributeProvider);
+            PopulateField(DicomTags.IssuerOfPatientId, attributeProvider);
+            PopulateField(DicomTags.PatientsName, attributeProvider);
+            PopulateField(DicomTags.PatientsBirthDate, attributeProvider);
+            PopulateField(DicomTags.PatientsSex, attributeProvider);
+            PopulateField(DicomTags.AccessionNumber, attributeProvider);
+            PopulateField(DicomTags.StudyDate, attributeProvider);
+        }
+        #endregion
+
+        #region Private Methods
+        private void PopulateField(uint tag, IDicomAttributeProvider attributeProvider)
+        {
+            DicomAttribute attr = null;
+            if (attributeProvider.TryGetAttribute(tag, out attr))
+            {
+                AddField(new ImageSetField(attr));
+            }
+            else
+            {
+                // add default value
+                AddField(new ImageSetField(DicomTagDictionary.GetDicomTag(tag).CreateDicomAttribute()));    
+            }
+
+        }
+
+        #endregion
+
+        #region Public Properties
         public ImageSetField[] Fields
         {
             get
@@ -103,15 +142,19 @@ namespace ClearCanvas.ImageServer.Common.Data
                 }
             }
         }
+        #endregion
 
+        #region Indexers
         public ImageSetField this[DicomTag tag]
         {
             get
             {
-                return _fields[tag];
+                if (_fields.ContainsKey(tag))
+                    return _fields[tag];
+                else
+                    return null;
             }
         }
-
         public ImageSetField this[uint tag]
         {
             get
@@ -119,30 +162,19 @@ namespace ClearCanvas.ImageServer.Common.Data
                 return _fields[DicomTagDictionary.GetDicomTag(tag)];
             }
         }
+        #endregion
 
+        #region Protected Methods
         protected void AddField(ImageSetField field)
         {
             _fields.Add(field.DicomTag, field);
         }
-
-        static public ImageSetDescriptor Parse(DicomMessageBase message)
-        {
-            ImageSetDescriptor desc = new ImageSetDescriptor();
-            desc.AddField(new ImageSetField(message.DataSet[DicomTags.PatientId]));
-            desc.AddField(new ImageSetField(message.DataSet[DicomTags.IssuerOfPatientId]));
-            desc.AddField(new ImageSetField(message.DataSet[DicomTags.PatientsName]));
-            desc.AddField(new ImageSetField(message.DataSet[DicomTags.PatientsBirthDate]));
-            desc.AddField(new ImageSetField(message.DataSet[DicomTags.PatientsSex]));
-            desc.AddField(new ImageSetField(message.DataSet[DicomTags.AccessionNumber]));
-            desc.AddField(new ImageSetField(message.DataSet[DicomTags.StudyDate]));
-            return desc;
-        }
+        #endregion
 
         static public ImageSetDescriptor Parse(XmlElement element)
         {
             return XmlUtils.Deserialize<ImageSetDescriptor>(element);
         }
-
 
         #region IEquatable<ImageSetDescriptor> Members
 
@@ -174,16 +206,24 @@ namespace ClearCanvas.ImageServer.Common.Data
 
         public void ReadXml(XmlReader reader)
         {
-            if (reader.ReadToFollowing("Field"))
+            // skip <ImageSetDescriptor>
+            reader.Read();
+            
+            while (reader.NodeType == XmlNodeType.Element && reader.LocalName == "Field")
             {
-                do
-                {
-                    ImageSetField field = new ImageSetField();
-                    field.Tag = reader["Tag"];
-                    field.Value = String.IsNullOrEmpty(reader["Value"]) ? String.Empty : reader["Value"];
-                    AddField(field);
-                } while (reader.ReadToNextSibling("Field"));
+                ImageSetField field = new ImageSetField();
+                field.Tag = reader["Tag"];
+                field.Value = String.IsNullOrEmpty(reader["Value"]) ? String.Empty : reader["Value"];
+                AddField(field);
+                reader.Read();
             }
+        
+
+            if (reader.NodeType == XmlNodeType.Element && reader.LocalName == "Details")
+            {
+                //Details = XmlUtils.Deserialize<ImageSetDetails>(reader);
+            }
+
             reader.Read();
         }
 
@@ -196,8 +236,13 @@ namespace ClearCanvas.ImageServer.Common.Data
                 writer.WriteAttributeString("Value", field.Value);
                 writer.WriteEndElement();
             }
+
+            //XmlUtils.Serialize(Details, writer);
         }
 
         #endregion
+
+
+
     }
 }

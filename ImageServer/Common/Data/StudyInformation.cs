@@ -1,25 +1,70 @@
 using System;
+using System.Collections.Generic;
 using System.Xml.Serialization;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageServer.Common.Helpers;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Common.Data
 {
     /// <summary>
-    /// Represents the information of a study.
+    /// Represents serializable study information.
     /// </summary>
     [XmlRoot("StudyInformation")]
-    public class StudyInformation
+    public class StudyInformation 
     {
         #region Private Fields
         private string _studyId;
         private string _accessionNumber;
-        private DateTime? _studyDateTime;
+        private string _studyDate;
+        private string _studyTime;
         private string _modalities;
         private string _studyInstanceUid;
         private string _studyDescription;
         private string _referringPhysician;
         private PatientInformation _patientInfo = new PatientInformation();
+        private List<SeriesInformation> _series= new List<SeriesInformation> ();
+
+        #endregion
+
+        #region Constructors
+        public StudyInformation()
+        {
+        }
+
+        public StudyInformation(IDicomAttributeProvider attributeProvider)
+        {
+            if (attributeProvider[DicomTags.StudyId]!=null)
+                StudyId = attributeProvider[DicomTags.StudyId].ToString();
+            
+            if (attributeProvider[DicomTags.AccessionNumber]!=null)
+                AccessionNumber = attributeProvider[DicomTags.AccessionNumber].ToString();
+
+            if (attributeProvider[DicomTags.StudyDate] != null )
+                StudyDate = attributeProvider[DicomTags.StudyDate].ToString();
+
+            if (attributeProvider[DicomTags.ModalitiesInStudy] != null)
+                Modalities = attributeProvider[DicomTags.ModalitiesInStudy].ToString();
+
+            if (attributeProvider[DicomTags.StudyInstanceUid] != null)
+                StudyInstanceUid = attributeProvider[DicomTags.StudyInstanceUid].ToString();
+
+            if (attributeProvider[DicomTags.StudyDescription] != null)
+                StudyDescription = attributeProvider[DicomTags.StudyDescription].ToString();
+
+
+            if (attributeProvider[DicomTags.ReferringPhysiciansName] != null)
+                ReferringPhysician = attributeProvider[DicomTags.ReferringPhysiciansName].ToString();
+
+            PatientInfo = new PatientInformation(attributeProvider);
+            SeriesInformation series = new SeriesInformation(attributeProvider);
+            if (!String.IsNullOrEmpty(series.SeriesInstanceUid))
+                Add(series);
+        }
+
         #endregion
 
         #region Public Properties
@@ -28,17 +73,23 @@ namespace ClearCanvas.ImageServer.Common.Data
             get { return _studyId; }
             set { _studyId = value; }
         }
-
+        
         public string AccessionNumber
         {
             get { return _accessionNumber; }
             set { _accessionNumber = value; }
         }
 
-        public DateTime? StudyDateTime
+        public string StudyDate
         {
-            get { return _studyDateTime; }
-            set { _studyDateTime = value; }
+            get { return _studyDate; }
+            set { _studyDate = value; }
+        }
+
+        public string StudyTime
+        {
+            get { return _studyTime; }
+            set { _studyTime = value; }
         }
 
         public string Modalities
@@ -59,6 +110,7 @@ namespace ClearCanvas.ImageServer.Common.Data
             set { _studyDescription = value; }
         }
 
+
         public string ReferringPhysician
         {
             get { return _referringPhysician; }
@@ -71,32 +123,59 @@ namespace ClearCanvas.ImageServer.Common.Data
             set { _patientInfo = value; }
         }
 
+        [XmlArray("Series")]
+        public List<SeriesInformation> Series
+        {
+            get { return _series;}
+            set { _series = value; }
+        }
+
         #endregion
 
-        #region Public Static Methods
-        public static StudyInformation CreateFrom(Study study)
+        #region Public Methods
+        /// <summary>
+        /// Adds a <see cref="SeriesInformation"/> data
+        /// </summary>
+        /// <param name="series"></param>
+        public void Add(SeriesInformation series)
         {
-            StudyInformation studyInfo = new StudyInformation();
-            studyInfo.AccessionNumber = study.AccessionNumber;
-            studyInfo.ReferringPhysician = study.ReferringPhysiciansName;
+            SeriesInformation theSeries = Series.Find(delegate(SeriesInformation ser) { return ser.SeriesInstanceUid == series.SeriesInstanceUid; });
+            if (theSeries==null)
+            {
+                this.Series.Add(series);
+            }
+            else
+            {
 
-            DateTime dt;
-            if (DateTimeParser.ParseDateAndTime(String.Empty, study.StudyDate, study.StudyTime, out dt))
-                studyInfo.StudyDateTime = dt;
+                theSeries.NumberOfInstances++;
+            }
+        }
 
-            studyInfo.StudyDescription = study.StudyDescription;
-            studyInfo.StudyId = study.StudyId;
-            studyInfo.StudyInstanceUid = study.StudyInstanceUid;
+        /// <summary>
+        /// Adds a list of <see cref="SeriesInformation"/> data
+        /// </summary>
+        /// <param name="series"></param>
+        public void Add(IEnumerable<SeriesInformation> series)
+        {
+           foreach(SeriesInformation ser in series)
+           {
+               Add(ser);
+           }
+       }
+       #endregion
 
-            studyInfo.PatientInfo = new PatientInformation();
-            studyInfo.PatientInfo.Age = study.PatientsAge;
-            if (DateParser.Parse(study.PatientsBirthDate, out dt))
-                studyInfo.PatientInfo.Birthdate = dt;
+       #region Public Static Methods
+       public static StudyInformation CreateFrom(Study study)
+        {
+            ServerEntityAttributeProvider studyWrapper = new ServerEntityAttributeProvider(study);
+            StudyInformation studyInfo = new StudyInformation(studyWrapper);
 
-            studyInfo.PatientInfo.Name = study.PatientsName;
-            studyInfo.PatientInfo.PatientId = study.PatientId;
-            studyInfo.PatientInfo.IssuerOfPatientId = study.IssuerOfPatientId;
-
+            foreach(Model.Series series in study.Series)
+            {
+                ServerEntityAttributeProvider seriesWrapper = new ServerEntityAttributeProvider(series);
+                SeriesInformation seriesInfo = new SeriesInformation(seriesWrapper);
+                studyInfo.Add(seriesInfo);
+            }
 
             return studyInfo;
         }

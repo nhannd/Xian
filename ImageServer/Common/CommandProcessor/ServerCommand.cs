@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Xml.Serialization;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 

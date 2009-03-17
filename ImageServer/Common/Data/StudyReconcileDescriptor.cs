@@ -9,6 +9,8 @@ namespace ClearCanvas.ImageServer.Common.Data
     /// <summary>
     /// Represents information encoded in the xml of a <see cref="StudyHistory"/> record of type <see cref="StudyHistoryTypeEnum.StudyReconciled"/>.
     /// </summary>
+    /// <remarks>
+    /// </remarks>
     [XmlRoot("Reconcile")]
     public class StudyReconcileDescriptor
     {
@@ -78,9 +80,7 @@ namespace ClearCanvas.ImageServer.Common.Data
             set { _commands = value; }
         }
         #endregion
-
     }
-
 
 
     [XmlRoot("Reconcile")]

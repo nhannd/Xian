@@ -1,13 +1,10 @@
 using System;
 using System.IO;
-using System.Reflection;
 using System.Security;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Serialization;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Common.Utilities
 {
@@ -84,8 +81,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         {
             return SerializeAsXmlDoc(obj).DocumentElement;
         }
-
-
+        
         public static XmlDocument SerializeAsXmlDoc(Object obj)
         {
             Platform.CheckForNullReference(obj, "obj");
@@ -173,6 +169,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
     /// }
     /// </remarks>
     public class AbstractProperty<AbstractType> : IXmlSerializable
+        where AbstractType:class
     {
         // Override the Implicit Conversions Since the XmlSerializer
         // Casts to/from the required types implicitly.
@@ -221,7 +218,7 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             return null; // this is fine as schema is unknown.
         }
 
-        public void ReadXml(System.Xml.XmlReader reader)
+        public void ReadXml(XmlReader reader)
         {
             // Cast the Data back from the Abstract Type.
             string typeAttrib = reader.GetAttribute("type");
@@ -245,12 +242,11 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 
             // Read the Data, Deserializing based on the (now known) concrete type.
             reader.ReadStartElement();
-            this.Data = (AbstractType)new
-                XmlSerializer(type).Deserialize(reader);
+            Data = (AbstractType)new XmlSerializer(type).Deserialize(reader);
             reader.ReadEndElement();
         }
 
-        public void WriteXml(System.Xml.XmlWriter writer)
+        public void WriteXml(XmlWriter writer)
         {
             // Write the Type Name to the XML Element as an Attrib and Serialize
             Type type = _data.GetType();

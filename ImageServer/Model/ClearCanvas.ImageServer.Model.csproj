@@ -224,7 +224,6 @@
     <Compile Include="InstanceKeys.cs" />
     <Compile Include="Parameters\CreatePatientForStudyParameters.cs" />
     <Compile Include="Parameters\LockStudyParameters.cs" />
-    <Compile Include="Parameters\ReconcileStudyWorkQueueData.cs" />
     <Compile Include="Parameters\AttachStudyToPatientParamaters.cs" />
     <Compile Include="Parameters\WebQueryStudyIntegrityQueueParameters.cs" />
     <Compile Include="Parameters\InsertStudyIntegrityQueueParameters.cs" />

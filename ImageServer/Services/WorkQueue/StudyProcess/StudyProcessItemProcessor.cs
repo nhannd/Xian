@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common;
@@ -42,10 +41,8 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
-using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
-using StringDiff=ClearCanvas.Common.Utilities.StringDiff;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
@@ -137,7 +134,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private StudyProcessStatistics _statistics;
         private InstanceStatistics _instanceStats;
         private StudyProcessorContext _context;
-        private WorkQueueUid _workQueueUid;
+        private ImageReconciler _reconciler =null;
 
         #endregion
 
@@ -195,11 +192,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(message, "message");
 
             string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, String.Empty);
-            string sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-
+            
             if (_context.Study == null || _context.Study.StudyInstanceUid != studyInstanceUid)
             {
-                _context.Study = base.Study;
+                _context.Study = Study;
                 // Note: if this is the first image in the study, _study will still be null at this point
             }
 
@@ -365,11 +361,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="file"></param>
         private void ScheduleReconcile(WorkQueueUid queueUid, DicomFile file)
         {
-            ImageReconciler reconciler = new ImageReconciler();
-            reconciler.ExistingStudy = _context.Study;
-            reconciler.ExistingStudyLocation = StorageLocation;
-            reconciler.Partition = _context.Partition;
+            ImageReconciler reconciler = GetReconciler();
             reconciler.ReconcileImage(file, queueUid.Duplicate);
+        }
+
+        private ImageReconciler GetReconciler()
+        {
+            //TODO: Need to make it thread-safe?
+            if (_reconciler==null)
+            {
+                _reconciler = new ImageReconciler();
+                _reconciler.ExistingStudy = _context.Study;
+                _reconciler.ExistingStudyLocation = StorageLocation;
+                _reconciler.Partition = _context.Partition;
+                
+            }
+            return _reconciler;
         }
 
 
@@ -501,8 +508,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             _instanceStats = new InstanceStatistics();
             _instanceStats.ProcessTime.Start();
-
-            _workQueueUid = uid;
         }
 
         /// <summary>

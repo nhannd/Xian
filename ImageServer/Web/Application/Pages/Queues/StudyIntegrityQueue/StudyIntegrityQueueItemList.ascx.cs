@@ -33,7 +33,7 @@ using System;
 using System.Drawing;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
-
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
@@ -270,6 +270,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 Label conflictingPatientId = row.FindControl("ConflictingPatientId") as Label;
                 Label existingAccessionNumber = row.FindControl("ExistingAccessionNumber") as Label;
                 Label conflictingAccessionNumber = row.FindControl("ConflictingAccessionNumber") as Label;
+                Label existingModalities = row.FindControl("ExistingModalities") as Label;
+                Label conflictingModalities = row.FindControl("ConflictingModalities") as Label;
                 
                 if(existingPatientId != null)
                     existingPatientId.Text = summary.ExistingPatientId;
@@ -296,6 +298,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                     if (!summary.ExistingAccessionNumber.Equals(summary.ConflictingAccessionNumber))
                         conflictingAccessionNumber.ForeColor = Color.Red;
                 }
+
+                if (conflictingModalities!=null)
+                {
+                    conflictingModalities.Text = StringUtilities.Combine(summary.ConflictingModalities, ",");
+                }
+                if (existingModalities!=null)
+                {
+                    existingModalities.Text = summary.StudySummary.ModalitiesInStudy;
+                }
+                
 
                 DateTimeLabel timeReceived = row.FindControl("TimeReceived") as DateTimeLabel;
                 if (timeReceived != null)

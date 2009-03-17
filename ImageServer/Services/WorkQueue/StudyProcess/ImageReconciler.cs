@@ -35,10 +35,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -65,8 +62,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         private Study _existingStudy;
         private StudyStorageLocation _existingStudyLocation;
     	private string _sopInstanceUid;
-        private IList<StudyHistory> _historyList;
         private ReconcileImageContext _reconcileContext;
+        private List<StudyHistory> _studyHistoryList;
 
         #endregion
 
@@ -104,77 +101,64 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region Private Methods
 
-        /// <summary>
-        /// Finds the <see cref="StudyHistory"/> record that matches the information of the specified <see cref="DicomFile"/>
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns>
-        /// The returned list is sorted by insert time. 
-        /// </returns>
-        private IList<StudyHistory> FindHistory(DicomFile file)
+        private IList<StudyHistory> LoadStudyHistories(StudyStorageLocation studyStorage, bool reload)
         {
-            IList<StudyHistory> histories = StudyHistory.Find(ExistingStudyLocation);
+            if (_studyHistoryList == null || reload)
+            {
+                _studyHistoryList = new List<StudyHistory>(StudyHistory.Find(studyStorage));
 
-            ImageSetDescriptor fileDesc = ImageSetDescriptor.Parse(file);
-            XmlNode node = XmlUtils.Serialize(fileDesc);
-
-            if (histories == null || histories.Count == 0)
-                return null;
-
-            // Find the one with matching demographics
-            List<StudyHistory> historyList = CollectionUtils.Cast<StudyHistory>(histories);
-            CollectionUtils.Remove(historyList, 
-                delegate(StudyHistory history)
-                {
-                    XmlDocument studyDescriptor = history.StudyData;
-                    Debug.Assert(studyDescriptor != null);
-
-                    ImageSetDescriptor desc = ImageSetDescriptor.Parse(studyDescriptor.DocumentElement);
-
-                    if (!desc.Equals(fileDesc))
-                        return true; // remove if it's not for this image set
-                    else
-                        return false;
-                });
-
-            historyList = CollectionUtils.Sort(historyList,
-                                 delegate(StudyHistory history1, StudyHistory history2)
+                _studyHistoryList.Sort(delegate(StudyHistory history1, StudyHistory history2)
                                      {
                                          return history1.InsertTime.CompareTo(history2.InsertTime);
                                      });
-
-            return historyList;
-        }
-
-        /// <summary>
-        /// Finds the <see cref="StudyHistory"/> record of the specified type and matching the information of the specified <see cref="DicomFile"/>
-        /// </summary>
-        /// <param name="file"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        private IList<StudyHistory> FindHistory(DicomFile file, StudyHistoryTypeEnum type)
-        {
-            Platform.CheckForNullReference(file, "file");
-            Platform.CheckForNullReference(type, "type");
-
-            IList<StudyHistory> historyList = FindHistory(file);
-            if (historyList!=null)
-            {
-                CollectionUtils.Remove(historyList,
-                 delegate(StudyHistory history)
-                 {
-                     return !history.StudyHistoryTypeEnum.Equals(type);
-                 });
             }
-            
-            return historyList;
+            return _studyHistoryList;
+        }
+
+        private IList<StudyHistory> FindReconcileHistories(DicomFile file)
+        {
+            ImageSetDescriptor fileDesc = new ImageSetDescriptor(file.DataSet);
+
+            LoadStudyHistories(ExistingStudyLocation, false);
+
+            IList<StudyHistory> reconcileHistories = _studyHistoryList.FindAll(
+                delegate(StudyHistory item)
+                   {
+                       if (item.StudyHistoryTypeEnum == StudyHistoryTypeEnum.StudyReconciled)
+                       {
+                           ImageSetDescriptor desc =
+                               XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
+
+                           return desc.Equals(fileDesc);
+                       }
+                       else
+                           return false;
+                       
+                   });
+
+            if (reconcileHistories==null || reconcileHistories.Count==0)
+            {
+                // no history found in cache... reload the list?
+                LoadStudyHistories(ExistingStudyLocation, true);
+                reconcileHistories = _studyHistoryList.FindAll(
+                    delegate(StudyHistory item)
+                       {
+                           if (item.StudyHistoryTypeEnum == StudyHistoryTypeEnum.StudyReconciled)
+                           {
+                               ImageSetDescriptor desc =
+                               XmlUtils.Deserialize<ImageSetDescriptor>(item.StudyData.DocumentElement);
+                               return desc.Equals(fileDesc);
+                           }
+                           else
+                               return false;
+                       });
+
+            }
+
+            return reconcileHistories;
         }
 
 
-        /// <summary>
-        /// Returns the path to a directory that can be used for storing images that need to be reconciled
-        /// </summary>
-        /// <returns></returns>
         private string GetSuggestedTemporaryReconcileFolderPath()
         {
             string path = Path.Combine(ExistingStudyLocation.FilesystemPath, ExistingStudyLocation.PartitionFolder);
@@ -276,22 +260,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             _sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
             
             //TODO: optimization: use previously loaded history list if possible
-            _historyList = FindHistory(file, StudyHistoryTypeEnum.StudyReconciled);
-
+            IList<StudyHistory> historyList = FindReconcileHistories(file);
             _reconcileContext = new ReconcileImageContext();
             _reconcileContext.Partition = _partition;
             _reconcileContext.CurrentStudyLocation = ExistingStudyLocation;
             _reconcileContext.File = file;
             _reconcileContext.IsDuplicate = isDuplicate;
             _reconcileContext.CurrentStudy = ExistingStudy;
-            _reconcileContext.History = _historyList == null || _historyList.Count==0? null : _historyList[0];
-
+            _reconcileContext.History = historyList == null || historyList.Count == 0 ? null : historyList[0];
+            
             LogDebugInfo(_reconcileContext);
 
-            
-            if (_historyList == null || _historyList.Count == 0)
+            if (historyList == null || historyList.Count == 0)
             {
-                if (ImageServerCommonConfiguration.EnablePatientsNameAutoCorrection && TryAutoCorrection(file))
+                if (ImageServerCommonConfiguration.EnablePatientsNameAutoCorrection 
+                    && TryAutoCorrection(file))
                 {
                     return;
                 }
@@ -315,7 +298,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             else
             {
                 Platform.Log(LogLevel.Debug, "Scheduling Auto Reconciliation...");
-                
+
                 if (_reconcileContext.History.DestStudyStorageKey != null)
                 {
                     StudyStorage destStorage = StudyStorage.Load(_reconcileContext.History.DestStudyStorageKey);
@@ -327,12 +310,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     Study destStudy = Study.Find(destStorage.StudyInstanceUid, _partition); // note: assuming destination partition is the same as the current one
                     Debug.Assert(destStudy != null);
                 }
-
+                
                 // Insert 'ReconcileStudy' in the work queue
                 _reconcileContext.StoragePath = GetSuggestedTemporaryReconcileFolderPath(); // since we no longer have the record in the Study Integrity Queue
+                
+                int index = _studyHistoryList.IndexOf(_reconcileContext.History);
                 using (ServerCommandProcessor processor = new ServerCommandProcessor("Schedule ReconcileStudy request based on histrory"))
                 {
                     InsertReconcileStudyCommand insertCommand = new InsertReconcileStudyCommand(_reconcileContext);
+                    
+                    // Note: we need to retrieve the reconcile folder path using InsertReconcileStudyCommand 
+                    // before we can move the image
                     MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(_reconcileContext);
                     
                     processor.AddCommand(insertCommand);
@@ -347,7 +335,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     Debug.Assert(insertCommand.ReconcileStudyWorkQueueItem != null);
                 }
                 Platform.Log(LogLevel.Info, "SOP {0} has been scheduled for auto reconciliation.", _sopInstanceUid);
-                
+
+                _studyHistoryList[index] = _reconcileContext.History;
             }
         }
 
@@ -360,9 +349,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             sb.AppendFormat("\tExisting Patient={0}\n", ExistingStudy.PatientsName);
             sb.AppendFormat("\tExisting Study={0}\n", ExistingStudy.StudyInstanceUid);
             sb.AppendFormat("\tReferenced History record to be used: {0}\n", context.History == null ? "N/A" : context.History.Key.ToString());
-            sb.AppendFormat("\tCan reconcile automatically? {0}\n", (_historyList != null && _historyList.Count > 0) ? "Yes" : "No");
+            sb.AppendFormat("\tCan reconcile automatically? {0}\n", context.History != null  ? "Yes" : "No");
             
-            Platform.Log(LogLevel.Info, sb.ToString());
+            Platform.Log(LogLevel.Debug, sb.ToString());
 
         }
 

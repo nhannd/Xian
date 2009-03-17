@@ -34,6 +34,7 @@
                                             </td>
                                         </tr>                                                        
                                         <tr><td class="DialogLabelBackground"><asp:Label ID="Label325" runat="server" CssClass="DialogTextBoxLabel">Issuer of Patient ID</asp:Label></td><td><asp:Label ID="ExistingPatientIssuerOfPatientID" runat="server" CssClass="ReconcileDemographicsLabel"></asp:Label></td></tr>                                     
+                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label7" runat="server" CssClass="DialogTextBoxLabel">Study Date</asp:Label></td><td><asp:Label ID="ExistingStudyDate" runat="server" CssClass="ReconcileDemographicsLabel"></asp:Label></td></tr>
                                     </table>
                                     </div>
                                     <table cellpadding="0" cellspacing="0" width="100%"><tr><td style="padding-left: 10px; padding-right: 10px;"><div class="SeriesTitle">Series</div></td></tr></table>
@@ -44,6 +45,7 @@
                                         <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ExistingPatientSeriesGridView" width="400px" BackColor="white" GridLines="Horizontal" BorderColor="Transparent" AutoGenerateColumns="false">
                                             <Columns>
 						                        <asp:BoundField HeaderText="Description" DataField="Description" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
+						                        <asp:BoundField HeaderText="Modalitiy" DataField="Modalitiy" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />                    
 						                        <asp:BoundField HeaderText="Instances" DataField="NumberOfInstances" />
 						                    </Columns>
 						                    <RowStyle CssClass="ReconcileSeriesGridViewRow" />
@@ -84,6 +86,7 @@
                                             </td>
                                         </tr>
                                         <tr><td class="DialogLabelBackground"><asp:Label ID="Label5" runat="server" CssClass="DialogTextBoxLabel">Issuer of Patient ID</asp:Label></td><td><asp:Label ID="ConflictingPatientIssuerOfPatientID" runat="server" CssClass="ReconcileDemographicsLabel"></asp:Label></td></tr>                                     
+                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label6" runat="server" CssClass="DialogTextBoxLabel">Study Date</asp:Label></td><td><asp:Label ID="ConflictingStudyDate" runat="server" CssClass="ReconcileDemographicsLabel"></asp:Label></td></tr>
                                     </table>
                                     </div>
                                     <table cellpadding="0" cellspacing="0" width="100%"><tr><td style="padding-left: 10px; padding-right: 10px;"><div class="SeriesTitle">Series</div></td></tr></table>
@@ -93,7 +96,8 @@
                                     <div class="ReconcileGridViewPanel">
                                         <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ConflictingPatientSeriesGridView" width="400px" BackColor="white" GridLines="Horizontal" BorderColor="Transparent" AutoGenerateColumns="false">
                                             <Columns>
-						                        <asp:BoundField HeaderText="Description" DataField="Description" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
+						                        <asp:BoundField HeaderText="Description" DataField="SeriesDescription" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
+						                        <asp:BoundField HeaderText="Modalitiy" DataField="Modality" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />                    
 						                        <asp:BoundField HeaderText="Instances" DataField="NumberOfInstances" />
 						                    </Columns>
 						                    <RowStyle CssClass="ReconcileSeriesGridViewRow" />

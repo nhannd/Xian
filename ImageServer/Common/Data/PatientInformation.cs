@@ -1,23 +1,50 @@
 using System;
 using System.Xml.Serialization;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Common.Data
 {
     /// <summary>
-    /// Represents the information of a patient that is relevant to the study edit operation.
+    /// Represents the serializable patient information
     /// </summary>
+    [XmlRoot("Patient")]
     public class PatientInformation
     {
         #region Private Fields
         private string _name;
         private string _patientId;
         private string _issuerOfPatientId;
-        private DateTime? _birthdate;
+        private string _birthdate;
         private string _age;
         private string _sex;
         #endregion
 
+        #region Constructors
+        public PatientInformation()
+        {
+        }
+
+        public PatientInformation(IDicomAttributeProvider attributeProvider)
+        {
+            if (attributeProvider[DicomTags.PatientsName] != null)
+                Name = attributeProvider[DicomTags.PatientsName].ToString();
+
+            if (attributeProvider[DicomTags.PatientId] != null)
+                PatientId = attributeProvider[DicomTags.PatientId].ToString();
+
+            if (attributeProvider[DicomTags.PatientsAge] != null)
+                Age = attributeProvider[DicomTags.PatientsAge].ToString();
+
+            if (attributeProvider[DicomTags.PatientsSex] != null)
+                Sex = attributeProvider[DicomTags.PatientsSex].ToString();
+
+            if (attributeProvider[DicomTags.IssuerOfPatientId] != null)
+                IssuerOfPatientId = attributeProvider[DicomTags.IssuerOfPatientId].ToString();
+        }
+        #endregion
+
         #region Public Properties
+
         public string Name
         {
             get { return _name; }
@@ -30,8 +57,8 @@ namespace ClearCanvas.ImageServer.Common.Data
             set { _patientId = value; }
         }
 
-        [XmlElement(DataType = "date")]
-        public DateTime? Birthdate
+
+        public string PatientsBirthdate
         {
             get { return _birthdate; }
             set { _birthdate = value; }

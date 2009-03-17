@@ -36,11 +36,27 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
+    public class DeleteUidCommand : ServerDatabaseCommand
+    {
+        private WorkQueueUid _uid;
 
+        public DeleteUidCommand(WorkQueueUid uid)
+            : base("Delete WorkQueue Uid Entry", true)
+        {
+            _uid = uid;
+        }
+
+        protected override void OnExecute(IUpdateContext updateContext)
+        {
+            IWorkQueueUidEntityBroker delete = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+            delete.Delete(_uid.GetKey());
+        }
+    }
     public class UpdateWorkQueueCommand : ServerDatabaseCommand
     {
         #region Private Members

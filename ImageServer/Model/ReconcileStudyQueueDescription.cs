@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageServer.Model
     public abstract class StudyIntegrityQueueDescription
     {
         private const String KEY_VALUE_SEPARATOR = "=";
-        private Dictionary<String, Object> _map = new Dictionary<string, object>();
+        private readonly Dictionary<String, Object> _map = new Dictionary<string, object>();
         protected object this[string key]
         {
             get

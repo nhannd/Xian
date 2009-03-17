@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy

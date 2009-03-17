@@ -172,6 +172,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private string _newStudyFolder;
         private string _newStudyInstanceUid;
         private string _oldStudyFolder;
+        private bool _initialized=false;
 
         private PatientInfo _oldPatientInfo;
         private PatientInfo _newPatientInfo;
@@ -201,8 +202,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _partition = partition;
             _studyLocation = studyLocation;
             _commands = imageLevelCommands;
+            _statistics = new UpdateStudyStatistics(_studyLocation.StudyInstanceUid);
 
-            Initialize();
         }
 
         public new UpdateStudyStatistics Statistics
@@ -222,9 +223,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         protected override void OnExecute(IUpdateContext updateContext)
         {
             Statistics.ProcessTime.Start();
-
+            Initialize();
             PrintUpdateCommands();
-            BackupFilesystem();
+            if (RequiresRollback)
+            {
+                BackupFilesystem();
+            }
             UpdateFilesystem();
             UpdateDatabase();
 
@@ -251,9 +255,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _newStudyFolder = _oldStudyFolder;
             _newStudyInstanceUid = _oldStudyInstanceUid;
 
-            _study = Study.Find(_oldStudyInstanceUid, _partition);
+            _study = _studyLocation.Study;
             _totalSopCount = _study.NumberOfStudyRelatedInstances;
-            _curPatient = Patient.Load(_study.PatientKey);
+            _curPatient = _study.Patient;
             _oldPatientInfo = new PatientInfo();
             _oldPatientInfo.Name = _curPatient.PatientsName;
             _oldPatientInfo.PatientId = _curPatient.PatientId;
@@ -311,16 +315,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _newPatient = FindPatient(_newPatientInfo);
             _patientInfoIsNotChanged = _newPatientInfo.Equals(_oldPatientInfo);
 
-            _statistics = new UpdateStudyStatistics(_oldStudyInstanceUid);
             Statistics.InstanceCount = _study.NumberOfStudyRelatedInstances;
             Statistics.StudySize = (ulong) DirectoryUtility.CalculateFolderSize(_oldStudyPath);
 
+            _initialized = true;
         }
 
-        private static Patient FindPatient(PatientInfo patientInfo)
+        private Patient FindPatient(PatientInfo patientInfo)
         {
-            IReadContext readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-            IPatientEntityBroker patientFindBroker = readContext.GetBroker<IPatientEntityBroker>();
+            IPatientEntityBroker patientFindBroker = UpdateContext.GetBroker<IPatientEntityBroker>();
             PatientSelectCriteria criteria = new PatientSelectCriteria();
             criteria.PatientId.EqualTo(patientInfo.PatientId);
             criteria.PatientsName.EqualTo(patientInfo.Name);
@@ -331,32 +334,32 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private void PrintUpdateCommands()
         {
             StringBuilder log = new StringBuilder();
-            log.AppendLine(); 
-            log.AppendFormat("Study to be updated:\n");
-            log.AppendFormat("\tServer Partition: {0}\n", _partition.AeTitle);
-            log.AppendFormat("\tStorage GUID: {0}\n", _studyLocation.GetKey().Key);
-            log.AppendFormat("\tPatient ID: {0}\n", _study.PatientId);
-            log.AppendFormat("\tPatient Name: {0}\n", _study.PatientsName);
-            log.AppendFormat("\tAccession #: {0}\n", _study.AccessionNumber);
-            log.AppendFormat("\tStudy ID : {0}\n", _study.StudyId);
-            log.AppendFormat("\tStudy Date : {0}\n", _study.StudyDate);
-            log.AppendFormat("\tStudy Instance Uid: {0}\n", _study.StudyInstanceUid);
-            log.AppendFormat("\tInstance Count: {0}\n", _study.NumberOfStudyRelatedInstances);
-            log.AppendFormat("\tCurrent location: {0}", _oldStudyPath);
+            log.AppendLine(String.Format("Study to be updated:"));
+            log.AppendLine(String.Format("\tServer Partition: {0}\n", _partition.AeTitle));
+            log.AppendLine(String.Format("\tStorage GUID: {0}\n", _studyLocation.GetKey().Key));
+            log.AppendLine(String.Format("\tPatient ID: {0}\n", _study.PatientId));
+            log.AppendLine(String.Format("\tPatient Name: {0}\n", _study.PatientsName));
+            log.AppendLine(String.Format("\tAccession #: {0}\n", _study.AccessionNumber));
+            log.AppendLine(String.Format("\tStudy ID : {0}\n", _study.StudyId));
+            log.AppendLine(String.Format("\tStudy Date : {0}\n", _study.StudyDate));
+            log.AppendLine(String.Format("\tStudy Instance Uid: {0}\n", _study.StudyInstanceUid));
+            log.AppendLine(String.Format("\tInstance Count: {0}\n", _study.NumberOfStudyRelatedInstances));
+            log.AppendLine(String.Format("\tCurrent location: {0}", _oldStudyPath));
             log.AppendLine();
-            log.AppendFormat("Changes:\n");
+            log.AppendLine("Changes to be applied:");
             foreach (BaseImageLevelUpdateCommand cmd in _commands)
             {
-                log.AppendFormat("\t{0}", cmd);
-                log.AppendLine();
+                log.AppendLine(String.Format("\t{0}", cmd));
             }
 
-            log.AppendFormat("\tNew location: {0}", NewStudyPath);
-            log.AppendLine();
+            log.AppendLine(String.Format("\tNew location: {0}", NewStudyPath));
             Platform.Log(LogLevel.Info, log);
         }
         private void RestoreFilesystem()
         {
+            if (!RequiresRollback || !_initialized)
+                return;
+
             if (NewStudyPath == _oldStudyPath)
             {
                 Platform.Log(LogLevel.Info, "Restoring old study folder...");
@@ -653,8 +656,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         private void BackupFilesystem()
         {
+            Platform.Log(LogLevel.Info, "Backing up current study folder...");
             Directory.CreateDirectory(_backupDir);
             DirectoryUtility.Copy(_oldStudyPath, _backupDir);
+            Platform.Log(LogLevel.Info, "A copy of {0} has been saved to {1}.", _oldStudyInstanceUid, _backupDir);
         }
 
         private StudyXml LoadStudyXml(string studyXmlPath)

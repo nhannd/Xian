@@ -111,14 +111,10 @@ namespace ClearCanvas.ImageServer.Common.Helpers
         {
             List<BaseImageLevelUpdateCommand> commandList = new List<BaseImageLevelUpdateCommand>();
             EntityDicomMap fieldMap = EntityDicomMapManager.Get(type);
+            XmlDocument studyXmlDoc = studyXml.GetMemento(new StudyXmlOutputSettings());
             foreach (DicomTag tag in fieldMap.Keys)
             {
-                ImageLevelUpdateEntry entry = new ImageLevelUpdateEntry();
-                entry.TagPath.Tag = tag;
-                entry.TagPath.Parents = null;
-                entry.Value = FindAttributeValue(tag, studyXml);
-                SetTagCommand cmd = new SetTagCommand();
-                cmd.UpdateEntry = entry;
+                SetTagCommand cmd = new SetTagCommand(tag.TagValue, FindAttributeValue(tag, studyXmlDoc));
                 commandList.Add(cmd);
             }
             return commandList;
@@ -138,12 +134,10 @@ namespace ClearCanvas.ImageServer.Common.Helpers
             return studyXml;
         }
 
-        private static String FindAttributeValue(DicomTag tag, StudyXml studyXml)
+        private static String FindAttributeValue(DicomTag tag, XmlNode xnlRootNode)
         {
-            XmlDocument doc = studyXml.GetMemento(new StudyXmlOutputSettings());
             String xpath = String.Format("//Attribute[@Tag='{0}']", tag.HexString);
-            //Platform.Log(LogLevel.Info, "Looking for {0}", xpath);
-            XmlNode node = doc.SelectSingleNode(xpath);
+            XmlNode node = xnlRootNode.SelectSingleNode(xpath);
             if (node == null)
                 return null;
             else

@@ -54,7 +54,11 @@
     <Compile Include="CommandProcessor\DeleteDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
     <Compile Include="Data\ImageSetDescriptor.cs" />
+    <Compile Include="Data\ImageSetDetails.cs" />
     <Compile Include="Data\PatientInformation.cs" />
+    <Compile Include="Data\ReconcileStudyWorkQueueData.cs" />
+    <Compile Include="Data\SeriesInformation.cs" />
+    <Compile Include="Data\ServerEntityAttributeProvider.cs" />
     <Compile Include="Data\StudyInformation.cs" />
     <Compile Include="Data\StudyReconcileAction.cs" />
     <Compile Include="Data\StudyReconcileDescriptor.cs" />

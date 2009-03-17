@@ -70,12 +70,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         protected override void OnExecute(ClearCanvas.Enterprise.Core.IUpdateContext updateContext)
         {
-            ImageSetDescriptor fileDesc = ImageSetDescriptor.Parse(_context.File);
             ReconcileMergeToExistingStudyDescriptor desc = new ReconcileMergeToExistingStudyDescriptor();
             desc.ExistingStudy = StudyInformation.CreateFrom(_context.CurrentStudy);
-            desc.ImageSetData = fileDesc;
+            desc.ImageSetData = _context.ImageSet;
             desc.Action = StudyReconcileAction.Merge;
-            string newPatientName = GetUnifiedPatientName(desc.ExistingStudy.PatientInfo.Name, fileDesc[DicomTags.PatientsName].Value);
+            string newPatientName = GetUnifiedPatientName(desc.ExistingStudy.PatientInfo.Name, _context.ImageSet[DicomTags.PatientsName].Value);
 
             if (!desc.ExistingStudy.PatientInfo.Name.Equals(newPatientName))
             {
@@ -93,7 +92,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             columns.DestStudyStorageKey = null;
             columns.InsertTime = Platform.Time;
             columns.StudyHistoryTypeEnum = StudyHistoryTypeEnum.StudyReconciled;
-            columns.StudyData = XmlUtils.SerializeAsXmlDoc(fileDesc);
+            columns.StudyData = XmlUtils.SerializeAsXmlDoc(_context.ImageSet);
             XmlDocument changeDesc = XmlUtils.SerializeAsXmlDoc(desc);
             columns.ChangeDescription = changeDesc;
 

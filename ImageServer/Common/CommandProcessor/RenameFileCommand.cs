@@ -47,7 +47,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private readonly string _destinationFile;
         private string _srcBackupFile; 
         private string _destBackupFile;
-
 		#endregion
 
 		public RenameFileCommand(string sourceFile, string destinationFile)
