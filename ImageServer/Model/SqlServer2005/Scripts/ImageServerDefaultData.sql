@@ -300,6 +300,12 @@ INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
            (newid(),201,'PurgeAlerts','Purge Alerts','This service by default removes Alert records from the database after a configurable time.  If configured it can save the alerts in zip files on a filesystem.  When initially run, it selects a filesystem from the lowest filesystem tier configured on the system to archive to.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),202,'ImportFiles','Import Dicom Files','This service periodically scans the filesystem for dicom files and imports them into the system.')
+GO
+
 -- ServiceLock Entries not associated with a Filesystem
 INSERT INTO [ImageServer].[dbo].ServiceLock
 	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])

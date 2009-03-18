@@ -42,6 +42,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FilesystemFileImporter\FileImporterBackgroundWorker.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FilesystemFileImporter\FilesystemFileImporterProcessor.cs">
+    </Compile>
+    <Compile Include="FilesystemFileImporter\FilesystemFileImporterProcessorFactoryExtension.cs" />
     <Compile Include="PurgeAlerts\PurgeAlertsFactoryExtension.cs" />
     <Compile Include="PurgeAlerts\PurgeAlertsItemProcessor.cs" />
     <Compile Include="ArchiveApplicationLog\ApplicationLogArchiveFactoryExtension.cs" />

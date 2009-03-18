@@ -51,6 +51,7 @@ public partial class ServiceLockTypeEnum : ServerEnum
       private static readonly ServiceLockTypeEnum _FilesystemRebuildXml = GetEnum("FilesystemRebuildXml");
       private static readonly ServiceLockTypeEnum _ArchiveApplicationLog = GetEnum("ArchiveApplicationLog");
       private static readonly ServiceLockTypeEnum _PurgeAlerts = GetEnum("PurgeAlerts");
+      private static readonly ServiceLockTypeEnum _ImportFiles = GetEnum("ImportFiles");
       #endregion
 
       #region Public Static Properties
@@ -109,6 +110,13 @@ public partial class ServiceLockTypeEnum : ServerEnum
       public static ServiceLockTypeEnum PurgeAlerts
       {
           get { return _PurgeAlerts; }
+      }
+      /// <summary>
+      /// This service scans the filesystem for dicom files and imports them into the system.
+      /// </summary>
+      public static ServiceLockTypeEnum ImportFiles
+      {
+          get { return _ImportFiles; }
       }
 
       #endregion

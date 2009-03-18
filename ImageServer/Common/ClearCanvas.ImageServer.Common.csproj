@@ -104,7 +104,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServerPlatform.cs" />
-    <Compile Include="SopInstanceProcessor.cs" />
+    <Compile Include="SopInstanceImporter.cs" />
     <Compile Include="ThreadedService.cs" />
     <Compile Include="Utilities\DicomNameUtils.cs" />
     <Compile Include="Utilities\DirectoryUtility.cs" />

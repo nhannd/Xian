@@ -31,14 +31,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -117,19 +115,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         }
         #endregion
 
-        #region Private Methods
-
-        private void RaiseNoStorageAlert()
-        {
-            ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical,
-                                SR.AlertComponentDICOM, AlertTypeCodes.NoResources,
-                                TimeSpan.FromMinutes(15), // don't repeat this alert again for another 15 min
-                                SR.AlertNoWritableStorage,
-                                Partition.AeTitle
-                    );
-        }
-        #endregion
-
         #region Overridden BaseSCP methods
 
         protected override DicomPresContextResult OnVerifyAssociation(AssociationParameters association, byte pcid)
@@ -152,14 +137,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         {
             try
             {
-                SopInstanceProcessor processor = new SopInstanceProcessor(Partition);
-                DicomProcessingResult result = processor.Process(message, association.CallingAE);
+                SopInstanceImporter importer = new SopInstanceImporter(Partition);
+                DicomSopProcessingResult result = importer.Import(message, association.CallingAE);
 
                 if (result.Sussessful)
                 {
-                    String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].ToString();
                     Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2} on context {3}",
-                                 sopInstanceUid, association.CallingAE, association.CalledAE, presentationID);
+                                 result.SopInstanceUid, association.CallingAE, association.CalledAE, presentationID);
                 
                 }
                 server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid, result.DicomStatus);

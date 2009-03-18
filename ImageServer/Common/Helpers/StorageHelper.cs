@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
         /// <param name="message">The DICOM message to create the storage location for.</param>
         /// <param name="partition">The partition where the study is being sent to</param>
         /// <returns>A <see cref="StudyStorageLocation"/> instance.</returns>
-        static public StudyStorageLocation GetStudyStorageLocation(DicomMessage message, ServerPartition partition)
+        static public StudyStorageLocation GetStudyStorageLocation(DicomMessageBase message, ServerPartition partition)
         {
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             String studyDate = message.DataSet[DicomTags.StudyDate].GetString(0, "");
@@ -78,6 +78,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                 return null;
             }
 
+
             using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IQueryStudyStorageLocation locQuery = updateContext.GetBroker<IQueryStudyStorageLocation>();
@@ -89,9 +90,10 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                 if (studyLocationList.Count == 0)
                 {
                     StudyStorage storage = StudyHelper.FindStorage(updateContext, studyInstanceUid, partition);
+
                     if (storage != null)
                     {
-                        Platform.Log(LogLevel.Warn, "Received SOP Instances for Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
+                        Platform.Log(LogLevel.Warn, "Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
                         return null;
                     }
 

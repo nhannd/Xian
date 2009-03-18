@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
@@ -15,40 +13,41 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Common
 {
-    public class DicomProcessingResult
+    public class DicomSopProcessingResult
     {
+        public String SopInstanceUid;
         public bool Sussessful;
         public String ErrorMessage;
         public DicomStatus DicomStatus;
     }
 
-    public class SopInstanceProcessorContext
-    {
-        public string SourceAE;
-    }
-
-    public class SopInstanceProcessor
+    public class SopInstanceImporter
     {
         private readonly ServerPartition _partition;
         private readonly IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         
-        public SopInstanceProcessor(ServerPartition partition)
+        public SopInstanceImporter(String partitionAE)
+            :this(ServerPartitionMonitor.Instance.GetPartition(partitionAE))
+        {
+        }
+
+        public SopInstanceImporter(ServerPartition partition)
         {
             Platform.CheckForNullReference(partition, "partition");
             _partition = partition;
         }
 
-        
-        public DicomProcessingResult Process(DicomMessage message, string sourceAE)
+        public DicomSopProcessingResult Import(DicomMessageBase message, string sourceAE)
         {
             Platform.CheckForNullReference(message, "message");
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
             String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
             String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
 
-            DicomProcessingResult result = new DicomProcessingResult();
+            DicomSopProcessingResult result = new DicomSopProcessingResult();
             result.Sussessful = true;
-            
+            result.SopInstanceUid = sopInstanceUid;
+
             // Use the command processor for rollback capabilities.
             using (ServerCommandProcessor processor = new ServerCommandProcessor(String.Format("Processing Sop Instance {0}",sopInstanceUid)))
             {
@@ -74,6 +73,8 @@ namespace ClearCanvas.ImageServer.Common
                     if (studyLocation == null)
                     {
                         StudyStorage storage = StudyStorage.Load(_partition.Key, studyInstanceUid);
+
+                        
                         if (storage != null)
                         {
                             failureMessage = String.Format("Study {0} on partition {1} is in a Nearline state, can't accept new images.  Inserting Restore Request for Study.", studyInstanceUid, _partition.Description);
@@ -246,7 +247,7 @@ namespace ClearCanvas.ImageServer.Common
         }
 
 
-        private static void SetError(DicomProcessingResult result, DicomStatus status, String message)
+        private static void SetError(DicomSopProcessingResult result, DicomStatus status, String message)
         {
             result.Sussessful = false;
             result.DicomStatus = status;
@@ -273,10 +274,22 @@ namespace ClearCanvas.ImageServer.Common
             return true;
         }
 
-        private static DicomFile ConvertToDicomFile(DicomMessage message, string filename, string sourceAE)
+        private static DicomFile ConvertToDicomFile(DicomMessageBase message, string filename, string sourceAE)
         {
             // This routine sets some of the group 0x0002 elements.
-            DicomFile file = new DicomFile(message, filename);
+            DicomFile file = null;
+            if (message is DicomFile)
+            {
+                file = message as DicomFile;
+            }
+            else if (message is DicomMessage)
+            {
+                new DicomFile(message as DicomMessage, filename);
+            }
+            else
+            {
+                throw new NotSupportedException(String.Format("Cannot convert {0} to DicomFile", message.GetType()));
+            }
 
             file.SourceApplicationEntityTitle = sourceAE;
             if (message.TransferSyntax.Encapsulated)
