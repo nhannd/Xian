@@ -1348,6 +1348,8 @@ BEGIN
 	DECLARE @FilesystemLosslessCompressServiceLockTypeEnum smallint
 	DECLARE @FilesystemLossyCompressServiceLockTypeEnum smallint
 	DECLARE @FilesystemRebuildXmlServiceLockTypeEnum smallint
+	DECLARE @FilesystemFileImporterServiceLockTypeEnum smallint
+
 
 	SET @GUID = newid()
 	SELECT @FilesystemDeleteServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemDelete''
@@ -1356,6 +1358,7 @@ BEGIN
 	SELECT @FilesystemLosslessCompressServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemLosslessCompress''
 	SELECT @FilesystemLossyCompressServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemLossyCompress''
 	SELECT @FilesystemRebuildXmlServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''FilesystemRebuildXml''
+	SELECT @FilesystemFileImporterServiceLockTypeEnum = Enum FROM ServiceLockTypeEnum WHERE [Lookup] = ''ImportFiles''
 
     -- Insert statements
 	BEGIN TRANSACTION
@@ -1387,6 +1390,10 @@ BEGIN
 	INSERT INTO [ImageServer].[dbo].ServiceLock
 		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
 	VALUES (newid(),@FilesystemRebuildXmlServiceLockTypeEnum,0,getdate(),@GUID,0)
+
+	INSERT INTO [ImageServer].[dbo].ServiceLock
+		([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+	VALUES (newid(),@FilesystemFileImporterServiceLockTypeEnum,0,getdate(),@GUID,0)
 
 	COMMIT TRANSACTION
 
