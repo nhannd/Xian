@@ -53,6 +53,7 @@
     <Compile Include="CommandProcessor\CreateTempDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DeleteDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
+    <Compile Include="CommandProcessor\UpdateWorkQueueCommand.cs" />
     <Compile Include="Data\ImageSetDescriptor.cs" />
     <Compile Include="Data\ImageSetDetails.cs" />
     <Compile Include="Data\PatientInformation.cs" />
@@ -103,6 +104,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServerPlatform.cs" />
+    <Compile Include="SopInstanceProcessor.cs" />
     <Compile Include="ThreadedService.cs" />
     <Compile Include="Utilities\DicomNameUtils.cs" />
     <Compile Include="Utilities\DirectoryUtility.cs" />

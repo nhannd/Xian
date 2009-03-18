@@ -78,7 +78,6 @@
     <Compile Include="StorageScp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UncompressedStorageScpExtension.cs" />
-    <Compile Include="UpdateWorkQueueCommand.cs" />
     <Compile Include="VerificationScpExtension.cs" />
   </ItemGroup>
   <ItemGroup>

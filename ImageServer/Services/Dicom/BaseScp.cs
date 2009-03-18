@@ -55,55 +55,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
     /// </summary>
     public abstract class BaseScp : IDicomScp<DicomScpContext>
     {
-        /// <summary>
-        /// Used for passing data into StorageHelper, extracting the data from a <see cref="DicomMessage"/>
-        /// </summary>
-        private class DataContext : StorageHelper.DataContext
-        {
-            #region Private Fields
-            private IPersistenceContext _context;
-            private readonly ServerPartition _partition;
-            private readonly DicomMessage _message;
-            #endregion
-
-            #region Constructors
-            public DataContext(ServerPartition partition, DicomMessage message)
-            {
-                _partition = partition;
-                _message = message;
-            }
-            #endregion
-
-            #region DataContext Members
-
-            public IPersistenceContext PersistenceContext
-            {
-                get { return _context; }
-                set { _context = value; }
-            }
-
-            public ServerPartition Partition
-            {
-                get { return _partition; }
-            }
-
-            public string GetDicomValue(uint tag)
-            {
-                return _message.DataSet[tag].GetString(0, null);
-            }
-
-            #endregion
-
-            #region DataContext Members
-
-
-            public string StudyInstanceUid
-            {
-                get { return GetDicomValue(DicomTags.StudyInstanceUid); }
-            }
-
-            #endregion
-        }
 
         #region Protected Members
         protected IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
@@ -112,21 +63,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         #endregion
 
         #region Private Methods
-        /// <summary>
-        /// Returns the name of the directory in the filesytem
-        /// where the study referenced by the specified <see cref="DicomMessage"></see> will be stored.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="message"></param>
-        /// <param name="checkExisting"></param>
-        /// <returns></returns>
-        /// 
-        public string ResolveStorageFolder(IPersistenceContext context, DicomMessage message, bool checkExisting)
-        {
-            DataContext dataContext = new DataContext(Partition, message);
-            dataContext.PersistenceContext = context;
-            return StorageHelper.ResolveStorageFolder(dataContext, checkExisting);
-        }
 
         #endregion
 
@@ -289,84 +225,6 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 			}
 		}
 
-        /// <summary>
-        /// Checks for a storage location for the study in the database, and creates a new location
-        /// in the database if it doesn't exist.
-        /// </summary>
-        /// <param name="message">The DICOM message to create the storage location for.</param>
-        /// <returns>A <see cref="StudyStorageLocation"/> instance.</returns>
-        public StudyStorageLocation GetStudyStorageLocation(DicomMessage message)
-        {
-            String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-
-            ServerFilesystemInfo filesystem = Selector.SelectFilesystem(message);
-            if (filesystem == null)
-            {
-                Platform.Log(LogLevel.Error, "Unable to select location for storing study.");
-                    
-                return null;
-            }
-
-            using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
-            {
-                IQueryStudyStorageLocation locQuery = updateContext.GetBroker<IQueryStudyStorageLocation>();
-                StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
-                locParms.StudyInstanceUid = studyInstanceUid;
-                locParms.ServerPartitionKey = Partition.GetKey();
-                IList<StudyStorageLocation> studyLocationList = locQuery.Find(locParms);
-
-                if (studyLocationList.Count == 0)
-                {
-                    StudyStorage storage = StudyHelper.FindStorage(updateContext, studyInstanceUid, Partition);
-                    if (storage != null)
-					{
-						Platform.Log(LogLevel.Warn,"Received SOP Instances for Study in {0} state.  Rejecting image.", storage.StudyStatusEnum.Description);
-						return null;
-					}
-                    
-                    IInsertStudyStorage locInsert = _store.OpenReadContext().GetBroker<IInsertStudyStorage>();
-                    InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
-                    insertParms.ServerPartitionKey = Partition.GetKey();
-                    insertParms.StudyInstanceUid = studyInstanceUid;
-                    insertParms.Folder = ResolveStorageFolder(updateContext, message, false /* set to false for optimization because we are sure it's not in the system */);
-                    insertParms.FilesystemKey = filesystem.Filesystem.GetKey();
-                	insertParms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
-
-					if (message.TransferSyntax.LosslessCompressed)
-					{
-						insertParms.TransferSyntaxUid = message.TransferSyntax.UidString;
-						insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossless;
-					}
-					else if (message.TransferSyntax.LossyCompressed)
-					{
-						insertParms.TransferSyntaxUid = message.TransferSyntax.UidString;
-						insertParms.StudyStatusEnum = StudyStatusEnum.OnlineLossy;
-					}
-					else
-                	{
-						insertParms.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
-						insertParms.StudyStatusEnum = StudyStatusEnum.Online;
-					}
-
-                    studyLocationList = locInsert.Find(insertParms);
-
-                    updateContext.Commit();
-                }
-                else
-                {
-					if (!FilesystemMonitor.Instance.CheckFilesystemWriteable(studyLocationList[0].FilesystemKey))
-                    {
-                        Platform.Log(LogLevel.Warn, "Unable to find writable filesystem for study {0} on Partition {1}",
-                                     studyInstanceUid, Partition.Description);
-                        return null;
-                    }
-                }
-
-                //TODO:  Do we need to do something to identify a primary storage location?
-                // Also, should the above check for writeable location check the other availab
-                return studyLocationList[0];
-            }
-        }
         #endregion
 
         #region IDicomScp Members

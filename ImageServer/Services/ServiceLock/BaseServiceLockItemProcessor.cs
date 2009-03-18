@@ -234,9 +234,19 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 		public void Cancel()
 		{
 			lock (_syncRoot)
-				_cancelPending = true;
+			{
+			    _cancelPending = true;
+			}
+
+		    OnCancelling();
 		}
-		#endregion
+
+        protected virtual void OnCancelling()
+        {
+            
+        }
+
+        #endregion
 
 		#region Static Methods
 		/// <summary>
