@@ -85,24 +85,30 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                     {
                         Type enumClass = GetEnumValueClassForEnumType(prop.Type.ReturnedClass);
 
-                        // build a constraint for this column
-                        Table constrainedTable = prop.Value.Table;
-                        Column constrainedColumn = CollectionUtils.FirstElement<Column>(prop.ColumnCollection);
-                        constrainedTable.CreateForeignKey(null, new Column[] { constrainedColumn }, enumClass);
+						// value may be null in which case there is no foreign key constraint
+						if(enumClass != null)
+						{
+							// build a constraint for this column
+							Table constrainedTable = prop.Value.Table;
+							Column constrainedColumn = CollectionUtils.FirstElement<Column>(prop.ColumnCollection);
+							constrainedTable.CreateForeignKey(null, new Column[] { constrainedColumn }, enumClass);
+						}
                     }
                 }
             }
         }
 
-        private Type GetEnumValueClassForEnumType(Type enumType)
+		/// <summary>
+		/// Gets the associated EnumValue class, or null if there is no associated class.
+		/// </summary>
+		/// <param name="enumType"></param>
+		/// <returns></returns>
+        private static Type GetEnumValueClassForEnumType(Type enumType)
         {
             EnumValueClassAttribute attr = CollectionUtils.FirstElement<EnumValueClassAttribute>(
                 enumType.GetCustomAttributes(typeof(EnumValueClassAttribute), false));
 
-            if (attr == null)
-                throw new Exception(string.Format("{0} is not marked with the EnumValueClassAttribute", enumType.FullName));
-
-            return attr.EnumValueClass;
+            return attr == null ? null : attr.EnumValueClass;
         }
 
         private Table GetTableForEnumClass(Type enumClass, PersistentStore store)
