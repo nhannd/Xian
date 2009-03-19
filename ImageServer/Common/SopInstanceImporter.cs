@@ -284,7 +284,7 @@ namespace ClearCanvas.ImageServer.Common
             }
             else if (message is DicomMessage)
             {
-                new DicomFile(message as DicomMessage, filename);
+                file = new DicomFile(message as DicomMessage, filename);
             }
             else
             {
