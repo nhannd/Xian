@@ -234,14 +234,48 @@ namespace ClearCanvas.Dicom.IO
 
         public void CopyTo(Stream s)
         {
-            if (_ms != null)
+			int maxSize = 1024 * 1024 * 4;
+			
+			if (_ms != null)
             {
-                _ms.WriteTo(s);
-                return;
+				// Discovered a bug when saving to a network drive, where 
+				// writing data in large chunks caused an IOException.  
+				// Limiting single writes to a smaller size seems to fix the issue.
+				if (_ms.Length > maxSize && s is FileStream)
+				{
+					byte[] array = _ms.ToArray();
+					int bytesLeft = array.Length;
+					int offset = 0;
+					while (bytesLeft > 0)
+					{
+						int bytesToWrite = bytesLeft > maxSize ? maxSize : bytesLeft;
+						s.Write(array, offset, bytesToWrite);
+						bytesLeft -= bytesToWrite;
+						offset += bytesToWrite;
+					}
+				}
+				else
+				{
+					_ms.WriteTo(s);
+				}
+            	return;
             }
             if (_data != null)
             {
-                s.Write(_data, 0, _data.Length);
+				if (s is FileStream)
+				{
+					int bytesLeft = _data.Length;
+					int offset = 0;
+					while (bytesLeft > 0)
+					{
+						int bytesToWrite = bytesLeft > maxSize ? maxSize : bytesLeft;
+						s.Write(_data, offset, bytesToWrite);
+						bytesLeft -= bytesToWrite;
+						offset += bytesToWrite;
+					}
+				}
+				else 
+					s.Write(_data, 0, _data.Length);
             }
         }
 

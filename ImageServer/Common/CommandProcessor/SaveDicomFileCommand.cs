@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private string _backupPath;
 		private readonly DicomFile _file;
 		private readonly bool _failOnExists;
-		private bool _fileSaved = false;
+		private bool _fileCreated = false;
 		#endregion
 
 		public SaveDicomFileCommand(string path, DicomFile file, bool failOnExists)
@@ -85,15 +85,16 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 			using (FileStream stream = FileStreamOpener.OpenForSoleUpdate(_path, FileMode.Create))
 			{
+				// Set _fileCreated here, because the file has been opened.
+				_fileCreated = true;
 				_file.Save(stream, DicomWriteOptions.Default);
-				_fileSaved = true;
 				stream.Close();
 			}
 		}
 
 		protected override void OnUndo()
 		{
-            if (File.Exists(_path) && _fileSaved) 
+            if (File.Exists(_path) && _fileCreated) 
                 File.Delete(_path); 
             
             if (false==String.IsNullOrEmpty(_backupPath) && File.Exists(_backupPath))
