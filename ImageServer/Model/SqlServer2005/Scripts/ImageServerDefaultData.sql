@@ -315,6 +315,10 @@ INSERT INTO [ImageServer].[dbo].ServiceLock
 	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
 VALUES (newid(),201,0,getdate(),null,1)
 
+INSERT INTO [ImageServer].[dbo].ServiceLock
+	([GUID],[ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+VALUES (newid(),202,0,getdate(),null,1)
+
 
 -- ServerSopClass inserts
 INSERT INTO [ImageServer].[dbo].[ServerSopClass] ([GUID],[SopClassUid],[Description],[NonImage])

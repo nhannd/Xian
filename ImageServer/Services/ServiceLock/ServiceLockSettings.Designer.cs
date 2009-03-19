@@ -152,14 +152,5 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock {
                 return ((bool)(this["AlertDelete"]));
             }
         }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("300")]
-        public int ImportFileBatchSize {
-            get {
-                return ((int)(this["ImportFileBatchSize"]));
-            }
-        }
     }
 }

@@ -100,6 +100,21 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             }
         }
 
+        public static void DeleteEmptySubDirectories(string path, bool recursive)
+        {
+            if (Directory.Exists(path))
+            {
+                DirectoryInfo dirInfo = new DirectoryInfo(path);
+                DirectoryInfo[] subDirs = dirInfo.GetDirectories();
+                foreach (DirectoryInfo subDir in subDirs)
+                {
+                    DeleteEmptySubDirectories(subDir.FullName, recursive);
+                    DeleteIfEmpty(subDir.FullName);
+                }
+            }
+        }
+
+
         public static void DeleteIfExists(string dir, bool deleteParentIfEmpty)
         {
             DirectoryInfo parent = Directory.GetParent(dir);

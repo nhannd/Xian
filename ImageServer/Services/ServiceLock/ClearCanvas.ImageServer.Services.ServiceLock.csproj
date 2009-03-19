@@ -42,6 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FilesystemFileImporter\DirectoryImportSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DirectoryImportSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="FilesystemFileImporter\FileImporterBackgroundWorker.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -125,6 +130,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="FilesystemFileImporter\DirectoryImportSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>DirectoryImportSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ServiceLockSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ServiceLockSettings.Designer.cs</LastGenOutput>
