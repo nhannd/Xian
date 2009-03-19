@@ -505,6 +505,18 @@ GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
 
+PRINT N'Inserting new row into [dbo].[ServiceLockTypeEnum]'
+GO
+INSERT INTO [ImageServer].[dbo].[ServiceLockTypeEnum] 
+    ([GUID],[Enum],[Lookup],[Description],[LongDescription]) 
+VALUES 
+    (newid(),202,'ImportFiles','Import Dicom Files','This service periodically scans the filesystem for dicom files and imports them into the system.') 
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
 PRINT N'Updating [dbo].[QueueStudyStateEnum]'
 GO
 UPDATE [dbo].[QueueStudyStateEnum]
