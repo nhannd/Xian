@@ -126,23 +126,39 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
             if (itemlist!=null )
             {
                 var rows = itemlist.getSelectedRowElements();
+                
                 if (rows.length>0)
                 {
                     this._enableDeleteButton(true);
                     this._enableOpenStudyButton(true);
+                    
+                    this._enableResetStudyButton(true);
+                    
+					for(i=0; i<rows.length; i++)
+					{
+						this._enableResetStudyButton(this._canResetItem(rows[i]));
+					}
                 }
                 else
                 {
                     this._enableDeleteButton(false);
                     this._enableOpenStudyButton(false);
+                    this._enableResetStudyButton(false);
                 }
             }
             else
             {
                 this._enableDeleteButton(false);
                 this._enableOpenStudyButton(false);
+                this._enableResetStudyButton(false);
             }
         },     
+        
+        _canResetItem : function(row)
+        {
+            //"canreset" is a custom attribute injected by the list control
+            return row.getAttribute('canreset')=='true';
+        },
         
         // return the study instance uid of the row 
         _getInstanceUid : function(row)
@@ -161,6 +177,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
         {
             var openButton = $find(this._OpenButtonClientID);
             if(openButton != null) openButton.set_enable(en);
+        },
+        
+        _enableResetStudyButton : function(en)
+        {
+            var resetButton = $find(this._ResetButtonClientID);
+            if(resetButton != null) resetButton.set_enable(en);
         },
         
         _enableDeleteButton : function(en)
@@ -200,6 +222,15 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
         set_OpenButtonClientID : function(value) {
             this._OpenButtonClientID = value;
             this.raisePropertyChanged('OpenButtonClientID');
+        },
+        
+        get_ResetButtonClientID : function() {
+            return this._ResetButtonClientID;
+        },
+
+        set_ResetButtonClientID : function(value) {
+            this._ResetButtonClientID = value;
+            this.raisePropertyChanged('ResetButtonClientID');
         },
         
         get_OpenStudyPageUrl : function() {

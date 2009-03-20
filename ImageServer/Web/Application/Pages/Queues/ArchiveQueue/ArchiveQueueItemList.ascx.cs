@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
@@ -208,6 +209,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                     {
                         row.Attributes.Add("instanceuid", item.StudyStorage.StudyInstanceUid);
                         row.Attributes.Add("serverae", item.ThePartition.AeTitle);
+                    	row.Attributes.Add("canreset",item.TheArchiveQueueItem.ArchiveQueueStatusEnum.Equals(ArchiveQueueStatusEnum.Failed).ToString().ToLower());
                     }
                 }
             }

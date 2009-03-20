@@ -52,6 +52,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
         private readonly ArchiveQueueController _controller = new ArchiveQueueController();
     	private ServerPartition _serverPartition;
+    	private Default _enclosingPage;
 
     	#endregion Private members
 
@@ -71,7 +72,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 			get { return ViewStudyDetailsButton.ClientID; }
 		}
 
-        [ExtenderControlProperty]
+		[ExtenderControlProperty]
+		[ClientPropertyName("ResetButtonClientID")]
+		public string ResetButtonClientID
+		{
+			get { return ResetItemButton.ClientID; }
+		}
+
+		[ExtenderControlProperty]
         [ClientPropertyName("ItemListClientID")]
         public string ItemListClientID
         {
@@ -83,6 +91,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 		public string OpenStudyPageUrl
 		{
 			get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.StudyDetailsPage); }
+		}
+
+		public Default EnclosingPage
+		{
+			get { return _enclosingPage; }
+			set { _enclosingPage = value; }
 		}
 
 		/// <summary>
@@ -239,5 +253,17 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         }
 
         #endregion Protected Methods
+
+    	protected void ResetItemButton_Click(object sender, ImageClickEventArgs e)
+    	{
+			if (ArchiveQueueItemList.SelectedItems == null)
+				DataBind();
+
+			if (ArchiveQueueItemList.SelectedItems.Count > 0)
+			{
+				EnclosingPage.ResetArchiveQueueItem(ArchiveQueueItemList.SelectedItems);
+				ArchiveQueueItemList.RefreshCurrentPage();
+			}
+    	}
     }
 }

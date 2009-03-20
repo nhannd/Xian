@@ -285,6 +285,13 @@
     <Compile Include="Pages\Login\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Queues\ArchiveQueue\ResetArchiveQueueDialog.ascx.cs">
+      <DependentUpon>ResetArchiveQueueDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\ArchiveQueue\ResetArchiveQueueDialog.ascx.designer.cs">
+      <DependentUpon>ResetArchiveQueueDialog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Code\DefaultStudyHistoryRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\IStudyHistoryColumnControlFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\ReconcileStudyRendererFactory.cs" />
@@ -1319,6 +1326,7 @@
     <Content Include="Pages\Login\ChangePasswordDialog.ascx" />
     <Content Include="Pages\Login\PasswordExpiredDialog.ascx" />
     <EmbeddedResource Include="Pages\Studies\Move\MovePanel.js" />
+    <Content Include="Pages\Queues\ArchiveQueue\ResetArchiveQueueDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\EditHistoryDetailsColumn.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\HistoryPanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\ReconcileHistoryDetailsColumn.ascx" />

@@ -408,4 +408,19 @@
   <data name="DialogEditUserTitle" xml:space="preserve">
     <value>Edit User</value>
   </data>
+  <data name="ArchiveQueueNotAvailable" xml:space="preserve">
+    <value>This archive queue item is no longer available in the system</value>
+  </data>
+  <data name="ArchiveQueueBeingProcessed" xml:space="preserve">
+    <value>This archive queue item is being processed. Try again later.</value>
+  </data>
+  <data name="ArchiveQueueResetConfirm" xml:space="preserve">
+    <value>Are you sure you want to reset this item to Pending?</value>
+  </data>
+  <data name="ArchiveQueueResetFailed" xml:space="preserve">
+    <value>Unable to reset this archive queue item. Please contact server administrator.</value>
+  </data>
+  <data name="MultipleArchiveQueueResetConfirm" xml:space="preserve">
+    <value>Are you sure you want to reset these items to Pending?</value>
+  </data>
 </root>

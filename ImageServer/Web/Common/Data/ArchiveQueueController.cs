@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
@@ -77,6 +78,41 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _adaptor.Delete(item.Key);
         }
 
-        
+		public bool ResetArchiveQueueItem(IList<ArchiveQueue> items, DateTime time)
+		{
+			if (items == null || items.Count == 0)
+				return false;
+
+			ArchiveQueueUpdateColumns columns = new ArchiveQueueUpdateColumns();
+			columns.ArchiveQueueStatusEnum = ArchiveQueueStatusEnum.Pending;
+			columns.ProcessorId = "";
+			columns.ScheduledTime = time;
+
+			bool result = true;
+			IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+			using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IArchiveQueueEntityBroker archiveQueueBroker = ctx.GetBroker<IArchiveQueueEntityBroker>();
+				
+				foreach (ArchiveQueue item in items)
+				{
+					// Only do an update if its a failed status currently
+					ArchiveQueueSelectCriteria criteria = new ArchiveQueueSelectCriteria();
+					criteria.ArchiveQueueStatusEnum.EqualTo(ArchiveQueueStatusEnum.Failed);
+					criteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
+
+					if (!archiveQueueBroker.Update(criteria, columns))
+					{
+						result = false;
+						break;
+					}
+				}
+
+				if (result)
+					ctx.Commit();
+			}
+
+			return result;
+		}
 	}
 }
