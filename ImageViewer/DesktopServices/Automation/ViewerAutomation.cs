@@ -82,15 +82,12 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		{
 			List<Viewer> viewers = new List<Viewer>();
 
-			foreach (Workspace workspace in GetViewerWorkspaces())
+			//The tool stores the viewer ids in order of activation, most recent first
+			foreach (Guid viewerId in ViewerAutomationTool.GetViewerIds())
 			{
-				IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
-				if (viewer != null)
-				{
-					Guid? viewerId = ViewerAutomationTool.GetViewerId(viewer);
-					if (viewerId != null)
-						viewers.Add(new Viewer((Guid) viewerId, GetPrimaryStudyInstanceUid(viewer)));
-				}
+				IImageViewer viewer = ViewerAutomationTool.GetViewer(viewerId);
+				if (viewer != null && GetViewerWorkspace(viewer) != null)
+					viewers.Add(new Viewer(viewerId, GetPrimaryStudyInstanceUid(viewer)));
 			}
 
 			if (viewers.Count == 0)
@@ -122,7 +119,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			{
 				string message = String.Format("The specified viewer ({0}) was not found, " +
 									"likely because it has already been closed by the user.", request.Viewer.Identifier);
-				Platform.Log(LogLevel.Error, message);
+				Platform.Log(LogLevel.Debug, message);
 
 				throw new FaultException<ViewerNotFoundFault>(new ViewerNotFoundFault(message), _viewerNotFoundReason);
 			}
@@ -233,7 +230,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			{
 				string message = String.Format("The specified viewer ({0}) was not found, " +
 					"likely because it has already been closed by the user.", request.Viewer.Identifier);
-				Platform.Log(LogLevel.Error, message);
+				Platform.Log(LogLevel.Debug, message);
 
 				throw new FaultException<ViewerNotFoundFault>(new ViewerNotFoundFault(message), _viewerNotFoundReason);
 			}
@@ -282,7 +279,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 			{
 				string message = String.Format("The specified viewer ({0}) was not found, " +
 					"likely because it has already been closed by the user.", request.Viewer.Identifier);
-				Platform.Log(LogLevel.Error, message);
+				Platform.Log(LogLevel.Debug, message);
 
 				throw new FaultException<ViewerNotFoundFault>(new ViewerNotFoundFault(message), _viewerNotFoundReason);
 			}

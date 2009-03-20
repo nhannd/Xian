@@ -61,18 +61,18 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="ArrayOfStudyRootStudyIdentifier" nillable="true" type="tns:ArrayOfStudyRootStudyIdentifier" />
-  <xs:complexType name="DataValidationFault">
-    <xs:sequence>
-      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
-    </xs:sequence>
-  </xs:complexType>
-  <xs:element name="DataValidationFault" nillable="true" type="tns:DataValidationFault" />
   <xs:complexType name="QueryFailedFault">
     <xs:sequence>
       <xs:element name="Description" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="QueryFailedFault" nillable="true" type="tns:QueryFailedFault" />
+  <xs:complexType name="DataValidationFault">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="Description" nillable="true" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="DataValidationFault" nillable="true" type="tns:DataValidationFault" />
   <xs:element name="SeriesQuery">
     <xs:complexType>
       <xs:sequence>

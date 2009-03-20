@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 {
@@ -32,6 +33,8 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 		{
 			base.Initialize();
 
+			this.Context.DesktopWindow.Workspaces.ItemActivationChanged += OnWorkspaceActivationChanged;
+
 			_viewer = base.ImageViewer;
 			lock(_syncLock)
 			{
@@ -41,12 +44,40 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 
 		protected override void Dispose(bool disposing)
 		{
+			this.Context.DesktopWindow.Workspaces.ItemActivationChanged -= OnWorkspaceActivationChanged;
+
 			lock(_syncLock)
 			{
 				_tools.Remove(this);
 			}
 
 			base.Dispose(disposing);
+		}
+
+		private void OnWorkspaceActivationChanged(object sender, ItemEventArgs<Workspace> e)
+		{
+			if (!e.Item.Active)
+				return;
+
+			IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(e.Item);
+			if (viewer == base.ImageViewer)
+			{
+				//make the list of tools reflect the activation order, most recent first
+				lock(_syncLock)
+				{
+					_tools.Remove(this);
+					_tools.Insert(0, this);
+				}
+			}
+		}
+
+		internal static List<Guid> GetViewerIds()
+		{
+			lock(_syncLock)
+			{
+				return CollectionUtils.Map<ViewerAutomationTool, Guid>(_tools, 
+					delegate(ViewerAutomationTool tool) { return tool._viewerId; });
+			}
 		}
 
 		internal static Guid? GetViewerId(IImageViewer viewer)

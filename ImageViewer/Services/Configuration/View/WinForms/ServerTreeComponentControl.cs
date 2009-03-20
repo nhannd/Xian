@@ -80,6 +80,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 			_aeTreeView.MouseDown += AETreeViewClick;
 			_aeTreeView.AfterSelect += AETreeViewAfterSelect;
 
+			_component.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
 			_component.ServerTree.ServerTreeUpdated += OnServerTreeUpdated;
 			if (_component.ShowTools)
 			{
@@ -262,6 +263,32 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
 		}
 
 		#endregion
+
+		private void OnSelectedServerChanged(object sender, EventArgs e)
+		{
+			TreeNode foundNode = FindNode(_component.ServerTree.CurrentNode, _aeTreeView.Nodes);
+			if (foundNode != null)
+				SelectNode(foundNode);
+		}
+
+		private TreeNode FindNode(IServerTreeNode findNode, TreeNodeCollection treeNodes)
+		{
+			foreach (TreeNode treeNode in treeNodes)
+			{
+				if (treeNode.Tag == findNode)
+				{
+					return treeNode;
+				}
+				else
+				{
+					TreeNode foundTreeNode = FindNode(findNode, treeNode.Nodes);
+					if (foundTreeNode != null)
+						return foundTreeNode;
+				}
+			}
+
+			return null;
+		}
 
 		//It is *very* important to keep the SelectedNode of the TreeView and _lastClickNode synchronized,
 		//and not only that, but _lastClickedNode must be set first, otherwise some odd behaviour can occur.

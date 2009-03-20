@@ -13,5 +13,11 @@
 			Contract="ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.IStudyRootQuery"
 			>
 		</EndPoint>
+		<EndPoint
+			Address="net.pipe://localhost/ClearCanvas/ImageViewer/StudyLocator"
+			BindingConfiguration="StudyLocator1"
+			Contract="ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.IStudyRootQuery"
+			>
+		</EndPoint>
 	</EndPoints>
 </ServiceReference>

@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ServiceReference>
+	<ProxyGenerationParameters
+		ServiceReferenceUri="http://localhost:51124/ClearCanvas/ImageViewer/DicomExplorer/Automation?wsdl"
+		Name="DicomExplorerAutomation"
+		NotifyPropertyChange="True"
+		UseObservableCollection="False">
+	</ProxyGenerationParameters>
+	<EndPoints>
+		<EndPoint
+			Address="http://localhost:51124/ClearCanvas/ImageViewer/DicomExplorer/Automation"
+			BindingConfiguration="DicomExplorerAutomation"
+			Contract="ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.DicomExplorerAutomation.IDicomExplorerAutomation"
+			>
+		</EndPoint>
+		<EndPoint
+			Address="net.pipe://localhost/ClearCanvas/ImageViewer/DicomExplorer/Automation"
+			BindingConfiguration="DicomExplorerAutomation1"
+			Contract="ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.DicomExplorerAutomation.IDicomExplorerAutomation"
+			>
+		</EndPoint>
+	</EndPoints>
+</ServiceReference>

@@ -512,6 +512,43 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLoc
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query")]
     [System.SerializableAttribute()]
+    public partial class QueryFailedFault : object, System.Runtime.Serialization.IExtensibleDataObject
+    {
+        
+        [System.NonSerializedAttribute()]
+        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
+        
+        private string DescriptionField;
+        
+        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
+        {
+            get
+            {
+                return this.extensionDataField;
+            }
+            set
+            {
+                this.extensionDataField = value;
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
+        public string Description
+        {
+            get
+            {
+                return this.DescriptionField;
+            }
+            set
+            {
+                this.DescriptionField = value;
+            }
+        }
+    }
+    
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query")]
+    [System.SerializableAttribute()]
     public partial class DataValidationFault : object, System.Runtime.Serialization.IExtensibleDataObject
     {
         
@@ -547,43 +584,6 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLoc
         }
     }
     
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "3.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query")]
-    [System.SerializableAttribute()]
-    public partial class QueryFailedFault : object, System.Runtime.Serialization.IExtensibleDataObject
-    {
-        
-        [System.NonSerializedAttribute()]
-        private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
-        
-        private string DescriptionField;
-        
-        public System.Runtime.Serialization.ExtensionDataObject ExtensionData
-        {
-            get
-            {
-                return this.extensionDataField;
-            }
-            set
-            {
-                this.extensionDataField = value;
-            }
-        }
-        
-        [System.Runtime.Serialization.DataMemberAttribute(IsRequired=true)]
-        public string Description
-        {
-            get
-            {
-                return this.DescriptionField;
-            }
-            set
-            {
-                this.DescriptionField = value;
-            }
-        }
-    }
-    
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "3.0.0.0")]
     [System.ServiceModel.ServiceContractAttribute(Namespace="http://www.clearcanvas.ca/dicom/query", ConfigurationName="ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.IStudy" +
         "RootQuery")]
@@ -591,10 +591,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLoc
     {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQuery", ReplyAction="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQueryResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQueryDataValidationFau" +
-            "ltFault", Name="DataValidationFault")]
         [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.QueryFailedFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQueryQueryFailedFaultF" +
             "ault", Name="QueryFailedFault")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQueryDataValidationFau" +
+            "ltFault", Name="DataValidationFault")]
         System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootStudyIdentifier> StudyQuery(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootStudyIdentifier queryCriteria);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQuery", ReplyAction="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQueryResponse")]
@@ -605,10 +605,10 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLoc
         System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesIdentifier> SeriesQuery(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.SeriesIdentifier queryCriteria);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQuery", ReplyAction="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQueryResponse")]
-        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQueryDataValidationFau" +
-            "ltFault", Name="DataValidationFault")]
         [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.QueryFailedFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQueryQueryFailedFaultF" +
             "ault", Name="QueryFailedFault")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.DataValidationFault), Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQueryDataValidationFau" +
+            "ltFault", Name="DataValidationFault")]
         System.ComponentModel.BindingList<ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageIdentifier> ImageQuery(ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.ImageIdentifier queryCriteria);
     }
     

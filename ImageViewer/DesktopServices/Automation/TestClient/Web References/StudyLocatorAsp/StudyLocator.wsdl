@@ -42,11 +42,11 @@
   <wsdl:message name="IStudyRootQuery_StudyQuery_OutputMessage">
     <wsdl:part name="parameters" element="tns:StudyQueryResponse" />
   </wsdl:message>
-  <wsdl:message name="IStudyRootQuery_StudyQuery_DataValidationFaultFault_FaultMessage">
-    <wsdl:part name="detail" element="tns:DataValidationFault" />
-  </wsdl:message>
   <wsdl:message name="IStudyRootQuery_StudyQuery_QueryFailedFaultFault_FaultMessage">
     <wsdl:part name="detail" element="tns:QueryFailedFault" />
+  </wsdl:message>
+  <wsdl:message name="IStudyRootQuery_StudyQuery_DataValidationFaultFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:DataValidationFault" />
   </wsdl:message>
   <wsdl:message name="IStudyRootQuery_SeriesQuery_InputMessage">
     <wsdl:part name="parameters" element="tns:SeriesQuery" />
@@ -66,18 +66,18 @@
   <wsdl:message name="IStudyRootQuery_ImageQuery_OutputMessage">
     <wsdl:part name="parameters" element="tns:ImageQueryResponse" />
   </wsdl:message>
-  <wsdl:message name="IStudyRootQuery_ImageQuery_DataValidationFaultFault_FaultMessage">
-    <wsdl:part name="detail" element="tns:DataValidationFault" />
-  </wsdl:message>
   <wsdl:message name="IStudyRootQuery_ImageQuery_QueryFailedFaultFault_FaultMessage">
     <wsdl:part name="detail" element="tns:QueryFailedFault" />
+  </wsdl:message>
+  <wsdl:message name="IStudyRootQuery_ImageQuery_DataValidationFaultFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:DataValidationFault" />
   </wsdl:message>
   <wsdl:portType name="IStudyRootQuery">
     <wsdl:operation name="StudyQuery">
       <wsdl:input wsaw:Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQuery" message="tns:IStudyRootQuery_StudyQuery_InputMessage" />
       <wsdl:output wsaw:Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQueryResponse" message="tns:IStudyRootQuery_StudyQuery_OutputMessage" />
-      <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQueryDataValidationFaultFault" name="DataValidationFaultFault" message="tns:IStudyRootQuery_StudyQuery_DataValidationFaultFault_FaultMessage" />
       <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQueryQueryFailedFaultFault" name="QueryFailedFaultFault" message="tns:IStudyRootQuery_StudyQuery_QueryFailedFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/StudyQueryDataValidationFaultFault" name="DataValidationFaultFault" message="tns:IStudyRootQuery_StudyQuery_DataValidationFaultFault_FaultMessage" />
     </wsdl:operation>
     <wsdl:operation name="SeriesQuery">
       <wsdl:input wsaw:Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/SeriesQuery" message="tns:IStudyRootQuery_SeriesQuery_InputMessage" />
@@ -88,8 +88,8 @@
     <wsdl:operation name="ImageQuery">
       <wsdl:input wsaw:Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQuery" message="tns:IStudyRootQuery_ImageQuery_InputMessage" />
       <wsdl:output wsaw:Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQueryResponse" message="tns:IStudyRootQuery_ImageQuery_OutputMessage" />
-      <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQueryDataValidationFaultFault" name="DataValidationFaultFault" message="tns:IStudyRootQuery_ImageQuery_DataValidationFaultFault_FaultMessage" />
       <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQueryQueryFailedFaultFault" name="QueryFailedFaultFault" message="tns:IStudyRootQuery_ImageQuery_QueryFailedFaultFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.clearcanvas.ca/dicom/query/IStudyRootQuery/ImageQueryDataValidationFaultFault" name="DataValidationFaultFault" message="tns:IStudyRootQuery_ImageQuery_DataValidationFaultFault_FaultMessage" />
     </wsdl:operation>
   </wsdl:portType>
   <wsdl:binding name="StudyLocator" type="tns:IStudyRootQuery">
@@ -102,11 +102,11 @@
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
-      <wsdl:fault name="DataValidationFaultFault">
-        <soap:fault use="literal" name="DataValidationFaultFault" namespace="" />
-      </wsdl:fault>
       <wsdl:fault name="QueryFailedFaultFault">
         <soap:fault use="literal" name="QueryFailedFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="DataValidationFaultFault">
+        <soap:fault use="literal" name="DataValidationFaultFault" namespace="" />
       </wsdl:fault>
     </wsdl:operation>
     <wsdl:operation name="SeriesQuery">
@@ -132,11 +132,11 @@
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
-      <wsdl:fault name="DataValidationFaultFault">
-        <soap:fault use="literal" name="DataValidationFaultFault" namespace="" />
-      </wsdl:fault>
       <wsdl:fault name="QueryFailedFaultFault">
         <soap:fault use="literal" name="QueryFailedFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="DataValidationFaultFault">
+        <soap:fault use="literal" name="DataValidationFaultFault" namespace="" />
       </wsdl:fault>
     </wsdl:operation>
   </wsdl:binding>
@@ -151,11 +151,11 @@
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
-      <wsdl:fault name="DataValidationFaultFault">
-        <soap12:fault use="literal" name="DataValidationFaultFault" namespace="" />
-      </wsdl:fault>
       <wsdl:fault name="QueryFailedFaultFault">
         <soap12:fault use="literal" name="QueryFailedFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="DataValidationFaultFault">
+        <soap12:fault use="literal" name="DataValidationFaultFault" namespace="" />
       </wsdl:fault>
     </wsdl:operation>
     <wsdl:operation name="SeriesQuery">
@@ -181,11 +181,11 @@
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
-      <wsdl:fault name="DataValidationFaultFault">
-        <soap12:fault use="literal" name="DataValidationFaultFault" namespace="" />
-      </wsdl:fault>
       <wsdl:fault name="QueryFailedFaultFault">
         <soap12:fault use="literal" name="QueryFailedFaultFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="DataValidationFaultFault">
+        <soap12:fault use="literal" name="DataValidationFaultFault" namespace="" />
       </wsdl:fault>
     </wsdl:operation>
   </wsdl:binding>

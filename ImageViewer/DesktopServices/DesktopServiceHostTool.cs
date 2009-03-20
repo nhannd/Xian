@@ -1,5 +1,6 @@
 using System;
 using System.ServiceModel;
+using System.ServiceModel.Description;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -15,7 +16,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices
 
 		private ServiceHost _host = null;
 
-		internal DesktopServiceHostTool()
+		protected DesktopServiceHostTool()
 		{
 		}
 
@@ -50,6 +51,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices
 				}
 
 				ServiceHost host = CreateServiceHost();
+				host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.None;
 				host.Open();
 				_host = host;
 			}

@@ -36,6 +36,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthorityTokens.cs" />
+    <Compile Include="Automation\IDicomExplorerAutomation.cs" />
     <Compile Include="Automation\IViewerAutomationBridge.cs" />
     <Compile Include="Automation\ViewerAutomationBridge.cs" />
     <Compile Include="Automation\DataContracts.cs" />

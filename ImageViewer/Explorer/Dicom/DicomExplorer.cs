@@ -29,28 +29,19 @@
 
 #endregion
 
-using System;
-using System.Security.Policy;
-using System.ServiceModel.Security;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Services.Configuration.ServerTree;
-using System.Threading;
+using ClearCanvas.Desktop.Explorer;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
 	[ExtensionOf(typeof(HealthcareArtifactExplorerExtensionPoint))]
 	public class DicomExplorer : IHealthcareArtifactExplorer
 	{
-		private SplitComponentContainer _splitComponentContainer;
-		private ServerTreeComponent _serverTreeComponent;
-		private StudyBrowserComponent _studyBrowser;
-		private SearchPanelComponent _searchPanel;
+		private DicomExplorerComponent _component;
 
 		public DicomExplorer()
 		{
-
 		}
 
 		#region IHealthcareArtifactExplorer Members
@@ -64,65 +55,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get
 			{
-				if (_splitComponentContainer == null)
-					CreateComponentContainer();
+				if (_component == null)
+					_component = DicomExplorerComponent.Create();
 
-				return _splitComponentContainer;
+				return _component;
 			}
 		}
 
 		#endregion
-
-		private void CreateComponentContainer()
-		{
-			if (_serverTreeComponent == null)
-				_serverTreeComponent = new ServerTreeComponent();
-
-			_serverTreeComponent.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
-
-			if (_studyBrowser == null)
-				_studyBrowser = new StudyBrowserComponent();
-
-			if (_searchPanel == null)
-				_searchPanel = new SearchPanelComponent(_studyBrowser);
-
-			_studyBrowser.SelectServerGroup(_serverTreeComponent.SelectedServers);
-
-			try
-			{
-				_studyBrowser.Search();
-			}
-			catch (PolicyException)
-			{
-				//TODO: ignore this on startup or show message?
-			}
-			catch(Exception e)
-			{
-				ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
-			}
-
-			SplitPane leftPane = new SplitPane(SR.TitleServerTreePane, _serverTreeComponent, 0.25f);
-			SplitPane rightPane = new SplitPane(SR.TitleStudyBrowserPane, _studyBrowser, 0.75f);
-
-			SplitComponentContainer bottomContainer = 
-				new SplitComponentContainer(
-				leftPane,
-				rightPane, 
-				SplitOrientation.Vertical);
-
-			SplitPane topPane = new SplitPane(SR.TitleSearchPanelPane, _searchPanel, true);
-			SplitPane bottomPane = new SplitPane(SR.TitleStudyNavigatorPane, bottomContainer, false);
-
-			_splitComponentContainer = 
-				new SplitComponentContainer(
-				topPane, 
-				bottomPane, 
-				SplitOrientation.Horizontal);
-		}
-
-		void OnSelectedServerChanged(object sender, EventArgs e)
-		{
-			_studyBrowser.SelectServerGroup(_serverTreeComponent.SelectedServers);
-		}
 	}
 }

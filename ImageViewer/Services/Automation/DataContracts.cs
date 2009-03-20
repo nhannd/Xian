@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Query;
 
 namespace ClearCanvas.ImageViewer.Services.Automation
@@ -15,6 +16,8 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		/// </summary>
 		public const string Value = "http://www.clearcanvas.ca/imageViewer/automation";
 	}
+
+	#region Viewer Automation
 
 	/// <summary>
 	/// Data contract for fault when there are no active viewers.
@@ -149,6 +152,34 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 		{
 			get { return _primaryStudyInstanceUid; }
 			set { _primaryStudyInstanceUid = value; }
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj is Viewer)
+				return (obj as Viewer).Identifier == this.Identifier;
+			else 
+				return false;
+		}
+
+		public override int GetHashCode()
+		{
+			return this.Identifier.GetHashCode();
+		}
+
+		public override string ToString()
+		{
+			return this.Identifier.ToString();
+		}
+
+		public static bool operator == (Viewer viewer1, Viewer viewer2)
+		{
+			return Object.Equals(viewer1, viewer2);
+		}
+
+		public static bool operator !=(Viewer viewer1, Viewer viewer2)
+		{
+			return !Object.Equals(viewer1, viewer2);
 		}
 	}
 
@@ -428,4 +459,154 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			set { _viewer = value; }
 		}
 	}
+
+	#endregion
+
+	#region Dicom Explorer Automation
+
+	[DataContract(Namespace = AutomationNamespace.Value)]
+	public class DicomExplorerNotFoundFault
+	{
+		public DicomExplorerNotFoundFault()
+		{
+		}
+	}
+
+	[DataContract(Namespace = AutomationNamespace.Value)]
+	public class ServerNotFoundFault
+	{
+		public ServerNotFoundFault()
+		{
+		}
+	}
+
+	[DataContract(Namespace = AutomationNamespace.Value)]
+	public class NoLocalStoreFault
+	{
+		public NoLocalStoreFault()
+		{
+		}
+	}
+
+	[DataContract(Namespace = AutomationNamespace.Value)]
+	public class DicomExplorerSearchCriteria
+	{
+		private string _patientId;
+		private string _patientsName;
+		private string _accessionNumber;
+		private string _studyDescription;
+		private DateTime? _studyDateFrom;
+		private DateTime? _studyDateTo;
+		private List<string> _modalities = new List<string>();
+
+		public DicomExplorerSearchCriteria()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public DateTime? StudyDateFrom
+		{
+			get { return _studyDateFrom; }
+			set { _studyDateFrom = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public DateTime? StudyDateTo
+		{
+			get { return _studyDateTo; }
+			set { _studyDateTo = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string PatientId
+		{
+			get { return _patientId; }
+			set { _patientId = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string PatientsName
+		{
+			get { return _patientsName; }
+			set { _patientsName = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string AccessionNumber
+		{
+			get { return _accessionNumber; }
+			set { _accessionNumber = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string StudyDescription
+		{
+			get { return _studyDescription; }
+			set { _studyDescription = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public List<string> Modalities
+		{
+			get { return _modalities; }
+			set { _modalities = value; }
+		}
+	}
+
+	[DataContract(Namespace = AutomationNamespace.Value)]
+	public abstract class SearchStudiesRequest
+	{
+		private DicomExplorerSearchCriteria _searchCriteria;
+
+		public SearchStudiesRequest()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public DicomExplorerSearchCriteria SearchCriteria
+		{
+			get { return _searchCriteria; }
+			set { _searchCriteria = value; }
+		}
+	}
+
+	[DataContract(Namespace = AutomationNamespace.Value)]
+	public class SearchLocalStudiesRequest : SearchStudiesRequest
+	{
+	}
+
+	[DataContract(Namespace = AutomationNamespace.Value)]
+	public class SearchLocalStudiesResult
+	{
+		public SearchLocalStudiesResult()
+		{
+		}
+	}
+
+	[DataContract(Namespace = AutomationNamespace.Value)]
+	public class SearchRemoteStudiesRequest : SearchStudiesRequest
+	{
+		private string _aeTitle;
+
+		public SearchRemoteStudiesRequest()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public string AETitle
+		{
+			get { return _aeTitle; }
+			set { _aeTitle = value; }
+		}
+	}
+
+	[DataContract(Namespace = AutomationNamespace.Value)]
+	public class SearchRemoteStudiesResult
+	{
+		public SearchRemoteStudiesResult()
+		{
+		}
+	}
+
+	#endregion
 }

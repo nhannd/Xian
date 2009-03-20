@@ -31,6 +31,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.ServiceModel.dll</HintPath>
@@ -38,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DicomExplorerComponent.cs" />
     <Compile Include="DicomExplorerConfigurationApplicationComponent.cs" />
     <Compile Include="DicomExplorerConfigurationSettings.cs" />
     <Compile Include="DicomExplorerConfigurationSettings.Designer.cs">
@@ -52,6 +54,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="DicomExplorerAutomation.cs" />
     <Compile Include="StudyBrowserTool.cs" />
     <Compile Include="DicomExplorer.cs" />
     <Compile Include="OpenStudyTool.cs" />
@@ -90,6 +93,10 @@
     <ProjectReference Include="..\..\Configuration\ClearCanvas.ImageViewer.Configuration.csproj">
       <Project>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</Project>
       <Name>ClearCanvas.ImageViewer.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DesktopServices\ClearCanvas.ImageViewer.DesktopServices.csproj">
+      <Project>{9144D03E-C4A2-4B34-B3B2-89A8834B3F02}</Project>
+      <Name>ClearCanvas.ImageViewer.DesktopServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Services\ClearCanvas.ImageViewer.Services.csproj">
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>

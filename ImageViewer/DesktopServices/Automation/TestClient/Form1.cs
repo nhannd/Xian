@@ -9,11 +9,15 @@ using System.Text;
 #if USE_ASP
 using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomationAsp;
 using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocatorAsp;
+using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.DicomExplorerAutomationAsp;
+using DicomExplorerAutomationClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.DicomExplorerAutomationAsp.DicomExplorerAutomation;
 using AutomationClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomationAsp.ViewerAutomation;
 using QueryClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocatorAsp.StudyLocator;
 #else
 using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation;
 using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator;
+using ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.DicomExplorerAutomation;
+using DicomExplorerAutomationClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.DicomExplorerAutomation.DicomExplorerAutomationClient;
 using AutomationClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.ViewerAutomation.ViewerAutomationClient;
 using QueryClient = ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient.StudyLocator.StudyRootQueryClient;
 #endif
@@ -27,10 +31,19 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			InitializeComponent();
 #if USE_ASP
 			this.Text = "Automation Test Client (ASP)";
-#else	
+#else
 			this.Text = "Automation Test Client (WCF)";
 #endif
 			_studyGrid.SelectionChanged += new EventHandler(OnStudySelectionChanged);
+
+			_dicomExplorerRemoteAE.DataBindings.Add("Enabled", _dicomExplorerQueryRemote, "Enabled", true,
+			                                        DataSourceUpdateMode.OnPropertyChanged);
+		}
+
+		private void OnClear(object sender, EventArgs e)
+		{
+			_patientId.Text = "";
+			_accession.Text = "";
 		}
 
 		private void OnStudySelectionChanged(object sender, EventArgs e)
@@ -131,36 +144,38 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 				return;
 
 			using (AutomationClient client = new AutomationClient())
-			try
 			{
-				OpenStudiesRequest request = new OpenStudiesRequest();
-				BindingList<OpenStudyInfo> studiesToOpen = new BindingList<OpenStudyInfo>();
-				foreach (StudyItem s in GetSelectedStudies())
+				try
 				{
-					OpenStudyInfo info = new OpenStudyInfo();
-					info.StudyInstanceUid = s.StudyInstanceUid;
-					info.SourceAETitle = s.RetrieveAETitle;
-					studiesToOpen.Add(info);
+					OpenStudiesRequest request = new OpenStudiesRequest();
+					BindingList<OpenStudyInfo> studiesToOpen = new BindingList<OpenStudyInfo>();
+					foreach (StudyItem s in GetSelectedStudies())
+					{
+						OpenStudyInfo info = new OpenStudyInfo();
+						info.StudyInstanceUid = s.StudyInstanceUid;
+						info.SourceAETitle = s.RetrieveAETitle;
+						studiesToOpen.Add(info);
+					}
+
+					request.StudiesToOpen = GetStudiesToOpen(studiesToOpen);
+					request.ActivateIfAlreadyOpen = _activateIfOpen.Checked;
+
+					OpenStudiesResult result = client.OpenStudies(request);
+					if (result.Viewer != null)
+					{
+						bool shouldExist = study.HasViewers && _activateIfOpen.Checked;
+						bool exists = study.HasViewer(result.Viewer.Identifier);
+						if (shouldExist && !exists)
+							study.ClearViewers();
+
+						if (!exists)
+							study.AddViewer(result.Viewer.Identifier);
+					}
 				}
-
-				request.StudiesToOpen = GetStudiesToOpen(studiesToOpen);
-				request.ActivateIfAlreadyOpen = _activateIfOpen.Checked;
-
-				OpenStudiesResult result = client.OpenStudies(request);
-				if (result.Viewer != null)
+				catch (Exception ex)
 				{
-					bool shouldExist = study.HasViewers && _activateIfOpen.Checked;
-					bool exists = study.HasViewer(result.Viewer.Identifier);
-					if (shouldExist && !exists)
-						study.ClearViewers();
-
-					if (!exists)
-						study.AddViewer(result.Viewer.Identifier);
+					MessageBox.Show(ex.Message);
 				}
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message);
 			}
 		}
 
@@ -214,22 +229,59 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 			}
 
 			using (AutomationClient client = new AutomationClient())
-			try
 			{
-				CloseViewerRequest request = new CloseViewerRequest();
-				request.Viewer = new Viewer();
-				request.Viewer.Identifier = GetIdentifier(viewerId.Value);
-				client.CloseViewer(request);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show(ex.Message);
-			}
-			finally
-			{
-				study.RemoveViewer(viewerId.Value);
+				try
+				{
+					CloseViewerRequest request = new CloseViewerRequest();
+					request.Viewer = new Viewer();
+					request.Viewer.Identifier = GetIdentifier(viewerId.Value);
+					client.CloseViewer(request);
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message);
+				}
+				finally
+				{
+					study.RemoveViewer(viewerId.Value);
+				}
 			}
 		}
+
+		#region Dicom Explorer
+
+		private void OnDicomExplorerExecuteQuery(object sender, EventArgs e)
+		{
+			using (DicomExplorerAutomationClient client = new DicomExplorerAutomationClient())
+			{
+				try
+				{
+					if (_dicomExplorerQueryLocal.Checked)
+					{
+						SearchLocalStudiesRequest request = new SearchLocalStudiesRequest();
+						request.SearchCriteria = new DicomExplorerSearchCriteria();
+						request.SearchCriteria.PatientId = _patientId.Text;
+						request.SearchCriteria.AccessionNumber = _accession.Text;
+						client.SearchLocalStudies(request);
+					}
+					else
+					{
+						SearchRemoteStudiesRequest request = new SearchRemoteStudiesRequest();
+						request.SearchCriteria = new DicomExplorerSearchCriteria();
+						request.SearchCriteria.PatientId = _patientId.Text;
+						request.SearchCriteria.AccessionNumber = _accession.Text;
+						request.AETitle = _dicomExplorerRemoteAE.Text;
+						client.SearchRemoteStudies(request);
+					}
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show(ex.Message);
+				}
+			}
+		}
+
+		#endregion
 
 		private void RefreshStudyList()
 		{
@@ -376,6 +428,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 		{
 			return studiesToOpen;
 		}
+
 #endif
 	}
 
@@ -419,7 +472,7 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation.TestClient
 
 		public string RetrieveAETitle
 		{
-			get { return _study.RetrieveAeTitle; }	
+			get { return _study.RetrieveAeTitle; }
 		}
 
 		public bool HasViewers
