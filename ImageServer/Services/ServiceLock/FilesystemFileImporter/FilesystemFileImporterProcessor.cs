@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
             ServerFilesystemInfo filesystem = EnsureFilesystemIsValid(item);
             if (filesystem != null)
             {
-                Platform.Log(LogLevel.Info, "Start importing dicom files from {0}", filesystem.Filesystem.FilesystemPath);
+                Platform.Log(LogLevel.Debug, "Start importing dicom files from {0}", filesystem.Filesystem.FilesystemPath);
 
                 foreach (ServerPartition partition in ServerPartitionMonitor.Instance)
                 {
@@ -56,7 +56,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                 }
 
                 _allCompleted.WaitOne();
-                Platform.Log(LogLevel.Info, "All import processes have completed gracefully.");
+
+                if (CancelPending)
+                    Platform.Log(LogLevel.Info, "All import processes have completed gracefully.");
             }
             UnlockServiceLock(item, true, Platform.Time.AddSeconds(settings.RecheckDelaySeconds));
         }

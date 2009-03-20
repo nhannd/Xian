@@ -15,10 +15,19 @@ namespace ClearCanvas.ImageServer.Common
 {
     public class DicomSopProcessingResult
     {
+        public String StudyInstanceUid;
+        public String SeriesInstanceUid;
         public String SopInstanceUid;
         public bool Sussessful;
         public String ErrorMessage;
         public DicomStatus DicomStatus;
+        /// <summary>
+        /// Indicates whether the sop being processed is a duplicate.
+        /// </summary>
+        /// <remarks>
+        /// The result of the processing depends on the duplicate policy used.
+        /// </remarks>
+        public bool Duplicate;
     }
 
     public class SopInstanceImporter
@@ -45,9 +54,11 @@ namespace ClearCanvas.ImageServer.Common
             String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
 
             DicomSopProcessingResult result = new DicomSopProcessingResult();
-            result.Sussessful = true;
+            result.Sussessful = true; // assumed for now 
+            result.StudyInstanceUid = studyInstanceUid;
+            result.SeriesInstanceUid = seriesInstanceUid;
             result.SopInstanceUid = sopInstanceUid;
-
+            
             // Use the command processor for rollback capabilities.
             using (ServerCommandProcessor processor = new ServerCommandProcessor(String.Format("Processing Sop Instance {0}",sopInstanceUid)))
             {
@@ -73,7 +84,6 @@ namespace ClearCanvas.ImageServer.Common
                     if (studyLocation == null)
                     {
                         StudyStorage storage = StudyStorage.Load(_partition.Key, studyInstanceUid);
-
                         
                         if (storage != null)
                         {
@@ -149,6 +159,8 @@ namespace ClearCanvas.ImageServer.Common
 
                     if (File.Exists(path))
                     {
+                        result.Duplicate = true;
+                        
                         if (_partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.SendSuccess))
                         {
                             result.DicomStatus = DicomStatuses.Success;
@@ -235,6 +247,7 @@ namespace ClearCanvas.ImageServer.Common
                 {
                     Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", processor.Description);
                     processor.Rollback();
+                    result.Sussessful = false;
                     if (result.DicomStatus==null /* not yet set */)
                         result.DicomStatus = DicomStatuses.ProcessingFailure;
                     result.ErrorMessage = e.Message;

@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Network;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 
@@ -27,11 +29,17 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
         #region Private Fields
         private DirectoryImporterParameters _parms;
         SopInstanceImporter _importer;
+        private readonly List<string> _skippedStudies = new List<String>();
         #endregion
 
         #region Constructors
         public DirectoryImporterBackgroundProcess(DirectoryImporterParameters parms)
         {
+            Platform.CheckForNullReference(parms, "parms");
+            Platform.CheckMemberIsSet(parms.Directory, "parms.Directory");
+            Platform.CheckMemberIsSet(parms.PartitionAE, "parms.PartitionAE");
+            Platform.CheckMemberIsSet(parms.Filter, "parms.Filter");
+            
             _parms = parms;
             WorkerSupportsCancellation = true;
         }
@@ -42,15 +50,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
         
         protected override void OnDoWork(DoWorkEventArgs e)
         {
-            Thread.CurrentThread.Name = String.Format("Import File to {0}", _parms.PartitionAE);
-            base.OnDoWork(e);
-
+            Thread.CurrentThread.Name = String.Format("Import Files to {0}", _parms.PartitionAE);
+            
             if (_parms.Directory.Exists)
             {
                 _importer = new SopInstanceImporter(_parms.PartitionAE);
                 
                 int counter = 0;
-                Platform.Log(LogLevel.Info, "Importing dicom files from {0}", _parms.Directory.FullName);
+                Platform.Log(LogLevel.Debug, "Importing dicom files from {0}", _parms.Directory.FullName);
                 FileProcessor.Process(_parms.Directory.FullName, _parms.Filter,
                                       delegate(string filePath, out bool cancel)
                                       {
@@ -60,51 +67,109 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                                               return;
                                           }
 
-                                          ProcessFile(filePath);
+                                          if (ProcessFile(filePath)> 0)
+                                          {
+                                              counter++;
+                                          }
 
                                           cancel = false;
-                                          counter++;
-
                                           if (_parms.Delay > 0)
                                             Thread.Sleep(TimeSpan.FromSeconds(_parms.Delay));
                                           
                                       }, true);
 
+                if (counter > 0)
+                    Platform.Log(LogLevel.Info, "{0} files have been successfully imported from {1}.", counter, _parms.Directory.FullName);
 
                 DirectoryInfo[] subDirs = _parms.Directory.GetDirectories();
                 foreach (DirectoryInfo subDir in subDirs)
                 {
                     DirectoryUtility.DeleteEmptySubDirectories(subDir.FullName, true);
                     DirectoryUtility.DeleteIfEmpty(subDir.FullName);
-                } 
+                }
+
+                
             }
-            
+
+            base.OnDoWork(e);
         }
 
-        private void ProcessFile(string filePath)
+        private int ProcessFile(string filePath)
         {
+            int importedSopCount = 0;
+            bool isDicomFile = false;
+            bool skipped = false;
             FileInfo fileInfo = new FileInfo(filePath);
             if (fileInfo.Exists)
             {
+                DicomFile file = null;
                 try
                 {
-                    DicomFile file = new DicomFile(filePath);
+                    file = new DicomFile(filePath);
                     file.Load();
-                    DicomSopProcessingResult result = _importer.Import(file, "Importer");
-                    if (result.Sussessful)
+                    isDicomFile = true;
+
+                    string studyInstanceUid;
+                    if (file.DataSet[DicomTags.StudyInstanceUid].TryGetString(0, out studyInstanceUid))
                     {
-                        Platform.Log(LogLevel.Info, "Imported SOP {0} to {1}", result.SopInstanceUid, _parms.PartitionAE);
-                        ProgressChangedEventArgs progress = new ProgressChangedEventArgs(100, result.SopInstanceUid);
-                        OnProgressChanged(progress);
+                        skipped = _skippedStudies.Contains(studyInstanceUid);
+                        if (!skipped)
+                        {
+                            DicomSopProcessingResult result = _importer.Import(file, "Importer");
+                            if (result.Sussessful)
+                            {
+                                if (result.Duplicate)
+                                {
+                                    // was imported but is duplicate
+                                }
+                                else
+                                {
+                                    importedSopCount = 1;
+                                    Platform.Log(LogLevel.Info, "Imported SOP {0} to {1}", result.SopInstanceUid, _parms.PartitionAE);
+                                    ProgressChangedEventArgs progress = new ProgressChangedEventArgs(100, result.SopInstanceUid);
+                                    OnProgressChanged(progress);
+                                }
+                            }
+                            else
+                            {
+                                if (result.DicomStatus == DicomStatuses.StorageStorageOutOfResources)
+                                {
+                                    _skippedStudies.Add(result.StudyInstanceUid);
+                                    skipped = true;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new ApplicationException("Sop does not contains Study Instance Uid tag");
                     }
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     Platform.Log(LogLevel.Error, ex);
+                    
                 }
-
-                fileInfo.Delete();
+                finally
+                {
+                    if (importedSopCount>0)
+                    {
+                        fileInfo.Delete();
+                    }
+                    else if (!isDicomFile)
+                    {
+                        fileInfo.Delete();
+                    }
+                    else
+                    {
+                        //is dicom file but could not be imported.
+                        if (!skipped)
+                            fileInfo.Delete();
+                    }
+                }
             }
+
+            return importedSopCount;
         }
     
 
