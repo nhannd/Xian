@@ -154,10 +154,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			List<Server> defaultServers = DefaultServers.GetAll();
 
-			//try to return the first streaming one if we can
+			//since streaming servers are queried automatically, it's more likely users will
+			//want to query non-streaming servers.
 			foreach (Server server in defaultServers)
 			{
-				if (server.IsStreaming)
+				if (!server.IsStreaming)
 					return server.AETitle;
 			}
 
