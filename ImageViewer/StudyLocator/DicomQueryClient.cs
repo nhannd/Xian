@@ -167,6 +167,7 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 			try
 			{
 				Dispose(true);
+				GC.SuppressFinalize(this);
 			}
 			catch (Exception e)
 			{

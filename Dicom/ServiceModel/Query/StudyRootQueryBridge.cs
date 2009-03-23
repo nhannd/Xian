@@ -234,8 +234,13 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 			try
 			{
 				Dispose(true);
+				GC.SuppressFinalize(this);
 			}
-			catch(Exception e)
+			catch(CommunicationException)
+			{
+				//connection already closed.
+			}
+			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error, e);
 			}

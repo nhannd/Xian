@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.ServiceModel.Query;
@@ -305,10 +306,15 @@ namespace ClearCanvas.ImageViewer.Services.Automation
 			try
 			{
 				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (CommunicationException)
+			{
+				//connection already closed.
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Error, e);
+				Platform.Log(LogLevel.Debug, e);
 			}
 		}
 
