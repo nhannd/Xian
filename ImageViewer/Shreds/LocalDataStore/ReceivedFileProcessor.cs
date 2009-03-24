@@ -94,6 +94,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				
 				_parent = parent;
 
+				_parent.PurgeEvent += new EventHandler(OnPurge);
 				_parent.StartEvent += new EventHandler(OnStart);
 				_parent.StopEvent += new EventHandler(OnStop);
 				_parent.CancelEvent += new EventHandler<ItemEventArgs<CancelProgressItemInformation>>(OnCancel);
@@ -114,6 +115,36 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					_noActivityTimer.Dispose();
 					_noActivityTimer = null;
+				}
+			}
+
+			void OnPurge(object sender, EventArgs e)
+			{
+				DateTime now = Platform.Time;
+				TimeSpan timeLimit = TimeSpan.FromMinutes(LocalDataStoreServiceSettings.Instance.PurgeTimeMinutes);
+				
+				lock (_syncLock)
+				{
+					List<InternalReceiveProgressItem> clearItems = new List<InternalReceiveProgressItem>();
+					foreach (InternalReceiveProgressItem item in _receiveProgressItems)
+					{
+						lock (item)
+						{
+							bool isOld = now.Subtract(item.LastActive) > timeLimit;
+							bool hasErrors = item.TotalDataStoreCommitFailures > 0 || 
+												!String.IsNullOrEmpty(item.StatusMessage);
+
+							if (isOld && !hasErrors)
+								clearItems.Add(item);
+						}
+					}
+
+					foreach (InternalReceiveProgressItem item in clearItems)
+					{
+						_receiveProgressItems.Remove(item);
+						item.Removed = true;
+						LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item.Clone());
+					}
 				}
 			}
 
@@ -149,7 +180,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						if (item != null)
 						{
 							_receiveProgressItems.Remove(item);
-
 							item.Removed = true;
 							LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item.Clone());
 						}
@@ -268,7 +298,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 
 				progressItem = GetReceiveProgressItem(receivedFileImportInformation, out exists);
-
 				lock (progressItem)
 				{
 					if (progressItem.Pending)

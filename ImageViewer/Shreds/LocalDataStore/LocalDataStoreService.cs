@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Dicom.DataStore;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -48,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		}
 
 		private static LocalDataStoreService _instance;
-
+		
 		private bool _disabled;
 
 		private DicomFileImporter _dicomFileImporter;
@@ -63,22 +64,26 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private uint _sendReceiveImportConcurrency;
 		private uint _databaseUpdateFrequencyMilliseconds;
 
-		private object _startEventLock  = new object();
+		private System.Threading.Timer _purgeTimer;
+		private readonly object _purgeEventLock = new object();
+		private event EventHandler _purgeEvent;
+
+		private readonly object _startEventLock = new object();
 		private event EventHandler _startEvent;
 
-		private object _stopEventLock = new object(); 
+		private readonly object _stopEventLock = new object(); 
 		private event EventHandler _stopEvent;
 
-		private object _republishEventLock = new object(); 
+		private readonly object _republishEventLock = new object(); 
 		private event EventHandler _republishEvent;
 
-		private object _clearInactiveEventLock = new object(); 
+		private readonly object _clearInactiveEventLock = new object(); 
 		private event EventHandler _clearInactiveEvent;
 
-		private object _cancelEventLock = new object(); 
+		private readonly object _cancelEventLock = new object(); 
 		private event EventHandler<ItemEventArgs<CancelProgressItemInformation>> _cancelEvent;
 
-		private object _stateSyncLock = new object();
+		private readonly object _stateSyncLock = new object();
 		private event EventHandler<ItemEventArgs<ServiceState>> _stateActivated;
 		ServiceState _state;
 
@@ -98,6 +103,24 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 
 				return _instance;
+			}
+		}
+
+		public event EventHandler PurgeEvent
+		{
+			add
+			{
+				lock (_purgeEventLock)
+				{
+					_purgeEvent += value;
+				}
+			}
+			remove
+			{
+				lock (_purgeEventLock)
+				{
+					_purgeEvent -= value;
+				}
 			}
 		}
 
@@ -340,6 +363,21 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
+		private void OnPurge(object nothing)
+		{
+			lock (_stateSyncLock)
+			{
+				if (_state != ServiceState.Importing)
+					return;
+			}
+
+			lock(_purgeEventLock)
+			{
+				if (_purgeTimer != null)
+					EventsHelper.Fire(_purgeEvent, this, EventArgs.Empty);
+			}
+		}
+
 		private string InitializeStorageDirectory(string directoryPath)
 		{
 			string returnPath = null;
@@ -377,6 +415,18 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				EventsHelper.Fire(_startEvent, this, EventArgs.Empty);
 			}
+
+			try
+			{
+				lock(_purgeEventLock)
+				{
+					_purgeTimer = new System.Threading.Timer(OnPurge, null, TimeSpan.FromSeconds(60), TimeSpan.FromSeconds(60));
+				}
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e, "Failed to start purge timer; old items will never be purged.");
+			}
 		}
 
 		public void Stop()
@@ -386,6 +436,19 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			lock (_stopEventLock)
 			{
 				EventsHelper.Fire(_stopEvent, this, EventArgs.Empty);
+			}
+
+			lock (_purgeEventLock)
+			{
+				try
+				{
+					if (_purgeTimer != null)
+						_purgeTimer.Dispose();
+				}
+				finally
+				{
+					_purgeTimer = null;
+				}
 			}
 
 			_dicomFileImporter.Stop();

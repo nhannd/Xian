@@ -55,6 +55,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				_parent = parent;
 				_parentState = _parent._state;
 
+				_parent.PurgeEvent += new EventHandler(OnPurge);
 				_parent.CancelEvent += new EventHandler<ItemEventArgs<CancelProgressItemInformation>>(OnCancel);
 				_parent.RepublishEvent += new EventHandler(OnRepublish);
 				_parent.ClearInactiveEvent += new EventHandler(OnClearInactive);
@@ -110,6 +111,31 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						}
 					}
 				}
+			}
+
+			private void OnPurge(object sender, EventArgs e)
+			{
+				DateTime now = Platform.Time;
+				TimeSpan timeLimit = TimeSpan.FromMinutes(LocalDataStoreServiceSettings.Instance.PurgeTimeMinutes);
+				
+				List<FileImportJobInformation> clearJobs = new List<FileImportJobInformation>();
+				lock (_syncLock)
+				{
+					foreach (FileImportJobInformation jobInformation in _importJobs)
+					{
+						lock (jobInformation.SyncRoot)
+						{
+							bool isOld = now.Subtract(jobInformation.ProgressItem.LastActive) > timeLimit;
+							bool hasErrors = jobInformation.ProgressItem.TotalDataStoreCommitFailures > 0;
+
+							if (isOld && !hasErrors)
+								clearJobs.Add(jobInformation);
+						}
+					}
+				}
+
+				foreach (FileImportJobInformation jobInformation in clearJobs)
+					ClearJob(jobInformation);
 			}
 
 			private void OnClearInactive(object sender, EventArgs e)

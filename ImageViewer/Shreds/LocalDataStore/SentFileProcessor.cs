@@ -33,10 +33,10 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -54,6 +54,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				_sendProgressItems = new List<SendProgressItem>();
 
 				_parent = parent;
+				_parent.PurgeEvent += OnPurge;
 				_parent.StartEvent += new EventHandler(OnStart);
 				_parent.StopEvent += new EventHandler(OnStop);
 				_parent.CancelEvent += new EventHandler<ItemEventArgs<CancelProgressItemInformation>>(OnCancel);
@@ -67,6 +68,35 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			private void OnStop(object sender, EventArgs e)
 			{
 				_sentFileInformationProcessor.Stop();
+			}
+
+			private void OnPurge(object sender, EventArgs e)
+			{
+				//use the same thread for everything, then no synclock is required on the progress items.
+				_sentFileInformationProcessor.Enqueue(delegate { Purge(); });
+			}
+
+			private void Purge()
+			{
+				DateTime now = Platform.Time;
+				TimeSpan timeLimit = TimeSpan.FromMinutes(LocalDataStoreServiceSettings.Instance.PurgeTimeMinutes);
+
+				List<SendProgressItem> clearItems = new List<SendProgressItem>();
+				foreach (SendProgressItem item in _sendProgressItems)
+				{
+					bool isOld = now.Subtract(item.LastActive) > timeLimit;
+					bool hasErrors = !String.IsNullOrEmpty(item.StatusMessage);
+
+					if (isOld && !hasErrors)
+						clearItems.Add(item);
+				}
+
+				foreach (SendProgressItem item in clearItems)
+				{
+					_sendProgressItems.Remove(item);
+					item.Removed = true;
+					LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item.Clone());
+				}
 			}
 
 			private void OnRepublish(object sender, EventArgs e)

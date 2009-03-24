@@ -40,6 +40,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		public const string DefaultBadFileDirectory = @"c:\dicom_datastore\badfiles\";
 		public const uint DefaultSendReceiveImportConcurrency = 2;
 		public const uint DefaultDatabaseUpdateFrequencyMilliseconds = 5000;
+		public const uint DefaultPurgeTimeMinutes = 120;
 
 		private static LocalDataStoreServiceSettings _instance;
 
@@ -105,6 +106,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			set { this["DatabaseUpdateFrequencyMilliseconds"] = value; }
 		}
 
+		[ConfigurationProperty("PurgeTimeMinutes", DefaultValue = LocalDataStoreServiceSettings.DefaultPurgeTimeMinutes)]
+		public uint PurgeTimeMinutes
+		{
+			get { return (uint)this["PurgeTimeMinutes"]; }
+			set { this["PurgeTimeMinutes"] = value; }
+		}
+
 		#endregion
 
 		public override object Clone()
@@ -115,6 +123,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			clone.BadFileDirectory = _instance.BadFileDirectory;
 			clone.SendReceiveImportConcurrency = _instance.SendReceiveImportConcurrency;
 			clone.DatabaseUpdateFrequencyMilliseconds = _instance.DatabaseUpdateFrequencyMilliseconds;
+			clone.PurgeTimeMinutes = _instance.PurgeTimeMinutes;
 
 			return clone;
 		}
