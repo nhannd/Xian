@@ -196,7 +196,16 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             writer.WriteLine("        public static DicomTag GetDicomTag(uint tag)");
             writer.WriteLine("        {");
             writer.WriteLine("            if (!_tags.ContainsKey(tag))");
-            writer.WriteLine("                return null;");
+			writer.WriteLine("            {");
+			writer.WriteLine("            	if ((tag & 0xFF000000) == 0x60000000)");
+			writer.WriteLine("            	{");
+			writer.WriteLine("            		DicomTag theTag = GetDicomTag(tag & 0xFF00FFFF);");
+			writer.WriteLine("            		if (theTag == null) return null;");
+			writer.WriteLine("");
+			writer.WriteLine("            		return new DicomTag(tag, theTag.Name, theTag.VariableName, theTag.VR, theTag.MultiVR, theTag.VMLow, theTag.VMHigh, theTag.Retired);");
+			writer.WriteLine("            	}");
+			writer.WriteLine("            	return null;");
+			writer.WriteLine("            }");
             writer.WriteLine("");
             writer.WriteLine("            return _tags[tag]; ");
             writer.WriteLine("        }");

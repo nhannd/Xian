@@ -31,6 +31,7 @@
 
 using System;
 using System.IO;
+using ClearCanvas.Dicom.Iod.Modules;
 
 namespace ClearCanvas.Dicom.Samples
 {
@@ -66,6 +67,24 @@ namespace ClearCanvas.Dicom.Samples
 		{
 			try
 			{
+				if (!_dicomFile.TransferSyntax.Encapsulated)
+				{
+					// Check if Overlay is embedded in pixels
+					OverlayPlaneModuleIod overlayIod = new OverlayPlaneModuleIod(_dicomFile.DataSet);
+					for (int i = 0; i < 16; i++)
+					{
+						if (overlayIod.HasOverlayPlane(i))
+						{
+							OverlayPlane overlay = overlayIod[i];
+							if (overlay.OverlayData == null)
+							{
+								DicomUncompressedPixelData pd = new DicomUncompressedPixelData(_dicomFile);
+								overlay.ConvertEmbeddedOverlay(pd);	
+							}
+						}
+					}
+				}
+
 				_dicomFile.ChangeTransferSyntax(syntax);
 			}
 			catch (Exception e)

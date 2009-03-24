@@ -80,10 +80,19 @@ namespace ClearCanvas.Dicom
         /// <returns>A DicomTag instance, if the tag exists, or null if it doesn't.</returns>
         public static DicomTag GetDicomTag(uint tag)
         {
-            if (!_tags.ContainsKey(tag))
-                return null;
+			if (!_tags.ContainsKey(tag))
+			{
+				if ((tag & 0xFF000000) == 0x60000000)
+				{
+					DicomTag theTag = GetDicomTag(tag & 0xFF00FFFF);
+					if (theTag == null) return null;
 
-            return _tags[tag]; 
+					return new DicomTag(tag,theTag.Name,theTag.VariableName,theTag.VR,theTag.MultiVR,theTag.VMLow,theTag.VMHigh,theTag.Retired);
+				}
+				return null;
+			}
+
+        	return _tags[tag]; 
         }
 
         /// <summary>

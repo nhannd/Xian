@@ -252,6 +252,7 @@
     <Compile Include="Iod\Modules\KeyObjectDocumentSeries.cs" />
     <Compile Include="Iod\Modules\Mask.cs" />
     <Compile Include="Iod\Modules\ModalityLut.cs" />
+    <Compile Include="Iod\Modules\MultiframeOverlayModule.cs" />
     <Compile Include="Iod\Modules\OverlayActivation.cs" />
     <Compile Include="Iod\Modules\OverlayPlane.cs" />
     <Compile Include="Iod\Modules\PatientModuleIod.cs" />

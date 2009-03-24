@@ -81,7 +81,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			if (index < 0 || index >= 16)
 				return false;
-			return !this.DicomAttributeProvider[ComputeTagOffset(index) + DicomTags.OverlayBitPosition].IsEmpty;
+			DicomAttribute attrib;
+			if (!DicomAttributeProvider.TryGetAttribute(ComputeTagOffset(index) + DicomTags.OverlayBitPosition, out attrib))
+				return false;
+			return !attrib.IsEmpty;
 		}
 
 		private static uint ComputeTagOffset(int index)
@@ -401,6 +404,104 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				}
 				base.DicomAttributeProvider[_tagOffset + DicomTags.RoiStandardDeviation].SetFloat64(0, value.Value);
 			}
+		}
+
+		public unsafe void ConvertEmbeddedOverlay(DicomUncompressedPixelData pd)
+		{
+			// General sanity checks
+			if (pd.SamplesPerPixel > 1)
+				throw new DicomException("Unable to convert embedded overlays when Samples Per Pixe > 1");
+			if (pd.BitsStored == 8 && pd.BitsAllocated == 8)
+				throw new DicomException("Unable to remove overlay with 8 Bits Stored and 8 Bits Allocated");
+			if (pd.BitsStored == 16 && pd.BitsAllocated == 16)
+				throw new DicomException("Unable to remove overlay with 16 Bits Stored and 16 Bits Allocated");
+
+			int frameSize = pd.UncompressedFrameSize;
+			int overlaySize = frameSize/pd.BitsAllocated;
+			if (frameSize%pd.BitsAllocated > 0)
+				overlaySize++;
+
+			int numValues = frameSize/pd.BytesAllocated;
+
+			byte[] overlay = new byte[overlaySize];
+			int overlayOffset = 0;
+			// Embededded overlay smust exist for all frames, they can't be for selected
+			for (int i = 0; i < pd.NumberOfFrames; i++)
+			{
+				byte[] frameData = pd.GetFrame(i);
+
+				if (pd.BitsAllocated <= 8)
+				{
+					byte pixelMask = ((byte)(0x1 << this.OverlayBitPosition ));
+					byte overlayMask = 0x01;
+
+					fixed (byte* pFrameData = frameData)
+					{
+						byte* pixelData = pFrameData;
+						for (int p = 0; p < numValues; p++, pixelData++)
+						{
+							if ((*pixelData & pixelMask) != 0)
+							{
+								overlay[overlayOffset] |= overlayMask;
+								*pixelData &= (byte)~pixelMask;
+							}
+
+							if (overlayMask == 0x80)
+							{
+								overlayMask = 0x01;
+								overlayOffset++;
+							}
+							else
+								overlayMask <<= 1;
+						}
+					}
+				}
+				else
+				{
+					fixed (byte* pFrameData = frameData)
+					{
+						ushort pixelMask = ((ushort)(0x1 << OverlayBitPosition));
+						byte overlayMask = 0x01;
+
+						ushort* pixelData = (ushort*) pFrameData;
+						for (int p = 0; p < numValues; p++, pixelData++)
+						{
+							if ((*pixelData & pixelMask) != 0)
+							{
+								overlay[overlayOffset] |= overlayMask;
+								*pixelData &= (ushort)~pixelMask;
+							}
+
+							if (overlayMask == 0x80)
+							{
+								overlayMask = 0x01;
+								overlayOffset++;
+							}
+							else
+								overlayMask <<= 1;
+						}
+					}
+				}
+			}
+
+			// Assign the new overlay tags
+			OverlayBitPosition = 0;
+			OverlayBitsAllocated = 1;
+			if (IsBigEndianOW)
+			{
+				// Just do a bulk swap, performance isn't much of an issue.
+				ByteBuffer buffer = new ByteBuffer(overlay, Endian.Little);
+				buffer.Swap2();
+				OverlayData = buffer.ToBytes();
+			}
+			else
+				OverlayData = overlay;
+
+			// Cleanup Rows/Columns if necessary
+			if (OverlayColumns == 0)
+				OverlayColumns = pd.ImageWidth;
+			if (OverlayRows == 0)
+				OverlayRows = pd.ImageHeight;
 		}
 	}
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common;
@@ -11,6 +10,7 @@ namespace ClearCanvas.ImageServer.TestApp
     {
         private string _sourceDirectory;
         private string _destinationDirectory;
+    	private int _imageCount = 1;
 
         public string SourceDirectory
         {
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageServer.TestApp
                 {
                     dicomFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
 
-                    string destination = this.DestinationDirectory;
+					string destination = DestinationDirectory;
 
 
                     destination = Path.Combine(destination, CreateVariableName(dicomFile.TransferSyntax.Name));
@@ -103,16 +103,19 @@ namespace ClearCanvas.ImageServer.TestApp
                         string filename =
                             Path.Combine(destination, dicomFile.MediaStorageSopInstanceUid + ".dcm");
 
-                        if (File.Exists(filename))
-                            File.Delete(file.FullName);
-                        else
-                            File.Move(file.FullName, filename);
+						if (File.Exists(filename))
+						{
+							Platform.Log(LogLevel.Info, "File has already been stored in destination folder: {0}", file.FullName);
+							File.Delete(file.FullName);
+						}
+						else
+							File.Move(file.FullName, filename);
                     }
                     catch (Exception)
                     { }
                    
                 }
-                catch (DicomException)
+                catch (Exception)
                 {
                     // TODO:  Add some logging for failed files
                 }
@@ -128,5 +131,93 @@ namespace ClearCanvas.ImageServer.TestApp
             }
 
         }
+
+		private enum SearchTypes
+		{
+			PrivateSequence,
+			Overlay
+		}
+		private bool SearchAttributeSet(DicomAttributeCollection set, string filename, SearchTypes searchType)
+		{
+			if (searchType == SearchTypes.PrivateSequence)
+			{
+				foreach (DicomAttribute attrib in set)
+				{
+					if (attrib.Tag.IsPrivate && attrib.Tag.VR.Equals(DicomVr.SQvr))
+					{
+						Platform.Log(LogLevel.Info, "Found file with private SQ: {0}", filename);
+						return true;
+					}
+					else if (attrib.Tag.VR.Equals(DicomVr.SQvr) && !attrib.IsNull)
+					{
+						// Recursive search
+						foreach (DicomSequenceItem item in (DicomSequenceItem[]) attrib.Values)
+						{
+							SearchAttributeSet(item, filename, searchType);
+						}
+					}
+				}
+			}
+			else if (searchType == SearchTypes.Overlay)
+			{
+				foreach (DicomAttribute attrib in set)
+				{
+					if ((attrib.Tag.TagValue & 0xFF000000) == 0x60000000)
+					{
+						Platform.Log(LogLevel.Info, "Found embedded overlay in file: {0}", filename);
+						return true;
+					}
+					else if (attrib.Tag.TagValue > 0x70000000)
+						return false;
+				}
+			}
+
+			return false;
+		}
+
+		public void SearchDirectories(DirectoryInfo dir)
+		{
+
+			FileInfo[] files = dir.GetFiles();
+
+			Platform.Log(LogLevel.Info, "Scanning directory: {0}", dir.FullName);
+
+			foreach (FileInfo file in files)
+			{
+
+				DicomFile dicomFile = new DicomFile(file.FullName);
+
+				try
+				{
+					Platform.Log(LogLevel.Info, "Checking file: {0}", file.FullName);
+					dicomFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
+
+					if (SearchAttributeSet(dicomFile.DataSet, file.FullName, SearchTypes.Overlay))
+					{
+						string destination = Path.Combine(DestinationDirectory, _imageCount + ".dcm");
+
+						if (File.Exists(destination))
+							File.Delete(destination);
+
+						File.Copy(file.FullName,destination);
+
+						_imageCount++;
+					}
+				}
+				catch (Exception)
+				{
+					// TODO:  Add some logging for failed files
+				}
+			}
+
+			String[] subdirectories = Directory.GetDirectories(dir.FullName);
+			foreach (String subPath in subdirectories)
+			{
+				DirectoryInfo subDir = new DirectoryInfo(subPath);
+				SearchDirectories(subDir);
+				continue;
+			}
+
+		}
     }
 }

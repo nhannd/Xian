@@ -80,84 +80,9 @@ namespace ClearCanvas.ImageServer.TestApp
             }
         }
 
-        private void buttonSelectDirectory_Click(object sender, EventArgs e)
-        {
-            folderBrowserDialog.ShowDialog();
 
-            String directory = folderBrowserDialog.SelectedPath;
 
-            DirectoryInfo dir = new DirectoryInfo(directory);
-
-            LoadFiles(dir);
-        }
-
-        private void SearchAttributeSet(DicomAttributeCollection set, string filename)
-        {
-            foreach (DicomAttribute attrib in set)
-            {
-                if (attrib.Tag.IsPrivate && attrib.Tag.VR.Equals(DicomVr.SQvr))
-                {
-                    Platform.Log(LogLevel.Info, "Found file with private SQ: {0}", filename);
-                    return;
-                }
-                else if (attrib.Tag.VR.Equals(DicomVr.SQvr) && !attrib.IsNull)
-                {
-                    // Recursive search
-                    foreach (DicomSequenceItem item in (DicomSequenceItem[])attrib.Values)
-                    {
-                        SearchAttributeSet(item,filename);
-                    }
-                }
-            }
-        }
-
-        private void LoadFiles(DirectoryInfo dir)
-        {
-
-            FileInfo[] files = dir.GetFiles();
-
-            Platform.Log(LogLevel.Info, "Scanning directory: {0}", dir.FullName);
-
-            foreach (FileInfo file in files)
-            {
-
-                DicomFile dicomFile = new DicomFile(file.FullName);
-
-                try
-                {
-                    DicomReadOptions options = new DicomReadOptions();
-
-                    dicomFile.Load(options);
-
-                    if (dicomFile.TransferSyntax.Equals(TransferSyntax.RleLossless))
-                    {
-                        dicomFile.ChangeTransferSyntax(TransferSyntax.ExplicitVrLittleEndian);
-
-                        dicomFile.Filename = "F:\\UnsortedMedicalImages\\RleDecompressed\\" + dicomFile.MediaStorageSopInstanceUid + ".dcm";
-
-                        dicomFile.Save();
-                    }
-
-                    SearchAttributeSet(dicomFile.DataSet,dicomFile.Filename);
-                }
-                catch (DicomException)
-                {
-                    // TODO:  Add some logging for failed files
-                }
-
-            }
-
-            String[] subdirectories = Directory.GetDirectories(dir.FullName);
-            foreach (String subPath in subdirectories)
-            {
-                DirectoryInfo subDir = new DirectoryInfo(subPath);
-                LoadFiles(subDir);
-                continue;
-            }
-
-        }
-
-        public static unsafe class CopyClass
+		public static unsafe class CopyClass
         {
             // The unsafe keyword allows pointers to be used within
             // the following method:
@@ -278,15 +203,46 @@ namespace ClearCanvas.ImageServer.TestApp
             
         }
 
-        private void buttonReformatDirectories_Click(object sender, EventArgs e)
-        {
-            DicomFileCleanup cleanup = new DicomFileCleanup();
+		private void buttonSelectDirectory_Click(object sender, EventArgs e)
+		{
+			folderBrowserDialog.Description = "Select Source Directory to Scan";
+			DialogResult result = folderBrowserDialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
 
-            cleanup.SourceDirectory = "F:\\Compressed Medical Images";
-            cleanup.DestinationDirectory = "F:\\MedicalImages\\";
-            cleanup.Scan();
-        }
+			DicomFileCleanup cleanup = new DicomFileCleanup();
+			cleanup.SourceDirectory = folderBrowserDialog.SelectedPath;
 
 
+			folderBrowserDialog.Description = "Select Destination Directory to Copy Files";
+			result = folderBrowserDialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+
+			cleanup.DestinationDirectory = folderBrowserDialog.SelectedPath;
+
+			cleanup.Scan();
+		}
+
+		private void buttonSearchForStudies_Click(object sender, EventArgs e)
+		{
+			folderBrowserDialog.Description = "Select Source Directory to Search";
+			DialogResult result = folderBrowserDialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+
+			DicomFileCleanup cleanup = new DicomFileCleanup();
+			cleanup.SourceDirectory = folderBrowserDialog.SelectedPath;
+
+
+			folderBrowserDialog.Description = "Select Destination Directory to Copy Found Files";
+			result = folderBrowserDialog.ShowDialog();
+			if (result != System.Windows.Forms.DialogResult.OK)
+				return;
+
+			cleanup.DestinationDirectory = folderBrowserDialog.SelectedPath;
+
+			cleanup.SearchDirectories(new DirectoryInfo(cleanup.SourceDirectory));
+		}
     }
 }
