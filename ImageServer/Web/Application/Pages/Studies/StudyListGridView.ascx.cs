@@ -107,6 +107,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {
             get
             {
+                if(!StudyListControl.IsDataBound) StudyListControl.DataBind();
+
                 if (Studies==null || Studies.Count == 0)
                     return null;
 

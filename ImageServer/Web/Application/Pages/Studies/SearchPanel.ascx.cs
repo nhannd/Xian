@@ -253,8 +253,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         
 		protected void RestoreStudyButton_Click(object sender, ImageClickEventArgs e)
 		{
-			Refresh();
-
 			IList<StudySummary> studies = StudyListGridView.SelectedStudies;
 
 			if (studies != null && studies.Count > 0)

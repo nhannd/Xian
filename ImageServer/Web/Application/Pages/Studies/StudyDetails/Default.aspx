@@ -17,11 +17,12 @@
                     <localAsp:StudyDetailsPanel ID="StudyDetailsPanel" runat="server" />
                     </ContentTemplate>
             </asp:UpdatePanel>
-            
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="DialogsSectionPlaceHolder" runat="server">
                     <localAsp:EditStudyDetailsDialog ID="EditStudyDialog" runat="server" />
                     <ccAsp:MessageBox ID="MessageDialog" runat="server" />
                     <ccAsp:MessageBox ID="DeleteConfirmDialog" runat="server" />    
                     <localAsp:DeleteStudyConfirmDialog ID="DeleteStudyConfirmDialog" runat="server"/>
 </asp:Content>
-
    
