@@ -3,21 +3,6 @@
 <%@ Register Src="DeviceGridView.ascx" TagName="DeviceGridView" TagPrefix="localAsp" %>
 <%@ Register Src="StudyGridView.ascx" TagName="StudyGridView" TagPrefix="localAsp" %>
 
-<script type="text/javascript">  
-
-    var close=false;
-
-    function endRequestHandler(sender, args)
-    {
-        if(close) window.close();
-    }
-
-    function pageLoad()
-    {
-        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(endRequestHandler);
-    }
-</script> 
-
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
     
@@ -35,7 +20,7 @@
             <td align="right" valign="bottom">
                 <asp:Panel CssClass="ToolbarButtons" style="padding-right: 4px;" runat="server">
                     <ccUI:ToolbarButton runat="server" SkinID="MoveButton" ID="MoveButton" onClick="MoveButton_Click" />
-                    <ccUI:ToolbarButton runat="server" SkinID="CancelButton" ID="CancelButton" onClientClick="window.close();" />
+                    <ccUI:ToolbarButton runat="server" SkinID="CancelButton" ID="CancelButton" onClientClick="self.close();" />
                 </asp:Panel>
             </td>
         </tr>

@@ -11,7 +11,7 @@
 				SelectMethod="Select" SelectCountMethod="SelectCount" OnObjectCreating="GetAlertDataSource"
 				OnObjectDisposing="DisposeAlertDataSource"/>
             <ccUI:GridView ID="AlertGridView" runat="server" OnRowDataBound="AlertGridView_RowDataBound" SelectionMode="Single"
-                DataKeyNames="Key" OnSelectedIndexChanged="AlertGridView_SelectedIndexChanged">
+                DataKeyNames="Key">
                 <Columns>
                     <asp:BoundField DataField="Content" HeaderText="Content" HeaderStyle-HorizontalAlign="Left" />
                     <asp:BoundField DataField="Component" HeaderText="Component" HeaderStyle-HorizontalAlign="Left" />

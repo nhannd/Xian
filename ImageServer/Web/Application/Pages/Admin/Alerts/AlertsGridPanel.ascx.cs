@@ -216,15 +216,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             }
         }
 
-
-        protected void AlertGridView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (AlertGridView.SelectedDataKey != null)
-                SelectedAlertKey = AlertGridView.SelectedDataKey.Value as ServerEntityKey;
-
-            DataBind();
-        }
-
         protected void AlertGridView_PageIndexChanged(object sender, EventArgs e)
         {
             DataBind();
@@ -243,12 +234,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             if (AlertGridView.EditIndex != e.Row.RowIndex)
             {
                 if (row.RowType == DataControlRowType.DataRow)
-                {
-                    // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
-                    // This method when posted back will be handled by the grid
-                    row.Attributes["OnClick"] =
-                        Page.ClientScript.GetPostBackEventReference(AlertGridView, "Select$" + e.Row.RowIndex);
-                    
+                {                   
                     AlertSummary alert = e.Row.DataItem as AlertSummary;
                     Label level = e.Row.FindControl("Level") as Label;
                    

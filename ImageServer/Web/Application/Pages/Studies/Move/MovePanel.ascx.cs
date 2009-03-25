@@ -63,8 +63,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
 
             MoveConfirmation.Confirmed += delegate(object data)
                                               {
-                    Page.ClientScript.RegisterStartupScript(this.GetType(), "myCloseScript", "close = true;", true);                                                  
-                    
+                    ScriptManager.RegisterStartupScript(Page, Page.GetType(), "alertScript", "self.close();", true);
                                               };
 
         }
