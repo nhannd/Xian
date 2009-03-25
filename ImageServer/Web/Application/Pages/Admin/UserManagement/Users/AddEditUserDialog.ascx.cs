@@ -236,6 +236,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                 OKButton.EnabledImageURL = ImageServerConstants.ImageURLs.UpdateButtonEnabled;
                 OKButton.HoverImageURL = ImageServerConstants.ImageURLs.UpdateButtonHover;
                 UserLoginId.ReadOnly = true;
+                UserLoginId.Style.Add("Color", "#999999");
                 EnabledRow.Visible = true;
                 UserLoginId.Text = User.UserName;
                 OriginalUserLoginId.Value = User.UserName;
