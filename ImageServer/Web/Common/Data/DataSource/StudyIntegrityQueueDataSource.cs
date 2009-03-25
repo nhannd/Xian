@@ -114,6 +114,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             private PatientInfo _patient = new PatientInfo();
             private IEnumerable<SeriesDetails> _series = new List<SeriesDetails>();
             private string _accessionNumber;
+            private string _studyInstanceUID;
             private string _studyDate;
             public IEnumerable<SeriesDetails> Series
             {
@@ -138,6 +139,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             {
                 get { return _accessionNumber; }
                 set { _accessionNumber = value; }
+            }
+
+            public string StudyInstanceUID
+            {
+                get { return _studyInstanceUID; }
+                set { _studyInstanceUID = value; }
             }
         }
 

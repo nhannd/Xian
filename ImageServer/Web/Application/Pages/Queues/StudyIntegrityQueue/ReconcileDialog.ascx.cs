@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 Compare(ReconcileDetails.ExistingStudy.Patient.Name, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name, 
                    delegate { ConflictingNameLabel.CssClass += HighlightCssClass; });
                 Compare(ReconcileDetails.ExistingStudy.Patient.PatientID, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId,
-                    delegate { ConflictingPatientID.CssClass += HighlightCssClass; });
+                    delegate { ConflictingPatientIDLabel.CssClass += HighlightCssClass; });
                 Compare(ReconcileDetails.ExistingStudy.Patient.IssuerOfPatientID, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId,
                     delegate { ConflictingPatientIssuerOfPatientID.CssClass += HighlightCssClass; });
                 Compare(ReconcileDetails.ExistingStudy.Patient.BirthDate, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate,
@@ -210,7 +210,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 Compare(ReconcileDetails.ExistingStudy.StudyDate, ReconcileDetails.ConflictingImageSet.StudyInfo.StudyDate,
                     delegate { ConflictingStudyDate.CssClass += HighlightCssClass; });
                 Compare(ReconcileDetails.ExistingStudy.AccessionNumber, ReconcileDetails.ConflictingImageSet.StudyInfo.AccessionNumber,
-                    delegate { ConflictingAccessionNumber.CssClass += HighlightCssClass; });
+                    delegate { ConflictingAccessionNumberLabel.CssClass += HighlightCssClass; });
 
             }
         }

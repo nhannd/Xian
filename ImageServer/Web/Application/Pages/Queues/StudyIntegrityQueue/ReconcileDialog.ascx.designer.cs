@@ -47,13 +47,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         protected global::System.Web.UI.WebControls.Label StudyInstanceUIDLabel;
         
         /// <summary>
-        /// Label8 control.
+        /// PreformattedLabel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Label8;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel PreformattedLabel1;
         
         /// <summary>
         /// Label321 control.
@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ExistingPatientID;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel ExistingPatientID;
         
         /// <summary>
         /// Label322 control.
@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ExistingPatientBirthDate;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel ExistingPatientBirthDate;
         
         /// <summary>
         /// Label323 control.
@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ExistingAccessionNumber;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel ExistingAccessionNumber;
         
         /// <summary>
         /// Label324 control.
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ExistingPatientIssuerOfPatientID;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel ExistingPatientIssuerOfPatientID;
         
         /// <summary>
         /// Label7 control.
@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ExistingStudyDate;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel ExistingStudyDate;
         
         /// <summary>
         /// ExistingPatientSeriesGridView control.
@@ -197,7 +197,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ConflictingNameLabel;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel ConflictingNameLabel;
         
         /// <summary>
         /// Label1 control.
@@ -209,13 +209,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// ConflictingPatientID control.
+        /// ConflictingPatientIDLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ConflictingPatientID;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel ConflictingPatientIDLabel;
         
         /// <summary>
         /// Label2 control.
@@ -233,7 +233,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ConflictingPatientBirthDate;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel ConflictingPatientBirthDate;
         
         /// <summary>
         /// Label3 control.
@@ -245,13 +245,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         protected global::System.Web.UI.WebControls.Label Label3;
         
         /// <summary>
-        /// ConflictingAccessionNumber control.
+        /// ConflictingAccessionNumberLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ConflictingAccessionNumber;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel ConflictingAccessionNumberLabel;
         
         /// <summary>
         /// Label4 control.
@@ -305,7 +305,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ConflictingPatientIssuerOfPatientID;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel ConflictingPatientIssuerOfPatientID;
         
         /// <summary>
         /// Label6 control.
@@ -323,7 +323,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ConflictingStudyDate;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.PreformattedLabel ConflictingStudyDate;
         
         /// <summary>
         /// ConflictingPatientSeriesGridView control.

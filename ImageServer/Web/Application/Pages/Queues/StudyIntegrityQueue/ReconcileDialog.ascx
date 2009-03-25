@@ -11,7 +11,7 @@
                     <asp:TableCell><span class="ConflictingStudyTitle">Conflicting Study</span></asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow>
-                    <asp:TableCell ColumnSpan="3"><div class="StudyInstanceUIDMessage">Study Instance UID: <asp:Label ID="StudyInstanceUIDLabel" runat="server"></asp:Label></div></asp:TableCell>
+                    <asp:TableCell ColumnSpan="3"><div class="StudyInstanceUIDMessage">Study Instance UID: <asp:Label ID="StudyInstanceUIDLabel" runat="server" Text='<%# ReconcileDetails.StudyInstanceUID %>'></asp:Label></div></asp:TableCell>
                 </asp:TableRow>
                 <asp:TableRow VerticalAlign="Top">
                     <asp:TableCell>
@@ -22,22 +22,37 @@
                                      <table>
                                         <tr>
                                             <td width="130px" class="DialogLabelBackground"><asp:Label runat="server" CssClass="DialogTextBoxLabel">Patient Name</asp:Label></td>
-                                            <td><asp:Label ID="Label8" runat="server" CssClass="StudyInfoField" Text='<%# ReconcileDetails.ExistingStudy.Patient.Name %>'></asp:Label></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="PreformattedLabel1" CssClass="StudyField" Text='<%# ReconcileDetails.ExistingStudy.Patient.Name %>' /></td>
                                         </tr>
-                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label321" runat="server" CssClass="DialogTextBoxLabel">Patient ID</asp:Label></td><td><asp:Label ID="ExistingPatientID" runat="server" CssClass="StudyInfoField"  Text='<%# ReconcileDetails.ExistingStudy.Patient.PatientID %>'></asp:Label></td></tr>
-                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label322" runat="server" CssClass="DialogTextBoxLabel">Patient Birthdate</asp:Label></td><td><asp:Label ID="ExistingPatientBirthDate" runat="server" CssClass="StudyInfoField" Text='<%# ReconcileDetails.ExistingStudy.Patient.BirthDate %>'></asp:Label></td></tr>
-                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label323" runat="server" CssClass="DialogTextBoxLabel">Accession Number</asp:Label></td><td><asp:Label ID="ExistingAccessionNumber" runat="server" CssClass="StudyInfoField" Text='<%# ReconcileDetails.ExistingStudy.AccessionNumber %>'></asp:Label></td></tr>
+                                        <tr>
+                                            <td class="DialogLabelBackground"><asp:Label ID="Label321" runat="server" CssClass="DialogTextBoxLabel">Patient ID</asp:Label></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ExistingPatientID" CssClass="StudyField" Text='<%# ReconcileDetails.ExistingStudy.Patient.PatientID %>' /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="DialogLabelBackground"><asp:Label ID="Label322" runat="server" CssClass="DialogTextBoxLabel">Patient Birthdate</asp:Label></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ExistingPatientBirthDate" CssClass="StudyField" Text='<%# ReconcileDetails.ExistingStudy.Patient.BirthDate %>' /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="DialogLabelBackground"><asp:Label ID="Label323" runat="server" CssClass="DialogTextBoxLabel">Accession Number</asp:Label></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ExistingAccessionNumber" CssClass="StudyField" Text='<%# ReconcileDetails.ExistingStudy.AccessionNumber %>' /></td>
+                                        </tr>
                                         <tr><td class="DialogLabelBackground"><asp:Label ID="Label324" runat="server" CssClass="DialogTextBoxLabel">Patient Sex</asp:Label></td>
                                             <td>
                                                 <table cellpadding="0" cellspacing="0">
-                                                    <tr><td><asp:Label ID="ExistingPatientSex" runat="server" CssClass="StudyInfoField" Text='<%# ReconcileDetails.ExistingStudy.Patient.Sex %>'></asp:Label></td>
+                                                    <tr><td><asp:Label ID="ExistingPatientSex" runat="server" CssClass="StudyField" Text='<%# ReconcileDetails.ExistingStudy.Patient.Sex %>'></asp:Label></td>
                                                         <td><ccAsp:InvalidInputIndicator ID="InvalidInputIndicator1" runat="server" SkinID="InvalidInputIndicator" /></td>
                                                     </tr>
                                                 </table>
                                             </td>
                                         </tr>                                                        
-                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label325" runat="server" CssClass="DialogTextBoxLabel">Issuer of Patient ID</asp:Label></td><td><asp:Label ID="ExistingPatientIssuerOfPatientID" runat="server" CssClass="StudyInfoField" Text='<%# ReconcileDetails.ExistingStudy.Patient.IssuerOfPatientID %>'></asp:Label></td></tr>                                     
-                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label7" runat="server" CssClass="DialogTextBoxLabel">Study Date</asp:Label></td><td><asp:Label ID="ExistingStudyDate" runat="server" CssClass="StudyInfoField" Text='<%# ReconcileDetails.ExistingStudy.StudyDate %>'></asp:Label></td></tr>
+                                        <tr>
+                                            <td class="DialogLabelBackground"><asp:Label ID="Label325" runat="server" CssClass="DialogTextBoxLabel">Issuer of Patient ID</asp:Label></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ExistingPatientIssuerOfPatientID" CssClass="StudyField" Text='<%# ReconcileDetails.ExistingStudy.Patient.IssuerOfPatientID %>' /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="DialogLabelBackground"><asp:Label ID="Label7" runat="server" CssClass="DialogTextBoxLabel">Study Date</asp:Label></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ExistingStudyDate" CssClass="StudyField" Text='<%# ReconcileDetails.ExistingStudy.StudyDate %>' /></td>
+                                        </tr>
                                     </table>
                                     </div>
                                     <table cellpadding="0" cellspacing="0" width="100%"><tr><td style="padding-left: 10px; padding-right: 10px;"><div class="SeriesTitle">Series</div></td></tr></table>
@@ -71,16 +86,20 @@
                                      <table>
                                         <tr>
                                             <td width="130px" class="DialogLabelBackground"><asp:Label runat="server" CssClass="DialogTextBoxLabel">Patient Name</asp:Label></td>
-                                            <td><asp:Label ID="ConflictingNameLabel" runat="server" CssClass="StudyInfoField" 
-                                                    Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name)? "Not Specified": ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name%>'></asp:Label>
-                                            </td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingNameLabel" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name)? "Not Specified": ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name%>' /></td>
                                         </tr>
-                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label1" runat="server" CssClass="DialogTextBoxLabel">Patient ID</asp:Label></td><td><asp:Label ID="ConflictingPatientID" runat="server" CssClass="StudyInfoField" Text='<%# ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId %>'></asp:Label></td></tr>
-                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label2" runat="server" CssClass="DialogTextBoxLabel">Patient Birthdate</asp:Label></td><td><asp:Label ID="ConflictingPatientBirthDate" runat="server" CssClass="StudyInfoField" 
-                                            Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate)? "Not Specified":ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate %>'></asp:Label></td></tr>
-                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label3" runat="server" CssClass="DialogTextBoxLabel">Accession Number</asp:Label></td><td><asp:Label ID="ConflictingAccessionNumber" runat="server" CssClass="StudyInfoField" 
-                                            Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingImageSet.StudyInfo.AccessionNumber)?"Not Specified":ReconcileDetails.ConflictingImageSet.StudyInfo.AccessionNumber %>'></asp:Label></td></tr>
                                         <tr>
+                                            <td class="DialogLabelBackground"><asp:Label ID="Label1" runat="server" CssClass="DialogTextBoxLabel">Patient ID</asp:Label></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientIDLabel" CssClass="StudyField" Text='<%# ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId %>' /></td>
+                                        <tr>
+                                            <td class="DialogLabelBackground"><asp:Label ID="Label2" runat="server" CssClass="DialogTextBoxLabel">Patient Birthdate</asp:Label></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientBirthDate" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate)? "Not Specified":ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate %>' /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="DialogLabelBackground"><asp:Label ID="Label3" runat="server" CssClass="DialogTextBoxLabel">Accession Number</asp:Label></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingAccessionNumberLabel" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingImageSet.StudyInfo.AccessionNumber)?"Not Specified":ReconcileDetails.ConflictingImageSet.StudyInfo.AccessionNumber %>' /></td>
+                                         </tr>
+                                         <tr>
                                             <td class="DialogLabelBackground"><asp:Label ID="Label4" runat="server" CssClass="DialogTextBoxLabel">Patient Sex</asp:Label></td>
                                             <td>
                                                 <table cellpadding="0" cellspacing="0">
@@ -95,12 +114,14 @@
                                                 </table>
                                             </td>
                                         </tr>
-                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label5" runat="server" CssClass="DialogTextBoxLabel">Issuer of Patient ID</asp:Label></td><td>
-                                        <asp:Label ID="ConflictingPatientIssuerOfPatientID" runat="server" CssClass="StudyInfoField" 
-                                            Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId)? "Not Specified":ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId %>'></asp:Label></td></tr>                                     
-                                        <tr><td class="DialogLabelBackground"><asp:Label ID="Label6" runat="server" CssClass="DialogTextBoxLabel">Study Date</asp:Label></td><td>
-                                            <asp:Label ID="ConflictingStudyDate" runat="server" CssClass="StudyInfoField" 
-                                                Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingImageSet.StudyInfo.StudyDate)?"Not Specified":ReconcileDetails.ConflictingImageSet.StudyInfo.StudyDate %>'></asp:Label></td></tr>
+                                        <tr>
+                                            <td class="DialogLabelBackground"><asp:Label ID="Label5" runat="server" CssClass="DialogTextBoxLabel">Issuer of Patient ID</asp:Label></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientIssuerOfPatientID" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId)? "Not Specified":ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId %>' /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="DialogLabelBackground"><asp:Label ID="Label6" runat="server" CssClass="DialogTextBoxLabel">Study Date</asp:Label></td>
+                                            <td><ccUI:PreformattedLabel runat="server" ID="ConflictingStudyDate" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingImageSet.StudyInfo.StudyDate)?"Not Specified":ReconcileDetails.ConflictingImageSet.StudyInfo.StudyDate %>' /></td>
+                                        </tr>
                                     </table>
                                     </div>
                                     <table cellpadding="0" cellspacing="0" width="100%"><tr><td style="padding-left: 10px; padding-right: 10px;"><div class="SeriesTitle">Series</div></td></tr></table>
