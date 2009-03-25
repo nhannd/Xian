@@ -105,11 +105,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
 
         #endregion // Events
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            GridView1.DataBind();
-        }
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -129,9 +124,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
                 {
                     // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
                     // This method when posted back will be handled by the grid
-                    e.Row.Attributes["OnClick"] =
-                        Page.ClientScript.GetPostBackEventReference(GridView1, "Select$" + e.Row.RowIndex);
-                    e.Row.Style["cursor"] = "hand";
+//                    e.Row.Attributes["OnClick"] =
+//                        Page.ClientScript.GetPostBackEventReference(GridView1, "Select$" + e.Row.RowIndex);
+//                    e.Row.Style["cursor"] = "hand";
 
                     // For some reason, double-click won't work if single-click is used
                     // e.Row.Attributes["ondblclick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Edit$" + e.Row.RowIndex);

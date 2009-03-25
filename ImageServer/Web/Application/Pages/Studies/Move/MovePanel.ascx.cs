@@ -1,15 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move.MovePanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
 {
-    public partial class MovePanel : UserControl
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move.MovePanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move.MovePanel.js")]
+    public partial class MovePanel : AJAXScriptControl
     {
         [Serializable]
         private class MoveRequest
@@ -32,6 +37,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.Move
         private ServerPartition _partition;
         private DeviceConfigurationController _theController;
         private IList<Study> _studies = new List<Study>();
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("MoveButtonClientID")]
+        public string MoveButtonClientID
+        {
+            get { return MoveButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("DeviceListClientID")]
+        public string DeviceListClientID
+        {
+            get { return DeviceGridPanel.TheGrid.ClientID; }
+        }
 
         public ServerPartition Partition
         {
