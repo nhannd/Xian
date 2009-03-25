@@ -30,13 +30,10 @@
 #endregion
 
 using System;
-using System.Drawing;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
-using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
@@ -46,7 +43,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     //
     public partial class StudyIntegrityQueueItemList : System.Web.UI.UserControl
     {
-		#region Delegates
+        private const string HighlightCssClass = "ConflictField";
+
+        #region Delegates
 		public delegate void StudyIntegrityQueueDataSourceCreated(StudyIntegrityQueueDataSource theSource);
 		public event StudyIntegrityQueueDataSourceCreated DataSourceCreated;
 		#endregion
@@ -247,73 +246,52 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 if (row.RowType == DataControlRowType.DataRow)
                 {
                     CustomizeRowAttribute(e.Row);
-                    CustomizeColumns(e.Row);
+                    HighlightDifference(e.Row);
                 }
             }
         }
 
-        private void CustomizeRowAttribute(GridViewRow row)
+        private static void HighlightDifference(GridViewRow row)
         {
             StudyIntegrityQueueSummary item = row.DataItem as StudyIntegrityQueueSummary;
-            row.Attributes["canreconcile"] = item.CanReconcile ? "true" : "false";
-        }
-
-        private void CustomizeColumns(GridViewRow row)
-        {
-            StudyIntegrityQueueSummary summary = row.DataItem as StudyIntegrityQueueSummary;
-
-            if (summary != null)
+            if (item!=null)
             {
-                Label existingPatientName = row.FindControl("ExistingPatientName") as Label;
-                Label conflictingPatientName = row.FindControl("ConflictingPatientName") as Label;
-                Label existingPatientId = row.FindControl("ExistingPatientId") as Label;
-                Label conflictingPatientId = row.FindControl("ConflictingPatientId") as Label;
                 Label existingAccessionNumber = row.FindControl("ExistingAccessionNumber") as Label;
                 Label conflictingAccessionNumber = row.FindControl("ConflictingAccessionNumber") as Label;
-                Label existingModalities = row.FindControl("ExistingModalities") as Label;
-                Label conflictingModalities = row.FindControl("ConflictingModalities") as Label;
-                
-                if(existingPatientId != null)
-                    existingPatientId.Text = summary.ExistingPatientId;
-                if(existingPatientName != null)
-                    existingPatientName.Text = summary.ExistingPatientName;
-                if(existingAccessionNumber != null)
-                    existingAccessionNumber.Text = summary.ExistingAccessionNumber;
-                if(conflictingPatientId != null)
-                    conflictingPatientId.Text = summary.ConflictingPatientId;
-                if (conflictingPatientId != null)
-                {
-                    conflictingPatientId.Text = summary.ConflictingPatientId;
-//                    if (!summary.ExistingPatientId.Equals(summary.ConflictingPatientId))
-  //                      conflictingPatientId.ForeColor = Color.Red;
-                }
-                if (conflictingPatientName != null)
-                {
-                    conflictingPatientName.Text = summary.ConflictingPatientName;
-                    if (!summary.ExistingPatientName.Equals(summary.ConflictingPatientName))
-                        conflictingPatientName.ForeColor = Color.Red;
-                }
-                if (conflictingAccessionNumber != null) {
-                    conflictingAccessionNumber.Text = summary.ConflictingAccessionNumber;
-                    if (!summary.ExistingAccessionNumber.Equals(summary.ConflictingAccessionNumber))
-                        conflictingAccessionNumber.ForeColor = Color.Red;
-                }
+                Label existingPatientId = row.FindControl("ExistingPatientId") as Label;
+                Label conflictingPatientId = row.FindControl("ConflictingPatientId") as Label;
+                Label existingPatientName = row.FindControl("ExistingPatientName") as Label;
+                Label conflictingPatientName = row.FindControl("ConflictingPatientName") as Label;
 
-                if (conflictingModalities!=null)
-                {
-                    conflictingModalities.Text = StringUtilities.Combine(summary.ConflictingModalities, ",");
-                }
-                if (existingModalities!=null)
-                {
-                    existingModalities.Text = summary.StudySummary.ModalitiesInStudy;
-                }
+                Highlight(item.ExistingPatientId, item.QueueData.Details.StudyInfo.PatientInfo.PatientId, existingPatientId, conflictingPatientId);
+                Highlight(item.ExistingPatientName, item.QueueData.Details.StudyInfo.PatientInfo.Name, existingPatientName, conflictingPatientName);
+                Highlight(item.ExistingAccessionNumber, item.QueueData.Details.StudyInfo.AccessionNumber, existingAccessionNumber, conflictingAccessionNumber);
                 
-
-                DateTimeLabel timeReceived = row.FindControl("TimeReceived") as DateTimeLabel;
-                if (timeReceived != null)
-                    timeReceived.Value = summary.ReceivedTime;
             }
         }
+
+        private static void Highlight(String value1, String value2, WebControl existingFieldControl, WebControl conflictingFieldControl)
+        {
+            if (existingFieldControl != null && conflictingFieldControl != null)
+            {
+                if (!StringUtils.AreEqual(value1, value2, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    existingFieldControl.CssClass += " " + HighlightCssClass;
+                    conflictingFieldControl.CssClass += " " + HighlightCssClass;
+                }
+            }
+        }
+
+        private static void CustomizeRowAttribute(GridViewRow row)
+        {
+            StudyIntegrityQueueSummary item = row.DataItem as StudyIntegrityQueueSummary;
+            if (item!=null)
+            {
+                row.Attributes["canreconcile"] = item.CanReconcile ? "true" : "false";    
+            }
+            
+        }
+
         #endregion
 
         #region public methods

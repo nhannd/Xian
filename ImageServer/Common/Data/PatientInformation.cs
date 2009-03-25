@@ -35,6 +35,9 @@ namespace ClearCanvas.ImageServer.Common.Data
             if (attributeProvider[DicomTags.PatientsAge] != null)
                 Age = attributeProvider[DicomTags.PatientsAge].ToString();
 
+            if (attributeProvider[DicomTags.PatientsBirthDate] != null)
+                PatientsBirthdate = attributeProvider[DicomTags.PatientsBirthDate].ToString();
+
             if (attributeProvider[DicomTags.PatientsSex] != null)
                 Sex = attributeProvider[DicomTags.PatientsSex].ToString();
 

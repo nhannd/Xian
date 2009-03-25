@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
+using System.Reflection;
 using System.Security;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Web;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.Utilities
 {
@@ -18,6 +18,24 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
             String encodedText = new SecurityElement("dummy", text).Text; //decode any escaped xml characters.
             return HttpUtility.HtmlEncode(encodedText).Replace(Environment.NewLine, "<BR/>");
             
+        }
+
+        /// <summary>
+        /// Returns the <see cref="EnumInfoAttribute"/> of an enum value, if it's defined.
+        /// </summary>
+        /// <typeparam name="TEnum"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public static EnumInfoAttribute GetEnumInfo<TEnum>(TEnum value)
+            where TEnum:struct
+        {
+            FieldInfo field = typeof (TEnum).GetField(value.ToString());
+            if (field != null)
+            {
+                return AttributeUtils.GetAttribute<EnumInfoAttribute>(field);
+            }
+            else
+                return null;
         }
     }
 }

@@ -41,6 +41,152 @@ using ClearCanvas.ImageServer.Web.Common.Exceptions;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
+    public class ReconcileDetails
+    {
+        public class SeriesDetails
+        {
+            private string _description;
+            private int _numberOfInstances;
+            private string _modality;
+
+            public string Description
+            {
+                get { return _description; }
+                set { _description = value; }
+            }
+
+            public string Modalitiy
+            {
+                get { return _modality; }
+                set { _modality = value; }
+            }
+
+            public int NumberOfInstances
+            {
+                get { return _numberOfInstances; }
+                set { _numberOfInstances = value; }
+            }
+        }
+
+        public class PatientInfo
+        {
+            private string _name;
+            private string _sex;
+            private string _birthDate;
+            private string _patientID;
+            private string _issuerOfPatientID;
+
+            public string Name
+            {
+                get { return _name; }
+                set { _name = value; }
+            }
+
+            public string Sex
+            {
+                get { return _sex; }
+                set { _sex = value; }
+            }
+
+            public string BirthDate
+            {
+                get { return _birthDate; }
+                set { _birthDate = value; }
+            }
+
+            public string PatientID
+            {
+                get { return _patientID; }
+                set { _patientID = value; }
+            }
+
+            public string IssuerOfPatientID
+            {
+                get { return _issuerOfPatientID; }
+                set { _issuerOfPatientID = value; }
+            }
+
+
+        }
+
+        public class StudyInfo
+        {
+            private PatientInfo _patient = new PatientInfo();
+            private IEnumerable<SeriesDetails> _series = new List<SeriesDetails>();
+            private string _accessionNumber;
+            private string _studyDate;
+            public IEnumerable<SeriesDetails> Series
+            {
+                get { return _series; }
+                set { _series = value; }
+            }
+
+
+            public string StudyDate
+            {
+                get { return _studyDate; }
+                set { _studyDate = value; }
+            }
+
+            public PatientInfo Patient
+            {
+                get { return _patient; }
+                set { _patient = value; }
+            }
+
+            public string AccessionNumber
+            {
+                get { return _accessionNumber; }
+                set { _accessionNumber = value; }
+            }
+        }
+
+        private string _studyInstanceUID;
+        private readonly StudyIntegrityQueue _item;
+        private StudyInfo _existingStudy;
+        private ImageSetDetails _conflictingImages;
+
+        public ReconcileDetails(StudyIntegrityQueue queueItem)
+        {
+            this._item = queueItem;
+        }
+
+
+        public string StudyInstanceUID
+        {
+            get { return _studyInstanceUID; }
+            set { _studyInstanceUID = value; }
+        }
+
+
+        public StudyInfo ExistingStudy
+        {
+            get
+            {
+                if (_existingStudy == null)
+                    _existingStudy = new StudyInfo();
+                return _existingStudy;
+            }
+            set { _existingStudy = value; }
+        }
+
+        public ImageSetDetails ConflictingImageSet
+        {
+            get
+            {
+                if (_conflictingImages == null)
+                    _conflictingImages = new ImageSetDetails();
+                return _conflictingImages;
+            }
+            set { _conflictingImages = value; }
+        }
+
+        public StudyIntegrityQueue StudyIntegrityQueueItem
+        {
+            get { return _item; }
+        }
+    }
+
 	public class StudyIntegrityQueueSummary
 	{
 		#region Private members

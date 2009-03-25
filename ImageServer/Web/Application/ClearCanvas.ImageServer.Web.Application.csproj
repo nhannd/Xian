@@ -744,7 +744,6 @@
     <Compile Include="Pages\Queues\StudyIntegrityQueue\Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Queues\StudyIntegrityQueue\ReconcileDetails.cs" />
     <Compile Include="Pages\Queues\StudyIntegrityQueue\ReconcileDetailsAssembler.cs" />
     <Compile Include="Pages\Queues\StudyIntegrityQueue\ReconcileDialog.ascx.cs">
       <DependentUpon>ReconcileDialog.ascx</DependentUpon>
@@ -1288,6 +1287,7 @@
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-left.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG-right.png" />
     <Content Include="App_Themes\Default\images\Controls\Dialog\DialogTitleBarBG.png" />
+    <Content Include="App_Themes\Default\StyleSheets\StudyIntegrityQueue.css" />
     <Content Include="App_Themes\Default\StyleSheets\WorkQueue.css" />
     <Content Include="Controls\AlertIndicator.ascx" />
     <Content Include="Controls\CheckJavascript.ascx" />
@@ -1605,7 +1605,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3746</DevelopmentServerPort>
+          <DevelopmentServerPort>1270</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

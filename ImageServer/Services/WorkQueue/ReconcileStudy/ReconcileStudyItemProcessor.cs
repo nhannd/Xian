@@ -173,21 +173,27 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             Platform.CheckForNullReference(StorageLocation, "StorageLocation");
             _context = new ReconcileStudyProcessorContext();
             _context.WorkQueueItem = WorkQueueItem;
-            _context.Partition = ServerPartition.Load(StorageLocation.ServerPartitionKey);
+            _context.WorkQueueItemStudyStorage = StorageLocation;
+            _context.Partition = ServerPartition;
+
             _context.ReconcileWorkQueueData = _reconcileQueueData;
             _context.WorkQueueUidList = WorkQueueUidList;
             _context.History = WorkQueueItem.StudyHistoryKey != null
                                    ? StudyHistory.Load(WorkQueueItem.StudyHistoryKey)
                                    : null;
 
-            _context.DestStudy = base.Study;
-
+            
             if (_context.History != null)
             {
                 // if the destination in the history has been set, 
                 // the work queue should refer to the same study so that the correct study will be locked
                 if (_context.History.DestStudyStorageKey!=null)
-                    Debug.Assert(_context.History.DestStudyStorageKey.Equals(WorkQueueItem.StudyStorageKey));
+                {
+                    StudyStorage destStorage = StudyStorage.Load(_context.History.DestStudyStorageKey);
+                    _context.DestStorageLocation = StudyStorageLocation.FindStorageLocations(destStorage)[0];
+                }
+
+                
             }
         }
 

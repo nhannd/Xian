@@ -13,14 +13,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
     {
         #region Private Members
         private Model.WorkQueue _item;
-        private ReconcileStudyWorkQueueData _data;
         private ServerPartition _partition;
+        private StudyStorageLocation _workQueueItemStudyStorage;
+        private ReconcileStudyWorkQueueData _data;
         private StudyHistory _history;
         private StudyStorageLocation _destStudyStorageLocation;
-        private Study _destStudy;
         private ServerFilesystemInfo _targetFilesystem;
         private IList<WorkQueueUid> _workQueueUidList;
-        private DicomFile _reconcileImage;
         #endregion
 
         #region Public Properties
@@ -81,16 +80,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             set { _workQueueUidList = value; }
         }
 
-        public DicomFile ReconcileImage
+        public StudyStorageLocation WorkQueueItemStudyStorage
         {
-            get { return _reconcileImage; }
-            set { _reconcileImage = value; }
-        }
-
-        public Study DestStudy
-        {
-            get { return _destStudy; }
-            set { _destStudy = value; }
+            get { return _workQueueItemStudyStorage; }
+            set { _workQueueItemStudyStorage = value; }
         }
 
         #endregion

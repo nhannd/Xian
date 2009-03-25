@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common;
@@ -42,6 +43,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
@@ -236,7 +238,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="queueUid"></param>
         /// <param name="path">The path of the file to process.</param>
         /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
-        private void ProcessFile(WorkQueueUid queueUid, string path, StudyXml stream)
+        protected virtual void ProcessFile(WorkQueueUid queueUid, string path, StudyXml stream)
         {
             DicomFile file = LoadDicomFile(path);
         
@@ -251,7 +253,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             
         }
 
-        private DicomFile LoadDicomFile(string path)
+        protected DicomFile LoadDicomFile(string path)
         {
             DicomFile file;
             long fileSize;
@@ -274,7 +276,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="file"></param>
         /// <param name="stream"></param>
         /// <param name="queueUid"></param>
-        private void InsertInstance(DicomFile file, StudyXml stream, WorkQueueUid queueUid)
+        protected void InsertInstance(DicomFile file, StudyXml stream, WorkQueueUid queueUid)
         {
             Platform.CheckForNullReference(_context, "_context");
             Platform.CheckForNullReference(_context.WorkQueueItem, "_context.WorkQueueItem");
@@ -420,7 +422,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="sop">The <see cref="WorkQueueUid"/> being processed</param>
         /// <param name="studyXml">The <see cref="StudyXml"/> object for the study being processed</param>
         /// <returns>true if the <see cref="WorkQueueUid"/> is successfully processed. false otherwise</returns>
-        private bool ProcessWorkQueueUid(Model.WorkQueue item, WorkQueueUid sop, StudyXml studyXml)
+        protected virtual bool ProcessWorkQueueUid(Model.WorkQueue item, WorkQueueUid sop, StudyXml studyXml)
         {
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(sop, "sop");

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Xml.Serialization;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 
@@ -13,6 +14,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         /// <summary>
         /// User edited the study via the Web GUI
         /// </summary>
+        [EnumInfo(ShortDescription="Web Edit", LongDescription="Study was edited using the Web GUI")]
         WebEdit  
     }
 

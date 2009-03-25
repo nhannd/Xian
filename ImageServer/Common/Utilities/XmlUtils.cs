@@ -84,7 +84,9 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         
         public static XmlDocument SerializeAsXmlDoc(Object obj)
         {
-            Platform.CheckForNullReference(obj, "obj");
+            if (obj == null)
+                return null;
+
             StringWriter sw = new StringWriter();
             XmlTextWriter xmlTextWriter = new XmlTextWriter(sw);
 

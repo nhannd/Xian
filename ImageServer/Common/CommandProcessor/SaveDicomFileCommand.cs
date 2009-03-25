@@ -65,8 +65,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 					throw new ApplicationException(String.Format("DICOM File unexpectedly already exists: {0}",_path));
 				try
 				{
-					Random random = new Random();
-					_backupPath = String.Format("{0}.bak.{1}", _path, random.Next());
+					_backupPath = String.Format("{0}.bak", _path);
 					File.Copy(_path, _backupPath);
 				}
 				catch (IOException)

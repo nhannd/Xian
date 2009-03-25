@@ -5,6 +5,7 @@ using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
+using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.ProcessAsIs;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
@@ -52,7 +53,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                     case StudyReconcileAction.CreateNewStudy: return new ReconcileCreateStudyProcessor();
                     case StudyReconcileAction.Discard: return new DiscardImageCommandProcessor();
                     case StudyReconcileAction.Merge: return new MergeStudyCommandProcessor();
-
+                    case StudyReconcileAction.ProcessAsIs: return new ReconcileProcessAsIsProcessor();
                     default:
                         throw new NotSupportedException(String.Format("Reconcile Action: {0}", desc.Action));
                 }

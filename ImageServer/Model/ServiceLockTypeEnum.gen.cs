@@ -112,7 +112,7 @@ public partial class ServiceLockTypeEnum : ServerEnum
           get { return _PurgeAlerts; }
       }
       /// <summary>
-      /// This service scans the filesystem for dicom files and imports them into the system.
+      /// This service periodically scans the filesystem for dicom files and imports them into the system.
       /// </summary>
       public static ServiceLockTypeEnum ImportFiles
       {

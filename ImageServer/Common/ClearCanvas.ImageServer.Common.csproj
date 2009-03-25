@@ -52,8 +52,10 @@
     <Compile Include="CommandProcessor\CreateDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\CreateTempDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DeleteDirectoryCommand.cs" />
+    <Compile Include="CommandProcessor\DeleteWorkQueueUidCommand.cs" />
     <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
     <Compile Include="CommandProcessor\UpdateWorkQueueCommand.cs" />
+    <Compile Include="EnumInfoAttribute.cs" />
     <Compile Include="Data\ImageSetDescriptor.cs" />
     <Compile Include="Data\ImageSetDetails.cs" />
     <Compile Include="Data\PatientInformation.cs" />

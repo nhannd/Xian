@@ -110,4 +110,13 @@ namespace ClearCanvas.ImageServer.Common.Data
         }
     }
 
+    [XmlRoot("Reconcile")]
+    public class ReconcileProcessAsIsDescriptor : StudyReconcileDescriptor
+    {
+        public ReconcileProcessAsIsDescriptor()
+        {
+            Action = StudyReconcileAction.ProcessAsIs;
+        }
+    }
+
 }

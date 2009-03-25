@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             StudyHistoryeAdaptor adaptor = new StudyHistoryeAdaptor();
             StudyHistorySelectCriteria criteria = new StudyHistorySelectCriteria();
-            criteria.StudyStorageKey.EqualTo(TheStudySummary.TheStudyStorage.GetKey());
+            criteria.DestStudyStorageKey.EqualTo(TheStudySummary.TheStudyStorage.GetKey());
             criteria.InsertTime.SortDesc(0);
             _historyList = CollectionUtils.Select(adaptor.Get(criteria),
                         delegate(StudyHistory history)
@@ -44,7 +44,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                                 if (history.StudyHistoryTypeEnum==StudyHistoryTypeEnum.StudyReconciled)
                                 {
                                     ReconcileHistoryRecord desc = StudyHistoryRecordDecoder.ReadReconcileRecord(history);
-                                    return desc.UpdateDescription.Action == StudyReconcileAction.Merge;
+                                    switch(desc.UpdateDescription.Action)
+                                    {
+                                        case StudyReconcileAction.CreateNewStudy:
+                                        case StudyReconcileAction.Merge:
+                                        case StudyReconcileAction.ProcessAsIs:
+                                            return true;
+                                    }
+                                    return false;
                                 }
                                 return true;
                             });

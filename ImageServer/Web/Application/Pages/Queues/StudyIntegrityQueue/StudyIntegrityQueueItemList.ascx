@@ -24,16 +24,18 @@
 							    <tr>
 							        <td style="border:none; vertical-align:top"></td>
 							        <td style="border:none; vertical-align:top; text-align:left">
-							            <asp:Label ID="ExistingPatientId" runat="server"></asp:Label> / <asp:Label ID="ExistingPatientName" runat="server"></asp:Label> / <%# Eval("ExistingAccessionNumber")%>
+							            <asp:Label runat="server" ID="ExistingPatientId" CssClass="StudyField" Text='<%# Eval("ExistingPatientId")%>'></asp:Label> / 
+							            <asp:Label runat="server" ID="ExistingPatientName" CssClass="StudyField" Text='<%# Eval("ExistingPatientName")%>'></asp:Label>
 							        </td>
 							        
 							    </tr>
 							    <tr >
 							        <td style="border:none; vertical-align:top"></td>
 							        <td style="border:none; vertical-align:top; text-align:left; font-size:80%;">
-							            <%# Eval("StudySummary.StudyDescription")%> / 
-							            <%# Eval("StudySummary.StudyDate")%> / 
-							            <%# Eval("StudySummary.ModalitiesInStudy")%>
+							            <asp:Label runat="server" ID="ExistingAccessionNumber" CssClass="StudyField" Text='<%# Eval("ExistingAccessionNumber")%>'></asp:Label> / 
+                                        <asp:Label runat="server" ID="ExistingStudyDescription" CssClass="StudyField" Text='<%# Eval("StudySummary.StudyDescription")%>'></asp:Label> / 
+							            <asp:Label runat="server" ID="ExistingStudyDate" CssClass="StudyField" Text='<%# Eval("StudySummary.StudyDate")%>'></asp:Label> / 
+							            <asp:Label runat="server" ID="ExistingModalitiesInStudy" CssClass="StudyField" Text='<%# Eval("StudySummary.ModalitiesInStudy")%>'></asp:Label>
 							        </td>
 							    </tr>
 							    </table>                                
@@ -46,15 +48,16 @@
 							    <tr>
 							        <td style="border:none; vertical-align:top"></td>
 							        <td style="border:none; vertical-align:top; text-align:left;">
-							            <asp:Label ID="ConflictingPatientId" runat="server"></asp:Label> / <asp:Label ID="ConflictingPatientName" runat="server"></asp:Label> / <%# Eval("ExistingAccessionNumber")%>
-                                    </td>							        
+							            <asp:Label runat="server" ID="ConflictingPatientId" CssClass="StudyField" Text='<%# Eval("QueueData.Details.StudyInfo.PatientInfo.PatientId")%>'></asp:Label> / 
+							            <asp:Label runat="server" ID="ConflictingPatientName" CssClass="StudyField" Text='<%# Eval("QueueData.Details.StudyInfo.PatientInfo.Name")%>'></asp:Label>
+							        </td>							        
 							    </tr>
 							    <tr >
 							        <td style="border:none; vertical-align:top"></td>
 							        <td style="border:none; vertical-align:top; text-align:left; font-size:80%;">
-							            <%# Eval("QueueData.Details.StudyInfo.StudyDescription") %> / 
-							            <%# Eval("QueueData.Details.StudyInfo.StudyDate") %> / 
-							            <%# StringUtilities.Combine(Eval("ConflictingModalities") as string[], ",") %>							            
+							            <asp:Label runat="server" ID="ConflictingAccessionNumber" CssClass="StudyField" Text='<%# Eval("QueueData.Details.StudyInfo.AccessionNumber")%>'></asp:Label> / <asp:Label runat="server" ID="ConflictingStudyDescription" CssClass="StudyField" Text='<%# Eval("QueueData.Details.StudyInfo.StudyDescription")%>'></asp:Label> / 
+                                        <asp:Label runat="server" ID="ConflictingStudyDate" CssClass="StudyField"  Text='<%# Eval("QueueData.Details.StudyInfo.StudyDate")%>'></asp:Label> / 
+                                        <asp:Label runat="server" ID="ConflictingModalities" CssClass="StudyField" Text='<%# StringUtilities.Combine(Eval("ConflictingModalities") as string[], ",") %>'></asp:Label>
 							        </td>
 							    </tr>
 							    </table>    
@@ -69,9 +72,9 @@
 				    <EmptyDataTemplate>
                         <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No items were found using the provided criteria." />
 					</EmptyDataTemplate>					
-					<RowStyle CssClass="GlobalGridViewRow" />
-					<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />
-					<SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
+					<RowStyle CssClass="GlobalGridViewRow StudyIntegrityQueueRow" />
+					<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow StudyIntegrityQueueRow" />
+					<SelectedRowStyle CssClass="GlobalGridViewSelectedRow StudyIntegrityQueueRow" />
 					<HeaderStyle CssClass="GlobalGridViewHeader" />
 					<PagerTemplate>
 					</PagerTemplate>

@@ -30,13 +30,12 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
@@ -72,10 +71,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             return _adaptor.Delete(item.Key);
         }
 
-        private void ReconcileStudy(string command, ServerEntityKey itemKey)
+        private void ReconcileStudy(string command,StudyIntegrityQueue item )
         {
-            StudyIntegrityQueue item = StudyIntegrityQueue.Load(itemKey);
-
             //Ignore the reconcile command if the item is null.
             if (item == null) return;
 
@@ -150,11 +147,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		}
 
 	    public void CreateNewStudy(ServerEntityKey itemKey)
-        {
-            ReconcileStudy(String.Format("<CreateStudy><SetTag TagPath=\"{0}\" Value=\"{1}\" /></CreateStudy>", DicomConstants.DicomTags.StudyInstanceUID, DicomUid.GenerateUid().UID), itemKey);
-        }
+	    {
+	        StudyIntegrityQueue item = StudyIntegrityQueue.Load(itemKey);
+	        ReconcileStudy(String.Format("<CreateStudy><SetTag TagPath=\"{0}\" Value=\"{1}\" /></CreateStudy>", DicomConstants.DicomTags.StudyInstanceUID, DicomUid.GenerateUid().UID), item);
+	    }
 
-        public void MergeStudy(ServerEntityKey itemKey, Boolean useExistingStudy)
+	    public void MergeStudy(ServerEntityKey itemKey, Boolean useExistingStudy)
         {
             StudyIntegrityQueueAdaptor queueAdaptor = new StudyIntegrityQueueAdaptor();
             StudyIntegrityQueue item = queueAdaptor.Get(itemKey);
@@ -220,13 +218,29 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 IssuerOfPatientID = string.Format(SetTag, DicomConstants.DicomTags.IssuerOfPatientID, GetConflictingIssuerOfPatientID(studyData));
                 Birthdate = string.Format(SetTag, DicomConstants.DicomTags.PatientsBirthDate, GetConflictingPatientBirthDate(studyData));                 
             }
-            
-            ReconcileStudy(String.Format("<MergeStudy>{0}{1}{2}{3}{4}{5}</MergeStudy>", PatientName, PatientID, AccessionNumber, PatientSex, IssuerOfPatientID, Birthdate), itemKey);
+
+            ReconcileStudy(String.Format("<MergeStudy>{0}{1}{2}{3}{4}{5}</MergeStudy>", PatientName, PatientID, AccessionNumber, PatientSex, IssuerOfPatientID, Birthdate), item);
         }
 
         public void Discard(ServerEntityKey itemKey)
         {
-            ReconcileStudy("<Discard/>", itemKey);
+            StudyIntegrityQueue item = StudyIntegrityQueue.Load(itemKey);
+            ReconcileStudy("<Discard/>", item);
+        }
+
+
+        public void IgnoreDifferences(ServerEntityKey key)
+        {
+            ReconcileProcessAsIsDescriptor command = new ReconcileProcessAsIsDescriptor();
+            InconsistentDataSIQRecord record = new InconsistentDataSIQRecord(StudyIntegrityQueue.Load(key));
+            
+            command.Automatic = false;
+            command.Description = "Ignore differences.";
+            command.ExistingStudy = record.ExistingStudyInfo;
+            command.ImageSetData = record.ConflictingImageDescriptor;
+            
+            String xml = XmlUtils.SerializeAsString(command);
+            ReconcileStudy(xml, record.QueueItem);
         }
 
         private static string GetConflictingName(string studyData)
@@ -269,5 +283,43 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             return str;
         }
+
 	}
+
+    internal class InconsistentDataSIQRecord
+    {
+        private readonly ImageSetDescriptor _conflictingImageDescriptor;
+        private readonly ImageSetDetails _conflictingImageDetails;
+        private readonly StudyInformation _existingStudyInfo;
+        private readonly StudyIntegrityQueue _queueItem;
+
+        public InconsistentDataSIQRecord(StudyIntegrityQueue queue)
+        {
+            _queueItem = queue;
+            ReconcileStudyWorkQueueData data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(queue.QueueData);
+            _conflictingImageDetails = data.Details;
+            _conflictingImageDescriptor = XmlUtils.Deserialize<ImageSetDescriptor>(queue.StudyData);
+            _existingStudyInfo = new StudyInformation( new ServerEntityAttributeProvider(StudyStorage.Load(queue.StudyStorageKey).Study));
+        }
+
+        public StudyInformation ExistingStudyInfo
+        {
+            get { return _existingStudyInfo; }
+        }
+
+        public ImageSetDescriptor ConflictingImageDescriptor
+        {
+            get { return _conflictingImageDescriptor; }
+        }
+
+        public StudyIntegrityQueue QueueItem
+        {
+            get { return _queueItem; }
+        }
+
+        public ImageSetDetails ConflictingImageDetails
+        {
+            get { return _conflictingImageDetails; }
+        }
+    }
 }

@@ -37,7 +37,6 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupReconcile
 {
@@ -135,7 +134,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupReconcile
                 {
                     Platform.Log(LogLevel.Info, "WARNING {0} is missing.", imagePath);
                 }
-                DeleteQueueUidCommand deleteUid = new DeleteQueueUidCommand(uid);
+
+                DeleteWorkQueueUidCommand deleteUid = new DeleteWorkQueueUidCommand(uid);
                 processor.AddCommand(deleteUid);
                 if (!processor.Execute())
                 {

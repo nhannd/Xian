@@ -31,6 +31,7 @@
 
 using System;
 using System.IO;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
@@ -41,14 +42,14 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	/// </summary>
 	public class FileDeleteCommand : ServerCommand, IDisposable
 	{
-        static string _tempRootDir = Path.GetPathRoot(Path.GetTempPath());
-        private string _backupFile = Path.Combine(Path.Combine(_tempRootDir, "temp"), Path.GetRandomFileName());
+        private string _backupFile;
         private bool _backedUp = false;
         private readonly string _path;
 
 		public FileDeleteCommand(string path, bool requiresRollback) 
             : base(String.Format("Delete {0}", path), requiresRollback)
 		{
+            Platform.CheckForNullReference(path, "path");
 			_path = path;
 		}
 
@@ -56,17 +57,36 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		{
             if (RequiresRollback)
             {
+                Backup();
+            }
+
+
+			if (File.Exists(_path))
+			{
+			    File.Delete(_path);
+			}
+            else
+			{
+			    Platform.Log(LogLevel.Warn, "Attempted to delete file which doesn't exist: {0}", _path);
+			}
+		}
+
+	    private void Backup()
+	    {
+            if (File.Exists(_path))
+            {
+                _backupFile = _path + ".bak";
                 File.Copy(_path, _backupFile);
                 _backedUp = true;
             }
-			File.Delete(_path);
-		}
+            
+	    }
 
-		protected override void OnUndo()
+	    protected override void OnUndo()
 		{
 			if (_backedUp)
 			{
-                File.Copy(_backupFile, _path);
+                File.Copy(_backupFile, _path, true);
 			}
 		}
 

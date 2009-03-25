@@ -47,13 +47,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         protected global::System.Web.UI.WebControls.Label StudyInstanceUIDLabel;
         
         /// <summary>
-        /// ExistingNameLabel control.
+        /// Label8 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label ExistingNameLabel;
+        protected global::System.Web.UI.WebControls.Label Label8;
         
         /// <summary>
         /// Label321 control.
@@ -369,6 +369,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RadioButton DiscardStudy;
+        
+        /// <summary>
+        /// IgnoreConflict control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton IgnoreConflict;
         
         /// <summary>
         /// OKButton control.

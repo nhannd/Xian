@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Data;
-using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
@@ -43,31 +41,22 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
         {
             Platform.CheckForNullReference(context, "context");
             _context = context;
+            CreateStudyCommandXmlParser parser = new CreateStudyCommandXmlParser();
+            ReconcileCreateStudyDescriptor desc = parser.Parse(_context.History.ChangeDescription);
 
             if (_context.History.DestStudyStorageKey == null)
             {
-                CreateStudyCommandXmlParser parser = new CreateStudyCommandXmlParser();
-                ReconcileCreateStudyDescriptor desc = parser.Parse(_context.History.ChangeDescription);
-                
-                CreateStudyCommand command = new CreateStudyCommand();
-                command.SetContext(_context);
-                command.ImageLevelCommands.AddRange(desc.Commands);
-
-                command.DestStudyStorage = null; // to be created
-                
+                CreateStudyCommand.CommandParameters paramaters = new CreateStudyCommand.CommandParameters();
+                paramaters.Commands = desc.Commands;
+                CreateStudyCommand command = new CreateStudyCommand(context, paramaters);
                 AddCommand(command);
             }
             else
             {
-
-                StudyStorage storage = StudyStorage.Load(_context.History.DestStudyStorageKey);
-                MergeStudyCommand command = new MergeStudyCommand();
-                command.SetContext(_context);
-                
-                IList<StudyStorageLocation> locations = StudyStorageLocation.FindStorageLocations(storage);
-                command.DestStudyStorage = locations[0];
-                command.UpdateDestination = false;
-
+                ReconcileMergeStudyCommandParameters parameters = new ReconcileMergeStudyCommandParameters();
+                parameters.Commands = desc.Commands;
+                parameters.UpdateDestination = false;
+                MergeStudyCommand command = new MergeStudyCommand(_context, parameters);
                 AddCommand(command);
             }
         }

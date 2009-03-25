@@ -31,22 +31,26 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Web.UI;
-using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
+    
     //
     // Dialog for adding a new device or editting an existing device.
     //
     public partial class ReconcileDialog : UserControl
     {
+        private const string HighlightCssClass = " ConflictField ";
+
+        private delegate void ComparisonCallback();
+
         #region private variables
 
         // The server partitions that the new device can be associated with
@@ -136,9 +140,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 {
                     controller.CreateNewStudy(itemKey);
                 }
-                else
+                else if (DiscardStudy.Checked)
                 {
                     controller.Discard(itemKey);
+                }
+                else if (IgnoreConflict.Checked)
+                {
+                    controller.IgnoreDifferences(itemKey);
                 }
             }
             catch (Exception ex)
@@ -162,81 +170,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             Close();
         }
         
-        private void DisplayReconcileSummary()
-        {
-            StudyInstanceUIDLabel.Text = ReconcileDetails.StudyInstanceUID;
-
-            ExistingNameLabel.Text = ReconcileDetails.ExistingPatient.Name;
-            ExistingPatientID.Text = ReconcileDetails.ExistingPatient.PatientID;
-            ExistingPatientBirthDate.Text = ReconcileDetails.ExistingPatient.BirthDate;
-            ExistingPatientSex.Text = ReconcileDetails.ExistingPatient.Sex;
-            ExistingPatientIssuerOfPatientID.Text = ReconcileDetails.ExistingPatient.IssuerOfPatientID;
-            ExistingAccessionNumber.Text = ReconcileDetails.ExistingPatient.AccessionNumber;
-            ExistingStudyDate.Text = ReconcileDetails.ExistingStudy.StudyDate;
-
-            ConflictingNameLabel.Text = ReconcileDetails.ConflictingPatient.Name;
-            ConflictingPatientID.Text = ReconcileDetails.ConflictingPatient.PatientID;
-            ConflictingPatientBirthDate.Text = ReconcileDetails.ConflictingPatient.BirthDate;
-            ConflictingPatientSex.Text = ReconcileDetails.ConflictingPatient.Sex;
-            PatientSexValidator.Validate();
-            ConflictingPatientSex.BackColor = Color.Transparent;
-            ConflictingPatientSex.BorderStyle = BorderStyle.None;
-            
-            ConflictingPatientIssuerOfPatientID.Text = ReconcileDetails.ConflictingPatient.IssuerOfPatientID;
-            ConflictingAccessionNumber.Text = ReconcileDetails.ConflictingPatient.AccessionNumber;
-
-            if (!ExistingNameLabel.Text.Equals(ConflictingNameLabel.Text))
-            {
-                ConflictingNameLabel.CssClass = "ConflictingValueLabel";
-                if (ExistingNameLabel.Text.Equals(string.Empty)) ExistingNameLabel.Text = "Not Specified";
-                if (ConflictingNameLabel.Text.Equals(string.Empty)) ConflictingNameLabel.Text = "Not Specified";
-            }
-
-            if (!ExistingPatientID.Text.Equals(ConflictingPatientID.Text))
-            {
-                ConflictingPatientID.CssClass = "ConflictingValueLabel";
-                if (ExistingPatientID.Text.Equals(string.Empty)) ExistingPatientID.Text = "Not Specified";
-                if (ConflictingPatientID.Text.Equals(string.Empty)) ConflictingPatientID.Text = "Not Specified";
-            }
- 
-
-            if (!ExistingPatientBirthDate.Text.Equals(ConflictingPatientBirthDate.Text))
-            {
-                ConflictingPatientBirthDate.CssClass = "ConflictingValueLabel";
-                if (ExistingPatientBirthDate.Text.Equals(string.Empty)) ExistingPatientBirthDate.Text = "Not Specified";
-                if (ConflictingPatientBirthDate.Text.Equals(string.Empty)) ConflictingPatientBirthDate.Text = "Not Specified";
-            }
-                
-
-            if (!ExistingPatientSex.Text.Equals(ConflictingPatientSex.Text))
-            {
-                ConflictingPatientSex.CssClass = "ConflictingValueLabel";
-                if (ExistingPatientSex.Text.Equals(string.Empty)) ExistingPatientSex.Text = "Not Specified";
-                if (ConflictingPatientSex.Text.Equals(string.Empty)) ConflictingPatientSex.Text = "Not Specified";
-            }
-                
-            if (!ExistingPatientIssuerOfPatientID.Text.Equals(ConflictingPatientIssuerOfPatientID.Text))
-            {
-                ConflictingPatientIssuerOfPatientID.CssClass = "ConflictingValueLabel";
-                if (ExistingPatientIssuerOfPatientID.Text.Equals(string.Empty)) ExistingPatientIssuerOfPatientID.Text = "Not Specified";
-                if (ConflictingPatientIssuerOfPatientID.Text.Equals(string.Empty)) ConflictingPatientIssuerOfPatientID.Text = "Not Specified";  
-            }
-
-            if (!ExistingAccessionNumber.Text.Equals(ConflictingAccessionNumber.Text))
-            {
-                ConflictingAccessionNumber.CssClass = "ConflictingValueLabel";
-                if (ExistingAccessionNumber.Text.Equals(string.Empty)) ExistingAccessionNumber.Text = "Not Specified";
-                if (ConflictingAccessionNumber.Text.Equals(string.Empty)) ConflictingAccessionNumber.Text = "Not Specified";                
-            }
-
-            ConflictingStudyDate.Text = ReconcileDetails.ConflictingImageSet.StudyInfo.StudyDate;
-
-            ExistingPatientSeriesGridView.DataSource = ReconcileDetails.ExistingStudy.Series;
-            ExistingPatientSeriesGridView.DataBind();
-
-            ConflictingPatientSeriesGridView.DataSource = ReconcileDetails.ConflictingImageSet.StudyInfo.Series;
-            ConflictingPatientSeriesGridView.DataBind();
-        }
 
         #endregion Protected methods
 
@@ -247,9 +180,45 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// </summary>
         public void Show()
         {
-            DisplayReconcileSummary();
-            ReconcileItemModalDialog.Title = App_GlobalResources.Titles.ReconcileStudyDialog;
+            DataBind();
+            HighlightDifferences();
+            Page.Validate();
             ReconcileItemModalDialog.Show();
+        }
+
+        public override void DataBind()
+        {
+            ExistingPatientSeriesGridView.DataSource = ReconcileDetails.ExistingStudy.Series;
+            ConflictingPatientSeriesGridView.DataSource = ReconcileDetails.ConflictingImageSet.StudyInfo.Series;
+            base.DataBind();
+        }
+
+        private void HighlightDifferences()
+        {
+            if (ReconcileDetails!=null)
+            {
+                Compare(ReconcileDetails.ExistingStudy.Patient.Name, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name, 
+                   delegate { ConflictingNameLabel.CssClass += HighlightCssClass; });
+                Compare(ReconcileDetails.ExistingStudy.Patient.PatientID, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId,
+                    delegate { ConflictingPatientID.CssClass += HighlightCssClass; });
+                Compare(ReconcileDetails.ExistingStudy.Patient.IssuerOfPatientID, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId,
+                    delegate { ConflictingPatientIssuerOfPatientID.CssClass += HighlightCssClass; });
+                Compare(ReconcileDetails.ExistingStudy.Patient.BirthDate, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate,
+                    delegate { ConflictingPatientBirthDate.CssClass += HighlightCssClass; });
+                Compare(ReconcileDetails.ExistingStudy.Patient.Sex, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex,
+                    delegate { ConflictingPatientSex.CssClass += HighlightCssClass; });
+                Compare(ReconcileDetails.ExistingStudy.StudyDate, ReconcileDetails.ConflictingImageSet.StudyInfo.StudyDate,
+                    delegate { ConflictingStudyDate.CssClass += HighlightCssClass; });
+                Compare(ReconcileDetails.ExistingStudy.AccessionNumber, ReconcileDetails.ConflictingImageSet.StudyInfo.AccessionNumber,
+                    delegate { ConflictingAccessionNumber.CssClass += HighlightCssClass; });
+
+            }
+        }
+
+        private static void Compare(string value1, string value2, ComparisonCallback del)
+        {
+            if (!StringUtils.AreEqual(value1, value2, StringComparison.InvariantCultureIgnoreCase))
+                del();
         }
 
         /// <summary>

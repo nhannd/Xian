@@ -65,12 +65,20 @@
     <Compile Include="DeleteStudy\IDeleteStudyProcessorExtension.cs" />
     <Compile Include="PurgeStudy\PurgeStudyFactoryExtension.cs" />
     <Compile Include="PurgeStudy\PurgeStudyItemProcessor.cs" />
+    <Compile Include="ReconcileStudyPostProcessing\ReconcilePostProcessingProcessor.cs" />
+    <Compile Include="ReconcileStudyPostProcessing\ReconcilePostProcessingProcessorFactoryExtension.cs" />
     <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommand.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ReconcileStudy\CreateStudy\CreateStudyCommandXmlParser.cs" />
+    <Compile Include="ReconcileStudy\UpdateHistoryCommand.cs" />
+    <Compile Include="ReconcileStudy\SaveFileCommand.cs" />
     <Compile Include="ReconcileStudy\Discard\DiscardImageCommandProcessor.cs" />
     <Compile Include="ReconcileStudy\Discard\DiscardImagesCommandXmlParser.cs" />
+    <Compile Include="ReconcileStudy\ProcessAsIs\ProcessAsIsCommand.cs" />
+    <Compile Include="ReconcileStudy\ProcessAsIs\ProcessAsIsCommandXmlParser.cs" />
+    <Compile Include="ReconcileStudy\ReconcileCommandBase.cs" />
+    <Compile Include="ReconcileStudy\ProcessAsIs\ReconcileProcessAsIsProcessor.cs" />
     <Compile Include="ReconcileStudy\ReconcileDescriptionParser.cs" />
     <Compile Include="ReconcileStudy\UpdateWorkQueueCommand.cs" />
     <Compile Include="StudyProcess\ImageReconciler.cs" />

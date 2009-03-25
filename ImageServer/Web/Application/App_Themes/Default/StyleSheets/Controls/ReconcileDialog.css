@@ -59,6 +59,11 @@
     color: #16425D;
 }
 
+.ReconcileFieldLabel
+{
+	white-space:pre;
+}
+
 .SeriesTitle
 {
     color: #16425D;

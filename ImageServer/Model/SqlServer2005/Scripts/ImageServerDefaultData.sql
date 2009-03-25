@@ -77,6 +77,12 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
            (newid(),112,'ReconcileCleanup','Cleanup Failed Reconcile Study','Cleanup a failed Reconcile Study entry')
 GO
 
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),113,'ReconcilePostProcess','Process Reconciled Images','Process reconciled images.')
+GO
+
 
 -- WorkQueueStatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]
@@ -851,7 +857,6 @@ GO
 INSERT INTO [ImageServer].[dbo].[QueueStudyStateEnum]([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES(newid(),114,'ArchiveScheduled','Archive Scheduled','The study is scheduled for archiving')
 GO
-
 
 -- StudyIntegrityReasonEnum inserts
 INSERT INTO [ImageServer].[dbo].[StudyIntegrityReasonEnum]

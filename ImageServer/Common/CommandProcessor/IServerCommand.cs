@@ -30,8 +30,5 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         void Undo();
     }
 
-    public interface IServerCommand<TContext> : IServerCommand
-    {
-        TContext Context { set; }
-    }
+
 }

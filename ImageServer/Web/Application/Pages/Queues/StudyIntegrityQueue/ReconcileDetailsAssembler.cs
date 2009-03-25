@@ -44,29 +44,24 @@ using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {
-
-
     public static class ReconcileDetailsAssembler
     {
-        private static int ArraySize = 100;
-
         public static ReconcileDetails CreateReconcileDetails(StudyIntegrityQueueSummary item)
         {
-            ReconcileDetails details = new ReconcileDetails();
+            ReconcileDetails details = new ReconcileDetails(item.TheStudyIntegrityQueueItem);
 
-            details.StudyIntegrityQueueItem = item.TheStudyIntegrityQueueItem;
             Study study = item.StudySummary.TheStudy;
             details.StudyInstanceUID = study.StudyInstanceUid;
 
             //Set the demographic details of the Existing Patient
-            details.ExistingPatient.PatientID = study.PatientId;
-            details.ExistingPatient.AccessionNumber = study.AccessionNumber;
-            details.ExistingPatient.Sex = study.PatientsSex;
-            details.ExistingPatient.IssuerOfPatientID = study.IssuerOfPatientId;
-            details.ExistingPatient.BirthDate = study.PatientsBirthDate;
-
             details.ExistingStudy = new ReconcileDetails.StudyInfo();
+            details.ExistingStudy.AccessionNumber = study.AccessionNumber;
             details.ExistingStudy.StudyDate = study.StudyDate;
+            details.ExistingStudy.Patient.PatientID = study.PatientId;
+            details.ExistingStudy.Patient.Name = study.PatientsName;
+            details.ExistingStudy.Patient.Sex = study.PatientsSex;
+            details.ExistingStudy.Patient.IssuerOfPatientID = study.IssuerOfPatientId;
+            details.ExistingStudy.Patient.BirthDate = study.PatientsBirthDate;
             details.ExistingStudy.Series = CollectionUtils.Map<Model.Series, ReconcileDetails.SeriesDetails>(
                 study.Series,
                 delegate(Model.Series theSeries)
@@ -79,143 +74,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                     });
 
 
-            ReconcileStudyQueueDescription description = ParseDescription(item.TheStudyIntegrityQueueItem.Description);
-            ReconcileStudyWorkQueueData workQueueData =
-                XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.TheStudyIntegrityQueueItem.QueueData);
-            
+            details.ConflictingImageSet = item.QueueData.Details;
 
-            details.ExistingPatient.Name = description.ExistingPatientName;
-            details.ConflictingPatient.Name = description.ConflictingPatientName;
-
-            StringWriter sw = new StringWriter();
-            XmlTextWriter xw = new XmlTextWriter(sw);
-            item.TheStudyIntegrityQueueItem.StudyData.WriteTo(xw);
-
-            string studyData = sw.ToString();
-
-            details.ConflictingPatient.PatientID = GetConflictingPatientID(studyData);
-            details.ConflictingPatient.AccessionNumber = GetConflictingPatientAccessionNumber(studyData);
-            details.ConflictingPatient.Sex = GetConflictingPatientSex(studyData);
-            details.ConflictingPatient.IssuerOfPatientID = GetConflictingIssuerOfPatientID(studyData);
-            details.ConflictingPatient.BirthDate = GetConflictingPatientBirthDate(studyData);
-
-            details.ConflictingImageSet = workQueueData.Details;
-
-            StudyIntegrityQueueUidAdaptor uidAdaptor = new StudyIntegrityQueueUidAdaptor();
-            StudyIntegrityQueueUidSelectCriteria uidCriteria = new StudyIntegrityQueueUidSelectCriteria();
-            uidCriteria.StudyIntegrityQueueKey.EqualTo(item.TheStudyIntegrityQueueItem.GetKey());
-
-            IList<StudyIntegrityQueueUid> uidItems = uidAdaptor.Get(uidCriteria);
-
-            //
-            // Get the Series information from the ReconcileQueueUid. For each
-            // Uid matching the current queue item, count the total number of
-            // images for each series description.
-            //
-
-            ArrayList seriesInstanceUid = new ArrayList();
-            int[] seriesCount = new int[ArraySize];
-            string[] seriesDescription = new string[ArraySize];
-
-            foreach (StudyIntegrityQueueUid uidItem in uidItems)
-            {
-                if (seriesInstanceUid.Contains(uidItem.SeriesInstanceUid))
-                {
-                    int index = seriesInstanceUid.IndexOf(uidItem.SeriesInstanceUid);
-                    seriesCount[index] = seriesCount[index] + 1;
-                }
-                else
-                {
-                    int index = seriesInstanceUid.Add(uidItem.SeriesInstanceUid);
-
-                    //Grow the array by ArraySize if there are more unique series.
-                    if (index > seriesCount.Length)
-                    {
-                        int[] tempSeriesCount = new int[seriesCount.Length + ArraySize];
-                        seriesCount.CopyTo(tempSeriesCount, 0);
-                        seriesCount = tempSeriesCount;
-
-                        string[] tempDescription = new string[seriesDescription.Length + ArraySize];
-                        seriesDescription.CopyTo(tempDescription, 0);
-                        seriesDescription = tempDescription;
-                    }
-
-                    seriesCount[index] = 1;
-                    seriesDescription[index] = uidItem.SeriesDescription;
-                }
-            }
-
-
-            List<ReconcileDetails.SeriesDetails> seriesList = new List<ReconcileDetails.SeriesDetails>();
-            foreach (string uid in seriesInstanceUid)
-            {
-                int index = seriesInstanceUid.IndexOf(uid);
-
-                ReconcileDetails.SeriesDetails seriesDetails = new ReconcileDetails.SeriesDetails();
-                seriesDetails.Description = seriesDescription[index];
-                seriesDetails.NumberOfInstances = seriesCount[index];
-                SeriesInformation seriesInfo = workQueueData.Details.StudyInfo.Series.Find(
-                    delegate(SeriesInformation theSeries) { return theSeries.SeriesInstanceUid.Equals(uid); });
-                if (seriesInfo != null)
-                {
-                    seriesDetails.Modalitiy = seriesInfo.Modality;
-                }
-
-                seriesList.Add(seriesDetails);
-            }
-
-            
             return details;
-        }
-
-        private static ReconcileStudyQueueDescription ParseDescription(string description)
-        {
-            ReconcileStudyQueueDescription desc = new ReconcileStudyQueueDescription();
-            desc.Parse(description);
-            return desc;
-        }
-
-
-        private static string GetConflictingPatientID(string studyData)
-        {
-            string patientIDTag = "00100020";
-            return parseXmlString(studyData, patientIDTag);
-        }
-
-        private static string GetConflictingPatientSex(string studyData)
-        {
-            string sexTag = "00100040";
-            return parseXmlString(studyData, sexTag);
-        }
-
-        private static string GetConflictingPatientBirthDate(string studyData)
-        {
-            string patientBirthDateTag = "00100030";
-            return parseXmlString(studyData, patientBirthDateTag);
-
-        }
-
-        private static string GetConflictingIssuerOfPatientID(string studyData)
-        {
-            string issuerOfPatientIDTag = "00100021";
-            return parseXmlString(studyData, issuerOfPatientIDTag);
-        }
-
-        private static string GetConflictingPatientAccessionNumber(string studyData)
-        {
-            string accessionTag = "00080050";
-            return parseXmlString(studyData, accessionTag);
-        }
-
-        private static string parseXmlString(string xmlString, string tag)
-        {
-            string VALUE = "Value=";
-
-            string str = xmlString.Substring(xmlString.IndexOf(tag));
-            str = str.Substring(str.IndexOf(VALUE) + VALUE.Length + 1);
-            str = str.Substring(0, str.IndexOf("\""));
-
-            return str;
         }
     }
 }

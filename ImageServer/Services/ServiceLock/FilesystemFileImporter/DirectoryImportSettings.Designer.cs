@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
         public int RecheckDelaySeconds {
             get {
                 return ((int)(this["RecheckDelaySeconds"]));

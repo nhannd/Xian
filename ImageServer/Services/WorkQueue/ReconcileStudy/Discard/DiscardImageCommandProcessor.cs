@@ -8,7 +8,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard
     /// </summary>
     class DiscardImageCommandProcessor : ServerCommandProcessor, IReconcileProcessor
     {
-        private ReconcileStudyProcessorContext _context;
         public DiscardImageCommandProcessor()
             : base("Discard Image")
         {
@@ -23,14 +22,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard
         public void Initialize(ReconcileStudyProcessorContext context)
         {
             Platform.CheckForNullReference(context, "context");
-            _context = context;
 
-            DiscardImagesCommand discard = new DiscardImagesCommand();
-            discard.SetContext(_context);
+            DiscardImagesCommand discard = new DiscardImagesCommand(context);
 
-            DeleteDirectoryCommand deleteDir = new DeleteDirectoryCommand(context.ReconcileWorkQueueData.StoragePath, true);
             AddCommand(discard);
-            AddCommand(deleteDir);
         }
 
         #endregion

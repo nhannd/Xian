@@ -11,6 +11,38 @@ namespace ClearCanvas.ImageServer.Model
 {
     public partial class StudyStorage
     {
+    	#region Private Fields
+        private Study _study;
+        private ServerPartition _partition;
+		#endregion
+		
+		#region Public Properties
+        public Study Study
+        {
+            get
+            {
+                if (_study==null)
+                {
+                    _study = Study.Find(this.StudyInstanceUid, this.ServerPartition);
+                }
+                return _study;
+            }
+        }
+
+        public ServerPartition ServerPartition
+        {
+            get
+            {
+                if (_partition==null)
+                {
+                    _partition = ServerPartition.Load(this.ServerPartitionKey);
+                }
+                return _partition;
+            }
+        }
+		
+		#endregion
+		
         public void Archive(IUpdateContext context)
         {
             IInsertArchiveQueue insertArchiveQueueBroker = context.GetBroker<IInsertArchiveQueue>();

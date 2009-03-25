@@ -7,8 +7,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
     /// <summary>
     /// Defines the common interface of commands used by 'ReconcileStudy' processor
     /// </summary>
-    public interface IReconcileServerCommand : IServerCommand
+    public interface IReconcileServerCommand
     {
-        void SetContext(ReconcileStudyProcessorContext context);
     }
 }

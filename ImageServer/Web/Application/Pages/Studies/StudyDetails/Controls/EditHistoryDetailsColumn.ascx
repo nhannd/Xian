@@ -5,8 +5,8 @@
 <asp:Panel ID="Panel1" runat="server" CssClass="HistoryDetailContainer">
 <asp:Table ID="Table1" runat="server" CssClass="ReconcileDetails" BorderColor="gray" BorderWidth="0px" CellPadding="0" CellSpacing="0">
 <asp:TableRow BorderWidth="1px">
-<asp:TableCell VerticalAlign="top" Width="120px">Edit Type</asp:TableCell>
-<asp:TableCell ><%# EditHistory.EditType%></asp:TableCell>
+<asp:TableCell VerticalAlign="top" Width="140px">Action</asp:TableCell>
+<asp:TableCell ><%# HtmlUtility.GetEnumInfo(EditHistory.EditType).LongDescription%></asp:TableCell>
 </asp:TableRow>
 <asp:TableRow BorderWidth="1px">
 <asp:TableCell BorderWidth="0px" VerticalAlign="top">Changes</asp:TableCell>

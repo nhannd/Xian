@@ -1,0 +1,17 @@
+.StudyIntegrityQueueColumn
+{
+	white-space:pre;
+}
+
+.StudyInfoField
+{
+	font-family: Sans-Serif; 
+	white-space:pre;
+	padding:0; margin:0;
+}
+
+.ConflictField
+{
+	color:red;
+	
+}

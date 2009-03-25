@@ -137,4 +137,86 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		protected abstract void OnUndo();
 		#endregion
 	}
+
+    /// <summary>
+    /// Abstract class representing commands that tie to a specific context
+    /// </summary>
+    /// <remarks>
+    /// <para> 
+    /// </para>
+    /// </remarks>
+    public abstract class ServerCommand<TContext> : ServerCommand
+        where TContext : class
+    {
+        #region Private Fields
+        private readonly TContext _context;
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Creates an instance of <see cref="ServerCommand"/>
+        /// </summary>
+        /// <param name="description"></param>
+        /// <param name="requiresRollback"></param>
+        /// <param name="context"></param>
+        public ServerCommand(string description, bool requiresRollback, TContext context)
+            : base(description, requiresRollback)
+        {
+            _context = context;
+        }
+        #endregion
+
+
+
+        /// <summary>
+        /// Gets or sets the context of this command.
+        /// </summary>
+        protected TContext Context
+        {
+            get { return _context; }
+        }
+
+    }
+
+    /// <summary>
+    /// Abstract class representing commands that tie to a specific context
+    /// and require specific type of input.
+    /// </summary>
+    /// <remarks>
+    /// <para> 
+    /// </para>
+    /// </remarks>
+    public abstract class ServerCommand<TContext, TParameters> : ServerCommand<TContext>
+        where TContext : class
+        where TParameters : class
+    {
+        #region Private Fields
+        private readonly TParameters _parms;
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Creates an instance of <see cref="ServerCommand"/>
+        /// </summary>
+        /// <param name="description"></param>
+        /// <param name="requiresRollback"></param>
+        /// <param name="context"></param>
+        /// <param name="parameters"></param>
+        public ServerCommand(string description, bool requiresRollback, TContext context, TParameters parameters)
+            :base(description, requiresRollback, context)
+        {
+            _parms = parameters;
+        }
+        #endregion
+
+        /// <summary>
+        /// Gets or sets the paramater object used for constructing this command.
+        /// </summary>
+        protected TParameters Parameters
+        {
+            get { return _parms; }
+        }
+
+    }
+
 }

@@ -1,3 +1,5 @@
+using System;
+
 namespace ClearCanvas.ImageServer.Common.Data
 {
     /// <summary>
@@ -5,8 +7,16 @@ namespace ClearCanvas.ImageServer.Common.Data
     /// </summary>
     public enum StudyReconcileAction
     {
+        [EnumInfoAttribute(ShortDescription = "Discard", LongDescription = "Discard conflicting images")]
         Discard,
+
+        [EnumInfoAttribute(ShortDescription = "Merge", LongDescription = "Merge conflicting images into study")]
         Merge,
-        CreateNewStudy
+
+        [EnumInfoAttribute(ShortDescription = "Split Studies", LongDescription = "Create new study from conflicting images")]
+        CreateNewStudy,
+
+        [EnumInfoAttribute(ShortDescription = "Process As Is", LongDescription = "Ignore all differences and process the images normally")]
+        ProcessAsIs
     }
 }
