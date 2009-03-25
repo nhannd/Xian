@@ -9,7 +9,9 @@
 				OnObjectDisposing="DisposeUserGroupsDataSource"/>
             <ccUI:GridView ID="UserGroupsGridView" runat="server" OnRowDataBound="UserGroupsGridView_RowDataBound">
                 <Columns>
-                    <asp:BoundField DataField="Name" HeaderText="Group Name" HeaderStyle-HorizontalAlign="Left" />
+                    <asp:BoundField DataField="Name" HeaderText="Group Name" HeaderStyle-HorizontalAlign="Left" >
+                        <itemstyle width="300px" />
+                    </asp:BoundField>
                     <asp:TemplateField HeaderText="Tokens" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left">
                         <ItemTemplate>
                             <asp:TextBox ID="TokensTextBox" runat="server" TextMode="multiline" rows="3" columns="100" CssClass="TokenTextArea" ></asp:TextBox>
