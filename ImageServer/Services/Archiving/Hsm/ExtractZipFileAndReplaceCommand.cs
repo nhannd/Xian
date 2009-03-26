@@ -45,24 +45,22 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		private readonly string _zipFile;
 		private readonly string _destinationFolder;
 		private readonly string _sourceFile;
-		private readonly CreateTempDirectoryCommand _tempDirectory;
 		private bool _fileBackedup = false;
 		private string _storageFile = String.Empty;
 		private string _backupFile = String.Empty;
 
-		public ExtractZipFileAndReplaceCommand(string zipFile, string sourceFile, string destinationFolder, CreateTempDirectoryCommand tempDirectory)
+		public ExtractZipFileAndReplaceCommand(string zipFile, string sourceFile, string destinationFolder)
 			: base("Extract file from Zip and replace existing file", true)
 		{
 			_zipFile = zipFile;
 			_destinationFolder = destinationFolder;
 			_sourceFile = sourceFile;
-			_tempDirectory = tempDirectory;
 		}
 
 		protected override void OnExecute()
 		{
 			_storageFile = Path.Combine(_destinationFolder, _sourceFile);
-			_backupFile = Path.Combine(_tempDirectory.TempDirectory, _sourceFile);
+			_backupFile = Path.Combine(ExecutionContext.TempDirectory, _sourceFile);
 
 
 			string baseDirectory = _backupFile.Substring(0, _backupFile.LastIndexOfAny(new char[] { Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar }));

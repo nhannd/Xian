@@ -261,14 +261,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			{
 				using (ServerCommandProcessor processor = new ServerCommandProcessor("HSM Restore Online Study"))
 				{
-					CreateTempDirectoryCommand tempCommand = new CreateTempDirectoryCommand();
-					processor.AddCommand(tempCommand);
-
 					using (ZipFile zip = new ZipFile(zipFile))
 					{
 						foreach (string file in zip.EntryFileNames)
 						{
-							processor.AddCommand(new ExtractZipFileAndReplaceCommand(zipFile, file, destinationFolder, tempCommand));
+							processor.AddCommand(new ExtractZipFileAndReplaceCommand(zipFile, file, destinationFolder));
 						}
 					}
 					StudyStatusEnum status;
