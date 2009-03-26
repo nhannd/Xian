@@ -100,6 +100,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 
 				EventsHelper.Fire(_topLeftChangedEvent, this, new PointChangedEventArgs(this.TopLeft));
+				base.NotifyPropertyChanged("TopLeft");
 			}
 		}
 
@@ -145,6 +146,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 
 				EventsHelper.Fire(_bottomRightChangedEvent, this, new PointChangedEventArgs(this.BottomRight));
+				base.NotifyPropertyChanged("BottomRight");
 			}
 		}
 
@@ -205,7 +207,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Gets the rectangle that defines a <see cref="BoundableGraphic"/>.
 		/// </summary>
-		protected RectangleF Rectangle
+		public RectangleF Rectangle
 		{
 			get
 			{
@@ -220,6 +222,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 					return base.SpatialTransform.ConvertToDestination(_rectangle);
 				}
 			}
+		}
+
+		public override RectangleF BoundingBox
+		{
+			get { return RectangleUtilities.ConvertToPositiveRectangle(this.Rectangle); }
 		}
 
 		/// <summary>

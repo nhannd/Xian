@@ -55,7 +55,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			k = _bounds.Top + b;
 		}
 
-		public EllipticalRoi(EllipseInteractiveGraphic ellipse) : base(ellipse.ParentPresentationImage)
+		public EllipticalRoi(IBoundableGraphic ellipse)
+			: base(ellipse.ParentPresentationImage)
 		{
 			ellipse.CoordinateSystem = CoordinateSystem.Source;
 			try
@@ -138,7 +139,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			{
 				if (!_pixelArea.HasValue)
 				{
-					_pixelArea = _bounds.Width*_bounds.Height*Math.PI/4;
+					_pixelArea = Math.Abs(_bounds.Width*_bounds.Height*Math.PI/4);
 				}
 				return _pixelArea.Value;
 			}

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
@@ -10,16 +9,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	{
 		private List<PointF> _points;
 
-		internal ProtractorRoiInfo(ProtractorInteractiveGraphic protractor) : base(protractor.ParentPresentationImage)
+		internal ProtractorRoiInfo(ProtractorGraphic protractor) : base(protractor.ParentPresentationImage)
 		{
 			_points = new List<PointF>();
 
 			protractor.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				PolyLineGraphic line = protractor.PolyLine;
-				for (int i = 0; i < line.Count; ++i)
-					_points.Add(line[i]);
+				for (int i = 0; i < protractor.Count; ++i)
+					_points.Add(protractor[i]);
 			}
 			finally
 			{

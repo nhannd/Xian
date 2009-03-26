@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			Units units = Units.Centimeters;
 
 			double length = RoiLengthAnalyzer.CalculateLength(
-				roiGraphic.Subject as PolyLineInteractiveGraphic,
+				roiGraphic.Subject as IPointsGraphic,
 			    image.Frame.NormalizedPixelSpacing, 
 				ref units);
 
@@ -137,11 +137,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				aspectRatio = image.Frame.PixelAspectRatio.Row / image.Frame.PixelAspectRatio.Column;
 			}
 
-			PolyLineInteractiveGraphic line = roiGraphic.Subject as PolyLineInteractiveGraphic;
+			IPointsGraphic line = roiGraphic.Subject as IPointsGraphic;
 
 			line.CoordinateSystem = CoordinateSystem.Source;
-			double widthInPixels = line.PolyLine[1].X - line.PolyLine[0].X;
-			double heightInPixels = line.PolyLine[1].Y - line.PolyLine[0].Y;
+			double widthInPixels = line.Points[1].X - line.Points[0].X;
+			double heightInPixels = line.Points[1].Y - line.Points[0].Y;
 			line.ResetCoordinateSystem();
 
 			if (widthInPixels == 0 && heightInPixels == 0)
@@ -176,7 +176,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				if (graphic is RoiGraphic)
 				{
 					RoiGraphic roiGraphic = graphic as RoiGraphic;
-					roiGraphic.ResumeRoiChangedEvent(true);
+					roiGraphic.Resume(true);
 				}
 			}
 		}

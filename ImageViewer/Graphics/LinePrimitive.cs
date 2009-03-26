@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -41,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// A primitive line graphic.
 	/// </summary>
 	[Cloneable(true)]
-	public class LinePrimitive : VectorGraphic, ILineSegmentGraphic
+	public class LinePrimitive : VectorGraphic, ILineSegmentGraphic, IPointsGraphic
 	{
 		#region Private fields
 		
@@ -92,6 +93,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 
 				EventsHelper.Fire(_pt1ChangedEvent, this, new PointChangedEventArgs(this.Pt1));
+				EventsHelper.Fire(_pointChanged, this, new ListEventArgs<PointF>(this.Pt1, 0));
+				base.NotifyPropertyChanged("Pt1");
 			}
 		}
 
@@ -128,7 +131,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 
 				EventsHelper.Fire(_pt2ChangedEvent, this, new PointChangedEventArgs(this.Pt2));
+				EventsHelper.Fire(_pointChanged, this, new ListEventArgs<PointF>(this.Pt2, 1));
+				base.NotifyPropertyChanged("Pt2");
 			}
+		}
+
+		public override RectangleF BoundingBox
+		{
+			get { return RectangleUtilities.ComputeBoundingRectangle(this.Pt1, this.Pt2); }
 		}
 
 		/// <summary>
@@ -178,6 +188,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 				return false;
 		}
 
+		public override PointF GetClosestPoint(PointF point)
+		{
+			PointF result = PointF.Empty;
+			Vector.DistanceFromPointToLine(point, this.Pt1, this.Pt2, ref result);
+			return result;
+		}
+
 		/// <summary>
 		/// Moves the <see cref="LinePrimitive"/> by a specified delta.
 		/// </summary>
@@ -198,5 +215,53 @@ namespace ClearCanvas.ImageViewer.Graphics
 			this.Pt2 += delta;
 #endif
 		}
+
+		#region IPointsGraphic Members
+
+		private event EventHandler<ListEventArgs<PointF>> _pointChanged;
+
+		IList<PointF> IPointsGraphic.Points
+		{
+			get
+			{
+				return new FixedPointsList(
+					delegate(int index)
+						{
+							Platform.CheckArgumentRange(index, 0, 1, "index");
+							if (index == 0)
+								return this.Pt1;
+							else
+								return this.Pt2;
+						},
+					delegate(int index, PointF value)
+						{
+							Platform.CheckArgumentRange(index, 0, 1, "index");
+							if (index == 0)
+								this.Pt1 = value;
+							else
+								this.Pt2 = value;
+						},
+					2);
+			}
+		}
+
+		int IPointsGraphic.IndexOfNextPoint(PointF point)
+		{
+			return Vector.Distance(this.Pt1, point) < Vector.Distance(this.Pt2, point) ? 0 : 1;
+		}
+
+		event EventHandler<ListEventArgs<PointF>> IPointsGraphic.PointChanged
+		{
+			add { _pointChanged += value; }
+			remove { _pointChanged -= value; }
+		}
+
+		event EventHandler IPointsGraphic.PointsChanged
+		{
+			add { }
+			remove { }
+		}
+
+		#endregion
 	}
 }

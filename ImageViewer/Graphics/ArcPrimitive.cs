@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the angle at which the arc begins.
+		/// Gets or sets the angle in degrees at which the arc begins.
 		/// </summary>
 		/// <remarks>
 		/// It is good practice to set the <see cref="IArcGraphic.StartAngle"/> before the <see cref="IArcGraphic.SweepAngle"/>
@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the angle that the arc sweeps out.
+		/// Gets or sets the angle in degrees that the arc sweeps out.
 		/// </summary>
 		/// <remarks>
 		/// See <see cref="IArcGraphic.StartAngle"/> for information on setting the <see cref="IArcGraphic.SweepAngle"/>.
@@ -160,6 +160,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
+		/// Gets the point on the <see cref="ArcPrimitive"/> closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// </remarks>
+		public override PointF GetClosestPoint(PointF point)
+		{
+			return GetClosestPoint(point, this.Rectangle, this.StartAngle, this.SweepAngle);
+		}
+
+		/// <summary>
 		/// Returns a value indicating whether the specified point is
 		/// contained in the graphic.
 		/// </summary>
@@ -169,6 +185,44 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public override bool Contains(PointF point)
 		{
 			return false;
+		}
+
+		internal static PointF GetClosestPoint(
+			PointF point,
+			RectangleF boundingBox,
+			float startAngle,
+			float sweepAngle)
+		{
+			// Semi major/minor axes
+			float a = boundingBox.Width/2;
+			float b = boundingBox.Height/2;
+
+			// Center of ellipse
+			float x1 = boundingBox.Left + a;
+			float y1 = boundingBox.Top + b;
+
+			// normalize the angles
+			float normSweepAngle = Math.Sign(sweepAngle)*Math.Min(360, Math.Abs(sweepAngle));
+			float normStartAngle = startAngle % 360;
+			float normEndAngle = (normStartAngle + normSweepAngle);
+			if(sweepAngle < 0)
+			{
+				float t = normStartAngle;
+				normStartAngle = normEndAngle;
+				normEndAngle = t;
+			}
+
+			PointF center = new PointF(x1, y1);
+			PointF result = EllipsePrimitive.IntersectEllipseAndLine(a, b, center, point);
+			double angle = Vector.SubtendedAngle(center + new SizeF(1, 0), center, result);
+			if(angle > normStartAngle && angle < normEndAngle)
+				return result;
+			angle = (angle + 180)%360;
+			if (angle > normStartAngle && angle < normEndAngle)
+				return result;
+
+			//TODO check end points
+			return center;
 		}
 
 		internal static bool HitTest(

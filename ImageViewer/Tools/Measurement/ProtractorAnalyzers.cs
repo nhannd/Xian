@@ -76,11 +76,13 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			return normalized;
 		}
 
-		public string Analyze(Roi roi, RoiAnalysisMode mode) {
+		public string Analyze(Roi roi, RoiAnalysisMode mode)
+		{
 			return Analyze((ProtractorRoiInfo) roi, mode);
 		}
 
-		public bool SupportsRoi(Roi roi) {
+		public bool SupportsRoi(Roi roi)
+		{
 			return roi is ProtractorRoiInfo;
 		}
 	}

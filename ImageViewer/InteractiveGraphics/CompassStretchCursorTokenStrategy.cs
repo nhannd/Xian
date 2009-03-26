@@ -58,9 +58,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			InstallDefaults();
 		}
 
-		private ControlPointGroup ControlPoints
+		private IControlPointsGraphic ControlPoints
 		{
-			get { return TargetGraphic.ControlPoints; }	
+			get
+			{
+				if (base.TargetGraphic is IControlPointsGraphic)
+					return (IControlPointsGraphic) base.TargetGraphic;
+				return null;
+			}
 		}
 
 		/// <summary>

@@ -33,8 +33,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
-using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
@@ -60,19 +60,19 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.FormatPolygonName; }
 		}
 
-		protected override InteractiveGraphic CreateInteractiveGraphic()
+		protected override IGraphic CreateGraphic()
 		{
-			return new PolygonInteractiveGraphic();
+			return new PolygonControlGraphic(true, new MoveControlGraphic(new PolyLineGraphic()));
 		}
 
-		protected override GraphicState CreateCreateState(RoiGraphic roiGraphic)
+		protected override InteractiveGraphicBuilder CreateGraphicBuilder(IGraphic graphic)
 		{
-			return new CreatePolygonGraphicState(roiGraphic);
+			return new InteractivePolygonGraphicBuilder((IPointsGraphic) graphic);
 		}
 
 		protected override IAnnotationCalloutLocationStrategy CreateCalloutLocationStrategy()
 		{
-			return new PolygonRoiCalloutLocationStrategy();
+			return new PolygonalRoiCalloutLocationStrategy();
 		}
 	}
 }

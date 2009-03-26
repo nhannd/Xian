@@ -7,7 +7,7 @@ using ClearCanvas.ImageViewer.RoiGraphics.Analyzers;
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
 	[Cloneable]
-	public class RoiGraphic : StandardAnnotationGraphic
+	public class RoiGraphic : AnnotationGraphic
 	{
 		private event EventHandler _roiChanged;
 
@@ -17,20 +17,19 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		[CloneIgnore]
 		private DelayedEventPublisher _delayedEventPublisher;
 
-		[CloneIgnore]
-		private bool _raiseRoiChangedEvent = true;
-
-		public RoiGraphic(InteractiveGraphic roi) : base(roi)
+		public RoiGraphic(IGraphic roi) : base(roi)
 		{
 			Initialize();
 		}
 
-		public RoiGraphic(InteractiveGraphic roi, IAnnotationCalloutLocationStrategy calloutLocationStrategy) : base(roi, calloutLocationStrategy)
+		public RoiGraphic(IGraphic roi, IAnnotationCalloutLocationStrategy calloutLocationStrategy)
+			: base(roi, calloutLocationStrategy)
 		{
 			Initialize();
 		}
 
-		protected RoiGraphic(RoiGraphic source, ICloningContext context) : base(source, context)
+		protected RoiGraphic(RoiGraphic source, ICloningContext context)
+			: base(source, context)
 		{
 			context.CloneFields(source, this);
 		}
@@ -98,9 +97,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		protected override sealed void OnSubjectChanged()
 		{
-			bool active = this.State is MoveGraphicState ||
-			              this.State is MoveControlPointGraphicState ||
-			              this.State is CreateGraphicState;
+			bool active = false;
+			if (this.DecoratedGraphic is IControlGraphic)
+			{
+				active = ((IControlGraphic) this.DecoratedGraphic).CurrentHandler is IActiveControlGraphic;
+			}	
 
 			if (!active)
 			{
@@ -127,36 +128,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		protected virtual void OnRoiChanged()
 		{
-			if (_raiseRoiChangedEvent)
-				EventsHelper.Fire(_roiChanged, this, EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// Suspends the raising of the <see cref="RoiChanged"/> event.
-		/// </summary>
-		/// <remarks>
-		/// There are times when it is desirable to suspend the raising of the
-		/// <see cref="RoiChanged"/> event, such as when initializing 
-		/// control points.  To resume the raising of the event, call
-		/// <see cref="ResumeRoiChangedEvent"/>.
-		/// </remarks>
-		public void SuspendRoiChangedEvent()
-		{
-			_raiseRoiChangedEvent = false;
-		}
-
-		/// <summary>
-		/// Resumes the raising of the <see cref="RoiChanged"/> event.
-		/// </summary>
-		/// <param name="raiseEventNow">If <b>true</b>, the <see cref="RoiChanged"/>
-		/// event is raised immediately.
-		/// </param>
-		public void ResumeRoiChangedEvent(bool raiseEventNow)
-		{
-			_raiseRoiChangedEvent = true;
-
-			if (raiseEventNow)
-				EventsHelper.Fire(_roiChanged, this, EventArgs.Empty);
+			EventsHelper.Fire(_roiChanged, this, EventArgs.Empty);
 		}
 
 		private void OnDelayedRoiChanged(object sender, EventArgs e)

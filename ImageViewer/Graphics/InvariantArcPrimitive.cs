@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the angle at which the arc begins.
+		/// Gets or sets the angle in degrees at which the arc begins.
 		/// </summary>
 		/// <remarks>
 		/// It is good practice to set the <see cref="IArcGraphic.StartAngle"/> before the <see cref="IArcGraphic.SweepAngle"/>
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the angle that the arc sweeps out.
+		/// Gets or sets the angle in degrees that the arc sweeps out.
 		/// </summary>
 		/// <remarks>
 		/// See <see cref="IArcGraphic.StartAngle"/> for information on setting the <see cref="IArcGraphic.SweepAngle"/>.
@@ -147,6 +147,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			this.ResetCoordinateSystem();
 
 			return result;
+		}
+
+		public override PointF GetClosestPoint(PointF point)
+		{
+			return ArcPrimitive.GetClosestPoint(point, this.Rectangle, this.StartAngle, this.SweepAngle);
 		}
 
 		public override bool Contains(Point point)

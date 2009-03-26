@@ -33,6 +33,8 @@ using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -40,6 +42,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// An elliptical <see cref="InvariantPrimitive"/>.
 	/// </summary>
 	[Cloneable(true)]
+	[DicomSerializableGraphicAnnotation(typeof (EllipseGraphicAnnotationSerializer))]
 	public class InvariantEllipsePrimitive : InvariantBoundablePrimitive
 	{
 		/// <summary>
@@ -72,6 +75,34 @@ namespace ClearCanvas.ImageViewer.Graphics
 			this.ResetCoordinateSystem();
 
 			return result;
+		}
+
+		/// <summary>
+		/// Gets the point where the ellipse intersects the line whose end points
+		/// are the center of the ellipse and the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// </remarks>
+		public override PointF GetClosestPoint(PointF point)
+		{
+			// Semi major/minor axes
+			float a = this.Width/2;
+			float b = this.Height/2;
+
+			// Center of ellipse
+			RectangleF rect = this.Rectangle;
+			float x1 = rect.Left + a;
+			float y1 = rect.Top + b;
+
+			PointF center = new PointF(x1, y1);
+
+			return EllipsePrimitive.IntersectEllipseAndLine(a, b, center, point);
 		}
 
 		public override bool Contains(Point point)

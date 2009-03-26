@@ -102,17 +102,17 @@
     </Compile>
     <Compile Include="CalibrationComponent.cs" />
     <Compile Include="CalibrationTool.cs" />
+    <Compile Include="RectangularRoiTool.cs" />
+    <Compile Include="MeasurementTool.cs" />
     <Compile Include="PolygonalRoiTool.cs" />
     <Compile Include="EllipticalRoiTool.cs" />
     <Compile Include="Formula.cs" />
-    <Compile Include="MeasurementTool.cs" />
-    <Compile Include="PolygonRoiCalloutLocationStrategy.cs" />
+    <Compile Include="PolygonalRoiCalloutLocationStrategy.cs" />
     <Compile Include="ProtractorAnalyzers.cs" />
-    <Compile Include="ProtractorInteractiveGraphic.cs" />
+    <Compile Include="ProtractorGraphic.cs" />
     <Compile Include="ProtractorRoiCalloutLocationStrategy.cs" />
     <Compile Include="ProtractorRoiInfo.cs" />
     <Compile Include="ProtractorTool.cs" />
-    <Compile Include="RectangularROITool.cs" />
     <Compile Include="RulerTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

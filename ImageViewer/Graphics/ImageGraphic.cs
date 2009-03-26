@@ -306,6 +306,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		public override RectangleF BoundingBox
+		{
+			get
+			{
+				// TODO fix this algorithm to work when the ImageGraphic is not also the provider of the "Source" coordinate space
+				RectangleF rect = new RectangleF(PointF.Empty, new SizeF(this.Columns, this.Rows));
+				if (this.CoordinateSystem == CoordinateSystem.Destination)
+					return Mathematics.RectangleUtilities.ConvertToPositiveRectangle(this.SpatialTransform.ConvertToDestination(rect));
+				return rect;
+			}
+		}
+
 		#endregion
 
 		#region Protected properties/methods
@@ -348,6 +360,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// of the image, <b>false</b> otherwise.</returns>
 		public override bool HitTest(Point point)
 		{
+			// TODO fix this algorithm to work when the ImageGraphic is not also the provider of the "Source" coordinate space
 			PointF srcPoint = this.SpatialTransform.ConvertToSource(point);
 
 			if (srcPoint.X >= 0.0 &&
@@ -357,6 +370,25 @@ namespace ClearCanvas.ImageViewer.Graphics
 				return true;
 			else
 				return false;
+		}
+
+		/// <summary>
+		/// Gets the point on the <see cref="ImageGraphic"/> closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// </remarks>
+		public override PointF GetClosestPoint(PointF point)
+		{
+			RectangleF rect = this.BoundingBox;
+			if (rect.Contains(point))
+				return point;
+			return RectanglePrimitive.GetClosestPoint(point, rect);
 		}
 
 		/// <summary>

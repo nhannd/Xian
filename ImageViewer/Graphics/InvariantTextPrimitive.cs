@@ -33,6 +33,8 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -46,7 +48,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// the zoom, and <i>always</i> appears left to right irrespective of the rotation.
 	/// </remarks>
 	[Cloneable(true)]
-	public class InvariantTextPrimitive : InvariantPrimitive
+	[DicomSerializableGraphicAnnotation(typeof (TextGraphicAnnotationSerializer))]
+	public class InvariantTextPrimitive : InvariantPrimitive, ITextGraphic
 	{
 		private string _text;
 		private float _sizeInPoints;
@@ -79,7 +82,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public string Text
 		{
 			get { return _text; }
-			set { _text = value; }
+			set
+			{
+				if (_text != value)
+				{
+					_text = value;
+					base.NotifyPropertyChanged("Text");
+				}
+			}
 		}
 
 		/// <summary>
@@ -146,6 +156,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 				EventsHelper.Fire(_boundingBoxChangedEvent, this, new RectangleChangedEventArgs(this.BoundingBox));
 			}
+		}
+
+		PointF ITextGraphic.Location
+		{
+			get { return this.AnchorPoint; }
+			set { this.AnchorPoint = value; }
 		}
 
 		/// <summary>

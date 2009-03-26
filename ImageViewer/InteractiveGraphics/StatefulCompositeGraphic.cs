@@ -30,12 +30,9 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 
@@ -44,8 +41,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// <summary>
 	/// A <see cref="CompositeGraphic"/> with state.
 	/// </summary>
-	[Cloneable(true)]
-	public abstract class StatefulCompositeGraphic : CompositeGraphic, IStatefulGraphic, IMouseButtonHandler
+	[Cloneable]
+	public abstract class StatefulCompositeGraphic : ControlGraphic, IStatefulGraphic, IMouseButtonHandler
 	{
 		private event EventHandler<GraphicStateChangedEventArgs> _stateChangedEvent;
 
@@ -56,10 +53,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private IMouseInformation _mouseInformation;
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="StatefulCompositeGraphic"/>.
+		/// Initializes a new instance of <see cref="XStatefulCompositeGraphic"/>.
 		/// </summary>
-		protected StatefulCompositeGraphic()
+		protected StatefulCompositeGraphic() : base(new CompositeGraphic()) {}
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="XStatefulCompositeGraphic"/>.
+		/// </summary>
+		protected StatefulCompositeGraphic(IGraphic subject) : base(subject) {}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		/// <param name="source">The source object to clone.</param>
+		/// <param name="context">The cloning context object.</param>
+		protected StatefulCompositeGraphic(StatefulCompositeGraphic source, ICloningContext context) : base(source, context)
 		{
+			context.CloneFields(source, this);
 		}
 
 		/// <summary>
@@ -95,6 +105,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				{
 					OnStateChanged(args);
 					EventsHelper.Fire(_stateChangedEvent, this, args);
+				} 
+				else
+				{
+					OnStateInitialized();
 				}
 
 				Trace.WriteLine(_state.ToString());
@@ -109,6 +123,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			add { _stateChangedEvent += value; }
 			remove { _stateChangedEvent -= value; }
 		}
+
+		protected virtual void OnStateInitialized() {}
 
 		protected virtual void OnStateChanged(GraphicStateChangedEventArgs e) {}
 
@@ -126,11 +142,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// True if the <see cref="IMouseButtonHandler"/> did something as a result of the call, 
 		/// and hence would like to receive capture.  Otherwise, false.
 		/// </returns>
-		public virtual bool Start(IMouseInformation mouseInformation)
+		protected override bool OnMouseStart(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
 			_mouseInformation = mouseInformation;
-			return this.State.Start(mouseInformation);
+			this.State.Start(mouseInformation);
+			return false;
 		}
 
 		/// <summary>
@@ -141,11 +158,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// call it any time the mouse moves.
 		/// </remarks>
 		/// <returns>True if the message was handled, otherwise false.</returns>
-		public virtual bool Track(IMouseInformation mouseInformation)
+		protected override bool OnMouseTrack(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
 			_mouseInformation = mouseInformation;
-			return this.State.Track(mouseInformation);
+			this.State.Track(mouseInformation);
+			return false;
 		}
 
 		/// <summary>
@@ -154,11 +172,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns>
 		/// True if the framework should <b>not</b> release capture, otherwise false.
 		/// </returns>
-		public virtual bool Stop(IMouseInformation mouseInformation)
+		protected override bool OnMouseStop(IMouseInformation mouseInformation)
 		{
 			Platform.CheckMemberIsSet(this.State, "State");
 			_mouseInformation = mouseInformation;
-			return this.State.Stop(mouseInformation);
+			this.State.Stop(mouseInformation);
+			return false;
 		}
 
 		/// <summary>
@@ -169,7 +188,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// It is important that this method is implemented correctly and doesn't simply do nothing when it is inappropriate
 		/// to do so, otherwise odd behaviour may be experienced.
 		/// </remarks>
-		public virtual void Cancel()
+		protected override void OnMouseCancel()
 		{
 			this.State.Cancel();
 		}
@@ -177,7 +196,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Allows the <see cref="IMouseButtonHandler"/> to override certain default framework behaviour.
 		/// </summary>
-		public MouseButtonHandlerBehaviour Behaviour
+		public override MouseButtonHandlerBehaviour Behaviour
 		{
 			get { return this.State.Behaviour; }
 		}

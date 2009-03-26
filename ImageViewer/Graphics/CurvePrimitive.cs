@@ -78,6 +78,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				{
 					_srcPts[index] = value;
 					EventsHelper.Fire(_pointChanged, this, new ListEventArgs<PointF>(value, index));
+					base.NotifyPropertyChanged("Points");
 				}
 			}
 		}
@@ -88,6 +89,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public int CountPoints
 		{
 			get { return _srcPts.Count; }
+		}
+
+		public override RectangleF BoundingBox
+		{
+			get { return RectangleUtilities.ComputeBoundingRectangle(this.AsArray()); }
 		}
 
 		/// <summary>
@@ -107,6 +113,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 
 			_srcPts.Add(point);
+			base.NotifyPropertyChanged("Points");
 		}
 
 		/// <summary>
@@ -127,6 +134,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 
 			_srcPts.Insert(index, point);
+			base.NotifyPropertyChanged("Points");
 		}
 
 		/// <summary>
@@ -136,6 +144,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public void RemoveAt(int index)
 		{
 			_srcPts.RemoveAt(index);
+			base.NotifyPropertyChanged("Points");
 		}
 
 		/// <summary>
@@ -183,6 +192,36 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
+		/// Gets the point on the <see cref="CurvePrimitive"/> closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// <para>Since the interpolation between nodes of the curve is not explicitly
+		/// defined, this method returns the closest node to the specified point, and
+		/// ignores the individual curve segments for the purposes of this calculation.</para>
+		/// </remarks>
+		public override PointF GetClosestPoint(PointF point)
+		{
+			PointF result = PointF.Empty;
+			double min = double.MaxValue;
+			foreach (PointF pt in this.AsArray())
+			{
+				double d = Vector.Distance(point, pt);
+				if (min > d)
+				{
+					min = d;
+					result = pt;
+				}
+			}
+			return result;
+		}
+
+		/// <summary>
 		/// Moves the <see cref="Graphic"/> by a specified delta.
 		/// </summary>
 		/// <param name="delta">The distance to move.</param>
@@ -197,6 +236,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				_srcPts[n] = _srcPts[n] + delta;
 			}
+			base.NotifyPropertyChanged("Points");
 		}
 
 		/// <summary>

@@ -179,6 +179,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		public abstract bool Contains(Point point);
 
+		public override RectangleF BoundingBox
+		{
+			get { return RectangleUtilities.ConvertToPositiveRectangle(this.Rectangle); }
+		}
+
+		RectangleF IBoundableGraphic.Rectangle
+		{
+			get { return this.Rectangle; }
+		}
+
 		/// <summary>
 		/// Gets the rectangle that defines a <see cref="BoundableGraphic"/>.
 		/// </summary>
@@ -208,5 +218,33 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			return new PointF(base.AnchorPoint.X + pt[0].X, base.AnchorPoint.Y + pt[0].Y);
 		}
+
+		#region IBoundableGraphic Members
+
+		event EventHandler<PointChangedEventArgs> IBoundableGraphic.TopLeftChanged
+		{
+			add { }
+			remove { }
+		}
+
+		event EventHandler<PointChangedEventArgs> IBoundableGraphic.BottomRightChanged
+		{
+			add { }
+			remove { }
+		}
+
+		PointF IBoundableGraphic.TopLeft
+		{
+			get { return this.TopLeft; }
+			set { throw new NotSupportedException(); }
+		}
+
+		PointF IBoundableGraphic.BottomRight
+		{
+			get { return this.BottomRight; }
+			set { throw new NotSupportedException(); }
+		}
+
+		#endregion
 	}
 }

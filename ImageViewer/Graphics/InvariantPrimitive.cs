@@ -107,6 +107,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 
 				EventsHelper.Fire(_anchorPointChangedEvent, this, new PointChangedEventArgs(this.AnchorPoint));
+				base.NotifyPropertyChanged("AnchorPoint");
 			}
 		}
 

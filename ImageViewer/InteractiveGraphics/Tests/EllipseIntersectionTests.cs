@@ -34,6 +34,7 @@
 
 using System;
 using System.Drawing;
+using ClearCanvas.ImageViewer.Graphics;
 using NUnit.Framework;
 using ClearCanvas.ImageViewer.Mathematics;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics.Tests
@@ -63,7 +64,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics.Tests
 			PointF center = new PointF(0, 0);
 			float root2Inverse = 1F/(float)Math.Sqrt(2);
 			PointF result = new PointF(root2Inverse, root2Inverse);
-			PointF intersection = EllipseInteractiveGraphic.IntersectEllipseAndLine(a, b, center, new PointF(1, 1));
+			PointF intersection = EllipsePrimitive.IntersectEllipseAndLine(a, b, center, new PointF(1, 1));
 
 			VerifyPointOnEllipse(a, b, center, intersection);
 
@@ -79,7 +80,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics.Tests
 			PointF test = new PointF(-4F, -2.5F);
 			PointF result = new PointF(-4.767767F, -2.883884F);
 
-			PointF intersection = EllipseInteractiveGraphic.IntersectEllipseAndLine(a, b, center, test);
+			PointF intersection = EllipsePrimitive.IntersectEllipseAndLine(a, b, center, test);
 
 			VerifyPointOnEllipse(a, b, center, intersection);
 
@@ -95,7 +96,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics.Tests
 			PointF test = new PointF(13F, 7F);
 			PointF result = new PointF(4.767767F, 2.883884F);
 
-			PointF intersection = EllipseInteractiveGraphic.IntersectEllipseAndLine(a, b, center, test);
+			PointF intersection = EllipsePrimitive.IntersectEllipseAndLine(a, b, center, test);
 
 			VerifyPointOnEllipse(a, b, center, intersection);
 
@@ -111,7 +112,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics.Tests
 			PointF center = new PointF(3F, 2F);
 			PointF test = new PointF(3.01F, 2.01F);
 
-			PointF intersection = EllipseInteractiveGraphic.IntersectEllipseAndLine(a, b, center, test);
+			PointF intersection = EllipsePrimitive.IntersectEllipseAndLine(a, b, center, test);
 			VerifyPointOnEllipse(a, b, center, intersection);
 		}
 
@@ -123,7 +124,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics.Tests
 			PointF center = new PointF(3F, 2F);
 			PointF test = new PointF(3.0001F, 2.0001F);
 
-			PointF intersection = EllipseInteractiveGraphic.IntersectEllipseAndLine(a, b, center, test);
+			PointF intersection = EllipsePrimitive.IntersectEllipseAndLine(a, b, center, test);
 			
 			//intersection is at center.
 			Assert.IsTrue(FloatComparer.AreEqual(center, intersection), "ellipse intersection point is not correct!");
@@ -137,7 +138,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics.Tests
 			PointF center = new PointF(3F, 2F);
 			PointF test = new PointF(13F, 7F);
 
-			PointF intersection = EllipseInteractiveGraphic.IntersectEllipseAndLine(a, b, center, test);
+			PointF intersection = EllipsePrimitive.IntersectEllipseAndLine(a, b, center, test);
 
 			//intersection is at center.
 			Assert.IsTrue(FloatComparer.AreEqual(center, intersection), "ellipse intersection point is not correct!");
@@ -151,7 +152,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics.Tests
 			PointF center = new PointF(3F, 2F);
 			PointF test = new PointF(13F, 7F);
 
-			PointF intersection = EllipseInteractiveGraphic.IntersectEllipseAndLine(a, b, center, test);
+			PointF intersection = EllipsePrimitive.IntersectEllipseAndLine(a, b, center, test);
 
 			//intersection is at center.
 			Assert.IsTrue(FloatComparer.AreEqual(center, intersection), "ellipse intersection point is not correct!");

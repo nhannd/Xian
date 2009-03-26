@@ -127,6 +127,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			remove { _locationChangedEvent -= value; }
 		}
 
+		public override void Move(SizeF delta)
+		{
+			this.Location += delta;
+		}
+
 		/// <summary>
 		/// This method overrides <see cref="Graphic.HitTest"/>.
 		/// </summary>

@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -47,6 +48,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		public override PointF GetClosestPoint(PointF point)
+		{
+			PointF result = PointF.Empty;
+			RectangleF rect = this.Rectangle;
+			Vector.DistanceFromPointToLine(point, new PointF(rect.Left, rect.Top), new PointF(rect.Right, rect.Bottom), ref result);
+			return result;
+		}
+
 		public override bool Contains(Point point)
 		{
 			return false;
@@ -62,6 +71,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		PointF ILineSegmentGraphic.Pt1
 		{
 			get { return this.TopLeft; }
+			set { throw new NotSupportedException(); }
 		}
 
 		/// <summary>
@@ -74,6 +84,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 		PointF ILineSegmentGraphic.Pt2
 		{
 			get { return this.BottomRight; }
+			set { throw new NotSupportedException(); }
+		}
+
+		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Pt1Changed
+		{
+			add { }
+			remove { }
+		}
+
+		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Pt2Changed
+		{
+			add { }
+			remove { }
 		}
 	}
 }

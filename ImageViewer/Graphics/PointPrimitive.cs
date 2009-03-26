@@ -30,9 +30,11 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -40,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// A primitive point graphic.
 	/// </summary>
 	[Cloneable(true)]
-	public class PointPrimitive : VectorGraphic
+	public class PointPrimitive : VectorGraphic, IPointsGraphic
 	{
 		private PointF _point;
 
@@ -73,6 +75,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			set 
 			{
+				if (FloatComparer.AreEqual(this.Point, value))
+					return;
+
 				if (base.CoordinateSystem == CoordinateSystem.Source)
 					_point = value;
 				else
@@ -80,17 +85,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
 					_point = base.SpatialTransform.ConvertToSource(value);
 				}
+
+				this.NotifyPointChanged();
+				base.NotifyPropertyChanged("Point");
 			}
+		}
+
+		public override RectangleF BoundingBox
+		{
+			get { return new RectangleF(this.Point, SizeF.Empty); }
 		}
 
 		/// <summary>
 		/// Performs a hit test on the <see cref="PointPrimitive"/>.
 		/// </summary>
-		/// <param name="point"></param>
+		/// <param name="point">The test point in destination coordinates.</param>
 		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
-			return _point == point;
+			return FloatComparer.AreEqual(base.SpatialTransform.ConvertToDestination(_point), point);
+		}
+
+		public override PointF GetClosestPoint(PointF point)
+		{
+			return this.Point;
 		}
 
 		/// <summary>
@@ -101,5 +119,48 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			this.Point += delta;
 		}
+
+		private void NotifyPointChanged()
+		{
+			EventsHelper.Fire(_pointChanged, this, new ListEventArgs<PointF>(this.Point, 0));
+		}
+
+		#region IPointsGraphic Members
+
+		private event EventHandler<ListEventArgs<PointF>> _pointChanged;
+
+		private PointF GetPoint(int index)
+		{
+			return this.Point;
+		}
+
+		private void SetPoint(int index, PointF value)
+		{
+			this.Point = value;
+		}
+
+		IList<PointF> IPointsGraphic.Points
+		{
+			get { return new FixedPointsList(this.GetPoint, this.SetPoint, 1); }
+		}
+
+		int IPointsGraphic.IndexOfNextPoint(PointF point)
+		{
+			return 0;
+		}
+
+		event EventHandler IPointsGraphic.PointsChanged
+		{
+			add { }
+			remove { }
+		}
+
+		event EventHandler<ListEventArgs<PointF>> IPointsGraphic.PointChanged
+		{
+			add { _pointChanged += value; }
+			remove { _pointChanged -= value; }
+		}
+
+		#endregion
 	}
 }

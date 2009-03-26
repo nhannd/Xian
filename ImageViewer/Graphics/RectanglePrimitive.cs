@@ -33,6 +33,9 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -40,6 +43,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// A primitive rectangle graphic.
 	/// </summary>
 	[Cloneable(true)]
+	[DicomSerializableGraphicAnnotation(typeof (RectangleGraphicAnnotationSerializer))]
 	public class RectanglePrimitive : BoundableGraphic
 	{
 		/// <summary>
@@ -71,6 +75,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
+		/// Gets the point on the <see cref="RectanglePrimitive"/> closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// </remarks>
+		public override PointF GetClosestPoint(PointF point)
+		{
+			return GetClosestPoint(point, this.BoundingBox);
+		}
+
+		/// <summary>
 		/// Returns a value indicating whether the specified point is contained
 		/// in the rectangle.
 		/// </summary>
@@ -79,6 +99,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public override bool Contains(PointF point)
 		{
 			return this.Rectangle.Contains(point);
+		}
+
+		public override Roi CreateRoiInformation()
+		{
+			return new RectangularRoi(this);
 		}
 
 		internal static bool HitTest(PointF point, RectangleF rectangle, SpatialTransform transform)
@@ -93,6 +118,52 @@ namespace ClearCanvas.ImageViewer.Graphics
 			pen.Dispose();
 
 			return result;
+		}
+
+		internal static PointF GetClosestPoint(PointF point, RectangleF rectangle)
+		{
+			double currentDistance;
+			double shortestDistance = double.MaxValue;
+			PointF currentPoint = new PointF(0, 0);
+			PointF closestPoint = new PointF(0, 0);
+
+			PointF ptTopLeft = new PointF(rectangle.Left, rectangle.Top);
+			PointF ptBottomRight = new PointF(rectangle.Right, rectangle.Bottom);
+			PointF ptTopRight = new PointF(ptBottomRight.X, ptTopLeft.Y);
+			PointF ptBottomLeft = new PointF(ptTopLeft.X, ptBottomRight.Y);
+
+			currentDistance = Vector.DistanceFromPointToLine(point, ptTopLeft, ptTopRight, ref currentPoint);
+
+			if (currentDistance < shortestDistance)
+			{
+				shortestDistance = currentDistance;
+				closestPoint = currentPoint;
+			}
+
+			currentDistance = Vector.DistanceFromPointToLine(point, ptTopRight, ptBottomRight, ref currentPoint);
+
+			if (currentDistance < shortestDistance)
+			{
+				shortestDistance = currentDistance;
+				closestPoint = currentPoint;
+			}
+
+			currentDistance = Vector.DistanceFromPointToLine(point, ptBottomRight, ptBottomLeft, ref currentPoint);
+
+			if (currentDistance < shortestDistance)
+			{
+				shortestDistance = currentDistance;
+				closestPoint = currentPoint;
+			}
+
+			currentDistance = Vector.DistanceFromPointToLine(point, ptBottomLeft, ptTopLeft, ref currentPoint);
+
+			if (currentDistance < shortestDistance)
+			{
+				closestPoint = currentPoint;
+			}
+
+			return closestPoint;
 		}
 	}
 }

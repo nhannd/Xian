@@ -30,7 +30,9 @@
 #endregion
 
 using System.Drawing;
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -42,8 +44,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 	public abstract class MeasurementTool : MouseImageViewerTool
 	{
 		private int _serialNumber;
-		private RoiGraphic _createRoiGraphic;
-
+		private InteractiveGraphicBuilder _graphicBuilder;
 		private DrawableUndoableCommand _undoableCommand;
 
 		/// <summary>
@@ -64,25 +65,37 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			base.Start(mouseInformation);
 
-			if (_createRoiGraphic != null)
-				return _createRoiGraphic.Start(mouseInformation);
+			if (_graphicBuilder != null)
+				return _graphicBuilder.Start(mouseInformation);
 
 			IPresentationImage image = mouseInformation.Tile.PresentationImage;
 			IOverlayGraphicsProvider provider = image as IOverlayGraphicsProvider;
 			if (provider == null)
 				return false;
 
-			_createRoiGraphic = CreateRoiGraphic();
+			RoiGraphic roiGraphic = CreateRoiGraphic();
+
+			_graphicBuilder = CreateGraphicBuilder(roiGraphic.Subject);
+			_graphicBuilder.GraphicComplete += OnGraphicBuilderComplete;
+			_graphicBuilder.GraphicCancelled += OnGraphicBuilderCancelled;
 
 			_undoableCommand = new DrawableUndoableCommand(image);
-			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(_createRoiGraphic, provider.OverlayGraphics, provider.OverlayGraphics.Count));
+			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(DecorateRoiGraphic(roiGraphic), provider.OverlayGraphics, provider.OverlayGraphics.Count));
 			_undoableCommand.Name = CreationCommandName;
 			_undoableCommand.Execute();
 
-			OnRoiCreation(_createRoiGraphic);
+			OnRoiCreation(roiGraphic);
 
-			if (_createRoiGraphic.Start(mouseInformation))
-				return true;
+			roiGraphic.Suspend();
+			try
+			{
+				if (_graphicBuilder.Start(mouseInformation))
+					return true;
+			}
+			finally
+			{
+				roiGraphic.Resume(true);
+			}
 
 			this.Cancel();
 			return false;
@@ -90,45 +103,40 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (_createRoiGraphic != null)
-				return _createRoiGraphic.Track(mouseInformation);
+			if (_graphicBuilder != null)
+				return _graphicBuilder.Track(mouseInformation);
 
 			return false;
 		}
 
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
-			if (_createRoiGraphic == null)
+			if (_graphicBuilder == null)
 				return false;
 
-			if (_createRoiGraphic.Stop(mouseInformation))
+			if (_graphicBuilder.Stop(mouseInformation))
 				return true;
 
-			_createRoiGraphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
+			_graphicBuilder.Graphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
+			_graphicBuilder = null;
 			_undoableCommand = null;
-			_createRoiGraphic = null;
 			return false;
 		}
 
 		public override void Cancel()
 		{
-			if (_createRoiGraphic == null)
+			if (_graphicBuilder == null)
 				return;
 
-			_createRoiGraphic.Cancel();
-
-			_undoableCommand.Unexecute();
-			_undoableCommand = null;
-
-			_createRoiGraphic = null;
+			_graphicBuilder.Cancel();
 		}
 
 		public override CursorToken GetCursorToken(Point point)
 		{
-			if (_createRoiGraphic != null)
-				return _createRoiGraphic.GetCursorToken(point);
+			if (_graphicBuilder != null)
+				return _graphicBuilder.GetCursorToken(point);
 
-			return null;
+			return base.GetCursorToken(point);
 		}
 
 		protected RoiGraphic CreateRoiGraphic()
@@ -136,36 +144,61 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			//When you create a graphic from within a tool (particularly one that needs capture, like a multi-click graphic),
 			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
 			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
-			InteractiveGraphic interactiveGraphic = CreateInteractiveGraphic();
+			IGraphic graphic = CreateGraphic();
 			IAnnotationCalloutLocationStrategy strategy = CreateCalloutLocationStrategy();
 
 			RoiGraphic roiGraphic;
 			if (strategy == null)
-				roiGraphic = new RoiGraphic(interactiveGraphic);
+				roiGraphic = new RoiGraphic(graphic);
 			else
-				roiGraphic = new RoiGraphic(interactiveGraphic, strategy);
+				roiGraphic = new RoiGraphic(graphic, strategy);
 
-			if(!string.IsNullOrEmpty(this.RoiNameFormat))
+			if (!string.IsNullOrEmpty(this.RoiNameFormat))
 				roiGraphic.Name = string.Format(this.RoiNameFormat, ++_serialNumber);
 			else
 				roiGraphic.Name = "";
 
-			roiGraphic.State = this.CreateCreateState(roiGraphic);
+			roiGraphic.State = roiGraphic.CreateFocussedSelectedState();
 
 			return roiGraphic;
 		}
 
-		protected abstract InteractiveGraphic CreateInteractiveGraphic();
+		protected abstract InteractiveGraphicBuilder CreateGraphicBuilder(IGraphic subjectGraphic);
 
-		protected abstract GraphicState CreateCreateState(RoiGraphic roiGraphic);
+		protected abstract IGraphic CreateGraphic();
+
+		protected  virtual IGraphic DecorateRoiGraphic(RoiGraphic roiGraphic)
+		{
+			// Add basic graphics context menu
+			return new BasicGraphicToolsControlGraphic(roiGraphic);
+		}
 
 		protected virtual IAnnotationCalloutLocationStrategy CreateCalloutLocationStrategy()
 		{
 			return null;
 		}
 
-		protected virtual void OnRoiCreation(RoiGraphic roiGraphic)
+		protected virtual void OnRoiCreation(RoiGraphic roiGraphic) {}
+
+		private void OnGraphicBuilderComplete(object sender, GraphicEventArgs e)
 		{
+			_graphicBuilder.GraphicComplete -= OnGraphicBuilderComplete;
+			_graphicBuilder.GraphicCancelled -= OnGraphicBuilderCancelled;
+
+			_undoableCommand = null;
+
+			_graphicBuilder = null;
+		}
+
+		private void OnGraphicBuilderCancelled(object sender, GraphicEventArgs e)
+		{
+			_graphicBuilder.GraphicComplete -= OnGraphicBuilderComplete;
+			_graphicBuilder.GraphicCancelled -= OnGraphicBuilderCancelled;
+
+			_undoableCommand.Unexecute();
+			_undoableCommand = null;
+
+			_graphicBuilder = null;
 		}
 	}
 }

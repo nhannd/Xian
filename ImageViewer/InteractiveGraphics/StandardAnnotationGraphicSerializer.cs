@@ -1,13 +1,13 @@
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod.Sequences;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	internal class StandardAnnotationGraphicSerializer : GraphicAnnotationSerializer<StandardAnnotationGraphic>
+	internal class StandardAnnotationGraphicSerializer : GraphicAnnotationSerializer<AnnotationGraphic>
 	{
-		protected override void Serialize(StandardAnnotationGraphic annotationGraphic, GraphicAnnotationSequenceItem serializationState) {
+		protected override void Serialize(AnnotationGraphic annotationGraphic, GraphicAnnotationSequenceItem serializationState)
+		{
 			Platform.CheckForNullReference(annotationGraphic, "annotationGraphic");
 			Platform.CheckForNullReference(serializationState, "serializationState");
 

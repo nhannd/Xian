@@ -24,7 +24,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	public class DefineObliqueTool : MouseImageViewerTool
 	{
 		private MprImageViewerToolHelper _toolHelper;
-		private StandardStatefulInteractiveGraphic _polyLine;
+		private PolyLineGraphic _polyLine;
+		private InteractivePolylineGraphicBuilder _graphicBuilder;
 		private CompositeUndoableCommand _undoableCommand;
 		private bool _visible;
 
@@ -65,12 +66,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 				_undoableCommand.Unexecute();
 				_undoableCommand = null;
-				
-				_polyLine.ControlPoints.ControlPointChangedEvent -= OnControlPointChanged;
+
+				RemoveGraphicBuilder();
+
+				_polyLine.AnchorPointChangedEvent -= OnAnchorPointChanged;
 				_polyLine.Drawing -= OnPolyLineDrawing;
 				_polyLine.Dispose();
 				_polyLine = null;
 				image.Draw();
+			}
+		}
+
+		private void RemoveGraphicBuilder()
+		{
+			if (_graphicBuilder != null)
+			{
+				_graphicBuilder.GraphicComplete -= OnGraphicBuilderDone;
+				_graphicBuilder.GraphicCancelled -= OnGraphicBuilderDone;
+				_graphicBuilder = null;
 			}
 		}
 
@@ -105,8 +118,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		{
 			base.Start(mouseInformation);
 
-			if (_polyLine != null)
-				return _polyLine.Start(mouseInformation);
+			if (_graphicBuilder != null)
+				return _graphicBuilder.Start(mouseInformation);
 
 			IPresentationImage image = mouseInformation.Tile.PresentationImage;
 
@@ -117,21 +130,28 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			if (provider == null)
 				return false;
 
-			_polyLine = new StandardStatefulInteractiveGraphic(new PolyLineInteractiveGraphic(2));
-			_polyLine.InactiveColor = Color.CornflowerBlue;
-			_polyLine.FocusColor = Color.Cyan;
-			_polyLine.SelectedColor = Color.Blue;
-			_polyLine.FocusSelectedColor = Color.Blue;
+			RemoveGraphic();
 
-			_polyLine.State = new CreatePolyLineGraphicState(_polyLine);
+			_polyLine = new PolyLineGraphic();
+
+			StandardStatefulGraphic statefulPolyline = new StandardStatefulGraphic(new VerticesControlGraphic(new MoveControlGraphic(_polyLine)));
+			statefulPolyline.InactiveColor = Color.CornflowerBlue;
+			statefulPolyline.FocusColor = Color.Cyan;
+			statefulPolyline.SelectedColor = Color.Blue;
+			statefulPolyline.FocusSelectedColor = Color.Blue;
+			statefulPolyline.State = statefulPolyline.CreateInactiveState();
 
 			_undoableCommand = new CompositeUndoableCommand();
-			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(_polyLine, provider.OverlayGraphics, provider.OverlayGraphics.Count));
+			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(statefulPolyline, provider.OverlayGraphics, provider.OverlayGraphics.Count));
 			_undoableCommand.Execute();
 
-			if (_polyLine.Start(mouseInformation))
+			_graphicBuilder = new InteractivePolylineGraphicBuilder(2, _polyLine);
+			_graphicBuilder.GraphicComplete += OnGraphicBuilderDone;
+			_graphicBuilder.GraphicCancelled += OnGraphicBuilderDone;
+
+			if (_graphicBuilder.Start(mouseInformation))
 			{
-				_polyLine.ControlPoints.ControlPointChangedEvent += OnControlPointChanged;
+				_polyLine.AnchorPointChangedEvent += OnAnchorPointChanged;
 				_polyLine.Drawing += OnPolyLineDrawing;
 				base.ActivationChanged += OnActivationChanged;
 				return true;
@@ -141,17 +161,22 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			return false;
 		}
 
+		private void OnGraphicBuilderDone(object sender, GraphicEventArgs e)
+		{
+			RemoveGraphicBuilder();
+		}
+
 		//TODO: Ideally handling this event wouldn't be necessary. Perhaps a Move event would solve the issue.
-		//	When the line is moved as a whole the OnControlPointChanged event is fired as the control points 
+		//	When the line is moved as a whole the OnAnchorPointChanged event is fired as the control points 
 		//	are offset individually. This results in endpoint wierdness that makes the oblique viewport behave erraticly. 
-		//	So here I grab the endpoints and use them in OnControlPointChange.
+		//	So here I grab the endpoints and use them in OnAnchorPointChanged.
 		private void OnPolyLineDrawing(object sender, EventArgs e)
 		{
 #if true
 			_polyLine.CoordinateSystem = CoordinateSystem.Destination;
 
-			PointF start = _polyLine.SpatialTransform.ConvertToSource(_polyLine.ControlPoints[0]);
-			PointF end = _polyLine.SpatialTransform.ConvertToSource(_polyLine.ControlPoints[1]);
+			PointF start = _polyLine.SpatialTransform.ConvertToSource(_polyLine[0]);
+			PointF end = _polyLine.SpatialTransform.ConvertToSource(_polyLine[1]);
 
 			_polyLine.ResetCoordinateSystem();
 
@@ -163,7 +188,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private Vector3D _startPatient;
 		private Vector3D _endPatient;
 
-		private void OnControlPointChanged(object sender, ListEventArgs<System.Drawing.PointF> e)
+		private void OnAnchorPointChanged(object sender, ListEventArgs<PointF> e)
 		{
 #if false  // Code moved to OnPolyLineDrawing above, enable this to see the erratic behavior
 			_polyLine.CoordinateSystem = CoordinateSystem.Destination;
@@ -198,18 +223,18 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (_polyLine != null)
-				return _polyLine.Track(mouseInformation);
+			if (_graphicBuilder != null)
+				return _graphicBuilder.Track(mouseInformation);
 
 			return false;
 		}
 
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
-			if (_polyLine == null)
+			if (_graphicBuilder == null)
 				return false;
 
-			if (_polyLine.Stop(mouseInformation))
+			if (_graphicBuilder.Stop(mouseInformation))
 				return true;
 
 			//RemoveGraphic();
@@ -218,10 +243,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public override void Cancel()
 		{
-			if (_polyLine == null)
+			if (_graphicBuilder == null)
 				return;
 
-			_polyLine.Cancel();
+			_graphicBuilder.Cancel();
 			RemoveGraphic();
 		}
 
@@ -235,10 +260,10 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 		public override CursorToken GetCursorToken(Point point)
 		{
-			if (_polyLine != null)
-				return _polyLine.GetCursorToken(point);
+			if (_graphicBuilder != null)
+				return _graphicBuilder.GetCursorToken(point);
 
-			return null;
+			return base.GetCursorToken(point);
 		}
 
 		private bool IsValidImage(IPresentationImage image)

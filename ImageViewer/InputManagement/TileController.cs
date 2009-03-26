@@ -648,10 +648,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private IEnumerable<IMouseButtonHandler> GetHandlerGraphics(CompositeGraphic compositeGraphic)
 		{
-			for (int graphicIndex = compositeGraphic.Graphics.Count - 1; graphicIndex >= 0; --graphicIndex)
+			foreach (IGraphic graphic in compositeGraphic.EnumerateChildGraphics(true))
 			{
-				IGraphic graphic = compositeGraphic.Graphics[graphicIndex];
-
 				if (!graphic.Visible)
 					continue;
 

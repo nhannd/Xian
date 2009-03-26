@@ -29,10 +29,14 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers;
+using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -40,6 +44,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// A primitive ellipse graphic.
 	/// </summary>
 	[Cloneable(true)]
+	[DicomSerializableGraphicAnnotation(typeof (EllipseGraphicAnnotationSerializer))]
 	public class EllipsePrimitive : BoundableGraphic
 	{
 		/// <summary>
@@ -72,6 +77,34 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
+		/// Gets the point where the ellipse intersects the line whose end points
+		/// are the center of the ellipse and the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// </remarks>
+		public override PointF GetClosestPoint(PointF point)
+		{
+			// Semi major/minor axes
+			float a = this.Width/2;
+			float b = this.Height/2;
+
+			// Center of ellipse
+			RectangleF rect = this.Rectangle;
+			float x1 = rect.Left + a;
+			float y1 = rect.Top + b;
+
+			PointF center = new PointF(x1, y1);
+
+			return IntersectEllipseAndLine(a, b, center, point);
+		}
+
+		/// <summary>
 		/// Returns a value indicating whether the specified point is contained
 		/// in the ellipse.
 		/// </summary>
@@ -96,6 +129,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return result;
 		}
 
+		public override Roi CreateRoiInformation()
+		{
+			return new EllipticalRoi(this);
+		}
+
 		internal static bool HitTest(PointF point, RectangleF boundingBox, SpatialTransform transform)
 		{
 			GraphicsPath path = new GraphicsPath();
@@ -108,6 +146,54 @@ namespace ClearCanvas.ImageViewer.Graphics
 			pen.Dispose();
 
 			return result;
+		}
+
+		/// <summary>
+		/// Finds the intersection between an ellipse and a line that starts at the
+		/// center of the ellipse and ends at an aribtrary point.
+		/// </summary>
+		internal static PointF IntersectEllipseAndLine(float a, float b, PointF center, PointF point)
+		{
+			/*
+			 * The point of intersection (P) between the center of the ellipse and the test point (Pt)
+			 * where the center of the ellipse is at (0, 0) can be described by the vector equation:
+			 * _     __ 
+			 * P = m*Pt
+			 * 
+			 * which yields two equations:
+			 * 
+			 * x = m * xt (1)
+			 * y = m * yt (2)
+			 * 
+			 * An ellipse centered at (0, 0) is described by the equation:
+			 * 
+			 * x^2/a^2 + y^2/b^2 = 1 (3)
+			 * 
+			 * substituting (1) and (2) into (3) gives:
+			 * 
+			 * m^2*xt^2/a^2 + m^2*yt^2/b^2 = 1
+			 * m^2*(xt^2*b^2 + yt^2*a^2) = a*b
+			 * 
+			 * finally,
+			 * 
+			 * m = a*b/Sqrt(xt^2*b^2 + yt^2*a^2) (where a^2*yt^2 > 0 and/or b^2*yt^2 > 0)
+			 * 
+			 * which is a constant for a given ellipse.
+			 * 
+			 * The intersection point (x, y) can then be found by substituting m into (1) and (2).
+			*/
+
+			PointF testPoint = new PointF(point.X - center.X, point.Y - center.Y);
+
+			float denominator = (float) Math.Sqrt(testPoint.X*testPoint.X*b*b +
+			                                      testPoint.Y*testPoint.Y*a*a);
+
+			if (FloatComparer.AreEqual(denominator, 0.0F, 0.001F))
+				return center;
+
+			float m = Math.Abs(a*b/denominator);
+
+			return new PointF(center.X + m*testPoint.X, center.Y + m*testPoint.Y);
 		}
 	}
 }

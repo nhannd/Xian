@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.ImageViewer.RoiGraphics;
 
@@ -38,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// Defines a graphical object that can be rendered.
 	/// </summary>
-	public interface IGraphic : IDrawable, IDisposable
+	public interface IGraphic : IDrawable, IDisposable, INotifyPropertyChanged
 	{
 		/// <summary>
 		/// Gets this <see cref="IGraphic"/> object's parent <see cref="IGraphic"/>.
@@ -66,6 +67,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Gets or sets a value indicating whether this <see cref="IGraphic"/> is visible.
 		/// </summary>
 		bool Visible { get; set; }
+		
+		/// <summary>
+		/// Gets the tightest bounding box that encloses the graphic in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
+		RectangleF BoundingBox { get; }
 
 		/// <summary>
 		/// Gets or sets the <see cref="CoordinateSystem"/>.
@@ -100,6 +110,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// It is up to the implementation of <see cref="IGraphic"/> to define what a "hit" is.
 		/// </remarks>
 		bool HitTest(Point point);
+
+		/// <summary>
+		/// Gets the point on the graphic closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.
+		/// </remarks>
+		PointF GetClosestPoint(PointF point);
 
 		/// <summary>
 		/// Moves the <see cref="IGraphic"/> by a specified delta.

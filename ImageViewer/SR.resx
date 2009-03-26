@@ -367,8 +367,17 @@ Please check the log for more details.</value>
   <data name="SeparatorPatientsLoaded" xml:space="preserve">
     <value>::</value>
   </data>
+  <data name="StringDeleteVertex" xml:space="preserve">
+    <value>Delete Vertex</value>
+  </data>
+  <data name="StringEditText" xml:space="preserve">
+    <value>Edit</value>
+  </data>
   <data name="StringEnterText" xml:space="preserve">
     <value>Enter Text</value>
+  </data>
+  <data name="StringInsertVertex" xml:space="preserve">
+    <value>Insert Vertex</value>
   </data>
   <data name="StringNotApplicable" xml:space="preserve">
     <value>N/A</value>

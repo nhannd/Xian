@@ -51,7 +51,12 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			_userMovedCallout = false;
 		}
 
-		public override void SetAnnotationGraphic(StandardAnnotationGraphic roiGraphic)
+		public new IPointsGraphic Roi
+		{
+			get { return (IPointsGraphic) base.Roi; }
+		}
+
+		public override void SetAnnotationGraphic(AnnotationGraphic roiGraphic)
 		{
 			base.SetAnnotationGraphic(roiGraphic);
 			if (_firstCalculation)
@@ -73,16 +78,16 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			{
 				coordinateSystem = base.Roi.CoordinateSystem;
 
-				if (base.Roi.ControlPoints.Count < 3)
-					endPoint = base.Roi.ControlPoints[0];
+				if (this.Roi.Points.Count < 3)
+					endPoint = this.Roi.Points[0];
 				else
-					endPoint = base.Roi.ControlPoints[1];
+					endPoint = this.Roi.Points[1];
 			}
 		}
 
 		public override bool CalculateCalloutLocation(out PointF location, out CoordinateSystem coordinateSystem)
 		{
-			if (Roi.ControlPoints.Count < 3)
+			if (this.Roi.Points.Count < 3)
 				base.Callout.Visible = false;
 			else
 				base.Callout.Visible = true;
@@ -98,9 +103,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			// first, move the callout by the same amount the vertex moved (if it moved at all).
 			location = base.Callout.Location + calloutOffsetDestination;
 
-			PointF start = Roi.ControlPoints[0];
-			PointF vertex = Roi.ControlPoints[1];
-			PointF end = Roi.ControlPoints[2];
+			PointF start = this.Roi.Points[0];
+			PointF vertex = this.Roi.Points[1];
+			PointF end = this.Roi.Points[2];
 
 			base.AnnotationGraphic.ResetCoordinateSystem();
 
@@ -141,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				_lastVertexLocationSource = base.Callout.EndPoint;
 			}
 
-			PointF currentVertexLocationSource = Roi.ControlPoints[1];
+			PointF currentVertexLocationSource = this.Roi.Points[1];
 
 			if (_lastVertexLocationSource != currentVertexLocationSource)
 			{

@@ -34,8 +34,10 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.PresentationStates;
 
@@ -49,17 +51,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// composed of a text label and a line that extends from the label
 	/// to some user defined point in the scene.
 	/// </remarks>
+	[DicomSerializableGraphicAnnotation(typeof (CalloutGraphicAnnotationSerializer))]
 	[Cloneable]
-	[DicomSerializableGraphicAnnotation(typeof(CalloutGraphicAnnotationSerializer))]
-	public class CalloutGraphic : InteractiveGraphic, IMemorable
+	public class CalloutGraphic : CompositeGraphic, ITextGraphic, IMemorable, IMouseButtonHandler, IContextMenuProvider, ICursorTokenProvider
 	{
 		#region Private fields
 
 		private event EventHandler<PointChangedEventArgs> _locationChanged;
 		private event EventHandler<EventArgs> _textChanged;
 
+		private Color _color = Color.Yellow;
+
 		[CloneIgnore]
-		private InvariantTextPrimitive _textGraphic;
+		private IControlGraphic _textControlGraphic;
 		[CloneIgnore]
 		private ArrowGraphic _lineGraphic;
 
@@ -79,15 +83,26 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="text">The label text to display on the callout.</param>
 		public CalloutGraphic(string text) : this()
 		{
-			_textGraphic.Text = text;
+			this.Text = text;
 		}
 
 		/// <summary>
 		/// Cloning constructor.
 		/// </summary>
-		protected CalloutGraphic(CalloutGraphic source, ICloningContext context) : base(source, context)
+		protected CalloutGraphic(CalloutGraphic source, ICloningContext context)
+			: base()
 		{
 			context.CloneFields(source, this);
+		}
+
+		protected InvariantTextPrimitive TextGraphic
+		{
+			get { return _textControlGraphic.Subject as InvariantTextPrimitive; }
+		}
+
+		protected IControlGraphic TextControlGraphic
+		{
+			get { return _textControlGraphic; }
 		}
 
 		/// <summary>
@@ -95,12 +110,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public string Text
 		{
-			get { return _textGraphic.Text; }
+			get { return this.TextGraphic.Text; }
 			protected set
 			{
-				if (_textGraphic.Text != value)
+				if (this.TextGraphic.Text != value)
 				{
-					_textGraphic.Text = value;
+					this.TextGraphic.Text = value;
 					OnTextChanged(new EventArgs());
 				}
 			}
@@ -111,8 +126,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public PointF Location
 		{
-			get { return base.ControlPoints[0]; }
-			set { base.ControlPoints[0] = value; }
+			get { return this.TextGraphic.AnchorPoint; }
+			set { this.TextGraphic.AnchorPoint = value; }
 		}
 
 		/// <summary>
@@ -136,21 +151,25 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return _lineGraphic.EndPoint; }
 			set 
 			{
-				_lineGraphic.EndPoint = value;
-				SetCalloutLineStart();
+				if (!FloatComparer.AreEqual(_lineGraphic.EndPoint, value))
+				{
+					_lineGraphic.EndPoint = value;
+					SetCalloutLineStart();
+					OnEndPointChanged();
+				}
 			}
 		}
 
 		public string FontName
 		{
-			get { return _textGraphic.Font; }
-			set { _textGraphic.Font = value; }
+			get { return this.TextGraphic.Font; }
+			set { this.TextGraphic.Font = value; }
 		}
 
 		public float FontSize
 		{
-			get { return _textGraphic.SizeInPoints; }
-			set { _textGraphic.SizeInPoints = value; }
+			get { return this.TextGraphic.SizeInPoints; }
+			set { this.TextGraphic.SizeInPoints = value; }
 		}
 
 		public LineStyle LineStyle
@@ -165,12 +184,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _lineGraphic.ShowArrowhead = value; }
 		}
 
-		protected override void OnColorChanged() 
+		public Color Color
 		{
-			base.OnColorChanged();
+			get { return _color; }
+			set
+			{
+				if (_color != value)
+				{
+					_color = value;
+					OnColorChanged();
+				}
+			}
+		}
 
-			_lineGraphic.Color = base.Color;
-			_textGraphic.Color = base.Color;
+		protected virtual void OnColorChanged()
+		{
+			_lineGraphic.Color = this.Color;
+			_textControlGraphic.Color = this.Color;
 		}
 
 		/// <summary>
@@ -187,7 +217,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Creates a memento of this object.
 		/// </summary>
 		/// <returns></returns>
-		public override object CreateMemento()
+		public virtual object CreateMemento()
         {
 			// Must store source coordinates in memento
 			this.CoordinateSystem = CoordinateSystem.Source;
@@ -201,7 +231,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Sets a memento for this object.
 		/// </summary>
 		/// <param name="memento"></param>
-        public override void SetMemento(object memento)
+        public virtual void SetMemento(object memento)
         {
 			PointMemento pointMemento = (PointMemento)memento;
 
@@ -212,61 +242,43 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			SetCalloutLineStart();
 		}
 
-		/// <summary>
-		/// This method overrides <see cref="Graphic.Move"/>.
-		/// </summary>
-		/// <param name="delta"></param>
-		public override void Move(SizeF delta)
-		{
-			_textGraphic.Move(delta);
-		}
- 
-		/// <summary>
-		/// This method overrides <see cref="Graphic.HitTest"/>.
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-		/// <remarks>
-		/// A hit on either the text label or callout line consitutes
-		/// a valid hit on the <see cref="CalloutGraphic"/>.
-		/// </remarks>
-		public override bool HitTest(Point point)
-        {
-			return _textGraphic.HitTest(point) || _lineGraphic.HitTest(point);
-        }
-
 		private void Initialize()
 		{
-			if (_textGraphic == null)
+			if (_textControlGraphic == null)
 			{
-				_textGraphic = new InvariantTextPrimitive();
-				this.Graphics.Add(_textGraphic);
+				_textControlGraphic = InitializeTextControlGraphic(new InvariantTextPrimitive());
+				_textControlGraphic.Name = "Text";
+				this.Graphics.Add(_textControlGraphic);
 			}
 
-			_textGraphic.AnchorPointChanged += OnTextAnchorPointChanged;
-			_textGraphic.BoundingBoxChanged += OnTextBoundingBoxChanged;
+			this.TextGraphic.AnchorPointChanged += OnTextAnchorPointChanged;
+			this.TextGraphic.BoundingBoxChanged += OnTextBoundingBoxChanged;
 
 			if (_lineGraphic == null)
 			{
 				_lineGraphic = new ArrowGraphic(false);
+				_lineGraphic.Name = "Line";
 				this.Graphics.Add(_lineGraphic);
 				_lineGraphic.LineStyle = LineStyle.Dash;
 			}
+		}
 
-			base.ControlPoints.Add(_textGraphic.AnchorPoint);
+		protected virtual IControlGraphic InitializeTextControlGraphic(IGraphic textGraphic)
+		{
+			return new MoveControlGraphic(textGraphic);
 		}
 
 		[OnCloneComplete]
 		private void OnCloneComplete()
 		{
-			_textGraphic = CollectionUtils.SelectFirst(base.Graphics,
-				delegate(IGraphic test) { return test is InvariantTextPrimitive; }) as InvariantTextPrimitive;
+			_textControlGraphic = (CollectionUtils.SelectFirst(base.Graphics,
+				delegate(IGraphic test) { return test.Name == "Text"; }) as IControlGraphic);
 
 			_lineGraphic = CollectionUtils.SelectFirst(base.Graphics,
-				delegate(IGraphic test) { return test is ArrowGraphic; }) as ArrowGraphic;
+				delegate(IGraphic test) { return test.Name == "Line"; }) as ArrowGraphic;
 
 			Platform.CheckForNullReference(_lineGraphic, "_lineGraphic");
-			Platform.CheckForNullReference(_textGraphic, "_textGraphic");
+			Platform.CheckForNullReference(_textControlGraphic, "_textControlGraphic");
 
 			Initialize();
 		}
@@ -284,7 +296,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="point"></param>
 		/// <returns></returns>
 		public override PointF GetClosestPoint(PointF point) {
-			RectangleF boundingBox = _textGraphic.BoundingBox;
+			RectangleF boundingBox = _textControlGraphic.BoundingBox;
 			boundingBox.Inflate(3, 3);
 
 			PointF topLeft = new PointF(boundingBox.Left, boundingBox.Top);
@@ -309,12 +321,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return point;
 		}
 
-		private void OnTextAnchorPointChanged(object sender, PointChangedEventArgs e) {
-			if (!FloatComparer.AreEqual(base.ControlPoints[0], e.Point))
-			{
-				base.ControlPoints[0] = e.Point;
-				EventsHelper.Fire(_locationChanged, this, e);
-			}
+		private void OnTextAnchorPointChanged(object sender, PointChangedEventArgs e)
+		{
+			EventsHelper.Fire(_locationChanged, this, e);
+			NotifyPropertyChanged("Location");
 		}
 
 		private void OnTextBoundingBoxChanged(object sender, RectangleChangedEventArgs e)
@@ -325,6 +335,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		protected virtual void OnTextChanged(EventArgs e)
 		{
 			EventsHelper.Fire(_textChanged, this, new EventArgs());
+			NotifyPropertyChanged("Text");
+		}
+
+		protected virtual void OnEndPointChanged()
+		{
+			NotifyPropertyChanged("EndPoint");
 		}
 
 		/// <summary>
@@ -332,15 +348,83 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		public override RectangleF BoundingBox
 		{
-			get { return _textGraphic.BoundingBox; }
+			get { return _textControlGraphic.BoundingBox; }
 		}
 
-		protected override void OnControlPointChanged(object sender, ListEventArgs<PointF> e)
+		#region IMouseButtonHandler Members
+
+		bool IMouseButtonHandler.Start(IMouseInformation mouseInformation)
 		{
-			if(!FloatComparer.AreEqual(_textGraphic.AnchorPoint, e.Item))
-			{
-				_textGraphic.AnchorPoint = e.Item;
-			}
+			return _textControlGraphic.Start(mouseInformation);
 		}
+
+		bool IMouseButtonHandler.Track(IMouseInformation mouseInformation)
+		{
+			return _textControlGraphic.Track(mouseInformation);
+		}
+
+		bool IMouseButtonHandler.Stop(IMouseInformation mouseInformation)
+		{
+			return _textControlGraphic.Stop(mouseInformation);
+		}
+
+		void IMouseButtonHandler.Cancel()
+		{
+			_textControlGraphic.Cancel();
+		}
+
+		MouseButtonHandlerBehaviour IMouseButtonHandler.Behaviour
+		{
+			get { return _textControlGraphic.Behaviour; }
+		}
+
+		#endregion
+
+		#region IContextMenuProvider Members
+
+		ActionModelNode IContextMenuProvider.GetContextMenuModel(IMouseInformation mouseInformation)
+		{
+			if(_textControlGraphic.HitTest(mouseInformation.Location))
+				return _textControlGraphic.GetContextMenuModel(mouseInformation);
+			return null;
+		}
+
+		#endregion
+
+		#region ICursorTokenProvider Members
+
+		CursorToken ICursorTokenProvider.GetCursorToken(Point point)
+		{
+			return _textControlGraphic.GetCursorToken(point);
+		}
+
+		#endregion
+
+		#region ITextGraphic Members
+
+		string ITextGraphic.Text
+		{
+			get { return this.Text; }
+			set { throw new NotSupportedException(); }
+		}
+
+		float ITextGraphic.SizeInPoints
+		{
+			get { return this.FontSize; }
+			set { this.FontSize = value; }
+		}
+
+		string ITextGraphic.Font
+		{
+			get { return this.FontName; }
+			set { this.FontName = value; }
+		}
+
+		SizeF ITextGraphic.Dimensions
+		{
+			get { return this.BoundingBox.Size; }
+		}
+
+		#endregion
 	}
 }

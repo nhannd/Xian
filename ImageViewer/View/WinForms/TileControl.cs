@@ -578,7 +578,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (_tileController.ContextMenuEnabled)
 			{
 				ActionModelNode menuModel = _tileController.ContextMenuProvider.GetContextMenuModel(_tileController);
-				if (menuModel != null)
+				if (menuModel != null && menuModel.ChildNodes.Count > 0)
 				{
 					ToolStripBuilder.Clear(_contextMenuStrip.Items);
 					ToolStripBuilder.BuildMenu(_contextMenuStrip.Items, menuModel.ChildNodes);

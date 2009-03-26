@@ -19,7 +19,8 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			_roiAnalyzers.AddRange(RoiAnalyzerExtensionPoint.RoiAnalyzers);
 		}
 
-		protected RoiCalloutGraphic(RoiCalloutGraphic source, ICloningContext context) : base(source, context)
+		protected RoiCalloutGraphic(RoiCalloutGraphic source, ICloningContext context)
+			: base(source, context)
 		{
 			context.CloneFields(source, this);
 			_roiAnalyzers.AddRange(source._roiAnalyzers);

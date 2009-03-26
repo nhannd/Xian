@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
@@ -37,15 +38,12 @@ using ClearCanvas.ImageViewer.Graphics;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	[Cloneable]
-	public class UserCalloutGraphic : CalloutGraphic
+	public class UserCalloutGraphic : CalloutGraphic, ITextGraphic, IPointsGraphic
 	{
 		private event EventHandler _textChanged;
 
-		[CloneIgnore]
-		private EditBox _currentCalloutEditBox;
-
 		/// <summary>
-		/// Instantiates a new instance of <see cref="UserCalloutGraphic"/>.
+		/// Instantiates a new instance of <see cref="XUserCalloutGraphic"/>.
 		/// </summary>
 		public UserCalloutGraphic() : base("") {}
 
@@ -56,6 +54,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			: base(source, context)
 		{
 			context.CloneFields(source, this);
+		}
+
+		/// <summary>
+		/// Gets or sets the text label.
+		/// </summary>
+		public new string Text
+		{
+			get { return base.Text; }
+			set { base.Text = value; }
+		}
+
+		string ITextGraphic.Text
+		{
+			get { return base.Text; }
+			set { base.Text = value; }
 		}
 
 		public event EventHandler TextChanged
@@ -71,71 +84,70 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			EventsHelper.Fire(_textChanged, this, new EventArgs());
 		}
 
-		/// <summary>
-		/// Starts edit mode on the callout graphic by installing a <see cref="EditBox"/> on the
-		/// <see cref="Tile"/> of the <see cref="Graphic.ParentPresentationImage">parent PresentationImage</see>.
-		/// </summary>
-		/// <returns>True if edit mode was successfully started; False otherwise.</returns>
+		protected override void OnEndPointChanged()
+		{
+			base.OnEndPointChanged();
+
+			EventsHelper.Fire(_pointChanged, this, new ListEventArgs<PointF>(this.EndPoint, 0));
+		}
+
+		protected new TextEditControlGraphic TextControlGraphic
+		{
+			get { return (TextEditControlGraphic) base.TextControlGraphic; }
+		}
+
+		protected override IControlGraphic InitializeTextControlGraphic(IGraphic textGraphic)
+		{
+			return new TextEditControlGraphic(new TextPlaceholderControlGraphic(base.InitializeTextControlGraphic(textGraphic)));
+		}
+
 		public bool StartEdit()
 		{
-			// remove any pre-existing edit boxes
-			EndEdit();
-
-			bool result = false;
-			this.CoordinateSystem = CoordinateSystem.Destination;
-			try
-			{
-				EditBox editBox = new EditBox(this.Text ?? string.Empty);
-				if (string.IsNullOrEmpty(this.Text))
-					editBox.Value = SR.StringEnterText;
-				editBox.Location = Point.Round(this.Location);
-				editBox.Size = Rectangle.Round(this.BoundingBox).Size;
-				editBox.FontName = this.FontName;
-				editBox.FontSize = this.FontSize;
-				editBox.ValueAccepted += OnEditBoxComplete;
-				editBox.ValueCancelled += OnEditBoxComplete;
-				InstallEditBox(_currentCalloutEditBox = editBox);
-				result = true;
-			}
-			finally
-			{
-				this.ResetCoordinateSystem();
-			}
-
-			return result;
+			return this.TextControlGraphic.StartEdit();
 		}
 
-		/// <summary>
-		/// Ends edit mode on the callout graphic if it is currently being edited. Has no effect otherwise.
-		/// </summary>
 		public void EndEdit()
 		{
-			if (_currentCalloutEditBox != null)
-			{
-				_currentCalloutEditBox.ValueAccepted -= OnEditBoxComplete;
-				_currentCalloutEditBox.ValueCancelled -= OnEditBoxComplete;
-				_currentCalloutEditBox = null;
-			}
-			InstallEditBox(null);
+			this.TextControlGraphic.EndEdit();
 		}
 
-		private void InstallEditBox(EditBox editBox)
+		#region IPointsGraphic Members
+
+		private event EventHandler<ListEventArgs<PointF>> _pointChanged;
+
+		private PointF GetPoint(int index)
 		{
-			if (base.ParentPresentationImage != null)
-			{
-				if (base.ParentPresentationImage.Tile != null)
-					base.ParentPresentationImage.Tile.EditBox = editBox;
-			}
+			return base.EndPoint;
 		}
 
-		private void OnEditBoxComplete(object sender, EventArgs e)
+		private void SetPoint(int index, PointF value)
 		{
-			if (_currentCalloutEditBox != null)
-			{
-				this.Text = _currentCalloutEditBox.LastAcceptedValue;
-				this.Draw();
-			}
-			EndEdit();
+			base.EndPoint = value;
 		}
+
+		IList<PointF> IPointsGraphic.Points
+		{
+			get { return new FixedPointsList(this.GetPoint, this.SetPoint, 1); }
+		}
+
+		int IPointsGraphic.IndexOfNextPoint(PointF point)
+		{
+			return 0;
+		}
+
+		event EventHandler IPointsGraphic.PointsChanged
+		{
+			add { }
+			remove { }
+		}
+
+		event EventHandler<ListEventArgs<PointF>> IPointsGraphic.PointChanged
+		{
+			add { _pointChanged += value; }
+			remove { _pointChanged -= value; }
+		}
+
+		#endregion
+
 	}
 }

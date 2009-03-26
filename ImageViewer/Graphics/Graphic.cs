@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -98,6 +99,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private bool _visible = true;
 		private Stack<CoordinateSystem> _coordinateSystemStack;
 		private event EventHandler _drawing;
+		private event PropertyChangedEventHandler _propertyChanged;
 		#endregion
 
 		/// <summary>
@@ -199,6 +201,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
+		/// Gets the tightest bounding box that encloses the graphic in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
+		public virtual RectangleF BoundingBox
+		{
+			get { return RectangleF.Empty; }
+		}
+
+		/// <summary>
 		/// Gets or sets the <see cref="CoordinateSystem"/>.
 		/// </summary>
 		/// <remarks>
@@ -240,6 +254,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// It is up to the <see cref="Graphic"/> to define what a "hit" is.
 		/// </remarks>
 		public abstract bool HitTest(Point point);
+
+		/// <summary>
+		/// Gets the point on the <see cref="Graphic"/> closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// </remarks>
+		public virtual PointF GetClosestPoint(PointF point)
+		{
+			return RectanglePrimitive.GetClosestPoint(point, this.BoundingBox);
+		}
 
 		/// <summary>
 		/// Moves the <see cref="Graphic"/> by a specified delta.
@@ -379,5 +409,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (_spatialTransform != null)
 				_spatialTransform.OwnerGraphic = this;
 		}
+
+		public event PropertyChangedEventHandler PropertyChanged
+		{
+			add { _propertyChanged += value; }
+			remove { _propertyChanged -= value; }
+		}
+
+		protected void NotifyPropertyChanged(string propertyName)
+		{
+			this.OnPropertyChanged(propertyName);
+			EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs(propertyName));
+		}
+
+		protected virtual void OnPropertyChanged(string propertyName) {}
 	}
 }

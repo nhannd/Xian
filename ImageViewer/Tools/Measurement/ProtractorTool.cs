@@ -33,6 +33,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.RoiGraphics;
 
@@ -61,14 +62,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return string.Empty; }
 		}
 
-		protected override InteractiveGraphic CreateInteractiveGraphic()
+		protected override InteractiveGraphicBuilder CreateGraphicBuilder(IGraphic graphic)
 		{
-			return new ProtractorInteractiveGraphic();
+			return new InteractivePolylineGraphicBuilder(3, (IPointsGraphic) graphic);
 		}
 
-		protected override GraphicState CreateCreateState(RoiGraphic roiGraphic)
+		protected override IGraphic CreateGraphic()
 		{
-			return new CreatePolyLineGraphicState(roiGraphic);
+			return new VerticesControlGraphic(new MoveControlGraphic(new ProtractorGraphic()));
 		}
 
 		protected override IAnnotationCalloutLocationStrategy CreateCalloutLocationStrategy()

@@ -33,6 +33,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
@@ -102,13 +103,13 @@ namespace ClearCanvas.ImageViewer.RoiGraphics.Analyzers
 		}
 
 		public static double CalculateLength(
-			PolyLineInteractiveGraphic polyLineInteractiveGraphic,
+			IPointsGraphic polylineGraphic,
 			PixelSpacing normalizedPixelSpacing,
 			ref Units units)
 		{
 			return CalculateLength(
-				polyLineInteractiveGraphic.PolyLine[0],
-				polyLineInteractiveGraphic.PolyLine[1],
+				polylineGraphic.Points[0],
+				polylineGraphic.Points[1],
 				normalizedPixelSpacing, ref units);
 		}
 

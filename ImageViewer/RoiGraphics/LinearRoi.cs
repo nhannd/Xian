@@ -60,15 +60,15 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			Platform.CheckTrue(_points.Count >= 2, "At least 2 points must be specified.");
 		}
 
-		public LinearRoi(PolyLineInteractiveGraphic polyline) : base(polyline.ParentPresentationImage)
+		public LinearRoi(IPointsGraphic polyline) : base(polyline.ParentPresentationImage)
 		{
 			polyline.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
 				List<PointF> points = new List<PointF>();
-				for (int n = 0; n < polyline.PolyLine.Count; n++)
+				foreach(PointF point in polyline.Points)
 				{
-					points.Add(polyline.PolyLine[n]);
+					points.Add(point);
 				}
 				_points = points.AsReadOnly();
 			}

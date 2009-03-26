@@ -34,6 +34,8 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -41,6 +43,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// A rectangular <see cref="InvariantPrimitive"/>.
 	/// </summary>
 	[Cloneable(true)]
+	[DicomSerializableGraphicAnnotation(typeof (RectangleGraphicAnnotationSerializer))]
 	public class InvariantRectanglePrimitive : InvariantBoundablePrimitive
 	{
 		/// <summary>
@@ -66,6 +69,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			this.ResetCoordinateSystem();
 
 			return result;
+		}
+
+		public override PointF GetClosestPoint(PointF point)
+		{
+			return RectanglePrimitive.GetClosestPoint(point, this.Rectangle);
 		}
 
 		public override bool Contains(Point point)

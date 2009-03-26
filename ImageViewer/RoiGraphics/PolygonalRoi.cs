@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
@@ -47,18 +48,21 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			_polygon = new PolygonF(vertices);
 		}
 
-		public PolygonalRoi(PolygonInteractiveGraphic polygon)
+		public PolygonalRoi(IPointsGraphic polygon)
 			: base(polygon.ParentPresentationImage)
 		{
+			if (!FloatComparer.AreEqual(polygon.Points[0], polygon.Points[polygon.Points.Count-1]))
+				throw new ArgumentException("Supplied graphic must be a closed polygon.", "polygon");
+
 			polygon.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				if (polygon.VertexCount >= 3)
+				if (polygon.Points.Count >= 3)
 				{
-					List<PointF> vertices = new List<PointF>(polygon.VertexCount);
-					for (int n = 0; n < polygon.VertexCount; n++)
+					List<PointF> vertices = new List<PointF>(polygon.Points.Count);
+					for (int n = 0; n < polygon.Points.Count; n++)
 					{
-						vertices.Add(polygon.PolyLine[n]);
+						vertices.Add(polygon.Points[n]);
 					}
 					_polygon = new PolygonF(vertices);
 				}

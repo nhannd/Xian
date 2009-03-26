@@ -305,6 +305,26 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		}
 
 		/// <summary>
+		/// Computes the bounding rectangle of a collection of rectangle.
+		/// </summary>
+		/// <param name="rectangles">A collection of rectangles.</param>
+		/// <returns>The bounding rectangle that encompasses all the rectangles.</returns>
+		/// <exception cref="NullReferenceException">If the input collection is null.</exception>
+		/// <exception cref="ArgumentException">If the input collection is empty.</exception>
+		public static RectangleF ComputeBoundingRectangle(IEnumerable<RectangleF> rectangles)
+		{
+			Platform.CheckForNullReference(rectangles, "rectangles");
+
+			List<PointF> points = new List<PointF>();
+			foreach (RectangleF rectangle in rectangles)
+			{
+				points.Add(new PointF(rectangle.Left, rectangle.Top));
+				points.Add(new PointF(rectangle.Right, rectangle.Bottom));
+			}
+			return ComputeBoundingRectangle(points);
+		}
+
+		/// <summary>
 		/// Computes the bounding rectangle of a collection of points.
 		/// </summary>
 		/// <param name="points">A collection of points.</param>

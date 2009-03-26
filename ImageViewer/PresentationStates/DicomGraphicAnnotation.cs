@@ -274,7 +274,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 						callout.Location = anchor - new SizeF(30, 30);
 				}
 
-				return new DeserializedInteractiveCallout(callout);
+				StandardStatefulGraphic statefulCallout = new StandardStatefulGraphic(callout);
+				statefulCallout.State = statefulCallout.CreateInactiveState();
+				return statefulCallout;
 			}
 			else if (textItem.BoundingBoxTopLeftHandCorner.HasValue && textItem.BoundingBoxBottomRightHandCorner.HasValue)
 			{
@@ -303,24 +305,6 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		}
 
 		#endregion
-
-		private class DeserializedInteractiveCallout : StandardStatefulInteractiveGraphic
-		{
-			public DeserializedInteractiveCallout(CalloutGraphic callout) : base(callout)
-			{
-				base.ControlPoints.Visible = false;
-			}
-
-			public CalloutGraphic CalloutGraphic
-			{
-				get { return (CalloutGraphic) base.InteractiveGraphic; }
-			}
-
-			protected override void SetControlPointVisibility(bool visible)
-			{
-				base.SetControlPointVisibility(false);
-			}
-		}
 
 		private class DicomGraphicAnnotationSerializer : GraphicAnnotationSerializer<DicomGraphicAnnotation>
 		{

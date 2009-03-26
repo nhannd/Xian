@@ -33,6 +33,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -43,7 +44,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	public class AnnotationCalloutLocationStrategy : IAnnotationCalloutLocationStrategy
 	{
 		[CloneIgnore]
-		private StandardAnnotationGraphic _annotationGraphic;
+		private AnnotationGraphic _annotationGraphic;
 		private bool _initialLocationSet;
 
 		/// <summary>
@@ -57,7 +58,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Gets the owning <see cref="AnnotationGraphic"/>.
 		/// </summary>
-		protected StandardAnnotationGraphic AnnotationGraphic
+		protected AnnotationGraphic AnnotationGraphic
 		{
 			get { return _annotationGraphic; }
 		}
@@ -65,7 +66,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Gets the <see cref="AnnotationGraphic"/>'s Subject.
 		/// </summary>
-		protected InteractiveGraphic Roi
+		protected IGraphic Roi
 		{
 			get { return _annotationGraphic.Subject; }
 		}
@@ -81,9 +82,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		#region IRoiCalloutLocationStrategy Members
 
 		/// <summary>
-		/// Sets the <see cref="InteractiveGraphics.AnnotationGraphic"/> that owns this strategy.
+		/// Sets the <see cref="InteractiveGraphics.XAnnotationGraphic"/> that owns this strategy.
 		/// </summary>
-		public virtual void SetAnnotationGraphic(StandardAnnotationGraphic annotationGraphic)
+		public virtual void SetAnnotationGraphic(AnnotationGraphic annotationGraphic)
 		{
 			_annotationGraphic = annotationGraphic;
 		}
@@ -108,11 +109,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_initialLocationSet = true;
 
 				//TODO: make the offset less hard-coded (use case Roi analyzers with many results).
-				SizeF offset = new SizeF(0, 30);
+				SizeF offset = new SizeF(0, 55);
 
 				// Setup the callout
 				this.Roi.CoordinateSystem = CoordinateSystem.Destination;
-				location = Roi.ControlPoints[0] - offset;
+				location = RectangleUtilities.ConvertToPositiveRectangle(Roi.BoundingBox).Location - offset;
 				this.Roi.ResetCoordinateSystem();
 				return true;
 			}
@@ -133,7 +134,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Creates a deep copy of this strategy object.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="IAnnotationCalloutLocationStrategy"/>s should not return null from this method.
+		/// <see cref="IXAnnotationCalloutLocationStrategy"/>s should not return null from this method.
 		/// </remarks>
 		public IAnnotationCalloutLocationStrategy Clone()
 		{

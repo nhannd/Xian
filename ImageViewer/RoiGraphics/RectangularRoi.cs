@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 	{
 		private readonly RectangleF _rectangle;
 
-		public RectangularRoi(RectangleInteractiveGraphic rectangle) : base(rectangle.ParentPresentationImage)
+		public RectangularRoi(IBoundableGraphic rectangle) : base(rectangle.ParentPresentationImage)
 		{
 			rectangle.CoordinateSystem = CoordinateSystem.Source;
 			try
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			{
 				if (!_pixelArea.HasValue)
 				{
-					_pixelArea = _rectangle.Width*_rectangle.Height;
+					_pixelArea = Math.Abs(_rectangle.Width*_rectangle.Height);
 				}
 				return _pixelArea.Value;
 			}

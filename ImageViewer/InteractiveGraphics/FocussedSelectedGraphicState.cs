@@ -62,14 +62,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <returns></returns>
 		public override bool Start(IMouseInformation mouseInformation)
 		{
-			// User has clicked the graphic body
-			if (this.StatefulGraphic.HitTest(mouseInformation.Location))
-			{
-				this.StatefulGraphic.State = new MoveGraphicState(this.StatefulGraphic);
-				this.StatefulGraphic.State.Start(mouseInformation);
-				return true;
-			}
-
 			//We should never actually get to here, but if we did, this should happen.
 			this.StatefulGraphic.State = this.StatefulGraphic.CreateSelectedState();
 			return false;

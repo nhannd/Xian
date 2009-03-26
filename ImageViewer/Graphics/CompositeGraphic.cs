@@ -30,8 +30,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -87,6 +89,23 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get { return base.Visible; }
 			set { base.Visible = value; }
+		}
+
+		public override RectangleF BoundingBox
+		{
+			get
+			{
+				List<RectangleF> rectangles = new List<RectangleF>();
+				foreach (IGraphic graphic in this.Graphics)
+				{
+					RectangleF rect = graphic.BoundingBox;
+					if (!rect.Size.IsEmpty || !rect.Location.IsEmpty)
+						rectangles.Add(rect);
+				}
+				if (rectangles.Count == 0)
+					return RectangleF.Empty;
+				return RectangleUtilities.ComputeBoundingRectangle(rectangles);
+			}
 		}
 
 		/// <summary>
@@ -171,6 +190,36 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
+		/// Gets the point on the <see cref="CompositeGraphic"/> closest to the specified point.
+		/// </summary>
+		/// <param name="point">A point in either source or destination coordinates.</param>
+		/// <returns>The point on the graphic closest to the given <paramref name="point"/>.</returns>
+		/// <remarks>
+		/// <para>
+		/// Depending on the value of <see cref="Graphic.CoordinateSystem"/>,
+		/// the computation will be carried out in either source
+		/// or destination coordinates.</para>
+		/// <para>Calling <see cref="GetClosestPoint"/> will recursively call <see cref="GetClosestPoint"/>
+		/// on <see cref="Graphic"/> objects in the subtree and return the closest result.</para>
+		/// </remarks>
+		public override PointF GetClosestPoint(PointF point)
+		{
+			PointF result = PointF.Empty;
+			double min = double.MaxValue;
+			foreach (Graphic graphic in this.Graphics)
+			{
+				PointF pt = graphic.GetClosestPoint(point);
+				double d = Vector.Distance(point, pt);
+				if (min > d)
+				{
+					min = d;
+					result = pt;
+				}
+			}
+			return result;
+		}
+
+		/// <summary>
 		/// Moves the <see cref="CompositeGraphic"/> by a specified delta.
 		/// </summary>
 		/// <param name="delta">The distance to move.</param>
@@ -232,6 +281,26 @@ namespace ClearCanvas.ImageViewer.Graphics
 				IGraphic clone = graphic.Clone();
 				if (clone != null)
 					this.Graphics.Add(clone);
+			}
+		}
+
+		/// <summary>
+		/// Enumerates the immediate child graphics of this <see cref="CompositeGraphic"/>.
+		/// </summary>
+		/// <param name="reverse">A value specifying that the enumeration should be carried out in reverse order.</param>
+		/// <returns>An enumeration of child graphics.</returns>
+		public IEnumerable<IGraphic> EnumerateChildGraphics(bool reverse)
+		{
+			if (reverse)
+				return this.ReverseEnumerateChildGraphics();
+			return this.Graphics;
+		}
+
+		private IEnumerable<IGraphic> ReverseEnumerateChildGraphics()
+		{
+			for (int graphicIndex = this.Graphics.Count - 1; graphicIndex >= 0; --graphicIndex)
+			{
+				yield return this.Graphics[graphicIndex];
 			}
 		}
 	}

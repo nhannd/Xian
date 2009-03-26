@@ -33,6 +33,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.RoiGraphics;
 
@@ -64,14 +65,14 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			get { return SR.FormatEllipseName; }
 		}
 
-		protected override GraphicState CreateCreateState(RoiGraphic roiGraphic)
+		protected override InteractiveGraphicBuilder CreateGraphicBuilder(IGraphic graphic)
 		{
-			return new CreateBoundableGraphicState(roiGraphic);
+			return new InteractiveBoundableGraphicBuilder((IBoundableGraphic) graphic);
 		}
 
-		protected override InteractiveGraphic CreateInteractiveGraphic()
+		protected override IGraphic CreateGraphic()
 		{
-			return new EllipseInteractiveGraphic();
+			return new BoundableResizeControlGraphic(new BoundableStretchControlGraphic(new MoveControlGraphic(new EllipsePrimitive())));
 		}
 	}
 }

@@ -199,6 +199,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		PointF ILineSegmentGraphic.Pt1
 		{
 			get { return this.StartPoint; }
+			set { this.StartPoint = value; }
 		}
 
 		/// <summary>
@@ -211,6 +212,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 		PointF ILineSegmentGraphic.Pt2
 		{
 			get { return this.EndPoint; }
+			set { this.EndPoint = value; }
+		}
+
+		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Pt1Changed
+		{
+			add { this.StartPointChanged += value; }
+			remove { this.StartPointChanged -= value; }
+		}
+
+		event EventHandler<PointChangedEventArgs> ILineSegmentGraphic.Pt2Changed
+		{
+			add { this.EndPointChanged += value; }
+			remove { this.EndPointChanged -= value; }
 		}
 
 		private void UpdateArrowheadAngle()

@@ -20,8 +20,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			calloutGraphic.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				InvariantTextPrimitive textGraphic = (InvariantTextPrimitive)CollectionUtils.SelectFirst(calloutGraphic.Graphics, delegate(IGraphic graphic) { return graphic is InvariantTextPrimitive; });
-				RectangleF boundingBox = RectangleUtilities.ConvertToPositiveRectangle(textGraphic.BoundingBox);
+				RectangleF boundingBox = RectangleUtilities.ConvertToPositiveRectangle(calloutGraphic.BoundingBox);
 				text.BoundingBoxAnnotationUnits = GraphicAnnotationSequenceItem.BoundingBoxAnnotationUnits.Pixel;
 				text.BoundingBoxTextHorizontalJustification = GraphicAnnotationSequenceItem.BoundingBoxTextHorizontalJustification.Left;
 				text.BoundingBoxTopLeftHandCorner = boundingBox.Location;

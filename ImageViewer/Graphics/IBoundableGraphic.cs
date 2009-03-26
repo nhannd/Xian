@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -41,25 +42,37 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// Rectangles and ellipses are examples of graphics that can be
 	/// described by a rectangular bounding box.
 	/// </remarks>
-	public interface IBoundableGraphic : IVectorGraphic
+	public interface IBoundableGraphic : IVectorGraphic 
 	{
 		/// <summary>
-		/// Gets the top left corner of the bounding box in either source or destination coordinates.
+		/// Occurs when the <see cref="TopLeft"/> property changed.
 		/// </summary>
-		/// <remarks>
-		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
-		/// property is in source or destination coordinates.
-		/// </remarks>
-		PointF TopLeft { get; }
+		event EventHandler<PointChangedEventArgs> TopLeftChanged;
 
 		/// <summary>
-		/// Gets the bottom right corner of the bounding box in either source or destination coordinates.
+		/// Occurs when the <see cref="BottomRight"/> property changed.
+		/// </summary>
+		event EventHandler<PointChangedEventArgs> BottomRightChanged;
+
+		/// <summary>
+		/// Gets or sets the top left corner of the bounding box in either source or destination coordinates.
 		/// </summary>
 		/// <remarks>
 		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
 		/// property is in source or destination coordinates.
 		/// </remarks>
-		PointF BottomRight { get; }
+		PointF TopLeft { get; set; }
+
+		/// <summary>
+		/// Gets or sets the bottom right corner of the bounding box in either source or destination coordinates.
+		/// </summary>
+		/// <remarks>
+		/// <see cref="IGraphic.CoordinateSystem"/> determines whether this
+		/// property is in source or destination coordinates.
+		/// </remarks>
+		PointF BottomRight { get; set; }
+
+		RectangleF Rectangle { get; }
 
 		/// <summary>
 		/// Gets the width of the bounding box in either source or destination pixels.

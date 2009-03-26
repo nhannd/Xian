@@ -1,4 +1,5 @@
 using System;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -56,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		#endregion
 
 		private DrawableUndoableCommand _undoableCommand;
-		private IStandardStatefulInteractiveGraphic _textCalloutGraphic;
+		private InteractiveGraphicBuilder _graphicBuilder;
 
 		public TextCalloutTool() : base(SR.TooltipTextCallout)
 		{
@@ -65,9 +66,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		#region Tool Mode Support
 
-		private delegate CreateGraphicState CreateCreateStateDelegate(IStandardStatefulInteractiveGraphic graphic);
+		private delegate InteractiveGraphicBuilder CreateInteractiveGraphicBuilderDelegate(StandardStatefulGraphic graphic);
 
-		private delegate IStandardStatefulInteractiveGraphic CreateGraphic();
+		private delegate StandardStatefulGraphic CreateGraphicDelegate();
 
 		/// <summary>
 		/// Fired when the tool's <see cref="Mode"/> changes.
@@ -87,8 +88,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		// fields specific to a particular mode
 		private TextCalloutMode _mode = TextCalloutMode.TextCallout;
 		private IconSet _iconSet = null;
-		private CreateCreateStateDelegate _stateCreatorDelegate;
-		private CreateGraphic _graphicCreatorDelegate;
+		private CreateInteractiveGraphicBuilderDelegate _interactiveGraphicBuilderDelegate;
+		private CreateGraphicDelegate _graphicDelegateCreatorDelegate;
 		private string _commandCreationName = "";
 
 		/// <summary>
@@ -221,15 +222,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					this.TooltipPrefix = SR.TooltipTextCallout;
 					this._commandCreationName = SR.CommandCreateTextCallout;
 					this._iconSet = _textCalloutIconSet;
-					this._stateCreatorDelegate = CreateCreateTextCalloutGraphicState;
-					this._graphicCreatorDelegate = CreateTextCalloutGraphic;
+					this._interactiveGraphicBuilderDelegate = CreateInteractiveTextCalloutBuilder;
+					this._graphicDelegateCreatorDelegate = CreateTextCalloutGraphic;
 					break;
 				case TextCalloutMode.TextArea:
 					this.TooltipPrefix = SR.TooltipTextArea;
 					this._commandCreationName = SR.CommandCreateTextArea;
 					this._iconSet = _textAreaIconSet;
-					this._stateCreatorDelegate = CreateCreateTextAreaGraphicState;
-					this._graphicCreatorDelegate = CreateTextAreaGraphic;
+					this._interactiveGraphicBuilderDelegate = CreateInteractiveTextAreaBuilder;
+					this._graphicDelegateCreatorDelegate = CreateTextAreaGraphic;
 					break;
 			}
 			_settings.TextCalloutMode = _mode.ToString();
@@ -258,27 +259,38 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.OnModeOrActiveChanged();
 		}
 
+		public override CursorToken GetCursorToken(Point point)
+		{
+			if (_graphicBuilder != null)
+				return _graphicBuilder.GetCursorToken(point);
+			return base.GetCursorToken(point);
+		}
+
 		public override bool Start(IMouseInformation mouseInformation)
 		{
 			base.Start(mouseInformation);
 
-			if (_textCalloutGraphic != null)
-				return _textCalloutGraphic.State.Start(mouseInformation);
+			if (_graphicBuilder != null)
+				return _graphicBuilder.Start(mouseInformation);
 
 			IPresentationImage image = mouseInformation.Tile.PresentationImage;
 			IOverlayGraphicsProvider provider = image as IOverlayGraphicsProvider;
 			if (provider == null)
 				return false;
 
-			_textCalloutGraphic = _graphicCreatorDelegate();
-			_textCalloutGraphic.State = _stateCreatorDelegate(_textCalloutGraphic);
+			StandardStatefulGraphic graphic = _graphicDelegateCreatorDelegate();
+			graphic.State = graphic.CreateFocussedSelectedState();
+
+			_graphicBuilder = _interactiveGraphicBuilderDelegate(graphic);
+			_graphicBuilder.GraphicComplete += OnGraphicBuilderComplete;
+			_graphicBuilder.GraphicCancelled += OnGraphicBuilderCancelled;
 
 			_undoableCommand = new DrawableUndoableCommand(image);
-			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(_textCalloutGraphic, provider.OverlayGraphics, provider.OverlayGraphics.Count));
+			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(new BasicGraphicToolsControlGraphic(graphic), provider.OverlayGraphics, provider.OverlayGraphics.Count));
 			_undoableCommand.Name = this.CreationCommandName;
 			_undoableCommand.Execute();
 
-			if (_textCalloutGraphic.State.Start(mouseInformation))
+			if (_graphicBuilder.Start(mouseInformation))
 				return true;
 
 			this.Cancel();
@@ -287,57 +299,87 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (_textCalloutGraphic != null)
-				return _textCalloutGraphic.State.Track(mouseInformation);
+			if (_graphicBuilder != null)
+				return _graphicBuilder.Track(mouseInformation);
 
 			return false;
 		}
 
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
-			if (_textCalloutGraphic == null)
+			if (_graphicBuilder == null)
 				return false;
 
-			if (_textCalloutGraphic.State.Stop(mouseInformation))
+			if (_graphicBuilder.Stop(mouseInformation))
 				return true;
 
-			_textCalloutGraphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
+			_graphicBuilder.Graphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
+			_graphicBuilder = null;
 			_undoableCommand = null;
-			_textCalloutGraphic = null;
 			return false;
 		}
 
 		public override void Cancel()
 		{
-			if (_textCalloutGraphic == null)
+			if (_graphicBuilder == null)
 				return;
 
-			_textCalloutGraphic.State.Cancel();
+			_graphicBuilder.Cancel();
+		}
+
+		private void OnGraphicBuilderComplete(object sender, GraphicEventArgs e)
+		{
+			// Find the edit control graphic for the text graphic and invoke edit mode.
+			IGraphic graphic = _graphicBuilder.Graphic;
+			while (graphic != null && !(graphic is TextEditControlGraphic) && !(graphic is UserCalloutGraphic))
+				graphic = graphic.ParentGraphic;
+			if (graphic is TextEditControlGraphic)
+				((TextEditControlGraphic)graphic).StartEdit();
+			else if (graphic is UserCalloutGraphic)
+				((UserCalloutGraphic) graphic).StartEdit();
+
+			_graphicBuilder.GraphicComplete -= OnGraphicBuilderComplete;
+			_graphicBuilder.GraphicCancelled -= OnGraphicBuilderCancelled;
+
+			_undoableCommand = null;
+
+			_graphicBuilder = null;
+		}
+
+		private void OnGraphicBuilderCancelled(object sender, GraphicEventArgs e)
+		{
+			_graphicBuilder.GraphicComplete -= OnGraphicBuilderComplete;
+			_graphicBuilder.GraphicCancelled -= OnGraphicBuilderCancelled;
 
 			_undoableCommand.Unexecute();
 			_undoableCommand = null;
 
-			_textCalloutGraphic = null;
+			_graphicBuilder = null;
 		}
 
-		private static TextCalloutGraphic CreateTextCalloutGraphic()
+		private static StandardStatefulGraphic CreateTextCalloutGraphic()
 		{
-			return new TextCalloutGraphic();
+			UserCalloutGraphic callout = new UserCalloutGraphic();
+			callout.LineStyle = LineStyle.Solid;
+			callout.ShowArrowhead = true;
+			return new StandardStatefulGraphic(new VerticesControlGraphic(callout));
 		}
 
-		private static CreateGraphicState CreateCreateTextCalloutGraphicState(IStandardStatefulInteractiveGraphic graphic)
+		private static InteractiveGraphicBuilder CreateInteractiveTextCalloutBuilder(StandardStatefulGraphic graphic)
 		{
-			return new CreateTextCalloutGraphicState((TextCalloutGraphic) graphic);
+			IDecoratorGraphic d = graphic;
+			d = d.DecoratedGraphic as IDecoratorGraphic;
+			return new InteractiveTextCalloutBuilder(d.DecoratedGraphic as UserCalloutGraphic);
 		}
 
-		private static TextAreaGraphic CreateTextAreaGraphic()
+		private static StandardStatefulGraphic CreateTextAreaGraphic()
 		{
-			return new TextAreaGraphic();
+			return new StandardStatefulGraphic(new TextEditControlGraphic(new MoveControlGraphic(new InvariantTextPrimitive())));
 		}
 
-		private static CreateGraphicState CreateCreateTextAreaGraphicState(IStandardStatefulInteractiveGraphic graphic)
+		private static InteractiveGraphicBuilder CreateInteractiveTextAreaBuilder(StandardStatefulGraphic graphic)
 		{
-			return new CreateTextAreaGraphicState((TextAreaGraphic) graphic);
+			return new InteractiveTextAreaBuilder(graphic.Subject as ITextGraphic);
 		}
 	}
 
