@@ -175,6 +175,18 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audit\BeginTransferringDicomInstancesAuditHelper.cs" />
+    <Compile Include="Audit\ApplicationActivityAuditHelper.cs" />
+    <Compile Include="Audit\DataExportAuditHelper.cs" />
+    <Compile Include="Audit\DataImportAuditHelper.cs" />
+    <Compile Include="Audit\DicomAuditHelper.cs" />
+    <Compile Include="Audit\AuditLogUsedAuditHelper.cs" />
+    <Compile Include="Audit\DicomAuditMessage.cs" />
+    <Compile Include="Audit\DicomAuditMessage.gen.cs" />
+    <Compile Include="Audit\DicomAuditMessageEnums.cs" />
+    <Compile Include="Audit\DicomInstancesAccessedAuditHelper.cs" />
+    <Compile Include="Audit\QueryAuditLogHelper.cs" />
+    <Compile Include="Audit\Test\AuditTest.cs" />
     <Compile Include="Codec\DicomCodecException.cs" />
     <Compile Include="Codec\DicomCodecFactoryExtensionPoint.cs" />
     <Compile Include="Codec\DicomCodecRegistry.cs" />
@@ -412,6 +424,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <EmbeddedResource Include="Audit\DicomAuditMessageSchema.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="Audit\DicomAuditMessageSchema.xsx">
+      <DependentUpon>DicomAuditMessageSchema.xsd</DependentUpon>
+    </None>
     <None Include="DicomSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DicomSettings.Designer.cs</LastGenOutput>
