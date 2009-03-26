@@ -279,7 +279,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return false;
 
 			StandardStatefulGraphic graphic = _graphicDelegateCreatorDelegate();
-			graphic.State = graphic.CreateFocussedSelectedState();
+			graphic.State = graphic.CreateSelectedState();
 
 			_graphicBuilder = _interactiveGraphicBuilderDelegate(graphic);
 			_graphicBuilder.GraphicComplete += OnGraphicBuilderComplete;

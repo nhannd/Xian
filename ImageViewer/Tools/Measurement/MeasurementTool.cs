@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			else
 				roiGraphic.Name = "";
 
-			roiGraphic.State = roiGraphic.CreateFocussedSelectedState();
+			roiGraphic.State = roiGraphic.CreateSelectedState();
 
 			return roiGraphic;
 		}
