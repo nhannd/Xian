@@ -214,7 +214,7 @@ namespace ClearCanvas.Desktop
         protected override void OnComponentModifiedChanged(IApplicationComponent component)
         {
             base.OnComponentModifiedChanged(component);
-            this.AcceptEnabled = this.Modified;
+            this.AcceptEnabled = true;
         }
     }
 }
