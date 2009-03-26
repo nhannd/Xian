@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 			if (PermissionsHelper.IsInRole(ImageViewer.Services.AuthorityTokens.Admin.System.DiskspaceManagement))
 				listPages.Add(new ConfigurationPage<DiskspaceManagerConfigurationComponent>("DiskspaceManagerConfiguration"));
 
-			listPages.Add(new ConfigurationPage<DefaultServersConfigurationComponent>("DefaultServerConfiguration"));
+			listPages.Add(new ConfigurationPage("DefaultServerConfiguration", new DefaultServersConfigurationComponent()));
 
 			return listPages.AsReadOnly();
 		}

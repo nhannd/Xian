@@ -31,6 +31,30 @@
 
 namespace ClearCanvas.Desktop.Configuration
 {
+	public abstract class ConfigurationApplicationComponentContainer: ApplicationComponentContainer, IConfigurationApplicationComponent
+	{
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		protected ConfigurationApplicationComponentContainer()
+		{
+		}
+
+		internal void ResetModified()
+		{
+			base.Modified = false;
+		}
+
+		#region IConfigurationApplicationComponent Members
+
+		/// <summary>
+		/// Save any settings modified in the hosted component.
+		/// </summary>
+		public abstract void Save();
+
+		#endregion
+	}
+
 	/// <summary>
 	/// A component that hosts a configuration page, where some settings need to
 	/// be saved when the user dismisses it.
@@ -42,6 +66,11 @@ namespace ClearCanvas.Desktop.Configuration
 		/// </summary>
 		protected ConfigurationApplicationComponent()
 		{
+		}
+
+		internal void ResetModified()
+		{
+			base.Modified = false;
 		}
 
 		#region IConfigurationApplicationComponent Members

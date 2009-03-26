@@ -35,6 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationDialogComponentView.cs" />
     <Compile Include="DateFormatApplicationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

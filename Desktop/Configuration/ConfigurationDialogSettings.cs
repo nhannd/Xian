@@ -29,34 +29,18 @@
 
 #endregion
 
+using System.Configuration;
+using ClearCanvas.Desktop;
+
 namespace ClearCanvas.Desktop.Configuration
 {
-	public sealed class ConfigurationDialog
+	[SettingsGroupDescription("Provides settings for the configuration dialog.")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	internal sealed partial class ConfigurationDialogSettings
 	{
-
-		private ConfigurationDialog()
+		private ConfigurationDialogSettings()
 		{
-		}
-
-		/// <summary>
-		/// Shows all <see cref="IConfigurationPage"/>s returned by extensions of <see cref="IConfigurationPageProvider"/>
-		/// in a dialog, with a navigable tree to select the pages.
-		/// </summary>
-		public static ApplicationComponentExitCode Show(IDesktopWindow desktopWindow)
-		{
-			return Show(desktopWindow, null);
-		}
-
-		/// <summary>
-		/// Shows all <see cref="IConfigurationPage"/>s returned by extensions of <see cref="IConfigurationPageProvider"/>
-		/// in a dialog, with a navigable tree to select the pages.
-		/// </summary>
-		public static ApplicationComponentExitCode Show(IDesktopWindow desktopWindow, string initialPageIdentifier)
-		{
-			ConfigurationDialogComponent container = new ConfigurationDialogComponent(initialPageIdentifier);
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(desktopWindow, container, SR.TitleMenuOptions);
-
-			return exitCode;
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 	}
 }

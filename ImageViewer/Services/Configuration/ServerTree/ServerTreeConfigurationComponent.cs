@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.ServerTree
 	}
 
 	[AssociateView(typeof(ServerTreeConfigurationComponentViewExtensionPoint))]
-	public abstract class ServerTreeConfigurationComponent : ApplicationComponentContainer, IConfigurationApplicationComponent
+	public abstract class ServerTreeConfigurationComponent : ConfigurationApplicationComponentContainer
 	{
 		public class ServerTreeComponentHost : ApplicationComponentHost
 		{
@@ -156,8 +156,6 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.ServerTree
 			base.Stop();
 			_serverTreeHost.StopComponent();
 		}
-
-		public abstract void Save();
 
 		public override IEnumerable<IApplicationComponent> ContainedComponents
 		{

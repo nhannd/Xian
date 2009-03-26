@@ -44,9 +44,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
-            if (disposing && (components != null))
+            if (disposing)
             {
-                components.Dispose();
+				if (components != null)
+					components.Dispose();
             }
             base.Dispose(disposing);
         }
@@ -69,6 +70,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._nextButton = new System.Windows.Forms.Button();
 			this._backButton = new System.Windows.Forms.Button();
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
+			this._applyButton = new System.Windows.Forms.Button();
 			this.splitContainer1.Panel1.SuspendLayout();
 			this.splitContainer1.Panel2.SuspendLayout();
 			this.splitContainer1.SuspendLayout();
@@ -139,18 +141,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.flowLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.flowLayoutPanel1.Controls.Add(this._cancelButton);
 			this.flowLayoutPanel1.Controls.Add(this._okButton);
+			this.flowLayoutPanel1.Controls.Add(this._applyButton);
 			this.flowLayoutPanel1.Controls.Add(this._nextButton);
 			this.flowLayoutPanel1.Controls.Add(this._backButton);
 			this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(133, 340);
+			this.flowLayoutPanel1.Location = new System.Drawing.Point(41, 340);
 			this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
 			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(338, 35);
+			this.flowLayoutPanel1.Size = new System.Drawing.Size(430, 35);
 			this.flowLayoutPanel1.TabIndex = 1;
 			// 
 			// _cancelButton
 			// 
-			this._cancelButton.Location = new System.Drawing.Point(261, 2);
+			this._cancelButton.Location = new System.Drawing.Point(353, 2);
 			this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
@@ -161,7 +164,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _okButton
 			// 
-			this._okButton.Location = new System.Drawing.Point(182, 2);
+			this._okButton.Location = new System.Drawing.Point(274, 2);
 			this._okButton.Margin = new System.Windows.Forms.Padding(2);
 			this._okButton.Name = "_okButton";
 			this._okButton.Size = new System.Drawing.Size(75, 23);
@@ -172,7 +175,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _nextButton
 			// 
-			this._nextButton.Location = new System.Drawing.Point(103, 2);
+			this._nextButton.Location = new System.Drawing.Point(116, 2);
 			this._nextButton.Margin = new System.Windows.Forms.Padding(2);
 			this._nextButton.Name = "_nextButton";
 			this._nextButton.Size = new System.Drawing.Size(75, 23);
@@ -183,7 +186,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _backButton
 			// 
-			this._backButton.Location = new System.Drawing.Point(24, 2);
+			this._backButton.Location = new System.Drawing.Point(37, 2);
 			this._backButton.Margin = new System.Windows.Forms.Padding(2);
 			this._backButton.Name = "_backButton";
 			this._backButton.Size = new System.Drawing.Size(75, 23);
@@ -204,6 +207,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this._titleBar.TabIndex = 3;
 			this._titleBar.Text = "titleBar1";
+			// 
+			// _applyButton
+			// 
+			this._applyButton.Location = new System.Drawing.Point(195, 2);
+			this._applyButton.Margin = new System.Windows.Forms.Padding(2);
+			this._applyButton.Name = "_applyButton";
+			this._applyButton.Size = new System.Drawing.Size(75, 23);
+			this._applyButton.TabIndex = 4;
+			this._applyButton.Text = "Apply";
+			this._applyButton.UseVisualStyleBackColor = true;
 			// 
 			// NavigatorComponentContainerControl
 			// 
@@ -236,5 +249,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.Button _okButton;
 		private System.Windows.Forms.Button _cancelButton;
 		private Crownwood.DotNetMagic.Controls.TitleBar _titleBar;
+		private System.Windows.Forms.Button _applyButton;
     }
 }

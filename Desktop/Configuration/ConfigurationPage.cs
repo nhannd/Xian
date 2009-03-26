@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.Configuration
@@ -41,21 +38,28 @@ namespace ClearCanvas.Desktop.Configuration
 	/// </summary>
 	/// <typeparam name="T">The type of <see cref="IConfigurationApplicationComponent"/>-derived 
 	/// class that will be hosted in this page.  The class must have a parameterless default constructor.</typeparam>
-	public class ConfigurationPage<T> : IConfigurationPage
+	public class ConfigurationPage<T> : ConfigurationPage
 		 where T : IConfigurationApplicationComponent, new()
 	{
-		private T _component;
-		private string _path;
-		
 		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="path">The path to the <see cref="ConfigurationPage{T}"/>.</param>
 		public ConfigurationPage(string path)
+			: base(path, new T())
 		{
-			Platform.CheckForEmptyString(path, "path");
+		}
+	}
+	
+	public class ConfigurationPage : IConfigurationPage
+	{
+		private readonly IConfigurationApplicationComponent _component;
+		private readonly string _path;
+
+		public ConfigurationPage(string path, IConfigurationApplicationComponent component)
+		{
 			_path = path;
-			_component = new T();
+			_component = component;
 		}
 
 		#region IConfigurationPage Members
@@ -82,6 +86,11 @@ namespace ClearCanvas.Desktop.Configuration
 		public void SaveConfiguration()
 		{
 			_component.Save();
+
+			if (_component is ConfigurationApplicationComponent)
+				((ConfigurationApplicationComponent)_component).ResetModified();
+			else if (_component is ConfigurationApplicationComponentContainer)
+				((ConfigurationApplicationComponentContainer)_component).ResetModified();
 		}
 
 		#endregion

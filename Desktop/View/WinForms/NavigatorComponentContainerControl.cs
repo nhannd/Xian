@@ -35,25 +35,48 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+	public interface INavigatorApplyHandler
+	{
+		void Apply();
+		bool ApplyEnabled { get; }
+		event EventHandler ApplyEnabledChanged;
+	}
+
     public partial class NavigatorComponentContainerControl : CustomUserControl
     {
         private NavigatorComponentContainer _component;
         private Dictionary<NavigatorPage, TreeNode> _nodeMap;
-        private List<Control> _createdControls;
+		private INavigatorApplyHandler _applyHandler;
 
-        public NavigatorComponentContainerControl(NavigatorComponentContainer component)
+		public NavigatorComponentContainerControl(NavigatorComponentContainer component)
+			: this(component, null)
+		{
+		}
+
+    	public NavigatorComponentContainerControl(NavigatorComponentContainer component, INavigatorApplyHandler applyHandler)
         {
             InitializeComponent();
 
+			_applyHandler = applyHandler;
 			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
 
             _nodeMap = new Dictionary<NavigatorPage, TreeNode>();
-            _createdControls = new List<Control>();        
 
             _component = component;
             _component.CurrentPageChanged += new EventHandler(_component_CurrentNodeChanged);
 
-			base.AcceptButton = this._okButton;
+			if (applyHandler == null)
+			{
+				_applyButton.Dispose();
+				_applyButton = null;
+			}
+			else
+			{
+				_applyButton.Click += delegate { _applyHandler.Apply(); };
+				_applyButton.DataBindings.Add("Enabled", _applyHandler, "ApplyEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			}
+
+    		base.AcceptButton = this._okButton;
 			base.CancelButton = this._cancelButton;
 
             _nextButton.DataBindings.Add("Enabled", _component, "ForwardEnabled");
