@@ -42,7 +42,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private readonly string _destinationFile;
 	    private bool _overwrite;
 	    private string _destBackupFile;
-	    private readonly bool _destExists;
 		#endregion
 
 		public CopyFileCommand(string sourceFile, string destinationFile)
@@ -54,7 +53,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 			_sourceFile = sourceFile;
 			_destinationFile = destinationFile;
-		    _destExists = File.Exists(_destinationFile);
 		}
 
 	    public bool Overwrite
@@ -68,40 +66,28 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             if (RequiresRollback)
                 Backup();
 
-			if (File.Exists(_destinationFile))
-			{
-				File.Delete(_destinationFile);
-			}
-
             File.Copy(_sourceFile, _destinationFile, Overwrite);
 		}
 
 	    private void Backup()
 	    {
 	        // backup the destination
-	        _destBackupFile = _destinationFile + ".bak";
-	        File.Copy(_destinationFile, _destBackupFile, true);
+            if (File.Exists(_destinationFile))
+            {
+                _destBackupFile = _destinationFile + ".bak";
+                File.Copy(_destinationFile, _destBackupFile, true);
+            }
+	        
 	    }
 
 	    protected override void OnUndo()
 		{
             if (RequiresRollback)
             {
-                if (!_destExists)
+                if (File.Exists(_destBackupFile))
                 {
-                    if (File.Exists(_destinationFile))
-                    {
-                        Platform.Log(LogLevel.Info, "Restoring {0}..", _destinationFile);
-                        File.Delete(_destinationFile);
-                    }
-                }
-                else
-                {
-                    if (File.Exists(_destBackupFile))
-                    {
-                        Platform.Log(LogLevel.Info, "Restoring {0}..", _destinationFile);
-                        File.Copy(_destinationFile, _destBackupFile, true);
-                    }
+                    Platform.Log(LogLevel.Info, "Restoring {0}..", _destinationFile);
+                    File.Copy(_destBackupFile, _destinationFile, true);
                 }
             }
 		}

@@ -188,10 +188,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// </summary>
         /// <param name="message">The Dicom message</param>
         /// <returns></returns>
-		private bool ShouldReconcile(DicomMessageBase message)
+		private bool ShouldReconcile(WorkQueueUid uid, DicomMessageBase message)
         {
             Platform.CheckForNullReference(_context, "_context");
             Platform.CheckForNullReference(message, "message");
+            Platform.CheckForNullReference(uid, "uid");
 
             string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, String.Empty);
             
@@ -213,7 +214,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 if (list != null && list.Count > 0)
                 {
                     LogDifferences(message, list);
-                    return true;
+
+					// Duplicate sops are governed by the duplicate policy
+                    if (uid.Duplicate)
+                    {
+                        Platform.Log(LogLevel.Warn, "Duplicate sop. Ignore the difference.");
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }
                 else
                 {
@@ -228,7 +239,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Found {0} issue(s) in SOP {1}\n", list.Count, sopInstanceUid);
             sb.Append(list.ToString());
-            Platform.Log(LogLevel.Info, sb.ToString());
+            Platform.Log(LogLevel.Warn, sb.ToString());
         }
 
 
@@ -242,7 +253,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             DicomFile file = LoadDicomFile(path);
         
-            if (ShouldReconcile(file))
+            if (ShouldReconcile(queueUid, file))
             {
                 ScheduleReconcile(queueUid, file);
             }
