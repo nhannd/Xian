@@ -1,6 +1,7 @@
 <%@ Master Language="C#" AutoEventWireup="true" Inherits="GlobalMasterPage" Codebehind="GlobalMasterPage.master.cs" %>
 
 <%@ Register Src="~/Controls/AlertIndicator.ascx" TagName="AlertIndicator" TagPrefix="ccAsp" %>
+<%@ Register Src="~/Controls/SessionTimeout.ascx" TagName="SessionTimeout" TagPrefix="ccAsp" %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
@@ -10,6 +11,8 @@
     <style runat="server" type="text/css" id="IE6PNGBugFixCSS" />
     
     <ccAsp:JQuery ID="MainJQuery" runat="server" />
+    
+    
        
 </head>
 <body id="MasterBody" class="GlobalBody">
@@ -20,12 +23,11 @@
     <div id="service" style="behavior: url(<%= ResolveClientUrl("~/Services/webservice.htc") %>);" />
     <!-- this is special code that web service validation needs -->
     <form id="MasterForm" runat="server" submitdisabledcontrols="true">
-        <ccAsp:CheckJavascript runat="server" ID="CheckJavascript" NonJSTargetURL="~/Pages/Error/JavascriptRequired.aspx" />   
               
         <asp:ScriptManager ID="GlobalScriptManager" runat="server" EnableScriptGlobalization="true"
             EnableScriptLocalization="true" OnAsyncPostBackError="GlobalScriptManager_AsyncPostBackError" >
-        </asp:ScriptManager>            
-            
+        </asp:ScriptManager>   
+                   
         <asp:Panel runat="server" CssClass="GlobalContentPanel">
             <asp:Table runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
                 <asp:TableRow>
@@ -49,7 +51,7 @@
                                         </asp:ContentPlaceHolder>
                                     </asp:Panel>
                                 </asp:TableCell>
-                                <asp:TableCell runat="server" Width="50%" HorizontalAlign="right" CssClass="MainMenuPanel" VerticalAlign="Bottom">
+                                <asp:TableCell runat="server" Width="50%" HorizontalAlign="right" CssClass="MainMenuPanel" VerticalAlign="Bottom" ID="UserInformationCell">
                                         <asp:Panel ID="UserInformationPanel" runat="server" CssClass="UserInformationPanel">
                                              <table><tr><td>logged in as <b><asp:Label ID="Username" runat="server"></asp:Label></b></td><td><ccasp:AlertIndicator ID="AlertIndicator1" runat="server" /></td><td>| <asp:LinkButton ID="LogoutButton" runat="server" CssClass="UserInformationLink" OnClick="Logout_Click">Logout</asp:LinkButton></td></tr></table> 
                                         </asp:Panel>
@@ -112,13 +114,16 @@
                     </asp:TableCell></asp:TableRow>
             </asp:Table>
         </asp:Panel>
-        
+
+        <ccAsp:SessionTimeout runat="server" ID="SessionTimeout" />                    
+
         <asp:ContentPlaceHolder ID="DialogsPlaceHolder" runat="server" />
     </form>
     
     <script type="text/javascript">
         UserInformationLink_Hover("<%= LogoutButton.ClientID %>");    
     </script>
+    
     
     
 </body>

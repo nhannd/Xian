@@ -8,14 +8,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head runat="server">
-    <title>ClearCanvas ImageServer</title>
+    <title>ClearCanvas ImageServer - Login</title>
 </head>
 <body class="LoginBody">
     
     
     <form runat="server">
-
-    <ccAsp:CheckJavascript runat="server" ID="CheckJavascript" NonJSTargetURL="~/Pages/Error/JavascriptRequired.aspx" />            
 
     <asp:ScriptManager ID="GlobalScriptManager" runat="server" EnableScriptGlobalization="true"
             EnableScriptLocalization="true">

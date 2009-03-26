@@ -8,150 +8,114 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageServer.Web.Application.Test {
+namespace ClearCanvas.ImageServer.Web.Application.Pages.Login {
     
     
     /// <summary>
-    /// AuthorityGroup class.
+    /// PasswordExpiredDialog class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class AuthorityGroup {
+    public partial class PasswordExpiredDialog {
         
         /// <summary>
-        /// form1 control.
+        /// ModalDialog1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlForm form1;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog ModalDialog1;
         
         /// <summary>
-        /// Login control.
+        /// ErrorMessagePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label Login;
+        protected global::System.Web.UI.WebControls.Panel ErrorMessagePanel;
         
         /// <summary>
-        /// Logout control.
+        /// ErrorMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button Logout;
+        protected global::System.Web.UI.WebControls.Label ErrorMessage;
         
         /// <summary>
-        /// NewTokenNameTextBox control.
+        /// Panel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox NewTokenNameTextBox;
+        protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// NewTokenDescriptionTextBox control.
+        /// Label1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox NewTokenDescriptionTextBox;
+        protected global::System.Web.UI.WebControls.Label Label1;
         
         /// <summary>
-        /// NewToken control.
+        /// Username control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button NewToken;
+        protected global::System.Web.UI.WebControls.TextBox Username;
         
         /// <summary>
-        /// TokenActionMessage control.
+        /// NewPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label TokenActionMessage;
+        protected global::System.Web.UI.WebControls.TextBox NewPassword;
         
         /// <summary>
-        /// GroupRef control.
+        /// ConfirmNewPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox GroupRef;
+        protected global::System.Web.UI.WebControls.TextBox ConfirmNewPassword;
         
         /// <summary>
-        /// NewGroupName control.
+        /// OriginalPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox NewGroupName;
+        protected global::System.Web.UI.HtmlControls.HtmlInputHidden OriginalPassword;
         
         /// <summary>
-        /// NewGroupTokenListBox control.
+        /// Panel2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.ListBox NewGroupTokenListBox;
+        protected global::System.Web.UI.WebControls.Panel Panel2;
         
         /// <summary>
-        /// NewGroupCreate control.
+        /// OKButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button NewGroupCreate;
-        
-        /// <summary>
-        /// GroupUpdate control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button GroupUpdate;
-        
-        /// <summary>
-        /// EditGroupMessage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label EditGroupMessage;
-        
-        /// <summary>
-        /// GroupListing control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView GroupListing;
-        
-        /// <summary>
-        /// TokenList control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView TokenList;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OKButton;
     }
 }

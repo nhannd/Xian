@@ -52,7 +52,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Pages\Login\Default.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
@@ -170,6 +169,13 @@
     <Compile Include="Controls\ServerPartitionTabs.ascx.designer.cs">
       <DependentUpon>ServerPartitionTabs.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\SessionTimeout.ascx.cs">
+      <DependentUpon>SessionTimeout.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\SessionTimeout.ascx.designer.cs">
+      <DependentUpon>SessionTimeout.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\TimedDialog.ascx.cs">
       <DependentUpon>TimedDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -221,7 +227,6 @@
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.ascx.cs">
       <DependentUpon>UserGroupsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\UserGroups\UserGroupsPanel.ascx.designer.cs">
       <DependentUpon>UserGroupsPanel.ascx</DependentUpon>
@@ -249,17 +254,9 @@
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\Users\UserPanel.ascx.cs">
       <DependentUpon>UserPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\UserManagement\Users\UserPanel.ascx.designer.cs">
       <DependentUpon>UserPanel.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Error\AuthorizationErrorPage.aspx.cs">
-      <DependentUpon>AuthorizationErrorPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Pages\Error\AuthorizationErrorPage.aspx.designer.cs">
-      <DependentUpon>AuthorizationErrorPage.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Login\ChangePasswordDialog.ascx.cs">
       <DependentUpon>ChangePasswordDialog.ascx</DependentUpon>
@@ -268,22 +265,36 @@
     <Compile Include="Pages\Login\ChangePasswordDialog.ascx.designer.cs">
       <DependentUpon>ChangePasswordDialog.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Login\Default.aspx.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Login\Default.aspx.designer.cs">
+      <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Error\AuthorizationErrorPage.aspx.cs">
+      <DependentUpon>AuthorizationErrorPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\AuthorizationErrorPage.aspx.designer.cs">
+      <DependentUpon>AuthorizationErrorPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Error\TimeoutErrorPage.aspx.cs">
+      <DependentUpon>TimeoutErrorPage.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Error\TimeoutErrorPage.aspx.designer.cs">
+      <DependentUpon>TimeoutErrorPage.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\DialogHelper.cs" />
+    <Compile Include="Helpers\HtmlEncoder.cs" />
+    <Compile Include="Helpers\ScriptHelper.cs" />
     <Compile Include="Pages\Login\PasswordExpiredDialog.ascx.cs">
       <DependentUpon>PasswordExpiredDialog.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Login\PasswordExpiredDialog.ascx.designer.cs">
       <DependentUpon>PasswordExpiredDialog.ascx</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Login\Default.aspx.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Helpers\DialogHelper.cs" />
-    <Compile Include="Helpers\HtmlEncoder.cs" />
-    <Compile Include="Helpers\ScriptHelper.cs" />
-    <Compile Include="Pages\Login\Default.aspx.designer.cs">
-      <DependentUpon>Default.aspx</DependentUpon>
     </Compile>
     <Compile Include="Pages\Queues\ArchiveQueue\ResetArchiveQueueDialog.ascx.cs">
       <DependentUpon>ResetArchiveQueueDialog.ascx</DependentUpon>
@@ -325,27 +336,6 @@
     <Compile Include="Pages\Studies\StudyDetails\Controls\StudyHistoryChangeDescPanel.ascx.designer.cs">
       <DependentUpon>StudyHistoryChangeDescPanel.ascx</DependentUpon>
     </Compile>
-    <Compile Include="Test\AuthorityGroup.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-      <DependentUpon>AuthorityGroup.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Test\AuthorityGroup.aspx.designer.cs">
-      <DependentUpon>AuthorityGroup.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Test\ListUsers.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-      <DependentUpon>ListUsers.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Test\ListUsers.aspx.designer.cs">
-      <DependentUpon>ListUsers.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Test\Login.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-      <DependentUpon>Login.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Test\Login.aspx.designer.cs">
-      <DependentUpon>Login.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Pages\Admin\Alerts\AlertItemCollection.cs" />
     <Compile Include="Pages\Admin\Alerts\AlertsGridPanel.ascx.cs">
       <DependentUpon>AlertsGridPanel.ascx</DependentUpon>
@@ -356,7 +346,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Alerts\AlertsPanel.ascx.cs">
       <DependentUpon>AlertsPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Alerts\AlertsPanel.ascx.designer.cs">
       <DependentUpon>AlertsPanel.ascx</DependentUpon>
@@ -405,7 +394,6 @@
     </Compile>
     <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudiesSearchPanel.ascx.cs">
       <DependentUpon>DeletedStudiesSearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Admin\Audit\DeletedStudies\DeletedStudiesSearchPanel.ascx.designer.cs">
       <DependentUpon>DeletedStudiesSearchPanel.ascx</DependentUpon>
@@ -725,7 +713,6 @@
     </Compile>
     <Compile Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\ArchiveQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -761,7 +748,6 @@
     </Compile>
     <Compile Include="Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\StudyIntegrityQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -782,7 +768,6 @@
     </Compile>
     <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\RestoreQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -838,7 +823,6 @@
     </Compile>
     <Compile Include="Pages\Studies\Move\MovePanel.ascx.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Studies\Move\MovePanel.ascx.designer.cs">
       <DependentUpon>MovePanel.ascx</DependentUpon>
@@ -852,7 +836,6 @@
     </Compile>
     <Compile Include="Pages\Studies\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Studies\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -1070,7 +1053,6 @@
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Queues\WorkQueue\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
@@ -1107,13 +1089,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Test\TestPage.aspx.cs">
-      <DependentUpon>TestPage.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Test\TestPage.aspx.designer.cs">
-      <DependentUpon>TestPage.aspx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1307,6 +1282,7 @@
     <Content Include="Controls\PersonNameInputPanel.ascx" />
     <Content Include="Controls\SectionPanel.ascx" />
     <Content Include="Controls\ServerPartitionTabs.ascx" />
+    <Content Include="Controls\SessionTimeout.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
     <Content Include="Default.aspx" />
     <Content Include="Images\ImageServerLogo.png" />
@@ -1322,18 +1298,17 @@
     <EmbeddedResource Include="Pages\Admin\UserManagement\Users\UserPanel.js" />
     <Content Include="Pages\Admin\UserManagement\Users\UserGridPanel.ascx" />
     <Content Include="Pages\Admin\UserManagement\Users\UserPanel.ascx" />
-    <Content Include="Pages\Error\AuthorizationErrorPage.aspx" />
     <Content Include="Pages\Login\ChangePasswordDialog.ascx" />
-    <Content Include="Pages\Login\PasswordExpiredDialog.ascx" />
+    <Content Include="Pages\Login\Default.aspx" />
+    <Content Include="Pages\Error\AuthorizationErrorPage.aspx" />
+    <Content Include="Pages\Error\TimeoutErrorPage.aspx" />
     <EmbeddedResource Include="Pages\Studies\Move\MovePanel.js" />
+    <Content Include="Pages\Login\PasswordExpiredDialog.ascx" />
     <Content Include="Pages\Queues\ArchiveQueue\ResetArchiveQueueDialog.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\EditHistoryDetailsColumn.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\HistoryPanel.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\ReconcileHistoryDetailsColumn.ascx" />
     <Content Include="Pages\Studies\StudyDetails\Controls\StudyHistoryChangeDescPanel.ascx" />
-    <Content Include="Test\AuthorityGroup.aspx" />
-    <Content Include="Test\ListUsers.aspx" />
-    <Content Include="Test\Login.aspx" />
     <Content Include="Pages\Admin\Alerts\AlertsGridPanel.ascx" />
     <Content Include="Pages\Admin\Alerts\AlertsPanel.ascx" />
     <Content Include="Pages\Admin\Alerts\Default.aspx" />
@@ -1502,7 +1477,6 @@
     <Content Include="PersistantImage.ashx" />
     <None Include="Scripts\CodeMirror\LICENSE" />
     <None Include="Service References\FilesystemServiceProxy.map" />
-    <Content Include="Test\SecuredWeb.config" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
     <Content Include="Services\FilesystemInfoService.asmx" />
     <Content Include="Services\ValidationServices.asmx" />
@@ -1511,7 +1485,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="Test\TestPage.aspx" />
     <Content Include="Web.sitemap" />
     <Content Include="Services\webservice.htc" />
   </ItemGroup>

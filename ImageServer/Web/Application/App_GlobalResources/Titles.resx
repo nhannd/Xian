@@ -288,4 +288,16 @@
   <data name="ServiceSchedulingPageTitle" xml:space="preserve">
     <value>Service Scheduling | Configure | ClearCanvas ImageServer</value>
   </data>
+  <data name="AuthorizationErrorPageTitle" xml:space="preserve">
+    <value>Authorization Error</value>
+  </data>
+  <data name="ErrorPageTitle" xml:space="preserve">
+    <value>ClearCanvas ImageServer</value>
+  </data>
+  <data name="JavascriptRequiredPageTitle" xml:space="preserve">
+    <value>Javascript Required</value>
+  </data>
+  <data name="TimeoutErrorPageTitle" xml:space="preserve">
+    <value>Session timed out</value>
+  </data>
 </root>

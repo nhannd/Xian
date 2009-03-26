@@ -178,6 +178,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Authorization Error.
+        /// </summary>
+        internal static string AuthorizationErrorPageTitle {
+            get {
+                return ResourceManager.GetString("AuthorizationErrorPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Configure.
         /// </summary>
         internal static string Configure {
@@ -259,6 +268,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ClearCanvas ImageServer.
+        /// </summary>
+        internal static string ErrorPageTitle {
+            get {
+                return ResourceManager.GetString("ErrorPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to File System Queue.
         /// </summary>
         internal static string FileSystemQueue {
@@ -282,6 +300,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string FileSystemsPageTitle {
             get {
                 return ResourceManager.GetString("FileSystemsPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Javascript Required.
+        /// </summary>
+        internal static string JavascriptRequiredPageTitle {
+            get {
+                return ResourceManager.GetString("JavascriptRequiredPageTitle", resourceCulture);
             }
         }
         
@@ -507,6 +534,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string StudyStorage {
             get {
                 return ResourceManager.GetString("StudyStorage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Session timed out.
+        /// </summary>
+        internal static string TimeoutErrorPageTitle {
+            get {
+                return ResourceManager.GetString("TimeoutErrorPageTitle", resourceCulture);
             }
         }
         

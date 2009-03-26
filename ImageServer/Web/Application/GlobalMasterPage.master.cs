@@ -49,7 +49,6 @@ using ClearCanvas.ImageServer.Web.Common.Security;
 
 public partial class GlobalMasterPage : System.Web.UI.MasterPage
 {
-
     protected void Page_Load(object sender, EventArgs e)
     {
         if (IsPostBack)
@@ -73,8 +72,6 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
         {
             Username.Text = "unknown";
         }
-
-        //GlobalScriptManager.Scripts.Add(new ScriptReference("~/Scripts/ErrorHandling.js"));
     }
 
     private void AddIE6PngBugFixCSS()
@@ -98,12 +95,12 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
 
     protected void Logout_Click(Object sender, EventArgs e)
     {
-        SessionManager.TerminiateSession();
-        Response.Redirect("~/Pages/Login/Default.aspx");
+        SessionManager.TerminateSession();
     }
 
     protected void GlobalScriptManager_AsyncPostBackError(object sender, AsyncPostBackErrorEventArgs e)
     {
         GlobalScriptManager.AsyncPostBackErrorMessage = ExceptionHandler.ThrowAJAXException(e.Exception);
     }
+
 }

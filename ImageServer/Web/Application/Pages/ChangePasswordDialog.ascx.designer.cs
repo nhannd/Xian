@@ -12,101 +12,119 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login {
     
     
     /// <summary>
-    /// _Default class.
+    /// ChangePasswordDialog class.
     /// </summary>
     /// <remarks>
     /// Auto-generated class.
     /// </remarks>
-    public partial class _Default {
+    public partial class ChangePasswordDialog {
         
         /// <summary>
-        /// CheckJavascript control.
+        /// ModalDialog1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.CheckJavascript CheckJavascript;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.ModalDialog ModalDialog1;
         
         /// <summary>
-        /// GlobalScriptManager control.
+        /// ErrorMessagePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.ScriptManager GlobalScriptManager;
+        protected global::System.Web.UI.WebControls.Panel ErrorMessagePanel;
         
         /// <summary>
-        /// LoginErrorPanel control.
+        /// ErrorMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel LoginErrorPanel;
+        protected global::System.Web.UI.WebControls.Label ErrorMessage;
         
         /// <summary>
-        /// LoginError control.
+        /// Panel1 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LoginError;
+        protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
-        /// UserName control.
+        /// ChangePasswordUsername control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox UserName;
+        protected global::System.Web.UI.WebControls.TextBox ChangePasswordUsername;
         
         /// <summary>
-        /// Password control.
+        /// OriginalPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox Password;
+        protected global::System.Web.UI.WebControls.TextBox OriginalPassword;
         
         /// <summary>
-        /// LoginButton control.
+        /// NewPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button LoginButton;
+        protected global::System.Web.UI.WebControls.TextBox NewPassword;
         
         /// <summary>
-        /// LinkButton1 control.
+        /// ConfirmNewPassword control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.LinkButton LinkButton1;
+        protected global::System.Web.UI.WebControls.TextBox ConfirmNewPassword;
         
         /// <summary>
-        /// ChangePasswordDialog control.
+        /// LoginPasswordChange control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Login.ChangePasswordDialog ChangePasswordDialog;
+        protected global::System.Web.UI.WebControls.CheckBox LoginPasswordChange;
         
         /// <summary>
-        /// PasswordExpiredDialog control.
+        /// Panel2 control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Pages.Login.PasswordExpiredDialog PasswordExpiredDialog;
+        protected global::System.Web.UI.WebControls.Panel Panel2;
+        
+        /// <summary>
+        /// OKButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton OKButton;
+        
+        /// <summary>
+        /// CancelButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton CancelButton;
     }
 }

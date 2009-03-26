@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            Page.Title = App_GlobalResources.Titles.JavascriptRequiredPageTitle;
         }
     }
 }

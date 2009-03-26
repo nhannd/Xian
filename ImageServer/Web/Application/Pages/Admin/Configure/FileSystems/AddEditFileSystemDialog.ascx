@@ -9,7 +9,7 @@
 <ccAsp:ModalDialog ID="ModalDialog" runat="server" Width="450px">
     <ContentTemplate>
     
-        <script>
+        <script type="text/javascript">
     Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
     </script>
     

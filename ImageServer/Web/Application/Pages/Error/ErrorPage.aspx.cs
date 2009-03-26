@@ -30,12 +30,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
             {
                 DescriptionLabel.Text = Context.Items[ImageServerConstants.ContextKeys.ErrorDescription].ToString();
             }
+
+            Page.Title = App_GlobalResources.Titles.ErrorPageTitle;
         }
 
         protected void Logout_Click(Object sender, EventArgs e)
         {
-            SessionManager.TerminiateSession();
-            Response.Redirect("~/Pages/Login/Default.aspx");
+            SessionManager.TerminateSession(true);
         }
 
     }

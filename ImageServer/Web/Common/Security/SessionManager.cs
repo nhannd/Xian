@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         /// </summary>
         /// <remarks>
         /// The session information is set by calling <see cref="InitializeSession"/>. It is null 
-        /// if the <see cref="InitializeSession"/> hasn't been called or <see cref="TerminiateSession"/> has been called.
+        /// if the <see cref="InitializeSession"/> hasn't been called or <see cref="TerminateSession()"/> has been called.
         /// </remarks>
         public static SessionInfo Current
         {
@@ -73,7 +73,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                 // Create a cookie with the encrypted data
                 HttpCookie authCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
 
+                //Create an unencrypted cookie that contains the userid and the expiry time so the browser
+                //can check for session timeout.
+                //HttpCookie loginIdCookie = new HttpCookie("loginid", loginId);
+                HttpCookie expiryCookie = new HttpCookie("ImageServer_" + loginId, token.ExpiryTime.ToString());
+                expiryCookie.Expires = token.ExpiryTime;
+
                 HttpContext.Current.Response.Cookies.Set(authCookie);
+                HttpContext.Current.Response.Cookies.Set(expiryCookie);
             }
 
        }
@@ -81,10 +88,24 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         /// <summary>
         /// Terminates the current session and redirects users to the login page
         /// </summary>
-        public static void TerminiateSession()
+        public static void TerminateSession()
         {
+            TerminateSession(true);
+        }
+
+        /// <summary>
+        /// Terminates the current session and redirects users to the login page
+        /// </summary>
+        public static void TerminateSession(bool redirect)
+        {
+            if (HttpContext.Current.User.Identity.IsAuthenticated && HttpContext.Current.User.Identity is FormsIdentity)
+            {
+                FormsIdentity loginId = (FormsIdentity) HttpContext.Current.User.Identity;
+                HttpContext.Current.Application.Remove(loginId.Name);
+            }
+
             FormsAuthentication.SignOut();
-            FormsAuthentication.RedirectToLoginPage();
+            if(redirect) FormsAuthentication.RedirectToLoginPage();
         }
     }
 }

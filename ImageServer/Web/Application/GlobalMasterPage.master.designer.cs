@@ -46,15 +46,6 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.HtmlControls.HtmlForm MasterForm;
     
     /// <summary>
-    /// CheckJavascript control.
-    /// </summary>
-    /// <remarks>
-    /// Auto-generated field.
-    /// To modify move field declaration from designer file to code-behind file.
-    /// </remarks>
-    protected global::ClearCanvas.ImageServer.Web.Application.Controls.CheckJavascript CheckJavascript;
-    
-    /// <summary>
     /// GlobalScriptManager control.
     /// </summary>
     /// <remarks>
@@ -98,6 +89,15 @@ public partial class GlobalMasterPage {
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.Menu MainMenu;
+    
+    /// <summary>
+    /// UserInformationCell control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.TableCell UserInformationCell;
     
     /// <summary>
     /// UserInformationPanel control.
@@ -179,6 +179,15 @@ public partial class GlobalMasterPage {
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.Panel SpacerPanel;
+    
+    /// <summary>
+    /// SessionTimeout control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::ClearCanvas.ImageServer.Web.Application.Controls.SessionTimeout SessionTimeout;
     
     /// <summary>
     /// DialogsPlaceHolder control.
