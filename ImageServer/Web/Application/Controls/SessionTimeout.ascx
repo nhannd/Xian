@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
 
-    var waitTime = <%= Int32.Parse(ConfigurationManager.AppSettings.Get("ClientSideTimeout")) %> * 60000;
+    var waitTime = <%= Int32.Parse(ConfigurationManager.AppSettings.Get("ClientSideTimeout")) %> * 10000;
     var webServicePath = "<%= ResolveClientUrl("~/Services/SessionService.asmx") %>";
     var redirectPage = "<%= ResolveClientUrl("~/Pages/Error/TimeoutErrorPage.aspx") %>";
     var loginId = "<%= HttpContext.Current.User.Identity.Name %>";
@@ -22,12 +22,20 @@
    function NoActivity() {
                 
         var expiryTime = GetExpiryTime();
-               
+                       
         if(expiryTime == null) {
             window.location = redirectPage;
         } else {
             var now = new Date();
+            var localTime = now.getTime();
+            var localOffset = now.getTimezoneOffset() * 60000;
+            
+            var utc = localTime + localOffset;
+            
+            now = new Date(utc);
+            
             var sessionExpiry = new Date(expiryTime);
+                        
             if(now > sessionExpiry) {
                 window.location = redirectPage;
             } else {

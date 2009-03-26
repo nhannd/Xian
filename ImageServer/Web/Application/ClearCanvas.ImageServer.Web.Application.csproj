@@ -836,6 +836,7 @@
     </Compile>
     <Compile Include="Pages\Studies\SearchPanel.ascx.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Pages\Studies\SearchPanel.ascx.designer.cs">
       <DependentUpon>SearchPanel.ascx</DependentUpon>

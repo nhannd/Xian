@@ -72,6 +72,7 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
         {
             Username.Text = "unknown";
         }
+
     }
 
     private void AddIE6PngBugFixCSS()
