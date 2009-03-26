@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         private readonly IList<BaseImageLevelUpdateCommand> _commands;
         private string _newStudyPath;
-        private readonly string _backupDir = ServerPlatform.GetTempPath();
+        private string _backupDir;
         private readonly ServerPartition _partition;
         private Study _study;
         private Patient _curPatient;
@@ -223,6 +223,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         protected override void OnExecute(IUpdateContext updateContext)
         {
             Statistics.ProcessTime.Start();
+
+            
             Initialize();
             PrintUpdateCommands();
             if (RequiresRollback)
@@ -248,6 +250,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         #region Private Methods
         private void Initialize()
         {
+            _backupDir = ExecutionContext.TempDirectory;
 
             _oldStudyPath = _studyLocation.GetStudyPath();
             _oldStudyInstanceUid = _studyLocation.StudyInstanceUid;

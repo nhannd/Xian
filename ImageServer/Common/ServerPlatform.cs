@@ -13,10 +13,12 @@ namespace ClearCanvas.ImageServer.Common
 {
     public delegate void ErrorDelegate();
 
+
     static public class ServerPlatform
     {
         #region Private Fields
         private static string _dbVersion;
+        private static string _tempDir;
         private static object _mutex = new object();
         #endregion
 
@@ -64,28 +66,46 @@ namespace ClearCanvas.ImageServer.Common
             }
         }
 
-        public static String GetTempPath()
+        /// <summary>
+        /// Gets the path to the temporary folder.
+        /// </summary>
+        public static String TempDirectory
         {
-            return Path.Combine(GetTempFolder(), Path.GetRandomFileName());
-        }
-
-        public static String GetTempFolder()
-        {
-            return Path.Combine(Path.GetPathRoot(Path.GetTempPath()), "temp");
-        }
-
-        public static String GetTempFolder(string operation, params string[] references)
-        {
-            Platform.CheckForEmptyString(operation, "operation");
-            string path = Path.Combine(GetTempFolder(), operation);
-            if (references != null)
+            get
             {
-                foreach (string subFolder in references)
+                if (String.IsNullOrEmpty(_tempDir) || !Directory.Exists(_tempDir))
                 {
-                    path = Path.Combine(path, subFolder);
+                    lock(_mutex)
+                    {
+                        // if specified in the config, use it
+                        if (String.IsNullOrEmpty(ImageServerCommonConfiguration.TemporaryPath))
+                        {
+                            _tempDir =  Path.Combine(Platform.InstallDirectory, "Temp");
+                        }
+                        else
+                        {
+                            _tempDir = ImageServerCommonConfiguration.TemporaryPath;
+                        }
+
+                        // make sure it exists
+                        if (!Directory.Exists(_tempDir))
+                        {
+                            try
+                            {
+                                Directory.CreateDirectory(_tempDir);
+                            }
+                            catch (Exception ex)
+                            {
+                                // cannot create directory here... ask windows for help.
+                                Platform.Log(LogLevel.Error, ex);
+                                _tempDir = Path.GetPathRoot(Path.GetTempPath());
+                            }
+                        }
+                    }
                 }
+
+                return _tempDir;
             }
-            return path;
         }
 
         [Conditional("DEBUG_SIM_ERRORS")]

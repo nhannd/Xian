@@ -93,18 +93,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             
             _src = _context.File.Filename;
             _dest = GetReconcileImageTempPath(_context.File);
+            
             CreateDirectoryCommand mkdirCommand = new CreateDirectoryCommand(Directory.GetParent(_dest).FullName);
             _processor.AddCommand(mkdirCommand);
-            if (_context.IsDuplicate)
-            {
-                CopyFileCommand copyCommand = new CopyFileCommand(_src, _dest);
-                _processor.AddCommand(copyCommand);
-            }
-            else
-            {
-                RenameFileCommand moveCommand = new RenameFileCommand(_src, _dest);
-                _processor.AddCommand(moveCommand);
-            }
+            
+            RenameFileCommand moveCommand = new RenameFileCommand(_src, _dest);
+            _processor.AddCommand(moveCommand);
+            
             if (!_processor.Execute())
             {
                 throw new ApplicationException(

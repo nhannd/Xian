@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Dicom.Utilities.Xml;
 
 namespace ClearCanvas.ImageServer.Common
@@ -80,6 +81,15 @@ namespace ClearCanvas.ImageServer.Common
             get
             {
                 return Settings.Default.EnablePatientsNameAutoCorrection;
+            }
+        }
+
+
+        public static String TemporaryPath
+        {
+            get
+            {
+                return Settings.Default.TemporaryPath;
             }
         }
 

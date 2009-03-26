@@ -45,11 +45,13 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	public abstract class ServerCommand: IServerCommand
 	{
 		#region Private Members
+
 		private string _description;
 		private bool _requiresRollback;
 		private readonly ServerCommandStatistics _stats;
-            
-		#endregion
+	    private IExecutionContext _executionContext;
+
+	    #endregion
 
 		#region Public property
 
@@ -97,6 +99,21 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			get { return _requiresRollback; }
 			set { _requiresRollback = value; }
 		}
+
+
+        /// <summary>
+        /// Gets or sets the execution context for the command.
+        /// </summary>
+        /// <remarks>
+        /// The execution context is managed by the owner.
+        /// </remarks>
+        [XmlIgnore]
+        public IExecutionContext ExecutionContext
+        {
+            get { return _executionContext; }
+            set { _executionContext = value; }
+        }
+
 		#endregion
 
 		#region Events
@@ -136,7 +153,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		protected abstract void OnExecute();
 		protected abstract void OnUndo();
 		#endregion
-	}
+        
+    }
 
     /// <summary>
     /// Abstract class representing commands that tie to a specific context

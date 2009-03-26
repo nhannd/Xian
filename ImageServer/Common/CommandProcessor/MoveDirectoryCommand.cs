@@ -21,8 +21,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private readonly string _src;
         private readonly string _dest;
         private bool _backedup = true;
-        private readonly string _backupSrcDir = ServerPlatform.GetTempPath();
-        private readonly string _backupDestDir = ServerPlatform.GetTempPath();
+        private string _backupSrcDir ;
+        private string _backupDestDir ;
         #endregion
 
         public MoveDirectoryCommand(string src, string dest)
@@ -50,6 +50,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             // by renaming it (if Windows API allow) or copy to a different location other than the current machine? 
             if (Directory.Exists(_src))
             {
+                _backupSrcDir = ExecutionContext.GetUniqueTempDir();
+
                 Platform.Log(LogLevel.Debug, "Backing up original source folder {0}", _src);
                 DirectoryUtility.Copy(_dest, _backupSrcDir);
 
@@ -59,6 +61,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
             if (Directory.Exists(_dest))
             {
+                _backupDestDir = ExecutionContext.GetUniqueTempDir();
                 Platform.Log(LogLevel.Debug, "Backing up original destination folder {0}", _dest);
                 DirectoryUtility.Copy(_dest, _backupDestDir);
                 Platform.Log(LogLevel.Info, "Original destination folder {0} is backed up to {1}", _dest, _backupDestDir);
@@ -93,25 +96,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         public void Dispose()
         {
-            try
-            {
-                Platform.Log(LogLevel.Debug, "Clean up backup directory {0}", _backupSrcDir);
-                DirectoryUtility.DeleteIfExists(_backupSrcDir);
-            }
-            catch (Exception ex)
-            {
-                Platform.Log(LogLevel.Warn, ex, "Unable to clean up backup directory {0}", _backupSrcDir);
-            }
-
-            try
-            {
-                Platform.Log(LogLevel.Debug, "Clean up backup directory {0}", _backupDestDir);
-                DirectoryUtility.DeleteIfExists(_backupDestDir);
-            }
-            catch (Exception ex)
-            {
-                Platform.Log(LogLevel.Warn, ex, "Unable to clean up backup directory {0}", _backupDestDir);
-            }
+            // Backup directories are created inside the context temporary folder.
+            // They will be deleted automatically
         }
 
         #endregion

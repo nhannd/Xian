@@ -86,6 +86,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		{
 			if (_backedUp)
 			{
+			    Platform.Log(LogLevel.Info, "Restoring {0} ...", _path);
                 File.Copy(_backupFile, _path, true);
 			}
 		}

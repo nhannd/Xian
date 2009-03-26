@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		public CreateTempDirectoryCommand()
 			: base("Create Temp Directory", true)
 		{
-			_directory = ServerPlatform.GetTempPath();
+		    _directory = Path.Combine(ServerPlatform.TempDirectory, "Archive");
 		}
 
 		protected override void OnExecute()
