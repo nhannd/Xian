@@ -162,11 +162,23 @@
   <data name="MenuOpenStudies" xml:space="preserve">
     <value>Open</value>
   </data>
+  <data name="MenuRestart" xml:space="preserve">
+    <value>Restart</value>
+  </data>
   <data name="MenuRetrieveStudy" xml:space="preserve">
     <value>Retrieve</value>
   </data>
   <data name="MenuSendStudy" xml:space="preserve">
     <value>Send</value>
+  </data>
+  <data name="MenuServices" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="MenuStart" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="MenuStop" xml:space="preserve">
+    <value>Stop</value>
   </data>
   <data name="MessageActivityMonitorServiceUnavailable" xml:space="preserve">
     <value>The Activity Monitor service is currently unavailable</value>
@@ -215,6 +227,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   <data name="MessageFailedToLaunchSendReceiveActivityComponent" xml:space="preserve">
     <value>Failed to launch the Send/Receive Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator.</value>
   </data>
+  <data name="MessageFailedToRestartService" xml:space="preserve">
+    <value>Failed to restart service. Please check the logs for more details.</value>
+  </data>
   <data name="MessageFailedToRetrieveStudy" xml:space="preserve">
     <value>Failed to initiate a retrieval of the selected items.</value>
   </data>
@@ -226,6 +241,12 @@ Please ensure the ClearCanvas server is running or contact your system administr
   </data>
   <data name="MessageFailedToStartReindex" xml:space="preserve">
     <value>Failed to start reindex operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator.</value>
+  </data>
+  <data name="MessageFailedToStartService" xml:space="preserve">
+    <value>Failed to start service. Please check the logs for more details.</value>
+  </data>
+  <data name="MessageFailedToStopService" xml:space="preserve">
+    <value>Failed to stop service. Please check the logs for more details.</value>
   </data>
   <data name="MessageImportLocalDataStoreServiceNotRunning" xml:space="preserve">
     <value>Failed to import the selected items because the Local Data Store service is not running.
