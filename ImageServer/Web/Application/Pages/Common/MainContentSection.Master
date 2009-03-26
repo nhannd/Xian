@@ -16,3 +16,7 @@
 <asp:Content runat="server" ContentPlaceHolderID="MainContentTitlePlaceHolder">
             <asp:ContentPlaceHolder runat="server" ID="TitlePlaceHolder" />   
 </asp:Content>
+
+<asp:Content runat="server" ContentPlaceHolderID="DialogsPlaceHolder">
+            <asp:ContentPlaceHolder runat="server" ID="DialogsSectionPlaceHolder" />   
+</asp:Content>
