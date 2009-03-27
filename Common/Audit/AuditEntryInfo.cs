@@ -5,8 +5,11 @@ using System.Text;
 
 namespace ClearCanvas.Common.Audit
 {
+	/// <summary>
+	/// Contains all information about an audit log entry.
+	/// </summary>
 	[DataContract]
-	public class AuditLogEntryDetail
+	public class AuditEntryInfo
 	{
 		private string _category;
 		private DateTime _timestamp;
@@ -16,7 +19,17 @@ namespace ClearCanvas.Common.Audit
 		private string _operation;
 		private string _details;
 
-		public AuditLogEntryDetail(string category, DateTime timeStamp, string hostName, string application, string user, string operation, string details)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="category"></param>
+		/// <param name="timeStamp"></param>
+		/// <param name="hostName"></param>
+		/// <param name="application"></param>
+		/// <param name="user"></param>
+		/// <param name="operation"></param>
+		/// <param name="details"></param>
+		public AuditEntryInfo(string category, DateTime timeStamp, string hostName, string application, string user, string operation, string details)
 		{
 			TimeStamp = timeStamp;
 			HostName = hostName;

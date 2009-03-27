@@ -292,7 +292,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Audit\AuditLog.cs" />
-    <Compile Include="Audit\AuditLogEntryDetail.cs" />
+    <Compile Include="Audit\AuditEntryInfo.cs" />
     <Compile Include="Audit\IAuditSink.cs" />
     <Compile Include="Shreds\IShred.cs" />
     <Compile Include="Shreds\QueueProcessor.cs" />

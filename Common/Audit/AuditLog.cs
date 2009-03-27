@@ -7,12 +7,20 @@ using System.Threading;
 
 namespace ClearCanvas.Common.Audit
 {
+	/// <summary>
+	/// Defines an extension point for audit sinks.
+	/// </summary>
 	[ExtensionPoint]
 	public class AuditSinkExtensionPoint : ExtensionPoint<IAuditSink>
 	{
 	}
 
-
+	/// <summary>
+	/// Represents an audit log.
+	/// </summary>
+	/// <remarks>
+	/// 
+	/// </remarks>
 	public class AuditLog
 	{
 		private readonly string _category;
@@ -20,12 +28,21 @@ namespace ClearCanvas.Common.Audit
 
 		#region Constructors
 		
+		/// <summary>
+		/// Constructs an audit log with the specified category.
+		/// </summary>
+		/// <param name="category"></param>
 		public AuditLog(string category)
 			:this(category, new IAuditSink[]{ CreateSink() })
 		{
 		}
 
-		public AuditLog(string category, IAuditSink[] sinks)
+		/// <summary>
+		/// Constructs an audit log with the specified category and sinks.
+		/// </summary>
+		/// <param name="category"></param>
+		/// <param name="sinks"></param>
+		private AuditLog(string category, IAuditSink[] sinks)
 		{
 			_category = category;
 			_sinks = sinks;			
@@ -35,9 +52,14 @@ namespace ClearCanvas.Common.Audit
 		
 		#region Public API
 
+		/// <summary>
+		/// Writes an entry to the audit log containing the specified information.
+		/// </summary>
+		/// <param name="operation"></param>
+		/// <param name="details"></param>
 		public void WriteEntry(string operation, string details)
 		{
-			AuditLogEntryDetail entry = new AuditLogEntryDetail(
+			AuditEntryInfo entry = new AuditEntryInfo(
 				_category,
 				Platform.Time,
 				Dns.GetHostName(),
@@ -63,12 +85,20 @@ namespace ClearCanvas.Common.Audit
 
 		#region Helpers
 
+		/// <summary>
+		/// Gets the identity of the current thread or null if not established.
+		/// </summary>
+		/// <returns></returns>
 		private static string GetUserName()
 		{
 			IPrincipal p = Thread.CurrentPrincipal;
 			return (p != null && p.Identity != null) ? p.Identity.Name : null;
 		}
 
+		/// <summary>
+		/// Creates the a single audit sink via the <see cref="AuditSinkExtensionPoint"/>.
+		/// </summary>
+		/// <returns></returns>
 		private static IAuditSink CreateSink()
 		{
 			try

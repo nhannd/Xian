@@ -2,22 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common.Audit;
-using ClearCanvas.Enterprise.Common.Audit;
 
 namespace ClearCanvas.Enterprise.Core.Audit
 {
 	class AuditLogEntryAssembler
 	{
-		public AuditLogEntry CreateAuditLogEntry(AuditLogEntryDetail detail)
+		public AuditLogEntry CreateAuditLogEntry(AuditEntryInfo info)
 		{
 			return new AuditLogEntry(
-				detail.Category,
-				detail.TimeStamp,
-				detail.HostName,
-				detail.Application,
-				detail.User,
-				detail.Operation,
-				detail.Details);
+				info.Category,
+				info.TimeStamp,
+				info.HostName,
+				info.Application,
+				info.User,
+				info.Operation,
+				info.Details);
 		}
 	}
 }

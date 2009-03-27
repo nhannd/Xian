@@ -10,12 +10,12 @@ namespace ClearCanvas.Enterprise.Common.Audit
 	[DataContract]
 	public class WriteEntryRequest : DataContractBase
 	{
-		public WriteEntryRequest(AuditLogEntryDetail logEntry)
+		public WriteEntryRequest(AuditEntryInfo logEntry)
 		{
 			LogEntry = logEntry;
 		}
 
 		[DataMember]
-		public AuditLogEntryDetail LogEntry;
+		public AuditEntryInfo LogEntry;
 	}
 }
