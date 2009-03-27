@@ -120,12 +120,9 @@
     <Compile Include="LayoutConfigurationPageProvider.cs" />
     <Compile Include="LayoutConfigurationSettings.cs" />
     <Compile Include="LayoutConfigurationSettings.Designer.cs">
-      <DependentUpon>LayoutConfigurationSettings.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Settings.Designer.cs">
+      <DependentUpon>LayoutConfigurationSettings.settings</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="LayoutConfigurationApplicationComponent.cs" />
     <Compile Include="LayoutToolViewEventArgs.cs" />
@@ -162,10 +159,9 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DefaultPatientReconciliationSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="LayoutConfigurationSettings.settings" />
-    <None Include="Settings.settings">
+    <None Include="LayoutConfigurationSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+      <LastGenOutput>LayoutConfigurationSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
