@@ -65,7 +65,7 @@ namespace ClearCanvas.Dicom.Audit
 													ParticipantObjectTypeCodeRoleEnum.SecurityResource,
 													null,
 													uriOfAuditLog,
-													ParticipateObjectIdTypeCodeEnum.URI);
+													ParticipantObjectIdTypeCodeEnum.URI);
 			o.Item = "Security Audit Log";
 
 			// Only one can be included.

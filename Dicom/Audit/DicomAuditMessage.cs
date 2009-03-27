@@ -225,7 +225,7 @@ namespace ClearCanvas.Dicom.Audit
 
 	public partial class ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode
 	{
-		public ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(ParticipateObjectIdTypeCodeEnum e)
+		public ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(ParticipantObjectIdTypeCodeEnum e)
 		{
 			code = ((byte)e).ToString();
 		}
@@ -240,7 +240,7 @@ namespace ClearCanvas.Dicom.Audit
 			ParticipantObjectTypeCodeRoleEnum? role,
 			ParticipantObjectDataLifeCycleEnum? lifeCycle, 
 			string participantObjectId, 
-			ParticipateObjectIdTypeCodeEnum typeCode)
+			ParticipantObjectIdTypeCodeEnum typeCode)
 		{
 			if (type.HasValue)
 			{
@@ -270,40 +270,67 @@ namespace ClearCanvas.Dicom.Audit
 			ParticipantObjectIDTypeCode = new ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(typeCode);
 		}
 
-		public ParticipantObjectIdentificationType(ParticipantObjectTypeCodeEnum? type, 
-			ParticipantObjectTypeCodeRoleEnum? role,
-			ParticipantObjectDataLifeCycleEnum? lifeCycle, 
-			string participantObjectId, 
-			CodedValueType participantObjectIdTypeCode)
+		public ParticipantObjectIdentificationType(AuditParticipantObject item)
 		{
-			if (type.HasValue)
+			if (item.ParticipantObjectTypeCode.HasValue)
 			{
-				ParticipantObjectTypeCode = (byte)type.Value;
+				ParticipantObjectTypeCode = (byte) item.ParticipantObjectTypeCode.Value;
 				ParticipantObjectTypeCodeSpecified = true;
 			}
 			else ParticipantObjectTypeCodeSpecified = false;
 
-			if (role.HasValue)
+			if (item.ParticipantObjectTypeCodeRole.HasValue)
 			{
-				ParticipantObjectTypeCodeRole = (byte)role.Value;
+				ParticipantObjectTypeCodeRole = (byte) item.ParticipantObjectTypeCodeRole.Value;
 				ParticipantObjectTypeCodeRoleSpecified = true;
 			}
 			else
 				ParticipantObjectTypeCodeRoleSpecified = false;
 
-			if (lifeCycle.HasValue)
+			if (item.ParticipantObjectDataLifeCycle.HasValue)
 			{
-				ParticipantObjectDataLifeCycle = (byte)lifeCycle.Value;
+				ParticipantObjectDataLifeCycle = (byte) item.ParticipantObjectDataLifeCycle.Value;
 				ParticipantObjectDataLifeCycleSpecified = true;
 			}
 			else
 				ParticipantObjectDataLifeCycleSpecified = false;
 
+			if (item.ParticipantObjectIdTypeCode.HasValue)
+			{
+				ParticipantObjectIDTypeCode =
+					new ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(item.ParticipantObjectIdTypeCode.Value);
+			}
+			else if (item.ParticipantObjectIdTypeCodedValue != null)
+			{
+				ParticipantObjectIDTypeCode =
+					new ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(item.ParticipantObjectIdTypeCodedValue);
+			}
 
-			ParticipantObjectID = participantObjectId;
+			if (!string.IsNullOrEmpty(item.ParticipantObjectId))
+				ParticipantObjectID = item.ParticipantObjectId;
 
-			ParticipantObjectIDTypeCode =
-				new ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(participantObjectIdTypeCode);
+			if (!string.IsNullOrEmpty(item.ParticipantObjectName))
+				Item = item.ParticipantObjectName;
+
+			ParticipantObjectDescriptionType description = new ParticipantObjectDescriptionType();
+			if (!String.IsNullOrEmpty(item.Accession))
+				description.Accession = new ParticipantObjectDescriptionTypeAccession[] { new ParticipantObjectDescriptionTypeAccession(item.Accession) };
+			if (!String.IsNullOrEmpty(item.MppsUid))
+				description.MPPS = new ParticipantObjectDescriptionTypeMPPS[] { new ParticipantObjectDescriptionTypeMPPS(item.MppsUid) };
+
+			if (item.SopClassList != null && item.SopClassList.Count > 0)
+			{
+				description.SOPClass = new ParticipantObjectDescriptionTypeSOPClass[item.SopClassList.Count];
+
+				for (int i = 0; i < item.SopClassList.Count; i++)
+				{
+					description.SOPClass[i] =
+						new ParticipantObjectDescriptionTypeSOPClass(item.SopClassList[i].UID, item.SopClassList[i].NumberOfInstances);
+				}
+			}
+
+			ParticipantObjectDescription = new ParticipantObjectDescriptionType[] { description };
+
 		}
 	}
 

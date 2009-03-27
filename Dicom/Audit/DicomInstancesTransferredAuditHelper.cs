@@ -79,34 +79,21 @@ namespace ClearCanvas.Dicom.Audit
 		}
 
 		/// <summary>
-		/// Add details about the patient affected.
+		/// Add details of a Patient.
 		/// </summary>
-		/// <param name="patientId"></param>
-		/// <param name="patientName"></param>
-		public void AddPatientParticipantObject(string patientId, string patientName)
+		/// <param name="study"></param>
+		public void AddPatientParticipantObject(AuditPatientParticipantObject patient)
 		{
-			InternalAddPatientParticipantObject(patientId, patientName);
+			InternalAddParticipantObject(patient);
 		}
 
 		/// <summary>
 		/// Add details of a study.
 		/// </summary>
-		/// <param name="studyInstanceUid"></param>
-		public void AddStudyParticipantObject(string studyInstanceUid)
+		/// <param name="study"></param>
+		public void AddStudyParticipantObject(AuditStudyParticipantObject study)
 		{
-			InternalAddStudyParticipantObject(studyInstanceUid);
-		}
-
-		/// <summary>
-		/// Add details of a Study
-		/// </summary>
-		/// <param name="studyInstanceUid">Required Study Instance UID.</param>
-		/// <param name="mppsUid"></param>
-		/// <param name="accessionNumber"></param>
-		/// <param name="sopClasses"></param>
-		public void AddStudyParticipantObject(string studyInstanceUid, string mppsUid, string accessionNumber, AuditSopClass[] sopClasses)
-		{
-			InternalAddStudyParticipantObject(studyInstanceUid, mppsUid, accessionNumber, sopClasses);
+			InternalAddParticipantObject(study);
 		}
 	}
 }

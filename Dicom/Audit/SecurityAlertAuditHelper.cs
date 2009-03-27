@@ -125,6 +125,15 @@ namespace ClearCanvas.Dicom.Audit
 		}
 
 		/// <summary>
+		/// Add details of a Security Alert.
+		/// </summary>
+		/// <param name="study"></param>
+		public void AddPatientParticipantObject(AuditSecurityAlertParticipantObject alert)
+		{
+			InternalAddParticipantObject(alert);
+		}
+
+		/// <summary>
 		/// Method for transforming event code enum into a CodedValueType.
 		/// </summary>
 		/// <param name="eventTypeCode"></param>

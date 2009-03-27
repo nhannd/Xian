@@ -31,10 +31,35 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Audit
 {
+
+	/// <summary>
+	/// Object use for adding SOP Class information to the ParticipatingObjectDescription field in an Audit Message.
+	/// </summary>
+	public class AuditSopClass
+	{
+		private readonly string _uid;
+		private readonly int _numberOfInstances;
+
+		public AuditSopClass(string uid, int numberOfInstances)
+		{
+			_uid = uid;
+			_numberOfInstances = numberOfInstances;
+		}
+
+		public string UID
+		{
+			get { return _uid; }
+		}
+		public int NumberOfInstances
+		{
+			get { return _numberOfInstances; }
+		}
+	}
+
 	/// <summary>
 	/// 
 	/// </summary>
@@ -86,13 +111,16 @@ namespace ClearCanvas.Dicom.Audit
 		protected ParticipantObjectTypeCodeEnum? _typeCode = null;
 		protected ParticipantObjectTypeCodeRoleEnum? _typeCodeRole = null;
 		protected ParticipantObjectDataLifeCycleEnum? _dataLifeCycle = null;
-		protected ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode _objectIdTypeCode;
+		protected ParticipantObjectIdTypeCodeEnum? _objectIdTypeCode;
 		protected string _participantObjectSensitivity = null;
 		protected string _participantObjectId = null;
 		protected string _participantObjectName = null;
 		protected string _participantObjectQuery = null;
 		protected string _participantObjectDetail = null;
 		protected CodedValueType _typeCodeCodedValue;
+		protected List<AuditSopClass> _sopClassList;
+		protected string _accession = null;
+		protected string _mppsUid = null;
 
 		protected AuditParticipantObject()
 		{}
@@ -105,16 +133,6 @@ namespace ClearCanvas.Dicom.Audit
 		{
 			get { return _typeCode;}
 			set { _typeCode = value;}
-		}
-
-		/// <summary>
-		/// Coded value representing the participating object type being audited.  Can be
-		/// used instead of 
-		/// </summary>
-		public CodedValueType ParticipantObjectIDTypeCode
-		{
-			get { return _typeCodeCodedValue; }	
-			set { _typeCodeCodedValue = value; }	
 		}
 
 		/// <summary>
@@ -144,12 +162,21 @@ namespace ClearCanvas.Dicom.Audit
 		/// From DICOM Supplement 95:
 		/// Values may be drawn from those listed in RFC 3881 and DCID (ccc5),as specified in the individual message descriptions.
 		/// </remarks>
-		public ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode  ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode
+		public ParticipantObjectIdTypeCodeEnum? ParticipantObjectIdTypeCode
 		{
 			get { return _objectIdTypeCode; }
 			set { _objectIdTypeCode = value; }
 		}
 
+		/// <summary>
+		/// Coded value representing the participating object type being audited.  Can be
+		/// used instead of 
+		/// </summary>
+		public CodedValueType ParticipantObjectIdTypeCodedValue
+		{
+			get { return _typeCodeCodedValue; }
+			set { _typeCodeCodedValue = value; }
+		}
 		/// <summary>
 		/// Denotes policy-defined sensitivity for the Participant Object ID
 		/// such as VIP, HIV status, mental health status, or similar topics.
@@ -197,15 +224,91 @@ namespace ClearCanvas.Dicom.Audit
 		{
 			get { return _participantObjectDetail; }
 		}
+
+		public List<AuditSopClass> SopClassList
+		{
+			get { return _sopClassList; }
+		}
+
+		/// <summary>
+		/// Accession Number
+		/// </summary>
+		public string Accession
+		{
+			get { return _accession; }
+		}
+
+		/// <summary>
+		/// MPPS UID
+		/// </summary>
+		public string MppsUid
+		{
+			get { return _mppsUid; }
+		}
 	}
 
-	public class PatientAuditParticipantObject : AuditParticipantObject
+	public class AuditPatientParticipantObject : AuditParticipantObject
 	{
+		public AuditPatientParticipantObject(string patientName, string patientId)
+		{
+			Platform.CheckForNullReference(patientName, "patientName");
+			Platform.CheckForNullReference(patientId, "patientId");
 
+			ParticipantObjectTypeCode = ParticipantObjectTypeCodeEnum.Person;
+			ParticipantObjectTypeCodeRole = ParticipantObjectTypeCodeRoleEnum.Patient;
+			ParticipantObjectIdTypeCode = ParticipantObjectIdTypeCodeEnum.PatientNumber;
+			_participantObjectId = patientId;
+			_participantObjectName = patientName;			
+		}
 	}
 
-	public class StudyAuditParticipantObject : AuditParticipantObject
+	public class AuditStudyParticipantObject : AuditParticipantObject
 	{
-		
+		public AuditStudyParticipantObject(string studyInstanceUid)
+		{
+			Platform.CheckForNullReference(studyInstanceUid, "studyInstanceUid");
+			ParticipantObjectIdTypeCodedValue = CodedValueType.StudyInstanceUID;
+			_participantObjectId = studyInstanceUid;
+		}
+
+		public AuditStudyParticipantObject(string studyInstanceUid, string accession)
+		{
+			Platform.CheckForNullReference(studyInstanceUid, "studyInstanceUid");
+			Platform.CheckForNullReference(accession, "accession");
+
+			ParticipantObjectIdTypeCodedValue = CodedValueType.StudyInstanceUID;
+			_participantObjectId = studyInstanceUid;
+			_accession = accession;
+		}
+
+		public AuditStudyParticipantObject(string studyInstanceUid, string accession, string mppsUid)
+		{
+			Platform.CheckForNullReference(studyInstanceUid, "studyInstanceUid");
+			Platform.CheckForNullReference(accession, "accession");
+			Platform.CheckForNullReference(mppsUid, "mppsUid");
+
+			ParticipantObjectIdTypeCodedValue = CodedValueType.StudyInstanceUID;
+			_participantObjectId = studyInstanceUid;
+			_accession = accession;
+			_mppsUid = mppsUid;
+		}
+
+		public void AddSopClass(string uid, int numberOfInstances)
+		{
+			SopClassList.Add(new AuditSopClass(uid,numberOfInstances));
+		}
+	}
+
+	public class AuditSecurityAlertParticipantObject : AuditParticipantObject
+	{
+		public AuditSecurityAlertParticipantObject(ParticipantObjectTypeCodeRoleEnum role, ParticipantObjectIdTypeCodeEnum objectIdType, string participantObjectId)
+		{
+			Platform.CheckForNullReference(participantObjectId,"participantObjectId");
+
+			ParticipantObjectTypeCode = ParticipantObjectTypeCodeEnum.SystemObject;
+			ParticipantObjectTypeCodeRole = role;
+			ParticipantObjectIdTypeCode = objectIdType;
+			_participantObjectId = participantObjectId;
+		}
 	}
 }

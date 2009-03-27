@@ -43,13 +43,12 @@ namespace ClearCanvas.Dicom.Audit
 		}
 
 		/// <summary>
-		/// Add details about the patient affected.
+		/// Add details of a Patient.
 		/// </summary>
-		/// <param name="patientId"></param>
-		/// <param name="patientName"></param>
-		public void AddPatientParticipantObject(string patientId, string patientName)
+		/// <param name="study"></param>
+		public void AddPatientParticipantObject(AuditPatientParticipantObject patient)
 		{
-			InternalAddPatientParticipantObject(patientId, patientName);
+			InternalAddParticipantObject(patient);
 		}
 	}
 }

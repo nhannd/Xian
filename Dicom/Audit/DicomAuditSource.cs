@@ -65,7 +65,6 @@ namespace ClearCanvas.Dicom.Audit
 		private readonly string _enterpriseSiteId;
 		private readonly string _auditSourceId;
 		private readonly AuditSourceTypeCodeEnum? _auditSourceTypeCode;
-		private readonly NetworkAccessPointTypeEnum? _networkAccessPointType;
 
 		/// <summary>
 		/// Constructor.

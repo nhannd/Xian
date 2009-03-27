@@ -43,30 +43,6 @@ using ClearCanvas.Dicom.Network;
 namespace ClearCanvas.Dicom.Audit
 {
 	/// <summary>
-	/// Object use for adding SOP Class information to the ParticipatingObjectDescription field in an Audit Message.
-	/// </summary>
-	public class AuditSopClass
-	{
-		private readonly string _uid;
-		private readonly int _numberOfInstances;
-
-		public AuditSopClass(string uid, int numberOfInstances)
-		{
-			_uid = uid;
-			_numberOfInstances = numberOfInstances;
-		}
-
-		public string UID
-		{
-			get { return _uid; }
-		}
-		public int NumberOfInstances
-		{
-			get { return _numberOfInstances; }
-		}
-	}
-
-	/// <summary>
 	/// Base class for Audit helpers.
 	/// </summary>
 	public abstract class DicomAuditHelper
@@ -247,53 +223,11 @@ namespace ClearCanvas.Dicom.Audit
 		{
 			_auditSourceList.Add(new AuditSourceIdentificationType(auditSource));
 		}
+		
+		protected void InternalAddParticipantObject(AuditParticipantObject study)
+		{
+			ParticipantObjectIdentificationType o = new ParticipantObjectIdentificationType(study);
 			
-		protected void InternalAddPatientParticipantObject(string patientId, string patientName)
-		{
-			ParticipantObjectIdentificationType o = new ParticipantObjectIdentificationType(ParticipantObjectTypeCodeEnum.Person,
-																							ParticipantObjectTypeCodeRoleEnum.Patient,
-																							null, patientId,
-																							ParticipateObjectIdTypeCodeEnum.PatientNumber);
-			o.Item = patientName;
-			_participantObjectList.Add(o);
-		}
-
-
-		protected void InternalAddStudyParticipantObject(string studyInstanceUid)
-		{
-			ParticipantObjectIdentificationType o = new ParticipantObjectIdentificationType(ParticipantObjectTypeCodeEnum.SystemObject,
-																							ParticipantObjectTypeCodeRoleEnum.Report,
-																							ParticipantObjectDataLifeCycleEnum.OriginationCreation,
-																							studyInstanceUid,
-																							CodedValueType.StudyInstanceUID);
-			_participantObjectList.Add(o);
-		}
-
-		protected void InternalAddStudyParticipantObject(string studyInstanceUid, string mppsUid, string accessionNumber, AuditSopClass[] sopClasses)
-		{
-			ParticipantObjectIdentificationType o = new ParticipantObjectIdentificationType(ParticipantObjectTypeCodeEnum.SystemObject,
-																							ParticipantObjectTypeCodeRoleEnum.Report,
-																							ParticipantObjectDataLifeCycleEnum.OriginationCreation,
-																							studyInstanceUid,
-																							CodedValueType.StudyInstanceUID);
-			ParticipantObjectDescriptionType description = new ParticipantObjectDescriptionType();
-			if (!String.IsNullOrEmpty(accessionNumber))
-				description.Accession = new ParticipantObjectDescriptionTypeAccession[] { new ParticipantObjectDescriptionTypeAccession(accessionNumber) };
-			if (!String.IsNullOrEmpty(mppsUid))
-				description.MPPS = new ParticipantObjectDescriptionTypeMPPS[] { new ParticipantObjectDescriptionTypeMPPS(mppsUid) };
-
-			if (sopClasses != null)
-			{
-				description.SOPClass = new ParticipantObjectDescriptionTypeSOPClass[sopClasses.Length];
-				for (int i = 0; i < sopClasses.Length; i++)
-				{
-					description.SOPClass[i] =
-						new ParticipantObjectDescriptionTypeSOPClass(sopClasses[i].UID, sopClasses[i].NumberOfInstances);
-				}
-			}
-
-			o.ParticipantObjectDescription = new ParticipantObjectDescriptionType[] { description };
-
 			_participantObjectList.Add(o);
 		}
 

@@ -52,8 +52,7 @@ namespace ClearCanvas.Dicom.Audit
 	{
 		public BeginTransferringDicomInstancesAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
 			AssociationParameters parms,
-			string patientName,
-			string patientId)
+			AuditPatientParticipantObject patient)
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.BeginTransferringDICOMInstances;
@@ -65,7 +64,7 @@ namespace ClearCanvas.Dicom.Audit
 
 			InternalAddActiveDicomParticipant(parms);
 
-			InternalAddPatientParticipantObject(patientId, patientName);
+			InternalAddParticipantObject(patient);
 		}
 
 		/// <summary>
@@ -80,22 +79,10 @@ namespace ClearCanvas.Dicom.Audit
 		/// <summary>
 		/// Add details of a study.
 		/// </summary>
-		/// <param name="studyInstanceUid"></param>
-		public void AddStudyParticipantObject(string studyInstanceUid)
+		/// <param name="study"></param>
+		public void AddStudyParticipantObject(AuditStudyParticipantObject study)
 		{
-			InternalAddStudyParticipantObject(studyInstanceUid);
-		}
-
-		/// <summary>
-		/// Add details of a Study
-		/// </summary>
-		/// <param name="studyInstanceUid">Required Study Instance UID.</param>
-		/// <param name="mppsUid"></param>
-		/// <param name="accessionNumber"></param>
-		/// <param name="sopClasses"></param>
-		public void AddStudyParticipantObject(string studyInstanceUid, string mppsUid, string accessionNumber, AuditSopClass[] sopClasses)
-		{
-			InternalAddStudyParticipantObject(studyInstanceUid, mppsUid, accessionNumber, sopClasses);
+			InternalAddParticipantObject(study);
 		}
 	}
 }

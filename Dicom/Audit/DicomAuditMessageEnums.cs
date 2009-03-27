@@ -312,7 +312,7 @@ namespace ClearCanvas.Dicom.Audit
 	/// <summary>
 	///  Describes the identifier that is contained in Participant Object ID.
 	/// </summary>
-	public enum ParticipateObjectIdTypeCodeEnum
+	public enum ParticipantObjectIdTypeCodeEnum
 	{
 		///<summary>
 		/// Medical Record Number (1) for use with <see cref="ParticipantObjectTypeCodeEnum.Person"/>

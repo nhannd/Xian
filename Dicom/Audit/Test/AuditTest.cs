@@ -57,9 +57,12 @@ namespace ClearCanvas.Dicom.Audit.Test
         		new QueryAuditHelper(new DicomAuditSource("testApplication"), EventIdentificationTypeEventOutcomeIndicator.Success, parms);
 
 			helper.AddOtherParticipant(new AuditPersonActiveParticipant("testUser","test@test","Test Name"));
-        	helper.AddPatientParticipantObject("id1234", "Test Patient");
-        	helper.AddStudyParticipantObject("1.2.3.4.5");
-			helper.AddStudyParticipantObject("1.2.3.4.5","1.2.3","A1234",new AuditSopClass[] {new AuditSopClass("1.2.3",5)});
+        	helper.AddPatientParticipantObject(new AuditPatientParticipantObject("id1234", "Test Patient"));
+        	helper.AddStudyParticipantObject(new AuditStudyParticipantObject("1.2.3.4.5"));
+
+			AuditStudyParticipantObject study = new AuditStudyParticipantObject("1.2.3.4.5", "1.2.3", "A1234");
+        	study.AddSopClass("1.2.3", 5);
+			helper.AddStudyParticipantObject(study);
 
         	string output = helper.Serialize(true);
 
