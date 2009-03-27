@@ -34,63 +34,61 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Dicom.Audit
 {
 	/// <summary>
-	/// Enum for use with <see cref="ApplicationActivityAuditHelper"/>.
+	/// Enum for use with <see cref="UserAuthenticationAuditHelper"/>.
 	/// </summary>
-	public enum ApplicationActivityType
+	public enum UserAuthenticationEventType
 	{
-		ApplicationStarted,
-		ApplicationStopped
+		Login,
+		Logout
 	}
 
 	/// <summary>
-	/// Helper for Application Activity Audit Log
+	/// User Authentication Audit Message
 	/// </summary>
 	/// <remarks>
-	/// This audit message describes the event of an Application Entity starting or stoping.
+	/// <para>
+	/// This message describes the event of a user has attempting to log on or log off, whether successful or not.
+	/// No Participant Objects are needed for this message.
+	/// </para>
 	/// </remarks>
-	public class ApplicationActivityAuditHelper : DicomAuditHelper
+	public class UserAuthenticationAuditHelper : DicomAuditHelper
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="auditSource"></param>
-		/// <param name="outcome"></param>
-		/// <param name="type"></param>
-		/// <param name="idOfApplicationStarted">Add the ID of the Application Started, should be called once.</param>
-		public ApplicationActivityAuditHelper(DicomAuditSource auditSource,
-			EventIdentificationTypeEventOutcomeIndicator outcome, 
-			ApplicationActivityType type,
-			AuditProcessActiveParticipant idOfApplicationStarted)
+		public UserAuthenticationAuditHelper(DicomAuditSource auditSource,
+			EventIdentificationTypeEventOutcomeIndicator outcome, UserAuthenticationEventType type)
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.ApplicationActivity;
+			AuditMessage.EventIdentification.EventID = CodedValueType.UserAuthentication;
 			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
 
 			InternalAddAuditSource(auditSource);
 
-			if (type == ApplicationActivityType.ApplicationStarted)
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStart };
+			if (type == UserAuthenticationEventType.Login)
+				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.Login };
 			else
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStop };
-
-			idOfApplicationStarted.UserIsRequestor = false;
-			idOfApplicationStarted.RoleIdCode = CodedValueType.Application;
-
-			InternalAddActiveParticipant(idOfApplicationStarted);
-
+				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.Logout };
 		}
 
 		/// <summary>
-		/// Add the ID of person or process that started or stopped the Application.  Can be called multiple times.
+		/// The identity of the person authenticated if successful. Asserted identity if not successful.
 		/// </summary>
 		/// <param name="participant">The participant.</param>
 		public void AddUserParticipant(AuditActiveParticipant participant)
 		{
-			participant.RoleIdCode = CodedValueType.ApplicationLauncher;
 			participant.UserIsRequestor = true;
+			InternalAddActiveParticipant(participant);
+		}
 
+		/// <summary>
+		/// The identity of the node that is authenticating the user. This is to
+		/// identify another node that is performing enterprise wide
+		/// authentication, e.g. Kerberos authentication.
+		/// </summary>
+		/// <param name="participant">The participant.</param>
+		public void AddNode(AuditProcessActiveParticipant participant)
+		{
+			participant.UserIsRequestor = false;
 			InternalAddActiveParticipant(participant);
 		}
 	}

@@ -30,42 +30,51 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.Dicom.Audit
 {
 	/// <summary>
-	/// DICOM Instances Accessed Audit Message Helper
+	/// DICOM Instances Transferred
 	/// </summary>
 	/// <remarks>
-	/// This message describes the event of DICOM SOP Instances being viewed, utilized, updated, or deleted.
-	/// This event is summarized at the level of studies. This message may only include information about a
-	/// single patient.
+	/// <para>
+	/// This message describes the event of the completion of transferring DICOM SOP Instances between two
+	/// Application Entities. This message may only include information about a single patient.
+	/// </para>
+	/// <para>
+	/// Note: This message may have been preceded by a Begin Transferring Instances message. The Begin
+	/// Transferring Instances message conveys the intent to store SOP Instances, while the Instances
+	/// Transferred message records the completion of the transfer. Any disagreement between the two
+	/// messages might indicate a potential security breach.
+	/// </para>
 	/// </remarks>
-	public class DicomInstancesAccessedAuditHelper : DicomAuditHelper
+	public class DicomInstancesTransferredAuditHelper : DicomAuditHelper
 	{
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public DicomInstancesAccessedAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
-			EventIdentificationTypeEventActionCode action)
+		public DicomInstancesTransferredAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
+			EventIdentificationTypeEventActionCode action,
+			AssociationParameters parms)
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.DICOMInstancesAccessed;
+			AuditMessage.EventIdentification.EventID = CodedValueType.DICOMInstancesTransferred;
 			AuditMessage.EventIdentification.EventActionCode = action;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
+
+			InternalAddActiveDicomParticipant(parms);
 
 			InternalAddAuditSource(auditSource);
 		}
 
 		/// <summary>
-		/// The identity of the person or process manipulating the data. If both
-		/// the person and the process are known, both shall be included.
+		/// (Optional) The identity of any other participants that might be involved andknown, especially third parties that are the requestor
 		/// </summary>
 		/// <param name="participant">The participant</param>
-		public void AddUser(AuditActiveParticipant participant)
+		public void AddOtherParticipants(AuditActiveParticipant participant)
 		{
-			participant.UserIsRequestor = true;
 			InternalAddActiveParticipant(participant);
 		}
 

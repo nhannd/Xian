@@ -243,16 +243,11 @@ namespace ClearCanvas.Dicom.Audit
 			}
 		}
 
-		protected void InternalAddAuditSource(string enterpriseId, string sourceId, AuditSourceTypeCodeEnum e)
+		protected void InternalAddAuditSource(DicomAuditSource auditSource)
 		{
-			_auditSourceList.Add(new AuditSourceIdentificationType(enterpriseId,sourceId,e));
+			_auditSourceList.Add(new AuditSourceIdentificationType(auditSource));
 		}
-
-		protected void InternalAddAuditSource(string sourceId)
-		{
-			_auditSourceList.Add(new AuditSourceIdentificationType(sourceId));
-		}
-
+			
 		protected void InternalAddPatientParticipantObject(string patientId, string patientName)
 		{
 			ParticipantObjectIdentificationType o = new ParticipantObjectIdentificationType(ParticipantObjectTypeCodeEnum.Person,
@@ -302,10 +297,10 @@ namespace ClearCanvas.Dicom.Audit
 			_participantObjectList.Add(o);
 		}
 
-		protected void InternalAddActiveParticipant(CodedValueType roleId, string userId, string alternateUserId, string userName)
+		protected void InternalAddActiveParticipant(AuditActiveParticipant participant)
+
 		{
-			_participantList.Add(
-				new AuditMessageActiveParticipant(null, userId, null, userName, ProcessId, NetworkAccessPointTypeEnum.IpAddress, null));
+			_participantList.Add(new AuditMessageActiveParticipant(participant));
 		}
 		#endregion
 

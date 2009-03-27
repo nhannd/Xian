@@ -35,19 +35,23 @@ namespace ClearCanvas.Dicom.Audit
 {
 	public class DataImportAuditHelper : DicomAuditHelper
 	{
-			/// <summary>
+		/// <summary>
 		/// Constructor.
 		/// </summary>
+		/// <param name="auditSource">The source of the audit message.</param>
 		/// <param name="outcome">The outcome (success or failure)</param>
 		/// <param name="importDescriptor">Any machine readable identifications on the media, such as media serial number, volume label, 
 		/// DICOMDIR SOP Instance UID.</param>
-		public DataImportAuditHelper(EventIdentificationTypeEventOutcomeIndicator outcome, string importDescriptor)
+		public DataImportAuditHelper(DicomAuditSource auditSource, 
+			EventIdentificationTypeEventOutcomeIndicator outcome, string importDescriptor)
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.Import;
 			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.C;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
+
+			InternalAddAuditSource(auditSource);
 
 			// Add the Destination
 			_participantList.Add(
@@ -60,12 +64,12 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="userId">The identity of the local user or process importer the data. If both
 		/// are known, then two active participants shall be included (both the
 		/// person and the process).</param>
-		/// <param name="userName">The name of the user</param>
-		/// <param name="userIsRequestor">Flag telling if the exporter is a user (as opposed to a process)</param>
-		public void AddImporter(string userId, string userName, bool userIsRequestor)
+		/// <param name="participant">The active participant</param>
+		public void AddImporter(AuditActiveParticipant participant)
 		{
-			_participantList.Add(
-			new AuditMessageActiveParticipant(CodedValueType.SourceMedia, userId, null, userName, ProcessId, NetworkAccessPointTypeEnum.IpAddress, userIsRequestor));
+			participant.UserIsRequestor = true;
+			participant.RoleIdCode = CodedValueType.Destination;
+			InternalAddActiveParticipant(participant);
 		}
 
 		/// <summary>
@@ -73,7 +77,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// </summary>
 		/// <param name="patientId"></param>
 		/// <param name="patientName"></param>
-		public void AddPatientParticipant(string patientId, string patientName)
+		public void AddPatientParticipantObject(string patientId, string patientName)
 		{
 			InternalAddPatientParticipantObject(patientId, patientName);
 		}
@@ -82,7 +86,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// Add details of a study.
 		/// </summary>
 		/// <param name="studyInstanceUid"></param>
-		public void AddStudyParticipant(string studyInstanceUid)
+		public void AddStudyParticipantObject(string studyInstanceUid)
 		{
 			InternalAddStudyParticipantObject(studyInstanceUid);
 		}
@@ -94,7 +98,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="mppsUid"></param>
 		/// <param name="accessionNumber"></param>
 		/// <param name="sopClasses"></param>
-		public void AddStudyParticipant(string studyInstanceUid, string mppsUid, string accessionNumber, AuditSopClass[] sopClasses)
+		public void AddStudyParticipantObject(string studyInstanceUid, string mppsUid, string accessionNumber, AuditSopClass[] sopClasses)
 		{
 			InternalAddStudyParticipantObject(studyInstanceUid, mppsUid, accessionNumber, sopClasses);
 		}

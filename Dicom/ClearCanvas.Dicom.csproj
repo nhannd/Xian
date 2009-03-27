@@ -175,6 +175,7 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Audit\AuditActiveParticipant.cs" />
     <Compile Include="Audit\BeginTransferringDicomInstancesAuditHelper.cs" />
     <Compile Include="Audit\ApplicationActivityAuditHelper.cs" />
     <Compile Include="Audit\DataExportAuditHelper.cs" />
@@ -184,9 +185,18 @@
     <Compile Include="Audit\DicomAuditMessage.cs" />
     <Compile Include="Audit\DicomAuditMessage.gen.cs" />
     <Compile Include="Audit\DicomAuditMessageEnums.cs" />
+    <Compile Include="Audit\DicomAuditSource.cs" />
     <Compile Include="Audit\DicomInstancesAccessedAuditHelper.cs" />
-    <Compile Include="Audit\QueryAuditLogHelper.cs" />
+    <Compile Include="Audit\DicomInstancesTransferredAuditHelper.cs" />
+    <Compile Include="Audit\DicomStudyDeletedAuditHelper.cs" />
+    <Compile Include="Audit\NetworkEntryAuditHelper.cs" />
+    <Compile Include="Audit\OrderRecordAuditHelper.cs" />
+    <Compile Include="Audit\PatientRecordAuditHelper.cs" />
+    <Compile Include="Audit\ProcedureRecordAuditHelper.cs" />
+    <Compile Include="Audit\QueryAuditHelper.cs" />
+    <Compile Include="Audit\SecurityAlertAuditHelper.cs" />
     <Compile Include="Audit\Test\AuditTest.cs" />
+    <Compile Include="Audit\UserAuthenticationAuditHelper.cs" />
     <Compile Include="Codec\DicomCodecException.cs" />
     <Compile Include="Codec\DicomCodecFactoryExtensionPoint.cs" />
     <Compile Include="Codec\DicomCodecRegistry.cs" />

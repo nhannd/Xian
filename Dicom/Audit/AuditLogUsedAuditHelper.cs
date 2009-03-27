@@ -43,13 +43,34 @@ namespace ClearCanvas.Dicom.Audit
 	/// </remarks>
 	public class AuditLogUsedAuditHelper : DicomAuditHelper
 	{
-		public AuditLogUsedAuditHelper(EventIdentificationTypeEventOutcomeIndicator outcome)
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="auditSource">The source of the audit</param>
+		/// <param name="outcome">The outcome</param>
+		/// <param name="uriOfAuditLog">Add the Identity of the Audit Log.  </param>
+		public AuditLogUsedAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
+			string uriOfAuditLog)
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.AuditLogUsed;
 			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.R;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
+
+			InternalAddAuditSource(auditSource);
+
+			ParticipantObjectIdentificationType o =
+			new ParticipantObjectIdentificationType(ParticipantObjectTypeCodeEnum.SystemObject,
+													ParticipantObjectTypeCodeRoleEnum.SecurityResource,
+													null,
+													uriOfAuditLog,
+													ParticipateObjectIdTypeCodeEnum.URI);
+			o.Item = "Security Audit Log";
+
+			// Only one can be included.
+			_participantObjectList.Clear();
+			_participantObjectList.Add(o);
 		}
 
 		/// <summary>
@@ -59,28 +80,10 @@ namespace ClearCanvas.Dicom.Audit
 		/// </remarks>
 		/// <param name="userId">The person or process accessing the audit trail. If both are known,
 		/// then two active participants shall be included (both the person and the process).</param>
-		public void AddParticipant(string userId)
+		public void AddActiveParticipant(AuditActiveParticipant participant)
 		{
-			InternalAddActiveParticipant(CodedValueType.AuditLogUsed, userId, null, null);
-		}
-
-		/// <summary>
-		/// Add the Identity of the Audit Log.  Should only be called once.
-		/// </summary>
-		/// <param name="uriOfLog">The URI of the Audit Log</param>
-		public void AddAuditLogIdentity(string uriOfLog)
-		{
-			ParticipantObjectIdentificationType o =
-				new ParticipantObjectIdentificationType(ParticipantObjectTypeCodeEnum.SystemObject,
-				                                        ParticipantObjectTypeCodeRoleEnum.SecurityResource,
-				                                        null,
-				                                        uriOfLog,
-				                                        ParticipateObjectIdTypeCodeEnum.URI);
-			o.Item = "Security Audit Log";
-
-			// Only one can be included.
-			_participantObjectList.Clear();
-			_participantObjectList.Add(o);
+			participant.UserIsRequestor = true;
+			InternalAddActiveParticipant(participant);
 		}
 	}
 }

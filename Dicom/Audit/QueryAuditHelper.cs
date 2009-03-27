@@ -35,13 +35,42 @@ using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.Dicom.Audit
 {
-	public class QueryAuditLogHelper : DicomAuditHelper
+	/// <summary>
+	/// Query Audit Message Helper
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// This message describes the event of a Query being issued or received. The message does not record the
+	/// response to the query, but merely records the fact that a query was issued. For example, this would report
+	/// queries using the DICOM SOP Classes:
+	/// <list>
+	/// <item>
+	/// a. Modality Worklist
+	/// </item>
+	/// <item>
+	/// b. General Purpose Worklist
+	/// </item>
+	/// <item>
+	/// c. Composite Instance Query
+	/// </item>
+	/// </list>
+	/// </para>
+	/// <para>
+	/// Notes: 1. The response to a query may result in one or more Instances Transferred or Instances Accessed
+	/// messages, depending on what events transpire after the query. If there were security-related failures,
+	/// such as access violations, when processing a query, those failures should show up in other audit
+	/// messages, such as a Security Alert message.
+	/// </para>
+	/// <para>
+	/// 2. Non-DICOM queries may also be captured by this message. The Participant Object ID Type Code,
+	/// the Participant Object ID, and the Query fields may have values related to such non-DICOM queries.
+	/// </para>
+	/// </remarks>
+	public class QueryAuditHelper : DicomAuditHelper
 	{
-		public QueryAuditLogHelper(EventIdentificationTypeEventOutcomeIndicator outcome, 
-			AssociationParameters parms,
-			string enterpriseId,
-			string applicationId,
-			AuditSourceTypeCodeEnum sourceCode)
+		public QueryAuditHelper(DicomAuditSource auditSource,
+			EventIdentificationTypeEventOutcomeIndicator outcome, 
+			AssociationParameters parms)
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.Query;
@@ -51,46 +80,31 @@ namespace ClearCanvas.Dicom.Audit
 
 			InternalAddActiveDicomParticipant(parms);
 
-			InternalAddAuditSource(enterpriseId, applicationId, sourceCode);
-		}
-
-		public QueryAuditLogHelper(EventIdentificationTypeEventOutcomeIndicator outcome,
-			AssociationParameters parms,
-			string applicationId)
-		{
-			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.Query;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
-			AuditMessage.EventIdentification.EventDateTime = DateTime.Now.ToUniversalTime();
-			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
-
-			InternalAddActiveDicomParticipant(parms);
-
-			InternalAddAuditSource(applicationId);
+			InternalAddAuditSource(auditSource);
 		}
 
 		/// <summary>
-		/// Add the ID of person or process that started or stopped the Application.  Can be called multiple times.
+		/// The identity of any other participants that might be involved and
+		/// known, especially third parties that are the requestor
 		/// </summary>
-		/// <param name="userId">The user ID</param>
-		/// <param name="alternateUserId">Alternate User Id, can be null</param>
-		/// <param name="userName">The user name</param>
-		public void AddParticipant(string userId, string alternateUserId, string userName)
+		/// <param name="participant">The participant to add.</param>
+		public void AddOtherParticipant(AuditActiveParticipant participant)
 		{
-			InternalAddActiveParticipant(null, userId, alternateUserId, userName);
+			participant.UserIsRequestor = true;
+			InternalAddActiveParticipant(participant);
 		}
 
-		public void AddPatientParticipant(string patientId, string patientName)
+		public void AddPatientParticipantObject(string patientId, string patientName)
 		{
 			InternalAddPatientParticipantObject(patientId, patientName);
 		}
 
-		public void AddStudyParticipant(string studyInstanceUid)
+		public void AddStudyParticipantObject(string studyInstanceUid)
 		{
 			InternalAddStudyParticipantObject(studyInstanceUid);
 		}
 
-		public void AddStudyParticipant(string studyInstanceUid, string mppsUid, string accessionNumber, AuditSopClass[] sopClasses)
+		public void AddStudyParticipantObject(string studyInstanceUid, string mppsUid, string accessionNumber, AuditSopClass[] sopClasses)
 		{
 			InternalAddStudyParticipantObject(studyInstanceUid, mppsUid, accessionNumber, sopClasses);
 		}

@@ -109,6 +109,40 @@ namespace ClearCanvas.Dicom.Audit
 		public AuditMessageActiveParticipant()
 		{}
 
+		public AuditMessageActiveParticipant(AuditActiveParticipant participant)
+		{
+			if (participant.RoleIdCode != null)
+			{
+				RoleIDCode = new CodedValueType[1];
+				RoleIDCode[0] = participant.RoleIdCode;
+			}
+			if (participant.UserIsRequestor.HasValue)
+			{
+				UserIsRequestor = participant.UserIsRequestor.Value;
+			}
+			if (participant.UserId != null)
+			{
+				UserID = participant.UserId;
+			}
+			if (participant.AlternateUserId != null)
+			{
+				AlternativeUserID = participant.AlternateUserId;
+			}
+			if (participant.UserName != null)
+				UserName = participant.UserName;
+
+			if (participant.NetworkAccessPointId != null)
+				NetworkAccessPointID = participant.NetworkAccessPointId;
+
+			if (participant.NetworkAccessPointType.HasValue)
+			{
+				NetworkAccessPointTypeCode = (byte) participant.NetworkAccessPointType.Value;
+				NetworkAccessPointTypeCodeSpecified = true;
+			}
+			else
+				NetworkAccessPointTypeCodeSpecified = false;
+		}
+
 		public AuditMessageActiveParticipant(CodedValueType roleId, string _userIDField, string alternateUserId, string _userNameField, string _networkAccessPointIDField, NetworkAccessPointTypeEnum? _networkAccessPointTypeCode, bool? userIsRequestor)
 		{
 			if (roleId != null)
@@ -160,13 +194,17 @@ namespace ClearCanvas.Dicom.Audit
 		public AuditSourceIdentificationType()
 		{}
 
-		public AuditSourceIdentificationType(string enterpriseId, string sourceId, AuditSourceTypeCodeEnum code)
+		public AuditSourceIdentificationType(DicomAuditSource auditSource)
 		{
-			if (!String.IsNullOrEmpty(enterpriseId))
-				AuditEnterpriseSiteID = enterpriseId;
-			AuditSourceID = sourceId;
-			AuditSourceTypeCode = new AuditSourceIdentificationTypeAuditSourceTypeCode[0];
-			AuditSourceTypeCode[0] = new AuditSourceIdentificationTypeAuditSourceTypeCode(code);
+			if (!String.IsNullOrEmpty(auditSource.EnterpriseSiteId))
+				AuditEnterpriseSiteID = auditSource.EnterpriseSiteId;
+			AuditSourceID = auditSource.AuditSourceId;
+
+			if (auditSource.AuditSourceType.HasValue)
+			{
+				AuditSourceTypeCode = new AuditSourceIdentificationTypeAuditSourceTypeCode[0];
+				AuditSourceTypeCode[0] = new AuditSourceIdentificationTypeAuditSourceTypeCode(auditSource.AuditSourceType.Value);
+			}
 		}
 		public AuditSourceIdentificationType(string sourceId)
 		{

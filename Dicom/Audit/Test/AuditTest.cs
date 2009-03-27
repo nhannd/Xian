@@ -53,8 +53,8 @@ namespace ClearCanvas.Dicom.Audit.Test
 			parms.LocalEndPoint = new IPEndPoint(new IPAddress(new byte[] {1, 1, 1, 1}),
         	                                                                       1);
 
-        	QueryAuditLogHelper helper =
-        		new QueryAuditLogHelper(EventIdentificationTypeEventOutcomeIndicator.Success, parms, "testApplication");
+        	QueryAuditHelper helper =
+        		new QueryAuditHelper(new DicomAuditSource("testApplication"), EventIdentificationTypeEventOutcomeIndicator.Success, parms);
 
 			helper.AddParticipant("testUser","test@test","Test Name");
         	helper.AddPatientParticipant("id1234", "Test Patient");
@@ -70,7 +70,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 
         	Assert.IsTrue(result, failure);
 
-			helper = new QueryAuditLogHelper(EventIdentificationTypeEventOutcomeIndicator.Success, parms, "testApplication2");
+			helper = new QueryAuditHelper(new DicomAuditSource("testApplication2","enterpriseId", AuditSourceTypeCodeEnum.EndUserInterface, NetworkAccessPointTypeEnum.MachineName),EventIdentificationTypeEventOutcomeIndicator.Success, parms);
 
 			output = helper.Serialize(true);
 

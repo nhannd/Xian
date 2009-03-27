@@ -34,64 +34,59 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Dicom.Audit
 {
 	/// <summary>
-	/// Enum for use with <see cref="ApplicationActivityAuditHelper"/>.
+	/// Enum for use with the <see cref="NetworkEntryAuditHelper"/> class.
 	/// </summary>
-	public enum ApplicationActivityType
+	public enum NetworkEntryType
 	{
-		ApplicationStarted,
-		ApplicationStopped
+		Attach,
+		Detach
 	}
 
 	/// <summary>
-	/// Helper for Application Activity Audit Log
+	/// Network Entry Audit Message
 	/// </summary>
 	/// <remarks>
-	/// This audit message describes the event of an Application Entity starting or stoping.
+	/// <para>
+	/// This message describes the event of a system, such as a mobile device, entering or leaving the network
+	/// as a normal part of operations. It is not intended to report network problems, loose cables, or other
+	/// unintentional detach and reattach situations.
+	/// </para>
+	/// <para>
+	/// Note: The machine should attempt to send this message prior to detaching. If this is not possible, it should
+	/// retain the message in a local buffer so that it can be sent later. The mobile machine can then capture
+	/// audit messages in a local buffer while it is outside the secure domain. When it is reconnected to the
+	/// secure domain, it can send the detach message (if buffered), followed by the buffered messages,
+	/// followed by a mobile machine message for rejoining the secure domain. The timestamps on these
+	/// messages is the time that the event occurred, not the time that the message is sent.
+	/// </para>
 	/// </remarks>
-	public class ApplicationActivityAuditHelper : DicomAuditHelper
+	public class NetworkEntryAuditHelper : DicomAuditHelper
 	{
 		/// <summary>
-		/// 
+		/// Constructor
 		/// </summary>
-		/// <param name="auditSource"></param>
-		/// <param name="outcome"></param>
-		/// <param name="type"></param>
-		/// <param name="idOfApplicationStarted">Add the ID of the Application Started, should be called once.</param>
-		public ApplicationActivityAuditHelper(DicomAuditSource auditSource,
-			EventIdentificationTypeEventOutcomeIndicator outcome, 
-			ApplicationActivityType type,
-			AuditProcessActiveParticipant idOfApplicationStarted)
+		/// <param name="outcome">The outcome of the audit event.</param>
+		/// <param name="type">Network Attach or Detach</param>
+		/// <param name="node">The identity of the node entering or leaving the network</param>
+		/// <param name="auditSource">The source of the audit message.</param>
+		public NetworkEntryAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome, NetworkEntryType type, AuditProcessActiveParticipant node)
+
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.ApplicationActivity;
+			AuditMessage.EventIdentification.EventID = CodedValueType.NetworkEntry;
 			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
 
-			InternalAddAuditSource(auditSource);
-
-			if (type == ApplicationActivityType.ApplicationStarted)
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStart };
+			if (type == NetworkEntryType.Attach)
+				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] {CodedValueType.Attach};
 			else
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStop };
+				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] {CodedValueType.Detach};
 
-			idOfApplicationStarted.UserIsRequestor = false;
-			idOfApplicationStarted.RoleIdCode = CodedValueType.Application;
+			node.UserIsRequestor = false;
+			InternalAddActiveParticipant(node);
 
-			InternalAddActiveParticipant(idOfApplicationStarted);
-
-		}
-
-		/// <summary>
-		/// Add the ID of person or process that started or stopped the Application.  Can be called multiple times.
-		/// </summary>
-		/// <param name="participant">The participant.</param>
-		public void AddUserParticipant(AuditActiveParticipant participant)
-		{
-			participant.RoleIdCode = CodedValueType.ApplicationLauncher;
-			participant.UserIsRequestor = true;
-
-			InternalAddActiveParticipant(participant);
+			InternalAddAuditSource(auditSource);
 		}
 	}
 }

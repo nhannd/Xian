@@ -38,14 +38,22 @@ namespace ClearCanvas.Dicom.Audit
 	/// Begin Transferring DICOM Instances
 	/// </summary>
 	/// <remarks>
+	/// <para>
 	/// This message describes the event of a system begining to transfer a set of DICOM instances from one
 	/// node to another node within control of the system’s security domain. This message may only include
 	/// information about a single patient.
+	/// </para>
+	/// <para>
+	/// Note: A separate Instances Transferred message is defined for transfer completion, allowing comparison of
+	/// what was intended to be sent and what was actually sent.
+	/// </para>
 	/// </remarks>
 	public class BeginTransferringDicomInstancesAuditHelper : DicomAuditHelper
 	{
-		public BeginTransferringDicomInstancesAuditHelper(EventIdentificationTypeEventOutcomeIndicator outcome,
-			AssociationParameters parms)
+		public BeginTransferringDicomInstancesAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
+			AssociationParameters parms,
+			string patientName,
+			string patientId)
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.BeginTransferringDICOMInstances;
@@ -53,34 +61,27 @@ namespace ClearCanvas.Dicom.Audit
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
 
+			InternalAddAuditSource(auditSource);
+
 			InternalAddActiveDicomParticipant(parms);
+
+			InternalAddPatientParticipantObject(patientId, patientName);
 		}
 
 		/// <summary>
 		/// (Optional) The identity of any other participants that might be involved andknown, especially third parties that are the requestor
 		/// </summary>
-		/// <param name="userId">The user ID.</param>
-		/// <param name="userName">The name of the user.</param>
-		public void AddParticipant(string userId, string userName)
+		/// <param name="participant">The participant</param>
+		public void AddOtherParticipants(AuditActiveParticipant participant)
 		{
-			InternalAddActiveParticipant(null, userId, null, userName);
-		}
-
-		/// <summary>
-		/// Add details about the patient affected.
-		/// </summary>
-		/// <param name="patientId"></param>
-		/// <param name="patientName"></param>
-		public void AddPatientParticipant(string patientId, string patientName)
-		{
-			InternalAddPatientParticipantObject(patientId, patientName);
+			InternalAddActiveParticipant(participant);
 		}
 
 		/// <summary>
 		/// Add details of a study.
 		/// </summary>
 		/// <param name="studyInstanceUid"></param>
-		public void AddStudyParticipant(string studyInstanceUid)
+		public void AddStudyParticipantObject(string studyInstanceUid)
 		{
 			InternalAddStudyParticipantObject(studyInstanceUid);
 		}
@@ -92,7 +93,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="mppsUid"></param>
 		/// <param name="accessionNumber"></param>
 		/// <param name="sopClasses"></param>
-		public void AddStudyParticipant(string studyInstanceUid, string mppsUid, string accessionNumber, AuditSopClass[] sopClasses)
+		public void AddStudyParticipantObject(string studyInstanceUid, string mppsUid, string accessionNumber, AuditSopClass[] sopClasses)
 		{
 			InternalAddStudyParticipantObject(studyInstanceUid, mppsUid, accessionNumber, sopClasses);
 		}

@@ -34,64 +34,58 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Dicom.Audit
 {
 	/// <summary>
-	/// Enum for use with <see cref="ApplicationActivityAuditHelper"/>.
-	/// </summary>
-	public enum ApplicationActivityType
-	{
-		ApplicationStarted,
-		ApplicationStopped
-	}
-
-	/// <summary>
-	/// Helper for Application Activity Audit Log
+	/// Order Record Audit
 	/// </summary>
 	/// <remarks>
-	/// This audit message describes the event of an Application Entity starting or stoping.
+	/// <para>
+	/// This message describes the event of an order being created, modified, accessed, or deleted. This
+	/// message may only include information about a single patient.
+	/// </para>
+	/// <para>
+	/// Note: An order record typically is managed by a non-DICOM system. However, DICOM applications often
+	/// manipulate order records, and thus may be obligated by site security policies to record such events in the
+	/// audit logs.
+	/// </para>
 	/// </remarks>
-	public class ApplicationActivityAuditHelper : DicomAuditHelper
+	public class OrderRecordAuditHelper : DicomAuditHelper
 	{
 		/// <summary>
-		/// 
+		/// Constructor.
 		/// </summary>
 		/// <param name="auditSource"></param>
 		/// <param name="outcome"></param>
-		/// <param name="type"></param>
-		/// <param name="idOfApplicationStarted">Add the ID of the Application Started, should be called once.</param>
-		public ApplicationActivityAuditHelper(DicomAuditSource auditSource,
-			EventIdentificationTypeEventOutcomeIndicator outcome, 
-			ApplicationActivityType type,
-			AuditProcessActiveParticipant idOfApplicationStarted)
+		/// <param name="code"></param>
+		public OrderRecordAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome, 
+			EventIdentificationTypeEventActionCode code)
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.ApplicationActivity;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification.EventID = CodedValueType.OrderRecord;
+			AuditMessage.EventIdentification.EventActionCode = code;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
 
 			InternalAddAuditSource(auditSource);
-
-			if (type == ApplicationActivityType.ApplicationStarted)
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStart };
-			else
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStop };
-
-			idOfApplicationStarted.UserIsRequestor = false;
-			idOfApplicationStarted.RoleIdCode = CodedValueType.Application;
-
-			InternalAddActiveParticipant(idOfApplicationStarted);
-
 		}
 
 		/// <summary>
-		/// Add the ID of person or process that started or stopped the Application.  Can be called multiple times.
+		/// The identity of the person or process manipulating the data. If both
+		/// the person and the process are known, both shall be included.
 		/// </summary>
-		/// <param name="participant">The participant.</param>
+		/// <param name="participant">The participant to add.</param>
 		public void AddUserParticipant(AuditActiveParticipant participant)
 		{
-			participant.RoleIdCode = CodedValueType.ApplicationLauncher;
 			participant.UserIsRequestor = true;
-
 			InternalAddActiveParticipant(participant);
+		}
+
+		/// <summary>
+		/// Add details about the patient affected.
+		/// </summary>
+		/// <param name="patientId"></param>
+		/// <param name="patientName"></param>
+		public void AddPatientParticipantObject(string patientId, string patientName)
+		{
+			InternalAddPatientParticipantObject(patientId, patientName);
 		}
 	}
 }

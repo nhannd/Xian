@@ -29,69 +29,72 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Audit
 {
 	/// <summary>
-	/// Enum for use with <see cref="ApplicationActivityAuditHelper"/>.
-	/// </summary>
-	public enum ApplicationActivityType
-	{
-		ApplicationStarted,
-		ApplicationStopped
-	}
-
-	/// <summary>
-	/// Helper for Application Activity Audit Log
+	/// Procedure Record Audit Message Helper
 	/// </summary>
 	/// <remarks>
-	/// This audit message describes the event of an Application Entity starting or stoping.
+	/// <para>
+	/// This message describes the event of a procedure record being created, accessed, modified, accessed, or
+	/// deleted. This message may only include information about a single patient.
+	/// </para>
+	/// <para>
+	/// Notes: 1. DICOM applications often manipulate procedure records, e.g. with MPPS update. Modality Worklist
+	/// query events are described by the Query event message.
+	///</para>
+	/// <para>
+	/// 2. The same accession number may appear with several order numbers. The Study participant fields
+	/// or the entire message may be repeated to capture such many to many relationships.
+	/// </para>
 	/// </remarks>
-	public class ApplicationActivityAuditHelper : DicomAuditHelper
+	public class ProcedureRecordAuditHelper : DicomAuditHelper
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="auditSource"></param>
-		/// <param name="outcome"></param>
-		/// <param name="type"></param>
-		/// <param name="idOfApplicationStarted">Add the ID of the Application Started, should be called once.</param>
-		public ApplicationActivityAuditHelper(DicomAuditSource auditSource,
-			EventIdentificationTypeEventOutcomeIndicator outcome, 
-			ApplicationActivityType type,
-			AuditProcessActiveParticipant idOfApplicationStarted)
+		public ProcedureRecordAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome, 
+			EventIdentificationTypeEventActionCode code)
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.ApplicationActivity;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification.EventID = CodedValueType.ProcedureRecord;
+			AuditMessage.EventIdentification.EventActionCode = code;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
 
 			InternalAddAuditSource(auditSource);
-
-			if (type == ApplicationActivityType.ApplicationStarted)
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStart };
-			else
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStop };
-
-			idOfApplicationStarted.UserIsRequestor = false;
-			idOfApplicationStarted.RoleIdCode = CodedValueType.Application;
-
-			InternalAddActiveParticipant(idOfApplicationStarted);
-
 		}
 
 		/// <summary>
-		/// Add the ID of person or process that started or stopped the Application.  Can be called multiple times.
+		/// The identity of the person or process manipulating the data. If both
+		/// the person and the process are known, both shall be included.
 		/// </summary>
-		/// <param name="participant">The participant.</param>
+		/// <param name="participant">The participant to add.</param>
 		public void AddUserParticipant(AuditActiveParticipant participant)
 		{
-			participant.RoleIdCode = CodedValueType.ApplicationLauncher;
 			participant.UserIsRequestor = true;
-
 			InternalAddActiveParticipant(participant);
+		}
+
+		/// <summary>
+		/// Add details about the patient affected.
+		/// </summary>
+		/// <param name="patientId"></param>
+		/// <param name="patientName"></param>
+		public void AddPatientParticipantObject(string patientId, string patientName)
+		{
+			InternalAddPatientParticipantObject(patientId, patientName);
+		}
+
+		/// <summary>
+		/// (Optional) Add details of a study. 
+		/// </summary>
+		/// <param name="studyInstanceUid"></param>
+		public void AddStudyParticipantObject(string studyInstanceUid)
+		{
+			InternalAddStudyParticipantObject(studyInstanceUid);
 		}
 	}
 }

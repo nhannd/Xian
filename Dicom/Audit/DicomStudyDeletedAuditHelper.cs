@@ -34,56 +34,31 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Dicom.Audit
 {
 	/// <summary>
-	/// Enum for use with <see cref="ApplicationActivityAuditHelper"/>.
-	/// </summary>
-	public enum ApplicationActivityType
-	{
-		ApplicationStarted,
-		ApplicationStopped
-	}
-
-	/// <summary>
-	/// Helper for Application Activity Audit Log
+	/// DICOM Study Deleted
 	/// </summary>
 	/// <remarks>
-	/// This audit message describes the event of an Application Entity starting or stoping.
+	/// This message describes the event of deletion of one or more studies and all associated SOP Instances in
+	/// a single action. This message may only include information about a single patient.
 	/// </remarks>
-	public class ApplicationActivityAuditHelper : DicomAuditHelper
+	public class DicomStudyDeletedAuditHelper : DicomAuditHelper
 	{
 		/// <summary>
-		/// 
+		/// Constructor.
 		/// </summary>
-		/// <param name="auditSource"></param>
-		/// <param name="outcome"></param>
-		/// <param name="type"></param>
-		/// <param name="idOfApplicationStarted">Add the ID of the Application Started, should be called once.</param>
-		public ApplicationActivityAuditHelper(DicomAuditSource auditSource,
-			EventIdentificationTypeEventOutcomeIndicator outcome, 
-			ApplicationActivityType type,
-			AuditProcessActiveParticipant idOfApplicationStarted)
+		public DicomStudyDeletedAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome)
 		{
 			AuditMessage.EventIdentification = new EventIdentificationType();
-			AuditMessage.EventIdentification.EventID = CodedValueType.ApplicationActivity;
-			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification.EventID = CodedValueType.DICOMStudyDeleted;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.D;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
 
 			InternalAddAuditSource(auditSource);
-
-			if (type == ApplicationActivityType.ApplicationStarted)
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStart };
-			else
-				AuditMessage.EventIdentification.EventTypeCode = new CodedValueType[] { CodedValueType.ApplicationStop };
-
-			idOfApplicationStarted.UserIsRequestor = false;
-			idOfApplicationStarted.RoleIdCode = CodedValueType.Application;
-
-			InternalAddActiveParticipant(idOfApplicationStarted);
-
 		}
 
 		/// <summary>
-		/// Add the ID of person or process that started or stopped the Application.  Can be called multiple times.
+		/// Add the ID of person or process deleting the study.  If both the person
+		/// and process are known, both shall be included.
 		/// </summary>
 		/// <param name="participant">The participant.</param>
 		public void AddUserParticipant(AuditActiveParticipant participant)
@@ -92,6 +67,37 @@ namespace ClearCanvas.Dicom.Audit
 			participant.UserIsRequestor = true;
 
 			InternalAddActiveParticipant(participant);
+		}
+
+		/// <summary>
+		/// Add details about the patient affected.
+		/// </summary>
+		/// <param name="patientId"></param>
+		/// <param name="patientName"></param>
+		public void AddPatientParticipantObject(string patientId, string patientName)
+		{
+			InternalAddPatientParticipantObject(patientId, patientName);
+		}
+
+		/// <summary>
+		/// Add details of a study.
+		/// </summary>
+		/// <param name="studyInstanceUid"></param>
+		public void AddStudyParticipantObject(string studyInstanceUid)
+		{
+			InternalAddStudyParticipantObject(studyInstanceUid);
+		}
+
+		/// <summary>
+		/// Add details of a Study
+		/// </summary>
+		/// <param name="studyInstanceUid">Required Study Instance UID.</param>
+		/// <param name="mppsUid"></param>
+		/// <param name="accessionNumber"></param>
+		/// <param name="sopClasses"></param>
+		public void AddStudyParticipantObject(string studyInstanceUid, string mppsUid, string accessionNumber, AuditSopClass[] sopClasses)
+		{
+			InternalAddStudyParticipantObject(studyInstanceUid, mppsUid, accessionNumber, sopClasses);
 		}
 	}
 }
