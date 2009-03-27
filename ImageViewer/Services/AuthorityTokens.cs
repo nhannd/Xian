@@ -27,6 +27,7 @@ namespace ClearCanvas.ImageViewer.Services
 						AuthorityTokens.Admin.System.DiskspaceManagement,
 						AuthorityTokens.Admin.System.DataStore,
 						AuthorityTokens.Admin.System.DicomServer,
+						AuthorityTokens.Management.Services,
 						AuthorityTokens.Management.DataStore,
 						AuthorityTokens.Management.DicomServer
                     })
@@ -55,6 +56,9 @@ namespace ClearCanvas.ImageViewer.Services
 
 		public class Management
 		{
+			[AuthorityToken(Description = "Allow management of the viewer services (e.g restarting shred host).")]
+			public const string Services = "Management/Viewer/Services";
+
 			[AuthorityToken(Description = "Allow management of the Data Store (e.g. Reindexing).")]
 			public const string DataStore = "Management/Viewer/Data Store";
 

@@ -9,14 +9,17 @@ using TimeoutException=System.ServiceProcess.TimeoutException;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
-	[MenuAction("start", "global-menus/MenuServices/MenuStart", "StartService")]
+	[MenuAction("start", "global-menus/MenuTools/MenuServices/MenuStart", "StartService")]
 	[EnabledStateObserver("start", "StartEnabled", "EnabledChanged")]
-	//[ActionPermission("start", AuthorityTokens.Management)]
-	[MenuAction("stop", "global-menus/MenuServices/MenuStop", "StopService")]
-	[EnabledStateObserver("stop", "StopEnabled", "EnabledChanged")]
+	[ActionPermission("start", AuthorityTokens.Management.Services)]
 
-	[MenuAction("restart", "global-menus/MenuServices/MenuRestart", "RestartService")]
+	[MenuAction("stop", "global-menus/MenuTools/MenuServices/MenuStop", "StopService")]
+	[EnabledStateObserver("stop", "StopEnabled", "EnabledChanged")]
+	[ActionPermission("stop", AuthorityTokens.Management.Services)]
+
+	[MenuAction("restart", "global-menus/MenuTools/MenuServices/MenuRestart", "RestartService")]
 	[EnabledStateObserver("restart", "StopEnabled", "EnabledChanged")]
+	[ActionPermission("restart", AuthorityTokens.Management.Services)]
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class ServiceControlTool : Tool<IDesktopToolContext>
