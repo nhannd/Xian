@@ -404,7 +404,8 @@
   </Target>
 
   <Target Name="Copy JScript Files">
-  
+
+    <MSBuild Projects="$(TrunkDirectory)\JScript\Build.proj" Properties="Configuration=$(Configuration)"/>
     <Copy Condition="$(DesktopBuild)" SourceFiles="@(JScriptFiles)" DestinationFolder="$(PluginsDirectory)" />
 
   </Target>

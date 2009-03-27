@@ -29,9 +29,16 @@
 			</PropertyGroup>
 		</When>
 	</Choose>
-	<Target Name="Build" Inputs="ClearCanvas.Jscript.js; ..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" Outputs="bin\$(Configuration)\ClearCanvas.Jscript.dll">
-		<MakeDir Directories="bin\$(Configuration)" Condition="!Exists('bin\$(Configuration)')" />
+
+    <Target Name="Build" Inputs="ClearCanvas.Jscript.js; ..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" Outputs="bin\$(Configuration)\ClearCanvas.Jscript.dll">
+
+      <GetFrameworkPath>
+        <Output TaskParameter="Path" PropertyName="FrameworkPath" />
+      </GetFrameworkPath>
+      <!--<Message Text="FrameworkPath = $(FrameworkPath)"/>-->
+
+      <MakeDir Directories="bin\$(Configuration)" Condition="!Exists('bin\$(Configuration)')" />
     <MSBuild Projects="..\Common\ClearCanvas.Common.csproj" Properties="$(CommonProperties)" />
-    <Exec Command="jsc $(EmitDebugInformation) /t:library /lib:..\Common\bin\$(Configuration) /out:bin\$(Configuration)\ClearCanvas.Jscript.dll ClearCanvas.Jscript.js"/>
+    <Exec Command="$(FrameworkPath)\jsc $(EmitDebugInformation) /t:library /lib:..\Common\bin\$(Configuration) /out:bin\$(Configuration)\ClearCanvas.Jscript.dll ClearCanvas.Jscript.js"/>
 	</Target>
 </Project>
