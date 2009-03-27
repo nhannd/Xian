@@ -20,7 +20,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         #region Private Members
         private readonly string _src;
         private readonly string _dest;
-        private bool _backedup = true;
         private string _backupSrcDir ;
         private string _backupDestDir ;
         #endregion
@@ -41,6 +40,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             {
                 Backup();
             }
+
             DirectoryUtility.Move(_src, _dest);
         }
 
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 _backupSrcDir = ExecutionContext.GetUniqueTempDir();
 
                 Platform.Log(LogLevel.Debug, "Backing up original source folder {0}", _src);
-                DirectoryUtility.Copy(_dest, _backupSrcDir);
+                DirectoryUtility.Copy(_src, _backupSrcDir);
 
                 Platform.Log(LogLevel.Info, "Original source folder {0} is backed up to {1}", _src, _backupSrcDir);
             }
@@ -67,8 +67,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 Platform.Log(LogLevel.Info, "Original destination folder {0} is backed up to {1}", _dest, _backupDestDir);
             }
 
-            _backedup = true;
-
         }
 
         protected override void OnUndo()
@@ -79,11 +77,14 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             }
             finally
             {
-                if (_backedup)
+                if (Directory.Exists(_backupSrcDir))
                 {
                     Platform.Log(LogLevel.Info, "Restoring original source folder {0}", _src);
                     DirectoryUtility.Copy(_backupSrcDir, _src);
+                }
 
+                if (Directory.Exists(_backupDestDir))
+                {
                     Platform.Log(LogLevel.Info, "Restoring original destination folder {0}", _dest);
                     DirectoryUtility.Copy(_backupDestDir, _dest);
                 }
