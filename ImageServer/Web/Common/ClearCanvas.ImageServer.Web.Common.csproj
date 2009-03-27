@@ -141,6 +141,7 @@
     <Compile Include="WebControls\UI\PersonNameLabel.cs" />
     <Compile Include="Utilities\DateTimeFormatter.cs" />
     <Compile Include="WebControls\UI\PreformattedLabel.cs" />
+    <Compile Include="WebControls\UI\SiteMapProvider.cs" />
     <Compile Include="WebControls\UI\TextBox.cs" />
     <Compile Include="WebControls\UI\TMLabel.cs" />
     <Compile Include="WebControls\UI\DALabel.cs" />
