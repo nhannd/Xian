@@ -31,7 +31,6 @@
 
 using System;
 using System.Text;
-using ClearCanvas.Common.Auditing;
 using log4net;
 using ClearCanvas.Common.Utilities;
 using System.Collections.Generic;
@@ -152,7 +151,6 @@ namespace ClearCanvas.Common
 		private static volatile PluginManager _pluginManager;
 		private static volatile IApplicationRoot _applicationRoot;
 		private static volatile IMessageBox _messageBox;
-		private static volatile AuditManager _auditManager;
 		private static volatile ITimeProvider _timeProvider;
         private static volatile IServiceProvider[] _serviceProviders;
 
@@ -340,32 +338,6 @@ namespace ClearCanvas.Common
                 }
 
                 return _logDirectory;
-			}
-		}
-
-		/// <summary>
-		/// Gets the <see cref="AuditManager"/>.
-		/// </summary>
-		/// <remarks>
-		/// The <see cref="AuditManager"/> is itself an <see cref="IAuditor"/>, but internally it manages a list
-		/// of <see cref="IAuditor"/>s created via the <see cref="AuditorExtensionPoint"/>.  When <see cref="IAuditor.Audit"/> 
-		/// is called on the <see cref="AuditManager"/>, it calls <see cref="IAuditor.Audit"/> on each of the 
-		/// <see cref="IAuditor"/>s in its internal list.
-		/// </remarks>
-		public static IAuditor AuditManager
-		{
-			get
-			{
-				if (_auditManager == null)
-				{
-					lock (_syncRoot)
-					{
-						if (_auditManager == null)
-							_auditManager = new AuditManager();
-					}
-				}
-
-				return _auditManager;
 			}
 		}
 

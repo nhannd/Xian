@@ -65,6 +65,9 @@
     <Compile Include="AopInterceptorChain.cs" />
     <Compile Include="AuditAdvice.cs" />
     <Compile Include="AuditAttribute.cs" />
+    <Compile Include="AuditLogEntry.cs" />
+    <Compile Include="Audit\AuditLogEntryAssembler.cs" />
+    <Compile Include="Audit\AuditService.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
     <Compile Include="DefaultExceptionRecorder.cs" />
     <Compile Include="EntityValidationException.cs" />
@@ -176,7 +179,6 @@
     <Compile Include="TransactionNotifier.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AuditLogEntry.cs" />
     <Compile Include="UpdateContextSyncMode.cs" />
     <Compile Include="UpdateOperationAttribute.cs" />
     <Compile Include="Upgrade\IPersistentStoreUpgradeScript.cs" />

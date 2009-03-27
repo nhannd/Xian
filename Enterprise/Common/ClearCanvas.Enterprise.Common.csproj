@@ -85,6 +85,10 @@
     <Compile Include="Admin\UserAdmin\UpdateUserResponse.cs" />
     <Compile Include="Admin\UserAdmin\UserDetail.cs" />
     <Compile Include="Admin\UserAdmin\UserSummary.cs" />
+    <Compile Include="Audit\AuditSink.cs" />
+    <Compile Include="Audit\IAuditService.cs" />
+    <Compile Include="Audit\WriteEntryRequest.cs" />
+    <Compile Include="Audit\WriteEntryResponse.cs" />
     <Compile Include="AuthenticationAttribute.cs" />
     <Compile Include="Authentication\ChangePasswordRequest.cs" />
     <Compile Include="Authentication\ChangePasswordResponse.cs" />
