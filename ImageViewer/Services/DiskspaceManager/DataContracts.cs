@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
 		private float _lowWatermark;
         private float _highWatermark;
         private int _checkFrequency;
-		private int _numberOfStudies;
+		private int _studyCount;
 		private bool _enforceStudyLimit;
 		private int _studyLimit;
 		private int _maxStudyLimit;
@@ -145,10 +145,10 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
         }
 
 		[DataMember(IsRequired = false)]
-		public int NumberOfStudies
+		public int StudyCount
 		{
-			get { return _numberOfStudies; }
-			set { _numberOfStudies = value; }
+			get { return _studyCount; }
+			set { _studyCount = value; }
 		}
 
 		[DataMember(IsRequired = false)]

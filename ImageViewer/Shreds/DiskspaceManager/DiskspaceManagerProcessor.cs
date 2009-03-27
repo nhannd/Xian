@@ -334,7 +334,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				returnInformation.LowWatermark = DiskspaceManagerSettings.Instance.LowWatermark;
 				returnInformation.HighWatermark = DiskspaceManagerSettings.Instance.HighWatermark;
 				returnInformation.CheckFrequency = DiskspaceManagerSettings.Instance.CheckFrequency;
-				returnInformation.NumberOfStudies = _lastStudyCount;
+				returnInformation.StudyCount = _lastStudyCount;
 				returnInformation.MinStudyLimit = DiskspaceManagerSettings.Instance.MinStudyLimit;
 				returnInformation.MaxStudyLimit = DiskspaceManagerSettings.Instance.MaxStudyLimit;
 				returnInformation.EnforceStudyLimit = DiskspaceManagerSettings.Instance.EnforceStudyLimit;

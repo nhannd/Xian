@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
         
 		private int _checkFrequency;
 
-    	private string _numberOfStudiesText;
+    	private string _studyCountText;
 		private bool _enforceStudyLimit;
     	private int _studyLimit;
 		private int _minStudyLimit;
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 				
 				_checkFrequency = serviceInformation.CheckFrequency;
 
-				_numberOfStudiesText = serviceInformation.NumberOfStudies.ToString();
+				_studyCountText = serviceInformation.StudyCount.ToString();
 
 				_enforceStudyLimit = serviceInformation.EnforceStudyLimit;
 				_studyLimit = serviceInformation.StudyLimit;
@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 				_spaceUsedPercentDisplay = "";
 				_spaceUsedBytesDisplay = "";
 
-				_numberOfStudiesText = SR.MessageNumberOfStudiesUnavailable;
+				_studyCountText = SR.MessageStudyCountUnavailable;
 				_enforceStudyLimit = false;
 				_studyLimit = 0;
 				_minStudyLimit = 0;
@@ -393,9 +393,9 @@ namespace ClearCanvas.ImageViewer.Services.Configuration
 			}
 		}
 
-		public string NumberOfStudiesText
+		public string StudyCountText
 		{
-			get { return _numberOfStudiesText; }
+			get { return _studyCountText; }
 		}
 
 		public int MinStudyLimit

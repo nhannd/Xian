@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Services.Configuration.View.WinForms
         	_enforceStudyLimit.DataBindings.Add("Checked", bindingSource, "EnforceStudyLimit", true, DataSourceUpdateMode.OnPropertyChanged);
         	_enforceStudyLimit.DataBindings.Add("Enabled", bindingSource, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			_numberOfStudies.DataBindings.Add("Text", bindingSource, "NumberOfStudiesText", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyCount.DataBindings.Add("Text", bindingSource, "StudyCountText", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_studyLimit.DataBindings.Add("Value", bindingSource, "StudyLimit", true, DataSourceUpdateMode.OnPropertyChanged);
 			_studyLimit.DataBindings.Add("Enabled", bindingSource, "EnforceStudyLimit", true, DataSourceUpdateMode.OnPropertyChanged);
