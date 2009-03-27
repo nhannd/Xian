@@ -229,6 +229,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 					int numberOfStudiesAfterDelete = _lastStudyCount - deleteStudyUids.Count;
 					if (numberOfStudiesAfterDelete > _studyLimit)
 						continue;
+					else
+						break;
 				}
 
 				if (totalExpectedFreeSpace >= _currentDriveInfo.BytesOverLowWaterMark)
