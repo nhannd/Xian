@@ -62,14 +62,28 @@ namespace ClearCanvas.Desktop
         private bool _acceptEnabled;
         private event EventHandler _acceptEnabledChanged;
 
+    	private readonly bool _showApply;
+		private bool _applyEnabled;
+		private event EventHandler _applyEnabledChanged;
+
         /// <summary>
         /// Default constructor.
         /// </summary>
         public NavigatorComponentContainer()
+			: this(false)
         {
         }
 
-        #region Presentation Model
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
+		/// <param name="showApply">Indicates whether or not to show an apply button.</param>
+		protected NavigatorComponentContainer(bool showApply)
+		{
+			_showApply = showApply;
+		}
+		
+		#region Presentation Model
 
 
         /// <summary>
@@ -153,9 +167,23 @@ namespace ClearCanvas.Desktop
 				this.ShowValidation(true);
 				return;
 			}
-            this.ExitCode = ApplicationComponentExitCode.Accepted;
+
+        	OnAccept();
+
+			this.ExitCode = ApplicationComponentExitCode.Accepted;
             this.Host.Exit();
         }
+
+		/// <summary>
+		/// Called from <see cref="Accept"/> after any validation errors have been resolved
+		/// and before the component exits.
+		/// </summary>
+		/// <remarks>
+		/// Override this method to complete any final tasks before the component closes.
+		/// </remarks>
+		protected virtual void OnAccept()
+		{
+		}
 
         /// <summary>
         /// Indicates whether the accept button should be enabled.
@@ -182,7 +210,69 @@ namespace ClearCanvas.Desktop
             remove { _acceptEnabledChanged -= value; }
         }
 
-        /// <summary>
+		/// <summary>
+		/// Gets whether an Apply button should be shown.
+		/// </summary>
+		public bool ShowApply
+		{
+			get { return _showApply; }
+		}
+
+		/// <summary>
+		/// Gets whether or not the Apply button should be enabled.
+		/// </summary>
+		/// <remarks>
+		/// When <see cref="ShowApply"/> is false, this property has no meaning.
+		/// </remarks>
+		public bool ApplyEnabled
+		{
+			get { return _applyEnabled; }
+			protected set
+			{
+				if (_applyEnabled != value)
+				{
+					_applyEnabled = value;
+					EventsHelper.Fire(_applyEnabledChanged, this, new EventArgs());
+				}
+			}
+		}
+
+		/// <summary>
+		/// Fires when <see cref="ApplyEnabled"/> has changed.
+		/// </summary>
+		public event EventHandler ApplyEnabledChanged
+		{
+			add { _applyEnabledChanged += value; }
+			remove { _applyEnabledChanged -= value; }
+		}
+
+		/// <summary>
+		/// Called from <see cref="Apply"/> after any validation errors have been resolved;
+		/// <see cref="ApplyEnabled"/> is automatically set to false.
+		/// </summary>
+		/// <remarks>
+		/// This method <b>MUST</b> be overridden if <see cref="ShowApply"/> is true.
+		/// </remarks>
+		protected virtual void OnApply()
+		{
+			throw new NotImplementedException("This method must be overridden when ShowApply is true.");
+		}
+
+		public virtual void Apply()
+		{
+			Platform.CheckTrue(_showApply, "Show Apply");
+
+			if (this.HasValidationErrors)
+			{
+				ShowValidation(this.HasValidationErrors);
+				return;
+			}
+
+			OnApply();
+			ApplyEnabled = false;
+		}
+	
+    	/// <summary>
         /// Causes the component to exit, discarding any changes made by the user.
         /// </summary>
         /// <remarks>
@@ -214,7 +304,8 @@ namespace ClearCanvas.Desktop
         protected override void OnComponentModifiedChanged(IApplicationComponent component)
         {
             base.OnComponentModifiedChanged(component);
-            this.AcceptEnabled = true;
-        }
+			this.ApplyEnabled = this.Modified;
+			this.AcceptEnabled = true;
+		}
     }
 }

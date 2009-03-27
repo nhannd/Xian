@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.Configuration
 {
-	public sealed class ConfigurationDialogComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-	{}
-
-	[AssociateView(typeof(ConfigurationDialogComponentViewExtensionPoint))]
 	public class ConfigurationDialogComponent : NavigatorComponentContainer
 	{
 		private class NavigatorPagePathComparer : IComparer<NavigatorPage>
@@ -38,13 +33,11 @@ namespace ClearCanvas.Desktop.Configuration
 			#endregion
 		}
 
-		private bool _applyEnabled = false;
-		private event EventHandler _applyEnabledChanged;
-
 		private readonly int _initialPageIndex;
 		private readonly ConfigurationPageManager _configurationPageManager;
 
 		internal ConfigurationDialogComponent(string initialPagePath)
+			: base(ConfigurationDialogSettings.Default.ShowApplyButton)
 		{
 			// We want to validate all configuration pages
 			this.ValidationStrategy = new StartedComponentsValidationStrategy();
@@ -87,74 +80,33 @@ namespace ClearCanvas.Desktop.Configuration
 			MoveTo(_initialPageIndex);
 		}
 
-		public override void Accept()
+		protected override void OnAccept()
 		{
-			Apply(true);
+			Save();
 		}
 
-		public bool ApplyVisible
+		protected override void OnApply()
 		{
-			get { return ConfigurationDialogSettings.Default.ShowApplyButton; }
+			Save();
 		}
 
-		public bool ApplyEnabled
+		private void Save()
 		{
-			get { return _applyEnabled; }
-			protected set
+			try
 			{
-				if (_applyEnabled != value)
+				foreach (IConfigurationPage configurationPage in this.ConfigurationPages)
 				{
-					_applyEnabled = value;
-					EventsHelper.Fire(_applyEnabledChanged, this, new EventArgs());
+					if (configurationPage.GetComponent().Modified)
+						configurationPage.SaveConfiguration();
 				}
 			}
-		}
-
-		public event EventHandler ApplyEnabledChanged
-		{
-			add { _applyEnabledChanged += value; }
-			remove { _applyEnabledChanged -= value; }
-		}
-
-		public virtual void Apply()
-		{
-			Apply(false);
-		}
-
-		protected override void OnComponentModifiedChanged(IApplicationComponent component)
-		{
-			base.OnComponentModifiedChanged(component);
-			this.ApplyEnabled = this.Modified;
-		}
-
-		private void Apply(bool exit)
-		{
-			if (this.HasValidationErrors)
+			catch (Exception e)
 			{
-				ShowValidation(true);
-			}
-			else
-			{
-				try
-				{
-					foreach (IConfigurationPage configurationPage in this.ConfigurationPages)
+				ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
+					delegate()
 					{
-						if (configurationPage.GetComponent().Modified)
-							configurationPage.SaveConfiguration();
-					}
-
-					ApplyEnabled = false;
-					if (exit)
-						this.Exit(ApplicationComponentExitCode.Accepted);
-				}
-				catch (Exception e)
-				{
-					ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
-						delegate()
-						{
-							this.Exit(ApplicationComponentExitCode.Error);
-						});
-				}
+						this.Exit(ApplicationComponentExitCode.Error);
+					});
 			}
 		}
 	}

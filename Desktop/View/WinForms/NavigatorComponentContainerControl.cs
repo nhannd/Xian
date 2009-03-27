@@ -35,29 +35,15 @@ using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-	public interface INavigatorApplyHandler
-	{
-		void Apply();
-		bool ApplyEnabled { get; }
-		event EventHandler ApplyEnabledChanged;
-	}
-
     public partial class NavigatorComponentContainerControl : CustomUserControl
     {
         private NavigatorComponentContainer _component;
         private Dictionary<NavigatorPage, TreeNode> _nodeMap;
-		private INavigatorApplyHandler _applyHandler;
 
 		public NavigatorComponentContainerControl(NavigatorComponentContainer component)
-			: this(component, null)
 		{
-		}
-
-    	public NavigatorComponentContainerControl(NavigatorComponentContainer component, INavigatorApplyHandler applyHandler)
-        {
             InitializeComponent();
 
-			_applyHandler = applyHandler;
 			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
 
             _nodeMap = new Dictionary<NavigatorPage, TreeNode>();
@@ -65,15 +51,15 @@ namespace ClearCanvas.Desktop.View.WinForms
             _component = component;
             _component.CurrentPageChanged += new EventHandler(_component_CurrentNodeChanged);
 
-			if (applyHandler == null)
+			if (!_component.ShowApply)
 			{
 				_applyButton.Dispose();
 				_applyButton = null;
 			}
 			else
 			{
-				_applyButton.Click += delegate { _applyHandler.Apply(); };
-				_applyButton.DataBindings.Add("Enabled", _applyHandler, "ApplyEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+				_applyButton.Click += delegate { _component.Apply(); };
+				_applyButton.DataBindings.Add("Enabled", _component, "ApplyEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			}
 
     		base.AcceptButton = this._okButton;
