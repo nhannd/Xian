@@ -312,8 +312,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			SendQueueItem foundItem = CollectionUtils.SelectFirst(_filteredItems.GetAllItems(), delegate(SendQueueItem testItem)
 				{
-					return (testItem.SendOperationReference != null && testItem.SendOperationReference == e.Item.SendOperationReference) ||
-						testItem.Identifier == e.Item.Identifier;
+					return testItem.Identifier.Equals(e.Item.Identifier);
 				});
 
 			if (foundItem != null)

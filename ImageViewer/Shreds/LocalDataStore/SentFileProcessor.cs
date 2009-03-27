@@ -168,12 +168,16 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						if (reference == null)
 						{
+							// should never get here, but we'll create one progress item per 
+							// ae title/study uid pair.
 							return testItem.SendOperationReference == null && testItem.ToAETitle == toAETitle &&
 							testItem.StudyInformation.StudyInstanceUid == studyInformation.StudyInstanceUid;
 						}
 						else
 						{
-							return testItem.SendOperationReference == reference;
+							//we want one progress item per send operation/study uid pair.
+							return testItem.SendOperationReference == reference
+							       && testItem.StudyInformation.StudyInstanceUid == studyInformation.StudyInstanceUid;
 						}
 					});
 
@@ -181,16 +185,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					progressItem = new SendProgressItem();
 					progressItem.SendOperationReference = reference;
-
 					if (reference != null)
-					{
-						progressItem.Identifier = reference.Identifier;
 						progressItem.IsBackground = reference.IsBackground;
-					}
-					else
-					{
-						 progressItem.Identifier = Guid.NewGuid();
-					}
+
+					progressItem.Identifier = Guid.NewGuid();
 
 					progressItem.StartTime = Platform.Time;
 					progressItem.LastActive = progressItem.StartTime;
