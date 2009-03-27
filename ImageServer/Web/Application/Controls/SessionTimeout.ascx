@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
 
-    var waitTime = <%= Int32.Parse(ConfigurationManager.AppSettings.Get("ClientSideTimeout")) %> * 10000;
+    var waitTime = <%= Int32.Parse(ConfigurationManager.AppSettings.Get("ClientSideTimeout")) %> * 60000;
     var webServicePath = "<%= ResolveClientUrl("~/Services/SessionService.asmx") %>";
     var redirectPage = "<%= ResolveClientUrl("~/Pages/Error/TimeoutErrorPage.aspx") %>";
     var loginId = "<%= HttpContext.Current.User.Identity.Name %>";
