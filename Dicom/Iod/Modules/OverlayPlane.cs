@@ -99,7 +99,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				for (int n = 0; n < 1; n++) // TODO make it 16 again
+				for (int n = 0; n < 16; n++)
 				{
 					uint tagOffset = ComputeTagOffset(n);
 					yield return tagOffset + DicomTags.OverlayBitPosition;
@@ -123,7 +123,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
 		public IEnumerator<OverlayPlane> GetEnumerator()
 		{
-			for (int n = 0; n < 1; n++) // TODO make it 16 again
+			for (int n = 0; n < 16; n++)
 			{
 				if (this.HasOverlayPlane(n))
 					yield return this[n];
