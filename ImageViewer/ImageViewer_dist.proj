@@ -7,6 +7,7 @@
 
   <PropertyGroup>
     <TrunkDirectory>$(MSBuildProjectDirectory)\..\</TrunkDirectory>
+    <JscriptDirectory>$(TrunkDirectory)\Jscript\bin\$(Configuration)</JscriptDirectory>
     <EmptyViewerDatabaseFile>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\$(PlatformSubFolder)\empty_viewer.sdf</EmptyViewerDatabaseFile>
     <DesktopBuild>false</DesktopBuild>
     <ShredHostBuild>false</ShredHostBuild>
@@ -80,6 +81,10 @@
     <DesktopBuild>false</DesktopBuild>
     <ShredHostBuild>true</ShredHostBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <JscriptFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
+  </ItemGroup>
 
   <ItemGroup>
     <SqlCEFiles Include="$(TrunkDirectory)\ReferencedAssemblies\SqlCe\$(PlatformSubFolder)\sqlce*.dll" />
@@ -398,9 +403,15 @@
 
   </Target>
 
+  <Target Name="Copy JScript Files">
+  
+    <Copy Condition="$(DesktopBuild)" SourceFiles="@(JScriptFiles)" DestinationFolder="$(PluginsDirectory)" />
+
+  </Target>
+  
   <Target Name ="Copy Files" >
     
-    <CallTarget Condition="$(DesktopBuild)" Targets="Copy Project Files;Copy ImageViewer App Config;Copy License Files;Copy Help Files" />
+    <CallTarget Condition="$(DesktopBuild)" Targets="Copy Project Files;Copy JScript Files;Copy ImageViewer App Config;Copy License Files;Copy Help Files" />
     <CallTarget Condition="$(ShredHostBuild)" Targets="Copy Project Files;Copy ShredHost App Config;Copy License Files" />
 
   </Target>

@@ -29,54 +29,18 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom.DataStore;
-using System;
+using System.Configuration;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
+namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-    [ExtensionOf(typeof(StudyLoaderExtensionPoint))]
-	public class LocalDataStoreStudyLoader : StudyLoader
-    {
-		private IEnumerator<ISopInstance> _sops;
-
-        public LocalDataStoreStudyLoader() : base("DICOM_LOCAL")
-        {
-
-        }
-
-    	public override int OnStart(StudyLoaderArgs studyLoaderArgs)
+	[SettingsGroupDescription("Provides settings for the default patient information reconciliation strategy.")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	internal sealed partial class DefaultPatientReconciliationSettings
+	{
+		private DefaultPatientReconciliationSettings()
 		{
-    		_sops = null;
-
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
-			{
-				IStudy study = reader.GetStudy(studyLoaderArgs.StudyInstanceUid);
-				if (study == null)
-					throw new Exception("The specified study does not exist.");
-
-				_sops = study.GetSopInstances().GetEnumerator();
-				return study.NumberOfStudyRelatedInstances;
-			}
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
-
-		protected override SopDataSource LoadNextSopDataSource()
-        {
-			if (_sops == null)
-				return null;
-
-			if (!_sops.MoveNext())
-			{
-				_sops = null;
-				return null;
-			}
-
-			return new LocalDataStoreSopDataSource(_sops.Current);
-        }
-    }
+	}
 }
-
-

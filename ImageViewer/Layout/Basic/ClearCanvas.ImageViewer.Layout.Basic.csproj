@@ -108,15 +108,25 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ContextMenuLayoutTool.cs" />
+    <Compile Include="DefaultPatientReconciliationSettings.cs" />
+    <Compile Include="DefaultPatientReconciliationSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>DefaultPatientReconciliationSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ExplodeTileTool.cs" />
+    <Compile Include="IPatientAutoReconciliationService.cs" />
     <Compile Include="LayoutChangerAction.cs" />
     <Compile Include="LayoutComponent.cs" />
     <Compile Include="LayoutConfigurationPageProvider.cs" />
     <Compile Include="LayoutConfigurationSettings.cs" />
     <Compile Include="LayoutConfigurationSettings.Designer.cs">
+      <DependentUpon>LayoutConfigurationSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>LayoutConfigurationSettings.settings</DependentUpon>
+      <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="LayoutConfigurationApplicationComponent.cs" />
     <Compile Include="LayoutToolViewEventArgs.cs" />
@@ -127,6 +137,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <Compile Include="DefaultPatientReconciliationStrategy.cs" />
     <Compile Include="PriorStudyFinder.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -137,6 +148,7 @@
     <Compile Include="DisplaySetNavigationTool.cs" />
     <Compile Include="ExplodeImageBoxTool.cs" />
     <Compile Include="ListObserver.cs" />
+    <Compile Include="XmlActionsApplicator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\LayoutToolLarge.png" />
@@ -147,9 +159,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="LayoutConfigurationSettings.settings">
+    <None Include="DefaultPatientReconciliationSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>LayoutConfigurationSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>DefaultPatientReconciliationSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="LayoutConfigurationSettings.settings" />
+    <None Include="Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -184,9 +201,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ExplodeImageBoxMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\..\..\Common\ClearCanvas.Strings.targets" />

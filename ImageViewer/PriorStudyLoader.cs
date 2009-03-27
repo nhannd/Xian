@@ -9,17 +9,19 @@ namespace ClearCanvas.ImageViewer
 {
 	public class PriorStudyLoaderException : Exception
 	{
-		internal PriorStudyLoaderException(bool findFailed, int totalFailures, int partialFailures, int totalQueryResults)
+		internal PriorStudyLoaderException(bool findFailed, int noStudyLoaderFailures, int completeFailures, int partialFailures, int totalQueryResults)
 			: base("A failure has occurred while loading prior studies.")
 		{
 			this.FindFailed = findFailed;
-			this.TotalFailures = totalFailures;
+			this.NoStudyLoaderFailures = noStudyLoaderFailures;
+			this.CompleteFailures = completeFailures;
 			this.PartialFailures = partialFailures;
 			this.TotalQueryResults = totalQueryResults;
 		}
 
 		public readonly bool FindFailed;
-		public readonly int TotalFailures;
+		public readonly int NoStudyLoaderFailures;
+		public readonly int CompleteFailures;
 		public readonly int PartialFailures;
 		public readonly int TotalQueryResults;
 	}
@@ -41,6 +43,7 @@ namespace ClearCanvas.ImageViewer
 			private readonly IPriorStudyFinder _priorStudyFinder;
 			private volatile StudyItemList _queryResults;
 			private volatile bool _findFailed = false;
+			private volatile int _noStudyLoaderFailures = 0;
 
 			public PriorStudyLoader(ImageViewerComponent imageViewer, IPriorStudyFinder priorStudyFinder)
 			{
@@ -79,6 +82,7 @@ namespace ClearCanvas.ImageViewer
 
 				_stop = true;
 				_thread.Join();
+				_thread = null;
 			}
 
 			private void Run()
@@ -126,6 +130,13 @@ namespace ClearCanvas.ImageViewer
 						loader.LoadSops(_studyLoaders);
 						_synchronizationContext.Post(AddSops, loader);
 					}
+					catch(StudyLoaderNotFoundException ex)
+					{
+						++_noStudyLoaderFailures;
+
+						Platform.Log(LogLevel.Error, ex, "Failed to load prior study '{0}'; study loader '{1}' does not exist.",
+							result.StudyInstanceUID, result.StudyLoaderName);
+					}
 					catch(Exception e)
 					{
 						Platform.Log(LogLevel.Error, e, "Failed to load prior study '{0}' from study loader '{1}'.",
@@ -146,8 +157,8 @@ namespace ClearCanvas.ImageViewer
 			private void OnComplete(object nothing)
 			{
 				_isActive = false;
-				int totalFailedStudies = GetTotalFailedStudies();
-				int partialFailedStudies = GetPartialFailedStudiesCount();
+				int completeFailures = GetCompleteFailures();
+				int partialFailures = GetPartialFailures();
 
 				DisposeLoaders();
 
@@ -156,7 +167,7 @@ namespace ClearCanvas.ImageViewer
 
 				try
 				{
-					VerifyLoadPriors(totalFailedStudies, partialFailedStudies);
+					VerifyLoadPriors(completeFailures, partialFailures);
 				}
 				catch(Exception e)
 				{
@@ -164,34 +175,34 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
-			private void VerifyLoadPriors(int totalFailedStudies, int partialFailedStudies)
+			private void VerifyLoadPriors(int completeFailures, int partialFailures)
 			{
-				if (_findFailed || totalFailedStudies > 0 || partialFailedStudies > 0)
-					throw new PriorStudyLoaderException(_findFailed, totalFailedStudies, partialFailedStudies, _queryResults.Count);
+				if (_findFailed || _noStudyLoaderFailures > 0 || completeFailures > 0 || partialFailures > 0)
+					throw new PriorStudyLoaderException(_findFailed, _noStudyLoaderFailures, completeFailures, partialFailures, _queryResults.Count);
 			}
 
-			private int GetTotalFailedStudies()
+			private int GetCompleteFailures()
 			{
-				int totalFailedStudies = 0;
+				int completeFailures = 0;
 				foreach (SingleStudyLoader loader in _singleStudyLoaders)
 				{
 					if (loader.Total == 0 || loader.Failed >= loader.Total)
-						++totalFailedStudies;
+						++completeFailures;
 				}
 
-				return totalFailedStudies;
+				return completeFailures - _noStudyLoaderFailures;
 			}
 
-			private int GetPartialFailedStudiesCount()
+			private int GetPartialFailures()
 			{
-				int partialFailedStudies = 0;
+				int partialFailures = 0;
 				foreach (SingleStudyLoader loader in _singleStudyLoaders)
 				{
 					if (loader.Failed > 0 && loader.Failed < loader.Total)
-						++partialFailedStudies;
+						++partialFailures;
 				}
 
-				return partialFailedStudies;
+				return partialFailures;
 			}
 
 			private void DisposeLoaders()

@@ -121,15 +121,9 @@ namespace ClearCanvas.ImageViewer
 		/// the specified parameters.
 		/// </summary>
 		public DisplaySet(string name, string uid)
-			: this(name, uid, "")
-		{
-		}
-
-		public DisplaySet(string name, string uid, string description)
 		{
 			_name = name ?? "";
 			_uid = uid ?? "";
-			_description = description ?? "";
 		}
 
 		#region Properties
@@ -219,15 +213,16 @@ namespace ClearCanvas.ImageViewer
 			get { return _name; }
 		}
 
-		public string Description
-		{
-			get { return _description; }
-		}
-
 		public int Number
 		{
 			get { return _number; }
 			set { _number = value; }
+		}
+
+		public string Description
+		{
+			get { return _description; }
+			set { _description = value; }
 		}
 
 		/// <summary>
@@ -353,9 +348,10 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public IDisplaySet CreateFreshCopy()
 		{
-			DisplaySet displaySet = new DisplaySet(this.Name, this.Uid, this.Description);
+			DisplaySet displaySet = new DisplaySet(this.Name, this.Uid);
 			displaySet.ParentImageSet = this.ParentImageSet;
 			displaySet.Number = Number;
+			displaySet.Description = Description;
 
 			foreach (IPresentationImage image in this.PresentationImages)
 				displaySet.PresentationImages.Add(image.CreateFreshCopy());

@@ -42,15 +42,27 @@ namespace ClearCanvas.ImageViewer
 			public void LoadSops(StudyLoaderMap studyLoaders)
 			{
 				IStudyLoader studyLoader = studyLoaders[_args.StudyLoaderName];
+
 				int total;
 				try
 				{
 					total = studyLoader.Start(new StudyLoaderArgs(_args.StudyInstanceUid, _args.Server));
+					if (total <= 0)
+					{
+						string message = String.Format("Study '{0}' does not appear to exist on server '{1}'",
+						                               _args.StudyInstanceUid, _args.Server);
+
+						throw new OpenStudyException(message);
+					}
+				}
+				catch(OpenStudyException)
+				{
+					throw;
 				}
 				catch (Exception e)
 				{
-					OpenStudyException ex = new OpenStudyException("Failed to load any of the requested images.", e);
-					throw ex;
+					string message = String.Format("Failed to load images for study '{0}'", _args.StudyInstanceUid);
+					throw new OpenStudyException(message, e);
 				}
 
 				try
@@ -66,23 +78,35 @@ namespace ClearCanvas.ImageViewer
 				}
 				catch (Exception e)
 				{
-					string message = String.Format("Failed to load Sops for study with uid '{0}'", _args.StudyInstanceUid);
+					string message = String.Format("Failed to load images for study '{0}'", _args.StudyInstanceUid);
 					Platform.Log(LogLevel.Error, e, message);
 
 					foreach (Sop sop in _sops)
-						sop.Dispose();
+					{
+						try
+						{
+							sop.Dispose();
+						}
+						catch(Exception ex)
+						{
+							Platform.Log(LogLevel.Error, ex);
+						}
+					}
 
 					_sops.Clear();
 
-					OpenStudyException ex = new OpenStudyException(message, e);
-					ex.TotalImages = total;
-					ex.FailedImages = total;
-					throw ex;
+					OpenStudyException exception = new OpenStudyException(message, e);
+					exception.TotalImages = total;
+					exception.FailedImages = total;
+					throw exception;
 				}
 			}
 
 			public void AddSops(ImageViewerComponent viewer)
 			{
+				if (_sops.Count == 0)
+					return;
+
 				List<Sop> sops = new List<Sop>(_sops);
 				_sops.Clear();
 				foreach (Sop sop in sops)

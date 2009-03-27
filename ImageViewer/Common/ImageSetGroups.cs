@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom.Utilities;
 
 namespace ClearCanvas.ImageViewer.Common
 {
@@ -23,66 +21,6 @@ namespace ClearCanvas.ImageViewer.Common
 				return new TestResult(true);
 			else
 				return new TestResult(false);
-		}
-	}
-
-	internal class ContainsModalitySpecification : ImageSetSpecification
-	{
-		private readonly string _modality;
-
-		public ContainsModalitySpecification(string modality)
-		{
-			Platform.CheckForEmptyString(modality, "modality");
-			_modality = modality;
-		}
-
-		public override TestResult Test(IImageSet imageSet)
-		{
-			//TODO: this doesn't actually test 'contains'.
-			IImageSopProvider provider = GetFirstImage<IImageSopProvider>(imageSet);
-			if (provider != null && provider.ImageSop.Modality == _modality)
-				return new TestResult(true);
-			else
-				return new TestResult(false);
-		}
-	}
-
-	internal class StudyDateSpecification : ImageSetSpecification
-	{
-		private readonly Predicate<DateTime> _innerTest;
-
-		private StudyDateSpecification(Predicate<DateTime> innerTest)
-		{
-			Platform.CheckForNullReference(innerTest, "innerTest");
-			_innerTest = innerTest;
-		}
-
-		public override TestResult Test(IImageSet imageSet)
-		{
-			IImageSopProvider provider = GetFirstImage<IImageSopProvider>(imageSet);
-			if (provider != null)
-			{
-				DateTime? studyDate = DateParser.Parse(provider.ImageSop.StudyDate);
-				if (studyDate != null && _innerTest(studyDate.Value))
-					return new TestResult(true);
-			}
-		
-			return new TestResult(false);
-		}
-
-		public static StudyDateSpecification CreateBeforeSpecification(DateTime date)
-		{
-			return new StudyDateSpecification(delegate(DateTime dateTime) { return dateTime < date; });
-		}
-		
-		public static StudyDateSpecification CreateAfterSpecification(DateTime date)
-		{
-			return new StudyDateSpecification(delegate(DateTime dateTime) { return dateTime > date; });
-		}
-
-		public static StudyDateSpecification CreateBetweenSpecification(DateTime begin, DateTime end)
-		{
-			return new StudyDateSpecification(delegate(DateTime dateTime) { return dateTime < end && dateTime > begin; });
 		}
 	}
 
@@ -170,31 +108,30 @@ namespace ClearCanvas.ImageViewer.Common
 		}
 	}
 
-	public class PatientsImageSetGroup : FilteredGroups<IImageSet>
+	public class SimplePatientImageSetGroupFactory : IFilteredGroupFactory<IImageSet>
 	{
-		public PatientsImageSetGroup()
+		public SimplePatientImageSetGroupFactory()
 		{
 		}
 
-		protected override FilteredGroup<IImageSet> CreateNewGroup(IImageSet imageSet)
+		#region IFilteredGroupFactory<IImageSet> Members
+
+		public FilteredGroup<IImageSet> Create(IImageSet item)
 		{
-			return new PatientImageSetGroup(imageSet);
+			return new PatientImageSetGroup(item);
 		}
 
-		protected override void  OnChildGroupEmpty(FilteredGroup<IImageSet> childGroup, out bool remove)
-		{
-			remove = true;
-		}
+		#endregion
 	}
 
 	public class ImageSetGroups : IDisposable
 	{
-		private readonly PatientsImageSetGroup _root;
+		private readonly FilteredGroups<IImageSet> _root;
 		private ObservableList<IImageSet> _sourceImageSets;
 
 		public ImageSetGroups()
 		{
-			_root = new PatientsImageSetGroup();
+			_root = new FilteredGroups<IImageSet>("Root", "All Patients", new SimplePatientImageSetGroupFactory());
 		}
 
 		public ImageSetGroups(ObservableList<IImageSet> sourceImageSets)
@@ -203,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Common
 			SourceImageSets = sourceImageSets;
 		}
 
-		public PatientsImageSetGroup Root
+		public FilteredGroups<IImageSet> Root
 		{
 			get { return _root; }	
 		}

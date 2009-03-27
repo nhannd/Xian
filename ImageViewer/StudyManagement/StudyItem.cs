@@ -113,6 +113,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get { return _wadoServicePort; }
 		}
+
+		public override string ToString()
+		{
+			return (_aeTitle ?? "unknown");
+		}
 	}
 
 	/// <summary>

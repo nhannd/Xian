@@ -39,9 +39,22 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	public class LayoutManager : ClearCanvas.ImageViewer.LayoutManager
 	{
 		private bool _physicalWorkspaceLayoutSet = false;
+		private readonly DefaultPatientReconciliationStrategy reconciliationStrategy = new DefaultPatientReconciliationStrategy();
 
 		public LayoutManager()
 		{	
+		}
+
+		protected override IImageSet CreateImageSet(Study study)
+		{
+			PatientInformation info = new PatientInformation(study.ParentPatient);
+			PatientInformation reconciled = reconciliationStrategy.ReconcilePatient(info);
+
+			ImageSet imageSet = (ImageSet)base.CreateImageSet(study);
+			imageSet.PatientInfo = String.Format("{0} · {1}",
+				study.ParentPatient.PatientsName.FormattedName, reconciled.PatientId);
+
+			return imageSet;
 		}
 
 		protected override void LayoutPhysicalWorkspace()

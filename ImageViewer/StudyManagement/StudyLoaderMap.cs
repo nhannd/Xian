@@ -44,7 +44,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
     {
     }
 
-    internal sealed class StudyLoaderMap : IEnumerable
+	internal class StudyLoaderNotFoundException : Exception
+	{
+		public StudyLoaderNotFoundException(string loaderName)
+		{
+			LoaderName = loaderName;
+		}
+
+		public readonly string LoaderName;
+	}
+	
+	internal sealed class StudyLoaderMap : IEnumerable
     {
         private readonly Dictionary<string, IStudyLoader> _studyLoaderMap = new Dictionary<string, IStudyLoader>();
 
@@ -61,7 +71,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				if (_studyLoaderMap.ContainsKey(studyLoaderName))
 					return _studyLoaderMap[studyLoaderName];
             	else
-					return null;
+					throw new StudyLoaderNotFoundException(studyLoaderName);
             }
         }
 

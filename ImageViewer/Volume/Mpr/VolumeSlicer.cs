@@ -212,7 +212,8 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		public DisplaySet CreateDisplaySet(string displaySetName)
 		{
 			string name = String.Format("MPR ({0})", displaySetName);
-			DisplaySet displaySet = new DisplaySet(name, Guid.NewGuid().ToString(), name);
+			DisplaySet displaySet = new DisplaySet(name, Guid.NewGuid().ToString());
+			displaySet.Description = name;
 			PopulateDisplaySetFull(displaySet);
 			return displaySet;
 		}

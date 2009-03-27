@@ -22,8 +22,9 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 		private VolumeSlicer _slicer;
 
 		private MprDisplaySet(string name, string uid, string description, MprDisplaySetIdentifier identifier, VolumeSlicer slicer)
-		: base(name, uid, description)
+		: base(name, uid)
 		{
+			base.Description = description;
 			_identifier = identifier;
 			_slicer = slicer;
 		}

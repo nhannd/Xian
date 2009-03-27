@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.Comparers;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -52,7 +53,7 @@ namespace ClearCanvas.ImageViewer
 			get { return _imageViewer.LogicalWorkspace; }
 		}
 
-		protected PresentationImageFactory PresentationImageFactory
+			protected PresentationImageFactory PresentationImageFactory
 		{
 			get
 			{
@@ -157,6 +158,81 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
+		/// Creates an <see cref="IImageSet"/> from the given <see cref="Study"/>, setting
+		/// the <see cref="IImageSet.Uid"/>, <see cref="IImageSet.Name"/> and <see cref="IImageSet.PatientInfo"/> properties.
+		/// </summary>
+		/// <remarks>
+		/// If you wish to override either the type of <see cref="IImageSet"/> created or any of it's properties,
+		/// you may override this method.  The following formatting is used to determine the property values:
+		/// <para>
+		/// The format of the <see cref="IImageSet.PatientInfo"/> property is 
+		/// <b>PatientsName(from <see cref="PersonName.FormattedName"/>) · PatientId</b>; for example <b>Doe, John 123</b>.
+		/// </para>
+		/// <para>
+		/// The format of the <see cref="IImageSet.Name"/> property is 
+		/// <b>StudyDate StudyTime [ModalitiesInStudy (comma separated)] StudyDescription</b>.
+		/// </para>
+		/// <para>
+		/// The <see cref="IImageSet.Uid"/> property is set to <see cref="Study.StudyInstanceUID"/>.
+		/// </para>
+		/// </remarks>
+		protected virtual IImageSet CreateImageSet(Study study)
+		{
+			ImageSet imageSet = new ImageSet();
+
+			DateTime studyDate;
+			DateParser.Parse(study.StudyDate, out studyDate);
+			DateTime studyTime;
+			TimeParser.Parse(study.StudyTime, out studyTime);
+
+			string modalitiesInStudy = StringUtilities.Combine(GetModalitiesInStudy(study), ", ");
+
+			imageSet.Name = String.Format("{0} {1} [{2}] {3}",
+				studyDate.ToString(Format.DateFormat),
+				studyTime.ToString(Format.TimeFormat),
+				modalitiesInStudy ?? "",
+				study.StudyDescription);
+
+			imageSet.PatientInfo = String.Format("{0} · {1}",
+				study.ParentPatient.PatientsName.FormattedName,
+				study.ParentPatient.PatientId);
+
+			imageSet.Uid = study.StudyInstanceUID;
+			return imageSet;
+		}
+
+		/// <summary>
+		/// Creates an <see cref="IDisplaySet"/> from the given <see cref="Series"/>, setting
+		/// the <see cref="IDisplaySet.Name"/>, <see cref="IDisplaySet.Description"/>, <see cref="IDisplaySet.Number"/>
+		/// and <see cref="IDisplaySet.Uid"/> properties.
+		/// </summary>
+		/// <remarks>
+		/// If you wish to override either the type of <see cref="IDisplaySet"/> created or any of it's properties,
+		/// you may override this method.  The following formatting is used to determine the property values:
+		/// <para>
+		/// The format of the <see cref="IDisplaySet.Name"/> property is 
+		/// <b><see cref="Series.SeriesNumber"/>: <see cref="Series.SeriesDescription"/></b>.
+		/// </para>
+		/// <para>
+		/// The format of the <see cref="IDisplaySet.Description"/> property is <b><see cref="Series.SeriesDescription"/></b> .
+		/// </para>
+		/// <para>
+		/// The <see cref="IDisplaySet.Number"/> property is set to <see cref="Series.SeriesNumber"/>.
+		/// </para>
+		/// <para>
+		/// The <see cref="IDisplaySet.Uid"/> property is set to <see cref="Series.SeriesInstanceUID"/>.
+		/// </para>
+		/// </remarks>
+		protected virtual IDisplaySet CreateDisplaySet(Series series)
+		{
+			string name = String.Format("{0}: {1}", series.SeriesNumber, series.SeriesDescription);
+			DisplaySet displaySet = new DisplaySet(name, series.SeriesInstanceUID);
+			displaySet.Number = series.SeriesNumber;
+			displaySet.Description = series.SeriesDescription;
+			return displaySet;
+		}
+
+		/// <summary>
 		/// Lays out the physical workspace, adding and setting up the <see cref="IPhysicalWorkspace.ImageBoxes"/>.
 		/// </summary>
 		/// <remarks>
@@ -246,6 +322,13 @@ namespace ClearCanvas.ImageViewer
 				SortDisplaySets(imageSet.DisplaySets);
 		}
 
+		protected virtual void OnPriorStudyLoaded(Study study)
+		{
+			BuildFromStudy(study);
+		}
+
+		#endregion
+
 		/// <summary>
 		/// Called to sort the image sets.
 		/// </summary>
@@ -259,13 +342,6 @@ namespace ClearCanvas.ImageViewer
 		{
 			LogicalWorkspace.ImageSets.Sort(GetImageSetComparer());
 		}
-
-		protected virtual void OnPriorStudyLoaded(Study study)
-		{
-			BuildFromStudy(study);
-		}
-
-		#endregion
 
 		protected void SortDisplaySets(DisplaySetCollection displaySets)
 		{
@@ -383,39 +459,6 @@ namespace ClearCanvas.ImageViewer
 			//Then you could observe new additions after that point.
 			if (imageSet != null)
 				AddImageSet(imageSet);
-		}
-
-		private IImageSet CreateImageSet(Study study)
-		{
-			ImageSet imageSet = new ImageSet();
-
-			DateTime studyDate;
-			DateParser.Parse(study.StudyDate, out studyDate);
-			DateTime studyTime;
-			TimeParser.Parse(study.StudyTime, out studyTime);
-
-			string modalitiesInStudy = StringUtilities.Combine(GetModalitiesInStudy(study), ", ");
-
-			imageSet.Name = String.Format("{0} {1} [{2}] {3}",
-				studyDate.ToString(Format.DateFormat),
-				studyTime.ToString(Format.TimeFormat),
-				modalitiesInStudy ?? "",
-				study.StudyDescription);
-
-			imageSet.PatientInfo = String.Format("{0} · {1}",
-				study.ParentPatient.PatientsName.FormattedName,
-				study.ParentPatient.PatientId);
-
-			imageSet.Uid = study.StudyInstanceUID;
-			return imageSet;
-		}
-
-		private IDisplaySet CreateDisplaySet(Series series)
-		{
-			string name = String.Format("{0}: {1}", series.SeriesNumber, series.SeriesDescription);
-			DisplaySet displaySet = new DisplaySet(name, series.SeriesInstanceUID, series.SeriesDescription);
-			displaySet.Number = series.SeriesNumber;
-			return displaySet;
 		}
 
 		private void AddImageSet(IImageSet imageSet)

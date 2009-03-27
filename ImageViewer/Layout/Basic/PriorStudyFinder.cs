@@ -30,24 +30,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private static void Handle(PriorStudyLoaderException exception, IExceptionHandlingContext context)
 		{
-			if (exception.FindFailed || (exception.TotalFailures == exception.TotalQueryResults))
+			if (exception.FindFailed || (exception.CompleteFailures == exception.TotalQueryResults))
 			{
 				context.ShowMessageBox(SR.MessageFailedToLoadAnyPriors);
 			}
-			else if (exception.TotalFailures > 0 && exception.PartialFailures> 0)
+			else if (exception.CompleteFailures > 0 && exception.PartialFailures > 0)
 			{
 				string message = String.Format(SR.FormatXCompleteYPartialPriorLoadFailures, 
-					exception.TotalFailures, exception.PartialFailures);
+					exception.CompleteFailures, exception.PartialFailures);
 
 				context.ShowMessageBox(message);
 			}
-			else if (exception.TotalFailures > 0)
+			else if (exception.CompleteFailures > 0)
 			{
 				string message;
-				if (exception.TotalFailures == 1)
+				if (exception.CompleteFailures == 1)
 					message = SR.Message1CompletePriorLoadFailures;
 				else
-					message = String.Format(SR.FormatXCompletePriorLoadFailures, exception.TotalFailures);
+					message = String.Format(SR.FormatXCompletePriorLoadFailures, exception.CompleteFailures);
 
 				context.ShowMessageBox(message);
 			}
@@ -60,6 +60,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					message = String.Format(SR.FormatXPartialPriorLoadFailures, exception.PartialFailures);
 
 				context.ShowMessageBox(message);
+			}
+			else if (exception.NoStudyLoaderFailures > 0)
+			{
+				//ignore, since there's not a lot we can do about it.
 			}
 			else
 			{
@@ -82,19 +86,34 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_cancel = false;
 			StudyItemList results = new StudyItemList();
 
+			DefaultPatientReconciliationStrategy reconciliationStrategy = new DefaultPatientReconciliationStrategy();
+			List<string> patientIds = new List<string>();
 			foreach (Patient patient in Viewer.StudyTree.Patients)
 			{
-				//TODO: option to find priors only when a single study is loaded?
 				if (_cancel)
 					break;
 
-				//TODO: add option for trimming last word and/or using wildcards?
-				using (StudyRootQueryBridge bridge = new StudyRootQueryBridge(Platform.GetService<IStudyRootQuery>()))
+				PatientInformation info = new PatientInformation(patient);
+				PatientInformation reconciled = reconciliationStrategy.ReconcilePatient(info);
+				if (!patientIds.Contains(reconciled.PatientId))
+					patientIds.Add(reconciled.PatientId);
+			}
+
+			using (StudyRootQueryBridge bridge = new StudyRootQueryBridge(Platform.GetService<IStudyRootQuery>()))
+			{
+				foreach (string patientId in patientIds)
 				{
-					IList<StudyRootStudyIdentifier> studies = bridge.QueryByPatientId(patient.PatientId);
+					StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
+					identifier.PatientId = patientId;
+					if (DefaultPatientReconciliationSettings.Default.PatientIdSearchAppendWildcard)
+						identifier.PatientId = identifier.PatientId  + "*";
+
+					IList<StudyRootStudyIdentifier> studies = bridge.StudyQuery(identifier);
 					foreach (StudyRootStudyIdentifier study in studies)
 					{
-						results.Add(ConvertToStudyItem(study));
+						StudyItem studyItem = ConvertToStudyItem(study);
+						if (studyItem != Null)
+							results.Add(studyItem);
 					}
 				}
 			}
@@ -110,11 +129,29 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private StudyItem ConvertToStudyItem(StudyRootStudyIdentifier study)
 		{
 			StudyItem item = new StudyItem();
-			item.Server = FindServer(study.RetrieveAeTitle);
-			if (item.Server == null)
+			IServerTreeNode node = FindServer(study.RetrieveAeTitle);
+			if (node.IsLocalDataStore)
+			{
 				item.StudyLoaderName = "DICOM_LOCAL";
-			else
-				item.StudyLoaderName = "CC_STREAMING";
+			}
+			else if (node.IsServer)
+			{
+				Server server = (Server) node;
+				if (server.IsStreaming)
+					item.StudyLoaderName = "CC_STREAMING";
+				else
+					item.StudyLoaderName = "DICOM_REMOTE";
+
+				item.Server = new ApplicationEntity(server.Host, server.AETitle, server.Port, server.HeaderServicePort, server.WadoServicePort);
+			}
+			else // (node == null)
+			{
+				Platform.Log(LogLevel.Warn,
+					String.Format("Unable to find server information '{0}' in order to load study '{1}'",
+					study.RetrieveAeTitle, study.StudyInstanceUid));
+
+				return null;
+			}
 
 			item.AccessionNumber = study.AccessionNumber;
 			item.ModalitiesInStudy = DicomStringHelper.GetDicomStringArray(study.ModalitiesInStudy ?? new string[0]);
@@ -130,13 +167,17 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			return item;
 		}
 
-		private static ApplicationEntity FindServer(string retrieveAETitle)
+		private static IServerTreeNode FindServer(string retrieveAETitle)
 		{
-			List<Server> remoteServers = Services.Configuration.DefaultServers.GetAll();
+			ServerTree serverTree = new ServerTree();
+			if (retrieveAETitle == serverTree.RootNode.LocalDataStoreNode.GetClientAETitle())
+				return serverTree.RootNode.LocalDataStoreNode;
+
+			List<Server> remoteServers = Services.Configuration.DefaultServers.SelectFrom(serverTree);
 			foreach (Server server in remoteServers)
 			{
-				if (server.IsStreaming && server.AETitle == retrieveAETitle)
-					return new ApplicationEntity(server.Host, server.AETitle, server.Port, server.HeaderServicePort, server.WadoServicePort);
+				if (server.AETitle == retrieveAETitle)
+					return server;
 			}
 
 			return null;

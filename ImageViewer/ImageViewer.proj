@@ -70,10 +70,14 @@
     </Otherwise>
   </Choose>
 
-  <Target Name="BuildSolution" >
+  <Target Name="Build JScript">
+    <MSBuild Projects="$(MSBuildProjectDirectory)\..\..\JScript\Build.proj" Properties="Configuration=$(Configuration);KeyFile=$(KeyFile)"/>
+  </Target>
+
+  <Target Name="BuildSolution" DependsOnTargets="Build JScript" >
     <RemoveDir Condition="$(DistributionBuild)" Directories="$(DistributionDir)" />
 
     <MSBuild Projects="ImageViewer.sln" Properties="$(ImageViewerProperties)" />
-	</Target>
+  </Target>
 
 </Project>

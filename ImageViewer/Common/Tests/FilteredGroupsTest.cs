@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Common.Tests
 			DicomGrayscalePresentationImage img = new DicomGrayscalePresentationImage(sop.Frames[1]);
 			sop.Dispose();
 
-			DisplaySet displaySet = new DisplaySet(patientId, seriesInstanceUid, patientId);
+			DisplaySet displaySet = new DisplaySet(patientId, seriesInstanceUid);
 			displaySet.PresentationImages.Add(img);
 			ImageSet imageSet = new ImageSet();
 			imageSet.PatientInfo = description;

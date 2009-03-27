@@ -49,13 +49,43 @@ namespace ClearCanvas.ImageViewer.Common
 	public class FilteredGroups<T> : FilteredGroup<T> where T : class
 	{
 		public FilteredGroups()
-			: base("Root", "All Items", new SimpleSpecification(delegate { return true; }))
+			: this("Root", "All Items")
 		{
 		}
 
-		public FilteredGroups(string name, string label, ISpecification specification)
-			: base(name, label, specification)
+		public FilteredGroups(string name, string label)
+			: this(name, label, ReturnTrue)
 		{
+		}
+
+		public FilteredGroups(string name, string label, Predicate<T> test)
+			: this(name, label, test, null)
+		{
+		}
+		
+		public FilteredGroups(string name, string label, ISpecification specification)
+			: this(name, label, specification, null)
+		{
+		}
+
+		public FilteredGroups(string name, string label, IFilteredGroupFactory<T> childGroupFactory)
+			: this(name, label, new SimpleSpecification(ReturnTrue), childGroupFactory)
+		{
+		}
+
+		public FilteredGroups(string name, string label, Predicate<T> test, IFilteredGroupFactory<T> childGroupFactory)
+			: base(name, label, test, childGroupFactory)
+		{
+		}
+
+		public FilteredGroups(string name, string label, ISpecification specification, IFilteredGroupFactory<T> childGroupFactory)
+			: base(name, label, specification, childGroupFactory)
+		{
+		}
+
+		private static bool ReturnTrue<T>(T item)
+		{
+			return true;
 		}
 
 		public void Add(T item)
@@ -79,12 +109,18 @@ namespace ClearCanvas.ImageViewer.Common
 		}
 	}
 
+	public interface IFilteredGroupFactory<T> where T: class
+	{
+		FilteredGroup<T> Create(T item);
+	}
+
 	public class FilteredGroup<T> where T : class 
 	{
 		private FilteredGroup<T> _parentGroup;
 		private readonly string _name;
 		private readonly string _label;
 		private readonly ISpecification _specification;
+		private readonly IFilteredGroupFactory<T> _childGroupFactory;
 		private readonly ObservableList<T> _items;
 		private readonly ReadOnlyCollection<T> _readOnlyItems;
 		private readonly FilteredGroupList<T> _childGroups;
@@ -94,17 +130,28 @@ namespace ClearCanvas.ImageViewer.Common
 		private event EventHandler<ItemEventArgs<T>> _itemRemoved;
 
 		public FilteredGroup(string name, string label, Predicate<T> test)
-			: this(name, label, new SimpleSpecification<T>(test))
+			: this(name, label, test, null)
+		{
+		}
+		
+		public FilteredGroup(string name, string label, ISpecification specification)
+			: this(name, label, specification, null)
 		{
 		}
 
-		public FilteredGroup(string name, string label, ISpecification specification)
+		public FilteredGroup(string name, string label, Predicate<T> test, IFilteredGroupFactory<T> childGroupFactory)
+			: this(name, label, new SimpleSpecification<T>(test), childGroupFactory)
+		{
+		}
+
+		public FilteredGroup(string name, string label, ISpecification specification, IFilteredGroupFactory<T> childGroupFactory)
 		{
 			Platform.CheckForNullReference(specification, "specification");
 
 			_name = name;
 			_label = label;
 			_specification = specification;
+			_childGroupFactory = childGroupFactory;
 
 			_childGroups = new FilteredGroupList<T>();
 			_items = new ObservableList<T>();
@@ -211,7 +258,15 @@ namespace ClearCanvas.ImageViewer.Common
 
 		protected virtual void OnChildGroupEmpty(FilteredGroup<T> childGroup, out bool remove)
 		{
-			remove = false;
+			remove = _childGroupFactory != null;
+		}
+
+		private FilteredGroup<T> CreateNewGroup(T item)
+		{
+			if (_childGroupFactory != null)
+				return _childGroupFactory.Create(item);
+			else
+				return null;
 		}
 
 		#endregion
@@ -389,11 +444,6 @@ namespace ClearCanvas.ImageViewer.Common
 				return false;
 
 			return child.AddItem(item);
-		}
-
-		protected virtual FilteredGroup<T> CreateNewGroup(T item)
-		{
-			return null;
 		}
 
 		protected virtual void RemoveItem(T item)

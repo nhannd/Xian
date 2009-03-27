@@ -58,8 +58,8 @@ namespace ClearCanvas.ImageViewer.Services
 			[AuthorityToken(Description = "Allow management of the Data Store (e.g. Reindexing).")]
 			public const string DataStore = "Management/Viewer/Data Store";
 
-			[AuthorityToken(Description = "Allow management of the viewer Dicom Server.")]
-			public const string DicomServer = "Management/Viewer/Dicom Server";
+			[AuthorityToken(Description = "Allow management of the viewer DICOM Server.")]
+			public const string DicomServer = "Management/Viewer/DICOM Server";
 		}
 	}
 }
