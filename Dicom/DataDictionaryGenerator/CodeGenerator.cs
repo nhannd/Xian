@@ -197,7 +197,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             writer.WriteLine("        {");
             writer.WriteLine("            if (!_tags.ContainsKey(tag))");
 			writer.WriteLine("            {");
-			writer.WriteLine("            	if (((tag & 0xFF000000) == 0x60000000) && (tag & 0xFFFF0000 != 0x60000000))");
+			writer.WriteLine("            	if (((tag & 0xFF000000) == 0x60000000) && ((tag & 0xFFFF0000) != 0x60000000))");
 			writer.WriteLine("            	{");
 			writer.WriteLine("            		DicomTag theTag = GetDicomTag(tag & 0xFF00FFFF);");
 			writer.WriteLine("            		if (theTag == null) return null;");
