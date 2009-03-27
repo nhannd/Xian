@@ -176,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Audit\AuditActiveParticipant.cs" />
+    <Compile Include="Audit\AuditParticipantObject.cs" />
     <Compile Include="Audit\BeginTransferringDicomInstancesAuditHelper.cs" />
     <Compile Include="Audit\ApplicationActivityAuditHelper.cs" />
     <Compile Include="Audit\DataExportAuditHelper.cs" />

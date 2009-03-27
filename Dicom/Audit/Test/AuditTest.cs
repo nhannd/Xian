@@ -56,10 +56,10 @@ namespace ClearCanvas.Dicom.Audit.Test
         	QueryAuditHelper helper =
         		new QueryAuditHelper(new DicomAuditSource("testApplication"), EventIdentificationTypeEventOutcomeIndicator.Success, parms);
 
-			helper.AddParticipant("testUser","test@test","Test Name");
-        	helper.AddPatientParticipant("id1234", "Test Patient");
-        	helper.AddStudyParticipant("1.2.3.4.5");
-			helper.AddStudyParticipant("1.2.3.4.5","1.2.3","A1234",new AuditSopClass[] {new AuditSopClass("1.2.3",5)});
+			helper.AddOtherParticipant(new AuditPersonActiveParticipant("testUser","test@test","Test Name"));
+        	helper.AddPatientParticipantObject("id1234", "Test Patient");
+        	helper.AddStudyParticipantObject("1.2.3.4.5");
+			helper.AddStudyParticipantObject("1.2.3.4.5","1.2.3","A1234",new AuditSopClass[] {new AuditSopClass("1.2.3",5)});
 
         	string output = helper.Serialize(true);
 
@@ -70,7 +70,7 @@ namespace ClearCanvas.Dicom.Audit.Test
 
         	Assert.IsTrue(result, failure);
 
-			helper = new QueryAuditHelper(new DicomAuditSource("testApplication2","enterpriseId", AuditSourceTypeCodeEnum.EndUserInterface, NetworkAccessPointTypeEnum.MachineName),EventIdentificationTypeEventOutcomeIndicator.Success, parms);
+			helper = new QueryAuditHelper(new DicomAuditSource("testApplication2","enterpriseId", AuditSourceTypeCodeEnum.EndUserInterface),EventIdentificationTypeEventOutcomeIndicator.Success, parms);
 
 			output = helper.Serialize(true);
 
