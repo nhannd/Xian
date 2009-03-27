@@ -43,10 +43,78 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Private Bit Packing Code
 
+		private static byte[] Pack(byte[] unpackedBits, int length, bool bigEndianWords) 
+		{
+			if (bigEndianWords && length % 2 == 1)
+				throw new ArgumentException("Output byte length must be even-length.", "length");
+
+			byte[] packedBits = new byte[length];
+			int outPos = 0;
+			int inLen = unpackedBits.Length;
+
+			byte[] input = unpackedBits;
+			{
+				byte[] output = packedBits;
+				{
+					if(bigEndianWords)
+					{
+						ushort window = 0x00;
+						ushort mask = 0x01;
+						for (int inPos = 0; inPos < inLen; inPos++)
+						{
+							if (input[inPos] > 0)
+								window |= mask;
+
+							mask = (ushort) (mask << 1);
+							if (mask == 0)
+							{
+								output[outPos] = (byte) (window >> 8);
+								output[outPos + 1] = (byte) (window);
+								outPos += 2;
+								window = 0x00;
+								mask = 0x01;
+							}
+						}
+						if (mask > 0)
+						{
+							output[outPos] = (byte)(window >> 8);
+							output[outPos + 1] = (byte)(window);
+						}
+					}
+					else
+					{
+						byte window = 0x00;
+						byte mask = 0x01;
+						for (int inPos = 0; inPos < inLen; inPos++)
+						{
+							if (input[inPos] > 0)
+								window |= mask;
+
+							mask = (byte) (mask << 1);
+							if (mask == 0)
+							{
+								output[outPos] = window;
+								outPos++;
+								window = 0x00;
+								mask = 0x01;
+							}
+						}
+						if (mask > 0)
+							output[outPos] = window;
+					}
+				}
+			}
+
+			return packedBits;
+		}
+
 		private unsafe static byte[] Unpack(byte[] packedBits, int length, bool bigEndianWords)
 		{
 			const byte ONE = 0x01;
 			const byte ZERO = 0x00;
+
+			if (bigEndianWords && packedBits.Length % 2 == 1)
+				throw new ArgumentException("Input byte array must be even-length.", "packedBits");
 
 			byte[] unpackedBits = new byte[length];
 			int outPos = 0;
@@ -56,23 +124,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				fixed (byte* output = unpackedBits)
 				{
-					byte window;
 					if (bigEndianWords)
 					{
 						for (int inPos = 0; inPos < inLen; inPos += 2)
 						{
 							// process the lower byte
-							window = input[inPos + 1];
+							byte lowerWindow = input[inPos + 1];
 							for (byte mask = 0x01; mask > 0 && outPos < length; mask = (byte) (mask << 1))
 							{
-								output[outPos++] = (window & mask) > 0 ? ONE : ZERO;
+								output[outPos++] = (lowerWindow & mask) > 0 ? ONE : ZERO;
 							}
 
 							// process the upper byte
-							window = input[inPos];
+							byte upperWindow = input[inPos];
 							for (byte mask = 0x01; mask > 0 && outPos < length; mask = (byte) (mask << 1))
 							{
-								output[outPos++] = (window & mask) > 0 ? ONE : ZERO;
+								output[outPos++] = (upperWindow & mask) > 0 ? ONE : ZERO;
 							}
 						}
 					}
@@ -80,7 +147,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					{
 						for (int inPos = 0; inPos < inLen; inPos++)
 						{
-							window = input[inPos];
+							byte window = input[inPos];
 							for (byte mask = 0x01; mask > 0 && outPos < length; mask = (byte) (mask << 1))
 							{
 								output[outPos++] = (window & mask) > 0 ? ONE : ZERO;
