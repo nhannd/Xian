@@ -280,10 +280,10 @@
     <value>Clipboard</value>
   </data>
   <data name="TooltipDeleteAllClipboardItems" xml:space="preserve">
-    <value>Delete All Clipboard Items</value>
+    <value>Delete All</value>
   </data>
   <data name="TooltipDeleteClipboardItem" xml:space="preserve">
-    <value>Delete Clipboard Item</value>
+    <value>Delete Selected</value>
   </data>
   <data name="TooltipExportToImage" xml:space="preserve">
     <value>Export to different image formats</value>

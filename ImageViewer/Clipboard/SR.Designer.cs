@@ -547,7 +547,7 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete All Clipboard Items.
+        ///   Looks up a localized string similar to Delete All.
         /// </summary>
         internal static string TooltipDeleteAllClipboardItems {
             get {
@@ -556,7 +556,7 @@ namespace ClearCanvas.ImageViewer.Clipboard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete Clipboard Item.
+        ///   Looks up a localized string similar to Delete Selected.
         /// </summary>
         internal static string TooltipDeleteClipboardItem {
             get {
