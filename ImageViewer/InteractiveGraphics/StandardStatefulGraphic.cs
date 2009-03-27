@@ -75,14 +75,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Constructs a new instance of <see cref="XStandardStatefulGraphic"/>.
 		/// </summary>
-		public StandardStatefulGraphic() : base()
-		{
-			Initialize();
-		}
-
-		/// <summary>
-		/// Constructs a new instance of <see cref="XStandardStatefulGraphic"/>.
-		/// </summary>
 		public StandardStatefulGraphic(IGraphic subject) : base(subject)
 		{
 			Initialize();

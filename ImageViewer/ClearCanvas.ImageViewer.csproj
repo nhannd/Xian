@@ -170,7 +170,6 @@
     <Compile Include="InteractiveGraphics\LineSegmentStretchControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\MoveControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\BoundableStretchControlGraphic.cs" />
-    <Compile Include="InteractiveGraphics\Tests\DrawShapeTestTool.cs" />
     <Compile Include="InteractiveGraphics\InteractiveBoundableGraphicBuilder.cs" />
     <Compile Include="InteractiveGraphics\InteractivePolylineGraphicBuilder.cs" />
     <Compile Include="InteractiveGraphics\UserCalloutGraphic.cs" />
