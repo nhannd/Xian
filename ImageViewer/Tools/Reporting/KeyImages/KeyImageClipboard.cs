@@ -9,6 +9,7 @@ using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Threading;
 using System.Security.Policy;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 {
@@ -19,6 +20,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private static readonly Dictionary<IImageViewer, KeyImageInformation> _keyImageInformation;
 		private static readonly Dictionary<IDesktopWindow, IShelf> _clipboardShelves;
+
+		private static ILocalDataStoreEventBroker _localDataStoreEventBroker;
 
 		static KeyImageClipboard()
 		{
@@ -68,9 +71,83 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				return null;
 		}
 
+		private static void ManageLocalDataStoreConnection()
+		{
+			if (_keyImageInformation.Count == 0 && _localDataStoreEventBroker != null)
+			{
+				try
+				{
+					_localDataStoreEventBroker.LostConnection -= DummyEventHandler;
+					_localDataStoreEventBroker.Dispose();
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Warn, e, "Failed to unsubscribe to local data store events.");
+				}
+				finally
+				{
+					_localDataStoreEventBroker = null;
+				}
+			}
+			else if (_keyImageInformation.Count > 0 && _localDataStoreEventBroker == null)
+			{
+				try
+				{
+					_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker(true);
+					//we subscribe to something to keep the local data store connection open.
+					_localDataStoreEventBroker.LostConnection += DummyEventHandler;
+				}
+				catch (Exception e)
+				{
+					_localDataStoreEventBroker = null;
+					Platform.Log(LogLevel.Warn, e, "Failed to subscribe to local data store events.");
+				}
+			}
+		}
+
+		private static void DummyEventHandler(object sender, EventArgs e)
+		{
+		}
+
 		#endregion
 
 		#region Internal Methods
+
+
+		internal static KeyImageInformation GetKeyImageInformation(Workspace workspace)
+		{
+			IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
+			return GetKeyImageInformation(viewer);
+		}
+
+		internal static KeyImageInformation GetKeyImageInformation(IImageViewer viewer)
+		{
+			if (!PermissionsHelper.IsInRole(ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify))
+				throw new PolicyException(SR.ExceptionViewKeyImagePermissionDenied);
+
+			if (viewer != null)
+				return _keyImageInformation[viewer];
+			else
+				return null;
+		}
+
+		internal static KeyImageInformation GetKeyImageInformation(IDesktopWindow desktopWindow)
+		{
+			IShelf shelf = GetClipboardShelf(desktopWindow);
+			if (shelf == null)
+				return null;
+
+			if (!PermissionsHelper.IsInRole(ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify))
+				throw new PolicyException(SR.ExceptionViewKeyImagePermissionDenied);
+
+			KeyImageClipboardComponent component = shelf.Component as KeyImageClipboardComponent;
+			if (component != null)
+				return component.KeyImageInformation;
+			else
+				return null;
+		}
+
+		#region Event Publishing
 
 		internal static void OnDesktopWindowOpened(IDesktopWindow desktopWindow)
 		{
@@ -88,6 +165,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 		{
 			if (!_keyImageInformation.ContainsKey(viewer))
 				_keyImageInformation[viewer] = new KeyImageInformation();
+
+			ManageLocalDataStoreConnection();
 		}
 
 		internal static void OnViewerClosed(IImageViewer viewer)
@@ -110,8 +189,11 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 					}
 				}
 			}
+
+			ManageLocalDataStoreConnection();
 		}
-		
+
+		#endregion
 		#endregion
 
 		#region Public Methods
@@ -133,37 +215,6 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				throw new ArgumentException("The image must be an IImageSopProvider.", "image");
 
 			info.ClipboardItems.Add(ClipboardComponent.CreatePresentationImageItem(image));
-		}
-
-		//TODO: make these internal?
-		public static KeyImageInformation GetKeyImageInformation(Workspace workspace)
-		{
-			IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
-			return GetKeyImageInformation(viewer);
-		}
-
-		public static KeyImageInformation GetKeyImageInformation(IImageViewer viewer)
-		{
-			if (viewer != null)
-				return _keyImageInformation[viewer];
-			else
-				return null;
-		}
-
-		public static KeyImageInformation GetKeyImageInformation(IDesktopWindow desktopWindow)
-		{
-			IShelf shelf = GetClipboardShelf(desktopWindow);
-			if (shelf == null)
-				return null;
-
-			if (!PermissionsHelper.IsInRole(ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify))
-				throw new PolicyException(SR.ExceptionViewKeyImagePermissionDenied);
-
-			KeyImageClipboardComponent component = shelf.Component as KeyImageClipboardComponent;
-			if (component != null)
-				return component.KeyImageInformation;
-			else
-				return null;
 		}
 
 		public static void Show(IDesktopWindow desktopWindow)

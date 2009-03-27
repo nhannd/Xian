@@ -326,6 +326,8 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				{
 					_lostConnection += value;
 				}
+
+				Startup();
 			}
 			remove
 			{
@@ -333,6 +335,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				{
 					_lostConnection -= value;
 				}
+
+				if (!this.AnySubscribers)
+					ShutDown();
 			}
 		}
 
@@ -344,6 +349,8 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				{
 					_connected += value;
 				}
+
+				Startup();
 			}
 			remove
 			{
@@ -351,6 +358,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				{
 					_connected -= value;
 				}
+
+				if (!this.AnySubscribers)
+					ShutDown();
 			}
 		}
 
@@ -378,7 +388,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 						_reindexProgressUpdate != null ||
 						_sendProgressUpdate != null ||
 						_sopInstanceImported != null ||
-						_instanceDeleted != null);
+						_instanceDeleted != null ||
+						_lostConnection != null ||
+						_connected != null);
 				}
 			}
 		}

@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 {
 	public class KeyImageSerializer
 	{
-		private readonly List<KeyValuePair<Frame, DicomSoftcopyPresentationState>> _frames;
+		private readonly Dictionary<Frame, DicomSoftcopyPresentationState> _framePresentationStates;
 		//private readonly List<string> _docTitleMods;
 		private DateTime _datetime;
 		private string _description;
@@ -25,13 +25,13 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 		public KeyImageSerializer()
 		{
-			_frames = new List<KeyValuePair<Frame, DicomSoftcopyPresentationState>>();
+			_framePresentationStates = new Dictionary<Frame, DicomSoftcopyPresentationState>();
 			_datetime = Platform.Time;
 		}
 
-		public IList<KeyValuePair<Frame, DicomSoftcopyPresentationState>> Frames
+		public IDictionary<Frame, DicomSoftcopyPresentationState> FramePresentationStates
 		{
-			get { return _frames; }
+			get { return _framePresentationStates; }
 		}
 
 		//public IList<string> DocumentTitleModifiers
@@ -65,22 +65,19 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 		public List<DicomFile> Serialize()
 		{
-			if (_frames.Count == 0)
+			if (_framePresentationStates.Count == 0)
 				throw new InvalidOperationException("Key object selection cannot be empty.");
 
-			List<DicomFile> dicomFiles = new List<DicomFile>();
+			List<DicomFile> keyObjectDocuments = new List<DicomFile>();
 			List<IHierarchicalSopInstanceReferenceMacro> identicalDocuments = new List<IHierarchicalSopInstanceReferenceMacro>();
 			Dictionary<string, KeyObjectSelectionDocumentIod> koDocumentsByStudy = new Dictionary<string, KeyObjectSelectionDocumentIod>();
-			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> pair in _frames)
+			foreach (Frame frame in _framePresentationStates.Keys)
 			{
-				Frame frame = pair.Key;
-				DicomSoftcopyPresentationState presentationState = pair.Value;
-
 				string studyInstanceUid = frame.StudyInstanceUID;
 				if (!koDocumentsByStudy.ContainsKey(studyInstanceUid))
 				{
-					DicomFile dcf = new DicomFile();
-					KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(frame.ParentImageSop.DataSource, dcf.DataSet);
+					DicomFile keyObjectDocument = new DicomFile();
+					KeyObjectSelectionDocumentIod iod = CreatePrototypeDocument(frame.ParentImageSop.DataSource, keyObjectDocument.DataSet);
 
 					iod.KeyObjectDocumentSeries.InitializeAttributes();
 					iod.KeyObjectDocumentSeries.Modality = Modality.KO;
@@ -99,7 +96,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 						iod.SopCommon.SopInstanceUid));
 
 					koDocumentsByStudy.Add(studyInstanceUid, iod);
-					dicomFiles.Add(dcf);
+					keyObjectDocuments.Add(keyObjectDocument);
 				}
 			}
 
@@ -119,7 +116,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				List<IHierarchicalSopInstanceReferenceMacro> currentRequestedProcedureEvidenceList = new List<IHierarchicalSopInstanceReferenceMacro>();
 
 				Dictionary<ImageSop, List<int>> frameMap = new Dictionary<ImageSop, List<int>>();
-				foreach (KeyValuePair<Frame,DicomSoftcopyPresentationState> framePRPair in _frames)
+				foreach (KeyValuePair<Frame,DicomSoftcopyPresentationState> framePRPair in _framePresentationStates)
 				{
 					Frame frame = framePRPair.Key;
 					ImageSop sop = frame.ParentImageSop;
@@ -205,12 +202,13 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			}
 
 			// set meta for the files
-			foreach (DicomFile dcf in dicomFiles) {
-				dcf.MediaStorageSopClassUid = dcf.DataSet[DicomTags.SopClassUid].ToString();
-				dcf.MediaStorageSopInstanceUid = dcf.DataSet[DicomTags.SopInstanceUid].ToString();
+			foreach (DicomFile keyObjectDocument in keyObjectDocuments)
+			{
+				keyObjectDocument.MediaStorageSopClassUid = keyObjectDocument.DataSet[DicomTags.SopClassUid].ToString();
+				keyObjectDocument.MediaStorageSopInstanceUid = keyObjectDocument.DataSet[DicomTags.SopInstanceUid].ToString();
 			}
 
-			return dicomFiles;
+			return keyObjectDocuments;
 		}
 
 		private int CalculateSeriesNumber(Frame frame)

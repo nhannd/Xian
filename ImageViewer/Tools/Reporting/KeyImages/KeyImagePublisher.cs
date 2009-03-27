@@ -27,8 +27,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private List<Server> _defaultServers;
 		private List<Server> _allServers;
-		//TODO: change to use something like KeyObjectContentItem instead of KVP?
-		private List<KeyValuePair<Frame,DicomSoftcopyPresentationState>> _sourceFrames;
+		private Dictionary<Frame, DicomSoftcopyPresentationState> _framePresentationStates;
 
 		public KeyImagePublisher(KeyImageInformation information, bool publishToSourceServer)
 		{
@@ -40,13 +39,13 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			_localPublishingInfo = new List<DicomFile>();
 		}
 
-		private List<KeyValuePair<Frame, DicomSoftcopyPresentationState>> SourceFrames
+		private Dictionary<Frame, DicomSoftcopyPresentationState> SourceFrames
 		{
 			get
 			{
-				if (_sourceFrames == null)
+				if (_framePresentationStates == null)
 				{
-					_sourceFrames = new List<KeyValuePair<Frame, DicomSoftcopyPresentationState>>();
+					_framePresentationStates = new Dictionary<Frame, DicomSoftcopyPresentationState>();
 					foreach (IClipboardItem item in _sourceInformation.ClipboardItems)
 					{
 						IImageSopProvider provider = item.Item as IImageSopProvider;
@@ -55,12 +54,12 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 							DicomSoftcopyPresentationState presentationState = null;
 							if (item.Item is IPresentationImage && DicomSoftcopyPresentationState.IsSupported((IPresentationImage)item.Item))
 								presentationState = DicomSoftcopyPresentationState.Create((IPresentationImage) item.Item);
-							_sourceFrames.Add(new KeyValuePair<Frame, DicomSoftcopyPresentationState>(provider.Frame, presentationState));
+							_framePresentationStates.Add(provider.Frame, presentationState);
 						}
 					}
 				}
 
-				return _sourceFrames;
+				return _framePresentationStates;
 			}
 		}
 
@@ -110,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			serializer.SeriesDescription = _sourceInformation.SeriesDescription;
 
 			foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> frameAndPR in SourceFrames)
-				serializer.Frames.Add(frameAndPR);
+				serializer.FramePresentationStates.Add(frameAndPR);
 
 			_keyObjectDocuments.AddRange(serializer.Serialize());
 		}
@@ -125,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				});
 		}
 
-		private void AddRemotePublishDocuments(Server publishServer, Frame frame, DicomFile dcfPresentationState)
+		private void AddRemotePublishDocuments(Server publishServer, Frame frame, DicomFile presentationStateDocument)
 		{
 			if (!_remotePublishingInfo.ContainsKey(publishServer))
 				_remotePublishingInfo.Add(publishServer, new List<DicomFile>());
@@ -139,8 +138,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				publishDocuments.Add(document);
 			}
 
-			if (dcfPresentationState != null && !publishDocuments.Contains(dcfPresentationState))
-				publishDocuments.Add(dcfPresentationState);
+			if (presentationStateDocument != null && !publishDocuments.Contains(presentationStateDocument))
+				publishDocuments.Add(presentationStateDocument);
 		}
 
 		private Server GetServer(ApplicationEntity server)
@@ -156,12 +155,13 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> frameAndPR in SourceFrames)
 				{
 					Frame frame = frameAndPR.Key;
-					DicomFile dcfPresentationState = null;
-					if(frameAndPR.Value!=null)
-						dcfPresentationState = frameAndPR.Value.DicomFile;
+					DicomSoftcopyPresentationState presentationState = frameAndPR.Value;
+					DicomFile presentationStateDocument = null;
+					if(presentationState != null)
+						presentationStateDocument = presentationState.DicomFile;
 
 					foreach (Server defaultServer in DefaultServers)
-						AddRemotePublishDocuments(defaultServer, frame, dcfPresentationState);
+						AddRemotePublishDocuments(defaultServer, frame, presentationStateDocument);
 
 					ISopDataSource dataSource = frame.ParentImageSop.DataSource;
 					ApplicationEntity sourceServer = dataSource.Server as ApplicationEntity;
@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 						Server publishServer = GetServer(sourceServer);
 						//if it's a default server, then it was already added above.
 						if (publishServer != null && !IsDefaultServer(publishServer))
-							AddRemotePublishDocuments(publishServer, frame, dcfPresentationState);
+							AddRemotePublishDocuments(publishServer, frame, presentationStateDocument);
 					}
 					else if (dataSource.StudyLoaderName == "DICOM_LOCAL")
 					{
@@ -181,8 +181,8 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 							_localPublishingInfo.Add(document);
 						}
 
-						if (dcfPresentationState != null)
-							_localPublishingInfo.Add(dcfPresentationState);
+						if (presentationStateDocument != null)
+							_localPublishingInfo.Add(presentationStateDocument);
 					}
 				}
 			}
@@ -212,14 +212,16 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 				{
 					try
 					{
+						Server server = pair.Key;
+						List<DicomFile> documents = pair.Value;
 						List<AEInformation> destinationServers = new List<AEInformation>();
 						AEInformation destination = new AEInformation();
-						destination.AETitle = pair.Key.AETitle;
-						destination.HostName = pair.Key.Host;
-						destination.Port = pair.Key.Port;
+						destination.AETitle = server.AETitle;
+						destination.HostName = server.Host;
+						destination.Port = server.Port;
 						destinationServers.Add(destination);
 
-						DicomFilePublisher.PublishRemote(pair.Value, destination, true);
+						DicomFilePublisher.PublishRemote(documents, destination, true);
 					}
 					catch (EndpointNotFoundException)
 					{
