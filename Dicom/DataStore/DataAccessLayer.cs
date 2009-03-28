@@ -53,9 +53,29 @@ namespace ClearCanvas.Dicom.DataStore
 		static DataAccessLayer()
 		{
 			_hibernateConfiguration = new Configuration();
-			string assemblyName = MethodBase.GetCurrentMethod().DeclaringType.Assembly.GetName().Name;
-			_hibernateConfiguration.Configure(assemblyName + ".cfg.xml");
-			_hibernateConfiguration.AddAssembly(assemblyName);
+			Assembly entryAssembly = Assembly.GetEntryAssembly();
+			Assembly thisAssembly = typeof (DataAccessLayer).Assembly;
+			string thisAssemblyName = thisAssembly.GetName().Name; 
+			string exePath = Path.GetDirectoryName(entryAssembly.Location);
+			string thisAssemblyPath = Path.GetDirectoryName(thisAssembly.Location);
+			
+			string configPath = Path.Combine(exePath, thisAssemblyName) + ".cfg.xml";
+			if (!File.Exists(configPath))
+			{
+				Platform.Log(LogLevel.Debug, "NHibernate config file '{0}' does not exist; checking assembly location ...", configPath);
+				configPath = Path.Combine(thisAssemblyPath, thisAssemblyName) + ".cfg.xml";
+				if (!File.Exists(configPath))
+				{
+					string message =
+						String.Format("NHibernate config file '{0}' does not exist; database cannot be initialized.", configPath);
+
+					Platform.Log(LogLevel.Debug, message);
+					throw new FileNotFoundException(message, configPath);
+				}
+			}
+
+			_hibernateConfiguration.Configure(configPath);
+			_hibernateConfiguration.AddAssembly(thisAssemblyName);
 			_sessionFactory = _hibernateConfiguration.BuildSessionFactory();
 		}
 

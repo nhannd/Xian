@@ -144,7 +144,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			public void RefreshStudyList()
 			{
-				_component.Search();
+				try
+				{
+					BlockingOperation.Run(_component.Search);
+				}
+				catch (Exception e)
+				{
+					ExceptionHandler.Report(e, _component.Host.DesktopWindow);
+				}
 			}
 
 			#endregion
@@ -396,7 +403,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 // this isn't ideal, but since we can operate on multiple entities, we need to aggregate all the
                 // exception messages. We should at least attempt to get at the first inner exception, and that's
                 // what we do here, to aid in debugging
-                this.Host.DesktopWindow.ShowMessageBox(aggregateExceptionMessage.ToString(), MessageBoxActions.Ok);
+
+				//NOTE: must use Application.ActiveDesktopWindow instead of this.Host.DesktopWindow b/c this
+				//method is called on startup before the component is started.
+				Application.ActiveDesktopWindow.ShowMessageBox(aggregateExceptionMessage.ToString(), MessageBoxActions.Ok);
             }
 		}
 
