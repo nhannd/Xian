@@ -53,10 +53,9 @@ namespace ClearCanvas.Dicom.DataStore
 		static DataAccessLayer()
 		{
 			_hibernateConfiguration = new Configuration();
-			Assembly entryAssembly = Assembly.GetEntryAssembly();
 			Assembly thisAssembly = typeof (DataAccessLayer).Assembly;
-			string thisAssemblyName = thisAssembly.GetName().Name; 
-			string exePath = Path.GetDirectoryName(entryAssembly.Location);
+			string thisAssemblyName = thisAssembly.GetName().Name;
+			string exePath = AppDomain.CurrentDomain.BaseDirectory;
 			string thisAssemblyPath = Path.GetDirectoryName(thisAssembly.Location);
 			
 			string configPath = Path.Combine(exePath, thisAssemblyName) + ".cfg.xml";
