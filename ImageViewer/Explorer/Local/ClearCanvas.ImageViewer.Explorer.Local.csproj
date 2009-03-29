@@ -38,6 +38,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandLineOpenTool.cs" />
     <Compile Include="DicomImageLoaderTool.cs" />
     <Compile Include="LocalImageExplorer.cs" />
     <Compile Include="LocalImageExplorerComponent.cs">
