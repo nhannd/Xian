@@ -415,12 +415,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		protected void SerializeDisplayShutter(DisplayShutterModuleIod displayShutterModule)
 		{
-			// TODO : fix this dummy implementation
+			//TODO: since we only do presentation states for key objects right now, implementing this
+			//would cause inconsistent behaviour.  When we support presentation states fully, this should be implemented,
+			//along with deserialization.
 		}
 
 		protected void SerializeBitmapDisplayShutter(BitmapDisplayShutterModuleIod bitmapDisplayShutterModule)
 		{
-			// TODO : fix this dummy implementation
+			//TODO: since we only do presentation states for key objects right now, implementing this
+			//would cause inconsistent behaviour.  When we support presentation states fully, this should be implemented,
+			//along with deserialization.
 		}
 
 		protected void SerializeOverlayPlane(OverlayPlaneModuleIod overlayPlaneModule)

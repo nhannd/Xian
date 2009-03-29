@@ -718,6 +718,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred while trying to add graphics from the image header.  Some or all of them will not appear..
+        /// </summary>
+        public static string MessageFailedToApplyDicomHeaderGraphics {
+            get {
+                return ResourceManager.GetString("MessageFailedToApplyDicomHeaderGraphics", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Creation of VOI Data LUTs failed..
         /// </summary>
         public static string MessageFailedToGetVOIDataLUTs {

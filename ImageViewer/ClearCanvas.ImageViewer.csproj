@@ -122,10 +122,16 @@
     <Compile Include="Comparers\AcquisitionTimeComparer.cs" />
     <Compile Include="Comparers\DisplaySetNumberComparer.cs" />
     <Compile Include="Comparers\SliceLocationComparer.cs" />
+    <Compile Include="DicomGraphics\DicomGraphicsDeserializer.cs" />
+    <Compile Include="DicomGraphics\DicomGraphicsFactory.cs" />
     <Compile Include="DrawableUndoableOperation.cs" />
     <Compile Include="EditBox.cs" />
     <Compile Include="Common\FilteredGroups.cs" />
     <Compile Include="Graphics\DecoratorCompositeGraphic.cs" />
+    <Compile Include="Graphics\AddGraphicUndoableCommand.cs" />
+    <Compile Include="DicomGraphics\ShuttersGraphic.cs" />
+    <Compile Include="DicomGraphics\OverlayPlaneGraphic.cs" />
+    <Compile Include="DicomGraphics\OverlayPlanesGraphic.cs" />
     <Compile Include="Graphics\FlashOverlayController.cs" />
     <Compile Include="Graphics\CurvePrimitive.cs" />
     <Compile Include="Graphics\IApplicationGraphicsProvider.cs" />
@@ -141,8 +147,6 @@
     <Compile Include="Graphics\InvariantArrowheadGraphic.cs" />
     <Compile Include="Graphics\InvariantLinePrimitive.cs" />
     <Compile Include="Graphics\ArrowGraphic.cs" />
-    <Compile Include="Imaging\DicomOverlayPlanes.cs" />
-    <Compile Include="Imaging\DicomOverlayPlane.cs" />
     <Compile Include="Imaging\OverlayData.cs" />
     <Compile Include="InteractiveGraphics\ContextMenuControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\BasicGraphicToolsControlGraphic.cs" />
@@ -199,6 +203,7 @@
     <Compile Include="RoiGraphics\Analyzers\RoiLengthAnalyzer.cs" />
     <Compile Include="RoiGraphics\LinearRoi.cs" />
     <Compile Include="RoiGraphics\Units.cs" />
+    <Compile Include="DicomGraphics\GeometricShuttersGraphic.cs" />
     <Compile Include="SingleStudyLoader.cs" />
     <Compile Include="IPriorStudyFinder.cs" />
     <Compile Include="KeyObjects\KeyImageDeserializer.cs" />

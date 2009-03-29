@@ -55,6 +55,14 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		{
 		}
 
+		public RectF(RectF rectangle)
+		{
+			_top = rectangle.Top;
+			_left = rectangle.Left;
+			_bottom = rectangle.Bottom;
+			_right = rectangle.Right;
+		}
+
 		/// <summary>
 		/// Gets or sets the top coordinate of the rectangle.
 		/// </summary>

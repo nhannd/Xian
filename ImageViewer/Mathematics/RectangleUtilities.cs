@@ -417,6 +417,13 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return normalizedRectangle;
 		}
 
+		public static Rectangle ConvertToPositiveRectangle(Rectangle rectangle)
+		{
+			RectangleF rect = new RectangleF(rectangle.Location, new SizeF(rectangle.Width, rectangle.Height));
+			RectangleF positive = ConvertToPositiveRectangle(rect);
+			return new Rectangle((int)positive.X, (int)positive.Y, (int)positive.Width, (int)positive.Height);
+		}
+
 		/// <summary>
 		/// Takes a rectangle whose width and/or height may be negative and converts it to
 		/// an equivalent rectangle whose width and height are guaranteed to be positive

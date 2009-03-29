@@ -61,52 +61,50 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		}
 
 		/// <summary>
-		/// Gets or sets the value of ShutterPresentationValue in the underlying collection. Type 1C.
+		/// Gets or sets the shutter presentation value.  Type 1C.
 		/// </summary>
 		public int? ShutterPresentationValue
 		{
 			get
 			{
-				int result;
-				if (base.DicomAttributeProvider[DicomTags.ShutterPresentationValue].TryGetInt32(0, out result))
-					return result;
-				return null;
+				DicomAttribute attribute;
+				if (base.DicomAttributeProvider.TryGetAttribute(DicomTags.ShutterPresentationValue, out attribute))
+					return attribute.GetInt32(0, 0);
+				else
+					return null;
 			}
 			set
 			{
 				if (!value.HasValue)
-				{
 					base.DicomAttributeProvider[DicomTags.ShutterPresentationValue] = null;
-					return;
-				}
-				base.DicomAttributeProvider[DicomTags.ShutterPresentationValue].SetInt32(0, value.Value);
+				else
+					base.DicomAttributeProvider[DicomTags.ShutterPresentationValue].SetInt32(0, value.Value);
 			}
 		}
 
 		/// <summary>
-		/// Gets or sets the value of ShutterPresentationColorCielabValue in the underlying collection. Type 1C.
+		/// Gets or sets the shutter presentation color value.  Type 1C.
 		/// </summary>
-		public int[] ShutterPresentationColorCielabValue
+		public CIELabColor? ShutterPresentationColorCielabValue
 		{
 			get
 			{
-				int[] result = new int[3];
-				if (base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].TryGetInt32(0, out result[0]))
-					if (base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].TryGetInt32(0, out result[1]))
-						if (base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].TryGetInt32(0, out result[2]))
-					return result;
-				return null;
+				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue];
+				if (attribute.IsEmpty || attribute.IsNull)
+					return null;
+
+				ushort[] values = attribute.Values as ushort[];
+				if (values != null && values.Length >= 3)
+					return new CIELabColor(values[0], values[1], values[2]);
+				else
+					return null;
 			}
 			set
 			{
-				if (value == null || value.Length != 3)
-				{
+				if (!value.HasValue)
 					base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue] = null;
-					return;
-				}
-				base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].SetInt32(0, value[0]);
-				base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].SetInt32(1, value[1]);
-				base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].SetInt32(2, value[2]);
+				else
+					base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].Values = value.Value.ToArray();
 			}
 		}
 

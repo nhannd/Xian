@@ -30,8 +30,6 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Dicom.Iod.Macros;
-using ClearCanvas.Dicom.Iod.Sequences;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
@@ -44,20 +42,126 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BitmapDisplayShutterModuleIod"/> class.
 		/// </summary>	
-		public BitmapDisplayShutterModuleIod() : base() {}
+		public BitmapDisplayShutterModuleIod() : base() { }
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="BitmapDisplayShutterModuleIod"/> class.
 		/// </summary>
 		public BitmapDisplayShutterModuleIod(IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider) { }
 
-		// TODO #1568: Implement Bitmap Display Shutter Module when user-shutters are implemented (Conditional module for GSPS IOD)
+		/// <summary>
+		/// Gets or sets the shutter shape.  Type 1.
+		/// </summary>
+		public ShutterShape ShutterShape
+		{
+			get
+			{
+				ShutterShape returnValue = ShutterShape.None;
+				string[] values = base.DicomAttributeProvider[DicomTags.ShutterShape].Values as string[];
+				if (values != null && values.Length > 0)
+				{
+					foreach (string value in values)
+					{
+						string upperValue = value.ToUpperInvariant();
+						if (upperValue == "CIRCULAR")
+							returnValue |= Iod.ShutterShape.Circular;
+						else if (upperValue == "RECTANGULAR")
+							returnValue |= Iod.ShutterShape.Rectangular;
+						else if (upperValue == "POLYGONAL")
+							returnValue |= Iod.ShutterShape.Polygonal;
+						else if (upperValue == "BITMAP")
+							returnValue |= Iod.ShutterShape.Bitmap;
+					}
+				}
+
+				return returnValue;
+			}
+			set
+			{
+				if (value == ShutterShape.None)
+				{
+					base.DicomAttributeProvider[DicomTags.ShutterShape] = null;
+				}
+				else
+				{
+					if ((value & ShutterShape.Bitmap) == ShutterShape.Bitmap)
+						base.DicomAttributeProvider[DicomTags.ShutterShape].SetString(0, ShutterShape.Bitmap.ToString().ToUpperInvariant());
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or set the group of an overlay in the presentation state Iod.
+		/// </summary>
+		public uint ShutterOverlayGroup
+		{
+			get { return base.DicomAttributeProvider[DicomTags.ShutterOverlayGroup].GetUInt32(0, 0); }	
+			set
+			{
+				//TODO: validate group
+				base.DicomAttributeProvider[DicomTags.ShutterOverlayGroup].SetUInt32(0, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the shutter presentation value.  Type 1.
+		/// </summary>
+		public int? ShutterPresentationValue
+		{
+			get
+			{
+				DicomAttribute attribute;
+				if (base.DicomAttributeProvider.TryGetAttribute(DicomTags.ShutterPresentationValue, out attribute))
+					return attribute.GetInt32(0, 0);
+				else
+					return null;
+			}
+			set
+			{
+				if (!value.HasValue)
+					base.DicomAttributeProvider[DicomTags.ShutterPresentationValue] = null;
+				else
+					base.DicomAttributeProvider[DicomTags.ShutterPresentationValue].SetInt32(0, value.Value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the shutter presentation color value.  Type 3.
+		/// </summary>
+		public CIELabColor? ShutterPresentationColorCielabValue
+		{
+			get
+			{
+				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue];
+				if (attribute.IsEmpty || attribute.IsNull)
+					return null;
+
+				ushort[] values = attribute.Values as ushort[];
+				if (values != null && values.Length >= 3)
+					return new CIELabColor(values[0], values[1], values[2]);
+				else
+					return null;
+			}
+			set
+			{
+				if (!value.HasValue)
+					base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue] = null;
+				else
+					base.DicomAttributeProvider[DicomTags.ShutterPresentationColorCielabValue].Values = value.Value.ToArray();
+			}
+		}
 
 		/// <summary>
 		/// Gets an enumeration of <see cref="DicomTag"/>s used by this module.
 		/// </summary>
-		public static IEnumerable<uint> DefinedTags {
-			get {
+		public static IEnumerable<uint> DefinedTags
+		{
+			get
+			{
+				yield return DicomTags.ShutterShape;
+				yield return DicomTags.ShutterOverlayGroup;
+				yield return DicomTags.ShutterPresentationValue;
+				yield return DicomTags.ShutterPresentationColorCielabValue;
 				yield break;
 			}
 		}

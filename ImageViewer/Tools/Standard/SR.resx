@@ -663,4 +663,40 @@ Please check the log for more details.</value>
   <data name="MenuClose" xml:space="preserve">
     <value>Close Menu</value>
   </data>
+  <data name="MenuDrawCircleShutter" xml:space="preserve">
+    <value>Draw Shutter (Circle)</value>
+  </data>
+  <data name="MenuDrawPolygonShutter" xml:space="preserve">
+    <value>Draw Shutter (Polygon)</value>
+  </data>
+  <data name="MenuDrawRectangleShutter" xml:space="preserve">
+    <value>Draw Shutter (Rectangle)</value>
+  </data>
+  <data name="MenuDrawShutter" xml:space="preserve">
+    <value>Draw Shutter</value>
+  </data>
+  <data name="TooltipDrawShutter" xml:space="preserve">
+    <value>Draw Shutter</value>
+  </data>
+  <data name="CommandClearCustomShutters" xml:space="preserve">
+    <value>Clear Custom Shutters</value>
+  </data>
+  <data name="CommandDrawShutter" xml:space="preserve">
+    <value>Draw Custom Shutter</value>
+  </data>
+  <data name="MenuClearCustomShutters" xml:space="preserve">
+    <value>Clear Custom Shutters</value>
+  </data>
+  <data name="MenuShowHideShutterOverlay" xml:space="preserve">
+    <value>Show/Hide Shutter Overlay</value>
+  </data>
+  <data name="ToolbarShutterOverlay" xml:space="preserve">
+    <value>Shutter Overlay</value>
+  </data>
+  <data name="TooltipShowHideShutterOverlay" xml:space="preserve">
+    <value>Show/Hide Shutter Overlay</value>
+  </data>
+  <data name="MessageShutterTooSmall" xml:space="preserve">
+    <value>The shutter area is too small.</value>
+  </data>
 </root>

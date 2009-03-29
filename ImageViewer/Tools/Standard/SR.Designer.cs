@@ -115,6 +115,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear Custom Shutters.
+        /// </summary>
+        internal static string CommandClearCustomShutters {
+            get {
+                return ResourceManager.GetString("CommandClearCustomShutters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Color Map.
         /// </summary>
         internal static string CommandColorMap {
@@ -156,6 +165,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string CommandDeleteAnnotation {
             get {
                 return ResourceManager.GetString("CommandDeleteAnnotation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draw Custom Shutter.
+        /// </summary>
+        internal static string CommandDrawShutter {
+            get {
+                return ResourceManager.GetString("CommandDrawShutter", resourceCulture);
             }
         }
         
@@ -693,6 +711,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear Custom Shutters.
+        /// </summary>
+        internal static string MenuClearCustomShutters {
+            get {
+                return ResourceManager.GetString("MenuClearCustomShutters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close Menu.
         /// </summary>
         internal static string MenuClose {
@@ -716,6 +743,42 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string MenuDeleteAnnotation {
             get {
                 return ResourceManager.GetString("MenuDeleteAnnotation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draw Shutter (Circle).
+        /// </summary>
+        internal static string MenuDrawCircleShutter {
+            get {
+                return ResourceManager.GetString("MenuDrawCircleShutter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draw Shutter (Polygon).
+        /// </summary>
+        internal static string MenuDrawPolygonShutter {
+            get {
+                return ResourceManager.GetString("MenuDrawPolygonShutter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draw Shutter (Rectangle).
+        /// </summary>
+        internal static string MenuDrawRectangleShutter {
+            get {
+                return ResourceManager.GetString("MenuDrawRectangleShutter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draw Shutter.
+        /// </summary>
+        internal static string MenuDrawShutter {
+            get {
+                return ResourceManager.GetString("MenuDrawShutter", resourceCulture);
             }
         }
         
@@ -851,6 +914,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string MenuShowHideScaleOverlay {
             get {
                 return ResourceManager.GetString("MenuShowHideScaleOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show/Hide Shutter Overlay.
+        /// </summary>
+        internal static string MenuShowHideShutterOverlay {
+            get {
+                return ResourceManager.GetString("MenuShowHideShutterOverlay", resourceCulture);
             }
         }
         
@@ -1032,6 +1104,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string MessageProbeToolError {
             get {
                 return ResourceManager.GetString("MessageProbeToolError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The shutter area is too small..
+        /// </summary>
+        internal static string MessageShutterTooSmall {
+            get {
+                return ResourceManager.GetString("MessageShutterTooSmall", resourceCulture);
             }
         }
         
@@ -1378,6 +1459,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Shutter Overlay.
+        /// </summary>
+        internal static string ToolbarShutterOverlay {
+            get {
+                return ResourceManager.GetString("ToolbarShutterOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stack.
         /// </summary>
         internal static string ToolbarStack {
@@ -1464,6 +1554,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string TooltipDicomOverlay {
             get {
                 return ResourceManager.GetString("TooltipDicomOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Draw Shutter.
+        /// </summary>
+        internal static string TooltipDrawShutter {
+            get {
+                return ResourceManager.GetString("TooltipDrawShutter", resourceCulture);
             }
         }
         
@@ -1599,6 +1698,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string TooltipShowHideScaleOverlay {
             get {
                 return ResourceManager.GetString("TooltipShowHideScaleOverlay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show/Hide Shutter Overlay.
+        /// </summary>
+        internal static string TooltipShowHideShutterOverlay {
+            get {
+                return ResourceManager.GetString("TooltipShowHideShutterOverlay", resourceCulture);
             }
         }
         

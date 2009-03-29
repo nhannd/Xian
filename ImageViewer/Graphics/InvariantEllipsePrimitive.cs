@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return EllipsePrimitive.IntersectEllipseAndLine(a, b, center, point);
 		}
 
-		public override bool Contains(Point point)
+		public override bool Contains(PointF point)
 		{
 			//TODO: duplicated from EllipsePrimitive - should combine.
 			GraphicsPath path = new GraphicsPath();

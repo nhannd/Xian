@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		public abstract bool Contains(Point point);
+		public abstract bool Contains(PointF point);
 
 		public override RectangleF BoundingBox
 		{

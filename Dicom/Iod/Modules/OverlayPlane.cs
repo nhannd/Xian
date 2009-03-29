@@ -73,7 +73,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			get
 			{
 				Platform.CheckArgumentRange(index, 0, 15, "index");
-				return new OverlayPlane(ComputeTagOffset(index), this.DicomAttributeProvider);
+				return new OverlayPlane(index, this.DicomAttributeProvider);
 			}
 		}
 
@@ -87,7 +87,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			return !attrib.IsEmpty;
 		}
 
-		private static uint ComputeTagOffset(int index)
+		internal static uint ComputeTagOffset(int index)
 		{
 			return (uint) index*2*0x10000;
 		}
@@ -167,16 +167,25 @@ namespace ClearCanvas.Dicom.Iod.Modules
 	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.9.2 (Table C.9-2)</remarks>
 	public class OverlayPlane : IodBase
 	{
+		private readonly int _index;
 		private readonly uint _tagOffset;
-
 		/// <summary>
 		/// Initializes a new instance of the <see cref="OverlayPlane"/> class.
 		/// </summary>
-		/// <param name="tagOffset">The tag offset for this overlay.</param>
+		/// <param name="index">The zero based index of this overlay.</param>
 		/// <param name="dicomAttributeProvider">The underlying collection.</param>
-		internal OverlayPlane(uint tagOffset, IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
+		internal OverlayPlane(int index, IDicomAttributeProvider dicomAttributeProvider) : base(dicomAttributeProvider)
 		{
-			_tagOffset = tagOffset;
+			_index = index;
+			_tagOffset = OverlayPlaneModuleIod.ComputeTagOffset(_index);
+		}
+
+		/// <summary>
+		/// Zero based index of this overlay plane (0-15).
+		/// </summary>
+		public int Index
+		{
+			get { return _index; }	
 		}
 
 		public uint TagOffset

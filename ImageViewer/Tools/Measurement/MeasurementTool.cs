@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			_graphicBuilder.GraphicCancelled += OnGraphicBuilderCancelled;
 
 			_undoableCommand = new DrawableUndoableCommand(image);
-			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(DecorateRoiGraphic(roiGraphic), provider.OverlayGraphics, provider.OverlayGraphics.Count));
+			_undoableCommand.Enqueue(new AddGraphicUndoableCommand(DecorateRoiGraphic(roiGraphic), provider.OverlayGraphics));
 			_undoableCommand.Name = CreationCommandName;
 			_undoableCommand.Execute();
 

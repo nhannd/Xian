@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
@@ -18,7 +15,9 @@ namespace ClearCanvas.ImageViewer {
 		IImageGraphicProvider,
 		IApplicationGraphicsProvider,
 		IOverlayGraphicsProvider,
-		ISpatialTransformProvider
+		ISpatialTransformProvider,
+		IDicomSoftcopyPresentationStateProvider
+		
 	{
 		/// <summary>
 		/// Gets this presentation image's collection of domain-level graphics.
@@ -30,10 +29,5 @@ namespace ClearCanvas.ImageViewer {
 		/// and before any <see cref="IOverlayGraphicsProvider.OverlayGraphics"/>.
 		/// </remarks>
 		GraphicCollection DicomGraphics { get; }
-
-		/// <summary>
-		/// Gets a collection of the DICOM overlay planes available on the image.
-		/// </summary>
-		IDicomOverlayPlanes DicomOverlayPlanes { get; }
 	}
 }

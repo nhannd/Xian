@@ -35,9 +35,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.DicomGraphics;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -45,8 +45,7 @@ namespace ClearCanvas.ImageViewer
 	/// A DICOM colour <see cref="PresentationImage"/>.
 	/// </summary>
 	[Cloneable]
-	public class DicomColorPresentationImage
-		: ColorPresentationImage, IDicomPresentationImage, IDicomSoftcopyPresentationStateProvider
+	public class DicomColorPresentationImage : ColorPresentationImage, IDicomPresentationImage
 	{
 		[CloneIgnore]
 		private IFrameReference _frameReference;
@@ -55,9 +54,11 @@ namespace ClearCanvas.ImageViewer
 		private CompositeGraphic _dicomGraphics;
 
 		[CloneIgnore]
-		private readonly DicomOverlayPlanes _dicomOverlayPlanes;
+		private DicomGraphicsDeserializer _graphicsDeserializer;
 
 		private bool _presentationStateApplied = false;
+		[CloneCopyReference]
+		private DicomSoftcopyPresentationState _presentationState;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomColorPresentationImage"/>.
@@ -82,7 +83,7 @@ namespace ClearCanvas.ImageViewer
 				   frameReference.Frame.GetNormalizedPixelData)
 		{
 			_frameReference = frameReference;
-			_dicomOverlayPlanes = new DicomOverlayPlanes(this);
+			_graphicsDeserializer = new DicomGraphicsDeserializer(this);
 			Initialize();
 		}
 
@@ -94,7 +95,9 @@ namespace ClearCanvas.ImageViewer
 		{
 			Frame frame = source.Frame;
 			_frameReference = frame.CreateTransientReference();
-			_dicomOverlayPlanes = new DicomOverlayPlanes(this);
+
+			if (source._graphicsDeserializer != null)
+				_graphicsDeserializer = new DicomGraphicsDeserializer(this);
 		}
 
 		[OnCloneComplete]
@@ -118,9 +121,6 @@ namespace ClearCanvas.ImageViewer
 					delegate(IGraphic test) { return test is ImageGraphic; });
 				base.GraphicalLayers.Insert(base.GraphicalLayers.IndexOf(imageGraphic) + 1, _dicomGraphics);
 			}
-
-			// populate the overlay planes
-			_dicomOverlayPlanes.Populate();
 		}
 
 		/// <summary>
@@ -163,9 +163,6 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDicomSoftcopyPresentationStateProvider Members
 
-		[CloneCopyReference]
-		private DicomSoftcopyPresentationState _presentationState;
-
 		public DicomSoftcopyPresentationState PresentationState
 		{
 			get { return _presentationState; }
@@ -186,11 +183,6 @@ namespace ClearCanvas.ImageViewer
 		public GraphicCollection DicomGraphics
 		{
 			get { return _dicomGraphics.Graphics; }
-		}
-
-		public IDicomOverlayPlanes DicomOverlayPlanes
-		{
-			get { return _dicomOverlayPlanes; }
 		}
 
 		#endregion
@@ -214,9 +206,25 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected override void OnDrawing()
 		{
+			try
+			{
+				if (_graphicsDeserializer != null)
+					_graphicsDeserializer.Deserialize();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e);
+				base.ImageViewer.DesktopWindow.ShowMessageBox(SR.MessageFailedToApplyDicomHeaderGraphics, MessageBoxActions.Ok);
+			}
+			finally
+			{
+				_graphicsDeserializer = null; //it's been done and any clones of this image will have their graphics cloned
+			}
+
 			if (!_presentationStateApplied && this.PresentationState != null)
 			{
 				_presentationStateApplied = true;
+
 				try
 				{
 					this.PresentationState.Deserialize(this);

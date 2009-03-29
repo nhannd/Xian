@@ -8,6 +8,8 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	//TODO: change this to expose a collection of points.
+
 	/// <summary>
 	/// A primitive curve graphic.
 	/// </summary>

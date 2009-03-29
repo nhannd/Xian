@@ -260,11 +260,12 @@
     <Compile Include="Iod\Modules\BasicFilmSessionModuleIod.cs" />
     <Compile Include="Iod\Modules\BillingAndMaterialManagementCodesModuleIod.cs" />
     <Compile Include="Iod\Modules\BitmapDisplayShutter.cs" />
+    <Compile Include="Iod\CIELabColor.cs" />
     <Compile Include="Iod\Modules\ClinicalTrialSeriesModuleIod.cs" />
     <Compile Include="Iod\Modules\ClinicalTrialStudyModuleIod.cs" />
     <Compile Include="Iod\Modules\ClinicalTrialSubjectModuleIod.cs" />
     <Compile Include="Iod\Modules\DisplayedArea.cs" />
-    <Compile Include="Iod\Modules\DisplayShutter.cs" />
+    <Compile Include="Iod\Modules\DisplayShutterMacroIod.cs" />
     <Compile Include="Iod\Modules\GeneralEquipment.cs" />
     <Compile Include="Iod\Modules\GeneralSeriesModuleIod.cs" />
     <Compile Include="Iod\Modules\GeneralStudyModuleIod.cs" />
@@ -338,6 +339,7 @@
     <Compile Include="Iod\Sequences\SpecimenTypeCodeSequence.cs" />
     <Compile Include="Iod\Sequences\ViewCodeSequenceIod.cs" />
     <Compile Include="Iod\SeriesReferenceDictionary.cs" />
+    <Compile Include="Iod\ShutterShape.cs" />
     <Compile Include="Iod\VoiDataLut.cs" />
     <Compile Include="Iod\PatientIdentityRemoved.cs" />
     <Compile Include="Iod\PatientsSex.cs" />

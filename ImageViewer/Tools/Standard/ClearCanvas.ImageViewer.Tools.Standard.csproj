@@ -109,12 +109,16 @@
     <Compile Include="CineTool.cs" />
     <Compile Include="InteractiveTextCalloutBuilder.cs" />
     <Compile Include="InteractiveTextAreaBuilder.cs" />
+    <Compile Include="ClearCustomShuttersTool.cs" />
     <Compile Include="DeleteAnnotationsTool.cs" />
     <Compile Include="DicomOverlaysTool.cs" />
+    <Compile Include="DrawShutterTool.cs" />
+    <Compile Include="OverlayToolBase.cs" />
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />
     <Compile Include="ScaleGraphic.cs" />
     <Compile Include="ScaleOverlayTool.cs" />
     <Compile Include="ShowHideOverlaysTool.cs" />
+    <Compile Include="ShutterOverlayTool.cs" />
     <Compile Include="TextCalloutTool.cs" />
     <Compile Include="ToolSettings.cs" />
     <Compile Include="ToolSettings.Designer.cs">
@@ -332,6 +336,24 @@
     <EmbeddedResource Include="Icons\DicomOverlaysToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Icons\DrawPolygonShutterToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DrawPolygonShutterToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DrawPolygonShutterToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DrawCircleShutterToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DrawCircleShutterToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DrawCircleShutterToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="Icons\DeleteAllAnnotationsToolLarge.png" />
   </ItemGroup>
   <ItemGroup>
@@ -348,6 +370,33 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\DeleteAnnotationToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DrawRectangleShutterToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DrawRectangleShutterToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DrawRectangleShutterToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ShutterOverlayToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ShutterOverlayToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ShutterOverlayToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ClearCustomShuttersToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ClearCustomShuttersToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ClearCustomShuttersToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return result;
 		}
 
-		public override bool Contains(Point point)
+		public override bool Contains(PointF point)
 		{
 			return false;
 		}

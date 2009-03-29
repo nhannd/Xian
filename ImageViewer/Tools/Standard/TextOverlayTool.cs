@@ -29,14 +29,10 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
-using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
@@ -54,66 +50,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[IconSet("toggle", IconScheme.Colour, "Icons.TextOverlayToolSmall.png", "Icons.TextOverlayToolMedium.png", "Icons.TextOverlayToolLarge.png")]
 	//
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class TextOverlayTool : Tool<IImageViewerToolContext>
+	public class TextOverlayTool : OverlayToolBase
 	{
-		private event EventHandler _checkedChanged;
-		private bool _checked;
-
 		public TextOverlayTool()
 		{
-			_checked = true;
 		}
 
-		public override void Initialize()
+		protected override void  UpdateVisibility(IPresentationImage image, bool visible)
 		{
-			base.Initialize();
-
-			this.Context.Viewer.EventBroker.ImageDrawing += OnImageDrawing;
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			this.Context.Viewer.EventBroker.ImageDrawing -= OnImageDrawing;
-
-			base.Dispose(disposing);
-		}
-
-		public bool Checked
-		{
-			get { return _checked; }
-			set
+			if (image is IAnnotationLayoutProvider)
 			{
-				if (_checked != value)
-				{
-					_checked = value;
-					OnCheckedChanged();
-				}
-			}
-		}
-
-		protected virtual void OnCheckedChanged()
-		{
-			EventsHelper.Fire(_checkedChanged, this, new EventArgs());
-		}
-
-		public event EventHandler CheckedChanged
-		{
-			add { _checkedChanged += value; }
-			remove { _checkedChanged -= value; }
-		}
-
-		public void ShowHide()
-		{
-			this.Checked = !this.Checked;
-			this.Context.Viewer.PhysicalWorkspace.Draw();
-		}
-
-		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
-		{
-			if (e.PresentationImage is IAnnotationLayoutProvider)
-			{
-				foreach (AnnotationBox box in ((IAnnotationLayoutProvider)e.PresentationImage).AnnotationLayout.AnnotationBoxes)
-					box.Visible = this.Checked;
+				foreach (AnnotationBox box in ((IAnnotationLayoutProvider)image).AnnotationLayout.AnnotationBoxes)
+					box.Visible = visible;
 			}
 		}
 	}

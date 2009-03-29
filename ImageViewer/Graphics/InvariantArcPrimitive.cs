@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return ArcPrimitive.GetClosestPoint(point, this.Rectangle, this.StartAngle, this.SweepAngle);
 		}
 
-		public override bool Contains(Point point)
+		public override bool Contains(PointF point)
 		{
 			return false;
 		}

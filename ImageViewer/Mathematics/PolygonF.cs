@@ -64,13 +64,13 @@ namespace ClearCanvas.ImageViewer.Mathematics
 		/// Constructs a new polygon.
 		/// </summary>
 		/// <param name="vertices">A list of vertices defining the polygon.</param>
-		public PolygonF(IList<PointF> vertices)
+		public PolygonF(IEnumerable<PointF> vertices)
 		{
 			Platform.CheckForNullReference(vertices, "vertices");
-			Platform.CheckTrue(vertices.Count >= 3, "A polygon must have at least 3 vertices.");
+			List<PointF> list = new List<PointF>(vertices);
+			Platform.CheckTrue(list.Count >= 3, "A polygon must have at least 3 vertices.");
 
 			// initialize vertex lists
-			List<PointF> list = new List<PointF>(vertices);
 			_vertices = list.AsReadOnly();
 			_vertexArray = list.ToArray();
 

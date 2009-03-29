@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return RectanglePrimitive.GetClosestPoint(point, this.Rectangle);
 		}
 
-		public override bool Contains(Point point)
+		public override bool Contains(PointF point)
 		{
 			return this.Rectangle.Contains(point);
 		}

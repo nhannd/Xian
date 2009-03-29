@@ -336,6 +336,9 @@
   <data name="MessageErrorLoadingAnnotationLayout" xml:space="preserve">
     <value>An unrecoverable error occurred while attempting to load the text overlay.  Please see the log for details.</value>
   </data>
+  <data name="MessageFailedToApplyDicomHeaderGraphics" xml:space="preserve">
+    <value>An error occurred while trying to add graphics from the image header.  Some or all of them will not appear.</value>
+  </data>
   <data name="MessageFailedToGetVOIDataLUTs" xml:space="preserve">
     <value>Creation of VOI Data LUTs failed.</value>
   </data>

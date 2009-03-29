@@ -91,5 +91,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// property is in source or destination coordinates.
 		/// </remarks>
 		float Height { get; }
+
+		/// <summary>
+		/// Returns a value indicating whether the specified point is
+		/// contained in the graphic.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
+		bool Contains(PointF point);
 	}
 }

@@ -32,10 +32,10 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
+using ClearCanvas.ImageViewer.DicomGraphics;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.PresentationStates;
@@ -47,8 +47,7 @@ namespace ClearCanvas.ImageViewer
 	/// A DICOM grayscale <see cref="PresentationImage"/>.
 	/// </summary>
 	[Cloneable]
-	public class DicomGrayscalePresentationImage
-		: GrayscalePresentationImage, IDicomPresentationImage, IDicomSoftcopyPresentationStateProvider, IDicomVoiLutsProvider
+	public class DicomGrayscalePresentationImage : GrayscalePresentationImage, IDicomPresentationImage, IDicomVoiLutsProvider
 	{
 		[CloneIgnore]
 		private IFrameReference _frameReference;
@@ -57,9 +56,14 @@ namespace ClearCanvas.ImageViewer
 		private CompositeGraphic _dicomGraphics;
 
 		[CloneIgnore]
-		private readonly DicomOverlayPlanes _dicomOverlayPlanes;
+		private DicomGraphicsDeserializer _graphicsDeserializer;
+
+		[CloneIgnore]
+		private readonly DicomVoiLuts _dicomVoiLuts;
 
 		private bool _presentationStateApplied = false;
+		[CloneCopyReference]
+		private DicomSoftcopyPresentationState _presentationState;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomGrayscalePresentationImage"/>.
@@ -91,8 +95,8 @@ namespace ClearCanvas.ImageViewer
 				   frameReference.Frame.GetNormalizedPixelData)
 		{
 			_frameReference = frameReference;
+			_graphicsDeserializer  = new DicomGraphicsDeserializer(this);
 			_dicomVoiLuts = new DicomVoiLuts(this);
-			_dicomOverlayPlanes = new DicomOverlayPlanes(this);
 			Initialize();
 		}
 
@@ -105,7 +109,9 @@ namespace ClearCanvas.ImageViewer
 			Frame frame = source.Frame;
 			_frameReference = frame.CreateTransientReference();
 			_dicomVoiLuts = new DicomVoiLuts(this);
-			_dicomOverlayPlanes = new DicomOverlayPlanes(this);
+
+			if (source._graphicsDeserializer != null)
+				_graphicsDeserializer = new DicomGraphicsDeserializer(this);
 		}
 
 		[OnCloneComplete]
@@ -129,9 +135,6 @@ namespace ClearCanvas.ImageViewer
 					delegate(IGraphic test) { return test is ImageGraphic; });
 				base.GraphicalLayers.Insert(base.GraphicalLayers.IndexOf(imageGraphic) + 1, _dicomGraphics);
 			}
-
-			// populate the overlay planes
-			_dicomOverlayPlanes.Populate();
 		}
 
 		/// <summary>
@@ -174,9 +177,6 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDicomSoftcopyPresentationStateProvider Members
 
-		[CloneCopyReference]
-		private DicomSoftcopyPresentationState _presentationState;
-
 		public DicomSoftcopyPresentationState PresentationState
 		{
 			get { return _presentationState; }
@@ -194,9 +194,6 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDicomVoiLutsProvider Members
 
-		[CloneIgnore]
-		private readonly DicomVoiLuts _dicomVoiLuts;
-
 		public IDicomVoiLuts DicomVoiLuts
 		{
 			get { return _dicomVoiLuts; }
@@ -209,11 +206,6 @@ namespace ClearCanvas.ImageViewer
 		public GraphicCollection DicomGraphics
 		{
 			get { return _dicomGraphics.Graphics; }
-		}
-
-		public IDicomOverlayPlanes DicomOverlayPlanes
-		{
-			get { return _dicomOverlayPlanes; }
 		}
 
 		#endregion
@@ -235,10 +227,27 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Raises the <see cref="PresentationImage.Drawing"/> event.
 		/// </summary>
-		protected override void OnDrawing() {
-			if(!_presentationStateApplied && this.PresentationState != null)
+		protected override void OnDrawing() 
+		{
+			try
+			{
+				if (_graphicsDeserializer != null)
+					_graphicsDeserializer.Deserialize();
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e);
+				base.ImageViewer.DesktopWindow.ShowMessageBox(SR.MessageFailedToApplyDicomHeaderGraphics, MessageBoxActions.Ok);
+			}
+			finally
+			{
+				_graphicsDeserializer = null; //it's been done and any clones of this image will have their graphics cloned
+			}
+
+			if (!_presentationStateApplied && this.PresentationState != null)
 			{
 				_presentationStateApplied = true;
+
 				try
 				{
 					this.PresentationState.Deserialize(this);

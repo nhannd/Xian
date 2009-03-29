@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <remarks>
 	/// This class should not be instantiated directly, but through the corresponding factory.
 	/// </remarks>
-	internal sealed class GrayscaleColorMap : ColorMap
+	internal class GrayscaleColorMap : ColorMap
 	{
 		/// <summary>
 		/// Default Constructor.

@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -24,114 +22,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[IconSet("toggle", IconScheme.Colour, "Icons.ScaleOverlayToolSmall.png", "Icons.ScaleOverlayToolMedium.png", "Icons.ScaleOverlayToolLarge.png")]
 	//
 	[ExtensionOf(typeof (ImageViewerToolExtensionPoint))]
-	public class ScaleOverlayTool : ImageViewerTool
+	public class ScaleOverlayTool : OverlayToolBase
 	{
-		private event EventHandler _checkedChanged;
-		private bool _checked;
-
 		public ScaleOverlayTool()
 		{
-			_checked = true;
 		}
 
-		public bool Checked
+		protected override void UpdateVisibility(IPresentationImage image, bool visible)
 		{
-			get { return _checked; }
-			set
-			{
-				if (_checked != value)
-				{
-					_checked = value;
-					OnCheckedChanged();
-				}
-			}
-		}
-
-		public event EventHandler CheckedChanged
-		{
-			add { _checkedChanged += value; }
-			remove { _checkedChanged -= value; }
-		}
-
-		public void ShowHide()
-		{
-			this.Checked = !this.Checked;
-		}
-
-		private void RefreshGraphics()
-		{
-			if (_checked)
-			{
-				foreach (IPresentationImage image in EnumerateVisiblePresentationImages(base.ImageViewer))
-				{
-					CompositeScaleGraphic scale = GetCompositeScaleGraphic(image, true);
-					if (scale != null)
-					{
-						scale.Visible = true;
-					}
-				}
-			}
-			else
-			{
-				foreach (IPresentationImage image in EnumerateVisiblePresentationImages(base.ImageViewer))
-				{
-					CompositeScaleGraphic scale = GetCompositeScaleGraphic(image, false);
-					if (scale != null)
-					{
-						scale.Visible = false;
-					}
-				}
-			}
-		}
-
-		private void RefreshGraphic(IPresentationImage image)
-		{
-			if (_checked)
-			{
-				CompositeScaleGraphic scale = GetCompositeScaleGraphic(image, true);
-				if (scale != null)
-				{
-					scale.Visible = true;
-				}
-			}
-			else
-			{
-				CompositeScaleGraphic scale = GetCompositeScaleGraphic(image, false);
-				if (scale != null)
-				{
-					scale.Visible = false;
-				}
-			}
-		}
-
-		public override void Initialize()
-		{
-			base.Initialize();
-			base.ImageViewer.EventBroker.DisplaySetChanged += OnDisplaySetChanged;
-			base.ImageViewer.EventBroker.ImageDrawing += OnImageDrawing;
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			base.ImageViewer.EventBroker.DisplaySetChanged -= OnDisplaySetChanged;
-			base.ImageViewer.EventBroker.ImageDrawing -= OnImageDrawing;
-			base.Dispose(disposing);
-		}
-
-		private void OnCheckedChanged()
-		{
-			RefreshGraphics();
-			EventsHelper.Fire(_checkedChanged, this, new EventArgs());
-		}
-
-		private void OnDisplaySetChanged(object sender, DisplaySetChangedEventArgs e)
-		{
-			RefreshGraphics();
-		}
-
-		private void OnImageDrawing(object sender, ImageDrawingEventArgs e)
-		{
-			RefreshGraphic(e.PresentationImage);
+			CompositeScaleGraphic scale = GetCompositeScaleGraphic(image, visible);
+			if (scale != null)
+				scale.Visible = visible;
 		}
 
 		private static CompositeScaleGraphic GetCompositeScaleGraphic(IPresentationImage image, bool createIfNull)
@@ -150,18 +51,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 
 			return null;
-		}
-
-		private static IEnumerable<IPresentationImage> EnumerateVisiblePresentationImages(IImageViewer imageViewer)
-		{
-			foreach (IImageBox imageBox in imageViewer.PhysicalWorkspace.ImageBoxes)
-			{
-				foreach (ITile tile in imageBox.Tiles)
-				{
-					if (tile.PresentationImage != null)
-						yield return tile.PresentationImage;
-				}
-			}
 		}
 
 		private class CompositeScaleGraphic : CompositeGraphic

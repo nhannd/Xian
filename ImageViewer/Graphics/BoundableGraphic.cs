@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	[Cloneable(true)]
 	public abstract class BoundableGraphic : VectorGraphic, IBoundableGraphic
 	{
-		private RectangleF _rectangle = new RectangleF(0,0,0,0);
+		private RectangleF _rectangle = new RectangleF(0, 0, 0, 0);
 		private event EventHandler<PointChangedEventArgs> _topLeftChangedEvent;
 		private event EventHandler<PointChangedEventArgs> _bottomRightChangedEvent;
 
@@ -258,14 +258,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public override void Move(SizeF delta)
 		{
-#if MONO
-			Size del = new Size((int)delta.Width, (int)delta.Height);
-			this.TopLeft += del;
-			this.BottomRight += del;
-#else
 			this.TopLeft += delta;
 			this.BottomRight += delta;
-#endif
 		}
 
 		/// <summary>
