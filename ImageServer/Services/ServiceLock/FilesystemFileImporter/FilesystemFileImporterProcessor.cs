@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
 
         #region IServiceLockItemProcessor Members
 
-        public void Process(Model.ServiceLock item)
+        protected override void OnProcess(Model.ServiceLock item)
         {
             DirectoryImportSettings settings = DirectoryImportSettings.Default;
 

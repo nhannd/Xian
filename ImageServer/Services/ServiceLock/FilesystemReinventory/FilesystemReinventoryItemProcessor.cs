@@ -240,7 +240,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
         #endregion
 
         #region Public Methods
-        public void Process(Model.ServiceLock item)
+        protected override void OnProcess(Model.ServiceLock item)
         {
         	WorkQueuePriorityEnum priority;
 

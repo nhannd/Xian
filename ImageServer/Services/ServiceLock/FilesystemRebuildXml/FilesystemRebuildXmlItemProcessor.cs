@@ -291,7 +291,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 		/// Process the <see cref="ServiceLock"/> item.
 		/// </summary>
 		/// <param name="item"></param>
-		public void Process(Model.ServiceLock item)
+        protected override void OnProcess(Model.ServiceLock item)
 		{
 			_store = PersistentStoreRegistry.GetDefaultStore();
 

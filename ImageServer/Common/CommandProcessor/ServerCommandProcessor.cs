@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -39,77 +38,6 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
     /// <summary>
-    /// Represents the execution context owned by a <see cref="ServerCommandProcessor"/>
-    /// </summary>
-    class ExecutionContext : IExecutionContext, IDisposable
-    {
-        #region Private Fields
-        private readonly ServerCommandProcessor _processor;
-        private string _tempDirectory;
-        private readonly object _sync = new object();
-        #endregion
-
-        #region Constructors
-        /// <summary>
-        /// Creates an instance of <see cref="ExecutionContext"/> for a <see cref="ServerCommandProcessor"/>
-        /// </summary>
-        /// <param name="processor"></param>
-        public ExecutionContext(ServerCommandProcessor processor)
-        {
-            //TODO: consider moving the update context created by the processor into here
-            _processor = processor;
-        }
-        #endregion
-
-        #region IExecutionContext Members
-        public String TempDirectory
-        {
-            get
-            {
-                if (_tempDirectory==null)
-                {
-                    lock(_sync)
-                    {
-                        // TODO: tie the id to the operation
-                        string uniqueId = Path.GetRandomFileName();
-                        _tempDirectory = Path.Combine(ServerPlatform.TempDirectory, uniqueId);
-                    }
-                }
-
-                return _tempDirectory;
-            }
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            if (Directory.Exists(_tempDirectory))
-            {
-                Directory.Delete(_tempDirectory, true);
-            }
-        }
-
-        #endregion
-
-
-        #region IExecutionContext Members
-
-
-        public string GetUniqueTempDir()
-        {
-            String uniqueId = Path.GetRandomFileName(); //TODO: Make the id more descriptive
-            String path = Path.Combine(TempDirectory, uniqueId);
-            Directory.CreateDirectory(path);
-            return path;
-        }
-
-        #endregion
-    }
-
-	/// <summary>
 	/// This class is used to execute and undo a series of <see cref="IServerCommand"/> instances.
 	/// </summary>
 	/// <remarks>
@@ -136,23 +64,44 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	public class ServerCommandProcessor : IDisposable
 	{
 		#region Private Members
-		private readonly string _description;
+		private string _description;
         private readonly Stack<IServerCommand> _stack = new Stack<IServerCommand>();
         private readonly Queue<IServerCommand> _queue = new Queue<IServerCommand>();
         private readonly List<IServerCommand> _list = new List<IServerCommand>(); 
         private string _failureReason;
 		private IUpdateContext _updateContext = null;
 		private Exception _exception;
-	    private ExecutionContext _executionContext;
+        private ExecutionContext _executionContext;
+	    private bool _ownsContext;
 
 	    #endregion
 
 		#region Constructors
-		public ServerCommandProcessor(string description)
+
+        /// <summary>
+        /// Creates an instance of <see cref="ServerCommandProcessor"/> using
+        /// the current <see cref="ExecutionContext"/> for the thread.
+        /// </summary>
+        /// <param name="description"></param>
+	    public ServerCommandProcessor(string description)
+            : this(description, CommandProcessor.ExecutionContext.Current)
 		{
-            _description = description;
+            
 		}
-		#endregion
+
+        /// <summary>
+        /// Creates an instance of <see cref="ServerCommandProcessor"/> using
+        /// the specified <see cref="ExecutionContext"/>
+        /// </summary>
+        /// <param name="description"></param>
+        /// <param name="context"></param>
+        public ServerCommandProcessor(string description, ExecutionContext context)
+	    {
+            _description = description;
+	        ExecutionContext = context;
+	    }
+
+	    #endregion
 
 		#region Public Properties
 		/// <summary>
@@ -161,6 +110,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		public string Description
 		{
 			get { return _description; }
+            set { _description = value; }
 		}
 
 		/// <summary>
@@ -191,6 +141,12 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			set { _updateContext = value; }
 		}
 
+        public ExecutionContext ExecutionContext
+	    {
+	        get { return _executionContext; }
+	        set { _executionContext = value; }
+	    }
+
 	    #endregion
 
 		#region Public Methods
@@ -210,12 +166,17 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		/// <returns>false on failure, true on success</returns>
 		public bool Execute()
 		{
-            _executionContext = new ExecutionContext(this);
+            if (ExecutionContext==null)
+            {
+                // No execution context assigned, create one
+                ExecutionContext = new ExecutionContext();
+                _ownsContext = true;
+            }
 			
 			while (_queue.Count > 0)
 			{
                 IServerCommand command = _queue.Dequeue();
-                command.ExecutionContext = _executionContext;
+                command.ExecutionContext = ExecutionContext;
                 ServerDatabaseCommand dbCommand = command as ServerDatabaseCommand;
 
 				_stack.Push(command);
@@ -262,7 +223,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			return true;
 		}
 
-		/// <summary>
+
+	    /// <summary>
 		/// Rollback the commands that have been executed already.
 		/// </summary>
 		public void Rollback()
@@ -286,7 +248,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 					Platform.Log(LogLevel.Error, e, "Unexpected exception rolling back command {0}", command.Description);
 				}  
 			}
-
 		}
 		#endregion
 
@@ -323,19 +284,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		            }
                 }
             }
-            
-            if (_executionContext!=null)
+
+            if (_ownsContext && ExecutionContext!=null)
             {
-                try
-                {
-                    _executionContext.Dispose();
-                }
-		        catch(Exception ex)
-		        {
-    			    Platform.Log(LogLevel.Error, ex);
-		        }
+                ExecutionContext.Dispose();
             }
-           
 		}
 
 		#endregion

@@ -12,6 +12,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Diagnostics;
 using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
@@ -191,6 +192,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         private UpdateStudyStatistics _statistics;
         private int _totalSopCount;
+        private bool _restored;
+
         #endregion
 
         #region Constructors
@@ -237,11 +240,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             Statistics.ProcessTime.End();
         }
 
+        private void CleaupBackupFiles()
+        {
+            DirectoryUtility.DeleteIfExists(_backupDir);
+        }
+
         protected override void OnUndo()
         {
             RestoreFilesystem();
 
             // db rollback is done by the processor
+            CleaupBackupFiles();
+
+            _restored = true;
         }
 
 
@@ -250,7 +261,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         #region Private Methods
         private void Initialize()
         {
-            _backupDir = ExecutionContext.TempDirectory;
+            _backupDir = ExecutionContext.BackupDirectory;
 
             _oldStudyPath = _studyLocation.GetStudyPath();
             _oldStudyInstanceUid = _studyLocation.StudyInstanceUid;
@@ -365,8 +376,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
             if (NewStudyPath == _oldStudyPath)
             {
-                Platform.Log(LogLevel.Info, "Restoring old study folder...");
-            
+                
                 // files were overwritten
                 if (Directory.Exists(_oldStudyPath))
                     Directory.CreateDirectory(_oldStudyPath);
@@ -379,6 +389,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 File.Copy(backupFilePath, Path.Combine(_oldStudyPath, _oldStudyInstanceUid + ".xml.gz"), true);
 
                 // restore updated SOPs
+                Platform.Log(LogLevel.Info, "Restoring old study folder... {0} sop need to be restored", _updatedSopList.Count);
+                int restoredCount = 0;
                 foreach (InstanceInfo sop in _updatedSopList)
                 {
                     string backupUidPath = Path.Combine(_backupDir, sop.SeriesInstanceUid);
@@ -394,8 +406,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
                     oldPath = Path.Combine(oldPath, sopUid + ".dcm");
 
-                    Platform.Log(LogLevel.Info, "Restoring SOP {0}", sopUid);
                     file.Save(oldPath);
+                    
+                    restoredCount++;
+                    Platform.Log(LogLevel.Info, "Restored SOP {0} [{1} of {2}]", sopUid, restoredCount, _updatedSopList.Count);
+                    
+                    SimulateErrors();
+
                 }
             }
             else
@@ -408,8 +425,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                     Platform.Log(LogLevel.Info, "Restoring original study folder");
                     DirectoryUtility.Copy(_backupDir, _oldStudyPath);
                 }
-                
+
+                SimulateErrors();
             }
+        }
+
+        private void SimulateErrors()
+        {
+            RandomError.Generate(Settings.SimulateEditError, "Update study errors");
         }
 
         private void UpdateEntity(ServerEntity entity)
@@ -580,6 +603,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                         newStudyXml.AddFile(file, fileSize);
 
                         Platform.Log(LogLevel.Info, "SOP {0} updated [{1} of {2}].", instance.SopInstanceUid, _updatedSopList.Count, _totalSopCount);
+
+                        SimulateErrors();
                     }
                     catch (Exception)
                     {
@@ -622,7 +647,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             String destPath = _studyLocation.FilesystemPath;
             String extension = ".dcm";
 
-            using (ServerCommandProcessor filesystemUpdateProcessor = new ServerCommandProcessor("Filesystem update processor"))
+            using (ServerCommandProcessor filesystemUpdateProcessor = new ServerCommandProcessor("Update Study"))
             {
                 filesystemUpdateProcessor.AddCommand(new CreateDirectoryCommand(destPath));
 
@@ -685,7 +710,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         public void Dispose()
         {
-            DirectoryUtility.DeleteIfExists(_backupDir);
+            if (RollBackRequested && _restored)
+            {
+                CleaupBackupFiles();
+            }
         }
 
         #endregion

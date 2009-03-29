@@ -45,7 +45,7 @@ using Ionic.Zip;
 
 namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 {
-	/// <summary>
+    /// <summary>
 	/// Helper class for restoring a study from an <see cref="HsmArchive"/>
 	/// </summary>
 	public class HsmStudyRestore
@@ -76,101 +76,105 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <param name="queueItem">The queue item to restore.</param>
 		public void Run(RestoreQueue queueItem)
 		{
-			try
-			{
-				// Load up related classes.
-				using (IReadContext readContext = _hsmArchive.PersistentStore.OpenReadContext())
-				{
-					_archiveStudyStorage = ArchiveStudyStorage.Load(readContext, queueItem.ArchiveStudyStorageKey);
-					_serverSyntax = ServerTransferSyntax.Load(readContext, _archiveStudyStorage.ServerTransferSyntaxKey);
-					_syntax = TransferSyntax.GetTransferSyntax(_serverSyntax.Uid);
+            using (RestoreProcessorContext context = new RestoreProcessorContext(queueItem))
+            {
+                try
+                {
+                    // Load up related classes.
+                    using (IReadContext readContext = _hsmArchive.PersistentStore.OpenReadContext())
+                    {
+                        _archiveStudyStorage = ArchiveStudyStorage.Load(readContext, queueItem.ArchiveStudyStorageKey);
+                        _serverSyntax = ServerTransferSyntax.Load(readContext, _archiveStudyStorage.ServerTransferSyntaxKey);
+                        _syntax = TransferSyntax.GetTransferSyntax(_serverSyntax.Uid);
 
-					StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
-					parms.StudyStorageKey = queueItem.StudyStorageKey;
-					IQueryStudyStorageLocation broker = readContext.GetBroker<IQueryStudyStorageLocation>();
-					_location = broker.FindOne(parms);
-					if (_location == null)
-						_studyStorage = StudyStorage.Load(queueItem.StudyStorageKey);
-				}
+                        StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+                        parms.StudyStorageKey = queueItem.StudyStorageKey;
+                        IQueryStudyStorageLocation broker = readContext.GetBroker<IQueryStudyStorageLocation>();
+                        _location = broker.FindOne(parms);
+                        if (_location == null)
+                            _studyStorage = StudyStorage.Load(queueItem.StudyStorageKey);
+                    }
 
-				if (_studyStorage == null)
-					Platform.Log(LogLevel.Info, "Starting restore of study: {0}", _location.StudyInstanceUid);
-				else
-					Platform.Log(LogLevel.Info, "Starting restore of study: {0}", _studyStorage.StudyInstanceUid);
+                    if (_studyStorage == null)
+                        Platform.Log(LogLevel.Info, "Starting restore of study: {0}", _location.StudyInstanceUid);
+                    else
+                        Platform.Log(LogLevel.Info, "Starting restore of study: {0}", _studyStorage.StudyInstanceUid);
 
-				// If restoring a Nearline study, select a filesystem
-				string destinationFolder;
-				if (_location == null)
-				{
-					ServerFilesystemInfo fs = _hsmArchive.Selector.SelectFilesystem();
-					if (fs == null)
-					{
-						DateTime scheduleTime = Platform.Time.AddMinutes(5);
-						Platform.Log(LogLevel.Error, "No writeable filesystem for restore, rescheduling restore request to {0}",
-						             scheduleTime);
-						queueItem.FailureDescription = "No writeable filesystem for restore, rescheduling request.";
-						_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Pending, scheduleTime);
-						return;
-					}
-					destinationFolder = Path.Combine(fs.Filesystem.FilesystemPath, _hsmArchive.ServerPartition.PartitionFolder);
-				}
-				else
-					destinationFolder = _location.GetStudyPath();
-
-
-				// Get the zip file path from the xml data in the ArchiveStudyStorage entry
-				// Also store the "StudyFolder" for use below
-				string studyFolder = String.Empty;
-				string filename = String.Empty;
-				string studyInstanceUid = String.Empty;
-				XmlElement element = _archiveStudyStorage.ArchiveXml.DocumentElement;
-				foreach (XmlElement node in element.ChildNodes)
-					if (node.Name.Equals("StudyFolder"))
-						studyFolder = node.InnerText;
-					else if (node.Name.Equals("Filename"))
-						filename = node.InnerText;
-					else if (node.Name.Equals("Uid"))
-						studyInstanceUid = node.InnerText;
-
-				string zipFile = Path.Combine(_hsmArchive.HsmPath, studyFolder);
-				zipFile = Path.Combine(zipFile, studyInstanceUid);
-				zipFile = Path.Combine(zipFile, filename);
+                    // If restoring a Nearline study, select a filesystem
+                    string destinationFolder;
+                    if (_location == null)
+                    {
+                        ServerFilesystemInfo fs = _hsmArchive.Selector.SelectFilesystem();
+                        if (fs == null)
+                        {
+                            DateTime scheduleTime = Platform.Time.AddMinutes(5);
+                            Platform.Log(LogLevel.Error, "No writeable filesystem for restore, rescheduling restore request to {0}",
+                                         scheduleTime);
+                            queueItem.FailureDescription = "No writeable filesystem for restore, rescheduling request.";
+                            _hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Pending, scheduleTime);
+                            return;
+                        }
+                        destinationFolder = Path.Combine(fs.Filesystem.FilesystemPath, _hsmArchive.ServerPartition.PartitionFolder);
+                    }
+                    else
+                        destinationFolder = _location.GetStudyPath();
 
 
-				// Do a test read of the zip file.  If it succeeds, the file is available, if it 
-				// fails, we just set back to pending and recheck.
-				try
-				{
-					FileStream stream = File.OpenRead(zipFile);
-					// Read a byte, just in case that makes a difference.
-					stream.ReadByte();
-					stream.Close();
-					stream.Dispose();
-				}
-				catch (Exception)
-				{
-					DateTime scheduledTime = Platform.Time.AddSeconds(HsmSettings.Default.ReadFailRescheduleDelaySeconds);
-					Platform.Log(LogLevel.Warn, "Study {0} is unreadable, rescheduling restore to {1}", _studyStorage == null ? (_location == null ? string.Empty : _location.StudyInstanceUid) : _studyStorage.StudyInstanceUid,
-					             scheduledTime);
-					// Just reschedule in "Restoring" state, the file is unreadable.
-					_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Restoring,
-					                               scheduledTime);
-					return;
-				}
+                    // Get the zip file path from the xml data in the ArchiveStudyStorage entry
+                    // Also store the "StudyFolder" for use below
+                    string studyFolder = String.Empty;
+                    string filename = String.Empty;
+                    string studyInstanceUid = String.Empty;
+                    XmlElement element = _archiveStudyStorage.ArchiveXml.DocumentElement;
+                    foreach (XmlElement node in element.ChildNodes)
+                        if (node.Name.Equals("StudyFolder"))
+                            studyFolder = node.InnerText;
+                        else if (node.Name.Equals("Filename"))
+                            filename = node.InnerText;
+                        else if (node.Name.Equals("Uid"))
+                            studyInstanceUid = node.InnerText;
 
-				if (_location == null)
-					RestoreNearlineStudy(queueItem, zipFile, destinationFolder, studyFolder);
-				else
-					RestoreOnlineStudy(queueItem, zipFile, destinationFolder);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception processing restore request for {0} on archive {1}",
-					_studyStorage == null ? (_location == null ? string.Empty : _location.StudyInstanceUid) : _studyStorage.StudyInstanceUid, 
-					_hsmArchive.PartitionArchive.Description);
-				queueItem.FailureDescription = e.Message;
-				_hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
-			}
+                    string zipFile = Path.Combine(_hsmArchive.HsmPath, studyFolder);
+                    zipFile = Path.Combine(zipFile, studyInstanceUid);
+                    zipFile = Path.Combine(zipFile, filename);
+
+
+                    // Do a test read of the zip file.  If it succeeds, the file is available, if it 
+                    // fails, we just set back to pending and recheck.
+                    try
+                    {
+                        FileStream stream = File.OpenRead(zipFile);
+                        // Read a byte, just in case that makes a difference.
+                        stream.ReadByte();
+                        stream.Close();
+                        stream.Dispose();
+                    }
+                    catch (Exception)
+                    {
+                        DateTime scheduledTime = Platform.Time.AddSeconds(HsmSettings.Default.ReadFailRescheduleDelaySeconds);
+                        Platform.Log(LogLevel.Warn, "Study {0} is unreadable, rescheduling restore to {1}", _studyStorage == null ? (_location == null ? string.Empty : _location.StudyInstanceUid) : _studyStorage.StudyInstanceUid,
+                                     scheduledTime);
+                        // Just reschedule in "Restoring" state, the file is unreadable.
+                        _hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Restoring,
+                                                       scheduledTime);
+                        return;
+                    }
+
+                    if (_location == null)
+                        RestoreNearlineStudy(queueItem, zipFile, destinationFolder, studyFolder);
+                    else
+                        RestoreOnlineStudy(queueItem, zipFile, destinationFolder);
+                }
+                catch (Exception e)
+                {
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception processing restore request for {0} on archive {1}",
+                        _studyStorage == null ? (_location == null ? string.Empty : _location.StudyInstanceUid) : _studyStorage.StudyInstanceUid,
+                        _hsmArchive.PartitionArchive.Description);
+                    queueItem.FailureDescription = e.Message;
+                    _hsmArchive.UpdateRestoreQueue(queueItem, RestoreQueueStatusEnum.Failed, Platform.Time);
+                }
+            }
+			
 		}
 
 		public void RestoreNearlineStudy(RestoreQueue queueItem, string zipFile, string destinationFolder, string studyFolder)
@@ -187,7 +191,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 			try
 			{
-				using (ServerCommandProcessor processor = new ServerCommandProcessor("HSM Restore Offline Study"))
+				using (ServerCommandProcessor processor = 
+                    new ServerCommandProcessor("HSM Restore Offline Study"))
 				{
 					processor.AddCommand(new CreateDirectoryCommand(destinationFolder));
 					destinationFolder = Path.Combine(destinationFolder, studyFolder);

@@ -11,8 +11,7 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Common
 {
-    public delegate void ErrorDelegate();
-
+    
 
     static public class ServerPlatform
     {
@@ -78,49 +77,27 @@ namespace ClearCanvas.ImageServer.Common
                     lock(_mutex)
                     {
                         // if specified in the config, use it
-                        if (String.IsNullOrEmpty(ImageServerCommonConfiguration.TemporaryPath))
+                        if (!String.IsNullOrEmpty(ImageServerCommonConfiguration.TemporaryPath))
                         {
-                            _tempDir =  Path.Combine(Platform.InstallDirectory, "Temp");
+                            _tempDir = ImageServerCommonConfiguration.TemporaryPath;
                         }
                         else
                         {
-                            _tempDir = ImageServerCommonConfiguration.TemporaryPath;
+                            // Use the OS temp folder instead, assuming it's not too long.
+                            // Avoid creating a temp folder under the installation directory because it could
+                            // lead to PathTooLongException.
+                            _tempDir = Path.Combine(Path.GetTempPath(), "ImageServer");
                         }
 
                         // make sure it exists
                         if (!Directory.Exists(_tempDir))
                         {
-                            try
-                            {
-                                Directory.CreateDirectory(_tempDir);
-                            }
-                            catch (Exception ex)
-                            {
-                                // cannot create directory here... ask windows for help.
-                                Platform.Log(LogLevel.Error, ex);
-                                _tempDir = Path.GetPathRoot(Path.GetTempPath());
-                            }
+                            Directory.CreateDirectory(_tempDir);
                         }
                     }
                 }
 
                 return _tempDir;
-            }
-        }
-
-        [Conditional("DEBUG_SIM_ERRORS")]
-        public static void SimulateError(string description, ErrorDelegate del)
-        {
-            Random ran = new Random();
-            bool simulate = ran.Next() % (ran.Next(10) + 1) == 0;
-            if (simulate)
-            {
-                StringBuilder sb = new StringBuilder();
-                sb.AppendFormat("\n\n\t**********************************************************************************************************\n");
-                sb.AppendFormat("\t                 SIMULATING ERROR: {0}\n", description);
-                sb.AppendFormat("\t**********************************************************************************************************\n");
-                Platform.Log(LogLevel.Info, sb.ToString());
-                del();
             }
         }
 

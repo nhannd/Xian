@@ -91,13 +91,23 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             DeleteIfExists(dir, false);
         }
 
-        public static void DeleteIfEmpty(string path)
+        public static bool DeleteIfEmpty(string path)
         {
             if (Directory.Exists(path))
             {
                 if (Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0)
+                {
                     Directory.Delete(path, true);
+                    return true;
+                }
+                else
+                {
+                    // not empty
+                    return false;
+                }
             }
+
+            return true;// not exist = empty 
         }
 
         public static void DeleteEmptySubDirectories(string path, bool recursive)

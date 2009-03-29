@@ -48,12 +48,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
     /// <summary>
     /// Base class with common routines for processors of <see cref="Model.ServiceLock"/> entries.
     /// </summary>
-    public class BaseServiceLockItemProcessor : IDisposable
+    public abstract class BaseServiceLockItemProcessor: IDisposable
 	{
 		#region Private Members
 		private IReadContext _readContext;
 		private bool _cancelPending = false;
-		private readonly object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
 		#endregion
 
 		#region Protected Properties
@@ -65,6 +65,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
 		{
 			get { lock (_syncRoot) return _cancelPending; }
 		}
+
         #endregion
 
         #region Contructors
@@ -231,16 +232,26 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         #endregion
 
 		#region Public Methods
-		public void Cancel()
-		{
-			lock (_syncRoot)
-			{
-			    _cancelPending = true;
-			}
 
-		    OnCancelling();
-		}
+        public void Process(Model.ServiceLock item)
+        {
+            using (ServiceLockProcessorContext executionContext = new ServiceLockProcessorContext(item))
+            {
+                OnProcess(item);
+            }
+        }
 
+        public void Cancel()
+        {
+            lock (_syncRoot)
+            {
+                _cancelPending = true;
+            }
+
+            OnCancelling();
+        }
+
+        
         protected virtual void OnCancelling()
         {
             
@@ -321,6 +332,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                 updateContext.Commit();
             }
         }
+        #endregion
+
+        
+		#region Abstract Methods
+        protected abstract void OnProcess(Model.ServiceLock item);
         #endregion
 
         #region IDisposable Members

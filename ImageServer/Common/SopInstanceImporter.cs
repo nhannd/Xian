@@ -58,9 +58,11 @@ namespace ClearCanvas.ImageServer.Common
             result.StudyInstanceUid = studyInstanceUid;
             result.SeriesInstanceUid = seriesInstanceUid;
             result.SopInstanceUid = sopInstanceUid;
+
             
             // Use the command processor for rollback capabilities.
-            using (ServerCommandProcessor processor = new ServerCommandProcessor(String.Format("Processing Sop Instance {0}",sopInstanceUid)))
+            using (ServerCommandProcessor processor =
+                new ServerCommandProcessor(String.Format("Processing Sop Instance {0}", sopInstanceUid)))
             {
                 try
                 {

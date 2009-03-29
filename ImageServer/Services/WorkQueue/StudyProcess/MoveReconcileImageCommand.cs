@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Diagnostics;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
@@ -122,8 +123,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         [Conditional("DEBUG_SIM_ERRORS")]
         private void SimulatePostOperationError()
         {
-            ServerPlatform.SimulateError("Post MoveReconcileImageCommand error : file is deleted by another process", delegate() { File.Delete(_dest); });
-            ServerPlatform.SimulateError("Post MoveReconcileImageCommand Exception", delegate() { throw new Exception("Faked Exception"); });
+            RandomError.Generate(Settings.SimulateTierMigrationError, "Post MoveReconcileImageCommand error : file is deleted by another process", delegate { File.Delete(_dest); });
+            RandomError.Generate(Settings.SimulateTierMigrationError, "Post MoveReconcileImageCommand Exception");
         }
 
         #region IDisposable Members

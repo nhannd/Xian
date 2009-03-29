@@ -49,8 +49,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private string _description;
 		private bool _requiresRollback;
 		private readonly ServerCommandStatistics _stats;
-	    private IExecutionContext _executionContext;
-
+        private ExecutionContext _executionContext;
+	    private bool _rollBackRequested;
 	    #endregion
 
 		#region Public property
@@ -108,13 +108,18 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         /// The execution context is managed by the owner.
         /// </remarks>
         [XmlIgnore]
-        public IExecutionContext ExecutionContext
+        public ExecutionContext ExecutionContext
         {
             get { return _executionContext; }
             set { _executionContext = value; }
         }
 
-		#endregion
+	    protected bool RollBackRequested
+	    {
+	        get { return _rollBackRequested; }
+	    }
+
+	    #endregion
 
 		#region Events
 		#endregion
@@ -143,6 +148,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		/// </summary>
 		public void Undo()
 		{
+		    _rollBackRequested = true;
 			OnUndo();
 			_stats.End();
 		}

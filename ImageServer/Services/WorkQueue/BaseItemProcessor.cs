@@ -79,12 +79,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     /// <summary>
     /// Base class used when implementing WorkQueue item processors.
     /// </summary>
-    public abstract class BaseItemProcessor : IWorkQueueItemProcessor
+    public abstract class BaseItemProcessor: IWorkQueueItemProcessor
     {
         private string _name = "Work Queue";
+        
         private IReadContext _readContext;
 
-        //private WorkQueueProcessorStatistics _statistics;
         private TimeSpanStatistics _storageLocationLoadTime = new TimeSpanStatistics();
         private TimeSpanStatistics _uidsLoadTime = new TimeSpanStatistics();
         private TimeSpanStatistics _dBUpdateTime = new TimeSpanStatistics();
@@ -96,8 +96,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private ServerPartition _partition;
         private Study _theStudy;
     	private bool _cancelPending = false;
-    	private readonly object _syncRoot = new object();   
-
+    	private readonly object _syncRoot = new object();
+        
         #region Protected Properties
 
         protected IReadContext ReadContext
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     if (_theStudy==null)
                     {
-                        _theStudy = Study.Find(StorageLocation.StudyInstanceUid, this.ServerPartition);
+                        _theStudy = Study.Find(StorageLocation.StudyInstanceUid, ServerPartition);
                     }
                 }
                 return _theStudy;
@@ -801,7 +801,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </summary>
         protected virtual void Initialize(Model.WorkQueue item)
         {
+            
         }
+
+        
 
 
         /// <summary>
@@ -846,38 +849,35 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
-        #region IWorkQueueItemProcessor members
-
         public void Process(Model.WorkQueue item)
         {
             _workQueueItem = item;
 
-            Initialize(item);
-
-            if (!CanStart())
+            using (WorkQueueProcessorContext executionContext = new WorkQueueProcessorContext(item))
             {
-                WorkQueueSettings settings = WorkQueueSettings.Instance;
-                DateTime newScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
-                DateTime expireTime = newScheduledTime.Add(TimeSpan.FromSeconds(settings.WorkQueueExpireDelaySeconds));
-                PostponeItem(item, newScheduledTime, expireTime);
-            }
-            else
-            {
-                OnProcessItemBegin(item);
+                Initialize(item);
 
-                ProcessTime.Add(
-                    delegate
-                    {
-                        ProcessItem(item);
-                    }
-                    );
-                OnProcessItemEnd(item);
+                if (!CanStart())
+                {
+                    WorkQueueSettings settings = WorkQueueSettings.Instance;
+                    DateTime newScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
+                    DateTime expireTime = newScheduledTime.Add(TimeSpan.FromSeconds(settings.WorkQueueExpireDelaySeconds));
+                    PostponeItem(item, newScheduledTime, expireTime);
+                }
+                else
+                {
+                    OnProcessItemBegin(item);
+
+                    ProcessTime.Add(
+                        delegate
+                        {
+                            ProcessItem(item);
+                        }
+                        );
+                    OnProcessItemEnd(item);
+                }
             }
-            
         }
-
-
-        #endregion IWorkQueueItemProcessor members
 
         #endregion
     }

@@ -123,8 +123,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 
 		#endregion
 
-		#region Public Methods
-		public void Process(Model.ServiceLock item)
+        #region Protected Methods
+        protected override void OnProcess(Model.ServiceLock item)
 		{
 			ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
 

@@ -88,18 +88,8 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                                 message.DataSet[DicomTags.AccessionNumber].ToString(), list);
             }
 
-            SimulateUnknownErrors(list);
             return list;
         }
 
-        [Conditional("DEBUG_SIMULATE_ERRORS")]
-        private void SimulateUnknownErrors(DifferenceCollection list)
-        {
-            ServerPlatform.SimulateError("Some unknown difference detected in the image",
-                                         delegate()
-                                             {
-                                                 list.Add(new ComparisionDifference(DicomTags.PatientsName, "12345", "12283"));
-                                             });
-        }
     }
 }

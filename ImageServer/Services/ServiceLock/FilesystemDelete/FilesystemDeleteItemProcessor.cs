@@ -695,18 +695,16 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 		}
     	#endregion
 
-        #region Public Methods
 
-        
-		/// <summary>
-		/// Main <see cref="ServiceLock"/> processing routine.
-		/// </summary>
-		/// <param name="item">The <see cref="ServiceLock"/> item to process.</param>
-        public void Process(Model.ServiceLock item)
+        /// <summary>
+        /// Main <see cref="ServiceLock"/> processing routine.
+        /// </summary>
+        /// <param name="item">The <see cref="ServiceLock"/> item to process.</param>
+        protected override void OnProcess(Model.ServiceLock item)
         {
-			ServiceLockSettings settings = ServiceLockSettings.Default;		    
-			ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
-            
+            ServiceLockSettings settings = ServiceLockSettings.Default;
+            ServerFilesystemInfo fs = FilesystemMonitor.Instance.GetFilesystemInfo(item.FilesystemKey);
+
             UpdateState(item, fs);
 
             DateTime scheduledTime;
@@ -764,10 +762,13 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
                 }
             }
 
-			UnlockServiceLock(item, true, scheduledTime);            
+            UnlockServiceLock(item, true, scheduledTime);
         }
        
 
+
+        #region Public Methods
+        
         public new void Dispose()
         {
             base.Dispose();

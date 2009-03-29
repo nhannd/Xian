@@ -76,6 +76,7 @@
     <Compile Include="FilesystemStudyProcess\FilesystemStudyProcessItemProcessor.cs" />
     <Compile Include="IServiceLockItemProcessor.cs" />
     <Compile Include="IServiceLockProcessorFactory.cs" />
+    <Compile Include="ServiceLockProcessorContext.cs" />
     <Compile Include="ServiceLockSettings.cs" />
     <Compile Include="ServiceLockThreadPool.cs" />
     <Compile Include="Shreds\ServiceLockServerExtension.cs" />

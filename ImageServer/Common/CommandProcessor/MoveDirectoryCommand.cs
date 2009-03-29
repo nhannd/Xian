@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             // by renaming it (if Windows API allow) or copy to a different location other than the current machine? 
             if (Directory.Exists(_src))
             {
-                _backupSrcDir = ExecutionContext.GetUniqueTempDir();
+                _backupSrcDir = ExecutionContext.TempDirectory;
 
                 Platform.Log(LogLevel.Debug, "Backing up original source folder {0}", _src);
                 DirectoryUtility.Copy(_src, _backupSrcDir);
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
             if (Directory.Exists(_dest))
             {
-                _backupDestDir = ExecutionContext.GetUniqueTempDir();
+                _backupDestDir = ExecutionContext.TempDirectory;
                 Platform.Log(LogLevel.Debug, "Backing up original destination folder {0}", _dest);
                 DirectoryUtility.Copy(_dest, _backupDestDir);
                 Platform.Log(LogLevel.Info, "Original destination folder {0} is backed up to {1}", _dest, _backupDestDir);

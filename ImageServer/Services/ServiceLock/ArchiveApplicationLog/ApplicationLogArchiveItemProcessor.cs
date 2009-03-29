@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 			}
 		}
 
-		public void Process(Model.ServiceLock item)
+        protected override void OnProcess(Model.ServiceLock item)
 		{
 			ServiceLockSettings settings = ServiceLockSettings.Default;
 
