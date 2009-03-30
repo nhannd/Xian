@@ -10,7 +10,7 @@
       <siteMapNode url="~/Pages/Queues/StudyIntegrityQueue/Default.aspx" title="$Resources: Titles, StudyIntegrityQueue" roles="PACS/StudyIntegrityQueue/Search" />
     </siteMapNode>
 
-    <siteMapNode url="" title="$Resources: Titles, Admin" roles="PACS/Configure/Devices,PACS/Configure/ServerPartitions,PACS/Configure/FileSystems,PACS/Configure/ServerRules,PACS/Configure/PartitionArchive,PACS/StudyDeleteHistory/Search,PACS/Configure/ServiceScheduling,PACS/Alert/View">
+    <siteMapNode url="" title="$Resources: Titles, Admin" roles="Admin/System/Enterprise Configuration,Admin/Security/User,Admin/Security/Authority Group,PACS/Configure/Devices,PACS/Configure/ServerPartitions,PACS/Configure/FileSystems,PACS/Configure/ServerRules,PACS/Configure/PartitionArchive,PACS/StudyDeleteHistory/Search,PACS/Configure/ServiceScheduling,PACS/Alert/View">
 
       <siteMapNode url="" title="$Resources: Titles, Configure" roles="PACS/Configure/Devices,PACS/Configure/ServerPartitions,PACS/Configure/FileSystems,PACS/Configure/ServerRules,PACS/Configure/PartitionArchive">
         <siteMapNode url="~/Pages/Admin/Configure/Devices/Default.aspx" title="$Resources: Titles, Devices" roles="PACS/Configure/Devices" />
