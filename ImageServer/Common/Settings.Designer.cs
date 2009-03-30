@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageServer.Common {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("E:\\temp\\ImageServer")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string TemporaryPath {
             get {
                 return ((string)(this["TemporaryPath"]));
