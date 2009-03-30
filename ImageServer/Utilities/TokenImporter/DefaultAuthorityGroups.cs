@@ -47,6 +47,8 @@ namespace ClearCanvas.ImageServer.Utilities
                 new string[]
                     {
                         #region Tokens
+                        ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.User,
+                        ClearCanvas.Enterprise.Common.AuthorityTokens.Admin.Security.AuthorityGroup,
                         AuthorityTokens.Admin.Alert.Delete,
                         AuthorityTokens.Admin.Alert.View,
                         AuthorityTokens.Admin.ApplicationLog.Search,
