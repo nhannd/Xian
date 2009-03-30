@@ -51,6 +51,7 @@
     <Compile Include="CommandProcessor\CreateTempDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DeleteWorkQueueUidCommand.cs" />
     <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
+    <Compile Include="CommandProcessor\ExecutionContext.cs" />
     <Compile Include="CommandProcessor\UpdateWorkQueueCommand.cs" />
     <Compile Include="Diagnostics\DiagnosticSettings.Designer.cs">
       <AutoGen>True</AutoGen>

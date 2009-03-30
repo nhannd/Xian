@@ -24,9 +24,12 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         {
             _inheritFrom = null;
             _current = this;
-            TempDirectory = ServerPlatform.TempDirectory;
         }
 
+        protected virtual string GetTemporaryDirectory()
+        {
+            return ServerPlatform.TempDirectory;
+        }
 
         public ExecutionContext(ExecutionContext inheritFrom)
         {
@@ -42,6 +45,16 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         {
             get
             {
+                if (_tempDirectory==null)
+                {
+                    lock(SyncRoot)
+                    {
+                        _tempDirectory = GetTemporaryDirectory();
+                        if (!Directory.Exists(_tempDirectory))
+                            Directory.CreateDirectory(_tempDirectory);
+                    }
+                }
+               
                 return _tempDirectory;
             }
             set
@@ -95,7 +108,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                     // We can remove the entire temp folder.
                     if (DirectoryUtility.DeleteIfEmpty(_backupDirectory))
                     {
-                        DirectoryUtility.DeleteIfExists(_tempDirectory, true);
+                        DirectoryUtility.DeleteIfExists(_tempDirectory);
                     }
                     else
                     {
@@ -108,7 +121,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                     {
                         // Nobody asked for backup storage or all of them have claimed the stuff. 
                         // We can remove the entire temp folder.
-                        DirectoryUtility.DeleteIfExists(_tempDirectory, true);
+                        DirectoryUtility.DeleteIfExists(_tempDirectory);
                     }
 
                 }

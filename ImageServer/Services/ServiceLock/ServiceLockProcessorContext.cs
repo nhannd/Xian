@@ -24,12 +24,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
         {
             Platform.CheckForNullReference(item, "item");
             _item = item;
-            TempDirectory = InitTempDirectory();
         }
         #endregion
        
         #region Private Methods
-        private string InitTempDirectory()
+        protected override string GetTemporaryDirectory()
         {
             ServerFilesystemInfo filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(_item.FilesystemKey);
             if (filesystem == null)
@@ -40,9 +39,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             else
             {
                 String basePath = Path.Combine(filesystem.Filesystem.FilesystemPath, "temp");
-                basePath = Path.Combine(basePath, _item.ServiceLockTypeEnum.Lookup);
-                String tempDirectory = Path.Combine(basePath, _item.GetKey().ToString());
-
+                String tempDirectory = Path.Combine(basePath, String.Format("{0}-{1}", _item.ServiceLockTypeEnum.Lookup, _item.GetKey()));
+                
                 for (int i = 2; i < 1000; i++)
                 {
                     if (!Directory.Exists(tempDirectory))
@@ -50,7 +48,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
                         break;
                     }
 
-                    tempDirectory = Path.Combine(basePath, String.Format("{0}({1})", _item.GetKey().ToString(), i));
+                    tempDirectory = Path.Combine(basePath, String.Format("{0}-{1}({2})", _item.ServiceLockTypeEnum.Lookup, _item.GetKey(), i));
                 }
 
                 if (!Directory.Exists(tempDirectory))

@@ -24,12 +24,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
         {
             Platform.CheckForNullReference(item, "item");
             _item = item;
-            TempDirectory = InitTempDirectory();
         }
         #endregion
 
-        #region Private Methods
-        private string InitTempDirectory()
+        #region Protected Methods
+        protected override string GetTemporaryDirectory()
         {
             StudyStorageLocation storage = StudyStorageLocation.FindStorageLocations(StudyStorage.Load(_item.StudyStorageKey))[0];
             if (storage == null)
@@ -37,8 +36,17 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
             else
             {
                 String basePath = Path.Combine(storage.FilesystemPath, "temp");
-                basePath = Path.Combine(basePath, "RestoreQueue");
-                String tempDirectory = Path.Combine(basePath, _item.GetKey().ToString());
+                String tempDirectory = Path.Combine(basePath, String.Format("RestoreQueue-{0}", _item.GetKey()));
+
+                for (int i = 2; i < 1000; i++)
+                {
+                    if (!Directory.Exists(tempDirectory))
+                    {
+                        break;
+                    }
+
+                    tempDirectory = Path.Combine(basePath, String.Format("RestoreQueue-{0}({1})", _item.GetKey(), i));
+                }
 
                 if (!Directory.Exists(tempDirectory))
                     Directory.CreateDirectory(tempDirectory);

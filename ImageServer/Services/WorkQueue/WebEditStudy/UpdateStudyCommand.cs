@@ -710,7 +710,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
         public void Dispose()
         {
-            if (RollBackRequested && _restored)
+            if (RollBackRequested)
+            {
+                if (_restored)
+                    CleaupBackupFiles();
+            }
+            else
             {
                 CleaupBackupFiles();
             }
