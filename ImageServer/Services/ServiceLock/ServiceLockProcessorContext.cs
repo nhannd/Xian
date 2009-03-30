@@ -38,7 +38,11 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock
             }
             else
             {
-                String basePath = Path.Combine(filesystem.Filesystem.FilesystemPath, "temp");
+                String basePath = GetBaseTempPath();
+                if (String.IsNullOrEmpty(basePath))
+                {
+                    basePath = Path.Combine(filesystem.Filesystem.FilesystemPath, "temp");
+                }
                 String tempDirectory = Path.Combine(basePath, String.Format("{0}-{1}", _item.ServiceLockTypeEnum.Lookup, _item.GetKey()));
                 
                 for (int i = 2; i < 1000; i++)

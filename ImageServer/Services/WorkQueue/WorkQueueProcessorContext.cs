@@ -19,7 +19,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         public WorkQueueProcessorContext(Model.WorkQueue item)
         {
-            Platform.CheckForNullReference(item, "item");
             _item = item;
             
         }
@@ -43,7 +42,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
                 else
                 {
-                    String basePath = Path.Combine(filesystem.Filesystem.FilesystemPath, "temp");
+                    string basePath = GetBaseTempPath();
+
+                    if (String.IsNullOrEmpty(basePath))
+                    {
+                        basePath = Path.Combine(filesystem.Filesystem.FilesystemPath, "temp");
+                    }
+                    
                     String tempDirectory = Path.Combine(basePath, String.Format("{0}-{1}",_item.WorkQueueTypeEnum.Lookup, _item.GetKey()));
 
                     for (int i = 2; i < 1000; i++)
@@ -63,6 +68,5 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                     return tempDirectory;
                 }
             }
-
     }
 }

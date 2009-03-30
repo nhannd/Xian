@@ -168,7 +168,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		{
             if (ExecutionContext==null)
             {
-                // No execution context assigned, create one
+                // No execution context assigned, create one for current thread
+                // This processor will be responsible for cleaning up this context
                 ExecutionContext = new ExecutionContext();
                 _ownsContext = true;
             }

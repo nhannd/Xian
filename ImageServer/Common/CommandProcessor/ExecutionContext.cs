@@ -20,26 +20,46 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
         #endregion
 
-        public ExecutionContext()
-        {
-            _inheritFrom = null;
-            _current = this;
-        }
+        #region Constructors
 
-        protected virtual string GetTemporaryDirectory()
+        /// <summary>
+        /// Creates an instance of <see cref="ExecutionContext"/> inherited
+        /// the current ExecutionContext in the thread, if it exists. This context
+        /// becomes the current context of the thread until it is disposed.
+        /// </summary>
+        public ExecutionContext()
+            : this(Current)
         {
-            return ServerPlatform.TempDirectory;
+         
         }
 
         public ExecutionContext(ExecutionContext inheritFrom)
         {
-            Platform.CheckForNullReference(inheritFrom, "inheritFrom");
             _inheritFrom = inheritFrom;
             _current = this;
 
-            TempDirectory = inheritFrom.TempDirectory;
-            BackupDirectory = inheritFrom.BackupDirectory;
+            if (inheritFrom!=null)
+            {
+                TempDirectory = inheritFrom.TempDirectory;
+                BackupDirectory = inheritFrom.BackupDirectory;
+            }
+
         }
+
+        #endregion
+
+        #region Virtual Protected Methods
+        protected virtual string GetTemporaryDirectory()
+        {
+            return ServerPlatform.TempDirectory;
+        }
+        #endregion
+
+        protected object SyncRoot
+        {
+            get { return _sync; }
+        }
+
 
         public String TempDirectory
         {
@@ -90,11 +110,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             get { return _current; }
         }
 
-        protected object SyncRoot
-        {
-            get { return _sync; }
-        }
-
+        
 
         #region IDisposable Members
 
@@ -128,11 +144,35 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             }
             finally
             {
+                // reset the current context for the thread
                 _current = _inheritFrom;
             }
             
         }
 
         #endregion
+
+        protected static string GetBaseTempPath()
+        {
+            String basePath = String.Empty;
+            if (!String.IsNullOrEmpty(ImageServerCommonConfiguration.TemporaryPath))
+            {
+                if (Directory.Exists(ImageServerCommonConfiguration.TemporaryPath))
+                    basePath = ImageServerCommonConfiguration.TemporaryPath;
+                else
+                {
+                    // try to create it
+                    try
+                    {
+                        Directory.CreateDirectory(ImageServerCommonConfiguration.TemporaryPath);
+                    }
+                    catch(Exception ex)
+                    {
+                        
+                    }
+                }
+            }
+            return basePath;
+        }
     }
 }

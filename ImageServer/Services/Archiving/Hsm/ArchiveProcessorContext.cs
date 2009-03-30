@@ -35,7 +35,12 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                 return base.TempDirectory;
             else
             {
-                String basePath = Path.Combine(storage.FilesystemPath, "temp");
+                String basePath =  GetBaseTempPath();
+
+                if (String.IsNullOrEmpty(basePath))
+                {
+                    basePath = Path.Combine(storage.FilesystemPath, "temp");
+                }
                 String tempDirectory = Path.Combine(basePath, String.Format("ArchiveQueue-{0}", _item.GetKey()));
 
                 for (int i = 2; i < 1000; i++)
