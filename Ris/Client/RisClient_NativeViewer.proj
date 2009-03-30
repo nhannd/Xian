@@ -42,8 +42,8 @@
     <DistributionBuild>false</DistributionBuild>
     <FullViewer>false</FullViewer>
     <!-- Default, triceratops options -->
-    <DefaultOptions>CopyDefaultAEServers+ExcludeEFilmAutomation+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeServiceConfiguration+ExcludeHelpUpdate+ExcludeDicomRemote+ExcludeDatabase</DefaultOptions>
-    <FullViewerOptions>ExcludeEFilmAutomation+ExcludeStudyComposer+ExcludeHelpUpdate</FullViewerOptions>
+    <DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeServiceConfiguration+ExcludeHelpUpdate+ExcludeDicomRemote+ExcludeDatabase</DefaultOptions>
+    <FullViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeHelpUpdate</FullViewerOptions>
   </PropertyGroup>
 
   <Choose>

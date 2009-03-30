@@ -217,6 +217,7 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 				delegate(IAuthenticationService service)
 				{
 					InitiateSessionRequest request = new InitiateSessionRequest(userName, password);
+					request.GetAuthorizations = true;
 					InitiateSessionResponse response = service.InitiateSession(request);
 
 					if (response.SessionToken == null)
