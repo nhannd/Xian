@@ -206,6 +206,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		protected override void OnDrawing()
 		{
+			bool anyFailures = false;
+
 			try
 			{
 				if (_graphicsDeserializer != null)
@@ -213,8 +215,8 @@ namespace ClearCanvas.ImageViewer
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Warn, e);
-				base.ImageViewer.DesktopWindow.ShowMessageBox(SR.MessageFailedToApplyDicomHeaderGraphics, MessageBoxActions.Ok);
+				anyFailures = true;
+				Platform.Log(LogLevel.Warn, e, "An error has occurred while deserializing graphics from the image header.");
 			}
 			finally
 			{
@@ -231,10 +233,13 @@ namespace ClearCanvas.ImageViewer
 				}
 				catch (Exception ex)
 				{
-					Platform.Log(LogLevel.Warn, ex, SR.MessagePresentationStateApplicationFailure);
-					base.ImageViewer.DesktopWindow.ShowMessageBox(SR.MessagePresentationStateApplicationFailure, MessageBoxActions.Ok);
+					anyFailures = true;
+					Platform.Log(LogLevel.Warn, ex, "An error has occurred while deserializing the image presentation state.");
 				}
 			}
+
+			if (anyFailures)
+				throw new Exception("At least one failure has occurred while deserializing the image presentation state.");
 
 			base.OnDrawing();
 		}

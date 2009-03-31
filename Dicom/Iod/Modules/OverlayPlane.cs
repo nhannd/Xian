@@ -84,7 +84,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			DicomAttribute attrib;
 			if (!DicomAttributeProvider.TryGetAttribute(ComputeTagOffset(index) + DicomTags.OverlayBitPosition, out attrib))
 				return false;
-			return !attrib.IsEmpty;
+			else if (attrib != null)
+				return !attrib.IsEmpty;
+			else 
+				return false;
 		}
 
 		internal static uint ComputeTagOffset(int index)

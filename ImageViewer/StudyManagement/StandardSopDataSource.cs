@@ -4,7 +4,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public abstract class StandardSopDataSource : SopDataSource
 	{
-		private readonly object _syncLock = new object();
+		//I hate doing this, but it's horribly inefficient for all subclasses to do their own locking.
+		protected readonly object SyncLock = new object();
 		private volatile WeakReference[] _framePixelData;
 
 		protected StandardSopDataSource()
@@ -18,7 +19,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				if (_framePixelData == null)
 				{
-					lock(_syncLock)
+					lock(SyncLock)
 					{
 						if (_framePixelData == null)
 						{
@@ -53,7 +54,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			if (!reference.IsAlive || pixelData == null)
 			{
-				lock(_syncLock)
+				lock(SyncLock)
 				{
 					pixelData = CreateFrameNormalizedPixelData(frameNumber);
 					reference.Target = pixelData;

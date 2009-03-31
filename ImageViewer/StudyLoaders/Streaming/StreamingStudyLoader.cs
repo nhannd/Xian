@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 	[ExtensionOf(typeof(StudyLoaderExtensionPoint))]
 	public class StreamingStudyLoader : StudyLoader
 	{
-		private IEnumerator<DicomMessageBase> _dicomMessages;
+		private IEnumerator<InstanceXml> _instances;
 		private ApplicationEntity _ae;
 
 		public StreamingStudyLoader() : base("CC_STREAMING")
@@ -30,21 +30,31 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			_ae = ae;
 
 			XmlDocument doc = RetrieveHeaderXml(studyLoaderArgs);
+			StudyXml studyXml = new StudyXml();
+			studyXml.SetMemento(doc);
 
-			List<DicomMessageBase> dicomMessages = BuildFileList(studyLoaderArgs.StudyInstanceUid, doc);
+			_instances = GetInstances(studyXml).GetEnumerator();
 
-			_dicomMessages = dicomMessages.GetEnumerator();
-			_dicomMessages.Reset();
-
-			return dicomMessages.Count;
+			return studyXml.NumberOfStudyRelatedInstances;
 		}
 
-		protected override SopDataSource  LoadNextSopDataSource()
+		private IEnumerable<InstanceXml> GetInstances(StudyXml studyXml)
 		{
-			if (!_dicomMessages.MoveNext())
+			foreach (SeriesXml seriesXml in studyXml)
+			{
+				foreach (InstanceXml instanceXml in seriesXml)
+				{
+					yield return instanceXml;
+				}
+			}
+		}
+
+		protected override SopDataSource LoadNextSopDataSource()
+		{
+			if (!_instances.MoveNext())
 				return null;
 
-			return new StreamingSopDataSource(_dicomMessages.Current, _ae.Host, _ae.AETitle, _ae.WadoServicePort);
+			return new StreamingSopDataSource(_instances.Current, _ae.Host, _ae.AETitle, _ae.WadoServicePort);
 		}
 
 		private XmlDocument RetrieveHeaderXml(StudyLoaderArgs studyLoaderArgs)
@@ -85,28 +95,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			XmlDocument doc = new XmlDocument();
 			doc.Load(gzStream);
 			return doc;
-		}
-
-		private static List<DicomMessageBase> BuildFileList(string studyInstanceUid, XmlDocument doc)
-		{
-			StudyXml studyXml = new StudyXml(studyInstanceUid);
-			studyXml.SetMemento(doc);
-
-			List<DicomMessageBase> dicomMessages = new List<DicomMessageBase>();
-			foreach (SeriesXml seriesXml in studyXml)
-			{
-				foreach (InstanceXml instanceXml in seriesXml)
-				{
-					DicomFile file = new DicomFile(
-						string.Empty,
-						new DicomAttributeCollection(),
-						instanceXml.Collection);
-
-					file.TransferSyntax = instanceXml.TransferSyntax;
-					dicomMessages.Add(file);
-				}
-			}
-			return dicomMessages;
 		}
 	}
 }

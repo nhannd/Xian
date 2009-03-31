@@ -99,7 +99,21 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
             return buffer;
         }
 
-        public Stream RetrieveImage(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid)
+		public Stream RetrieveImageHeader(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid)
+		{
+			StreamingResultMetaData metaInfo;
+			return RetrieveImageHeader(serverAE, studyInstanceUID, seriesInstanceUID, sopInstanceUid, DicomTags.PixelData, out metaInfo);
+		}
+
+		public Stream RetrieveImageHeader(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid, uint stopTag, out StreamingResultMetaData metaInfo)
+		{
+        	string imageUrl = BuildImageUrl(serverAE, studyInstanceUID, seriesInstanceUID, sopInstanceUid);
+			imageUrl = imageUrl + String.Format("&stopTag={0:x8}", stopTag);
+			imageUrl = imageUrl + String.Format("&contentType={0}", HttpUtility.HtmlEncode("application/clearcanvas-header"));
+        	return RetrieveImageData(imageUrl, out metaInfo);
+		}
+		
+		public Stream RetrieveImage(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid)
         {
             StreamingResultMetaData result;
             return RetrieveImage(serverAE, studyInstanceUID, seriesInstanceUID, sopInstanceUid, out result);
@@ -107,66 +121,76 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 
         public Stream RetrieveImage(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid, out StreamingResultMetaData metaInfo)
         {
-            Platform.CheckForEmptyString(serverAE, "serverAE");
-            Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
-            Platform.CheckForEmptyString(seriesInstanceUID, "seriesInstanceUID");
-            Platform.CheckForEmptyString(sopInstanceUid, "sopInstanceUid");
-
-            StreamingResultMetaData result = new StreamingResultMetaData();
-
-            StringBuilder url = new StringBuilder();
-            if (_baseUri.ToString().EndsWith("/"))
-            {
-                url.AppendFormat("{0}{1}", _baseUri, serverAE);
-            }
-            else
-            {
-                url.AppendFormat("{0}/{1}", _baseUri, serverAE);
-            } 
-            url.AppendFormat("?requesttype=WADO&studyUID={0}&seriesUID={1}&objectUID={2}", studyInstanceUID, seriesInstanceUID, sopInstanceUid);
-            url.AppendFormat("&contentType={0}", HttpUtility.HtmlEncode("application/dicom"));
-
-            result.Speed.Start();
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url.ToString());
-            request.Accept = "application/dicom,application/clearcanvas,image/jpeg";
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new Exception(String.Format("Server responded with an error: {0}", HttpUtility.HtmlDecode(response.StatusDescription)));
-            }
-
-
-            byte[] buffer = new byte[response.ContentLength];
-            Stream stream = response.GetResponseStream();
-            int offset = 0;
-            do
-            {
-                int readSize = stream.Read(buffer, offset, buffer.Length - offset);
-                if (readSize <= 0)
-                    break;
-                offset += readSize;
-
-            } while (true);
-            stream.Close();
-
-            result.Speed.SetData(buffer.Length);
-            result.Speed.End();
-
-            result.ResponseMimeType = response.ContentType;
-            result.Status = response.StatusCode;
-            result.StatusDescription = response.StatusDescription;
-            result.Uri = response.ResponseUri;
-            result.ContentLength = buffer.Length;
-
-            metaInfo = result;
-            return new MemoryStream(buffer);
+        	string imageUrl = BuildImageUrl(serverAE, studyInstanceUID, seriesInstanceUID, sopInstanceUid);
+			imageUrl = imageUrl + String.Format("&contentType={0}", HttpUtility.HtmlEncode("application/dicom"));
+        	return RetrieveImageData(imageUrl, out metaInfo);
         }
 
         #endregion Public Methods
 
         #region Private Static Methods
-        /// <summary>
+
+		private string BuildImageUrl(string serverAE, string studyInstanceUid, string seriesInstanceUid, string sopInstanceUid)
+		{
+			Platform.CheckForEmptyString(serverAE, "serverAE");
+			Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
+			Platform.CheckForEmptyString(seriesInstanceUid, "seriesInstanceUid");
+			Platform.CheckForEmptyString(sopInstanceUid, "sopInstanceUid");
+
+			StringBuilder url = new StringBuilder();
+			if (_baseUri.ToString().EndsWith("/"))
+			{
+				url.AppendFormat("{0}{1}", _baseUri, serverAE);
+			}
+			else
+			{
+				url.AppendFormat("{0}/{1}", _baseUri, serverAE);
+			}
+
+			url.AppendFormat("?requesttype=WADO&studyUID={0}&seriesUID={1}&objectUID={2}", studyInstanceUid, seriesInstanceUid, sopInstanceUid);
+			return url.ToString();
+		}
+
+    	private static MemoryStream RetrieveImageData(string url, out StreamingResultMetaData result)
+		{
+			result = new StreamingResultMetaData();
+
+			result.Speed.Start();
+
+			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url.ToString());
+			request.Accept = "application/dicom,application/clearcanvas,application/clearcanvas-header,image/jpeg";
+			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+			if (response.StatusCode != HttpStatusCode.OK)
+			{
+				throw new Exception(String.Format("Server responded with an error: {0}", HttpUtility.HtmlDecode(response.StatusDescription)));
+			}
+
+			byte[] buffer = new byte[response.ContentLength];
+			Stream stream = response.GetResponseStream();
+			int offset = 0;
+			do
+			{
+				int readSize = stream.Read(buffer, offset, buffer.Length - offset);
+				if (readSize <= 0)
+					break;
+				offset += readSize;
+
+			} while (true);
+			stream.Close();
+
+			result.Speed.SetData(buffer.Length);
+			result.Speed.End();
+
+			result.ResponseMimeType = response.ContentType;
+			result.Status = response.StatusCode;
+			result.StatusDescription = response.StatusDescription;
+			result.Uri = response.ResponseUri;
+			result.ContentLength = buffer.Length;
+
+			return new MemoryStream(buffer);
+		}
+
+    	/// <summary>
         /// Decompressed an image buffer returned by wado http response.
         /// </summary>
         /// <param name="response">WADO http response</param>

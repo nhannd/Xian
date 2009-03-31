@@ -51,6 +51,7 @@
     <Compile Include="ImageStreaming\Handlers\IImageMimeTypeProcessor.cs" />
     <Compile Include="ImageStreaming\Handlers\ImageStreamingContext.cs" />
     <Compile Include="ImageStreaming\Handlers\PixelDataLoader.cs" />
+    <Compile Include="ImageStreaming\MimeTypes\ImageHeaderMimeType.cs" />
     <Compile Include="ImageStreaming\StreamingContext.cs" />
     <Compile Include="ImageStreaming\MimeTypes\PixelDataMimeType.cs" />
     <Compile Include="ImageStreaming\Handlers\ImageMimeTypeConverterExtensionPoint.cs" />

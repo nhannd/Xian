@@ -1,7 +1,77 @@
 using System;
+using System.Runtime.InteropServices;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	//TODO: work in progress; may delete in favour of doing masking in the interpolator.
+	//public class EmbeddedOverlayData
+	//{
+	//    public unsafe static byte[] Unpack(int bitsAllocated, int rows, int columns, int overlayBit, byte[] pixelData)
+	//    {
+	//        Platform.CheckTrue(overlayBit <= bitsAllocated, "Overlay Bit <= Bits Allocated");
+
+	//        int overlaySize = rows*columns;
+	//        GCHandle overlayPin = GCHandle.Alloc(pixelData, GCHandleType.Pinned);
+
+	//        try
+	//        {
+	//            if (bitsAllocated == 16)
+	//                return Unpack((ushort*) overlayPin.AddrOfPinnedObject(), overlaySize, overlayBit);
+	//            else
+	//                return Unpack((byte*)overlayPin.AddrOfPinnedObject(), overlaySize, overlayBit);
+	//        }
+	//        finally
+	//        {
+	//            overlayPin.Free();
+	//        }
+	//    }
+
+	//    private unsafe static byte[] Unpack(byte* pixelData, int overlaySize, int overlayBit)
+	//    {
+	//        byte pixelMask = ((byte)(0x1 << overlayBit));
+			
+	//        byte[] overlayData = new byte[overlaySize];
+	//        fixed (byte* overlayPtr = overlayData)
+	//        {
+	//            byte* pOverlay = overlayPtr;
+	//            for (int p = 0; p < overlaySize; ++p)
+	//            {
+	//                if (((*pixelData) & pixelMask) != 0)
+	//                    *pOverlay = 0x1;
+	//                else
+	//                    *pOverlay = 0x0;
+
+	//                ++pOverlay;
+	//                ++pixelData;
+	//            }
+	//        }
+	//        return overlayData;
+	//    }
+
+	//    private unsafe static byte[] Unpack(ushort* pixelData, int overlaySize, int overlayBit)
+	//    {
+	//        ushort pixelMask = ((ushort)(0x1 << overlayBit));
+
+	//        byte[] overlayData = new byte[overlaySize];
+	//        fixed (byte* overlayPtr = overlayData)
+	//        {
+	//            byte* pOverlay = overlayPtr;
+	//            for (int p = 0; p < overlaySize; ++p)
+	//            {
+	//                if (((*pixelData) & pixelMask) != 0)
+	//                    *pOverlay = 0x1;
+	//                else
+	//                    *pOverlay = 0x0;
+
+	//                ++pOverlay;
+	//                ++pixelData;
+	//            }
+	//        }
+	//        return overlayData;
+	//    }
+	//}
+
 	public class OverlayData
 	{
 		private int _rows;

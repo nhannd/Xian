@@ -117,12 +117,18 @@ namespace ClearCanvas.Dicom
             _endTag = endTag;
         }
 
-        /// <summary>
-        /// Internal constructor used when creating a copy of an DicomAttributeCollection.
-        /// </summary>
-        /// <param name="source">The source collection to copy attributes from.</param>
-        /// <param name="copyBinary"></param>
-        internal DicomAttributeCollection(DicomAttributeCollection source, bool copyBinary)
+		/// <summary>
+		/// Internal constructor used when creating a copy of an DicomAttributeCollection.
+		/// </summary>
+		/// <param name="source">The source collection to copy attributes from.</param>
+		/// <param name="copyBinary"></param>
+		internal DicomAttributeCollection(DicomAttributeCollection source, bool copyBinary)
+			: this(source, copyBinary, 0xFFFFFFFF)
+        {
+
+        }
+
+        internal DicomAttributeCollection(DicomAttributeCollection source, bool copyBinary, uint stopTag)
         {
         	_startTag = source.StartTagValue;
         	_endTag = source.EndTagValue;
@@ -130,6 +136,9 @@ namespace ClearCanvas.Dicom
 
             foreach (DicomAttribute attrib in source)
             {
+				if (attrib.Tag.TagValue >= stopTag)
+					break;
+
                 if (copyBinary ||
                       (!(attrib is DicomAttributeOB)
                     && !(attrib is DicomAttributeOW)
@@ -490,7 +499,22 @@ namespace ClearCanvas.Dicom
             return new DicomAttributeCollection(this, copyBinary);
         }
 
-        /// <summary>
+		/// <summary>
+		/// Create a duplicate copy of the DicomAttributeCollection.
+		/// </summary>
+		/// <remarks>This method will not copy <see cref="DicomAttributeOB"/>,
+		/// <see cref="DicomAttributeOW"/> and <see cref="DicomAttributeOF"/>
+		/// instances if the <paramref name="copyBinary"/> parameter is set
+		/// to false.</remarks>
+		/// <param name="copyBinary">Flag to set if binary VR attributes will be copied.</param>
+		/// <param name="stopTag">Indicates a tag at which to stop copying.</param>
+		/// <returns>a new DicomAttributeCollection.</returns>
+		public virtual DicomAttributeCollection Copy(bool copyBinary, uint stopTag)
+		{
+			return new DicomAttributeCollection(this, copyBinary, stopTag);
+		}
+		
+		/// <summary>
         /// Check if the contents of the DicomAttributeCollection is identical to another DicomAttributeCollection instance.
         /// </summary>
         /// <remarks>

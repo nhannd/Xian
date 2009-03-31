@@ -176,8 +176,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         /// <returns>true on scuccess.</returns>
         public bool AddFile(DicomFile theFile, long fileSize)
         {
-            // Create a copy of the collection without pixel data
-            DicomAttributeCollection data = theFile.DataSet.Copy(false);
+			// Create a copy of the collection without pixel data
+            DicomAttributeCollection data = theFile.DataSet.Copy(true, DicomTags.PixelData);
 
             String studyInstanceUid = data[DicomTags.StudyInstanceUid];
 

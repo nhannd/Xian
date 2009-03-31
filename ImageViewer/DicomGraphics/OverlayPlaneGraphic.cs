@@ -84,6 +84,9 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 				highBit = 1;
 			}
 
+			if (overlayData == null)
+				throw new Exception("Overlay plane data is invalid.");
+
 			GrayscaleImageGraphic imageGraphic = new GrayscaleImageGraphic(
 				rows, cols, // the reported overlay dimensions
 				bitsAllocated, // the reported bits allocated
@@ -257,9 +260,6 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 			}
 		}
 
-		/// <summary>
-		/// Simple 2-value color map for DICOM overlays.
-		/// </summary>
 		[Cloneable(true)]
 		private class OverlayColorMap : ColorMap
 		{

@@ -37,7 +37,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
 	internal class LocalDataStoreSopDataSource : LocalSopDataSource
 	{
-		private readonly object _syncLock =  new object();
 		private readonly ISopInstance _sop;
 
 		public LocalDataStoreSopDataSource(ISopInstance sop)
@@ -74,7 +73,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		public override DicomAttribute GetDicomAttribute(uint tag)
 		{
 			//the _sop indexer is not thread-safe.
-			lock (_syncLock)
+			lock (SyncLock)
 			{
 				if (_sop.IsStoredTag(tag))
 					return _sop[tag];
@@ -85,7 +84,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public override bool TryGetAttribute(uint tag, out DicomAttribute attribute)
 		{
-			lock (_syncLock)
+			lock (SyncLock)
 			{
 				if (_sop.IsStoredTag(tag))
 				{

@@ -9,14 +9,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	public class DicomMessageSopDataSource : StandardSopDataSource, IDicomMessageSopDataSource
 	{
-		private readonly object _syncLock = new object();
-		private readonly DicomMessageBase _sourceMessage;
+		private readonly DicomAttributeCollection _dummy;
+		private DicomMessageBase _sourceMessage;
 		private bool _loaded = false;
 		private bool _loading = false;
 
 		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage)
-			: base()
 		{
+			_dummy = new DicomAttributeCollection();
 			_sourceMessage = sourceMessage;
 		}
 
@@ -26,8 +26,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				Load();
-				return _sourceMessage;
+				lock (SyncLock)
+				{
+					Load();
+					return _sourceMessage;
+				}
+			}
+			protected set
+			{
+				lock (SyncLock)
+				{
+					_sourceMessage = value;
+				}
 			}
 		}
 
@@ -37,7 +47,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private void Load()
 		{
-			lock(_syncLock)
+			lock(SyncLock)
 			{
 				if (_loaded || _loading)
 					return;
@@ -57,30 +67,24 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public override DicomAttribute GetDicomAttribute(uint tag)
 		{
-			lock (_syncLock)
+			lock (SyncLock)
 			{
 				Load();
 
-				bool isInMetaInfoRange = (tag >= _sourceMessage.MetaInfo.StartTagValue && tag <= _sourceMessage.MetaInfo.EndTagValue);
-				bool isInDataSetRange = (tag >= _sourceMessage.DataSet.StartTagValue && tag <= _sourceMessage.DataSet.EndTagValue);
+				DicomAttribute attribute;
+				if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
+					return attribute;
 
-				if (isInDataSetRange)
-				{
-					DicomAttribute attribute = _sourceMessage.DataSet[tag];
-					if (!attribute.IsEmpty || !isInMetaInfoRange)
-						return attribute;
-				}
+				if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
+					return attribute;
 
-				if (isInMetaInfoRange)
-					return _sourceMessage.MetaInfo[tag];
-
-				throw new ArgumentOutOfRangeException("tag", "The tag is not within the valid range for either the meta info or dataset.");
+				return _dummy[tag];
 			}
 		}
 
 		public override bool TryGetAttribute(uint tag, out DicomAttribute attribute)
 		{
-			lock (_syncLock)
+			lock (SyncLock)
 			{
 				Load();
 
@@ -94,7 +98,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected override byte[] CreateFrameNormalizedPixelData(int frameNumber)
 		{
 			//already locked by base calling method, but it doesn't hurt.
-			lock (_syncLock)
+			lock (SyncLock)
 			{
 				Load();
 				return CreateFrameNormalizedPixelData(SourceMessage, frameNumber);
@@ -127,7 +131,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				throw new DicomCodecException("Unsupported transfer syntax");
 
 			if (photometricInterpretation.IsColor)
-				rawPixelData = ToArgb(message, rawPixelData, photometricInterpretation);
+				rawPixelData = ToArgb(message.DataSet, rawPixelData, photometricInterpretation);
 
 			clock.Stop();
 			PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "CreateFrameNormalizedPixelData", clock.Seconds);
@@ -138,13 +142,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Converts colour pixel data to ARGB.
 		/// </summary>
-		protected static byte[] ToArgb(DicomMessageBase message, byte[] pixelData, PhotometricInterpretation photometricInterpretation)
+		public static byte[] ToArgb(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, PhotometricInterpretation photometricInterpretation)
 		{
 			CodeClock clock = new CodeClock();
 			clock.Start();
 
-			int rows = message.DataSet[DicomTags.Rows].GetInt32(0, 0);
-			int columns = message.DataSet[DicomTags.Columns].GetInt32(0, 0);
+			int rows = dicomAttributeProvider[DicomTags.Rows].GetInt32(0, 0);
+			int columns = dicomAttributeProvider[DicomTags.Columns].GetInt32(0, 0);
 			int sizeInBytes = rows * columns * 4;
 			byte[] argbPixelData = new byte[sizeInBytes];
 
@@ -152,20 +156,20 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			// when rendering.
 			if (photometricInterpretation == PhotometricInterpretation.PaletteColor)
 			{
-				int bitsAllocated = message.DataSet[DicomTags.BitsAllocated].GetInt32(0, 0);
-				int pixelRepresentation = message.DataSet[DicomTags.PixelRepresentation].GetInt32(0, 0);
+				int bitsAllocated = dicomAttributeProvider[DicomTags.BitsAllocated].GetInt32(0, 0);
+				int pixelRepresentation = dicomAttributeProvider[DicomTags.PixelRepresentation].GetInt32(0, 0);
 
 				ColorSpaceConverter.ToArgb(
 					bitsAllocated,
 					pixelRepresentation != 0 ? true : false,
 					pixelData,
 					argbPixelData,
-					PaletteColorMap.Create(message.DataSet));
+					PaletteColorMap.Create(dicomAttributeProvider));
 			}
 			// Convert RGB and YBR variants to ARGB
 			else
 			{
-				int planarConfiguration = message.DataSet[DicomTags.PlanarConfiguration].GetInt32(0, 0);
+				int planarConfiguration = dicomAttributeProvider[DicomTags.PlanarConfiguration].GetInt32(0, 0);
 
 				ColorSpaceConverter.ToArgb(
 					photometricInterpretation,

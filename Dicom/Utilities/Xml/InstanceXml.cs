@@ -39,17 +39,162 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ClearCanvas.Common;
+using System.Collections.ObjectModel;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
-    /// <summary>
+	#region InstanceXml DicomAttribute stuff
+
+	//TODO: this is not ideal, but is the most straightforward given the current study xml design.  Later,
+	//we should refactor for a cleaner API.
+	public interface IInstanceXmlDicomAttributeCollection : IDicomAttributeProvider, IEnumerable<DicomAttribute>
+	{
+		ReadOnlyCollection<uint> ExcludedTags { get; }
+
+		bool HasExcludedTags(bool recursive);
+	}
+
+	internal interface IPrivateInstanceXmlDicomAttributeCollection : IInstanceXmlDicomAttributeCollection
+	{
+		ExcludedTagsHelper ExcludedTagsHelper { get; }
+	}
+
+	internal class ExcludedTagsHelper
+	{
+		private readonly IInstanceXmlDicomAttributeCollection _parent;
+
+		private readonly ReadOnlyCollection<uint> _readOnlyExcludedTags;
+		private readonly List<uint> _excludedTags;
+
+		public ExcludedTagsHelper(IInstanceXmlDicomAttributeCollection parent)
+		{
+			_parent = parent;
+			_excludedTags = new List<uint>();
+			_readOnlyExcludedTags = new ReadOnlyCollection<uint>(_excludedTags);
+		}
+
+		public ReadOnlyCollection<uint> ExcludedTags
+		{
+			get { return _readOnlyExcludedTags; }
+		}
+
+		public void Add(uint tag)
+		{
+			if (!_excludedTags.Contains(tag))
+				_excludedTags.Add(tag);
+		}
+
+		public bool HasExcludedTags(bool recursive)
+		{
+			if (ExcludedTags.Count > 0)
+				return true;
+
+			if (recursive)
+			{
+				foreach (DicomAttribute attribute in _parent)
+				{
+					if (attribute is DicomAttributeSQ)
+					{
+						DicomSequenceItem[] items = attribute.Values as DicomSequenceItem[];
+						if (items != null)
+						{
+							foreach (DicomSequenceItem item in items)
+							{
+								if (item is InstanceXmlDicomSequenceItem)
+								{
+									if (((InstanceXmlDicomSequenceItem)item).HasExcludedTags(recursive))
+										return true;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+	}
+
+	public class InstanceXmlDicomAttributeCollection : DicomAttributeCollection, IPrivateInstanceXmlDicomAttributeCollection
+	{
+		private readonly ExcludedTagsHelper _excludedTagsHelper;
+
+		internal InstanceXmlDicomAttributeCollection()
+		{
+			_excludedTagsHelper = new ExcludedTagsHelper(this);
+		}
+
+		#region IInstanceXmlDicomAttributeCollection Members
+
+		public ReadOnlyCollection<uint> ExcludedTags
+		{
+			get { return _excludedTagsHelper.ExcludedTags; }
+		}
+
+		public bool HasExcludedTags(bool recursive)
+		{
+			return _excludedTagsHelper.HasExcludedTags(recursive);
+		}
+
+		#endregion
+
+		#region IInternalInstanceXmlDicomAttributeCollection Members
+
+		ExcludedTagsHelper IPrivateInstanceXmlDicomAttributeCollection.ExcludedTagsHelper
+		{
+			get { return _excludedTagsHelper; }
+		}
+
+		#endregion
+	}
+
+	public class InstanceXmlDicomSequenceItem : DicomSequenceItem, IPrivateInstanceXmlDicomAttributeCollection
+	{
+		private readonly ExcludedTagsHelper _excludedTagsHelper;
+
+		internal InstanceXmlDicomSequenceItem()
+		{
+			_excludedTagsHelper = new ExcludedTagsHelper(this);
+		}
+
+		#region IInstanceXmlDicomAttributeCollection Members
+
+		public ReadOnlyCollection<uint> ExcludedTags
+		{
+			get { return _excludedTagsHelper.ExcludedTags; }
+		}
+
+		public bool HasExcludedTags(bool recursive)
+		{
+			return _excludedTagsHelper.HasExcludedTags(recursive);
+		}
+
+		#endregion
+
+		#region IInternalInstanceXmlDicomAttributeCollection Members
+
+		ExcludedTagsHelper IPrivateInstanceXmlDicomAttributeCollection.ExcludedTagsHelper
+		{
+			get { return _excludedTagsHelper; }
+		}
+
+		#endregion
+	}
+
+	#endregion
+
+	/// <summary>
     /// Class for representing a SOP Instance as XML.
     /// </summary>
+    /// <remarks>
+    /// This class may change in a future release.
+    /// </remarks>
     public class InstanceXml
-    {
+	{
 		#region Private members
 
-        private readonly String _sopInstanceUid = null;
+		private readonly String _sopInstanceUid = null;
         private readonly SopClass _sopClass = null;
         private readonly TransferSyntax _transferSyntax = null;
     	private string _sourceFileName = null;
@@ -103,7 +248,14 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             get { return _transferSyntax; }
         }
 
-        public DicomAttributeCollection Collection
+		/// <summary>
+		/// Gets the underlying data as a <see cref="DicomAttributeCollection"/>.
+		/// </summary>
+		/// <remarks>
+		/// When parsed from xml, the return type is <see cref="InstanceXmlDicomAttributeCollection"/>, otherwise
+		/// it is the source <see cref="DicomAttributeCollection"/>.
+		/// </remarks>
+		public DicomAttributeCollection Collection
         {
             get
             {
@@ -111,7 +263,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             	return _collection;
             }
         }
-
+		
     	public DicomAttribute this[DicomTag tag]
     	{
     		get
@@ -133,7 +285,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
         #region Constructors
 
-        public InstanceXml(DicomAttributeCollection collection, SopClass sopClass, TransferSyntax syntax)
+		public InstanceXml(DicomAttributeCollection collection, SopClass sopClass, TransferSyntax syntax)
         {
             _sopInstanceUid = collection[DicomTags.SopInstanceUid];
 
@@ -142,9 +294,9 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             _transferSyntax = syntax;
         }
 
-        public InstanceXml(XmlNode instanceNode, DicomAttributeCollection baseCollection)
+		public InstanceXml(XmlNode instanceNode, DicomAttributeCollection baseCollection)
         {
-			_collection = new DicomAttributeCollection();
+			_collection = new InstanceXmlDicomAttributeCollection();
 
 			if (baseCollection != null)
 			{
@@ -290,7 +442,10 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 					tagValue = dicomTag.TagValue;
 				}
 				else
+				{
 					tagValue = uint.Parse(tagString, NumberStyles.HexNumber);
+				}
+
 				if (tagValue <= tag)
 				{
 					ParseAttribute(_collection, node);
@@ -330,7 +485,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 						while (itemNode != null)
 						{
-							DicomSequenceItem theItem = new DicomSequenceItem();
+							DicomSequenceItem theItem = new InstanceXmlDicomSequenceItem();
 
 							ParseCollection(theItem, itemNode);
 
@@ -368,6 +523,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				DicomTag theTag = GetTagFromAttributeNode(attributeNode);
 				theCollection[theTag] = null;
 			}
+			else if (attributeNode.Name.Equals("ExcludedAttribute"))
+			{
+				DicomTag theTag = GetTagFromAttributeNode(attributeNode);
+				((IPrivateInstanceXmlDicomAttributeCollection)theCollection).ExcludedTagsHelper.Add(theTag.TagValue);
+			}
 		}
 
     	#endregion
@@ -377,7 +537,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		private void SwitchToCachedXml()
 		{
 			// Give to the garbage collector the memory associated with the collection
-			_collection = new DicomAttributeCollection();
+			_collection = new InstanceXmlDicomAttributeCollection();
 
 			if (_baseInstance != null)
 			{
@@ -394,12 +554,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				_instanceXmlEnumerator = null;
 		}
 
-        private XmlElement GetMementoForCollection(XmlDocument theDocument, DicomAttributeCollection baseCollection,
-                                                   DicomAttributeCollection collection, StudyXmlOutputSettings settings)
+		private XmlElement GetMementoForCollection(XmlDocument theDocument, DicomAttributeCollection baseCollection,
+												   DicomAttributeCollection collection, StudyXmlOutputSettings settings)
         {
             XmlElement instance;
 
-            if (collection is DicomSequenceItem)
+			if (collection is DicomSequenceItem)
             {
                 instance = theDocument.CreateElement("Item");
             }
@@ -449,7 +609,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				validIterator = baseIterator.MoveNext();
 			}
 
-            foreach (DicomAttribute attribute in collection)
+			foreach (DicomAttribute attribute in collection)
             {
 				bool isInBase = false;
 				if (baseIterator != null && validIterator)
@@ -492,7 +652,11 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 						continue;
 
 				if (!AttributeShouldBeIncluded(attribute, settings))
-                    continue;
+				{
+					XmlElement excludedAttributeElement = CreateDicomAttributeElement(theDocument, attribute, "ExcludedAttribute");
+					instance.AppendChild(excludedAttributeElement);
+					continue;
+				}
 
 				if (attribute.IsEmpty)
 				{
@@ -504,8 +668,8 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             	XmlElement instanceElement = CreateDicomAttributeElement(theDocument, attribute, "Attribute");
             	if (attribute is DicomAttributeSQ)
                 {
-                    DicomSequenceItem[] items = (DicomSequenceItem[]) attribute.Values;
-                    foreach (DicomSequenceItem item in items)
+					DicomSequenceItem[] items = (DicomSequenceItem[])attribute.Values;
+					foreach (DicomSequenceItem item in items)
                     {
                         XmlElement itemElement = GetMementoForCollection(theDocument, null, item, settings);
 
@@ -554,6 +718,12 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 instance.AppendChild(instanceElement);
             }
 
+			if (collection is IInstanceXmlDicomAttributeCollection)
+			{
+				foreach (uint excludedTag in ((IInstanceXmlDicomAttributeCollection)collection).ExcludedTags)
+					instance.AppendChild(CreateDicomAttributeElement(theDocument, excludedTag, "ExcludedAttribute"));
+			}
+
             return instance;
         }
 
@@ -585,22 +755,32 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			return theTag;
 		}
 
-    	private static XmlElement CreateDicomAttributeElement(XmlDocument document, DicomAttribute attribute, string name)
+		private static XmlElement CreateDicomAttributeElement(XmlDocument document, DicomAttribute attribute, string name)
+		{
+			return CreateDicomAttributeElement(document, attribute.Tag, name);
+		}
+
+		private static XmlElement CreateDicomAttributeElement(XmlDocument document, uint dicomTag, string name)
+		{
+			return CreateDicomAttributeElement(document, DicomTagDictionary.GetDicomTag(dicomTag), name);
+		}
+
+		private static XmlElement CreateDicomAttributeElement(XmlDocument document, DicomTag dicomTag, string name)
 		{
 			XmlElement dicomAttributeElement = document.CreateElement(name);
 
-            XmlAttribute tag = document.CreateAttribute("Tag");
-            tag.Value = attribute.Tag.HexString;
+			XmlAttribute tag = document.CreateAttribute("Tag");
+			tag.Value = dicomTag.HexString;
 
-            XmlAttribute vr = document.CreateAttribute("VR");
-            vr.Value = attribute.Tag.VR.ToString();
+			XmlAttribute vr = document.CreateAttribute("VR");
+			vr.Value = dicomTag.VR.ToString();
 
 			dicomAttributeElement.Attributes.Append(tag);
 			dicomAttributeElement.Attributes.Append(vr);
 
 			return dicomAttributeElement;
 		}
-
-    	#endregion
+		
+		#endregion
 	}	
 }
