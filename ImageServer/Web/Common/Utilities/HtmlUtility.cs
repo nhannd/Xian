@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using System.Security;
 using System.Web;
+using System.Web.UI;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
 
@@ -36,6 +37,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
             }
             else
                 return null;
+        }
+
+        public static string GetEvalValue(object item, string itemName, string defaultValue)
+        {
+            string value = DataBinder.Eval(item, itemName, "");
+
+            if (value == null || value.Equals("")) return defaultValue;
+            else return value;
         }
     }
 }

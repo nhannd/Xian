@@ -1,3 +1,4 @@
+<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Utilities"%>
 
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Application.Helpers" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="DeleteStudyConfirmDialog.ascx.cs"
@@ -57,18 +58,18 @@
                                     <HeaderTemplate>
                                         <table  cellspacing="0" width="100%" class="GlobalGridView"
                                             style="border: solid 1px #3d98d1;">
-                                            <tr class="GlobalGridViewHeader">
-                                                <th style="white-space:nowrap">
+                                            <tr>
+                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
                                                     Patient's Name</th>
-                                                <th style="white-space:nowrap">
+                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
                                                     Patient Id</th>
-                                                <th style="white-space:nowrap">
+                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
                                                     Study Date</th>
-                                                <th style="white-space:nowrap">
+                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
                                                     Study Description</th>
-                                                <th style="white-space:nowrap">
+                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
                                                     Accession #</th>
-                                                <th style="white-space:nowrap">
+                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
                                                     Modality</th>
                                             </tr>
                                     </HeaderTemplate>
@@ -87,7 +88,7 @@
                                                 <%# Eval("StudyDescription") %>
                                             </td>
                                             <td>
-                                                <%# Eval("AccessionNumber") %>
+                                                <%# HtmlUtility.GetEvalValue(Container.DataItem, "AccessionNumber", "&nbsp;")%>
                                             </td>
                                             <td>
                                                 <%# Eval("Modalities")%>

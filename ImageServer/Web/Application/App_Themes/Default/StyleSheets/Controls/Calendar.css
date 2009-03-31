@@ -10,6 +10,7 @@
 	border: #cccccc 1px solid;
 	background-color:#ffffff;
 	color:#000000;
+	z-index: 1000;
 }
 
 .Calendar .ajax__calendar_container TABLE 

@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
             base.OnInit(e);
 
-            Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "jQuery", ResolveUrl("~/Scripts/jquery/jquery-1.2.6.min.js"));
+            Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "jQuery", ResolveUrl("~/Scripts/jquery/jquery-1.3.2.min.js"));
 
             //Default Libraries
             Page.ClientScript.RegisterClientScriptInclude(typeof(JQuery), "ClearCanvas", ResolveUrl("~/Scripts/ClearCanvas.js"));

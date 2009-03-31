@@ -34,12 +34,13 @@
 .multiSelectOptions LABEL {
 	padding: 2px 5px;
 	display: block;
-	border: dashed 1px transparent;
+    border: solid 1px White;
+
 }
 
 .multiSelectOptions LABEL.checked {
 	background: #eeeeee;
-	border: dashed 1px transparent;
+
 }
 
 .multiSelectOptions LABEL.selectAll {
@@ -47,5 +48,5 @@
 }
 
 .multiSelectOptions LABEL.hover {
-	border: dotted 1px #CCC;
+    background: white;
 }

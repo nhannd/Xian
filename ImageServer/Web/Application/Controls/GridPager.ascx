@@ -27,11 +27,13 @@
         <td align="center">
             <% if (PagerPosition == ImageServerConstants.GridViewPagerPosition.top)
                { %>
+               
             <asp:UpdateProgress ID="SearchUpdateProgress" runat="server" DisplayAfter="50">
                 <ProgressTemplate>
                     <asp:Image ID="Image10" runat="server" SkinID="Searching" />
                 </ProgressTemplate>
             </asp:UpdateProgress>
+
             <%} %>
         </td>
         <td align="right" style="padding-right: 6px; padding-bottom: 2px; padding-top: 0px;">
@@ -73,7 +75,6 @@
                     </td>
                 </tr>
             </table>
-            </div>
         </td>
     </tr>
 </table>

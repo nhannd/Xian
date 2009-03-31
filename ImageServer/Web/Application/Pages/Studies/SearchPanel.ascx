@@ -14,11 +14,13 @@ Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
 Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
 
 function MultiSelect() {
-    $("#<%=ModalityListBox.ClientID %>").multiSelect({
-        noneSelected: '',
-        oneOrMoreSelected: '% Selected',
-        style: 'width: 120px;'
-    });
+
+        $("#<%=ModalityListBox.ClientID %>").multiSelect({
+            noneSelected: '',
+            oneOrMoreSelected: '% Selected',
+            style: 'width: 120px;'
+        });   
+
 }
 </script>
             <asp:Table runat="server">

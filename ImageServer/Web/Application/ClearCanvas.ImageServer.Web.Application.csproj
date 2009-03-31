@@ -1468,9 +1468,9 @@
     <Content Include="Scripts\CodeMirror\js\tokenizejavascript.js" />
     <Content Include="Scripts\CodeMirror\js\undo.js" />
     <Content Include="Scripts\CodeMirror\js\util.js" />
-    <Content Include="Scripts\Effects.js" />
     <Content Include="Scripts\ErrorHandling.js" />
     <Content Include="Scripts\jquery\jquery-1.2.6.min.js" />
+    <Content Include="Scripts\jquery\jquery-1.3.2.min.js" />
     <Content Include="Scripts\jquery\jquery.dimensions.js" />
     <Content Include="Scripts\jquery\jquery.dropshadow.js" />
     <Content Include="Scripts\jquery\jquery.maskedinput-1.2.1.js" />
