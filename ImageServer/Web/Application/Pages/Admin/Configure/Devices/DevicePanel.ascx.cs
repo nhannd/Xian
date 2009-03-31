@@ -33,16 +33,21 @@ using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
+using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 {
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DevicePanel.js")]
     /// <summary>
     /// Panel to display list of devices for a particular server partition.
     /// </summary>
-    public partial class DevicePanel : UserControl
+    public partial class DevicePanel : AJAXScriptControl
     {
         #region Private members
 
@@ -55,6 +60,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         #endregion Private members
 
         #region Public Properties
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("DeleteButtonClientID")]
+        public string DeleteButtonClientID
+        {
+            get { return DeleteDeviceButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("EditButtonClientID")]
+        public string EditButtonClientID
+        {
+            get { return EditDeviceButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("DeviceListClientID")]
+        public string DeviceListClientID
+        {
+            get { return DeviceGridViewControl1.TheGrid.ClientID; }
+        }
+
 
         /// <summary>
         /// Sets/Gets the partition whose information is displayed in this panel.

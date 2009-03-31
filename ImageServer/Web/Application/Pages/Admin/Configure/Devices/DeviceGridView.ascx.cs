@@ -165,7 +165,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
 
-            GridView1.SelectedIndexChanged += GridView1_SelectedIndexChanged;
         }
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
@@ -174,15 +173,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
-                    // This method when posted back will be handled by the grid
-                    e.Row.Attributes["OnClick"] =
-                        Page.ClientScript.GetPostBackEventReference(GridView1, "Select$" + e.Row.RowIndex);
-                    e.Row.Style["cursor"] = "hand";
-
-                    // For some reason, double-click won't work if single-click is used
-                    // e.Row.Attributes["ondblclick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Edit$" + e.Row.RowIndex);
-
                     CustomizeActiveColumn(e);
                     CustomizeIpAddressColumn(e);
                     CustomizeDHCPColumn(e);
@@ -324,18 +314,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
             Device dev = e.Row.DataItem as Device;
             Label lbl = e.Row.FindControl("IpAddressLabel") as Label; // The label is added in the template
             lbl.Text = dev.Dhcp ? string.Empty : dev.IpAddress;
-        }
-
-        protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Device dev = SelectedDevice;
-            if (dev != null)
-                if (OnDeviceSelectionChanged != null)
-                    OnDeviceSelectionChanged(this, dev);
-        }
-
-        protected void GridView1_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
-        {
         }
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)

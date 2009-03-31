@@ -35,6 +35,7 @@
                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No log messages." />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
+                <AlternatingRowStyle CssClass="GlobalGridViewRow" />
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />
             </ccUI:GridView>

@@ -18,6 +18,9 @@
         </ContentTemplate>
     </asp:UpdatePanel>
     
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="DialogsPlaceHolder" runat="server">
     <ccAddEdit:AddEditDeviceDialog ID="AddEditDeviceControl1" runat="server" />
     <ccAsp:MessageBox ID="DeleteConfirmation" runat="server" />    
 </asp:Content>

@@ -48,6 +48,7 @@
                   <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage1" runat="server" Message="No partition archives were found using the provided criteria." />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
+                <AlternatingRowStyle CssClass="GlobalGridViewRow" />                
                 <HeaderStyle CssClass="GlobalGridViewHeader" />
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
             </ccUI:GridView>

@@ -153,15 +153,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
-                    // This method when posted back will be handled by the grid
-                    e.Row.Attributes["OnClick"] =
-                        Page.ClientScript.GetPostBackEventReference(GridView1, "Select$" + e.Row.RowIndex);
-                    e.Row.Style["cursor"] = "hand";
-
-                    // For some reason, double-click won't work if single-click is used
-                    // e.Row.Attributes["ondblclick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Edit$" + e.Row.RowIndex);
-
                     CustomizeUsageColumn(e.Row);
                     CustomizePathColumn(e.Row);
                     CustomizeEnabledColumn(e);
@@ -273,7 +264,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            GridView1.DataBind();
         }
 
         protected override void OnInit(EventArgs e)
@@ -284,7 +274,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
             if (Height != Unit.Empty)
                 ContainerTable.Height = _height;
 
-            GridView1.SelectedIndexChanged += GridView1_SelectedIndexChanged;
         }
 
         #endregion   
@@ -336,18 +325,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
                     img.ImageUrl = ImageServerConstants.ImageURLs.Unchecked;
                 }
             }
-        }
-
-        protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            Filesystem filesystem = SelectedFileSystem;
-            if (filesystem != null)
-                if (FileSystemSelectionChanged != null)
-                    FileSystemSelectionChanged(this, filesystem);
-        }
-
-        protected void GridView1_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
-        {
         }
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)

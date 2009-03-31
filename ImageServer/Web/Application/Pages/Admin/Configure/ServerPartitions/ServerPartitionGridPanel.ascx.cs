@@ -135,15 +135,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
-                    // This method when posted back will be handled by the grid
-                    e.Row.Attributes["OnClick"] =
-                        Page.ClientScript.GetPostBackEventReference(PartitionGridView, "Select$" + e.Row.RowIndex);
-                    e.Row.Style["cursor"] = "hand";
-
-                    // For some reason, double-click won't work if single-click is used
-                    // e.Row.Attributes["ondblclick"] = Page.ClientScript.GetPostBackEventReference(GridView1, "Edit$" + e.Row.RowIndex);
-
                     CustomizeActiveColumn(e);
                     CustomizeAcceptAnyDeviceColumn(e);
                     CustomizeDuplicateSopPolicyColumn(e.Row);

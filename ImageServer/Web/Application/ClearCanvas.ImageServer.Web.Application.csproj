@@ -1299,6 +1299,12 @@
     <Content Include="Images\ImageServerLogo.png" />
     <EmbeddedResource Include="Pages\Admin\Alerts\AlertsPanel.js" />
     <Content Include="Pages\Admin\Configure\Devices\ThrottleSettingsTab.ascx" />
+    <EmbeddedResource Include="Pages\Admin\Configure\Devices\DevicePanel.js" />
+    <EmbeddedResource Include="Pages\Admin\Configure\FileSystems\FileSystemsPanel.js" />
+    <EmbeddedResource Include="Pages\Admin\Configure\ServerPartitions\ServerPartitionPanel.js" />
+    <EmbeddedResource Include="Pages\Admin\Configure\ServerRules\ServerRulePanel.js" />
+    <EmbeddedResource Include="Pages\Admin\Configure\ServiceLocks\ServiceLockPanel.js" />
+    <EmbeddedResource Include="Pages\Admin\Configure\PartitionArchive\PartitionArchivePanel.js" />
     <Content Include="Pages\Admin\UserManagement\UserGroups\AddEditUserGroupsDialog.ascx" />
     <Content Include="Pages\Admin\UserManagement\UserGroups\Default.aspx" />
     <Content Include="Pages\Admin\UserManagement\UserGroups\UserGroupsGridPanel.ascx" />

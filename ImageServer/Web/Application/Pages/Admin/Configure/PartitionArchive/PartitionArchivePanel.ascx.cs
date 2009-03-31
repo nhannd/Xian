@@ -39,12 +39,15 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive.PartitionArchivePanel.js", "application/x-javascript")]
+
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive
 {
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive.PartitionArchivePanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive.PartitionArchivePanel.js")]
     /// <summary>
     /// Server parition panel  used in <seealso cref="Default"/> web page.
     /// </summary>
-    public partial class PartitionArchivePanel : UserControl
+    public partial class PartitionArchivePanel : AJAXScriptControl
     {
         #region Private Members
 

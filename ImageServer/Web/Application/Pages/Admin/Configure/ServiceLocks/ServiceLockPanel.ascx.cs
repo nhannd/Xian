@@ -33,18 +33,22 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using AjaxControlToolkit;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks.ServiceLockPanel.js", "application/x-javascript")]
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks
 {
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks.ServiceLockPanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceLocks.ServiceLockPanel.js")]
     /// <summary>
     /// Panel to display list of devices for a particular server partition.
     /// </summary>
-    public partial class ServiceLockPanel : UserControl
+    public partial class ServiceLockPanel : AJAXScriptControl
     {
         #region Private members
 
@@ -59,6 +63,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
         #endregion Events
 
         #region Public Properties
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("EditButtonClientID")]
+        public string EditButtonClientID
+        {
+            get { return EditServiceScheduleButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("ServiceLockListClientID")]
+        public string ServiceLockListClientID
+        {
+            get { return ServiceLockGridViewControl.TheGrid.ClientID; }
+        }
 
         #endregion
 

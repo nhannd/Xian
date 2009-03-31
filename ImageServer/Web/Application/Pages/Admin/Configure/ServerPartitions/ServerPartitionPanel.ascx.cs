@@ -33,16 +33,21 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions.ServerPartitionPanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions
 {
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions.ServerPartitionPanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions.ServerPartitionPanel.js")]
     /// <summary>
     /// Server parition panel  used in <seealso cref="ServerPartitionPage"/> web page.
     /// </summary>
-    public partial class ServerPartitionPanel : UserControl
+    public partial class ServerPartitionPanel : AJAXScriptControl
     {
         #region Private Members
 
@@ -55,6 +60,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         #endregion Private Members
 
         #region Public Properties
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("DeleteButtonClientID")]
+        public string DeleteButtonClientID
+        {
+            get { return DeletePartitionButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("EditButtonClientID")]
+        public string EditButtonClientID
+        {
+            get { return EditPartitionButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("ServerPartitionListClientID")]
+        public string ServerPartitionListClientID
+        {
+            get { return ServerPartitionGridPanel.TheGrid.ClientID; }
+        }
 
         // Sets/Gets the list of partitions displayed in the panel
         public IList<ServerPartition> Partitions
@@ -83,10 +109,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPa
         #endregion Public Properties
 
         #region Protected Methods
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-        }
 
         /// <summary>
         /// Determines if filters are being specified.

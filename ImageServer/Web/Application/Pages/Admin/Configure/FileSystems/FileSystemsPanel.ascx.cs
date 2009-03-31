@@ -33,16 +33,21 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems.FileSystemsPanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems
 {
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems.FileSystemsPanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems.FileSystemsPanel.js")]
     /// <summary>
     /// Panel to display list of FileSystems for a particular server partition.
     /// </summary>
-    public partial class FileSystemsPanel : UserControl
+    public partial class FileSystemsPanel : AJAXScriptControl
     {
         #region Private members
 
@@ -56,6 +61,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
         #endregion Private members
 
         #region Public Properties
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("EditButtonClientID")]
+        public string EditButtonClientID
+        {
+            get { return EditFileSystemButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("FileSystemListClientID")]
+        public string FileSystemListClientID
+        {
+            get { return FileSystemsGridView1.TheGrid.ClientID; }
+        }
 
         /// <summary>
         /// Sets/Gets the filesystems whose information are displayed in this panel.

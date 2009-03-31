@@ -11,7 +11,6 @@
         
             <ccUI:GridView ID="GridView" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
                 Width="100%" OnRowDataBound="GridView_RowDataBound" OnDataBound="GridView_DataBound"
-                OnSelectedIndexChanged="GridView_SelectedIndexChanged"
                 EmptyDataText="" OnPageIndexChanging="GridView_PageIndexChanging" CellPadding="0" PagerSettings-Visible="false"
                 PageSize="20" CellSpacing="0" AllowPaging="True" CaptionAlign="Top" BorderWidth="0px">
                 <Columns>
@@ -65,6 +64,7 @@
                     <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No services were found using the provided criteria." />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
+                <AlternatingRowStyle CssClass="GlobalGridViewRow" />                
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />
                 <PagerTemplate>

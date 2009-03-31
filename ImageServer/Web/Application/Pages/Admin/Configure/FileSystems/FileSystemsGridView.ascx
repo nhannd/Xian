@@ -8,7 +8,6 @@
         <asp:TableCell VerticalAlign="top">
             <ccUI:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" CssClass="GlobalGridView"
                 Width="100%" OnRowDataBound="GridView1_RowDataBound" 
-                OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
                 OnPageIndexChanging="GridView1_PageIndexChanging" EmptyDataText="No filesystems found (Please check the filters!)"
                 PageSize="20" CellPadding="0" CellSpacing="0" AllowPaging="True" CaptionAlign="Top"
                 BorderWidth="0px">
@@ -60,6 +59,7 @@
                    <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage" runat="server" Message="No file systems were found using the provided criteria." />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
+                <AlternatingRowStyle CssClass="GlobalGridViewRow" />                
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />
             </ccUI:GridView>

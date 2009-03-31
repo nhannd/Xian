@@ -32,13 +32,19 @@
 using System;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using AjaxControlToolkit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerPartitions;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+
+[assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRulePanel.js", "application/x-javascript")]
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules
 {
-    public partial class ServerRulePanel : UserControl
+    [ClientScriptResource(ComponentType = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRulePanel", ResourcePath = "ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRules.ServerRulePanel.js")]
+    public partial class ServerRulePanel : AJAXScriptControl
     {
         #region Private Members
         private readonly ServerRuleController _controller = new ServerRuleController();
@@ -49,6 +55,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 
 
         #region Public Properties
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("DeleteButtonClientID")]
+        public string DeleteButtonClientID
+        {
+            get { return DeleteServerRuleButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("EditButtonClientID")]
+        public string EditButtonClientID
+        {
+            get { return EditServerRuleButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("ServerRuleListClientID")]
+        public string ServerRuleListClientID
+        {
+            get { return ServerRuleGridViewControl.TheGrid.ClientID; }
+        }
 
         public ServerPartition ServerPartition
         {

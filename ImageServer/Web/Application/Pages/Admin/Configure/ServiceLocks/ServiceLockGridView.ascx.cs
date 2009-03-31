@@ -154,12 +154,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
             {
                 if (e.Row.RowType == DataControlRowType.DataRow)
                 {
-                    // Add OnClick attribute to each row to make javascript call "Select$###" (where ### is the selected row)
-                    // This method when posted back will be handled by the grid
-                    e.Row.Attributes["OnClick"] =
-                        Page.ClientScript.GetPostBackEventReference(GridView, "Select$" + e.Row.RowIndex);
-                    e.Row.Style["cursor"] = "hand";
-
                     CustomizeTypeColumn(e.Row);
                     CustomizeDescriptionColumn(e.Row);
                     CustomizeEnabledColumn(e.Row);
@@ -218,15 +212,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServiceL
             ServiceLock item = row.DataItem as ServiceLock;
             if (text != null && item != null)
                 text.Text = item.FilesystemKey == null ? "N/A" : _fsController.LoadFileSystem(item.FilesystemKey).Description;
-        }
-
-        protected void GridView_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            DataBind();
-            ServiceLock dev = SelectedServiceLock;
-            if (dev != null)
-                if (OnServiceLockSelectionChanged != null)
-                    OnServiceLockSelectionChanged(this, dev);
         }
 
         protected void GridView_DataBound(object sender, EventArgs e)

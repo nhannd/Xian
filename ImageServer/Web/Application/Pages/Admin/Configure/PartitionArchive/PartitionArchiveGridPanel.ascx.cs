@@ -126,16 +126,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
                 ContainerTable.Height = _height;
         }
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            UpdateUI();
-        }
-
-        protected void Partition_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            UpdateUI();
-        }
-
         #endregion Protected methods
 
         #region Public methods
@@ -176,10 +166,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
                                            ? ImageServerConstants.ImageURLs.Checked
                                            : ImageServerConstants.ImageURLs.Unchecked;
                     }
-
-                    e.Row.Attributes["OnClick"] =
-                               Page.ClientScript.GetPostBackEventReference(PartitionGridView, "Select$" + e.Row.RowIndex);
-                    e.Row.Style["cursor"] = "hand";
                 }
             }
         }

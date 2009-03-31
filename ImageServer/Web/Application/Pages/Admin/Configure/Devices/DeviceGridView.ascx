@@ -9,7 +9,6 @@
         
             <ccUI:GridView ID="GridView1" runat="server" 
                 OnRowDataBound="GridView1_RowDataBound" 
-                OnSelectedIndexChanged="GridView1_SelectedIndexChanged" OnSelectedIndexChanging="GridView1_SelectedIndexChanging"
                 OnPageIndexChanging="GridView1_PageIndexChanging">
                 <Columns>
                     <asp:BoundField DataField="AETitle" HeaderText="AE Title" HeaderStyle-HorizontalAlign="Left"></asp:BoundField>
@@ -55,6 +54,7 @@
                     <ccAsp:EmptySearchResultsMessage ID="EmptySearchResultsMessage1" runat="server" Message="No devices were found using the provided criteria." />
                 </EmptyDataTemplate>
                 <RowStyle CssClass="GlobalGridViewRow" />
+                <AlternatingRowStyle CssClass="GlobalGridViewRow" />                
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />
                 <PagerTemplate>
