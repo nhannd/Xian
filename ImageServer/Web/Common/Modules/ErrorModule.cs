@@ -65,6 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Modules
             HttpContext context = HttpContext.Current;
 
             Exception baseException = context.Server.GetLastError();
+            Platform.Log(LogLevel.Error, context.Error);
 
             if (baseException != null)
             {
@@ -83,6 +84,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Modules
         {
             HttpContext ctx = HttpContext.Current;
             Exception theException;
+            Platform.Log(LogLevel.Error, ctx.Error);
 
             for (theException = ctx.Server.GetLastError();
                  theException != null && theException.InnerException != null;

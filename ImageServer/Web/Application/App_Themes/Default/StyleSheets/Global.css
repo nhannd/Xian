@@ -451,3 +451,9 @@ Global.css - Defines the global styles for the entire web application relating
     font-family: Sans-Serif;
     font-size: 14px;
 }
+
+pre
+{
+	font-family: Sans-Serif;	
+	margin:0px;
+}

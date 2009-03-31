@@ -141,10 +141,32 @@
     History tab
 ========================================*/
 .HistoryDetailContainer
+{  
+	margin:5px;
+	/*border-left: #dadada 1px dotted;*/
+}
+
+
+
+.HistoryDetailsHeading
 {
-	padding-right: 0px;
-	padding-left: 0px;
-	padding-bottom: 10px;
-	padding-top: 10px;
-	border-left: #dadada 1px solid;
+	background: #d7eafd;
+}
+
+.HistoryDetailsSectionPanel
+{
+	border-right: #cccccc 1px dotted;
+	border-top: #cccccc 1px dotted;
+	border-left: #cccccc 1px dotted;
+	border-bottom: #cccccc 1px dotted;
+	background-color: #f2f5ff;
+}
+
+.HistoryDetailTable
+{
+}
+
+.HistoryDetailTable tr td
+{
+	padding-left:0px;
 }

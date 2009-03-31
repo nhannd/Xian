@@ -168,7 +168,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                     }
                     catch(Exception ex)
                     {
-                        
+                        Platform.Log(LogLevel.Error, ex);
                     }
                 }
             }

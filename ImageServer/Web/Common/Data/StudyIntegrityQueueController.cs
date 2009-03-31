@@ -35,6 +35,8 @@ using System.IO;
 using System.Xml;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
@@ -42,6 +44,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Web.Common.Security;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -148,84 +151,66 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 	    public void CreateNewStudy(ServerEntityKey itemKey)
 	    {
-	        StudyIntegrityQueue item = StudyIntegrityQueue.Load(itemKey);
-	        ReconcileStudy(String.Format("<CreateStudy><SetTag TagPath=\"{0}\" Value=\"{1}\" /></CreateStudy>", DicomConstants.DicomTags.StudyInstanceUID, DicomUid.GenerateUid().UID), item);
+            InconsistentDataSIQRecord record = new InconsistentDataSIQRecord(StudyIntegrityQueue.Load(itemKey));
+            ReconcileCreateStudyDescriptor command = new ReconcileCreateStudyDescriptor();
+            command.Automatic = false;
+	        command.UserName = SessionManager.Current.User.Identity.Name;
+            command.ExistingStudy = record.ExistingStudyInfo;
+            command.ImageSetData = record.ConflictingImageDescriptor;
+            command.Commands.Add(new SetTagCommand(DicomTags.StudyInstanceUid, DicomUid.GenerateUid().UID));
+            String xml = XmlUtils.SerializeAsString(command);
+            ReconcileStudy(xml, record.QueueItem);
 	    }
 
 	    public void MergeStudy(ServerEntityKey itemKey, Boolean useExistingStudy)
         {
-            StudyIntegrityQueueAdaptor queueAdaptor = new StudyIntegrityQueueAdaptor();
-            StudyIntegrityQueue item = queueAdaptor.Get(itemKey);
-
-            string PatientName = string.Empty;
-            string PatientID = string.Empty;;
-            string IssuerOfPatientID = string.Empty;
-            string Birthdate = string.Empty; 
-            string AccessionNumber = string.Empty;
-            string PatientSex = string.Empty;
-
+            InconsistentDataSIQRecord record = new InconsistentDataSIQRecord(StudyIntegrityQueue.Load(itemKey));
+            ReconcileMergeToExistingStudyDescriptor command = new ReconcileMergeToExistingStudyDescriptor();
+            command.UserName = SessionManager.Current.User.Identity.Name;
+            command.Automatic = false;
+            command.ExistingStudy = record.ExistingStudyInfo;
+            command.ImageSetData = record.ConflictingImageDescriptor;
+  
             if(useExistingStudy)
             {
-                StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
-                StudyStorage storages = ssAdaptor.Get(item.StudyStorageKey);
-                StudyAdaptor studyAdaptor = new StudyAdaptor();
-                StudySelectCriteria studycriteria = new StudySelectCriteria();
-                studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
-            	studycriteria.ServerPartitionKey.EqualTo(storages.ServerPartitionKey);
-                IList<Study> studyList = studyAdaptor.Get(studycriteria);
-
-                if (studyList != null && studyList.Count > 0)
-                {
-                    Study study = studyList[0];
-
-                    //Set the demographic details using the Existing Patient
-                    PatientName = string.Format(SetTag, DicomConstants.DicomTags.PatientsName, XmlUtils.EncodeValue(study.PatientsName));
-                    PatientID = string.Format(SetTag, DicomConstants.DicomTags.PatientID, study.PatientId);
-                    AccessionNumber = string.Format(SetTag, DicomConstants.DicomTags.AccessionNumber, study.AccessionNumber);
-                    PatientSex = string.Format(SetTag, DicomConstants.DicomTags.PatientsSex, study.PatientsSex);
-                    IssuerOfPatientID = string.Format(SetTag, DicomConstants.DicomTags.IssuerOfPatientID, study.IssuerOfPatientId);
-                    Birthdate = string.Format(SetTag, DicomConstants.DicomTags.PatientsBirthDate, study.PatientsBirthDate); 
-                }               
+                command.Description = "Merge using existing study information.";
+                String xml = XmlUtils.SerializeAsString(command);
+                ReconcileStudy(xml, record.QueueItem);    
             }
             else
             {
-                StringWriter sw = new StringWriter();
-                XmlTextWriter xw = new XmlTextWriter(sw);
-                item.StudyData.WriteTo(xw);
+                command.Description = "Using study information from the conflicting images.";
+                
+                command.Commands.Add(
+                    new SetTagCommand(DicomTags.PatientsName, record.ConflictingImageDetails.StudyInfo.PatientInfo.Name));
 
-                string studyData = sw.ToString();
+                command.Commands.Add(
+                                    new SetTagCommand(DicomTags.PatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientId));
+                command.Commands.Add(
+                                    new SetTagCommand(DicomTags.PatientsBirthDate, record.ConflictingImageDetails.StudyInfo.PatientInfo.PatientsBirthdate));
+                command.Commands.Add(
+                                    new SetTagCommand(DicomTags.PatientsSex, record.ConflictingImageDetails.StudyInfo.PatientInfo.Sex));
+                command.Commands.Add(
+                                    new SetTagCommand(DicomTags.IssuerOfPatientId, record.ConflictingImageDetails.StudyInfo.PatientInfo.IssuerOfPatientId));
+                command.Commands.Add(
+                                    new SetTagCommand(DicomTags.AccessionNumber, record.ConflictingImageDetails.StudyInfo.AccessionNumber));
 
-                //Set the demographic details using the Conflicting Patient
-                PatientName = string.Format(SetTag, DicomConstants.DicomTags.PatientsName, GetConflictingName(studyData));
-                PatientID = string.Format(SetTag, DicomConstants.DicomTags.PatientID, GetConflictingPatientID(studyData));
-                AccessionNumber = string.Format(SetTag, DicomConstants.DicomTags.AccessionNumber, GetConflictingPatientAccessionNumber(studyData));
-
-                string sex = GetConflictingPatientSex(studyData).ToLower();                
-                if (sex.Equals("male") || sex.Equals("m"))
-                {
-                    sex = DicomConstants.Male;
-                }
-                else if (sex.Equals("female") || sex.Equals("f"))
-                {
-                    sex = DicomConstants.Female;
-                }
-                else
-                {
-                    sex = DicomConstants.Other;
-                }
-
-                PatientSex = string.Format(SetTag, DicomConstants.DicomTags.PatientsSex, sex);
-                IssuerOfPatientID = string.Format(SetTag, DicomConstants.DicomTags.IssuerOfPatientID, GetConflictingIssuerOfPatientID(studyData));
-                Birthdate = string.Format(SetTag, DicomConstants.DicomTags.PatientsBirthDate, GetConflictingPatientBirthDate(studyData));                 
+                String xml = XmlUtils.SerializeAsString(command);
+                ReconcileStudy(xml, record.QueueItem); 
             }
-
-            ReconcileStudy(String.Format("<MergeStudy>{0}{1}{2}{3}{4}{5}</MergeStudy>", PatientName, PatientID, AccessionNumber, PatientSex, IssuerOfPatientID, Birthdate), item);
         }
 
         public void Discard(ServerEntityKey itemKey)
         {
-            StudyIntegrityQueue item = StudyIntegrityQueue.Load(itemKey);
-            ReconcileStudy("<Discard/>", item);
+            ReconcileDiscardImagesDescriptor command = new ReconcileDiscardImagesDescriptor();
+            InconsistentDataSIQRecord record = new InconsistentDataSIQRecord(StudyIntegrityQueue.Load(itemKey));
+            command.UserName = SessionManager.Current.User.Identity.Name;
+            
+            command.Automatic = false;
+            command.ExistingStudy = record.ExistingStudyInfo;
+            command.ImageSetData = record.ConflictingImageDescriptor;
+            String xml = XmlUtils.SerializeAsString(command);
+            ReconcileStudy(xml, record.QueueItem); 
         }
 
 
@@ -233,55 +218,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             ReconcileProcessAsIsDescriptor command = new ReconcileProcessAsIsDescriptor();
             InconsistentDataSIQRecord record = new InconsistentDataSIQRecord(StudyIntegrityQueue.Load(key));
-            
+            command.UserName = SessionManager.Current.Credentials.UserName;
             command.Automatic = false;
-            command.Description = "Ignore differences.";
+            command.Description = "Ignore the differences";
             command.ExistingStudy = record.ExistingStudyInfo;
             command.ImageSetData = record.ConflictingImageDescriptor;
             
             String xml = XmlUtils.SerializeAsString(command);
             ReconcileStudy(xml, record.QueueItem);
-        }
-
-        private static string GetConflictingName(string studyData)
-        {
-            return parseXmlString(studyData, DicomConstants.DicomTags.PatientsName);
-        }
-
-        private static string GetConflictingPatientID(string studyData)
-        {
-            return parseXmlString(studyData, DicomConstants.DicomTags.PatientID);
-        }
-
-        private static string GetConflictingPatientSex(string studyData)
-        {
-            return parseXmlString(studyData, DicomConstants.DicomTags.PatientsSex);
-        }
-
-        private static string GetConflictingPatientBirthDate(string studyData)
-        {
-            return parseXmlString(studyData, DicomConstants.DicomTags.PatientsBirthDate);
-        }
-
-        private static string GetConflictingIssuerOfPatientID(string studyData)
-        {
-            return parseXmlString(studyData, DicomConstants.DicomTags.IssuerOfPatientID);
-        }
-
-        private static string GetConflictingPatientAccessionNumber(string studyData)
-        {
-            return parseXmlString(studyData, DicomConstants.DicomTags.AccessionNumber);
-        }
-
-        private static string parseXmlString(string xmlString, string tag)
-        {
-            string VALUE = "Value=";
-
-            string str = xmlString.Substring(xmlString.IndexOf(tag));
-            str = str.Substring(str.IndexOf(VALUE) + VALUE.Length + 1);
-            str = str.Substring(0, str.IndexOf("\""));
-
-            return str;
         }
 
 	}

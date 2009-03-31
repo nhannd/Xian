@@ -21,6 +21,7 @@ namespace ClearCanvas.ImageServer.Common.Data
         private StudyInformation _existingStudyInfo;
         private ImageSetDescriptor _imageSet;
         private string _description;
+        private string _userName;
         #endregion
 
         #region Public Properties
@@ -76,9 +77,21 @@ namespace ClearCanvas.ImageServer.Common.Data
         [XmlArrayItem("Command", Type = typeof(AbstractProperty<BaseImageLevelUpdateCommand>))]
         public List<BaseImageLevelUpdateCommand> Commands
         {
-            get { return _commands; }
+            get
+            {
+                if (_commands == null)
+                    _commands = new List<BaseImageLevelUpdateCommand>();
+                return _commands;
+            }
             set { _commands = value; }
         }
+
+        public string UserName
+        {
+            get { return _userName; }
+            set { _userName = value; }
+        }
+
         #endregion
     }
 
