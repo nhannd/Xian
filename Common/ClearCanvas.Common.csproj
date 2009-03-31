@@ -294,6 +294,12 @@
     <Compile Include="Audit\AuditLog.cs" />
     <Compile Include="Audit\AuditEntryInfo.cs" />
     <Compile Include="Audit\IAuditSink.cs" />
+    <Compile Include="ExtensionSettings.cs" />
+    <Compile Include="ExtensionSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ExtensionSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Shreds\IShred.cs" />
     <Compile Include="Shreds\QueueProcessor.cs" />
     <Compile Include="Shreds\QueueProcessorShred.cs" />
@@ -311,7 +317,12 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="ClassDiagrams\Platform.cd" />
+    <None Include="ExtensionSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ExtensionSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Specifications\Tests\XmlSpecificationCompilerTests.xml" />

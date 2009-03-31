@@ -43,9 +43,10 @@ namespace ClearCanvas.Common
     [AttributeUsage(AttributeTargets.Class, AllowMultiple=true)]
     public class ExtensionOfAttribute: Attribute
     {
-        private Type _extensionPointClass;
+        private readonly Type _extensionPointClass;
         private string _name;
         private string _description;
+    	private bool _enabled = true;	// extensions are enabled by default
 
         /// <summary>
         /// Attribute constructor.
@@ -87,5 +88,14 @@ namespace ClearCanvas.Common
             get { return _description; }
             set { _description = value; }
         }
+
+		/// <summary>
+		/// The default enablement of the extension.
+		/// </summary>
+    	public bool Enabled
+    	{
+			get { return _enabled; }
+			set { _enabled = value; }
+    	}
     }
 }

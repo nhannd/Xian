@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common
 {
@@ -116,21 +117,15 @@ namespace ClearCanvas.Common
         {
             Type extensionPointClass = extensionPoint.GetType();
 
-            List<ExtensionInfo> extensions = new List<ExtensionInfo>();
-
             // assume that Platform.PluginManager.Extensions is a thread-safe property, 
             // therefore no need to lock here
-            ExtensionInfo[] allExtensions = Platform.PluginManager.Extensions;
-
-            foreach (ExtensionInfo extension in allExtensions)
-            {
-                if (extension.PointExtended == extensionPointClass
-                    && (filter == null || filter.Test(extension)))
-                {
-                    extensions.Add(extension);
-                }
-            }
-            return extensions.ToArray();
+			return CollectionUtils.Select(Platform.PluginManager.Extensions,
+				delegate(ExtensionInfo extension)
+				{
+					return extension.PointExtended == extensionPointClass
+							&& extension.Enabled
+							&& (filter == null || filter.Test(extension));
+				}).ToArray();
         }
 
         private static bool IsConcreteClass(Type type)

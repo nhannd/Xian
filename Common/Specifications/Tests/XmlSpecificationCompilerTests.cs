@@ -33,7 +33,7 @@ namespace ClearCanvas.Common.Specifications.Tests
 			{
 				Console.WriteLine(extensionPoint);
 				if (extensionPoint.GetType() == typeof(ExpressionFactoryExtensionPoint))
-					return new ExtensionInfo[] { new ExtensionInfo(typeof(ConstantExpressionFactory), extensionPoint.GetType(), null, null),  };
+					return new ExtensionInfo[] { new ExtensionInfo(typeof(ConstantExpressionFactory), extensionPoint.GetType(), null, null, true),  };
 				if (extensionPoint.GetType() == typeof(XmlSpecificationCompilerOperatorExtensionPoint))
 					return new ExtensionInfo[] { };
 

@@ -42,20 +42,22 @@ namespace ClearCanvas.Common
     /// </remarks>
     public class ExtensionInfo : IBrowsable
     {
-        private Type _extensionClass;
-        private Type _pointExtended;
-        private string _name;
-        private string _description;
+        private readonly Type _extensionClass;
+        private readonly Type _pointExtended;
+        private readonly string _name;
+        private readonly string _description;
+    	private readonly bool _enabled;
 
         /// <summary>
         /// Internal constructor.
         /// </summary>
-        internal ExtensionInfo(Type extensionClass, Type pointExtended, string name, string description)
+        internal ExtensionInfo(Type extensionClass, Type pointExtended, string name, string description, bool enabled)
         {
             _extensionClass = extensionClass;
             _pointExtended = pointExtended;
             _name = name;
             _description = description;
+        	_enabled = enabled;
         }
 
         /// <summary>
@@ -73,6 +75,14 @@ namespace ClearCanvas.Common
         {
             get { return _pointExtended; }
         }
+
+		/// <summary>
+		/// Gets a value indicatign whether this extension is enabled.
+		/// </summary>
+    	public bool Enabled
+    	{
+			get { return _enabled; }
+    	}
 
         #region IBrowsable Members
 

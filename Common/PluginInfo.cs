@@ -54,7 +54,7 @@ namespace ClearCanvas.Common
                 object[] attrs = type.GetCustomAttributes(typeof(ExtensionOfAttribute), false);
                 foreach (ExtensionOfAttribute a in attrs)
                 {
-                    extensionList.Add(new ExtensionInfo(type, a.ExtensionPointClass, a.Name, a.Description));
+                    extensionList.Add(new ExtensionInfo(type, a.ExtensionPointClass, a.Name, a.Description, a.Enabled));
                 }
             }
             return extensionList.ToArray();
