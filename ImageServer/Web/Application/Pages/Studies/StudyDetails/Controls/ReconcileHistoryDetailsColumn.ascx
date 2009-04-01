@@ -59,7 +59,7 @@
                     <table border="0" width="100%">
                         <tr><td class="HistoryDetailsHeading">
                             <span style="margin-left:5px">
-                                Action (<%# ReconcileHistory.Automatic ? "Auto" : "<b>Manual{0}</b>" %>):
+                                Action (<%# ReconcileHistory.Automatic ? "Auto" : "<b>Manual</b>" %>):
                                 
                                 <%# HtmlUtility.GetEnumInfo(ReconcileHistory.Action).LongDescription%>
                                 <%  if (!String.IsNullOrEmpty(ReconcileHistory.Description))
