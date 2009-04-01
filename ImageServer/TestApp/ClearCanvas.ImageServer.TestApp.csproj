@@ -52,11 +52,11 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ImageServerDataSet.xsd</DependentUpon>
     </Compile>
-    <Compile Include="TestReconcileForm.cs">
+    <Compile Include="TestSendImagesForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TestReconcileForm.Designer.cs">
-      <DependentUpon>TestReconcileForm.cs</DependentUpon>
+    <Compile Include="TestSendImagesForm.Designer.cs">
+      <DependentUpon>TestSendImagesForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Service References\services.cs">
       <DependentUpon>services.map</DependentUpon>
@@ -95,9 +95,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="TestReconcileForm.resx">
+    <EmbeddedResource Include="TestSendImagesForm.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>TestReconcileForm.cs</DependentUpon>
+      <DependentUpon>TestSendImagesForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TestEditStudy.resx">
       <SubType>Designer</SubType>
@@ -197,6 +197,17 @@
       <Name>ClearCanvas.ImageServer.Rules</Name>
       <Private>False</Private>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="GivenNames.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="LastNames.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SeriesDescriptions.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

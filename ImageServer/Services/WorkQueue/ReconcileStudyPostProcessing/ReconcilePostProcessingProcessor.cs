@@ -10,6 +10,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 {
     class ReconcilePostProcessingProcessor:StudyProcessItemProcessor
     {
+        protected override void ProcessItem(ClearCanvas.ImageServer.Model.WorkQueue item)
+        {
+            LoadUids(item);
+
+            if (WorkQueueUidList.Count == 0)
+            {
+                // Delete the queue entry.
+                PostProcessing(item,
+                               WorkQueueProcessorStatus.Complete,
+                               WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+            }
+            else
+                base.ProcessItem(item);
+        }
         protected override void ProcessFile(ClearCanvas.ImageServer.Model.WorkQueueUid queueUid, string path, ClearCanvas.Dicom.Utilities.Xml.StudyXml stream)
         {
             DicomFile file = LoadDicomFile(path);

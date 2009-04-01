@@ -40,9 +40,9 @@ namespace ClearCanvas.ImageServer.TestApp
             test.Show();
         }
 
-        private void TestReconcileButton_Click(object sender, EventArgs e)
+        private void RandomImageSender_Click(object sender, EventArgs e)
         {
-            TestReconcileForm test = new TestReconcileForm();
+            TestSendImagesForm test = new TestSendImagesForm();
             test.Show();
         }
     }
