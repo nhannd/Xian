@@ -21,6 +21,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
         private readonly List<DirectoryImporterBackgroundProcess> _inprogress = new List<DirectoryImporterBackgroundProcess>();
         private readonly ManualResetEvent _allCompleted = new ManualResetEvent(false);
         private readonly object _sync = new object();
+        private int importedSopCounter = 0;
         #endregion
 
         #region IServiceLockItemProcessor Members
@@ -44,8 +45,15 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                     parms.MaxImages = settings.MaxBatchSize;
                     parms.Delay = settings.ImageDelay;
                     parms.Filter = "*.*";
+
+                    if (!parms.Directory.Exists)
+                    {
+                        parms.Directory.Create();
+                    }
+
                     DirectoryImporterBackgroundProcess process = new DirectoryImporterBackgroundProcess(parms);
-                    
+                    process.SopImported += delegate { importedSopCounter++; };
+
                     _queue.Enqueue(process);
                 }
 
@@ -60,7 +68,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                 if (CancelPending)
                     Platform.Log(LogLevel.Info, "All import processes have completed gracefully.");
             }
-            UnlockServiceLock(item, true, Platform.Time.AddSeconds(settings.RecheckDelaySeconds));
+
+            UnlockServiceLock(item, true, Platform.Time.AddSeconds(importedSopCounter>0? 5: settings.RecheckDelaySeconds));
         }
 
         #endregion

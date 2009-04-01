@@ -21,15 +21,23 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
         public string Filter;
     }
 
+    class SopImportedEventArgs : EventArgs
+    {
+        public string  StudyInstanceUid;
+        public string  SeriesInstanceUid;
+        public string  SopInstanceUid;
+    }
+
     /// <summary>
     /// Background worker thread to import dicom files from a directory.
     /// </summary>
     internal class DirectoryImporterBackgroundProcess : BackgroundWorker
     {
         #region Private Fields
-        private DirectoryImporterParameters _parms;
+        private readonly DirectoryImporterParameters _parms;
         SopInstanceImporter _importer;
         private readonly List<string> _skippedStudies = new List<String>();
+        private  EventHandler<SopImportedEventArgs> _sopImportedHandlers;
         #endregion
 
         #region Constructors
@@ -45,9 +53,17 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
         }
         #endregion
 
+        #region Events
+        public event EventHandler<SopImportedEventArgs> SopImported
+        {
+            add { _sopImportedHandlers += value; }
+            remove { _sopImportedHandlers -= value; }
+        }
+        #endregion
+
         #region Protected Methods
 
-        
+
         protected override void OnDoWork(DoWorkEventArgs e)
         {
             Thread.CurrentThread.Name = String.Format("Import Files to {0}", _parms.PartitionAE);
@@ -69,6 +85,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
 
                                           if (ProcessFile(filePath)> 0)
                                           {
+
                                               counter++;
                                           }
 
