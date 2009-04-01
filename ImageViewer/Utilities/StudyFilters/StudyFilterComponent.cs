@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.FilterNodes;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
@@ -23,9 +24,10 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		private readonly StudyItemSelection _selection;
 		private readonly StudyFilterSettings _settings;
 		private readonly FilteredGroups<StudyItem> _root;
-		private readonly FilteredGroup<StudyItem> _filter;
 		private readonly ObservableList<StudyItem> _items;
+		private readonly RootPredicate _filterPredicate;
 		private event EventHandler _filteredChanged;
+		private FilteredGroup<StudyItem> _filter;
 		private ToolSet _toolset;
 		private IActionSet _actions;
 		private bool _filtered;
@@ -43,8 +45,9 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			_table = new Table<StudyItem>();
 			_columns = new StudyFilterColumnCollection(this);
 			_settings = StudyFilterSettings.Default;
+			_filterPredicate = new RootPredicate();
 			_root = new FilteredGroups<StudyItem>();
-			_root.ChildGroups.Add(_filter = new FilteredGroup<StudyItem>("User", "User", this.FilterPredicate));
+			_root.ChildGroups.Add(_filter = new FilteredGroup<StudyItem>("User", "User", _filterPredicate.Evaluate));
 		}
 
 		public StudyFilterComponent(string path) : this()
@@ -93,6 +96,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		public StudyItemSelection Selection
 		{
 			get { return _selection; }
+		}
+
+		public IList<FilterNodeBase> FilterPredicates
+		{
+			get { return _filterPredicate.Operands; }
 		}
 
 		#endregion
@@ -193,6 +201,8 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 
 			if (_filtered)
 			{
+				_root.ChildGroups.Remove(_filter);
+				_root.ChildGroups.Add(_filter = new FilteredGroup<StudyItem>("User", "User", _filterPredicate.Evaluate));
 				_table.Items.AddRange(_filter.Items);
 			}
 			else
@@ -204,12 +214,6 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 		#endregion
 
 		#region Private Methods
-
-		private bool FilterPredicate(StudyItem test)
-		{
-			// dummy test filter predicate
-			return test.File.Length > 1024*1024;
-		}
 
 		private void OnMasterListItemRemoved(object sender, ListEventArgs<StudyItem> e)
 		{
@@ -268,6 +272,38 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			public IDesktopWindow DesktopWindow
 			{
 				get { return _component.Host.DesktopWindow; }
+			}
+		}
+
+		#endregion
+
+		#region Filter Root Predicate Class
+
+		public sealed class RootPredicate : FilterNodeBase
+		{
+			private readonly IList<FilterNodeBase> _operands;
+
+			public RootPredicate()
+			{
+				_operands = new List<FilterNodeBase>();
+			}
+
+			public IList<FilterNodeBase> Operands
+			{
+				get { return _operands; }
+			}
+
+			public override bool Evaluate(StudyItem item)
+			{
+				if (_operands.Count == 0)
+					return true;
+
+				foreach (FilterNodeBase operand in _operands)
+				{
+					if (!operand.Evaluate(item))
+						return false;
+				}
+				return true;
 			}
 		}
 

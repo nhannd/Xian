@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,85 +117,77 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AddRemoveColumns" xml:space="preserve">
-    <value>Add/Remove Columns</value>
+  <metadata name="_grpAvailableColumns.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_grpDicomColumns.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_icons.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="_icons.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
+    <value>
+        AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+        LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+        ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAa
+        CQAAAk1TRnQBSQFMAgEBBAEAAQkBAAEEAQABEAEAARABAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
+        AwABQAMAASADAAEBAQABCAYAAQgYAAGAAgABgAMAAoABAAGAAwABgAEAAYABAAKAAgADwAEAAcAB3AHA
+        AQAB8AHKAaYBAAEzBQABMwEAATMBAAEzAQACMwIAAxYBAAMcAQADIgEAAykBAANVAQADTQEAA0IBAAM5
+        AQABgAF8Af8BAAJQAf8BAAGTAQAB1gEAAf8B7AHMAQABxgHWAe8BAAHWAucBAAGQAakBrQIAAf8BMwMA
+        AWYDAAGZAwABzAIAATMDAAIzAgABMwFmAgABMwGZAgABMwHMAgABMwH/AgABZgMAAWYBMwIAAmYCAAFm
+        AZkCAAFmAcwCAAFmAf8CAAGZAwABmQEzAgABmQFmAgACmQIAAZkBzAIAAZkB/wIAAcwDAAHMATMCAAHM
+        AWYCAAHMAZkCAALMAgABzAH/AgAB/wFmAgAB/wGZAgAB/wHMAQABMwH/AgAB/wEAATMBAAEzAQABZgEA
+        ATMBAAGZAQABMwEAAcwBAAEzAQAB/wEAAf8BMwIAAzMBAAIzAWYBAAIzAZkBAAIzAcwBAAIzAf8BAAEz
+        AWYCAAEzAWYBMwEAATMCZgEAATMBZgGZAQABMwFmAcwBAAEzAWYB/wEAATMBmQIAATMBmQEzAQABMwGZ
+        AWYBAAEzApkBAAEzAZkBzAEAATMBmQH/AQABMwHMAgABMwHMATMBAAEzAcwBZgEAATMBzAGZAQABMwLM
+        AQABMwHMAf8BAAEzAf8BMwEAATMB/wFmAQABMwH/AZkBAAEzAf8BzAEAATMC/wEAAWYDAAFmAQABMwEA
+        AWYBAAFmAQABZgEAAZkBAAFmAQABzAEAAWYBAAH/AQABZgEzAgABZgIzAQABZgEzAWYBAAFmATMBmQEA
+        AWYBMwHMAQABZgEzAf8BAAJmAgACZgEzAQADZgEAAmYBmQEAAmYBzAEAAWYBmQIAAWYBmQEzAQABZgGZ
+        AWYBAAFmApkBAAFmAZkBzAEAAWYBmQH/AQABZgHMAgABZgHMATMBAAFmAcwBmQEAAWYCzAEAAWYBzAH/
+        AQABZgH/AgABZgH/ATMBAAFmAf8BmQEAAWYB/wHMAQABzAEAAf8BAAH/AQABzAEAApkCAAGZATMBmQEA
+        AZkBAAGZAQABmQEAAcwBAAGZAwABmQIzAQABmQEAAWYBAAGZATMBzAEAAZkBAAH/AQABmQFmAgABmQFm
+        ATMBAAGZATMBZgEAAZkBZgGZAQABmQFmAcwBAAGZATMB/wEAApkBMwEAApkBZgEAA5kBAAKZAcwBAAKZ
+        Af8BAAGZAcwCAAGZAcwBMwEAAWYBzAFmAQABmQHMAZkBAAGZAswBAAGZAcwB/wEAAZkB/wIAAZkB/wEz
+        AQABmQHMAWYBAAGZAf8BmQEAAZkB/wHMAQABmQL/AQABzAMAAZkBAAEzAQABzAEAAWYBAAHMAQABmQEA
+        AcwBAAHMAQABmQEzAgABzAIzAQABzAEzAWYBAAHMATMBmQEAAcwBMwHMAQABzAEzAf8BAAHMAWYCAAHM
+        AWYBMwEAAZkCZgEAAcwBZgGZAQABzAFmAcwBAAGZAWYB/wEAAcwBmQIAAcwBmQEzAQABzAGZAWYBAAHM
+        ApkBAAHMAZkBzAEAAcwBmQH/AQACzAIAAswBMwEAAswBZgEAAswBmQEAA8wBAALMAf8BAAHMAf8CAAHM
+        Af8BMwEAAZkB/wFmAQABzAH/AZkBAAHMAf8BzAEAAcwC/wEAAcwBAAEzAQAB/wEAAWYBAAH/AQABmQEA
+        AcwBMwIAAf8CMwEAAf8BMwFmAQAB/wEzAZkBAAH/ATMBzAEAAf8BMwH/AQAB/wFmAgAB/wFmATMBAAHM
+        AmYBAAH/AWYBmQEAAf8BZgHMAQABzAFmAf8BAAH/AZkCAAH/AZkBMwEAAf8BmQFmAQAB/wKZAQAB/wGZ
+        AcwBAAH/AZkB/wEAAf8BzAIAAf8BzAEzAQAB/wHMAWYBAAH/AcwBmQEAAf8CzAEAAf8BzAH/AQAC/wEz
+        AQABzAH/AWYBAAL/AZkBAAL/AcwBAAJmAf8BAAFmAf8BZgEAAWYC/wEAAf8CZgEAAf8BZgH/AQAC/wFm
+        AQABIQEAAaUBAANfAQADdwEAA4YBAAOWAQADywEAA7IBAAPXAQAD3QEAA+MBAAPqAQAD8QEAA/gBAAHw
+        AfsB/wEAAaQCoAEAA4ADAAH/AgAB/wMAAv8BAAH/AwAB/wEAAf8BAAL/AgAD//8A/wD/AP8AYwAB/zUA
+        Af8TAAEHHAABXwEKAa4BpwwAAf8HAAH/CQABBwEAAQcNAAMHCwABCgEAARABrgGnCwAB/wYAAf8JAAEH
+        AwABBwsAAQcDAAEHCgABhQEKAQABEAGuAacLAAH/BQAB/wgAAQcFAAEHCgABBwMAAQcLAAGFAQoBAAEQ
+        Aa4BpwsAAf8DAAH/CAABBwcAAQcJAAEHAwABBwwAAYUBCgEAARABrgGnDQAB/wgAAQcJAAEHCAABBwMA
+        AQcMAAGFAQoBAAEQAW0BzwwAAf8MAAEHAwABBwgAAQcJAAEHCAABhQEKAQABEAFtAc8OAAH/CwABBwMA
+        AQcJAAEHBwABBwgAAYUBCgEAAQ8BbQHPDAAB/wIAAf8LAAEHAwABBwoAAQcFAAEHCQABCgEAAQ8BbQHP
+        DAAB/wUAAf8JAAEHAwABBwsAAQcDAAEHCgABXwEKAa4BpwwAAf8HAAH/CQADBw0AAQcBAAEHGQAB/woA
+        Af8ZAAEHhwABQgFNAT4HAAE+AwABKAMAAUADAAEgAwABAQEAAQEGAAEBFgAD/4EAC/8B+Qb/AecC/wF/
+        Av8B+AF/AcMB8wH+AT8B/gE/AfgBPwHDAecB/AEfAfwBHwH4AR8B4QHHAfgBDwH8AR8B/AEPAfABjwHw
+        AQcB/AEfAf4BBwH4AR8B4AEDAfwBHwH+AQcB/AE/AfwBHwHgAQMB/AEPAfgBHwH8AR8B8AEHAfgBHwHw
+        AZ8B/AEfAfgBDwH4AT8BwQHHAfwBHwH8AR8B+AF/AYMB4wH+AT8B/gE/Av8BjwHxA/8BfxD/Cw==
+</value>
   </data>
-  <data name="Directory" xml:space="preserve">
-    <value>Directory</value>
-  </data>
-  <data name="EditFilters" xml:space="preserve">
-    <value>Edit Filters</value>
-  </data>
-  <data name="Extension" xml:space="preserve">
-    <value>Extension</value>
-  </data>
-  <data name="Filename" xml:space="preserve">
-    <value>Filename</value>
-  </data>
-  <data name="FileSize" xml:space="preserve">
-    <value>File Size</value>
-  </data>
-  <data name="FormatDicomTag" xml:space="preserve">
-    <value>{0} ({1:x4},{2:x4})</value>
-  </data>
-  <data name="FormatFileSizeBytes" xml:space="preserve">
-    <value>{0} Bytes</value>
-  </data>
-  <data name="FormatFileSizeGB" xml:space="preserve">
-    <value>{0:f2} GiB</value>
-  </data>
-  <data name="FormatFileSizeKB" xml:space="preserve">
-    <value>{0:f2} KiB</value>
-  </data>
-  <data name="FormatFileSizeMB" xml:space="preserve">
-    <value>{0:f2} MiB</value>
-  </data>
-  <data name="FormatFileSizeTB" xml:space="preserve">
-    <value>{0:f2} TiB</value>
-  </data>
-  <data name="FormatRepeatingDicomTag" xml:space="preserve">
-    <value>{0} #{3} ({1:x4},{2:x4})</value>
-  </data>
-  <data name="FormatUnknownDicomTag" xml:space="preserve">
-    <value>({0:x4},{1:x4})</value>
-  </data>
-  <data name="LabelBinaryTagValue" xml:space="preserve">
-    <value>(binary)</value>
-  </data>
-  <data name="LabelNonExistentValue" xml:space="preserve">
-    <value />
-  </data>
-  <data name="LabelNullTagValue" xml:space="preserve">
-    <value>(null)</value>
-  </data>
-  <data name="LabelVRUnknown" xml:space="preserve">
-    <value>(VR=UN)</value>
-  </data>
-  <data name="MenuOpenInStudyFilters" xml:space="preserve">
-    <value>Open in Study Filters</value>
-  </data>
-  <data name="MessageDicomException" xml:space="preserve">
-    <value>Invalid DICOM file: {0}</value>
-  </data>
-  <data name="MessageInvalidPath" xml:space="preserve">
-    <value>Invalid path or filename: {0}</value>
-  </data>
-  <data name="Path" xml:space="preserve">
-    <value>Path</value>
-  </data>
-  <data name="StudyFilters" xml:space="preserve">
-    <value>Study Filters</value>
-  </data>
-  <data name="ToolbarAddRemoveColumns" xml:space="preserve">
-    <value>Add/Remove Columns</value>
-  </data>
-  <data name="ToolbarFilter" xml:space="preserve">
-    <value>Filter</value>
-  </data>
-  <data name="ToolbarLaunchInViewer" xml:space="preserve">
-    <value>Launch in Viewer</value>
-  </data>
-  <data name="TooltipOpenInStudyFilters" xml:space="preserve">
-    <value>Opens the selected DICOM files in a table for filtering purposes</value>
-  </data>
+  <metadata name="_tooltips.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>100, 17</value>
+  </metadata>
+  <metadata name="_grpDicomTag.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_lblDicomTagElement.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_lblDicomTagGroup.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_grpSpecialColumns.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="_grpSelectedColumns.GenerateMember" type="System.Boolean, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
 </root>

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.FilterNodes;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 {
@@ -10,25 +11,34 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 	[AssociateView(typeof(FilterEditorComponentViewExtensionPoint))]
 	public class FilterEditorComponent : ApplicationComponent, IStudyFilterColumnCollectionCallbacks
 	{
-		private readonly StudyFilterColumnCollection _columns;
+		private readonly StudyFilterColumnCollection _availableColumns;
+		private readonly List<FilterNodeBase> _filters;
 
 		public FilterEditorComponent()
 		{
-			_columns = new StudyFilterColumnCollection(this);
+			_availableColumns = new StudyFilterColumnCollection(this);
+			_filters = new List<FilterNodeBase>();
 		}
 
-		public FilterEditorComponent(IEnumerable<StudyFilterColumn> columns)
+		public FilterEditorComponent(IEnumerable<StudyFilterColumn> columns, IEnumerable<FilterNodeBase> filters)
 			: this()
 		{
 			foreach (StudyFilterColumn column in columns)
 			{
-				_columns.Add(column);
+				_availableColumns.Add(column);
 			}
+
+			_filters.AddRange(filters);
 		}
 
-		public StudyFilterColumnCollection Columns
+		public StudyFilterColumnCollection AvailableColumns
 		{
-			get { return _columns; }
+			get { return _availableColumns; }
+		}
+
+		public IList<FilterNodeBase > Filters
+		{
+			get { return _filters; }
 		}
 
 		#region IStudyFilterColumnCollectionCallbacks Members

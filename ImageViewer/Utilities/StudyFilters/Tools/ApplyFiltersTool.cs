@@ -1,11 +1,13 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.FilterNodes;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
-	//[ButtonAction("show", DefaultToolbarActionSite + "/ToolbarEditFilters", "Show")]
+	[ButtonAction("show", DefaultToolbarActionSite + "/ToolbarEditFilters", "Show")]
 	[ButtonAction("toggle", DefaultToolbarActionSite + "/ToolbarFilter", "ToggleFilter")]
 	[CheckedStateObserver("toggle", "Checked", "CheckedChanged")]
 	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
@@ -43,7 +45,18 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 
 		public void Show()
 		{
-			
+			FilterEditorComponent component = new FilterEditorComponent(base.Columns, base.Component.FilterPredicates);
+			SimpleComponentContainer container = new SimpleComponentContainer(component);
+			DialogBoxAction action = base.DesktopWindow.ShowDialogBox(container, SR.EditFilters);
+			if (action == DialogBoxAction.Ok)
+			{
+				base.Component.FilterPredicates.Clear();
+				foreach (FilterNodeBase filter in component.Filters)
+				{
+					base.Component.FilterPredicates.Add(filter);
+				}
+				base.Component.Refresh();
+			}
 		}
 	}
 }

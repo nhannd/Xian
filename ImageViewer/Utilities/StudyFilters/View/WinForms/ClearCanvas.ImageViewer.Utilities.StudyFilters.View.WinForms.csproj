@@ -35,6 +35,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FilterBuilder.cs" />
+    <Compile Include="FilterEditorComponentPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FilterEditorComponentPanel.Designer.cs">
+      <DependentUpon>FilterEditorComponentPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FilterEditorComponentView.cs" />
     <Compile Include="FolderPicker.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -99,6 +107,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="FilterEditorComponentPanel.resx">
+      <DependentUpon>FilterEditorComponentPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>

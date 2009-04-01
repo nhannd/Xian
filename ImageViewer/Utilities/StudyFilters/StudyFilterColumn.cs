@@ -20,14 +20,16 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			return false;
 		}
 
+		public abstract string Key { get; }
+
 		public abstract bool Equals(StudyFilterColumn other);
+
+		public abstract string GetValue(StudyItem item);
 
 		public override sealed string ToString()
 		{
 			return this.Name;
 		}
-
-		public abstract string Key { get; }
 
 		internal abstract TableColumnBase<StudyItem> CreateColumn();
 
@@ -112,9 +114,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				return false;
 			}
 
+			public override string GetValue(StudyItem item)
+			{
+				return item[_dicomTag];
+			}
+
 			internal override TableColumnBase<StudyItem> CreateColumn()
 			{
-				return new TableColumn<StudyItem, string>(_tagName, delegate(StudyItem item) { return item[_dicomTag]; });
+				return new TableColumn<StudyItem, string>(_tagName, this.GetValue);
 			}
 		}
 
@@ -138,6 +145,11 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 			public override bool Equals(StudyFilterColumn other)
 			{
 				return other is FileSizeColumn;
+			}
+
+			public override string GetValue(StudyItem item)
+			{
+				return item.File.Length.ToString();
 			}
 
 			internal override TableColumnBase<StudyItem> CreateColumn()
@@ -190,9 +202,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				return other is FilenameColumn;
 			}
 
+			public override string GetValue(StudyItem item)
+			{
+				return item.File.Name;
+			}
+
 			internal override TableColumnBase<StudyItem> CreateColumn()
 			{
-				return new TableColumn<StudyItem, string>(this.Name, delegate(StudyItem item) { return item.File.Name; });
+				return new TableColumn<StudyItem, string>(this.Name, this.GetValue);
 			}
 		}
 
@@ -218,9 +235,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				return other is PathColumn;
 			}
 
+			public override string GetValue(StudyItem item)
+			{
+				return item.File.FullName;
+			}
+
 			internal override TableColumnBase<StudyItem> CreateColumn()
 			{
-				return new TableColumn<StudyItem, string>(this.Name, delegate(StudyItem item) { return item.File.FullName; });
+				return new TableColumn<StudyItem, string>(this.Name, this.GetValue);
 			}
 		}
 
@@ -246,9 +268,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				return other is DirectoryColumn;
 			}
 
+			public override string GetValue(StudyItem item)
+			{
+				return item.File.DirectoryName;
+			}
+
 			internal override TableColumnBase<StudyItem> CreateColumn()
 			{
-				return new TableColumn<StudyItem, string>(this.Name, delegate(StudyItem item) { return item.File.DirectoryName; });
+				return new TableColumn<StudyItem, string>(this.Name, this.GetValue);
 			}
 		}
 
@@ -274,9 +301,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters
 				return other is ExtensionColumn;
 			}
 
+			public override string GetValue(StudyItem item)
+			{
+				return item.File.Extension;
+			}
+
 			internal override TableColumnBase<StudyItem> CreateColumn()
 			{
-				return new TableColumn<StudyItem, string>(this.Name, delegate(StudyItem item) { return item.File.Extension; });
+				return new TableColumn<StudyItem, string>(this.Name, this.GetValue);
 			}
 		}
 	}

@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
@@ -29,6 +30,7 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 			if (base.Selection.Count > 0)
 			{
 				string outputDir = FolderPickerExtensionPoint.GetFolder();
+				int count = 0;
 
 				foreach (StudyItem item in base.Selection)
 				{
@@ -39,8 +41,14 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 						if (!File.Exists(newpath))
 						{
 							file.CopyTo(newpath);
+							count ++;
 						}
 					}
+				}
+
+				if (count > 0)
+				{
+					Process p = Process.Start(outputDir);
 				}
 			}
 		}

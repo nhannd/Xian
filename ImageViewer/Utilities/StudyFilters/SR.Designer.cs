@@ -79,6 +79,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Filters.
+        /// </summary>
+        internal static string EditFilters {
+            get {
+                return ResourceManager.GetString("EditFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Extension.
         /// </summary>
         internal static string Extension {

@@ -35,6 +35,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FilterEditorComponent.cs" />
+    <Compile Include="FilterNodes\And.cs" />
+    <Compile Include="FilterNodes\Not.cs" />
+    <Compile Include="FilterNodes\FilterNodeBase.cs" />
+    <Compile Include="FilterNodes\Or.cs" />
+    <Compile Include="FilterNodes\Value.cs" />
     <Compile Include="FolderPicker.cs" />
     <Compile Include="StudyFilterSettings.cs" />
     <Compile Include="Tools\AddRemoveColumnsTool.cs" />
