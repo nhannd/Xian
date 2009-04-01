@@ -174,6 +174,7 @@ namespace ClearCanvas.Common
             if (_plugins.Length == 0)
                 throw new PluginException(SR.ExceptionUnableToLoadPlugins);
 
+            // scan plugins for extensions
             List<ExtensionInfo> extList = new List<ExtensionInfo>();
             foreach (PluginInfo plugin in _plugins)
             {
@@ -182,8 +183,15 @@ namespace ClearCanvas.Common
 
             // hack: add extensions from ClearCanvas.Common, which isn't technically a plugin
             extList.AddRange(PluginInfo.DiscoverExtensions(this.GetType().Assembly));
-            _extensions = extList.ToArray();
 
+            // #742: order the extensions according to the XML configuration
+            List<ExtensionInfo> ordered, remainder;
+            ExtensionSettings.Default.OrderExtensions(extList, out ordered, out remainder);
+
+            // create global extension list, with the ordered set appearing first
+            _extensions = CollectionUtils.Concat<ExtensionInfo>(ordered, remainder).ToArray();
+
+            // scan plugins for extension points
             List<ExtensionPointInfo> epList = new List<ExtensionPointInfo>();
             foreach (PluginInfo plugin in _plugins)
             {
