@@ -130,7 +130,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="study"></param>
 		public void AddPatientParticipantObject(AuditSecurityAlertParticipantObject alert)
 		{
-			InternalAddParticipantObject(alert);
+			InternalAddParticipantObject(alert.ParticipantObjectId, alert);
 		}
 
 		/// <summary>

@@ -4,11 +4,14 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.Security;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -204,6 +207,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                         try
                         {
                             controller.DeleteStudy(study.StudyKey, Reason.Text);
+
+							// Audit log
+                        	DicomStudyDeletedAuditHelper helper = new DicomStudyDeletedAuditHelper(
+                        										ServerPlatform.AuditSource, 
+																EventIdentificationTypeEventOutcomeIndicator.Success);
+							helper.AddUserParticipant(new AuditPersonActiveParticipant(
+																SessionManager.Current.Credentials.UserName, 
+																null, 
+																SessionManager.Current.Credentials.DisplayName));
+                        	helper.AddStudyParticipantObject(new AuditStudyParticipantObject(
+																	study.StudyInstanceUid, 
+																	study.AccessionNumber));
+                        	ServerPlatform.LogAuditMessage("DicomStudyDeleted", helper);
                         }
                         catch (Exception ex)
                         {

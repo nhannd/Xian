@@ -29,15 +29,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
@@ -60,7 +54,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <returns>true if the association should be accepted, false if it should be rejected.</returns>
         public static bool Verify(DicomScpContext context, ServerAssociationParameters assocParms, out DicomRejectResult result, out DicomRejectReason reason)
         {
-            bool isNew = false;
+            bool isNew;
             Device device = DeviceManager.LookupDevice(context.Partition, assocParms, out isNew);
 
             if (device==null)

@@ -1,24 +1,23 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common.Audit;
+using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Common
 {
-    
-
     static public class ServerPlatform
     {
         #region Private Fields
         private static string _dbVersion;
         private static string _tempDir;
-        private static object _mutex = new object();
+        private static readonly object _syncLock = new object();
+    	private static DicomAuditSource _auditSource;
+    	private static AuditLog _log; 
         #endregion
 
         /// <summary>
@@ -65,6 +64,34 @@ namespace ClearCanvas.ImageServer.Common
             }
         }
 
+    	public static DicomAuditSource AuditSource
+    	{
+    		get
+    		{
+    			lock (_syncLock)
+    			{
+    				if (_auditSource == null)
+    				{
+    					_auditSource = new DicomAuditSource("ImageServer");
+    				}
+    				return _auditSource;
+    			}
+    		}
+    	}
+
+		public static void LogAuditMessage(string operation, DicomAuditHelper helper)
+		{
+			lock (_syncLock)
+			{
+				if (_log == null)
+					_log = new AuditLog("ImageServer");
+
+//				_log.WriteEntry(operation, helper.Serialize(false));
+
+				Platform.Log(LogLevel.Info, helper.Serialize(true));
+			}
+		}
+
         /// <summary>
         /// Gets the path to the temporary folder.
         /// </summary>
@@ -74,7 +101,7 @@ namespace ClearCanvas.ImageServer.Common
             {
                 if (String.IsNullOrEmpty(_tempDir) || !Directory.Exists(_tempDir))
                 {
-                    lock(_mutex)
+                    lock(_syncLock)
                     {
                         // if specified in the config, use it
                         if (!String.IsNullOrEmpty(ImageServerCommonConfiguration.TemporaryPath))
@@ -108,7 +135,7 @@ namespace ClearCanvas.ImageServer.Common
         {
             get
             {
-                lock (_mutex)
+                lock (_syncLock)
                 {
                     if (String.IsNullOrEmpty(_dbVersion))
                     {

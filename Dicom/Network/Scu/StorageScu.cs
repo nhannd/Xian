@@ -86,7 +86,6 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// Occurs when an SOP Instance has started being sent over the network.
 		/// </summary>
 		public event EventHandler<StorageInstance> ImageStoreStarted;
-
 		/// <summary>
 		/// Delegate for starting Send in ASynch mode with <see cref="BeginSend"/>.
 		/// </summary>
@@ -264,19 +263,19 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 				string message =
 					String.Format("Not creating DICOM C-STORE SCU connection from {0} to {1}, no existing and valid files to send.",
-					              base.ClientAETitle, base.RemoteAE);
+					              ClientAETitle, RemoteAE);
 				Platform.Log(LogLevel.Error, message);
 				throw new ApplicationException(message);
 			}
 			else
 			{
 				Platform.Log(LogLevel.Info, "Preparing to connect to AE {0} on host {1} on port {2} and sending {3} images.",
-				             base.RemoteAE, base.RemoteHost, base.RemotePort, _storageInstanceList.Count);
+				             RemoteAE, RemoteHost, RemotePort, _storageInstanceList.Count);
 
 				try
 				{
 					// the connect launches the actual send in a background thread.
-					base.Connect();
+					Connect();
 				}
 				catch
 				{
@@ -311,7 +310,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <returns></returns>
 		public IAsyncResult BeginSend(AsyncCallback callback, object asyncState)
 		{
-			SendDelegate sendDelegate = new SendDelegate(this.Send);
+			SendDelegate sendDelegate = this.Send;
 			return sendDelegate.BeginInvoke(callback, asyncState);
 		}
 
@@ -349,7 +348,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="storageInstance">The storage instance.</param>
 		public void AddStorageInstance(StorageInstance storageInstance)
 		{
-			this.StorageInstanceList.Add(storageInstance);
+			StorageInstanceList.Add(storageInstance);
 		}
 
 		/// <summary>
@@ -372,7 +371,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="storageInstance">The storage instance.</param>
 		protected virtual void OnImageStoreCompleted(StorageInstance storageInstance)
 		{
-			EventHandler<StorageInstance> tempHandler = this.ImageStoreCompleted;
+			EventHandler<StorageInstance> tempHandler = ImageStoreCompleted;
 			if (tempHandler != null)
 				tempHandler(this, storageInstance);
 		}
@@ -383,7 +382,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="storageInstance">The storage instance.</param>
 		protected virtual void OnImageStoreStarted(StorageInstance storageInstance)
 		{
-			EventHandler<StorageInstance> tempHandler = this.ImageStoreStarted;
+			EventHandler<StorageInstance> tempHandler = ImageStoreStarted;
 			if (tempHandler != null)
 				tempHandler(this, storageInstance);
 		}
@@ -567,25 +566,25 @@ namespace ClearCanvas.Dicom.Network.Scu
 				{
 					// If the image is encapsulated, make sure there's an exact match of the transfer
 					// syntax, if not, just make sure there's an unencapsulated transfer syntax.
-					byte pcid = base.AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
+					byte pcid = AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
 					                                                                            sendStruct.TransferSyntax);
 
 					if (pcid == 0)
 					{
-						pcid = base.AssociationParameters.AddPresentationContext(sendStruct.SopClass);
+						pcid = AssociationParameters.AddPresentationContext(sendStruct.SopClass);
 
-						base.AssociationParameters.AddTransferSyntax(pcid, sendStruct.TransferSyntax);
+						AssociationParameters.AddTransferSyntax(pcid, sendStruct.TransferSyntax);
 					}
 
 					// Check for a codec, and if it exists, also register an uncompressed context.
 					IDicomCodec codec = DicomCodecRegistry.GetCodec(sendStruct.TransferSyntax);
 					if (codec != null)
 					{
-						pcid = base.AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
+						pcid = AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
 						                                                                       TransferSyntax.ExplicitVrLittleEndian);
 						if (pcid == 0)
 						{
-							pcid = base.AssociationParameters.AddPresentationContext(sendStruct.SopClass);
+							pcid = AssociationParameters.AddPresentationContext(sendStruct.SopClass);
 
 							AssociationParameters.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
 							AssociationParameters.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
@@ -594,7 +593,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				}
 				else
 				{
-					byte pcid = base.AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
+					byte pcid = AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
 					                                                                            TransferSyntax.ExplicitVrLittleEndian);
 
 					if (pcid == 0)
@@ -613,18 +612,18 @@ namespace ClearCanvas.Dicom.Network.Scu
 					{
 						TransferSyntax syntax = _preferredSyntaxes[sendStruct.SopClass.Uid];
 
-						byte pcid = base.AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
+						byte pcid = AssociationParameters.FindAbstractSyntaxWithTransferSyntax(sendStruct.SopClass,
 						                                                                            syntax);
 
 						// If we have more than 1 transfer syntax associated with the preferred, we want to 
 						// have a dedicated presentation context for the preferred, so that we ensure it
 						// gets accepted if the SCP supports it.  This is only really going to happen if
 						// the preferred is Explicit VR Little Endian or Implicit VR Little Endian.
-						if ((pcid == 0) || (base.AssociationParameters.GetPresentationContextTransferSyntaxes(pcid).Count > 1))
+						if ((pcid == 0) || (AssociationParameters.GetPresentationContextTransferSyntaxes(pcid).Count > 1))
 						{
-							pcid = base.AssociationParameters.AddPresentationContext(sendStruct.SopClass);
+							pcid = AssociationParameters.AddPresentationContext(sendStruct.SopClass);
 
-							base.AssociationParameters.AddTransferSyntax(pcid, syntax);
+							AssociationParameters.AddTransferSyntax(pcid, syntax);
 						}
 					}
 				}

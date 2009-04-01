@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AssociationAuditLogger.cs" />
     <Compile Include="AssociationVerifier.cs" />
     <Compile Include="BaseScp.cs" />
     <Compile Include="CompressedStorageScpExtension.cs" />

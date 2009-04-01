@@ -33,6 +33,8 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Audit;
+using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -87,39 +89,68 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 
 			if (DicomSettings.Default.ListenIPV4)
 			{
-				DicomScp<DicomScpContext> ipV4Scp = new DicomScp<DicomScpContext>(parms, AssociationVerifier.Verify);
+				DicomScp<DicomScpContext> ipV4Scp = new DicomScp<DicomScpContext>(parms, AssociationVerifier.Verify, AssociationAuditLogger.InstancesTransferredAuditLogger);
 
 				ipV4Scp.ListenPort = part.Port;
 				ipV4Scp.AeTitle = part.AeTitle;
 
 				if (ipV4Scp.Start(IPAddress.Any))
+				{
 					_listenerList.Add(ipV4Scp);
+					ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
+											ServerPlatform.AuditSource, 
+											EventIdentificationTypeEventOutcomeIndicator.Success, 
+											ApplicationActivityType.ApplicationStarted, 
+											new AuditProcessActiveParticipant(ipV4Scp.AeTitle));
+					ServerPlatform.LogAuditMessage("ApplicationActivity", helper);
+				}
 				else
 				{
+					ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
+											ServerPlatform.AuditSource,
+											EventIdentificationTypeEventOutcomeIndicator.MajorFailureActionMadeUnavailable,
+											ApplicationActivityType.ApplicationStarted,
+											new AuditProcessActiveParticipant(ipV4Scp.AeTitle));
+					ServerPlatform.LogAuditMessage("ApplicationActivity", helper);
 					Platform.Log(LogLevel.Error, "Unable to add IPv4 SCP handler for server partition {0}",
-					             part.Description);
+								 part.Description);
 					Platform.Log(LogLevel.Error,
-					             "Partition {0} will not accept IPv4 incoming DICOM associations.",
-					             part.Description);
+								 "Partition {0} will not accept IPv4 incoming DICOM associations.",
+								 part.Description);
 				}
 			}
 
 			if (DicomSettings.Default.ListenIPV6)
 			{
-				DicomScp<DicomScpContext> ipV6Scp = new DicomScp<DicomScpContext>(parms, AssociationVerifier.Verify);
+				DicomScp<DicomScpContext> ipV6Scp = new DicomScp<DicomScpContext>(parms, AssociationVerifier.Verify, AssociationAuditLogger.InstancesTransferredAuditLogger);
 
 				ipV6Scp.ListenPort = part.Port;
 				ipV6Scp.AeTitle = part.AeTitle;
 
 				if (ipV6Scp.Start(IPAddress.IPv6Any))
+				{
 					_listenerList.Add(ipV6Scp);
+					ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
+											ServerPlatform.AuditSource,
+											EventIdentificationTypeEventOutcomeIndicator.Success,
+											ApplicationActivityType.ApplicationStarted,
+											new AuditProcessActiveParticipant(ipV6Scp.AeTitle));
+					ServerPlatform.LogAuditMessage("ApplicationActivity", helper);
+				}
 				else
 				{
+					ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
+						ServerPlatform.AuditSource,
+						EventIdentificationTypeEventOutcomeIndicator.MajorFailureActionMadeUnavailable,
+						ApplicationActivityType.ApplicationStarted,
+						new AuditProcessActiveParticipant(ipV6Scp.AeTitle));
+					ServerPlatform.LogAuditMessage("ApplicationActivity", helper);
+
 					Platform.Log(LogLevel.Error, "Unable to add IPv6 SCP handler for server partition {0}",
-					             part.Description);
+								 part.Description);
 					Platform.Log(LogLevel.Error,
-					             "Partition {0} will not accept IPv6 incoming DICOM associations.",
-					             part.Description);
+								 "Partition {0} will not accept IPv6 incoming DICOM associations.",
+								 part.Description);
 				}
 			}
 		}
@@ -149,6 +180,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 						Platform.Log(LogLevel.Info, "Partition was deleted, shutting down listener {0}:{1}", scp.AeTitle, scp.ListenPort);
 						scp.Stop();
 						scpsToDelete.Add(scp);
+						ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
+												ServerPlatform.AuditSource,
+												EventIdentificationTypeEventOutcomeIndicator.Success,
+												ApplicationActivityType.ApplicationStopped,
+												new AuditProcessActiveParticipant(scp.AeTitle));
+						ServerPlatform.LogAuditMessage("ApplicationActivity", helper);
 					}
 				}
 
@@ -239,6 +276,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 				foreach (DicomScp<DicomScpContext> scp in _listenerList)
 				{
 					scp.Stop();
+					ApplicationActivityAuditHelper helper = new ApplicationActivityAuditHelper(
+								ServerPlatform.AuditSource,
+								EventIdentificationTypeEventOutcomeIndicator.Success,
+								ApplicationActivityType.ApplicationStopped,
+								new AuditProcessActiveParticipant(scp.AeTitle));
+					ServerPlatform.LogAuditMessage("ApplicationActivity", helper);
+	
 				}
 				ServerPartitionMonitor.Instance.Changed -= _changedEvent;
 			}

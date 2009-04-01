@@ -35,6 +35,8 @@ using System.ServiceModel;
 using System.Threading;
 using System.Web.Security;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Audit;
+using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -60,6 +62,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                     {
                         SessionInfo session = service.Login(UserName.Text, Password.Text);
                         SessionManager.InitializeSession(session);
+
+						UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource, 
+							EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
+						audit.AddUserParticipant(new AuditPersonActiveParticipant(session.Credentials.UserName, null, session.Credentials.DisplayName));
+						ServerPlatform.LogAuditMessage("UserAuthentication", audit);
+
                         Response.Redirect(FormsAuthentication.GetRedirectUrl(UserName.Text, false));
                     }
                     catch (PasswordExpiredException)
@@ -71,7 +79,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 						Platform.Log(LogLevel.Info,x,"Invalid login");
 					    LoginErrorPanel.Visible = true;
                         UserName.Focus();
-					}
+
+						UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
+							EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated,UserAuthenticationEventType.Login );
+						audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text,null,null));
+						ServerPlatform.LogAuditMessage("UserAuthentication",audit);
+ 					}
 
                 });
             

@@ -38,7 +38,8 @@
 
   <ItemGroup>
 	  <PluginFiles Include="$(ProjectDir)\..\..\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll"/>
-	  <PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll"/>
+	<PluginFiles Include="$(ProjectDir)\..\..\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll"/>
+	<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll"/>
 	  <PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll"/>
 		<PluginFiles Include="$(ProjectDir)\..\..\Rules\JpegCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.JpegCodec.dll"/>

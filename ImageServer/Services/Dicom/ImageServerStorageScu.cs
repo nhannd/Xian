@@ -122,7 +122,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// </summary>
         /// <param name="seriesXml"></param>
         /// <param name="seriesPath"></param>
-        public void LoadSeriesFromSeriesXml(string seriesPath, SeriesXml seriesXml)
+        /// <param name="patientsName"></param>
+        /// <param name="patientId"></param>
+        /// <param name="studyXml"></param>
+        public void LoadSeriesFromSeriesXml(StudyXml studyXml, string seriesPath, SeriesXml seriesXml, string patientsName, string patientId)
         {
             foreach (InstanceXml instanceXml in seriesXml)
             {
@@ -133,6 +136,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 instance.SopClass = instanceXml.SopClass;
                 instance.TransferSyntax = instanceXml.TransferSyntax;
                 instance.SopInstanceUid = instanceXml.SopInstanceUid;
+            	instance.PatientId = patientId;
+            	instance.PatientsName = patientsName;
+            	instance.StudyInstanceUid = studyXml.StudyInstanceUid;
             }
         }
 
@@ -147,7 +153,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 string seriesPath = Path.Combine(studyPath, seriesXml.SeriesInstanceUid);
 
-                LoadSeriesFromSeriesXml(seriesPath, seriesXml);
+				LoadSeriesFromSeriesXml(studyXml, seriesPath, seriesXml, studyXml.PatientsName, studyXml.PatientId);
             }
         }
 
@@ -158,7 +164,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="seriesInstanceUid">The Series Instance UID of the SOP Instance to send.</param>
         /// <param name="sopInstanceUid">The SOP Instance UID to send.</param>
         /// <param name="studyXml">The <see cref="StudyXml"/> file to load the instance information from.</param>
-        public void LoadInstanceFromStudyXml(string studyPath, string seriesInstanceUid, string sopInstanceUid, StudyXml studyXml)
+		public void LoadInstanceFromStudyXml(string studyPath, string seriesInstanceUid, string sopInstanceUid, StudyXml studyXml)
         {
             SeriesXml seriesXml = studyXml[seriesInstanceUid];
             InstanceXml instanceXml = seriesXml[sopInstanceUid];
@@ -171,6 +177,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             instance.SopClass = instanceXml.SopClass;
             instance.TransferSyntax = instanceXml.TransferSyntax;
             instance.SopInstanceUid = instanceXml.SopInstanceUid;
+        	instance.StudyInstanceUid = studyXml.StudyInstanceUid;
+        	instance.PatientId = studyXml.PatientId;
+			instance.PatientsName = studyXml.PatientsName;
         }
     }
 }

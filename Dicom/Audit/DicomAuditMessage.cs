@@ -30,6 +30,9 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom.Audit
 {
@@ -42,9 +45,9 @@ namespace ClearCanvas.Dicom.Audit
 	{
 		public static CodedValueType ApplicationActivity = new CodedValueType("110100", "DCM", "Application Activity", "Application audit event");
 		public static CodedValueType AuditLogUsed = new CodedValueType("110101", "DCM", "	Audit Log Used	", "Audit Log Used audit event");
-		public static CodedValueType BeginTransferringDICOMInstances = new CodedValueType("110102", "DCM", "Begin Transferring DICOM Instances", "Begin Storing DICOM Instances audit event	");
-		public static CodedValueType DICOMInstancesAccessed = new CodedValueType("110103", "DCM", "	DICOM Instances Accessed	", "	DICOM Instances created, read, updated, or deleted audit event	");
-		public static CodedValueType DICOMInstancesTransferred = new CodedValueType("110104", "DCM", "DICOM Instances Transferred", "Storage of DICOM Instances complete audit event	");
+		public static CodedValueType BeginTransferringDICOMInstances = new CodedValueType("110102", "DCM", "Begin Transferring DICOM Instances", "Begin Storing DICOM Instances audit event");
+		public static CodedValueType DICOMInstancesAccessed = new CodedValueType("110103", "DCM", "DICOM Instances Accessed", "DICOM Instances created, read, updated, or deleted audit event");
+		public static CodedValueType DICOMInstancesTransferred = new CodedValueType("110104", "DCM", "DICOM Instances Transferred", "Storage of DICOM Instances complete audit event");
 		public static CodedValueType DICOMStudyDeleted = new CodedValueType("110105", "DCM", "DICOM Study Deleted", "Deletion of Entire Study audit event");
 		public static CodedValueType Export = new CodedValueType("110106", "DCM", "Export", "Data exported out of the system audit event");
 		public static CodedValueType Import = new CodedValueType("110107", "DCM", "Import", "Data imported into the system audit event");
@@ -52,7 +55,7 @@ namespace ClearCanvas.Dicom.Audit
 		public static CodedValueType OrderRecord = new CodedValueType("110109", "DCM", "Order Record", "Order Record audit event");
 		public static CodedValueType PatientRecord = new CodedValueType("110110", "DCM", "Patient Record", "Patient Record audit event");
 		public static CodedValueType ProcedureRecord = new CodedValueType("110111", "DCM", "Procedure Record", "Procedure Record audit event");
-		public static CodedValueType Query = new CodedValueType("110112", "DCM", "	Query", "Query requested audit event");
+		public static CodedValueType Query = new CodedValueType("110112", "DCM", "Query", "Query requested audit event");
 		public static CodedValueType SecurityAlert = new CodedValueType("110113", "DCM", "Security Alert", "SecurityAlert audit event");
 		public static CodedValueType UserAuthentication = new CodedValueType("110114", "DCM", "User Authentication", "User Authentication audit event");
 		public static CodedValueType ApplicationStart = new CodedValueType("110120", "DCM", "Application Start", "Application Entity Started audit event type");
@@ -306,6 +309,11 @@ namespace ClearCanvas.Dicom.Audit
 					new ParticipantObjectIdentificationTypeParticipantObjectIDTypeCode(item.ParticipantObjectIdTypeCodedValue);
 			}
 
+			if (!string.IsNullOrEmpty(item.ParticipantObjectDetail))
+			{
+				ParticipantObjectDetailString = new string[] {item.ParticipantObjectDetail};
+			}
+
 			if (!string.IsNullOrEmpty(item.ParticipantObjectId))
 				ParticipantObjectID = item.ParticipantObjectId;
 
@@ -313,19 +321,19 @@ namespace ClearCanvas.Dicom.Audit
 				Item = item.ParticipantObjectName;
 
 			ParticipantObjectDescriptionType description = new ParticipantObjectDescriptionType();
-			if (!String.IsNullOrEmpty(item.Accession))
-				description.Accession = new ParticipantObjectDescriptionTypeAccession[] { new ParticipantObjectDescriptionTypeAccession(item.Accession) };
+			if (!String.IsNullOrEmpty(item.AccessionNumber))
+				description.Accession = new ParticipantObjectDescriptionTypeAccession[] { new ParticipantObjectDescriptionTypeAccession(item.AccessionNumber) };
 			if (!String.IsNullOrEmpty(item.MppsUid))
 				description.MPPS = new ParticipantObjectDescriptionTypeMPPS[] { new ParticipantObjectDescriptionTypeMPPS(item.MppsUid) };
 
-			if (item.SopClassList != null && item.SopClassList.Count > 0)
+			if (item.SopClassDictionary != null && item.SopClassDictionary.Count > 0)
 			{
-				description.SOPClass = new ParticipantObjectDescriptionTypeSOPClass[item.SopClassList.Count];
-
-				for (int i = 0; i < item.SopClassList.Count; i++)
+				description.SOPClass = new ParticipantObjectDescriptionTypeSOPClass[item.SopClassDictionary.Count];
+				List<AuditSopClass> list = new List<AuditSopClass>(item.SopClassDictionary.Values);
+				for (int i = 0; i < item.SopClassDictionary.Count; i++)
 				{
 					description.SOPClass[i] =
-						new ParticipantObjectDescriptionTypeSOPClass(item.SopClassList[i].UID, item.SopClassList[i].NumberOfInstances);
+						new ParticipantObjectDescriptionTypeSOPClass(list[i].UID, list[i].NumberOfInstances);
 				}
 			}
 

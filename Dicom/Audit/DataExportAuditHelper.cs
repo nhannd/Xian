@@ -30,6 +30,7 @@
 #endregion
 
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Network.Scu;
 
 namespace ClearCanvas.Dicom.Audit
 {
@@ -87,7 +88,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="study"></param>
 		public void AddPatientParticipantObject(AuditPatientParticipantObject patient)
 		{
-			InternalAddParticipantObject(patient);
+			InternalAddParticipantObject(patient.PatientId + patient.PatientsName, patient);
 		}
 
 		/// <summary>
@@ -96,7 +97,16 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="study"></param>
 		public void AddStudyParticipantObject(AuditStudyParticipantObject study)
 		{
-			InternalAddParticipantObject(study);
+			InternalAddParticipantObject(study.StudyInstanceUid, study);
+		}
+
+		/// <summary>
+		/// Add details of images within a study.  SOP Class information is automatically updated.
+		/// </summary>
+		/// <param name="instance">Descriptive object being audited</param>
+		public void AddStorageInstance(StorageInstance instance)
+		{
+			InternalAddStorageInstance(instance);
 		}
 	}
 }

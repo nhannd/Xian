@@ -1,25 +1,25 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
   <xs:element name="AuditMessage">
 	<xs:complexType>
 	  <xs:sequence>
-		<xs:element name="EventIdentification" type="EventIdentificationType"/>
+		<xs:element name="EventIdentification" type="EventIdentificationType" />
 		<xs:element name="ActiveParticipant" maxOccurs="unbounded">
 		  <xs:complexType>
 			<xs:complexContent>
-			  <xs:extension base="ActiveParticipantType"/>
+			  <xs:extension base="ActiveParticipantType" />
 			</xs:complexContent>
 		  </xs:complexType>
 		</xs:element>
-		<xs:element name="AuditSourceIdentification" type="AuditSourceIdentificationType" maxOccurs="unbounded"/>
-		<xs:element name="ParticipantObjectIdentification" type="ParticipantObjectIdentificationType" minOccurs="0" maxOccurs="unbounded"/>
+		<xs:element name="AuditSourceIdentification" type="AuditSourceIdentificationType" maxOccurs="unbounded" />
+		<xs:element name="ParticipantObjectIdentification" type="ParticipantObjectIdentificationType" minOccurs="0" maxOccurs="unbounded" />
 	  </xs:sequence>
 	</xs:complexType>
   </xs:element>
   <xs:complexType name="EventIdentificationType">
 	<xs:sequence>
-	  <xs:element name="EventID" type="CodedValueType"/>
-	  <xs:element name="EventTypeCode" type="CodedValueType" minOccurs="0" maxOccurs="unbounded"/>
+	  <xs:element name="EventID" type="CodedValueType" />
+	  <xs:element name="EventTypeCode" type="CodedValueType" minOccurs="0" maxOccurs="unbounded" />
 	</xs:sequence>
 	<xs:attribute name="EventActionCode" use="optional">
 	  <xs:simpleType>
@@ -52,7 +52,7 @@
 		</xs:restriction>
 	  </xs:simpleType>
 	</xs:attribute>
-	<xs:attribute name="EventDateTime" type="xs:dateTime" use="required"/>
+	<xs:attribute name="EventDateTime" type="xs:dateTime" use="required" />
 	<xs:attribute name="EventOutcomeIndicator" use="required">
 	  <xs:simpleType>
 		<xs:restriction base="xs:integer">
@@ -148,18 +148,18 @@
 		</xs:complexType>
 	  </xs:element>
 	</xs:sequence>
-	<xs:attribute name="AuditEnterpriseSiteID" type="xs:string" use="optional"/>
-	<xs:attribute name="AuditSourceID" type="xs:string" use="required"/>
+	<xs:attribute name="AuditEnterpriseSiteID" type="xs:string" use="optional" />
+	<xs:attribute name="AuditSourceID" type="xs:string" use="required" />
   </xs:complexType>
   <xs:complexType name="ActiveParticipantType">
 	<xs:sequence minOccurs="0">
-	  <xs:element name="RoleIDCode" type="CodedValueType" minOccurs="0" maxOccurs="unbounded"/>
+	  <xs:element name="RoleIDCode" type="CodedValueType" minOccurs="0" maxOccurs="unbounded" />
 	</xs:sequence>
-	<xs:attribute name="UserID" type="xs:string" use="required"/>
-	<xs:attribute name="AlternativeUserID" type="xs:string" use="optional"/>
-	<xs:attribute name="UserName" type="xs:string" use="optional"/>
-	<xs:attribute name="UserIsRequestor" type="xs:boolean" use="optional" default="true"/>
-	<xs:attribute name="NetworkAccessPointID" type="xs:string" use="optional"/>
+	<xs:attribute name="UserID" type="xs:string" use="required" />
+	<xs:attribute name="AlternativeUserID" type="xs:string" use="optional" />
+	<xs:attribute name="UserName" type="xs:string" use="optional" />
+	<xs:attribute name="UserIsRequestor" type="xs:boolean" use="optional" default="true" />
+	<xs:attribute name="NetworkAccessPointID" type="xs:string" use="optional" />
 	<xs:attribute name="NetworkAccessPointTypeCode" use="optional">
 	  <xs:simpleType>
 		<xs:restriction base="xs:unsignedByte">
@@ -190,7 +190,7 @@
 			<xs:restriction base="CodedValueType">
 			  <xs:attribute name="code" use="required">
 				<xs:simpleType>
-				  <xs:restriction base="xs:string"/>
+				  <xs:restriction base="xs:string" />
 				</xs:simpleType>
 			  </xs:attribute>
 			</xs:restriction>
@@ -198,13 +198,14 @@
 		</xs:complexType>
 	  </xs:element>
 	  <xs:choice minOccurs="0">
-		<xs:element name="ParticipantObjectName" type="xs:string" minOccurs="0"/>
-		<xs:element name="ParticipantObjectQuery" type="xs:base64Binary" minOccurs="0"/>
+		<xs:element name="ParticipantObjectName" type="xs:string" minOccurs="0" />
+		<xs:element name="ParticipantObjectQuery" type="xs:base64Binary" minOccurs="0" />
 	  </xs:choice>
-	  <xs:element name="ParticipantObjectDetail" type="TypeValuePairType" minOccurs="0" maxOccurs="unbounded"/>
-	  <xs:element name="ParticipantObjectDescription" type="ParticipantObjectDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
+	  <xs:element name="ParticipantObjectDetail" type="TypeValuePairType" minOccurs="0" maxOccurs="unbounded" />
+	  <xs:element name="ParticipantObjectDetailString" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+	  <xs:element name="ParticipantObjectDescription" type="ParticipantObjectDescriptionType" minOccurs="0" maxOccurs="unbounded" />
 	</xs:sequence>
-	<xs:attribute name="ParticipantObjectID" type="xs:string" use="required"/>
+	<xs:attribute name="ParticipantObjectID" type="xs:string" use="required" />
 	<xs:attribute name="ParticipantObjectTypeCode" use="optional">
 	  <xs:simpleType>
 		<xs:restriction base="xs:unsignedByte">
@@ -440,18 +441,18 @@
 		</xs:restriction>
 	  </xs:simpleType>
 	</xs:attribute>
-	<xs:attribute name="ParticipantObjectSensitivity" type="xs:string" use="optional"/>
+	<xs:attribute name="ParticipantObjectSensitivity" type="xs:string" use="optional" />
   </xs:complexType>
   <xs:complexType name="ParticipantObjectDescriptionType">
 	<xs:sequence>
 	  <xs:element name="MPPS" minOccurs="0" maxOccurs="unbounded">
 		<xs:complexType>
-		  <xs:attribute name="UID" type="OID" use="optional"/>
+		  <xs:attribute name="UID" type="OID" use="optional" />
 		</xs:complexType>
 	  </xs:element>
 	  <xs:element name="Accession" minOccurs="0" maxOccurs="unbounded">
 		<xs:complexType>
-		  <xs:attribute name="Number" type="xs:string" use="optional"/>
+		  <xs:attribute name="Number" type="xs:string" use="optional" />
 		</xs:complexType>
 	  </xs:element>
 	  <xs:element name="SOPClass" minOccurs="0" maxOccurs="unbounded">
@@ -459,35 +460,34 @@
 		  <xs:sequence>
 			<xs:element name="Instance" minOccurs="0" maxOccurs="unbounded">
 			  <xs:complexType>
-				<xs:attribute name="UID" type="OID" use="required"/>
+				<xs:attribute name="UID" type="OID" use="required" />
 			  </xs:complexType>
 			</xs:element>
 		  </xs:sequence>
-		  <xs:attribute name="UID" type="OID" use="optional"/>
-		  <xs:attribute name="NumberOfInstances" type="xs:integer"/>
+		  <xs:attribute name="UID" type="OID" use="optional" />
+		  <xs:attribute name="NumberOfInstances" type="xs:integer" />
 		</xs:complexType>
 	  </xs:element>
 	</xs:sequence>
   </xs:complexType>
   <xs:complexType name="CodedValueType">
-	<xs:attribute name="code" type="xs:string" use="required"/>
-	<xs:attributeGroup ref="CodeSystem"/>
-	<xs:attribute name="displayName" type="xs:string" use="optional"/>
-	<xs:attribute name="originalText" type="xs:string" use="optional"/>
+	<xs:attribute name="code" type="xs:string" use="required" />
+	<xs:attributeGroup ref="CodeSystem" />
+	<xs:attribute name="displayName" type="xs:string" use="optional" />
+	<xs:attribute name="originalText" type="xs:string" use="optional" />
   </xs:complexType>
   <xs:complexType name="TypeValuePairType">
-	<xs:attribute name="type" type="xs:string" use="required"/>
-	<xs:attribute name="value" type="xs:base64Binary" use="required"/>
+	<xs:attribute name="type" type="xs:string" use="required" />
+	<xs:attribute name="value" type="xs:base64Binary" use="required" />
   </xs:complexType>
   <xs:attributeGroup name="CodeSystem">
-	<xs:attribute name="codeSystem" type="OID" use="optional"/>
-	<xs:attribute name="codeSystemName" type="xs:string" use="optional"/>
+	<xs:attribute name="codeSystem" type="OID" use="optional" />
+	<xs:attribute name="codeSystemName" type="xs:string" use="optional" />
   </xs:attributeGroup>
   <xs:simpleType name="OID">
 	<xs:restriction base="xs:string">
-	  <xs:whiteSpace value="collapse"/>
-	  <xs:pattern value="[0-2]((\.0)|(\.[1-9][0-9]*))*"/>
+	  <xs:whiteSpace value="collapse" />
+	  <xs:pattern value="[0-2]((\.0)|(\.[1-9][0-9]*))*" />
 	</xs:restriction>
   </xs:simpleType>
 </xs:schema>
-

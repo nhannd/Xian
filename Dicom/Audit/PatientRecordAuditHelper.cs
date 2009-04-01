@@ -48,7 +48,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <param name="study"></param>
 		public void AddPatientParticipantObject(AuditPatientParticipantObject patient)
 		{
-			InternalAddParticipantObject(patient);
+			InternalAddParticipantObject(patient.PatientId + patient.PatientsName,patient);
 		}
 	}
 }

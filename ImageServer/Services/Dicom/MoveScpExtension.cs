@@ -40,11 +40,8 @@ using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Dicom
 {
@@ -159,7 +156,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					else
 						return false;
 				}
-            	StudyXml theStream = LoadStudyXml(location);
+
+				StudyXml theStream = LoadStudyXml(location);
 
                 _theScu.LoadStudyFromStudyXml(location.GetStudyPath(), theStream);
             }
@@ -172,9 +170,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <summary>
         /// Create a list of DICOM SOP Instances to move based on a Series level C-MOVE-RQ
         /// </summary>
+        /// <param name="read"></param>
         /// <param name="msg"></param>
         /// <returns></returns>
-        private bool GetSopListForSeries(DicomMessageBase msg)
+        private bool GetSopListForSeries(IReadContext read, DicomMessageBase msg)
         {
 
             string studyInstanceUid = msg.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
@@ -207,11 +206,18 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 					return false;
             }
 
+			IStudyEntityBroker select = read.GetBroker<IStudyEntityBroker>();
+
+			StudySelectCriteria criteria = new StudySelectCriteria();
+			criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
+			criteria.ServerPartitionKey.EqualTo(Partition.Key);
+
+			Study study = select.FindOne(criteria);
         	StudyXml studyStream = LoadStudyXml(location);
 
             foreach (string seriesInstanceUid in seriesList)
             {
-                _theScu.LoadSeriesFromSeriesXml(Path.Combine(location.GetStudyPath(), seriesInstanceUid), studyStream[seriesInstanceUid]);
+				_theScu.LoadSeriesFromSeriesXml(studyStream, Path.Combine(location.GetStudyPath(), seriesInstanceUid), studyStream[seriesInstanceUid], study.PatientsName, study.PatientId);
             }
 
             return true;
@@ -357,7 +363,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     }
                     else if (level.Equals("SERIES"))
                     {
-                        bOnline = GetSopListForSeries(message);
+                        bOnline = GetSopListForSeries(read, message);
                     }
                     else if (level.Equals("IMAGE"))
                     {
@@ -450,6 +456,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 	                               			finalResponseSent = true;
                 	                               	};
 
+                	_theScu.AssociationAccepted += delegate(Object sender, AssociationParameters parms)
+                	                               	{
+                	                               		AssociationAuditLogger.BeginInstancesTransferAuditLogger(
+                	                               			_theScu.StorageInstanceList,
+                	                               			parms);
+                	                               	};
+					
                     _theScu.BeginSend(
                         delegate
                         	{

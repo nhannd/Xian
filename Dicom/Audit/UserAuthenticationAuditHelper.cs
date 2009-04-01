@@ -74,7 +74,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// The identity of the person authenticated if successful. Asserted identity if not successful.
 		/// </summary>
 		/// <param name="participant">The participant.</param>
-		public void AddUserParticipant(AuditActiveParticipant participant)
+		public void AddUserParticipant(AuditPersonActiveParticipant participant)
 		{
 			participant.UserIsRequestor = true;
 			InternalAddActiveParticipant(participant);

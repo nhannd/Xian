@@ -39,6 +39,7 @@ using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.Network.Scu;
 
 namespace ClearCanvas.Dicom.Audit
 {
@@ -58,7 +59,7 @@ namespace ClearCanvas.Dicom.Audit
 		private readonly AuditMessage _message = new AuditMessage();
 		protected readonly List<AuditMessageActiveParticipant> _participantList = new List<AuditMessageActiveParticipant>(3);
 		protected readonly List<AuditSourceIdentificationType> _auditSourceList = new List<AuditSourceIdentificationType>(1);
-		protected readonly List<ParticipantObjectIdentificationType> _participantObjectList = new List<ParticipantObjectIdentificationType>();
+		protected readonly Dictionary<string, AuditParticipantObject> _participantObjectList = new Dictionary<string, AuditParticipantObject>();
 		#endregion
 
 		#region Static Properties
@@ -88,6 +89,7 @@ namespace ClearCanvas.Dicom.Audit
 				}
 			}
 		}
+
 		public static string ProcessName
 		{
 			get
@@ -170,23 +172,31 @@ namespace ClearCanvas.Dicom.Audit
 		{
 			AuditMessage.ActiveParticipant = _participantList.ToArray();
 			AuditMessage.AuditSourceIdentification = _auditSourceList.ToArray();
-			AuditMessage.ParticipantObjectIdentification = _participantObjectList.ToArray();
+
+			List<ParticipantObjectIdentificationType> list = new List<ParticipantObjectIdentificationType>(_participantObjectList.Values.Count);
+			foreach (AuditParticipantObject o in _participantObjectList.Values)
+			{
+				list.Add(new ParticipantObjectIdentificationType(o));
+			}
+			AuditMessage.ParticipantObjectIdentification = list.ToArray();
 
 			TextWriter tw = new StringWriter();
-			XmlWriter writer = XmlWriter.Create(tw);
 			
-			writer.Settings.Encoding = Encoding.UTF8;
+			XmlWriterSettings settings = new XmlWriterSettings();
+
+			settings.Encoding = Encoding.UTF8;
 			if (format)
 			{
-				writer.Settings.NewLineOnAttributes = false;
-				writer.Settings.Indent = true;
-				writer.Settings.IndentChars = "  ";
+				settings.NewLineOnAttributes = false;
+				settings.Indent = true;
+				settings.IndentChars = "  ";
 			}
 			else
 			{
-				writer.Settings.NewLineOnAttributes = false;
-				writer.Settings.Indent = false;
+				settings.NewLineOnAttributes = false;
+				settings.Indent = false;
 			}
+			XmlWriter writer = XmlWriter.Create(tw,settings);
 
 			XmlSerializer serializer = new XmlSerializer(typeof(AuditMessage));
 			serializer.Serialize(writer, AuditMessage);
@@ -224,11 +234,9 @@ namespace ClearCanvas.Dicom.Audit
 			_auditSourceList.Add(new AuditSourceIdentificationType(auditSource));
 		}
 		
-		protected void InternalAddParticipantObject(AuditParticipantObject study)
+		protected void InternalAddParticipantObject(string key, AuditParticipantObject study)
 		{
-			ParticipantObjectIdentificationType o = new ParticipantObjectIdentificationType(study);
-			
-			_participantObjectList.Add(o);
+			_participantObjectList.Add(key, study);
 		}
 
 		protected void InternalAddActiveParticipant(AuditActiveParticipant participant)
@@ -238,5 +246,23 @@ namespace ClearCanvas.Dicom.Audit
 		}
 		#endregion
 
+		protected void InternalAddStorageInstance(StorageInstance instance)
+		{
+			if (_participantObjectList.ContainsKey(instance.StudyInstanceUid))
+			{
+				AuditStudyParticipantObject study = _participantObjectList[instance.StudyInstanceUid] as AuditStudyParticipantObject;
+
+				if (study!=null)
+				{
+					study.AddStorageInstance(instance);
+				}
+			}
+			else
+			{
+				AuditStudyParticipantObject o = new AuditStudyParticipantObject(instance.StudyInstanceUid);
+				o.AddStorageInstance(instance);
+				_participantObjectList.Add(instance.StudyInstanceUid, o);
+			}
+		}
 	}
 }

@@ -212,7 +212,7 @@ namespace ClearCanvas.Dicom.Network
     /// <summary>
     /// Class used to represent parameters used to negotiate an association.
     /// </summary>
-    public abstract class AssociationParameters
+    public abstract class AssociationParameters : EventArgs
     {
         
         #region Private Members

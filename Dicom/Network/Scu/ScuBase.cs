@@ -197,6 +197,13 @@ namespace ClearCanvas.Dicom.Network.Scu
         }
 		#endregion
 
+		#region Public Events/Delegates...
+		/// <summary>
+		/// Occurs when the association has been accepted.
+		/// </summary>
+		public event EventHandler<AssociationParameters> AssociationAccepted;
+		#endregion
+
 		#region Public Methods...
 		/// <summary>
 		/// Cancels the operation.
@@ -448,6 +455,10 @@ namespace ClearCanvas.Dicom.Network.Scu
 			_statsRecorder = new AssociationStatisticsRecorder(client);
 
 			Platform.Log(LogLevel.Info, "Association Accepted when {0} connected to remote AE {1}", association.CallingAE, association.CalledAE);
+
+			EventHandler<AssociationParameters> tempHandler = AssociationAccepted;
+			if (tempHandler != null)
+				tempHandler(this, association);
 		}
 
 		/// <summary>

@@ -30,20 +30,10 @@
 #endregion
 
 using System;
-using System.Data;
 using System.Configuration;
-using System.Collections;
-using System.Threading;
-using System.Web;
-using System.Web.Security;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using System.Reflection;
-using ClearCanvas.Common;
+using ClearCanvas.Dicom.Audit;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Services.Login;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
@@ -72,7 +62,6 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
         {
             Username.Text = "unknown";
         }
-
     }
 
     private void AddIE6PngBugFixCSS()
@@ -96,6 +85,18 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
 
     protected void Logout_Click(Object sender, EventArgs e)
     {
+    	SessionInfo session = SessionManager.Current;
+
+		UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(
+													ServerPlatform.AuditSource, 
+													EventIdentificationTypeEventOutcomeIndicator.Success, 
+													UserAuthenticationEventType.Logout);
+		audit.AddUserParticipant(new AuditPersonActiveParticipant(
+										session.Credentials.UserName, 
+										null, 
+										session.Credentials.DisplayName));
+		ServerPlatform.LogAuditMessage("UserAuthentication", audit);
+
         SessionManager.TerminateSession();
     }
 

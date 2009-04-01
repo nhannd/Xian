@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Statistics;
 
 namespace ClearCanvas.Dicom.Network.Scp
@@ -42,10 +43,11 @@ namespace ClearCanvas.Dicom.Network.Scp
     internal class DicomScpHandler<TContext> : IDicomServerHandler
     {
         #region Private Members
-        private TContext _context;
-        private IDictionary<byte, IDicomScp<TContext>> _extensionList = new Dictionary<byte, IDicomScp<TContext>>();
-        private DicomScp<TContext>.AssociationVerifyCallback _verifier;
-        
+        private readonly TContext _context;
+        private readonly IDictionary<byte, IDicomScp<TContext>> _extensionList = new Dictionary<byte, IDicomScp<TContext>>();
+        private readonly DicomScp<TContext>.AssociationVerifyCallback _verifier;
+    	private readonly DicomScp<TContext>.AssociationComplete _complete;
+    	private readonly List<StorageInstance> _instances = new List<StorageInstance>();
         private AssociationStatisticsRecorder _statsRecorder ;
         #endregion
 
@@ -62,10 +64,12 @@ namespace ClearCanvas.Dicom.Network.Scp
         /// <param name="parameters">Association parameters for the negotiated association.</param>
         /// <param name="userParms">User parameters to be passed to the plugins called by the class.</param>
         /// <param name="verifier">Delegate to call to verify an association before its accepted.</param>
-        public DicomScpHandler(DicomServer server, ServerAssociationParameters parameters, TContext userParms, DicomScp<TContext>.AssociationVerifyCallback verifier)
+        /// <param name="complete">Delegate to call when the association is closed/complete.  Can be null.</param>
+        public DicomScpHandler(DicomServer server, ServerAssociationParameters parameters, TContext userParms, DicomScp<TContext>.AssociationVerifyCallback verifier, DicomScp<TContext>.AssociationComplete complete)
         {
             _context = userParms;
             _verifier = verifier;
+        	_complete = complete;
 
             DicomScpExtensionPoint<TContext> ep = new DicomScpExtensionPoint<TContext>();
             object[] scps = ep.CreateExtensions();
@@ -116,9 +120,6 @@ namespace ClearCanvas.Dicom.Network.Scp
 
         #region IDicomServerHandler Members
 
-        
-
-
         void IDicomServerHandler.OnReceiveAssociateRequest(DicomServer server, ServerAssociationParameters association)
         {
             if (_verifier != null)
@@ -164,7 +165,6 @@ namespace ClearCanvas.Dicom.Network.Scp
             }
            
 
-
             server.SendAssociateAccept(association);
 
             Platform.Log(LogLevel.Info, "Received association:\r\n{0}", association.ToString());      
@@ -182,7 +182,12 @@ namespace ClearCanvas.Dicom.Network.Scp
                 server.SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
 
             }
-            
+			else if (_complete != null)
+            {
+				// Only save C-STORE-RQ messages
+				if (message.CommandField == DicomCommandField.CStoreRequest)
+            		_instances.Add(new StorageInstance(message));
+            }
         }
 
         void IDicomServerHandler.OnReceiveResponseMessage(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
@@ -195,17 +200,22 @@ namespace ClearCanvas.Dicom.Network.Scp
         void IDicomServerHandler.OnReceiveReleaseRequest(DicomServer server, ServerAssociationParameters association)
         {
             Platform.Log(LogLevel.Info, "Received association release request from {0} to {1}.", association.CallingAE, association.CalledAE);
+			if (_complete != null)
+				_complete(_context, association, _instances);
         }
 
         void IDicomServerHandler.OnReceiveAbort(DicomServer server, ServerAssociationParameters association, DicomAbortSource source, DicomAbortReason reason)
         {
-            Platform.Log(LogLevel.Error, "Received association abort from {0} to {1}", association.CallingAE, association.CalledAE);            
-        }
+            Platform.Log(LogLevel.Error, "Received association abort from {0} to {1}", association.CallingAE, association.CalledAE);
+			if (_complete != null)
+				_complete(_context, association, _instances);
+		}
 
         void IDicomServerHandler.OnNetworkError(DicomServer server, ServerAssociationParameters association, Exception e)
         {
             Platform.Log(LogLevel.Error, "Unexpectedly received OnNetworkError callback from {0} to {1}.  Aborting association.", association.CallingAE, association.CalledAE);
-            
+			if (_complete != null)
+				_complete(_context, association, _instances);
         }
 
         void IDicomServerHandler.OnDimseTimeout(DicomServer server, ServerAssociationParameters association)
@@ -213,7 +223,6 @@ namespace ClearCanvas.Dicom.Network.Scp
             // Annoying log
             //Platform.Log(LogLevel.Info, "Unexpected timeout waiting for activity on association from {0} to {1}.", association.CallingAE, association.CalledAE);
         }
-
 
         #endregion
     }

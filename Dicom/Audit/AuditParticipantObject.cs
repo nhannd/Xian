@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Network.Scu;
 
 namespace ClearCanvas.Dicom.Audit
 {
@@ -42,7 +43,7 @@ namespace ClearCanvas.Dicom.Audit
 	public class AuditSopClass
 	{
 		private readonly string _uid;
-		private readonly int _numberOfInstances;
+		private int _numberOfInstances;
 
 		public AuditSopClass(string uid, int numberOfInstances)
 		{
@@ -57,6 +58,7 @@ namespace ClearCanvas.Dicom.Audit
 		public int NumberOfInstances
 		{
 			get { return _numberOfInstances; }
+			set { _numberOfInstances = value; }
 		}
 	}
 
@@ -118,9 +120,10 @@ namespace ClearCanvas.Dicom.Audit
 		protected string _participantObjectQuery = null;
 		protected string _participantObjectDetail = null;
 		protected CodedValueType _typeCodeCodedValue;
-		protected List<AuditSopClass> _sopClassList;
+		protected Dictionary<string,AuditSopClass> _sopClassList = new Dictionary<string, AuditSopClass>();
 		protected string _accession = null;
 		protected string _mppsUid = null;
+		private string _participantObjectDescription;
 
 		protected AuditParticipantObject()
 		{}
@@ -223,9 +226,16 @@ namespace ClearCanvas.Dicom.Audit
 		public string ParticipantObjectDetail
 		{
 			get { return _participantObjectDetail; }
+			set { _participantObjectDetail = value; }
 		}
 
-		public List<AuditSopClass> SopClassList
+		public string ParticipantObjectDescription
+		{
+			get { return _participantObjectDescription; }
+			set { _participantObjectDescription = value; }
+		}
+
+		public Dictionary<string, AuditSopClass> SopClassDictionary
 		{
 			get { return _sopClassList; }
 		}
@@ -233,7 +243,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <summary>
 		/// Accession Number
 		/// </summary>
-		public string Accession
+		public string AccessionNumber
 		{
 			get { return _accession; }
 		}
@@ -259,6 +269,16 @@ namespace ClearCanvas.Dicom.Audit
 			ParticipantObjectIdTypeCode = ParticipantObjectIdTypeCodeEnum.PatientNumber;
 			_participantObjectId = patientId;
 			_participantObjectName = patientName;			
+		}
+
+		public string PatientId
+		{
+			get { return _participantObjectId; }
+		}
+
+		public string PatientsName
+		{
+			get { return _participantObjectName; }
 		}
 	}
 
@@ -295,7 +315,26 @@ namespace ClearCanvas.Dicom.Audit
 
 		public void AddSopClass(string uid, int numberOfInstances)
 		{
-			SopClassList.Add(new AuditSopClass(uid,numberOfInstances));
+			SopClassDictionary.Add(uid, new AuditSopClass(uid, numberOfInstances));
+		}
+
+		public string StudyInstanceUid
+		{
+			get { return _participantObjectId; }
+		}
+
+		public void AddStorageInstance(StorageInstance instance)
+		{
+			AuditSopClass sopClass;
+			if (SopClassDictionary.TryGetValue(instance.SopClass.Uid,out sopClass))
+			{
+				sopClass.NumberOfInstances++;
+			}
+			else
+			{
+				sopClass = new AuditSopClass(instance.SopClass.Uid, 1);
+				SopClassDictionary.Add(sopClass.UID, sopClass);
+			}
 		}
 	}
 
@@ -309,6 +348,16 @@ namespace ClearCanvas.Dicom.Audit
 			ParticipantObjectTypeCodeRole = role;
 			ParticipantObjectIdTypeCode = objectIdType;
 			_participantObjectId = participantObjectId;
+		}
+		public AuditSecurityAlertParticipantObject(ParticipantObjectTypeCodeRoleEnum role, ParticipantObjectIdTypeCodeEnum objectIdType, string participantObjectId, string participantObjectName)
+		{
+			Platform.CheckForNullReference(participantObjectId, "participantObjectId");
+
+			ParticipantObjectTypeCode = ParticipantObjectTypeCodeEnum.SystemObject;
+			ParticipantObjectTypeCodeRole = role;
+			ParticipantObjectIdTypeCode = objectIdType;
+			_participantObjectId = participantObjectId;
+			_participantObjectName = participantObjectName;
 		}
 	}
 }

@@ -60,11 +60,40 @@ namespace ClearCanvas.Dicom.Utilities.Xml
             get
             {
                 if (_studyInstanceUid == null)
-                    return "";
+                    return string.Empty;
                 return _studyInstanceUid;
             }
         }
 
+    	public String PatientsName
+    	{
+    		get
+    		{
+    			foreach (SeriesXml series in _seriesList.Values)
+					foreach (InstanceXml instance in series)
+					{
+						DicomAttribute attrib;
+						if (instance.Collection.TryGetAttribute(DicomTags.PatientsName, out attrib))
+							return attrib.GetString(0, string.Empty);
+					}
+    			return string.Empty;
+    		}
+    	}
+
+		public String PatientId
+		{
+			get
+			{
+				foreach (SeriesXml series in _seriesList.Values)
+					foreach (InstanceXml instance in series)
+					{
+						DicomAttribute attrib;
+						if (instance.Collection.TryGetAttribute(DicomTags.PatientId, out attrib))
+							return attrib.GetString(0, string.Empty);
+					}
+				return string.Empty;
+			}
+		}
 		public int NumberOfStudyRelatedSeries
     	{
 			get { return _seriesList.Count; }	

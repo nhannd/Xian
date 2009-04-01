@@ -47,6 +47,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 		private TransferSyntax _syntax;
 		private bool _infoLoaded = false;
 		private string _extendedFailureDescription;
+		private string _patientId = string.Empty;
+		private string _patientsName = string.Empty;
+		private string _studyInstanceUid = string.Empty;
 		private DicomFile _dicomFile = null;
 		#endregion
 
@@ -81,6 +84,33 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			get { return _sopInstanceUid; }
 			set { _sopInstanceUid = value; }
+		}
+
+		/// <summary>
+		/// The Study Instance Uid of the storage instance.
+		/// </summary>
+		public string StudyInstanceUid
+		{
+			get { return _studyInstanceUid; }
+			set { _studyInstanceUid = value; }
+		}
+
+		/// <summary>
+		/// The Patient's Name of the storage instance.
+		/// </summary>
+		public string PatientsName
+		{
+			get { return _patientsName; }
+			set { _patientsName = value; }
+		}
+
+		/// <summary>
+		/// The Patient Id of the storage instance.
+		/// </summary>
+		public string PatientId
+		{
+			get { return _patientId; }
+			set { _patientId = value; }
 		}
 
 		/// <summary>
@@ -144,6 +174,22 @@ namespace ClearCanvas.Dicom.Network.Scu
 			_sopInstanceUid = _dicomFile.MediaStorageSopInstanceUid;
 			_filename = dicomFile.Filename;
 
+			_studyInstanceUid = _dicomFile.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+			_patientsName = _dicomFile.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
+			_patientId = _dicomFile.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
+			_infoLoaded = true;
+		}
+
+		public StorageInstance(DicomMessage msg)
+		{
+			_sopClass = msg.SopClass;
+
+			_syntax = msg.TransferSyntax;
+			_sopInstanceUid = msg.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
+
+			_studyInstanceUid = msg.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+			_patientsName = msg.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
+			_patientId = msg.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
 			_infoLoaded = true;
 		}
 

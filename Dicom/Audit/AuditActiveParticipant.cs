@@ -41,7 +41,7 @@ namespace ClearCanvas.Dicom.Audit
 		}
 
 		/// <summary>
-		///    An identifier for the type of network access point that originated the audit event.
+		/// An identifier for the type of network access point that originated the audit event.
 		/// </summary>
 		public NetworkAccessPointTypeEnum? NetworkAccessPointType
 		{
@@ -201,6 +201,9 @@ namespace ClearCanvas.Dicom.Audit
 			_userId = userId;
 			_alternateUserId = alternateUserId;
 			_userName = userName;
+
+			_networkAccessPointType = NetworkAccessPointTypeEnum.IpAddress;
+			_networkAccessPointId = DicomAuditHelper.ProcessId;
 		}
 	}
 

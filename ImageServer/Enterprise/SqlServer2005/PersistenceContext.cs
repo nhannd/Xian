@@ -58,6 +58,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         #region Private Members
         private SqlConnection _connection;
         private ITransactionNotifier _transactionNotifier;
+    	private IEntityChangeSetRecorder _changeSetRecorder = new ChangeSetRecorder();
         #endregion
 
         #region Properties
@@ -131,11 +132,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
         {
             get
             {
-                throw new Exception("The method or operation is not implemented.");
+            	return _changeSetRecorder;
             }
             set
             {
-                throw new Exception("The method or operation is not implemented.");
+            	_changeSetRecorder = value;
             }
         }
 

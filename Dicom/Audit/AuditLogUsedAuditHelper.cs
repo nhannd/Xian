@@ -60,17 +60,13 @@ namespace ClearCanvas.Dicom.Audit
 
 			InternalAddAuditSource(auditSource);
 
-			ParticipantObjectIdentificationType o =
-			new ParticipantObjectIdentificationType(ParticipantObjectTypeCodeEnum.SystemObject,
-													ParticipantObjectTypeCodeRoleEnum.SecurityResource,
-													null,
-													uriOfAuditLog,
-													ParticipantObjectIdTypeCodeEnum.URI);
-			o.Item = "Security Audit Log";
-
+			AuditSecurityAlertParticipantObject o =
+				new AuditSecurityAlertParticipantObject(ParticipantObjectTypeCodeRoleEnum.SecurityResource,
+														ParticipantObjectIdTypeCodeEnum.URI, uriOfAuditLog,
+														"Security Audit Log");
 			// Only one can be included.
 			_participantObjectList.Clear();
-			_participantObjectList.Add(o);
+			_participantObjectList.Add(uriOfAuditLog, o);
 		}
 
 		/// <summary>

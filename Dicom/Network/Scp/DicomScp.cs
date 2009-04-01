@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using System.Net;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Network.Scu;
 
 namespace ClearCanvas.Dicom.Network.Scp
 {
@@ -71,6 +72,14 @@ namespace ClearCanvas.Dicom.Network.Scp
         /// <returns>true if the association should be accepted, false if rejected.</returns>
         public delegate bool AssociationVerifyCallback(TContext context, ServerAssociationParameters assocParms, out DicomRejectResult result, out DicomRejectReason reason);
 
+		/// <summary>
+		/// Delegate called after an association is complete with a list of Storage images transferred.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="assocParams"></param>
+		/// <param name="instances"></param>
+    	public delegate void AssociationComplete(
+    		TContext context, ServerAssociationParameters assocParams, List<StorageInstance> instances);
         #region Constructors
         /// <summary>
         /// Constructor for the DICOM SCP.
@@ -88,6 +97,25 @@ namespace ClearCanvas.Dicom.Network.Scp
             _context = context;
             _verifier = verifier;
         }
+
+		/// <summary>
+		/// Constructor for the DICOM SCP.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The constructor allows the user to pass an object to plugins that implement the 
+		/// <see cref="IDicomScp{TContext}"/> interface. 
+		/// </para>
+		/// </remarks>
+		/// <param name="context">An object to be passed to plugins implementing the <see cref="IDicomScp{TContext}"/> interface.</param>
+		/// <param name="verifier">Delegate called when a new association arrives to verify if it should be accepted or rejected.  Can be set to null.</param>
+		/// <param name="complete">Delegate called when the association is complete/released relaying storage instance information.  Typically used for audit log purposes.</param>
+		public DicomScp(TContext context, AssociationVerifyCallback verifier, AssociationComplete complete)
+		{
+			_context = context;
+			_verifier = verifier;
+			_complete = complete;
+		}
         #endregion
 
         #region Private Members
@@ -97,6 +125,7 @@ namespace ClearCanvas.Dicom.Network.Scp
         private ServerAssociationParameters _assocParameters;
         private readonly TContext _context;
         private readonly AssociationVerifyCallback _verifier;
+    	private readonly AssociationComplete _complete;
         #endregion
 
         #region Properties
@@ -179,10 +208,11 @@ namespace ClearCanvas.Dicom.Network.Scp
         /// that implements the <see cref="IDicomServerHandler"/> interface for a new incoming association.
         /// </summary>
         /// <param name="assoc">The association parameters for the negotiated association.</param>
+        /// <param name="server">The server.</param>
         /// <returns>A new <see cref="DicomScpHandler{TContext}"/> instance.</returns>
         public IDicomServerHandler StartAssociation(DicomServer server, ServerAssociationParameters assoc)
         {
-            return new DicomScpHandler<TContext>(server, assoc, _context, _verifier);
+        	return new DicomScpHandler<TContext>(server, assoc, _context, _verifier, _complete);
         }
 
         /// <summary>
