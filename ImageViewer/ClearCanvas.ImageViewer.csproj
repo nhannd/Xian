@@ -342,6 +342,7 @@
     <Compile Include="Rendering\RendererFactoryBase.cs" />
     <Compile Include="Rendering\RenderPerformanceReportBroker.cs" />
     <Compile Include="StudyManagement\FrameReference.cs" />
+    <Compile Include="StudyManagement\PrefetchingStrategy.cs" />
     <Compile Include="StudyManagement\SopReference.cs" />
     <Compile Include="StudyManagement\Frame.cs" />
     <Compile Include="StudyManagement\FrameCollection.cs" />
@@ -439,7 +440,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ValidationSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="StudyManagement\VisibleDisplaySetPrefetchingStrategy.cs" />
     <Compile Include="Tests\BuildTreeTest.cs" />
     <Compile Include="Tests\AddImageTest.cs" />
     <Compile Include="Tests\DisplaySetSelectionTest.cs" />

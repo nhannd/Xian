@@ -69,7 +69,7 @@ namespace StreamingClientConsole
                                     s.StudyUid,
                                     seriesXml.SeriesInstanceUid,
                                     instanceXml.SopInstanceUid,
-                                    0);                                
+                                    0).GetPixelData();                                
                             }
                         }
                     }

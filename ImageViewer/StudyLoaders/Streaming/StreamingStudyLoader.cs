@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		public StreamingStudyLoader() : base("CC_STREAMING")
 		{
-			PrefetchingStrategy = new VisibleDisplaySetPrefetchingStrategy(StreamingSettings.Default.PrefetchingConcurrency);
+			PrefetchingStrategy = new StreamingPrefetchingStrategy();
 		}
 
 		public override int OnStart(StudyLoaderArgs studyLoaderArgs)
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			if (!_instances.MoveNext())
 				return null;
 
-			return new StreamingSopDataSource(_instances.Current, _ae.Host, _ae.AETitle, _ae.WadoServicePort);
+			return new StreamingSopDataSource(_instances.Current, _ae.Host, _ae.AETitle, StreamingSettings.Default.FormatWadoUriPrefix, _ae.WadoServicePort);
 		}
 
 		private XmlDocument RetrieveHeaderXml(StudyLoaderArgs studyLoaderArgs)

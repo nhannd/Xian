@@ -8,6 +8,49 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.ServiceModel.Streaming
 {
+	public class RetrievePixelDataResult
+	{
+		private readonly FrameStreamingResultMetaData _metaData;
+		private DicomCompressedPixelData _compressedPixelData;
+		private byte[] _pixelData;
+
+		internal RetrievePixelDataResult(byte[] uncompressedPixelData, FrameStreamingResultMetaData resultMetaData)
+		{
+			_pixelData = uncompressedPixelData;
+			_metaData = resultMetaData;
+		}
+
+		internal RetrievePixelDataResult(DicomCompressedPixelData compressedPixelData, FrameStreamingResultMetaData resultMetaData)
+		{
+			_compressedPixelData = compressedPixelData;
+			_metaData = resultMetaData;
+		}
+
+		public FrameStreamingResultMetaData MetaData
+		{
+			get { return _metaData; }	
+		}
+
+		public byte[] GetPixelData()
+		{
+			if (_compressedPixelData != null)
+			{
+				try
+				{
+					byte[] uncompressed = _compressedPixelData.GetFrame(0);
+
+					_pixelData = uncompressed;
+					_compressedPixelData = null;
+				}
+				catch (Exception ex)
+				{
+					throw new Exception(String.Format("Error occurred while decompressing the pixel data: {0}", ex.Message));
+				}
+			}
+
+			return _pixelData;
+		}
+	}
 
     /// <summary>
     /// Represents a web client that can be used to retrieve study images or pixel data from a streaming server using WADO protocol.
@@ -27,13 +70,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 
         #region Public Methods
 
-        public byte[] RetrievePixelData(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid, int frame)
-        {
-            FrameStreamingResultMetaData result;
-            return RetrievePixelData(serverAE, studyInstanceUID, seriesInstanceUID, sopInstanceUid, frame, out result);
-        }
-
-        public byte[] RetrievePixelData(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid, int frame, out FrameStreamingResultMetaData metaInfo)
+		public RetrievePixelDataResult RetrievePixelData(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid, int frame)
         {
             CodeClock clock = new CodeClock();
 			clock.Start();
@@ -90,14 +127,11 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 			clock.Stop();
 			PerformanceReportBroker.PublishReport("Streaming", "RetrievePixelData", clock.Seconds);
 
-            if (response.Headers["Compressed"] != null && bool.Parse(response.Headers["Compressed"]))
-            {
-                buffer = DecompressPixelData(response, buffer);
-            }
-
-			metaInfo = result;
-            return buffer;
-        }
+			if (response.Headers["Compressed"] != null && bool.Parse(response.Headers["Compressed"]))
+				return new RetrievePixelDataResult(CreateCompressedPixelData(response, buffer), result);
+			else
+				return new RetrievePixelDataResult(buffer, result);
+		}
 
 		public Stream RetrieveImageHeader(string serverAE, string studyInstanceUID, string seriesInstanceUID, string sopInstanceUid)
 		{
@@ -128,7 +162,7 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 
         #endregion Public Methods
 
-        #region Private Static Methods
+		#region Private Methods
 
 		private string BuildImageUrl(string serverAE, string studyInstanceUid, string seriesInstanceUid, string sopInstanceUid)
 		{
@@ -151,15 +185,15 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 			return url.ToString();
 		}
 
-    	private static MemoryStream RetrieveImageData(string url, out StreamingResultMetaData result)
+		private static MemoryStream RetrieveImageData(string url, out StreamingResultMetaData result)
 		{
 			result = new StreamingResultMetaData();
 
 			result.Speed.Start();
 
-			HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url.ToString());
+			HttpWebRequest request = (HttpWebRequest) WebRequest.Create(url.ToString());
 			request.Accept = "application/dicom,application/clearcanvas,application/clearcanvas-header,image/jpeg";
-			HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+			HttpWebResponse response = (HttpWebResponse) request.GetResponse();
 			if (response.StatusCode != HttpStatusCode.OK)
 			{
 				throw new Exception(String.Format("Server responded with an error: {0}", HttpUtility.HtmlDecode(response.StatusDescription)));
@@ -190,64 +224,42 @@ namespace ClearCanvas.Dicom.ServiceModel.Streaming
 			return new MemoryStream(buffer);
 		}
 
-    	/// <summary>
-        /// Decompressed an image buffer returned by wado http response.
-        /// </summary>
-        /// <param name="response">WADO http response</param>
-        /// <param name="buffer">Compressed pixel data</param>
-        /// <returns></returns>
-        private static byte[] DecompressPixelData(HttpWebResponse response, byte[] buffer)
-        {
-            try
-            {
-				CodeClock clock = new CodeClock();
-				clock.Start();
+		private static DicomCompressedPixelData CreateCompressedPixelData(HttpWebResponse response, byte[] pixelDataBuffer)
+		{
+			string transferSyntaxUid = response.Headers["TransferSyntaxUid"];
+			TransferSyntax transferSyntax = TransferSyntax.GetTransferSyntax(transferSyntaxUid);
+			ushort bitsAllocated = ushort.Parse(response.Headers["BitsAllocated"]);
+			ushort bitsStored = ushort.Parse(response.Headers["BitsStored"]);
+			ushort height = ushort.Parse(response.Headers["ImageHeight"]);
+			ushort width = ushort.Parse(response.Headers["ImageWidth"]);
+			ushort samples = ushort.Parse(response.Headers["SamplesPerPixel"]);
 
-                string transferSyntaxUid = response.Headers["TransferSyntaxUid"];
-                TransferSyntax transferSyntax = TransferSyntax.GetTransferSyntax(transferSyntaxUid);
-                ushort bitesAllocated = ushort.Parse(response.Headers["BitsAllocated"]);
-                ushort bitsStored = ushort.Parse(response.Headers["BitsStored"]);
-                ushort height = ushort.Parse(response.Headers["ImageHeight"]);
-                ushort width = ushort.Parse(response.Headers["ImageWidth"]);
-                ushort samples = ushort.Parse(response.Headers["SamplesPerPixel"]);
+			DicomAttributeCollection collection = new DicomAttributeCollection();
+			collection[DicomTags.BitsAllocated].SetUInt16(0, bitsAllocated);
+			collection[DicomTags.BitsStored].SetUInt16(0, bitsStored);
+			collection[DicomTags.HighBit].SetUInt16(0, ushort.Parse(response.Headers["HighBit"]));
+			collection[DicomTags.Rows].SetUInt16(0, height);
+			collection[DicomTags.Columns].SetUInt16(0, width);
+			collection[DicomTags.PhotometricInterpretation].SetStringValue(response.Headers["PhotometricInterpretation"]);
+			collection[DicomTags.PixelRepresentation].SetUInt16(0, ushort.Parse(response.Headers["PixelRepresentation"]));
+			collection[DicomTags.SamplesPerPixel].SetUInt16(0, samples);
+			collection[DicomTags.DerivationDescription].SetStringValue(response.Headers["DerivationDescription"]);
+			collection[DicomTags.LossyImageCompression].SetStringValue(response.Headers["LossyImageCompression"]);
+			collection[DicomTags.LossyImageCompressionMethod].SetStringValue(response.Headers["LossyImageCompressionMethod"]);
+			collection[DicomTags.LossyImageCompressionRatio].SetFloat32(0, float.Parse(response.Headers["LossyImageCompressionRatio"]));
+			collection[DicomTags.PixelData] = new DicomFragmentSequence(DicomTags.PixelData);
 
-                DicomAttributeCollection collection = new DicomAttributeCollection();
-                collection[DicomTags.BitsAllocated].SetUInt16(0, bitesAllocated);
-                collection[DicomTags.BitsStored].SetUInt16(0, bitsStored);
-                collection[DicomTags.HighBit].SetUInt16(0, ushort.Parse(response.Headers["HighBit"]));
-                collection[DicomTags.Rows].SetUInt16(0, height);
-                collection[DicomTags.Columns].SetUInt16(0, width);
-                collection[DicomTags.PhotometricInterpretation].SetStringValue(response.Headers["PhotometricInterpretation"]);
-                collection[DicomTags.PixelRepresentation].SetUInt16(0, ushort.Parse(response.Headers["PixelRepresentation"]));
-                collection[DicomTags.SamplesPerPixel].SetUInt16(0, samples);
-                collection[DicomTags.DerivationDescription].SetStringValue(response.Headers["DerivationDescription"]);
-                collection[DicomTags.LossyImageCompression].SetStringValue(response.Headers["LossyImageCompression"]);
-                collection[DicomTags.LossyImageCompressionMethod].SetStringValue(response.Headers["LossyImageCompressionMethod"]);
-                collection[DicomTags.LossyImageCompressionRatio].SetFloat32(0, float.Parse(response.Headers["LossyImageCompressionRatio"]));
-                collection[DicomTags.PixelData] = new DicomFragmentSequence(DicomTags.PixelData);
+			ushort planar;
+			if (ushort.TryParse(response.Headers["PlanarConfiguration"], out planar))
+				collection[DicomTags.PlanarConfiguration].SetUInt16(0, planar);
 
-                ushort planar;
-                if (ushort.TryParse(response.Headers["PlanarConfiguration"], out planar))
-                    collection[DicomTags.PlanarConfiguration].SetUInt16(0, planar);
+			DicomCompressedPixelData cpd = new DicomCompressedPixelData(collection);
+			cpd.TransferSyntax = transferSyntax;
+			cpd.AddFrameFragment(pixelDataBuffer);
 
-                DicomCompressedPixelData cpd = new DicomCompressedPixelData(collection);
-                cpd.TransferSyntax = transferSyntax;
+			return cpd;
+		}
 
-                cpd.AddFrameFragment(buffer);
-                buffer = cpd.GetFrame(0);
-
-				clock.Stop();
-				PerformanceReportBroker.PublishReport("Streaming", "DecompressPixelData", clock.Seconds);
-
-                return buffer;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(String.Format("Error occurred while decompressing the pixel data: {0}", ex.Message));
-            }
-
-        }
-        #endregion
-
-    }
+		#endregion
+	}
 }

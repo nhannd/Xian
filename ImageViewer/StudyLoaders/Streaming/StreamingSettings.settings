@@ -8,8 +8,23 @@
     <Setting Name="FormatHeaderServiceUri" Type="System.String" Scope="Application">
       <Value Profile="(Default)">http://{0}:{1}/HeaderStreaming/HeaderStreaming</Value>
     </Setting>
-    <Setting Name="PrefetchingConcurrency" Type="System.Int32" Scope="Application">
+    <Setting Name="RetrieveConcurrency" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="SelectedWeighting" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">3</Value>
+    </Setting>
+    <Setting Name="UnselectedWeighting" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
+    <Setting Name="DecompressConcurrency" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
+    <Setting Name="ImageWindow" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">-1</Value>
+    </Setting>
+    <Setting Name="AvailableMemoryLimitMegabytes" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">250</Value>
     </Setting>
   </Settings>
 </SettingsFile>

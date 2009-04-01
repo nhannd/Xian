@@ -36,13 +36,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BlockingCollection.cs" />
+    <Compile Include="BlockingThreadPool.cs" />
+    <Compile Include="ImageBoxFrameSelectionStrategy.cs" />
     <Compile Include="HeaderRetrievalServiceClient.cs" />
+    <Compile Include="IBlockingEnumerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="StreamingPrefetchingStrategy.cs" />
     <Compile Include="StreamingSopDataSource.cs" />
     <Compile Include="StreamingSettings.cs" />
     <Compile Include="StreamingSettings.Designer.cs">
@@ -51,6 +56,7 @@
       <DependentUpon>StreamingSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="StreamingStudyLoader.cs" />
+    <Compile Include="ViewerFrameEnumerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

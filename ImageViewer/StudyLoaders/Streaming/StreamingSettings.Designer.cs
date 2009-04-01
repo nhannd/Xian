@@ -44,9 +44,54 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5")]
-        public int PrefetchingConcurrency {
+        public int RetrieveConcurrency {
             get {
-                return ((int)(this["PrefetchingConcurrency"]));
+                return ((int)(this["RetrieveConcurrency"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("3")]
+        public int SelectedWeighting {
+            get {
+                return ((int)(this["SelectedWeighting"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int UnselectedWeighting {
+            get {
+                return ((int)(this["UnselectedWeighting"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int DecompressConcurrency {
+            get {
+                return ((int)(this["DecompressConcurrency"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("-1")]
+        public int ImageWindow {
+            get {
+                return ((int)(this["ImageWindow"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("250")]
+        public int AvailableMemoryLimitMegabytes {
+            get {
+                return ((int)(this["AvailableMemoryLimitMegabytes"]));
             }
         }
     }

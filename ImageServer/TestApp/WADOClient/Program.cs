@@ -164,8 +164,9 @@ namespace WADOClient
                                 int frameCount = 0;
                                 do
                                 {
-                                    client.RetrievePixelData(serverAE, studyUid, seriesUid, uid, frameCount, out frameMetaData);
-                                    totalFrameCount++;
+									RetrievePixelDataResult result = client.RetrievePixelData(serverAE, studyUid, seriesUid, uid, frameCount);
+                                	frameMetaData = result.MetaData;
+									totalFrameCount++;
                                     frameCount++;
                                     averageSpeed.AddSample(frameMetaData.Speed);
                                     totalSize.Value += (ulong)frameMetaData.ContentLength;

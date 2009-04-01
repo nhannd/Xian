@@ -41,10 +41,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		//TODO: push up?
 		protected virtual void EnsureLoaded()
 		{
 		}
 
+		//TODO: is there a better way to do this?
 		private void Load()
 		{
 			lock(SyncLock)

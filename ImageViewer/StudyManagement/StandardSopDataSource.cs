@@ -62,9 +62,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		
 		//NOTE: no need to implement anything here, at least for pixel data, since we're using a WeakReferenceCache.
-		public override void UnloadFrameData(int frameNumber)
+		protected virtual void OnUnloadFrameData(int frameNumber)
 		{
+		}
+
+		public sealed override void UnloadFrameData(int frameNumber)
+		{
+			lock(SyncLock)
+			{
+				OnUnloadFrameData(frameNumber);
+			}
 		}
 	}
 }

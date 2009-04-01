@@ -11,18 +11,105 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
 	internal class StreamingSopDataSource : DicomMessageSopDataSource
 	{
+		private class FramePixelData
+		{
+			private readonly StreamingSopDataSource _parent;
+			private readonly int _frameNumber;
+
+			private readonly object _syncLock = new object();
+			private volatile bool _alreadyRetrieved;
+			private RetrievePixelDataResult _retrieveResult;
+
+			public FramePixelData(StreamingSopDataSource parent, int frameNumber)
+			{
+				_parent = parent;
+				_frameNumber = frameNumber;
+			}
+
+			private void RetrievePixelData(bool force, out RetrievePixelDataResult result)
+			{
+				//get this information before locking so there's no chance of deadlocking
+				//with the parent data source (because we are accessing it's tags at the 
+				//same time as it's trying to get the pixel data).
+				string host = _parent._host;
+				string aeTitle = _parent._aeTitle;
+				string wadoPrefix = _parent._wadoUriPrefix;
+				int wadoPort = _parent._wadoServicePort;
+
+				Uri baseUri = new Uri(String.Format(wadoPrefix, host, wadoPort));
+				StreamingClient client = new StreamingClient(baseUri);
+
+				string studyInstanceUid = _parent.StudyInstanceUid;
+				string seriesInstanceUid = _parent.SeriesInstanceUid;
+				string sopInstanceUid = _parent.SopInstanceUid;
+
+				lock (_syncLock)
+				{
+					if (!_alreadyRetrieved || force)
+					{
+						_retrieveResult =
+							client.RetrievePixelData(aeTitle, studyInstanceUid, seriesInstanceUid, sopInstanceUid, _frameNumber - 1);
+						_alreadyRetrieved = true;
+					}
+
+					result = _retrieveResult;
+				}
+			}
+
+			public bool AlreadyRetrieved
+			{
+				get { return _alreadyRetrieved; }	
+			}
+
+			public void RetrievePixelData(bool force)
+			{
+				RetrievePixelDataResult result;
+				RetrievePixelData(force, out result);
+			}
+
+			public byte[] GetUncompressedPixelData()
+			{
+				RetrievePixelDataResult result;
+				//important: do not put a lock around this method; it will deadlock with the parent synclock
+				RetrievePixelData(false, out result);
+
+				lock (_syncLock)
+				{
+					//free this memory up - the parent already has the uncompressed data.
+					_retrieveResult = null;
+					
+					//synchronize the call to decompress; it's really already synchronized by
+					//the parent b/c it's only called from CreateFrameNormalizedPixelData, but it doesn't hurt.
+					return result.GetPixelData();
+				}
+			}
+
+			public void Unload()
+			{
+				lock (_syncLock)
+				{
+					_alreadyRetrieved = false;
+					_retrieveResult = null;
+				}
+			}
+		}
+
 		private readonly InstanceXml _instanceXml;
 		private readonly string _host;
 		private readonly string _aeTitle;
+		private readonly string _wadoUriPrefix;
 		private readonly int _wadoServicePort;
 		private volatile bool _fullHeaderRetrieved = false;
 
-		public StreamingSopDataSource(InstanceXml instanceXml, string host, string aeTitle, int wadoServicePort)
+		private volatile FramePixelData[] _retrieveResults;
+
+		public StreamingSopDataSource(InstanceXml instanceXml, string host, string aeTitle, string wadoUriPrefix, int wadoServicePort)
 			: base(new DicomFile("", new DicomAttributeCollection(), instanceXml.Collection))
 		{
 			_instanceXml = instanceXml;
 			_host = host;
 			_aeTitle = aeTitle;
+			_wadoUriPrefix = wadoUriPrefix;
 			_wadoServicePort = wadoServicePort;
 		}
 
@@ -53,13 +140,48 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			}
 		}
 
-		protected override byte[]  CreateFrameNormalizedPixelData(int frameNumber)
+		private FramePixelData[] RetrieveResults
 		{
-			Uri uri = new Uri(String.Format(StreamingSettings.Default.FormatWadoUriPrefix, _host, _wadoServicePort));
-			StreamingClient client = new StreamingClient(uri);
+			get
+			{
+				if (_retrieveResults == null)
+				{
+					lock (SyncLock)
+					{
+						if (_retrieveResults == null)
+						{
+							_retrieveResults = new FramePixelData[NumberOfFrames];
+							for (int i = 0; i < _retrieveResults.Length; ++i)
+								_retrieveResults[i] = new FramePixelData(this, i + 1);
+						}
+					}
+				}
 
-			byte[] pixelData = client.RetrievePixelData(_aeTitle, StudyInstanceUid, SeriesInstanceUid, SopInstanceUid, frameNumber - 1);
+				return _retrieveResults;
+			}	
+		}
 
+		public void RetrievePixelData(int frameNumber)
+		{
+			RetrievePixelData(frameNumber, false);
+		}
+
+		public void RetrievePixelData(int frameNumber, bool force)
+		{
+			RetrieveResults[frameNumber - 1].RetrievePixelData(force);
+		}
+
+		internal bool IsFrameRetrieved(int frameNumber)
+		{
+			return RetrieveResults[frameNumber - 1].AlreadyRetrieved;
+		}
+
+		protected override byte[] CreateFrameNormalizedPixelData(int frameNumber)
+		{
+			int frameIndex = frameNumber - 1;
+
+			byte[] pixelData = RetrieveResults[frameIndex].GetUncompressedPixelData();
+			
 			string photometricInterpretationCode = this[DicomTags.PhotometricInterpretation].ToString();
 			PhotometricInterpretation pi = PhotometricInterpretation.FromCodeString(photometricInterpretationCode);
 
@@ -80,9 +202,17 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			return pixelData;
 		}
 
+		protected override void OnUnloadFrameData(int frameNumber)
+		{
+			this.RetrieveResults[frameNumber - 1].Unload();
+		}
+
 		private bool NeedFullHeader(uint tag)
 		{
-			if (CollectionUtils.Contains(AttributeCollection.ExcludedTags,
+			if (_fullHeaderRetrieved)
+				return false;
+
+			if (CollectionUtils.Contains(AttributeCollection.ExcludedTags, 
 				delegate(DicomTag dicomTag) { return dicomTag.TagValue == tag; }))
 			{
 				return true;
