@@ -11,14 +11,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[MenuAction("start", "global-menus/MenuTools/MenuServices/MenuStart", "StartService")]
 	[EnabledStateObserver("start", "StartEnabled", "EnabledChanged")]
+	[IconSet("start", IconScheme.Colour, "Icons.StartServiceToolSmall.png", "Icons.StartServiceToolMedium.png", "Icons.StartServiceToolLarge.png")]
 	[ActionPermission("start", AuthorityTokens.Management.Services)]
 
 	[MenuAction("stop", "global-menus/MenuTools/MenuServices/MenuStop", "StopService")]
 	[EnabledStateObserver("stop", "StopEnabled", "EnabledChanged")]
+	[IconSet("stop", IconScheme.Colour, "Icons.StopServiceToolSmall.png", "Icons.StopServiceToolMedium.png", "Icons.StopServiceToolLarge.png")]
 	[ActionPermission("stop", AuthorityTokens.Management.Services)]
 
 	[MenuAction("restart", "global-menus/MenuTools/MenuServices/MenuRestart", "RestartService")]
 	[EnabledStateObserver("restart", "StopEnabled", "EnabledChanged")]
+	[IconSet("restart", IconScheme.Colour, "Icons.RestartServiceToolSmall.png", "Icons.RestartServiceToolMedium.png", "Icons.RestartServiceToolLarge.png")]
 	[ActionPermission("restart", AuthorityTokens.Management.Services)]
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]

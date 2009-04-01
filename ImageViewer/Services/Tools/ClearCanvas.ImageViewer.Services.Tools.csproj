@@ -146,6 +146,17 @@
       <LastGenOutput>ServiceControlSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RestartServiceToolLarge.png" />
+    <EmbeddedResource Include="Icons\RestartServiceToolMedium.png" />
+    <EmbeddedResource Include="Icons\RestartServiceToolSmall.png" />
+    <EmbeddedResource Include="Icons\StartServiceToolLarge.png" />
+    <EmbeddedResource Include="Icons\StartServiceToolMedium.png" />
+    <EmbeddedResource Include="Icons\StartServiceToolSmall.png" />
+    <EmbeddedResource Include="Icons\StopServiceToolLarge.png" />
+    <EmbeddedResource Include="Icons\StopServiceToolMedium.png" />
+    <EmbeddedResource Include="Icons\StopServiceToolSmall.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
