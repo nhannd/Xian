@@ -46,11 +46,6 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class SetupApplication : IApplicationRoot
     {
-        private const string SysAdminUserName = "sa";
-        private const string SysAdminDisplayName = "sysadmin";
-        private const string SysAdminInitialPassword = "clearcanvas";
-        private const string SysAdminGroup = "Administrators";
-
         #region IApplicationRoot Members
 
         public void RunApplication(string[] args)
@@ -72,7 +67,7 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 					// create the sys admin group, which has all tokens assigned by default
 					string[] tokenStrings = CollectionUtils.Map<AuthorityToken, string, List<string>>(allTokens,
 					   delegate(AuthorityToken t) { return t.Name; }).ToArray();
-					AuthorityGroupDefinition adminGroupDef = new AuthorityGroupDefinition(SysAdminGroup, tokenStrings);
+					AuthorityGroupDefinition adminGroupDef = new AuthorityGroupDefinition(cmdLine.SysAdminGroup, tokenStrings);
 					AuthorityGroupImporter groupImporter = new AuthorityGroupImporter();
 
 					IList<AuthorityGroup> groups = 
@@ -80,10 +75,10 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 
 					// find the admin group entity that was just created
 					AuthorityGroup adminGroup = CollectionUtils.SelectFirst(groups,
-						delegate(AuthorityGroup g) { return g.Name == SysAdminGroup; });
+						delegate(AuthorityGroup g) { return g.Name == cmdLine.SysAdminGroup; });
 
 					// create the "sa" user
-					CreateSysAdminUser(adminGroup, PersistenceScope.CurrentContext, Console.Out);
+					CreateSysAdminUser(adminGroup, cmdLine, PersistenceScope.CurrentContext, Console.Out);
 
 					// optionally import other default authority groups defined in other plugins
 					if (cmdLine.ImportDefaultAuthorityGroups)
@@ -101,17 +96,17 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
 			}
         }
 
-        public void CreateSysAdminUser(AuthorityGroup adminGroup, IPersistenceContext context, TextWriter log)
+        private void CreateSysAdminUser(AuthorityGroup adminGroup, SetupCommandLine cmdLine, IPersistenceContext context, TextWriter log)
         {
             try
             {
                 // create the sa user, if doesn't already exist
                 IUserBroker userBroker = context.GetBroker<IUserBroker>();
                 UserSearchCriteria where = new UserSearchCriteria();
-                where.UserName.EqualTo(SysAdminUserName);
+				where.UserName.EqualTo(cmdLine.SysAdminUserName);
                 userBroker.FindOne(where);
 
-                log.WriteLine(string.Format("User '{0}' already exists.", SysAdminUserName));
+				log.WriteLine(string.Format("User '{0}' already exists.", cmdLine.SysAdminUserName));
             }
             catch (EntityNotFoundException)
             {
@@ -122,8 +117,8 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
                 // (note that DateTime.Now is used instead of Platform.Time because
                 // we don't want to assume there is a time-server during setup)
                 User saUser = User.CreateNewUser(
-                    new UserInfo(SysAdminUserName, SysAdminDisplayName, null, null),
-                    Password.CreatePassword(SysAdminInitialPassword, DateTime.Now),
+					new UserInfo(cmdLine.SysAdminUserName, cmdLine.SysAdminDisplayName, null, null),
+					Password.CreatePassword(cmdLine.SysAdminInitialPassword, DateTime.Now),
                     groups);
                 context.Lock(saUser, DirtyState.New);
             }
