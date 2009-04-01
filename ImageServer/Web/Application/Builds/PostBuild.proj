@@ -1,69 +1,68 @@
 <Project DefaultTargets="CopyPlugins;CopyBin;CopyConfigFiles" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <Choose>
-    <When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
-      <PropertyGroup>
-        <BuildPlatform>x64</BuildPlatform>
-      </PropertyGroup>
-    </When>
-    <When Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' ">
-      <PropertyGroup>
-        <BuildPlatform>x86</BuildPlatform>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <PropertyGroup>
-        <BuildPlatform></BuildPlatform>
-      </PropertyGroup>
-    </Otherwise>
+	<When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
+	  <PropertyGroup>
+		<BuildPlatform>x64</BuildPlatform>
+	  </PropertyGroup>
+	</When>
+	<When Condition="'$(PROCESSOR_ARCHITECTURE)' == 'x86' ">
+	  <PropertyGroup>
+		<BuildPlatform>x86</BuildPlatform>
+	  </PropertyGroup>
+	</When>
+	<Otherwise>
+	  <PropertyGroup>
+		<BuildPlatform></BuildPlatform>
+	  </PropertyGroup>
+	</Otherwise>
   </Choose>
 
   <PropertyGroup>
-    <TargetPlatform>$(BuildPlatform)</TargetPlatform>
+	<TargetPlatform>$(BuildPlatform)</TargetPlatform>
   </PropertyGroup>
 
   <Choose>
-    <When Condition=" '$(TargetPlatform)' != 'x86' ">
-      <PropertyGroup>
-        <PlatformSubFolder>$(TargetPlatform)</PlatformSubFolder>
-      </PropertyGroup>
-    </When>
-    <Otherwise>
-      <!-- assumes Win32 -->
-      <PropertyGroup>
-        <PlatformSubFolder></PlatformSubFolder>
-      </PropertyGroup>
-    </Otherwise>
+	<When Condition=" '$(TargetPlatform)' != 'x86' ">
+	  <PropertyGroup>
+		<PlatformSubFolder>$(TargetPlatform)</PlatformSubFolder>
+	  </PropertyGroup>
+	</When>
+	<Otherwise>
+	  <!-- assumes Win32 -->
+	  <PropertyGroup>
+		<PlatformSubFolder></PlatformSubFolder>
+	  </PropertyGroup>
+	</Otherwise>
   </Choose>
 
   <ItemGroup>
-	  <PluginFiles Include="$(ProjectDir)\..\..\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll"/>
+	<PluginFiles Include="$(ProjectDir)\..\..\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll"/>
-	  <PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
-		<PluginFiles Include="$(ProjectDir)\..\..\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll"/>
-		<PluginFiles Include="$(ProjectDir)\..\..\Rules\JpegCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.JpegCodec.dll"/>
-		<PluginFiles Include="$(ProjectDir)\..\..\Rules\RleCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.RleCodec.dll"/>
-	  <PluginFiles Include="$(ProjectDir)\..\..\Services\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Common.dll"/>
-		<BinFiles Include="$(ProjectDir)\..\..\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll"/>
-    <ConfigFiles Include="$(ProjectDir)\..\..\..\ImageServer\Executable\Logging.config"/>
-	</ItemGroup>
-	<Target Name="CopyPlugins">
-		<Message Text="Copying plugin assemblies into plugins folder (ASP.NET Development Server must not be running)"/>
-		<Message Text="$(ProjectDir)"/>
-		<Message Text="@(PluginFiles)"/>
-		<Copy SkipUnchangedFiles="true" SourceFiles="@(PluginFiles)" DestinationFolder="$(ProjectDir)\plugins"/>
-	</Target> 
-	<Target Name="CopyBin">
-		<Message Text="Copying common assemblies into bin folder (ASP.NET Development Server must not be running)"/>
-		<Message Text="$(ProjectDir)"/>
-		<Message Text="@(BinFiles)"/>
-		<Copy SkipUnchangedFiles="true" SourceFiles="@(BinFiles)" DestinationFolder="$(ProjectDir)\bin"/>
-	</Target>
-  <Target Name="CopyConfigFiles">
-    <Message Text="Copying config files into output folder (ASP.NET Development Server must not be running)"/>
-    <Message Text="$(ProjectDir)"/>
-    <Message Text="@(ConfigFiles)"/>
-    <Copy SkipUnchangedFiles="true" SourceFiles="@(ConfigFiles)" DestinationFolder="$(ProjectDir)"/>
+	<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
+	<PluginFiles Include="$(ProjectDir)\..\..\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll"/>
+	<PluginFiles Include="$(ProjectDir)\..\..\Rules\JpegCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.JpegCodec.dll"/>
+	<PluginFiles Include="$(ProjectDir)\..\..\Rules\RleCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.RleCodec.dll"/>
+	<PluginFiles Include="$(ProjectDir)\..\..\Services\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Common.dll"/>
+	<ConfigFiles Include="$(ProjectDir)\..\..\..\ImageServer\Executable\Logging.config"/>
+  </ItemGroup>
+  <Target Name="CopyPlugins">
+	<Message Text="Copying plugin assemblies into plugins folder (ASP.NET Development Server must not be running)"/>
+	<Message Text="$(ProjectDir)"/>
+	<Message Text="@(PluginFiles)"/>
+	<Copy SkipUnchangedFiles="true" SourceFiles="@(PluginFiles)" DestinationFolder="$(ProjectDir)\plugins"/>
   </Target>
-</Project> 
+  <Target Name="CopyBin">
+	<Message Text="Copying common assemblies into bin folder (ASP.NET Development Server must not be running)"/>
+	<Message Text="$(ProjectDir)"/>
+	<Message Text="@(BinFiles)"/>
+	<Copy SkipUnchangedFiles="true" SourceFiles="@(BinFiles)" DestinationFolder="$(ProjectDir)\bin"/>
+  </Target>
+  <Target Name="CopyConfigFiles">
+	<Message Text="Copying config files into output folder (ASP.NET Development Server must not be running)"/>
+	<Message Text="$(ProjectDir)"/>
+	<Message Text="@(ConfigFiles)"/>
+	<Copy SkipUnchangedFiles="true" SourceFiles="@(ConfigFiles)" DestinationFolder="$(ProjectDir)"/>
+  </Target>
+</Project>

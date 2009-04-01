@@ -86,9 +86,7 @@ namespace ClearCanvas.ImageServer.Common
 				if (_log == null)
 					_log = new AuditLog("ImageServer");
 
-//				_log.WriteEntry(operation, helper.Serialize(false));
-
-				Platform.Log(LogLevel.Info, helper.Serialize(true));
+				_log.WriteEntry(operation, helper.Serialize(false));
 			}
 		}
 
