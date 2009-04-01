@@ -1,5 +1,3 @@
-#if DEBUG
-
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -62,8 +60,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	#endregion
 	#endregion
 
+#if DEBUG
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
+#endif
+
 	public class DrawShutterTool : MouseImageViewerTool
 	{
 		#region MouseInformation Proxy
@@ -474,5 +475,3 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 	}
 }
-
-#endif
