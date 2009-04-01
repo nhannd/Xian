@@ -248,6 +248,10 @@
     <!-- Thumbnails -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Thumbnails\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.dll" />
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Thumbnails\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Thumbnails.View.WinForms.dll" />
+    
+    <!-- Study Filters -->
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Utilities\StudyFilters\bin\$(Configuration)\ClearCanvas.ImageViewer.Utilities.StudyFilters.dll" />
+    <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Utilities\StudyFilters\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms.dll" />
 
     <!-- Reporting -->
     <PluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Reporting\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Reporting.dll" />
