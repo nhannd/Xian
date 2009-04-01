@@ -50,7 +50,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 	//we should refactor for a cleaner API.
 	public interface IInstanceXmlDicomAttributeCollection : IDicomAttributeProvider, IEnumerable<DicomAttribute>
 	{
-		ReadOnlyCollection<uint> ExcludedTags { get; }
+		ReadOnlyCollection<DicomTag> ExcludedTags { get; }
 
 		bool HasExcludedTags(bool recursive);
 	}
@@ -64,22 +64,22 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 	{
 		private readonly IInstanceXmlDicomAttributeCollection _parent;
 
-		private readonly ReadOnlyCollection<uint> _readOnlyExcludedTags;
-		private readonly List<uint> _excludedTags;
+		private readonly ReadOnlyCollection<DicomTag> _readOnlyExcludedTags;
+		private readonly List<DicomTag> _excludedTags;
 
 		public ExcludedTagsHelper(IInstanceXmlDicomAttributeCollection parent)
 		{
 			_parent = parent;
-			_excludedTags = new List<uint>();
-			_readOnlyExcludedTags = new ReadOnlyCollection<uint>(_excludedTags);
+			_excludedTags = new List<DicomTag>();
+			_readOnlyExcludedTags = new ReadOnlyCollection<DicomTag>(_excludedTags);
 		}
 
-		public ReadOnlyCollection<uint> ExcludedTags
+		public ReadOnlyCollection<DicomTag> ExcludedTags
 		{
 			get { return _readOnlyExcludedTags; }
 		}
 
-		public void Add(uint tag)
+		public void Add(DicomTag tag)
 		{
 			if (!_excludedTags.Contains(tag))
 				_excludedTags.Add(tag);
@@ -127,7 +127,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		#region IInstanceXmlDicomAttributeCollection Members
 
-		public ReadOnlyCollection<uint> ExcludedTags
+		public ReadOnlyCollection<DicomTag> ExcludedTags
 		{
 			get { return _excludedTagsHelper.ExcludedTags; }
 		}
@@ -160,7 +160,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		#region IInstanceXmlDicomAttributeCollection Members
 
-		public ReadOnlyCollection<uint> ExcludedTags
+		public ReadOnlyCollection<DicomTag> ExcludedTags
 		{
 			get { return _excludedTagsHelper.ExcludedTags; }
 		}
@@ -185,20 +185,20 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 	#endregion
 
 	/// <summary>
-    /// Class for representing a SOP Instance as XML.
-    /// </summary>
-    /// <remarks>
-    /// This class may change in a future release.
-    /// </remarks>
-    public class InstanceXml
+	/// Class for representing a SOP Instance as XML.
+	/// </summary>
+	/// <remarks>
+	/// This class may change in a future release.
+	/// </remarks>
+	public class InstanceXml
 	{
 		#region Private members
 
 		private readonly String _sopInstanceUid = null;
-        private readonly SopClass _sopClass = null;
-        private readonly TransferSyntax _transferSyntax = null;
-    	private string _sourceFileName = null;
-    	private long _fileSize = 0;
+		private readonly SopClass _sopClass = null;
+		private readonly TransferSyntax _transferSyntax = null;
+		private string _sourceFileName = null;
+		private long _fileSize = 0;
 
 		private BaseInstanceXml _baseInstance = null;
 		private XmlElement _cachedElement = null;
@@ -208,45 +208,45 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		private IEnumerator<DicomAttribute> _baseCollectionEnumerator = null;
 		private IEnumerator _instanceXmlEnumerator = null;
 
-        #endregion
+		#endregion
 
-        #region Public Properties
+		#region Public Properties
 
-        public String SopInstanceUid
-        {
-            get
-            {
-                return _sopInstanceUid ?? "";
-            }
-        }
+		public String SopInstanceUid
+		{
+			get
+			{
+				return _sopInstanceUid ?? "";
+			}
+		}
 
-        public SopClass SopClass
-        {
-            get { return _sopClass; }
-        }
+		public SopClass SopClass
+		{
+			get { return _sopClass; }
+		}
 
-    	public string SourceFileName
-    	{
+		public string SourceFileName
+		{
 			get { return _sourceFileName; }
 			internal set
 			{
 				if (value != null && Path.IsPathRooted(value))
-						value = Path.GetFullPath(value);
+					value = Path.GetFullPath(value);
 
 				_sourceFileName = value;
 			}
-    	}
+		}
 
-    	public long FileSize
-    	{
+		public long FileSize
+		{
 			get { return _fileSize; }
 			set { _fileSize = value; }
-    	}
+		}
 
 		public TransferSyntax TransferSyntax
-        {
-            get { return _transferSyntax; }
-        }
+		{
+			get { return _transferSyntax; }
+		}
 
 		/// <summary>
 		/// Gets the underlying data as a <see cref="DicomAttributeCollection"/>.
@@ -256,21 +256,21 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		/// it is the source <see cref="DicomAttributeCollection"/>.
 		/// </remarks>
 		public DicomAttributeCollection Collection
-        {
-            get
-            {
+		{
+			get
+			{
 				ParseTo(0xffffffff);
-            	return _collection;
-            }
-        }
-		
-    	public DicomAttribute this[DicomTag tag]
-    	{
-    		get
-    		{
-    			return this[tag.TagValue];
-    		}	
-    	}
+				return _collection;
+			}
+		}
+
+		public DicomAttribute this[DicomTag tag]
+		{
+			get
+			{
+				return this[tag.TagValue];
+			}
+		}
 
 		public DicomAttribute this[uint tag]
 		{
@@ -283,19 +283,19 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		#endregion
 
-        #region Constructors
+		#region Constructors
 
 		public InstanceXml(DicomAttributeCollection collection, SopClass sopClass, TransferSyntax syntax)
-        {
-            _sopInstanceUid = collection[DicomTags.SopInstanceUid];
+		{
+			_sopInstanceUid = collection[DicomTags.SopInstanceUid];
 
-            _collection = collection;
-            _sopClass = sopClass;
-            _transferSyntax = syntax;
-        }
+			_collection = collection;
+			_sopClass = sopClass;
+			_transferSyntax = syntax;
+		}
 
 		public InstanceXml(XmlNode instanceNode, DicomAttributeCollection baseCollection)
-        {
+		{
 			_collection = new InstanceXmlDicomAttributeCollection();
 
 			if (baseCollection != null)
@@ -305,31 +305,31 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 					_baseCollectionEnumerator = null;
 			}
 
-        	if (!instanceNode.HasChildNodes)
-                return;
+			if (!instanceNode.HasChildNodes)
+				return;
 
-        	_instanceXmlEnumerator = instanceNode.ChildNodes.GetEnumerator();
+			_instanceXmlEnumerator = instanceNode.ChildNodes.GetEnumerator();
 			if (!_instanceXmlEnumerator.MoveNext())
 				_instanceXmlEnumerator = null;
 
-            if (instanceNode.Attributes["UID"] != null)
-            {
-                _sopInstanceUid = instanceNode.Attributes["UID"].Value;
-            }
+			if (instanceNode.Attributes["UID"] != null)
+			{
+				_sopInstanceUid = instanceNode.Attributes["UID"].Value;
+			}
 
-            if (instanceNode.Attributes["SopClassUID"] != null)
-            {
-                _sopClass = SopClass.GetSopClass(instanceNode.Attributes["SopClassUID"].Value);
-            }
+			if (instanceNode.Attributes["SopClassUID"] != null)
+			{
+				_sopClass = SopClass.GetSopClass(instanceNode.Attributes["SopClassUID"].Value);
+			}
 
-            if (instanceNode.Attributes["TransferSyntaxUID"] != null)
-            {
-                _transferSyntax = TransferSyntax.GetTransferSyntax(instanceNode.Attributes["TransferSyntaxUID"].Value);
-            }
-            else
-            {
-            	_transferSyntax = TransferSyntax.ExplicitVrLittleEndian;
-            }
+			if (instanceNode.Attributes["TransferSyntaxUID"] != null)
+			{
+				_transferSyntax = TransferSyntax.GetTransferSyntax(instanceNode.Attributes["TransferSyntaxUID"].Value);
+			}
+			else
+			{
+				_transferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+			}
 
 			if (instanceNode.Attributes["SourceFileName"] != null)
 			{
@@ -341,85 +341,85 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				long.TryParse(instanceNode.Attributes["FileSize"].Value, out _fileSize);
 			}
 
-        	// This should never happen
-            if (_sopClass == null)
-            {
-                _sopClass = SopClass.GetSopClass(Collection[DicomTags.SopClassUid].GetString(0, String.Empty));
-            }
-        }
+			// This should never happen
+			if (_sopClass == null)
+			{
+				_sopClass = SopClass.GetSopClass(Collection[DicomTags.SopClassUid].GetString(0, String.Empty));
+			}
+		}
 
-        #endregion
+		#endregion
 
-        #region Internal Methods
+		#region Internal Methods
 
-        internal XmlElement GetMemento(XmlDocument theDocument, StudyXmlOutputSettings settings)
-        {
-            if (_cachedElement != null)
-            {
-                return _cachedElement;
-            }
+		internal XmlElement GetMemento(XmlDocument theDocument, StudyXmlOutputSettings settings)
+		{
+			if (_cachedElement != null)
+			{
+				return _cachedElement;
+			}
 
-            if (_baseInstance != null)
-            {
-                _cachedElement = GetMementoForCollection(theDocument, _baseInstance.Collection, Collection, settings);
+			if (_baseInstance != null)
+			{
+				_cachedElement = GetMementoForCollection(theDocument, _baseInstance.Collection, Collection, settings);
 
 				// Only keep around the cached xml data, free the collection to reduce memory usage
-            	SwitchToCachedXml();
+				SwitchToCachedXml();
 
-                return _cachedElement;
-            }
+				return _cachedElement;
+			}
 
-            _cachedElement = GetMementoForCollection(theDocument, null, Collection, settings);
-            return _cachedElement;
-        }
+			_cachedElement = GetMementoForCollection(theDocument, null, Collection, settings);
+			return _cachedElement;
+		}
 
-        internal void SetBaseInstance(BaseInstanceXml baseInstance)
-        {
-            if (_baseInstance != baseInstance)
-            {
-                // force the element to be regenerated when GetMemento() is called
-                _cachedElement = null;
-            }
+		internal void SetBaseInstance(BaseInstanceXml baseInstance)
+		{
+			if (_baseInstance != baseInstance)
+			{
+				// force the element to be regenerated when GetMemento() is called
+				_cachedElement = null;
+			}
 
-            _baseInstance = baseInstance;
-        }
+			_baseInstance = baseInstance;
+		}
 
-    	#endregion
+		#endregion
 
-    	#region Private Static Methods
+		#region Private Static Methods
 
-        private static bool AttributeShouldBeIncluded(DicomAttribute attribute, StudyXmlOutputSettings settings)
-        {
-            if (settings == null)
-                return true;
+		private static bool AttributeShouldBeIncluded(DicomAttribute attribute, StudyXmlOutputSettings settings)
+		{
+			if (settings == null)
+				return true;
 
-            if (attribute is DicomAttributeSQ)
-            {
-                if (attribute.Tag.IsPrivate)
-                    return settings.IncludePrivateValues;
-                else
-                    return true;
-            }
+			if (attribute is DicomAttributeSQ)
+			{
+				if (attribute.Tag.IsPrivate)
+					return settings.IncludePrivateValues;
+				else
+					return true;
+			}
 
 
-            // private tag
-            if (attribute.Tag.IsPrivate)
-            {
-                if (settings.IncludePrivateValues == false)
-                    return false;
-            }
+			// private tag
+			if (attribute.Tag.IsPrivate)
+			{
+				if (settings.IncludePrivateValues == false)
+					return false;
+			}
 
-            // check type
-            if (attribute is DicomAttributeUN)
-            {
-                if (settings.IncludeUnknownTags == false)
-                    return false;
-            }
+			// check type
+			if (attribute is DicomAttributeUN)
+			{
+				if (settings.IncludeUnknownTags == false)
+					return false;
+			}
 
 			// check the size
-            ulong length = attribute.StreamLength;
-            return (length <= settings.MaxTagLength);
-        }
+			ulong length = attribute.StreamLength;
+			return (length <= settings.MaxTagLength);
+		}
 
 		private void ParseTo(uint tag)
 		{
@@ -457,14 +457,14 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		}
 
 		private static void ParseCollection(DicomAttributeCollection theCollection, XmlNode theNode)
-        {
-            XmlNode attributeNode = theNode.FirstChild;
-            while (attributeNode != null)
-            {
+		{
+			XmlNode attributeNode = theNode.FirstChild;
+			while (attributeNode != null)
+			{
 				ParseAttribute(theCollection, attributeNode);
-                attributeNode = attributeNode.NextSibling;
-            }
-        }
+				attributeNode = attributeNode.NextSibling;
+			}
+		}
 
 		private static void ParseAttribute(DicomAttributeCollection theCollection, XmlNode attributeNode)
 		{
@@ -526,14 +526,14 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			else if (attributeNode.Name.Equals("ExcludedAttribute"))
 			{
 				DicomTag theTag = GetTagFromAttributeNode(attributeNode);
-				((IPrivateInstanceXmlDicomAttributeCollection)theCollection).ExcludedTagsHelper.Add(theTag.TagValue);
+				((IPrivateInstanceXmlDicomAttributeCollection)theCollection).ExcludedTagsHelper.Add(theTag);
 			}
 		}
 
-    	#endregion
+		#endregion
 
-        #region Private Methods
-		
+		#region Private Methods
+
 		private void SwitchToCachedXml()
 		{
 			// Give to the garbage collector the memory associated with the collection
@@ -556,34 +556,34 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		private XmlElement GetMementoForCollection(XmlDocument theDocument, DicomAttributeCollection baseCollection,
 												   DicomAttributeCollection collection, StudyXmlOutputSettings settings)
-        {
-            XmlElement instance;
+		{
+			XmlElement instance;
 
 			if (collection is DicomSequenceItem)
-            {
-                instance = theDocument.CreateElement("Item");
-            }
-            else
-            {
-                instance = theDocument.CreateElement("Instance");
+			{
+				instance = theDocument.CreateElement("Item");
+			}
+			else
+			{
+				instance = theDocument.CreateElement("Instance");
 
-                XmlAttribute sopInstanceUid = theDocument.CreateAttribute("UID");
-                sopInstanceUid.Value = _sopInstanceUid;
-                instance.Attributes.Append(sopInstanceUid);
+				XmlAttribute sopInstanceUid = theDocument.CreateAttribute("UID");
+				sopInstanceUid.Value = _sopInstanceUid;
+				instance.Attributes.Append(sopInstanceUid);
 
-                if (_sopClass != null)
-                {
-                    XmlAttribute sopClassAttribute = theDocument.CreateAttribute("SopClassUID");
-                    sopClassAttribute.Value = _sopClass.Uid;
-                    instance.Attributes.Append(sopClassAttribute);
-                }
+				if (_sopClass != null)
+				{
+					XmlAttribute sopClassAttribute = theDocument.CreateAttribute("SopClassUID");
+					sopClassAttribute.Value = _sopClass.Uid;
+					instance.Attributes.Append(sopClassAttribute);
+				}
 
 				if (_transferSyntax != null && !(this is BaseInstanceXml))
-                {
-                    XmlAttribute transferSyntaxAttribute = theDocument.CreateAttribute("TransferSyntaxUID");
-                    transferSyntaxAttribute.Value = _transferSyntax.UidString;
-                    instance.Attributes.Append(transferSyntaxAttribute);
-                }
+				{
+					XmlAttribute transferSyntaxAttribute = theDocument.CreateAttribute("TransferSyntaxUID");
+					transferSyntaxAttribute.Value = _transferSyntax.UidString;
+					instance.Attributes.Append(transferSyntaxAttribute);
+				}
 
 				if (_sourceFileName != null && settings.IncludeSourceFileName)
 				{
@@ -599,10 +599,10 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 					fileSize.Value = _fileSize.ToString();
 					instance.Attributes.Append(fileSize);
 				}
-            }
+			}
 
 			IEnumerator<DicomAttribute> baseIterator = null;
-        	bool validIterator = false;
+			bool validIterator = false;
 			if (baseCollection != null)
 			{
 				baseIterator = baseCollection.GetEnumerator();
@@ -610,10 +610,10 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			}
 
 			foreach (DicomAttribute attribute in collection)
-            {
+			{
 				bool isInBase = false;
 				if (baseIterator != null && validIterator)
-                {
+				{
 					while (baseIterator.Current.Tag < attribute.Tag && validIterator)
 					{
 						XmlElement emptyAttributeElement = CreateDicomAttributeElement(theDocument, baseIterator.Current, "EmptyAttribute");
@@ -643,13 +643,13 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 							validIterator = baseIterator.MoveNext();
 						}
 					}
-                }
+				}
 
 				//Only store an empty attribute when:
 				// - there is a base collection
 				// - the attribute is in the base and it is not empty.
 				if (attribute.IsEmpty && (baseCollection == null || !isInBase))
-						continue;
+					continue;
 
 				if (!AttributeShouldBeIncluded(attribute, settings))
 				{
@@ -665,67 +665,67 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 					continue;
 				}
 
-            	XmlElement instanceElement = CreateDicomAttributeElement(theDocument, attribute, "Attribute");
-            	if (attribute is DicomAttributeSQ)
-                {
+				XmlElement instanceElement = CreateDicomAttributeElement(theDocument, attribute, "Attribute");
+				if (attribute is DicomAttributeSQ)
+				{
 					DicomSequenceItem[] items = (DicomSequenceItem[])attribute.Values;
 					foreach (DicomSequenceItem item in items)
-                    {
-                        XmlElement itemElement = GetMementoForCollection(theDocument, null, item, settings);
+					{
+						XmlElement itemElement = GetMementoForCollection(theDocument, null, item, settings);
 
-                        instanceElement.AppendChild(itemElement);
-                    }
-                }
-                else if (attribute is DicomAttributeOW || attribute is DicomAttributeUN)
-                {
-                    byte[] val = (byte[]) attribute.Values;
+						instanceElement.AppendChild(itemElement);
+					}
+				}
+				else if (attribute is DicomAttributeOW || attribute is DicomAttributeUN)
+				{
+					byte[] val = (byte[])attribute.Values;
 
-                    StringBuilder str = null;
-                    foreach (byte i in val)
-                    {
-                        if (str == null)
-                            str = new StringBuilder(i.ToString());
-                        else
-                            str.AppendFormat("\\{0}", i);
-                    }
-                    if (str != null)
-                        instanceElement.InnerText = str.ToString();
-                }
-                else if (attribute is DicomAttributeOF)
-                {
-                    float[] val = (float[]) attribute.Values;
-                    StringBuilder str = null;
-                    foreach (float i in val)
-                    {
-                        if (str == null)
-                            str = new StringBuilder(i.ToString());
-                        else
-                            str.AppendFormat("\\{0}", i);
-                    }
-                    if (str != null)
-                        instanceElement.InnerText = str.ToString();
-                }
-                else
-                {
-                    // Do the regular expression to block out invalid XML characters in the string.
-                    string text = SecurityElement.Escape(attribute);
-                    if (text.Length == 0 || !Regex.IsMatch(text, "[^\x9\xA\xD\x20-\xD7FF\xE000-\xFFFD\x10000-\x10FFFF]"))
-                        instanceElement.InnerText = text;
-                    // else
-                    //     Platform.Log(LogLevel.Error, "Invalid encoding: {0}", text);
-                }
+					StringBuilder str = null;
+					foreach (byte i in val)
+					{
+						if (str == null)
+							str = new StringBuilder(i.ToString());
+						else
+							str.AppendFormat("\\{0}", i);
+					}
+					if (str != null)
+						instanceElement.InnerText = str.ToString();
+				}
+				else if (attribute is DicomAttributeOF)
+				{
+					float[] val = (float[])attribute.Values;
+					StringBuilder str = null;
+					foreach (float i in val)
+					{
+						if (str == null)
+							str = new StringBuilder(i.ToString());
+						else
+							str.AppendFormat("\\{0}", i);
+					}
+					if (str != null)
+						instanceElement.InnerText = str.ToString();
+				}
+				else
+				{
+					// Do the regular expression to block out invalid XML characters in the string.
+					string text = SecurityElement.Escape(attribute);
+					if (text.Length == 0 || !Regex.IsMatch(text, "[^\x9\xA\xD\x20-\xD7FF\xE000-\xFFFD\x10000-\x10FFFF]"))
+						instanceElement.InnerText = text;
+					// else
+					//     Platform.Log(LogLevel.Error, "Invalid encoding: {0}", text);
+				}
 
-                instance.AppendChild(instanceElement);
-            }
+				instance.AppendChild(instanceElement);
+			}
 
 			if (collection is IInstanceXmlDicomAttributeCollection)
 			{
-				foreach (uint excludedTag in ((IInstanceXmlDicomAttributeCollection)collection).ExcludedTags)
+				foreach (DicomTag excludedTag in ((IInstanceXmlDicomAttributeCollection)collection).ExcludedTags)
 					instance.AppendChild(CreateDicomAttributeElement(theDocument, excludedTag, "ExcludedAttribute"));
 			}
 
-            return instance;
-        }
+			return instance;
+		}
 
 		private static DicomTag GetTagFromAttributeNode(XmlNode attributeNode)
 		{
@@ -749,7 +749,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				if (!theTag.VR.Equals(xmlVr))
 				{
 					theTag = new DicomTag(tagValue, theTag.Name, theTag.VariableName, xmlVr, theTag.MultiVR, theTag.VMLow,
-					                      theTag.VMHigh, theTag.Retired);
+										  theTag.VMHigh, theTag.Retired);
 				}
 			}
 			return theTag;
@@ -758,11 +758,6 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		private static XmlElement CreateDicomAttributeElement(XmlDocument document, DicomAttribute attribute, string name)
 		{
 			return CreateDicomAttributeElement(document, attribute.Tag, name);
-		}
-
-		private static XmlElement CreateDicomAttributeElement(XmlDocument document, uint dicomTag, string name)
-		{
-			return CreateDicomAttributeElement(document, DicomTagDictionary.GetDicomTag(dicomTag), name);
 		}
 
 		private static XmlElement CreateDicomAttributeElement(XmlDocument document, DicomTag dicomTag, string name)
@@ -780,7 +775,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 			return dicomAttributeElement;
 		}
-		
+
 		#endregion
-	}	
+	}
 }

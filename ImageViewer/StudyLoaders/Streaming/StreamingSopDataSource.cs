@@ -81,8 +81,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		private bool NeedFullHeader(uint tag)
 		{
-			if (AttributeCollection.ExcludedTags.Contains(tag))
+			if (CollectionUtils.Contains(AttributeCollection.ExcludedTags,
+				delegate(DicomTag dicomTag) { return dicomTag.TagValue == tag; }))
+			{
 				return true;
+			}
 
 			DicomAttribute attribute = base.GetDicomAttribute(tag);
 			if (attribute is DicomAttributeSQ)
