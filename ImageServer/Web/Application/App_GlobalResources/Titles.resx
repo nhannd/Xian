@@ -241,10 +241,10 @@
     <value>Application Log</value>
   </data>
   <data name="UserManagement" xml:space="preserve">
-    <value>User Management</value>
+    <value>Users</value>
   </data>
   <data name="UserManagementPageTitle" xml:space="preserve">
-    <value>User Management | Admin | ClearCanvas ImageServer</value>
+    <value>Users | User Management | Admin | ClearCanvas ImageServer</value>
   </data>
   <data name="AuthorityTokens" xml:space="preserve">
     <value>Authority Tokens</value>
@@ -268,7 +268,7 @@
     <value>Deleted Studies | Audit | ClearCanvas ImageServer</value>
   </data>
   <data name="UserGroupsPageTitle" xml:space="preserve">
-    <value>User Groups | User Management | ClearCanvas ImageServer</value>
+    <value>User Groups | User Management | Admin | ClearCanvas ImageServer</value>
   </data>
   <data name="DevicesPageTitle" xml:space="preserve">
     <value>Devices | Configure | ClearCanvas ImageServer</value>

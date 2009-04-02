@@ -556,7 +556,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Groups | User Management | ClearCanvas ImageServer.
+        ///   Looks up a localized string similar to User Groups | User Management | Admin | ClearCanvas ImageServer.
         /// </summary>
         internal static string UserGroupsPageTitle {
             get {
@@ -565,7 +565,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Management.
+        ///   Looks up a localized string similar to Users.
         /// </summary>
         internal static string UserManagement {
             get {
@@ -574,7 +574,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User Management | Admin | ClearCanvas ImageServer.
+        ///   Looks up a localized string similar to Users | User Management | Admin | ClearCanvas ImageServer.
         /// </summary>
         internal static string UserManagementPageTitle {
             get {
