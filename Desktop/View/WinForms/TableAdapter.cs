@@ -353,7 +353,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void TableStructureChangedEventHandler(object sender, ItemChangedEventArgs e)
         {
-            ITableColumn column = (ITableColumn)_table.Columns[e.ItemIndex];
+            ITableColumn column = e.ItemIndex >= 0 ? (ITableColumn)_table.Columns[e.ItemIndex] : null;
             switch (e.ChangeType)
             {
                 case ItemChangeType.ItemAdded:
@@ -368,6 +368,10 @@ namespace ClearCanvas.Desktop.View.WinForms
                     _columnToPropertyMap.Remove(column);
                     NotifyListChanged(new ListChangedEventArgs(ListChangedType.PropertyDescriptorDeleted, -1));
                     break;
+				case ItemChangeType.Reset:
+					_columnToPropertyMap.Clear();
+					NotifyListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+            		break;
             }
         }
 

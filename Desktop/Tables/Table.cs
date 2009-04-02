@@ -225,7 +225,7 @@ namespace ClearCanvas.Desktop.Tables
         }
 
     	/// <summary>
-    	/// Filters this table accordint ot the specified filter parameters.
+    	/// Filters this table according to the specified filter parameters.
     	/// </summary>
     	public void Filter(TableFilterParams filterParams)
         {

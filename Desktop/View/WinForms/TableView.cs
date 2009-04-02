@@ -499,6 +499,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
                     _dataGridView.Columns.Add(dgcol);
                 }
+            	_table.Columns.ItemsChanged += OnColumnsChanged;
             }
         }
 
@@ -510,10 +511,16 @@ namespace ClearCanvas.Desktop.View.WinForms
                     column.VisibleChanged -= OnColumnVisibilityChanged;
 
 				_dataGridView.ColumnHeaderMouseClick -= _dataGridView_ColumnHeaderMouseClick;
+				_table.Columns.ItemsChanged -= OnColumnsChanged;
 				_table.BeforeSorted -= _table_BeforeSortedEvent;
 				_table.Sorted -= _table_SortedEvent;
             }
         }
+
+    	private void OnColumnsChanged(object sender, ItemChangedEventArgs e)
+    	{
+    		this.Table = this.Table;
+    	}
 
         private void OnColumnVisibilityChanged(object sender, EventArgs e)
         {
