@@ -46,7 +46,8 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         public uint nTag;
         public String tag;
         public String name;
-        public String vr;
+		public String unEscapedName;
+		public String vr;
         public String vm;
         public String retired;
         public String varName;
@@ -129,6 +130,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
              && !thisTag.varName.EndsWith("Retired"))
                 thisTag.varName += "Retired";
 
+        	thisTag.unEscapedName = thisTag.name;
             thisTag.name = SecurityElement.Escape(thisTag.name);
         }
 
@@ -290,8 +292,6 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             {
 
             }
-
         }
-
     }
 }

@@ -270,7 +270,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                 writer.WriteLine("            _tags.Add(DicomTags." + tag.varName + ",");
                 writer.WriteLine("                      new DicomTag(");
                 writer.WriteLine("                          DicomTags." + tag.varName + ",");
-                writer.WriteLine("                          \"" + tag.name + "\",");
+                writer.WriteLine("                          \"" + tag.unEscapedName + "\",");
                 writer.WriteLine("                          \"" + tag.varName + "\",");
                 if (tag.vr.Contains("or"))
                 {
