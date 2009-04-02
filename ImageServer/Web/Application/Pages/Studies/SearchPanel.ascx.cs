@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
@@ -122,6 +123,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         public string SendStudyPageUrl
         {
             get { return Page.ResolveClientUrl(ImageServerConstants.PageURLs.MoveStudyPage); }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("CanViewStudyDetails")]
+        public bool CanViewStudyDetails
+        {
+            get { return Thread.CurrentPrincipal.IsInRole(ImageServer.Common.Authentication.AuthorityTokens.Study.View); }
         }
 
         public ServerPartition ServerPartition

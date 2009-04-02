@@ -76,7 +76,10 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                  
             var studylist = $find(this._StudyListClientID);
             studylist.add_onClientRowClick(this._OnStudyListRowClickedHandler);
-            studylist.add_onClientRowDblClick(this._OnStudyListRowDblClickedHandler);
+            
+            if(this._CanViewStudyDetails) {          
+                studylist.add_onClientRowDblClick(this._OnStudyListRowDblClickedHandler);
+            }
             
             this._updateToolbarButtonStates();
         },
@@ -161,7 +164,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                         if (instanceuid!=undefined && serverae!=undefined)
                         {
                             var url= String.format('{0}?serverae={1}&siuid={2}', this._OpenStudyPageUrl, serverae, instanceuid);
-                            window.open(url);
+                            window.open(url, 'detailswindow', 'toolbar=no,location=no,directories=no,status=no,menubar=no,resizable=yes,scrollbars=yes,width=1024,height=768');
                         }
                     }
                     
@@ -196,7 +199,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                         }
                     }
                     // load in the current window 
-                    window.open(url, 'movewindow', 'toolbar=no,location=no,directories=no,status=no,menubar=no');
+                    window.open(url, 'movewindow', 'toolbar=no,location=no,directories=no,status=no,menubar=no,resizable=yes,scrollbars=yes,width=1024,height=768');
                 }
             }
         },
@@ -352,6 +355,15 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
         set_SendStudyPageUrl : function(value) {
             this._SendStudyPageUrl = value;
             this.raisePropertyChanged('SendStudyPageUrl');
+        },
+        
+        get_CanViewStudyDetails : function() {
+            return this._CanViewStudyDetails;
+        },
+       
+        set_CanViewStudyDetails : function(value) {
+            this._CanViewStudyDetails = value;
+            this.raisePropertyChanged('CanViewStudyDetails');
         }
     }
 
