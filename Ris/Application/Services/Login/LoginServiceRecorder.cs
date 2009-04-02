@@ -2,12 +2,16 @@ using System;
 using System.Management;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Audit;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common.Login;
 
 namespace ClearCanvas.Ris.Application.Services.Login
 {
+	/// <summary>
+	/// Records custom information about operations on <see cref="ILoginService"/>.
+	/// </summary>
     public class LoginServiceRecorder : ServiceOperationRecorderBase
     {
         /// <summary>
@@ -17,24 +21,12 @@ namespace ClearCanvas.Ris.Application.Services.Login
         {
         }
 
-        protected override string Category
+		/// <summary>
+		/// Gets the category that should be assigned to the audit entries.
+		/// </summary>
+		public override string Category
         {
             get { return "Authentication"; }
-        }
-
-        public override AuditLogEntry CreateLogEntry(ServiceOperationInvocationInfo invocationInfo)
-        {
-            // because the login service is not authenticated, the thread that handles the request 
-            // does not have a principal, and the logEntry will not be associated with a user
-            // therefore, we modify the user to indicate the userName that submitted the request
-
-            AuditLogEntry logEntry = base.CreateLogEntry(invocationInfo);
-            if(logEntry != null)
-            {
-                LoginServiceRequestBase request = (LoginServiceRequestBase) invocationInfo.Arguments[0];
-                logEntry.User = request.UserName;
-            }
-            return logEntry;
         }
 
         protected override bool WriteXml(XmlWriter writer, ServiceOperationInvocationInfo info)
@@ -55,5 +47,14 @@ namespace ClearCanvas.Ris.Application.Services.Login
 
             return true;
         }
-    }
+
+		protected override void WriteToLog(ServiceOperationInvocationInfo invocationInfo, AuditLog auditLog, string details)
+		{
+			// because the login service is not authenticated, the thread that handles the request 
+			// does not have a principal, and the logEntry will not be associated with a user
+			// therefore, we explicitly specify the user to indicate who submitted the request
+			LoginServiceRequestBase request = (LoginServiceRequestBase)invocationInfo.Arguments[0];
+			auditLog.WriteEntry(invocationInfo.OperationName, details, request.UserName);
+		}
+	}
 }

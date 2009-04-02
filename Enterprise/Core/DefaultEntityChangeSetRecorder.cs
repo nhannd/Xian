@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Xml;
+using ClearCanvas.Common.Audit;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
 using System.Collections;
@@ -102,14 +103,12 @@ namespace ClearCanvas.Enterprise.Core
 
 		#region IEntityChangeSetRecorder Members
 
-		/// <summary>
-        /// Creates a <see cref="AuditLogEntry"/> for the specified change set.
-        /// </summary>
-        /// <param name="changeSet"></param>
-        /// <returns></returns>
-        public AuditLogEntry CreateLogEntry(IEnumerable<EntityChange> changeSet)
+    	/// <summary>
+    	/// Writes an audit log entry for the specified change set.
+    	/// </summary>
+    	public void WriteLogEntry(IEnumerable<EntityChange> changeSet, AuditLog auditLog)
         {
-            return new AuditLogEntry("ChangeSet", _operationName, WriteXml(changeSet));
+			auditLog.WriteEntry(_operationName, WriteXml(changeSet));
         }
 
         #endregion

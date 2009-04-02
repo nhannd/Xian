@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using ClearCanvas.Common.Audit;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -15,44 +16,27 @@ namespace ClearCanvas.Enterprise.Core
         #region IServiceOperationRecorder Members
 
         /// <summary>
-        /// Creates a <see cref="AuditLogEntry"/> for the specified service operation invocation,
-        /// or returns null if no log entry is created.
+        /// Writes the specified service operation invocation to the specified audit log.
         /// </summary>
-        /// <remarks>
-        /// Override this method to perform custom creation of the <see cref="AuditLogEntry"/>.
-        /// In most cases this method does not need to be overridden - instead just override
-        /// <see cref="WriteXml(XmlWriter,ServiceOperationInvocationInfo)"/>.
-        /// </remarks>
-        /// <returns>A log entry, or null to indicate that no log entry should be created.</returns>
-        public virtual AuditLogEntry CreateLogEntry(ServiceOperationInvocationInfo invocationInfo)
+        public void WriteLogEntry(ServiceOperationInvocationInfo invocationInfo, AuditLog auditLog)
         {
             string xml;
             bool messageGenerated = WriteXml(invocationInfo, out xml);
             if(messageGenerated)
             {
-                return new AuditLogEntry(this.Category, invocationInfo.OperationName, xml);
-            }
-            return null;
-        }
-
-        #endregion
-
-        private bool WriteXml(ServiceOperationInvocationInfo invocationInfo, out string xml)
-        {
-            StringWriter sw = new StringWriter();
-            using (XmlTextWriter writer = new XmlTextWriter(sw))
-            {
-                writer.Formatting = Formatting.Indented;
-                bool success = WriteXml(writer, invocationInfo);
-                xml = success ? sw.ToString() : null;
-                return success;
+            	WriteToLog(invocationInfo, auditLog, xml);
             }
         }
 
-        /// <summary>
-        /// Gets the category, which is used to set the <see cref="AuditLogEntry.Category"/> property.
-        /// </summary>
-        protected abstract string Category { get; }
+		/// <summary>
+		/// Gets the category that should be assigned to the audit entries.
+		/// </summary>
+		public abstract string Category { get; }
+		
+		#endregion
+
+		#region Protected API
+
 
         /// <summary>
         /// Writes the detailed message to the specified XML writer.
@@ -61,10 +45,40 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="invocationInfo"></param>
         /// <returns>True if a log message was written, or false to indicate that no log message was written.</returns>
         /// <remarks>
-        /// The resulting XML will be used to populate the <see cref="AuditLogEntry.Details"/> property.
+        /// The resulting XML will be used to populate the audit log Details property.
         /// Return false to opt out of auditing the specified invocation (for example, if the invocation
-        /// inidcates that an exception was thrown by the service, you may not need to audit it).
+        /// inidcates that an exception was thrown by the service, you may not want to audit it).
         /// </remarks>
         protected abstract bool WriteXml(XmlWriter writer, ServiceOperationInvocationInfo invocationInfo);
-    }
+
+		/// <summary>
+		/// If the call to <see cref="WriteXml(XmlWriter,ServiceOperationInvocationInfo)"/> returns true,
+		/// called to write the XML to the audit log.
+		/// </summary>
+		/// <remarks>
+		/// Override this method to customize writing of the log entry.
+		/// </remarks>
+		/// <param name="invocationInfo"></param>
+		/// <param name="auditLog"></param>
+		/// <param name="details"></param>
+		protected virtual void WriteToLog(ServiceOperationInvocationInfo invocationInfo, AuditLog auditLog, string details)
+		{
+			auditLog.WriteEntry(invocationInfo.OperationName, details);
+		}
+
+		#endregion
+
+		private bool WriteXml(ServiceOperationInvocationInfo invocationInfo, out string xml)
+		{
+			StringWriter sw = new StringWriter();
+			using (XmlTextWriter writer = new XmlTextWriter(sw))
+			{
+				writer.Formatting = Formatting.Indented;
+				bool success = WriteXml(writer, invocationInfo);
+				xml = success ? sw.ToString() : null;
+				return success;
+			}
+		}
+
+	}
 }

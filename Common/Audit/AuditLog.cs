@@ -53,31 +53,37 @@ namespace ClearCanvas.Common.Audit
 		#region Public API
 
 		/// <summary>
-		/// Writes an entry to the audit log containing the specified information.
+		/// Writes an entry to the audit log containing the specified information,
+		/// on behalf of the current application user.
 		/// </summary>
 		/// <param name="operation"></param>
 		/// <param name="details"></param>
 		public void WriteEntry(string operation, string details)
+		{
+			WriteEntry(operation, details, GetUserName());
+		}
+
+		/// <summary>
+		/// Writes an entry to the audit log containing the specified information,
+		/// on behalf of the specified application user.
+		/// </summary>
+		/// <param name="operation"></param>
+		/// <param name="details"></param>
+		/// <param name="user"></param>
+		public void WriteEntry(string operation, string details, string user)
 		{
 			AuditEntryInfo entry = new AuditEntryInfo(
 				_category,
 				Platform.Time,
 				Dns.GetHostName(),
 				null,	// not currently in use
-				GetUserName(),
+				user,
 				operation,
 				details);
 
 			foreach (IAuditSink sink in _sinks)
 			{
-				try
-				{
-					sink.WriteEntry(entry);
-				}
-				catch(Exception e)
-				{
-					Platform.Log(LogLevel.Error, e);
-				}
+				sink.WriteEntry(entry);
 			}
 		}
 

@@ -37,6 +37,7 @@ using NHibernate;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Common.Specifications;
+using ClearCanvas.Common.Audit;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -187,27 +188,16 @@ namespace ClearCanvas.Enterprise.Hibernate
         #region Helpers
 
         /// <summary>
-        /// Creates and saves an <see cref="AuditLogEntry"/> for the current change-set, assuming the
+        /// Writes an audit log entry for the current change-set, assuming the
         /// <see cref="ChangeSetRecorder"/> property is set.
         /// </summary>
         private void AuditTransaction()
         {
             if (_changeSetRecorder != null)
             {
-
-                AuditLogEntry changeSetLogEntry = _changeSetRecorder.CreateLogEntry(_interceptor.EntityChangeSet);
-
-                /* NB. Does not work with NHibernate 1.0.3
-                // obtain an audit session, based on the same ADO connection and same DB transaction
-                using (ISession session = _sessionFactory.OpenSession(this.Session.Connection))
-                {
-                   session.Save(record);
-                   session.Flush();
-                }
-                */
-
-                // for now, use the same session
-                this.Session.Save(changeSetLogEntry);
+				// write to the "ChangeSet" audit log
+				AuditLog auditLog = new AuditLog("ChangeSet");
+                _changeSetRecorder.WriteLogEntry(_interceptor.EntityChangeSet, auditLog);
             }
         }
 

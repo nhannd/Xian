@@ -9,14 +9,23 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Enterprise.Configuration
 {
+	/// <summary>
+	/// Records custom information about operations on <see cref="IConfigurationService"/>.
+	/// </summary>
     public class ConfigurationServiceRecorder : ServiceOperationRecorderBase
     {
-        protected override string Category
+		/// <summary>
+		/// Gets the category that should be assigned to the audit entries.
+		/// </summary>
+		public override string Category
         {
             get { return "Configuration"; }
         }
 
-        protected override bool WriteXml(XmlWriter writer, ServiceOperationInvocationInfo info)
+		/// <summary>
+		/// Writes the detailed message to the specified XML writer.
+		/// </summary>
+		protected override bool WriteXml(XmlWriter writer, ServiceOperationInvocationInfo info)
         {
             // don't bother logging failed attempts
             if(info.Exception != null)

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Audit;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
-    /// Defines an interface for creating a <see cref="AuditLogEntry"/> that records
+    /// Defines an interface for writing an audit log entry that records
     /// information about a set of <see cref="EntityChange"/> objects.
     /// </summary>
     public interface IEntityChangeSetRecorder
@@ -17,10 +18,8 @@ namespace ClearCanvas.Enterprise.Core
         string OperationName { get; set; }
 
         /// <summary>
-        /// Creates a <see cref="AuditLogEntry"/> for the specified change set.
+        /// Writes an audit log entry for the specified change set.
         /// </summary>
-        /// <param name="changeSet"></param>
-        /// <returns></returns>
-        AuditLogEntry CreateLogEntry(IEnumerable<EntityChange> changeSet);
+        void WriteLogEntry(IEnumerable<EntityChange> changeSet, AuditLog auditLog);
     }
 }

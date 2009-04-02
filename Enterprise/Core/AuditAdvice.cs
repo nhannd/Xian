@@ -35,6 +35,7 @@ using System.Text;
 using Castle.DynamicProxy;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Audit;
 
 
 namespace ClearCanvas.Enterprise.Core
@@ -108,13 +109,9 @@ namespace ClearCanvas.Enterprise.Core
             // create an instance of the specified recorder class
             IServiceOperationRecorder recorder = (IServiceOperationRecorder) Activator.CreateInstance(attr.RecorderClass);
 
-            // create a log entry
-            AuditLogEntry logEntry = recorder.CreateLogEntry(info);
-            if(logEntry != null)
-            {
-                // save the log entry
-                PersistenceScope.CurrentContext.Lock(logEntry, DirtyState.New);
-            }
+            // write to the audit log
+			AuditLog log = new AuditLog(recorder.Category);
+			recorder.WriteLogEntry(info, log);
         }
 
         #endregion
