@@ -72,6 +72,7 @@
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Model\bin\$(Configuration)\ClearCanvas.ImageServer.Model.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll" />
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll" />
   </ItemGroup>
 
 
@@ -97,7 +98,6 @@
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Utilities\TokenImporter\bin\$(Configuration)\ClearCanvas.ImageServer.Utilities.TokenImporter.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
-	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Authentication\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Common\Authentication\bin\$(Configuration)\ClearCanvas.ImageServer.Common.Authentication.dll" />
 
