@@ -129,7 +129,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
              && thisTag.retired.Equals("RET") 
              && !thisTag.varName.EndsWith("Retired"))
                 thisTag.varName += "Retired";
-
+        	thisTag.name = thisTag.name.Replace("’", "'");
         	thisTag.unEscapedName = thisTag.name;
             thisTag.name = SecurityElement.Escape(thisTag.name);
         }
