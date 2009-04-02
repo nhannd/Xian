@@ -3019,7 +3019,7 @@ BEGIN
 		SET @stmt = @stmt + '' WHERE '' + @where
 
 	PRINT @stmt
-	SET @stmt = ''SELECT A.GUID, A.PartitionArchiveGUID, A.ScheduledTime, A.StudyStorageGUID, A.ArchiveQueueStatusEnum, A.ProcessorId FROM ('' + @stmt
+	SET @stmt = ''SELECT A.GUID, A.PartitionArchiveGUID, A.ScheduledTime, A.StudyStorageGUID, A.ArchiveQueueStatusEnum, A.ProcessorId, A.FailureDescription FROM ('' + @stmt
 	SET @stmt = @stmt + '') AS A WHERE A.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
 
 	EXEC(@stmt)
