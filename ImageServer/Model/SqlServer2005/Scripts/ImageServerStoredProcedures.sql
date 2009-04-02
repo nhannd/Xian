@@ -3134,7 +3134,7 @@ BEGIN
 		SET @stmt = @stmt + '' WHERE '' + @where
 
 	PRINT @stmt
-	SET @stmt = ''SELECT A.GUID, A.ArchiveStudyStorageGUID, A.ScheduledTime, A.StudyStorageGUID, A.RestoreQueueStatusEnum, A.ProcessorId FROM ('' + @stmt
+	SET @stmt = ''SELECT A.GUID, A.ArchiveStudyStorageGUID, A.ScheduledTime, A.StudyStorageGUID, A.RestoreQueueStatusEnum, A.ProcessorId, A.FailureDescription FROM ('' + @stmt
 	SET @stmt = @stmt + '') AS A WHERE A.RowNum BETWEEN '' + str(@StartIndex) + '' AND ('' + str(@StartIndex) + '' + '' + str(@MaxRowCount) + '') - 1''
 
 	EXEC(@stmt)
