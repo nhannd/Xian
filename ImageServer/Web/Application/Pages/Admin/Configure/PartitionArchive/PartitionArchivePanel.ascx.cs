@@ -155,7 +155,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
             _theController = new PartitionArchiveConfigController();
 
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, PartitionArchiveGridPanel.TheGrid, delegate { return PartitionArchives.Count; }, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerPartitionSingleItem, App_GlobalResources.SR.GridPagerPartitionMultipleItems, PartitionArchiveGridPanel.TheGrid, delegate { return PartitionArchives.Count; }, ImageServerConstants.GridViewPagerPosition.bottom);
         }
 
         public override void DataBind()

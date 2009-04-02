@@ -216,14 +216,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices 
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices.DeviceGridView DeviceGridViewControl1;
-        
-        /// <summary>
-        /// GridPagerBottom control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerBottom;
     }
 }

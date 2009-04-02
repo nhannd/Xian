@@ -121,7 +121,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
             // setup child controls
             GridPagerTop.InitializeGridPager(App_GlobalResources.SR.GridPagerFileSystemSingleItem, App_GlobalResources.SR.GridPagerFileSystemMultipleItems, FileSystemsGridView1.TheGrid, delegate { return FileSystemsGridView1.FileSystems.Count; }, ImageServerConstants.GridViewPagerPosition.top);
-            GridPagerBottom.InitializeGridPager(App_GlobalResources.SR.GridPagerFileSystemSingleItem, App_GlobalResources.SR.GridPagerFileSystemMultipleItems, FileSystemsGridView1.TheGrid, delegate { return FileSystemsGridView1.FileSystems.Count; }, ImageServerConstants.GridViewPagerPosition.bottom);
                 
             Tiers = _theController.GetFileSystemTiers();
 
