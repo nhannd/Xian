@@ -82,7 +82,7 @@ namespace ClearCanvas.Dicom
         {
 			if (!_tags.ContainsKey(tag))
 			{
-				if (((tag & 0xFF000000) == 0x60000000) && ((tag & 0xFFFF0000) != 0x60000000))
+				if (((tag & 0xFFE10000) == 0x60000000) && ((tag & 0xFFFF0000) != 0x60000000))
 				{
 					DicomTag theTag = GetDicomTag(tag & 0xFF00FFFF);
 					if (theTag == null) return null;
