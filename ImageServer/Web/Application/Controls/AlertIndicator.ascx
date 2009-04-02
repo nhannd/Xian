@@ -44,13 +44,12 @@
 <script type="text/javascript">
 
     $(document).ready(function() {
-        $("#AlertDetailsPanel").dropShadow({left: 2, top: 2, opacity: 0.7, blur: 2, color: "#003366"}).hide();
         $("#<%=AlertLink.ClientID %>").mouseover(function() { 
-            $(".AlertDetailsPanel:hidden").show().redrawShadow();
+            $(".AlertDetailsPanel:hidden").show();
         });
         $("#CloseButton").click(function(event) { 
             event.preventDefault();
-            $("#AlertDetailsPanel:visible").removeShadow().slideUp("fast");
+            $("#AlertDetailsPanel:visible").slideUp("fast");
         });             
     });
 </script>
