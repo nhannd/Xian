@@ -83,7 +83,7 @@ namespace ClearCanvas.Common
         public abstract Type InterfaceType { get; }
 
         /// <summary>
-        /// Lists meta-data for all extensions of this point.
+        /// Lists meta-data for all enabled extensions of this point.
         /// </summary>
         /// <returns></returns>
         public ExtensionInfo[] ListExtensions()
@@ -92,7 +92,7 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// List meta-data for extensions of this point that match the supplied filter.
+        /// List meta-data for enabled extensions of this point that match the supplied filter.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -102,7 +102,7 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// List meta-data for extensions of this point that match the supplied filter.
+        /// List meta-data for enabled extensions of this point that match the supplied filter.
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
@@ -137,7 +137,7 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// Instantiates all extensions of this point.
+        /// Instantiates all enabled extensions of this point.
         /// </summary>
         public object[] CreateExtensions()
         {
@@ -145,7 +145,7 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// Instantiates all extensions of this point that match the supplied filter.
+        /// Instantiates all enabled extensions of this point that match the supplied filter.
         /// </summary>
         public object[] CreateExtensions(ExtensionFilter filter)
         {
@@ -153,7 +153,7 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// Instantiates all extensions of this point that match the supplied filter.
+        /// Instantiates all enabled extensions of this point that match the supplied filter.
         /// </summary>
         public object[] CreateExtensions(Predicate<ExtensionInfo> filter)
         {

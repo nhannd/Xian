@@ -44,6 +44,9 @@ namespace ClearCanvas.Common
     /// </remarks>
     internal class DefaultExtensionFactory : IExtensionFactory
     {
+    	private IDictionary<Type, List<ExtensionInfo>> _extensionMap;
+		private readonly object _syncLock = new object();
+
         internal DefaultExtensionFactory()
         {
         }
@@ -61,7 +64,7 @@ namespace ClearCanvas.Common
         public object[] CreateExtensions(ExtensionPoint extensionPoint, ExtensionFilter filter, bool justOne)
         {
             // get subset of applicable extensions
-            ExtensionInfo[] extensions = ListExtensions(extensionPoint, filter);
+            List<ExtensionInfo> extensions = ListExtensionsHelper(extensionPoint, filter);
 
             // attempt to instantiate the extension classes
             List<object> createdObjects = new List<object>();
@@ -107,7 +110,7 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// Gets metadata describing all extensions of the input <paramref name="extensionPoint"/>, 
+        /// Gets metadata describing all enabled extensions of the input <paramref name="extensionPoint"/>, 
         /// matching the given <paramref name="filter"/>.
         /// </summary>
         /// <param name="extensionPoint">The <see cref="ExtensionPoint"/> whose extension metadata is to be retrieved.</param>
@@ -115,24 +118,57 @@ namespace ClearCanvas.Common
         /// <returns></returns>
         public ExtensionInfo[] ListExtensions(ExtensionPoint extensionPoint, ExtensionFilter filter)
         {
-            Type extensionPointClass = extensionPoint.GetType();
-
-            // assume that Platform.PluginManager.Extensions is a thread-safe property, 
-            // therefore no need to lock here
-			return CollectionUtils.Select(Platform.PluginManager.Extensions,
-				delegate(ExtensionInfo extension)
-				{
-					return extension.PointExtended == extensionPointClass
-							&& extension.Enabled
-							&& (filter == null || filter.Test(extension));
-				}).ToArray();
-        }
-
-        private static bool IsConcreteClass(Type type)
-        {
-            return !type.IsAbstract && type.IsClass;
+        	return ListExtensionsHelper(extensionPoint, filter).ToArray();
         }
 
         #endregion
+
+		private List<ExtensionInfo> ListExtensionsHelper(ExtensionPoint extensionPoint, ExtensionFilter filter)
+		{
+			// ensure extension map has been constructed
+			BuildExtensionMapOnce();
+
+			Type extensionPointClass = extensionPoint.GetType();
+
+			List<ExtensionInfo> extensions;
+			if (_extensionMap.TryGetValue(extensionPointClass, out extensions))
+			{
+				return CollectionUtils.Select(extensions,
+					delegate(ExtensionInfo extension)
+					{
+						return extension.Enabled
+								&& (filter == null || filter.Test(extension));
+					});
+			}
+			else
+			{
+				return new List<ExtensionInfo>();
+			}
+
+		}
+
+		private static bool IsConcreteClass(Type type)
+		{
+			return !type.IsAbstract && type.IsClass;
+		}
+
+		private void BuildExtensionMapOnce()
+		{
+			// build extension map if not already built
+			// note that this is the only place where we need to lock, because once built, map is safe for concurrent readers
+			if(_extensionMap == null)
+			{
+				lock(_syncLock)
+				{
+					if(_extensionMap == null)
+					{
+						// group extensions by extension point
+						// (note that grouping preserves the order of the original Extensions list)
+						_extensionMap = CollectionUtils.GroupBy<ExtensionInfo, Type>(Platform.PluginManager.Extensions,
+							delegate(ExtensionInfo extension) { return extension.PointExtended; });
+					}
+				}
+			}
+		}
     }
 }
