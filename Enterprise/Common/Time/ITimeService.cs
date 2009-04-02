@@ -30,24 +30,18 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Text;
+using System.ServiceModel;
 
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common.Time;
-
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise.Common.Time
 {
-    [ExtensionOf(typeof(CoreServiceExtensionPoint))]
-    [ServiceImplementsContract(typeof(ITimeService))]
-    public class TimeService : CoreServiceLayer, ITimeService
+    [EnterpriseCoreService]
+    [ServiceContract]
+    [Authentication(false)]
+    public interface ITimeService : ICoreServiceLayer
     {
-        #region ITimeService Members
-
-		public GetTimeResponse GetTime(GetTimeRequest request)
-        {
-            return new GetTimeResponse(DateTime.Now);
-        }
-
-        #endregion
+        [OperationContract]
+		GetTimeResponse GetTime(GetTimeRequest request);
     }
-
 }

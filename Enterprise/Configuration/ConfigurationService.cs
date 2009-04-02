@@ -35,6 +35,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.Configuration;
 using ClearCanvas.Enterprise.Configuration.Brokers;
 using ClearCanvas.Enterprise.Core;
 using System.Threading;
@@ -51,40 +52,37 @@ namespace ClearCanvas.Enterprise.Configuration
     {
         #region IConfigurationService Members
 
-        public List<SettingsGroupInfo> ListSettingsGroups()
+        public ListSettingsGroupsResponse ListSettingsGroups(ListSettingsGroupsRequest request)
         {
-            return CollectionUtils.Map<SettingsGroupDescriptor, SettingsGroupInfo, List<SettingsGroupInfo>>(
-                SettingsGroupDescriptor.ListInstalledSettingsGroups(true),
-                delegate(SettingsGroupDescriptor desc)
-                {
-                    return new SettingsGroupInfo(desc);
-                });
+        	return new ListSettingsGroupsResponse(SettingsGroupDescriptor.ListInstalledSettingsGroups(true));
         }
 
-        public List<SettingsPropertyInfo> ListSettingsProperties(SettingsGroupInfo group)
+        public ListSettingsPropertiesResponse ListSettingsProperties(ListSettingsPropertiesRequest request)
         {
-            return CollectionUtils.Map<SettingsPropertyDescriptor, SettingsPropertyInfo, List<SettingsPropertyInfo>>(
-                SettingsPropertyDescriptor.ListSettingsProperties(group.ToDescriptor()),
-                delegate(SettingsPropertyDescriptor desc)
-                {
-                    return new SettingsPropertyInfo(desc);
-                });
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.Group, "Group");
+
+        	return new ListSettingsPropertiesResponse(
+				SettingsPropertyDescriptor.ListSettingsProperties(request.Group));
         }
 
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public string GetConfigurationDocument(string name, Version version, string user, string instanceKey)
+        public GetConfigurationDocumentResponse GetConfigurationDocument(GetConfigurationDocumentRequest request)
         {
-            CheckReadAccess(user);
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.DocumentKey, "DocumentKey");
+			
+			CheckReadAccess(request.DocumentKey.User);
 
             IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
-            ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
+            ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(request.DocumentKey);
             IList<ConfigurationDocument> documents = broker.Find(
                 new ConfigurationDocumentSearchCriteria[] { criteria }, new SearchResultPage(0, 1), true);
 
             ConfigurationDocument document = CollectionUtils.FirstElement(documents);
-            return document == null ? null : document.Body.DocumentText;
+            return new GetConfigurationDocumentResponse(request.DocumentKey, document == null ? null : document.Body.DocumentText);
         }
 
 
@@ -93,40 +91,48 @@ namespace ClearCanvas.Enterprise.Configuration
         // it is safest to use a new persistence scope
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
         [Audit(typeof(ConfigurationServiceRecorder))]
-        public void SetConfigurationDocument(string name, Version version, string user, string instanceKey, string content)
+		public SetConfigurationDocumentResponse SetConfigurationDocument(SetConfigurationDocumentRequest request)
         {
-            CheckWriteAccess(user);
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.DocumentKey, "DocumentKey");
+
+			CheckWriteAccess(request.DocumentKey.User);
 
             IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
-            ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
+            ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(request.DocumentKey);
             IList<ConfigurationDocument> documents = broker.Find(
                 new ConfigurationDocumentSearchCriteria[] { criteria }, new SearchResultPage(0, 1), true);
 
             ConfigurationDocument document = CollectionUtils.FirstElement(documents);
             if(document != null)
             {
-                document.Body.DocumentText = content;
+                document.Body.DocumentText = request.Content;
             }
             else
             {
                 // no saved document, create new
-                document = NewDocument(name, version, user, instanceKey);
-                document.Body.DocumentText = content;
+                document = NewDocument(request.DocumentKey);
+                document.Body.DocumentText = request.Content;
                 PersistenceContext.Lock(document, DirtyState.New);
             }
+
+			return new SetConfigurationDocumentResponse();
         }
 
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public void RemoveConfigurationDocument(string name, Version version, string user, string instanceKey)
+		public RemoveConfigurationDocumentResponse RemoveConfigurationDocument(RemoveConfigurationDocumentRequest request)
         {
-            CheckWriteAccess(user);
+			Platform.CheckForNullReference(request, "request");
+			Platform.CheckMemberIsSet(request.DocumentKey, "DocumentKey");
+
+			CheckWriteAccess(request.DocumentKey.User);
    
             try
             {
                 IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
-                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
+                ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(request.DocumentKey);
                 ConfigurationDocument document = broker.FindOne(criteria);
                 broker.Delete(document);
             }
@@ -134,6 +140,8 @@ namespace ClearCanvas.Enterprise.Configuration
             {
                 // no document - nothing to remove
             }
+
+			return new RemoveConfigurationDocumentResponse();
         }
 
         #endregion
@@ -168,49 +176,45 @@ namespace ClearCanvas.Enterprise.Configuration
             }
         }
 
-        private ConfigurationDocument NewDocument(string name, Version version, string user, string instanceKey)
+        private ConfigurationDocument NewDocument(ConfigurationDocumentKey key)
         {
-            // force an empty instanceKey to null
-            if (instanceKey != null && instanceKey.Length == 0)
-                instanceKey = null;
-
-            return new ConfigurationDocument(name,
-                VersionUtils.ToPaddedVersionString(version, false, false),
-                StringUtilities.NullIfEmpty(user),
-                StringUtilities.NullIfEmpty(instanceKey));
+            return new ConfigurationDocument(key.DocumentName,
+                VersionUtils.ToPaddedVersionString(key.Version, false, false),
+                StringUtilities.NullIfEmpty(key.User),
+                StringUtilities.NullIfEmpty(key.InstanceKey));
         }
 
-        private ConfigurationDocumentSearchCriteria BuildCurrentVersionCriteria(string name, Version version, string user, string instanceKey)
+        private ConfigurationDocumentSearchCriteria BuildCurrentVersionCriteria(ConfigurationDocumentKey key)
         {
-            ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(name, user, instanceKey);
-            criteria.DocumentVersionString.EqualTo(VersionUtils.ToPaddedVersionString(version, false, false));
+            ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(key);
+            criteria.DocumentVersionString.EqualTo(VersionUtils.ToPaddedVersionString(key.Version, false, false));
             return criteria;
         }
 
-        private ConfigurationDocumentSearchCriteria BuildCurrentAndPerviousVersionsCriteria(string name, Version version, string user, string instanceKey)
+		private ConfigurationDocumentSearchCriteria BuildCurrentAndPerviousVersionsCriteria(ConfigurationDocumentKey key)
         {
-            ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(name, user, instanceKey);
-            criteria.DocumentVersionString.LessThanOrEqualTo(VersionUtils.ToPaddedVersionString(version, false, false));
+            ConfigurationDocumentSearchCriteria criteria = BuildUnversionedCriteria(key);
+            criteria.DocumentVersionString.LessThanOrEqualTo(VersionUtils.ToPaddedVersionString(key.Version, false, false));
             return criteria;
         }
 
-        private ConfigurationDocumentSearchCriteria BuildUnversionedCriteria(string name, string user, string instanceKey)
+		private ConfigurationDocumentSearchCriteria BuildUnversionedCriteria(ConfigurationDocumentKey key)
         {
             ConfigurationDocumentSearchCriteria criteria = new ConfigurationDocumentSearchCriteria();
-            criteria.DocumentName.EqualTo(name);
+            criteria.DocumentName.EqualTo(key.DocumentName);
 
-            if (!string.IsNullOrEmpty(instanceKey))
+            if (!string.IsNullOrEmpty(key.InstanceKey))
             {
-                criteria.InstanceKey.EqualTo(instanceKey);
+                criteria.InstanceKey.EqualTo(key.InstanceKey);
             }
             else
             {
                 criteria.InstanceKey.IsNull();
             }
 
-            if (!string.IsNullOrEmpty(user))
+            if (!string.IsNullOrEmpty(key.User))
             {
-                criteria.User.EqualTo(user);
+                criteria.User.EqualTo(key.User);
             }
             else
             {

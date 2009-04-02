@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Enterprise.Common.Configuration;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -25,7 +26,9 @@ namespace ClearCanvas.Enterprise.Common
             Platform.GetService<IConfigurationService>(
                 delegate(IConfigurationService service)
                 {
-                    content = service.GetConfigurationDocument(name, version, user, instanceKey);
+                    content = service.GetConfigurationDocument(
+						new GetConfigurationDocumentRequest(
+							new ConfigurationDocumentKey(name, version, user, instanceKey))).Content;
                 });
 
             if(content == null)
@@ -43,7 +46,9 @@ namespace ClearCanvas.Enterprise.Common
             Platform.GetService<IConfigurationService>(
                 delegate(IConfigurationService service)
                 {
-                    service.SetConfigurationDocument(name, version, user, instanceKey, content.ReadToEnd());
+                    service.SetConfigurationDocument(
+						new SetConfigurationDocumentRequest(
+							new ConfigurationDocumentKey(name, version, user, instanceKey), content.ReadToEnd()));
                 });
         }
 

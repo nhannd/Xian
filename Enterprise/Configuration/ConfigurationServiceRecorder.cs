@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Xml;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common.Configuration;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Enterprise.Configuration
@@ -21,18 +22,15 @@ namespace ClearCanvas.Enterprise.Configuration
             if(info.Exception != null)
                 return false;
 
-            string name = (string) info.Arguments[0];
-            Version version = (Version)info.Arguments[1];
-            string user = (string)info.Arguments[2];
-            string instanceKey = (string)info.Arguments[3];
+			ConfigurationDocumentRequestBase request = (ConfigurationDocumentRequestBase)info.Arguments[0];
 
             writer.WriteStartDocument();
             writer.WriteStartElement("action");
             writer.WriteAttributeString("type", info.OperationMethodInfo.Name);
-            writer.WriteAttributeString("documentName", name);
-            writer.WriteAttributeString("documentVersion", version.ToString());
-            writer.WriteAttributeString("documentUser", user ?? "{application}");
-            writer.WriteAttributeString("instanceKey", instanceKey ?? "{default}");
+            writer.WriteAttributeString("documentName", request.DocumentKey.DocumentName);
+            writer.WriteAttributeString("documentVersion", request.DocumentKey.Version.ToString());
+            writer.WriteAttributeString("documentUser", request.DocumentKey.User ?? "{application}");
+            writer.WriteAttributeString("instanceKey", request.DocumentKey.InstanceKey ?? "{default}");
             writer.WriteEndElement();
             writer.WriteEndDocument();
 

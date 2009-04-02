@@ -33,15 +33,50 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ServiceModel;
+using System.Runtime.Serialization;
+using ClearCanvas.Common.Configuration;
 
-namespace ClearCanvas.Enterprise.Common
+namespace ClearCanvas.Enterprise.Common.Configuration
 {
+    /// <summary>
+    /// Defines a service for saving/retrieving configuration data to/from a persistent store.
+    /// </summary>
     [EnterpriseCoreService]
     [ServiceContract]
-    [Authentication(false)]
-    public interface ITimeService : ICoreServiceLayer
+    public interface IConfigurationService : ICoreServiceLayer
     {
+        /// <summary>
+        /// Lists settings groups installed in the local plugin base.
+        /// </summary>
         [OperationContract]
-        DateTime GetTime();
+		ListSettingsGroupsResponse ListSettingsGroups(ListSettingsGroupsRequest request);
+
+        /// <summary>
+        /// Lists the settings properties for the specified settings group.
+        /// </summary>
+        [OperationContract]
+		ListSettingsPropertiesResponse ListSettingsProperties(ListSettingsPropertiesRequest request);
+
+        /// <summary>
+        /// Gets the document specified by the name, version, user and instance key.
+        /// The user and instance key may be null.
+        /// </summary>
+        [OperationContract]
+		GetConfigurationDocumentResponse GetConfigurationDocument(GetConfigurationDocumentRequest request);
+
+        /// <summary>
+        /// Sets the content for the specified document, version, user and instance key.
+        /// The user and instance key may be null.
+        /// </summary>
+        [OperationContract]
+		SetConfigurationDocumentResponse SetConfigurationDocument(SetConfigurationDocumentRequest request);
+
+        /// <summary>
+        /// Removes any stored settings values for the specified group, version, user and instance key.
+        /// The user and instance key may be null.
+        /// </summary>
+        [OperationContract]
+		RemoveConfigurationDocumentResponse RemoveConfigurationDocument(RemoveConfigurationDocumentRequest request);
+
     }
 }

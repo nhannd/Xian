@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Common.Configuration
 {
@@ -42,6 +43,7 @@ namespace ClearCanvas.Common.Configuration
     /// <remarks>
 	/// A settings property is a single property belonging to a settings group.
 	/// </remarks>
+	[DataContract]
     public class SettingsPropertyDescriptor
     {
 		/// <summary>
@@ -88,41 +90,51 @@ namespace ClearCanvas.Common.Configuration
         /// <summary>
         /// Gets the name of the property.
         /// </summary>
+        [DataMember]
         public string Name
         {
             get { return _name; }
+			private set { _name = value; }
         }
 
         /// <summary>
         /// Gets the name of the type of the property.
         /// </summary>
-        public string TypeName
+		[DataMember]
+		public string TypeName
         {
             get { return _typeName; }
-        }
+			private set { _typeName = value; }
+		}
 
         /// <summary>
         /// Gets the description of the property.
         /// </summary>
-        public string Description
+		[DataMember]
+		public string Description
         {
             get { return _description; }
-        }
+			private set { _description = value; }
+		}
 
         /// <summary>
         /// Gets the scope of the property.
         /// </summary>
-        public SettingScope Scope
+		[DataMember]
+		public SettingScope Scope
         {
             get { return _scope; }
-        }
+			private set { _scope = value; }
+		}
 
         /// <summary>
         /// Gets the serialized default value of the property.
         /// </summary>
-        public string DefaultValue
+		[DataMember]
+		public string DefaultValue
         {
             get { return _defaultValue; }
-        }
+			private set { _defaultValue = value; }
+		}
     }
 }

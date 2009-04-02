@@ -33,12 +33,14 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using ClearCanvas.Common.Utilities;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Common.Configuration
 {
     /// <summary>
     /// Describes a settings group.
     /// </summary>
+    [DataContract]
     public class SettingsGroupDescriptor : IEquatable<SettingsGroupDescriptor>
     {
         /// <summary>
@@ -84,11 +86,11 @@ namespace ClearCanvas.Common.Configuration
             return groups;
         }
 
-        private readonly string _name;
-        private readonly Version _version;
-        private readonly string _description;
-        private readonly string _assemblyQualifiedTypeName;
-        private readonly bool _hasUserScopedSettings;
+        private string _name;
+        private Version _version;
+        private string _description;
+        private string _assemblyQualifiedTypeName;
+        private bool _hasUserScopedSettings;
 
         /// <summary>
         /// Constructor.
@@ -118,42 +120,52 @@ namespace ClearCanvas.Common.Configuration
         /// <summary>
         /// Gets the name of the settings group.
         /// </summary>
-        public string Name
+		[DataMember]
+		public string Name
         {
             get { return _name; }
+			private set { _name = value; }
         }
 
         /// <summary>
         /// Gets the version of the settings group.
         /// </summary>
-        public Version Version
+		[DataMember]
+		public Version Version
         {
             get { return _version; }
-        }
+			private set { _version = value; }
+		}
 
         /// <summary>
         /// Gets the description of the settings group.
         /// </summary>
-        public string Description
+		[DataMember]
+		public string Description
         {
             get { return _description; }
-        }
+			private set { _description = value; }
+		}
 
         /// <summary>
         /// Gets a value indicating whether this settings class has user-scoped settings.
         /// </summary>
-        public bool HasUserScopedSettings
+		[DataMember]
+		public bool HasUserScopedSettings
         {
             get { return _hasUserScopedSettings; }
-        }
+			private set { _hasUserScopedSettings = value; }
+		}
 
         /// <summary>
         /// Gets the assembly-qualified type name of the class that implements the settings group.
         /// </summary>
-        public string AssemblyQualifiedTypeName
+		[DataMember]
+		public string AssemblyQualifiedTypeName
         {
             get { return _assemblyQualifiedTypeName; }
-        }
+			private set { _assemblyQualifiedTypeName = value; }
+		}
 
         /// <summary>
         /// Settings groups are considered equal if they have the same name and version.

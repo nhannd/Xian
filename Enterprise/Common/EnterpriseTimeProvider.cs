@@ -32,6 +32,7 @@
 using System;
 
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common.Time;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -104,7 +105,7 @@ namespace ClearCanvas.Enterprise.Common
             Platform.GetService<ITimeService>(
                 delegate(ITimeService service)
                 {
-                    time = service.GetTime();
+                    time = service.GetTime(new GetTimeRequest()).Time;
                 });
 
             _lastResyncInLocalTime = DateTime.Now;

@@ -33,12 +33,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using System.Configuration;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
-using System.ServiceModel;
-using System.ServiceModel.Security;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common.Configuration;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -73,14 +70,19 @@ namespace ClearCanvas.Enterprise.Common
                 {
                     SettingsParser parser = new SettingsParser();
 
-                    string sharedDocument = service.GetConfigurationDocument(group.Name, group.Version, null, instanceKey);
+                    string sharedDocument = service.GetConfigurationDocument(
+						new GetConfigurationDocumentRequest(
+							new ConfigurationDocumentKey(group.Name, group.Version, null, instanceKey))).Content;
+
                     parser.FromXml(sharedDocument, values);
 
                     // if the group contains user-scoped settings, get the user document
                     // and overwrite any values with the user's values
                     if(group.HasUserScopedSettings)
                     {
-                        string userDocument = service.GetConfigurationDocument(group.Name, group.Version, user, instanceKey);
+                        string userDocument = service.GetConfigurationDocument(
+									new GetConfigurationDocumentRequest(
+										new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey))).Content;
                         parser.FromXml(userDocument, values);
                     }
                 });
@@ -113,7 +115,9 @@ namespace ClearCanvas.Enterprise.Common
                     Dictionary<string, string> values = new Dictionary<string, string>();
 
                     // next we obtain any previously stored configuration document for this settings group
-                    string document = service.GetConfigurationDocument(group.Name, group.Version, user, instanceKey);
+                    string document = service.GetConfigurationDocument(
+						new GetConfigurationDocumentRequest(
+							new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey))).Content;
                     parser.FromXml(document, values);
 
                     // update the values that have changed
@@ -135,7 +139,9 @@ namespace ClearCanvas.Enterprise.Common
 
                     // generate the document and save it
                     document = parser.ToXml(values);
-                    service.SetConfigurationDocument(group.Name, group.Version, user, instanceKey, document);
+                    service.SetConfigurationDocument(
+						new SetConfigurationDocumentRequest(
+							new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey), document));
                 });
         }
 
@@ -147,10 +153,8 @@ namespace ClearCanvas.Enterprise.Common
                 delegate(IConfigurationService service)
                 {
                     service.RemoveConfigurationDocument(
-                        group.Name,
-                        group.Version,
-                        user,
-                        instanceKey);
+						new RemoveConfigurationDocumentRequest(
+							new ConfigurationDocumentKey(group.Name, group.Version, user, instanceKey)));
                 });
         }
 
@@ -169,12 +173,7 @@ namespace ClearCanvas.Enterprise.Common
                 Platform.GetService<IConfigurationService>(
                     delegate(IConfigurationService service)
                     {
-                        _groups = CollectionUtils.Map<SettingsGroupInfo, SettingsGroupDescriptor, List<SettingsGroupDescriptor>>(
-                           service.ListSettingsGroups(),
-                           delegate(SettingsGroupInfo info)
-                           {
-                               return info.ToDescriptor();
-                           });
+                    	_groups = service.ListSettingsGroups(new ListSettingsGroupsRequest()).Groups;
                     });
 
                 // HACK:
@@ -214,12 +213,7 @@ namespace ClearCanvas.Enterprise.Common
                 Platform.GetService<IConfigurationService>(
                     delegate(IConfigurationService service)
                     {
-                        properties = CollectionUtils.Map<SettingsPropertyInfo, SettingsPropertyDescriptor, List<SettingsPropertyDescriptor>>(
-                            service.ListSettingsProperties(new SettingsGroupInfo(group)),
-                            delegate(SettingsPropertyInfo info)
-                            {
-                                return info.ToDescriptor();
-                            });
+                    	properties = service.ListSettingsProperties(new ListSettingsPropertiesRequest(group)).Properties;
                     });
                 return properties;
             }
