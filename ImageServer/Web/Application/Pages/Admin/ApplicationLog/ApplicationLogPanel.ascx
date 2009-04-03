@@ -87,11 +87,6 @@
 												<localAsp:ApplicationLogGridView ID="ApplicationLogGridView" runat="server"/>
 											</td>
 										</tr>
-										<tr>
-											<td style="border-top: solid 1px #3d98d1">
-												<ccAsp:GridPager ID="GridPagerBottom" runat="server" />
-											</td>
-										</tr>
 									</table>
 								</asp:Panel>
 							</td>

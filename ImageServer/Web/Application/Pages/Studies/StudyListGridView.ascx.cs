@@ -246,7 +246,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                 {
                     if(StudyListGrid.DataSource == null)
                     {
-                        message.Message = "Enter search criteria to find studies.";    
+                        message.Message = "Please enter search criteria to find studies.";    
                     } else
                     {
                         message.Message = "No studies found matching the provided criteria.";

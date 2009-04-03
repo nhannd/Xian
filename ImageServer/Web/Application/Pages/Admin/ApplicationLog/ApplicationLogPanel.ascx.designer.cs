@@ -20,13 +20,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog {
     public partial class ApplicationLogSearchPanel {
         
         /// <summary>
-        /// UpdatePanel control.
+        /// SearchUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.UpdatePanel UpdatePanel;
+        protected global::System.Web.UI.UpdatePanel SearchUpdatePanel;
         
         /// <summary>
         /// Table1 control.
@@ -182,15 +182,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog {
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton SearchButton;
         
         /// <summary>
-        /// UpdateProgress1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.UpdateProgress UpdateProgress1;
-        
-        /// <summary>
         /// ToolBarUpdatePanel control.
         /// </summary>
         /// <remarks>
@@ -234,14 +225,5 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog.ApplicationLogGridView ApplicationLogGridView;
-        
-        /// <summary>
-        /// GridPagerBottom control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerBottom;
     }
 }
