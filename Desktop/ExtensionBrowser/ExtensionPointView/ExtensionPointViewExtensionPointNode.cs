@@ -48,18 +48,8 @@ namespace ClearCanvas.Desktop.ExtensionBrowser.ExtensionPointView
 
         protected override void CreateChildNodes()
         {
-            // determine the set of extensions of this extension point
-            List<ExtensionInfo> extensions = new List<ExtensionInfo>();
-            foreach (ExtensionInfo e in Platform.PluginManager.Extensions)
-            {
-                if (e.PointExtended == _ep.ExtensionPointClass)
-                {
-                    extensions.Add(e);
-                }
-            }
-
             // pass those extensions to a child node
-            AddChild(new ExtensionPointViewExtensionsNode(extensions.ToArray()));
+            AddChild(new ExtensionPointViewExtensionsNode(_ep.ListExtensions()));
         }
 
         public override string DisplayName

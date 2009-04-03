@@ -39,9 +39,9 @@ namespace ClearCanvas.Desktop.ExtensionBrowser.ExtensionPointView
 {
     public class ExtensionPointViewExtensionsNode : BrowserNode
     {
-        private ExtensionInfo[] _extensions;
+        private IList<ExtensionInfo> _extensions;
 
-        internal ExtensionPointViewExtensionsNode(ExtensionInfo[] extensions)
+        internal ExtensionPointViewExtensionsNode(IList<ExtensionInfo> extensions)
         {
             _extensions = extensions;
         }

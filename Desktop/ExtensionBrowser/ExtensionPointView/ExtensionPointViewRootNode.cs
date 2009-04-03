@@ -49,7 +49,7 @@ namespace ClearCanvas.Desktop.ExtensionBrowser.ExtensionPointView
 
         public override string DisplayName
         {
-			get { return string.Format(SR.FormatExtensionPointsDisplayName, Platform.PluginManager.ExtensionPoints.Length); }
+			get { return string.Format(SR.FormatExtensionPointsDisplayName, Platform.PluginManager.ExtensionPoints.Count); }
         }
 
         public override string Details

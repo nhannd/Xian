@@ -30,6 +30,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common
 {
@@ -59,7 +61,7 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// The class that defines the extension point.
+        /// Gets the class that defines the extension point.
         /// </summary>
         public Type ExtensionPointClass
         {
@@ -67,11 +69,22 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// The interface that an extension must implement.
+        /// Gets the interface that an extension must implement.
         /// </summary>
         public Type ExtensionInteface
         {
             get { return _extensionInterface; }
+        }
+
+        /// <summary>
+        /// Computes and returns a list of the installed extensions to this point,
+        /// including disabled extensions.
+        /// </summary>
+        /// <returns></returns>
+        public IList<ExtensionInfo> ListExtensions()
+        {
+            return CollectionUtils.Select(Platform.PluginManager.Extensions,
+                delegate(ExtensionInfo ext) { return ext.PointExtended == _extensionPointClass; });
         }
 
         #region IBrowsable Members

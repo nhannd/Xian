@@ -46,7 +46,7 @@ namespace ClearCanvas.Common
         /// </summary>
         /// <param name="asm">The plugin assembly to inspect.</param>
         /// <returns>An array of <see cref="ExtensionInfo" /> objects describing the extensions.</returns>
-        internal static ExtensionInfo[] DiscoverExtensions(Assembly asm)
+        internal static List<ExtensionInfo> DiscoverExtensions(Assembly asm)
         {
             List<ExtensionInfo> extensionList = new List<ExtensionInfo>();
             foreach (Type type in asm.GetTypes())
@@ -65,7 +65,7 @@ namespace ClearCanvas.Common
                     );
                 }
             }
-            return extensionList.ToArray();
+            return extensionList;
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace ClearCanvas.Common
         /// </summary>
         /// <param name="asm">The plugin assembly to inspect.</param>
         /// <returns>An array of <see cref="ExtensionPointInfo" />objects describing the extension points.</returns>
-        internal static ExtensionPointInfo[] DiscoverExtensionPoints(Assembly asm)
+        internal static List<ExtensionPointInfo> DiscoverExtensionPoints(Assembly asm)
         {
             List<ExtensionPointInfo> extensionPointList = new List<ExtensionPointInfo>();
             foreach (Type type in asm.GetTypes())
@@ -97,7 +97,7 @@ namespace ClearCanvas.Common
                     Platform.Log(LogLevel.Error, e.Message);
                 }
             }
-            return extensionPointList.ToArray();
+            return extensionPointList;
         }
 
         private static void ValidateExtensionPointClass(Type extensionPointClass)
@@ -114,8 +114,8 @@ namespace ClearCanvas.Common
 		private string _icon;
 		private Assembly _assembly;
 
-        private ExtensionPointInfo[] _extensionPoints;
-        private ExtensionInfo[] _extensions;
+        private List<ExtensionPointInfo> _extensionPoints;
+        private List<ExtensionInfo> _extensions;
 
         /// <summary>
         /// Internal constructor.
@@ -132,27 +132,35 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// The set of extensions defined in this plugin.
+        /// Gets the set of extensions defined in this plugin, including disabled extensions.
         /// </summary>
-        public ExtensionInfo[] Extensions
+        public IList<ExtensionInfo> Extensions
         {
-            get { return _extensions; }
+            get { return _extensions.AsReadOnly(); }
         }
 
         /// <summary>
-        /// The set of extension points defined in this plugin.
+        /// Gets the set of extension points defined in this plugin.
         /// </summary>
-        public ExtensionPointInfo[] ExtensionPoints
+        public IList<ExtensionPointInfo> ExtensionPoints
         {
-            get { return _extensionPoints; }
+            get { return _extensionPoints.AsReadOnly(); }
         }
 
         /// <summary>
-        /// The assembly that implements this plugin.
+        /// Gets the assembly that implements this plugin.
         /// </summary>
         public Assembly Assembly
         {
             get { return _assembly; }
+        }
+
+        /// <summary>
+        /// The name of an icon resource to associate with the plugin.
+        /// </summary>
+        public string Icon
+        {
+            get { return _icon; }
         }
 
         #region IBrowsable Members
@@ -180,14 +188,6 @@ namespace ClearCanvas.Common
         {
             get { return _description; }
         }
-
-		/// <summary>
-		/// The name of an icon resource to associate with the plugin.
-		/// </summary>
-    	public string Icon
-    	{
-			get { return _icon; }	
-    	}
 
         #endregion
     }

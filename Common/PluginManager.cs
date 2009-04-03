@@ -45,9 +45,9 @@ namespace ClearCanvas.Common
 	/// </summary>
 	public class PluginManager 
 	{
-        private volatile PluginInfo[] _plugins;
-        private volatile ExtensionInfo[] _extensions;
-        private volatile ExtensionPointInfo[] _extensionPoints;
+        private volatile List<PluginInfo> _plugins;
+        private volatile List<ExtensionInfo> _extensions;
+        private volatile List<ExtensionPointInfo> _extensionPoints;
 		private readonly string _pluginDir;
 		private event EventHandler<PluginLoadedEventArgs> _pluginProgressEvent;
 
@@ -62,49 +62,50 @@ namespace ClearCanvas.Common
 		}
 
         /// <summary>
-		/// Information about the set of all installed plugins.
+		/// Gets information about the set of all installed plugins.
         /// </summary>
         /// <remarks>
 		/// If plugins have not yet been loaded into memory,
 		/// querying this property will cause them to be loaded.
 		/// </remarks>
-        public PluginInfo[] Plugins
+        public IList<PluginInfo> Plugins
         {
             get 
             {
                 EnsurePluginsLoaded();
-                return _plugins;
+                return _plugins.AsReadOnly();
             }
         }
 
         /// <summary>
-        /// Information about the set of extensions defined across all installed plugins.
+        /// Gets information about the set of extensions defined across all installed plugins,
+        /// including disabled extensions.
         /// </summary>
         /// <remarks>
 		/// If plugins have not yet been loaded
 		/// into memory, querying this property will cause them to be loaded.
 		/// </remarks>
-        public ExtensionInfo[] Extensions
+        public IList<ExtensionInfo> Extensions
         {
             get
             {
                 EnsurePluginsLoaded();
-                return _extensions;
+                return _extensions.AsReadOnly();
             }
         }
 
         /// <summary>
-        /// Information about the set of extension points defined across all installed plugins.  
+        /// Gets information about the set of extension points defined across all installed plugins.  
         /// </summary>
         /// <remarks>
 		/// If plugins have not yet been loaded into memory, querying this property will cause them to be loaded.
 		/// </remarks>
-        public ExtensionPointInfo[] ExtensionPoints
+        public IList<ExtensionPointInfo> ExtensionPoints
         {
             get
             {
                 EnsurePluginsLoaded();
-                return _extensionPoints;
+                return _extensionPoints.AsReadOnly();
             }
         }
 
@@ -171,7 +172,7 @@ namespace ClearCanvas.Common
             _plugins = ProcessAssemblies(assemblies);
 
             // If no plugins could be loaded, throw a fatal exception
-            if (_plugins.Length == 0)
+            if (_plugins.Count == 0)
                 throw new PluginException(SR.ExceptionUnableToLoadPlugins);
 
             // scan plugins for extensions
@@ -189,7 +190,7 @@ namespace ClearCanvas.Common
             ExtensionSettings.Default.OrderExtensions(extList, out ordered, out remainder);
 
             // create global extension list, with the ordered set appearing first
-            _extensions = CollectionUtils.Concat<ExtensionInfo>(ordered, remainder).ToArray();
+            _extensions = CollectionUtils.Concat<ExtensionInfo>(ordered, remainder);
 
             // scan plugins for extension points
             List<ExtensionPointInfo> epList = new List<ExtensionPointInfo>();
@@ -199,10 +200,10 @@ namespace ClearCanvas.Common
             }
             // hack: add extension points from ClearCanvas.Common, which isn't technically a plugin
             epList.AddRange(PluginInfo.DiscoverExtensionPoints(this.GetType().Assembly));
-            _extensionPoints = epList.ToArray();
+            _extensionPoints = epList;
         }
 
-        private PluginInfo[] ProcessAssemblies(Assembly[] assemblies)
+        private List<PluginInfo> ProcessAssemblies(Assembly[] assemblies)
         {
             List<PluginInfo> plugins = new List<PluginInfo>();
             for(int i = 0; i < assemblies.Length; i++)
@@ -235,7 +236,7 @@ namespace ClearCanvas.Common
                     Platform.Log(LogLevel.Error, e, SR.LogFailedToProcessPluginAssembly, assemblies[i].FullName);
                 }
             }
-            return plugins.ToArray();
+            return plugins;
         }
 
         private bool RootPluginDirectoryExists()
