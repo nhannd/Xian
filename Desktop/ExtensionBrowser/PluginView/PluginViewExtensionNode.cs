@@ -60,5 +60,10 @@ namespace ClearCanvas.Desktop.ExtensionBrowser.PluginView
         {
             get { return GetDefaultDetails(_ext); }
         }
+
+        public override bool Enabled
+        {
+            get { return _ext.Enabled; }
+        }
     }
 }

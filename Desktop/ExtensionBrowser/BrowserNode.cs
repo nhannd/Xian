@@ -79,6 +79,11 @@ namespace ClearCanvas.Desktop.ExtensionBrowser
             }
         }
 
+        public virtual bool Enabled
+        {
+            get { return true; }
+        }
+
         public abstract string DisplayName
         {
             get;

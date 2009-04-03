@@ -111,6 +111,7 @@ namespace ClearCanvas.Desktop.ExtensionBrowser.View.WinForms
             {
                 TreeNode treeChild = new TreeNode(dataChild.DisplayName);
                 treeChild.Tag = dataChild;
+                treeChild.ForeColor = dataChild.Enabled ? treeNode.TreeView.ForeColor : Color.DimGray;
                 treeNode.Nodes.Add(treeChild);
             }
         }

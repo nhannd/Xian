@@ -51,5 +51,7 @@ namespace ClearCanvas.Desktop.ExtensionBrowser
         {
             get;
         }
+
+        bool Enabled { get; }
     }
 }
