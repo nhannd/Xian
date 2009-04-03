@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using ClearCanvas.Common.Audit;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 
@@ -42,6 +43,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 		{
 			get { return _operationName; }
 			set { _operationName = value; }
+		}
+
+		public void WriteLogEntry(IEnumerable<EntityChange> changeSet, AuditLog auditLog)
+		{
+			AuditLogEntry entry = CreateLogEntry(changeSet);
+			auditLog.WriteEntry(entry.Category, entry.Details);
 		}
 
 		public AuditLogEntry CreateLogEntry(IEnumerable<EntityChange> changeSet)
