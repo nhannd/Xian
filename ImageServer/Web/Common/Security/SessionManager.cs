@@ -105,7 +105,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             }
 
             FormsAuthentication.SignOut();
-            if(redirect) FormsAuthentication.RedirectToLoginPage();
+            if(redirect) HttpContext.Current.Response.Redirect(ImageServerConstants.PageURLs.LoginPage);
         }
     }
 }
