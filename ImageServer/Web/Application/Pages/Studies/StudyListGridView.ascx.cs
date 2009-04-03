@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             if(IsPostBack)
             {
                 StudyListGrid.DataSource = StudyDataSourceObject;    
-            }
+            } 
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -233,6 +233,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                             row.Attributes.Add("canrestore", "true");
 					}
                 }
+            }
+        }
+
+        protected void GridView_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.EmptyDataRow)
+            {
+                EmptySearchResultsMessage message =
+                                        (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
+                if (message != null)
+                {
+                    if(StudyListGrid.DataSource == null)
+                    {
+                        message.Message = "Enter search criteria to find studies.";    
+                    } else
+                    {
+                        message.Message = "No studies found matching the provided criteria.";
+                    }
+                }
+                
             }
         }
 

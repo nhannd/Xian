@@ -352,23 +352,23 @@ Global.css - Defines the global styles for the entire web application relating
     background: #ffffff url(../../../PersistantImage.ashx?key=SearchTextBoxBackground) repeat-x ;
 }
 
-.SearchTextBox.hover {
+.SearchTextBox.TextInputHover {
 	background: #fff;
 	border: solid 1px #99CCFF;
 	font-weight: bold;
 	color: #333333;
 }
 
-.SearchTextBox.focus {
+.SearchTextBox.TextInputFocus {
 	background: #fff;
 	border: solid 1px #99CCFF;
 	font-weight: bold;
 	color: #333333;
 }
 
-.SearchDateBox.hover 
+.SearchDateBox.DateInputHover 
 {
-	background: #ffffff url(../images/MainContent/dropdown.gif) no-repeat right;
+	background: #ffffff;
 	border: solid 1px #99CCFF;
 	font-weight: bold;
 	color: #333333;

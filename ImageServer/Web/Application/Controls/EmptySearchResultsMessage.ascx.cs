@@ -12,7 +12,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         {
         }
         
-        private string _message = String.Empty;
         private readonly SuggestionPanelContainer _suggestionPanelContainer = new SuggestionPanelContainer();
         private ITemplate _suggestionTemplate = null;
 
@@ -34,14 +33,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         public string Message
         { 
-            get { return _message;}
-            set{ _message = value;}
+            get { return ResultsMessage.Text;}
+            set{ ResultsMessage.Text = value;}
         }
 
         protected void Page_Init(object sender, EventArgs e)
         {
-            ResultsMessage.Text = Message;
-
             if (_suggestionTemplate != null)
             {
                 _suggestionTemplate.InstantiateIn(_suggestionPanelContainer);

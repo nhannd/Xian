@@ -11,6 +11,7 @@
 				<ccUI:GridView ID="StudyListControl" runat="server" 
 					OnSelectedIndexChanged="StudyListControl_SelectedIndexChanged"
 					OnPageIndexChanging="StudyListControl_PageIndexChanging"
+					OnRowDataBound="GridView_RowDataBound"
 					SelectionMode="Multiple">
 					<Columns>
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">
@@ -39,7 +40,7 @@
 							ItemStyle-HorizontalAlign="Center" />
 					</Columns>
 					<EmptyDataTemplate>				    
-                        <ccAsp:EmptySearchResultsMessage runat="server" ID="EmptySearchResultsMessage" Message="No studies were found using the provided criteria." />
+                        <ccAsp:EmptySearchResultsMessage runat="server" ID="EmptySearchResultsMessage" />
 					</EmptyDataTemplate>
 					<RowStyle CssClass="GlobalGridViewRow" />
 					<AlternatingRowStyle CssClass="GlobalGridViewAlternatingRow" />

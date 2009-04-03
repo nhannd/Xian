@@ -8,7 +8,7 @@
         <table  class="EmptySearchResultsSuggestionPanel">
 	        <tr align="left">
 	        <td class="EmptySearchResultsSuggestionPanelHeader">
-	            <asp:Label runat="server" ID="SuggestionTitle" Text="What should I do?"></asp:Label></td>
+	            <asp:Label runat="server" ID="SuggestionTitle" Text="What can I do?"></asp:Label></td>
 	        </tr>
 	        <tr align="left" class="EmptySearchResultsSuggestionContent">
 	        <td class="EmptySearchResultsSuggestionContent" style="padding:10px;">
