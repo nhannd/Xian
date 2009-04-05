@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
     /// Represents handler that handles requests with RequestType of "WADO"
     /// </summary>
     [ExtensionOf(typeof(WADORequestTypeExtensionPoint))]
-    public class StandardWADORequestTypeHandler : IWADORequestTypeHandler
+    class StandardWADORequestTypeHandler : IWADORequestTypeHandler
     {
 
         #region IWADORequestTypeHandler Members
@@ -78,16 +78,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         #region IWADORequestTypeHandler Members
 
 
-
-        public WADOResponse Process(string serverAE, HttpListenerContext httpContext)
-        {
-            Validate(httpContext.Request);
-
-            ObjectStreamingHandlerFactory factory = new ObjectStreamingHandlerFactory();
-            IObjectStreamingHandler handler = factory.CreateHandler(httpContext.Request);
-            return handler.Process(serverAE, httpContext);
-        }
-
         #endregion
 
         #region IDisposable Members
@@ -95,6 +85,20 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         public void Dispose()
         {
 
+        }
+
+        #endregion
+
+        #region IWADORequestTypeHandler Members
+
+
+        public WADOResponse Process(WADORequestTypeHandlerContext context)
+        {
+            Validate(context.HttpContext.Request);
+
+            ObjectStreamingHandlerFactory factory = new ObjectStreamingHandlerFactory();
+            IObjectStreamingHandler handler = factory.CreateHandler(context.HttpContext.Request);
+            return handler.Process(context);
         }
 
         #endregion

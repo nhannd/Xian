@@ -34,13 +34,14 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming;
+using ClearCanvas.ImageServer.Services.Streaming.Shreds;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 {
+    
     /// <summary>
     /// Represents a Dicom WADO request processor.
     /// </summary>
@@ -49,6 +50,16 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         #region Private Members
         private WADORequestProcessorStatistics _statistics;
         private string _serverAE;
+        private readonly Uri _baseUri;
+		#endregion
+		
+		#region Constructor
+
+        public WADORequestProcessor(Uri baseUri)
+        {
+            _baseUri = baseUri;
+        }
+
         #endregion
 
         #region Public Properties
@@ -81,7 +92,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
-        private string GetClientAcceptTypes(HttpListenerContext context)
+        private static string GetClientAcceptTypes(HttpListenerContext context)
         {
             Platform.CheckForNullReference(context, "context");
 
@@ -159,9 +170,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         {
             Platform.CheckForNullReference(context, "context");
 
-            
-            Parse(context);
-
             _statistics = new WADORequestProcessorStatistics(context.Request.RemoteEndPoint.Address.ToString());
             _statistics.TotalProcessTime.Add(delegate()
                 {
@@ -172,7 +180,11 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
                         string requestType = context.Request.QueryString["requestType"];
                         IWADORequestTypeHandler typeHandler = handlerManager.GetHandler(requestType);
 
-                        using (WADOResponse response = typeHandler.Process(_serverAE, context))
+                        WADORequestTypeHandlerContext ctx = new WADORequestTypeHandlerContext();
+                        ctx.HttpContext = context;
+                        ctx.ServerAE = UriHelper.GetServerAE(context);
+                        
+                        using (WADOResponse response = typeHandler.Process(ctx))
                         {
                             if (response != null)
                             {
@@ -187,27 +199,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         }
 
 
-        private void Parse(HttpListenerContext context)
-        {
-            string path = context.Request.Url.GetComponents(UriComponents.Path, UriFormat.Unescaped);
-            if (String.IsNullOrEmpty(path))
-                throw new WADOException(HttpStatusCode.BadRequest, "Invalid url format");
-
-            string[] components = path.Split('/');
-            if (components.Length!=2)
-                throw new WADOException(HttpStatusCode.BadRequest, "Invalid url format.");
-
-            _serverAE = components[1];
-            if (String.IsNullOrEmpty(_serverAE ))
-                throw new WADOException(HttpStatusCode.BadRequest, "Invalid url format: ServerAE is expected.");
-
-
-            string requestType = context.Request.QueryString["requestType"];
-            if (String.IsNullOrEmpty(requestType))
-            {
-                throw new WADOException(HttpStatusCode.BadRequest, "RequestType parameter is missing");
-            }
-        }
 
         #endregion
 

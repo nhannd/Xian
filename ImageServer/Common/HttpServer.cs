@@ -1,10 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Net;
-using System.Text;
-using System.Threading;
 using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -44,7 +39,7 @@ namespace ClearCanvas.ImageServer.Common
 
         #region Private Members
 
-        private string _name;
+        private readonly string _name;
         private event HttpListenerHandlerDelegate _httpRequestReceived;
         #endregion
 
@@ -67,7 +62,7 @@ namespace ClearCanvas.ImageServer.Common
         /// </summary>
         /// <param name="serverName">Name of the Http server</param>
         /// <param name="uri">The Uri where the server will listen at</param>
-        public HttpServer(string serverName, string uri) : base(uri)
+        public HttpServer(string serverName, Uri uri) : base(uri)
         {
             _name = serverName;
         }
@@ -109,11 +104,8 @@ namespace ClearCanvas.ImageServer.Common
                     if (listener.IsListening)
                     {
                         context = listener.EndGetContext(result);
-
-                        Thread.CurrentThread.Name = String.Format("Http Request(from {0}:{1})", context.Request.RemoteEndPoint.Address, context.Request.RemoteEndPoint.Port);
-
                         Platform.Log(LogLevel.Debug, "Handling http request");
-
+                        Platform.Log(LogLevel.Debug, "{0}", context.Request.Url.AbsoluteUri);
                         // signal the listener that it can now accept another connection
                         state.WaitEvent.Set();
 
@@ -157,8 +149,9 @@ namespace ClearCanvas.ImageServer.Common
                     {
                         context.Response.Close();
 
-                    }catch(Exception)
+                    }catch(Exception ex)
                     {
+                        Platform.Log(LogLevel.Error, ex);
                     }
                 }
 

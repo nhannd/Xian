@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "9.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
     internal sealed partial class ImageStreamingServerSettings : global::System.Configuration.ApplicationSettingsBase {
         
         private static ImageStreamingServerSettings defaultInstance = ((ImageStreamingServerSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ImageStreamingServerSettings())));
@@ -25,10 +25,28 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("http://+:1000/wado/")]
-        public string Address {
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public int Port {
             get {
-                return ((string)(this["Address"]));
+                return ((int)(this["Port"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("/wado/")]
+        public string Path {
+            get {
+                return ((string)(this["Path"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        public int ConcurrencyWarningThreshold {
+            get {
+                return ((int)(this["ConcurrencyWarningThreshold"]));
             }
         }
     }

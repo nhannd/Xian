@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
     /// <remarks>
     /// Dicom standard says "WADO" is the only valid request type value currently defined, but additional ones may be added in the future.
     /// </remarks>
-    public interface IWADORequestTypeHandler : IDisposable
+    interface IWADORequestTypeHandler : IDisposable
     {
         /// <summary>
         /// Gets the request type that can be handled by the handler.
@@ -52,14 +52,20 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
         /// Processes a WADO request.
         /// </summary>
         /// <param name="context"></param>
-        WADOResponse Process(string serverAE, HttpListenerContext context);
+        WADOResponse Process(WADORequestTypeHandlerContext context);
+    }
+
+    class WADORequestTypeHandlerContext
+    {
+        public String ServerAE;
+        public HttpListenerContext HttpContext;
     }
 
     /// <summary>
     /// Extension point to allow adding plugins for handling requests with different RequestType parameter
     /// </summary>
     [ExtensionPoint()]
-    public class WADORequestTypeExtensionPoint : ExtensionPoint<IWADORequestTypeHandler>
+    class WADORequestTypeExtensionPoint : ExtensionPoint<IWADORequestTypeHandler>
     {
     }
 }

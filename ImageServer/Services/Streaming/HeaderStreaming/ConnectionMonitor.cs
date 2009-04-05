@@ -93,12 +93,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 
                 if (_contexts.Count == _maxConnections)
                 {
+                    Platform.Log(LogLevel.Warn, "Max concurrency reached: {0}. Max={1}", _contexts.Count, _maxConnections); 
+
                     ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, "Header Streaming",
                                          AlertTypeCodes.LowResources,
                                          SR.AlertHeaderMaxConnectionsReached, _maxConnections);
                 }
-
-                Platform.Log(LogLevel.Info, "# concurrent connections: {0}. Max={1}", _contexts.Count, _maxConnections);
             }
         }
 
@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
                     }
                 }
 
-                Platform.Log(LogLevel.Info, "Context closed detected: # concurrent connections: {0}", _contexts.Count);
+                Platform.Log(LogLevel.Debug, "Context closed detected: # concurrent connections: {0}", _contexts.Count);
             }
         }
         #endregion

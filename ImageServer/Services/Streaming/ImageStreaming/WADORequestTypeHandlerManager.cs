@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
     /// <see cref="WADORequestTypeHandlerManager"/> instantiates and cleans up resources held by plugins that implements <see cref="IWADORequestTypeHandler"/>.
     /// When <see cref="WADORequestTypeHandlerManager"/> is <see cref="Dispose">disposed</see> the plugin instances held are also disposed of. 
     /// </remarks>
-    public class WADORequestTypeHandlerManager : IDisposable
+    class WADORequestTypeHandlerManager : IDisposable
     {
         #region Private Members
         private Dictionary<string, IWADORequestTypeHandler> _handlers = new Dictionary<string, IWADORequestTypeHandler>();
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
         public IWADORequestTypeHandler GetHandler(string requestType)
         {
-            if (_handlers.ContainsKey(requestType))
+            if (_handlers.ContainsKey(requestType.ToUpper()))
                 return _handlers[requestType];
             else
                 throw new WADOException(HttpStatusCode.BadRequest, String.Format("Unsupported RequestType {0}", requestType));
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
                 if (plugin is IWADORequestTypeHandler)
                 {
                     IWADORequestTypeHandler typeHandler = plugin as IWADORequestTypeHandler;
-                    _handlers.Add(typeHandler.RequestType, typeHandler);
+                    _handlers.Add(typeHandler.RequestType.ToUpper(), typeHandler);
                 }
             }
         }

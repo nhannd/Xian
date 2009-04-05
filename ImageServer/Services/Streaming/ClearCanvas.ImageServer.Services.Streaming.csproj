@@ -85,7 +85,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>HeaderStreamingServerSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Shreds\ImageStreamingServer.cs" />
+    <Compile Include="Shreds\ImageStreamingServer.cs">
+    </Compile>
     <Compile Include="Shreds\ImageStreamingServerSettings.cs" />
     <Compile Include="Shreds\ImageStreamingServerSettings.Designer.cs">
       <AutoGen>True</AutoGen>

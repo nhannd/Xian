@@ -44,50 +44,50 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
     /// </summary>
     internal class ImageStreamingHandler : IObjectStreamingHandler
     {
-        public WADOResponse Process(string serverAE, HttpListenerContext httpContext)
+        public WADOResponse Process(WADORequestTypeHandlerContext context)
         {
-            Platform.CheckForNullReference(serverAE, "serverAE");
-            Platform.CheckForNullReference(httpContext, "httpContext");
-            
-            ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(serverAE);
+            Platform.CheckForNullReference(context, "httpContext");
+            Platform.CheckForNullReference(context.ServerAE, "context.ServerAE");
+            Platform.CheckForNullReference(context.HttpContext, "context.HttpContext");
+
+            ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(context.ServerAE);
             if (partition== null)
-                throw new WADOException(HttpStatusCode.NotFound, String.Format("Server {0} does not exist", serverAE));
+                throw new WADOException(HttpStatusCode.NotFound, String.Format("Server {0} does not exist", context.ServerAE));
 
             if (!partition.Enabled)
-                throw new WADOException(HttpStatusCode.Forbidden, String.Format("Server {0} has been disabled", serverAE));
+                throw new WADOException(HttpStatusCode.Forbidden, String.Format("Server {0} has been disabled", context.ServerAE));
             
-            ImageStreamingContext context = new ImageStreamingContext();
-            context.ServerAE = serverAE;
-            context.Request = httpContext.Request;
-            context.Response = httpContext.Response;
-            context.StudyInstanceUid = httpContext.Request.QueryString["studyuid"];
-            context.SeriesInstanceUid = httpContext.Request.QueryString["seriesuid"];
-            context.ObjectUid = httpContext.Request.QueryString["objectuid"];
+            ImageStreamingContext streamingContext = new ImageStreamingContext();
+            streamingContext.ServerAE = context.ServerAE;
+            streamingContext.Request = context.HttpContext.Request;
+            streamingContext.Response = context.HttpContext.Response;
+            streamingContext.StudyInstanceUid = context.HttpContext.Request.QueryString["studyuid"];
+            streamingContext.SeriesInstanceUid = context.HttpContext.Request.QueryString["seriesuid"];
+            streamingContext.ObjectUid = context.HttpContext.Request.QueryString["objectuid"];
 
 			StudyStorageLocation location;
-			if (!FilesystemMonitor.Instance.GetStudyStorageLocation(partition.Key,context.StudyInstanceUid,out location))
+			if (!FilesystemMonitor.Instance.GetStudyStorageLocation(partition.Key,streamingContext.StudyInstanceUid,out location))
 				throw new WADOException(HttpStatusCode.NotFound, "The requested object does not have a readable location on the specified server");
 
-        	context.StorageLocation = location;
+            streamingContext.StorageLocation = location;
 
-            if (!File.Exists(context.ImagePath))
+            if (!File.Exists(streamingContext.ImagePath))
                 throw new WADOException(HttpStatusCode.NotFound, "The requested object does not exist on the specified server");
 
-            if (context.StorageLocation.Lock)
+            if (streamingContext.StorageLocation.Lock)
                 throw new WADOException(HttpStatusCode.Forbidden, "The requested object is being used by another process. Please try again later.");
             
             // convert the dicom image into the appropriate mime type
             WADOResponse response = new WADOResponse();
-            IImageMimeTypeProcessor processor = GetMimeTypeProcessor(context);
+            IImageMimeTypeProcessor processor = GetMimeTypeProcessor(streamingContext);
 
-            MimeTypeProcessorOutput output = processor.Process(context);   
+            MimeTypeProcessorOutput output = processor.Process(streamingContext);   
             response.Output = output.Output;
             response.ContentType = output.ContentType;
             response.IsLast = output.IsLast;
             
             return response;
         }
-
 
         protected static bool ClientAcceptable(ImageStreamingContext context, string contentType)
         {
@@ -151,5 +151,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                                     String.Format("The specified contentType '{0}' is not supported", responseContentType));
             }
         }
+
     }
 }
