@@ -600,6 +600,9 @@
   <data name="TitleAddExternalPractitioner" xml:space="preserve">
     <value>Add Practitioner</value>
   </data>
+  <data name="TitleAddFolder" xml:space="preserve">
+    <value>Add Folder</value>
+  </data>
   <data name="TitleAddPhoneNumber" xml:space="preserve">
     <value>Add Phone Number...</value>
   </data>
@@ -657,6 +660,9 @@
   <data name="TitleExternalPractitioner" xml:space="preserve">
     <value>External Practitioner</value>
   </data>
+  <data name="TitleFolderSystems" xml:space="preserve">
+    <value>Folder Systems</value>
+  </data>
   <data name="TitleImagingServices" xml:space="preserve">
     <value>Imaging Services</value>
   </data>
@@ -665,6 +671,12 @@
   </data>
   <data name="TitleMergePractitioner" xml:space="preserve">
     <value>Merge Practitioners</value>
+  </data>
+  <data name="TitleMoveDown" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="TitleMoveUp" xml:space="preserve">
+    <value>Move up</value>
   </data>
   <data name="TitleNext" xml:space="preserve">
     <value>Next Page</value>

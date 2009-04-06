@@ -1510,6 +1510,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Folder.
+        /// </summary>
+        internal static string TitleAddFolder {
+            get {
+                return ResourceManager.GetString("TitleAddFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Phone Number....
         /// </summary>
         internal static string TitleAddPhoneNumber {
@@ -1681,6 +1690,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Folder Systems.
+        /// </summary>
+        internal static string TitleFolderSystems {
+            get {
+                return ResourceManager.GetString("TitleFolderSystems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Imaging Services.
         /// </summary>
         internal static string TitleImagingServices {
@@ -1704,6 +1722,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleMergePractitioner {
             get {
                 return ResourceManager.GetString("TitleMergePractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move down.
+        /// </summary>
+        internal static string TitleMoveDown {
+            get {
+                return ResourceManager.GetString("TitleMoveDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move up.
+        /// </summary>
+        internal static string TitleMoveUp {
+            get {
+                return ResourceManager.GetString("TitleMoveUp", resourceCulture);
             }
         }
         
