@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Shreds;
@@ -61,9 +59,8 @@ namespace ClearCanvas.Server.ShredHost
     {
         #region Private Members
         private HttpListener _listener;
-        private string _uri;
+        private readonly Uri _uri;
         private string _name;
-        private List<ManualResetEvent> _handlers = new List<ManualResetEvent>();
         private HttpListenerAsyncState _syncState;
 
         #endregion
@@ -74,7 +71,7 @@ namespace ClearCanvas.Server.ShredHost
         /// Creates an instance of <see cref="HttpListenerShred"/> to listern at the specified address.
         /// </summary>
         /// <param name="uri">The URI where the listen will listens at</param>
-        public HttpListenerShred(string uri)
+        public HttpListenerShred(Uri uri)
         {
             _uri = uri;
         }
@@ -84,13 +81,15 @@ namespace ClearCanvas.Server.ShredHost
 
         #region Public Properties
 
+
         /// <summary>
         /// Gets the URI where the shred is listening at for incoming http requests.
         /// </summary>
-        public string Uri
+        public Uri BaseUri
         {
             get { return _uri; }
         }
+
 
         /// <summary>
         /// Gets or sets the name of the shred.
@@ -107,15 +106,16 @@ namespace ClearCanvas.Server.ShredHost
 
         protected void StartListening(AsyncCallback callback)
         {
+            Platform.Log(LogLevel.Info, "Started listening at {0}", BaseUri);
+
             _listener = new HttpListener(); ;
-            _listener.Prefixes.Add(Uri);
+            _listener.Prefixes.Add(BaseUri.AbsoluteUri);
             _listener.Start();
 
-            Platform.Log(LogLevel.Info, "Started listening at {0}", Uri);
-
+            
             while (_listener.IsListening)
             {
-                Platform.Log(LogLevel.Debug, "Waiting for request at {0}", Uri);
+                Platform.Log(LogLevel.Debug, "Waiting for request at {0}", BaseUri);
 
                 _syncState = new HttpListenerAsyncState(_listener);
 
