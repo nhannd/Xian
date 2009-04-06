@@ -90,13 +90,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		}
 
 		[ReadOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
 		public LoadStaffForEditResponse LoadStaffForEdit(LoadStaffForEditRequest request)
 		{
-			// note that the version of the StaffRef is intentionally ignored here (default behaviour of ReadOperation)
 			Staff s = PersistenceContext.Load<Staff>(request.StaffRef);
-			StaffAssembler assembler = new StaffAssembler();
 
+			// ensure user has access to edit this staff
+			CheckAccess(s);
+
+			StaffAssembler assembler = new StaffAssembler();
 			return new LoadStaffForEditResponse(assembler.CreateStaffDetail(s, this.PersistenceContext));
 		}
 
@@ -133,7 +134,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 
 			// set properties from request
 			StaffAssembler assembler = new StaffAssembler();
-			assembler.UpdateStaff(request.StaffDetail, staff, Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup), PersistenceContext);
+
+			bool groupsEditable = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup);
+			assembler.UpdateStaff(request.StaffDetail,
+				staff,
+				groupsEditable,
+				groupsEditable,
+				PersistenceContext);
 
 			PersistenceContext.Lock(staff, DirtyState.New);
 
@@ -144,13 +151,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		}
 
 		[UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Staff)]
 		public UpdateStaffResponse UpdateStaff(UpdateStaffRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.StaffDetail, "StaffDetail");
 
 			Staff staff = PersistenceContext.Load<Staff>(request.StaffDetail.StaffRef);
+
+			// ensure user has access to edit this staff
+			CheckAccess(staff);
 
 			// if trying to associate with a new user account, check the account is free
 			if (!string.IsNullOrEmpty(request.StaffDetail.UserName) && request.StaffDetail.UserName != staff.UserName)
@@ -159,7 +168,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			}
 
 			StaffAssembler assembler = new StaffAssembler();
-			assembler.UpdateStaff(request.StaffDetail, staff, Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup), PersistenceContext);
+			assembler.UpdateStaff(request.StaffDetail,
+				staff,
+				Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup) || staff.UserName == this.CurrentUser,
+				Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup),
+				PersistenceContext);
 
 			return new UpdateStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
 		}
@@ -248,6 +261,23 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Throws an exception if the current user does not have access to edit specified staff.
+		/// </summary>
+		/// <param name="staff"></param>
+		private void CheckAccess(Staff staff)
+		{
+			// users with Admin.Data.Staff token can access any staff
+			if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.Staff))
+				return;
+
+			// users can access their own staff profile
+			if (staff.UserName == this.CurrentUser)
+				return;
+
+			throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
+		}
 
 		/// <summary>
 		/// Applies the specified staff types filter to the specified set of criteria objects.

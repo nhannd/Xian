@@ -156,6 +156,7 @@
     <Compile Include="SessionManagerTool.cs" />
     <Compile Include="StaffGroupEditorComponent.cs" />
     <Compile Include="StaffGroupLookupHandler.cs" />
+    <Compile Include="StaffGroupsConfigurationPage.cs" />
     <Compile Include="StaffGroupSummaryComponent.cs" />
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="SummaryComponentBase.cs" />

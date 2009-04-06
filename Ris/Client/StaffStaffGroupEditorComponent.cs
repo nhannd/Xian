@@ -37,11 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop.Validation;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
-using ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -71,21 +67,23 @@ namespace ClearCanvas.Ris.Client
         private readonly StaffGroupTable _availableGroups;
         private readonly StaffGroupTable _selectedGroups;
 
+		/// <summary>
+		/// Protected constructor.
+		/// </summary>
+		protected StaffStaffGroupEditorComponent()
+			: this(new StaffGroupSummary[0], new StaffGroupSummary[0])
+		{
+		}
+
         /// <summary>
         /// Constructs an editor to edit an existing staff profile
         /// </summary>
         public StaffStaffGroupEditorComponent(IList<StaffGroupSummary> groups, IList<StaffGroupSummary> groupChoices)
         {
             _selectedGroups = new StaffGroupTable();
-            _selectedGroups.Items.AddRange(groups);
+			_availableGroups = new StaffGroupTable();
 
-            _availableGroups = new StaffGroupTable();
-            _availableGroups.Items.AddRange(CollectionUtils.Reject(groupChoices,
-                delegate(StaffGroupSummary x)
-                {
-                    return CollectionUtils.Contains(_selectedGroups.Items,
-                        delegate(StaffGroupSummary y) { return x.StaffGroupRef.Equals(y.StaffGroupRef, true); });
-                }));
+			Initialize(groups, groupChoices);
         }
 
         public IList<StaffGroupSummary> SelectedItems
@@ -111,5 +109,25 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
-    }
+
+		/// <summary>
+		/// Protected method to re-initialize the component.
+		/// </summary>
+		/// <param name="groups"></param>
+		/// <param name="groupChoices"></param>
+		protected void Initialize(IList<StaffGroupSummary> groups, IList<StaffGroupSummary> groupChoices)
+		{
+			_selectedGroups.Items.Clear();
+			_selectedGroups.Items.AddRange(groups);
+
+			_availableGroups.Items.Clear();
+			_availableGroups.Items.AddRange(CollectionUtils.Reject(groupChoices,
+				delegate(StaffGroupSummary x)
+				{
+					return CollectionUtils.Contains(_selectedGroups.Items,
+						delegate(StaffGroupSummary y) { return x.StaffGroupRef.Equals(y.StaffGroupRef, true); });
+				}));
+		}
+
+	}
 }

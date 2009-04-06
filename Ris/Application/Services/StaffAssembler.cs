@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -84,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Services
 				staff.UserName);
 		}
 
-		public void UpdateStaff(StaffDetail detail, Staff staff, bool updateGroups, IPersistenceContext context)
+		public void UpdateStaff(StaffDetail detail, Staff staff, bool updateElectiveGroups, bool updateNonElectiveGroups, IPersistenceContext context)
 		{
 			PersonNameAssembler assembler = new PersonNameAssembler();
 			EmailAddressAssembler emailAssembler = new EmailAddressAssembler();
@@ -134,32 +135,53 @@ namespace ClearCanvas.Ris.Application.Services
 				staff.ExtendedProperties[pair.Key] = pair.Value;
 			}
 
-			if (updateGroups)
+			if (updateElectiveGroups)
 			{
-				// create a helper to sync staff group membership
-				CollectionSynchronizeHelper<StaffGroup, StaffGroupSummary> helper =
-					new CollectionSynchronizeHelper<StaffGroup, StaffGroupSummary>(
-						delegate(StaffGroup group, StaffGroupSummary summary)
-						{
-							return group.GetRef().Equals(summary.StaffGroupRef, true);
-						},
-						delegate(StaffGroupSummary groupSummary, ICollection<StaffGroup> groups)
-						{
-							StaffGroup group = context.Load<StaffGroup>(groupSummary.StaffGroupRef, EntityLoadFlags.Proxy);
-							group.AddMember(staff);
-						},
-						delegate
-						{
-							// do nothing
-						},
-						delegate(StaffGroup group, ICollection<StaffGroup> groups)
-						{
-							group.RemoveMember(staff);
-						}
-					);
-
-				helper.Synchronize(staff.Groups, detail.Groups);
+				// update elective groups
+				UpdateStaffGroups(detail, staff,
+					delegate(StaffGroupSummary summary) { return summary.IsElective; },
+					delegate(StaffGroup group) { return group.Elective; },
+					context);
 			}
+
+			if (updateNonElectiveGroups)
+			{
+				// update non-elective groups
+				UpdateStaffGroups(detail, staff,
+					delegate(StaffGroupSummary summary) { return !summary.IsElective; },
+					delegate(StaffGroup group) { return !group.Elective; },
+					context);
+			}
+		}
+
+		private static void UpdateStaffGroups(StaffDetail detail, Staff staff, Predicate<StaffGroupSummary> p1, Predicate<StaffGroup> p2,
+			IPersistenceContext context)
+		{
+			// create a helper to sync staff group membership
+			CollectionSynchronizeHelper<StaffGroup, StaffGroupSummary> helper =
+				new CollectionSynchronizeHelper<StaffGroup, StaffGroupSummary>(
+					delegate(StaffGroup group, StaffGroupSummary summary)
+					{
+						return group.GetRef().Equals(summary.StaffGroupRef, true);
+					},
+					delegate(StaffGroupSummary groupSummary, ICollection<StaffGroup> groups)
+					{
+						StaffGroup group = context.Load<StaffGroup>(groupSummary.StaffGroupRef, EntityLoadFlags.Proxy);
+						group.AddMember(staff);
+					},
+					delegate
+					{
+						// do nothing
+					},
+					delegate(StaffGroup group, ICollection<StaffGroup> groups)
+					{
+						group.RemoveMember(staff);
+					}
+				);
+
+			helper.Synchronize(
+				CollectionUtils.Select(staff.Groups, p2),
+				CollectionUtils.Select(detail.Groups, p1));
 		}
 	}
 }
