@@ -82,21 +82,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             StudyDetailView.DataBind();
         }
 
-        protected void StudyDetailView_DataBound(object sender, EventArgs e)
-        {
-            Study study = (StudyDetailView.DataItem) as Study;
-            if (study != null)
-            {
-                Label statusLabel = StudyDetailView.FindControl("Status") as Label;
-                if (statusLabel != null)
-                {
-					StudyController studyController = new StudyController();
-					StudyStorage storage = studyController.GetStudyStorage(study);
-					statusLabel.Text = storage.StudyStatusEnum.Description;
-                }
-            }
-        }
-
         #endregion Protected Methods
     }
 }

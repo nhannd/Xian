@@ -1,6 +1,6 @@
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="StudyDetailsView.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls.StudyDetailsView" %>
 
-<asp:DetailsView ID="StudyDetailView" runat="server" AutoGenerateRows="False" GridLines="Horizontal" CellPadding="4" OnDataBound="StudyDetailView_DataBound"
+<asp:DetailsView ID="StudyDetailView" runat="server" AutoGenerateRows="False" GridLines="Horizontal" CellPadding="4" 
      CssClass="GlobalGridView" Width="100%">
     <Fields>
         <asp:BoundField DataField="StudyDescription" HeaderText="Study Description: ">
@@ -19,12 +19,9 @@
         <asp:BoundField DataField="StudyInstanceUid" HeaderText="Study Instance UID: ">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
         </asp:BoundField>
-        <asp:TemplateField HeaderText="Study Status: ">
+        <asp:BoundField DataField="StudyStatusEnumString" HeaderText="Study Status: ">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
-            <ItemTemplate>
-                <asp:Label ID="Status" runat="server" />
-            </ItemTemplate>
-        </asp:TemplateField>
+        </asp:BoundField>
         <asp:TemplateField HeaderText="Study Date/Time: ">
             <HeaderStyle CssClass="StudyDetailsViewHeader" Wrap="false" />
             <ItemTemplate>

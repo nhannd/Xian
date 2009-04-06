@@ -585,7 +585,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			studySummary.StudyStatusEnum = studySummary.TheStudyStorage.StudyStatusEnum;
 			studySummary.QueueStudyStateEnum = studySummary.TheStudyStorage.QueueStudyStateEnum;
 
-			IList<ArchiveStudyStorage> archiveList = controller.GetArchiveStudyStorage(study);
+			IList<ArchiveStudyStorage> archiveList = controller.GetArchiveStudyStorage(studySummary.TheStudyStorage.Key);
 			if (archiveList.Count > 0)
 				studySummary.TheArchiveLocation = CollectionUtils.FirstElement(archiveList);
 

@@ -352,11 +352,23 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public IList<ArchiveStudyStorage> GetArchiveStudyStorage(Study study)
         {
-            Platform.CheckForNullReference(study, "Study");
+        	Platform.CheckForNullReference(study, "Study");
+
+        	ArchiveStudyStorageAdaptor adaptor = new ArchiveStudyStorageAdaptor();
+        	ArchiveStudyStorageSelectCriteria archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
+        	archiveStudyStorageCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
+        	archiveStudyStorageCriteria.ArchiveTime.SortDesc(0);
+
+        	return adaptor.Get(archiveStudyStorageCriteria);
+        }
+
+    	public IList<ArchiveStudyStorage> GetArchiveStudyStorage(ServerEntityKey studyStorageKey)
+        {
+            Platform.CheckForNullReference(studyStorageKey, "studyStorageKey");
 
             ArchiveStudyStorageAdaptor adaptor = new ArchiveStudyStorageAdaptor();
             ArchiveStudyStorageSelectCriteria archiveStudyStorageCriteria = new ArchiveStudyStorageSelectCriteria();
-            archiveStudyStorageCriteria.StudyStorageKey.EqualTo(GetStudyStorageGUID(study));
+            archiveStudyStorageCriteria.StudyStorageKey.EqualTo(studyStorageKey);
         	archiveStudyStorageCriteria.ArchiveTime.SortDesc(0);
 
             return adaptor.Get(archiveStudyStorageCriteria);
