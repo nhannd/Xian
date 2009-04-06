@@ -389,6 +389,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         server.SendCMoveResponse(presentationID, message.MessageId, new DicomMessage(),
                                                  DicomStatuses.QueryRetrieveUnableToPerformSuboperations);
                         finalResponseSent = true;
+                    	_theScu.Dispose();
                         _theScu = null;
                         return true;
                     }
@@ -400,7 +401,8 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                                  DicomStatuses.Success,
                                                  0, 0, 0, 0);
                         finalResponseSent = true;
-                        _theScu = null;
+						_theScu.Dispose();
+						_theScu = null;
                         return true;
                     }
 
@@ -436,7 +438,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 	                               			else
                 	                               				status = DicomStatuses.Success;
 
-                	                               			_theScu = null;
+															_theScu = null;
                 	                               		}
                 	                               		else
                 	                               		{
@@ -466,7 +468,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     _theScu.BeginSend(
                         delegate
                         	{
-                                //NOOP
+								//No-Op
                             },
                         _theScu);
 
