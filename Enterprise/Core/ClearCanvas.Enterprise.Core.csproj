@@ -161,6 +161,11 @@
     <Compile Include="SearchCriteria.cs" />
     <Compile Include="ServiceImplementsContractAttribute.cs" />
     <Compile Include="ServiceFactory.cs" />
+    <Compile Include="ServiceModel\DefaultAuthorizationPolicy.cs" />
+    <Compile Include="ServiceModel\DefaultUserValidator.cs" />
+    <Compile Include="ServiceModel\ServiceFactoryInjectionServiceBehavior.cs" />
+    <Compile Include="ServiceModel\ServiceMount.cs" />
+    <Compile Include="ServiceModel\ServiceMountException.cs" />
     <Compile Include="ServiceOperationAdvice.cs">
       <SubType>Code</SubType>
     </Compile>
