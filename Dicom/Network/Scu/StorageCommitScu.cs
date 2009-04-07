@@ -242,6 +242,38 @@ namespace ClearCanvas.Dicom.Network.Scu
 				return;
 			}
 		}
+
+		/// <summary>
+		/// Called when [receive request message].
+		/// </summary>
+		/// <param name="client">The client.</param>
+		/// <param name="association">The association.</param>
+		/// <param name="presentationID">The presentation ID.</param>
+		/// <param name="message">The message.</param>
+		public override void OnReceiveRequestMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
+		{
+			if (message.CommandField == DicomCommandField.NEventReportRequest)
+			{
+				Platform.Log(LogLevel.Info, "N-EVENT-REPORT-RQ messages currently not supported by StorageCommitScu.  Aborting connection.");
+				client.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
+				StopRunningOperation(ScuOperationStatus.UnexpectedMessage);
+				throw new Exception("The method or operation is not implemented.");
+			}
+			else
+			{
+				Platform.Log(LogLevel.Info, "Unexpected OnReceiveRequestMessage callback on client.");
+				try
+				{
+					client.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Error, ex, "Error aborting association");
+				}
+				StopRunningOperation(ScuOperationStatus.UnexpectedMessage);
+				throw new Exception("The method or operation is not implemented.");
+			}
+		}
 		#endregion
 	}
 }

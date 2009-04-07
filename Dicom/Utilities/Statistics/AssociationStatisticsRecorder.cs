@@ -47,6 +47,7 @@ namespace ClearCanvas.Dicom.Utilities.Statistics
         #region private members
         // The tranmission statistics.
         private TransmissionStatistics _assocStats = null;
+    	private bool _logInformation;
         #endregion
 
         #region Public Properties
@@ -66,7 +67,8 @@ namespace ClearCanvas.Dicom.Utilities.Statistics
         /// <param name="network"></param>
         public AssociationStatisticsRecorder(NetworkBase network)
         {
-            
+        	_logInformation = network.LogInformation;
+
             // hookup network events
             network.AssociationEstablished+=OnAssociationEstablished;
             network.MessageReceived += OnDicomMessageReceived;
@@ -132,7 +134,8 @@ namespace ClearCanvas.Dicom.Utilities.Statistics
             // it needs at this point based on what we have set
             _assocStats.End();
 
-            StatisticsLogger.Log(LogLevel.Info, _assocStats);
+			if (_logInformation)
+				StatisticsLogger.Log(LogLevel.Info, _assocStats);
         }
 
         /// <summary>

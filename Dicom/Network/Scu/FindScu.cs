@@ -345,7 +345,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				{
 					if (status == DicomState.Cancel)
 					{
-						Platform.Log(LogLevel.Info, "Cancel status received in Find Scu: {0}", message.Status);
+						if (LogInformation) Platform.Log(LogLevel.Info, "Cancel status received in Find Scu: {0}", message.Status);
 						Status = ScuOperationStatus.Canceled;
 					}
 					else if (status == DicomState.Failure)
@@ -361,12 +361,12 @@ namespace ClearCanvas.Dicom.Network.Scu
 					}
 					else if (Status == ScuOperationStatus.Canceled)
 					{
-						Platform.Log(LogLevel.Info, "Client cancelled Find Scu operation.");
+						if (LogInformation) Platform.Log(LogLevel.Info, "Client cancelled Find Scu operation.");
 					}
 				}
 				else
 				{
-					Platform.Log(LogLevel.Info, "Success status received in Find Scu!");
+					if (LogInformation) Platform.Log(LogLevel.Info, "Success status received in Find Scu!");
 				}
 				if (!ReuseAssociation)
 				{

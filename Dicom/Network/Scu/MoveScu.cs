@@ -166,8 +166,9 @@ namespace ClearCanvas.Dicom.Network.Scu
             _successSubOperations = 0;
             _warningSubOperations = 0;
 
-            Platform.Log(LogLevel.Info, "Preparing to connect to AE {0} on host {1} on port {2} for move request to {3}.",
-                         RemoteAE, RemoteHost, RemotePort, _destinationAe);
+			if (LogInformation)
+				Platform.Log(LogLevel.Info, "Preparing to connect to AE {0} on host {1} on port {2} for move request to {3}.",
+				             RemoteAE, RemoteHost, RemotePort, _destinationAe);
 
             try
             {
@@ -369,7 +370,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				{
 					if (status == DicomState.Cancel)
 					{
-						Platform.Log(LogLevel.Info, "Cancel status received in Move Scu: {0}", message.Status);
+						if (LogInformation) Platform.Log(LogLevel.Info, "Cancel status received in Move Scu: {0}", message.Status);
 						Status = ScuOperationStatus.Canceled;
 					}
 					else if (status == DicomState.Failure)
@@ -383,14 +384,14 @@ namespace ClearCanvas.Dicom.Network.Scu
 					{
 						Platform.Log(LogLevel.Warn, "Warning status received in Move Scu: {0}", message.Status);
 					}
-					else if (this.Status == ScuOperationStatus.Canceled)
+					else if (Status == ScuOperationStatus.Canceled)
 					{
-						Platform.Log(LogLevel.Info, "Client cancelled Move Scu operation.");
+						if (LogInformation) Platform.Log(LogLevel.Info, "Client cancelled Move Scu operation.");
 					}
 				}
 				else
 				{
-					Platform.Log(LogLevel.Info, "Success status received in Move Scu!");
+					if (LogInformation) Platform.Log(LogLevel.Info, "Success status received in Move Scu!");
 				}
 
 				client.SendReleaseRequest();

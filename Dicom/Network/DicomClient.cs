@@ -332,7 +332,7 @@ namespace ClearCanvas.Dicom.Network
 
         private void OnClientConnected()
         {
-            Platform.Log(LogLevel.Info, "{0} SCU -> Network Connected: {2} {1}", _assoc.CallingAE, InternalSocket.RemoteEndPoint.ToString(), _assoc.CalledAE);
+            if (LogInformation) Platform.Log(LogLevel.Debug, "{0} SCU -> Network Connected: {2} {1}", _assoc.CallingAE, InternalSocket.RemoteEndPoint.ToString(), _assoc.CalledAE);
 
             SendAssociateRequest(_assoc);
         }

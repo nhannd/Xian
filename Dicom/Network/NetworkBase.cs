@@ -171,6 +171,7 @@ namespace ClearCanvas.Dicom.Network
         private bool _stop;
         internal DicomAssociationState _state = DicomAssociationState.Sta1_Idle;
         private int _timeout = 30;
+		private bool _logInformation = true;
 
         internal Queue<RawPDU> _pduQueue = new Queue<RawPDU>();
 
@@ -182,6 +183,15 @@ namespace ClearCanvas.Dicom.Network
         {
             get { return _assoc; }
         }
+
+		/// <summary>
+		/// Flag telling if informational level logging should be done.
+		/// </summary>
+		public bool LogInformation
+		{
+			get { return _logInformation; }
+			set { _logInformation = value; }
+		}
 
         #endregion
 

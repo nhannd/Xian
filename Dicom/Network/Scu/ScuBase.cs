@@ -61,6 +61,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		private AssociationStatisticsRecorder _statsRecorder;
 		private string _failureDescription = "";
         private DicomState _resultStatus;
+		private bool _logInformation = true;
 		#endregion
 
 		#region Protected Properties...
@@ -177,6 +178,24 @@ namespace ClearCanvas.Dicom.Network.Scu
 		}
 		#endregion
 
+		#region LogInformation
+		/// <summary>
+		/// Sets if informational logging should be done by the Scu.  
+		/// </summary>
+		/// <value>Boolean, <c>true</c> if informational logging should be done, <c>
+		/// false</c> otherwise.  (Default: true)</value>
+		public bool LogInformation
+		{
+			get { return _logInformation; }
+			set
+			{
+				_logInformation = value;
+				if (_dicomClient != null)
+					_dicomClient.LogInformation = LogInformation;
+			}
+		}
+		#endregion
+
 		/// <summary>
 		/// Gets or sets Canceled - ie, rerturns true if the <see cref="Status"/> Property equals Canceled.
 		/// </summary>
@@ -210,7 +229,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// </summary>
 		public void Cancel()
 		{
-			Platform.Log(LogLevel.Info, "Canceling...");
+			if (LogInformation) Platform.Log(LogLevel.Info, "Canceling...");
 			Status = ScuOperationStatus.Canceled;
 			ProgressEvent.Set();
 		}
@@ -296,6 +315,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 				Status = ScuOperationStatus.Running;
 				_dicomClient = DicomClient.Connect(AssociationParameters, this);
+				_dicomClient.LogInformation = LogInformation;
 				ProgressEvent.WaitOne();
 			}
 			catch (Exception ex)
@@ -310,7 +330,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
         protected void Connect(string clientAETitle, string remoteAE, string remoteHost, int remotePort)
         {
-            Platform.Log(LogLevel.Info, "Preparing to connect to AE {0} on host {1} on port {2} for printer status request.", remoteAE, remoteHost, remotePort);
+			if (LogInformation) Platform.Log(LogLevel.Info, "Preparing to connect to AE {0} on host {1} on port {2} for printer status request.", remoteAE, remoteHost, remotePort);
             try
             {
                 ClientAETitle = clientAETitle;
@@ -387,7 +407,7 @@ namespace ClearCanvas.Dicom.Network.Scu
             }
             else
             {
-                throw new DicomException("Cannot find SopClass in association parameters: " + sopClass.ToString());
+                throw new DicomException("Cannot find SopClass in association parameters: " + sopClass);
             }
         }
 
@@ -454,7 +474,9 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			_statsRecorder = new AssociationStatisticsRecorder(client);
 
-			Platform.Log(LogLevel.Info, "Association Accepted when {0} connected to remote AE {1}", association.CallingAE, association.CalledAE);
+			if (LogInformation)
+				Platform.Log(LogLevel.Info, "Association Accepted from {0} to remote AE {1}:{2}", association.CallingAE,
+				             association.CalledAE, association.RemoteEndPoint.ToString());
 
 			EventHandler<AssociationParameters> tempHandler = AssociationAccepted;
 			if (tempHandler != null)
@@ -489,8 +511,10 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="reason">The reason.</param>
 		public void OnReceiveAssociateReject(DicomClient client, ClientAssociationParameters association, DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason)
 		{
-			FailureDescription = String.Format("Association Rejection when {0} connected to remote AE {1}", association.CallingAE, association.CalledAE);
-			Platform.Log(LogLevel.Info, FailureDescription);
+			FailureDescription =
+				String.Format("Association Rejection when {0} connected to remote AE {1}:{2}", association.CallingAE,
+				              association.CalledAE, association.RemoteEndPoint);
+			Platform.Log(LogLevel.Warn, FailureDescription);
 			StopRunningOperation(ScuOperationStatus.AssociationRejected);
 		}
 
@@ -501,7 +525,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="association">The association.</param>
 		/// <param name="presentationID">The presentation ID.</param>
 		/// <param name="message">The message.</param>
-		public void OnReceiveRequestMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
+		public virtual void OnReceiveRequestMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
 		{
 			Platform.Log(LogLevel.Error, "Unexpected OnReceiveRequestMessage callback on client.");
 			try
@@ -523,7 +547,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="association">The association.</param>
 		public void OnReceiveReleaseResponse(DicomClient client, ClientAssociationParameters association)
 		{
-			Platform.Log(LogLevel.Info, "Association released from {0} to {1}", association.CallingAE, association.CalledAE);
+			if (LogInformation) Platform.Log(LogLevel.Info, "Association released from {0} to {1}", association.CallingAE, association.CalledAE);
 			StopRunningOperation();
 		}
 
@@ -537,7 +561,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		public void OnReceiveAbort(DicomClient client, ClientAssociationParameters association, DicomAbortSource source, DicomAbortReason reason)
 		{
 			FailureDescription = String.Format( "Unexpected association abort received from {0} to {1}", association.CallingAE, association.CalledAE);
-			Platform.Log(LogLevel.Info, FailureDescription);
+			Platform.Log(LogLevel.Warn, FailureDescription);
 			StopRunningOperation(ScuOperationStatus.UnexpectedMessage);
 		}
 
@@ -554,7 +578,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 			//We don't want to blow away other failure descriptions (e.g. the OnDimseTimeout one).
 			if (Status == ScuOperationStatus.Running)
-				FailureDescription = String.Format("Unexpected network error");
+				FailureDescription = String.Format("Unexpected network error: {0}", e.Message);
 
 			if (client._state == DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
 			{
@@ -562,7 +586,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 			}
 			else
 			{
-				Platform.Log(LogLevel.Info, FailureDescription);
+				Platform.Log(LogLevel.Warn, FailureDescription);
 			}
 
 			//We don't want to blow away the OnDimseTimeout 'TimeoutExpired' status.
@@ -582,7 +606,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		{
 			Status = ScuOperationStatus.TimeoutExpired;
 			FailureDescription = String.Format("Timeout Expired for remote host {0}, aborting connection", RemoteAE);
-			Platform.Log(LogLevel.Info, FailureDescription );
+			if (LogInformation) Platform.Log(LogLevel.Info, FailureDescription );
 
 			try
 			{
@@ -593,7 +617,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				Platform.Log(LogLevel.Error, ex, "Error aborting association");
 			}
 
-			Platform.Log(LogLevel.Info, "Completed aborting connection from {0} to {1}", association.CallingAE, association.CalledAE);
+			if (LogInformation) Platform.Log(LogLevel.Info, "Completed aborting connection from {0} to {1}", association.CallingAE, association.CalledAE);
 			ProgressEvent.Set();
 		}
 
