@@ -10,10 +10,11 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
+using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 {
-    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.ApplicationLog.Search)]
+    [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.ApplicationLog.Search)]
 	public partial class Default : BasePage
 	{
 		protected void Page_Load(object sender, EventArgs e)

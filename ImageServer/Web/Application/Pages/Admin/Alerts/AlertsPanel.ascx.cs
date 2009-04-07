@@ -40,6 +40,7 @@ using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts.AlertsPanel.js", "application/x-javascript")]
 
@@ -127,7 +128,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             CategoryFilter.SelectedIndex = prevSelectedIndex;
 
             DeleteAllAlertsButton.Roles =
-                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.Alert.Delete;
+                AuthorityTokens.Admin.Alert.Delete;
 
             SetupEventHandlers();
         }

@@ -1,6 +1,6 @@
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Enterprise
 {
     public interface IApplicationServiceLayer
     {

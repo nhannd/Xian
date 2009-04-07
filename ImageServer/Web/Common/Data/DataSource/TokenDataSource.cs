@@ -34,7 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.ImageServer.Common.Admin;
+using ClearCanvas.ImageServer.Enterprise.Admin;
 using ClearCanvas.ImageServer.Services.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource

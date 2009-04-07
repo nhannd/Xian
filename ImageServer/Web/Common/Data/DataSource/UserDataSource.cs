@@ -31,12 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.ImageServer.Common.Admin;
+using ClearCanvas.ImageServer.Enterprise.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {

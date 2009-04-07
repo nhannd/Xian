@@ -2,7 +2,7 @@ using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Enterprise
 {
     [ExtensionOf(typeof(ServiceProviderExtensionPoint), Enabled = true)]
     class RemoteServiceProvider : RemoteCoreServiceProvider

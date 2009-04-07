@@ -8,8 +8,8 @@ using ClearCanvas.Common.Authorization;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.ImageServer.Common.Admin;
-using ClearCanvas.ImageServer.Common.Authentication;
+using ClearCanvas.ImageServer.Enterprise.Admin;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Utilities
 {

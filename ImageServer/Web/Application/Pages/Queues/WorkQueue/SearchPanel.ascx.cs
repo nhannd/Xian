@@ -39,6 +39,7 @@ using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.SearchPanel.js", "application/x-javascript")]
 
@@ -263,13 +264,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 PriorityDropDownList.Items.Add(new ListItem(p.Description, p.Lookup));
             PriorityDropDownList.SelectedIndex = prevSelectedIndex;
 
-            ViewItemDetailsButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.View;
-            DeleteItemButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Delete;
+            ViewItemDetailsButton.Roles = AuthorityTokens.WorkQueue.View;
+            DeleteItemButton.Roles = AuthorityTokens.WorkQueue.Delete;
             ReprocessItemButton.Roles =
-                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reprocess;
-            ResetItemButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reset;
+                AuthorityTokens.WorkQueue.Reprocess;
+            ResetItemButton.Roles = AuthorityTokens.WorkQueue.Reset;
             RescheduleItemButton.Roles =
-                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.WorkQueue.Reschedule;
+                AuthorityTokens.WorkQueue.Reschedule;
 
         }
 

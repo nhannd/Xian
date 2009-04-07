@@ -34,6 +34,7 @@ using System.Web.UI;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls
 {
@@ -100,8 +101,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
 
         public void Page_Load(Object sender, EventArgs e)
         {
-            DeleteStudyButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Delete;
-            EditStudyButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Edit;
+            DeleteStudyButton.Roles = AuthorityTokens.Study.Delete;
+            EditStudyButton.Roles = AuthorityTokens.Study.Edit;
         }
 
         protected override void OnPreRender(EventArgs e)

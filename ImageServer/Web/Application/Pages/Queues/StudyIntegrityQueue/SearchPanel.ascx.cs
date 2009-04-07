@@ -37,6 +37,7 @@ using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using ClearCanvas.Common.Utilities;
+using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.SearchPanel.js", "application/x-javascript")]
 
@@ -126,7 +127,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 										};
 
             ReconcileButton.Roles =
-                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.StudyIntegrityQueue.Reconcile;
+                AuthorityTokens.StudyIntegrityQueue.Reconcile;
         }
 
         protected override void OnPreRender(EventArgs e)

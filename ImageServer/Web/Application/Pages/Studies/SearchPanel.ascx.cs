@@ -43,6 +43,7 @@ using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Control
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Studies.SearchPanel.js", "application/x-javascript")]
 
@@ -129,7 +130,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         [ClientPropertyName("CanViewStudyDetails")]
         public bool CanViewStudyDetails
         {
-            get { return Thread.CurrentPrincipal.IsInRole(ImageServer.Common.Authentication.AuthorityTokens.Study.View); }
+            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Study.View); }
         }
 
         public ServerPartition ServerPartition
@@ -207,10 +208,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
                                         };
 
             //Set Roles
-            ViewStudyDetailsButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.View;
-            MoveStudyButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Move;
-            DeleteStudyButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Delete;
-            RestoreStudyButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.Restore;
+            ViewStudyDetailsButton.Roles = AuthorityTokens.Study.View;
+            MoveStudyButton.Roles = AuthorityTokens.Study.Move;
+            DeleteStudyButton.Roles = AuthorityTokens.Study.Delete;
+            RestoreStudyButton.Roles = AuthorityTokens.Study.Restore;
         }
 
     	#endregion Private Methods

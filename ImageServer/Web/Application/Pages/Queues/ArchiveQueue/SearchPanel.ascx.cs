@@ -40,6 +40,7 @@ using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue.SearchPanel.js", "application/x-javascript")]
 
@@ -190,8 +191,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                 StatusFilter.Items.Add(new ListItem(s.Description, s.Lookup));
             StatusFilter.SelectedIndex = prevSelectedIndex;
 
-            DeleteItemButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.ArchiveQueue.Delete;
-        	ViewStudyDetailsButton.Roles = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Study.View;
+            DeleteItemButton.Roles = AuthorityTokens.ArchiveQueue.Delete;
+        	ViewStudyDetailsButton.Roles = AuthorityTokens.Study.View;
         }
 
         protected override void OnPreRender(EventArgs e)

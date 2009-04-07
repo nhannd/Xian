@@ -1,7 +1,9 @@
 using System.Threading;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Enterprise;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Enterprise
 {
     /// <summary>
     /// User credentials

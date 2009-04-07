@@ -56,17 +56,13 @@
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Common\Admin\ClearCanvas.ImageServer.Common.Admin.csproj">
-      <Project>{F3BC804F-D3BC-46E2-9640-7DC105E9551F}</Project>
-      <Name>ClearCanvas.ImageServer.Common.Admin</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Common\Authentication\ClearCanvas.ImageServer.Common.Authentication.csproj">
-      <Project>{600584A7-4B78-4983-A21B-7F30023766A8}</Project>
-      <Name>ClearCanvas.ImageServer.Common.Authentication</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Common\ClearCanvas.ImageServer.Common.csproj">
       <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
       <Name>ClearCanvas.ImageServer.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
+      <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
+      <Name>ClearCanvas.ImageServer.Enterprise</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Services\Common\ClearCanvas.ImageServer.Services.Common.csproj">
       <Project>{6863F5CE-F1D3-46A7-915C-DE02D1452EED}</Project>

@@ -1,7 +1,7 @@
 using System.Security.Principal;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.ImageServer.Common
+namespace ClearCanvas.ImageServer.Enterprise
 {
     /// <summary>
     /// Custom principal

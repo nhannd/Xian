@@ -35,11 +35,12 @@ using ClearCanvas.ImageServer.Model;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSystems
 {
-    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.Configuration.FileSystems)]
+    [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Configuration.FileSystems)]
     public partial class Default : BasePage
     {
         #region Private members

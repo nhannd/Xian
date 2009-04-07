@@ -4,6 +4,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Services.Common.Alert
 {

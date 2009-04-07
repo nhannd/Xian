@@ -8,6 +8,7 @@ using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Data.Model;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
+using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 [assembly: WebResource("ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudies.DeletedStudySearchPanel.js", "application/x-javascript")]
 
@@ -129,9 +130,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Audit.DeletedStudi
             SearchResultGridView1.DataSourceContainer.ObjectCreated += DataSource_ObjectCreated;
 
             DeleteButton.Roles =
-                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.StudyDeleteHistory.Delete;
+                AuthorityTokens.Admin.StudyDeleteHistory.Delete;
             ViewStudyDetailsButton.Roles =
-                ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.StudyDeleteHistory.View;
+                AuthorityTokens.Admin.StudyDeleteHistory.View;
         }
         #endregion
 

@@ -34,7 +34,7 @@ using System.Configuration;
 using System.Web.UI;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Authentication;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 using ClearCanvas.ImageServer.Web.Common.Security;
 

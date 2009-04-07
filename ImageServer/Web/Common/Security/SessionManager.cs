@@ -4,7 +4,8 @@ using System.Web;
 using System.Web.Security;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Authentication;
+using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Web.Common.Security
 {

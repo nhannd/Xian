@@ -35,7 +35,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.ImageServer.Common.Admin;
+using ClearCanvas.ImageServer.Enterprise.Admin;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
