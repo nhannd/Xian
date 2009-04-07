@@ -35,6 +35,7 @@ using System.Web.UI;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
@@ -66,8 +67,8 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
 
         try
         {
-            AlertIndicator testControl = (AlertIndicator) LoadControl("~/Controls/AlertIndicator.ascx");
-            AlertIndicatorPlaceHolder.Controls.Add(testControl);
+            AlertIndicator alertControl = (AlertIndicator) LoadControl("~/Controls/AlertIndicator.ascx");
+            AlertIndicatorPlaceHolder.Controls.Add(alertControl);
         } catch(Exception ex)
         {
             //No permissions for Alerts, control won't be displayed

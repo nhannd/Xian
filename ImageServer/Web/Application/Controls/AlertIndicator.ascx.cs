@@ -16,7 +16,7 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Controls
 {
-    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.Alert.View)]
+    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens.Admin.Alert.View)]
     public partial class AlertIndicator : System.Web.UI.UserControl
     {
         protected IList<Alert> alerts;
