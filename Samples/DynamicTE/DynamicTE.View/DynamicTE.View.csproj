@@ -28,23 +28,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ClearCanvas.Common, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ClearCanvas.Common, Version=1.3.8146.27242, Culture=neutral, PublicKeyToken=ef419f6a04216132, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)\build\$(ConfigurationName)\common\ClearCanvas.Common.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\..\..\Program Files\ClearCanvas\SDK\1.3\bin\redistributable\common\ClearCanvas.Common.dll</HintPath>
     </Reference>
-    <Reference Include="ClearCanvas.Desktop, Version=0.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ClearCanvas.Desktop, Version=1.3.8146.27242, Culture=neutral, PublicKeyToken=ef419f6a04216132, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>$(SolutionDir)\build\$(ConfigurationName)\plugins\ClearCanvas.Desktop.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\..\..\Program Files\ClearCanvas\SDK\1.3\bin\redistributable\plugins\ClearCanvas.Desktop.dll</HintPath>
     </Reference>
-    <Reference Include="ClearCanvas.Desktop.View.WinForms, Version=1.1.5175.21520, Culture=neutral, PublicKeyToken=ef419f6a04216132, processorArchitecture=MSIL">
+    <Reference Include="ClearCanvas.Desktop.View.WinForms, Version=1.3.8146.27242, Culture=neutral, PublicKeyToken=ef419f6a04216132, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\ClearCanvas\SDK\1.1\bin\redistributable\plugins\ClearCanvas.Desktop.View.WinForms.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\ClearCanvas\SDK\1.3\bin\redistributable\plugins\ClearCanvas.Desktop.View.WinForms.dll</HintPath>
     </Reference>
-    <Reference Include="ClearCanvas.ImageViewer, Version=1.1.5175.21520, Culture=neutral, PublicKeyToken=ef419f6a04216132, processorArchitecture=MSIL">
+    <Reference Include="ClearCanvas.ImageViewer, Version=1.3.8146.27242, Culture=neutral, PublicKeyToken=ef419f6a04216132, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\ClearCanvas\SDK\1.1\bin\redistributable\plugins\ClearCanvas.ImageViewer.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files\ClearCanvas\SDK\1.3\bin\redistributable\plugins\ClearCanvas.ImageViewer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

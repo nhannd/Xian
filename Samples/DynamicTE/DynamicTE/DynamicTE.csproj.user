@@ -4,4 +4,7 @@
     <StartProgram>C:\VS2005\Projects\DynamicTE\build\Debug\ClearCanvas.Desktop.Executable.exe</StartProgram>
     <StartWorkingDirectory>C:\VS2005\Projects\DynamicTE\build\Debug\</StartWorkingDirectory>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <StartAction>Program</StartAction>
+  </PropertyGroup>
 </Project>

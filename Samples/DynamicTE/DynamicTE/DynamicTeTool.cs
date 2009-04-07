@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 
 		#region IImageOperation Members
 
-		IMemorable IImageOperation.GetOriginator(IPresentationImage image)
+		IMemorable IUndoableOperation<IPresentationImage>.GetOriginator(IPresentationImage image)
 		{
 			IDynamicTeProvider provider = image as IDynamicTeProvider;
 			if (provider == null)
@@ -178,12 +178,12 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			return provider as IMemorable;
 		}
 
-		bool IImageOperation.AppliesTo(IPresentationImage image)
+		bool IUndoableOperation<IPresentationImage>.AppliesTo(IPresentationImage image)
 		{
 			return image is IDynamicTeProvider;
 		}
 
-		void IImageOperation.Apply(IPresentationImage image)
+		void IUndoableOperation<IPresentationImage>.Apply(IPresentationImage image)
 		{
 			IDynamicTeProvider provider = image as IDynamicTeProvider;
 
