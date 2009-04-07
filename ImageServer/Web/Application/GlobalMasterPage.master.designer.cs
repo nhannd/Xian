@@ -118,13 +118,22 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.WebControls.Label Username;
     
     /// <summary>
-    /// AlertIndicator1 control.
+    /// AlertIndicatorCell control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::ClearCanvas.ImageServer.Web.Application.Controls.AlertIndicator AlertIndicator1;
+    protected global::System.Web.UI.HtmlControls.HtmlTableCell AlertIndicatorCell;
+    
+    /// <summary>
+    /// AlertIndicatorPlaceHolder control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.PlaceHolder AlertIndicatorPlaceHolder;
     
     /// <summary>
     /// LogoutButton control.

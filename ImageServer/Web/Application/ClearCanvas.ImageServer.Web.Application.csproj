@@ -1102,6 +1102,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Themes\Default\images\Background.png" />
     <Content Include="App_Themes\Default\images\blank.gif" />
     <Content Include="App_Themes\Default\images\Buttons\AddDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\AddEnabled.png" />

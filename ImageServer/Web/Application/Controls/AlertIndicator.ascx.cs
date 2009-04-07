@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Configuration;
+using System.Security.Permissions;
+using System.Threading;
 using System.Web;
 using System.Web.Security;
 using System.Web.UI;
@@ -14,12 +16,13 @@ using ClearCanvas.ImageServer.Web.Common.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Controls
 {
+    [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.ImageServer.Common.Authentication.AuthorityTokens.Admin.Alert.View)]
     public partial class AlertIndicator : System.Web.UI.UserControl
     {
         protected IList<Alert> alerts;
-        
+       
         protected void Page_Load(object sender, EventArgs e)
-        {
+        {           
             AlertController controller = new AlertController();
             AlertSelectCriteria criteria = new AlertSelectCriteria();
 

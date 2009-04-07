@@ -63,6 +63,17 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
         {
             Username.Text = "unknown";
         }
+
+        try
+        {
+            AlertIndicator testControl = (AlertIndicator) LoadControl("~/Controls/AlertIndicator.ascx");
+            AlertIndicatorPlaceHolder.Controls.Add(testControl);
+        } catch(Exception ex)
+        {
+            //No permissions for Alerts, control won't be displayed
+            //hide table cell that contains the control.
+            AlertIndicatorCell.Visible = false;
+        }
     }
 
     private void AddIE6PngBugFixCSS()

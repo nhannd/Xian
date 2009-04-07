@@ -54,7 +54,7 @@
                                 </asp:TableCell>
                                 <asp:TableCell runat="server" Width="50%" HorizontalAlign="right" CssClass="MainMenuPanel" VerticalAlign="Bottom" ID="UserInformationCell">
                                         <asp:Panel ID="UserInformationPanel" runat="server" CssClass="UserInformationPanel">
-                                             <table><tr><td>logged in as <b><asp:Label ID="Username" runat="server"></asp:Label></b></td><td><ccasp:AlertIndicator ID="AlertIndicator1" runat="server" /></td><td>| <asp:LinkButton ID="LogoutButton" runat="server" CssClass="UserInformationLink" OnClick="Logout_Click">Logout</asp:LinkButton></td></tr></table> 
+                                             <table runat="server"><tr><td>logged in as <b><asp:Label ID="Username" runat="server"></asp:Label></b></td><td id="AlertIndicatorCell"><asp:PlaceHolder runat="server" ID="AlertIndicatorPlaceHolder"></asp:PlaceHolder></td><td>| <asp:LinkButton ID="LogoutButton" runat="server" CssClass="UserInformationLink" OnClick="Logout_Click">Logout</asp:LinkButton></td></tr></table> 
                                         </asp:Panel>
                                 </asp:TableCell>
                                 <asp:TableCell VerticalAlign="Bottom">
@@ -116,7 +116,7 @@
             </asp:Table>
         </asp:Panel>
 
-        <ccAsp:SessionTimeout runat="server" ID="SessionTimeout" />                    
+        <ccAsp:SessionTimeout runat="server" ID="SessionTimeout" />                   
 
         <asp:ContentPlaceHolder ID="DialogsPlaceHolder" runat="server" />
     </form>
@@ -125,7 +125,7 @@
         UserInformationLink_Hover("<%= LogoutButton.ClientID %>");    
     </script>
     
-    
+
     
 </body>
 </html>
