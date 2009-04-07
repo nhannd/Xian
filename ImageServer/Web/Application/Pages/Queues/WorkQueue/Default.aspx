@@ -9,11 +9,14 @@
 <asp:Content ID="ContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder" runat="server">
 
 <script type="text/javascript">
-    function Submit() {
+    function KeyPress() {
         var isEnter = window.event == null ? e.keyCode == 13 : window.event.keyCode == 13;
         if(isEnter) {
             __doPostBack('<%=RefreshRateTextBox.ClientID %>','<%=RefreshRateTextBox.Text %>');     
-        }
+        }   
+    }
+    function Blur() {
+        __doPostBack('<%=RefreshRateTextBox.ClientID %>','<%=RefreshRateTextBox.Text %>');     
     }
 </script>
 
@@ -29,7 +32,7 @@
                                                     <asp:ListItem Selected="True" Value="Y" Text="Yes"/>
                                                     <asp:ListItem Value="N" Text="No" />
                                                 </asp:DropDownList> 
-                                                <asp:TextBox ID="RefreshRateTextBox" runat="server" Width="30" Text="20" CssClass="SearchTextBoxLabel" onkeypress="javascript: Submit()" style="padding-left: 2px;" /><span class="SearchTextBoxLabel" style="color: white">s</span>
+                                                <asp:TextBox ID="RefreshRateTextBox" runat="server" Width="30" Text="20" CssClass="SearchTextBoxLabel" onkeypress="javascript: KeyPress()" onblur="javascript: Blur()" style="padding-left: 2px;" /><span class="SearchTextBoxLabel" style="color: white">s</span>
                                         </div> 
     </td>
 </tr>

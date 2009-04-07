@@ -227,7 +227,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 PageCountLabel.Text =
                     string.Format(" of {0}", AdjustCurrentPageForDisplay(_target.PageCount));
 
-                if (GetRecordCountMethod != null && _target.PageCount != 0)
+                if (GetRecordCountMethod != null)
                 {
                     int numRows = GetRecordCountMethod();
                     ItemCountLabel.Text = string.Format("{0} {1}", numRows, numRows == 1 ? ItemName : PluralItemName);

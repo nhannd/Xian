@@ -118,6 +118,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         private readonly DialogTitleBarContainer _titleBarPanelContainer = new DialogTitleBarContainer();
         #endregion Private members
 
+        #region Events
+
+        /// <summary>
+        /// Defines the event handler for <seealso cref="OnShow"/> event.
+        /// </summary>
+        public delegate void ShowEventHandler();
+
+        /// <summary>
+        /// Occurs when modal dialog is made visible
+        /// </summary>
+        public event ShowEventHandler OnShow;
+
+        /// <summary>
+        /// Defines the event handler for <seealso cref="OnHide"/> event.
+        /// </summary>
+        public delegate void HideEventHandler();
+
+        /// <summary>
+        /// Occurs when modal dialog is hidden
+        /// </summary>
+        public event HideEventHandler OnHide;
+
+        #endregion Events
+
         #region Public Properties
         /// <summary>
         /// The customized titlebar template
@@ -411,6 +435,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         /// </summary>
         public void Show()
         {
+            if (OnShow != null) OnShow();
+            
             ModalPopupExtender.Show();
             
             if (State==ShowState.Hide)
@@ -433,6 +459,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         /// </summary>
         public void Hide()
         {
+            if (OnHide != null) OnHide();
+            
             ModalPopupExtender.Hide();
             RefreshUI();
             State = ShowState.Hide;

@@ -9,7 +9,11 @@
    
     <asp:Panel ID="Panel1" runat="server" CssClass="DialogPanelContent" width="100%">
         
-        <localAsp:WorkQueueItemList ID="WorkQueueItemList" runat="server" />
+        <asp:UpdatePanel ID="TestUpdatePanel" runat="server">
+            <ContentTemplate>
+            <localAsp:WorkQueueItemList ID="WorkQueueItemList" runat="server" />
+            </ContentTemplate>
+        </asp:UpdatePanel>
         <asp:Panel runat="server" style="border-top: solid 1px #CCCCCC; padding-top: 3px; text-align: center; padding-top: 5px; padding-bottom: 5px;">
             <localAsp:WorkQueueSettingsPanel  ID="WorkQueueSettingsPanel" runat="server" />           
         </asp:Panel>
@@ -25,9 +29,7 @@
                     </td>
                 </tr>
             </table>
-    
-    <asp:Timer ID="RefreshTimer" runat="server" OnTick="RefreshTimer_Tick"></asp:Timer>
-        
+          
     
 </ContentTemplate>
 </ccAsp:ModalDialog>

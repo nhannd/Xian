@@ -121,6 +121,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public event WorkQueueUpdatedListener WorkQueueUpdated;
 
+        public delegate void OnShowEventHandler();
+        public event OnShowEventHandler OnShow;
+
+        public delegate void OnHideEventHandler();
+        public event OnHideEventHandler OnHide;
+
         #endregion Events
 
         #region Protected Methods
@@ -138,27 +144,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 														{
 															source.SearchKeys = WorkQueueKeys;
 														};
-            RefreshTimer.Enabled = false;
-        }
-
-        protected override void OnPreRender(EventArgs e)
-        {
-
-            if (WorkQueueItemList.WorkQueueItems != null)
-            {
-                // the refresh rate should be high if the item was scheduled to start soon..
-                foreach (WorkQueueSummary item in WorkQueueItemList.WorkQueueItems.Values)
-                {
-                    TimeSpan span = item.TheWorkQueueItem.ScheduledTime.Subtract(Platform.Time);
-                    if (span < TimeSpan.FromMinutes(1))
-                    {
-                        RefreshTimer.Interval = WorkQueueSettings.Default.FastRefreshIntervalSeconds*1000;
-                        break;
-                    }
-                }
-            }
-
-            base.OnPreRender(e);
         }
 
         protected void WorkQueueListControl_SelectedIndexChanged(object sender, EventArgs e)
@@ -331,7 +316,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 WorkQueueSettingsPanel.SelectedPriority = workqueue.WorkQueuePriorityEnum;
                 WorkQueueSettingsPanel.NewScheduledDateTime = workqueue.ScheduledTime;
             }
-
             
             ModalDialog.Show();
         }
@@ -345,7 +329,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public void Hide()
         {
-            ModalDialog.Hide();
+            if (OnHide != null) OnHide();
+            ModalDialog.Hide();            
         }
 
         /// <summary>
@@ -368,15 +353,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             WorkQueueSettingsPanel.ScheduleNow = false;
 
-            RefreshTimer.Enabled = true;
+            if (OnShow != null) OnShow();
             
             Display();
 
-        }
-
-        protected void RefreshTimer_Tick(object sender, EventArgs e)
-        {
-            DataBind();
         }
 
         #endregion Public Methods

@@ -153,6 +153,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         /// </summary>
         public event ConfirmedEventHandler Confirmed;
 
+        /// <summary>
+        /// Defines the event handler for <seealso cref="Cancel"/> event.
+        /// </summary>
+        public delegate void CancelEventHandler();
+
+        /// <summary>
+        /// Occurs when users click on "No" or "Cancel"
+        /// </summary>
+        public event CancelEventHandler Cancel;
+
+        public delegate void OnShowEventHandler();
+        public event OnShowEventHandler OnShow;
+
+        public delegate void OnHideEventHandler();
+        public event OnHideEventHandler OnHide;
+
         #endregion Events
 
         #region Protected Methods
@@ -203,16 +219,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         protected void YesButton_Click(object sender, EventArgs e)
         {
-            if (Confirmed != null)
-                Confirmed(Data);
-
-            Close();
+            OKButton_Click(sender, e);
         }
 
 
         protected void NoButton_Click(object sender, EventArgs e)
         {
-            Close();
+            CancelButton_Click(sender, e);
         }
 
         protected void OKButton_Click(object sender, EventArgs e)
@@ -225,6 +238,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         protected void CancelButton_Click(object sender, EventArgs e)
         {
+            if (Cancel != null)
+                Cancel();
             Close();
         }
 
@@ -239,6 +254,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         public void Close()
         {
             ModalDialog.Hide();
+            if (OnHide != null) OnHide();
 
         }
 
@@ -247,8 +263,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         /// </summary>
         public void Show()
         {
-            
             ModalDialog.Show();
+            if (OnShow != null) OnShow();
         }
 
         #endregion Public Methods

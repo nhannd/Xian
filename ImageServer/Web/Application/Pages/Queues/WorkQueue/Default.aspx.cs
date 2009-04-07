@@ -93,15 +93,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         }
 
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
 
             ConfirmRescheduleDialog.Confirmed += ConfirmationContinueDialog_Confirmed;
             ScheduleWorkQueueDialog.WorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
+            ScheduleWorkQueueDialog.OnShow += DisableRefresh;
+            ScheduleWorkQueueDialog.OnHide += EnableRefresh;
             ResetWorkQueueDialog.WorkQueueItemReseted += ResetWorkQueueDialog_WorkQueueItemReseted;
+            ResetWorkQueueDialog.OnShow += DisableRefresh;
+            ResetWorkQueueDialog.OnHide += EnableRefresh;
             DeleteWorkQueueDialog.WorkQueueItemDeleted += DeleteWorkQueueDialog_WorkQueueItemDeleted;
+            DeleteWorkQueueDialog.OnShow += DisableRefresh;
+            DeleteWorkQueueDialog.OnHide += EnableRefresh;
+            InformationDialog.OnShow += DisableRefresh;
+            InformationDialog.OnHide += EnableRefresh;
             ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
                                                            {
                                                                SearchPanel panel =
@@ -283,19 +290,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             ScheduleWorkQueueDialog.Show();
         }
 
+        private void DisableRefresh()
+        {
+            AutoRefresh = false;
+        }
+
+        private void EnableRefresh()
+        {
+            //Reset the AutoRefresh to whatever the user has it set to.
+            if (RefreshRateEnabled.SelectedItem.Value.Equals("Y"))
+            {
+                AutoRefresh = true;
+            } else
+            {
+                AutoRefresh = false;
+            }
+            
+        }
+
         #endregion Private Methods
 
         protected void RefreshRate_IndexChanged(Object sender, EventArgs arg)
         {
             if (RefreshRateEnabled.SelectedItem.Value.Equals("Y"))
             {
-                ((Default)Page).AutoRefresh = true;
-                ((Default)Page).RefreshRate = Int32.Parse(RefreshRateTextBox.Text);
+                AutoRefresh = true;
+                RefreshRate = Int32.Parse(RefreshRateTextBox.Text);
                 RefreshRateTextBox.Enabled = true;
             }
             else
             {
-                ((Default)Page).AutoRefresh = false;
+                AutoRefresh = false;
                 RefreshRateTextBox.Enabled = false;
             }
         }

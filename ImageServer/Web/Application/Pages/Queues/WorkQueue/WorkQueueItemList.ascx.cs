@@ -72,7 +72,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 		{
 			get
 			{
-				if (_dataSource == null) return 0;
+                if (!WorkQueueGridView.IsDataBound) WorkQueueGridView.DataBind();
+                if (_dataSource == null) return 0;
 				return _dataSource.ResultCount;
 			}
 		}

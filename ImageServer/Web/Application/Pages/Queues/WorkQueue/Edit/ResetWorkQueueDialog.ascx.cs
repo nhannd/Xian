@@ -59,8 +59,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         #region Events
 
         public delegate void WorkQueueItemResetListener(Model.WorkQueue item);
-
         public event WorkQueueItemResetListener WorkQueueItemReseted;
+
+        public delegate void OnShowEventHandler();
+        public event OnShowEventHandler OnShow;
+
+        public delegate void OnHideEventHandler();
+        public event OnHideEventHandler OnHide;
 
         #endregion Events
 
@@ -85,6 +90,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             base.OnInit(e);
 
             PreResetConfirmDialog.Confirmed += PreResetConfirmDialog_Confirmed;
+            PreResetConfirmDialog.Cancel += Hide;
+            MessageBox.Cancel += Hide;
         }
 
         #endregion Protected Methods
@@ -129,6 +136,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
                             if (WorkQueueItemReseted != null)
                                 WorkQueueItemReseted(item);
+
+                            if (OnHide != null) OnHide();
                         }
                         else
                         {
@@ -208,6 +217,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueResetConfirm;
                 PreResetConfirmDialog.Show();
             }
+
+            if (OnShow != null) OnShow();
             
         }
 
@@ -216,6 +227,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public void Hide()
         {
+            if (OnHide != null) OnHide();
             PreResetConfirmDialog.Close();
             MessageBox.Close();
         }

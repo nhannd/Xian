@@ -38,6 +38,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// <param name="item"></param>
         public delegate void WorkQueueItemDeletedListener(Model.WorkQueue item);
 
+        public delegate void OnShowEventHandler();
+        public event OnShowEventHandler OnShow;
+
+        public delegate void OnHideEventHandler();
+        public event OnHideEventHandler OnHide;
+
         
         #endregion Events
 
@@ -61,6 +67,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             base.OnInit(e);
 
             PreDeleteConfirmDialog.Confirmed += PreDeleteConfirmDialog_Confirmed;
+            PreDeleteConfirmDialog.Cancel += Hide;
         }
 
         #endregion Protected Methods
@@ -108,6 +115,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
                             if (WorkQueueItemDeleted != null)
                                 WorkQueueItemDeleted(item);
+
+                            if (OnHide != null) OnHide();
                         }
                         else
                         {
@@ -170,6 +179,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 PreDeleteConfirmDialog.Message = App_GlobalResources.SR.WorkQueueDeleteConfirm;
                 PreDeleteConfirmDialog.Show();
             }
+
+            if (OnShow != null) OnShow();
         }
 
         /// <summary>
@@ -177,6 +188,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public void Hide()
         {
+            if (OnHide != null) OnHide();
+            
             PreDeleteConfirmDialog.Close();
             MessageBox.Close();
         }
