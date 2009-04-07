@@ -214,6 +214,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete Management.
+        /// </summary>
+        internal static string DeleteManagement {
+            get {
+                return ResourceManager.GetString("DeleteManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete Confirmation.
         /// </summary>
         internal static string DeleteStudyConfirmation {

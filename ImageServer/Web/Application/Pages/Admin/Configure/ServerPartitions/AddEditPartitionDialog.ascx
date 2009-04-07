@@ -209,7 +209,7 @@
                         Study Matching
                     </HeaderTemplate>
                 </aspAjax:TabPanel>
-                <aspAjax:TabPanel ID="TabPanel3" runat="server" HeaderText="<%$ Resources:Titles, Audit %>" CssClass="DialogTabControl">
+                <aspAjax:TabPanel ID="TabPanel3" runat="server" HeaderText="<%$ Resources:Titles, DeleteManagement %>" CssClass="DialogTabControl">
                     <ContentTemplate>
                         <asp:Panel ID="Panel5" runat="server" CssClass="DialogTabPanelContent" >
                             <table width="100%">

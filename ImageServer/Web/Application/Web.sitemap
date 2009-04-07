@@ -25,9 +25,7 @@
         <siteMapNode url="~/Pages/Admin/UserManagement/UserGroups/Default.aspx" title="$Resources: Titles, UserGroups" roles="Admin/Security/Authority Group" />
       </siteMapNode>
 
-      <siteMapNode url="" title="$Resources: Titles, Audit" roles="PACS/StudyDeleteHistory/Search">
-        <siteMapNode url="~/Pages/Admin/Audit/DeletedStudies/Default.aspx" title="$Resources: Titles, DeletedStudies" roles="PACS/StudyDeleteHistory/Search" />
-      </siteMapNode>
+      <siteMapNode url="~/Pages/Admin/Audit/DeletedStudies/Default.aspx" title="$Resources: Titles, DeletedStudies" roles="PACS/StudyDeleteHistory/Search" />
 
       <siteMapNode url="~/Pages/Admin/Configure/ServiceLocks/Default.aspx" title="$Resources: Titles, ServiceScheduling" roles="PACS/Configure/ServiceScheduling" />
       

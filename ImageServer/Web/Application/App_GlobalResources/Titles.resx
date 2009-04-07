@@ -300,4 +300,7 @@
   <data name="TimeoutErrorPageTitle" xml:space="preserve">
     <value>Session timed out</value>
   </data>
+  <data name="DeleteManagement" xml:space="preserve">
+    <value>Delete Management</value>
+  </data>
 </root>
