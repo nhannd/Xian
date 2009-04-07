@@ -1,9 +1,9 @@
 using System;
 using System.Web;
 using System.Web.Security;
-using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Authentication;
+using ClearCanvas.ImageServer.Services.Common;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 
 namespace ClearCanvas.ImageServer.Web.Common.Security

@@ -58,6 +58,8 @@
   <ItemGroup>
     <ConfigFiles Include="$(ProjectDir)\..\Executable\Logging.config" />
     <ConfigFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.ImageServer.ShredHostService.exe.config" />
+	<ConfigFiles Include="$(ProjectDir)\..\Executable\bin\$(Configuration)\ClearCanvas.ImageServer.Executable.exe.config" />
+
   </ItemGroup>
 
   <!-- Shared library files, to be placed in common directory -->

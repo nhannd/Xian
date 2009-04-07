@@ -2,9 +2,10 @@ using System;
 using System.Threading;
 using System.Web;
 using System.Web.Security;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Authentication;
+
 namespace ClearCanvas.ImageServer.Web.Common.Security
 {
     public static class SessionManager

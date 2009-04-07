@@ -81,6 +81,10 @@
       <Name>ClearCanvas.ImageServer.Common</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\Executable\ClearCanvas.ImageServer.Executable.csproj">
+      <Project>{5B86516B-203F-4AEB-82BA-CD54144581FA}</Project>
+      <Name>ClearCanvas.ImageServer.Executable</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

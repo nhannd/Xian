@@ -34,7 +34,8 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.ImageServer.Common.Services.Admin;
+using ClearCanvas.ImageServer.Common.Admin;
+using ClearCanvas.ImageServer.Services.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
@@ -69,28 +70,27 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
             if (maximumRows == 0) return new List<TokenRowData>();
 
-            Platform.GetService<IAuthorityAdminService>(
-                delegate(IAuthorityAdminService services)
-                    {
-                        IList<AuthorityTokenSummary> tokens = services.ListAuthorityTokens();
-                        List<TokenRowData> tokenRows = CollectionUtils.Map<AuthorityTokenSummary, TokenRowData>(
-                            tokens, delegate(AuthorityTokenSummary token)
-                                   {
-                                       TokenRowData row = new TokenRowData(token);
-                                       return row;
-                                   });
+            using(AuthorityAdminService service = new AuthorityAdminService())
+            {
+                IList<AuthorityTokenSummary> tokens = service.ListAuthorityTokens();
+                List<TokenRowData> tokenRows = CollectionUtils.Map<AuthorityTokenSummary, TokenRowData>(
+                    tokens, delegate(AuthorityTokenSummary token)
+                           {
+                               TokenRowData row = new TokenRowData(token);
+                               return row;
+                           });
 
-                        tokenRowData = CollectionUtils.ToArray(tokenRows);
+                tokenRowData = CollectionUtils.ToArray(tokenRows);
 
-                        int copyLength = adjustCopyLength(startRowIndex, maximumRows, tokenRowData.Length);
+                int copyLength = adjustCopyLength(startRowIndex, maximumRows, tokenRowData.Length);
 
-                        Array.Copy(tokenRowData, startRowIndex, tokenRowDataRange, 0, copyLength);
+                Array.Copy(tokenRowData, startRowIndex, tokenRowDataRange, 0, copyLength);
 
-                        if(copyLength < tokenRowDataRange.Length)
-                        {
-                            tokenRowDataRange = resizeArray(tokenRowDataRange, copyLength);
-                        }
-            });
+                if(copyLength < tokenRowDataRange.Length)
+                {
+                    tokenRowDataRange = resizeArray(tokenRowDataRange, copyLength);
+                }
+            };
 
             if (tokenRowData != null)
             {

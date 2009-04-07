@@ -33,14 +33,9 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.ImageServer.Common.Services.Admin;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Common.Admin;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
@@ -127,9 +122,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             if (Page.IsPostBack == false)
             {
-                Platform.GetService<IAuthorityAdminService>(
-                delegate(IAuthorityAdminService service)
-                {
+                 using(AuthorityAdminService service = new AuthorityAdminService())
+                 {
                     IList<AuthorityGroupSummary> list = service.ListAllAuthorityGroups();
                     IList<ListItem> items = CollectionUtils.Map<AuthorityGroupSummary, ListItem>(
                         list,
@@ -139,7 +133,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                         }
                         );
                     UserGroupListBox.Items.AddRange(CollectionUtils.ToArray(items));
-                });
+                };
 
             }
             else

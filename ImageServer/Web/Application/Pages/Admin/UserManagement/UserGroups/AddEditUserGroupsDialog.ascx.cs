@@ -33,14 +33,10 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.ImageServer.Common.Services.Admin;
-using ClearCanvas.ImageServer.Enterprise;
-using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Common.Admin;
+using ClearCanvas.ImageServer.Services.Common;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 
@@ -128,10 +124,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
             if (Page.IsPostBack == false)
             {
                 
-                Platform.GetService<IAuthorityAdminService>(
-                delegate(IAuthorityAdminService services)
+                using(AuthorityAdminService service = new AuthorityAdminService())
                 {
-                    IList<AuthorityTokenSummary> tokens = services.ListAuthorityTokens();
+                    IList<AuthorityTokenSummary> tokens = service.ListAuthorityTokens();
                     IList<ListItem> items = CollectionUtils.Map<AuthorityTokenSummary, ListItem>(
                                             tokens,
                                             delegate(AuthorityTokenSummary token)
@@ -140,7 +135,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
                                             });
 
                     TokenCheckBoxList.Items.AddRange(CollectionUtils.ToArray(items));
-                });
+                };
             }
             else
             {

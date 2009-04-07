@@ -41,13 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Admin\AdminServices.cs" />
-    <Compile Include="Admin\AuthorityAdminServices.cs" />
     <Compile Include="Alert\AlertPlugins\DefaultAlertSink.cs" />
     <Compile Include="Alert\AlertService.cs" />
     <Compile Include="Alert\IAlertServiceExtension.cs" />
     <Compile Include="ApplicationLogAuditSink.cs" />
-    <Compile Include="Login\LoginService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

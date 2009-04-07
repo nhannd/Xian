@@ -47,12 +47,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alert.cs" />
+    <Compile Include="IApplicationServiceLayer.cs" />
     <Compile Include="CommandProcessor\CreateDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\CreateTempDirectoryCommand.cs" />
     <Compile Include="CommandProcessor\DeleteWorkQueueUidCommand.cs" />
     <Compile Include="CommandProcessor\DicomCompressCommand.cs" />
     <Compile Include="CommandProcessor\ExecutionContext.cs" />
     <Compile Include="CommandProcessor\UpdateWorkQueueCommand.cs" />
+    <Compile Include="CustomIdentity.cs" />
+    <Compile Include="CustomPrincipal.cs" />
     <Compile Include="Diagnostics\DiagnosticSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -89,10 +92,14 @@
     <Compile Include="ICancelable.cs" />
     <Compile Include="ImageServerCommonConfiguration.cs" />
     <Compile Include="ImageServerLogWriter.cs" />
-    <Compile Include="LoginCredentials.cs" />
+    <Compile Include="InProcessApplicationServiceProvider.cs" />
+    <Compile Include="LoginCredentials.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CommandProcessor\RenameFileCommand.cs" />
     <Compile Include="CommandProcessor\SaveDicomFileCommand.cs" />
+    <Compile Include="RemoteCoreServiceProvider.cs" />
     <Compile Include="ServerAddress.cs" />
     <Compile Include="CommandProcessor\ServerCommand.cs" />
     <Compile Include="CommandProcessor\ServerCommandProcessor.cs" />
@@ -100,9 +107,6 @@
     <Compile Include="CommandProcessor\ServerDatabaseCommand.cs" />
     <Compile Include="ServerFilesystemInfo.cs" />
     <Compile Include="ServerPartitionMonitor.cs" />
-    <Compile Include="Services\Admin\IUserAdminService.cs" />
-    <Compile Include="Services\Admin\IAuthorityAdminService.cs" />
-    <Compile Include="Services\Login\ILoginService.cs" />
     <Compile Include="ServiceTools.cs" />
     <Compile Include="FileStreamOpener.cs" />
     <Compile Include="Settings.Designer.cs">

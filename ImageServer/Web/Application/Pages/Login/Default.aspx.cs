@@ -30,17 +30,13 @@
 #endregion
 
 using System;
-using System.Configuration;
 using System.ServiceModel;
-using System.Threading;
 using System.Web.Security;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Audit;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.Services.Login;
+using ClearCanvas.ImageServer.Common.Authentication;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
@@ -55,38 +51,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 
         protected void LoginClicked(object sender, EventArgs e)
         {
-            Platform.GetService<ILoginService>(
-                delegate(ILoginService service)
+            using(LoginService service =new LoginService())
+            {
+                try
                 {
-                    try
-                    {
-                        SessionInfo session = service.Login(UserName.Text, Password.Text);
-                        SessionManager.InitializeSession(session);
+                    SessionInfo session = service.Login(UserName.Text, Password.Text);
+                    SessionManager.InitializeSession(session);
 
-						UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource, 
-							EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
-						audit.AddUserParticipant(new AuditPersonActiveParticipant(session.Credentials.UserName, null, session.Credentials.DisplayName));
-						ServerPlatform.LogAuditMessage("UserAuthentication", audit);
+					UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource, 
+						EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
+					audit.AddUserParticipant(new AuditPersonActiveParticipant(session.Credentials.UserName, null, session.Credentials.DisplayName));
+					ServerPlatform.LogAuditMessage("UserAuthentication", audit);
 
-                        Response.Redirect(FormsAuthentication.GetRedirectUrl(UserName.Text, false));
-                    }
-                    catch (PasswordExpiredException)
-                    {
-                        PasswordExpiredDialog.Show(UserName.Text, Password.Text);
-                    }
-					catch (FaultException x)
-					{
-						Platform.Log(LogLevel.Info,x,"Invalid login");
-					    LoginErrorPanel.Visible = true;
-                        UserName.Focus();
+                    Response.Redirect(FormsAuthentication.GetRedirectUrl(UserName.Text, false));
+                }
+                catch (PasswordExpiredException)
+                {
+                    PasswordExpiredDialog.Show(UserName.Text, Password.Text);
+                }
+				catch (FaultException x)
+				{
+					Platform.Log(LogLevel.Info,x,"Invalid login");
+				    LoginErrorPanel.Visible = true;
+                    UserName.Focus();
 
-						UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-							EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated,UserAuthenticationEventType.Login );
-						audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text,null,null));
-						ServerPlatform.LogAuditMessage("UserAuthentication",audit);
- 					}
+					UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
+						EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated,UserAuthenticationEventType.Login );
+					audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text,null,null));
+					ServerPlatform.LogAuditMessage("UserAuthentication",audit);
+				}
 
-                });
+            };
             
         }
 

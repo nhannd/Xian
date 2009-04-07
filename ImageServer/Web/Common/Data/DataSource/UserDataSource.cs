@@ -36,7 +36,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
 using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using IUserAdminService=ClearCanvas.ImageServer.Common.Services.Admin.IUserAdminService;
+using ClearCanvas.ImageServer.Common.Admin;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
@@ -78,52 +78,38 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
         private IList<UserRowData> InternalSelect(int startRowIndex, int maximumRows, out int resultCount)
         {
-            Array userRowData = null;
-            Array userRowDataRange = Array.CreateInstance(typeof(UserRowData), maximumRows);
-
-            resultCount = 0;
-
-            if (maximumRows == 0) return new List<UserRowData>();
-
-            Platform.GetService<IUserAdminService>(
-                            delegate(IUserAdminService services)
-                            {
-                                ListUsersRequest filter = new ListUsersRequest();
-                                filter.UserName = UserName;
-                                filter.DisplayName = DisplayName;
-
-                                List<UserSummary> users = services.ListUsers(filter);
-
-                                List<UserRowData> rows = CollectionUtils.Map<UserSummary, UserRowData>(
-                                    users, delegate(UserSummary summary)
-                                               {
-                                                   UserRowData row = new UserRowData(summary, services.GetUserDetail(summary.UserName));
-                                                   return row;
-                                               });
-                                
-                                userRowData = CollectionUtils.ToArray(rows);
-
-                                int copyLength = adjustCopyLength(startRowIndex, maximumRows, userRowData.Length);
-
-                            	Array.Copy(userRowData, startRowIndex, userRowDataRange, 0, copyLength);
-
-                                if(copyLength < userRowDataRange.Length)
-                                {
-                                    userRowData = resizeArray(userRowDataRange, copyLength);
-                                }
-                            });
-
-            if (userRowData != null)
+            if (maximumRows == 0)
             {
-                resultCount = userRowData.Length;
+                resultCount = 0;
+                return new List<UserRowData>();
             }
 
-            return CollectionUtils.Cast<UserRowData>(userRowDataRange);
+            List<UserRowData> users = null;
+            using (UserAdminService service = new UserAdminService())
+            {
+                ListUsersRequest filter = new ListUsersRequest();
+                filter.UserName = UserName;
+                filter.DisplayName = DisplayName;
+                filter.Page.FirstRow = startRowIndex;
+                filter.Page.MaxRows = maximumRows;
+
+                users = CollectionUtils.Map<UserSummary, UserRowData>(
+                    service.FindUsers(filter),
+                    delegate(UserSummary summary)
+                        {
+                            UserRowData user = new UserRowData(summary, service.GetUserDetail(summary.UserName));
+                            return user;
+                        });
+            }
+            resultCount = users.Count;
+
+            return users;
         }
 
         #endregion Private Methods
 
         #region Public Methods
+        
         public IEnumerable<UserRowData> Select(int startRowIndex, int maximumRows)
         {
             IList<UserRowData> _list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
@@ -187,18 +173,22 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             set { _lastLoginTime = value; }
         }
 
-        public UserRowData(UserSummary summary, UserDetail user)
+        public UserRowData(UserSummary summary, UserDetail details)
         {
             UserName = summary.UserName;
             DisplayName = summary.DisplayName;
             Enabled = summary.Enabled;
             LastLoginTime = summary.LastLoginTime;
 
-            foreach (AuthorityGroupSummary authorityGroup in user.AuthorityGroups)
+            if (details!=null)
             {
-                UserGroups.Add(new UserGroup(
-                        authorityGroup.AuthorityGroupRef.Serialize(), authorityGroup.Name));
+                foreach (AuthorityGroupSummary authorityGroup in details.AuthorityGroups)
+                {
+                    UserGroups.Add(new UserGroup(
+                            authorityGroup.AuthorityGroupRef.Serialize(), authorityGroup.Name));
+                }
             }
+            
         }
 
         public UserRowData()

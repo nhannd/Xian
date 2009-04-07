@@ -34,18 +34,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.ServiceModel;
-using System.Text.RegularExpressions;
 using System.Web.Script.Services;
 using System.Web.Services;
 using System.Xml;
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.ImageServer.Common.Services.Admin;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.Validators;
-using IUserAdminService=ClearCanvas.Enterprise.Common.Admin.UserAdmin.IUserAdminService;
 
 namespace ClearCanvas.ImageServer.Web.Application.Services
 {

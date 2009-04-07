@@ -34,7 +34,8 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common.Admin.AuthorityGroupAdmin;
-using ClearCanvas.ImageServer.Common.Services.Admin;
+using ClearCanvas.ImageServer.Common.Admin;
+using ClearCanvas.ImageServer.Services.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
@@ -80,45 +81,44 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
             if (maximumRows == 0) return new List<UserGroupRowData>();
 
-            Platform.GetService<IAuthorityAdminService>(
-                delegate(IAuthorityAdminService services)
+            using(AuthorityAdminService service = new AuthorityAdminService())
+            {
+                IList<AuthorityGroupSummary> list = service.ListAllAuthorityGroups();
+                IList<AuthorityGroupSummary> filteredList = new List<AuthorityGroupSummary>();
+
+                if(GroupName != null)
+                {
+                    foreach(AuthorityGroupSummary group in list)
                     {
-                        IList<AuthorityGroupSummary> list = services.ListAllAuthorityGroups();
-                        IList<AuthorityGroupSummary> filteredList = new List<AuthorityGroupSummary>();
-
-                        if(GroupName != null)
+                        if(group.Name.ToLower().Contains(GroupName.ToLower()) || group.Name.ToLower().Equals(GroupName.ToLower()))
                         {
-                            foreach(AuthorityGroupSummary group in list)
-                            {
-                                if(group.Name.ToLower().Contains(GroupName.ToLower()) || group.Name.ToLower().Equals(GroupName.ToLower()))
-                                {
-                                    filteredList.Add(group);
-                                }
-                            }
-                        } else
-                        {
-                            filteredList = list;
+                            filteredList.Add(group);
                         }
+                    }
+                } else
+                {
+                    filteredList = list;
+                }
 
-                        List<UserGroupRowData> rows = CollectionUtils.Map<AuthorityGroupSummary, UserGroupRowData>(
-                            filteredList, delegate(AuthorityGroupSummary group)
-                                      {
-                                          UserGroupRowData row =
-                                              new UserGroupRowData(services.LoadAuthorityGroupDetail(group));
-                                          return row;
-                                      });
+                List<UserGroupRowData> rows = CollectionUtils.Map<AuthorityGroupSummary, UserGroupRowData>(
+                    filteredList, delegate(AuthorityGroupSummary group)
+                              {
+                                  UserGroupRowData row =
+                                      new UserGroupRowData(service.LoadAuthorityGroupDetail(group));
+                                  return row;
+                              });
 
-                        authorityRowData = CollectionUtils.ToArray(rows);
+                authorityRowData = CollectionUtils.ToArray(rows);
 
-                        int copyLength = adjustCopyLength(startRowIndex, maximumRows, authorityRowData.Length);
+                int copyLength = adjustCopyLength(startRowIndex, maximumRows, authorityRowData.Length);
 
-                        Array.Copy(authorityRowData, startRowIndex, authorityRowDataRange, 0, copyLength);
+                Array.Copy(authorityRowData, startRowIndex, authorityRowDataRange, 0, copyLength);
 
-                        if (copyLength < authorityRowDataRange.Length)
-                        {
-                            authorityRowDataRange = resizeArray(authorityRowDataRange, copyLength);
-                        }
-                    });
+                if (copyLength < authorityRowDataRange.Length)
+                {
+                    authorityRowDataRange = resizeArray(authorityRowDataRange, copyLength);
+                }
+            };
 
             if (authorityRowData != null)
             {

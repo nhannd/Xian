@@ -10,8 +10,8 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert
     /// <summary>
     /// Alert record service
     /// </summary>
-    [ExtensionOf(typeof(CoreServiceExtensionPoint))]
-    public class AlertService : ICoreServiceLayer, IAlertService
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    public class AlertService : IApplicationServiceLayer, IAlertService
     {
         #region Private Members
         private IAlertServiceExtension[] _extensions;

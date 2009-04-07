@@ -1525,14 +1525,23 @@
       <Name>ClearCanvas.Enterprise.Core</Name>
       <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj">
+      <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>
+      <Name>ClearCanvas.Server.ShredHost</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Common\Admin\ClearCanvas.ImageServer.Common.Admin.csproj">
+      <Project>{F3BC804F-D3BC-46E2-9640-7DC105E9551F}</Project>
+      <Name>ClearCanvas.ImageServer.Common.Admin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Common\Authentication\ClearCanvas.ImageServer.Common.Authentication.csproj">
       <Project>{600584A7-4B78-4983-A21B-7F30023766A8}</Project>
       <Name>ClearCanvas.ImageServer.Common.Authentication</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Common\ClearCanvas.ImageServer.Common.csproj">
       <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
       <Name>ClearCanvas.ImageServer.Common</Name>
-      <Private>True</Private>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
       <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
@@ -1579,7 +1588,7 @@
     <ProjectReference Include="..\Common\ClearCanvas.ImageServer.Web.Common.csproj">
       <Project>{9A4EF57B-2702-4931-9E94-B194707E87FA}</Project>
       <Name>ClearCanvas.ImageServer.Web.Common</Name>
-      <Private>True</Private>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -1597,7 +1606,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3875</DevelopmentServerPort>
+          <DevelopmentServerPort>2141</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>
