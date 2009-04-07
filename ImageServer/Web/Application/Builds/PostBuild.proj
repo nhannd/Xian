@@ -40,13 +40,11 @@
 	<PluginFiles Include="$(ProjectDir)\..\..\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\..\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll"/>
-	<PluginFiles Include="$(ProjectDir)\..\..\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\Rules\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\Rules\JpegCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.JpegCodec.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\Rules\RleCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.RleCodec.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\Services\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Common.dll"/>
-	<PluginFiles Include="$(ProjectDir)\..\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Web.Common.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll"/>
 	<ConfigFiles Include="$(ProjectDir)\..\..\..\ImageServer\Executable\Logging.config"/>
   </ItemGroup>

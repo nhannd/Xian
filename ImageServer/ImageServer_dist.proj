@@ -71,7 +71,7 @@
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Ionic.Zip.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\Common\bin\$(Configuration)\ClearCanvas.Common.dll" />
 	<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Model\bin\$(Configuration)\ClearCanvas.ImageServer.Model.dll" />
-	<!--<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll" />-->
+	<ImageServerCommonFiles Include="$(SolutionDir)\..\ImageServer\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll" />
   </ItemGroup>
 
 
@@ -84,7 +84,6 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Common.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Common.dll" />
@@ -100,7 +99,6 @@
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Authentication\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll" />
-	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Common\Admin\bin\$(Configuration)\ClearCanvas.ImageServer.Common.Admin.dll" />
 
   </ItemGroup>
 
