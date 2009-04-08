@@ -102,5 +102,12 @@ namespace ClearCanvas.Desktop
 		/// <param name="args"></param>
 		/// <returns></returns>
 		FileDialogResult ShowOpenFileDialogBox(FileDialogCreationArgs args);
+
+		/// <summary>
+		/// Shows a 'Select Folder' common dialog.
+		/// </summary>
+		/// <param name="args"></param>
+		/// <returns></returns>
+    	FileDialogResult ShowSelectFolderDialogBox(SelectFolderDialogCreationArgs args);
 	}
 }

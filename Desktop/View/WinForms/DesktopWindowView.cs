@@ -639,6 +639,27 @@ namespace ClearCanvas.Desktop.View.WinForms
 				return new FileDialogResult(DialogBoxAction.Cancel, null);
 		}
 
+    	/// <summary>
+    	/// Shows a 'Select folder' dialog in front of this window.
+    	/// </summary>
+    	/// <param name="args"></param>
+    	/// <returns></returns>
+    	public FileDialogResult ShowSelectFolderDialogBox(SelectFolderDialogCreationArgs args)
+    	{
+    		FolderBrowserDialog dialog = new FolderBrowserDialog();
+    		dialog.SelectedPath = args.Path ?? "";
+    		dialog.Description = args.Prompt ?? "";
+    		dialog.ShowNewFolderButton = args.AllowCreateNewFolder;
+
+    		DialogResult dr = dialog.ShowDialog(_form);
+    		if (dr == DialogResult.OK)
+    		{
+    			return new FileDialogResult(DialogBoxAction.Ok, dialog.SelectedPath);
+    		}
+    		else
+    			return new FileDialogResult(DialogBoxAction.Cancel, null);
+    	}
+
     	#endregion
 
         #region DesktopObjectView overrides

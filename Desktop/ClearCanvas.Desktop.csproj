@@ -101,6 +101,7 @@
     <Compile Include="DragDropOption.cs" />
     <Compile Include="Factories.cs" />
     <Compile Include="FileDialogCreationArgs.cs" />
+    <Compile Include="SelectFolderDialogCreationArgs.cs" />
     <Compile Include="GalleryItemEventArgs.cs" />
     <Compile Include="IApplicationView.cs" />
     <Compile Include="IDragDropObject.cs" />
@@ -125,6 +126,7 @@
     <Compile Include="Tables\DateTimeTableColumn.cs" />
     <Compile Include="Tables\FilteredItemCollection.cs" />
     <Compile Include="Tables\TableFilterParams.cs" />
+    <Compile Include="Tests\TableTest.cs" />
     <Compile Include="UndoableCommand.cs" />
     <Compile Include="UserInteraction.cs" />
     <Compile Include="PrincipalPermissionSpecification.cs" />

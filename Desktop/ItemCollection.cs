@@ -133,7 +133,8 @@ namespace ClearCanvas.Desktop
     	/// </summary>
     	public virtual void Sort(IComparer<TItem> comparer)
         {
-            _list.Sort(comparer);
+            // We don't call _list.Sort(...) because .NET internally uses an unstable sort
+			MergeSort(comparer, _list, 0, _list.Count);
 
             // notify that the list has been sorted
             NotifyItemsChanged(ItemChangeType.Reset, -1, default(TItem));
@@ -431,6 +432,48 @@ namespace ClearCanvas.Desktop
         protected virtual void NotifyItemsChanged(ItemChangeType itemChangeType, int index, TItem item)
         {
             EventsHelper.Fire(_itemsChanged, this, new ItemChangedEventArgs(itemChangeType, index, item));
-        }
-    }
+		}
+
+		#region Stable Sort Implementation
+
+		/// <summary>
+		/// Performs a stable merge sort on the given <paramref name="list"/> using the given <paramref name="comparer"/>.
+		/// The range of items sorted is [<paramref name="rangeStart"/>, <paramref name="rangeStop"/>).
+		/// </summary>
+    	private static void MergeSort(IComparer<TItem> comparer, IList<TItem> list, int rangeStart, int rangeStop)
+    	{
+    		int rangeLength = rangeStop - rangeStart;
+    		if (rangeLength > 1)
+    		{
+    			// sort halves
+    			int rangeMid = rangeStart + rangeLength/2;
+    			MergeSort(comparer, list, rangeStart, rangeMid);
+    			MergeSort(comparer, list, rangeMid, rangeStop);
+
+    			// merge halves
+    			List<TItem> merged = new List<TItem>(rangeLength);
+    			int j = rangeStart;
+    			int k = rangeMid;
+
+    			for (int n = 0; n < rangeLength; n++)
+    			{
+					// if left half has run out of items, add item from right half
+					// else if right half has run out of items, add item from left half
+					// else if the left item is before or equal to the right item, add left half item
+					// else add right half item
+    				if (k >= rangeStop || (j < rangeMid && comparer.Compare(list[j], list[k]) <= 0))
+    					merged.Add(list[j++]);
+    				else
+    					merged.Add(list[k++]);
+    			}
+
+				// copy merged to list
+    			k = rangeStart;
+    			foreach (TItem item in merged)
+    				list[k++] = item;
+    		}
+    	}
+
+		#endregion
+	}
 }

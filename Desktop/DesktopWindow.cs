@@ -225,6 +225,18 @@ namespace ClearCanvas.Desktop
 		}
 
     	/// <summary>
+    	/// Shows a 'Select Folder' common dialog.
+    	/// </summary>
+    	/// <param name="args"></param>
+    	/// <returns></returns>
+    	public FileDialogResult ShowSelectFolderDialogBox(SelectFolderDialogCreationArgs args)
+    	{
+    		AssertState(new DesktopObjectState[] {DesktopObjectState.Open, DesktopObjectState.Closing});
+
+    		return this.DesktopWindowView.ShowSelectFolderDialogBox(args);
+    	}
+
+    	/// <summary>
         /// Shows a dialog box in front of this window.
         /// </summary>
         /// <param name="component">The application component to be hosted in the dialog.</param>
