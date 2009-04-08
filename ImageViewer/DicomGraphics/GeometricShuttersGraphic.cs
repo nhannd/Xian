@@ -305,6 +305,7 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 		{
 			if (_imageGraphic != null)
 			{
+				//TODO: will this cause unnecessary re-allocation of memory?
 				base.Graphics.Remove(_imageGraphic);
 				_imageGraphic.Dispose();
 				_imageGraphic = null;

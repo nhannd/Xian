@@ -1,8 +1,5 @@
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using ClearCanvas.ImageViewer.Services.Configuration.ServerTree;
-using ClearCanvas.ImageViewer.Services.ServerTree;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Services.Configuration
 {

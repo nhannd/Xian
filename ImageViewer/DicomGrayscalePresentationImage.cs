@@ -231,6 +231,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			bool anyFailures = false;
 
+			// TODO: just put the 'dicom graphics' stuff in the PresentationState namespace (and renamed to PresentationState)
+
 			try
 			{
 				if (_graphicsDeserializer != null)
@@ -261,6 +263,9 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
+			// TODO: throwing here can cause rendering problems due to message box showing, as can showing a message box.
+			// need to do something a little more ingenious, or somehow put this stuff in the rendering sequence
+			// so that the errors get rendered to the text overlay.
 			if (anyFailures)
 				throw new Exception("At least one failure has occurred while deserializing the image presentation state.");
 

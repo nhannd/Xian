@@ -168,22 +168,9 @@ namespace ClearCanvas.Desktop
 				return;
 			}
 
-        	OnAccept();
-
 			this.ExitCode = ApplicationComponentExitCode.Accepted;
             this.Host.Exit();
         }
-
-		/// <summary>
-		/// Called from <see cref="Accept"/> after any validation errors have been resolved
-		/// and before the component exits.
-		/// </summary>
-		/// <remarks>
-		/// Override this method to complete any final tasks before the component closes.
-		/// </remarks>
-		protected virtual void OnAccept()
-		{
-		}
 
         /// <summary>
         /// Indicates whether the accept button should be enabled.
@@ -247,17 +234,21 @@ namespace ClearCanvas.Desktop
 		}
 
 		/// <summary>
-		/// Called from <see cref="Apply"/> after any validation errors have been resolved;
-		/// <see cref="ApplyEnabled"/> is automatically set to false.
+		/// Applies any changes from the contained pages.
 		/// </summary>
 		/// <remarks>
-		/// This method <b>MUST</b> be overridden if <see cref="ShowApply"/> is true.
+		/// <para>
+		/// If this method is not overridden, it will essentially do nothing other
+		/// than set <see cref="ApplyEnabled"/> to false; therefore, you should override
+		/// it if <see cref="ShowApply"/> is true.
+		/// </para>
+		/// <para>
+		/// If and only if there are no validation errors will <see cref="ApplyEnabled"/> be
+		/// set to false.  Overriding methods can use the value of <see cref="ApplyEnabled"/> to
+		/// decide whether or not to perform an action as a result of the user having clicked
+		/// the Apply button (e.g. check that it is indeed false, then apply).
+		/// </para>
 		/// </remarks>
-		protected virtual void OnApply()
-		{
-			throw new NotImplementedException("This method must be overridden when ShowApply is true.");
-		}
-
 		public virtual void Apply()
 		{
 			Platform.CheckTrue(_showApply, "Show Apply");
@@ -268,7 +259,6 @@ namespace ClearCanvas.Desktop
 				return;
 			}
 
-			OnApply();
 			ApplyEnabled = false;
 		}
 	

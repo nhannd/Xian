@@ -40,17 +40,18 @@ namespace ClearCanvas.Desktop.Configuration
 		{
 		}
 
-		internal void ResetModified()
-		{
-			base.Modified = false;
-		}
-
-		#region IConfigurationApplicationComponent Members
-
 		/// <summary>
 		/// Save any settings modified in the hosted component.
 		/// </summary>
 		public abstract void Save();
+
+		#region IConfigurationApplicationComponent Members
+
+		void IConfigurationApplicationComponent.Save()
+		{
+			this.Save();
+			base.Modified = false;
+		}
 
 		#endregion
 	}
@@ -68,17 +69,18 @@ namespace ClearCanvas.Desktop.Configuration
 		{
 		}
 
-		internal void ResetModified()
-		{
-			base.Modified = false;
-		}
-
-		#region IConfigurationApplicationComponent Members
-
 		/// <summary>
 		/// Save any settings modified in the hosted component.
 		/// </summary>
 		public abstract void Save();
+
+		#region IConfigurationApplicationComponent Members
+
+		void IConfigurationApplicationComponent.Save()
+		{
+			this.Save();
+			base.Modified = false;
+		}
 
 		#endregion
 	}

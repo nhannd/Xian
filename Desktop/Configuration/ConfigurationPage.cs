@@ -86,11 +86,6 @@ namespace ClearCanvas.Desktop.Configuration
 		public void SaveConfiguration()
 		{
 			_component.Save();
-
-			if (_component is ConfigurationApplicationComponent)
-				((ConfigurationApplicationComponent)_component).ResetModified();
-			else if (_component is ConfigurationApplicationComponentContainer)
-				((ConfigurationApplicationComponentContainer)_component).ResetModified();
 		}
 
 		#endregion

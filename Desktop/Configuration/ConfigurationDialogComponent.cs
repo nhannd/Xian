@@ -80,14 +80,27 @@ namespace ClearCanvas.Desktop.Configuration
 			MoveTo(_initialPageIndex);
 		}
 
-		protected override void OnAccept()
+		public override void Accept()
 		{
+			if (this.HasValidationErrors)
+			{
+				this.ShowValidation(true);
+				return;
+			}
+
 			Save();
+
+			this.ExitCode = ApplicationComponentExitCode.Accepted;
+			this.Host.Exit();
 		}
 
-		protected override void OnApply()
+		public override void Apply()
 		{
-			Save();
+			base.Apply();
+
+			//The base method sets ApplyEnabled=false when there are no validation errors.
+			if (!base.ApplyEnabled)
+				Save();
 		}
 
 		private void Save()

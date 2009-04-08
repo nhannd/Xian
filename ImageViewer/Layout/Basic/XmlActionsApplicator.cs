@@ -436,6 +436,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			List<IXmlAction> actions = new List<IXmlAction>();
 
+			//TODO: when this becomes non-internal, make these extensions.
 			actions.Add(new TrimEndXmlAction());
 			actions.Add(new TrimStartXmlAction());
 			actions.Add(new ReplaceRegexXmlAction());
