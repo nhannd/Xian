@@ -60,10 +60,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	#endregion
 	#endregion
 
-#if DEBUG
 	[MouseToolButton(XMouseButtons.Left, false)]
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-#endif
 
 	public class DrawShutterTool : MouseImageViewerTool
 	{
