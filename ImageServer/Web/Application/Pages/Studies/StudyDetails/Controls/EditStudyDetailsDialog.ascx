@@ -58,7 +58,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 <td>
                                     <table cellpadding="0" cellspacing="0">
                                         <tr><td>
-                                        <ccUI:TextBox ID="PatientBirthDate" runat="server" ReadOnly="true" CausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" ></ccUI:TextBox><asp:LinkButton ID="ClearPatientBirthDateButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
+                                        <ccUI:TextBox ID="PatientBirthDate" runat="server" textCausesValidation="true" ValidationGroup="vg1" CssClass="DialogTextBox" ></ccUI:TextBox><asp:ImageButton ID="CalendarLink" runat="server" style="padding-left: 3px; padding-right: 3px;" /><asp:LinkButton ID="ClearPatientBirthDateButton" Text="Clear" runat="server" CssClass="DialogLinkButton" />
                                         </td><td valign="bottom">
                                             <ccAsp:InvalidInputIndicator ID="PatientBirthDateHelp" runat="server" SkinID="InvalidInputIndicator" />
                                             <ccValidator:DateValidator
@@ -66,6 +66,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                                         InvalidInputColor="#FAFFB5" ValidationGroup="vg1" InvalidInputIndicatorID="PatientBirthDateHelp"
                                                         Text="The Patient Birth Date cannot be in the future." Display="None">
                                             </ccValidator:DateValidator>
+                                            <aspAjax:MaskedEditExtender runat="server" ID="PatientBirthDateMaskExtender" MaskType="Date" Mask="99/99/9999" TargetControlID="PatientBirthDate"></aspAjax:MaskedEditExtender>
                                         </td></tr>
                                     </table>
                                 </td>
@@ -93,7 +94,7 @@ EnableClientScript="true" runat="server" ValidationGroup="vg1" CssClass="EditStu
                                 </td>
                             </tr>
                         </table>
-                        <ccUI:CalendarExtender ID="PatientBirthDateCalendarExtender" runat="server" TargetControlID="PatientBirthDate" CssClass="Calendar">
+                        <ccUI:CalendarExtender ID="PatientBirthDateCalendarExtender" runat="server" TargetControlID="PatientBirthDate" CssClass="Calendar" PopupButtonID="CalendarLink" Format="MM/dd/yyyy">
                         </ccUI:CalendarExtender>
                     </ContentTemplate>
                     <HeaderTemplate>

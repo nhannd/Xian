@@ -173,6 +173,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.TextBox PatientBirthDate;
         
         /// <summary>
+        /// CalendarLink control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.ImageButton CalendarLink;
+        
+        /// <summary>
         /// ClearPatientBirthDateButton control.
         /// </summary>
         /// <remarks>
@@ -252,7 +261,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender PatientBirthDateCalendarExtender;
-        
+
         /// <summary>
         /// TabPanel2 control.
         /// </summary>
@@ -504,6 +513,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.CalendarExtender StudyDateCalendarExtender;
+
+        protected AjaxControlToolkit.MaskedEditExtender PatientBirthDateMaskExtender;
         
         /// <summary>
         /// Panel1 control.

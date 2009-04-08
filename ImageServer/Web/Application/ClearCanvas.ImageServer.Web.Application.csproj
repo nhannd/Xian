@@ -1110,6 +1110,7 @@
     <Content Include="App_Themes\Default\images\Buttons\ApplyDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ApplyEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\ApplyHover.png" />
+    <Content Include="App_Themes\Default\images\Buttons\CalendarIcon.png" />
     <Content Include="App_Themes\Default\images\Buttons\CancelDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\CancelEnabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\CancelHover.png" />

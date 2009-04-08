@@ -70,6 +70,7 @@ public class ImageServerConstants
         public static readonly string Watermark = string.Format("~/App_Themes/{0}/images/Indicators/Watermark.gif", Theme);
         public static readonly string PhoneticName = string.Format("~/App_Themes/{0}/images/Indicators/PhoneticName.gif", Theme);
         public static readonly string IdeographyName = string.Format("~/App_Themes/{0}/images/Indicators/IdeographicName.gif", Theme);
+        public static readonly string CalendarIcon = string.Format("~/App_Themes/{0}/images/Buttons/CalendarIcon.png", Theme);
     }
 
     public class QueryStrings

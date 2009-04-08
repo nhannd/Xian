@@ -574,7 +574,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Users.
+        ///   Looks up a localized string similar to User Management.
         /// </summary>
         internal static string UserManagement {
             get {

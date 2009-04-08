@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Web.UI.WebControls;
 using System.Xml;
 using AjaxControlToolkit;
@@ -349,6 +350,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
         {
             SetupJavascript();
             EditStudyDetailsValidationSummary.HeaderText = App_GlobalResources.ErrorMessages.EditStudyValidationError;
+            CalendarLink.ImageUrl = ImageServerConstants.ImageURLs.CalendarIcon;
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            //Set the culture settings
+            CultureInfo oCulture = CultureInfo.CurrentCulture;
+            PatientBirthDateMaskExtender.CultureName = oCulture.Name;
+            PatientBirthDateCalendarExtender.Format = oCulture.DateTimeFormat.ShortDatePattern;
+
+            //CalendarMaskExtender expects something like "99/99/9999"
+            string Mask = PatientBirthDateCalendarExtender.Format.Replace(oCulture.DateTimeFormat.DateSeparator, "/");
+            if (Mask.IndexOf("d") != Mask.LastIndexOf("d"))
+            {
+                Mask = Mask.Replace("d", "9");
+            }
+            else
+            {
+                Mask = Mask.Replace("d", "99");
+            }
+            if (Mask.IndexOf("M") != Mask.LastIndexOf("M"))
+            {
+                Mask = Mask.Replace("M", "9");
+            }
+            else
+            {
+                Mask = Mask.Replace("M", "99");
+            }
+            Mask = Mask.Replace("y", "9");
+            PatientBirthDateMaskExtender.Mask = Mask;
+
         }
 
         /// <summary>
