@@ -17,5 +17,8 @@
     <Setting Name="RevocationMode" Type="System.Security.Cryptography.X509Certificates.X509RevocationMode" Scope="Application">
       <Value Profile="(Default)">NoCheck</Value>
     </Setting>
+    <Setting Name="UserCredentialsProviderClass" Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

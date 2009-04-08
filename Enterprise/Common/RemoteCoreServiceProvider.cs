@@ -21,7 +21,8 @@ namespace ClearCanvas.Enterprise.Common
 				RemoteCoreServiceSettings.Default.ConfigurationClass,
 				RemoteCoreServiceSettings.Default.MaxReceivedMessageSize,
 				RemoteCoreServiceSettings.Default.CertificateValidationMode,
-				RemoteCoreServiceSettings.Default.RevocationMode
+				RemoteCoreServiceSettings.Default.RevocationMode,
+                RemoteCoreServiceSettings.Default.UserCredentialsProviderClass
 				);
 		}
 	}

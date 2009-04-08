@@ -16,22 +16,43 @@ namespace ClearCanvas.Enterprise.Common
 	public class RemoteServiceProviderArgs
 	{
 		private string _baseUrl;
-		private string _configurationClassName;
+        private IServiceChannelConfiguration _configuration;
 		private int _maxReceivedMessageSize;
 		private X509CertificateValidationMode _certificateValidationMode;
 		private X509RevocationMode _revocationMode;
+        private IUserCredentialsProvider _userCredentialsProvider;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="baseUrl"></param>
+        /// <param name="configurationClassName"></param>
+        /// <param name="maxReceivedMessageSize"></param>
+        /// <param name="certificateValidationMode"></param>
+        /// <param name="revocationMode"></param>
+        public RemoteServiceProviderArgs(string baseUrl, string configurationClassName, int maxReceivedMessageSize,
+            X509CertificateValidationMode certificateValidationMode, X509RevocationMode revocationMode)
+            :this(baseUrl, configurationClassName, maxReceivedMessageSize, certificateValidationMode,
+                revocationMode, null)
+        {
+        }
+
+
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		public RemoteServiceProviderArgs(string baseUrl, string configurationClassName, int maxReceivedMessageSize,
-			X509CertificateValidationMode certificateValidationMode, X509RevocationMode revocationMode)
+			X509CertificateValidationMode certificateValidationMode, X509RevocationMode revocationMode,
+            string credentialsProviderClassName)
 		{
 			_baseUrl = baseUrl;
-			_configurationClassName = configurationClassName;
+            _configuration = InstantiateClass<IServiceChannelConfiguration>(configurationClassName);
 			_maxReceivedMessageSize = maxReceivedMessageSize;
 			_certificateValidationMode = certificateValidationMode;
 			_revocationMode = revocationMode;
+            _userCredentialsProvider = string.IsNullOrEmpty(credentialsProviderClassName) ? null :
+                InstantiateClass<IUserCredentialsProvider>(credentialsProviderClassName);
 		}
 
 		/// <summary>
@@ -44,13 +65,12 @@ namespace ClearCanvas.Enterprise.Common
 		}
 
 		/// <summary>
-		/// Assembly-qualified name of the class that is responsible for configuring the service binding/endpoint.
-		/// This class must implement <see cref="IServiceChannelConfiguration"/>.
+		/// Configuration that is responsible for configuring the service binding/endpoint.
 		/// </summary>
-		public string ConfigurationClassName
+        public IServiceChannelConfiguration Configuration
 		{
-			get { return _configurationClassName; }
-			set { _configurationClassName = value; }
+			get { return _configuration; }
+			set { _configuration = value; }
 		}
 
 		/// <summary>
@@ -79,7 +99,23 @@ namespace ClearCanvas.Enterprise.Common
 			get { return _revocationMode; }
 			set { _revocationMode = value; }
 		}
-	}
+
+        /// <summary>
+        /// Gets or sets an <see cref="IUserCredentialsProvider"/>.
+        /// May be null if user credentials are not relevant.
+        /// </summary>
+        public IUserCredentialsProvider UserCredentialsProvider
+        {
+            get { return _userCredentialsProvider; }
+            set { _userCredentialsProvider = value; }
+        }
+
+        private static T InstantiateClass<T>(string className)
+        {
+            Type type = Type.GetType(className);
+            return (T)Activator.CreateInstance(type);
+        }
+    }
 
 	#endregion
 
@@ -91,7 +127,6 @@ namespace ClearCanvas.Enterprise.Common
 		where TServiceLayerAttribute : Attribute
 	{
 		private readonly RemoteServiceProviderArgs _args;
-		private readonly IServiceChannelConfiguration _channelConfiguration;
 
 		/// <summary>
 		/// Constructor.
@@ -100,9 +135,6 @@ namespace ClearCanvas.Enterprise.Common
 		public RemoteServiceProviderBase(RemoteServiceProviderArgs args)
 		{
 			_args = args;
-
-			Type configClass = Type.GetType(_args.ConfigurationClassName);
-			_channelConfiguration = (IServiceChannelConfiguration)Activator.CreateInstance(configClass);
 		}
 
         #region IServiceProvider Members
@@ -155,7 +187,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// <returns></returns>
 		protected virtual ChannelFactory GetChannelFactory(Type channelFactoryClass, Uri uri, bool authenticationRequired)
 		{
-			ChannelFactory factory = _channelConfiguration.ConfigureChannelFactory(
+			ChannelFactory factory = _args.Configuration.ConfigureChannelFactory(
 				new ServiceChannelConfigurationArgs(channelFactoryClass, uri, authenticationRequired,
 													_args.MaxReceivedMessageSize,
 													_args.CertificateValidationMode,
@@ -175,7 +207,7 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		protected virtual string UserName
 		{
-			get { return ""; }
+			get { return _args.UserCredentialsProvider == null ? "" : _args.UserCredentialsProvider.UserName; }
 		}
 
 		/// <summary>
@@ -183,8 +215,8 @@ namespace ClearCanvas.Enterprise.Common
 		/// </summary>
 		protected virtual string Password
 		{
-			get { return ""; }
-		}
+            get { return _args.UserCredentialsProvider == null ? "" : _args.UserCredentialsProvider.SessionTokenId; }
+        }
 
 		#endregion
 

@@ -130,6 +130,7 @@
     <Compile Include="ICoreServiceLayer.cs" />
     <Compile Include="IServiceChannelConfiguration.cs" />
     <Compile Include="IServiceHostConfiguration.cs" />
+    <Compile Include="IUserCredentialsProvider.cs" />
     <Compile Include="Time\GetTimeRequest.cs" />
     <Compile Include="Time\GetTimeResponse.cs" />
     <Compile Include="Time\ITimeService.cs" />
