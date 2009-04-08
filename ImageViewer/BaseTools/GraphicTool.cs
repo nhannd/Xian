@@ -45,6 +45,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		private bool _enabled = true;
 		private event EventHandler _enabledChanged;
 
+		private bool _visible = true;
+		private event EventHandler _visibleChanged;
+
 		/// <summary>
 		/// Gets or sets a value indicating whether the tool is enabled.
 		/// </summary>
@@ -70,5 +73,29 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			remove { _enabledChanged -= value; }
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the tool is visible.
+		/// </summary>
+		public bool Visible
+		{
+			get { return _visible; }
+			protected set
+			{
+				if (_visible != value)
+				{
+					_visible = value;
+					EventsHelper.Fire(_visibleChanged, this, EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Occurs when the <see cref="Visible"/> property has changed.
+		/// </summary>
+		public event EventHandler VisibleChanged
+		{
+			add { _visibleChanged += value; }
+			remove { _visibleChanged -= value; }
+		}
 	}
 }

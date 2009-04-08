@@ -73,7 +73,13 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		public Roi Roi
 		{
-			get { return _roi; }
+			get
+			{
+				if (_roi == null)
+					_roi = base.Subject.CreateRoiInformation();
+
+				return _roi;
+			}
 		}
 
 		public event EventHandler RoiChanged

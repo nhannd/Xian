@@ -10,7 +10,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public interface IControlGraphic : IDecoratorGraphic, ICursorTokenProvider, IMouseButtonHandler, IContextMenuProvider
+	public interface IControlGraphic : IDecoratorGraphic, ICursorTokenProvider, IMouseButtonHandler, IExportedActionsProvider
 	{
 		IGraphic Subject { get; }
 		event EventHandler SubjectChanged;
@@ -144,11 +144,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Suspends updating the <see cref="XAnnotationGraphic"/>.
+		/// Suspends notification of <see cref="SubjectChanged"/> events.
 		/// </summary>
 		/// <remarks>
-		/// There are times when it is desirable to suspend the updating of the
-		/// <see cref="XAnnotationGraphic"/>, such as when initializing 
+		/// There are times when it is desirable to suspend the notification of
+		/// <see cref="SubjectChanged"/> events, such as when initializing 
 		/// the <see cref="IControlGraphic.Subject"/> graphic.  To resume the raising of the event, call
 		/// <see cref="Resume"/>.
 		/// </remarks>
@@ -158,7 +158,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		}
 
 		/// <summary>
-		/// Resumes updating the <see cref="XAnnotationGraphic"/>.
+		/// Resumes notification of <see cref="SubjectChanged"/> events.
 		/// </summary>
 		/// <param name="notifyNow">If <b>true</b>, the graphic is updated immediately.
 		/// </param>
@@ -176,7 +176,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected virtual void OnShowControlGraphicsChanged() {}
 
-		protected virtual ActionModelNode OnGetContextMenuModel(IMouseInformation mouseInformation)
+		protected virtual IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
 		{
 			return null;
 		}
@@ -383,38 +383,35 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
-		#region IContextMenuProvider Members
+		#region IExportedActionsProvider Members
 
-		public ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
+		public IActionSet GetExportedActions(string site, IMouseInformation mouseInformation)
 		{
 			bool atLeastOne = false;
-			ActionModelRoot actionModel = new ActionModelRoot();
+			IActionSet actions = new ActionSet();
 
-			ActionModelNode node = this.OnGetContextMenuModel(mouseInformation);
-			if (node != null)
+			IActionSet myActions = this.OnGetExportedActions(site, mouseInformation);
+			if (myActions != null)
 			{
-				actionModel.Merge(node);
+				actions = actions.Union(myActions);
 				atLeastOne = true;
 			}
 
 			foreach (IGraphic graphic in this.EnumerateChildGraphics(true))
 			{
-				if (!graphic.Visible)
-					continue;
-
-				IContextMenuProvider provider = graphic as IContextMenuProvider;
-				if (provider != null)
+				IExportedActionsProvider controlGraphic = graphic as IExportedActionsProvider;
+				if (controlGraphic != null)
 				{
-					ActionModelNode other = provider.GetContextMenuModel(mouseInformation);
-					if (other != null)
+					IActionSet otherActions = controlGraphic.GetExportedActions(site, mouseInformation);
+					if (otherActions != null)
 					{
-						actionModel.Merge(other);
+						actions = actions.Union(otherActions);
 						atLeastOne = true;
 					}
 				}
 			}
 
-			return atLeastOne ? actionModel : null;
+			return atLeastOne ? actions : null;
 		}
 
 		#endregion

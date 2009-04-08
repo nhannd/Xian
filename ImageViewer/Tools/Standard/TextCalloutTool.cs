@@ -4,6 +4,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -66,9 +67,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		#region Tool Mode Support
 
-		private delegate InteractiveGraphicBuilder CreateInteractiveGraphicBuilderDelegate(StandardStatefulGraphic graphic);
+		private delegate InteractiveGraphicBuilder CreateInteractiveGraphicBuilderDelegate(IControlGraphic graphic);
 
-		private delegate StandardStatefulGraphic CreateGraphicDelegate();
+		private delegate IControlGraphic CreateGraphicDelegate();
 
 		/// <summary>
 		/// Fired when the tool's <see cref="Mode"/> changes.
@@ -278,15 +279,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (provider == null)
 				return false;
 
-			StandardStatefulGraphic graphic = _graphicDelegateCreatorDelegate();
-			graphic.State = graphic.CreateSelectedState();
+			IControlGraphic graphic = _graphicDelegateCreatorDelegate();
 
 			_graphicBuilder = _interactiveGraphicBuilderDelegate(graphic);
 			_graphicBuilder.GraphicComplete += OnGraphicBuilderComplete;
 			_graphicBuilder.GraphicCancelled += OnGraphicBuilderCancelled;
 
 			_undoableCommand = new DrawableUndoableCommand(image);
-			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(new BasicGraphicToolsControlGraphic(graphic), provider.OverlayGraphics, provider.OverlayGraphics.Count));
+			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(graphic, provider.OverlayGraphics, provider.OverlayGraphics.Count));
 			_undoableCommand.Name = this.CreationCommandName;
 			_undoableCommand.Execute();
 
@@ -357,27 +357,41 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_graphicBuilder = null;
 		}
 
-		private static StandardStatefulGraphic CreateTextCalloutGraphic()
+		private static IControlGraphic CreateTextCalloutGraphic()
 		{
 			UserCalloutGraphic callout = new UserCalloutGraphic();
 			callout.LineStyle = LineStyle.Solid;
 			callout.ShowArrowhead = true;
-			return new StandardStatefulGraphic(new VerticesControlGraphic(callout));
+
+			VerticesControlGraphic controlGraphic = new VerticesControlGraphic(callout);
+			StandardStatefulGraphic statefulGraphic = new StandardStatefulGraphic(controlGraphic);
+			statefulGraphic.State = statefulGraphic.CreateInactiveState();
+
+			ContextMenuControlGraphic contextGraphic = new ContextMenuControlGraphic(typeof (TextCalloutTool).FullName, "basicgraphic-menu", null, statefulGraphic);
+			contextGraphic.Actions = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(contextGraphic, contextGraphic.Subject)).Actions;
+
+			return contextGraphic;
 		}
 
-		private static InteractiveGraphicBuilder CreateInteractiveTextCalloutBuilder(StandardStatefulGraphic graphic)
+		private static InteractiveGraphicBuilder CreateInteractiveTextCalloutBuilder(IControlGraphic graphic)
 		{
-			IDecoratorGraphic d = graphic;
-			d = d.DecoratedGraphic as IDecoratorGraphic;
-			return new InteractiveTextCalloutBuilder(d.DecoratedGraphic as UserCalloutGraphic);
+			return new InteractiveTextCalloutBuilder(graphic.Subject as UserCalloutGraphic);
 		}
 
-		private static StandardStatefulGraphic CreateTextAreaGraphic()
+		private static IControlGraphic CreateTextAreaGraphic()
 		{
-			return new StandardStatefulGraphic(new TextEditControlGraphic(new MoveControlGraphic(new InvariantTextPrimitive())));
+			InvariantTextPrimitive textArea = new InvariantTextPrimitive();
+			TextEditControlGraphic controlGraphic = new TextEditControlGraphic(new MoveControlGraphic(textArea));
+			StandardStatefulGraphic statefulGraphic = new StandardStatefulGraphic(controlGraphic);
+			statefulGraphic.State = statefulGraphic.CreateInactiveState();
+
+			ContextMenuControlGraphic contextGraphic = new ContextMenuControlGraphic(typeof (TextCalloutTool).FullName, "basicgraphic-menu", null, statefulGraphic);
+			contextGraphic.Actions = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(contextGraphic, contextGraphic.Subject)).Actions;
+
+			return contextGraphic;
 		}
 
-		private static InteractiveGraphicBuilder CreateInteractiveTextAreaBuilder(StandardStatefulGraphic graphic)
+		private static InteractiveGraphicBuilder CreateInteractiveTextAreaBuilder(IControlGraphic graphic)
 		{
 			return new InteractiveTextAreaBuilder(graphic.Subject as ITextGraphic);
 		}

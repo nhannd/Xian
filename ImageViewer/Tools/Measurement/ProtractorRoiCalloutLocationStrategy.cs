@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		public override bool CalculateCalloutLocation(out PointF location, out CoordinateSystem coordinateSystem)
 		{
-			if (this.Roi.Points.Count < 3)
+			if (this.Roi.Points.Count < 3 || string.IsNullOrEmpty(this.Callout.Text))
 				base.Callout.Visible = false;
 			else
 				base.Callout.Visible = true;

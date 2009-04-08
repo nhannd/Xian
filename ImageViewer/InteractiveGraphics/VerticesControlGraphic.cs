@@ -5,7 +5,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
-using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -13,9 +12,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	public class VerticesControlGraphic : ControlPointsGraphic
 	{
 		private bool _canAddRemoveVertices = false;
-
-		[CloneIgnore]
-		private ActionModelNode _actionModel;
 
 		[CloneIgnore]
 		private bool _bypassControlPointChangedEvent = false;
@@ -147,37 +143,36 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected void OnCanAddRemoveVerticesChanged() {}
 
-		protected override ActionModelNode OnGetContextMenuModel(IMouseInformation mouseInformation)
+		protected override IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
 		{
 			_lastContextMenuPoint = mouseInformation.Location;
 
-			if (_actionModel == null)
-			{
-				MenuAction insertAction = new MenuAction("insert", new ActionPath("VerticesControlGraphic/InsertVertex", null), ClickActionFlags.None, null);
-				insertAction.Label = SR.StringInsertVertex;
-				insertAction.SetClickHandler(this.InsertVertex);
+			if (!_canAddRemoveVertices)
+				return null;
 
-				MenuAction deleteAction = new MenuAction("delete", new ActionPath("VerticesControlGraphic/DeleteVertex", null), ClickActionFlags.None, null);
-				deleteAction.Label = SR.StringDeleteVertex;
-				deleteAction.SetClickHandler(this.DeleteVertex);
-
-				ActionModelRoot model = new ActionModelRoot();
-				model.InsertAction(insertAction);
-				model.InsertAction(deleteAction);
-				_actionModel = model;
-			}
+			if (!base.Subject.HitTest(Point.Round(_lastContextMenuPoint)))
+				return null;
 
 			int count = this.Subject.Points.Count;
 			bool hit = base.ControlPoints.HitTest(Point.Round(_lastContextMenuPoint));
-			foreach (MenuAction action in _actionModel.GetActionsInOrder())
-			{
-				if (action.ActionID == "insert")
-					action.Visible = (true || count == 1);
-				else if (action.ActionID == "delete")
-					action.Visible = (hit && count > 1);
-			}
 
-			return _canAddRemoveVertices ? _actionModel : null;
+			IResourceResolver resolver = new ResourceResolver(this.GetType(), true);
+			string @namespace = typeof (VerticesControlGraphic).FullName;
+
+			MenuAction insertAction = new MenuAction(@namespace + ":insert", new ActionPath(site + "/MenuInsertVertex", resolver), ClickActionFlags.None, resolver);
+			insertAction.GroupHint = new GroupHint("Tools.Graphics.Edit");
+			insertAction.Label = SR.MenuInsertVertex;
+			insertAction.Persistent = true;
+			insertAction.SetClickHandler(this.InsertVertex);
+
+			MenuAction deleteAction = new MenuAction(@namespace + ":delete", new ActionPath(site + "/MenuDeleteVertex", resolver), ClickActionFlags.None, resolver);
+			deleteAction.GroupHint = new GroupHint("Tools.Graphics.Edit");
+			deleteAction.Label = SR.MenuDeleteVertex;
+			deleteAction.Visible = hit && count > 1;
+			deleteAction.Persistent = true;
+			deleteAction.SetClickHandler(this.DeleteVertex);
+
+			return new ActionSet(new IAction[] {insertAction, deleteAction});
 		}
 
 		protected virtual void OnSubjectPointsChanged(object sender, EventArgs e)

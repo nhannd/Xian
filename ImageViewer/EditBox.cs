@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageViewer
 		private string _fontName = null;
 		private float _fontSize = 12;
 		private string _value = string.Empty;
+		private bool _multiline = false;
 		private string _lastAcceptedValue = string.Empty;
 
 		private event EventHandler _valueAccepted;
@@ -116,6 +117,15 @@ namespace ClearCanvas.ImageViewer
 		{
 			get { return _size; }
 			set { _size = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating if this <see cref="EditBox"/> should support multiline input.
+		/// </summary>
+		public bool Multiline
+		{
+			get { return _multiline; }
+			set { _multiline = value; }
 		}
 
 		/// <summary>

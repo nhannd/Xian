@@ -149,10 +149,10 @@
     <Compile Include="Graphics\ArrowGraphic.cs" />
     <Compile Include="Imaging\OverlayData.cs" />
     <Compile Include="InteractiveGraphics\ContextMenuControlGraphic.cs" />
-    <Compile Include="InteractiveGraphics\BasicGraphicToolsControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\ControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\ControlPointsGraphic.cs" />
     <Compile Include="InteractiveGraphics\BoundableResizeControlGraphic.cs" />
+    <Compile Include="InteractiveGraphics\IExportedActionsProvider.cs" />
     <Compile Include="InteractiveGraphics\StandardAnnotationGraphicSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -202,6 +202,12 @@
     <Compile Include="RoiGraphics\IRoiStatisticsProvider.cs" />
     <Compile Include="RoiGraphics\Analyzers\RoiLengthAnalyzer.cs" />
     <Compile Include="RoiGraphics\LinearRoi.cs" />
+    <Compile Include="RoiGraphics\RoiSettings.cs" />
+    <Compile Include="RoiGraphics\RoiSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>RoiSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="RoiGraphics\Units.cs" />
     <Compile Include="DicomGraphics\GeometricShuttersGraphic.cs" />
     <Compile Include="SingleStudyLoader.cs" />
@@ -590,6 +596,10 @@
     <None Include="app.config" />
     <None Include="ClassDiagrams\StudyFindersLoaders.cd" />
     <None Include="ClassDiagrams\VectorGraphics.cd" />
+    <None Include="RoiGraphics\RoiSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>RoiSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="StandardModalitySettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>StandardModalitySettings.Designer.cs</LastGenOutput>

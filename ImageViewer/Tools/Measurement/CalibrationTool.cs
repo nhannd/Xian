@@ -44,12 +44,12 @@ using System;
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	[MenuAction("calibrate", "basicgraphic-menu/MenuCalibrationTool", "Calibrate")]
-	[EnabledStateObserver("calibrate", "Enabled", "EnabledChanged")]
+	[VisibleStateObserver("calibrate", "Visible", "VisibleChanged")]
 	[GroupHint("calibrate", "Tools.Image.Measurement.Calibrate")]
 	[Tooltip("calibrate", "TooltipCalibrationTool")]
 
 	[ExtensionOf(typeof(GraphicToolExtensionPoint))]
-	public class CalibrationTool :GraphicTool
+	public class CalibrationTool : GraphicTool
 	{
 		public CalibrationTool()
 		{
@@ -59,13 +59,13 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			RoiGraphic roiGraphic = this.Context.OwnerGraphic as RoiGraphic;
 
-			this.Enabled = false;
+			this.Visible = false;
 
 			// Only allow calibration on linear measurements
 			if (roiGraphic != null)
 			{
 				if (roiGraphic.Roi is IRoiLengthProvider)
-					this.Enabled = true;
+					this.Visible = true;
 			}
 
 			base.Initialize();

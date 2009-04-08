@@ -7,24 +7,25 @@ using ClearCanvas.ImageViewer.InputManagement;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	[Cloneable]
-	public class ContextMenuControlGraphic : ControlGraphic
+	public class ContextMenuControlGraphic : ControlGraphic, IContextMenuProvider
 	{
 		[CloneCopyReference]
 		private IActionSet _actions;
 
-		private string _actionSite;
+		private string _namespace;
+		private string _site;
 
 		public ContextMenuControlGraphic(IGraphic subject)
-			: base(subject)
-		{
-			_actionSite = "";
-			_actions = null;
-		}
+			: this(string.Empty, string.Empty, null, subject) {}
 
-		public ContextMenuControlGraphic(string actionSite, IActionSet actions, IGraphic subject)
+		public ContextMenuControlGraphic(string site, IActionSet actions, IGraphic subject)
+			: this(string.Empty, site, actions, subject) {}
+
+		public ContextMenuControlGraphic(string @namespace, string site, IActionSet actions, IGraphic subject)
 			: base(subject)
 		{
-			_actionSite = actionSite;
+			_namespace = @namespace;
+			_site = site;
 			_actions = actions;
 		}
 
@@ -40,18 +41,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _actions = value; }
 		}
 
-		public virtual string Site
+		public string Namespace
 		{
-			get { return _actionSite; }
-			set { _actionSite = value; }
+			get
+			{
+				if (string.IsNullOrEmpty(_namespace))
+					return typeof (ContextMenuControlGraphic).FullName;
+				return _namespace;
+			}
+			protected set { _namespace = value; }
 		}
 
-		protected override ActionModelNode OnGetContextMenuModel(IMouseInformation mouseInformation)
+		public string Site
 		{
-			if (this.Actions == null || string.IsNullOrEmpty(this.Site))
-				return null;
-
-			return ActionModelRoot.CreateModel(typeof (ContextMenuControlGraphic).FullName, this.Site, this.Actions);
+			get { return _site; }
+			protected set { _site = value; }
 		}
 
 		protected override bool OnMouseStart(IMouseInformation mouseInformation)
@@ -73,5 +77,22 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 			return base.OnMouseStart(mouseInformation);
 		}
+
+		protected sealed override IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
+		{
+			return this.Actions;
+		}
+
+		#region IContextMenuProvider Members
+
+		public ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
+		{
+			if (string.IsNullOrEmpty(this.Site))
+				return null;
+
+			return ActionModelRoot.CreateModel(this.Namespace, this.Site, this.GetExportedActions(this.Site, mouseInformation));
+		}
+
+		#endregion
 	}
 }

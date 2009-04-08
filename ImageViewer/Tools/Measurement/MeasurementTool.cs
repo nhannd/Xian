@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			_graphicBuilder.GraphicCancelled += OnGraphicBuilderCancelled;
 
 			_undoableCommand = new DrawableUndoableCommand(image);
-			_undoableCommand.Enqueue(new AddGraphicUndoableCommand(DecorateRoiGraphic(roiGraphic), provider.OverlayGraphics));
+			_undoableCommand.Enqueue(new AddGraphicUndoableCommand(roiGraphic, provider.OverlayGraphics));
 			_undoableCommand.Name = CreationCommandName;
 			_undoableCommand.Execute();
 
@@ -117,7 +117,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (_graphicBuilder.Stop(mouseInformation))
 				return true;
 
-			_graphicBuilder.Graphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
 			_graphicBuilder = null;
 			_undoableCommand = null;
 			return false;
@@ -167,12 +166,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected abstract IGraphic CreateGraphic();
 
-		protected  virtual IGraphic DecorateRoiGraphic(RoiGraphic roiGraphic)
-		{
-			// Add basic graphics context menu
-			return new BasicGraphicToolsControlGraphic(roiGraphic);
-		}
-
 		protected virtual IAnnotationCalloutLocationStrategy CreateCalloutLocationStrategy()
 		{
 			return null;
@@ -184,6 +177,9 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		{
 			_graphicBuilder.GraphicComplete -= OnGraphicBuilderComplete;
 			_graphicBuilder.GraphicCancelled -= OnGraphicBuilderCancelled;
+
+			_graphicBuilder.Graphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
+			_graphicBuilder.Graphic.Draw();
 
 			_undoableCommand = null;
 

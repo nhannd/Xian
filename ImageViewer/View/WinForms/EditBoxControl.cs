@@ -101,6 +101,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				_editBox.Accept();
 				e.Handled = e.SuppressKeyPress = true;
 			}
+			else if (e.KeyCode == Keys.Enter && !_editBox.Multiline)
+			{
+				e.Handled = e.SuppressKeyPress = true;
+			}
 		}
 
 		private static Rectangle ComputeEditBoxControlBounds(Control control, EditBox editBox)

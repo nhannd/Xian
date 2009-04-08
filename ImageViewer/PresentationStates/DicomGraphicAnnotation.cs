@@ -166,6 +166,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 					((VectorGraphic) graphic).Color = _color;
 				else if (graphic is CalloutGraphic)
 					((CalloutGraphic) graphic).Color = _color;
+				else if (graphic is StandardStatefulGraphic)
+					((StandardStatefulGraphic) graphic).InactiveColor = ((StandardStatefulGraphic) graphic).Color = _color;
 			}
 		}
 
@@ -275,6 +277,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				}
 
 				StandardStatefulGraphic statefulCallout = new StandardStatefulGraphic(callout);
+				statefulCallout.InactiveColor = Color.LemonChiffon;
 				statefulCallout.State = statefulCallout.CreateInactiveState();
 				return statefulCallout;
 			}

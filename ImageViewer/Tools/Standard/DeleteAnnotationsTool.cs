@@ -40,13 +40,13 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	[MenuAction("closemenu", "basicgraphic-menu/MenuClose")]
-
 	[MenuAction("delete", "basicgraphic-menu/MenuDeleteAnnotation", "Delete")]
 	[IconSet("delete", IconScheme.Colour, "DeleteAnnotationToolSmall.png", "DeleteAnnotationToolMedium.png", "DeleteAnnotationToolLarge.png")]
+	[GroupHint("delete", "Tools.Annotations.Delete")]
 
 	[MenuAction("deleteall", "basicgraphic-menu/MenuDeleteAllAnnotations", "DeleteAll")]
 	[IconSet("deleteall", IconScheme.Colour, "DeleteAllAnnotationsToolSmall.png", "DeleteAllAnnotationsToolMedium.png", "DeleteAllAnnotationsToolLarge.png")]
+	[GroupHint("deleteall", "Tools.Annotations.Delete")]
 
 	[ExtensionOf(typeof(GraphicToolExtensionPoint))]
 	public class DeleteAnnotationsTool : GraphicTool

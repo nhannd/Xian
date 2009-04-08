@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// </remarks>
 	[DicomSerializableGraphicAnnotation(typeof (StandardAnnotationGraphicSerializer))]
 	[Cloneable]
-	public class AnnotationGraphic : StandardStatefulGraphic
+	public class AnnotationGraphic : StandardStatefulGraphic, IContextMenuProvider
 	{
 		#region AnnotationGraphicMemento
 
@@ -103,6 +103,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		[CloneIgnore]
 		private CalloutGraphic _calloutGraphic;
+
+		[CloneIgnore]
+		private IToolSet _toolSet;
 
 		[CloneIgnore]
 		private bool _settingCalloutLocation = false;
@@ -178,9 +181,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region Virtual Members
 
+		protected virtual string ContextMenuNamespace
+		{
+			get { return typeof (AnnotationGraphic).FullName; }
+		}
+
 		public virtual void Refresh()
 		{
-			SetCalloutLocation();
+			this.SetCalloutLocation();
+			this.Draw();
 		}
 
 		protected virtual CalloutGraphic CreateCalloutGraphic()
@@ -281,5 +290,21 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			base.OnStateChanged(e);
 		}
+
+		protected override IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
+		{
+			if (_toolSet == null)
+				_toolSet = new ToolSet(new GraphicToolExtensionPoint(), new GraphicToolContext(this, this.Subject));
+			return _toolSet.Actions;
+		}
+
+		#region IContextMenuProvider Members
+
+		public ActionModelNode GetContextMenuModel(IMouseInformation mouseInformation)
+		{
+			return ActionModelRoot.CreateModel(this.ContextMenuNamespace, "basicgraphic-menu", base.GetExportedActions("basicgraphic-menu", mouseInformation));
+		}
+
+		#endregion
 	}
 }

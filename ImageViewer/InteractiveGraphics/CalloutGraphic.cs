@@ -35,7 +35,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -53,7 +52,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// </remarks>
 	[DicomSerializableGraphicAnnotation(typeof (CalloutGraphicAnnotationSerializer))]
 	[Cloneable]
-	public class CalloutGraphic : CompositeGraphic, ITextGraphic, IMemorable, IMouseButtonHandler, IContextMenuProvider, ICursorTokenProvider
+	public class CalloutGraphic : CompositeGraphic, ITextGraphic, IMemorable, IMouseButtonHandler, IExportedActionsProvider, ICursorTokenProvider
 	{
 		#region Private fields
 
@@ -64,6 +63,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		[CloneIgnore]
 		private IControlGraphic _textControlGraphic;
+
 		[CloneIgnore]
 		private ArrowGraphic _lineGraphic;
 
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// Instantiates a new instance of <see cref="CalloutGraphic"/>.
 		/// </summary>
 		protected CalloutGraphic() : base()
-        {
+		{
 			Initialize();
 		}
 
@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public PointF EndPoint
 		{
 			get { return _lineGraphic.EndPoint; }
-			set 
+			set
 			{
 				if (!FloatComparer.AreEqual(_lineGraphic.EndPoint, value))
 				{
@@ -218,22 +218,22 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <returns></returns>
 		public virtual object CreateMemento()
-        {
+		{
 			// Must store source coordinates in memento
 			this.CoordinateSystem = CoordinateSystem.Source;
 			PointMemento memento = new PointMemento(this.Location);
 			this.ResetCoordinateSystem();
 
 			return memento;
-        }
+		}
 
 		/// <summary>
 		/// Sets a memento for this object.
 		/// </summary>
 		/// <param name="memento"></param>
-        public virtual void SetMemento(object memento)
-        {
-			PointMemento pointMemento = (PointMemento)memento;
+		public virtual void SetMemento(object memento)
+		{
+			PointMemento pointMemento = (PointMemento) memento;
 
 			this.CoordinateSystem = CoordinateSystem.Source;
 			this.Location = pointMemento.Point;
@@ -272,10 +272,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private void OnCloneComplete()
 		{
 			_textControlGraphic = (CollectionUtils.SelectFirst(base.Graphics,
-				delegate(IGraphic test) { return test.Name == "Text"; }) as IControlGraphic);
+			                                                   delegate(IGraphic test) { return test.Name == "Text"; }) as IControlGraphic);
 
 			_lineGraphic = CollectionUtils.SelectFirst(base.Graphics,
-				delegate(IGraphic test) { return test.Name == "Line"; }) as ArrowGraphic;
+			                                           delegate(IGraphic test) { return test.Name == "Line"; }) as ArrowGraphic;
 
 			Platform.CheckForNullReference(_lineGraphic, "_lineGraphic");
 			Platform.CheckForNullReference(_textControlGraphic, "_textControlGraphic");
@@ -295,7 +295,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="point"></param>
 		/// <returns></returns>
-		public override PointF GetClosestPoint(PointF point) {
+		public override PointF GetClosestPoint(PointF point)
+		{
 			RectangleF boundingBox = _textControlGraphic.BoundingBox;
 			boundingBox.Inflate(3, 3);
 
@@ -380,22 +381,32 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#endregion
 
-		#region IContextMenuProvider Members
+		#region IExportedActionsProvider Members
 
-		ActionModelNode IContextMenuProvider.GetContextMenuModel(IMouseInformation mouseInformation)
+		protected virtual IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
 		{
-			if(_textControlGraphic.HitTest(mouseInformation.Location))
-				return _textControlGraphic.GetContextMenuModel(mouseInformation);
+			if (_textControlGraphic.HitTest(mouseInformation.Location))
+				return _textControlGraphic.GetExportedActions(site, mouseInformation);
 			return null;
+		}
+
+		IActionSet IExportedActionsProvider.GetExportedActions(string site, IMouseInformation mouseInformation)
+		{
+			return this.OnGetExportedActions(site, mouseInformation);
 		}
 
 		#endregion
 
 		#region ICursorTokenProvider Members
 
-		CursorToken ICursorTokenProvider.GetCursorToken(Point point)
+		protected virtual CursorToken OnGetCursorToken(Point point)
 		{
 			return _textControlGraphic.GetCursorToken(point);
+		}
+
+		CursorToken ICursorTokenProvider.GetCursorToken(Point point)
+		{
+			return this.OnGetCursorToken(point);
 		}
 
 		#endregion

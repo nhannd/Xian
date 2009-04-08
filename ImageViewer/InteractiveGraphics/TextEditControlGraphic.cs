@@ -12,8 +12,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	[Cloneable]
 	public class TextEditControlGraphic : ControlGraphic, ITextGraphic
 	{
-		[CloneIgnore]
-		private ActionModelNode _actionModel;
+		private bool _multiline = true;
 
 		[CloneIgnore]
 		private EditBox _currentCalloutEditBox;
@@ -31,6 +30,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public new ITextGraphic Subject
 		{
 			get { return base.Subject as ITextGraphic; }
+		}
+
+		public bool Multiline
+		{
+			get { return _multiline; }
+			set { _multiline = value; }
 		}
 
 		/// <summary>
@@ -52,6 +57,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					editBox.Value = SR.StringEnterText;
 				editBox.Location = Point.Round(this.Location);
 				editBox.Size = Rectangle.Round(this.BoundingBox).Size;
+				editBox.Multiline = this.Multiline;
 				editBox.FontName = this.FontName;
 				editBox.FontSize = this.FontSize;
 				editBox.ValueAccepted += OnEditBoxComplete;
@@ -100,19 +106,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			EndEdit();
 		}
 
-		protected override ActionModelNode OnGetContextMenuModel(IMouseInformation mouseInformation)
+		protected override IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
 		{
-			if (_actionModel == null)
-			{
-				MenuAction action = new MenuAction("edit", new ActionPath("TextEditControlGraphic/EditText", null), ClickActionFlags.None, null);
-				action.Label = SR.StringEditText;
-				action.SetClickHandler(delegate { this.StartEdit(); });
-
-				ActionModelRoot model = new ActionModelRoot();
-				model.InsertAction(action);
-				_actionModel = model;
-			}
-			return _actionModel;
+			IResourceResolver resolver = new ResourceResolver(this.GetType(), true);
+			string @namespace = typeof(TextEditControlGraphic).FullName;
+			MenuAction action = new MenuAction(@namespace + ":edit", new ActionPath(site + "/MenuEditText", resolver), ClickActionFlags.None, resolver);
+			action.GroupHint = new GroupHint("Tools.Graphics.Edit");
+			action.Label = SR.MenuEditText;
+			action.Persistent = true;
+			action.SetClickHandler(delegate { this.StartEdit(); });
+			return new ActionSet(new IAction[] {action});
 		}
 
 		protected override bool OnMouseStart(IMouseInformation mouseInformation)

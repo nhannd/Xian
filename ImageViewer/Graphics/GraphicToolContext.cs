@@ -71,16 +71,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 	{
 		private readonly IGraphic _ownerGraphic;
 		private readonly IGraphic _graphic;
-		private readonly IDesktopWindow _desktopWindow;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public GraphicToolContext(IGraphic owner, IGraphic graphic, IDesktopWindow desktopWindow)
+		public GraphicToolContext(IGraphic owner, IGraphic graphic)
 		{
 			_ownerGraphic = owner;
 			_graphic = graphic;
-			_desktopWindow = desktopWindow;
 		}
 
 		/// <summary>
@@ -104,7 +102,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public IDesktopWindow DesktopWindow
 		{
-			get { return _desktopWindow; }
+			get
+			{
+				if (_graphic.ImageViewer == null)
+					return null;
+				return _graphic.ImageViewer.DesktopWindow;
+			}
 		}
 	}
 }
