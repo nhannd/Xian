@@ -411,6 +411,12 @@
     <Content Include="Icons\ClearFilterMedium.png" />
     <Content Include="Icons\ClearFilterSmall.png" />
     <EmbeddedResource Include="Icons\DoubleExclamation.png" />
+    <EmbeddedResource Include="Icons\EditReportWithImagesToolSmall.png" />
+    <EmbeddedResource Include="Icons\EditReportWithImagesToolLarge.png" />
+    <EmbeddedResource Include="Icons\EditReportWithImagesToolMedium.png" />
+    <EmbeddedResource Include="Icons\CreateReportWithImagesLarge.png" />
+    <EmbeddedResource Include="Icons\CreateReportWithImagesSmall.png" />
+    <EmbeddedResource Include="Icons\CreateReportWithImagesMedium.png" />
     <Content Include="Icons\ImportAuthorityTokensLarge.png" />
     <Content Include="Icons\ImportAuthorityTokensMedium.png" />
     <Content Include="Icons\ImportAuthorityTokensSmall.png" />

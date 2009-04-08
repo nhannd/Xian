@@ -36,33 +36,34 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Client;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
-	[MenuAction("apply", "folderexplorer-items-contextmenu/Edit Report", "Apply")]
-	[ButtonAction("apply", "folderexplorer-items-toolbar/Edit Report", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png")]
-	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-	[IconSetObserver("apply", "CurrentIconSet", "LabelChanged")]
-	[LabelValueObserver("apply", "Label", "LabelChanged")]
-	[ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
-	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-	public class EditReportTool : ReportingWorkflowItemTool
+	/// <summary>
+	/// This class provide common functionality for a edit report tool that either opens the report with or without images opening.
+	/// </summary>
+	/// <remarks>
+	/// "With image" and "Without image" behaviour are specified by <see cref="EditReportWithImagesTool"/> and <see cref="EditReportWithoutImagesTool"/>
+	/// respectively.
+	/// </remarks>
+	public abstract class EditReportToolBase : ReportingWorkflowItemTool
 	{
-		public EditReportTool()
+		private readonly bool _loadImages;
+		private readonly string _createReportTitle;
+		private readonly string _editReportTitle;
+		private readonly IconSet _createReportIcons;
+		private readonly IconSet _editReportIcons;
+
+		public EditReportToolBase(bool loadImages, string createReportTitle, string editReportTitle, IconSet createReportIcons, IconSet editReportIcons)
 			: base("EditReport")
 		{
+			_loadImages = loadImages;
+			_createReportTitle = createReportTitle;
+			_editReportTitle = editReportTitle;
+			_createReportIcons = createReportIcons;
+			_editReportIcons = editReportIcons;
 		}
-
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			this.Context.RegisterDropHandler(typeof(Folders.Reporting.DraftFolder), this);
-            this.Context.RegisterDoubleClickHandler(
-                (IClickAction)CollectionUtils.SelectFirst(this.Actions,
-                    delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("apply"); }));
-        }
 
 		public string Label
 		{
@@ -70,22 +71,22 @@ namespace ClearCanvas.Ris.Client.Workflow
 			{
 				ReportingWorklistItem item = GetSelectedItem();
 				if (item != null && item.ProcedureStepName == StepType.Interpretation && item.ActivityStatus.Code == StepState.Scheduled)
-					return SR.TitleCreateReport;
+					return _createReportTitle;
 				else
-					return SR.TitleEditReport;
+					return _editReportTitle;
 			}
 		}
 
 		public IconSet CurrentIconSet
 		{
-		    get
-		    {
-		        ReportingWorklistItem item = GetSelectedItem();
-		        if (item != null && item.ProcedureStepName == StepType.Interpretation && item.ActivityStatus.Code == StepState.Scheduled)
-		            return new IconSet(IconScheme.Colour, "Icons.CreateReportSmall.png", "Icons.CreateReportMedium.png", "Icons.CreateReportMedium.png");
-		        else
-		            return new IconSet(IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png");
-		    }
+			get
+			{
+				ReportingWorklistItem item = GetSelectedItem();
+				if (item != null && item.ProcedureStepName == StepType.Interpretation && item.ActivityStatus.Code == StepState.Scheduled)
+					return _createReportIcons;
+				else
+					return _editReportIcons;
+			}
 		}
 
 		public event EventHandler LabelChanged
@@ -128,9 +129,255 @@ namespace ClearCanvas.Ris.Client.Workflow
 				return true;
 
 			// open the report editor
-			OpenReportEditor(item);
+			OpenReportEditor(item, _loadImages);
 
 			return true;
 		}
 	}
+
+	/// <summary>
+	/// An extension of <see cref="EditReportToolBase"/> that does not open images with the report.
+	/// </summary>
+	/// <remarks>
+	/// This tool is not added by the extension mechanism, but instead indirectly added by the <see cref="EditReportTool"/>.
+	/// </remarks>
+	public class EditReportWithoutImagesTool : EditReportToolBase
+	{
+		public EditReportWithoutImagesTool()
+			: base(
+			false,
+			SR.TitleCreateReport,
+			SR.TitleEditReport,
+			new IconSet(IconScheme.Colour, "Icons.CreateReportSmall.png", "Icons.CreateReportMedium.png", "Icons.CreateReportMedium.png"),
+			new IconSet(IconScheme.Colour, "Icons.EditReportToolSmall.png", "Icons.EditReportToolMedium.png", "Icons.EditReportToolLarge.png"))
+		{
+		}
+	}
+
+	/// <summary>
+	/// An extension of <see cref="EditReportToolBase"/> that does open images with the report.
+	/// </summary>
+	/// <remarks>
+	/// This tool is not added by the extension mechanism, but instead indirectly added by the <see cref="EditReportTool"/>.
+	/// </remarks>
+	public class EditReportWithImagesTool : EditReportToolBase
+	{
+		public EditReportWithImagesTool()
+			: base(
+			true,
+			SR.TitleCreateReportWithImages,
+			SR.TitleEditReportWithImages,
+			new IconSet(IconScheme.Colour, "Icons.CreateReportWithImagesSmall.png", "Icons.CreateReportWithImagesMedium.png", "Icons.CreateReportWithImagesMedium.png"),
+			new IconSet(IconScheme.Colour, "Icons.EditReportWithImagesToolSmall.png", "Icons.EditReportWithImagesToolMedium.png", "Icons.EditReportWithImagesToolLarge.png"))
+		{
+		}
+	}
+
+	/// <summary>
+	/// Adds "Edit/Create Report" and "Edit/Create Report and Open Images" tools to the reporting folder system.
+	/// </summary>
+	/// <remarks>
+	/// This class adds both tools to the folder system context menu.  Additionally, it adds a drop-down button to the folder system tool bar with 
+	/// drop down options for each tool;  selecting either drop down option will invoke the tool and also cause the tool bar button to perform the same 
+	/// action, as well as change the folder system's double-click and drag-drop functions to invoke the same tool.  The selected drop-down tool 
+	/// will also be saved in the <see cref="ReportingSettings.ShouldOpenImages"/> setting for each user, preserving the toolbar button, double-click,
+	/// and drag-drop behaviour between sessions.
+	/// 
+	/// This class does not open the report itself; clickHandlers for the three actions are proxied to an instance of either a 
+	/// <see cref="EditReportWithImagesTool"/> or <see cref="EditReportWithoutImagesTool"/> which take care of opening the report.
+	/// </remarks>
+	[DropDownButtonAction("group", "folderexplorer-items-toolbar/ToolbarEditReport", "ApplySelected", "EditReportMenuModel")]
+	[EnabledStateObserver("group", "Enabled", "EnabledChanged")]
+	[IconSetObserver("group", "GroupCurrentIconSet", "LabelChanged")]
+	[LabelValueObserver("group", "GroupLabel", "LabelChanged")]
+
+	[MenuAction("withImages", "folderexplorer-items-contextmenu/Edit Report and View Images", "ApplyWithImages")]
+	[ButtonAction("withImages", "editreport-toolbar-dropdown/Edit Report and ViewImages", "ApplyWithImagesAndSetDefault")]
+	[EnabledStateObserver("withImages", "Enabled", "EnabledChanged")]
+	[IconSetObserver("withImages", "withImagesIconSet", "LabelChanged")]
+	[LabelValueObserver("withImages", "withImagesLabel", "LabelChanged")]
+
+	[MenuAction("withoutImages", "folderexplorer-items-contextmenu/Edit Report and View Images", "ApplyWithoutImages")]
+	[ButtonAction("withoutImages", "editreport-toolbar-dropdown/Edit Report and ViewImages", "ApplyWithoutImagesAndSetDefault")]
+	[EnabledStateObserver("withoutImages", "Enabled", "EnabledChanged")]
+	[IconSetObserver("withoutImages", "withoutImagesIconSet", "LabelChanged")]
+	[LabelValueObserver("withoutImages", "withoutImagesLabel", "LabelChanged")]
+
+	[ActionPermission("group", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
+	[ActionPermission("withImages", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
+	[ActionPermission("withoutImages", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
+	[ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+	public class EditReportTool : ReportingWorkflowItemTool
+	{
+		private readonly EditReportWithImagesTool _editReportWithImagesTool;
+		private readonly EditReportWithoutImagesTool _editReportWithoutImagesTool;
+		private EditReportToolBase _selectedTool;
+
+		public EditReportTool()
+			: base("EditReport")
+		{
+			_editReportWithImagesTool = new EditReportWithImagesTool();
+			_editReportWithoutImagesTool = new EditReportWithoutImagesTool();
+		}
+
+		public override void Initialize()
+		{
+			base.Initialize();
+
+			// manually add the two child tools.
+			_editReportWithImagesTool.SetContext(this.Context);
+			_editReportWithImagesTool.Initialize();
+
+			_editReportWithoutImagesTool.SetContext(this.Context);
+			_editReportWithoutImagesTool.Initialize();
+
+			if (ReportingSettings.Default.ShouldOpenImages)
+				SetActiveTool(_editReportWithImagesTool);
+			else
+				SetActiveTool(_editReportWithoutImagesTool);
+		}
+
+		/// Execute need not be implemented since no actions delegate to the Apply method on the <see cref="WorkflowItemTool{TItem,TContext}"/> 
+		/// base class.
+		protected override bool Execute(ReportingWorklistItem item)
+		{
+			throw new Exception("The method or operation is not implemented.");
+		}
+
+		public override bool Enabled
+		{
+			get
+			{
+				ReportingWorklistItem item = GetSelectedItem();
+
+				if (this.Context.SelectedItems.Count != 1)
+					return false;
+
+				return
+					this.Context.GetOperationEnablement("StartInterpretation") ||
+					this.Context.GetOperationEnablement("StartTranscriptionReview") ||
+					this.Context.GetOperationEnablement("StartVerification") ||
+
+					// there is no specific workflow operation for editing a previously created draft,
+					// so we enable the tool if it looks like a draft and SaveReport is enabled
+					(this.Context.GetOperationEnablement("SaveReport") && item != null && item.ActivityStatus.Code == StepState.InProgress);
+			}
+		}
+
+		public event EventHandler LabelChanged
+		{
+			add { this.Context.SelectionChanged += value; }
+			remove { this.Context.SelectionChanged -= value; }
+		}
+
+		#region Action delegates for top-level group button
+
+		public void ApplySelected()
+		{
+			_selectedTool.Apply();
+		}
+
+		public ActionModelNode EditReportMenuModel
+		{
+			get { return ActionModelRoot.CreateModel(typeof(TestTool).FullName, "editreport-toolbar-dropdown", base.Actions); }
+		}
+
+		public string GroupLabel
+		{
+			get { return _selectedTool.Label; }
+		}
+
+		public IconSet GroupCurrentIconSet
+		{
+			get { return _selectedTool.CurrentIconSet; }
+		}
+
+		#endregion
+
+		#region Action delegates for context menu and group sub-menu buttons
+
+		public void ApplyWithImages()
+		{
+			_editReportWithImagesTool.Apply();
+		}
+
+		public void ApplyWithImagesAndSetDefault()
+		{
+			SetActiveTool(_editReportWithImagesTool);
+			ApplyWithImages();
+		}
+
+		public void ApplyWithoutImages()
+		{
+			_editReportWithoutImagesTool.Apply();
+		}
+
+		public void ApplyWithoutImagesAndSetDefault()
+		{
+			SetActiveTool(_editReportWithoutImagesTool);
+			ApplyWithoutImages();
+		}
+
+		public string withImagesLabel
+		{
+			get { return _editReportWithImagesTool.Label; }
+		}
+
+		public IconSet withImagesIconSet
+		{
+			get { return _editReportWithImagesTool.CurrentIconSet; }
+		}
+
+		public string withoutImagesLabel
+		{
+			get { return _editReportWithoutImagesTool.Label; }
+		}
+
+		public IconSet withoutImagesIconSet
+		{
+			get { return _editReportWithoutImagesTool.CurrentIconSet; }
+		}
+
+		#endregion
+
+		private void SetActiveTool(EditReportToolBase tool)
+		{
+			if(_selectedTool == tool)
+				return;
+
+			_selectedTool = tool;
+
+			if (_selectedTool == _editReportWithImagesTool)
+			{
+				ReportingSettings.Default.ShouldOpenImages = true;
+
+				this.Context.UnregisterDropHandler(typeof(Folders.Reporting.DraftFolder), _editReportWithoutImagesTool);
+				this.Context.RegisterDropHandler(typeof(Folders.Reporting.DraftFolder), _editReportWithImagesTool);
+
+				this.Context.UnregisterDoubleClickHandler(
+					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
+						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withoutImages"); }));
+				this.Context.RegisterDoubleClickHandler(
+					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
+						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withImages"); }));
+			}
+			else
+			{
+				ReportingSettings.Default.ShouldOpenImages = false;
+
+				this.Context.UnregisterDropHandler(typeof(Folders.Reporting.DraftFolder), _editReportWithImagesTool);
+				this.Context.RegisterDropHandler(typeof(Folders.Reporting.DraftFolder), _editReportWithoutImagesTool);
+
+				this.Context.UnregisterDoubleClickHandler(
+					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
+						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withImages"); }));
+				this.Context.RegisterDoubleClickHandler(
+					(IClickAction)CollectionUtils.SelectFirst(this.Actions,
+						delegate(IAction a) { return a is IClickAction && a.ActionID.EndsWith("withoutImages"); }));
+			}
+
+			ReportingSettings.Default.Save();
+		}
+	}
 }
+

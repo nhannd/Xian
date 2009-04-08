@@ -477,6 +477,9 @@
   <data name="TitleCreateReport" xml:space="preserve">
     <value>Create Report</value>
   </data>
+  <data name="TitleCreateReportWithImages" xml:space="preserve">
+    <value>Create Report and Open Images</value>
+  </data>
   <data name="TitleCreateTranscription" xml:space="preserve">
     <value>Create Transcription</value>
   </data>
@@ -500,6 +503,9 @@
   </data>
   <data name="TitleEditReport" xml:space="preserve">
     <value>Edit Report</value>
+  </data>
+  <data name="TitleEditReportWithImages" xml:space="preserve">
+    <value>Edit Report and Open Images</value>
   </data>
   <data name="TitleEditTranscription" xml:space="preserve">
     <value>Edit Transcription</value>

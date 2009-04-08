@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
@@ -40,17 +39,19 @@ namespace ClearCanvas.Ris.Client.Workflow
 	public class ReportDocument : Document
 	{
 		private readonly ReportingWorklistItem _worklistItem;
+		private readonly bool _shouldOpenImages;
 		private readonly string _folderName;
 		private readonly EntityRef _worklistRef;
 		private readonly string _worklistClassName;
 
-		public ReportDocument(ReportingWorklistItem worklistItem, IReportingWorkflowItemToolContext context)
+		public ReportDocument(ReportingWorklistItem worklistItem, bool shouldOpenImages, IReportingWorkflowItemToolContext context)
 			: base(worklistItem.ProcedureStepRef, context.DesktopWindow)
 		{
 			_worklistItem = worklistItem;
 			_folderName = context.SelectedFolder.Name;
+			_shouldOpenImages = shouldOpenImages;
 
-			if(context.SelectedFolder is ReportingWorkflowFolder)
+			if (context.SelectedFolder is ReportingWorkflowFolder)
 			{
 				_worklistRef = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistRef;
 				_worklistClassName = ((ReportingWorkflowFolder)context.SelectedFolder).WorklistClassName;
@@ -69,12 +70,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override IApplicationComponent GetComponent()
 		{
-			return new ReportingComponent(_worklistItem, _folderName, _worklistRef, _worklistClassName);
+			return new ReportingComponent(_worklistItem, _folderName, _worklistRef, _worklistClassName, _shouldOpenImages);
 		}
 
 		public static string GetTitle(ReportingWorklistItem item)
 		{
-            return string.Format("Report - {0} - {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
+			return string.Format("Report - {0} - {1}", PersonNameFormat.Format(item.PatientName), MrnFormat.Format(item.Mrn));
 		}
 	}
 }

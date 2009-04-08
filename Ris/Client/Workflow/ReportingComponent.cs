@@ -355,6 +355,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		private TabComponentContainer _rightHandComponentContainer;
 
 		private string _proceduresText;
+		private readonly bool _shouldOpenImages;
 		private bool _imagesAvailable = true;
 
 		private bool _canCompleteInterpretationAndVerify;
@@ -382,11 +383,12 @@ namespace ClearCanvas.Ris.Client.Workflow
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ReportingComponent(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef, string worklistClassName)
+		public ReportingComponent(ReportingWorklistItem worklistItem, string folderName, EntityRef worklistRef, string worklistClassName, bool shouldOpenImages)
 		{
 			_worklistItemManager = new ReportingComponentWorklistItemManager(folderName, worklistRef, worklistClassName);
 			_worklistItemManager.Initialize(worklistItem);
 			_worklistItemManager.WorklistItemChanged += OnWorklistItemChangedEvent;
+			_shouldOpenImages = shouldOpenImages;
 		}
 
 		#region ApplicationComponent overrides
@@ -445,6 +447,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			_reportEditor = provider == null ? new ReportEditorComponent(new ReportEditorContext(this)) : provider.GetEditor(new ReportEditorContext(this));
 			_reportEditorHost = new ChildComponentHost(this.Host, _reportEditor.GetComponent());
 			_reportEditorHost.StartComponent();
+
+			OpenImages();
 
 			base.Start();
 		}
@@ -1149,7 +1153,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		private void OpenImages()
 		{
-			if (!ViewImagesHelper.IsSupported)
+			if (!ViewImagesHelper.IsSupported || !_shouldOpenImages)
 				return;
 
 			try

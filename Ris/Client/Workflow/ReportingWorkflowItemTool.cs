@@ -35,7 +35,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
@@ -84,6 +83,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		protected void OpenReportEditor(ReportingWorklistItem item)
 		{
+			OpenReportEditor(item, true);
+		}
+
+		protected void OpenReportEditor(ReportingWorklistItem item, bool shouldOpenImages)
+		{
 			if (!ActivateIfAlreadyOpen(item))
 			{
 				if (!ReportingSettings.Default.AllowMultipleReportingWorkspaces)
@@ -111,25 +115,13 @@ namespace ClearCanvas.Ris.Client.Workflow
 				}
 
 				// open the report editor
-				ReportDocument doc = new ReportDocument(item, this.Context);
+				ReportDocument doc = new ReportDocument(item, shouldOpenImages, this.Context);
 				doc.Open();
 
 				// Need to re-invalidate folders that open a report document, since cancelling the report
 				// can re-insert items into the same folder.
 				Type selectedFolderType = this.Context.SelectedFolder.GetType();  // use closure to remember selected folder at time tool is invoked.
 				doc.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
-
-				try
-				{
-					// open the images
-					if (ViewImagesHelper.IsSupported)
-						ViewImagesHelper.Open(item.AccessionNumber);
-				}
-				catch (Exception)
-				{
-					ReportingComponent component = (ReportingComponent) DocumentManager.Get<ReportDocument>(item.ProcedureStepRef).Component;
-					component.ImagesAvailable = false;
-				}
 			}
 		}
 

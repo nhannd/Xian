@@ -30,13 +30,10 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -49,8 +46,8 @@ namespace ClearCanvas.Ris.Client
 	/// <summary>
 	/// Defines a base tool context for tools that operate on workflow items.
 	/// </summary>
-    public interface IWorkflowItemToolContext : IToolContext
-    {
+	public interface IWorkflowItemToolContext : IToolContext
+	{
 		/// <summary>
 		/// Gets the desktop window.
 		/// </summary>
@@ -97,8 +94,17 @@ namespace ClearCanvas.Ris.Client
 		/// More than one tool may register a double-click handler, but at most one will receive
 		/// the notification.  The first handler whose enablement function returns true will receive the call. 
 		/// </remarks>
-        /// <param name="clickAction"></param>
+		/// <param name="clickAction"></param>
 		void RegisterDoubleClickHandler(IClickAction clickAction);
+
+		/// <summary>
+		/// Allows the tool to un-register itself as a double-click handler for items,
+		/// regardless of which folder they are in.
+		/// </summary>
+		/// <remarks>
+		/// If the tool is not registered as a double-click handler, nothing will happen.
+		/// </remarks>
+		void UnregisterDoubleClickHandler(IClickAction clickAction);
 
 		/// <summary>
 		/// Allows the tool to register a workflow service with the folder system.  When the selection changes,
@@ -128,17 +134,24 @@ namespace ClearCanvas.Ris.Client
 	/// Defines a base tool context for tools that operate on workflow items.
 	/// </summary>
 	public interface IWorkflowItemToolContext<TItem> : IWorkflowItemToolContext
-    {
+	{
 		/// <summary>
 		/// Gets the currently selection items as a strongly typed collection.
 		/// </summary>
-        ICollection<TItem> SelectedItems { get; }
+		ICollection<TItem> SelectedItems { get; }
 
 		/// <summary>
 		/// Allows the tool to register a drag-drop handler on the specified folder class.
 		/// </summary>
 		/// <param name="folderClass"></param>
 		/// <param name="dropHandler"></param>
-        void RegisterDropHandler(Type folderClass, IDropHandler<TItem> dropHandler);
+		void RegisterDropHandler(Type folderClass, IDropHandler<TItem> dropHandler);
+
+		/// <summary>
+		/// Allows the tool to un-register a drag-drop handler on the specified folder class.
+		/// </summary>
+		/// <param name="folderClass"></param>
+		/// <param name="dropHandler"></param>
+		void UnregisterDropHandler(Type folderClass, IDropHandler<TItem> dropHandler);
 	}
 }

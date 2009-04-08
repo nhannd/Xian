@@ -30,17 +30,15 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using ClearCanvas.Desktop;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
 using System.Collections;
-using ClearCanvas.Ris.Application.Common;
-using System.Threading;
+using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
-using Timer=ClearCanvas.Common.Utilities.Timer;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -81,49 +79,49 @@ namespace ClearCanvas.Ris.Client
 		#region WorkflowItemToolContext
 
 		protected class WorkflowItemToolContext : IWorkflowItemToolContext
-        {
-            private readonly WorkflowFolderSystem _owner;
+		{
+			private readonly WorkflowFolderSystem _owner;
 
-            public WorkflowItemToolContext(WorkflowFolderSystem owner)
-            {
-                _owner = owner;
-            }
+			public WorkflowItemToolContext(WorkflowFolderSystem owner)
+			{
+				_owner = owner;
+			}
 
-            public bool GetOperationEnablement(string operationClass)
-            {
-                return _owner.GetOperationEnablement(operationClass);
-            }
+			public bool GetOperationEnablement(string operationClass)
+			{
+				return _owner.GetOperationEnablement(operationClass);
+			}
 
 			public bool GetOperationEnablement(Type serviceContract, string operationClass)
 			{
 				return _owner.GetOperationEnablement(serviceContract, operationClass);
 			}
 
-            public event EventHandler SelectionChanged
-            {
-                add { _owner.SelectionChanged += value; }
-                remove { _owner.SelectionChanged -= value; }
-            }
+			public event EventHandler SelectionChanged
+			{
+				add { _owner.SelectionChanged += value; }
+				remove { _owner.SelectionChanged -= value; }
+			}
 
-            public ISelection Selection
-            {
-                get { return _owner.Selection; }
-            }
+			public ISelection Selection
+			{
+				get { return _owner.Selection; }
+			}
 
-            public IFolder SelectedFolder
-            {
-                get { return _owner.SelectedFolder; }
-            }
+			public IFolder SelectedFolder
+			{
+				get { return _owner.SelectedFolder; }
+			}
 
-            public IDesktopWindow DesktopWindow
-            {
-                get { return _owner.DesktopWindow; }
-            }
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _owner.DesktopWindow; }
+			}
 
-            public void InvalidateFolders()
-            {
-                _owner.InvalidateFolders();
-            }
+			public void InvalidateFolders()
+			{
+				_owner.InvalidateFolders();
+			}
 
 			public void InvalidateSelectedFolder()
 			{
@@ -135,15 +133,35 @@ namespace ClearCanvas.Ris.Client
 				_owner.InvalidateFolders(folderClass);
 			}
 
-            public void RegisterDoubleClickHandler(IClickAction clickAction)
-            {
-                _owner._doubleClickHandlers.Add(new DoubleClickHandlerRegistration(clickAction));
-            }
+			public void RegisterDoubleClickHandler(IClickAction clickAction)
+			{
+				_owner._doubleClickHandlers.Add(new DoubleClickHandlerRegistration(clickAction));
+			}
 
-            protected void RegisterDropHandler(Type folderClass, object dropHandler)
-            {
-                _owner.RegisterDropHandler(folderClass, dropHandler);
-            }
+			public void UnregisterDoubleClickHandler(IClickAction clickAction)
+			{
+				if (clickAction == null)
+					return;
+
+				foreach (DoubleClickHandlerRegistration handler in _owner._doubleClickHandlers)
+				{
+					if (handler.ClickAction.ActionID == clickAction.ActionID)
+					{
+						_owner._doubleClickHandlers.Remove(handler);
+						return;
+					}
+				}
+			}
+
+			protected void RegisterDropHandler(Type folderClass, object dropHandler)
+			{
+				_owner.RegisterDropHandler(folderClass, dropHandler);
+			}
+
+			protected void UnregisterDropHandler(Type folderClass, object dropHandler)
+			{
+				_owner.UnregisterDropHandler(folderClass, dropHandler);
+			}
 
 			public void RegisterWorkflowService(Type serviceContract)
 			{
@@ -151,24 +169,29 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-        #endregion
+		#endregion
 
 		#region DoubleClickHandlerRegistration
 
 		class DoubleClickHandlerRegistration
 		{
-		    private readonly IClickAction _clickAction;
+			private readonly IClickAction _clickAction;
 
 			public DoubleClickHandlerRegistration(IClickAction clickAction)
 			{
-                _clickAction = clickAction;
+				_clickAction = clickAction;
+			}
+
+			public IClickAction ClickAction
+			{
+				get { return _clickAction; }
 			}
 
 			public bool Handle()
 			{
-                if (_clickAction.Permissible && _clickAction.Enabled)
+				if (_clickAction.Permissible && _clickAction.Enabled)
 				{
-                    _clickAction.Click();
+					_clickAction.Click();
 					return true;
 				}
 				return false;
@@ -196,10 +219,10 @@ namespace ClearCanvas.Ris.Client
 
 		private readonly List<Type> _workflowServices = new List<Type>();
 		private IDictionary<string, bool> _workflowEnablement;
-        private readonly Dictionary<Type, List<object>> _mapFolderClassToDropHandlers = new Dictionary<Type, List<object>>();
+		private readonly Dictionary<Type, List<object>> _mapFolderClassToDropHandlers = new Dictionary<Type, List<object>>();
 		private readonly List<DoubleClickHandlerRegistration> _doubleClickHandlers = new List<DoubleClickHandlerRegistration>();
 
-        private SearchResultsFolder _searchFolder;
+		private SearchResultsFolder _searchFolder;
 
 		/// <summary>
 		/// Constructor.
@@ -335,34 +358,34 @@ namespace ClearCanvas.Ris.Client
 			remove { _foldersInvalidated -= value; }
 		}
 
-        /// <summary>
-        /// Gets a value indicating whether this folder system supports searching.
-        /// </summary>
-        public virtual bool SearchEnabled
-        {
-            get { return true; }
-        }
+		/// <summary>
+		/// Gets a value indicating whether this folder system supports searching.
+		/// </summary>
+		public virtual bool SearchEnabled
+		{
+			get { return true; }
+		}
 
 		public virtual string SearchMessage
 		{
 			get { return SR.MessageSearchMessageDefault; }
 		}
 
-        /// <summary>
-        /// Performs a search, if supported.
-        /// </summary>
-        /// <param name="params"></param>
-        public void ExecuteSearch(SearchParams @params)
-        {
-            if (this.SearchResultsFolder != null)
-            {
-                this.SearchResultsFolder.SearchParams = @params;
+		/// <summary>
+		/// Performs a search, if supported.
+		/// </summary>
+		/// <param name="params"></param>
+		public void ExecuteSearch(SearchParams @params)
+		{
+			if (this.SearchResultsFolder != null)
+			{
+				this.SearchResultsFolder.SearchParams = @params;
 
 				// ensure the results folder is selected, and force an immediate update
-                this.SelectedFolder = this.SearchResultsFolder;
+				this.SelectedFolder = this.SearchResultsFolder;
 				this.SearchResultsFolder.Update();
 			}
-        }
+		}
 
 		/// <summary>
 		/// Invalidates all folders.
@@ -385,7 +408,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public void InvalidateSelectedFolder()
 		{
-			if(this.SelectedFolder != null)
+			if (this.SelectedFolder != null)
 				InvalidateFolders(delegate(IFolder f) { return f == this.SelectedFolder; });
 		}
 
@@ -429,7 +452,7 @@ namespace ClearCanvas.Ris.Client
 		/// Called to instantiate the search-results folder, if this folder system supports searches.
 		/// </summary>
 		/// <returns></returns>
-        protected abstract SearchResultsFolder CreateSearchResultsFolder();
+		protected abstract SearchResultsFolder CreateSearchResultsFolder();
 
 		/// <summary>
 		/// Called whenever the selection changes, to obtain the operation enablement for a given selection.
@@ -445,20 +468,33 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="handlers"></param>
 		/// <param name="items"></param>
 		/// <returns></returns>
-        protected abstract object SelectDropHandler(IList handlers, object[] items);
+		protected abstract object SelectDropHandler(IList handlers, object[] items);
 
 		/// <summary>
 		/// Registers the specified drop handler for the specified folder class.
 		/// </summary>
 		/// <param name="folderClass"></param>
 		/// <param name="dropHandler"></param>
-        protected void RegisterDropHandler(Type folderClass, object dropHandler)
-        {
-            List<object> handlers;
-            if (!_mapFolderClassToDropHandlers.TryGetValue(folderClass, out handlers))
-                _mapFolderClassToDropHandlers.Add(folderClass, handlers = new List<object>());
-            handlers.Add(dropHandler);
-        }
+		protected void RegisterDropHandler(Type folderClass, object dropHandler)
+		{
+			List<object> handlers;
+			if (!_mapFolderClassToDropHandlers.TryGetValue(folderClass, out handlers))
+				_mapFolderClassToDropHandlers.Add(folderClass, handlers = new List<object>());
+			handlers.Add(dropHandler);
+		}
+
+		/// <summary>
+		/// Unregisters the specified drop handler for the specified folder class.
+		/// </summary>
+		/// <param name="folderClass"></param>
+		/// <param name="dropHandler"></param>
+		protected void UnregisterDropHandler(Type folderClass, object dropHandler)
+		{
+			List<object> handlers;
+			if (!_mapFolderClassToDropHandlers.TryGetValue(folderClass, out handlers))
+				_mapFolderClassToDropHandlers.Add(folderClass, handlers = new List<object>());
+			handlers.Remove(dropHandler);
+		}
 
 		/// <summary>
 		/// Dispose pattern.
@@ -526,17 +562,17 @@ namespace ClearCanvas.Ris.Client
 		/// Gets the search-results folder, or null if this system does not support searches.
 		/// </summary>
 		protected SearchResultsFolder SearchResultsFolder
-        {
-            get
-            {
-                if(_searchFolder == null)
-                {
-                    _searchFolder = CreateSearchResultsFolder();
-                    _workflowFolders.Add(_searchFolder);
-                }
-                return _searchFolder;
-            }
-        }
+		{
+			get
+			{
+				if (_searchFolder == null)
+				{
+					_searchFolder = CreateSearchResultsFolder();
+					_workflowFolders.Add(_searchFolder);
+				}
+				return _searchFolder;
+			}
+		}
 
 		/// <summary>
 		/// Gets the set of registered workflow services.
@@ -565,7 +601,7 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-        #region Helpers
+		#region Helpers
 
 		/// <summary>
 		/// Called by <see cref="WorkflowFolder"/>s to obtain the drop handler for the specified items.
@@ -576,7 +612,7 @@ namespace ClearCanvas.Ris.Client
 		internal object GetDropHandler(WorkflowFolder folder, object[] items)
 		{
 			List<object> handlers;
-			if(!_mapFolderClassToDropHandlers.TryGetValue(folder.GetType(), out handlers))
+			if (!_mapFolderClassToDropHandlers.TryGetValue(folder.GetType(), out handlers))
 				handlers = new List<object>();
 
 			return SelectDropHandler(handlers, items);
@@ -627,7 +663,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="workflowService"></param>
 		private void RegisterWorkflowService(Type workflowService)
 		{
-			if(!_workflowServices.Contains(workflowService))
+			if (!_workflowServices.Contains(workflowService))
 				_workflowServices.Add(workflowService);
 		}
 
@@ -686,7 +722,7 @@ namespace ClearCanvas.Ris.Client
 				}
 			}
 
-			if(count > 0)
+			if (count > 0)
 				NotifyFoldersInvalidated();
 		}
 
@@ -704,13 +740,13 @@ namespace ClearCanvas.Ris.Client
 		where TItem : DataContractBase
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
 		where TItemToolExtensionPoint : ExtensionPoint<ITool>, new()
-    {
+	{
 		#region WorkflowItemToolContext class
 
-        protected new class WorkflowItemToolContext : WorkflowFolderSystem.WorkflowItemToolContext, IWorkflowItemToolContext<TItem>
+		protected new class WorkflowItemToolContext : WorkflowFolderSystem.WorkflowItemToolContext, IWorkflowItemToolContext<TItem>
 		{
 			public WorkflowItemToolContext(WorkflowFolderSystem owner)
-                :base(owner)
+				: base(owner)
 			{
 			}
 
@@ -723,16 +759,21 @@ namespace ClearCanvas.Ris.Client
 				}
 			}
 
-            public void RegisterDropHandler(Type folderClass, IDropHandler<TItem> dropHandler)
-            {
-                base.RegisterDropHandler(folderClass, dropHandler);
-            }
+			public void RegisterDropHandler(Type folderClass, IDropHandler<TItem> dropHandler)
+			{
+				base.RegisterDropHandler(folderClass, dropHandler);
+			}
+
+			public void UnregisterDropHandler(Type folderClass, IDropHandler<TItem> dropHandler)
+			{
+				base.RegisterDropHandler(folderClass, dropHandler);
+			}
 		}
 
 		#endregion
 
 		#region WorkflowFolderToolContext class
-		
+
 		protected class WorkflowFolderToolContext : IWorkflowFolderToolContext
 		{
 			private readonly WorkflowFolderSystem _owner;
@@ -781,7 +822,7 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		/// <param name="title"></param>
 		protected WorkflowFolderSystem(string title)
-			:base(title)
+			: base(title)
 		{
 		}
 
@@ -818,24 +859,24 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="items"></param>
 		/// <returns></returns>
 		protected override object SelectDropHandler(IList handlers, object[] items)
-        {
-            // cast items to type safe collection, cannot accept drop if items contains a different item type 
-            ICollection<TItem> dropItems = new List<TItem>();
-            foreach (object item in items)
-            {
-                if (item is TItem)
-                    dropItems.Add((TItem)item);
-                else
-                    return null;
-            }
+		{
+			// cast items to type safe collection, cannot accept drop if items contains a different item type 
+			ICollection<TItem> dropItems = new List<TItem>();
+			foreach (object item in items)
+			{
+				if (item is TItem)
+					dropItems.Add((TItem)item);
+				else
+					return null;
+			}
 
-            // check for a handler that can accept
-            return CollectionUtils.SelectFirst<IDropHandler<TItem>>(handlers,
-                delegate(IDropHandler<TItem> handler)
-                {
-                    return handler.CanAcceptDrop(dropItems);
-                });
-        }
+			// check for a handler that can accept
+			return CollectionUtils.SelectFirst<IDropHandler<TItem>>(handlers,
+				delegate(IDropHandler<TItem> handler)
+				{
+					return handler.CanAcceptDrop(dropItems);
+				});
+		}
 
 		/// <summary>
 		/// Called whenever the selection changes, to obtain the operation enablement for a given selection.
@@ -901,6 +942,6 @@ namespace ClearCanvas.Ris.Client
 		protected abstract IWorkflowFolderToolContext CreateFolderToolContext();
 
 		#endregion
-    }
+	}
 
 }
