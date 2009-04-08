@@ -699,4 +699,28 @@ Please check the log for more details.</value>
   <data name="MessageShutterTooSmall" xml:space="preserve">
     <value>The shutter area is too small.</value>
   </data>
+  <data name="MenuMagnification" xml:space="preserve">
+    <value>Magnification</value>
+  </data>
+  <data name="ToolbarMagnification" xml:space="preserve">
+    <value>Magnification</value>
+  </data>
+  <data name="TooltipMagnification" xml:space="preserve">
+    <value>Magnification</value>
+  </data>
+  <data name="MenuMagnification1AndOneHalf" xml:space="preserve">
+    <value>1.5x</value>
+  </data>
+  <data name="MenuMagnification2x" xml:space="preserve">
+    <value>2x</value>
+  </data>
+  <data name="MenuMagnification4x" xml:space="preserve">
+    <value>4x</value>
+  </data>
+  <data name="MenuMagnification8x" xml:space="preserve">
+    <value>8x</value>
+  </data>
+  <data name="MenuMagnification6x" xml:space="preserve">
+    <value>6x</value>
+  </data>
 </root>

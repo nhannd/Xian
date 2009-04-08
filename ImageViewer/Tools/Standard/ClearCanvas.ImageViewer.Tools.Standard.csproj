@@ -113,6 +113,7 @@
     <Compile Include="DeleteAnnotationsTool.cs" />
     <Compile Include="DicomOverlaysTool.cs" />
     <Compile Include="DrawShutterTool.cs" />
+    <Compile Include="MagnificationTool.cs" />
     <Compile Include="OverlayToolBase.cs" />
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />
     <Compile Include="ScaleGraphic.cs" />
@@ -397,6 +398,18 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ClearCustomShuttersToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\MagnificationToolLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\MagnificationToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\MagnificationToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\BlankCursor.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

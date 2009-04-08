@@ -29,21 +29,52 @@
 
 #endregion
 
+using System;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.InputManagement;
 
-namespace ClearCanvas.ImageViewer.Annotations
+namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
-	/// <summary>
-	/// Provides access to an <see cref="IAnnotationLayout"/>.
-	/// </summary>
-	/// <seealso cref="IAnnotationLayout"/>
-	public interface IAnnotationLayoutProvider
-	{
-		/// <summary>
-		/// Gets or sets the <see cref="IAnnotationLayout"/>.
-		/// </summary>
-		/// <remarks>
-		/// Like other provider interfaces, it is not recommended that this property return null.
-		/// </remarks>
-		IAnnotationLayout AnnotationLayout { get; set; }
+	[ExtensionOf(typeof(MagnificationViewExtensionPoint))]
+    public class MagnificationComponentView : WinFormsView, IMagnificationView
+    {
+        private MagnificationForm _form;
+
+		public MagnificationComponentView()
+		{
+		}
+
+		public override object GuiElement
+        {
+            get { throw new InvalidOperationException("Not valid for this view type."); }
+        }
+
+		#region IMagnificationView Members
+
+		public void Open(float magnificationFactor, PresentationImage image, IMouseInformation mouseInformation)
+		{
+			_form = new MagnificationForm(magnificationFactor, image, mouseInformation.Location);
+			_form.Show();
+		}
+
+		public void Close()
+		{
+			if (_form != null)
+			{
+				_form.Dispose();
+				_form = null;
+			}
+		}
+
+		public void UpdateMouseInformation(IMouseInformation mouseInformation)
+		{
+			if (_form == null)
+				throw new InvalidOperationException("Open must be called before UpdateMouseInformation");
+
+			_form.UpdateMousePosition(mouseInformation.Location);
+		}
+
+		#endregion
 	}
 }

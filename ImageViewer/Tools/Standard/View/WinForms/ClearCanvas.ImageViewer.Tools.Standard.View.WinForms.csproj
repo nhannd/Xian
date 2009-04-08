@@ -43,6 +43,13 @@
       <DependentUpon>CineApplicationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CineApplicationComponentView.cs" />
+    <Compile Include="MagnificationComponentView.cs" />
+    <Compile Include="MagnificationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MagnificationForm.Designer.cs">
+      <DependentUpon>MagnificationForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="PresetVoiLutOperationComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -106,6 +113,10 @@
     <EmbeddedResource Include="CineApplicationComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>CineApplicationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MagnificationForm.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MagnificationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PresetVoiLutOperationComponentContainerControl.resx">
       <SubType>Designer</SubType>

@@ -70,5 +70,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
                 this["TextCalloutMode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public float MagnificationFactor {
+            get {
+                return ((float)(this["MagnificationFactor"]));
+            }
+            set {
+                this["MagnificationFactor"] = value;
+            }
+        }
     }
 }

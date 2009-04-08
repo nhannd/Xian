@@ -215,7 +215,7 @@ namespace ClearCanvas.ImageViewer
 				
 				return _annotationLayout;
 			}
-			protected set { _annotationLayout = value; }
+			set { _annotationLayout = value; }
 		}
 
 		#endregion

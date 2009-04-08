@@ -828,6 +828,60 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Magnification.
+        /// </summary>
+        internal static string MenuMagnification {
+            get {
+                return ResourceManager.GetString("MenuMagnification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 1.5x.
+        /// </summary>
+        internal static string MenuMagnification1AndOneHalf {
+            get {
+                return ResourceManager.GetString("MenuMagnification1AndOneHalf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 2x.
+        /// </summary>
+        internal static string MenuMagnification2x {
+            get {
+                return ResourceManager.GetString("MenuMagnification2x", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 4x.
+        /// </summary>
+        internal static string MenuMagnification4x {
+            get {
+                return ResourceManager.GetString("MenuMagnification4x", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 6x.
+        /// </summary>
+        internal static string MenuMagnification6x {
+            get {
+                return ResourceManager.GetString("MenuMagnification6x", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 8x.
+        /// </summary>
+        internal static string MenuMagnification8x {
+            get {
+                return ResourceManager.GetString("MenuMagnification8x", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Match Scale.
         /// </summary>
         internal static string MenuMatchScale {
@@ -1378,6 +1432,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Magnification.
+        /// </summary>
+        internal static string ToolbarMagnification {
+            get {
+                return ResourceManager.GetString("ToolbarMagnification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Match Scale.
         /// </summary>
         internal static string ToolbarMatchScale {
@@ -1599,6 +1662,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string TooltipLocateOnDisk {
             get {
                 return ResourceManager.GetString("TooltipLocateOnDisk", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Magnification.
+        /// </summary>
+        internal static string TooltipMagnification {
+            get {
+                return ResourceManager.GetString("TooltipMagnification", resourceCulture);
             }
         }
         

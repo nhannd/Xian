@@ -14,5 +14,8 @@
     <Setting Name="TextCalloutMode" Type="System.String" Scope="User">
       <Value Profile="(Default)">TextCallout</Value>
     </Setting>
+    <Setting Name="MagnificationFactor" Type="System.Single" Scope="User">
+      <Value Profile="(Default)">2</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
