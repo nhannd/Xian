@@ -36,9 +36,11 @@ using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Services.Streaming.Shreds;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 {
+    
     /// <summary>
     /// Represents a handler that can stream dicom images to web clients.
     /// </summary>
@@ -65,9 +67,13 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             streamingContext.SeriesInstanceUid = context.HttpContext.Request.QueryString["seriesuid"];
             streamingContext.ObjectUid = context.HttpContext.Request.QueryString["objectuid"];
 
-			StudyStorageLocation location;
-			if (!FilesystemMonitor.Instance.GetStudyStorageLocation(partition.Key,streamingContext.StudyInstanceUid,out location))
-				throw new WADOException(HttpStatusCode.NotFound, "The requested object does not have a readable location on the specified server");
+            string sessionId = context.HttpContext.Request.RemoteEndPoint.Address.ToString();
+            StudyStorageLoader storageLoader = new StudyStorageLoader(sessionId);
+            storageLoader.CacheEnabled = ImageStreamingServerSettings.Default.EnableCache;
+            storageLoader.CacheRetentionTime = ImageStreamingServerSettings.Default.CacheRetentionWindow;
+            StudyStorageLocation location = storageLoader.Find(streamingContext.StudyInstanceUid, partition);
+            if (location==null)	
+                throw new WADOException(HttpStatusCode.NotFound, "The requested object does not have a readable location on the specified server");
 
             streamingContext.StorageLocation = location;
 

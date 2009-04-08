@@ -45,5 +45,11 @@ namespace ClearCanvas.ImageServer.TestApp
             TestSendImagesForm test = new TestSendImagesForm();
             test.Show();
         }
+
+        private void ExtremeStreaming_Click(object sender, EventArgs e)
+        {
+            ImageStreamingStressTest test = new ImageStreamingStressTest();
+            test.Show();
+        }
     }
 }

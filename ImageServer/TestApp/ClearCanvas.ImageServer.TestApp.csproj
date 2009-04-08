@@ -52,6 +52,12 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ImageServerDataSet.xsd</DependentUpon>
     </Compile>
+    <Compile Include="ImageStreamingStressTest.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImageStreamingStressTest.Designer.cs">
+      <DependentUpon>ImageStreamingStressTest.cs</DependentUpon>
+    </Compile>
     <Compile Include="TestSendImagesForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -95,6 +101,10 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ImageStreamingStressTest.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ImageStreamingStressTest.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TestSendImagesForm.resx">
       <SubType>Designer</SubType>
       <DependentUpon>TestSendImagesForm.cs</DependentUpon>
@@ -208,6 +218,9 @@
     <Content Include="SeriesDescriptions.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Streaming\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

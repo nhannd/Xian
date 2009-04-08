@@ -51,6 +51,9 @@
     <Compile Include="ImageStreaming\Handlers\IImageMimeTypeProcessor.cs" />
     <Compile Include="ImageStreaming\Handlers\ImageStreamingContext.cs" />
     <Compile Include="ImageStreaming\Handlers\PixelDataLoader.cs" />
+    <Compile Include="ImageStreaming\Handlers\ServerSessionList.cs" />
+    <Compile Include="ImageStreaming\Handlers\StudyStorageCache.cs" />
+    <Compile Include="ImageStreaming\Handlers\StudyStorageLoader.cs" />
     <Compile Include="ImageStreaming\MimeTypes\ImageHeaderMimeType.cs" />
     <Compile Include="ImageStreaming\StreamingContext.cs" />
     <Compile Include="ImageStreaming\MimeTypes\PixelDataMimeType.cs" />
@@ -70,6 +73,7 @@
     <Compile Include="ImageStreaming\Handlers\ImageStreamingHandler.cs" />
     <Compile Include="ImageStreaming\Handlers\MimeTypeProcessorOutput.cs" />
     <Compile Include="ImageStreaming\IObjectStreamingHandler.cs" />
+    <Compile Include="ImageStreaming\Test\StressTest.cs" />
     <Compile Include="ImageStreaming\WADORequestTypeExtensionPoint.cs" />
     <Compile Include="ImageStreaming\WADORequestProcessorStatistics.cs" />
     <Compile Include="ImageStreaming\WADORequestTypeHandlerManager.cs" />

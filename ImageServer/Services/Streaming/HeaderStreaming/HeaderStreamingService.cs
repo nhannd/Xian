@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 				Platform.Log(LogLevel.Debug, "Received request from {0}. Ref # {1} ", callingAETitle, parameters.ReferenceID);
 
 				HeaderStreamingContext context = new HeaderStreamingContext();
-				context.ServiceInstanceID = ID;
+			    context.ServiceInstanceID = ID;
 				context.CallerAE = callingAETitle;
 				context.Parameters = parameters;
 

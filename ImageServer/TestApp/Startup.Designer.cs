@@ -33,6 +33,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.buttonCompression = new System.Windows.Forms.Button();
             this.TestEditStudyButton = new System.Windows.Forms.Button();
             this.RandomImageSender = new System.Windows.Forms.Button();
+            this.ExtremeStreaming = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // TestRule
@@ -85,11 +86,22 @@ namespace ClearCanvas.ImageServer.TestApp
             this.RandomImageSender.UseVisualStyleBackColor = true;
             this.RandomImageSender.Click += new System.EventHandler(this.RandomImageSender_Click);
             // 
+            // ExtremeStreaming
+            // 
+            this.ExtremeStreaming.Location = new System.Drawing.Point(258, 228);
+            this.ExtremeStreaming.Name = "ExtremeStreaming";
+            this.ExtremeStreaming.Size = new System.Drawing.Size(183, 59);
+            this.ExtremeStreaming.TabIndex = 2;
+            this.ExtremeStreaming.Text = "Extreme Streaming";
+            this.ExtremeStreaming.UseVisualStyleBackColor = true;
+            this.ExtremeStreaming.Click += new System.EventHandler(this.ExtremeStreaming_Click);
+            // 
             // Startup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(467, 399);
+            this.Controls.Add(this.ExtremeStreaming);
             this.Controls.Add(this.RandomImageSender);
             this.Controls.Add(this.TestEditStudyButton);
             this.Controls.Add(this.buttonCompression);
@@ -108,5 +120,6 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.Button buttonCompression;
         private System.Windows.Forms.Button TestEditStudyButton;
         private System.Windows.Forms.Button RandomImageSender;
+        private System.Windows.Forms.Button ExtremeStreaming;
     }
 }

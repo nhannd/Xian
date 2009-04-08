@@ -31,11 +31,14 @@
 
 using System;
 using System.IO;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
+using ClearCanvas.ImageServer.Services.Streaming.Shreds;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 {
@@ -56,7 +59,13 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
             _studyInstanceUid = context.Parameters.StudyInstanceUID;
             _partitionAE = context.Parameters.ServerAETitle;
 			_statistics.FindStudyFolder.Start();
-			StudyLocation = GetStudyStorageLocation(_studyInstanceUid, _partitionAE);
+            string sessionId = context.CallerAE;
+            ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(_partitionAE);
+            StudyStorageLoader storageLoader = new StudyStorageLoader(sessionId);
+            storageLoader.CacheEnabled = ImageStreamingServerSettings.Default.EnableCache;
+            storageLoader.CacheRetentionTime = ImageStreamingServerSettings.Default.CacheRetentionWindow;
+            StudyLocation = storageLoader.Find(_studyInstanceUid, partition);
+            
 			_statistics.FindStudyFolder.End();
         }
 
@@ -138,6 +147,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 			Platform.Log(LogLevel.Debug, "Study Header Path={0}", compressedHeaderFile);
 			Stream theStream = FileStreamOpener.OpenForRead(compressedHeaderFile, FileMode.Open, 30000 /* try for 30 seconds */);
 			_statistics.LoadHeaderStream.End();
+		    _statistics.Size = (ulong) theStream.Length;
 			return theStream;
 			//Thread.Sleep(100000);
 		}

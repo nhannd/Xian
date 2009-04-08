@@ -48,8 +48,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
     {
         #region Private Fields
         private readonly List<IPEndPoint> _currentRequests = new List<IPEndPoint>();
-        #endregion
+        private WADORequestProcessor _processor;
+		#endregion
 
+	    		
         #region Constructor
 
         /// <summary>
@@ -60,7 +62,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
                 UriHelper.GetConfiguredUri())
 		{
 			HttpRequestReceived += OnHttpRequestReceived;
-            
+            _processor = new WADORequestProcessor();
+				
 		}
 
         
@@ -104,6 +107,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
         #region Private Methods
         void AddContext(HttpListenerContext ctx)
         {
+            //Platform.Log(LogLevel.Info, ctx.Request.Url.Query);
+                    
             lock (_currentRequests)
             {
                 _currentRequests.Add(ctx.Request.RemoteEndPoint);
@@ -150,8 +155,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 			try
 			{
 			    Validate(context);
-                WADORequestProcessor processor = new WADORequestProcessor(BaseUri);
-				processor.Process(context);
+                _processor.Process(context);
 				
 			}
 			catch (HttpException e)
