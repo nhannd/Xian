@@ -48,7 +48,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	[Cloneable(true)]
 	public abstract class BoundableGraphic : VectorGraphic, IBoundableGraphic
 	{
-		private RectangleF _rectangle = new RectangleF(0, 0, 0, 0);
+		private PointF _topLeft = new PointF(0, 0);
+		private PointF _bottomRight = new PointF(0, 0);
 		private event EventHandler<PointChangedEventArgs> _topLeftChangedEvent;
 		private event EventHandler<PointChangedEventArgs> _bottomRightChangedEvent;
 
@@ -72,11 +73,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-					return _rectangle.Location;
+					return _topLeft;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					return base.SpatialTransform.ConvertToDestination(_rectangle.Location);
+					return base.SpatialTransform.ConvertToDestination(_topLeft);
 				}
 			}
 			set
@@ -85,18 +86,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 					return;
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-				{
-					_rectangle.Width = _rectangle.Right - value.X;
-					_rectangle.Height = _rectangle.Bottom - value.Y;
-					_rectangle.Location = value;
-				}
+					_topLeft = value;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-
-					_rectangle.Width = _rectangle.Right - base.SpatialTransform.ConvertToSource(value).X;
-					_rectangle.Height = _rectangle.Bottom - base.SpatialTransform.ConvertToSource(value).Y;
-					_rectangle.Location = base.SpatialTransform.ConvertToSource(value);
+					_topLeft = base.SpatialTransform.ConvertToSource(value);
 				}
 
 				EventsHelper.Fire(_topLeftChangedEvent, this, new PointChangedEventArgs(this.TopLeft));
@@ -116,14 +110,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get
 			{
-				PointF bottomRight = new PointF(_rectangle.Right, _rectangle.Bottom);
-
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-					return bottomRight;
+					return _bottomRight;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					return base.SpatialTransform.ConvertToDestination(bottomRight);
+					return base.SpatialTransform.ConvertToDestination(_bottomRight);
 				}
 			}
 			set
@@ -132,17 +124,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 					return;
 
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-				{
-					_rectangle.Width = value.X - _rectangle.X;
-					_rectangle.Height = value.Y - _rectangle.Y;
-				}
+					_bottomRight = value;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-					PointF pointSrc = base.SpatialTransform.ConvertToSource(value);
-
-					_rectangle.Width = pointSrc.X - _rectangle.X;
-					_rectangle.Height = pointSrc.Y - _rectangle.Y;
+					_bottomRight = base.SpatialTransform.ConvertToSource(value);
 				}
 
 				EventsHelper.Fire(_bottomRightChangedEvent, this, new PointChangedEventArgs(this.BottomRight));
@@ -162,15 +148,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-				{
-					return _rectangle.Width;
-				}
+					return _bottomRight.X - _topLeft.X;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-
-					PointF topLeft = base.SpatialTransform.ConvertToDestination(_rectangle.Location);
-					PointF bottomRight = base.SpatialTransform.ConvertToDestination(new PointF(_rectangle.Right, _rectangle.Bottom));
+					PointF topLeft = base.SpatialTransform.ConvertToDestination(_topLeft);
+					PointF bottomRight = base.SpatialTransform.ConvertToDestination(_bottomRight);
 
 					return bottomRight.X - topLeft.X;
 				}
@@ -189,15 +172,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-				{
-					return _rectangle.Height;
-				}
+					return _bottomRight.Y - _topLeft.Y;
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
-
-					PointF topLeft = base.SpatialTransform.ConvertToDestination(_rectangle.Location);
-					PointF bottomRight = base.SpatialTransform.ConvertToDestination(new PointF(_rectangle.Right, _rectangle.Bottom));
+					PointF topLeft = base.SpatialTransform.ConvertToDestination(_topLeft);
+					PointF bottomRight = base.SpatialTransform.ConvertToDestination(_bottomRight);
 
 					return bottomRight.Y - topLeft.Y;
 				}
@@ -212,14 +192,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (base.CoordinateSystem == CoordinateSystem.Source)
-				{
-					return _rectangle;
-				}
+					return RectangleF.FromLTRB(_topLeft.X, _topLeft.Y, _bottomRight.X, _bottomRight.Y);
 				else
 				{
 					Platform.CheckMemberIsSet(base.SpatialTransform, "SpatialTransform");
+					PointF topLeft = base.SpatialTransform.ConvertToDestination(_topLeft);
+					PointF bottomRight = base.SpatialTransform.ConvertToDestination(_bottomRight);
 
-					return base.SpatialTransform.ConvertToDestination(_rectangle);
+					return RectangleF.FromLTRB(topLeft.X, topLeft.Y, bottomRight.X, bottomRight.Y);
 				}
 			}
 		}

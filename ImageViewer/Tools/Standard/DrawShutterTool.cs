@@ -65,46 +65,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 	public class DrawShutterTool : MouseImageViewerTool
 	{
-		#region MouseInformation Proxy
-
-		private class MouseInformationProxy : IMouseInformation
-		{
-			private readonly IMouseInformation _mouseInformation;
-			private readonly Point _constrainedPoint;
-
-			public MouseInformationProxy(IMouseInformation mouseInformation, Point constrainedPoint)
-			{
-				_mouseInformation = mouseInformation;
-				_constrainedPoint = constrainedPoint;
-			}
-
-			#region IMouseInformation Members
-
-			public ITile Tile
-			{
-				get { return _mouseInformation.Tile; }
-			}
-
-			public Point Location
-			{
-				get { return _constrainedPoint; }
-			}
-
-			public XMouseButtons ActiveButton
-			{
-				get { return _mouseInformation.ActiveButton; }
-			}
-
-			public uint ClickCount
-			{
-				get { return _mouseInformation.ClickCount; }
-			}
-
-			#endregion
-		}
-
-		#endregion
-
 		private ShutterType _selectedShutterType;
 		private InteractiveGraphicBuilder _graphicBuilder;
 		private IGraphic _primitiveGraphic;
@@ -253,8 +213,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			if (_graphicBuilder != null)
 			{
-				Point constrained = ConstrainMouseLocation(mouseInformation.Location);
-				bool returnValue = _graphicBuilder.Track(new MouseInformationProxy(mouseInformation, constrained));
+				bool returnValue = _graphicBuilder.Track(mouseInformation);
 				_primitiveGraphic.Draw();
 				return returnValue;
 			}
@@ -378,38 +337,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				_primitiveGraphic.Dispose();
 				_primitiveGraphic = null;
 			}
-		}
-
-		private Point ConstrainMouseLocation(Point realMouseLocation)
-		{
-			Point constrained = realMouseLocation;
-
-			//Constrain to circle
-			if (_primitiveGraphic is EllipsePrimitive)
-			{
-				_primitiveGraphic.CoordinateSystem = CoordinateSystem.Destination;
-				EllipsePrimitive ellipse = (EllipsePrimitive)_primitiveGraphic;
-				Vector3D widthVector = new Vector3D(realMouseLocation.X - ellipse.TopLeft.X, 0, 0);
-				Vector3D heightVector = new Vector3D(0, realMouseLocation.Y - ellipse.TopLeft.Y, 0);
-
-				if (!Vector3D.AreEqual(widthVector, heightVector) && widthVector.Magnitude > 1 && heightVector.Magnitude > 1)
-				{
-					if (widthVector.Magnitude < heightVector.Magnitude)
-					{
-						heightVector = heightVector * widthVector.Magnitude / heightVector.Magnitude;
-						constrained = new Point(constrained.X, (int)(ellipse.TopLeft.Y + heightVector.Y));
-					}
-					else
-					{
-						widthVector = widthVector * heightVector.Magnitude / widthVector.Magnitude;
-						constrained = new Point((int)(ellipse.TopLeft.X + widthVector.X), constrained.Y);
-					}
-				}
-
-				_primitiveGraphic.ResetCoordinateSystem();
-			}
-
-			return constrained;
 		}
 
 		private GeometricShutter ConvertToGeometricShutter()

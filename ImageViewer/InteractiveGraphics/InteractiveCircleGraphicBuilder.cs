@@ -1,4 +1,6 @@
+using System;
 using System.Drawing;
+using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Mathematics;
@@ -48,20 +50,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
-			try
+			if (_numberOfPointsAnchored == 2)
 			{
-				float radius = (float) Vector.Distance(_centre, mouseInformation.Location);
-				SizeF offset = new SizeF(radius, radius);
-				this.Graphic.TopLeft = _centre + offset;
-				this.Graphic.BottomRight = _centre - offset;
-			}
-			finally
-			{
-				this.Graphic.ResetCoordinateSystem();
-			}
+				this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
+				try
+				{
+					float radius = (float) Vector.Distance(_centre, mouseInformation.Location);
+					SizeF offset = new SizeF(radius, radius);
+					this.Graphic.TopLeft = _centre - offset;
+					this.Graphic.BottomRight = _centre + offset;
+				}
+				finally
+				{
+					this.Graphic.ResetCoordinateSystem();
+				}
 
-			this.Graphic.Draw();
+				this.Graphic.Draw();
+			}
 			return true;
 		}
 
