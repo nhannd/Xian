@@ -348,6 +348,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 				string syntax = element.Attributes["syntax"].Value;
 
 				TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
+				if (compressSyntax == null)
+				{
+					item.FailureDescription = String.Format("Invalid transfer syntax in compression WorkQueue item: {0}", element.Attributes["syntax"].Value);
+					Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
+					base.PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
+					return;
+				}
 
 				Platform.Log(LogLevel.Info, "Compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid,
 				             ServerPartition.Load(item.ServerPartitionKey).AeTitle);
