@@ -41,7 +41,7 @@ using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.Authorit
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.PartitionArchive
 {
-    [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Configuration.PartitionArchive)]
+
     public partial class Default : BasePage
     {
         #region Private Members

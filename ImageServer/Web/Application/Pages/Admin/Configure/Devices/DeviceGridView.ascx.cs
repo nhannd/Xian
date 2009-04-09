@@ -91,12 +91,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
                 return Devices[index];
             }
-            set
-            {
-                GridView1.SelectedIndex = Devices.IndexOf(value);
-                if (OnDeviceSelectionChanged != null)
-                    OnDeviceSelectionChanged(this, value);
-            }
         }
 
         /// <summary>
@@ -131,31 +125,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
         }
         #endregion
 
-        #region Events
-
-        /// <summary>
-        /// Defines the handler for <seealso cref="OnDeviceSelectionChanged"/> event.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="selectedDevice"></param>
-        public delegate void DeviceSelectedEventHandler(object sender, Device selectedDevice);
-
-        /// <summary>
-        /// Occurs when the selected device in the list is changed.
-        /// </summary>
-        /// <remarks>
-        /// The selected device can change programmatically or by users selecting the device in the list.
-        /// </remarks>
-        public event DeviceSelectedEventHandler OnDeviceSelectionChanged;
-
-        #endregion // Events
-
         #region protected methods
-
-        protected void Page_Load(object sender, EventArgs e)
-        {
-            GridView1.DataBind();
-        }
 
         protected override void OnInit(EventArgs e)
         {
@@ -329,19 +299,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Devices
 
         #endregion
 
-        #region public methods
-
-        /// <summary>
-        /// Binds the list to the control.
-        /// </summary>
-        /// <remarks>
-        /// This method must be called after setting <seeaslo cref="Devices"/> to update the grid with the list.
-        /// </remarks>
-        public override void DataBind()
-        {
-            GridView1.DataBind();
-        }
-
-        #endregion // public methods
+   
+   
     }
 }

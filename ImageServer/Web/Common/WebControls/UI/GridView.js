@@ -87,7 +87,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         getSelectedRowElements : function() {
             var rows = this.get_element().rows;
-            
+                                  
             if (rows!=undefined && rows!=null)
             {
                 var selectedRows = new Array();                
@@ -106,6 +106,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         
         selectRow : function (rowIndex)
         {
+            debugger
             var row = this.get_element().rows[rowIndex];
             if (row!=null && row!=undefined)
                 this._selectRow(row);
@@ -211,7 +212,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         
         
         _onCellClick : function(e) {
-
+          
             var el = e.target;
             // The event can be triggered by a descendant in the cell
             // We have to traverse the tree to find the row element
@@ -219,6 +220,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                 el = el.parentNode;
                 
             var row = el;
+            
+            debugger
             
             if (this.get_element() && !this.get_element().disabled ) 
             {
@@ -288,6 +291,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         ////////////////////////////////////////////////////////////////////////////////////////////
         _selectRow : function (row)
         {
+            debugger
+        
             if (this.get_element() && !this.get_element().disabled ) 
             {
                 if (this._SelectionMode=='Multiple')
@@ -298,7 +303,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                     row.setAttribute('selected', 'true');
                 }
                 else if (this._SelectionMode=='Single')
-                {
+                {               
                     this.clearSelections();
                     row.style.cssText = this._SelectedRowStyle;                    
                     row.className = this._SelectedRowCSS;

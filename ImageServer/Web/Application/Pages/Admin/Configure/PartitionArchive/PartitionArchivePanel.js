@@ -86,7 +86,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
                                          
             this._enableEditButton(false);
             this._enableDeleteButton(false);
-                                           
+                                                      
             if (PartitionArchivelist!=null )
             {
                 var rows = PartitionArchivelist.getSelectedRowElements();

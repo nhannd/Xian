@@ -85,6 +85,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.Partitio
         {
             get
             {
+                if (Partitions.Count == 0 || PartitionGridView.SelectedIndex < 0)
+                    return null;
+                
                 int index = TheGrid.PageIndex*TheGrid.PageSize + TheGrid.SelectedIndex;
 
                 if (index < 0 || index >= Partitions.Count)

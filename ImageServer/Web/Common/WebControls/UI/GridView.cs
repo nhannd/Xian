@@ -321,37 +321,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         {
             base.OnPreRender(e);
             
-            foreach(GridViewRow row in Rows)
-            {
-                if (row.RowType==DataControlRowType.DataRow)
-                {
-                    // the following lines will disable text select on the row.
-                    // We need to disable it because IE and firefox interpret Ctrl-Click as text selection and will display
-                    // a box around the cell users click on.
-
-                    // Firefox way:
-                    row.Attributes["onmousedown"] = "if (event.ctrlKey && typeof (event.preventDefault) != 'undefined') {event.preventDefault();}";
-                    // IE way:
-                    row.Attributes["onselectstart"] = "return false;"; // disable select
-                    
-                    row.Attributes["isdatarow"] = "true";
-                    row.Attributes["rowIndex"] = (row.RowIndex).ToString();
-
-                    row.Style["cursor"] = "hand";
-
-                    if (_selectedRows.ContainsKey(row.RowIndex))
-                    {
-                        row.RowState = DataControlRowState.Selected;
-                        row.Attributes["selected"] = "true";
-
-                    }
-                    else
-                    {
-                        row.Attributes["selected"] = "false";
-                    }
-
-                }
-            }
+            
             
             if (!DesignMode)
             {
@@ -367,6 +337,26 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
             {
                 ScriptManager sm = ScriptManager.GetCurrent(Page);
                 sm.RegisterScriptDescriptors(this);
+            }
+
+            foreach(GridViewRow row in Rows)
+            {
+                if (row.RowType==DataControlRowType.DataRow)
+                {
+                    
+
+                    if (_selectedRows.ContainsKey(row.RowIndex))
+                    {
+                        row.RowState = DataControlRowState.Selected;
+                        row.Attributes["selected"] = "true";
+
+                    }
+                    else
+                    {
+                        row.Attributes["selected"] = "false";
+                    }
+
+                }
             }
             base.Render(writer);
         }
@@ -415,6 +405,20 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         protected override void OnRowCreated(GridViewRowEventArgs e)
         {
             base.OnRowCreated(e);
+
+            // the following lines will disable text select on the row.
+            // We need to disable it because IE and firefox interpret Ctrl-Click as text selection and will display
+            // a box around the cell users click on.
+
+            // Firefox way:
+            e.Row.Attributes["onmousedown"] = "if (event.ctrlKey && typeof (event.preventDefault) != 'undefined') {event.preventDefault();}";
+            // IE way:
+            e.Row.Attributes["onselectstart"] = "return false;"; // disable select
+
+            e.Row.Attributes["isdatarow"] = "true";
+            e.Row.Attributes["rowIndex"] = (e.Row.RowIndex).ToString();
+
+            e.Row.Style["cursor"] = "hand";
 
             if (e.Row.RowType == DataControlRowType.DataRow && MouseHoverRowHighlightEnabled)
             {
