@@ -11,13 +11,13 @@ namespace ClearCanvas.Ris.Client
 	[Tooltip("apply", "Configure Folder Systems")]
 	[IconSet("apply", IconScheme.Colour, "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png")]
 	[ExtensionOf(typeof(FolderExplorerGroupToolExtensionPoint))]
-	public class FolderSystemConfigurationTool : Tool<IFolderExplorerGroupToolContext>
+	public class FolderExplorerConfigurationTool : Tool<IFolderExplorerGroupToolContext>
 	{
 		public void Configure()
 		{
 			try
 			{
-				ConfigurationDialog.Show(this.Context.DesktopWindow, SR.TitleFolderSystems);
+				ConfigurationDialog.Show(this.Context.DesktopWindow, SR.TitleFolderExplorer);
 			}
 			catch (Exception e)
 			{

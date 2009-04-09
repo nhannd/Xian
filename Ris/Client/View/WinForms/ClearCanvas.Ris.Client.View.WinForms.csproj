@@ -159,13 +159,13 @@
       <DependentUpon>ExternalPractitionerContactPointSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ExternalPractitionerContactPointSummaryComponentView.cs" />
-    <Compile Include="FolderSystemConfigurationComponentControl.cs">
+    <Compile Include="FolderExplorerConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FolderSystemConfigurationComponentControl.Designer.cs">
-      <DependentUpon>FolderSystemConfigurationComponentControl.cs</DependentUpon>
+    <Compile Include="FolderExplorerConfigurationComponentControl.Designer.cs">
+      <DependentUpon>FolderExplorerConfigurationComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="FolderSystemConfigurationComponentView.cs" />
+    <Compile Include="FolderExplorerConfigurationComponentView.cs" />
     <Compile Include="HomepageConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -634,9 +634,9 @@
       <DependentUpon>DiagnosticServiceSummaryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="FolderSystemConfigurationComponentControl.resx">
+    <EmbeddedResource Include="FolderExplorerConfigurationComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>FolderSystemConfigurationComponentControl.cs</DependentUpon>
+      <DependentUpon>FolderExplorerConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HomepageConfigurationComponentControl.resx">
       <SubType>Designer</SubType>

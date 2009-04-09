@@ -194,6 +194,17 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
 		/// <summary>
+		/// Start editing the selected node.
+		/// </summary>
+		public void EditSelectedNode()
+		{
+			if (!_treeCtrl.LabelEdit || _treeCtrl.SelectedNode == null)
+				return;
+			
+			_treeCtrl.SelectedNode.BeginEdit();
+		}
+
+		/// <summary>
         /// Expands the entire tree
         /// </summary>
         public void ExpandAll()

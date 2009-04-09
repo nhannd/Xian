@@ -1681,11 +1681,11 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Folder Systems.
+        ///   Looks up a localized string similar to Folder Explorer.
         /// </summary>
-        internal static string TitleFolderSystems {
+        internal static string TitleFolderExplorer {
             get {
-                return ResourceManager.GetString("TitleFolderSystems", resourceCulture);
+                return ResourceManager.GetString("TitleFolderExplorer", resourceCulture);
             }
         }
         

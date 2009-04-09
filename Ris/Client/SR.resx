@@ -657,8 +657,8 @@
   <data name="TitleExternalPractitioner" xml:space="preserve">
     <value>External Practitioner</value>
   </data>
-  <data name="TitleFolderSystems" xml:space="preserve">
-    <value>Folder Systems</value>
+  <data name="TitleFolderExplorer" xml:space="preserve">
+    <value>Folder Explorer</value>
   </data>
   <data name="TitleImagingServices" xml:space="preserve">
     <value>Imaging Services</value>

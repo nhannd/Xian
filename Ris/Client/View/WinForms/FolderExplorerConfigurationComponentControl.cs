@@ -29,50 +29,57 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
+using System.Windows.Forms;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="FolderSystemConfigurationComponent"/>.
+    /// Provides a Windows Forms user-interface for <see cref="FolderExplorerConfigurationComponent"/>.
     /// </summary>
-    [ExtensionOf(typeof(FolderSystemConfigurationComponentViewExtensionPoint))]
-    public class FolderSystemConfigurationComponentView : WinFormsView, IApplicationComponentView
+    public partial class FolderExplorerConfigurationComponentControl : ApplicationComponentUserControl
     {
-        private FolderSystemConfigurationComponent _component;
-        private FolderSystemConfigurationComponentControl _control;
-
-        #region IApplicationComponentView Members
+        private readonly FolderExplorerConfigurationComponent _component;
 
         /// <summary>
-        /// Called by the host to assign this view to a component.
+        /// Constructor.
         /// </summary>
-        public void SetComponent(IApplicationComponent component)
+        public FolderExplorerConfigurationComponentControl(FolderExplorerConfigurationComponent component)
+            :base(component)
         {
-            _component = (FolderSystemConfigurationComponent)component;
-        }
+			_component = component;
+            InitializeComponent();
 
-        #endregion
+			_folderSystems.DisplayMember = "Title";
+			_folderSystems.DataBindings.Add("SelectedIndex", _component, "SelectedFolderSystemIndex", true, DataSourceUpdateMode.OnPropertyChanged);
+			_folderSystems.ItemDropped += _folderSystems_ItemDropped;
+			_folderSystems.MenuModel = _component.FolderSystemsActionModel;
+			_folderSystems.ToolbarModel = _component.FolderSystemsActionModel;
+			_folderSystems.DataSource = _component.FolderSystems;
 
-        /// <summary>
-        /// Gets the underlying GUI component for this view.
-        /// </summary>
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new FolderSystemConfigurationComponentControl(_component);
-                }
-                return _control;
-            }
-        }
-    }
+			_folders.DataBindings.Add("Selection", _component, "SelectedFolderNode", true, DataSourceUpdateMode.OnPropertyChanged);
+			_folders.MenuModel = _component.FoldersActionModel;
+			_folders.ToolbarModel = _component.FoldersActionModel;
+			_folders.Tree = _component.FolderTree;
+
+        	_component.OnEditFolder += delegate { _folders.EditSelectedNode(); };
+		}
+
+		private void _folderSystems_ItemDropped(object sender, ListBoxItemDroppedEventArgs e)
+		{
+			_component.MoveFolderSystem(e.DraggedIndex, e.DroppedIndex);
+		}
+
+		private void _folders_ItemDrag(object sender, ItemDragEventArgs e)
+		{
+			// allow dragging of nodes
+			ISelection selection = (ISelection)e.Item;
+
+			// send the node
+			if (selection.Item != null)
+				_folders.DoDragDrop(selection.Item, DragDropEffects.All);
+		}
+
+	}
 }

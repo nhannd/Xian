@@ -42,7 +42,7 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.Ris.Client
 {
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
-	public class FolderSystemConfigurationPageProvider : IConfigurationPageProvider
+	public class FolderExplorerConfigurationPageProvider : IConfigurationPageProvider
 	{
 		#region IConfigurationPageProvider Members
 
@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<FolderSystemConfigurationComponent>(SR.TitleFolderSystems));
+			listPages.Add(new ConfigurationPage<FolderExplorerConfigurationComponent>(SR.TitleFolderExplorer));
 
 			return listPages.AsReadOnly();
 		}
@@ -62,18 +62,18 @@ namespace ClearCanvas.Ris.Client
 	}
 
 	/// <summary>
-	/// Extension point for views onto <see cref="FolderSystemConfigurationComponent"/>.
+	/// Extension point for views onto <see cref="FolderExplorerConfigurationComponent"/>.
 	/// </summary>
 	[ExtensionPoint]
-	public sealed class FolderSystemConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class FolderExplorerConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
 	/// <summary>
-	/// FolderSystemConfigurationComponent class.
+	/// FolderExplorerConfigurationComponent class.
 	/// </summary>
-	[AssociateView(typeof(FolderSystemConfigurationComponentViewExtensionPoint))]
-	public class FolderSystemConfigurationComponent : ConfigurationApplicationComponent
+	[AssociateView(typeof(FolderExplorerConfigurationComponentViewExtensionPoint))]
+	public class FolderExplorerConfigurationComponent : ConfigurationApplicationComponent
 	{
 		public class FolderNode
 		{
@@ -308,11 +308,14 @@ namespace ClearCanvas.Ris.Client
 		private readonly string _moveFolderSystemUpKey = "MoveFolderSystemUp";
 		private readonly string _moveFolderSystemDownKey = "MoveFolderSystemDown";
 		private readonly string _addFolderKey = "AddFolder";
+		private readonly string _editFolderKey = "EditFolder";
 		private readonly string _deleteFolderKey = "DeleteFolder";
 		private readonly string _moveFolderUpKey = "MoveFolderUp";
 		private readonly string _moveFolderDownKey = "MoveFolderDown";
 
-		public FolderSystemConfigurationComponent()
+		private event EventHandler _onEditFolder;
+
+		public FolderExplorerConfigurationComponent()
 		{
 			_folderTree = FolderNode.BuildTree();
 		}
@@ -330,10 +333,12 @@ namespace ClearCanvas.Ris.Client
 
 			_foldersActionModel = new SimpleActionModel(resourceResolver);
 			_foldersActionModel.AddAction(_addFolderKey, SR.TitleAdd, "Icons.AddToolSmall.png", SR.TitleAdd, AddFolder);
+			_foldersActionModel.AddAction(_editFolderKey, SR.TitleEdit, "Icons.EditToolSmall.png", SR.TitleEdit, EditFolder);
 			_foldersActionModel.AddAction(_deleteFolderKey, SR.TitleDelete, "Icons.DeleteToolSmall.png", SR.TitleDelete, DeleteFolder);
 			_foldersActionModel.AddAction(_moveFolderUpKey, SR.TitleMoveUp, "Icons.UpToolSmall.png", SR.TitleMoveUp, MoveFolderUp);
 			_foldersActionModel.AddAction(_moveFolderDownKey, SR.TitleMoveDown, "Icons.DownToolSmall.png", SR.TitleMoveDown, MoveFolderDown);
 			_foldersActionModel[_addFolderKey].Enabled = false;
+			_foldersActionModel[_editFolderKey].Enabled = false;
 			_foldersActionModel[_deleteFolderKey].Enabled = false;
 			_foldersActionModel[_moveFolderUpKey].Enabled = false;
 			_foldersActionModel[_moveFolderDownKey].Enabled = false;
@@ -418,6 +423,12 @@ namespace ClearCanvas.Ris.Client
 			get { return _foldersActionModel; }
 		}
 
+		public event EventHandler OnEditFolder
+		{
+			add { _onEditFolder += value; }
+			remove { _onEditFolder -= value; }
+		}
+
 		#endregion
 
 		#region IConfigurationApplicationComponent Members
@@ -462,6 +473,11 @@ namespace ClearCanvas.Ris.Client
 			UpdateFolderActionModel();
 		}
 
+		private void EditFolder()
+		{
+			EventsHelper.Fire(_onEditFolder, this, EventArgs.Empty);
+		}
+
 		private void DeleteFolder()
 		{
 			FolderNode parentNode = _selectedFolderNode.Parent;
@@ -495,6 +511,7 @@ namespace ClearCanvas.Ris.Client
 		private void UpdateFolderActionModel()
 		{
 			_foldersActionModel[_addFolderKey].Enabled = _selectedFolderNode != null;
+			_foldersActionModel[_editFolderKey].Enabled = _selectedFolderNode != null;
 			_foldersActionModel[_deleteFolderKey].Enabled = _selectedFolderNode != null && _selectedFolderNode.CanDelete;
 			_foldersActionModel[_moveFolderUpKey].Enabled = _selectedFolderNode != null && _selectedFolderNode.PreviousSibling != null;
 			_foldersActionModel[_moveFolderDownKey].Enabled = _selectedFolderNode != null && _selectedFolderNode.NextSibling != null;

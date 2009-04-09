@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class FolderSystemConfigurationComponentControl
+    partial class FolderExplorerConfigurationComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -138,12 +138,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._foldersGroupBox.TabStop = false;
 			this._foldersGroupBox.Text = "Folders";
 			// 
-			// FolderSystemConfigurationComponentControl
+			// FolderExplorerConfigurationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.splitContainer1);
-			this.Name = "FolderSystemConfigurationComponentControl";
+			this.Name = "FolderExplorerConfigurationComponentControl";
 			this.Size = new System.Drawing.Size(576, 418);
 			this._folderSystemsGroupBox.ResumeLayout(false);
 			this.splitContainer1.Panel1.ResumeLayout(false);
