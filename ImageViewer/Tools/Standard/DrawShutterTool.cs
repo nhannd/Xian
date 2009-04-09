@@ -339,7 +339,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					{
 						_primitiveGraphic = new EllipsePrimitive();
 						image.OverlayGraphics.Add(_primitiveGraphic);
-						_graphicBuilder = new InteractiveBoundableGraphicBuilder((EllipsePrimitive)_primitiveGraphic);
+						_graphicBuilder = new InteractiveCircleGraphicBuilder((EllipsePrimitive)_primitiveGraphic);
 						break;
 					}
 				default:

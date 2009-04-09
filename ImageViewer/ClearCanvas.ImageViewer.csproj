@@ -153,6 +153,7 @@
     <Compile Include="InteractiveGraphics\ControlPointsGraphic.cs" />
     <Compile Include="InteractiveGraphics\BoundableResizeControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\IExportedActionsProvider.cs" />
+    <Compile Include="InteractiveGraphics\InteractiveCircleGraphicBuilder.cs" />
     <Compile Include="InteractiveGraphics\StandardAnnotationGraphicSerializer.cs">
       <SubType>Code</SubType>
     </Compile>
