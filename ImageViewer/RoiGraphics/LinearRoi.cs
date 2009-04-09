@@ -41,7 +41,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
-	public class LinearRoi : Roi, IRoiLengthProvider, IRoiStatisticsProvider
+	public class LinearRoi : Roi, IRoiLengthProvider
 	{
 		private readonly IList<PointF> _points;
 
@@ -106,36 +106,6 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			}
 			return false;
 		}
-
-		#region IRoiStatisticsProvider Members
-
-		private RoiStatistics _statistics;
-
-		public double StandardDeviation
-		{
-			get
-			{
-				if (_statistics == null)
-				{
-					_statistics = RoiStatistics.Calculate(this);
-				}
-				return _statistics.StandardDeviation;
-			}
-		}
-
-		public double Mean
-		{
-			get
-			{
-				if (_statistics == null)
-				{
-					_statistics = RoiStatistics.Calculate(this);
-				}
-				return _statistics.Mean;
-			}
-		}
-
-		#endregion
 
 		#region IRoiLengthProvider Members
 

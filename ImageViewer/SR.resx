@@ -286,13 +286,13 @@
     <value>W:{0} L:{1} ({2})</value>
   </data>
   <data name="FormatLengthCm" xml:space="preserve">
-    <value>Length: {0:F1} cm</value>
+    <value>{0:F1} cm</value>
   </data>
   <data name="FormatLengthMm" xml:space="preserve">
-    <value>Length: {0:F0} mm</value>
+    <value>{0:F0} mm</value>
   </data>
   <data name="FormatLengthPixels" xml:space="preserve">
-    <value>Length: {0:F0} pixels</value>
+    <value>{0:F0} pixels</value>
   </data>
   <data name="FormatMean" xml:space="preserve">
     <value>Mean: {0}</value>

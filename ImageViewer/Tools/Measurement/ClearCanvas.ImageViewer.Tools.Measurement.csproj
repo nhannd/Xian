@@ -70,6 +70,11 @@
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj">
+      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
+      <Name>ClearCanvas.Desktop.Configuration</Name>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
@@ -85,6 +90,7 @@
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -114,6 +120,12 @@
     <Compile Include="ProtractorRoiInfo.cs" />
     <Compile Include="ProtractorTool.cs" />
     <Compile Include="RulerTool.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -152,7 +164,12 @@
     <EmbeddedResource Include="Icons\RectangularRoiToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="ClassDiagrams\MeasurementTools.cd" />
+    <None Include="Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\PolygonalRoiToolLarge.png" />

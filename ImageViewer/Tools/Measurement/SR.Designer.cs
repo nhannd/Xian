@@ -142,6 +142,15 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Protractor {0}.
+        /// </summary>
+        public static string FormatProtractorName {
+            get {
+                return ResourceManager.GetString("FormatProtractorName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rectangle {0}.
         /// </summary>
         public static string FormatRectangleName {

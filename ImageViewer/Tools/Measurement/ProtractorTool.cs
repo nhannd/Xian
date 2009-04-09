@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected override string RoiNameFormat
 		{
-			get { return string.Empty; }
+			get { return SR.FormatProtractorName; }
 		}
 
 		protected override InteractiveGraphicBuilder CreateGraphicBuilder(IGraphic graphic)

@@ -216,4 +216,7 @@
   <data name="FormatRulerName" xml:space="preserve">
     <value>Ruler {0}</value>
   </data>
+  <data name="FormatProtractorName" xml:space="preserve">
+    <value>Protractor {0}</value>
+  </data>
 </root>
