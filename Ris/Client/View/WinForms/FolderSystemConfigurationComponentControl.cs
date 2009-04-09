@@ -64,18 +64,20 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_folders.Tree = _component.FolderTree;
 		}
 
-		void _folderSystems_ItemDropped(object sender, ListBoxItemDroppedEventArgs e)
+		private void _folderSystems_ItemDropped(object sender, ListBoxItemDroppedEventArgs e)
 		{
 			_component.MoveFolderSystem(e.DraggedIndex, e.DroppedIndex);
 		}
 
 		private void _folders_ItemDrag(object sender, ItemDragEventArgs e)
 		{
-            // allow dragging of nodes
-            ISelection selection = (ISelection)e.Item;
+			// allow dragging of nodes
+			ISelection selection = (ISelection)e.Item;
 
-            // send the node
-            _folders.DoDragDrop(selection.Item, DragDropEffects.All);
+			// send the node
+			if (selection.Item != null)
+				_folders.DoDragDrop(selection.Item, DragDropEffects.All);
 		}
+
 	}
 }

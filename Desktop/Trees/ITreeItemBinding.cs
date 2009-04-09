@@ -44,6 +44,11 @@ namespace ClearCanvas.Desktop.Trees
         /// </summary>
         string GetNodeText(object item);
 
+    	/// <summary>
+    	/// Sets the text to display for the node representing the specified item.
+    	/// </summary>
+    	void SetNodeText(object item, string text);
+
         /// <summary>
         /// Gets whether or not <paramref name="item"/> is checked.
         /// </summary>

@@ -205,6 +205,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Design time properties
 
+		[DefaultValue(false)]
+    	public bool LabelEdit
+    	{
+			get { return _treeCtrl.LabelEdit; }
+			set { _treeCtrl.LabelEdit = value; }
+    	}
+
         [DefaultValue(true)]
         public bool ShowToolbar
         {
@@ -520,13 +527,17 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 try
                 {
-                    // ask the node to accept the drop
-                    DragDropKind result = _dropTargetNode.AcceptDrop(GetDragDropData(e), GetDragDropKind(e.Effect));
+					object dragDropData = GetDragDropData(e);
+					
+					// ask the node to accept the drop
+					DragDropKind result = _dropTargetNode.AcceptDrop(dragDropData, GetDragDropKind(e.Effect));
 
                     // be sure to set the resulting effect in the event args, so that it gets communicated
                     // back to the initiator of the drag drop operation
                     e.Effect = GetDragDropEffect(result);
-                }
+
+					this.Selection = new Selection(dragDropData);
+				}
                 catch (Exception ex)
                 {
                     Platform.Log(LogLevel.Error, ex);
@@ -692,7 +703,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
-
-
+		private void _treeCtrl_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+		{
+			BindingTreeNode node = e.Node as BindingTreeNode;
+			if (node != null)
+			{
+				node.AfterLabelEdit(e.Label);
+			}
+		}
     }
 }

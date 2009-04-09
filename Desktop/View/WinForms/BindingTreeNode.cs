@@ -216,6 +216,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+		public void AfterLabelEdit(string text)
+		{
+			_parentTree.Binding.SetNodeText(_item, text);
+		}
+
         public void OnChecked()
         {
             _parentTree.Binding.SetIsChecked(_item, this.Checked);

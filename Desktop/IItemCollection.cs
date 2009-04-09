@@ -45,6 +45,11 @@ namespace ClearCanvas.Desktop
         /// </summary>
         ItemAdded,
 
+		/// <summary>
+		/// An item was inserted to the table.
+		/// </summary>
+		ItemInserted,
+		
         /// <summary>
         /// An item in the table was changed.
         /// </summary>

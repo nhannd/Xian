@@ -65,6 +65,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._treeCtrl = new System.Windows.Forms.TreeView();
 			this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._imageList = new System.Windows.Forms.ImageList(this.components);
+			this._toolTip = new System.Windows.Forms.ToolTip(this.components);
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -111,6 +112,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._treeCtrl.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterCheck);
 			this._treeCtrl.AfterCollapse += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterCollapse);
 			this._treeCtrl.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this._treeCtrl_BeforeExpand);
+			this._treeCtrl.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this._treeCtrl_AfterLabelEdit);
 			this._treeCtrl.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterSelect);
 			this._treeCtrl.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this._treeCtrl_NodeMouseClick);
 			this._treeCtrl.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this._treeCtrl_BeforeSelect);
@@ -131,6 +133,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._imageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
 			this._imageList.ImageSize = new System.Drawing.Size(16, 16);
 			this._imageList.TransparentColor = System.Drawing.Color.Transparent;
+			// 
+			// _toolTip
+			// 
+			this._toolTip.ShowAlways = true;
 			// 
 			// BindingTreeView
 			// 
@@ -155,5 +161,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.TreeView _treeCtrl;
         private System.Windows.Forms.ContextMenuStrip _contextMenu;
         private System.Windows.Forms.ImageList _imageList;
+		private System.Windows.Forms.ToolTip _toolTip;
     }
 }

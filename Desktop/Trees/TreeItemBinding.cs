@@ -54,6 +54,7 @@ namespace ClearCanvas.Desktop.Trees
     public class TreeItemBinding<TItem> : TreeItemBindingBase
     {
         private Converter<TItem, string> _nodeTextProvider;
+    	private SetterDelegate<TItem, string> _nodeTextSetter;
         private Converter<TItem, bool> _isCheckedGetter;
         private SetterDelegate<TItem, bool> _isCheckedSetter;
         private Converter<TItem, string> _tooltipTextProvider;
@@ -104,6 +105,15 @@ namespace ClearCanvas.Desktop.Trees
             set { _nodeTextProvider = value; }
         }
 
+		/// <summary>
+		/// Gets or sets the node text setter for this binding.
+		/// </summary>
+		public SetterDelegate<TItem, string> NodeTextSetter
+		{
+			get { return _nodeTextSetter; }
+			set { _nodeTextSetter = value; }
+		}
+		
         /// <summary>
         /// Gets or sets the node checked status provider for this binding.
         /// </summary>
@@ -210,6 +220,14 @@ namespace ClearCanvas.Desktop.Trees
         {
             return _nodeTextProvider((TItem)item);
         }
+
+		public override void SetNodeText(object item, string text)
+		{
+			if (_nodeTextSetter != null)
+			{
+				_nodeTextSetter((TItem) item, text);
+			}
+		}
 
     	///<summary>
     	/// Gets whether or not <paramref name="item" /> is checked.

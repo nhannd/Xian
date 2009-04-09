@@ -1510,15 +1510,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Folder.
-        /// </summary>
-        internal static string TitleAddFolder {
-            get {
-                return ResourceManager.GetString("TitleAddFolder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add Phone Number....
         /// </summary>
         internal static string TitleAddPhoneNumber {

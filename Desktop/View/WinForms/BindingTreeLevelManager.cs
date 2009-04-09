@@ -87,6 +87,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                 case ItemChangeType.ItemAdded:
                     AddNode(_tree.Items[e.ItemIndex]);
                     break;
+				case ItemChangeType.ItemInserted:
+            		InsertNode(e.ItemIndex, _tree.Items[e.ItemIndex]);
+            		break;
                 case ItemChangeType.ItemChanged:
                     UpdateNode(e.ItemIndex, _tree.Items[e.ItemIndex]);
                     break;
@@ -119,6 +122,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             node.DataBoundItem = item;
             node.UpdateDisplay();   // force update, even if it is the same item, because its properties may have changed
         }
+
+		private void InsertNode(int index, object item)
+		{
+			BindingTreeNode node = new BindingTreeNode(_tree, item, _treeView);
+			_nodeCollection.Insert(index, node);
+		}
 
         /// <summary>
         /// Removes the node at the specified index

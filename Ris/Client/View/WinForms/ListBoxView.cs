@@ -11,6 +11,10 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
+	/// <summary>
+	/// ListBox-view that binds to an instance of an <see cref="IBindingList"/>, which acts as data-source.
+	/// Also has built-in drag & drop support, delegating drop decisions to the underlying <see cref="ListBoxWithDragSupport"/>.
+	/// </summary>
 	public partial class ListBoxView : UserControl
 	{
 		private ActionModelNode _toolbarModel;
@@ -25,12 +29,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		#region Public Members
 
-		public object DataSource
+		/// <summary>
+		/// Gets or sets the data source for the underlying <see cref="ListBoxWithDragSupport"/>.
+		/// </summary>
+		public IBindingList DataSource
 		{
-			get { return _listBox.DataSource; }
+			get { return (IBindingList) _listBox.DataSource; }
 			set { _listBox.DataSource = value; }
 		}
 
+		/// <summary>
+		/// Gets or sets the display member of the ListBox item.
+		/// </summary>
 		public string DisplayMember
 		{
 			get { return _listBox.DisplayMember; }
@@ -80,6 +90,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			remove { _listBox.SelectedIndexChanged -= value; }
 		}
 
+		/// <summary>
+		/// Notifies that an item is dragged and dropped on another item.
+		/// </summary>
 		public event EventHandler<ListBoxItemDroppedEventArgs> ItemDropped
 		{
 			add { _listBox.ItemDropped += value; }

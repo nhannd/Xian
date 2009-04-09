@@ -343,6 +343,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 case ItemChangeType.ItemRemoved:
                     NotifyListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, e.ItemIndex));
                     break;
+				case ItemChangeType.ItemInserted:
                 case ItemChangeType.Reset:
                     NotifyListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
                     break;
@@ -368,6 +369,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     _columnToPropertyMap.Remove(column);
                     NotifyListChanged(new ListChangedEventArgs(ListChangedType.PropertyDescriptorDeleted, -1));
                     break;
+				case ItemChangeType.ItemInserted:
 				case ItemChangeType.Reset:
 					_columnToPropertyMap.Clear();
 					NotifyListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));

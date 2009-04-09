@@ -600,9 +600,6 @@
   <data name="TitleAddExternalPractitioner" xml:space="preserve">
     <value>Add Practitioner</value>
   </data>
-  <data name="TitleAddFolder" xml:space="preserve">
-    <value>Add Folder</value>
-  </data>
   <data name="TitleAddPhoneNumber" xml:space="preserve">
     <value>Add Phone Number...</value>
   </data>
