@@ -31,49 +31,70 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Services.Dicom;
 using ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
 {
     public class WebMoveStudyItemProcessor : AutoRouteItemProcessor
     {
-        protected override void AddWorkQueueUidsToSendList(Model.WorkQueue item, ImageServerStorageScu scu)
+        
+        /// <summary>
+        /// Gets the list of instances to be sent from the study xml
+        /// </summary>
+        /// <returns></returns>
+        protected override IList<StorageInstance> GetStorageInstanceList()
         {
-			string studyPath = StorageLocation.GetStudyPath();
+            Platform.CheckForNullReference(StorageLocation, "StorageLocation");
 
+            List<StorageInstance> list = new List<StorageInstance>(); 
+            string studyPath = StorageLocation.GetStudyPath();
             StudyXml studyXml = LoadStudyXml(StorageLocation);
+            foreach (SeriesXml seriesXml in studyXml)
+            {
+                foreach (InstanceXml instanceXml in seriesXml)
+                {
+                    string seriesPath = Path.Combine(studyPath, seriesXml.SeriesInstanceUid);
+                    string instancePath = Path.Combine(seriesPath, instanceXml.SopInstanceUid + ".dcm");
+                    StorageInstance instance = new StorageInstance(instancePath);
+                    instance.SopClass = instanceXml.SopClass;
+                    instance.TransferSyntax = instanceXml.TransferSyntax;
+                    instance.SopInstanceUid = instanceXml.SopInstanceUid;
+                    instance.StudyInstanceUid = studyXml.StudyInstanceUid;
+                    instance.PatientId = studyXml.PatientId;
+                    instance.PatientsName = studyXml.PatientsName;
 
-            scu.LoadStudyFromStudyXml(studyPath, studyXml);
+                    list.Add(instance);
+                }
+            }
+            
+            return list;
         }
 
-        protected override void ProcessItem(Model.WorkQueue item)
+        protected override void OnComplete()
         {
-			if (item.ScheduledTime.Equals(item.ExpirationTime))
-			{
-				Platform.Log(LogLevel.Debug, "Removing Idle WebMoveStudy WorkQueueEntry: {0}", item.Key);
-				base.PostProcessing(item, WorkQueueProcessorStatus.Complete, 
-				                    WorkQueueProcessorDatabaseUpdate.None);
-				return;
-			}
+            // Force the entry to idle and stay for a while
+            // Note: the assumption is the code will set ScheduledTime = ExpirationTime = some future time
+            // so that the item will be removed when it is processed again.
+            PostProcessing(WorkQueueItem,
+                           WorkQueueProcessorStatus.CompleteDelayDelete, 
+                           WorkQueueProcessorDatabaseUpdate.None);
+        
+        }
 
-            if (!LoadStorageLocation(item))
-            {
-            	Platform.Log(LogLevel.Warn,"Unable to find readable location when processing WebMoveStudy WorkQueue item, rescheduling");
-				PostponeItem(item, item.ScheduledTime.AddMinutes(2),item.ExpirationTime.AddMinutes(2));
-            	return;
-            }
-
+        protected override bool CanStart()
+        {
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-            workQueueCriteria.StudyStorageKey.EqualTo(item.StudyStorageKey);
+            workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
             workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
-            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending});
+            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
 
-            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item, workQueueCriteria);
+            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
             if (relatedItems != null && relatedItems.Count > 0)
             {
                 // can't do it now. Reschedule it for future
@@ -86,13 +107,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
                 if (newScheduledTime < Platform.Time.AddMinutes(1))
                     newScheduledTime = Platform.Time.AddMinutes(1);
 
-                PostponeItem(item, newScheduledTime, newScheduledTime.AddDays(1));
-                Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", item.WorkQueueTypeEnum, newScheduledTime, StorageLocation.StudyInstanceUid);
+                PostponeItem(WorkQueueItem, newScheduledTime, newScheduledTime.AddDays(1));
+                Platform.Log(LogLevel.Info, "{0} postponed to {1}. Study UID={2}", WorkQueueItem.WorkQueueTypeEnum, newScheduledTime, StorageLocation.StudyInstanceUid);
             }
-            else
-            {
-                base.ProcessItem(item);
-            }
+
+            return base.CanStart();
         }
     }
+
+    
 }

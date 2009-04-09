@@ -50,13 +50,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 		public const int DefaultWorkQueueExpireDelaySeconds = 90;
 		public const int DefaultWorkQueueProcessDelayLowPrioritySeconds = 45;
 		public const int DefaultWorkQueueProcessDelayHighPrioritySeconds = 1;
-		public const int DefaultLowPriorityMaxBatchSize = 100;
+        public const int DefaultCompletedWorkQueueDelayDeleteSeconds = 60;
+        public const int DefaultLowPriorityMaxBatchSize = 100;
 		public const int DefaultMedPriorityMaxBatchSize = 250;
 		public const int DefaultWorkQueueThreadCount = 10;
 		public const int DefaultPriorityWorkQueueThreadCount = 2;
 		public const int DefaultMemoryLimitedWorkQueueThreadCount = 4;
 		public const string DefaultNonMemoryLimitedWorkQueueTypes = "DeleteStudy,WebDeleteStudy,MigrateStudy,PurgeStudy";
-
+        
 		private static WorkQueueSettings _instance;
 
 		private WorkQueueSettings()
@@ -150,6 +151,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			set { this["WorkQueueProcessDelayHighPrioritySeconds"] = value; }
 		}
 
+        [ConfigurationProperty("CompletedWorkQueueDelayDeleteSeconds", DefaultValue = DefaultCompletedWorkQueueDelayDeleteSeconds)]
+        public int CompletedWorkQueueDelayDeleteSeconds
+        {
+            get { return ((int)(this["CompletedWorkQueueDelayDeleteSeconds"])); }
+            set { this["CompletedWorkQueueDelayDeleteSeconds"] = value; }
+        }
+
 		[ConfigurationProperty("LowPriorityMaxBatchSize", DefaultValue = DefaultLowPriorityMaxBatchSize)]
 		public int LowPriorityMaxBatchSize
 		{
@@ -209,6 +217,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			clone.PriorityWorkQueueThreadCount = _instance.PriorityWorkQueueThreadCount;
 			clone.MemoryLimitedWorkQueueThreadCount = _instance.MemoryLimitedWorkQueueThreadCount;
 			clone.NonMemoryLimitedWorkQueueTypes = _instance.NonMemoryLimitedWorkQueueTypes;
+		    clone.CompletedWorkQueueDelayDeleteSeconds = _instance.CompletedWorkQueueDelayDeleteSeconds;
 			return clone;
 		}
 	}

@@ -30,6 +30,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
@@ -47,27 +49,91 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
     public class AutoRouteItemProcessor : BaseItemProcessor, ICancelable
     {
         #region Private Members
-        private object _syncRoot = new object();
+        private readonly object _syncRoot = new object();
+        private Dictionary<string, WorkQueueUid> _uidMaps = null;
         private Device _device;
         private const short UNLIMITED = -1;
         #endregion
 
-        #region Protected Methods
+        #region Virtual Protected Methods
+
+
         /// <summary>
-        /// Add the UIDs scheduled to be transfered to the SCU
+        /// Convert Uids into SopInstance
         /// </summary>
-        /// <param name="item">The <see cref="WorkQueue"/> item being processed</param>
-        /// <param name="scu">The Storage SCU component doing an autoroute.</param>
-        protected virtual void AddWorkQueueUidsToSendList(Model.WorkQueue item, ImageServerStorageScu scu)
+        /// <returns></returns>
+        protected virtual IList<StorageInstance> GetStorageInstanceList()
         {
-			string studyPath = StorageLocation.GetStudyPath();
-
+            LoadUids(WorkQueueItem);
+            
+            string studyPath = StorageLocation.GetStudyPath();
             StudyXml studyXml = LoadStudyXml(StorageLocation);
-
-            foreach (WorkQueueUid uid in WorkQueueUidList)
+            
+            List<StorageInstance> list = new List<StorageInstance>();
+            foreach(WorkQueueUid uid in WorkQueueUidList)
             {
-                scu.LoadInstanceFromStudyXml(studyPath, uid.SeriesInstanceUid, uid.SopInstanceUid, studyXml);
+                SeriesXml seriesXml = studyXml[uid.SeriesInstanceUid];
+                InstanceXml instanceXml = seriesXml[uid.SopInstanceUid];
+            
+                string seriesPath = Path.Combine(studyPath, uid.SeriesInstanceUid);
+                string instancePath = Path.Combine(seriesPath, uid.SopInstanceUid + ".dcm");
+                StorageInstance instance = new StorageInstance(instancePath);
+                instance.SopClass = instanceXml.SopClass;
+                instance.TransferSyntax = instanceXml.TransferSyntax;
+                instance.SopInstanceUid = instanceXml.SopInstanceUid;
+        	    instance.StudyInstanceUid = studyXml.StudyInstanceUid;
+        	    instance.PatientId = studyXml.PatientId;
+			    instance.PatientsName = studyXml.PatientsName;
+
+                list.Add(instance);
             }
+
+            return list;
+        }
+
+        /// <summary>
+        /// Called when all instances have been sent
+        /// </summary>
+        protected virtual void OnComplete()
+        {
+            PostProcessing(WorkQueueItem,
+                           WorkQueueProcessorStatus.Pending, // will go to Idle the next time around if there's no item left.
+                           WorkQueueProcessorDatabaseUpdate.None);
+        }
+
+        protected virtual void OnInstanceSent(StorageInstance instance)
+        {
+            WorkQueueUid foundUid = FindWorkQueueUid(instance);
+
+            if (instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
+            {
+                WorkQueueItem.FailureDescription =
+                    String.Format("SOP Class not supported by remote device: {0}",
+                                  instance.SopClass.Name);
+                Platform.Log(LogLevel.Warn,
+                             "Unable to transfer SOP Instance, SOP Class is not supported by remote device: {0}",
+                             instance.SopClass.Name);
+            }
+
+            if (instance.SendStatus.Status == DicomState.Failure)
+            {
+                WorkQueueItem.FailureDescription = instance.SendStatus.Description;
+                if (foundUid != null)
+                {
+                    foundUid.FailureCount++;
+                    UpdateWorkQueueUid(foundUid);
+                }
+            }
+            else
+            {
+                if (foundUid != null)
+                {
+                    DeleteWorkQueueUid(foundUid);
+                    WorkQueueUidList.Remove(foundUid);
+                }
+            }
+
+
         }
 
         #endregion
@@ -92,7 +158,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
 
         #region Overridden Protected Method
 
-        protected override void Initialize(ClearCanvas.ImageServer.Model.WorkQueue item)
+        protected override void Initialize(Model.WorkQueue item)
         {
             base.Initialize(item);
 
@@ -104,32 +170,37 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         /// </summary>
         protected override void ProcessItem(Model.WorkQueue item)
         {
-            Platform.Log(LogLevel.Info, "Moving study {0} for patient {1} to {2}...",
-                         base.Study.StudyInstanceUid, base.Study.PatientsName, DestinationDevice.AeTitle);
-
-            // Load related rows form the WorkQueueUid table
-            LoadUids(item);
-
-            // Intercept entries that don't have any UIDs associated with them, and just
-            // set them back to pending if its an AutoRoute request.
-            if (WorkQueueUidList.Count == 0 
-                && item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
+            if (WorkQueueItem.ScheduledTime >= WorkQueueItem.ExpirationTime)
             {
-				PostProcessing(item, 
-					WorkQueueProcessorStatus.Idle, 
-					WorkQueueProcessorDatabaseUpdate.None);
+                Platform.Log(LogLevel.Debug, "Removing Idle {0} entry : {1}", item.WorkQueueTypeEnum, item.GetKey().Key);
+                base.PostProcessing(item, WorkQueueProcessorStatus.Complete, WorkQueueProcessorDatabaseUpdate.None);
                 return;
             }
+
+            // Load the list of instances to be sent
+            IList<StorageInstance> instanceList = GetStorageInstanceList();
+            
+            if (instanceList == null || instanceList.Count == 0)
+            {
+                // nothing to process, change to idle state
+                PostProcessing(item, WorkQueueProcessorStatus.Idle, WorkQueueProcessorDatabaseUpdate.None);
+                return;
+            }
+
+            Platform.Log(LogLevel.Info, "Moving study {0} for patient {1} to {2}... {3} instances to move",
+                         Study.StudyInstanceUid, Study.PatientsName, DestinationDevice.AeTitle,
+                         instanceList.Count);
+
 
             // Load remote device information from the database.
             Device device = DestinationDevice;
             if (device == null)
             {
                 item.FailureDescription = String.Format("Unknown auto-route destination \"{0}\"", item.DeviceKey);
-                Platform.Log(LogLevel.Error,item.FailureDescription);
+                Platform.Log(LogLevel.Error, item.FailureDescription);
 
                 PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal); // Fatal Error
-                return ;
+                return;
             }
 
             if (device.Dhcp && device.IpAddress.Length == 0)
@@ -142,16 +213,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 return;
             }
 
-            ServerPartition partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
-
+            
             // Now setup the StorageSCU component
-            ImageServerStorageScu scu = new ImageServerStorageScu(partition, device);
+            int sendCounter = 0;
+            ImageServerStorageScu scu = new ImageServerStorageScu(ServerPartition, device);
 
             // set the preferred syntax lists
             scu.LoadPreferredSyntaxes(ReadContext);
 
             // Load the Instances to Send into the SCU component
-            AddWorkQueueUidsToSendList(item, scu);
+            scu.AddStorageInstanceList(instanceList);
 
             // Set an event to be called when each image is transferred
             scu.ImageStoreCompleted += delegate(Object sender, StorageInstance instance)
@@ -160,52 +231,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                                             || instance.SendStatus.Status == DicomState.Warning
                                             || instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
                                         {
-                                        	WorkQueueUid foundUid = null;
-                                        	foreach (WorkQueueUid uid in WorkQueueUidList)
-                                        	{
-                                        		if (uid.SopInstanceUid.Equals(instance.SopInstanceUid))
-                                        		{
-                                        			foundUid = uid;
-                                        			break;
-                                        		}
-                                        	}
-
-                                        	if (instance.SendStatus.Status == DicomState.Failure)
-                                        	{
-                                        		item.FailureDescription =
-                                        			scu.FailureDescription = instance.SendStatus.Description;
-                                        		if (foundUid != null)
-                                        		{
-                                        			foundUid.FailureCount++;
-                                        			UpdateWorkQueueUid(foundUid);
-                                        		}
-                                        	}
-                                        	else
-                                        	{
-                                        		if (foundUid != null)
-                                        		{
-                                        			DeleteWorkQueueUid(foundUid);
-                                        			WorkQueueUidList.Remove(foundUid);
-                                        		}
-                                        	}
+                                            sendCounter++;
+                                            OnInstanceSent(instance);
                                         }
 
-										if (instance.SendStatus.Equals(DicomStatuses.SOPClassNotSupported))
-										{
-											item.FailureDescription =
-												String.Format("SOP Class not supported by remote device: {0}",
-												              instance.SopClass.Name);
-											Platform.Log(LogLevel.Warn,
-											             "Unable to transfer SOP Instance, SOP Class is not supported by remote device: {0}",
-											             instance.SopClass.Name);
-										}
+                                        if (instance.SendStatus.Status == DicomState.Failure)
+                                            scu.FailureDescription = instance.SendStatus.Description;
 
-										if (CancelPending && !(this is WebMoveStudyItemProcessor) && !scu.Canceled)
-										{
-											Platform.Log(LogLevel.Info,"Auto-route canceled due to shutdown for study: {0}",StorageLocation.StudyInstanceUid);
-											item.FailureDescription = "Operation was canceled due to server shutdown request.";
-											scu.Cancel();
-										}
+                                        if (CancelPending && !(this is WebMoveStudyItemProcessor) && !scu.Canceled)
+                                        {
+                                            Platform.Log(LogLevel.Info, "Auto-route canceled due to shutdown for study: {0}", StorageLocation.StudyInstanceUid);
+                                            item.FailureDescription = "Operation was canceled due to server shutdown request.";
+                                            scu.Cancel();
+                                        }
                                     };
 
             // Block until send is complete
@@ -217,28 +255,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             // Dispose to cleanup properly
             scu.Dispose();
 
-			if (scu.FailureDescription.Length > 0)
-			{
-				item.FailureDescription = scu.FailureDescription;
-				scu.Status = ScuOperationStatus.Failed;
-			}
+            if (scu.FailureDescription.Length > 0)
+            {
+                item.FailureDescription = scu.FailureDescription;
+                scu.Status = ScuOperationStatus.Failed;
+            }
 
-        	// Reset the WorkQueue entry status
-            if ((WorkQueueUidList.Count > 0) || scu.Status == ScuOperationStatus.Failed || scu.Status == ScuOperationStatus.ConnectFailed)
-                PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal); // failures occurred
-			else if (item.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.AutoRoute))
-				PostProcessing(item,
-					WorkQueueProcessorStatus.Pending,
-					WorkQueueProcessorDatabaseUpdate.None); // no failures
-			else
-			{
-				item.ScheduledTime = item.ExpirationTime;
-				PostProcessing(item,
-				               WorkQueueProcessorStatus.Idle, // Will force the entry to idle.
-				               WorkQueueProcessorDatabaseUpdate.None); 
-			}
+            // Reset the WorkQueue entry status
+            if ( (instanceList.Count > 0 && sendCounter != instanceList.Count) // not all sop were sent
+                || scu.Status == ScuOperationStatus.Failed 
+                || scu.Status == ScuOperationStatus.ConnectFailed)
+            {
+                PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal); // failures occurred}
+            }
+            else
+            {
+                OnComplete();    
+            }
+            
         }
-        #endregion
 
         protected override bool CanStart()
         {
@@ -259,6 +294,36 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
             return true;
         }
 
+        #endregion
+
+        #region Private Methods
+
+        private WorkQueueUid FindWorkQueueUid(StorageInstance instance)
+        {
+            if (_uidMaps == null)
+            {
+                if (WorkQueueUidList != null)
+                {
+                    _uidMaps = new Dictionary<string, WorkQueueUid>();
+                    foreach (WorkQueueUid uid in WorkQueueUidList)
+                    {
+                        _uidMaps.Add(uid.SopInstanceUid, uid);
+                    }
+                }
+            }
+
+            WorkQueueUid foundUid;
+            if (_uidMaps.TryGetValue(instance.SopInstanceUid, out foundUid))
+            {
+                return foundUid;
+            }
+            else
+                return null;
+
+        }
+
+        
+
         private void RaiseConnectionLimitReachedAlert()
         {
             Platform.Log(LogLevel.Warn, "Connection limit on device {0} has been reached. Max = {1}.", DestinationDevice.AeTitle, DestinationDevice.ThrottleMaxConnections);
@@ -275,5 +340,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                                                    });
         }
 
+        #endregion
     }
 }

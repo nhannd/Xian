@@ -64,7 +64,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		Complete,
 		Pending,
 		Idle,
-		IdleNoDelete
+		IdleNoDelete,
+        CompleteDelayDelete
 	}
 
 	/// <summary>
@@ -113,7 +114,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
         protected IList<WorkQueueUid> WorkQueueUidList
         {
-            get { return _uidList; }
+            get
+            {
+                if (_uidList==null)
+                {
+                    LoadUids(WorkQueueItem);
+                }
+                return _uidList;
+            }
         }
 
         protected TimeSpanStatistics StorageLocationLoadTime
@@ -229,20 +237,21 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="item">The WorkQueue item.</param>
         protected void LoadUids(Model.WorkQueue item)
         {
-            UidsLoadTime.Add(
-                delegate
-                    {
-						IWorkQueueUidEntityBroker select = _readContext.GetBroker<IWorkQueueUidEntityBroker>();
+            if (_uidList==null)
+            {
+                UidsLoadTime.Add(delegate
+                        {
+                            IWorkQueueUidEntityBroker select = _readContext.GetBroker<IWorkQueueUidEntityBroker>();
 
-						WorkQueueUidSelectCriteria parms = new WorkQueueUidSelectCriteria();
+                            WorkQueueUidSelectCriteria parms = new WorkQueueUidSelectCriteria();
 
-                        parms.WorkQueueKey.EqualTo(item.GetKey());
-                        _uidList = select.Find(parms);
+                            parms.WorkQueueKey.EqualTo(item.GetKey());
+                            _uidList = select.Find(parms);
 
-                        _uidList = TruncateList(item, _uidList);
-                    }
+                            _uidList = TruncateList(item, _uidList);
+                        }
                 );
-            
+            }
         }
 
         /// <summary>
@@ -426,8 +435,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 						if (scheduledTime > item.ExpirationTime)
 							scheduledTime = item.ExpirationTime;
 
-						if (status == WorkQueueProcessorStatus.Complete
-							|| (status == WorkQueueProcessorStatus.Idle) && item.ExpirationTime < Platform.Time)
+                        if (status == WorkQueueProcessorStatus.CompleteDelayDelete)
+                        {
+                            parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Idle;
+                            parms.FailureCount = item.FailureCount;
+                            parms.FailureDescription = "";
+                            parms.ScheduledTime = parms.ExpirationTime = Platform.Time.AddSeconds(settings.CompletedWorkQueueDelayDeleteSeconds);
+                            if (resetQueueStudyState == WorkQueueProcessorDatabaseUpdate.ResetQueueState)
+                                parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
+                        }
+                        else if (status == WorkQueueProcessorStatus.Complete
+							|| (status == WorkQueueProcessorStatus.Idle) 
+                            && item.ExpirationTime < Platform.Time)
 						{
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Completed;
 							parms.FailureCount = item.FailureCount;

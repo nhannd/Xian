@@ -157,29 +157,5 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             }
         }
 
-        /// <summary>
-        /// Loads a specific SOP Instance from a given <see cref="StudyXml"/> file for sending.
-        /// </summary>
-        /// <param name="studyPath">The filesystem path of the study containing the SOP Instance to send.</param>
-        /// <param name="seriesInstanceUid">The Series Instance UID of the SOP Instance to send.</param>
-        /// <param name="sopInstanceUid">The SOP Instance UID to send.</param>
-        /// <param name="studyXml">The <see cref="StudyXml"/> file to load the instance information from.</param>
-		public void LoadInstanceFromStudyXml(string studyPath, string seriesInstanceUid, string sopInstanceUid, StudyXml studyXml)
-        {
-            SeriesXml seriesXml = studyXml[seriesInstanceUid];
-            InstanceXml instanceXml = seriesXml[sopInstanceUid];
-            string seriesPath = Path.Combine(studyPath, seriesInstanceUid);
-            string instancePath = Path.Combine(seriesPath, instanceXml.SopInstanceUid + ".dcm");
-            StorageInstance instance = new StorageInstance(instancePath);
-
-            AddStorageInstance(instance);
-
-            instance.SopClass = instanceXml.SopClass;
-            instance.TransferSyntax = instanceXml.TransferSyntax;
-            instance.SopInstanceUid = instanceXml.SopInstanceUid;
-        	instance.StudyInstanceUid = studyXml.StudyInstanceUid;
-        	instance.PatientId = studyXml.PatientId;
-			instance.PatientsName = studyXml.PatientsName;
-        }
     }
 }
