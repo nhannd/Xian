@@ -163,5 +163,30 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 					compositeGraphic.SpatialTransform.ValidationPolicy = new RoiTransformPolicy();
 			}
 		}
+
+		#region Static Helpers
+
+		public static RoiGraphic CreateEllipse()
+		{
+			RoiGraphic roiGraphic = new RoiGraphic(new BoundableResizeControlGraphic(new BoundableStretchControlGraphic(new MoveControlGraphic(new EllipsePrimitive()))));
+			roiGraphic.State = roiGraphic.CreateInactiveState();
+			return roiGraphic;
+		}
+
+		public static RoiGraphic CreateRectangle()
+		{
+			RoiGraphic roiGraphic = new RoiGraphic(new BoundableResizeControlGraphic(new BoundableStretchControlGraphic(new MoveControlGraphic(new RectanglePrimitive()))));
+			roiGraphic.State = roiGraphic.CreateInactiveState();
+			return roiGraphic;
+		}
+
+		public static RoiGraphic CreatePolygon()
+		{
+			RoiGraphic roiGraphic = new RoiGraphic(new PolygonControlGraphic(true, new MoveControlGraphic(new PolyLineGraphic())));
+			roiGraphic.State = roiGraphic.CreateInactiveState();
+			return roiGraphic;
+		}
+
+		#endregion
 	}
 }
