@@ -38,6 +38,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public interface IDataLut : IComposableLut
 	{
 		/// <summary>
+		/// Gets the first mapped pixel value.
+		/// </summary>
+		int FirstMappedPixelValue { get; }
+
+		/// <summary>
 		/// Gets the lut data.
 		/// </summary>
 		int[] Data { get; }

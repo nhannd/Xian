@@ -136,6 +136,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			get { return _index >= _dataLuts.Count - 1; }
 		}
 
+		public override int FirstMappedPixelValue
+		{
+			get { return _dataLuts[_index].FirstMappedPixelValue; }
+		}
+
+		public override int LastMappedPixelValue
+		{
+			get { return _dataLuts[_index].LastMappedPixelValue; }
+		}
+
 		public override sealed int[] Data
 		{
 			get { return _dataLuts[_index].Data; }

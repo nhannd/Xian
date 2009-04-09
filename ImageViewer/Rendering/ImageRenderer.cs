@@ -230,13 +230,13 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 						if (!invert)
 						{
-							int firstColorMappedPixelValue = colorMap.MinInputValue;
+							int firstColorMappedPixelValue = colorMap.FirstMappedPixelValue;
 							for (int i = 0; i < numberOfEntries; ++i)
 								*(pFinalLut++) = pColorMapData[*(pOutputLutData + i) - firstColorMappedPixelValue];
 						}
 						else
 						{
-							int lastColorMappedPixelValue = colorMap.MaxInputValue;
+							int lastColorMappedPixelValue = colorMap.FirstMappedPixelValue + colorMap.Data.Length - 1;
 							for (int i = 0; i < numberOfEntries; ++i)
 								*(pFinalLut++) = pColorMapData[lastColorMappedPixelValue - *(pOutputLutData + i)];
 						}

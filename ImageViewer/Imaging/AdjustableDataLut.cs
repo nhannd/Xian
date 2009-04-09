@@ -278,6 +278,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IDataLut Members
 
+		int IDataLut.FirstMappedPixelValue
+		{
+			get { return _dataLut.FirstMappedPixelValue; }
+		}
+
 		int[] IDataLut.Data
 		{
 			get
@@ -286,6 +291,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				{
 					int lutLength = _dataLut.Length;
 					int[] lutData = new int[lutLength];
+
 					unsafe
 					{
 						fixed (int* output = lutData)
@@ -297,8 +303,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 							}
 						}
 					}
+
 					_lutDataCache = lutData;
 				}
+
 				return _lutDataCache;
 			}
 		}

@@ -57,6 +57,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
+		/// Since the data lut is generated, simply returns <see cref="IComposableLut.MinInputValue"/>.
+		/// </summary>
+		public sealed override int FirstMappedPixelValue
+		{
+			get { return base.MinInputValue; }
+		}
+
+		/// <summary>
+		/// Since the data lut is generated, simply returns <see cref="IComposableLut.MaxInputValue"/>.
+		/// </summary>
+		public sealed override int LastMappedPixelValue
+		{
+			get { return base.MaxInputValue; }
+		}
+
+		/// <summary>
 		/// Gets the Lut's data, lazily created.
 		/// </summary>
 		public sealed override int[] Data

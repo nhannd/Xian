@@ -34,6 +34,8 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	//TODO: the color map shouldn't *have* to be a data lut - it could be calculated.
+
 	/// <summary>
 	/// A Color Map Manager, which is responsible for managing installation and restoration
 	/// of color maps via the Memento pattern.

@@ -33,6 +33,7 @@ using System;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	//TODO: one of these days, make this a simple data lut or have 2 types of color map.  ColorMap is a generated data lut, and this one doesn't need to be.
 	/// <summary>
 	/// Implements a Color Map as a LUT.
 	/// </summary>

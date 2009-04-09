@@ -187,6 +187,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			#region IDataLut Members
 
+			public int FirstMappedPixelValue
+			{
+				get { return RealLut.FirstMappedPixelValue; }
+			}
+
 			public int[] Data
 			{
 				get { return RealLut.Data; }

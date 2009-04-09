@@ -45,11 +45,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private readonly int[] _data;
 		private readonly string _key;
 		private readonly string _description;
+		private readonly int _firstMappedPixelValue;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		public SimpleDataLut(int minInputValue, int[] data, int minOutputValue, int maxOutputValue, string key, string description)
+		public SimpleDataLut(int firstMappedPixelValue, int[] data, int minOutputValue, int maxOutputValue, string key, string description)
 		{
 			Platform.CheckForNullReference(data, "data");
 			Platform.CheckForEmptyString(key, "key");
@@ -60,8 +61,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_key = key;
 			_description = description;
 
-			base.MinInputValue = minInputValue;
-			base.MaxInputValue = minInputValue + _data.Length - 1;
+			_firstMappedPixelValue = firstMappedPixelValue;
+
+			base.MinInputValue = _firstMappedPixelValue;
+			base.MaxInputValue = LastMappedPixelValue;
 			base.MinOutputValue = minOutputValue;
 			base.MaxOutputValue = maxOutputValue;
 		}
@@ -75,30 +78,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			//clone the actual buffer
 			_data = (int[])source._data.Clone();
-		}
-
-		/// <summary>
-		/// Gets the minimum input value.
-		/// </summary>
-		/// <remarks>
-		/// This value is constant and cannot be changed.
-		/// </remarks>
-		public override int MinInputValue
-		{
-			get { return base.MinInputValue; }
-			set { }
-		}
-
-		/// <summary>
-		/// Gets the maximum input value.
-		/// </summary>
-		/// <remarks>
-		/// This value is constant and cannot be changed.
-		/// </remarks>
-		public override int MaxInputValue
-		{
-			get { return base.MaxInputValue; }
-			set { }
 		}
 
 		/// <summary>
@@ -153,6 +132,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		#region IDataLut Members
+
+		/// <summary>
+		/// Gets the first mapped pixel value.
+		/// </summary>
+		public sealed override int FirstMappedPixelValue
+		{
+			get { return _firstMappedPixelValue; }
+		}
+
+		/// <summary>
+		/// Gets the last mapped pixel value.
+		/// </summary>
+		public sealed override int LastMappedPixelValue
+		{
+			get { return _firstMappedPixelValue + _data.Length - 1; }
+		}
 
 		/// <summary>
 		/// Gets the lut data.

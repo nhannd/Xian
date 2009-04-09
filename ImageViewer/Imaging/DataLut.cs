@@ -137,19 +137,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 				Platform.CheckMemberIsSet(Data, "Data");
 				Platform.CheckTrue(Data.Length == Length, "Data Lut length check");
 
-				if (index <= MinInputValue)
+				if (index <= FirstMappedPixelValue)
 					return Data[0];
-				else if (index >= this.MaxInputValue)
+				else if (index >= LastMappedPixelValue)
 					return Data[this.Length - 1];
 				else
-					return Data[index - this.MinInputValue];
+					return Data[index - this.FirstMappedPixelValue];
 			}
 			protected set
 			{
-				if (index < this.MinInputValue || index > this.MaxInputValue)
+				if (index < this.FirstMappedPixelValue || index > this.LastMappedPixelValue)
 					return;
 
-				this.Data[index - this.MinInputValue] = value;
+				this.Data[index - this.FirstMappedPixelValue] = value;
 			}
 		}
 
@@ -158,18 +158,28 @@ namespace ClearCanvas.ImageViewer.Imaging
 		///</summary>
 		/// <remarks>
 		/// The reason for this member's existence is that <see cref="Data"/> may
-		/// not yet exist; this value is based solely on <see cref="IComposableLut.MinInputValue"/>
-		/// and <see cref="IComposableLut.MaxInputValue"/>.
+		/// not yet exist; this value is based solely on <see cref="IDataLut.FirstMappedPixelValue"/>
+		/// and <see cref="DataLut.LastMappedPixelValue"/>.
 		/// </remarks>
 		public int Length
 		{
 			get
 			{
-				return 1 + MaxInputValue - MinInputValue;
+				return 1 + LastMappedPixelValue - FirstMappedPixelValue;
 			}
 		}
 
 		#region IDataLut Members
+
+		/// <summary>
+		/// Gets the first mapped pixel value.
+		/// </summary>
+		public abstract int FirstMappedPixelValue { get; }
+
+		/// <summary>
+		/// Gets the last mapped pixel value.
+		/// </summary>
+		public abstract int LastMappedPixelValue { get; }
 
 		/// <summary>
 		/// Gets the lut data.
