@@ -106,7 +106,6 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         
         selectRow : function (rowIndex)
         {
-            debugger
             var row = this.get_element().rows[rowIndex];
             if (row!=null && row!=undefined)
                 this._selectRow(row);
@@ -220,9 +219,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
                 el = el.parentNode;
                 
             var row = el;
-            
-            debugger
-            
+                        
             if (this.get_element() && !this.get_element().disabled ) 
             {
                 var button = e.which || e.button;

@@ -122,6 +122,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                     ChangePageButton.ClientID + "').click();return false;}} else {return true}; ";
                 
                 CurrentPage.Attributes.Add("onkeydown", script);
+                CurrentPage.Attributes.Add("onclick", "javascript: document.getElementById('" + CurrentPage.ClientID + "').select();");
 
                 if(!Target.IsDataBound)
                 {
