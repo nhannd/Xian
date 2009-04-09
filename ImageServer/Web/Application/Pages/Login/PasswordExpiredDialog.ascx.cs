@@ -13,6 +13,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
         {
             Username.Text = username;
             OriginalPassword.Value = password;
+            ErrorMessagePanel.Visible = false;
             
             ModalDialog1.Show();
         }
@@ -31,7 +32,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                     if (!NewPassword.Text.Equals(ConfirmNewPassword.Text) || NewPassword.Text.Equals(string.Empty))
                     {
                         ErrorMessage.Text =
-                            "The new password provided is invalid.<br/>Please retype your passwords and try again.";
+                            "Provided passwords don't match.<br/>Please retype your passwords and try again.";
                         ErrorMessagePanel.Visible = true;
                     }
                     else
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 }
                 catch (Exception ex)
                 {
-                    ErrorMessage.Text = "Invalid Password. Password must be 8 - 16 characters long.";
+                    ErrorMessage.Text = ex.Message;
                     ErrorMessagePanel.Visible = true;
 					// May want to elimiate this.
 					Platform.Log(LogLevel.Error, ex, "Unexpected exception changing password: {0}.", ex.Message);
