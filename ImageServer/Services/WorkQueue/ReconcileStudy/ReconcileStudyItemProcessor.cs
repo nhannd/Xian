@@ -53,52 +53,36 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         #endregion
 
         #region Overridden Protected Method
-        protected override void ProcessItem(Model.WorkQueue item)
-        {
-            Platform.CheckForNullReference(item, "item");
-            Platform.CheckForNullReference(item.Data, "item.Data");
-            
-            if (!CanStart())
-            {
-                WorkQueueSettings settings = WorkQueueSettings.Instance;
-                DateTime newScheduledTime = Platform.Time.Add(TimeSpan.FromMilliseconds(settings.WorkQueueQueryDelay));
-                Platform.Log(LogLevel.Info, "Postpone ReconcileStudy entry until {0}. [GUID={1}]", newScheduledTime, item.GetKey());
-                PostponeItem(item, newScheduledTime, newScheduledTime.Add(TimeSpan.FromSeconds(settings.WorkQueueExpireDelaySeconds)));
-            }
-            else
-            {
-                _reconcileQueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(WorkQueueItem.Data);
-                
-                LoadUids(item);
-                
+		protected override void ProcessItem(Model.WorkQueue item)
+		{
+			Platform.CheckForNullReference(item, "item");
+			Platform.CheckForNullReference(item.Data, "item.Data");
 
-                if (WorkQueueUidList.Count == 0)
-                {
-                    Complete();
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Info, "Reconcililation started. GUID={0}. StudyStorage={1}. {2} instances to be processed", WorkQueueItem.GetKey(), WorkQueueItem.StudyStorageKey, WorkQueueUidList.Count);
+			_reconcileQueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(WorkQueueItem.Data);
 
-					if (!LoadStorageLocation(item))
-					{
-						Platform.Log(LogLevel.Warn, "Unable to find readable location when processing ReconcileStudy WorkQueue item, rescheduling");
-						PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
-						return;
-					}
+			LoadUids(item);
 
-                    InitializeContext();
-                    
-                    SetupProcessor();
-                    
-                    ExecuteCommands();
 
-                }
-            }
-            
-        }
+			if (WorkQueueUidList.Count == 0)
+			{
+				Complete();
+			}
+			else
+			{
+				Platform.Log(LogLevel.Info,
+				             "Reconciling study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}, {5} objects",
+				             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+				             Study.AccessionNumber, ServerPartition.Description, WorkQueueUidList.Count);
 
-        private void ExecuteCommands()
+				InitializeContext();
+
+				SetupProcessor();
+
+				ExecuteCommands();
+			}
+		}
+
+    	private void ExecuteCommands()
         {
             if(_processor!=null)
             {
@@ -133,7 +117,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                                               });
 
             List<Model.WorkQueue> items = FindRelatedWorkQueueItems(WorkQueueItem, criteria);
-            return items==null || items.Count == 0;
+            if (!( items==null || items.Count == 0))
+            {
+				PostponeItem(WorkQueueItem);
+            	return false;
+            }
+        	return true;
         }
 
 

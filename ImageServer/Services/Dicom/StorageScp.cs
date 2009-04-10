@@ -142,8 +142,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                 if (result.Sussessful)
                 {
-                    Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2} on context {3}",
-                                 result.SopInstanceUid, association.CallingAE, association.CalledAE, presentationID);
+					if (!String.IsNullOrEmpty(result.AccessionNumber))
+						Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2} (A#:{3} StudyUid:{4})",
+						             result.SopInstanceUid, association.CallingAE, association.CalledAE, result.AccessionNumber,
+						             result.StudyInstanceUid);
+					else
+						Platform.Log(LogLevel.Info, "Received SOP Instance {0} from {1} to {2} (StudyUid:{3})",
+									 result.SopInstanceUid, association.CallingAE, association.CalledAE,
+									 result.StudyInstanceUid);
                 
                 }
                 server.SendCStoreResponse(presentationID, message.MessageId, message.AffectedSopInstanceUid, result.DicomStatus);

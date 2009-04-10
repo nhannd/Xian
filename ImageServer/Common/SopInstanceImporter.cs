@@ -15,7 +15,8 @@ namespace ClearCanvas.ImageServer.Common
 {
     public class DicomSopProcessingResult
     {
-        public String StudyInstanceUid;
+		public String AccessionNumber;
+		public String StudyInstanceUid;
         public String SeriesInstanceUid;
         public String SopInstanceUid;
         public bool Sussessful;
@@ -49,16 +50,17 @@ namespace ClearCanvas.ImageServer.Common
         public DicomSopProcessingResult Import(DicomMessageBase message, string sourceAE)
         {
             Platform.CheckForNullReference(message, "message");
-            String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, "");
-            String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, "");
-            String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, "");
+            String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
+			String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
+			String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
+			String accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
 
             DicomSopProcessingResult result = new DicomSopProcessingResult();
             result.Sussessful = true; // assumed for now 
             result.StudyInstanceUid = studyInstanceUid;
             result.SeriesInstanceUid = seriesInstanceUid;
             result.SopInstanceUid = sopInstanceUid;
-
+        	result.AccessionNumber = accessionNumber;
             
             // Use the command processor for rollback capabilities.
             using (ServerCommandProcessor processor =
@@ -292,7 +294,7 @@ namespace ClearCanvas.ImageServer.Common
         private static DicomFile ConvertToDicomFile(DicomMessageBase message, string filename, string sourceAE)
         {
             // This routine sets some of the group 0x0002 elements.
-            DicomFile file = null;
+            DicomFile file;
             if (message is DicomFile)
             {
                 file = message as DicomFile;

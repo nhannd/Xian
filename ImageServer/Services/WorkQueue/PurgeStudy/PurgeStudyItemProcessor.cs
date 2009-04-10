@@ -110,26 +110,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
-            //Load the storage location.
-			if (!LoadStorageLocation(item))
-			{
-				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing PurgeStudy WorkQueue item, rescheduling");
-				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
-				return;
-			}
+			_partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
 
-            
-            else
-            {
-                _partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
+			Platform.Log(LogLevel.Info,
+			             "Purging study {0} for Patient {1} (PatientId:{2} A#:{3}) on partition {4}",
+			             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+			             Study.AccessionNumber, ServerPartition.Description);
 
-                Platform.Log(LogLevel.Info, "Purging study '{0}' from partition '{1}'", StorageLocation.StudyInstanceUid,
-                             _partition.Description);
+			RemoveFilesystem();
 
-                RemoveFilesystem();
-            }
 
-		    RemoveDatabase(item);
+			RemoveDatabase(item);
 
 			// No need to remove / update the Queue entry, it was deleted as part of the delete process.
 		}
@@ -144,7 +135,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
             workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
 
             List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
-            return (relatedItems == null || relatedItems.Count == 0);
+            if (! (relatedItems == null || relatedItems.Count == 0))
+            {
+				PostponeItem(WorkQueueItem);
+            	return false;
+            }
+        	return true;
         }
     }
 }

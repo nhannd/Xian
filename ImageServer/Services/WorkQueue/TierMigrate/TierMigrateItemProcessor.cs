@@ -103,44 +103,32 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
         }
 
-        
-        protected override void ProcessItem(Model.WorkQueue item)
-        {
-            Platform.CheckForNullReference(item, "item");
 
-            //Load the storage location.
-			if (!LoadStorageLocation(item))
+		protected override void ProcessItem(Model.WorkQueue item)
+		{
+			Platform.CheckForNullReference(item, "item");
+
+			try
 			{
-				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing TierMigrate WorkQueue item, rescheduling");
-				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
-				return;
+				Platform.Log(LogLevel.Info,
+				             "Starting Tier Migration of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+				             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+				             Study.AccessionNumber, ServerPartition.Description);
+
+				DoMigrateStudy(StorageLocation);
+
+				PostProcessing(item,
+				               WorkQueueProcessorStatus.Complete,
+				               WorkQueueProcessorDatabaseUpdate.ResetQueueState);
 			}
-            else
-            {
-				if (CheckForProcessingStudy(item))
-				{
-					Platform.Log(LogLevel.Info,
-								 "Tier Migrate entry for study {0} has conflicting WorkQueue entry, reinserting into FilesystemQueue",
-								 StorageLocation.StudyInstanceUid);
-					return;
-				}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Info, e);
+				FailQueueItem(item, e.Message);
+			}
+		}
 
-                try
-                {
-                    DoMigrateStudy(StorageLocation);
-					PostProcessing(item, 
-						WorkQueueProcessorStatus.Complete, 
-						WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-                }
-                catch (Exception e)
-                {
-                    Platform.Log(LogLevel.Info, e);
-                    FailQueueItem(item, e.Message);
-                }
-            }
-        }
-
-        private static void DoMigrateStudy(StudyStorageLocation storage)
+    	private static void DoMigrateStudy(StudyStorageLocation storage)
         {
             TierMigrationStatistics stat = new TierMigrationStatistics();
             stat.StudyInstanceUid = storage.StudyInstanceUid;
@@ -231,38 +219,28 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 
         protected override bool CanStart()
         {
-        	return true;
-			/*
-            WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-            workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
-            workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
-            workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
-
-            List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
-            return relatedItems == null || relatedItems.Count == 0;
-			 */
-        }
-
-		private bool CheckForProcessingStudy(Model.WorkQueue item)
-		{
 			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
 			workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
 			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
 			List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
 			if (relatedItems == null || relatedItems.Count == 0)
-				return false;
+				return true;
 
+			Platform.Log(LogLevel.Info,
+						 "Tier Migrate entry for study {0} has conflicting WorkQueue entry, reinserting into FilesystemQueue",
+						 StorageLocation.StudyInstanceUid);
+		
 			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
 				IWorkQueueUidEntityBroker broker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
 				WorkQueueUidSelectCriteria workQueueUidCriteria = new WorkQueueUidSelectCriteria();
-				workQueueUidCriteria.WorkQueueKey.EqualTo(item.Key);
+				workQueueUidCriteria.WorkQueueKey.EqualTo(WorkQueueItem.Key);
 				broker.Delete(workQueueUidCriteria);
 
 				FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
 				parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.TierMigrate;
 				parms.ScheduledTime = Platform.Time.AddMinutes(10);
-				parms.StudyStorageKey = item.StudyStorageKey;
+				parms.StudyStorageKey = WorkQueueItem.StudyStorageKey;
 				parms.FilesystemKey = StorageLocation.FilesystemKey;
 
 				IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
@@ -275,10 +253,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.TierMigrate
 					updateContext.Commit();
 			}
 
-			PostProcessing(item, 
+			PostProcessing(WorkQueueItem, 
 				WorkQueueProcessorStatus.Complete, 
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-			return true;
+			return false;
 		}
     }
 }

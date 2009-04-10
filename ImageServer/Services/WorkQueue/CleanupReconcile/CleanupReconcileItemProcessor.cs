@@ -52,57 +52,41 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupReconcile
             return true;
         }
 
-        protected override void ProcessItem(Model.WorkQueue item)
-        {
-            Platform.CheckForNullReference(item, "item");
-            Platform.CheckForNullReference(item.Data, "item.Data");
+		protected override void ProcessItem(Model.WorkQueue item)
+		{
+			Platform.CheckForNullReference(item, "item");
+			Platform.CheckForNullReference(item.Data, "item.Data");
 
-            if (!CanStart())
-            {
-                WorkQueueSettings settings = WorkQueueSettings.Instance;
-                DateTime newScheduledTime = Platform.Time.Add(TimeSpan.FromMilliseconds(settings.WorkQueueQueryDelay));
-                Platform.Log(LogLevel.Info, "Postpone CleanupReconcile entry until {0}. [GUID={1}]", newScheduledTime, item.GetKey());
-                PostponeItem(item, newScheduledTime, newScheduledTime.Add(TimeSpan.FromSeconds(settings.WorkQueueExpireDelaySeconds)));
-            }
-            else
-            {
-                _reconcileQueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(WorkQueueItem.Data);
-                
-                LoadUids(item);
+			_reconcileQueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(WorkQueueItem.Data);
+
+			LoadUids(item);
 
 
-                if (WorkQueueUidList.Count == 0)
-                {
-                    Complete();
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Info, "Reconcile Cleanup started. GUID={0}. StudyStorage={1}", WorkQueueItem.GetKey(), WorkQueueItem.StudyStorageKey);
+			if (WorkQueueUidList.Count == 0)
+			{
+				DirectoryUtility.DeleteIfEmpty(_reconcileQueueData.StoragePath);
 
-                    ProcessUidList();
+				Platform.Log(LogLevel.Info, "Reconcile Cleanup is completed. GUID={0}.", WorkQueueItem.GetKey());
+				PostProcessing(WorkQueueItem,
+					WorkQueueProcessorStatus.Complete,
+					WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+			}
+			else
+			{
+				Platform.Log(LogLevel.Info,
+				             "Starting Cleanup of Reconcile Queue item for study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}, {5} objects",
+				             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+				             Study.AccessionNumber, ServerPartition.Description,
+				             WorkQueueUidList.Count);
 
-                    BatchComplete();
-                }
-            }
-        }
+				ProcessUidList();
 
-        private void BatchComplete()
-        {
-            Platform.Log(LogLevel.Info, "Successfully complete Reconcile Cleanup. GUID={0}. {0} uids processed.", WorkQueueItem.GetKey(), WorkQueueUidList.Count);
-			PostProcessing(WorkQueueItem, 
-				WorkQueueProcessorStatus.Pending, 
-				WorkQueueProcessorDatabaseUpdate.None);
-        }
-
-        private void Complete()
-        {
-            DirectoryUtility.DeleteIfEmpty(_reconcileQueueData.StoragePath);
-
-            Platform.Log(LogLevel.Info, "Reconcile Cleanup is completed. GUID={0}.", WorkQueueItem.GetKey());
-			PostProcessing(WorkQueueItem, 
-				WorkQueueProcessorStatus.Complete, 
-				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-        }
+				Platform.Log(LogLevel.Info, "Successfully complete Reconcile Cleanup. GUID={0}. {0} uids processed.", WorkQueueItem.GetKey(), WorkQueueUidList.Count);
+				PostProcessing(WorkQueueItem,
+					WorkQueueProcessorStatus.Pending,
+					WorkQueueProcessorDatabaseUpdate.None);
+			}
+		}
 
         private void ProcessUidList()
         {

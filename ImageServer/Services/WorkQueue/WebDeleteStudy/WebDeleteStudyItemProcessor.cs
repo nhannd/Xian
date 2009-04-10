@@ -29,7 +29,6 @@
 
 #endregion
 
-using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebDeleteStudy

@@ -647,8 +647,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                         }
                     }
                 );
-
-            
         }
 
 
@@ -740,6 +738,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
            return theXml;
         }
 
+		protected virtual void PostponeItem(Model.WorkQueue item)
+		{
+			WorkQueueSettings settings = WorkQueueSettings.Instance;
+			DateTime newScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
+			DateTime expireTime = newScheduledTime.Add(TimeSpan.FromSeconds(settings.WorkQueueExpireDelaySeconds));
+			PostponeItem(item, newScheduledTime, expireTime);
+		}
+
         protected virtual void PostponeItem(Model.WorkQueue item, DateTime newScheduledTime, DateTime expireTime)
         {
             DBUpdateTime.Add(
@@ -784,7 +790,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         }
 
 
-        protected bool LockStudyState(Model.WorkQueue item, QueueStudyStateEnum state)
+        protected static bool LockStudyState(Model.WorkQueue item, QueueStudyStateEnum state)
         {
             using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -804,8 +810,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             }
         }
 
-        
-
         /// <summary>
         /// Called by the base before <see cref="ProcessItem"/> is invoked to determine 
         /// if the process can begin.
@@ -822,9 +826,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         {
             
         }
-
-        
-
 
         /// <summary>
         /// Called before the <see cref="WorkQueue"/> item is processed
@@ -876,14 +877,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             {
                 Initialize(item);
 
-                if (!CanStart())
-                {
-                    WorkQueueSettings settings = WorkQueueSettings.Instance;
-                    DateTime newScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
-                    DateTime expireTime = newScheduledTime.Add(TimeSpan.FromSeconds(settings.WorkQueueExpireDelaySeconds));
-                    PostponeItem(item, newScheduledTime, expireTime);
-                }
-                else
+            	if (!LoadStorageLocation(item))
+            	{
+            		Platform.Log(LogLevel.Warn,
+            		             "Unable to find readable storagelocation when processing {0) WorkQueue item, rescheduling",
+            		             item.WorkQueueTypeEnum.Description);
+					PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+					return;
+            	}
+
+                if (CanStart())
                 {
                     OnProcessItemBegin(item);
 

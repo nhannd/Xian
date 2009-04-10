@@ -264,131 +264,68 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
             }
 		}
 
-		private bool CheckForProcessingStudy(Model.WorkQueue item)
+		protected override void ProcessItem(Model.WorkQueue item)
 		{
-			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
-			workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
-			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
-			List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
-			if (relatedItems == null || relatedItems.Count == 0)
-				return false;
+			LoadUids(item);
+
+			if (WorkQueueUidList.Count == 0)
+			{
+				// No UIDs associated with the WorkQueue item.  Set the status back to idle
+				PostProcessing(item,
+				               WorkQueueProcessorStatus.Idle,
+				               WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+				return;
+			}
+
 
 			XmlElement element = item.Data.DocumentElement;
 
 			string syntax = element.Attributes["syntax"].Value;
 
 			TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
-
-
-			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			if (compressSyntax == null)
 			{
-				IWorkQueueUidEntityBroker broker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
-				WorkQueueUidSelectCriteria workQueueUidCriteria = new WorkQueueUidSelectCriteria();
-				workQueueUidCriteria.WorkQueueKey.EqualTo(item.Key);
-				broker.Delete(workQueueUidCriteria);
-
-				FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
-				if (compressSyntax.LosslessCompressed)
-					parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LosslessCompress;
-				else
-					parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LossyCompress;
-				parms.ScheduledTime = Platform.Time.AddMinutes(10);
-				parms.StudyStorageKey = item.StudyStorageKey;
-				parms.FilesystemKey = StorageLocation.FilesystemKey;
-
-				parms.QueueXml = item.Data;
-
-				IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
-
-				if (false == insertQueue.Execute(parms))
-				{
-					Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
-				}
-				else
-					updateContext.Commit();
-			}
-
-			PostProcessing(item, WorkQueueProcessorStatus.Complete,
-				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-
-			return true;
-		}
-		protected override void ProcessItem(Model.WorkQueue item)
-		{
-			if (!LoadStorageLocation(item))
-			{
-				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing CompressStudy WorkQueue item, rescheduling");
-				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
+				item.FailureDescription =
+					String.Format("Invalid transfer syntax in compression WorkQueue item: {0}", element.Attributes["syntax"].Value);
+				Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
+				base.PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
 				return;
 			}
+
+			Platform.Log(LogLevel.Info,
+			             "Compressing study {0} for Patient {1} (PatientId:{2} A#:{3}) on partition {4} to {5}",
+			             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+			             Study.AccessionNumber, ServerPartition.Description, compressSyntax.Name);
+
+			IDicomCodecFactory[] codecs = DicomCodecRegistry.GetCodecFactories();
+			IDicomCodecFactory theCodecFactory = null;
+			foreach (IDicomCodecFactory codec in codecs)
+				if (codec.CodecTransferSyntax.Equals(compressSyntax))
+				{
+					theCodecFactory = codec;
+					break;
+				}
+
+			if (theCodecFactory == null)
+			{
+				item.FailureDescription = String.Format("Unable to find codec for compression: {0}", compressSyntax.Name);
+				Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
+				base.PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
+				return;
+			}
+
+			if (!ProcessUidList(item, theCodecFactory))
+				PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal);
 			else
 			{
-
-				if (CheckForProcessingStudy(item))
-				{
-					Platform.Log(LogLevel.Info,
-					             "Compression entry for study {0} has existing WorkQueue entry, reinserting into FilesystemQueue",
-					             StorageLocation.StudyInstanceUid);
-					return;
-				}
-				LoadUids(item);
-				
-				if (WorkQueueUidList.Count == 0)
-				{
-					// No UIDs associated with the WorkQueue item.  Set the status back to idle
-					PostProcessing(item, 
-						WorkQueueProcessorStatus.Idle, 
-						WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-					return;
-				}
-
-
-				XmlElement element = item.Data.DocumentElement;
-
-				string syntax = element.Attributes["syntax"].Value;
-
-				TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
-				if (compressSyntax == null)
-				{
-					item.FailureDescription = String.Format("Invalid transfer syntax in compression WorkQueue item: {0}", element.Attributes["syntax"].Value);
-					Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
-					base.PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
-					return;
-				}
-
-				Platform.Log(LogLevel.Info, "Compressing study {0} on partition {1}", StorageLocation.StudyInstanceUid,
-				             ServerPartition.Load(item.ServerPartitionKey).AeTitle);
-
-				IDicomCodecFactory[] codecs = DicomCodecRegistry.GetCodecFactories();
-				IDicomCodecFactory theCodecFactory = null;
-				foreach (IDicomCodecFactory codec in codecs)
-					if (codec.CodecTransferSyntax.Equals(compressSyntax))
-					{
-						theCodecFactory = codec;
-						break;
-					}
-
-				if (theCodecFactory == null)
-				{
-					item.FailureDescription = String.Format("Unable to find codec for compression: {0}", compressSyntax.Name);
-					Platform.Log(LogLevel.Error, "Error with work queue item {0}: {1}", item.GetKey(), item.FailureDescription);
-					base.PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
-					return;
-				}
-
-				if (!ProcessUidList(item, theCodecFactory))
-					PostProcessingFailure(item, WorkQueueProcessorFailureType.NonFatal);
+				if (compressSyntax.LossyCompressed)
+					UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossy, compressSyntax);
 				else
-				{
-					if (compressSyntax.LossyCompressed)
-						UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossy, compressSyntax);
-					else
-						UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossless, compressSyntax);
+					UpdateStudyStatus(StorageLocation, StudyStatusEnum.OnlineLossless, compressSyntax);
 
-					PostProcessing(item, 
-						WorkQueueProcessorStatus.Pending,
-						WorkQueueProcessorDatabaseUpdate.None); // batch processed, not complete
-				}
+				PostProcessing(item,
+				               WorkQueueProcessorStatus.Pending,
+				               WorkQueueProcessorDatabaseUpdate.None); // batch processed, not complete
 			}
 		}
 
@@ -418,7 +355,56 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CompressStudy
 
         protected override bool CanStart()
         {
-        	return true;
+			WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
+			workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
+			workQueueCriteria.WorkQueueTypeEnum.In(new WorkQueueTypeEnum[] { WorkQueueTypeEnum.StudyProcess, WorkQueueTypeEnum.ReconcileStudy });
+			List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
+			if (relatedItems == null || relatedItems.Count == 0)
+				return true;
+
+			XmlElement element = WorkQueueItem.Data.DocumentElement;
+
+			string syntax = element.Attributes["syntax"].Value;
+
+			TransferSyntax compressSyntax = TransferSyntax.GetTransferSyntax(syntax);
+
+			Platform.Log(LogLevel.Info,
+						 "Compression entry for study {0} has existing WorkQueue entry, reinserting into FilesystemQueue",
+						 StorageLocation.StudyInstanceUid);
+
+			using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IWorkQueueUidEntityBroker broker = updateContext.GetBroker<IWorkQueueUidEntityBroker>();
+				WorkQueueUidSelectCriteria workQueueUidCriteria = new WorkQueueUidSelectCriteria();
+				workQueueUidCriteria.WorkQueueKey.EqualTo(WorkQueueItem.Key);
+				broker.Delete(workQueueUidCriteria);
+
+				FilesystemQueueInsertParameters parms = new FilesystemQueueInsertParameters();
+				if (compressSyntax.LosslessCompressed)
+					parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LosslessCompress;
+				else
+					parms.FilesystemQueueTypeEnum = FilesystemQueueTypeEnum.LossyCompress;
+				parms.ScheduledTime = Platform.Time.AddMinutes(10);
+				parms.StudyStorageKey = WorkQueueItem.StudyStorageKey;
+				parms.FilesystemKey = StorageLocation.FilesystemKey;
+
+				parms.QueueXml = WorkQueueItem.Data;
+
+				IInsertFilesystemQueue insertQueue = updateContext.GetBroker<IInsertFilesystemQueue>();
+
+				if (false == insertQueue.Execute(parms))
+				{
+					Platform.Log(LogLevel.Error, "Unexpected failure inserting FilesystemQueue entry");
+				}
+				else
+					updateContext.Commit();
+			}
+
+
+			PostProcessing(WorkQueueItem, WorkQueueProcessorStatus.Complete,
+				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
+
+			return false;
         }
 
 

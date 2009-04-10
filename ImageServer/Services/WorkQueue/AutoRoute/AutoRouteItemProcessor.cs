@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
     public class AutoRouteItemProcessor : BaseItemProcessor, ICancelable
     {
         #region Private Members
-        private readonly object _syncRoot = new object();
+        private readonly object _syncLock = new object();
         private Dictionary<string, WorkQueueUid> _uidMaps = null;
         private Device _device;
         private const short UNLIMITED = -1;
@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
         {
             get
             {
-                lock(_syncRoot)
+                lock(_syncLock)
                 {
                     if (_device==null)
                     {
@@ -187,10 +187,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
                 return;
             }
 
-            Platform.Log(LogLevel.Info, "Moving study {0} for patient {1} to {2}... {3} instances to move",
-                         Study.StudyInstanceUid, Study.PatientsName, DestinationDevice.AeTitle,
-                         instanceList.Count);
-
+			Platform.Log(LogLevel.Info,
+						 "Moving study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4} to {5}...",
+						 Study.StudyInstanceUid, Study.PatientsName, Study.PatientId, Study.AccessionNumber,
+						 ServerPartition.Description, DestinationDevice.AeTitle);
 
             // Load remote device information from the database.
             Device device = DestinationDevice;

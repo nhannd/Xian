@@ -139,80 +139,72 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         #endregion
 
         #region Overriden Protected Methods
-        protected override void ProcessItem(Model.WorkQueue item)
-        {
-            if (!LoadStorageLocation(item))
-            {
-                WorkQueueSettings settings = WorkQueueSettings.Instance;
+		protected override void ProcessItem(Model.WorkQueue item)
+		{
+			if (!FilesystemIsAccessable())
+			{
+				String reason = String.Format("Filesystem {0} is not readable and writable.", _filesystem.Filesystem.Description);
+				FailQueueItem(item, reason);
+			}
+			else
+			{
+				LoadAdditionalEntities();
 
-                DateTime newScheduledTime = Platform.Time.AddMilliseconds(settings.WorkQueueQueryDelay);
-                DateTime expire = newScheduledTime.AddSeconds(settings.WorkQueueExpireDelaySeconds);
-                Platform.Log(LogLevel.Info, "Storage is not ready. Postponing {0} work queue entry (GUID={1}) to {2}",item.WorkQueueTypeEnum, item.GetKey(), newScheduledTime);
-                PostponeItem(item, newScheduledTime, expire);
-            }
-            else
-            {
-                
-                if (!FilesystemIsAccessable())
-                {
-                    String reason = String.Format("Filesystem {0} is not readable and writable.", _filesystem.Filesystem.Description);
-                    FailQueueItem(item, reason);
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Info, "Study Edit started. GUID={0}. Storage={1}", item.GetKey(), item.StudyStorageKey);
+				Platform.Log(LogLevel.Info,
+				             "Starting Edit of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+				             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+				             Study.AccessionNumber, ServerPartition.Description);
 
-                    LoadAdditionalEntities();
-                    
-                    LoadExtensions();
+				LoadExtensions();
 
-                    WebEditStudyCommandCompiler compiler = new WebEditStudyCommandCompiler();
+				WebEditStudyCommandCompiler compiler = new WebEditStudyCommandCompiler();
 
-                    StatisticsSet statistics = null;
-                    using (ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study"))
-                    {
-                        XmlElement actionXml = item.Data.DocumentElement;
+				StatisticsSet statistics = null;
+				using (ServerCommandProcessor processor = new ServerCommandProcessor("Web Edit Study"))
+				{
+					XmlElement actionXml = item.Data.DocumentElement;
 
-                        List<BaseImageLevelUpdateCommand> updateCommands = compiler.Compile(actionXml);
-                        UpdateStudyCommand updateStudyCommand = new UpdateStudyCommand(ServerPartition, StorageLocation, updateCommands);
-                        processor.AddCommand(updateStudyCommand);
-                        
-                        WebEditStudyContext context = new WebEditStudyContext();
-                        context.WorkQueueProcessor = this;
-                        context.CommandProcessor = processor;
-                        context.EditType = EditType.WebEdit;
-                        context.OriginalStudyStorageLocation = StorageLocation;
-                        context.EditCommands = updateCommands;
-                        context.OriginalStudy = _study;
-                        context.OrginalPatient = _patient;
-                        
-                        OnStudyUpdating(context);
-                        
-                        if (processor.Execute())
-                        {
-                            context.NewStudystorageLocation = context.OriginalStudyStorageLocation;//won't change
+					List<BaseImageLevelUpdateCommand> updateCommands = compiler.Compile(actionXml);
+					UpdateStudyCommand updateStudyCommand = new UpdateStudyCommand(ServerPartition, StorageLocation, updateCommands);
+					processor.AddCommand(updateStudyCommand);
 
-                            Complete();
+					WebEditStudyContext context = new WebEditStudyContext();
+					context.WorkQueueProcessor = this;
+					context.CommandProcessor = processor;
+					context.EditType = EditType.WebEdit;
+					context.OriginalStudyStorageLocation = StorageLocation;
+					context.EditCommands = updateCommands;
+					context.OriginalStudy = _study;
+					context.OrginalPatient = _patient;
 
-                            OnStudyUpdated(context);
-                            
-                            statistics = updateStudyCommand.Statistics;
-                        }
-                        else
-                        {
-                            FailQueueItem(WorkQueueItem, processor.FailureReason);
-                            Platform.Log(LogLevel.Info, "Study Edit failed. GUID={0}. Reason={1}", WorkQueueItem.GetKey(), processor.FailureReason);
-                        }
-                    }
+					OnStudyUpdating(context);
 
-                    if (statistics != null)
-                    {
-                        StatisticsLogger.Log(LogLevel.Info, statistics);
-                    }
-                }
-            }
-        }
-        #endregion
+					if (processor.Execute())
+					{
+						context.NewStudystorageLocation = context.OriginalStudyStorageLocation; //won't change
+
+						Complete();
+
+						OnStudyUpdated(context);
+
+						statistics = updateStudyCommand.Statistics;
+					}
+					else
+					{
+						FailQueueItem(WorkQueueItem, processor.FailureReason);
+						Platform.Log(LogLevel.Info, "Study Edit failed. WorkQueueKey:{0}. Reason={1}", WorkQueueItem.GetKey(),
+						             processor.FailureReason);
+					}
+				}
+
+				if (statistics != null)
+				{
+					StatisticsLogger.Log(LogLevel.Info, statistics);
+				}
+			}
+		}
+
+    	#endregion
 
         #region Protected Methods
         protected void LoadExtensions()
@@ -258,7 +250,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 			PostProcessing(WorkQueueItem, 
 				WorkQueueProcessorStatus.Complete, 
 				WorkQueueProcessorDatabaseUpdate.ResetQueueState);
-            Platform.Log(LogLevel.Info, "Study Edit completed. GUID={0}", WorkQueueItem.GetKey());
+            Platform.Log(LogLevel.Info, "Study Edit completed. WorkQueueKey={0}", WorkQueueItem.GetKey());
         }
 
         protected override bool CanStart()
@@ -276,8 +268,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             workQueueCriteria.WorkQueueStatusEnum.In(new WorkQueueStatusEnum[] { WorkQueueStatusEnum.Idle, WorkQueueStatusEnum.InProgress, WorkQueueStatusEnum.Pending });
 
             List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(item, workQueueCriteria);
-            return (relatedItems == null || relatedItems.Count == 0);
+            if (! (relatedItems == null || relatedItems.Count == 0))
+            {
+				PostponeItem(WorkQueueItem);
+            	return false;
+            }
+        	return true;
         }
+
         #endregion
 
         #region Public Methods
@@ -292,6 +290,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                 {
                     plugin.Dispose();
                 }
+            	_plugins = null;
             }
 
             base.Dispose();

@@ -109,54 +109,41 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
         #region Overridden Protected Method
 
-        protected override void ProcessItem(Model.WorkQueue item)
-        {
-            //Load the storage location.
-			if (!LoadStorageLocation(item))
+		protected override void ProcessItem(Model.WorkQueue item)
+		{
+			if (StorageLocation.IsReconcileRequired)
 			{
-				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing DeleteStudy WorkQueue item, rescheduling");
-				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
-				return;
+				// fail immediately
+				FailQueueItem(item, "Study needs to be reconciled first");
 			}
-            else
-            {
-                if (StorageLocation.IsReconcileRequired)
-                {
-                    // fail immediately
-                    FailQueueItem(item, "Study needs to be reconciled first");
-                }
-                else
-                {
-                    Platform.Log(LogLevel.Info, "Processing {0} (GUID={1})", 
-                        WorkQueueItem.WorkQueueTypeEnum.Description,
-                        WorkQueueItem.Key.Key); 
-                    
-                    LoadExtensions();
+			else
+			{
+				Platform.Log(LogLevel.Info, "Processing {0} (GUID={1})",
+				             WorkQueueItem.WorkQueueTypeEnum.Description,
+				             WorkQueueItem.Key.Key);
 
-                    OnDeletingStudy();
-                    
-                    Platform.Log(LogLevel.Info, "Deleting study '{0}' from partition '{1}'",
-                                 StorageLocation.StudyInstanceUid,
-                                 ServerPartition.Description);
-                    
-                    RemoveFilesystem();
+				LoadExtensions();
 
-                    RemoveDatabase(item);
+				OnDeletingStudy();
 
-                    OnStudyDeleted();
+				Platform.Log(LogLevel.Info,
+				             "Deleting study {0} for Patient {1} (PatientId:{2} A#:{3}) on partition {4}",
+				             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+				             Study.AccessionNumber, ServerPartition.Description);
 
-                    Platform.Log(LogLevel.Info, "{0} is completed. (GUID={1})",
-                        WorkQueueItem.WorkQueueTypeEnum.Description,
-                        WorkQueueItem.Key.Key); 
-                    
+				RemoveFilesystem();
 
-                }
-                
-            }
-            
-        }
+				RemoveDatabase(item);
 
-        protected override bool CanStart()
+				OnStudyDeleted();
+
+				Platform.Log(LogLevel.Info, "{0} is completed. (GUID={1})",
+				             WorkQueueItem.WorkQueueTypeEnum.Description,
+				             WorkQueueItem.Key.Key);
+			}
+		}
+
+    	protected override bool CanStart()
         {
             WorkQueueSelectCriteria workQueueCriteria = new WorkQueueSelectCriteria();
             workQueueCriteria.StudyStorageKey.EqualTo(WorkQueueItem.StudyStorageKey);
@@ -174,7 +161,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 
             List<Model.WorkQueue> relatedItems = FindRelatedWorkQueueItems(WorkQueueItem, workQueueCriteria);
 
-            return (relatedItems == null || relatedItems.Count == 0);
+            if (! (relatedItems == null || relatedItems.Count == 0))
+            {
+				PostponeItem(WorkQueueItem);
+            	return false;
+            }
+    		return true;
         }
 
 

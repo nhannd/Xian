@@ -30,7 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common;
@@ -43,7 +42,6 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
@@ -186,6 +184,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <summary>
         /// Returns a value indicating whether the Dicom image must be reconciled.
         /// </summary>
+        /// <param name="uid"></param>
         /// <param name="message">The Dicom message</param>
         /// <returns></returns>
 		private bool ShouldReconcile(WorkQueueUid uid, DicomMessageBase message)
@@ -554,15 +553,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region Overridden Protected Method
 
-        protected override void Initialize(Model.WorkQueue item)
-        {
-            base.Initialize(item);
-
-            //Load the storage location.
-            LoadStorageLocation(item);
-        }
-
-        protected override void OnProcessItemEnd(Model.WorkQueue item)
+    	protected override void OnProcessItemEnd(Model.WorkQueue item)
         {
             Platform.CheckForNullReference(item, "item");
 
@@ -614,8 +605,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                 _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
             
                                 _context.StorageLocation = StorageLocation;
-                                
-                                // Process the images in the list
+
+								if (Study != null)
+								{
+									Platform.Log(LogLevel.Info, "Processing study {0} for Patient {1} (PatientId:{2} A#:{3}), {4} objects",
+									             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+									             Study.AccessionNumber, WorkQueueUidList.Count);
+								}
+								else
+								{
+									Platform.Log(LogLevel.Info, "Processing study {0}, {1} objects",
+												 StorageLocation.StudyInstanceUid, WorkQueueUidList.Count);
+								}
+                            	// Process the images in the list
                                 successful = ProcessUidList(item);
                             }
                         }
@@ -668,12 +670,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         protected override bool CanStart()
         {
-            if (StorageLocation==null)
-            {
-                Platform.Log(LogLevel.Warn, "Unable to find readable location when processing StudyProcess WorkQueue item, rescheduling");
-                return false;
-            }
-
             // If the study is not in processing state, attempt to push it into this state
             // If it fails, postpone the processing instead of failing
             if (StorageLocation.QueueStudyStateEnum != QueueStudyStateEnum.ProcessingScheduled)
@@ -683,7 +679,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     Platform.Log(LogLevel.Debug,
                                  "StudyProcess cannot start at this point. Study is being locked by another processor. Current state={0}",
                                  StorageLocation.QueueStudyStateEnum);
-
+                	PostponeItem(WorkQueueItem);
                     return false;
                 }
             }

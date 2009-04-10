@@ -214,18 +214,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReprocessStudy
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(item.StudyStorageKey, "item.StudyStorageKey");
 
-			if (!LoadStorageLocation(item))
-			{
-				Platform.Log(LogLevel.Warn, "Unable to find readable location when processing ReprocessStudy WorkQueue item, rescheduling");
-				PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
-				return;
-			}
-
 			try
 			{
 				ServerPartition partition = ServerPartition.Load(item.ServerPartitionKey);
-				Platform.Log(LogLevel.Info, "Started reprocess of study {0} on partition {1}", StorageLocation.StudyInstanceUid,
-							 partition.Description);
+
+				Platform.Log(LogLevel.Info,
+				             "Reprocessing study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+				             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+				             Study.AccessionNumber, ServerPartition.Description);
+
 				CleanupDirectory();
 
 				// Warning, this may end up causing problems w/ a long running transaction.

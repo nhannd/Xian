@@ -117,9 +117,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         return;
                     }
 
-                    Platform.Log(LogLevel.Info, "Starting archival of study {0} on partition {1} to archive {2}", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description,
-                        _hsmArchive.PartitionArchive.Description);
-
                     // First, check to see if we can lock the study, if not just reschedule the queue entry.
                     if (!_storageLocation.QueueStudyStateEnum.Equals(QueueStudyStateEnum.Idle))
                     {
@@ -138,7 +135,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         bool retVal = studyLock.Execute(parms);
                         if (!parms.Successful || !retVal)
                         {
-                            Platform.Log(LogLevel.Info, "Study {0} on partition {1} is failed to lock, delaying archival.", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description);
+                            Platform.Log(LogLevel.Info, "Study {0} on partition {1} failed to lock, delaying archival.", _storageLocation.StudyInstanceUid, _hsmArchive.ServerPartition.Description);
                             queueItem.FailureDescription = "Study failed to lock, delaying archival.";
                             _hsmArchive.UpdateArchiveQueue(queueItem, ArchiveQueueStatusEnum.Pending, Platform.Time.AddMinutes(2));
                             return;
@@ -155,10 +152,19 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
                     DicomMessage message = LoadMessageFromStudyXml();
 
+                	string patientsName = message.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
+					string patientId = message.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
+					string accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
+
+                	Platform.Log(LogLevel.Info,
+                	             "Starting archival of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4} on archive {5}",
+                	             _storageLocation.StudyInstanceUid, patientsName, patientId,
+                	             accessionNumber, _hsmArchive.ServerPartition.Description,
+                	             _hsmArchive.PartitionArchive.Description);
+
                     // Use the command processor to do the archival.
                     using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("Archive"))
                     {
-
                         _archiveXml = new XmlDocument();
 
                         // Create the study date folder
@@ -190,7 +196,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
 
                         // Create the Zip file
-                        commandProcessor.AddCommand(new CreateStudyZipCommand(zipFilename, _studyXml, studyFolder));
+                    	commandProcessor.AddCommand(
+                    		new CreateStudyZipCommand(zipFilename, _studyXml, studyFolder, executionContext.TempDirectory));
 
                         // Update the database.
                         commandProcessor.AddCommand(new InsertArchiveStudyStorageCommand(queueItem.StudyStorageKey, queueItem.PartitionArchiveKey, queueItem.GetKey(), _storageLocation.ServerTransferSyntaxKey, _archiveXml));
@@ -213,8 +220,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                             Platform.Log(LogLevel.Info, "Successfully archived study {0} on {1}", _storageLocation.StudyInstanceUid,
                                          _hsmArchive.PartitionArchive.Description);
                     }
-
-
                 }
                 catch (Exception e)
                 {
@@ -242,8 +247,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         update.Commit();
                     }
                 }
-            }
-			
+            }			
 		}
 
 		/// <summary>

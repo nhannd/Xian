@@ -108,9 +108,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
 				// This will just delete the study, if there's no images that have been sucessfully processed.
             	CheckEmptyStudy(item);
                 return;
-            }      
+            }
 
-            Platform.Log(LogLevel.Info, "Cleaning up unprocessed objects for study {0} on partition {1}", StorageLocation.StudyInstanceUid, ServerPartition.Load(item.ServerPartitionKey).AeTitle);
+        	Platform.Log(LogLevel.Info,
+        	             "Starting Cleanup of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4}",
+        	             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
+        	             Study.AccessionNumber, ServerPartition.Description);
 
             string basePath = StorageLocation.GetStudyPath();
 

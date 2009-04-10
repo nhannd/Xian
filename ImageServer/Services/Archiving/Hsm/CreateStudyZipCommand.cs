@@ -45,6 +45,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		private readonly string _zipFile;
 		private readonly StudyXml _studyXml;
 		private readonly string _studyFolder;
+		private readonly string _tempFolder;
 
 		/// <summary>
 		/// Constructor
@@ -52,11 +53,13 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <param name="zipFile">The path of the zip file to create</param>
 		/// <param name="studyXml">The <see cref="StudyXml"/> file describing the contents of the study.</param>
 		/// <param name="studyFolder">The folder the study is stored in.</param>
-		public CreateStudyZipCommand(string zipFile, StudyXml studyXml, string studyFolder) : base("Create study zip file",true)
+		/// <param name="tempFolder">The folder for tempory files when creating the zip file.</param>
+		public CreateStudyZipCommand(string zipFile, StudyXml studyXml, string studyFolder, string tempFolder) : base("Create study zip file",true)
 		{
 			_zipFile = zipFile;
 			_studyXml = studyXml;
 			_studyFolder = studyFolder;
+			_tempFolder = tempFolder;
 		}
 
 		/// <summary>
@@ -67,6 +70,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 			using (ZipFile zip = new ZipFile(_zipFile))
 			{
 				zip.ForceNoCompression = !HsmSettings.Default.CompressZipFiles;
+				zip.TempFileFolder = _tempFolder;
 				zip.Comment = String.Format("Archive for study {0}", _studyXml.StudyInstanceUid);
 
 				// Add the studyXml file
