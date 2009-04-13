@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -130,6 +131,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy
 				             "Deleting study {0} for Patient {1} (PatientId:{2} A#:{3}) on partition {4}",
 				             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,
 				             Study.AccessionNumber, ServerPartition.Description);
+
+				// Audit log
+				DicomStudyDeletedAuditHelper helper = new DicomStudyDeletedAuditHelper(
+													ServerPlatform.AuditSource,
+													EventIdentificationTypeEventOutcomeIndicator.Success);
+				helper.AddUserParticipant(new AuditProcessActiveParticipant(ServerPartition.AeTitle));
+				helper.AddStudyParticipantObject(new AuditStudyParticipantObject(
+														Study.StudyInstanceUid,
+														Study.AccessionNumber));
+				ServerPlatform.LogAuditMessage("DicomStudyDeleted", helper);
+
 
 				RemoveFilesystem();
 
