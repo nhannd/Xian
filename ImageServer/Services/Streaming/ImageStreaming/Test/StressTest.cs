@@ -13,17 +13,9 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Test
 {
-    class Sop
-    {
-        public string StudyInstanceUid;
-        public string SeriesInstanceUid;
-        public string SopInstanceUid;
-    }
-
     class HeaderStreamingServiceClient : ClientBase<IHeaderStreamingService>, IHeaderStreamingService
     {
         public HeaderStreamingServiceClient()
@@ -39,15 +31,14 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Test
 
         public Stream GetStudyHeader(string callingAETitle, HeaderStreamingParameters parameters)
         {
-            return base.Channel.GetStudyHeader(callingAETitle, parameters);
+            return Channel.GetStudyHeader(callingAETitle, parameters);
         }
     }
 
     class TestClient
     {
         private StudyXml _studyXml;
-        private List<Sop> _instances = new List<Sop>();
-        private string _id;
+        private readonly string _id;
 
         public TestClient(string id)
         {
@@ -178,9 +169,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Test
                                                        TestClient client = new TestClient("" + Thread.CurrentThread.ManagedThreadId);
                                                        client.GetStudy(_studies[r.Next(_studies.Count)],
                                                                        new Uri("http://localhost:1000/wado"),
-                                                                       "ImageServer", single);
-
-                                                       
+                                                                       "ImageServer", single);                                                       
                                                    } while (true);
                                                    
                                                 }
@@ -189,8 +178,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Test
                 thread.Start(i);
             }
         }
-
-
 
         #endregion
     }

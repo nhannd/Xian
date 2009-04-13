@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
         public string Filter;
     }
 
-    class SopImportedEventArgs : EventArgs
+    internal class SopImportedEventArgs : EventArgs
     {
         public string  StudyInstanceUid;
         public string  SeriesInstanceUid;
@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
             FileInfo fileInfo = new FileInfo(filePath);
             if (fileInfo.Exists)
             {
-                DicomFile file = null;
+                DicomFile file;
                 try
                 {
                     file = new DicomFile(filePath);
@@ -144,6 +144,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                                     importedSopCount = 1;
                                     Platform.Log(LogLevel.Info, "Imported SOP {0} to {1}", result.SopInstanceUid, _parms.PartitionAE);
                                     ProgressChangedEventArgs progress = new ProgressChangedEventArgs(100, result.SopInstanceUid);
+
+									// Fire the imported event.
+									SopImportedEventArgs args = new SopImportedEventArgs();
+                                	args.StudyInstanceUid = result.StudyInstanceUid;
+                                	args.SeriesInstanceUid = result.SeriesInstanceUid;
+                                	args.SopInstanceUid = result.SopInstanceUid;
+                                	EventsHelper.Fire(_sopImportedHandlers, this, args);
+
                                     OnProgressChanged(progress);
                                 }
                             }
@@ -187,8 +195,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
             }
 
             return importedSopCount;
-        }
-    
+        }    
 
         #endregion
     }
