@@ -161,17 +161,23 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// <summary>
         /// This stores the film Session Uid that in the Film Session create request, we need it later on...
         /// </summary>
-        DicomUid _filmSessionUid = null;
+        string _filmSessionUid = null;
 
         /// <summary>
         /// This stores the film BOx Uid that in the Film Box create request, we need it later on...
         /// </summary>
-        DicomUid _filmBoxUid = null;
+        private IList<string> _filmBoxUids = new List<string>();
+
+        /// <summary>
+        /// Need to remember film box response message because this contains info about the image boxes... note
+        /// only supports one film box for now...
+        /// </summary>
+        IDictionary<string, DicomAttributeCollection> _filmBoxResponseMessages = new Dictionary<string, DicomAttributeCollection>();
 
         /// <summary>
         /// Keeps track of which image is sent
         /// </summary>
-        int _currentImageBoxIndex;
+        private int _currentImageBoxIndex;
 
         /// <summary>
         /// Basic Film Session request
@@ -188,7 +194,6 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// </summary>
         IList<ImageBoxPixelModuleIod> _imageBoxPixelModuleIods;
 
-        
         #endregion
 
         #region Constructors
@@ -198,17 +203,6 @@ namespace ClearCanvas.Dicom.Network.Scu
         public BasicGrayscalePrintScu()
             :base()
         {
-        }
-        #endregion
-
-        #region Public Properties
-        /// <summary>
-        /// Gets the results of the find request.
-        /// </summary>
-        /// <value>The results.</value>
-        public DicomAttributeCollection Results
-        {
-            get { return _results; }
         }
         #endregion
 
@@ -226,16 +220,16 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// <param name="imageBoxPixelModuleIods">The image box pixel module iods.</param>
         public DicomState Print(string clientAETitle, string remoteAE, string remoteHost, int remotePort, BasicFilmSessionModuleIod basicFilmSessionModuleIod, BasicFilmBoxModuleIod basicFilmBoxModuleIod, IList<ImageBoxPixelModuleIod> imageBoxPixelModuleIods)
         {
-            this._results = null;
-            this._filmSessionUid = null;
-            this._filmBoxUid = null;
+            _results = null;
+            _filmSessionUid = null;
             _basicFilmSessionModuleIod = basicFilmSessionModuleIod;
             _basicFilmBoxModuleIod = basicFilmBoxModuleIod;
             _imageBoxPixelModuleIods = imageBoxPixelModuleIods;
-            _firstFilmBoxResponseMessage = null;
-            this._currentImageBoxIndex = 0;
+            _filmBoxResponseMessages.Clear();
+            _currentImageBoxIndex = 0;
+            _filmBoxUids.Clear();
             Connect(clientAETitle, remoteAE, remoteHost, remotePort);
-            return base.ResultStatus;
+            return ResultStatus;
         }
 
         /// <summary>
@@ -269,7 +263,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
             if (printDelegate != null)
             {
-                return (DicomState)printDelegate.EndInvoke(ar);
+                return printDelegate.EndInvoke(ar);
             }
             else
                 throw new InvalidOperationException("cannot get results, asynchresult is null");
@@ -282,9 +276,8 @@ namespace ClearCanvas.Dicom.Network.Scu
             DicomMessage newRequestMessage = new DicomMessage(null, (DicomAttributeCollection)_basicFilmSessionModuleIod.DicomAttributeProvider);
 
             byte pcid = association.FindAbstractSyntaxOrThrowException(SopClass.BasicGrayscalePrintManagementMetaSopClass);
-            _filmSessionUid = DicomUid.GenerateUid();
             _nextRequestType = RequestType.FilmBox;
-            client.SendNCreateRequest(_filmSessionUid, pcid, client.NextMessageID(), newRequestMessage, DicomUids.BasicFilmSession);
+            client.SendNCreateRequest(DicomUid.GenerateUid(), pcid, client.NextMessageID(), newRequestMessage, DicomUids.BasicFilmSession);
         }
 
         private void SendCreateFilmBoxRequest(DicomClient client, ClientAssociationParameters association, DicomMessage responseMessage)
@@ -299,31 +292,26 @@ namespace ClearCanvas.Dicom.Network.Scu
 
             byte pcid = association.FindAbstractSyntaxOrThrowException(SopClass.BasicGrayscalePrintManagementMetaSopClass);
 
-            _filmBoxUid = DicomUid.GenerateUid();
             _nextRequestType = RequestType.ImageBox;
-            client.SendNCreateRequest(_filmBoxUid, pcid, client.NextMessageID(), newRequestMessage, DicomUids.BasicFilmBoxSOP);
+            client.SendNCreateRequest(DicomUid.GenerateUid(), pcid, client.NextMessageID(), newRequestMessage, DicomUids.BasicFilmBoxSOP);
         }
 
-        /// <summary>
-        /// Need to remember first film box response message because this contains info about the image boxes...
-        /// </summary>
-        DicomAttributeCollection _firstFilmBoxResponseMessage;
-
-        private void SendSetImageBoxRequest(DicomClient client, ClientAssociationParameters association, DicomMessage responseMessage)
+        private void SendSetImageBoxRequest(DicomClient client, ClientAssociationParameters association)
         {
             if (_currentImageBoxIndex >= _imageBoxPixelModuleIods.Count)
             {
+                // done sending images box - send print request
                 _nextRequestType = RequestType.PrintAction;
-                SendActionPrintRequest(client, association, responseMessage);
+                SendActionPrintRequest(client, association);
             }
             else
             {
-                if (_currentImageBoxIndex == 0)
-                {
-                    _firstFilmBoxResponseMessage = responseMessage.DataSet;
-                }
+                // want to get first film box response - although not sure if CC is using .net 3.5.. prolly not so do it old way
+                IEnumerator<DicomAttributeCollection> filmBoxResponseEnumerator = _filmBoxResponseMessages.Values.GetEnumerator();
+                filmBoxResponseEnumerator.Reset();
+                filmBoxResponseEnumerator.MoveNext();
 
-                BasicFilmBoxModuleIod basicFilmBoxModuleIod = new BasicFilmBoxModuleIod(_firstFilmBoxResponseMessage);
+                BasicFilmBoxModuleIod basicFilmBoxModuleIod = new BasicFilmBoxModuleIod(filmBoxResponseEnumerator.Current);
 
                 if (_currentImageBoxIndex > basicFilmBoxModuleIod.ReferencedImageBoxSequenceList.Count)
                 {
@@ -350,10 +338,10 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// <param name="client">The client.</param>
         /// <param name="association">The association.</param>
         /// <param name="responseMessage">The response message.</param>
-        private void SendActionPrintRequest(DicomClient client, ClientAssociationParameters association, DicomMessage responseMessage)
+        private void SendActionPrintRequest(DicomClient client, ClientAssociationParameters association)
         {
             DicomMessage newRequestMessage = new DicomMessage(null, null);
-            newRequestMessage.RequestedSopInstanceUid = _filmBoxUid.UID;
+            newRequestMessage.RequestedSopInstanceUid = _filmBoxUids[0];
             newRequestMessage.RequestedSopClassUid = SopClass.BasicFilmBoxSopClassUid;
             newRequestMessage.ActionTypeId = 1;
             _nextRequestType = RequestType.DeleteFilmBox;
@@ -364,29 +352,38 @@ namespace ClearCanvas.Dicom.Network.Scu
 
         private void SendDeleteFilmBoxRequest(DicomClient client, ClientAssociationParameters association, DicomMessage responseMessage)
         {
-            DicomMessage newRequestMessage = new DicomMessage(null, null);
-            newRequestMessage.RequestedSopInstanceUid = _filmBoxUid.UID;
-            newRequestMessage.RequestedSopClassUid = SopClass.BasicFilmBoxSopClassUid;
+            if (_filmBoxUids.Count == 0)
+            {
+                // no more film boxes left to delete - so send delete film session
+                SendDeleteFilmSessionRequest(client, association);
+            }
+            else
+            {
+                string currentFilmBoxUid = _filmBoxUids[0];
+                _filmBoxUids.Remove(currentFilmBoxUid);
 
-            _nextRequestType = RequestType.DeleteFilmSession;
+                DicomMessage newRequestMessage = new DicomMessage(null, null);
+                newRequestMessage.RequestedSopInstanceUid = currentFilmBoxUid;
+                newRequestMessage.RequestedSopClassUid = SopClass.BasicFilmBoxSopClassUid;
+                newRequestMessage.Priority = DicomPriority.Medium;
 
-            byte pcid = association.FindAbstractSyntaxOrThrowException(SopClass.BasicGrayscalePrintManagementMetaSopClass);
-            client.SendNDeleteRequest(pcid, client.NextMessageID(), newRequestMessage);
+                _nextRequestType = RequestType.DeleteFilmBox;
+
+                byte pcid = association.FindAbstractSyntaxOrThrowException(SopClass.BasicGrayscalePrintManagementMetaSopClass);
+                client.SendNDeleteRequest(pcid, client.NextMessageID(), newRequestMessage);
+            }
         }
 
-        private void SendDeleteFilmSessionRequest(DicomClient client, ClientAssociationParameters association, DicomMessage responseMessage)
+        private void SendDeleteFilmSessionRequest(DicomClient client, ClientAssociationParameters association)
         {
             DicomMessage newRequestMessage = new DicomMessage(null, null);
-            newRequestMessage.RequestedSopInstanceUid = _filmSessionUid.UID;
+            newRequestMessage.RequestedSopInstanceUid = _filmSessionUid;
             newRequestMessage.RequestedSopClassUid = SopClass.BasicFilmSessionSopClassUid;
 
             _nextRequestType = RequestType.Close;
             byte pcid = association.FindAbstractSyntaxOrThrowException(SopClass.BasicGrayscalePrintManagementMetaSopClass);
             client.SendNDeleteRequest(pcid, client.NextMessageID(), newRequestMessage);
         }
-
-
-
 
         #endregion
 
@@ -400,7 +397,9 @@ namespace ClearCanvas.Dicom.Network.Scu
         {
             base.OnReceiveAssociateAccept(client, association);
             if (Canceled)
+            {
                 client.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
+            }
             else
             {
                 SendCreateFilmSessionRequest(client, association);
@@ -421,8 +420,19 @@ namespace ClearCanvas.Dicom.Network.Scu
                 base.ResultStatus = message.Status.Status;
                 if (message.Status.Status == DicomState.Success)
                 {
+                    if (message.CommandField == DicomCommandField.NCreateResponse && message.AffectedSopClassUid == SopClass.BasicFilmSessionSopClassUid)
+                    {
+                        _filmSessionUid = message.AffectedSopInstanceUid;
+                    }
+
+                    else if (message.CommandField == DicomCommandField.NCreateResponse && message.AffectedSopClassUid == SopClass.BasicFilmBoxSopClassUid)
+                    {
+                        _filmBoxUids.Add(message.AffectedSopInstanceUid);
+                        _filmBoxResponseMessages.Add(message.AffectedSopInstanceUid, message.DataSet);
+                    }
+
                     Platform.Log(LogLevel.Info, "Success status received in Printer Status Scu!");
-                    this._results = message.DataSet;
+                    _results = message.DataSet;
                     switch (_nextRequestType)
                     {
                         case RequestType.FilmBox:
@@ -430,11 +440,11 @@ namespace ClearCanvas.Dicom.Network.Scu
                             break;
 
                         case RequestType.ImageBox:
-                            SendSetImageBoxRequest(client, association, message);
+                            SendSetImageBoxRequest(client, association);
                             break;
 
                         case RequestType.PrintAction:
-                            SendActionPrintRequest(client, association, message);
+                            SendActionPrintRequest(client, association);
                             break;
 
                         case RequestType.DeleteFilmBox:
@@ -442,7 +452,7 @@ namespace ClearCanvas.Dicom.Network.Scu
                             break;
 
                         case RequestType.DeleteFilmSession:
-                            SendDeleteFilmSessionRequest(client, association, message);
+                            SendDeleteFilmSessionRequest(client, association);
                             break;
 
                         case RequestType.Close:
@@ -502,6 +512,5 @@ namespace ClearCanvas.Dicom.Network.Scu
         #endregion
 
     }
-
 
 }

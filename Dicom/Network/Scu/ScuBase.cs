@@ -594,6 +594,8 @@ namespace ClearCanvas.Dicom.Network.Scu
 			if (stopStatus == ScuOperationStatus.Running)
 				stopStatus = ScuOperationStatus.NetworkError;
 
+            ResultStatus = DicomState.Failure;
+
 			StopRunningOperation(stopStatus);
 		}
 
@@ -605,6 +607,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		public void OnDimseTimeout(DicomClient client, ClientAssociationParameters association)
 		{
 			Status = ScuOperationStatus.TimeoutExpired;
+            ResultStatus = DicomState.Failure;
 			FailureDescription = String.Format("Timeout Expired for remote host {0}, aborting connection", RemoteAE);
 			if (LogInformation) Platform.Log(LogLevel.Info, FailureDescription );
 

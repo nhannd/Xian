@@ -218,7 +218,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
 
                 this.SamplesPerPixel = 1; // only possible value for grayscale as per dicom standard
 
-                if (imagePixelMacroIod.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 || imagePixelMacroIod.PhotometricInterpretation != PhotometricInterpretation.Monochrome2)
+                if (imagePixelMacroIod.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 && imagePixelMacroIod.PhotometricInterpretation != PhotometricInterpretation.Monochrome2)
                 {
                     // Dicom File doesn't have Monochrome1 or MonoChrome2 - what to do?  throw exception or pick one?  let's try picking one...
                     this.PhotometricInterpretation = PhotometricInterpretation.Monochrome1;
@@ -232,7 +232,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
                 this.Columns = imagePixelMacroIod.Columns;
 
                 PixelAspectRatio ratio = imagePixelMacroIod.PixelAspectRatio;
-				if (ratio.IsNull)
+				if (ratio == null || ratio.IsNull)
 					this.PixelAspectRatio = new PixelAspectRatio(1, 1);
 
                 //TODO: figure out when to make it 12... possible values are only 8 or 12...

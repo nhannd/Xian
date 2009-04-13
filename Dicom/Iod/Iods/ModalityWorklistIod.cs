@@ -45,7 +45,6 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// Initializes a new instance of the <see cref="ModalityWorklistIod"/> class.
         /// </summary>
         public ModalityWorklistIod()
-            :base()
         {
         }
 
@@ -66,7 +65,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The patient module.</value>
         public PatientIdentificationModuleIod PatientIdentificationModule
         {
-            get { return base.GetModuleIod<PatientIdentificationModuleIod>(); }
+            get { return GetModuleIod<PatientIdentificationModuleIod>(); }
         }
 
         /// <summary>
@@ -75,7 +74,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The requested procedure module.</value>
         public RequestedProcedureModuleIod RequestedProcedureModule
         {
-            get { return base.GetModuleIod<RequestedProcedureModuleIod>(); }
+            get { return GetModuleIod<RequestedProcedureModuleIod>(); }
         }
 
         /// <summary>
@@ -84,7 +83,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The scheduled procedure step module.</value>
         public ScheduledProcedureStepModuleIod ScheduledProcedureStepModule
         {
-            get { return base.GetModuleIod<ScheduledProcedureStepModuleIod>(); }
+            get { return GetModuleIod<ScheduledProcedureStepModuleIod>(); }
         }
 
         /// <summary>
@@ -93,7 +92,16 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// <value>The imaging service request module.</value>
         public ImagingServiceRequestModule ImagingServiceRequestModule
         {
-            get { return base.GetModuleIod<ImagingServiceRequestModule>(); }
+            get { return GetModuleIod<ImagingServiceRequestModule>(); }
+        }
+
+        /// <summary>
+        /// Gets the patient medical module module.
+        /// </summary>
+        /// <value>The patient medical module.</value>
+        public PatientMedicalModule PatientMedicalModule
+        {
+            get { return GetModuleIod<PatientMedicalModule>(); }
         }
        #endregion
 
@@ -103,7 +111,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
         /// </summary>
         public void SetCommonTags()
         {
-            SetCommonTags(base.DicomAttributeProvider);
+            SetCommonTags(DicomAttributeProvider);
         }
         #endregion
 
@@ -131,6 +139,7 @@ namespace ClearCanvas.Dicom.Iod.Iods
             iod.SetAttributeNull(DicomTags.ReferringPhysiciansName);
             iod.SetAttributeNull(DicomTags.RequestedProcedureLocation);
             iod.SetAttributeNull(DicomTags.AccessionNumber);
+            iod.SetAttributeNull(DicomTags.PatientsSex);
 
             ScheduledProcedureStepSequenceIod scheduledProcedureStepSequenceIod = new ScheduledProcedureStepSequenceIod();
             scheduledProcedureStepSequenceIod.SetCommonTags();
