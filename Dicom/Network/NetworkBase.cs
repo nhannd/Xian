@@ -1057,7 +1057,185 @@ namespace ClearCanvas.Dicom.Network
             SendDimse(presentationID, message.CommandSet, message.DataSet);
         }
 
-        #endregion
+		/// <summary>
+		/// Sends an N-Get request.
+		/// </summary>
+		/// <param name="requestedSopInstanceUid">The requested sop instance uid.</param>
+		/// <param name="presentationID">The presentation ID.</param>
+		/// <param name="messageID">The message ID.</param>
+		/// <param name="message">The message.</param>
+		public void SendNGetRequest(DicomUid requestedSopInstanceUid, byte presentationID, ushort messageID, DicomMessage message)
+		{
+			if (message.DataSet.IsEmpty())
+				throw new DicomException("Unexpected empty DataSet when sending N-GET-RQ.");
+
+			DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
+
+			message.AffectedSopClassUid = affectedClass.UID;
+			message.MessageId = messageID;
+			message.CommandField = DicomCommandField.NGetRequest;
+
+			if (!message.CommandSet.Contains(DicomTags.Priority))
+				message.Priority = DicomPriority.Medium;
+			message.DataSetType = 0x0202;
+
+			message.CommandSet[DicomTags.RequestedSopClassUid].SetStringValue(affectedClass.UID);
+			message.CommandSet[DicomTags.RequestedSopInstanceUid].SetStringValue(requestedSopInstanceUid.UID);
+
+
+			SendDimse(presentationID, message.CommandSet, message.DataSet);
+		}
+
+		/// <summary>
+		/// Sends an N-Create request, affected class is the one associated with the <paramref name="presentationID"/>.
+		/// </summary>
+		/// <param name="affectedSopInstanceUid">The affected sop instance uid.</param>
+		/// <param name="presentationID">The presentation ID.</param>
+		/// <param name="messageID">The message ID.</param>
+		/// <param name="message">The message.</param>
+		public void SendNCreateRequest(DicomUid affectedSopInstanceUid, byte presentationID, ushort messageID, DicomMessage message)
+		{
+			SendNCreateRequest(affectedSopInstanceUid, presentationID, messageID, message, null);
+		}
+
+		/// <summary>
+		/// Sends an N-Create Request.
+		/// </summary>
+		/// <param name="affectedSopInstanceUid">The affected sop instance uid.</param>
+		/// <param name="presentationID">The presentation ID.</param>
+		/// <param name="messageID">The message ID.</param>
+		/// <param name="message">The message.</param>
+		/// <param name="affectedClass">The affected class.</param>
+		public void SendNCreateRequest(DicomUid affectedSopInstanceUid, byte presentationID, ushort messageID, DicomMessage message, DicomUid affectedClass)
+		{
+			if (message.DataSet.IsEmpty())
+				throw new DicomException("Unexpected empty DataSet when sending N-CREATE-RQ.");
+
+			if (affectedClass == null)
+				affectedClass = _assoc.GetAbstractSyntax(presentationID);
+
+			message.AffectedSopClassUid = affectedClass.UID;
+			message.MessageId = messageID;
+			message.CommandField = DicomCommandField.NCreateRequest;
+			if (!message.CommandSet.Contains(DicomTags.Priority))
+				message.Priority = DicomPriority.Medium;
+			message.DataSetType = 0x0202;
+
+			if (affectedSopInstanceUid != null)
+				message.AffectedSopInstanceUid = affectedSopInstanceUid.UID;
+
+			SendDimse(presentationID, message.CommandSet, message.DataSet);
+		}
+
+		/// <summary>
+		/// Sends an N-Create Response.
+		/// </summary>
+		/// <param name="presentationID">The presentation context ID</param>
+		/// <param name="messageID">The MessageID being responsed to.</param>
+		/// <param name="message">The response message to send.</param>
+		/// <param name="status">The status to send.</param>
+		public void SendNCreateResponse(byte presentationID, ushort messageID, DicomMessage message, DicomStatus status)
+		{
+			SendNCreateNSetNDeleteHelper(DicomCommandField.NCreateResponse, presentationID, messageID, message, status);
+		}
+
+
+		/// <summary>
+		/// Sends an N-Set request.
+		/// </summary>
+		/// <param name="presentationID">The presentation context ID to send the request over.</param>
+		/// <param name="messageID">The message ID.</param>
+		/// <param name="message">The message.</param>
+		public void SendNSetRequest(byte presentationID, ushort messageID, DicomMessage message)
+		{
+			if (message.DataSet.IsEmpty())
+				throw new DicomException("Unexpected empty DataSet when sending N-SET-RQ.");
+
+			message.MessageId = messageID;
+			message.CommandField = DicomCommandField.NSetRequest;
+			if (!message.CommandSet.Contains(DicomTags.Priority))
+				message.Priority = DicomPriority.Medium;
+
+			message.DataSetType = 0x0202;
+
+			SendDimse(presentationID, message.CommandSet, message.DataSet);
+		}
+
+		/// <summary>
+		/// Sends an N-Set Response.
+		/// </summary>
+		/// <param name="presentationID">The presentation context ID to send th response over.</param>
+		/// <param name="messageID">The message ID.</param>
+		/// <param name="message">The response message to send.</param>
+		/// <param name="status">The status to set in the response message.</param>
+		public void SendNSetResponse(byte presentationID, ushort messageID, DicomMessage message, DicomStatus status)
+		{
+			SendNCreateNSetNDeleteHelper(DicomCommandField.NSetResponse, presentationID, messageID, message, status);
+		}
+
+		/// <summary>
+		/// Sends an N-Action request.
+		/// </summary>
+		/// <param name="presentationID">The presentation ID to send the request message on.</param>
+		/// <param name="messageID">The message ID.</param>
+		/// <param name="message">The message.</param>
+		public void SendNActionRequest(byte presentationID, ushort messageID, DicomMessage message)
+		{
+			message.MessageId = messageID;
+			message.CommandField = DicomCommandField.NActionRequest;
+
+			//if (message.DataSet != null && !message.DataSet.IsEmpty())
+			message.DataSetType = 257;
+
+			SendDimse(presentationID, message.CommandSet, message.DataSet);
+		}
+
+		/// <summary>
+		/// Sends an N-Action Response.
+		/// </summary>
+		/// <param name="presentationID">The presentation context ID to send the response message on.</param>
+		/// <param name="messageID">The message ID of the message responding to.</param>
+		/// <param name="message">The response message to send.</param>
+		/// <param name="status">The status to set in the response message.</param>
+		public void SendNActionResponse(byte presentationID, ushort messageID, DicomMessage message, DicomStatus status)
+		{
+			SendNCreateNSetNDeleteHelper(DicomCommandField.NActionResponse, presentationID, messageID, message, status);
+		}
+
+		/// <summary>
+		/// Sends an N-Delete Request.
+		/// </summary>
+		/// <param name="presentationID">The presentation ID.</param>
+		/// <param name="messageID">The message ID.</param>
+		/// <param name="message">The message.</param>
+		public void SendNDeleteRequest(byte presentationID, ushort messageID, DicomMessage message)
+		{
+			message.MessageId = messageID;
+			message.CommandField = DicomCommandField.NDeleteRequest;
+			if (!message.CommandSet.Contains(DicomTags.Priority))
+				message.Priority = DicomPriority.Medium;
+
+			if (message.DataSet == null || message.DataSet.IsEmpty())
+				message.DataSetType = 0x0101;
+			else
+				message.DataSetType = 0x202;
+
+			SendDimse(presentationID, message.CommandSet, message.DataSet);
+		}
+
+		/// <summary>
+		/// Sends an N-Delete Response.
+		/// </summary>
+		/// <param name="presentationID">The presentation context ID to send the response message on.</param>
+		/// <param name="messageID">The message ID of the request message being responded to.</param>
+		/// <param name="message">The response message to send.</param>
+		/// <param name="status">The status to send in the response message.</param>
+		public void SendNDeleteResponse(byte presentationID, ushort messageID, DicomMessage message, DicomStatus status)
+		{
+			SendNCreateNSetNDeleteHelper(DicomCommandField.NDeleteResponse, presentationID, messageID, message, status);
+		}
+
+		#endregion
 
         #region Private Methods
 
@@ -1358,6 +1536,8 @@ namespace ClearCanvas.Dicom.Network
                                 if (!ret)
 									Platform.Log(LogLevel.Error, "Error with OnReceiveDimse");
 
+                                LogSendReceive(true, _dimse.Command, _dimse.Dataset);
+                                
                                 //_assoc.TotalBytesRead += (UInt64)total;
 
                                 _dimse = null;
@@ -1408,6 +1588,8 @@ namespace ClearCanvas.Dicom.Network
                             }
                             _dimse.CommandData = null;
                             _dimse.CommandReader = null;
+
+                            LogSendReceive(true, _dimse.Command, _dimse.Dataset);
 
                             if (_dimse.IsNewDimse)
                             {
@@ -1478,7 +1660,7 @@ namespace ClearCanvas.Dicom.Network
                     command.CalculateWriteLength(TransferSyntax.ImplicitVrLittleEndian,
                                                  DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
 
-                if (dataset != null)
+                if (dataset != null  && !dataset.IsEmpty())
                     total += dataset.CalculateWriteLength(ts, DicomWriteOptions.Default);
 
                 PDataTFStream pdustream;
@@ -1493,6 +1675,8 @@ namespace ClearCanvas.Dicom.Network
                                             if (DimseMessageSending != null)
                                                 DimseMessageSending(_assoc, pcid, command, dataset);
                                         };
+
+                LogSendReceive(false, command, dataset);
 
                 OnSendDimseBegin(pcid, command, dataset);
 
@@ -1527,133 +1711,42 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
-        /// <summary>
-        /// Sends an N-Get request.
-        /// </summary>
-        /// <param name="requestedSopInstanceUid">The requested sop instance uid.</param>
-        /// <param name="presentationID">The presentation ID.</param>
-        /// <param name="messageID">The message ID.</param>
-        /// <param name="message">The message.</param>
-        public void SendNGetRequest(DicomUid requestedSopInstanceUid, byte presentationID, ushort messageID, DicomMessage message)
-        {
-            if (message.DataSet.IsEmpty())
-                throw new DicomException("Unexpected empty DataSet when sending N-GET-RQ.");
+		/// <summary>
+		/// Helper for sending N-Create, N-Set, and N-Delete Response messages.
+		/// </summary>
+		/// <param name="commandField">The type of message.</param>
+		/// <param name="presentationID">The presentation context ID to send the message on.</param>
+		/// <param name="messageID">The message ID to use for the message.</param>
+		/// <param name="message">The actual message to send.</param>
+		/// <param name="status">The response message.</param>
+		private void SendNCreateNSetNDeleteHelper(DicomCommandField commandField, byte presentationID, ushort messageID, DicomMessage message, DicomStatus status)
+		{
+			message.CommandField = commandField;
+			message.MessageId = messageID;
+			message.AffectedSopClassUid = message.AffectedSopClassUid;
+			if (!message.CommandSet.Contains(DicomTags.Priority))
+				message.Priority = DicomPriority.Medium;
 
-            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
+			if (message.DataSet == null || message.DataSet.IsEmpty())
+				message.DataSetType = 0x0101;
+			else
+				message.DataSetType = 0x202;
+			message.Status = status;
+			SendDimse(presentationID, message.CommandSet, message.DataSet);
 
-            message.AffectedSopClassUid = affectedClass.UID;
-            message.MessageId = messageID;
-            message.CommandField = DicomCommandField.NGetRequest;
-
-            if (!message.CommandSet.Contains(DicomTags.Priority))
-                message.Priority = DicomPriority.Medium;
-            message.DataSetType = 0x0202;
-
-            message.CommandSet[DicomTags.RequestedSopClassUid].SetStringValue(affectedClass.UID);
-            message.CommandSet[DicomTags.RequestedSopInstanceUid].SetStringValue(requestedSopInstanceUid.UID);
-
-
-            SendDimse(presentationID, message.CommandSet, message.DataSet);
-        }
-
-        /// <summary>
-        /// Sends an N-Create request, affected class is the one associated with the <paramref name="presentationID"/>.
-        /// </summary>
-        /// <param name="affectedSopInstanceUid">The affected sop instance uid.</param>
-        /// <param name="presentationID">The presentation ID.</param>
-        /// <param name="messageID">The message ID.</param>
-        /// <param name="message">The message.</param>
-        public void SendNCreateRequest(DicomUid affectedSopInstanceUid, byte presentationID, ushort messageID, DicomMessage message)
-        {
-            SendNCreateRequest(affectedSopInstanceUid, presentationID, messageID, message, null);
-        }
-
-        /// <summary>
-        /// Sends an N-Create Request.
-        /// </summary>
-        /// <param name="affectedSopInstanceUid">The affected sop instance uid.</param>
-        /// <param name="presentationID">The presentation ID.</param>
-        /// <param name="messageID">The message ID.</param>
-        /// <param name="message">The message.</param>
-        /// <param name="affectedClass">The affected class.</param>
-        public void SendNCreateRequest(DicomUid affectedSopInstanceUid, byte presentationID, ushort messageID, DicomMessage message, DicomUid affectedClass)
-        {
-            if (message.DataSet.IsEmpty())
-                throw new DicomException("Unexpected empty DataSet when sending N-CREATE-RQ.");
-
-            if (affectedClass == null)
-                affectedClass = _assoc.GetAbstractSyntax(presentationID);
-
-            message.AffectedSopClassUid = affectedClass.UID;
-            message.MessageId = messageID;
-            message.CommandField = DicomCommandField.NCreateRequest;
-            if (!message.CommandSet.Contains(DicomTags.Priority))
-                message.Priority = DicomPriority.Medium;
-            message.DataSetType = 0x0202;
-
-            if (affectedSopInstanceUid != null)
-                message.AffectedSopInstanceUid = affectedSopInstanceUid.UID;
-
-            SendDimse(presentationID, message.CommandSet, message.DataSet);
-        }
-
-        /// <summary>
-        /// Sends the N set request.
-        /// </summary>
-        /// <param name="presentationID">The presentation ID.</param>
-        /// <param name="messageID">The message ID.</param>
-        /// <param name="message">The message.</param>
-        public void SendNSetRequest(byte presentationID, ushort messageID, DicomMessage message)
-        {
-            if (message.DataSet.IsEmpty())
-                throw new DicomException("Unexpected empty DataSet when sending N-SET-RQ.");
-
-             message.MessageId = messageID;
-            message.CommandField = DicomCommandField.NSetRequest;
-            if (!message.CommandSet.Contains(DicomTags.Priority))
-                message.Priority = DicomPriority.Medium;
-
-            message.DataSetType = 0x0202;
-
-            SendDimse(presentationID, message.CommandSet, message.DataSet);
-        }
-
-        /// <summary>
-        /// Sends the N action request.
-        /// </summary>
-        /// <param name="presentationID">The presentation ID.</param>
-        /// <param name="messageID">The message ID.</param>
-        /// <param name="message">The message.</param>
-        public void SendNActionRequest(byte presentationID, ushort messageID, DicomMessage message)
-        {
-            message.MessageId = messageID;
-            message.CommandField = DicomCommandField.NActionRequest;
-
-            //if (message.DataSet != null && !message.DataSet.IsEmpty())
-                message.DataSetType = 257;
-
-            SendDimse(presentationID, message.CommandSet, message.DataSet);
-        }
-
-        /// <summary>
-        /// Sends the N delete request.
-        /// </summary>
-        /// <param name="presentationID">The presentation ID.</param>
-        /// <param name="messageID">The message ID.</param>
-        /// <param name="message">The message.</param>
-        public void SendNDeleteRequest(byte presentationID, ushort messageID, DicomMessage message)
-        {
-            message.MessageId = messageID;
-            message.CommandField = DicomCommandField.NDeleteRequest;
-            if (!message.CommandSet.Contains(DicomTags.Priority))
-                message.Priority = DicomPriority.Medium;
-
-            //if (message.DataSet != null && !message.DataSet.IsEmpty())
-                message.DataSetType = 0x0201;
-
-            SendDimse(presentationID, message.CommandSet, message.DataSet);
-        }
+		}
         #endregion
+
+        private static void LogSendReceive(bool receive, DicomAttributeCollection metaInfo, DicomAttributeCollection dataSet)
+        {
+			if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+			{
+				string receiveOrSend = receive ? "Receive" : "Send";
+				Platform.Log(LogLevel.Debug,
+				             receiveOrSend + " MetaInfo:\r\n" + (metaInfo != null ? metaInfo.DumpString : String.Empty));
+				Platform.Log(LogLevel.Debug, receiveOrSend + " DataSet:\r\n" + (dataSet != null ? dataSet.DumpString : String.Empty));
+			}
+        }
     }
 }
  

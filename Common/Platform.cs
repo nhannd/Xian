@@ -578,6 +578,29 @@ namespace ClearCanvas.Common
             throw new UnknownServiceException(string.Format(SR.ExceptionNoServiceProviderCanProvide, service.FullName));
         }
 
+		/// <summary>
+		/// Determines if the specified <see cref="LogLevel"/> is enabled.
+		/// </summary>
+		/// <param name="category">The logging level to check.</param>
+		/// <returns>true if the <see cref="LogLevel"/> is enabled, or else false.</returns>
+		public static bool IsLogLevelEnabled(LogLevel category)
+		{
+			switch (category)
+			{
+				case LogLevel.Debug:
+					return _log.IsDebugEnabled;
+				case LogLevel.Info:
+					return _log.IsInfoEnabled;
+				case LogLevel.Warn:
+					return _log.IsWarnEnabled;
+				case LogLevel.Error:
+					return _log.IsErrorEnabled;
+				case LogLevel.Fatal:
+					return _log.IsFatalEnabled;
+			}
+			return false;
+		}
+
         /// <summary>
         /// Logs the specified message at the specified <see cref="LogLevel"/>.
         /// </summary>
