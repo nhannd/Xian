@@ -129,6 +129,24 @@
   <data name="DicomServerDescription" xml:space="preserve">
     <value>Dicom Server</value>
   </data>
+  <data name="FaultFilesystemOffline" xml:space="preserve">
+    <value>The filesystem containing the study is not readable.</value>
+  </data>
+  <data name="FaultLocked" xml:space="preserve">
+    <value>The requested object is being used by another process. Please try again later.</value>
+  </data>
+  <data name="FaultNearline" xml:space="preserve">
+    <value>The Study is nearline.</value>
+  </data>
+  <data name="FaultNotExists" xml:space="preserve">
+    <value>The study {0} does on exist on the partition {1}.</value>
+  </data>
+  <data name="FaultPartitionDisabled" xml:space="preserve">
+    <value>Server {0} has been disabled</value>
+  </data>
+  <data name="FaultPartitionNotExists" xml:space="preserve">
+    <value>Server Partition {0} does not exist.</value>
+  </data>
   <data name="HeaderStreamingServerDescription" xml:space="preserve">
     <value>Provide DICOM header streaming service</value>
   </data>

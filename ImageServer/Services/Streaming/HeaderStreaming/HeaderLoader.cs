@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
         private readonly string _partitionAE;
         private readonly string _studyInstanceUid;
         private StudyStorageLocation _studyLocation;
+    	private string _faultDescription;
 
         #region Constructor
 
@@ -65,7 +66,9 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
             storageLoader.CacheEnabled = ImageStreamingServerSettings.Default.EnableCache;
             storageLoader.CacheRetentionTime = ImageStreamingServerSettings.Default.CacheRetentionWindow;
             StudyLocation = storageLoader.Find(_studyInstanceUid, partition);
-            
+			if (StudyLocation == null)
+				_faultDescription = storageLoader.FaultDescription;
+
 			_statistics.FindStudyFolder.End();
         }
 
@@ -113,6 +116,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
             get { return _studyLocation; }
             set { _studyLocation = value; }
 		}
+
+    	public string FaultDescription
+    	{
+			get { return _faultDescription; }
+			set { _faultDescription = value; }    		
+    	}
 
 		#endregion
 

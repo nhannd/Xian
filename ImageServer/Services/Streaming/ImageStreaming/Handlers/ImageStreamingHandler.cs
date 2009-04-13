@@ -54,10 +54,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 
             ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(context.ServerAE);
             if (partition== null)
-                throw new WADOException(HttpStatusCode.NotFound, String.Format("Server {0} does not exist", context.ServerAE));
+				throw new WADOException(HttpStatusCode.NotFound, String.Format(SR.FaultPartitionNotExists, context.ServerAE));
 
             if (!partition.Enabled)
-                throw new WADOException(HttpStatusCode.Forbidden, String.Format("Server {0} has been disabled", context.ServerAE));
+                throw new WADOException(HttpStatusCode.Forbidden, String.Format(SR.FaultPartitionDisabled, context.ServerAE));
             
             ImageStreamingContext streamingContext = new ImageStreamingContext();
             streamingContext.ServerAE = context.ServerAE;
@@ -72,16 +72,16 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             storageLoader.CacheEnabled = ImageStreamingServerSettings.Default.EnableCache;
             storageLoader.CacheRetentionTime = ImageStreamingServerSettings.Default.CacheRetentionWindow;
             StudyStorageLocation location = storageLoader.Find(streamingContext.StudyInstanceUid, partition);
-            if (location==null)	
-                throw new WADOException(HttpStatusCode.NotFound, "The requested object does not have a readable location on the specified server");
+            if (location==null)
+            	throw new WADOException(HttpStatusCode.NotFound, storageLoader.FaultDescription);
 
             streamingContext.StorageLocation = location;
 
             if (!File.Exists(streamingContext.ImagePath))
-                throw new WADOException(HttpStatusCode.NotFound, "The requested object does not exist on the specified server");
+                throw new WADOException(HttpStatusCode.NotFound, SR.FaultNotExists);
 
             if (streamingContext.StorageLocation.Lock)
-                throw new WADOException(HttpStatusCode.Forbidden, "The requested object is being used by another process. Please try again later.");
+                throw new WADOException(HttpStatusCode.Forbidden, SR.FaultLocked);
             
             // convert the dicom image into the appropriate mime type
             WADOResponse response = new WADOResponse();

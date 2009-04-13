@@ -95,8 +95,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 				loader = new HeaderLoader(context);
 				Stream stream = loader.Load();
 				if (stream == null)
-					throw new FaultException(
-						String.Format("Study {0} does not exist on partition {1}", parameters.StudyInstanceUID, parameters.ServerAETitle));
+					throw new FaultException(loader.FaultDescription);
 
 				//Random r = new Random();
 				//Thread.Sleep(r.Next(2000));

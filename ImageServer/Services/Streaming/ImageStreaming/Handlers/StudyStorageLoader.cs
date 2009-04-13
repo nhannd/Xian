@@ -1,22 +1,27 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 {
     class StudyStorageLoader
-    {
-        private static readonly ServerSessionList _serverSessions = new ServerSessionList();
-
+	{
+		#region Private Members
+		private static readonly ServerSessionList _serverSessions = new ServerSessionList();
         private static readonly StudyStorageLoaderStatistics _statistics = new StudyStorageLoaderStatistics();
-        
         private readonly string _sessionId;
         private bool _cacheEnabled = true;
         private TimeSpan _cacheRetentionTime = TimeSpan.FromSeconds(10); //default
+    	private string _faultDescription = String.Empty;
+		#endregion
 
-        public StudyStorageLoader(string sessionId)
+		#region Public Properties
+		public StudyStorageLoader(string sessionId)
         {
             _sessionId = sessionId;
         }
@@ -31,16 +36,57 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
         {
             get { return _cacheRetentionTime; }
             set { _cacheRetentionTime = value; }
-        }
+		}
 
-        public StudyStorageLocation Find(string studyInstanceUid, ServerPartition partition)
+		public string FaultDescription
+		{
+			get { return _faultDescription; }
+			set { _faultDescription = value; }
+		}
+		#endregion
+
+		#region Public Methods
+		private void CheckNearline(string studyInstanceUid, ServerPartition partition)
+		{
+			StudyStorage storage = StudyStorage.Load(partition.Key, studyInstanceUid);
+			if (storage != null && storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+			{
+				FaultDescription = SR.FaultNearline;
+
+				using (
+					IUpdateContext updateContext =
+						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+				{
+					IInsertRestoreQueue broker = updateContext.GetBroker<IInsertRestoreQueue>();
+
+					InsertRestoreQueueParameters parms = new InsertRestoreQueueParameters();
+					parms.StudyStorageKey = storage.Key;
+
+					RestoreQueue queue = broker.FindOne(parms);
+
+					if (queue != null)
+						updateContext.Commit();
+				}
+			}
+			else if (storage != null)
+			{
+				FaultDescription = SR.FaultFilesystemOffline;
+			}
+			else
+				FaultDescription = String.Format(SR.FaultNotExists, studyInstanceUid, partition.AeTitle);
+		}
+
+    	public StudyStorageLocation Find(string studyInstanceUid, ServerPartition partition)
         {
             TimeSpan STATS_WINDOW = TimeSpan.FromMinutes(1);
             StudyStorageLocation location;
             if (!CacheEnabled)
             {
-                FilesystemMonitor.Instance.GetStudyStorageLocation(partition.Key, studyInstanceUid, out location);
-                return location;
+				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
+				{
+					CheckNearline(studyInstanceUid, partition);
+				}
+            	return location;
             }
 
             Session session = _serverSessions[_sessionId];
@@ -65,12 +111,18 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                 if (location == null)
                 {
                     _statistics.Misses++;
-                    FilesystemMonitor.Instance.GetStudyStorageLocation(partition.Key, studyInstanceUid, out location);
-                    cache.Insert(location, studyInstanceUid);
-                    Platform.Log(LogLevel.Info,"Cache (since {0}): Hits {1} [{3:0}%], Miss {2}",
-                                _statistics.StartTime,
-                                _statistics.Hits, _statistics.Misses, 
-                                (float)_statistics.Hits / (_statistics.Hits + _statistics.Misses) * 100f);
+					if (FilesystemMonitor.Instance.GetStudyStorageLocation(partition.Key, studyInstanceUid, out location))
+					{
+						cache.Insert(location, studyInstanceUid);
+						Platform.Log(LogLevel.Info, "Cache (since {0}): Hits {1} [{3:0}%], Miss {2}",
+						             _statistics.StartTime,
+						             _statistics.Hits, _statistics.Misses,
+						             (float) _statistics.Hits/(_statistics.Hits + _statistics.Misses)*100f);
+					}
+					else
+					{
+						CheckNearline(studyInstanceUid, partition);
+					}
                 }
                 else
                 {
@@ -84,8 +136,9 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                 
             }
             return location;
-        }
-    }
+		}
+		#endregion
+	}
 
     class StudyStorageLoaderStatistics : StatisticsSet
     {
