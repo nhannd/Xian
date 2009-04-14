@@ -1,8 +1,10 @@
+using System;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
 
 namespace ClearCanvas.ImageServer.Enterprise.Authentication
 {
+
     public class SessionInfo
     {
         private readonly CustomPrincipal _user;
@@ -54,12 +56,12 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
 
         private void Validate()
         {
+            _valid = false;
             using(LoginService service = new LoginService())
             {
                 service.Validate(this);
                 _valid = true;
-            }
-            
+            }   
         }
     }
 }

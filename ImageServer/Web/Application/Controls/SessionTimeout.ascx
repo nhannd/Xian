@@ -23,7 +23,10 @@
                 
         var expiryTime = GetExpiryTime();
                        
-        if(expiryTime == null) {
+        if(expiryTime == null) 
+        {
+            // this could mean cookie is disabled
+            // or user has signed out in another window.
             window.location = redirectPage;
         } else {
             var now = new Date();
@@ -33,7 +36,6 @@
             var utc = localTime + localOffset;
             
             now = new Date(utc);
-            
             var sessionExpiry = new Date(expiryTime);
                         
             if(now > sessionExpiry) {

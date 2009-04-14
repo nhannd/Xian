@@ -37,6 +37,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                                     new CustomPrincipal(new CustomIdentity(userName, response.DisplayName),
                                                         credentials);
                                 session = new SessionInfo(user);
+                                
                             }
                             else
                             {
@@ -70,7 +71,9 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
             ValidateSessionRequest request = new ValidateSessionRequest(session.User.Identity.Name, session.Credentials.SessionToken);
             request.GetAuthorizations = true;
 
-            Platform.GetService<IAuthenticationService>(
+            try
+            {
+                Platform.GetService<IAuthenticationService>(
                 delegate(IAuthenticationService service)
                     {
                         ValidateSessionResponse response = service.ValidateSession(request);
@@ -78,6 +81,15 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                         session.Credentials.Authorities = response.AuthorityTokens;
                         session.Credentials.SessionToken = response.SessionToken;
                     });
+            }
+            catch(Exception ex)
+            {
+                //TODO: for now we can't distinguish communicate errors and credential validation errors.
+                // All exceptions are treated the same: we can't verify the login.
+                SessionValidationException e = new SessionValidationException(ex);
+                throw e;
+            }
+            
 
             
         }

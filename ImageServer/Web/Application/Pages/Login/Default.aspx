@@ -30,7 +30,12 @@
         <div id="LoginCredentials">
         <table>
             <tr>
-                <td colspan="2" align="right"><asp:Panel style="background: #8FC3E4; padding: 2px 7px 2px 7px;" runat="server" ID="LoginErrorPanel" Visible="false"><asp:Label runat="server" ID="LoginError" ForeColor="red" Text="Invalid username/password combination." /></asp:Panel></td>
+                <td colspan="2" align="right">
+                    <asp:Panel style="background: #8FC3E4; padding: 2px 7px 2px 7px;" runat="server" ID="ErrorMessagePanel"
+                        Visible='<%# !String.IsNullOrEmpty(Page.Request.QueryString["error"]) %>'>
+                        <asp:Label runat="server" ID="ErrorMessage" ForeColor="red" Text='<%# Page.Request.QueryString["error"] %>' />
+                    </asp:Panel>
+                </td>
             </tr>        
             <tr>
             <td>Username:</td>

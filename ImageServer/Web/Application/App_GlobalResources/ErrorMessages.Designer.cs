@@ -149,5 +149,14 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
                 return ResourceManager.GetString("EditStudyValidationError", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid username or password..
+        /// </summary>
+        internal static string LoginInvalidUsernameOrPassword {
+            get {
+                return ResourceManager.GetString("LoginInvalidUsernameOrPassword", resourceCulture);
+            }
+        }
     }
 }

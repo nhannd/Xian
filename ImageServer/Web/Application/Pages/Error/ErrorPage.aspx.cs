@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 
         protected void Logout_Click(Object sender, EventArgs e)
         {
-            SessionManager.TerminateSession(true);
+            SessionManager.TerminateSession();
         }
 
     }

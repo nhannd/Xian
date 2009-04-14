@@ -147,4 +147,7 @@
   <data name="EditStudyValidationError" xml:space="preserve">
     <value>Validation Error. Please check all tabs for indicated errors and correct before submitting changes.</value>
   </data>
+  <data name="LoginInvalidUsernameOrPassword" xml:space="preserve">
+    <value>Invalid username or password.</value>
+  </data>
 </root>

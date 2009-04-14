@@ -9,6 +9,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
@@ -18,15 +19,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            SessionManager.TerminateSession(false);
-            TimeoutMinutes.Text = Session.Timeout.ToString();
-
+            TimeoutMinutes.Text = SessionManager.SessionTimeout.Minutes.ToString();
             Page.Title = App_GlobalResources.Titles.TimeoutErrorPageTitle;
+        }
+
+        protected override void Render(HtmlTextWriter writer)
+        {
+            base.Render(writer);
+            SessionManager.TerminateSession(false);
         }
 
         protected void Login_Click(Object sender, EventArgs e)
         {
-            Response.Redirect("~/Pages/Login/Default.aspx");
+            SessionManager.RedirectToLogin();
         }
 
     }

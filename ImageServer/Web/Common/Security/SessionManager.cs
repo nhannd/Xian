@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Web;
 using System.Web.Security;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
@@ -11,12 +12,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
 {
     public static class SessionManager
     {
+        #region Private Fields
+        private static TimeSpan _sessionTimeOut;
+        #endregion
+
         /// <summary>
         /// Returns the current session information
         /// </summary>
         /// <remarks>
-        /// The session information is set by calling <see cref="InitializeSession"/>. It is null 
-        /// if the <see cref="InitializeSession"/> hasn't been called or <see cref="TerminateSession()"/> has been called.
+        /// The session information is set by calling <see cref="InitializeSession(SessionInfo)"/>. It is null 
+        /// if the <see cref="InitializeSession(SessionInfo)"/> hasn't been called or <see cref="TerminateSession()"/> has been called.
         /// </remarks>
         public static SessionInfo Current
         {
@@ -41,23 +46,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         }
 
         /// <summary>
-        /// Sets up the principal for the thread and save the authentiction ticket if there's none.
+        /// Sets up the principal for the thread and save the authentiction ticket.
         /// </summary>
         /// <param name="session"></param>
         public static void InitializeSession(SessionInfo session)
         {
             if (!session.Valid)
             {
-                throw new ApplicationException("Attempt to initialize session with an invalid session object");
+                throw new SessionValidationException();
             }
             else
             {
                 // this should throw exception if the session is no longer valid. It also loads the authority tokens}
-
                 Current = session;
 
                 string loginId = session.User.Identity.Name;
-                string displayName = (session.User.Identity as CustomIdentity).DisplayName;
+                CustomIdentity identity = session.User.Identity as CustomIdentity;
+                Platform.CheckForNullReference(identity, "identity");
+                
+                string displayName = identity.DisplayName;
                 SessionToken token = session.Credentials.SessionToken;
                 string[] authorities = session.Credentials.Authorities;
 
@@ -83,20 +90,48 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
 
                 HttpContext.Current.Response.Cookies.Set(authCookie);
                 HttpContext.Current.Response.Cookies.Set(expiryCookie);
+
+                SessionTimeout = token.ExpiryTime - Platform.Time;
             }
 
-       }
+        }
+
+        /// <summary>
+        /// Intializes the session using the given username and password.
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="password"></param>
+        public static SessionInfo InitializeSession(string username, string password)
+        {
+            using (LoginService service = new LoginService())
+            {
+                SessionInfo session = service.Login(username, password);
+                InitializeSession(session);
+                return session;
+            }
+        }
 
         /// <summary>
         /// Terminates the current session and redirects users to the login page
         /// </summary>
         public static void TerminateSession()
         {
-            TerminateSession(true);
+            TerminateSession("");
+        }
+
+
+        /// <summary>
+        /// Terminates the current session and redirects users to the login page and displays the given message on the screen.
+        /// </summary>
+        public static void TerminateSession(string error)
+        {
+            SignOut();// force to signout by removing the authentication ticket
+            String queryString = String.Format("error={0}", error);
+            FormsAuthentication.RedirectToLoginPage(queryString);
         }
 
         /// <summary>
-        /// Terminates the current session and redirects users to the login page
+        /// Terminates the current session and optionally redirects users to the login page
         /// </summary>
         public static void TerminateSession(bool redirect)
         {
@@ -106,8 +141,54 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                 HttpContext.Current.Application.Remove(loginId.Name);
             }
 
-            FormsAuthentication.SignOut();
-            if(redirect) HttpContext.Current.Response.Redirect(ImageServerConstants.PageURLs.LoginPage);
+            SignOut();
+
+            if(redirect)
+            {
+                RedirectToLogin();
+            }
         }
+
+
+        /// <summary>
+        /// Signs out (no direction)
+        /// </summary>
+        public static void SignOut()
+        {
+            FormsAuthentication.SignOut();
+        }
+
+        /// <summary>
+        /// Signals the session is timed out.
+        /// </summary>
+        public static void Timeout()
+        {
+            SignOut();// force to signout again when user clicks on something
+        }
+
+        /// <summary>
+        /// Redirects users to the login screen.
+        /// </summary>
+        public static void RedirectToLogin()
+        {
+            FormsAuthentication.RedirectToLoginPage();
+        }
+
+        /// <summary>
+        /// Gets or sets the session time out in minutes.
+        /// </summary>
+        public static TimeSpan SessionTimeout
+        {
+            get
+            {
+                return _sessionTimeOut;
+            }
+            set
+            {
+                // no thread-safety check here, assuming it's almost the same even if it's changed.
+                _sessionTimeOut = value;
+            }
+        }
+
     }
 }

@@ -37,6 +37,7 @@ using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise.Authentication;
+using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
@@ -47,47 +48,54 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            DataBind();
         }
 
         protected void LoginClicked(object sender, EventArgs e)
         {
-            using(LoginService service =new LoginService())
+            try
             {
-                try
-                {
-                    SessionInfo session = service.Login(UserName.Text, Password.Text);
-                    SessionManager.InitializeSession(session);
+                SessionInfo session = SessionManager.InitializeSession(UserName.Text, Password.Text);
+				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource, 
+					EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
+				audit.AddUserParticipant(new AuditPersonActiveParticipant(session.Credentials.UserName, null, session.Credentials.DisplayName));
+				ServerPlatform.LogAuditMessage("UserAuthentication", audit);
 
-					UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource, 
-						EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
-					audit.AddUserParticipant(new AuditPersonActiveParticipant(session.Credentials.UserName, null, session.Credentials.DisplayName));
-					ServerPlatform.LogAuditMessage("UserAuthentication", audit);
+                Response.Redirect(FormsAuthentication.GetRedirectUrl(UserName.Text, false));
+            }
+            catch (PasswordExpiredException)
+            {
+                PasswordExpiredDialog.Show(UserName.Text, Password.Text);
+            }
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex, "Invalid login");
 
-                    Response.Redirect(FormsAuthentication.GetRedirectUrl(UserName.Text, false));
-                }
-                catch (PasswordExpiredException)
-                {
-                    PasswordExpiredDialog.Show(UserName.Text, Password.Text);
-                }
-				catch (FaultException x)
-				{
-					Platform.Log(LogLevel.Info,x,"Invalid login");
-				    LoginErrorPanel.Visible = true;
-                    UserName.Focus();
+                // TODO: The server is throwing exception when username or password is invalid or something else. 
+                // We can't determine the cause unless IncludeExceptionDetailInFaults is enabled on the server.
+                // For this reason, we can only assume for now it only throw exceptions.
+                // If the error is due to communication with the server, users will be redirected to the error page instead.
+                ShowError(ErrorMessages.LoginInvalidUsernameOrPassword);
+                UserName.Focus();
 
-					UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-						EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated,UserAuthenticationEventType.Login );
-					audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text,null,null));
-					ServerPlatform.LogAuditMessage("UserAuthentication",audit);
-				}
-
-            };
-            
+				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
+					EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated,UserAuthenticationEventType.Login );
+				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text,null,null));
+				ServerPlatform.LogAuditMessage("UserAuthentication",audit);
+			}
         }
 
         public void ChangePassword(object sender, EventArgs e)
         {
             ChangePasswordDialog.Show(true);
+        }
+
+
+
+        private void ShowError(string error)
+        {
+            ErrorMessage.Text = error;
+            ErrorMessagePanel.Visible = true;
         }
     }
 }

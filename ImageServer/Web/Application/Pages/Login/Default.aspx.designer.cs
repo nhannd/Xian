@@ -47,22 +47,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login {
         protected global::System.Web.UI.ScriptManager GlobalScriptManager;
         
         /// <summary>
-        /// LoginErrorPanel control.
+        /// ErrorMessagePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Panel LoginErrorPanel;
+        protected global::System.Web.UI.WebControls.Panel ErrorMessagePanel;
         
         /// <summary>
-        /// LoginError control.
+        /// ErrorMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label LoginError;
+        protected global::System.Web.UI.WebControls.Label ErrorMessage;
         
         /// <summary>
         /// UserName control.

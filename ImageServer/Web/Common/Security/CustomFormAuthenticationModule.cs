@@ -32,6 +32,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             {
                 if (HttpContext.Current.User.Identity.IsAuthenticated && HttpContext.Current.User.Identity is FormsIdentity)
                 {
+                    // Note: If user signed out in another window, the ticket would have been 
+                    // removed from the browser and this code shoudn't be executed.
+                    
+                    // resemble the SessionInfo from the ticket.
                     FormsIdentity loginId = (FormsIdentity) HttpContext.Current.User.Identity ;
                     FormsAuthenticationTicket ticket = loginId.Ticket;
 
@@ -39,13 +43,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                     String tokenId = fields[0];
                     String userDisplayName = fields[1];
                     SessionToken token = new SessionToken(tokenId, ticket.Expiration);
-
                     SessionInfo  session = new SessionInfo(loginId.Name, userDisplayName, token);
+
+                    // Initialize the session. This will throw exception if the session is no longer
+                    // valid. For eg, time-out.
                     SessionManager.InitializeSession(session);
                 }
                 
             }
-            catch (Exception ex)
+            catch (SessionValidationException)
+            {
+                // redirect to login screen
+                String error = String.Format("The current session is no longer valid.");
+                SessionManager.TerminateSession(error);
+            }
+            catch(Exception ex)
             {
                 // log the exception
                 ExceptionHandler.ThrowException(ex);
