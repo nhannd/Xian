@@ -208,7 +208,6 @@ namespace ClearCanvas.Dicom.Network.Scu
 				Platform.Log(LogLevel.Info, "Success status received in sending verification!");
 				_verificationResult = VerificationResult.Success;
 			}
-			ProgressEvent.Set();
 			client.SendReleaseRequest();
 			StopRunningOperation();
 		}

@@ -41,9 +41,9 @@ namespace ClearCanvas.Dicom.Network.Scu
     /// <summary>
     /// Abstract class for Move SCU.  Please see <see cref="PatientRootMoveScu"/> and <see cref="StudyRootMoveScu"/>.
     /// </summary>
-    public abstract class MoveScuBase :ScuBase 
+    public abstract class MoveScuBase : ScuBase 
     {
-       #region Public Events/Delegates
+        #region Public Events/Delegates
 
         /// Event called when an image has completed being moved.
         /// </summary>
@@ -67,6 +67,7 @@ namespace ClearCanvas.Dicom.Network.Scu
         private int _remainingSubOperations = 0;
         private readonly DicomAttributeCollection _dicomAttributeCollection = new DicomAttributeCollection();
         string _destinationAe;
+    	private int _timeoutCount = 0;
         #endregion
 
         #region Constructors
@@ -190,7 +191,7 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// <returns></returns>
         public IAsyncResult BeginMove(AsyncCallback callback, object asyncState)
         {
-            MoveDelegate moveDelegate = new MoveDelegate(this.Move);
+            MoveDelegate moveDelegate = this.Move;
             return moveDelegate.BeginInvoke(callback, asyncState);
         }
 
@@ -301,7 +302,7 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// <exception cref="InvalidOperationException">If adding an instance of a different Query Level</exception>
         private void CheckForOtherLevel(QueryRetrieveLevel queryRetrieveLevel)
         {
-            QueryRetrieveLevel currentLevel = IodBase.ParseEnum<QueryRetrieveLevel>(_dicomAttributeCollection[DicomTags.QueryRetrieveLevel].GetString(0, String.Empty), QueryRetrieveLevel.None);
+            QueryRetrieveLevel currentLevel = IodBase.ParseEnum(_dicomAttributeCollection[DicomTags.QueryRetrieveLevel].GetString(0, String.Empty), QueryRetrieveLevel.None);
 
             if (currentLevel != QueryRetrieveLevel.None && queryRetrieveLevel != currentLevel)
             {
@@ -352,6 +353,7 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// <param name="message">The message.</param>
 		public override void OnReceiveResponseMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
         {
+			_timeoutCount = 0;
         	_failureSubOperations = message.NumberOfFailedSubOperations;
         	_successSubOperations = message.NumberOfCompletedSubOperations;
         	_remainingSubOperations = message.NumberOfRemainingSubOperations;
@@ -398,6 +400,36 @@ namespace ClearCanvas.Dicom.Network.Scu
 				StopRunningOperation();
 			}
         }
+
+
+		/// <summary>
+		/// Called when a timeout occurs waiting for the next message, as specified by <see cref="AssociationParameters.ReadTimeout"/>.
+		/// </summary>
+		/// <param name="client">The client.</param>
+		/// <param name="association">The association.</param>
+		public override void OnDimseTimeout(DicomClient client, ClientAssociationParameters association)
+		{
+			_timeoutCount++;
+			if (_timeoutCount > 10)
+			{
+				Status = ScuOperationStatus.TimeoutExpired;
+				// Timeout in ReadTimeout / 1000 * 10, ie, ReadTimeout / 100
+				FailureDescription = String.Format("Timeout Expired ({0} seconds) for remote host {1}, aborting connection", association.ReadTimeout / 100, RemoteAE);
+				if (LogInformation) Platform.Log(LogLevel.Info, FailureDescription);
+
+				try
+				{
+					client.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(LogLevel.Error, ex, "Error aborting association");
+				}
+
+				if (LogInformation) Platform.Log(LogLevel.Info, "Completed aborting connection from {0} to {1}", association.CallingAE, association.CalledAE);
+				ProgressEvent.Set();
+			}
+		}
 
     	#endregion
 

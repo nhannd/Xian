@@ -417,7 +417,6 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// <param name="client">The client.</param>
         protected void ReleaseConnection(DicomClient client)
         {
-            ProgressEvent.Set();
             if (client != null)
                 client.SendReleaseRequest();
             StopRunningOperation();
@@ -570,7 +569,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// </summary>
 		/// <param name="client">The client.</param>
 		/// <param name="association">The association.</param>
-		/// <param name="e">The e.</param>
+		/// <param name="e">The e.  Note, e can be null in some instances.</param>
 		public void OnNetworkError(DicomClient client, ClientAssociationParameters association, Exception e)
 		{
 			//TODO: right now this method gets called in timeout and abort situations.  Should add
@@ -578,7 +577,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 
 			//We don't want to blow away other failure descriptions (e.g. the OnDimseTimeout one).
 			if (Status == ScuOperationStatus.Running)
-				FailureDescription = String.Format("Unexpected network error: {0}", e.Message);
+				FailureDescription = String.Format("Unexpected network error: {0}", e == null ? "Unknown" : e.Message);
 
 			if (client._state == DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
 			{
@@ -604,7 +603,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// </summary>
 		/// <param name="client">The client.</param>
 		/// <param name="association">The association.</param>
-		public void OnDimseTimeout(DicomClient client, ClientAssociationParameters association)
+		public virtual void OnDimseTimeout(DicomClient client, ClientAssociationParameters association)
 		{
 			Status = ScuOperationStatus.TimeoutExpired;
             ResultStatus = DicomState.Failure;

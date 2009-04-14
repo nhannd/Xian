@@ -170,7 +170,7 @@ namespace ClearCanvas.Dicom.Network
         private Thread _thread;
         private bool _stop;
         internal DicomAssociationState _state = DicomAssociationState.Sta1_Idle;
-        private int _timeout = 30;
+        private readonly int _timeout = 60; // Default timeout when none set
 		private bool _logInformation = true;
 
         internal Queue<RawPDU> _pduQueue = new Queue<RawPDU>();
@@ -1246,8 +1246,13 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                DateTime timeout = DateTime.Now.AddSeconds(_timeout);
-                while (!_stop)
+                DateTime timeout;
+				if (_assoc != null)
+					timeout = DateTime.Now.AddSeconds(_assoc.ReadTimeout / 1000);
+				else
+					timeout = DateTime.Now.AddSeconds(_timeout);
+
+				while (!_stop)
                 {
                     if (NetworkHasData())
                     {
@@ -1308,6 +1313,7 @@ namespace ClearCanvas.Dicom.Network
                         }
                         else
                         {
+                        	Platform.Log(LogLevel.Error, "DIMSE timeout in unexpected state: {0}", _state.ToString());
                             OnDimseTimeout();
                             if (_assoc != null)
                                 timeout = DateTime.Now.AddSeconds(_assoc.ReadTimeout/1000);
