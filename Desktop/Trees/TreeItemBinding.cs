@@ -55,6 +55,7 @@ namespace ClearCanvas.Desktop.Trees
     {
         private Converter<TItem, string> _nodeTextProvider;
     	private SetterDelegate<TItem, string> _nodeTextSetter;
+		private Converter<TItem, bool> _canSetNodeTextHandler;
         private Converter<TItem, bool> _isCheckedGetter;
         private SetterDelegate<TItem, bool> _isCheckedSetter;
         private Converter<TItem, string> _tooltipTextProvider;
@@ -114,6 +115,15 @@ namespace ClearCanvas.Desktop.Trees
 			set { _nodeTextSetter = value; }
 		}
 		
+		/// <summary>
+		/// Gets or sets the handler that determines whether or not the text of this item can change.
+		/// </summary>
+    	public Converter<TItem, bool> CanSetNodeTextHandler
+    	{
+			get { return _canSetNodeTextHandler; }
+			set { _canSetNodeTextHandler = value; }
+    	}
+
         /// <summary>
         /// Gets or sets the node checked status provider for this binding.
         /// </summary>
@@ -221,12 +231,25 @@ namespace ClearCanvas.Desktop.Trees
             return _nodeTextProvider((TItem)item);
         }
 
+		/// <summary>
+		/// Sets the text to display for the node representing the specified item.
+		/// </summary>
 		public override void SetNodeText(object item, string text)
 		{
-			if (_nodeTextSetter != null)
+			if (_nodeTextSetter != null && CanSetNodeText(item))
 			{
 				_nodeTextSetter((TItem) item, text);
 			}
+		}
+
+		/// <summary>
+		/// Asks if the item text can be changed.
+		/// </summary>
+		public override bool CanSetNodeText(object item)
+		{
+			return _canSetNodeTextHandler == null 
+				? _nodeTextSetter != null
+				: _canSetNodeTextHandler((TItem)item);
 		}
 
     	///<summary>

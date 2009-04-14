@@ -63,6 +63,11 @@ namespace ClearCanvas.Desktop.Trees
 			return;
 		}
 		
+		public virtual bool CanSetNodeText(object item)
+		{
+			return false;
+		}
+
 		/// <summary>
     	/// Gets whether or not <paramref name="item"/> is checked.
     	/// </summary>

@@ -216,13 +216,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Design time properties
 
-		[DefaultValue(false)]
-    	public bool LabelEdit
-    	{
-			get { return _treeCtrl.LabelEdit; }
-			set { _treeCtrl.LabelEdit = value; }
-    	}
-
         [DefaultValue(true)]
         public bool ShowToolbar
         {
@@ -387,7 +380,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="e"></param>
         private void _treeCtrl_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
+			BindingTreeNode selNode = (BindingTreeNode)_treeCtrl.SelectedNode;
+			_treeCtrl.LabelEdit = selNode != null && selNode.CanSetNodeText();
+			
+			EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
         }
 
         private void InitializeToolStrip()
@@ -692,6 +688,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void _treeCtrl_ItemDrag(object sender, ItemDragEventArgs e)
         {
+			// the item being dragged should be selected as well.
+			BindingTreeNode node = (BindingTreeNode)e.Item;
+			_treeCtrl.SelectedNode = node;
+
             ItemDragEventArgs args = new ItemDragEventArgs(e.Button, this.GetSelectionHelper());
             EventsHelper.Fire(_itemDrag, this, args);
         }
@@ -716,10 +716,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void _treeCtrl_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
 		{
-			BindingTreeNode node = e.Node as BindingTreeNode;
-			if (node != null)
+			if (string.IsNullOrEmpty(e.Label))
 			{
-				node.AfterLabelEdit(e.Label);
+				// user cancel the edit, stop editing
+				e.CancelEdit = true;
+			}
+			else
+			{
+				BindingTreeNode node = e.Node as BindingTreeNode;
+				if (node != null)
+				{
+					node.AfterLabelEdit(e.Label);
+				}
 			}
 		}
     }

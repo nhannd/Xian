@@ -117,6 +117,15 @@ namespace ClearCanvas.Desktop.View.WinForms
             return _parentTree.Binding.CanAcceptDrop(_item, dropData, kind);
         }
 
+		/// <summary>
+		/// Asks if the item text can be changed.
+		/// </summary>
+		/// <returns></returns>
+		public bool CanSetNodeText()
+		{
+			return _parentTree.Binding.CanSetNodeText(_item);
+		}
+
         /// <summary>
         /// Asks the item to accept the specified drop
         /// </summary>

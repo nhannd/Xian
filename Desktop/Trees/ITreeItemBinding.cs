@@ -49,6 +49,11 @@ namespace ClearCanvas.Desktop.Trees
     	/// </summary>
     	void SetNodeText(object item, string text);
 
+		/// <summary>
+		/// Asks if the item text can be changed.
+		/// </summary>
+    	bool CanSetNodeText(object item);
+
         /// <summary>
         /// Gets whether or not <paramref name="item"/> is checked.
         /// </summary>
