@@ -619,7 +619,7 @@ namespace ClearCanvas.Dicom.Network.Scu
 				Platform.Log(LogLevel.Error, ex, "Error aborting association");
 			}
 
-			if (LogInformation) Platform.Log(LogLevel.Info, "Completed aborting connection from {0} to {1}", association.CallingAE, association.CalledAE);
+			Platform.Log(LogLevel.Warn, "Completed aborting connection (after DIMSE timeout) from {0} to {1}", association.CallingAE, association.CalledAE);
 			ProgressEvent.Set();
 		}
 

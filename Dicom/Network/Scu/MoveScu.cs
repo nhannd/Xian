@@ -67,7 +67,6 @@ namespace ClearCanvas.Dicom.Network.Scu
         private int _remainingSubOperations = 0;
         private readonly DicomAttributeCollection _dicomAttributeCollection = new DicomAttributeCollection();
         string _destinationAe;
-    	private int _timeoutCount = 0;
         #endregion
 
         #region Constructors
@@ -353,13 +352,19 @@ namespace ClearCanvas.Dicom.Network.Scu
         /// <param name="message">The message.</param>
 		public override void OnReceiveResponseMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
         {
-			_timeoutCount = 0;
-        	_failureSubOperations = message.NumberOfFailedSubOperations;
-        	_successSubOperations = message.NumberOfCompletedSubOperations;
-        	_remainingSubOperations = message.NumberOfRemainingSubOperations;
-        	_warningSubOperations = message.NumberOfWarningSubOperations;
-        	_totalSubOperations = _failureSubOperations + _successSubOperations + _remainingSubOperations +
-        	                      _warningSubOperations;
+			// Discovered issue with an SCP that was not setting these values on the final Success return, so blocking an update of the values if all of them are 0.
+			if (message.NumberOfFailedSubOperations != 0 
+				|| message.NumberOfCompletedSubOperations != 0
+				|| message.NumberOfRemainingSubOperations != 0
+				|| message.NumberOfWarningSubOperations != 0)
+        	{
+        		_failureSubOperations = message.NumberOfFailedSubOperations;
+        		_successSubOperations = message.NumberOfCompletedSubOperations;
+        		_remainingSubOperations = message.NumberOfRemainingSubOperations;
+        		_warningSubOperations = message.NumberOfWarningSubOperations;
+        		_totalSubOperations = _failureSubOperations + _successSubOperations + _remainingSubOperations +
+        		                      _warningSubOperations;
+        	}
 
         	if (message.Status.Status == DicomState.Pending)
         	{
@@ -409,26 +414,24 @@ namespace ClearCanvas.Dicom.Network.Scu
 		/// <param name="association">The association.</param>
 		public override void OnDimseTimeout(DicomClient client, ClientAssociationParameters association)
 		{
-			_timeoutCount++;
-			if (_timeoutCount > 10)
+			Status = ScuOperationStatus.TimeoutExpired;
+			FailureDescription =
+				String.Format("Timeout Expired ({0} seconds) for remote host {1} when processing C-MOVE-RQ, aborting connection", association.ReadTimeout/1000,
+				              RemoteAE);
+			Platform.Log(LogLevel.Error, FailureDescription);
+
+			try
 			{
-				Status = ScuOperationStatus.TimeoutExpired;
-				// Timeout in ReadTimeout / 1000 * 10, ie, ReadTimeout / 100
-				FailureDescription = String.Format("Timeout Expired ({0} seconds) for remote host {1}, aborting connection", association.ReadTimeout / 100, RemoteAE);
-				if (LogInformation) Platform.Log(LogLevel.Info, FailureDescription);
-
-				try
-				{
-					client.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
-				}
-				catch (Exception ex)
-				{
-					Platform.Log(LogLevel.Error, ex, "Error aborting association");
-				}
-
-				if (LogInformation) Platform.Log(LogLevel.Info, "Completed aborting connection from {0} to {1}", association.CallingAE, association.CalledAE);
-				ProgressEvent.Set();
+				client.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
 			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex, "Error aborting association");
+			}
+
+			Platform.Log(LogLevel.Warn, "Completed aborting connection (after DIMSE timeout) from {0} to {1}",
+			             association.CallingAE, association.CalledAE);
+			ProgressEvent.Set();
 		}
 
     	#endregion
