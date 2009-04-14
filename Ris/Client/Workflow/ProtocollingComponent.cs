@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			StartProtocollingWorklistItem();
 
-			this.Host.Title = ProtocollingComponentDocument.GetTitle(this.WorklistItem);
+			this.Host.Title = ProtocolDocument.GetTitle(this.WorklistItem);
 
 			_bannerComponentHost = new ChildComponentHost(this.Host, new BannerComponent(this.WorklistItem));
 			_bannerComponentHost.StartComponent();
@@ -599,7 +599,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 			((OrderNoteSummaryComponent)_orderNotesComponentHost.Component).Notes = _notes;
 
 			// Update title
-			this.Host.Title = ProtocollingComponentDocument.GetTitle(this.WorklistItem);
+			this.Host.Title = ProtocolDocument.GetTitle(this.WorklistItem);
 
 			NotifyPropertyChanged("StatusText");
 			NotifyPropertyChanged("ProceduresText");

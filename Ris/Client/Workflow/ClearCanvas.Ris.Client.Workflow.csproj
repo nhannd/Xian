@@ -128,7 +128,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="ProtocollingComponent.cs" />
-    <Compile Include="ProtocollingComponentDocument.cs" />
+    <Compile Include="ProtocolDocument.cs" />
     <Compile Include="ReasonSelectionComponentBase.cs" />
     <Compile Include="ProtocolWorkflowFolderSystem.cs" />
     <Compile Include="RandomOrderTool.cs" />

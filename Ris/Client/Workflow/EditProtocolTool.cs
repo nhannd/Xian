@@ -5,6 +5,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Workflow
 {
@@ -62,19 +63,51 @@ namespace ClearCanvas.Ris.Client.Workflow
 			if (ActivateIfAlreadyOpen(item))
 				return true;
 
-			// open the protocol editor
-			ProtocollingComponentDocument protocollingComponentDocument = new ProtocollingComponentDocument(item, GetMode(item), this.Context);
-			protocollingComponentDocument.Open();
-
-			Type selectedFolderType = this.Context.SelectedFolder.GetType();
-			protocollingComponentDocument.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
+			OpenProtocolEditor(item);
 
 			return true;
 		}
 
+		private void OpenProtocolEditor(ReportingWorklistItem item)
+		{
+			if (!ActivateIfAlreadyOpen(item))
+			{
+				if (!ProtocollingSettings.Default.AllowMultipleProtocollingWorkspaces)
+				{
+					List<Workspace> documents = DocumentManager.GetAll<ProtocolDocument>();
+
+					// Show warning message and ask if the existing document should be closed or not
+					if (documents.Count > 0)
+					{
+						Workspace firstDocument = CollectionUtils.FirstElement(documents);
+						firstDocument.Activate();
+
+						string message = string.Format(SR.MessageReportingComponentAlreadyOpened, firstDocument.Title, PersonNameFormat.Format(item.PatientName));
+						if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
+						{
+							// Leave the existing document open
+							return;
+						}
+						else
+						{
+							// close documents and continue
+							CollectionUtils.ForEach(documents, delegate(Workspace document) { document.Close(); });
+						}
+					}
+				}
+
+				// open the protocol editor
+				ProtocolDocument protocolDocument = new ProtocolDocument(item, GetMode(item), this.Context);
+				protocolDocument.Open();
+
+				Type selectedFolderType = this.Context.SelectedFolder.GetType();
+				protocolDocument.Closed += delegate { DocumentManager.InvalidateFolder(selectedFolderType); };
+			}
+		}
+
 		private static bool ActivateIfAlreadyOpen(ReportingWorklistItem item)
 		{
-			Workspace workspace = DocumentManager.Get<ProtocollingComponentDocument>(item.OrderRef);
+			Workspace workspace = DocumentManager.Get<ProtocolDocument>(item.OrderRef);
 			if (workspace != null)
 			{
 				workspace.Activate();

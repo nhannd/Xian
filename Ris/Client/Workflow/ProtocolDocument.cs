@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 	/// <summary>
 	/// Document container for <see cref="ProtocolEditorComponent"/>
 	/// </summary>
-	class ProtocollingComponentDocument : Document
+	class ProtocolDocument : Document
 	{
 		#region Private Members
 
@@ -53,8 +53,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#region Constructor
 
-		public ProtocollingComponentDocument(ReportingWorklistItem item, IContinuousWorkflowComponentMode mode, IReportingWorkflowItemToolContext context)
-			: base(null, context.DesktopWindow)
+		public ProtocolDocument(ReportingWorklistItem item, IContinuousWorkflowComponentMode mode, IReportingWorkflowItemToolContext context)
+			: base(item.OrderRef, context.DesktopWindow)
 		{
 			_item = item;
 			_mode = mode;
@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public override string GetTitle()
 		{
-			return ProtocollingComponentDocument.GetTitle(_item);
+			return ProtocolDocument.GetTitle(_item);
 		}
 
 		public override IApplicationComponent GetComponent()
