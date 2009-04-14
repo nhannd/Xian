@@ -51,8 +51,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_component = component;
             InitializeComponent();
 
-			_folderSystems.DisplayMember = "Title";
 			_folderSystems.DataBindings.Add("SelectedIndex", _component, "SelectedFolderSystemIndex", true, DataSourceUpdateMode.OnPropertyChanged);
+			_folderSystems.Format += _folderSystems_Format;
 			_folderSystems.ItemDropped += _folderSystems_ItemDropped;
 			_folderSystems.MenuModel = _component.FolderSystemsActionModel;
 			_folderSystems.ToolbarModel = _component.FolderSystemsActionModel;
@@ -64,6 +64,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_folders.Tree = _component.FolderTree;
 
         	_component.OnEditFolder += delegate { _folders.EditSelectedNode(); };
+		}
+
+		private void _folderSystems_Format(object sender, ListControlConvertEventArgs e)
+		{
+			e.Value = _component.FormatFolderSystem(e.ListItem);
 		}
 
 		private void _folderSystems_ItemDropped(object sender, ListBoxItemDroppedEventArgs e)

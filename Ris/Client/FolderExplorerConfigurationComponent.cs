@@ -32,12 +32,14 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -75,282 +77,11 @@ namespace ClearCanvas.Ris.Client
 	[AssociateView(typeof(FolderExplorerConfigurationComponentViewExtensionPoint))]
 	public class FolderExplorerConfigurationComponent : ConfigurationApplicationComponent
 	{
-		public class FolderNode
-		{
-			private const string SEPARATOR = "/";
-			private readonly int _lastSeparatorIndex;
-
-			private readonly string _id;
-			private readonly string _defaultPath;
-			private bool _isVisible;
-			private bool _isStale;
-
-			private string _text;
-			private bool _isExpanded;
-			private FolderNode _parent;
-			private Tree<FolderNode> _subTree;
-
-			public FolderNode(string id, string path)
-				: this(id, path, true, false)
-			{
-			}
-
-			public FolderNode(string id, string defaultPath, bool isVisible, bool isStale)
-			{
-				_id = id;
-				_defaultPath = defaultPath;
-				_isVisible = isVisible;
-				_isStale = isStale;
-
-				_isExpanded = true;
-				_lastSeparatorIndex = _defaultPath.LastIndexOf(SEPARATOR);
-				_text = _defaultPath.Substring(_lastSeparatorIndex + 1);
-			}
-
-			#region Public Data Members
-
-			public string ID
-			{
-				get { return _id; }
-			}
-
-			public string DefaultPath
-			{
-				get { return _defaultPath; }
-			}
-
-			public bool IsVisible
-			{
-				get { return _isVisible; }
-				set { _isVisible = value; }
-			}
-
-			public bool IsStale
-			{
-				get { return _isStale; }
-			}
-
-			#endregion
-
-			#region Presentation Model Properties
-
-			/// <summary>
-			/// Gets or sets the display text of this node.
-			/// </summary>
-			public string Text
-			{
-				get { return _text; }
-				set { _text = value; }
-			}
-
-			/// <summary>
-			/// Gets or sets whether the subtree of this node is expanded.
-			/// </summary>
-			public bool IsExpanded
-			{
-				get { return _isExpanded; }
-				set { _isExpanded = value; }
-			}
-
-			/// <summary>
-			/// Gets whether this node can be edited.
-			/// </summary>
-			public bool CanEdit
-			{
-				get { return this.Parent != null; }
-			}
-
-			/// <summary>
-			/// Gets whether this node can be deleted.
-			/// </summary>
-			public bool CanDelete
-			{
-				get { return string.IsNullOrEmpty(_id) && (_subTree == null || _subTree.Items.Count == 0); }
-			}
-
-			/// <summary>
-			/// Gets the previous sibling of this node, null if none.
-			/// </summary>
-			public FolderNode PreviousSibling
-			{
-				get
-				{
-					if (_parent == null)
-						return null;
-
-					// Find index of current node
-					int index = _parent.SubTree.Items.IndexOf(this);
-
-					// has older sibling
-					return index <= 0 ? null : _parent.SubTree.Items[index - 1];
-				}
-			}
-
-			/// <summary>
-			/// Gets the next sibling of this node, null if none.
-			/// </summary>
-			public FolderNode NextSibling
-			{
-				get
-				{
-					if (_parent == null)
-						return null;
-
-					// Find index of current node
-					int index = _parent.SubTree.Items.IndexOf(this);
-
-					// has younger sibling
-					return index == _parent.SubTree.Items.Count - 1 ? null : _parent.SubTree.Items[index + 1];
-				}
-			}
-
-			/// <summary>
-			/// Gets the parent of this node, null if none.
-			/// </summary>
-			public FolderNode Parent
-			{
-				get { return _parent; }
-				private set { _parent = value; }
-			}
-
-			/// <summary>
-			/// Gets the subtree of this node, null if none.
-			/// </summary>
-			public Tree<FolderNode> SubTree
-			{
-				get { return _subTree; }
-			}
-
-			#endregion
-
-			#region Public methods
-
-			public void AddChildNode(FolderNode node)
-			{
-				BuildSubTree();
-
-				node.Parent = this;
-				_subTree.Items.Add(node);
-
-				// expand the tree right away
-				this.ExpandSubTree();
-			}
-
-			public void MoveUp()
-			{
-				FolderNode previousSibling = this.PreviousSibling;
-				if (_parent == null || previousSibling == null)
-					return;
-
-				int index = _parent.SubTree.Items.IndexOf(this);
-
-				// remove and re-insert this node at the prior index
-				_parent.SubTree.Items.Remove(previousSibling);
-				_parent.SubTree.Items.Insert(index, previousSibling);
-			}
-
-			public void MoveDown()
-			{
-				FolderNode nextSibling = this.NextSibling;
-				if (_parent == null || nextSibling == null)
-					return;
-
-				// Find index of current node
-				int index = _parent.SubTree.Items.IndexOf(this);
-
-				// remove and re-insert this node at the next index
-				_parent.SubTree.Items.Remove(nextSibling);
-				_parent.SubTree.Items.Insert(index, nextSibling);
-			}
-
-			#endregion
-
-			#region Drag & Drop supports
-
-			public DragDropKind CanAcceptDrop(FolderNode dropData, DragDropKind kind)
-			{
-				if (this == dropData || this == dropData.Parent || this.IsDescendentOf(dropData))
-					return DragDropKind.None;
-
-				return DragDropKind.Move;
-			}
-
-			public DragDropKind AcceptDrop(FolderNode dropData, DragDropKind kind)
-			{
-				if (dropData.Parent != null)
-					dropData.Parent.SubTree.Items.Remove(dropData);
-
-				this.AddChildNode(dropData);
-
-				return DragDropKind.Move;
-			}
-
-			#endregion
-
-			#region Private helpers
-
-			private void BuildSubTree()
-			{
-				if (_subTree != null)
-					return;
-
-				_subTree = BuildTree();
-				if (_parent != null)
-					_parent.SubTree.Items.NotifyItemUpdated(this);
-			}
-
-			private void ExpandSubTree()
-			{
-				if (_parent == null)
-					return;
-
-				this.IsExpanded = true;
-				_parent.SubTree.Items.NotifyItemUpdated(this);
-			}
-
-			/// <summary>
-			/// Determine whether this node is a descendent of the ancestorNode.
-			/// </summary>
-			/// <param name="ancestorNode">The unknown ancestorNode.</param>
-			/// <returns>True if this node is the descendent of the ancestorNode.</returns>
-			private bool IsDescendentOf(FolderNode ancestorNode)
-			{
-				// testNode has no children
-				if (ancestorNode.SubTree == null)
-					return false;
-
-				bool isDescendentOfAncestorNode = CollectionUtils.Contains(ancestorNode.SubTree.Items,
-					delegate(FolderNode childOfTestNode) { return this == childOfTestNode || this.IsDescendentOf(childOfTestNode); });
-
-				return isDescendentOfAncestorNode;
-			}
-
-			#endregion
-
-			public static Tree<FolderNode> BuildTree()
-			{
-				TreeItemBinding<FolderNode> binding = new TreeItemBinding<FolderNode>(
-						delegate(FolderNode node) { return node.Text; },
-						delegate(FolderNode node) { return node.SubTree; });
-				binding.NodeTextSetter = delegate(FolderNode node, string text) { node.Text = text; };
-				binding.CanSetNodeTextHandler = delegate(FolderNode node) { return node.CanEdit; };
-				binding.CanHaveSubTreeHandler = delegate(FolderNode node) { return node.SubTree != null; };
-				binding.IsCheckedGetter = delegate(FolderNode node) { return node.IsVisible; };
-				binding.IsCheckedSetter = delegate(FolderNode node, bool isChecked) { node.IsVisible = isChecked; };
-				binding.TooltipTextProvider = delegate(FolderNode node) { return node.DefaultPath; };
-				binding.IsExpandedGetter = delegate(FolderNode node) { return node.IsExpanded; };
-				binding.IsExpandedSetter = delegate(FolderNode node, bool isExpanded) { node.IsExpanded = isExpanded; };
-				binding.CanAcceptDropHandler = delegate(FolderNode node, object dropData, DragDropKind kind) { return node.CanAcceptDrop((dropData as FolderNode), kind); };
-				binding.AcceptDropHandler = delegate(FolderNode node, object dropData, DragDropKind kind) { return node.AcceptDrop((dropData as FolderNode), kind); };
-				return new Tree<FolderNode>(binding);
-			}
-		}
-
-		private BindingList<IFolderSystem> _folderSystems;
+		private BindingList<FolderSystemConfigurationNode> _folderSystems;
 		private int _selectedFolderSystemIndex;
 		private SimpleActionModel _folderSystemsActionModel;
-		private readonly Tree<FolderNode> _folderTree;
-		private FolderNode _selectedFolderNode;
+		private readonly Tree<DraggableTreeNode> _folderTree;
+		private DraggableTreeNode _selectedFolderNode;
 		private SimpleActionModel _foldersActionModel;
 
 		private readonly string _moveFolderSystemUpKey = "MoveFolderSystemUp";
@@ -365,13 +96,13 @@ namespace ClearCanvas.Ris.Client
 
 		public FolderExplorerConfigurationComponent()
 		{
-			_folderTree = FolderNode.BuildTree();
+			_folderTree = DraggableTreeNode.BuildTree();
 		}
 
 		public override void Start()
 		{
 			// establish default resource resolver on this assembly (not the assembly of the derived class)
-			IResourceResolver resourceResolver = new ResourceResolver(typeof(FolderNode).Assembly);
+			IResourceResolver resourceResolver = new ResourceResolver(typeof(DraggableTreeNode).Assembly);
 
 			_folderSystemsActionModel = new SimpleActionModel(resourceResolver);
 			_folderSystemsActionModel.AddAction(_moveFolderSystemUpKey, SR.TitleMoveUp, "Icons.UpToolSmall.png", SR.TitleMoveUp, MoveFolderSystemUp);
@@ -413,6 +144,12 @@ namespace ClearCanvas.Ris.Client
 			get { return _folderSystems; }
 		}
 
+		public string FormatFolderSystem(object item)
+		{
+			FolderSystemConfigurationNode node = (FolderSystemConfigurationNode)item;
+			return node.Text;
+		}
+
 		public int SelectedFolderSystemIndex
 		{
 			get { return _selectedFolderSystemIndex; }
@@ -422,7 +159,13 @@ namespace ClearCanvas.Ris.Client
 				UpdateFolderSystemActionModel();
 				NotifyPropertyChanged("SelectedFolderSystemIndex");
 
-				LoadFolderTree(_folderSystems[_selectedFolderSystemIndex]);
+				FolderSystemConfigurationNode folderSystemNode = _folderSystems[_selectedFolderSystemIndex];
+
+				LoadFolderTree(folderSystemNode);
+
+				_folderTree.Items.Clear();
+				_folderTree.Items.Add(folderSystemNode);
+				this.SelectedFolderNode = new Selection(folderSystemNode);
 			}
 		}
 
@@ -430,9 +173,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (index >= 0 && newIndex >= 0 && index != newIndex)
 			{
-				IFolderSystem fs = _folderSystems[index];
+				FolderSystemConfigurationNode fs = _folderSystems[index];
 				_folderSystems.RemoveAt(index);
 				_folderSystems.Insert(newIndex, fs);
+
+				this.Modified = true;
 			}
 		}
 
@@ -464,7 +209,7 @@ namespace ClearCanvas.Ris.Client
 			get { return new Selection(_selectedFolderNode); }
 			set
 			{
-				FolderNode node = (FolderNode)value.Item;
+				DraggableTreeNode node = (DraggableTreeNode)value.Item;
 
 				_selectedFolderNode = node;
 				UpdateFolderActionModel();
@@ -492,8 +237,20 @@ namespace ClearCanvas.Ris.Client
 
 		private void LoadFolderSystems()
 		{
-			// TODO: Load Folder Systems in the same order as in the FolderExplorer
-			_folderSystems = new BindingList<IFolderSystem>(CollectionUtils.Cast<IFolderSystem>(new FolderSystemExtensionPoint().CreateExtensions()));
+			// TODO: Load Folder Systems in the same order as in the FolderExplorer, rather than from extension point
+
+			List<IFolderSystem> folderSystems = CollectionUtils.Cast<IFolderSystem>(new FolderSystemExtensionPoint().CreateExtensions());
+			IList<FolderSystemConfigurationNode> fsNodes = CollectionUtils.Map<IFolderSystem, FolderSystemConfigurationNode, List<FolderSystemConfigurationNode>>(folderSystems,
+				delegate(IFolderSystem fs) { return new FolderSystemConfigurationNode(fs); });
+
+			CollectionUtils.ForEach(fsNodes,
+				delegate(FolderSystemConfigurationNode node)
+					{
+						node.ModifiedChanged += delegate { this.Modified = true; };
+					});
+
+			_folderSystems = new BindingList<FolderSystemConfigurationNode>(fsNodes);
+
 			this.SelectedFolderSystemIndex = _folderSystems.Count > 0 ? 0 : -1;
 		}
 
@@ -504,6 +261,7 @@ namespace ClearCanvas.Ris.Client
 				int newIndex = _selectedFolderSystemIndex - 1;
 				MoveFolderSystem(_selectedFolderSystemIndex, newIndex);
 				this.SelectedFolderSystemIndex = newIndex;
+				this.Modified = true;
 			}
 		}
 
@@ -514,7 +272,8 @@ namespace ClearCanvas.Ris.Client
 				int newIndex = _selectedFolderSystemIndex + 1;
 				MoveFolderSystem(_selectedFolderSystemIndex, newIndex);
 				this.SelectedFolderSystemIndex = newIndex;
-            }
+				this.Modified = true;
+			}
 		}
 
 		private void UpdateFolderSystemActionModel()
@@ -527,25 +286,24 @@ namespace ClearCanvas.Ris.Client
 
 		#region Folders Helper
 
-		private void LoadFolderTree(IFolderSystem folderSystem)
+		private void LoadFolderTree(FolderSystemConfigurationNode folderSystemNode)
 		{
-			_folderTree.Items.Clear();
+			if (folderSystemNode.SubTree == null)
+			{
+				// TODO: Load Folder tree in the same order as in the FolderExplorer or from Xml Document
+				FolderConfigurationNode node1 = new FolderConfigurationNode("node1", "Root/Node1");
+				FolderConfigurationNode node2 = new FolderConfigurationNode("node2", "Root/Node2");
+				FolderConfigurationNode node21 = new FolderConfigurationNode("node3", "Root/Node21");
 
-			// TODO: Load Folder tree in the same order as in the FolderExplorer
-			FolderNode rootNode = new FolderNode(folderSystem.Id, folderSystem.Title);
-			FolderNode node1 = new FolderNode("node1", "Root/Node1");
-			FolderNode node2 = new FolderNode("node2", "Root/Node2");
-			FolderNode node21 = new FolderNode("node3", "Root/Node21");
-
-			node2.AddChildNode(node21);
-			rootNode.AddChildNode(node1);
-			rootNode.AddChildNode(node2);
-			_folderTree.Items.Add(rootNode);
+				node2.AddChildNode(node21);
+				folderSystemNode.AddChildNode(node1);
+				folderSystemNode.AddChildNode(node2);
+			}
 		}
 
 		private void AddFolder()
 		{
-			FolderNode newFolderNode = new FolderNode(null, "New Node");
+			FolderConfigurationNode newFolderNode = new FolderConfigurationNode(null, "New Node");
 			_selectedFolderNode.AddChildNode(newFolderNode);
 
 			// Must update action model because the node index may have changed after adding node.
@@ -559,8 +317,8 @@ namespace ClearCanvas.Ris.Client
 
 		private void DeleteFolder()
 		{
-			FolderNode parentNode = _selectedFolderNode.Parent;
-			FolderNode previousSibling = _selectedFolderNode.PreviousSibling;
+			DraggableTreeNode parentNode = _selectedFolderNode.Parent;
+			DraggableTreeNode previousSibling = _selectedFolderNode.PreviousSibling;
 			parentNode.SubTree.Items.Remove(_selectedFolderNode);
 
 			if (previousSibling != null)

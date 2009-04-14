@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
@@ -19,12 +16,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 	{
 		private ActionModelNode _toolbarModel;
 		private ActionModelNode _menuModel;
+		private event ListControlConvertEventHandler _format;
 
 		private bool _isLoaded = false;
 
 		public ListBoxView()
 		{
 			InitializeComponent();
+			_listBox.Format += _listBox_Format;
 		}
 
 		#region Public Members
@@ -99,6 +98,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			remove { _listBox.ItemDropped -= value; }
 		}
 
+		/// <summary>
+		/// Occurs to allow formatting of the item for display in the user-interface.
+		/// </summary>
+		public event ListControlConvertEventHandler Format
+		{
+			add { _format += value; }
+			remove { _format -= value; }
+		}
+
 		#endregion
 
 		#region Design Time Properties and Events
@@ -145,5 +153,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			}
 		}
 
+		private void _listBox_Format(object sender, ListControlConvertEventArgs e)
+		{
+			e.Value = FormatItem(e.ListItem);
+		}
+
+		private string FormatItem(object item)
+		{
+			ListControlConvertEventArgs args = new ListControlConvertEventArgs(item, typeof(string), item);
+			EventsHelper.Fire(_format, this, args);
+
+			return args.Value.ToString();
+		}
 	}
 }

@@ -75,6 +75,7 @@
     <Compile Include="ExternalPractitionerMergeComponent.cs" />
     <Compile Include="FolderExplorerConfigurationComponent.cs" />
     <Compile Include="FolderExplorerConfigurationTool.cs" />
+    <Compile Include="FolderExplorerConfigurationTreeNode.cs" />
     <Compile Include="FolderTreeNode.cs" />
     <Compile Include="Formatting\ProcedureFormat.cs" />
     <Compile Include="Formatting\StaffNameAndRoleFormat.cs" />
