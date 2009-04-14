@@ -917,15 +917,6 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Enter Text.
-        /// </summary>
-        public static string StringEnterText {
-            get {
-                return ResourceManager.GetString("StringEnterText", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to N/A.
         /// </summary>
         public static string StringNotApplicable {

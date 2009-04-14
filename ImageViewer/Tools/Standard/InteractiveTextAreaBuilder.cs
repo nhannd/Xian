@@ -4,7 +4,7 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	internal class InteractiveTextAreaBuilder : InteractiveGraphicBuilder
+	internal class InteractiveTextAreaBuilder : InteractiveTextGraphicBuilder
 	{
 		public InteractiveTextAreaBuilder(ITextGraphic textGraphic) : base(textGraphic) {}
 

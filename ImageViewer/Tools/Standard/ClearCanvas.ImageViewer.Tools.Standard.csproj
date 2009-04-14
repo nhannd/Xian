@@ -113,6 +113,7 @@
     <Compile Include="DeleteAnnotationsTool.cs" />
     <Compile Include="DicomOverlaysTool.cs" />
     <Compile Include="DrawShutterTool.cs" />
+    <Compile Include="InteractiveTextGraphicBuilder.cs" />
     <Compile Include="MagnificationTool.cs" />
     <Compile Include="OverlayToolBase.cs" />
     <Compile Include="PresetVoiLuts\Luts\AutoVoiLutData.cs" />

@@ -403,9 +403,6 @@ Please check the log for more details.</value>
   <data name="SeparatorPatientsLoaded" xml:space="preserve">
     <value>::</value>
   </data>
-  <data name="StringEnterText" xml:space="preserve">
-    <value>Enter Text</value>
-  </data>
   <data name="StringNotApplicable" xml:space="preserve">
     <value>N/A</value>
   </data>

@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		#endregion
 
 		private DrawableUndoableCommand _undoableCommand;
-		private InteractiveGraphicBuilder _graphicBuilder;
+		private InteractiveTextGraphicBuilder _graphicBuilder;
 
 		public TextCalloutTool() : base(SR.TooltipTextCallout)
 		{
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		#region Tool Mode Support
 
-		private delegate InteractiveGraphicBuilder CreateInteractiveGraphicBuilderDelegate(IControlGraphic graphic);
+		private delegate InteractiveTextGraphicBuilder CreateInteractiveGraphicBuilderDelegate(IControlGraphic graphic);
 
 		private delegate IControlGraphic CreateGraphicDelegate();
 
@@ -282,8 +282,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			IControlGraphic graphic = _graphicDelegateCreatorDelegate();
 
 			_graphicBuilder = _interactiveGraphicBuilderDelegate(graphic);
-			_graphicBuilder.GraphicComplete += OnGraphicBuilderComplete;
-			_graphicBuilder.GraphicCancelled += OnGraphicBuilderCancelled;
+			_graphicBuilder.GraphicComplete += OnGraphicBuilderInitiallyDone;
+			_graphicBuilder.GraphicCancelled += OnGraphicBuilderInitiallyDone;
+			_graphicBuilder.GraphicFinalComplete += OnGraphicFinalComplete;
+			_graphicBuilder.GraphicFinalCancelled += OnGraphicFinalCancelled;
 
 			_undoableCommand = new DrawableUndoableCommand(image);
 			_undoableCommand.Enqueue(new InsertGraphicUndoableCommand(graphic, provider.OverlayGraphics, provider.OverlayGraphics.Count));
@@ -327,36 +329,50 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_graphicBuilder.Cancel();
 		}
 
-		private void OnGraphicBuilderComplete(object sender, GraphicEventArgs e)
+		/// <summary>
+		/// Fired when the graphic builder is done placing the graphic, and hence does not need mouse capture anymore, but in the
+		/// text graphic is not technically complete yet and thus we do not insert into the command history yet.
+		/// </summary>
+		private void OnGraphicBuilderInitiallyDone(object sender, GraphicEventArgs e)
 		{
-			// Find the edit control graphic for the text graphic and invoke edit mode.
-			IGraphic graphic = _graphicBuilder.Graphic;
-			while (graphic != null && !(graphic is TextEditControlGraphic) && !(graphic is UserCalloutGraphic))
-				graphic = graphic.ParentGraphic;
-			if (graphic is TextEditControlGraphic)
-				((TextEditControlGraphic)graphic).StartEdit();
-			else if (graphic is UserCalloutGraphic)
-				((UserCalloutGraphic) graphic).StartEdit();
-
-			_graphicBuilder.GraphicComplete -= OnGraphicBuilderComplete;
-			_graphicBuilder.GraphicCancelled -= OnGraphicBuilderCancelled;
-
-			_graphicBuilder.Graphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
-
-			_undoableCommand = null;
-
+			_graphicBuilder.GraphicComplete -= OnGraphicBuilderInitiallyDone;
+			_graphicBuilder.GraphicCancelled -= OnGraphicBuilderInitiallyDone;
 			_graphicBuilder = null;
 		}
 
-		private void OnGraphicBuilderCancelled(object sender, GraphicEventArgs e)
+		/// <summary>
+		/// Fired when the graphic builder is also done setting text in the graphic, and thus we can decide if we want to unexecute
+		/// the insert or save the command into the history.
+		/// </summary>
+		private void OnGraphicFinalComplete(object sender, GraphicEventArgs e)
 		{
-			_graphicBuilder.GraphicComplete -= OnGraphicBuilderComplete;
-			_graphicBuilder.GraphicCancelled -= OnGraphicBuilderCancelled;
+			// fired 
+			InteractiveTextGraphicBuilder graphicBuilder = sender as InteractiveTextGraphicBuilder;
+			if (graphicBuilder != null)
+			{
+				graphicBuilder.GraphicFinalComplete -= OnGraphicFinalComplete;
+				graphicBuilder.GraphicFinalCancelled -= OnGraphicFinalCancelled;
+			}
+
+			e.Graphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
+			_undoableCommand = null;
+		}
+
+		/// <summary>
+		/// Fired when the graphic builder is also done setting text in the graphic, and thus we can decide if we want to unexecute
+		/// the insert or save the command into the history.
+		/// </summary>
+		private void OnGraphicFinalCancelled(object sender, GraphicEventArgs e)
+		{
+			InteractiveTextGraphicBuilder graphicBuilder = sender as InteractiveTextGraphicBuilder;
+			if (graphicBuilder != null)
+			{
+				graphicBuilder.GraphicFinalComplete -= OnGraphicFinalComplete;
+				graphicBuilder.GraphicFinalCancelled -= OnGraphicFinalCancelled;
+			}
 
 			_undoableCommand.Unexecute();
 			_undoableCommand = null;
-
-			_graphicBuilder = null;
 		}
 
 		private static IControlGraphic CreateTextCalloutGraphic()
@@ -375,7 +391,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			return contextGraphic;
 		}
 
-		private static InteractiveGraphicBuilder CreateInteractiveTextCalloutBuilder(IControlGraphic graphic)
+		private static InteractiveTextGraphicBuilder CreateInteractiveTextCalloutBuilder(IControlGraphic graphic)
 		{
 			return new InteractiveTextCalloutBuilder(graphic.Subject as UserCalloutGraphic);
 		}
@@ -395,7 +411,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			return contextGraphic;
 		}
 
-		private static InteractiveGraphicBuilder CreateInteractiveTextAreaBuilder(IControlGraphic graphic)
+		private static InteractiveTextGraphicBuilder CreateInteractiveTextAreaBuilder(IControlGraphic graphic)
 		{
 			return new InteractiveTextAreaBuilder(graphic.Subject as ITextGraphic);
 		}

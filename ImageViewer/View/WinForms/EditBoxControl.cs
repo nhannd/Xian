@@ -11,6 +11,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 	internal class EditBoxControl : TextBox
 	{
 		private EditBox _editBox;
+		private bool _hasChanges = false;
 
 		public EditBoxControl()
 		{
@@ -50,6 +51,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 					base.Focus();
 					base.SelectAll();
 				}
+
+				_hasChanges = false;
 			}
 		}
 
@@ -71,6 +74,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				return;
 
 			_editBox.Value = base.Text;
+			_hasChanges = true;
 			base.Bounds = ComputeEditBoxControlBounds(this, _editBox);
 		}
 
@@ -81,7 +85,12 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (_editBox == null)
 				return;
 
-			_editBox.Accept();
+			// if the user clicks away, then we infer if the user meant to accept or cancel
+			// based on if the user has actually typed into the control
+			if (_hasChanges)
+				_editBox.Accept();
+			else 
+				_editBox.Cancel();
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)

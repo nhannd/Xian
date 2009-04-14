@@ -66,8 +66,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			try
 			{
 				EditBox editBox = new EditBox(this.Text ?? string.Empty);
-				if (string.IsNullOrEmpty(this.Text))
-					editBox.Value = SR.StringEnterText;
 				editBox.Location = Point.Round(this.Location);
 				editBox.Size = Rectangle.Round(this.BoundingBox).Size;
 				editBox.Multiline = this.Multiline;

@@ -723,4 +723,7 @@ Please check the log for more details.</value>
   <data name="MenuMagnification6x" xml:space="preserve">
     <value>6x</value>
   </data>
+  <data name="LabelEnterText" xml:space="preserve">
+    <value>Enter Text</value>
+  </data>
 </root>

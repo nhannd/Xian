@@ -4,15 +4,15 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	internal class InteractiveTextCalloutBuilder : InteractiveGraphicBuilder
+	internal class InteractiveTextCalloutBuilder : InteractiveTextGraphicBuilder
 	{
 		private int clickIndex = 0;
 
-		public InteractiveTextCalloutBuilder(UserCalloutGraphic textCalloutGraphic) : base(textCalloutGraphic) { }
+		public InteractiveTextCalloutBuilder(UserCalloutGraphic textCalloutGraphic) : base(textCalloutGraphic) {}
 
 		internal new UserCalloutGraphic Graphic
 		{
-			get { return (UserCalloutGraphic)base.Graphic; }
+			get { return (UserCalloutGraphic) base.Graphic; }
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
