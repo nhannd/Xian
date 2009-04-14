@@ -97,6 +97,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change.
+        /// </summary>
+        public static string CommandChange {
+            get {
+                return ResourceManager.GetString("CommandChange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create multiline graphic.
         /// </summary>
         public static string CommandCreateMultilineGraphic {
@@ -124,6 +133,33 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        public static string CommandDelete {
+            get {
+                return ResourceManager.GetString("CommandDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Text.
+        /// </summary>
+        public static string CommandEditText {
+            get {
+                return ResourceManager.GetString("CommandEditText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Move.
+        /// </summary>
+        public static string CommandMove {
+            get {
+                return ResourceManager.GetString("CommandMove", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Move control point.
         /// </summary>
         public static string CommandMoveControlPoint {
@@ -138,6 +174,24 @@ namespace ClearCanvas.ImageViewer {
         public static string CommandMoveGraphic {
             get {
                 return ResourceManager.GetString("CommandMoveGraphic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resize.
+        /// </summary>
+        public static string CommandResize {
+            get {
+                return ResourceManager.GetString("CommandResize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stretch.
+        /// </summary>
+        public static string CommandStretch {
+            get {
+                return ResourceManager.GetString("CommandStretch", resourceCulture);
             }
         }
         
@@ -565,7 +619,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Length: {0:F1} cm.
+        ///   Looks up a localized string similar to {0:F1} cm.
         /// </summary>
         public static string FormatLengthCm {
             get {
@@ -574,7 +628,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Length: {0:F0} mm.
+        ///   Looks up a localized string similar to {0:F0} mm.
         /// </summary>
         public static string FormatLengthMm {
             get {
@@ -583,7 +637,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Length: {0:F0} pixels.
+        ///   Looks up a localized string similar to {0:F0} pixels.
         /// </summary>
         public static string FormatLengthPixels {
             get {

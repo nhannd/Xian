@@ -16,6 +16,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		event EventHandler SubjectChanged;
 		Color Color { get; set; }
 		bool ShowControlGraphics { get; set; }
+		string CommandName { get; }
 		IMouseButtonHandler CurrentHandler { get;}
 	}
 
@@ -73,6 +74,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					return ((IControlGraphic) this.DecoratedGraphic).Subject;
 				return this.DecoratedGraphic;
 			}
+		}
+
+		public virtual string CommandName
+		{
+			get { return null; }
 		}
 
 		public IMouseButtonHandler CurrentHandler

@@ -40,6 +40,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return base.Subject as ILineSegmentGraphic; }
 		}
 
+		public override string CommandName
+		{
+			get { return SR.CommandChange; }
+		}
+
 		[OnCloneComplete]
 		private void OnCloneComplete()
 		{

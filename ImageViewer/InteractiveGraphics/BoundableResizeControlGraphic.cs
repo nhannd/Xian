@@ -71,6 +71,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return base.Subject as IBoundableGraphic; }
 		}
 
+		public override string CommandName
+		{
+			get { return SR.CommandResize; }
+		}
+
 		private void Initialize()
 		{
 			this.Subject.BottomRightChanged += OnSubjectBottomRightChanged;

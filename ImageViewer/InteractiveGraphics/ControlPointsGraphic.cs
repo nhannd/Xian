@@ -335,6 +335,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				memorableCommand.EndState = endState;
 
 				DrawableUndoableCommand command = new DrawableUndoableCommand(this);
+				command.Name = this.CommandName;
 				command.Enqueue(memorableCommand);
 
 				base.ImageViewer.CommandHistory.AddCommand(command);

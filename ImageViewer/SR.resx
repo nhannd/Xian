@@ -129,6 +129,9 @@
   <data name="BoolYes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="CommandChange" xml:space="preserve">
+    <value>Change</value>
+  </data>
   <data name="CommandCreateMultilineGraphic" xml:space="preserve">
     <value>Create multiline graphic</value>
   </data>
@@ -138,11 +141,26 @@
   <data name="CommandCreateROIGraphic" xml:space="preserve">
     <value>Create ROI graphic</value>
   </data>
+  <data name="CommandDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="CommandEditText" xml:space="preserve">
+    <value>Edit Text</value>
+  </data>
+  <data name="CommandMove" xml:space="preserve">
+    <value>Move</value>
+  </data>
   <data name="CommandMoveControlPoint" xml:space="preserve">
     <value>Move control point</value>
   </data>
   <data name="CommandMoveGraphic" xml:space="preserve">
     <value>Move graphic</value>
+  </data>
+  <data name="CommandResize" xml:space="preserve">
+    <value>Resize</value>
+  </data>
+  <data name="CommandStretch" xml:space="preserve">
+    <value>Stretch</value>
   </data>
   <data name="DescriptionBlueColorMap" xml:space="preserve">
     <value>Blue</value>

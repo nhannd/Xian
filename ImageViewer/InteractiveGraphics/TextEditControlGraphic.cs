@@ -34,6 +34,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return base.Subject as ITextGraphic; }
 		}
 
+		public override string CommandName
+		{
+			get { return SR.CommandEditText; }
+		}
+
 		public bool Multiline
 		{
 			get { return _multiline; }
@@ -131,6 +136,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				{
 					IImageViewer imageViewer = base.ImageViewer;
 					DrawableUndoableCommand command = new DrawableUndoableCommand(graphic.ParentPresentationImage);
+					command.Name = SR.CommandDelete;
 					command.Enqueue(new RemoveGraphicUndoableCommand(graphic));
 					command.Execute();
 					imageViewer.CommandHistory.AddCommand(command);
@@ -147,6 +153,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				memorableCommand.EndState = endState;
 
 				DrawableUndoableCommand command = new DrawableUndoableCommand(this);
+				command.Name = this.CommandName;
 				command.Enqueue(memorableCommand);
 
 				base.ImageViewer.CommandHistory.AddCommand(command);

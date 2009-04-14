@@ -41,6 +41,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return base.Subject as ITextGraphic; }
 		}
 
+		public override string CommandName
+		{
+			get { return SR.CommandChange; }
+		}
+
 		#region IMemorable Members
 
 		public virtual object CreateMemento()

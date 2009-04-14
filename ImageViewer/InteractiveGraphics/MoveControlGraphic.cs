@@ -29,6 +29,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			context.CloneFields(source, this);
 		}
 
+		public override string CommandName
+		{
+			get { return SR.CommandMove; }
+		}
+
 		/// <summary>
 		/// Gets a point that can be used as a landmark to quantify the difference in position of the controlled
 		/// graphic when moved by this <see cref="ControlGraphic"/>.
@@ -150,6 +155,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				memorableCommand.EndState = endState;
 
 				DrawableUndoableCommand command = new DrawableUndoableCommand(this);
+				command.Name = this.CommandName;
 				command.Enqueue(memorableCommand);
 
 				base.ImageViewer.CommandHistory.AddCommand(command);
