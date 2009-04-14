@@ -79,6 +79,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private int _trackedControlPoint = -1;
 
 		[CloneIgnore]
+		private bool _bypassControlPointChangedEvent = false;
+
+		[CloneIgnore]
+		private object _memorableState = null;
+
+		[CloneIgnore]
 		private ControlPointGroup _controlPoints;
 
 		private StretchCursorTokenStrategy _stretchCursorTokenStrategy;
@@ -167,10 +173,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Dispose(disposing);
 		}
 
+		protected void SuspendControlPointEvents()
+		{
+			_bypassControlPointChangedEvent = true;
+		}
+
+		protected void ResumeControlPointEvents()
+		{
+			_bypassControlPointChangedEvent = false;
+		}
+
 		private void OnControlPointLocationChanged(object sender, ListEventArgs<PointF> e)
 		{
-			this.OnControlPointChanged(e.Index, e.Item);
-			EventsHelper.Fire(_controlPointChangedEvent, this, e);
+			if (!_bypassControlPointChangedEvent)
+			{
+				this.OnControlPointChanged(e.Index, e.Item);
+				EventsHelper.Fire(_controlPointChangedEvent, this, e);
+			}
 		}
 
 		protected virtual void OnControlPointChanged(int index, PointF point) {}
@@ -244,6 +263,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				_trackedControlPoint = this.ControlPoints.HitTestControlPoint(mouseInformation.Location);
 				if (_trackedControlPoint >= 0)
 				{
+					if(this is IMemorable)
+					{
+						_memorableState = ((IMemorable) this).CreateMemento();
+					}
 					return true;
 				}
 			}
@@ -286,14 +309,36 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected override bool OnMouseStop(IMouseInformation mouseInformation)
 		{
+			if (this is IMemorable && base.ImageViewer != null)
+			{
+				AddToCommandHistory(_memorableState, ((IMemorable) this).CreateMemento());
+				_memorableState = null;
+			}
+
 			_trackedControlPoint = -1;
 			return base.OnMouseStop(mouseInformation);
 		}
 
 		protected override void OnMouseCancel()
 		{
+			_memorableState = null;
 			_trackedControlPoint = -1;
 			base.OnMouseCancel();
+		}
+
+		protected void AddToCommandHistory(object beginState, object endState)
+		{
+			if (this is IMemorable && beginState != null && endState != null && !beginState.Equals(endState) && base.ImageViewer != null)
+			{
+				MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand((IMemorable) this);
+				memorableCommand.BeginState = beginState;
+				memorableCommand.EndState = endState;
+
+				DrawableUndoableCommand command = new DrawableUndoableCommand(this);
+				command.Enqueue(memorableCommand);
+
+				base.ImageViewer.CommandHistory.AddCommand(command);
+			}
 		}
 	}
 }

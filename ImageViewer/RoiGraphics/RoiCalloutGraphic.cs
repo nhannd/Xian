@@ -163,6 +163,11 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		public void Update(Roi roi, RoiAnalysisMode mode)
 		{
+			if (this.ImageViewer == null)
+			{
+				return;
+			}
+
 			StringBuilder builder = new StringBuilder();
 			RoiGraphic parent = this.ParentGraphic;
 			if (parent != null && !string.IsNullOrEmpty(parent.Name))

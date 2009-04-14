@@ -10,9 +10,11 @@ using ClearCanvas.ImageViewer.InputManagement;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	[Cloneable]
-	public class TextEditControlGraphic : ControlGraphic, ITextGraphic
+	public class TextEditControlGraphic : ControlGraphic, ITextGraphic, IMemorable
 	{
 		private bool _multiline = true;
+
+		private bool _deleteOnEmpty = false;
 
 		[CloneIgnore]
 		private EditBox _currentCalloutEditBox;
@@ -36,6 +38,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			get { return _multiline; }
 			set { _multiline = value; }
+		}
+
+		public bool DeleteOnEmpty
+		{
+			get { return _deleteOnEmpty; }
+			set { _deleteOnEmpty = value; }
 		}
 
 		/// <summary>
@@ -98,12 +106,51 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void OnEditBoxComplete(object sender, EventArgs e)
 		{
+			bool removeFromParent = false;
 			if (_currentCalloutEditBox != null)
 			{
-				this.Text = _currentCalloutEditBox.LastAcceptedValue;
-				this.Draw();
+				removeFromParent = _deleteOnEmpty && string.IsNullOrEmpty(_currentCalloutEditBox.LastAcceptedValue);
+				if (!removeFromParent)
+				{
+					object state = this.CreateMemento();
+					this.Text = _currentCalloutEditBox.LastAcceptedValue;
+					this.AddToCommandHistory(state, this.CreateMemento());
+					this.Draw();
+				}
 			}
 			EndEdit();
+
+			if (removeFromParent && base.ImageViewer != null)
+			{
+				// find the highest-level control graphic
+				IGraphic graphic = this;
+				while (graphic != null && graphic.ParentGraphic is IControlGraphic)
+					graphic = graphic.ParentGraphic;
+
+				if (graphic != null && graphic.ParentPresentationImage != null)
+				{
+					IImageViewer imageViewer = base.ImageViewer;
+					DrawableUndoableCommand command = new DrawableUndoableCommand(graphic.ParentPresentationImage);
+					command.Enqueue(new RemoveGraphicUndoableCommand(graphic));
+					command.Execute();
+					imageViewer.CommandHistory.AddCommand(command);
+				}
+			}
+		}
+
+		private void AddToCommandHistory(object beginState, object endState)
+		{
+			if (beginState != null && endState != null && !beginState.Equals(endState) && base.ImageViewer != null)
+			{
+				MemorableUndoableCommand memorableCommand = new MemorableUndoableCommand(this);
+				memorableCommand.BeginState = beginState;
+				memorableCommand.EndState = endState;
+
+				DrawableUndoableCommand command = new DrawableUndoableCommand(this);
+				command.Enqueue(memorableCommand);
+
+				base.ImageViewer.CommandHistory.AddCommand(command);
+			}
 		}
 
 		protected override IActionSet OnGetExportedActions(string site, IMouseInformation mouseInformation)
@@ -190,6 +237,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			get { return this.Subject.LineStyle; }
 			set { this.Subject.LineStyle = value; }
+		}
+
+		#endregion
+
+		#region IMemorable Members
+
+		public object CreateMemento()
+		{
+			return this.Subject.Text;
+		}
+
+		public void SetMemento(object memento)
+		{
+			if (!(memento is string))
+				throw new ArgumentException("The provided memento is not the expected type.", "memento");
+
+			this.Subject.Text = (string) memento;
 		}
 
 		#endregion

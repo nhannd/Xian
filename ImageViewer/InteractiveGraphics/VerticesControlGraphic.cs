@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
@@ -9,12 +10,12 @@ using ClearCanvas.ImageViewer.InputManagement;
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	[Cloneable]
-	public class VerticesControlGraphic : ControlPointsGraphic
+	public class VerticesControlGraphic : ControlPointsGraphic, IMemorable
 	{
 		private bool _canAddRemoveVertices = false;
 
 		[CloneIgnore]
-		private bool _bypassControlPointChangedEvent = false;
+		private bool _suspendSubjectPointChangeEvents = false;
 
 		[CloneIgnore]
 		private PointF _lastContextMenuPoint = PointF.Empty;
@@ -75,6 +76,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Dispose(disposing);
 		}
 
+		#region Add/Remove Vertices
+
 		public bool CanAddRemoveVertices
 		{
 			get { return _canAddRemoveVertices; }
@@ -92,6 +95,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			if (!_canAddRemoveVertices)
 				return;
+
+			object memento = this.CreateMemento();
 
 			IPointsGraphic subject = this.Subject;
 			subject.CoordinateSystem = CoordinateSystem.Destination;
@@ -120,13 +125,15 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				subject.ResetCoordinateSystem();
 			}
 
-			subject.Draw();
+			base.AddToCommandHistory(memento, this.CreateMemento());
 		}
 
 		protected virtual void DeleteVertex()
 		{
 			if (!_canAddRemoveVertices)
 				return;
+
+			object memento = this.CreateMemento();
 
 			IPointsGraphic subject = this.Subject;
 			if (subject.Points.Count > 1)
@@ -138,7 +145,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				}
 			}
 
-			subject.Draw();
+			base.AddToCommandHistory(memento, this.CreateMemento());
+		}
+
+		private void PerformInsertVertex()
+		{
+			this.InsertVertex();
+			this.Draw();
+		}
+
+		private void PerformDeleteVertex()
+		{
+			this.DeleteVertex();
+			this.Draw();
 		}
 
 		protected void OnCanAddRemoveVerticesChanged() {}
@@ -163,21 +182,74 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			insertAction.GroupHint = new GroupHint("Tools.Graphics.Edit");
 			insertAction.Label = SR.MenuInsertVertex;
 			insertAction.Persistent = true;
-			insertAction.SetClickHandler(this.InsertVertex);
+			insertAction.SetClickHandler(this.PerformInsertVertex);
 
 			MenuAction deleteAction = new MenuAction(@namespace + ":delete", new ActionPath(site + "/MenuDeleteVertex", resolver), ClickActionFlags.None, resolver);
 			deleteAction.GroupHint = new GroupHint("Tools.Graphics.Edit");
 			deleteAction.Label = SR.MenuDeleteVertex;
 			deleteAction.Visible = hit && count > 1;
 			deleteAction.Persistent = true;
-			deleteAction.SetClickHandler(this.DeleteVertex);
+			deleteAction.SetClickHandler(this.PerformDeleteVertex);
 
 			return new ActionSet(new IAction[] {insertAction, deleteAction});
 		}
 
+		#endregion
+
+		#region IMemorable Members
+
+		public virtual object CreateMemento()
+		{
+			PointsMemento pointsMemento = new PointsMemento();
+
+			this.Subject.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				foreach (PointF point in this.Subject.Points)
+					pointsMemento.Add(point);
+			}
+			finally
+			{
+				this.Subject.ResetCoordinateSystem();
+			}
+
+			return pointsMemento;
+		}
+
+		public virtual void SetMemento(object memento)
+		{
+			PointsMemento pointsMemento = memento as PointsMemento;
+			if (pointsMemento == null)
+				throw new ArgumentException("The provided memento is not the expected type.", "memento");
+
+			_suspendSubjectPointChangeEvents = true;
+			this.Subject.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				int numPoints = Math.Min(this.Subject.Points.Count, pointsMemento.Count);
+				for (int n = 0; n < numPoints; n++)
+					this.Subject.Points[n] = pointsMemento[n];
+				for (int n = numPoints; n < this.Subject.Points.Count; n++)
+					this.Subject.Points.RemoveAt(numPoints);
+				for (int n = numPoints; n < pointsMemento.Count; n++)
+					this.Subject.Points.Add(pointsMemento[n]);
+			}
+			finally
+			{
+				this.Subject.ResetCoordinateSystem();
+				_suspendSubjectPointChangeEvents = false;
+				this.OnSubjectPointsChanged(this, new EventArgs());
+			}
+		}
+
+		#endregion
+
 		protected virtual void OnSubjectPointsChanged(object sender, EventArgs e)
 		{
-			_bypassControlPointChangedEvent = true;
+			if (_suspendSubjectPointChangeEvents)
+				return;
+
+			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
@@ -191,13 +263,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			finally
 			{
 				this.ResetCoordinateSystem();
-				_bypassControlPointChangedEvent = false;
+				this.ResumeControlPointEvents();
 			}
 		}
 
 		protected virtual void OnSubjectPointChanged(object sender, ListEventArgs<PointF> e)
 		{
-			_bypassControlPointChangedEvent = true;
+			if (_suspendSubjectPointChangeEvents)
+				return;
+
+			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
@@ -206,16 +281,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			finally
 			{
 				this.ResetCoordinateSystem();
-				_bypassControlPointChangedEvent = false;
+				this.ResumeControlPointEvents();
 			}
 		}
 
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
-			if (!_bypassControlPointChangedEvent)
-			{
-				this.Subject.Points[index] = point;
-			}
+			this.Subject.Points[index] = point;
 			base.OnControlPointChanged(index, point);
 		}
 	}

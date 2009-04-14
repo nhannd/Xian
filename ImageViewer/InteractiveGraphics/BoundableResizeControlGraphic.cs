@@ -2,13 +2,14 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	[Cloneable]
-	public sealed class BoundableResizeControlGraphic : ControlPointsGraphic
+	public sealed class BoundableResizeControlGraphic : ControlPointsGraphic, IMemorable
 	{
 		private const int _topLeft = 0;
 		private const int _topRight = 1;
@@ -16,9 +17,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private const int _bottomRight = 3;
 
 		private float? _fixedAspectRatio = null;
-
-		[CloneIgnore]
-		private bool _bypassControlPointChangedEvent = false;
 
 		public BoundableResizeControlGraphic(IGraphic subject)
 			: base(subject)
@@ -68,17 +66,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Initialize();
 		}
 
-		public float? FixedAspectRatio
-		{
-			get { return _fixedAspectRatio; }
-			set
-			{
-				if (value.HasValue)
-					Platform.CheckPositive(value.Value, "FixedAspectRatio");
-				_fixedAspectRatio = value;
-			}
-		}
-
 		public new IBoundableGraphic Subject
 		{
 			get { return base.Subject as IBoundableGraphic; }
@@ -96,6 +83,19 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Subject.TopLeftChanged -= OnSubjectTopLeftChanged;
 
 			base.Dispose(disposing);
+		}
+
+		#region Fixed Ratio Resizing
+
+		public float? FixedAspectRatio
+		{
+			get { return _fixedAspectRatio; }
+			set
+			{
+				if (value.HasValue)
+					Platform.CheckPositive(value.Value, "FixedAspectRatio");
+				_fixedAspectRatio = value;
+			}
 		}
 
 		protected override PointF ConstrainControlPointLocation(int controlPointIndex, PointF cursorLocation) {
@@ -177,36 +177,75 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return result;
 		}
 
+		#endregion
+
+		#region IMemorable Members
+
+		public object CreateMemento()
+		{
+			PointsMemento pointsMemento = new PointsMemento();
+
+			this.Subject.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				pointsMemento.Add(this.Subject.TopLeft);
+				pointsMemento.Add(this.Subject.BottomRight);
+			}
+			finally
+			{
+				this.Subject.ResetCoordinateSystem();
+			}
+
+			return pointsMemento;
+		}
+
+		public void SetMemento(object memento)
+		{
+			PointsMemento pointsMemento = memento as PointsMemento;
+			if (pointsMemento == null || pointsMemento.Count != 2)
+				throw new ArgumentException("The provided memento is not the expected type.", "memento");
+
+			this.Subject.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				this.Subject.TopLeft = pointsMemento[0];
+				this.Subject.BottomRight = pointsMemento[1];
+			}
+			finally
+			{
+				this.Subject.ResetCoordinateSystem();
+			}
+		}
+
+		#endregion
+
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
-			if (!_bypassControlPointChangedEvent)
+			IBoundableGraphic subject = this.Subject;
+			RectangleF rect = subject.Rectangle;
+			switch (index)
 			{
-				IBoundableGraphic subject = this.Subject;
-				RectangleF rect = subject.Rectangle;
-				switch (index)
-				{
-					case _topLeft:
-						subject.TopLeft = point;
-						break;
-					case _bottomRight:
-						subject.BottomRight = point;
-						break;
-					case _topRight:
-						subject.TopLeft = new PointF(rect.Left, point.Y);
-						subject.BottomRight = new PointF(point.X, rect.Bottom);
-						break;
-					case _bottomLeft:
-						subject.TopLeft = new PointF(point.X, rect.Top);
-						subject.BottomRight = new PointF(rect.Right, point.Y);
-						break;
-				}
+				case _topLeft:
+					subject.TopLeft = point;
+					break;
+				case _bottomRight:
+					subject.BottomRight = point;
+					break;
+				case _topRight:
+					subject.TopLeft = new PointF(rect.Left, point.Y);
+					subject.BottomRight = new PointF(point.X, rect.Bottom);
+					break;
+				case _bottomLeft:
+					subject.TopLeft = new PointF(point.X, rect.Top);
+					subject.BottomRight = new PointF(rect.Right, point.Y);
+					break;
 			}
 			base.OnControlPointChanged(index, point);
 		}
 
 		private void OnSubjectTopLeftChanged(object sender, PointChangedEventArgs e)
 		{
-			_bypassControlPointChangedEvent = true;
+			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
@@ -218,13 +257,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			finally
 			{
 				this.ResetCoordinateSystem();
-				_bypassControlPointChangedEvent = false;
+				this.ResumeControlPointEvents();
 			}
 		}
 
 		private void OnSubjectBottomRightChanged(object sender, PointChangedEventArgs e)
 		{
-			_bypassControlPointChangedEvent = true;
+			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
@@ -236,7 +275,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			finally
 			{
 				this.ResetCoordinateSystem();
-				_bypassControlPointChangedEvent = false;
+				this.ResumeControlPointEvents();
 			}
 		}
 	}

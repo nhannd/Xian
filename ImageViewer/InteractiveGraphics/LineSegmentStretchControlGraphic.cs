@@ -1,16 +1,15 @@
+using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	[Cloneable]
-	public sealed class LineSegmentStretchControlGraphic : ControlPointsGraphic
+	public sealed class LineSegmentStretchControlGraphic : ControlPointsGraphic, IMemorable
 	{
-		[CloneIgnore]
-		private bool _bypassControlPointChangedEvent = false;
-
 		public LineSegmentStretchControlGraphic(IGraphic subject)
 			: base(subject)
 		{
@@ -60,9 +59,49 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			base.Dispose(disposing);
 		}
 
+		#region IMemorable Members
+
+		public object CreateMemento()
+		{
+			PointsMemento pointsMemento = new PointsMemento();
+
+			this.Subject.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				pointsMemento.Add(this.Subject.Pt1);
+				pointsMemento.Add(this.Subject.Pt2);
+			}
+			finally
+			{
+				this.Subject.ResetCoordinateSystem();
+			}
+
+			return pointsMemento;
+		}
+
+		public void SetMemento(object memento)
+		{
+			PointsMemento pointsMemento = memento as PointsMemento;
+			if (pointsMemento == null || pointsMemento.Count != 2)
+				throw new ArgumentException("The provided memento is not the expected type.", "memento");
+
+			this.Subject.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				this.Subject.Pt1 = pointsMemento[0];
+				this.Subject.Pt2 = pointsMemento[1];
+			}
+			finally
+			{
+				this.Subject.ResetCoordinateSystem();
+			}
+		}
+
+		#endregion
+
 		private void OnSubjectPt1Changed(object sender, PointChangedEventArgs e)
 		{
-			_bypassControlPointChangedEvent = true;
+			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
@@ -71,13 +110,13 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			finally
 			{
 				this.ResetCoordinateSystem();
-				_bypassControlPointChangedEvent = false;
+				this.ResumeControlPointEvents();
 			}
 		}
 
 		private void OnSubjectPt2Changed(object sender, PointChangedEventArgs e)
 		{
-			_bypassControlPointChangedEvent = true;
+			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
@@ -86,19 +125,16 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			finally
 			{
 				this.ResetCoordinateSystem();
-				_bypassControlPointChangedEvent = false;
+				this.ResumeControlPointEvents();
 			}
 		}
 
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
-			if (!_bypassControlPointChangedEvent)
-			{
-				if (index == 0)
-					this.Subject.Pt1 = point;
-				else if (index == 1)
-					this.Subject.Pt2 = point;
-			}
+			if (index == 0)
+				this.Subject.Pt1 = point;
+			else if (index == 1)
+				this.Subject.Pt2 = point;
 			base.OnControlPointChanged(index, point);
 		}
 	}

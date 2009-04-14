@@ -37,14 +37,18 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			base.InsertVertex();
 			ResyncEndPoints();
-			base.Draw();
 		}
 
 		protected override void DeleteVertex()
 		{
 			base.DeleteVertex();
 			ResyncEndPoints();
-			base.Draw();
+		}
+
+		public override void SetMemento(object memento)
+		{
+			base.SetMemento(memento);
+			ResyncEndPoints();
 		}
 
 		protected override void OnSubjectPointChanged(object sender, ListEventArgs<PointF> e)

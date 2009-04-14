@@ -341,6 +341,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_graphicBuilder.GraphicComplete -= OnGraphicBuilderComplete;
 			_graphicBuilder.GraphicCancelled -= OnGraphicBuilderCancelled;
 
+			_graphicBuilder.Graphic.ImageViewer.CommandHistory.AddCommand(_undoableCommand);
+
 			_undoableCommand = null;
 
 			_graphicBuilder = null;
@@ -382,6 +384,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			InvariantTextPrimitive textArea = new InvariantTextPrimitive();
 			TextEditControlGraphic controlGraphic = new TextEditControlGraphic(new MoveControlGraphic(textArea));
+			controlGraphic.DeleteOnEmpty = true;
+
 			StandardStatefulGraphic statefulGraphic = new StandardStatefulGraphic(controlGraphic);
 			statefulGraphic.State = statefulGraphic.CreateInactiveState();
 

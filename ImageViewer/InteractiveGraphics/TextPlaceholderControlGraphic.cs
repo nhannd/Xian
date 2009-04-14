@@ -1,17 +1,16 @@
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	[Cloneable]
-	public class TextPlaceholderControlGraphic : ControlPointsGraphic
+	public class TextPlaceholderControlGraphic : ControlPointsGraphic, IMemorable
 	{
-		[CloneIgnore]
-		private bool _bypassControlPointChangedEvent = false;
-
 		public TextPlaceholderControlGraphic(IGraphic subject)
 			: base(subject)
 		{
@@ -42,9 +41,47 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return base.Subject as ITextGraphic; }
 		}
 
+		#region IMemorable Members
+
+		public virtual object CreateMemento()
+		{
+			PointMemento pointMemento;
+
+			this.Subject.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				pointMemento = new PointMemento(this.Subject.Location);
+			}
+			finally
+			{
+				this.Subject.ResetCoordinateSystem();
+			}
+
+			return pointMemento;
+		}
+
+		public virtual void SetMemento(object memento)
+		{
+			PointMemento pointMemento = memento as PointMemento;
+			if (pointMemento == null)
+				throw new ArgumentException("The provided memento is not the expected type.", "memento");
+
+			this.Subject.CoordinateSystem = CoordinateSystem.Source;
+			try
+			{
+				this.Subject.Location = pointMemento.Point;
+			}
+			finally
+			{
+				this.Subject.ResetCoordinateSystem();
+			}
+		}
+
+		#endregion
+
 		private void Subject_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
-			_bypassControlPointChangedEvent = true;
+			this.SuspendControlPointEvents();
 			this.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
@@ -57,17 +94,14 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			finally
 			{
 				this.ResetCoordinateSystem();
-				_bypassControlPointChangedEvent = false;
+				this.ResumeControlPointEvents();
 			}
 		}
 
 		protected override void OnControlPointChanged(int index, PointF point)
 		{
-			if (!_bypassControlPointChangedEvent)
-			{
-				this.Subject.Location = point;
-				this.Draw();
-			}
+			this.Subject.Location = point;
+			this.Draw();
 			base.OnControlPointChanged(index, point);
 		}
 	}
