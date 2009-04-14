@@ -33,7 +33,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Audit;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Enterprise.Core;
@@ -117,6 +116,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 					Platform.Log(LogLevel.Error,
 								 "Partition {0} will not accept IPv4 incoming DICOM associations.",
 								 part.Description);
+					ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, "DICOM Listener",
+					                     AlertTypeCodes.UnableToStart, "Unable to start IPv4 DICOM listener on {0} : {1}",
+					                     ipV4Scp.AeTitle, ipV4Scp.ListenPort);
 				}
 			}
 
@@ -151,6 +153,9 @@ namespace ClearCanvas.ImageServer.Services.Dicom.Shreds
 					Platform.Log(LogLevel.Error,
 								 "Partition {0} will not accept IPv6 incoming DICOM associations.",
 								 part.Description);
+					ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, "DICOM Listener",
+										 AlertTypeCodes.UnableToStart, "Unable to start IPv6 DICOM listener on {0} : {1}",
+										 ipV6Scp.AeTitle, ipV6Scp.ListenPort);
 				}
 			}
 		}

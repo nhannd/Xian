@@ -51,91 +51,124 @@ namespace ClearCanvas.Dicom.Network
     {
         #region Members
 
-        static private Dictionary<IPEndPoint, Listener> _listeners = new Dictionary<IPEndPoint, Listener>();
-        private IPEndPoint _ipEndPoint = null;
-        private Dictionary<String, ListenerInfo> _applications = new Dictionary<String, ListenerInfo>();
+        static private readonly Dictionary<IPEndPoint, Listener> _listeners = new Dictionary<IPEndPoint, Listener>();
+        private readonly IPEndPoint _ipEndPoint = null;
+        private readonly Dictionary<String, ListenerInfo> _applications = new Dictionary<String, ListenerInfo>();
         private TcpListener _tcpListener = null;
         private Thread _theThread = null;
-        private bool _stop = false;
-
+        private volatile bool _stop = false;
+		private static readonly object _syncLock = new object();
         #endregion
 
         #region Public Static Methods
 
         public static bool Listen(ServerAssociationParameters parameters, StartAssociation acceptor)
         {
-            if (_listeners.ContainsKey(parameters.LocalEndPoint))
-            {
-                Listener theListener = _listeners[parameters.LocalEndPoint];
+			lock (_syncLock)
+			{
+				if (_listeners.ContainsKey(parameters.LocalEndPoint))
+				{
+					Listener theListener = _listeners[parameters.LocalEndPoint];
 
-                ListenerInfo info = new ListenerInfo();
-                
-                info.StartDelegate = acceptor;
-                info.Parameters = parameters;
+					ListenerInfo info = new ListenerInfo();
 
-                if (theListener._applications.ContainsKey(parameters.CalledAE))
-                {
-					Platform.Log(LogLevel.Error, "Already listening with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
-                    return false;
-                }
+					info.StartDelegate = acceptor;
+					info.Parameters = parameters;
 
-                theListener._applications.Add(parameters.CalledAE,info);
-                Platform.Log(LogLevel.Info, "Starting to listen with AE {0} on existing port {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
-            }
-            else
-            {
-                
-                Listener theListener = new Listener(parameters, acceptor);
-                _listeners[parameters.LocalEndPoint] = theListener;
-                theListener.StartThread();
+					if (theListener._applications.ContainsKey(parameters.CalledAE))
+					{
+						Platform.Log(LogLevel.Error, "Already listening with AE {0} on {1}", parameters.CalledAE,
+						             parameters.LocalEndPoint.ToString());
+						return false;
+					}
 
-                Platform.Log(LogLevel.Info, "Starting to listen with AE {0} on port {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
-            }
+					theListener._applications.Add(parameters.CalledAE, info);
+					Platform.Log(LogLevel.Info, "Starting to listen with AE {0} on existing port {1}", parameters.CalledAE,
+					             parameters.LocalEndPoint.ToString());
+				}
+				else
+				{
+					Listener theListener = new Listener(parameters, acceptor);
+					if (!theListener.StartListening())
+					{
+						Platform.Log(LogLevel.Error, "Unexpected error starting to listen on {0}", parameters.LocalEndPoint.ToString());
+						return false;
+					}
 
-            return true;
+					_listeners[parameters.LocalEndPoint] = theListener;
+					theListener.StartThread();
+
+					Platform.Log(LogLevel.Info, "Starting to listen with AE {0} on port {1}", parameters.CalledAE,
+					             parameters.LocalEndPoint.ToString());
+				}
+
+				return true;
+			}
         }
+
+		public bool StartListening()
+		{
+			_tcpListener = new TcpListener(_ipEndPoint);
+			try
+			{
+				_tcpListener.Start(50);
+			}
+			catch (SocketException e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when starting TCP listener");
+				Platform.Log(LogLevel.Error, "Shutting down listener on {0}", _ipEndPoint.ToString());
+				_tcpListener = null;
+				return false;
+			}
+			return true;
+		}
 
         public static bool StopListening(ServerAssociationParameters parameters)
         {
-            Listener theListener;
+			lock (_syncLock)
+			{
+				Listener theListener;
 
-            if (_listeners.ContainsKey(parameters.LocalEndPoint))
-            {
-                theListener = _listeners[parameters.LocalEndPoint];
+				if (_listeners.ContainsKey(parameters.LocalEndPoint))
+				{
+					theListener = _listeners[parameters.LocalEndPoint];
 
-                if (theListener._applications.ContainsKey(parameters.CalledAE))
-                {
-                    theListener._applications.Remove(parameters.CalledAE);
+					if (theListener._applications.ContainsKey(parameters.CalledAE))
+					{
+						theListener._applications.Remove(parameters.CalledAE);
 
-                    if (theListener._applications.Count == 0)
-                    {
-                        // Cleanup the listener
-                        _listeners.Remove(parameters.LocalEndPoint);
-                        theListener.StopThread();
-                        theListener.Dispose();
-                    }
-                    Platform.Log(LogLevel.Info, "Stopping listening with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
-                }
-                else
-                {
-					Platform.Log(LogLevel.Error, "Unable to stop listening on AE {0}, assembly was not listening with this AE.", parameters.CalledAE);
-                    return false;
-                }
-            }
-            else
-            {
-				Platform.Log(LogLevel.Error, "Unable to stop listening, assembly was not listening on end point {0}.", parameters.LocalEndPoint.ToString());
-                return false;
-            }
+						if (theListener._applications.Count == 0)
+						{
+							// Cleanup the listener
+							_listeners.Remove(parameters.LocalEndPoint);
+							theListener.StopThread();
+							theListener.Dispose();
+						}
+						Platform.Log(LogLevel.Info, "Stopping listening with AE {0} on {1}", parameters.CalledAE,
+						             parameters.LocalEndPoint.ToString());
+					}
+					else
+					{
+						Platform.Log(LogLevel.Error, "Unable to stop listening on AE {0}, assembly was not listening with this AE.",
+						             parameters.CalledAE);
+						return false;
+					}
+				}
+				else
+				{
+					Platform.Log(LogLevel.Error, "Unable to stop listening, assembly was not listening on end point {0}.",
+					             parameters.LocalEndPoint.ToString());
+					return false;
+				}
 
-            return true;
+				return true;
+			}
         }
         #endregion
 
         #region Constructors
         internal Listener(ServerAssociationParameters parameters, StartAssociation acceptor)
         {
-
             ListenerInfo info = new ListenerInfo();
 
             info.Parameters = parameters;
@@ -165,18 +198,6 @@ namespace ClearCanvas.Dicom.Network
 
         public void Listen()
         {
-            _tcpListener = new TcpListener(_ipEndPoint);
-            try
-            {
-                _tcpListener.Start(50);
-            }
-            catch (SocketException e)
-            {
-				Platform.Log(LogLevel.Error, e, "Unexpected exception when starting TCP listener");
-				Platform.Log(LogLevel.Error, "Shutting down listener on {0}", _ipEndPoint.ToString());
-                return;
-            }
-
             while (_stop == false)
             {
                 // Tried Async i/o here, but had some weird problems with connections not getting
@@ -184,7 +205,9 @@ namespace ClearCanvas.Dicom.Network
                 if (_tcpListener.Pending())
                 {
                     Socket theSocket = _tcpListener.AcceptSocket();
-                    DicomServer server = new DicomServer(theSocket, _applications);
+
+					// The DicomServer will automatically start working in the background
+                    new DicomServer(theSocket, _applications);
                     continue;
                 }
                 Thread.Sleep(10);               

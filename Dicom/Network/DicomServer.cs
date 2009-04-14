@@ -81,9 +81,10 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="parameters">The parameters to use when listening for associations.</param>
         /// <param name="acceptor">A delegate to be called to return a class instance that implements
         /// the <see cref="IDicomServerHandler"/> interface to handle an incoming association.</param>
-        public static void StartListening(ServerAssociationParameters parameters, StartAssociation acceptor)
+        /// <returns><i>true</i> on success, <i>false</i> on failure</returns>
+        public static bool StartListening(ServerAssociationParameters parameters, StartAssociation acceptor)
         {
-            Listener.Listen(parameters, acceptor);
+            return Listener.Listen(parameters, acceptor);
         }
 
         /// <summary>

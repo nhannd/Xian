@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		#endregion
 
 		#region Private Members
-		private AlertController _alertController = new AlertController();
+		private readonly AlertController _alertController = new AlertController();
 		private string _insertTime;
 		private string _component;
 		private AlertLevelEnum _level;
@@ -162,23 +162,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		#endregion
 
 		#region Private Methods
-		private IList<Alert> InternalSelect(int startRowIndex, int maximumRows, out int resultCount)
+		private AlertSelectCriteria GetSelectCriteria()
 		{
-			resultCount = 0;
-
-			if (maximumRows == 0) return new List<Alert>();
-
-			if (SearchKeys != null)
-			{
-				IList<Alert> alertList = new List<Alert>();
-				foreach (ServerEntityKey key in SearchKeys)
-					alertList.Add(Alert.Load(key));
-
-				resultCount = alertList.Count;
-
-				return alertList;
-			}
-
 			AlertSelectCriteria criteria = new AlertSelectCriteria();
 
 			if (Component != null)
@@ -195,10 +180,27 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				criteria.AlertLevelEnum.EqualTo(Level);
 			if (Category != null)
 				criteria.AlertCategoryEnum.EqualTo(Category);
+			return criteria;
+		}
+
+		private IList<Alert> InternalSelect(int startRowIndex, int maximumRows)
+		{
+			if (maximumRows == 0) return new List<Alert>();
+
+			if (SearchKeys != null)
+			{
+				IList<Alert> alertList = new List<Alert>();
+				foreach (ServerEntityKey key in SearchKeys)
+					alertList.Add(Alert.Load(key));
+
+				return alertList;
+			}
+
+			AlertSelectCriteria criteria = GetSelectCriteria();
+
+			criteria.InsertTime.SortDesc(0);
 
 			IList<Alert> list = _alertController.GetRangeAlerts(criteria, startRowIndex, maximumRows);
-
-			resultCount = list.Count;
 
 			return list;
 		}
@@ -207,7 +209,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		#region Public Methods
 		public IEnumerable<AlertSummary> Select(int startRowIndex, int maximumRows)
 		{
-			IList<Alert> list = InternalSelect(startRowIndex, maximumRows, out _resultCount);
+			IList<Alert> list = InternalSelect(startRowIndex, maximumRows);
 
 			_list = new List<AlertSummary>();
 			foreach (Alert item in list)
@@ -223,8 +225,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		{
 			if (ResultCount != 0) return ResultCount;
 
-			// Ignore the search results
-			InternalSelect(0, 1, out _resultCount);
+			AlertSelectCriteria criteria = GetSelectCriteria();
+
+			ResultCount = _alertController.GetAlertsCount(criteria);
 
 			return ResultCount;
 		}

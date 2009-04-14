@@ -234,15 +234,13 @@ namespace ClearCanvas.Dicom.Network.Scp
                     return false;
                 }
 
-                DicomServer.StartListening(_assocParameters, StartAssociation);
+                return DicomServer.StartListening(_assocParameters, StartAssociation);
             }
             catch (DicomException ex)
             {
                 Platform.Log(LogLevel.Fatal, ex, "Unexpected exception when starting listener on port {0)", ListenPort);
                 return false;
             }
-
-            return true;
         }
 
         /// <summary>
