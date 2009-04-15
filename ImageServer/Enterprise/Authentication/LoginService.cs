@@ -39,10 +39,6 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                                 session = new SessionInfo(user);
                                 
                             }
-                            else
-                            {
-                                throw new SecurityException();
-                            }
                         }
                         catch (FaultException<PasswordExpiredException> ex)
                         {

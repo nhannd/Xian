@@ -97,6 +97,24 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to contact the authentication and authorization server..
+        /// </summary>
+        internal static string CannotContactEnterpriseServer {
+            get {
+                return ResourceManager.GetString("CannotContactEnterpriseServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0}.
+        /// </summary>
+        internal static string ChangePasswordError {
+            get {
+                return ResourceManager.GetString("ChangePasswordError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to delete the study. See server log for more details..
         /// </summary>
         internal static string DeleteStudyError {
@@ -156,6 +174,15 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         internal static string LoginInvalidUsernameOrPassword {
             get {
                 return ResourceManager.GetString("LoginInvalidUsernameOrPassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Provided passwords do not match.&lt;br/&gt;Please retype your passwords and try again..
+        /// </summary>
+        internal static string PasswordsDoNotMatch {
+            get {
+                return ResourceManager.GetString("PasswordsDoNotMatch", resourceCulture);
             }
         }
     }

@@ -67,22 +67,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             {
                 PasswordExpiredDialog.Show(UserName.Text, Password.Text);
             }
-			catch (Exception ex)
-			{
-				Platform.Log(LogLevel.Error, ex, "Invalid login");
-
-                // TODO: The server is throwing exception when username or password is invalid or something else. 
-                // We can't determine the cause unless IncludeExceptionDetailInFaults is enabled on the server.
-                // For this reason, we can only assume for now it only throw exceptions.
-                // If the error is due to communication with the server, users will be redirected to the error page instead.
+            catch(FaultException ex)
+            {
+                // NOTE: The server is throwing FaultException when username or password is invalid. 
+                Platform.Log(LogLevel.Error, ex, "Invalid login for {0}", UserName.Text);
                 ShowError(ErrorMessages.LoginInvalidUsernameOrPassword);
                 UserName.Focus();
 
-				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
-					EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated,UserAuthenticationEventType.Login );
-				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text,null,null));
-				ServerPlatform.LogAuditMessage("UserAuthentication",audit);
-			}
+                UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
+                    EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated, UserAuthenticationEventType.Login);
+                audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
+                ServerPlatform.LogAuditMessage("UserAuthentication", audit);
+            }
+            catch (CommunicationException ex)
+            {
+                Platform.Log(LogLevel.Error, ex, "Unable to contact A/A server");
+                ShowError(ErrorMessages.CannotContactEnterpriseServer);
+            }
         }
 
         public void ChangePassword(object sender, EventArgs e)

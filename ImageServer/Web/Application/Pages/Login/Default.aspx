@@ -28,22 +28,19 @@
     
     <div id="LoginSplash">
         <div id="LoginCredentials">
-        <table>
-            <tr>
-                <td colspan="2" align="right">
-                    <asp:Panel style="background: #8FC3E4; padding: 2px 7px 2px 7px;" runat="server" ID="ErrorMessagePanel"
+        
+        <asp:Panel style="background: #8FC3E4; padding: 2px 7px 2px 7px;" runat="server" ID="ErrorMessagePanel"
                         Visible='<%# !String.IsNullOrEmpty(Page.Request.QueryString["error"]) %>'>
                         <asp:Label runat="server" ID="ErrorMessage" ForeColor="red" Text='<%# Page.Request.QueryString["error"] %>' />
-                    </asp:Panel>
-                </td>
-            </tr>        
+        </asp:Panel>
+        <table>      
             <tr>
-            <td>Username:</td>
-            <td><asp:TextBox runat="server" ID="UserName" Width="100" CssClass="LoginTextInput"></asp:TextBox></td>
+            <td align="right">Username:</td>
+            <td align="right"><asp:TextBox runat="server" ID="UserName" Width="100" CssClass="LoginTextInput"></asp:TextBox></td>
             </tr>
             <tr>
-            <td>Password:</td>
-            <td><asp:TextBox runat="server" ID="Password" TextMode="Password" Width="100" CssClass="LoginTextInput"></asp:TextBox></td>
+            <td align="right">Password:</td>
+            <td align="right"><asp:TextBox runat="server" ID="Password" TextMode="Password" Width="100" CssClass="LoginTextInput"></asp:TextBox></td>
             </tr> 
             <tr>
                 <td colspan="2" align="right"><asp:Button runat="server" ID="LoginButton" OnClick="LoginClicked"  Text="Login" CssClass="LoginButton"/></td>

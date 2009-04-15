@@ -129,6 +129,12 @@
   <data name="AlertNotAvailable" xml:space="preserve">
     <value>This alert item is no longer available in the system.</value>
   </data>
+  <data name="CannotContactEnterpriseServer" xml:space="preserve">
+    <value>Unable to contact the authentication and authorization server.</value>
+  </data>
+  <data name="ChangePasswordError" xml:space="preserve">
+    <value>{0}</value>
+  </data>
   <data name="DeleteStudyError" xml:space="preserve">
     <value>Unable to delete the study. See server log for more details.</value>
   </data>
@@ -149,5 +155,8 @@
   </data>
   <data name="LoginInvalidUsernameOrPassword" xml:space="preserve">
     <value>Invalid username or password.</value>
+  </data>
+  <data name="PasswordsDoNotMatch" xml:space="preserve">
+    <value>Provided passwords do not match.&lt;br/&gt;Please retype your passwords and try again.</value>
   </data>
 </root>

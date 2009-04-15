@@ -127,6 +127,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         {
             SignOut();// force to signout by removing the authentication ticket
             String queryString = String.Format("error={0}", error);
+            if (String.IsNullOrEmpty(error))
+            {
+                Platform.Log(LogLevel.Info, "Terminate session because {0}", error);
+            }
             FormsAuthentication.RedirectToLoginPage(queryString);
         }
 
