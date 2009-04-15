@@ -10,6 +10,7 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
 namespace ClearCanvas.ImageServer.Web.Application
@@ -18,19 +19,14 @@ namespace ClearCanvas.ImageServer.Web.Application
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            //TODO: Use a mapping file similar to SiteMap to specify the default home page based on the authority tokens that user has.
-            if (SessionManager.Current == null)
+            string defaultHomePageUrl = UserProfile.GetDefaultUrl();
+            if (defaultHomePageUrl != null)
             {
-                FormsAuthentication.RedirectToLoginPage();  // once user has logged in, he/she will be redirected to somewhere else based on the roles  
-            }
-                
-            if (SessionManager.Current.User.IsInRole(AuthorityTokens.Admin.System.EnterpriseConfiguration))
-            {
-                Response.Redirect(ImageServerConstants.PageURLs.AdminUserPage);
+                Response.Redirect(ImageServerConstants.PageURLs.SearchPage);
             }
             else
             {
-                Response.Redirect(ImageServerConstants.PageURLs.SearchPage);
+                Response.Redirect(defaultHomePageUrl);
             }
         }
     }

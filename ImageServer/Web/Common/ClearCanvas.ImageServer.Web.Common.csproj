@@ -132,6 +132,7 @@
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
     <Compile Include="UICommonSettings.cs" />
+    <Compile Include="UserProfile.cs" />
     <Compile Include="Utilities\HtmlUtility.cs" />
     <Compile Include="Utilities\NameFormatter.cs" />
     <Compile Include="WebControls\UI\AJAXScriptControl.cs">

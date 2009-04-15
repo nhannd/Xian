@@ -9,6 +9,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
+using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
@@ -36,8 +37,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 
         protected void Logout_Click(Object sender, EventArgs e)
         {
-            SessionManager.TerminateSession();
-            Response.Redirect("~/Pages/Login/Default.aspx");
+            String afterLoginUrl = UserProfile.GetDefaultUrl();
+            SessionManager.SignOut();
+            Response.Redirect(afterLoginUrl); // since we have signed out, this will force user to login again
         }
     }
 }
