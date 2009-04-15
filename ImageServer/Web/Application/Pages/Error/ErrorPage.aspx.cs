@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
             } 
             if (Context.Items[ImageServerConstants.ContextKeys.StackTrace] != null)
             {
-                StackTraceTextBox.Text = Context.Items[ImageServerConstants.ContextKeys.StackTrace].ToString();
+                StackTraceTextBox.Text = Server.HtmlEncode(Context.Items[ImageServerConstants.ContextKeys.StackTrace].ToString());
                 StackTraceTextBox.Visible = true;
                 StackTraceMessage.Visible = true;
             }
