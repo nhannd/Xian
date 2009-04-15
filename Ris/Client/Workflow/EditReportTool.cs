@@ -279,7 +279,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		public ActionModelNode EditReportMenuModel
 		{
-			get { return ActionModelRoot.CreateModel(typeof(TestTool).FullName, "editreport-toolbar-dropdown", base.Actions); }
+			get { return ActionModelRoot.CreateModel(typeof(EditReportTool).FullName, "editreport-toolbar-dropdown", base.Actions); }
 		}
 
 		public string GroupLabel
