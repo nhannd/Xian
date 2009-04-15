@@ -32,14 +32,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Runtime.Serialization;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -131,10 +129,13 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Save()
 		{
+			// Save the ordering of the folder systems
 			FolderExplorerComponentSettings.Default.SaveUserFolderSystemsOrder(
 				CollectionUtils.Map<FolderSystemConfigurationNode, IFolderSystem>(
 					_folderSystems, 
 					delegate(FolderSystemConfigurationNode node) { return node.FolderSystem; }));
+
+			// TODO: save the ordering of the folders
 		}
 		
 		#endregion
@@ -162,8 +163,7 @@ namespace ClearCanvas.Ris.Client
 				NotifyPropertyChanged("SelectedFolderSystemIndex");
 
 				FolderSystemConfigurationNode folderSystemNode = _folderSystems[_selectedFolderSystemIndex];
-
-				LoadFolderTree(folderSystemNode);
+				BuildFolderTreeIfNotExist(folderSystemNode);
 
 				_folderTree.Items.Clear();
 				_folderTree.Items.Add(folderSystemNode);
@@ -239,16 +239,17 @@ namespace ClearCanvas.Ris.Client
 
 		private void LoadFolderSystems()
 		{
-			// TODO: Load Folder Systems in the same order as in the FolderExplorer, rather than from extension point
-
+			// Get a list of folder systems, initialize each of them so the folder list is populated
 			List<IFolderSystem> folderSystems = CollectionUtils.Cast<IFolderSystem>(new FolderSystemExtensionPoint().CreateExtensions());
+			CollectionUtils.ForEach(folderSystems,
+				delegate(IFolderSystem fs) { fs.Initialize(); });
 
 			List<IFolderSystem> remainder;
 			FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(folderSystems, out folderSystems, out remainder);
 			// add the remainder to the end of the ordered list
 			folderSystems.AddRange(remainder);
 
-			IList<FolderSystemConfigurationNode> fsNodes = CollectionUtils.Map<IFolderSystem, FolderSystemConfigurationNode, List<FolderSystemConfigurationNode>>(folderSystems,
+			IList<FolderSystemConfigurationNode> fsNodes = CollectionUtils.Map<IFolderSystem, FolderSystemConfigurationNode>(folderSystems,
 				delegate(IFolderSystem fs) { return new FolderSystemConfigurationNode(fs); });
 
 			CollectionUtils.ForEach(fsNodes,
@@ -294,19 +295,27 @@ namespace ClearCanvas.Ris.Client
 
 		#region Folders Helper
 
-		private void LoadFolderTree(FolderSystemConfigurationNode folderSystemNode)
+		private void BuildFolderTreeIfNotExist(FolderSystemConfigurationNode folderSystemNode)
 		{
-			if (folderSystemNode.SubTree == null)
-			{
-				// TODO: Load Folder tree in the same order as in the FolderExplorer or from Xml Document
-				FolderConfigurationNode node1 = new FolderConfigurationNode("node1", "Root/Node1");
-				FolderConfigurationNode node2 = new FolderConfigurationNode("node2", "Root/Node2");
-				FolderConfigurationNode node21 = new FolderConfigurationNode("node3", "Root/Node21");
+			if (folderSystemNode.SubTree != null)
+				return;
 
-				node2.AddChildNode(node21);
-				folderSystemNode.AddChildNode(node1);
-				folderSystemNode.AddChildNode(node2);
-			}
+			// put folders in correct insertion order from XML
+			List<IFolder> orderedFolders;
+			List<IFolder> remainderFolders;
+			FolderExplorerComponentSettings.Default.ApplyUserFoldersCustomizations(folderSystemNode.FolderSystem, out orderedFolders, out remainderFolders);
+
+			// add the remainder to the end of the ordered list
+			orderedFolders.AddRange(remainderFolders);
+
+			// add each ordered folder to the tree
+			folderSystemNode.ClearSubTree();
+			CollectionUtils.ForEach(orderedFolders,
+				delegate(IFolder folder)
+					{
+						FolderConfigurationNode folderNode = new FolderConfigurationNode(folder, "Root/Node1");
+						folderSystemNode.AddChildNode(folderNode);
+					});
 		}
 
 		private void AddFolder()

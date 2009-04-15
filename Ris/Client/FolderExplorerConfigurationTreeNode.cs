@@ -159,6 +159,18 @@ namespace ClearCanvas.Ris.Client
 		#region Public methods
 
 		/// <summary>
+		/// Clear all the children from this node.
+		/// </summary>
+		public void ClearSubTree()
+		{
+			if (_subTree == null)
+				return;
+
+			_subTree.Items.Clear();
+			_subTree = null;
+		}
+
+		/// <summary>
 		/// Add a node to the sub tree.
 		/// </summary>
 		public void AddChildNode(DraggableTreeNode node)
@@ -243,8 +255,8 @@ namespace ClearCanvas.Ris.Client
 				return;
 
 			_subTree = BuildTree();
-			if (_parent != null)
-				_parent.SubTree.Items.NotifyItemUpdated(this);
+
+			ExpandSubTree();
 		}
 
 		private void ExpandSubTree()
@@ -347,32 +359,37 @@ namespace ClearCanvas.Ris.Client
 		private const string SEPARATOR = "/";
 		private readonly int _lastSeparatorIndex;
 
-		private readonly string _id;
+		private readonly IFolder _folder;
 		private readonly string _defaultPath;
 		private bool _isStale;
 
 		private string _text;
 
-		public FolderConfigurationNode(string id, string path)
-			: this(id, path, true, false)
+		public FolderConfigurationNode(IFolder folder, string path)
+			: this(folder, path, true, false)
 		{
 		}
 
-		public FolderConfigurationNode(string id, string defaultPath, bool isVisible, bool isStale)
+		public FolderConfigurationNode(IFolder folder, string defaultPath, bool isVisible, bool isStale)
 		{
-			_id = id;
+			_folder = folder;
 			_defaultPath = defaultPath;
 			_isStale = isStale;
 
 			_lastSeparatorIndex = _defaultPath.LastIndexOf(SEPARATOR);
-			_text = _defaultPath.Substring(_lastSeparatorIndex + 1);
+			_text = folder == null ? defaultPath : folder.Text;
 			this.IsChecked = isVisible;
+		}
+
+		public IFolder Folder
+		{
+			get { return _folder; }
 		}
 
 		[DataMember]
 		public string Id
 		{
-			get { return _id; }
+			get { return _folder == null ? null : _folder.Id; }
 		}
 
 		[DataMember]
@@ -403,7 +420,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override string ToolTip
 		{
-			get { return _defaultPath; }
+			get { return _folder == null ? null : _folder.Tooltip; }
 		}
 
 		public override bool CanEdit
@@ -413,7 +430,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override bool CanDelete
 		{
-			get { return string.IsNullOrEmpty(_id) && (this.SubTree == null || this.SubTree.Items.Count == 0); }
+			get { return _folder == null && (this.SubTree == null || this.SubTree.Items.Count == 0); }
 		}
 
 		#endregion
