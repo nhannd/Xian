@@ -164,7 +164,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                         if (instanceuid!=undefined && serverae!=undefined)
                         {
                             var url= String.format('{0}?serverae={1}&siuid={2}', this._OpenStudyPageUrl, serverae, instanceuid);
-                            window.open(url, 'detailswindow', 'toolbar=no,location=no,directories=no,status=no,menubar=no,resizable=yes,scrollbars=yes,width=1024,height=768');
+                            window.open(url);
                         }
                     }
                     
@@ -198,8 +198,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Stud
                             urlCount++;
                         }
                     }
-                    // load in the current window 
-                    window.open(url, 'movewindow', 'toolbar=no,location=no,directories=no,status=no,menubar=no,resizable=yes,scrollbars=yes,width=1024,height=768');
+                    window.open(url);
                 }
             }
         },
