@@ -131,8 +131,10 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Save()
 		{
-			//TODO: save configuration to Xml
-			throw new Exception("The method or operation is not implemented.");
+			FolderExplorerComponentSettings.Default.SaveUserFolderSystemsOrder(
+				CollectionUtils.Map<FolderSystemConfigurationNode, IFolderSystem>(
+					_folderSystems, 
+					delegate(FolderSystemConfigurationNode node) { return node.FolderSystem; }));
 		}
 		
 		#endregion
@@ -240,6 +242,12 @@ namespace ClearCanvas.Ris.Client
 			// TODO: Load Folder Systems in the same order as in the FolderExplorer, rather than from extension point
 
 			List<IFolderSystem> folderSystems = CollectionUtils.Cast<IFolderSystem>(new FolderSystemExtensionPoint().CreateExtensions());
+
+			List<IFolderSystem> remainder;
+			FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(folderSystems, out folderSystems, out remainder);
+			// add the remainder to the end of the ordered list
+			folderSystems.AddRange(remainder);
+
 			IList<FolderSystemConfigurationNode> fsNodes = CollectionUtils.Map<IFolderSystem, FolderSystemConfigurationNode, List<FolderSystemConfigurationNode>>(folderSystems,
 				delegate(IFolderSystem fs) { return new FolderSystemConfigurationNode(fs); });
 

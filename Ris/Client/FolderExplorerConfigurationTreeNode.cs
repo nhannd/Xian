@@ -310,6 +310,11 @@ namespace ClearCanvas.Ris.Client
 			get { return _folderSystem.Id; }
 		}
 
+		public IFolderSystem FolderSystem
+		{
+			get { return _folderSystem; }
+		}
+
 		#region DraggableTreeNode Overrides
 
 		public override string Text
