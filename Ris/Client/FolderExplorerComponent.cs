@@ -388,7 +388,7 @@ namespace ClearCanvas.Ris.Client
 			// put folders in correct insertion order from XML
 			List<IFolder> orderedFolders;
 			List<IFolder> remainderFolders;
-			FolderExplorerComponentSettings.Default.OrderFolders(_folderSystem, out orderedFolders, out remainderFolders);
+			FolderExplorerComponentSettings.Default.ApplyUserFoldersCustomizations(_folderSystem, out orderedFolders, out remainderFolders);
 
 			_folderTreeRoot.InsertFolders(orderedFolders, false);	// insert the ordered folders as ordered
 			_folderTreeRoot.InsertFolders(remainderFolders, true);	// insert the remainder sorting alphabetically

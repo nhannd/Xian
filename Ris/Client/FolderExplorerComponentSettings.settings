@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client" GeneratedClassName="FolderExplorerComponentSettings">
   <Profiles />
   <Settings>
-    <Setting Name="FolderPathXml" Description="XML document that describes the ordering of folders in folder systems." Type="System.String" Scope="Application">
+    <Setting Name="FolderPathXml" Description="XML document that describes the ordering of folders in folder systems." Type="System.String" Scope="User">
       <Value Profile="(Default)">FolderExplorerComponentSettings.xml</Value>
     </Setting>
   </Settings>

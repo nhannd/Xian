@@ -170,7 +170,7 @@ namespace ClearCanvas.Ris.Client
 
 			// Order the Folder Systems
 			List<IFolderSystem> remainder;
-			FolderExplorerComponentSettings.Default.OrderFolderSystems(folderSystems, out folderSystems, out remainder);
+			FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(folderSystems, out folderSystems, out remainder);
 
 			// add the remainder to the end of the ordered list
 			folderSystems.AddRange(remainder);
