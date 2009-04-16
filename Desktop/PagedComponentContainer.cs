@@ -140,7 +140,7 @@ namespace ClearCanvas.Desktop
 				base.OnItemAdded(e);
 
 				// if this is the first page, move to it
-				if (_owner._current == -1)
+				if (_owner.IsStarted && _owner._current == -1)
 					_owner.MoveTo(0);
 			}
 
