@@ -1483,6 +1483,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Container Folder.
+        /// </summary>
+        internal static string TitleAddContainerFolder {
+            get {
+                return ResourceManager.GetString("TitleAddContainerFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Imaging Service.
         /// </summary>
         internal static string TitleAddDiagnosticService {
@@ -1614,6 +1623,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleDelete {
             get {
                 return ResourceManager.GetString("TitleDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete Container Folder.
+        /// </summary>
+        internal static string TitleDeleteContainerFolder {
+            get {
+                return ResourceManager.GetString("TitleDeleteContainerFolder", resourceCulture);
             }
         }
         
@@ -1857,6 +1875,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitlePrintFaxReport {
             get {
                 return ResourceManager.GetString("TitlePrintFaxReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rename Folder.
+        /// </summary>
+        internal static string TitleRenameFolder {
+            get {
+                return ResourceManager.GetString("TitleRenameFolder", resourceCulture);
             }
         }
         

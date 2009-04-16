@@ -591,6 +591,9 @@
   <data name="TitleAddContactPoint" xml:space="preserve">
     <value>Add Contact Point</value>
   </data>
+  <data name="TitleAddContainerFolder" xml:space="preserve">
+    <value>Add Container Folder</value>
+  </data>
   <data name="TitleAddDiagnosticService" xml:space="preserve">
     <value>Add Imaging Service</value>
   </data>
@@ -635,6 +638,9 @@
   </data>
   <data name="TitleDelete" xml:space="preserve">
     <value>Delete</value>
+  </data>
+  <data name="TitleDeleteContainerFolder" xml:space="preserve">
+    <value>Delete Container Folder</value>
   </data>
   <data name="TitleDemographicProfiles" xml:space="preserve">
     <value>Demographic Profiles</value>
@@ -716,6 +722,9 @@
   </data>
   <data name="TitlePrintFaxReport" xml:space="preserve">
     <value>Print/Fax Report</value>
+  </data>
+  <data name="TitleRenameFolder" xml:space="preserve">
+    <value>Rename Folder</value>
   </data>
   <data name="TitleSearch" xml:space="preserve">
     <value>Search</value>

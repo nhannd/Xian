@@ -109,9 +109,9 @@ namespace ClearCanvas.Ris.Client
 			_folderSystemsActionModel[_moveFolderSystemDownKey].Enabled = false;
 
 			_foldersActionModel = new SimpleActionModel(resourceResolver);
-			_foldersActionModel.AddAction(_addFolderKey, SR.TitleAdd, "Icons.AddToolSmall.png", SR.TitleAdd, AddFolder);
-			_foldersActionModel.AddAction(_editFolderKey, SR.TitleEdit, "Icons.EditToolSmall.png", SR.TitleEdit, EditFolder);
-			_foldersActionModel.AddAction(_deleteFolderKey, SR.TitleDelete, "Icons.DeleteToolSmall.png", SR.TitleDelete, DeleteFolder);
+			_foldersActionModel.AddAction(_addFolderKey, SR.TitleAdd, "Icons.AddToolSmall.png", SR.TitleAddContainerFolder, AddFolder);
+			_foldersActionModel.AddAction(_editFolderKey, SR.TitleEdit, "Icons.EditToolSmall.png", SR.TitleRenameFolder, EditFolder);
+			_foldersActionModel.AddAction(_deleteFolderKey, SR.TitleDelete, "Icons.DeleteToolSmall.png", SR.TitleDeleteContainerFolder, DeleteFolder);
 			_foldersActionModel.AddAction(_moveFolderUpKey, SR.TitleMoveUp, "Icons.UpToolSmall.png", SR.TitleMoveUp, MoveFolderUp);
 			_foldersActionModel.AddAction(_moveFolderDownKey, SR.TitleMoveDown, "Icons.DownToolSmall.png", SR.TitleMoveDown, MoveFolderDown);
 			_foldersActionModel[_addFolderKey].Enabled = false;
@@ -330,9 +330,8 @@ namespace ClearCanvas.Ris.Client
 		{
 			DraggableTreeNode.ContainerNode newFolderNode = new DraggableTreeNode.ContainerNode("New Folder");
 			_selectedFolderNode.AddChildNode(newFolderNode);
-
-			// Must update action model because the node index may have changed after adding node.
-			UpdateFolderActionModel();
+			this.SelectedFolderNode = new Selection(newFolderNode);
+			EventsHelper.Fire(_onEditFolder, this, EventArgs.Empty);
 		}
 
 		private void EditFolder()

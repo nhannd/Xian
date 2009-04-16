@@ -319,29 +319,30 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public void InsertNode(DraggableTreeNode node, Path path)
 		{
-			// This node is the first child, or there is no recommended path.  Add it immediately
-			if (_subTree == null || _subTree.Items.Count == 0 || path == null || path.Segments.Count == 0)
+			// There is no recommended path.  Add it immediately
+			if (path == null || path.Segments.Count == 0)
 			{
 				AddChildNode(node);
 				return;
 			}
 
 			string text  = CollectionUtils.FirstElement(path.Segments).LocalizedText;
-			DraggableTreeNode childWithMatchingText = CollectionUtils.SelectFirst(_subTree.Items,
-				delegate(DraggableTreeNode child) { return child.Text == text; });
+			DraggableTreeNode childWithMatchingText = _subTree == null ? null
+				: CollectionUtils.SelectFirst(_subTree.Items,
+					delegate(DraggableTreeNode child) { return child.Text == text; });
 			
 			if (childWithMatchingText == null)
 			{
 				if (path.Segments.Count == 1)
 				{
+					// There are no more depth to the path, add child now.
 					AddChildNode(node);
 				}
 				else
 				{
+					// create a container node and insert into the container node's subtree
 					ContainerNode containerNode = new ContainerNode(text);
 					AddChildNode(containerNode);
-
-					// insert this node child's subtree
 					containerNode.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
 				}
 			}
