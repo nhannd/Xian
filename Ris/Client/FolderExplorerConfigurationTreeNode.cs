@@ -8,6 +8,48 @@ namespace ClearCanvas.Ris.Client
 {
 	public abstract class DraggableTreeNode
 	{
+		public class ContainerNode : DraggableTreeNode
+		{
+			private string _text;
+
+			public ContainerNode(string text)
+			{
+				_text = text;
+			}
+
+			#region DraggableTreeNode Overrides
+
+			public override string Text
+			{
+				get { return _text; }
+				set
+				{
+					if (_text != value)
+					{
+						_text = value;
+						this.Modified = true;
+					}
+				}
+			}
+
+			public override string ToolTip
+			{
+				get { return _text; }
+			}
+
+			public override bool CanEdit
+			{
+				get { return true; }
+			}
+
+			public override bool CanDelete
+			{
+				get { return true; }
+			}
+
+			#endregion
+		}
+
 		private bool _isChecked;
 		private bool _isExpanded;
 		private DraggableTreeNode _parent;
@@ -235,13 +277,25 @@ namespace ClearCanvas.Ris.Client
 				return;
 			}
 
-			PathSegment firstSegment = CollectionUtils.FirstElement(path.Segments);
+			string text  = CollectionUtils.FirstElement(path.Segments).LocalizedText;
 			DraggableTreeNode childWithMatchingText = CollectionUtils.SelectFirst(_subTree.Items,
-				delegate(DraggableTreeNode child) { return child.Text == firstSegment.LocalizedText; });
+				delegate(DraggableTreeNode child) { return child.Text == text; });
 			
 			if (childWithMatchingText == null)
 			{
-				AddChildNode(node);
+				if (path.Segments.Count == 1)
+				{
+					AddChildNode(node);
+				}
+				else
+				{
+					ContainerNode containerNode = new ContainerNode(text);
+					AddChildNode(containerNode);
+
+					// insert this node child's subtree
+					containerNode.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
+				}
+
 			}
 			else
 			{
@@ -393,12 +447,18 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				return CollectionUtils.Map<DraggableTreeNode, IFolder>(this.Descendents,
+				List<IFolder> folders = new List<IFolder>();
+				CollectionUtils.ForEach(this.Descendents,
 					delegate(DraggableTreeNode node)
 						{
-							FolderConfigurationNode folderNode = (FolderConfigurationNode) node;
-							return folderNode.Folder;
+							if (node is FolderConfigurationNode)
+							{
+								FolderConfigurationNode folderNode = (FolderConfigurationNode)node;
+								folders.Add(folderNode.Folder);
+							}
 						});
+
+				return folders;
 			}
 		}
 
@@ -410,8 +470,11 @@ namespace ClearCanvas.Ris.Client
 			CollectionUtils.ForEach(this.Descendents,
 				delegate(DraggableTreeNode node)
 				{
-					FolderConfigurationNode folderNode = (FolderConfigurationNode)node;
-					folderNode.Folder.FolderPath = folderNode.Path;
+					if (node is FolderConfigurationNode)
+					{
+						FolderConfigurationNode folderNode = (FolderConfigurationNode) node;
+						folderNode.Folder.FolderPath = folderNode.Path;
+					}
 				});
 		}
 
@@ -425,7 +488,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override string ToolTip
 		{
-			get { return _folderSystem.Id; }
+			get { return _folderSystem.Title; }
 		}
 
 		public override bool CanEdit
@@ -455,22 +518,10 @@ namespace ClearCanvas.Ris.Client
 		private readonly IFolder _folder;
 		private string _text;
 
-		/// <summary>
-		/// Constructor for a new node not associated with an IFolder
-		/// </summary>
-		public FolderConfigurationNode(string text)
-		{
-			_text = text;
-		}
-		
-		/// <summary>
-		/// Constructor for a node that is associated with an IFolder.
-		/// </summary>
-		/// <param name="folder"></param>
 		public FolderConfigurationNode(IFolder folder)
-			: this(folder.Text)
 		{
 			_folder = folder;
+			_text = folder.Name;
 
 			// TODO: visibility of IFolder
 			//this.IsChecked = _folder.IsVisible;
@@ -499,17 +550,17 @@ namespace ClearCanvas.Ris.Client
 
 		public override string ToolTip
 		{
-			get { return _folder == null ? null : _folder.Tooltip; }
+			get { return _folder.Tooltip; }
 		}
 
 		public override bool CanEdit
 		{
-			get { return this.Parent != null; }
+			get { return true; }
 		}
 
 		public override bool CanDelete
 		{
-			get { return _folder == null && (this.SubTree == null || this.SubTree.Items.Count == 0); }
+			get { return false; }
 		}
 
 		public override bool IsChecked
@@ -519,7 +570,6 @@ namespace ClearCanvas.Ris.Client
 				base.IsChecked = value;
 
 				// TODO: enable folder visiblility
-				//if (_folder != null)
 				//    _folder.Visible = value;
 			}
 		}

@@ -326,7 +326,7 @@ namespace ClearCanvas.Ris.Client
 
 		private void AddFolder()
 		{
-			FolderConfigurationNode newFolderNode = new FolderConfigurationNode("New Folder");
+			DraggableTreeNode.ContainerNode newFolderNode = new DraggableTreeNode.ContainerNode("New Folder");
 			_selectedFolderNode.AddChildNode(newFolderNode);
 
 			// Must update action model because the node index may have changed after adding node.
