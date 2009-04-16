@@ -88,7 +88,7 @@ namespace ClearCanvas.Desktop
         /// </summary>
         private class PageHost : ApplicationComponentHost
         {
-            private PagedComponentContainer<TPage> _container;
+            private readonly PagedComponentContainer<TPage> _container;
 
             internal PageHost(PagedComponentContainer<TPage> container, ContainerPage page)
                 : base(page.Component)
@@ -124,14 +124,44 @@ namespace ClearCanvas.Desktop
 
         private class PageList : ObservableList<TPage>
         {
-			public PageList()
+        	private readonly PagedComponentContainer<TPage> _owner;
+
+			public PageList(PagedComponentContainer<TPage> owner)
 			{
+				_owner = owner;
+			}
+
+			protected override void OnItemAdded(ListEventArgs<TPage> e)
+			{
+				// create page host
+				_owner._mapPageToHost.Add(e.Item, new PageHost(_owner, e.Item));
+
+				// fire event
+				base.OnItemAdded(e);
+
+				// if this is the first page, move to it
+				if (_owner._current == -1)
+					_owner.MoveTo(0);
+			}
+
+			protected override void OnItemRemoved(ListEventArgs<TPage> e)
+			{
+				// fire event
+				base.OnItemRemoved(e);
+
+				if (_owner.Pages.Count == 0)
+					_owner._current = -1;
+
+
+				// stop page component and remove page host
+				_owner.EnsureStopped(e.Item);
+				_owner._mapPageToHost.Remove(e.Item);
 			}
         }
 
 
-        private PageList _pages;
-        private Dictionary<ContainerPage, PageHost> _mapPageToHost;
+        private readonly PageList _pages;
+        private readonly Dictionary<ContainerPage, PageHost> _mapPageToHost;
 
         private int _current;
         private event EventHandler _currentPageChanged;
@@ -142,15 +172,7 @@ namespace ClearCanvas.Desktop
         public PagedComponentContainer()
         {
             _mapPageToHost = new Dictionary<ContainerPage, PageHost>();
-            _pages = new PageList();
-            _pages.ItemAdded += delegate(object sender, ListEventArgs<TPage> args)
-                {
-                    _mapPageToHost.Add(args.Item, new PageHost(this, args.Item));
-                };
-            _pages.ItemRemoved += delegate(object sender, ListEventArgs<TPage> args)
-                {
-                    _mapPageToHost.Remove(args.Item);
-                };
+            _pages = new PageList(this);
 
             _current = -1;
         }
@@ -158,7 +180,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Returns the current set of pages.
         /// </summary>
-        public IList<TPage> Pages
+        public ObservableList<TPage> Pages
         {
             get { return _pages; }
         }
@@ -347,6 +369,20 @@ namespace ClearCanvas.Desktop
             }
         }
 
+		/// <summary>
+		/// Ensures that the specified <see cref="ContainerPage"/> is stopped, regardless of whether or not it is visible.
+		/// </summary>
+		/// <param name="page"></param>
+		protected void EnsureStopped(ContainerPage page)
+		{
+			PageHost host = _mapPageToHost[page];
+			if (host.IsStarted)
+			{
+				host.StopComponent();
+				page.Component.ModifiedChanged -= Component_ModifiedChanged;
+			}
+		}
+
         /// <summary>
         /// Calls <see cref="IApplicationComponent.Stop"/> on all child components.
         /// </summary>
@@ -354,14 +390,10 @@ namespace ClearCanvas.Desktop
         {
             foreach (TPage page in _pages)
             {
-                PageHost host = _mapPageToHost[page];
-                if (host.IsStarted)
-                {
-                    host.StopComponent();
-                    page.Component.ModifiedChanged -= Component_ModifiedChanged;
-                }
+				EnsureStopped(page);
             }
         }
+
 
         /// <summary>
         /// True if <see cref="IApplicationComponent.Modified"/> returns true for any child component.

@@ -33,6 +33,7 @@ using System;
 using System.ComponentModel;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using ClearCanvas.Common.Utilities;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Controls;
 
@@ -61,13 +62,20 @@ namespace ClearCanvas.Desktop.View.WinForms
 			InitializeComponent();
 			_component = component;
 
+			_stackTabControl.RootDirection = Crownwood.DotNetMagic.Common.LayoutDirection.Vertical;
+			// Set the sizing spaces between leaves
+			_stackTabControl.ResizeBarVector = _component.StackStyle == StackStyle.ShowMultiple ? 1 : 0;
+			_stackTabControl.PageChanged += OnControlPageChanged;
+
 			CreateStackTabs();
 
-			_stackTabControl.PageChanged += OnControlPageChanged;
+			_component.Pages.ItemAdded += OnComponentPageAdded;
+			_component.Pages.ItemRemoved += OnComponentPageRemoved;
 			_component.CurrentPageChanged += OnComponentCurrentPageChanged;
+
 		}
 
-		#region Properties
+		#region Design-time Properties
 
 		[DefaultValue(VisualStyle.Office2007Blue)]
     	public VisualStyle ActiveStyle
@@ -119,6 +127,16 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
 		}
 
+		private void OnComponentPageAdded(object sender, ListEventArgs<StackTabPage> e)
+		{
+			CreateStackTab(e.Item);
+		}
+
+		private void OnComponentPageRemoved(object sender, ListEventArgs<StackTabPage> e)
+		{
+			RemoveStackTab(e.Item);
+		}
+
 		private void OnComponentCurrentPageChanged(object sender, EventArgs e)
 		{
 			if (_component.CurrentPage != null)
@@ -134,26 +152,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void CreateStackTabs()
 		{
-			_stackTabControl.RootDirection = Crownwood.DotNetMagic.Common.LayoutDirection.Vertical;
-
 			foreach (StackTabPage page in _component.Pages)
 			{
-				StackTab stackTab = CreateStackTab(page, _component.StackStyle);
-
-				TabGroupLeaf tgl = _stackTabControl.RootSequence.AddNewLeaf();
-				tgl.MinimumSize = stackTab.MinimumRequestedSize;
-
-				// Prevent user from resizing
-				tgl.ResizeBarLock = _component.StackStyle == StackStyle.ShowMultiple ? false : true;
-
-				Crownwood.DotNetMagic.Controls.TabPage tabPageUI = new Crownwood.DotNetMagic.Controls.TabPage(page.Name, stackTab);
-				tabPageUI.Tag = page;
-				tgl.TabPages.Add(tabPageUI);
+				CreateStackTab(page);
 			}
+		}
 
-			// Set the sizing spaces between leaves
-			_stackTabControl.ResizeBarVector = _component.StackStyle == StackStyle.ShowMultiple ? 1 : 0;
-
+		private void RecalculateTabSizes()
+		{
 			// The space of each leaf can only be set after each leaf is created
 			// Open up only the first leaf and close all others
 			for (int i = 0; i < _stackTabControl.RootSequence.Count; i++)
@@ -180,11 +186,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_stackTabControl.RootSequence.Reposition();
 		}
 
-		private StackTab CreateStackTab(StackTabPage page, StackStyle stackStyle)
+		private void CreateStackTab(StackTabPage page)
 		{
 			StackTab stackTab = new StackTab(page, DockStyle.Top);
-			
-			if (stackStyle == StackStyle.ShowMultiple)
+
+			if (_component.StackStyle == StackStyle.ShowMultiple)
 			{
 				stackTab.TitleBar.ActAsButton = ActAsButton.JustArrow;
 				stackTab.TitleBar.ArrowButton = ArrowButton.DownArrow;
@@ -199,7 +205,35 @@ namespace ClearCanvas.Desktop.View.WinForms
 			stackTab.TitleClicked += OnTabTitleClicked;
 			stackTab.TitleDoubleClicked += OnTabTitleDoubleClicked;
 
-			return stackTab;
+			TabGroupLeaf tgl = _stackTabControl.RootSequence.AddNewLeaf();
+			tgl.MinimumSize = stackTab.MinimumRequestedSize;
+
+			// Prevent user from resizing
+			tgl.ResizeBarLock = _component.StackStyle == StackStyle.ShowMultiple ? false : true;
+
+			Crownwood.DotNetMagic.Controls.TabPage tabPageUI = new Crownwood.DotNetMagic.Controls.TabPage(page.Name, stackTab);
+			tabPageUI.Tag = page;
+			tgl.TabPages.Add(tabPageUI);
+
+			RecalculateTabSizes();
+		}
+
+		private void RemoveStackTab(StackTabPage page)
+		{
+			for (int i = 0; i < _stackTabControl.RootSequence.Count; i++)
+			{
+				TabGroupLeaf tgl = (TabGroupLeaf)_stackTabControl.RootSequence[i];
+				Crownwood.DotNetMagic.Controls.TabPage tabPageUI = CollectionUtils.FirstElement<Crownwood.DotNetMagic.Controls.TabPage>(tgl.TabPages);
+				if(tabPageUI.Tag == page)
+				{
+					// remove the tab page
+					// note that this automatically removes the parent leaf, since it is the only tab
+					tgl.TabPages.Remove(tabPageUI);
+					break;
+				}
+			}
+
+			RecalculateTabSizes();
 		}
 
 		private void OpenLeaf(TabGroupLeaf tgl, decimal space)
