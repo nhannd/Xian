@@ -59,9 +59,14 @@ namespace ClearCanvas.Ris.Client
 		private event EventHandler _modifiedChanged;
 
 		public DraggableTreeNode()
+			: this(true)
+		{
+		}
+
+		public DraggableTreeNode(bool isChecked)
 		{
 			_isExpanded = true;
-			_isChecked = true;
+			_isChecked = isChecked;
 		}
 
 		#region Abstract and Virtual Properties
@@ -285,14 +290,14 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (path.Segments.Count == 1)
 				{
-					AddChildNode(node);
-				}
-				else
-				{
+				AddChildNode(node);
+			}
+			else
+			{
 					ContainerNode containerNode = new ContainerNode(text);
 					AddChildNode(containerNode);
 
-					// insert this node child's subtree
+				// insert this node child's subtree
 					containerNode.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
 				}
 
@@ -473,7 +478,7 @@ namespace ClearCanvas.Ris.Client
 					if (node is FolderConfigurationNode)
 					{
 						FolderConfigurationNode folderNode = (FolderConfigurationNode) node;
-						folderNode.Folder.FolderPath = folderNode.Path;
+					folderNode.Folder.FolderPath = folderNode.Path;
 					}
 				});
 		}
@@ -519,13 +524,10 @@ namespace ClearCanvas.Ris.Client
 		private string _text;
 
 		public FolderConfigurationNode(IFolder folder)
+			: base(folder.Visible)
 		{
 			_folder = folder;
 			_text = folder.Name;
-
-			// TODO: visibility of IFolder
-			//this.IsChecked = _folder.IsVisible;
-			this.IsChecked = true;
 		}
 
 		public IFolder Folder
@@ -568,9 +570,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				base.IsChecked = value;
-
-				// TODO: enable folder visiblility
-				//    _folder.Visible = value;
+				_folder.Visible = value;
 			}
 		}
 

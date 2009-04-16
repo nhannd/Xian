@@ -30,10 +30,8 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
@@ -134,6 +132,11 @@ namespace ClearCanvas.Ris.Client
 		/// Gets a value indicating whether the folder is currently in the process of updating.
 		/// </summary>
 		bool IsUpdating { get; }
+
+		/// <summary>
+		/// Gets or sets a value indicating if the folder should be visible.
+		/// </summary>
+		bool Visible { get; set; }
 
 		#endregion
 

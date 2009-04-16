@@ -390,6 +390,9 @@ namespace ClearCanvas.Ris.Client
 			List<IFolder> remainderFolders;
 			FolderExplorerComponentSettings.Default.ApplyUserFoldersCustomizations(_folderSystem, out orderedFolders, out remainderFolders);
 
+			orderedFolders = CollectionUtils.Select(orderedFolders, delegate(IFolder f) { return f.Visible; });
+			remainderFolders = CollectionUtils.Select(remainderFolders, delegate(IFolder f) { return f.Visible; });
+
 			_folderTreeRoot.InsertFolders(orderedFolders, false);	// insert the ordered folders as ordered
 			_folderTreeRoot.InsertFolders(remainderFolders, true);	// insert the remainder sorting alphabetically
 		}

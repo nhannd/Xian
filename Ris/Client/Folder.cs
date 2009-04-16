@@ -30,12 +30,10 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -91,6 +89,7 @@ namespace ClearCanvas.Ris.Client
 		private Path _folderPath;
 		private readonly bool _startExpanded;
 		private bool _isStatic = true;
+		private bool _visible = true;
 
 		private static readonly IconSet _closedIconSet = new IconSet(IconScheme.Colour, "FolderClosedSmall.png", "FolderClosedMedium.png", "FolderClosedMedium.png");
 		private static readonly IconSet _openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
@@ -444,6 +443,15 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return _isStatic; }
 			protected set { _isStatic = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating if the folder should be visible.
+		/// </summary>
+		public bool Visible
+		{
+			get { return _visible; }
+			set { _visible = value; }
 		}
 
 		#endregion

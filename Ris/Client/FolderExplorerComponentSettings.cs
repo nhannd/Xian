@@ -66,8 +66,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="remainder"></param>
 		public void ApplyUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems, out List<IFolderSystem> ordered, out List<IFolderSystem> remainder)
 		{
-			Order(folderSystems, this.ListXmlFolderSystems(), delegate(IFolderSystem fs) { return fs.Id; },
-				out ordered, out remainder);
+			OrderFolderSystems(folderSystems, this.ListXmlFolderSystems(), out ordered, out remainder);
 		}
 
 		/// <summary>
@@ -132,26 +131,23 @@ namespace ClearCanvas.Ris.Client
 		/// and puts the result into the <paramref name="ordered"/> list.  Any items not found in the XML ordering list
 		/// are put into the <paramref name="remainder"/> list.
 		/// </remarks>
-		/// <typeparam name="T"></typeparam>
 		/// <param name="input"></param>
 		/// <param name="ordering"></param>
-		/// <param name="idProvider"></param>
 		/// <param name="ordered"></param>
 		/// <param name="remainder"></param>
-		private void Order<T>(IEnumerable<T> input, XmlNodeList ordering, Converter<T, string> idProvider,
-			out List<T> ordered, out List<T> remainder)
-			where T : class
+		private void OrderFolderSystems(IEnumerable<IFolderSystem> input, XmlNodeList ordering,
+			out List<IFolderSystem> ordered, out List<IFolderSystem> remainder)
 		{
-			ordered = new List<T>();
-			remainder = new List<T>(input);
+			ordered = new List<IFolderSystem>();
+			remainder = new List<IFolderSystem>(input);
 
 			// order the items based on the order in the XML
 			foreach (XmlElement element in ordering)
 			{
 				string id = element.GetAttribute("id");
 
-				T item = CollectionUtils.SelectFirst(remainder,
-					delegate(T x) { return Equals(idProvider(x), id); });
+				IFolderSystem item = CollectionUtils.SelectFirst(remainder,
+					delegate(IFolderSystem fs) { return Equals(fs.Id, id); });
 
 				if (item != null)
 				{
@@ -192,11 +188,9 @@ namespace ClearCanvas.Ris.Client
 					}
 
 					string visibleSetting = element.GetAttribute("visible");
-					if(string.IsNullOrEmpty(visibleSetting) || !Equals(visibleSetting, "false"))
-					{
-						ordered.Add(item);
-					}
-					
+					item.Visible = string.IsNullOrEmpty(visibleSetting) || string.Compare(visibleSetting, "false", true) != 0;
+
+					ordered.Add(item);
 					remainder.Remove(item);
 
 					if (remainder.Count == 0)
@@ -256,7 +250,7 @@ namespace ClearCanvas.Ris.Client
 				? ((IWorklistFolder) folder).WorklistRef.ToString(false) 
 				: folder.Id);
 			xmlFolder.SetAttribute("path", folder.FolderPath.LocalizedPath);
-			xmlFolder.SetAttribute("visible", "true");
+			xmlFolder.SetAttribute("visible", folder.Visible.ToString());
 
 			return xmlFolder;
 		}
@@ -293,96 +287,96 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		#region Not currently in use - may need these in future if we save the folder ordering per user
+		//#region Not currently in use - may need these in future if we save the folder ordering per user
 
-		/// <summary>
-		/// Synchronizes persistent folders with the xml store.
-		/// Refer to <see cref="BuildAndSynchronize"/> for more details.
-		/// </summary>
-		/// <param name="folderSystemID">the ID of the folder system</param>
-		/// <param name="folderMap">the folders that are to be synchronized/added to the store</param>
-		/// <returns>the "folder-system" node with the specified folderSystemID</returns>
-		private XmlElement Synchronize(string folderSystemID, IDictionary<string, IFolder> folderMap)
-		{
-			bool changed = false;
+		///// <summary>
+		///// Synchronizes persistent folders with the xml store.
+		///// Refer to <see cref="BuildAndSynchronize"/> for more details.
+		///// </summary>
+		///// <param name="folderSystemID">the ID of the folder system</param>
+		///// <param name="folderMap">the folders that are to be synchronized/added to the store</param>
+		///// <returns>the "folder-system" node with the specified folderSystemID</returns>
+		//private XmlElement Synchronize(string folderSystemID, IDictionary<string, IFolder> folderMap)
+		//{
+		//    bool changed = false;
 
-			XmlElement xmlFolderSystem = FindXmlFolderSystem(folderSystemID) ?? CreateXmlFolderSystem(folderSystemID);
+		//    XmlElement xmlFolderSystem = FindXmlFolderSystem(folderSystemID) ?? CreateXmlFolderSystem(folderSystemID);
 
-			//make sure every folder has a pre-determined spot in the store, inserting
-			//folders appropriately based on their path.  The algorithm guarantees 
-			//that each folder will get put somewhere in the store.  Only static folders
-			//are added to the xml store; otherwise, the non-static folders would 
-			//be determining the positions of persistent folders in the store,
-			//which is clearly the reverse of what should happen.
-			foreach (IFolder folder in folderMap.Values)
-			{
-				if (folder.IsStatic)
-				{
-					if (AppendFolderToXmlFolderSystem(xmlFolderSystem, folder))
-						changed = true;
-				}
-			}
+		//    //make sure every folder has a pre-determined spot in the store, inserting
+		//    //folders appropriately based on their path.  The algorithm guarantees 
+		//    //that each folder will get put somewhere in the store.  Only static folders
+		//    //are added to the xml store; otherwise, the non-static folders would 
+		//    //be determining the positions of persistent folders in the store,
+		//    //which is clearly the reverse of what should happen.
+		//    foreach (IFolder folder in folderMap.Values)
+		//    {
+		//        if (folder.IsStatic)
+		//        {
+		//            if (AppendFolderToXmlFolderSystem(xmlFolderSystem, folder))
+		//                changed = true;
+		//        }
+		//    }
 
-			//if (changed)
-			//{
-			//    if (!systemExists)
-			//        this.GetFolderSystemsNode().AppendChild(xmlFolderSystem);
+		//    //if (changed)
+		//    //{
+		//    //    if (!systemExists)
+		//    //        this.GetFolderSystemsNode().AppendChild(xmlFolderSystem);
 
-			//    //this.FolderPathXml = _xmlDoc.InnerXml;
-			//    //this.Save();
-			//}
+		//    //    //this.FolderPathXml = _xmlDoc.InnerXml;
+		//    //    //this.Save();
+		//    //}
 
-			XmlElement xmlFolderSystemClone = (XmlElement)xmlFolderSystem.CloneNode(true);
+		//    XmlElement xmlFolderSystemClone = (XmlElement)xmlFolderSystem.CloneNode(true);
 
-			foreach (IFolder folder in folderMap.Values)
-			{
-				if (!folder.IsStatic)
-					AppendFolderToXmlFolderSystem(xmlFolderSystemClone, folder);
-			}
+		//    foreach (IFolder folder in folderMap.Values)
+		//    {
+		//        if (!folder.IsStatic)
+		//            AppendFolderToXmlFolderSystem(xmlFolderSystemClone, folder);
+		//    }
 
-			return xmlFolderSystemClone;
-		}
+		//    return xmlFolderSystemClone;
+		//}
 
-		/// <summary>
-		/// Appends the specified folder to the specified XML system.  The path
-		/// attribute of the folder to be inserted is compared with the path of the
-		/// folders in the xml system and an appropriate place to insert the folder is determined
-		/// based on the length of the common path.
-		/// </summary>
-		/// <param name="xmlFolderSystem">the "folder-system" node to insert an folder into</param>
-		/// <param name="folder">the folder to be inserted</param>
-		/// <returns>a boolean indicating whether anything was added/removed/modified</returns>
-		private bool AppendFolderToXmlFolderSystem(XmlElement xmlFolderSystem, IFolder folder)
-		{
-			if (null != FindXmlFolder(folder.Id, xmlFolderSystem))
-				return false;
+		///// <summary>
+		///// Appends the specified folder to the specified XML system.  The path
+		///// attribute of the folder to be inserted is compared with the path of the
+		///// folders in the xml system and an appropriate place to insert the folder is determined
+		///// based on the length of the common path.
+		///// </summary>
+		///// <param name="xmlFolderSystem">the "folder-system" node to insert an folder into</param>
+		///// <param name="folder">the folder to be inserted</param>
+		///// <returns>a boolean indicating whether anything was added/removed/modified</returns>
+		//private bool AppendFolderToXmlFolderSystem(XmlElement xmlFolderSystem, IFolder folder)
+		//{
+		//    if (null != FindXmlFolder(folder.Id, xmlFolderSystem))
+		//        return false;
 
-			XmlNode insertionPoint = null;
-			int highestScore = 0;
-			string folderPath = folder.FolderPath.LocalizedPath;
+		//    XmlNode insertionPoint = null;
+		//    int highestScore = 0;
+		//    string folderPath = folder.FolderPath.LocalizedPath;
 
-			foreach (XmlElement xmlFolder in xmlFolderSystem.GetElementsByTagName("folder"))
-			{
-				string path = xmlFolder.GetAttribute("path");
+		//    foreach (XmlElement xmlFolder in xmlFolderSystem.GetElementsByTagName("folder"))
+		//    {
+		//        string path = xmlFolder.GetAttribute("path");
 
-				int currentScore = folderPath.Contains(path) || path.Contains(folderPath) ? Math.Min(folderPath.Length, path.Length) : 0;
-				if (currentScore >= highestScore)
-				{
-					insertionPoint = xmlFolder;
-					highestScore = currentScore;
-				}
-			}
+		//        int currentScore = folderPath.Contains(path) || path.Contains(folderPath) ? Math.Min(folderPath.Length, path.Length) : 0;
+		//        if (currentScore >= highestScore)
+		//        {
+		//            insertionPoint = xmlFolder;
+		//            highestScore = currentScore;
+		//        }
+		//    }
 
-			XmlElement newXmlFolder = CreateXmlFolder(folder);
+		//    XmlElement newXmlFolder = CreateXmlFolder(folder);
 
-			if (insertionPoint != null)
-				xmlFolderSystem.InsertAfter(newXmlFolder, insertionPoint);
-			else
-				xmlFolderSystem.AppendChild(newXmlFolder);
+		//    if (insertionPoint != null)
+		//        xmlFolderSystem.InsertAfter(newXmlFolder, insertionPoint);
+		//    else
+		//        xmlFolderSystem.AppendChild(newXmlFolder);
 
-			return true;
-		}
+		//    return true;
+		//}
 
-		#endregion
+		//#endregion
 	}
 }
