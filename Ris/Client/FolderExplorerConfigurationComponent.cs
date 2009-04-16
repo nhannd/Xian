@@ -343,13 +343,8 @@ namespace ClearCanvas.Ris.Client
 		private void DeleteFolder()
 		{
 			DraggableTreeNode parentNode = _selectedFolderNode.Parent;
-			DraggableTreeNode previousSibling = _selectedFolderNode.PreviousSibling;
-			parentNode.SubTree.Items.Remove(_selectedFolderNode);
-
-			if (previousSibling != null)
-				this.SelectedFolderNode = new Selection(previousSibling);
-			else
-				this.SelectedFolderNode = new Selection(parentNode);
+			DraggableTreeNode nextSelectedNode = parentNode.RemoveChildNode(_selectedFolderNode);
+			this.SelectedFolderNode = new Selection(nextSelectedNode);
 		}
 
 		private void MoveFolderUp()

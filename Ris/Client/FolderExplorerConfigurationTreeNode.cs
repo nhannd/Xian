@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Client
 
 			public override bool CanDelete
 			{
-				get { return true; }
+				get { return _subTree == null || _subTree.Items.Count == 0; }
 			}
 
 			#endregion
@@ -102,9 +102,40 @@ namespace ClearCanvas.Ris.Client
 				if (_isChecked != value)
 				{
 					_isChecked = value;
+					NotifyItemUpdated();
 					this.Modified = true;
+
+					if (this.CheckStateChained)
+					{
+						if (_isChecked && _parent != null)
+						{
+							// The parent must be visible if this node is visible
+							_parent.IsChecked = true;
+						}
+
+						if (!_isChecked && _subTree != null)
+						{
+							CollectionUtils.ForEach(_subTree.Items,
+								delegate(DraggableTreeNode node)
+								{
+									node.IsChecked = false;
+								});
+						}
+					}
 				}
 			}
+		}
+
+		/// <summary>
+		/// Gets or sets whether un/checking will affect check state of parent and children.  Default is true.
+		/// </summary>
+		/// <remarks>
+		/// If true, the parent will be checked if this node is checked.  The descendents will be unchecked if this node is unchecked.
+		/// If false, checking or unchecking this node will not affect the check state of parent or children.
+		/// </remarks>
+		public virtual bool CheckStateChained
+		{
+			get { return true; }
 		}
 
 		/// <summary>
@@ -266,8 +297,21 @@ namespace ClearCanvas.Ris.Client
 			node.Parent = this;
 			_subTree.Items.Add(node);
 
+			if (this.CheckStateChained && !this.IsChecked)
+				node.IsChecked = false;
+
 			// expand the tree right away
 			this.ExpandSubTree();
+		}
+
+		/// <summary>
+		/// Remove a child node and return the node's next sibling, previous sibling or the parent node.
+		/// </summary>
+		public DraggableTreeNode RemoveChildNode(DraggableTreeNode node)
+		{
+			DraggableTreeNode nextSelectedNode = node.NextSibling ?? node.PreviousSibling ?? this;
+			this.SubTree.Items.Remove(node);
+			return nextSelectedNode;
 		}
 
 		/// <summary>
@@ -290,17 +334,16 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (path.Segments.Count == 1)
 				{
-				AddChildNode(node);
-			}
-			else
-			{
+					AddChildNode(node);
+				}
+				else
+				{
 					ContainerNode containerNode = new ContainerNode(text);
 					AddChildNode(containerNode);
 
-				// insert this node child's subtree
+					// insert this node child's subtree
 					containerNode.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
 				}
-
 			}
 			else
 			{
@@ -386,10 +429,15 @@ namespace ClearCanvas.Ris.Client
 
 		private void ExpandSubTree()
 		{
+			this.IsExpanded = true;
+			NotifyItemUpdated();
+		}
+
+		private void NotifyItemUpdated()
+		{
 			if (_parent == null)
 				return;
 
-			this.IsExpanded = true;
 			_parent.SubTree.Items.NotifyItemUpdated(this);
 		}
 
@@ -502,6 +550,11 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		public override bool CanDelete
+		{
+			get { return false; }
+		}
+
+		public override bool CheckStateChained
 		{
 			get { return false; }
 		}
