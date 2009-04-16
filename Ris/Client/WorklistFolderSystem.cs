@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		///<summary>
-		///Initialize the folder system.
+		///Initializes or re-initializes the folder system.
 		///</summary>
 		///<remarks>
 		/// This method will be called after <see cref="M:ClearCanvas.Ris.Client.IFolderSystem.SetContext(ClearCanvas.Ris.Client.IFolderSystemContext)" /> has been called. 
@@ -44,6 +44,8 @@ namespace ClearCanvas.Ris.Client
 		public override void Initialize()
 		{
 			base.Initialize();
+
+			this.Folders.Clear();
 
 			InitializeFolders(new TFolderExtensionPoint());
 		}

@@ -13,6 +13,7 @@ namespace ClearCanvas.Ris.Client
 	{
 		IDesktopWindow DesktopWindow { get; }
 		IFolderSystem SelectedFolderSystem { get; }
+		void RebuildFolderExplorers();
 	}
 
 	[ExtensionPoint]
@@ -143,11 +144,30 @@ namespace ClearCanvas.Ris.Client
 				get { return _owner._selectedFolderExplorer.FolderSystem; }
 			}
 
+			public void RebuildFolderExplorers()
+			{
+				_owner.Rebuild();
+			}
+
 			#endregion
 		}
 
 		#endregion
 
+		//[ButtonAction("apply", "folderexplorer-folders-toolbar/Rebuild", "Rebuild")]
+		//[IconSet("apply", IconScheme.Colour, "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png")]
+		//[ExtensionOf(typeof(FolderExplorerGroupToolExtensionPoint))]
+		//public class TestToool : Tool<IFolderExplorerGroupToolContext>
+		//{
+		//    public void Rebuild()
+		//    {
+		//        this.Context.Rebuild();
+		//    }
+		//}
+
+
+		private readonly List<IFolderSystem> _folderSystems;
+		private readonly FolderContentsComponent _contentComponent;
 		private readonly StackTabComponentContainer _stackTabComponent;
 		private ChildComponentHost _stackTabComponentContainerHost;
 
@@ -164,60 +184,39 @@ namespace ClearCanvas.Ris.Client
 		/// </summary>
 		public FolderExplorerGroupComponent(List<IFolderSystem> folderSystems, FolderContentsComponent contentComponent)
 		{
+			_folderSystems = folderSystems;
+			_contentComponent = contentComponent;
 			_stackTabComponent = new StackTabComponentContainer(StackStyle.ShowOneOnly, false);
-
 			_folderExplorerComponents = new Dictionary<IFolderSystem, FolderExplorerComponent>();
 
-			// Order the Folder Systems
-			List<IFolderSystem> remainder;
-			FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(folderSystems, out folderSystems, out remainder);
-
-			// add the remainder to the end of the ordered list
-			folderSystems.AddRange(remainder);
-
-			// create a folder explorer component and a tab page for each folder system
-			CollectionUtils.ForEach(folderSystems,
-				delegate(IFolderSystem folderSystem)
-				{
-					FolderExplorerComponent explorer = new FolderExplorerComponent(folderSystem);
-					folderSystem.SetContext(new FolderSystemContext(this, explorer, contentComponent));
-					explorer.Initialized += new EventHandler(FolderSystemInitializedEventHandler);
-					_folderExplorerComponents.Add(folderSystem, explorer);
-
-					StackTabPage thisPage = new StackTabPage(
-						folderSystem.Title,
-						explorer,
-						folderSystem.Title,
-						folderSystem.TitleIcon,
-						folderSystem.ResourceResolver);
-
-					// start folder explorers immediately, so that they can update the title bar if needed
-					thisPage.LazyStart = false;
-
-					_stackTabComponent.Pages.Add(thisPage);
-
-					folderSystem.TitleChanged += delegate { thisPage.Title = folderSystem.Title; };
-					folderSystem.TitleIconChanged += delegate { thisPage.IconSet = folderSystem.TitleIcon; };
-				});
 		}
+
+		internal void Rebuild()
+		{
+			DestroyFolderExplorers();
+			BuildFolderExplorers();
+		}
+
 
 		#region Application Overrides
 
 		public override void Start()
 		{
+			BuildFolderExplorers();
+
 			// Subscribe to page changed event before starting component, so that when component start the event will fire
 			// for the initial page that open
 			_stackTabComponent.CurrentPageChanged += OnCurrentPageChanged;
 			_stackTabComponentContainerHost = new ChildComponentHost(this.Host, _stackTabComponent);
 			_stackTabComponentContainerHost.StartComponent();
 
-			CollectionUtils.ForEach(_folderExplorerComponents.Keys,
-				delegate(IFolderSystem folderSystem)
-				{
-					DocumentManager.RegisterFolderSystem(folderSystem);
-					_folderExplorerComponents[folderSystem].SelectedFolderChanged += OnSelectedFolderChanged;
-				});
+			// register folder system instances with document manager
+			foreach (IFolderSystem folderSystem in _folderSystems)
+			{
+				DocumentManager.RegisterFolderSystem(folderSystem);
+			}
 
+			// create tools
 			_toolSet = new ToolSet(new FolderExplorerGroupToolExtensionPoint(), new FolderExplorerGroupToolContext(this));
 
 			FolderExplorerComponentSettings.Default.UserFolderSystemCustomizationsChanged += OnUserFolderSystemCustomizationsChanged;
@@ -240,12 +239,11 @@ namespace ClearCanvas.Ris.Client
                 _stackTabComponentContainerHost = null;
             }
 
-			CollectionUtils.ForEach(_folderExplorerComponents.Keys,
-				delegate(IFolderSystem folderSystem)
-				{
-					_folderExplorerComponents[folderSystem].SelectedFolderChanged -= OnSelectedFolderChanged;
-					DocumentManager.UnregisterFolderSystem(folderSystem);
-				});
+			// un-register folder system instances with document manager
+			foreach (IFolderSystem folderSystem in _folderSystems)
+			{
+				DocumentManager.UnregisterFolderSystem(folderSystem);
+			}
 
 			FolderExplorerComponentSettings.Default.UserFolderSystemCustomizationsChanged -= OnUserFolderSystemCustomizationsChanged;
 
@@ -254,7 +252,7 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-		#region Properties
+		#region Public API
 
 		public event EventHandler SelectedFolderExplorerChanged
 		{
@@ -286,7 +284,11 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				IActionSet allActions = _toolSet.Actions.Union(_selectedFolderExplorer.ExportedActions);
+				IActionSet allActions = _toolSet.Actions;
+				if (_selectedFolderExplorer != null)
+				{
+					allActions = allActions.Union(_selectedFolderExplorer.ExportedActions);
+				}
 				return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", allActions);
 			}
 		}
@@ -352,9 +354,94 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		private void FolderSystemTitleChangedEventHandler(object sender, EventArgs e)
+		{
+			IFolderSystem fs = (IFolderSystem)sender;
+			StackTabPage page = FindPage(fs);
+			page.Title = fs.Title;
+		}
+
+		private void FolderSystemIconChangedEventHandler(object sender, EventArgs e)
+		{
+			IFolderSystem fs = (IFolderSystem)sender;
+			StackTabPage page = FindPage(fs);
+			page.IconSet = fs.TitleIcon;
+		}
+
 		private void OnUserFolderSystemCustomizationsChanged(object sender, EventArgs e)
 		{
-			// todo: refresh the stack tab component
+			Rebuild();
+		}
+
+		#endregion
+
+		#region Helpers
+
+		private void BuildFolderExplorers()
+		{
+			// Order the Folder Systems
+			List<IFolderSystem> folderSystems, remainder;
+			FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(_folderSystems, out folderSystems, out remainder);
+
+			// add the remainder to the end of the ordered list
+			folderSystems.AddRange(remainder);
+
+			// create a folder explorer component and a tab page for each folder system
+			foreach (IFolderSystem folderSystem in folderSystems)
+			{
+				StackTabPage page = CreatePageForFolderSystem(folderSystem);
+
+				_folderExplorerComponents.Add(folderSystem, (FolderExplorerComponent)page.Component);
+				_stackTabComponent.Pages.Add(page);
+
+				folderSystem.TitleChanged += FolderSystemTitleChangedEventHandler;
+				folderSystem.TitleChanged += FolderSystemIconChangedEventHandler;
+			}
+		}
+
+		private void DestroyFolderExplorers()
+		{
+			// disconnect UI from folder-system events
+			foreach (IFolderSystem folderSystem in _folderSystems)
+			{
+				folderSystem.TitleChanged -= FolderSystemTitleChangedEventHandler;
+				folderSystem.TitleChanged -= FolderSystemIconChangedEventHandler;
+			}
+
+			// remove all the folder explorer component pages from the UI
+			// (this will call Stop on each component)
+			_stackTabComponent.Pages.Clear();
+
+			// clear the map
+			_folderExplorerComponents.Clear();
+		}
+
+		private StackTabPage CreatePageForFolderSystem(IFolderSystem folderSystem)
+		{
+			FolderExplorerComponent explorer = new FolderExplorerComponent(folderSystem);
+			folderSystem.SetContext(new FolderSystemContext(this, explorer, _contentComponent));
+			explorer.Initialized += FolderSystemInitializedEventHandler;
+			explorer.SelectedFolderChanged += OnSelectedFolderChanged;
+
+			StackTabPage thisPage = new StackTabPage(
+				folderSystem.Title,
+				explorer,
+				folderSystem.Title,
+				folderSystem.TitleIcon,
+				folderSystem.ResourceResolver);
+
+			// set folder explorers to start immediately, so that they can update the title bar if needed
+			thisPage.LazyStart = false;
+
+			return thisPage;
+		}
+
+		private StackTabPage FindPage(IFolderSystem folderSystem)
+		{
+			FolderExplorerComponent explorer = _folderExplorerComponents[folderSystem];
+
+			return CollectionUtils.SelectFirst(_stackTabComponent.Pages,
+				delegate(StackTabPage page) { return ReferenceEquals(page.Component, explorer); });
 		}
 
 		#endregion

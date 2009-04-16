@@ -208,6 +208,12 @@ namespace ClearCanvas.Ris.Client
 				_folderInvalidateTimer.Dispose();
 			}
 
+			// un-subscribe to events (important because the folderSystem object may be re-used by another explorer)
+			_folderSystem.Folders.ItemAdded -= FolderAddedEventHandler;
+			_folderSystem.Folders.ItemRemoved -= FolderRemovedEventHandler;
+			_folderSystem.FoldersChanged -= FoldersChangedEventHandler;
+			_folderSystem.FoldersInvalidated -= FoldersInvalidatedEventHandler;
+
 			base.Stop();
 		}
 
