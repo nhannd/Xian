@@ -135,7 +135,13 @@ namespace ClearCanvas.Ris.Client
 					_folderSystems, 
 					delegate(FolderSystemConfigurationNode node) { return node.FolderSystem; }));
 
-			// TODO: save the ordering of the folders
+			CollectionUtils.ForEach(_folderTree.Items,
+				delegate(DraggableTreeNode node)
+					{
+						FolderSystemConfigurationNode fsNode = (FolderSystemConfigurationNode) node;
+						fsNode.UpdateFolderPath();
+						FolderExplorerComponentSettings.Default.SaveUserFoldersCustomizations(fsNode.FolderSystem, fsNode.Folders);
+					});
 		}
 		
 		#endregion
@@ -313,14 +319,14 @@ namespace ClearCanvas.Ris.Client
 			CollectionUtils.ForEach(orderedFolders,
 				delegate(IFolder folder)
 					{
-						FolderConfigurationNode folderNode = new FolderConfigurationNode(folder, "Root/Node1");
-						folderSystemNode.AddChildNode(folderNode);
+						FolderConfigurationNode folderNode = new FolderConfigurationNode(folder);
+						folderSystemNode.InsertNode(folderNode, folder.FolderPath);
 					});
 		}
 
 		private void AddFolder()
 		{
-			FolderConfigurationNode newFolderNode = new FolderConfigurationNode(null, "New Node");
+			FolderConfigurationNode newFolderNode = new FolderConfigurationNode("New Folder");
 			_selectedFolderNode.AddChildNode(newFolderNode);
 
 			// Must update action model because the node index may have changed after adding node.

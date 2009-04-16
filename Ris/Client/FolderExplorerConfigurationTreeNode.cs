@@ -1,14 +1,12 @@
+using System;
+using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Trees;
-using ClearCanvas.Enterprise.Common;
-using System.Runtime.Serialization;
-using System;
 
 namespace ClearCanvas.Ris.Client
 {
-	[DataContract]
-	public abstract class DraggableTreeNode : DataContractBase
+	public abstract class DraggableTreeNode
 	{
 		private bool _isChecked;
 		private bool _isExpanded;
@@ -24,7 +22,7 @@ namespace ClearCanvas.Ris.Client
 			_isChecked = true;
 		}
 
-		#region Abstract Properties
+		#region Abstract and Virtual Properties
 
 		/// <summary>
 		/// Gets or sets the display text of this node.
@@ -45,6 +43,38 @@ namespace ClearCanvas.Ris.Client
 		/// Gets whether this node can be deleted.
 		/// </summary>
 		public abstract bool CanDelete { get; }
+
+		/// <summary>
+		/// Gets or sets whether the node is checked.
+		/// </summary>
+		public virtual bool IsChecked
+		{
+			get { return _isChecked; }
+			set
+			{
+				if (_isChecked != value)
+				{
+					_isChecked = value;
+					this.Modified = true;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the path of this node.
+		/// </summary>
+		public virtual Path Path
+		{
+			get
+			{
+				Path thisPath = new Path(this.Text);
+
+				if (_parent == null || _parent.Path == null)
+					return thisPath;
+				else
+					return _parent.Path.Append(thisPath);
+			}
+		}
 
 		#endregion
 
@@ -76,22 +106,6 @@ namespace ClearCanvas.Ris.Client
 			remove { _modifiedChanged -= value; }
 		}
 		
-		/// <summary>
-		/// Gets or sets whether the node is checked.
-		/// </summary>
-		public bool IsChecked
-		{
-			get { return _isChecked; }
-			set
-			{
-				if (_isChecked != value)
-				{
-					_isChecked = value;
-					this.Modified = true;
-				}
-			}
-		}
-
 		/// <summary>
 		/// Gets or sets whether the subtree of this node is expanded.
 		/// </summary>
@@ -147,6 +161,31 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
+		/// Gets a list of all descendent nodes, starting with the immediate children.
+		/// </summary>
+		public List<DraggableTreeNode> Descendents
+		{
+			get
+			{
+				List<DraggableTreeNode> descendents = new List<DraggableTreeNode>();
+
+				if (_subTree != null)
+				{
+					descendents.AddRange(_subTree.Items);
+
+					CollectionUtils.ForEach(_subTree.Items,
+						delegate(DraggableTreeNode child)
+						{
+							descendents.AddRange(child.Descendents);
+						});
+				}
+
+				return descendents;
+				
+			}
+		}
+
+		/// <summary>
 		/// Gets the subtree of this node, null if none.
 		/// </summary>
 		public Tree<DraggableTreeNode> SubTree
@@ -182,6 +221,33 @@ namespace ClearCanvas.Ris.Client
 
 			// expand the tree right away
 			this.ExpandSubTree();
+		}
+
+		/// <summary>
+		/// Insert a node to the proper depth using the path.
+		/// </summary>
+		public void InsertNode(DraggableTreeNode node, Path path)
+		{
+			// This node is the first child, or there is no recommended path.  Add it immediately
+			if (_subTree == null || _subTree.Items.Count == 0 || path == null || path.Segments.Count == 0)
+			{
+				AddChildNode(node);
+				return;
+			}
+
+			PathSegment firstSegment = CollectionUtils.FirstElement(path.Segments);
+			DraggableTreeNode childWithMatchingText = CollectionUtils.SelectFirst(_subTree.Items,
+				delegate(DraggableTreeNode child) { return child.Text == firstSegment.LocalizedText; });
+			
+			if (childWithMatchingText == null)
+			{
+				AddChildNode(node);
+			}
+			else
+			{
+				// insert this node child's subtree
+				childWithMatchingText.InsertNode(node, path.SubPath(1, path.Segments.Count - 1));
+			}
 		}
 
 		/// <summary>
@@ -306,7 +372,6 @@ namespace ClearCanvas.Ris.Client
 		}
 	}
 
-	[DataContract]
 	public class FolderSystemConfigurationNode : DraggableTreeNode
 	{
 		private readonly IFolderSystem _folderSystem;
@@ -316,15 +381,38 @@ namespace ClearCanvas.Ris.Client
 			_folderSystem = folderSystem;
 		}
 
-		[DataMember]
-		public string Id
-		{
-			get { return _folderSystem.Id; }
-		}
-
 		public IFolderSystem FolderSystem
 		{
 			get { return _folderSystem; }
+		}
+
+		/// <summary>
+		/// Gets a list of all folders for this folder system.
+		/// </summary>
+		public List<IFolder> Folders
+		{
+			get
+			{
+				return CollectionUtils.Map<DraggableTreeNode, IFolder>(this.Descendents,
+					delegate(DraggableTreeNode node)
+						{
+							FolderConfigurationNode folderNode = (FolderConfigurationNode) node;
+							return folderNode.Folder;
+						});
+			}
+		}
+
+		/// <summary>
+		/// Update IFolder with the current path of the folder node.
+		/// </summary>
+		public void UpdateFolderPath()
+		{
+			CollectionUtils.ForEach(this.Descendents,
+				delegate(DraggableTreeNode node)
+				{
+					FolderConfigurationNode folderNode = (FolderConfigurationNode)node;
+					folderNode.Folder.FolderPath = folderNode.Path;
+				});
 		}
 
 		#region DraggableTreeNode Overrides
@@ -350,57 +438,48 @@ namespace ClearCanvas.Ris.Client
 			get { return false; }
 		}
 
+		public override Path Path
+		{
+			get
+			{
+				// This is overwritten because we don't want folder system name to be part of the path
+				return null;
+			}
+		}
+
 		#endregion
 	}
 
-	[DataContract]
 	public class FolderConfigurationNode : DraggableTreeNode
 	{
-		private const string SEPARATOR = "/";
-		private readonly int _lastSeparatorIndex;
-
 		private readonly IFolder _folder;
-		private readonly string _defaultPath;
-		private bool _isStale;
-
 		private string _text;
 
-		public FolderConfigurationNode(IFolder folder, string path)
-			: this(folder, path, true, false)
+		/// <summary>
+		/// Constructor for a new node not associated with an IFolder
+		/// </summary>
+		public FolderConfigurationNode(string text)
 		{
+			_text = text;
 		}
-
-		public FolderConfigurationNode(IFolder folder, string defaultPath, bool isVisible, bool isStale)
+		
+		/// <summary>
+		/// Constructor for a node that is associated with an IFolder.
+		/// </summary>
+		/// <param name="folder"></param>
+		public FolderConfigurationNode(IFolder folder)
+			: this(folder.Text)
 		{
 			_folder = folder;
-			_defaultPath = defaultPath;
-			_isStale = isStale;
 
-			_lastSeparatorIndex = _defaultPath.LastIndexOf(SEPARATOR);
-			_text = folder == null ? defaultPath : folder.Text;
-			this.IsChecked = isVisible;
+			// TODO: visibility of IFolder
+			//this.IsChecked = _folder.IsVisible;
+			this.IsChecked = true;
 		}
 
 		public IFolder Folder
 		{
 			get { return _folder; }
-		}
-
-		[DataMember]
-		public string Id
-		{
-			get { return _folder == null ? null : _folder.Id; }
-		}
-
-		[DataMember]
-		public string DefaultPath
-		{
-			get { return _defaultPath; }
-		}
-
-		public bool IsStale
-		{
-			get { return _isStale; }
 		}
 
 		#region DraggableTreeNode Overrides
@@ -431,6 +510,18 @@ namespace ClearCanvas.Ris.Client
 		public override bool CanDelete
 		{
 			get { return _folder == null && (this.SubTree == null || this.SubTree.Items.Count == 0); }
+		}
+
+		public override bool IsChecked
+		{
+			set
+			{
+				base.IsChecked = value;
+
+				// TODO: enable folder visiblility
+				//if (_folder != null)
+				//    _folder.Visible = value;
+			}
 		}
 
 		#endregion
