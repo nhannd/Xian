@@ -691,6 +691,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 							}
 						}
 					}
+					catch(StudyFinderNotFoundException e)
+					{
+						//should never get here, really.
+						Platform.Log(LogLevel.Error, e);
+					}
 					catch (Exception e)
 					{
 						Platform.Log(LogLevel.Error, e);

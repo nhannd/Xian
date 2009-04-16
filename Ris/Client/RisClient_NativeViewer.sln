@@ -20,7 +20,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
 		{E494640B-7A9A-401A-BB28-C6AAB2899FFC} = {E494640B-7A9A-401A-BB28-C6AAB2899FFC}
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91} = {CD1E4F1B-5E8F-426E-9637-19EF973B3B91}
 		{9144D03E-C4A2-4B34-B3B2-89A8834B3F02} = {9144D03E-C4A2-4B34-B3B2-89A8834B3F02}
 		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF} = {AD9ECE2B-8268-4115-8DC8-860FBD011FFF}
 		{AA917C1F-958A-4626-9A72-D41DFE07B816} = {AA917C1F-958A-4626-9A72-D41DFE07B816}
@@ -347,12 +346,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHos
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Shreds", "..\..\ImageViewer\Shreds\ClearCanvas.ImageViewer.Shreds.csproj", "{E991CF00-A0E1-490C-A0D1-2BD77FAECF06}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Services.Configuration", "..\..\ImageViewer\Services\Configuration\ClearCanvas.ImageViewer.Services.Configuration.csproj", "{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -690,14 +683,6 @@ Global
 		{E991CF00-A0E1-490C-A0D1-2BD77FAECF06}.Release Full Viewer|Any CPU.Build.0 = Release|Any CPU
 		{E991CF00-A0E1-490C-A0D1-2BD77FAECF06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E991CF00-A0E1-490C-A0D1-2BD77FAECF06}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Debug Full Viewer|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Debug Full Viewer|Any CPU.Build.0 = Debug|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Release Full Viewer|Any CPU.ActiveCfg = Release|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Release Full Viewer|Any CPU.Build.0 = Release|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -713,7 +698,6 @@ Global
 		{8FC2F7CD-F35B-4AF2-BD98-3F3F75FA9E07} = {515AA7FB-DD7C-437D-8F84-B93AC26A9D65}
 		{8347B928-805E-42E7-B980-08D8AF1A0671} = {515AA7FB-DD7C-437D-8F84-B93AC26A9D65}
 		{E991CF00-A0E1-490C-A0D1-2BD77FAECF06} = {515AA7FB-DD7C-437D-8F84-B93AC26A9D65}
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91} = {515AA7FB-DD7C-437D-8F84-B93AC26A9D65}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		VisualSVNWorkingCopyRoot = ..\..

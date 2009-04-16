@@ -36,12 +36,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationPageProvider.cs" />
     <Compile Include="DeleteStudyTool.cs" />
     <Compile Include="DicomFileImportActivityTool.cs" />
     <Compile Include="DicomFileImportApplicationComponent.cs" />
     <Compile Include="DicomFileImportTools.cs" />
     <Compile Include="DicomFileImportTool.cs" />
     <Compile Include="DicomSendReceiveActivityTool.cs" />
+    <Compile Include="DicomServerConfigurationComponent.cs" />
+    <Compile Include="DiskspaceManagerConfigurationComponent.cs" />
     <Compile Include="LocalDataStoreActivityMonitorComponentManager.cs" />
     <Compile Include="LocalDataStoreDeletionHelperExceptionPolicy.cs" />
     <Compile Include="LocalDataStoreReindexApplicationComponent.cs" />
@@ -83,6 +86,10 @@
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj">
+      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
+      <Name>ClearCanvas.Desktop.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
@@ -106,10 +113,6 @@
     <ProjectReference Include="..\ClearCanvas.ImageViewer.Services.csproj">
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Configuration\ClearCanvas.ImageViewer.Services.Configuration.csproj">
-      <Project>{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}</Project>
-      <Name>ClearCanvas.ImageViewer.Services.Configuration</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

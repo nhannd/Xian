@@ -1,4 +1,6 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Default Target" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <UsingTask TaskName="ClearCanvas.Utilities.BuildTasks.RegexIsMatch" AssemblyFile="$(ProjectDir)\..\..\ReferencedAssemblies\MSBuild\ClearCanvas.Utilities.BuildTasks.dll"/>
 
   <Choose>
     <When Condition=" '$(PROCESSOR_ARCHITEW6432)' == 'IA64' Or '$(PROCESSOR_ARCHITEW6432)' == 'AMD64' Or '$(PROCESSOR_ARCHITECTURE)' == 'IA64' Or '$(PROCESSOR_ARCHITECTURE)' == 'AMD64'">
@@ -41,6 +43,19 @@
     </When>
   </Choose>
 
+  <Choose>
+    <When Condition="'$(Options)' == ''">
+      <PropertyGroup>
+        <OptionsFlags>None</OptionsFlags>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <OptionsFlags>$(Options)</OptionsFlags>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+
   <PropertyGroup>
     <CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
     <PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
@@ -69,7 +84,7 @@
   <ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
     <SharedLibraryFiles Include="$(ProjectDir)\..\..\ReferencedAssemblies\nunit.framework.dll" />
   </ItemGroup>
-  
+
   <!-- License files -->
   <ItemGroup>
     <LicenseFiles Include="$(ProjectDir)\..\..\License.rtf" />
@@ -85,14 +100,14 @@
     <PluginDeleteFiles Include="$(PluginsDirectory)\*.*" />
   </ItemGroup>
 
-  <Target Name="Copy files">
+  <Target Name="Copy Files">
 
     <!-- Make required directories -->
     <MakeDir Directories="@(DestinationDirectories)" ContinueOnError="true" />
 
     <!-- Delete contents of plugin directory -->
     <Delete Condition="$(DeletePlugins)" Files="@(PluginDeleteFiles)" ContinueOnError="true"/>
-    
+
     <!-- Copy shared config files -->
     <Copy SourceFiles="@(ConfigFiles)" Condition="!Exists('$(DistributionDirectory)\%(FileName).%(Extension)')" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
@@ -113,4 +128,15 @@
     <!-- Run the solution specific build file -->
     <MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);TargetPlatform=$(TargetPlatform);Configuration=$(Configuration);ProjectName=$(ProjectName);ProjectOutDir=$(ProjectOutDir);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory);Options=$(Options)" />
   </Target>
+
+  <Target Name="Default Target">
+
+    <RegexIsMatch Pattern="ExcludeShredHostService" Input="$(OptionsFlags)" >
+      <Output TaskParameter="IsMatch" PropertyName="ExcludeShredHostService" />
+    </RegexIsMatch>
+
+    <CallTarget Condition="!$(ExcludeShredHostService)" Targets="Copy Files" />
+
+  </Target>
+
 </Project>

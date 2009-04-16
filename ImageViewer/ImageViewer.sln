@@ -34,8 +34,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7} = {26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}
 		{9144D03E-C4A2-4B34-B3B2-89A8834B3F02} = {9144D03E-C4A2-4B34-B3B2-89A8834B3F02}
 		{D780A782-15DA-4E46-B642-7EA60F2D1A0A} = {D780A782-15DA-4E46-B642-7EA60F2D1A0A}
-		{7FD1F68D-E165-4D79-9863-FBAD8852D62E} = {7FD1F68D-E165-4D79-9863-FBAD8852D62E}
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91} = {CD1E4F1B-5E8F-426E-9637-19EF973B3B91}
 		{7F89848A-B05C-4FF5-93D4-9B59A1A36F5E} = {7F89848A-B05C-4FF5-93D4-9B59A1A36F5E}
 		{5C17A246-C4AB-4D66-8715-425192D88D6E} = {5C17A246-C4AB-4D66-8715-425192D88D6E}
 		{8517089B-809E-4A62-9AB2-CFF8C72E1AEB} = {8517089B-809E-4A62-9AB2-CFF8C72E1AEB}
@@ -290,6 +288,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(SolutionItems) = preProject
+		Desktop.HelpUpdate_dist.config = Desktop.HelpUpdate_dist.config
+		ImageViewer.DesktopServices_dist.config = ImageViewer.DesktopServices_dist.config
+		ImageViewer.DicomExplorer_dist.config = ImageViewer.DicomExplorer_dist.config
+		ImageViewer.EnterpriseDesktop_dist.config = ImageViewer.EnterpriseDesktop_dist.config
+		ImageViewer.Streaming_dist.config = ImageViewer.Streaming_dist.config
 		ImageViewer_dist.config = ImageViewer_dist.config
 		ImageViewer_dist.proj = ImageViewer_dist.proj
 		ImageViewer_Shreds_dist.config = ImageViewer_Shreds_dist.config
@@ -383,18 +386,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Des
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Help.UpdateTools", "..\Desktop\Help\UpdateTools\ClearCanvas.Desktop.Help.UpdateTools.csproj", "{D780A782-15DA-4E46-B642-7EA60F2D1A0A}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Services.Configuration", "Services\Configuration\ClearCanvas.ImageViewer.Services.Configuration.csproj", "{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Services.Configuration.View.WinForms", "Services\Configuration\View\WinForms\ClearCanvas.ImageViewer.Services.Configuration.View.WinForms.csproj", "{7FD1F68D-E165-4D79-9863-FBAD8852D62E}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -642,14 +633,6 @@ Global
 		{D780A782-15DA-4E46-B642-7EA60F2D1A0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D780A782-15DA-4E46-B642-7EA60F2D1A0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D780A782-15DA-4E46-B642-7EA60F2D1A0A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7FD1F68D-E165-4D79-9863-FBAD8852D62E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7FD1F68D-E165-4D79-9863-FBAD8852D62E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7FD1F68D-E165-4D79-9863-FBAD8852D62E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7FD1F68D-E165-4D79-9863-FBAD8852D62E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7DE2AD68-75E5-44D0-B94D-7549D3AE7CC3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7DE2AD68-75E5-44D0-B94D-7549D3AE7CC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DE2AD68-75E5-44D0-B94D-7549D3AE7CC3}.Release|Any CPU.ActiveCfg = Release|Any CPU

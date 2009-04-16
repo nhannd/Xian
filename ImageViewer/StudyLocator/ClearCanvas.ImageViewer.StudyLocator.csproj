@@ -65,13 +65,13 @@
       <Project>{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}</Project>
       <Name>ClearCanvas.Dicom.DataStore</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Configuration\ClearCanvas.ImageViewer.Configuration.csproj">
+      <Project>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</Project>
+      <Name>ClearCanvas.ImageViewer.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Services\Configuration\ClearCanvas.ImageViewer.Services.Configuration.csproj">
-      <Project>{CD1E4F1B-5E8F-426E-9637-19EF973B3B91}</Project>
-      <Name>ClearCanvas.ImageViewer.Services.Configuration</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

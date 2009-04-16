@@ -46,6 +46,20 @@
       <DependentUpon>DicomFileImportApplicationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="DicomFileImportApplicationComponentView.cs" />
+    <Compile Include="DicomServerConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomServerConfigurationComponentControl.Designer.cs">
+      <DependentUpon>DicomServerConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomServerConfigurationComponentView.cs" />
+    <Compile Include="DiskspaceManagerConfigurationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DiskspaceManagerConfigurationComponentControl.Designer.cs">
+      <DependentUpon>DiskspaceManagerConfigurationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DiskspaceManagerConfigurationComponentView.cs" />
     <Compile Include="ImportProgressControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -90,6 +104,10 @@
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\..\..\Desktop\Configuration\ClearCanvas.Desktop.Configuration.csproj">
+      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
+      <Name>ClearCanvas.Desktop.Configuration</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
@@ -103,6 +121,14 @@
     <EmbeddedResource Include="DicomFileImportApplicationComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DicomFileImportApplicationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DicomServerConfigurationComponentControl.resx">
+      <DependentUpon>DicomServerConfigurationComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DiskspaceManagerConfigurationComponentControl.resx">
+      <DependentUpon>DiskspaceManagerConfigurationComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ImportProgressControl.resx">
       <SubType>Designer</SubType>

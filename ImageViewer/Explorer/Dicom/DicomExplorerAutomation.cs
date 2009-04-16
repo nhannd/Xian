@@ -5,10 +5,10 @@ using System.ServiceModel.Description;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.DesktopServices;
 using ClearCanvas.ImageViewer.Services.Automation;
 using ClearCanvas.ImageViewer.Services.ServerTree;
-using ClearCanvas.ImageViewer.Services.Configuration;
 using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom

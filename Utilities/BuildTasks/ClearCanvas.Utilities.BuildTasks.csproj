@@ -41,6 +41,7 @@
     <Compile Include="NUnitLogParser.cs" />
     <Compile Include="RegexIsMatch.cs" />
     <Compile Include="RelativeBuildDateTime.cs" />
+    <Compile Include="XmlFileRemoveNodes.cs" />
     <Compile Include="VersionProjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VersionWebFiles.cs" />

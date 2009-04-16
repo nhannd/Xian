@@ -21,7 +21,13 @@
   </Choose>
 
   <PropertyGroup>
-    <TargetPlatform>$(BuildPlatform)</TargetPlatform>  
+    <TargetPlatform>$(BuildPlatform)</TargetPlatform>
+    <ThinPackageOptions>ExcludeHttpDesktopServices+ExcludeShredHostService+ExcludeServiceTools+ExcludeDatabase+ExcludeDicomEditor+ExcludeStudyComposer+ExcludeStudyFilters+ExcludeReporting+ExcludeHelpUpdate</ThinPackageOptions>
+    <DefaultOptions>ExcludeStudyComposer+ExcludeStudyFilters</DefaultOptions>
+    <PackageOption>Normal</PackageOption>
+    <!--<PackageOption>NormalEnterprise</PackageOption>-->
+    <!--<PackageOption>Thin</PackageOption>-->
+    <!--<PackageOption>ThinEnterprise</PackageOption>-->
   </PropertyGroup>
   
   <Choose>
@@ -38,6 +44,33 @@
     </Otherwise>
   </Choose>
 
+  <Choose>
+    <When Condition="'$(PackageOption)' == 'ThinEnterprise'">
+      <PropertyGroup>
+        <BuildOptions>$(ThinPackageOptions)</BuildOptions>
+        <ThinBuild>True</ThinBuild>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(PackageOption)' == 'NormalEnterprise'">
+      <PropertyGroup>
+        <BuildOptions>$(DefaultOptions)</BuildOptions>
+        <ThinBuild>False</ThinBuild>
+      </PropertyGroup>
+    </When>
+    <When Condition="'$(PackageOption)' == 'Thin'">
+      <PropertyGroup>
+        <BuildOptions>ExcludeEnterprise+$(ThinPackageOptions)</BuildOptions>
+        <ThinBuild>True</ThinBuild>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <BuildOptions>ExcludeEnterprise+$(DefaultOptions)</BuildOptions>
+        <ThinBuild>False</ThinBuild>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
+  
   <!-- set out some defaults -->
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -60,12 +93,12 @@
   <Choose>
     <When Condition="$(DistributionBuild) And '$(Configuration)' == 'Release' And '$(KeyFile)' != ''">
       <PropertyGroup>
-        <ImageViewerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile)</ImageViewerProperties>
+        <ImageViewerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);SignAssembly=true;DelaySign=false;AssemblyOriginatorKeyFile=$(KeyFile);Options=$(BuildOptions)</ImageViewerProperties>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
-        <ImageViewerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir)</ImageViewerProperties>
+        <ImageViewerProperties>Configuration=$(Configuration);TargetPlatform=$(TargetPlatform);DistributionDir=$(DistributionDir);Options=$(BuildOptions)</ImageViewerProperties>
       </PropertyGroup>
     </Otherwise>
   </Choose>

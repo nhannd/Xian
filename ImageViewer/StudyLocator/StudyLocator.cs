@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Services.Configuration;
+using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.ServiceModel;
 using ClearCanvas.Common;

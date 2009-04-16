@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.Enterprise" GeneratedClassName="ServiceSettings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.ImageViewer.EnterpriseDesktop" GeneratedClassName="ServiceSettings">
   <Profiles />
   <Settings>
     <Setting Name="ApplicationServicesBaseUrl" Type="System.String" Scope="Application">

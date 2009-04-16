@@ -6,7 +6,7 @@
 
   <PropertyGroup>
     <TrunkDirectory>$(MSBuildProjectDirectory)\..\..\</TrunkDirectory>
-    <DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeServiceConfiguration+ExcludeHelpUpdate+ExcludeDicomRemote+ExcludeDatabase</DefaultOptions>
+    <DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeHelpUpdate+ExcludeDatabase</DefaultOptions>
     <!--<DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeMpr</DefaultOptions>-->
   </PropertyGroup>
     

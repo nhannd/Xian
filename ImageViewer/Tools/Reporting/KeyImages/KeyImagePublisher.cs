@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			get
 			{
 				if (_defaultServers == null)
-					_defaultServers = Services.Configuration.DefaultServers.GetAll();
+					_defaultServers = ImageViewer.Configuration.DefaultServers.GetAll();
 
 				return _defaultServers;
 			}	

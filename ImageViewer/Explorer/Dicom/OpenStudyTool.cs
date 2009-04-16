@@ -72,7 +72,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					return;
 
 				if (this.Context.SelectedServerGroup.IsLocalDatastore)
+				{
 					OpenStudyHelper.OpenStudies(new OpenStudyArgs(GetStudyInstanceUids(), null, "DICOM_LOCAL", ViewerLaunchSettings.WindowBehaviour));
+				}
 				else
 				{
 					OpenStudyHelper.OpenStudies(

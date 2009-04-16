@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			if (retrieveAETitle == serverTree.RootNode.LocalDataStoreNode.GetClientAETitle())
 				return serverTree.RootNode.LocalDataStoreNode;
 
-			List<Server> remoteServers = Services.Configuration.DefaultServers.SelectFrom(serverTree);
+			List<Server> remoteServers = Configuration.DefaultServers.SelectFrom(serverTree);
 			foreach (Server server in remoteServers)
 			{
 				if (server.AETitle == retrieveAETitle)

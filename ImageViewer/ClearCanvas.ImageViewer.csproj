@@ -141,7 +141,7 @@
     <Compile Include="Graphics\PointsList.cs" />
     <Compile Include="Graphics\PolylineGraphic.cs" />
     <Compile Include="IDicomPresentationImage.cs" />
-    <Compile Include="Common\ImageSetGroups.cs" />
+    <Compile Include="ImageSetGroups.cs" />
     <Compile Include="Imaging\DicomVoiLuts.cs" />
     <Compile Include="Graphics\ILineSegmentGraphic.cs" />
     <Compile Include="Graphics\InvariantArrowheadGraphic.cs" />

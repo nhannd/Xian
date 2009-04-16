@@ -42,7 +42,7 @@
     <DistributionBuild>false</DistributionBuild>
     <FullViewer>false</FullViewer>
     <!-- Default, triceratops options -->
-    <DefaultOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeServiceConfiguration+ExcludeHelpUpdate+ExcludeDicomRemote+ExcludeDatabase</DefaultOptions>
+    <DefaultOptions>ExcludeHttpDesktopServices+ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeHelpUpdate+ExcludeDatabase</DefaultOptions>
     <FullViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeHelpUpdate</FullViewerOptions>
   </PropertyGroup>
 

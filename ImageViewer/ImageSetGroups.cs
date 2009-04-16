@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
 
-namespace ClearCanvas.ImageViewer.Common
+namespace ClearCanvas.ImageViewer
 {
 	internal class PatientInfoSpecification : ImageSetSpecification
 	{

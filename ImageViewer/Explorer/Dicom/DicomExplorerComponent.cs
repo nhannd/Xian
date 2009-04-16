@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Security.Policy;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Services.Configuration.ServerTree;
+using ClearCanvas.ImageViewer.Configuration.ServerTree;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -26,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public StudyBrowserComponent StudyBrowserComponent
 		{
-			get { return _studyBrowserComponent; }	
+			get { return _studyBrowserComponent; }
 		}
 
 		public SearchPanelComponent SearchPanelComponent
@@ -37,8 +40,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public override void Start()
 		{
 			base.Start();
-			
-			lock(_syncLock)
+
+			lock (_syncLock)
 			{
 				_activeComponents.Add(this);
 			}
@@ -65,6 +68,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public static DicomExplorerComponent Create()
 		{
 			ServerTreeComponent serverTreeComponent = new ServerTreeComponent();
+			serverTreeComponent.ShowLocalDataStoreNode = HasLocalDatastoreSupport();
+
 			StudyBrowserComponent studyBrowserComponent = new StudyBrowserComponent();
 
 			serverTreeComponent.SelectedServerChanged +=
@@ -76,7 +81,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			try
 			{
-				studyBrowserComponent.Search();
+				//explicitly check and make sure we're querying local only.
+				if (serverTreeComponent.ShowLocalDataStoreNode && serverTreeComponent.SelectedServers.IsLocalDatastore)
+					studyBrowserComponent.Search();
 			}
 			catch (PolicyException)
 			{
@@ -103,6 +110,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			component._studyBrowserComponent = studyBrowserComponent;
 			component._serverTreeComponent = serverTreeComponent;
 			return component;
+		}
+
+		private static bool HasLocalDatastoreSupport()
+		{
+			try
+			{
+				StudyFinderExtensionPoint finders = new StudyFinderExtensionPoint();
+				return null != CollectionUtils.SelectFirst(finders.CreateExtensions(),
+								delegate(object extension) { return ((IStudyFinder)extension).Name == "DICOM_LOCAL"; });
+			}
+			catch (NotSupportedException)
+			{
+				Platform.Log(LogLevel.Warn, "Local data store study finder not found.");
+				return false;
+			}
 		}
 	}
 }

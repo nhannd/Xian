@@ -44,6 +44,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
     {
     }
     
+	public class StudyFinderNotFoundException : Exception
+	{
+		internal StudyFinderNotFoundException(string name)
+		{
+			FinderName = name;
+		}
+
+		public readonly string FinderName;
+	}
+
 	/// <summary>
 	/// A map of <see cref="IStudyFinder"/> objects.
 	/// </summary>
@@ -66,6 +76,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				Platform.CheckForEmptyString(studyFinderName, "studyFinderName");
+
+				if (!_studyFinderMap.ContainsKey(studyFinderName))
+					throw new StudyFinderNotFoundException(studyFinderName);
+
 				return _studyFinderMap[studyFinderName];
 			}
 		}
