@@ -75,6 +75,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				EditBox editBox = new EditBox(_textGraphic.Text ?? string.Empty);
 				if (string.IsNullOrEmpty(_textGraphic.Text))
 					editBox.Value = SR.LabelEnterText;
+				editBox.Multiline = true;
 				editBox.Location = Point.Round(_textGraphic.Location);
 				editBox.Size = Rectangle.Round(_textGraphic.BoundingBox).Size;
 				editBox.FontName = _textGraphic.Font;

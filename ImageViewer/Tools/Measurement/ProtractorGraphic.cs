@@ -80,9 +80,31 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		public override bool HitTest(Point point)
 		{
 			if (_arc.Visible)
-				return _arc.HitTest(point) || base.HitTest(point);
-			else
+			{
 				return base.HitTest(point);
+			}
+
+			foreach (IGraphic graphic in this.Graphics)
+			{
+				if (graphic.Visible && graphic.HitTest(point))
+					return true;
+			}
+			return false;
+		}
+
+		public override PointF GetClosestPoint(PointF point)
+		{
+			if (_arc.Visible)
+			{
+				return base.GetClosestPoint(point);
+			}
+
+			foreach (IGraphic graphic in this.Graphics)
+			{
+				if (graphic.Visible)
+					return graphic.GetClosestPoint(point);
+			}
+			return PointF.Empty;
 		}
 
 		private void CalculateArc()
