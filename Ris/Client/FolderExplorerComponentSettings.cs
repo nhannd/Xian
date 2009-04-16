@@ -214,13 +214,7 @@ namespace ClearCanvas.Ris.Client
 				string id = element.GetAttribute("id");
 
 				IFolder item = CollectionUtils.SelectFirst(remainder,
-					delegate(IFolder x)
-					{
-						if (x is IWorklistFolder && !x.IsStatic)
-							return Equals(((IWorklistFolder) x).WorklistRef.ToString(false), id);
-						else
-							return Equals(x.Id, id);
-					});
+					delegate(IFolder x) { return x.Id == id; });
 
 				if (item != null)
 				{
@@ -289,9 +283,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			XmlElement xmlFolder = this.GetXmlDocument().CreateElement("folder");
 
-			xmlFolder.SetAttribute("id", folder is IWorklistFolder && !folder.IsStatic
-				? ((IWorklistFolder) folder).WorklistRef.ToString(false) 
-				: folder.Id);
+			xmlFolder.SetAttribute("id", folder.Id);
 			xmlFolder.SetAttribute("path", folder.FolderPath.LocalizedPath);
 			xmlFolder.SetAttribute("visible", folder.Visible.ToString());
 

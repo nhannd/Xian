@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client
 		IFolderSystem FolderSystem { get; }
 
 		/// <summary>
-		/// Gets the ID that identifies the folder
+		/// Gets the ID that uniquely identifies the folder for use in persisting the folder tree organization.
 		/// </summary>
 		string Id { get; }
 

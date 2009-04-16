@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			try
 			{
-				ConfigurationDialog.Show(this.Context.DesktopWindow, SR.TitleFolderExplorer);
+				ConfigurationDialog.Show(this.Context.DesktopWindow, SR.FolderExplorerConfigurationPagePath);
 			}
 			catch (Exception e)
 			{

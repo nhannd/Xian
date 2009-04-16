@@ -31,6 +31,11 @@ namespace ClearCanvas.Ris.Client
             this.IsStatic = false;
 		}
 
+		public override string Id
+		{
+			get { return _groupRef.ToString(false); }
+		}
+
 		protected override void PrepareQueryRequest(QueryNoteboxRequest request)
 		{
 			base.PrepareQueryRequest(request);

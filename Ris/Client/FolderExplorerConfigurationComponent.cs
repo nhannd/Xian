@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<FolderExplorerConfigurationComponent>(SR.TitleFolderExplorer));
+			listPages.Add(new ConfigurationPage<FolderExplorerConfigurationComponent>(SR.FolderExplorerConfigurationPagePath));
 
 			return listPages.AsReadOnly();
 		}

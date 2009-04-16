@@ -72,6 +72,14 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
+		public override string Id
+		{
+			get
+			{
+				return this.IsStatic ? base.Id : _worklistRef.ToString(false);
+			}
+		}
+
 		#region IWorklistFolder Members
 
 		/// <summary>

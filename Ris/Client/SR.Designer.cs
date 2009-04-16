@@ -961,6 +961,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Homepage/Folder Organization.
+        /// </summary>
+        internal static string FolderExplorerConfigurationPagePath {
+            get {
+                return ResourceManager.GetString("FolderExplorerConfigurationPagePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Checked-in at {0}.
         /// </summary>
         internal static string FormatCheckedInTime {
