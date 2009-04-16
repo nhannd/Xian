@@ -239,7 +239,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Gets a list of all descendent nodes, starting with the immediate children.
+		/// Gets a list of all descendent nodes, by in-order traversal.
 		/// </summary>
 		public List<DraggableTreeNode> Descendents
 		{
@@ -249,11 +249,10 @@ namespace ClearCanvas.Ris.Client
 
 				if (_subTree != null)
 				{
-					descendents.AddRange(_subTree.Items);
-
 					CollectionUtils.ForEach(_subTree.Items,
 						delegate(DraggableTreeNode child)
 						{
+							descendents.Add(child);
 							descendents.AddRange(child.Descendents);
 						});
 				}
