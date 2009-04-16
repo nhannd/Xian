@@ -62,6 +62,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public ReportingWorkflowFolderSystem()
 			: base(SR.TitleReportingFolderSystem)
 		{
+		}
+
+		protected override void AddDefaultFolders()
+		{
 			// add the personal folders, since they are not extensions and will not be automatically added
 			this.Folders.Add(new Folders.Reporting.AssignedFolder());
 

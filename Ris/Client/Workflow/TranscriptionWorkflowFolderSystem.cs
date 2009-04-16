@@ -31,6 +31,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public TranscriptionWorkflowFolderSystem()
 			: base(SR.TitleTranscriptionFolderSystem)
 		{
+		}
+
+		protected override void AddDefaultFolders()
+		{
 			this.Folders.Add(new Folders.Transcription.ToBeReviewedFolder());
 			this.Folders.Add(new Folders.Transcription.DraftFolder());
 

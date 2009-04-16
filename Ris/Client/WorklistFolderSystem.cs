@@ -68,11 +68,20 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
+		/// This method should be overridden by any folder systems that require folders not added through the extension mechanism.
+		/// </summary>
+		protected virtual void AddDefaultFolders()
+		{
+		}
+
+		/// <summary>
 		/// Creates the folder system based on the specified extension point.
 		/// </summary>
 		/// <param name="folderExtensionPoint"></param>
 		private void InitializeFolders(ExtensionPoint<IWorklistFolder> folderExtensionPoint)
 		{
+			AddDefaultFolders();
+
 			Dictionary<string, Type> mapWorklistClassToFolderClass = new Dictionary<string, Type>();
 
 			// collect worklist class names, and add unfiltered folders if authorized

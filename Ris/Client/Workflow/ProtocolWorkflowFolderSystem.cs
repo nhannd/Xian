@@ -62,6 +62,10 @@ namespace ClearCanvas.Ris.Client.Workflow
 		public ProtocolWorkflowFolderSystem()
 			: base(SR.TitleProtocollingFolderSystem)
 		{
+		}
+
+		protected override void AddDefaultFolders()
+		{
 			// add the personal folders, since they are not extensions and will not be automatically added
 			this.Folders.Add(new Folders.Reporting.AssignedToBeProtocolFolder());
 
