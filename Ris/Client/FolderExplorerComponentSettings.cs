@@ -49,6 +49,7 @@ namespace ClearCanvas.Ris.Client
 		public delegate void InsertFolderDelegate(IFolder folder);
 
 		private XmlDocument _xmlDoc;
+		private event EventHandler _userFolderSystemCustomizationsChanged;
 
 		private FolderExplorerComponentSettings()
 		{
@@ -70,7 +71,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		/// <summary>
-		/// Orders the folders in the specified folder system according to what is in the XML document,
+		/// Customizes the folders in the specified folder system according to what is in the XML document,
 		/// and puts any items without an XML entry into the remainder list.
 		/// </summary>
 		/// <param name="folderSystem"></param>
@@ -82,6 +83,10 @@ namespace ClearCanvas.Ris.Client
 			CustomizeFolders(folderSystem.Folders, xmlFolderSystem.GetElementsByTagName("folder"), out ordered, out remainder);
 		}
 
+		/// <summary>
+		/// Saves the order of the specified folder sytems.
+		/// </summary>
+		/// <param name="folderSystems"></param>
 		public void SaveUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems)
 		{
 			XmlElement replacementFolderSystems = this.GetXmlDocument().CreateElement("folder-systems");
@@ -98,6 +103,11 @@ namespace ClearCanvas.Ris.Client
 			this.Save();
 		}
 
+		/// <summary>
+		/// For the specified <see cref="IFolderSystem"/>, saves customizations of paths and visibility of <see cref="IFolder"/> items in the list.
+		/// </summary>
+		/// <param name="folderSystem"></param>
+		/// <param name="customizedFolders"></param>
 		public void SaveUserFoldersCustomizations(IFolderSystem folderSystem, List<IFolder> customizedFolders)
 		{
 			XmlElement xmlFolderSystem = FindXmlFolderSystem(folderSystem.Id);
@@ -117,6 +127,27 @@ namespace ClearCanvas.Ris.Client
 
 			this.FolderPathXml = _xmlDoc.OuterXml;
 			this.Save();
+		}
+
+		/// <summary>
+		/// Raises the <see cref="UserFolderSystemCustomizationsChanged"/> to indicate that all user 
+		/// customizations have been committed to the settings.
+		/// </summary>
+		/// <remarks>
+		/// Should be called following calls of <see cref="SaveUserFoldersCustomizations"/> and/or <see cref="SaveUserFolderSystemsOrder"/>
+		/// </remarks>
+		public void CompleteUserFolderSystemCustomizations()
+		{
+			EventsHelper.Fire(_userFolderSystemCustomizationsChanged, this, EventArgs.Empty);
+		}
+
+		/// <summary>
+		/// Indicates that the current user's folder/folder system customizations have changed.
+		/// </summary>
+		public event EventHandler UserFolderSystemCustomizationsChanged
+		{
+			add { _userFolderSystemCustomizationsChanged += value; }
+			remove { _userFolderSystemCustomizationsChanged -= value; }
 		}
 
 		#endregion
@@ -159,6 +190,18 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		/// <summary>
+		/// Applies user customizations to the path and visibility of items in the input list.
+		/// </summary>
+		/// <remarks>
+		/// Orders the input items according to the order specified by the <paramref name="ordering"/> XML list,
+		/// and puts the result into the <paramref name="ordered"/> list.  Any items not found in the XML ordering list
+		/// are put into the <paramref name="remainder"/> list.
+		/// </remarks>
+		/// <param name="input"></param>
+		/// <param name="ordering"></param>
+		/// <param name="ordered"></param>
+		/// <param name="remainder"></param>
 		private void CustomizeFolders(IEnumerable<IFolder> input, XmlNodeList ordering, 
 			out List<IFolder> ordered, out List<IFolder> remainder)
 		{
@@ -286,97 +329,5 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#endregion
-
-		//#region Not currently in use - may need these in future if we save the folder ordering per user
-
-		///// <summary>
-		///// Synchronizes persistent folders with the xml store.
-		///// Refer to <see cref="BuildAndSynchronize"/> for more details.
-		///// </summary>
-		///// <param name="folderSystemID">the ID of the folder system</param>
-		///// <param name="folderMap">the folders that are to be synchronized/added to the store</param>
-		///// <returns>the "folder-system" node with the specified folderSystemID</returns>
-		//private XmlElement Synchronize(string folderSystemID, IDictionary<string, IFolder> folderMap)
-		//{
-		//    bool changed = false;
-
-		//    XmlElement xmlFolderSystem = FindXmlFolderSystem(folderSystemID) ?? CreateXmlFolderSystem(folderSystemID);
-
-		//    //make sure every folder has a pre-determined spot in the store, inserting
-		//    //folders appropriately based on their path.  The algorithm guarantees 
-		//    //that each folder will get put somewhere in the store.  Only static folders
-		//    //are added to the xml store; otherwise, the non-static folders would 
-		//    //be determining the positions of persistent folders in the store,
-		//    //which is clearly the reverse of what should happen.
-		//    foreach (IFolder folder in folderMap.Values)
-		//    {
-		//        if (folder.IsStatic)
-		//        {
-		//            if (AppendFolderToXmlFolderSystem(xmlFolderSystem, folder))
-		//                changed = true;
-		//        }
-		//    }
-
-		//    //if (changed)
-		//    //{
-		//    //    if (!systemExists)
-		//    //        this.GetFolderSystemsNode().AppendChild(xmlFolderSystem);
-
-		//    //    //this.FolderPathXml = _xmlDoc.InnerXml;
-		//    //    //this.Save();
-		//    //}
-
-		//    XmlElement xmlFolderSystemClone = (XmlElement)xmlFolderSystem.CloneNode(true);
-
-		//    foreach (IFolder folder in folderMap.Values)
-		//    {
-		//        if (!folder.IsStatic)
-		//            AppendFolderToXmlFolderSystem(xmlFolderSystemClone, folder);
-		//    }
-
-		//    return xmlFolderSystemClone;
-		//}
-
-		///// <summary>
-		///// Appends the specified folder to the specified XML system.  The path
-		///// attribute of the folder to be inserted is compared with the path of the
-		///// folders in the xml system and an appropriate place to insert the folder is determined
-		///// based on the length of the common path.
-		///// </summary>
-		///// <param name="xmlFolderSystem">the "folder-system" node to insert an folder into</param>
-		///// <param name="folder">the folder to be inserted</param>
-		///// <returns>a boolean indicating whether anything was added/removed/modified</returns>
-		//private bool AppendFolderToXmlFolderSystem(XmlElement xmlFolderSystem, IFolder folder)
-		//{
-		//    if (null != FindXmlFolder(folder.Id, xmlFolderSystem))
-		//        return false;
-
-		//    XmlNode insertionPoint = null;
-		//    int highestScore = 0;
-		//    string folderPath = folder.FolderPath.LocalizedPath;
-
-		//    foreach (XmlElement xmlFolder in xmlFolderSystem.GetElementsByTagName("folder"))
-		//    {
-		//        string path = xmlFolder.GetAttribute("path");
-
-		//        int currentScore = folderPath.Contains(path) || path.Contains(folderPath) ? Math.Min(folderPath.Length, path.Length) : 0;
-		//        if (currentScore >= highestScore)
-		//        {
-		//            insertionPoint = xmlFolder;
-		//            highestScore = currentScore;
-		//        }
-		//    }
-
-		//    XmlElement newXmlFolder = CreateXmlFolder(folder);
-
-		//    if (insertionPoint != null)
-		//        xmlFolderSystem.InsertAfter(newXmlFolder, insertionPoint);
-		//    else
-		//        xmlFolderSystem.AppendChild(newXmlFolder);
-
-		//    return true;
-		//}
-
-		//#endregion
 	}
 }

@@ -218,8 +218,9 @@ namespace ClearCanvas.Ris.Client
 					_folderExplorerComponents[folderSystem].SelectedFolderChanged += OnSelectedFolderChanged;
 				});
 
-
 			_toolSet = new ToolSet(new FolderExplorerGroupToolExtensionPoint(), new FolderExplorerGroupToolContext(this));
+
+			FolderExplorerComponentSettings.Default.UserFolderSystemCustomizationsChanged += OnUserFolderSystemCustomizationsChanged;
 
 			base.Start();
 		}
@@ -245,6 +246,8 @@ namespace ClearCanvas.Ris.Client
 					_folderExplorerComponents[folderSystem].SelectedFolderChanged -= OnSelectedFolderChanged;
 					DocumentManager.UnregisterFolderSystem(folderSystem);
 				});
+
+			FolderExplorerComponentSettings.Default.UserFolderSystemCustomizationsChanged -= OnUserFolderSystemCustomizationsChanged;
 
 			base.Stop();
 		}
@@ -349,6 +352,10 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		private void OnUserFolderSystemCustomizationsChanged(object sender, EventArgs e)
+		{
+			// todo: refresh the stack tab component
+		}
 
 		#endregion
 	}

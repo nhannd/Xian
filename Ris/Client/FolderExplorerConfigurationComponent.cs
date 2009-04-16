@@ -142,6 +142,8 @@ namespace ClearCanvas.Ris.Client
 						fsNode.UpdateFolderPath();
 						FolderExplorerComponentSettings.Default.SaveUserFoldersCustomizations(fsNode.FolderSystem, fsNode.Folders);
 					});
+
+			FolderExplorerComponentSettings.Default.CompleteUserFolderSystemCustomizations();
 		}
 		
 		#endregion
