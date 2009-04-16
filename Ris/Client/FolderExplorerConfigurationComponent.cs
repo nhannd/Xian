@@ -109,9 +109,9 @@ namespace ClearCanvas.Ris.Client
 			_folderSystemsActionModel[_moveFolderSystemDownKey].Enabled = false;
 
 			_foldersActionModel = new SimpleActionModel(resourceResolver);
-			_foldersActionModel.AddAction(_addFolderKey, SR.TitleAdd, "Icons.AddToolSmall.png", SR.TitleAddContainerFolder, AddFolder);
-			_foldersActionModel.AddAction(_editFolderKey, SR.TitleEdit, "Icons.EditToolSmall.png", SR.TitleRenameFolder, EditFolder);
-			_foldersActionModel.AddAction(_deleteFolderKey, SR.TitleDelete, "Icons.DeleteToolSmall.png", SR.TitleDeleteContainerFolder, DeleteFolder);
+			_foldersActionModel.AddAction(_addFolderKey, SR.TitleAddContainerFolder, "Icons.AddToolSmall.png", SR.TitleAddContainerFolder, AddFolder);
+			_foldersActionModel.AddAction(_editFolderKey, SR.TitleRenameFolder, "Icons.EditToolSmall.png", SR.TitleRenameFolder, EditFolder);
+			_foldersActionModel.AddAction(_deleteFolderKey, SR.TitleDeleteContainerFolder, "Icons.DeleteToolSmall.png", SR.TitleDeleteContainerFolder, DeleteFolder);
 			_foldersActionModel.AddAction(_moveFolderUpKey, SR.TitleMoveUp, "Icons.UpToolSmall.png", SR.TitleMoveUp, MoveFolderUp);
 			_foldersActionModel.AddAction(_moveFolderDownKey, SR.TitleMoveDown, "Icons.DownToolSmall.png", SR.TitleMoveDown, MoveFolderDown);
 			_foldersActionModel[_addFolderKey].Enabled = false;
@@ -135,12 +135,11 @@ namespace ClearCanvas.Ris.Client
 					_folderSystems, 
 					delegate(FolderSystemConfigurationNode node) { return node.FolderSystem; }));
 
-			CollectionUtils.ForEach(_folderTree.Items,
-				delegate(DraggableTreeNode node)
+			CollectionUtils.ForEach(_folderSystems,
+				delegate(FolderSystemConfigurationNode node)
 					{
-						FolderSystemConfigurationNode fsNode = (FolderSystemConfigurationNode) node;
-						fsNode.UpdateFolderPath();
-						FolderExplorerComponentSettings.Default.SaveUserFoldersCustomizations(fsNode.FolderSystem, fsNode.Folders);
+						node.UpdateFolderPath();
+						FolderExplorerComponentSettings.Default.SaveUserFoldersCustomizations(node.FolderSystem, node.Folders);
 					});
 
 			FolderExplorerComponentSettings.Default.CompleteUserFolderSystemCustomizations();

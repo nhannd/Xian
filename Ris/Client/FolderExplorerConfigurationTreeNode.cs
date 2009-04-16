@@ -11,10 +11,12 @@ namespace ClearCanvas.Ris.Client
 		public class ContainerNode : DraggableTreeNode
 		{
 			private string _text;
+			private readonly IResourceResolver _resourceResolver;
 
 			public ContainerNode(string text)
 			{
 				_text = text;
+				_resourceResolver = new ResourceResolver(typeof(ContainerNode).Assembly);
 			}
 
 			#region DraggableTreeNode Overrides
@@ -45,6 +47,16 @@ namespace ClearCanvas.Ris.Client
 			public override bool CanDelete
 			{
 				get { return _subTree == null || _subTree.Items.Count == 0; }
+			}
+
+			public override IconSet IconSet
+			{
+				get { return new IconSet(IconScheme.Colour, "ContainerFolderOpenSmall.png", "ContainerFolderOpenSmall.png", "ContainerFolderOpenSmall.png"); }
+			}
+
+			public override IResourceResolver ResourceResolver
+			{
+				get { return _resourceResolver; }
 			}
 
 			#endregion
@@ -136,6 +148,23 @@ namespace ClearCanvas.Ris.Client
 		public virtual bool CheckStateChained
 		{
 			get { return true; }
+		}
+
+		/// <summary>
+		/// Gets the iconset that should be displayed for the node.
+		/// </summary>
+		public virtual IconSet IconSet
+		{
+			get { return null; }
+		}
+
+
+		/// <summary>
+		/// Gets the resource resolver that is used to resolve the Icon
+		/// </summary>
+		public virtual IResourceResolver ResourceResolver
+		{
+			get { return null; }
 		}
 
 		/// <summary>
@@ -475,6 +504,8 @@ namespace ClearCanvas.Ris.Client
 			binding.IsExpandedSetter = delegate(DraggableTreeNode node, bool isExpanded) { node.IsExpanded = isExpanded; };
 			binding.CanAcceptDropHandler = delegate(DraggableTreeNode node, object dropData, DragDropKind kind) { return node.CanAcceptDrop((dropData as DraggableTreeNode), kind); };
 			binding.AcceptDropHandler = delegate(DraggableTreeNode node, object dropData, DragDropKind kind) { return node.AcceptDrop((dropData as DraggableTreeNode), kind); };
+			binding.IconSetProvider = delegate(DraggableTreeNode node) { return node.IconSet; };
+			binding.ResourceResolverProvider = delegate(DraggableTreeNode node) { return node.ResourceResolver; };
 			return new Tree<DraggableTreeNode>(binding);
 		}
 	}
@@ -575,12 +606,14 @@ namespace ClearCanvas.Ris.Client
 	{
 		private readonly IFolder _folder;
 		private string _text;
+		private readonly IResourceResolver _resourceResolver;
 
 		public FolderConfigurationNode(IFolder folder)
 			: base(folder.Visible)
 		{
 			_folder = folder;
 			_text = folder.Name;
+			_resourceResolver = new ResourceResolver(typeof(ContainerNode).Assembly);
 		}
 
 		public IFolder Folder
@@ -625,6 +658,16 @@ namespace ClearCanvas.Ris.Client
 				base.IsChecked = value;
 				_folder.Visible = value;
 			}
+		}
+
+		public override IconSet IconSet
+		{
+			get { return new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenSmall.png", "FolderOpenSmall.png"); ; }
+		}
+
+		public override IResourceResolver ResourceResolver
+		{
+			get { return _resourceResolver; }
 		}
 
 		#endregion
