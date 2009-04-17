@@ -149,7 +149,7 @@ namespace ClearCanvas.Ris.Client
 				CollectionUtils.Reduce<IFolder, int>(this.Folders, 0,
 					delegate(IFolder f, int sum)
 					{
-						return sum + ((f is GroupInboxFolder) ? f.TotalItemCount : 0);
+						return sum + ((f is GroupInboxFolder && f.Visible) ? f.TotalItemCount : 0);
 					});
 		}
 
@@ -159,16 +159,16 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IOrderNoteService>(
 				delegate(IOrderNoteService service)
 				{
-					List<string> visibleGroups = OrderNoteboxFolderSystemSettings.Default.GroupFolders.StaffGroupNames;
-					ListStaffGroupsResponse response = service.ListStaffGroups(new ListStaffGroupsRequest());
+					//List<string> visibleGroups = OrderNoteboxFolderSystemSettings.Default.GroupFolders.StaffGroupNames;
+                    groupsToShow = service.ListStaffGroups(new ListStaffGroupsRequest()).StaffGroups;
 
 					// select those groups that are marked as visible
-					groupsToShow = CollectionUtils.Select(response.StaffGroups,
-						delegate(StaffGroupSummary g)
-						{
-							return CollectionUtils.Contains(visibleGroups,
-								delegate(string groupName) { return groupName == g.Name; });
-						});
+                    //groupsToShow = CollectionUtils.Select(groupsToShow,
+                    //    delegate(StaffGroupSummary g)
+                    //    {
+                    //        return CollectionUtils.Contains(visibleGroups,
+                    //            delegate(string groupName) { return groupName == g.Name; });
+                    //    });
 				});
 
 			// sort groups alphabetically
