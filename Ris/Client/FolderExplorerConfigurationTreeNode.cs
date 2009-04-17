@@ -114,26 +114,12 @@ namespace ClearCanvas.Ris.Client
 			{
 				if (_isChecked != value)
 				{
-					_isChecked = value;
-					NotifyItemUpdated();
-					this.Modified = true;
+                    SetCheckStateInternal(value);
 
 					if (this.CheckStateChained)
 					{
-						if (_isChecked && _parent != null)
-						{
-							// The parent must be visible if this node is visible
-							_parent.IsChecked = true;
-						}
-
-						if (!_isChecked && _subTree != null)
-						{
-							CollectionUtils.ForEach(_subTree.Items,
-								delegate(DraggableTreeNode node)
-								{
-									node.IsChecked = this.IsChecked;
-								});
-						}
+                        PropagateCheckStateUp(_parent);
+                        PropagateCheckStateDown(this);
 					}
 				}
 			}
@@ -363,6 +349,7 @@ namespace ClearCanvas.Ris.Client
 				{
 					// There are no more depth to the path, add child now.
 					AddChildNode(node);
+                    PropagateCheckStateUp(node.Parent);
 				}
 				else
 				{
@@ -433,7 +420,8 @@ namespace ClearCanvas.Ris.Client
 			if (dropData.Parent != null)
 				dropData.Parent.SubTree.Items.Remove(dropData);
 
-			this.AddChildNode(dropData);
+			AddChildNode(dropData);
+            PropagateCheckStateUp(this);
 
 			this.Modified = true;
 
@@ -485,7 +473,53 @@ namespace ClearCanvas.Ris.Client
 			return isDescendentOfAncestorNode;
 		}
 
-		#endregion
+        /// <summary>
+        /// Sets the checked state without propagating.
+        /// </summary>
+        /// <param name="value"></param>
+        private void SetCheckStateInternal(bool value)
+        {
+            if (_isChecked != value)
+            {
+                _isChecked = value;
+                this.Modified = true;
+                NotifyItemUpdated();
+            }
+        }
+
+        /// <summary>
+        /// Propagates check state up to parent.
+        /// </summary>
+        /// <param name="parent"></param>
+        private void PropagateCheckStateUp(DraggableTreeNode parent)
+        {
+            if (parent == null)
+                return;
+
+            bool b = CollectionUtils.Contains(parent.SubTree.Items,
+                delegate(DraggableTreeNode n) { return n.IsChecked; });
+            parent.SetCheckStateInternal(b);
+
+            PropagateCheckStateUp(parent.Parent);
+        }
+
+        /// <summary>
+        /// Propagates check state down to children.
+        /// </summary>
+        /// <param name="parent"></param>
+        private void PropagateCheckStateDown(DraggableTreeNode parent)
+        {
+            if (parent == null || parent.SubTree == null)
+                return;
+
+            foreach (DraggableTreeNode child in parent.SubTree.Items)
+            {
+                child.SetCheckStateInternal(parent.IsChecked);
+                PropagateCheckStateDown(child);
+            }
+        }
+
+        #endregion
 
 		public static Tree<DraggableTreeNode> BuildTree()
 		{
