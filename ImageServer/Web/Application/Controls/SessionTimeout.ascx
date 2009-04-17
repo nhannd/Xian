@@ -14,19 +14,18 @@
 <![endif]-->
 
 <script type="text/javascript">
+
     var countdownTimer;
-    var waitTime = <%= SessionManager.SessionTimeout.Seconds %>;
-    var webServicePath = "<%= ResolveClientUrl("~/Services/SessionService.asmx") %>";
     var redirectPage = "<%= ResolveClientUrl("~/Pages/Error/TimeoutErrorPage.aspx") %>";
     var loginId = "<%= HttpContext.Current.User.Identity.Name %>";
-    var showCountDownMinLength = Math.min(30, <%= SessionManager.SessionTimeout.TotalSeconds %>);
+    var minCountdownLength = <%= MinCountDownDuration.TotalSeconds %>;
     var timeLeft;
     var hideWarning = true;
-    Sys.Application.remove_load(initCountdownTimer);
     Sys.Application.add_load(initCountdownTimer);
     
-    function initCountdownTimer(){        
-        countdownTimer = setTimeout("Countdown()", 1000);
+    function initCountdownTimer(){ 
+         hideWarning = true;
+         countdownTimer = setTimeout("Countdown()", 1000);
     };
     
     function Countdown()
@@ -36,7 +35,11 @@
         {
             window.location = redirectPage;
         }
-        else if (timeLeft<showCountDownMinLength)
+        else if (timeLeft > minCountdownLength)
+        {
+            hideWarning = true;
+        }
+        else
         {
             hideWarning = false;
         }
@@ -50,7 +53,7 @@
         var expiryTime = GetExpiryTime();
         if (expiryTime==null)
         {
-            return 0;
+            return 60;
         }
         var now = new Date();
         var localTime = now.getTime();
@@ -80,13 +83,10 @@
     
     function HideSessionWarning()
     {
-        hideWarning = true;   
-        if (countdownTimer!=null)
-        {
-            clearTimeout(countdownTimer);
-            RefreshWarning();
-        }
-        //RefreshWarning();
+        hideWarning = true;
+        $("#<%= CountdownEffectPanel.ClientID %>").hide();
+        $("#<%= CountdownBanner.ClientID %>").hide();
+		    
     }
     
     function RefreshWarning()
@@ -102,7 +102,7 @@
         {
             $("#<%= CountdownEffectPanel.ClientID %>").hide();
 		    $("#<%= CountdownBanner.ClientID %>").hide();
-		    countdownTimer = setTimeout("Countdown()", 1000);//(timeLeft-showCountDownMinLength)*1000);
+		    countdownTimer = setTimeout("Countdown()", 1000);//(timeLeft-minCountdownLength)*1000);
         }
     }
     
