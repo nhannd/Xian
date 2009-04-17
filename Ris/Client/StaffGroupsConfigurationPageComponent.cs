@@ -81,7 +81,11 @@ namespace ClearCanvas.Ris.Client
 			Platform.GetService<IStaffAdminService>(
 				delegate(IStaffAdminService service)
 				{
-					service.UpdateStaff(new UpdateStaffRequest(_staffDetail));
+					UpdateStaffRequest request = new UpdateStaffRequest(_staffDetail);
+
+					// even if current user has StaffGroupAdmin token, we don't want to update non-elective groups in this context
+					request.UpdateNonElectiveGroups = false;
+					service.UpdateStaff(request);
 				});
 
 			// reset modified flag

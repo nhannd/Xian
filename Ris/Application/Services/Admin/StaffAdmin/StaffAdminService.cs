@@ -170,8 +170,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 			StaffAssembler assembler = new StaffAssembler();
 			assembler.UpdateStaff(request.StaffDetail,
 				staff,
-				Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup) || staff.UserName == this.CurrentUser,
-				Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup),
+				request.UpdateElectiveGroups && (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup) || staff.UserName == this.CurrentUser),
+				request.UpdateNonElectiveGroups && Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.StaffGroup),
 				PersistenceContext);
 
 			return new UpdateStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));

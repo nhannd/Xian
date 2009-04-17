@@ -43,9 +43,25 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         public UpdateStaffRequest(StaffDetail staffDetail)
         {
             this.StaffDetail = staffDetail;
+
+			// update all staff groups by default (eg assume operating in "admin" mode)
+        	this.UpdateNonElectiveGroups = true;
+        	this.UpdateElectiveGroups = true;
         }
 
         [DataMember]
         public StaffDetail StaffDetail;
-    }
+
+		/// <summary>
+		/// Specifies whether to update non-elective group memberships.  Admin privileges are required.
+		/// </summary>
+		[DataMember]
+		public bool UpdateNonElectiveGroups;
+
+		/// <summary>
+		/// Specifies whether to update elective group memberships.
+		/// </summary>
+		[DataMember]
+		public bool UpdateElectiveGroups;
+	}
 }
