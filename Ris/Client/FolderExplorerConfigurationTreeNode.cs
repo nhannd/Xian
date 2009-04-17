@@ -14,6 +14,7 @@ namespace ClearCanvas.Ris.Client
 			private readonly IResourceResolver _resourceResolver;
 
 			public ContainerNode(string text)
+				: base(false)
 			{
 				_text = text;
 				_resourceResolver = new ResourceResolver(typeof(ContainerNode).Assembly);
@@ -130,7 +131,7 @@ namespace ClearCanvas.Ris.Client
 							CollectionUtils.ForEach(_subTree.Items,
 								delegate(DraggableTreeNode node)
 								{
-									node.IsChecked = false;
+									node.IsChecked = this.IsChecked;
 								});
 						}
 					}

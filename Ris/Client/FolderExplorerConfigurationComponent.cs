@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client
 	public class FolderExplorerConfigurationComponent : ConfigurationApplicationComponent
 	{
 		private BindingList<FolderSystemConfigurationNode> _folderSystems;
-		private int _selectedFolderSystemIndex;
+		private FolderSystemConfigurationNode _selectedFolderSystemNode;
 		private SimpleActionModel _folderSystemsActionModel;
 		private readonly Tree<DraggableTreeNode> _folderTree;
 		private DraggableTreeNode _selectedFolderNode;
@@ -162,31 +162,56 @@ namespace ClearCanvas.Ris.Client
 
 		public int SelectedFolderSystemIndex
 		{
-			get { return _selectedFolderSystemIndex; }
+			get { return _selectedFolderSystemNode == null ? -1 : _folderSystems.IndexOf(_selectedFolderSystemNode); }
 			set
 			{
-				_selectedFolderSystemIndex = value;
+				FolderSystemConfigurationNode previousSelection = _selectedFolderSystemNode;
+				_selectedFolderSystemNode = value < 0 ? null : _folderSystems[value];
+
 				UpdateFolderSystemActionModel();
 				NotifyPropertyChanged("SelectedFolderSystemIndex");
 
-				FolderSystemConfigurationNode folderSystemNode = _folderSystems[_selectedFolderSystemIndex];
-				BuildFolderTreeIfNotExist(folderSystemNode);
+				BuildFolderTreeIfNotExist(_selectedFolderSystemNode);
 
-				_folderTree.Items.Clear();
-				_folderTree.Items.Add(folderSystemNode);
-				this.SelectedFolderNode = new Selection(folderSystemNode);
+				if (previousSelection != _selectedFolderSystemNode)
+				{
+					_folderTree.Items.Clear();
+					_folderTree.Items.Add(_selectedFolderSystemNode);
+					this.SelectedFolderNode = new Selection(_selectedFolderSystemNode);
+				}
 			}
 		}
 
-		public void MoveFolderSystem(int index, int newIndex)
+		public bool CanMoveFolderSystemUp
 		{
-			if (index >= 0 && newIndex >= 0 && index != newIndex)
-			{
-				FolderSystemConfigurationNode fs = _folderSystems[index];
-				_folderSystems.RemoveAt(index);
-				_folderSystems.Insert(newIndex, fs);
+			get { return this.SelectedFolderSystemIndex > 0; }
+		}
 
-				this.Modified = true;
+		public bool CanMoveFolderSystemDown
+		{
+			get { return this.SelectedFolderSystemIndex < _folderSystems.Count - 1; }
+		}
+
+		public void MoveSelectedFolderSystem(int index, int newIndex)
+		{
+			if (newIndex < 0)
+				newIndex = _folderSystems.Count - 1;
+
+			if (newIndex > index)
+			{
+				while (newIndex > index)
+				{
+					MoveFolderSystemDown();
+					index++;
+				}
+			}
+			else
+			{
+				while (newIndex < index)
+				{
+					MoveFolderSystemUp();
+					index--;
+				}				
 			}
 		}
 
@@ -267,35 +292,43 @@ namespace ClearCanvas.Ris.Client
 
 			_folderSystems = new BindingList<FolderSystemConfigurationNode>(fsNodes);
 
-			this.SelectedFolderSystemIndex = _folderSystems.Count > 0 ? 0 : -1;
+			// Set the initial selected folder system
+			if (_folderSystems.Count > 0)
+				this.SelectedFolderSystemIndex = 0;
 		}
 
 		private void MoveFolderSystemUp()
 		{
-			if (_selectedFolderSystemIndex > 0)
-			{
-				int newIndex = _selectedFolderSystemIndex - 1;
-				MoveFolderSystem(_selectedFolderSystemIndex, newIndex);
-				this.SelectedFolderSystemIndex = newIndex;
-				this.Modified = true;
-			}
+			if (!this.CanMoveFolderSystemUp)
+				return;
+
+			int index = this.SelectedFolderSystemIndex;
+			FolderSystemConfigurationNode fs = _folderSystems[index - 1];
+			_folderSystems.Remove(fs);
+			_folderSystems.Insert(index, fs);
+
+			this.SelectedFolderSystemIndex = index - 1;
+			this.Modified = true;
 		}
 
 		private void MoveFolderSystemDown()
 		{
-			if (_selectedFolderSystemIndex < _folderSystems.Count - 1)
-            {
-				int newIndex = _selectedFolderSystemIndex + 1;
-				MoveFolderSystem(_selectedFolderSystemIndex, newIndex);
-				this.SelectedFolderSystemIndex = newIndex;
-				this.Modified = true;
-			}
+			if (!this.CanMoveFolderSystemDown)
+				return;
+
+			int index = this.SelectedFolderSystemIndex;
+			FolderSystemConfigurationNode fs = _folderSystems[index + 1];
+			_folderSystems.Remove(fs);
+			_folderSystems.Insert(index, fs);
+
+			this.SelectedFolderSystemIndex = index + 1;
+			this.Modified = true;
 		}
 
 		private void UpdateFolderSystemActionModel()
 		{
-			_folderSystemsActionModel[_moveFolderSystemUpKey].Enabled = _selectedFolderSystemIndex > 0;
-			_folderSystemsActionModel[_moveFolderSystemDownKey].Enabled = _selectedFolderSystemIndex < _folderSystems.Count - 1;
+			_folderSystemsActionModel[_moveFolderSystemUpKey].Enabled = this.CanMoveFolderSystemUp;
+			_folderSystemsActionModel[_moveFolderSystemDownKey].Enabled = this.CanMoveFolderSystemDown;
 		}
 
 		#endregion

@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		private void _folderSystems_ItemDropped(object sender, ListBoxItemDroppedEventArgs e)
 		{
-			_component.MoveFolderSystem(e.DraggedIndex, e.DroppedIndex);
+			_component.MoveSelectedFolderSystem(e.DraggedIndex, e.DroppedIndex);
 		}
 
 		private void _folders_ItemDrag(object sender, ItemDragEventArgs e)
