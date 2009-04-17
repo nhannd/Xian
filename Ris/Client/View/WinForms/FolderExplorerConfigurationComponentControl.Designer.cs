@@ -78,6 +78,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._folders.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._folders.IconColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
 			this._folders.IconSize = new System.Drawing.Size(16, 16);
+			this._folders.LabelEditShortcut = System.Windows.Forms.Keys.F2;
 			this._folders.Location = new System.Drawing.Point(3, 16);
 			this._folders.Margin = new System.Windows.Forms.Padding(2);
 			this._folders.Name = "_folders";

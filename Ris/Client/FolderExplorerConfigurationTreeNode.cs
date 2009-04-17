@@ -69,6 +69,7 @@ namespace ClearCanvas.Ris.Client
 		private Tree<DraggableTreeNode> _subTree;
 
 		private bool _modified;
+		private bool _modifiedEnabled;
 		private event EventHandler _modifiedChanged;
 
 		public DraggableTreeNode()
@@ -174,12 +175,15 @@ namespace ClearCanvas.Ris.Client
 
 		#region Public Properties
 
+		/// <summary>
+		/// Gets or sets whether this node has been modified.
+		/// </summary>
 		public bool Modified
 		{
 			get { return _modified; }
 			protected set
 			{
-				if (value != _modified)
+				if (_modifiedEnabled && value != _modified)
 				{
 					_modified = value;
 
@@ -187,6 +191,28 @@ namespace ClearCanvas.Ris.Client
 						_parent.Modified = true;
 
 					EventsHelper.Fire(_modifiedChanged, this, EventArgs.Empty);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets whether the Modified property is in effect or not.  It should be set to false when initializing the tree, where nodes
+		/// are being inserted but the Modified property should remain false.
+		/// </summary>
+		public bool ModifiedEnabled
+		{
+			get { return _modifiedEnabled; }
+			set
+			{
+				_modifiedEnabled = value;
+
+				if (_subTree != null)
+				{
+					CollectionUtils.ForEach(_subTree.Items,
+						delegate(DraggableTreeNode child)
+							{
+								child.ModifiedEnabled = value;
+							});
 				}
 			}
 		}
@@ -310,7 +336,9 @@ namespace ClearCanvas.Ris.Client
 			BuildSubTree();
 
 			node.Parent = this;
+			node.ModifiedEnabled = this.ModifiedEnabled;
 			_subTree.Items.Add(node);
+			this.Modified = true;
 
 			// expand the tree right away
 			this.ExpandSubTree();
@@ -323,6 +351,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			DraggableTreeNode nextSelectedNode = node.NextSibling ?? node.PreviousSibling ?? this;
 			this.SubTree.Items.Remove(node);
+			this.Modified = true;
 			return nextSelectedNode;
 		}
 

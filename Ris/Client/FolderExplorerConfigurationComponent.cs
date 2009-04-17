@@ -142,8 +142,11 @@ namespace ClearCanvas.Ris.Client
                 CollectionUtils.ForEach(_folderSystems,
                     delegate(FolderSystemConfigurationNode node)
                     {
-                        node.UpdateFolderPath();
-                        FolderExplorerComponentSettings.Default.SaveUserFoldersCustomizations(node.FolderSystem, node.Folders);
+						if (node.Modified)
+						{
+							node.UpdateFolderPath();
+							FolderExplorerComponentSettings.Default.SaveUserFoldersCustomizations(node.FolderSystem, node.Folders);
+						}
                     });
 
                 // commit the changes
@@ -370,6 +373,7 @@ namespace ClearCanvas.Ris.Client
 			orderedFolders.AddRange(remainderFolders);
 
 			// add each ordered folder to the tree
+			folderSystemNode.ModifiedEnabled = false;
 			folderSystemNode.ClearSubTree();
 			CollectionUtils.ForEach(orderedFolders,
 				delegate(IFolder folder)
@@ -377,6 +381,8 @@ namespace ClearCanvas.Ris.Client
 						FolderConfigurationNode folderNode = new FolderConfigurationNode(folder);
 						folderSystemNode.InsertNode(folderNode, folder.FolderPath);
 					});
+
+			folderSystemNode.ModifiedEnabled = true;
 		}
 
 		private void AddFolder()
