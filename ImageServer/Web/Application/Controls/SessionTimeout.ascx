@@ -19,7 +19,7 @@
     var webServicePath = "<%= ResolveClientUrl("~/Services/SessionService.asmx") %>";
     var redirectPage = "<%= ResolveClientUrl("~/Pages/Error/TimeoutErrorPage.aspx") %>";
     var loginId = "<%= HttpContext.Current.User.Identity.Name %>";
-    var showCountDownMinLength = Math.min(110, <%= SessionManager.SessionTimeout.TotalSeconds %>);
+    var showCountDownMinLength = Math.min(30, <%= SessionManager.SessionTimeout.TotalSeconds %>);
     var timeLeft;
     var hideWarning = true;
     Sys.Application.remove_load(initCountdownTimer);
