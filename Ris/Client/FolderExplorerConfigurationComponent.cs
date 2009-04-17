@@ -110,7 +110,7 @@ namespace ClearCanvas.Ris.Client
 
 			_foldersActionModel = new SimpleActionModel(resourceResolver);
 			_foldersActionModel.AddAction(_addFolderKey, SR.TitleAddContainerFolder, "Icons.AddToolSmall.png", SR.TitleAddContainerFolder, AddFolder);
-			_foldersActionModel.AddAction(_editFolderKey, SR.TitleRenameFolder, "Icons.EditToolSmall.png", SR.TitleRenameFolder, EditFolder);
+			ClickAction editFolderAction = _foldersActionModel.AddAction(_editFolderKey, SR.TitleRenameFolder, "Icons.EditToolSmall.png", SR.TitleRenameFolder, EditFolder);
 			_foldersActionModel.AddAction(_deleteFolderKey, SR.TitleDeleteContainerFolder, "Icons.DeleteToolSmall.png", SR.TitleDeleteContainerFolder, DeleteFolder);
 			_foldersActionModel.AddAction(_moveFolderUpKey, SR.TitleMoveUp, "Icons.UpToolSmall.png", SR.TitleMoveUp, MoveFolderUp);
 			_foldersActionModel.AddAction(_moveFolderDownKey, SR.TitleMoveDown, "Icons.DownToolSmall.png", SR.TitleMoveDown, MoveFolderDown);
@@ -119,6 +119,8 @@ namespace ClearCanvas.Ris.Client
 			_foldersActionModel[_deleteFolderKey].Enabled = false;
 			_foldersActionModel[_moveFolderUpKey].Enabled = false;
 			_foldersActionModel[_moveFolderDownKey].Enabled = false;
+
+			editFolderAction.KeyStroke = XKeys.F2;
 
 			LoadFolderSystems();
 

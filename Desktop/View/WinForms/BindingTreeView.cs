@@ -59,7 +59,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
         private bool _selectionDisabled = false;
-    	private Keys _labelEditShortcut;
 
         private bool _isLoaded = false;
 
@@ -289,13 +288,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			get { return _treeCtrl.LineColor; }
 			set { _treeCtrl.LineColor = value; }
 		}
-
-		[DefaultValue(Keys.None)]
-    	public Keys LabelEditShortcut
-    	{
-			get { return _labelEditShortcut; }
-			set { _labelEditShortcut = value; }
-    	}
 
 		[Obsolete("Toolstrip item display style is controlled by ToolStripBuilder.")]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -736,14 +728,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 				{
 					node.AfterLabelEdit(e.Label);
 				}
-			}
-		}
-
-		private void _treeCtrl_KeyDown(object sender, KeyEventArgs e)
-		{
-			if (e.KeyCode == _labelEditShortcut)
-			{
-				EditSelectedNode();
 			}
 		}
     }
