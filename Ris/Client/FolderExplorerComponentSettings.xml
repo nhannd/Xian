@@ -1,81 +1,82 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <folder-systems>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.PerformingWorkflowFolderSystem">
-    <folder id="CheckedInFolder" />	
-    <folder id="InProgressFolder" />
-    <folder id="UndocumentedFolder" />
-    <folder id="PerformedFolder" />
-    <folder id="ScheduledFolder" />
-    <folder id="CancelledFolder" />    
-    <folder id="SearchFolder" />
+    <folder-class class="CheckedInFolder" />	
+    <folder-class class="InProgressFolder" />
+    <folder-class class="UndocumentedFolder" />
+    <folder-class class="PerformedFolder" />
+    <folder-class class="ScheduledFolder" />
+    <folder-class class="CancelledFolder" />    
+    <folder-class class="SearchFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.RegistrationWorkflowFolderSystem">
-    <folder id="ScheduledFolder" />
-    <folder id="CheckedInFolder" />
-    <folder id="InProgressFolder" />
-    <folder id="PerformedFolder" />
-    <folder id="CancelledFolder" />
-    <folder id="RegistrationSearchFolder" />
+    <folder-class class="ScheduledFolder" />
+    <folder-class class="CheckedInFolder" />
+    <folder-class class="InProgressFolder" />
+    <folder-class class="PerformedFolder" />
+    <folder-class class="CancelledFolder" />
+    <folder-class class="RegistrationSearchFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.BookingWorkflowFolderSystem">
-    <folder id="ToBeScheduledFolder" />
-    <folder id="PendingProtocolFolder" />
-    <folder id="CompletedProtocolFolder" />
-    <folder id="RejectedProtocolFolder" />
-    <folder id="BookingSearchFolder" />
+    <folder-class class="ToBeScheduledFolder" />
+    <folder-class class="PendingProtocolFolder" />
+    <folder-class class="CompletedProtocolFolder" />
+    <folder-class class="RejectedProtocolFolder" />
+    <folder-class class="BookingSearchFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.ReportingWorkflowFolderSystem">
-    <folder id="ToBeReportedFolder" />
-    <folder id="ToBeReviewedFolder" />
-    <folder id="AssignedFolder" />
-    <folder id="AssignedForReviewFolder" />
-    <folder id="ReviewTranscriptionFolder" />
-    <folder id="DraftFolder" />
-    <folder id="InTranscriptionFolder" />
-    <folder id="TranscriptionReviewFolder" />
-    <folder id="AwaitingReviewFolder" />
-    <folder id="VerifiedFolder" />
-    <folder id="ReportingSearchFolder" />
+    <folder-class class="ToBeReportedFolder" />
+    <folder-class class="ToBeReviewedFolder" />
+    <folder-class class="AssignedFolder" />
+    <folder-class class="AssignedForReviewFolder" />
+    <folder-class class="ReviewTranscriptionFolder" />
+    <folder-class class="DraftFolder" />
+    <folder-class class="InTranscriptionFolder" />
+    <folder-class class="TranscriptionReviewFolder" />
+    <folder-class class="AwaitingReviewFolder" />
+    <folder-class class="VerifiedFolder" />
+    <folder-class class="ReportingSearchFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.ProtocolWorkflowFolderSystem">
-    <folder id="ToBeProtocolledFolder" />
-    <folder id="ToBeReviewedProtocolFolder" />
-    <folder id="AssignedToBeProtocolFolder" />
-    <folder id="AssignedForReviewProtocolFolder" />
-    <folder id="DraftProtocolFolder" />
-    <folder id="AwaitingApprovalProtocolFolder" />
-    <folder id="CompletedProtocolFolder" />
-    <folder id="RejectedProtocolFolder" />
-    <folder id="ProtocollingSearchFolder" />
+    <folder-class class="ToBeProtocolledFolder" />
+    <folder-class class="ToBeReviewedProtocolFolder" />
+    <folder-class class="AssignedToBeProtocolFolder" />
+    <folder-class class="AssignedForReviewProtocolFolder" />
+    <folder-class class="DraftProtocolFolder" />
+    <folder-class class="AwaitingApprovalProtocolFolder" />
+    <folder-class class="CompletedProtocolFolder" />
+    <folder-class class="RejectedProtocolFolder" />
+    <folder-class class="ProtocollingSearchFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Fax.IncomingFaxWorkflowFolderSystem">
-    <folder id="IncomingPendingFolder"/>
-    <folder id="IncomingProcessedFolder" />
-    <folder id="IncomingDeletedFolder" />
-    <folder id="IncomingSpamFolder" />
+    <folder-class class="IncomingPendingFolder"/>
+    <folder-class class="IncomingProcessedFolder" />
+    <folder-class class="IncomingDeletedFolder" />
+    <folder-class class="IncomingSpamFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.EmergencyWorkflowFolderSystem">
-    <folder id="ScheduledFolder" />
-    <folder id="InProgressFolder" />
-    <folder id="PerformedFolder" />
-    <folder id="CancelledFolder" />
+    <folder-class class="ScheduledFolder" />
+    <folder-class class="InProgressFolder" />
+    <folder-class class="PerformedFolder" />
+    <folder-class class="CancelledFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.OrderNoteboxFolderSystem">
-    <folder id="PersonalInboxFolder" />
-    <folder id="GroupInboxFolder" />
-    <folder id="SentItemsFolder" />
+    <folder-class class="PersonalInboxFolder" />
+    <!-- Hide group folders by default -->
+    <folder-class class="GroupInboxFolder" visible="false"/>
+    <folder-class class="SentItemsFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.RadiologistAdminWorkflowFolderSystem">
-    <folder id="ReportingAdminUnreportedFolder" />
-    <folder id="ReportingAdminAssignedFolder" />
-    <folder id="ProtocollingAdminAssignedFolder" />
-    <folder id="RadiologistAdminSearchFolder" />
+    <folder-class class="ReportingAdminUnreportedFolder" />
+    <folder-class class="ReportingAdminAssignedFolder" />
+    <folder-class class="ProtocollingAdminAssignedFolder" />
+    <folder-class class="RadiologistAdminSearchFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.TranscriptionWorkflowFolderSystem">
-    <folder id="ToBeTranscribedFolder" />
-    <folder id="ToBeReviewedFolder" />
-    <folder id="DraftFolder" />
-    <folder id="AwaitingReviewFolder" />
-    <folder id="CompletedFolder" />
+    <folder-class class="ToBeTranscribedFolder" />
+    <folder-class class="ToBeReviewedFolder" />
+    <folder-class class="DraftFolder" />
+    <folder-class class="AwaitingReviewFolder" />
+    <folder-class class="CompletedFolder" />
   </folder-system>
 </folder-systems>

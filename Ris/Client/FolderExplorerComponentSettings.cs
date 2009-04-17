@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client
 		public void ApplyUserFoldersCustomizations(IFolderSystem folderSystem, out List<IFolder> ordered, out List<IFolder> remainder)
 		{
 			XmlElement xmlFolderSystem = FindXmlFolderSystem(folderSystem.Id) ?? CreateXmlFolderSystem(folderSystem.Id);
-			CustomizeFolders(folderSystem.Folders, xmlFolderSystem.GetElementsByTagName("folder"), out ordered, out remainder);
+			CustomizeFolders(folderSystem.Folders, xmlFolderSystem, out ordered, out remainder);
 		}
 
 		/// <summary>
@@ -194,7 +194,7 @@ namespace ClearCanvas.Ris.Client
 		/// Applies user customizations to the path and visibility of items in the input list.
 		/// </summary>
 		/// <remarks>
-		/// Orders the input items according to the order specified by the <paramref name="ordering"/> XML list,
+        /// Orders the input items according to the order specified by the <paramref name="xmlFolderSystem"/> XML list,
 		/// and puts the result into the <paramref name="ordered"/> list.  Any items not found in the XML ordering list
 		/// are put into the <paramref name="remainder"/> list.
 		/// </remarks>
@@ -202,37 +202,46 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="ordering"></param>
 		/// <param name="ordered"></param>
 		/// <param name="remainder"></param>
-		private void CustomizeFolders(IEnumerable<IFolder> input, XmlNodeList ordering, 
+        private void CustomizeFolders(IEnumerable<IFolder> input, XmlElement xmlFolderSystem, 
 			out List<IFolder> ordered, out List<IFolder> remainder)
 		{
 			ordered = new List<IFolder>();
 			remainder = new List<IFolder>(input);
 
 			// order the items based on the order in the XML
-			foreach (XmlElement element in ordering)
+            List<XmlNode> ordering = CollectionUtils.Select<XmlNode>(xmlFolderSystem.ChildNodes,
+                delegate(XmlNode n) { return n.Name == "folder" || n.Name == "folder-class"; });
+            foreach (XmlElement element in ordering)
 			{
-				string id = element.GetAttribute("id");
+                Predicate<IFolder> selector = null;
+                if(element.Name == "folder")
+                {
+                    string id = element.GetAttribute("id");
+                    selector = delegate(IFolder f) { return f.Id == id; }; 
+                }
+                else if (element.Name == "folder-class")
+                {
+                    string cls = element.GetAttribute("class");
+                    selector = delegate(IFolder f) { return f.GetType().Name == cls; };
+                }
 
-				IFolder item = CollectionUtils.SelectFirst(remainder,
-					delegate(IFolder x) { return x.Id == id; });
+                string pathSetting = element.GetAttribute("path");
+                string visibleSetting = element.GetAttribute("visible");
+                foreach (IFolder item in CollectionUtils.Select(remainder, selector))
+                {
+                    if (!string.IsNullOrEmpty(pathSetting))
+                    {
+                        item.FolderPath = new Path(pathSetting);
+                    }
 
-				if (item != null)
-				{
-					string pathSetting = element.GetAttribute("path");
-					if (!string.IsNullOrEmpty(pathSetting))
-					{
-						item.FolderPath = new Path(pathSetting);
-					}
+                    item.Visible = string.IsNullOrEmpty(visibleSetting) || string.Compare(visibleSetting, "false", true) != 0;
 
-					string visibleSetting = element.GetAttribute("visible");
-					item.Visible = string.IsNullOrEmpty(visibleSetting) || string.Compare(visibleSetting, "false", true) != 0;
+                    ordered.Add(item);
+                    remainder.Remove(item);
 
-					ordered.Add(item);
-					remainder.Remove(item);
-
-					if (remainder.Count == 0)
-						break;
-				}
+                    if (remainder.Count == 0)
+                        break;
+                }
 			}
 		}
 
