@@ -35,6 +35,8 @@ using System.Configuration;
 using System.Xml;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using System.Text;
+using System.IO;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -113,7 +115,15 @@ namespace ClearCanvas.Ris.Client
             if (!_transactionPending)
                 throw new InvalidOperationException("Must call BeginTransaction() first.");
 
-            // persist changes
+            // copy document to setting
+            StringBuilder sb = new StringBuilder();
+            XmlTextWriter writer = new XmlTextWriter(new StringWriter(sb));
+            writer.Formatting = System.Xml.Formatting.Indented;
+            _xmlDoc.Save(writer);
+
+            this.FolderPathXml = sb.ToString();
+
+            // persist settings
             Save();
 
             _transactionPending = false;
@@ -140,8 +150,6 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			GetFolderSystemsNode().InnerXml = replacementFolderSystems.InnerXml;
-
-			this.FolderPathXml = _xmlDoc.OuterXml;
 		}
 
 		/// <summary>
@@ -168,8 +176,6 @@ namespace ClearCanvas.Ris.Client
 				xmlFolderSystem.InnerXml = replacementFolderSystem.InnerXml;
 			else
 				folderSystemsNode.AppendChild(replacementFolderSystem);
-
-			this.FolderPathXml = _xmlDoc.OuterXml;
 		}
 
 		/// <summary>
@@ -262,7 +268,7 @@ namespace ClearCanvas.Ris.Client
                 {
                     if (!string.IsNullOrEmpty(pathSetting))
                     {
-                        item.FolderPath = new Path(pathSetting);
+                        item.FolderPath = new Desktop.Path(pathSetting);
                     }
 
                     item.Visible = string.IsNullOrEmpty(visibleSetting) || string.Compare(visibleSetting, "false", true) != 0;
@@ -283,6 +289,7 @@ namespace ClearCanvas.Ris.Client
 				try
 				{
 					_xmlDoc = new XmlDocument();
+                    _xmlDoc.PreserveWhitespace = true;
 					_xmlDoc.LoadXml(this.FolderPathXml);
 				}
 				catch (Exception)
