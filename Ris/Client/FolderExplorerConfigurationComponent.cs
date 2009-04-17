@@ -194,9 +194,16 @@ namespace ClearCanvas.Ris.Client
 
 		public void MoveSelectedFolderSystem(int index, int newIndex)
 		{
+			// invalid, should never happen.
+			if (index < 0)
+				return;
+
+			// If a node is dragged to an empty space (not on a node), put it at the end of the list
 			if (newIndex < 0)
 				newIndex = _folderSystems.Count - 1;
 
+			// Instead of remove/insert node at the source/target index, we opt to move folder system node up and down
+			// one at a time.  So the selected node never leave the tree.  The folder tree won't flicker.
 			if (newIndex > index)
 			{
 				while (newIndex > index)
@@ -302,6 +309,7 @@ namespace ClearCanvas.Ris.Client
 			if (!this.CanMoveFolderSystemUp)
 				return;
 
+			// We don't want to remove/insert the selected node, but rather the node before, so the folder tree does not flicker
 			int index = this.SelectedFolderSystemIndex;
 			FolderSystemConfigurationNode fs = _folderSystems[index - 1];
 			_folderSystems.Remove(fs);
@@ -316,6 +324,7 @@ namespace ClearCanvas.Ris.Client
 			if (!this.CanMoveFolderSystemDown)
 				return;
 
+			// We don't want to remove/insert the selected node, but rather the node after, so the folder tree does not flicker
 			int index = this.SelectedFolderSystemIndex;
 			FolderSystemConfigurationNode fs = _folderSystems[index + 1];
 			_folderSystems.Remove(fs);

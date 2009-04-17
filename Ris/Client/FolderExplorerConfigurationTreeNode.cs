@@ -326,9 +326,6 @@ namespace ClearCanvas.Ris.Client
 			node.Parent = this;
 			_subTree.Items.Add(node);
 
-			if (this.CheckStateChained && !this.IsChecked)
-				node.IsChecked = false;
-
 			// expand the tree right away
 			this.ExpandSubTree();
 		}
