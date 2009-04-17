@@ -55,16 +55,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
         {
             try
             {
-                SessionInfo session = SessionManager.InitializeSession(UserName.Text, Password.Text);
-				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource, 
-					EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
-				audit.AddUserParticipant(new AuditPersonActiveParticipant(session.Credentials.UserName, null, session.Credentials.DisplayName));
-				ServerPlatform.LogAuditMessage("UserAuthentication", audit);
-
-                Response.Redirect(FormsAuthentication.GetRedirectUrl(UserName.Text, false));
+                SessionManager.InitializeSession(UserName.Text, Password.Text);
             }
             catch (PasswordExpiredException)
             {
+                Platform.Log(LogLevel.Info, "Password for {0} has expired. Requesting new password.",UserName.Text);
                 PasswordExpiredDialog.Show(UserName.Text, Password.Text);
             }
             catch(FaultException ex)

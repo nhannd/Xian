@@ -33,11 +33,10 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                                 credentials.DisplayName = response.DisplayName;
                                 credentials.SessionToken = response.SessionToken;
                                 credentials.Authorities = response.AuthorityTokens;
-                                CustomPrincipal user =
-                                    new CustomPrincipal(new CustomIdentity(userName, response.DisplayName),
-                                                        credentials);
+                                CustomPrincipal user = new CustomPrincipal(new CustomIdentity(userName, response.DisplayName),credentials);
                                 session = new SessionInfo(user);
-                                
+
+                                Platform.Log(LogLevel.Info, "{0} has successfully logged in.", userName);                                
                             }
                         }
                         catch (FaultException<PasswordExpiredException> ex)
@@ -98,7 +97,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                 delegate(IAuthenticationService service)
                     {
                         service.ChangePassword(request);
-                           
+                        Platform.Log(LogLevel.Info, "Password for {0} has been changed.", userName);
                     });
         }
 

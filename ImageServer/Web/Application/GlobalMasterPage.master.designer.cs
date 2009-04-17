@@ -55,6 +55,42 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.ScriptManager GlobalScriptManager;
     
     /// <summary>
+    /// SessionTimeout control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::ClearCanvas.ImageServer.Web.Application.Controls.SessionTimeout SessionTimeout;
+    
+    /// <summary>
+    /// Panel1 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Panel Panel1;
+    
+    /// <summary>
+    /// Table1 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Table Table1;
+    
+    /// <summary>
+    /// Table2 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Table Table2;
+    
+    /// <summary>
     /// LogoImage control.
     /// </summary>
     /// <remarks>
@@ -62,6 +98,24 @@ public partial class GlobalMasterPage {
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.Image LogoImage;
+    
+    /// <summary>
+    /// TableCell1 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.TableCell TableCell1;
+    
+    /// <summary>
+    /// Panel2 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Panel Panel2;
     
     /// <summary>
     /// MainMenuPlaceHolder control.
@@ -109,6 +163,15 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.WebControls.Panel UserInformationPanel;
     
     /// <summary>
+    /// Table3 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.HtmlControls.HtmlTable Table3;
+    
+    /// <summary>
     /// Username control.
     /// </summary>
     /// <remarks>
@@ -145,6 +208,24 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.WebControls.LinkButton LogoutButton;
     
     /// <summary>
+    /// Image1 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Image Image1;
+    
+    /// <summary>
+    /// Table4 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Table Table4;
+    
+    /// <summary>
     /// MainContentUpdatePanel control.
     /// </summary>
     /// <remarks>
@@ -161,6 +242,15 @@ public partial class GlobalMasterPage {
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
     protected global::System.Web.UI.WebControls.Panel PageContentPanel;
+    
+    /// <summary>
+    /// Table5 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Table Table5;
     
     /// <summary>
     /// MainContentTitlePlaceHolder control.
@@ -181,6 +271,15 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.WebControls.ContentPlaceHolder MainContentPlaceHolder;
     
     /// <summary>
+    /// Image2 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Image Image2;
+    
+    /// <summary>
     /// SpacerPanel control.
     /// </summary>
     /// <remarks>
@@ -190,13 +289,22 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.WebControls.Panel SpacerPanel;
     
     /// <summary>
-    /// SessionTimeout control.
+    /// Image3 control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::ClearCanvas.ImageServer.Web.Application.Controls.SessionTimeout SessionTimeout;
+    protected global::System.Web.UI.WebControls.Image Image3;
+    
+    /// <summary>
+    /// Image4 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Image Image4;
     
     /// <summary>
     /// DialogsPlaceHolder control.

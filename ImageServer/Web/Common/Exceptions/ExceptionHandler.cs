@@ -23,22 +23,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions
         public static void ThrowException(Exception e)
         {
             context = HttpContext.Current;
-            
-            Exception baseException = context.Server.GetLastError();
-            if (baseException != null)
-            {
-                baseException = baseException.GetBaseException();
-
-                context.Server.ClearError();
-
-                string message = baseException.Message;
-                string source = baseException.Source;
-                string stackTrace = baseException.StackTrace;
-
-                string logMessage = string.Format("Message: {0}\nSource:{1}\nStack Trace:{2}", message, source, stackTrace);
-                Platform.Log(LogLevel.Error, logMessage);
-                context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, logMessage);
-            }
+            Platform.Log(LogLevel.Error, e);
+            context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, e.StackTrace);
             context.Server.Transfer(ImageServerConstants.PageURLs.ErrorPage);   
         }
 

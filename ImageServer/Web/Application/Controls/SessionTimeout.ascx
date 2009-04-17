@@ -1,51 +1,69 @@
+<%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SessionTimeout.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.SessionTimeout" %>
 
-<script type="text/javascript">
+<!--[if gte IE 5.5]>
+<![if lt IE 7]>
+<style type="text/css">
+.CountdownBanner {
+  /* IE5.5+/Win - this is more specific than the IE 5.0 version */
+  left: expression( ( ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
+  top: expression( ( ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+}
+</style>
+<![endif]>
+<![endif]-->
 
-    var waitTime = <%= Int32.Parse(ConfigurationManager.AppSettings.Get("ClientSideTimeout")) %> * 60000;
+<script type="text/javascript">
+    var countdownTimer;
+    var waitTime = <%= SessionManager.SessionTimeout.Seconds %>;
     var webServicePath = "<%= ResolveClientUrl("~/Services/SessionService.asmx") %>";
     var redirectPage = "<%= ResolveClientUrl("~/Pages/Error/TimeoutErrorPage.aspx") %>";
     var loginId = "<%= HttpContext.Current.User.Identity.Name %>";
+    var showCountDownMinLength = Math.min(110, <%= SessionManager.SessionTimeout.TotalSeconds %>);
+    var timeLeft;
+    var hideWarning = true;
+    Sys.Application.remove_load(initCountdownTimer);
+    Sys.Application.add_load(initCountdownTimer);
     
-    var timer = setTimeout("NoActivity()", waitTime);
+    function initCountdownTimer(){        
+        countdownTimer = setTimeout("Countdown()", 1000);
+    };
     
-    document.onmousemove = UserActivity;
-    if (document.captureEvents) document.captureEvents(Event.MOUSEMOVE);
-    
-    function UserActivity(e) {
-        if(timer != null) {
-            clearTimeout ( timer );
-            timer = setTimeout("NoActivity()", waitTime);
-        }
-    }    
-    
-   function NoActivity() {
-                
-        var expiryTime = GetExpiryTime();
-                       
-        if(expiryTime == null) 
+    function Countdown()
+    {
+        timeLeft = GetSecondsLeft();
+        if (timeLeft<= 0)
         {
-            // this could mean cookie is disabled
-            // or user has signed out in another window.
             window.location = redirectPage;
-        } else {
-            var now = new Date();
-            var localTime = now.getTime();
-            var localOffset = now.getTimezoneOffset() * 60000;
-            
-            var utc = localTime + localOffset;
-            
-            now = new Date(utc);
-            var sessionExpiry = new Date(expiryTime);
-                        
-            if(now > sessionExpiry) {
-                window.location = redirectPage;
-            } else {
-                clearTimeout ( timer );
-                timer = setTimeout("NoActivity()", waitTime);
-            }
         }
+        else if (timeLeft<showCountDownMinLength)
+        {
+            hideWarning = false;
+        }
+        
+        RefreshWarning();
+        
     }
+    
+    function GetSecondsLeft()
+    {
+        var expiryTime = GetExpiryTime();
+        if (expiryTime==null)
+        {
+            return 0;
+        }
+        var now = new Date();
+        var localTime = now.getTime();
+        var localOffset = now.getTimezoneOffset() * 60000;
+        
+        var utc = localTime + localOffset;
+        
+        now = new Date(utc);
+        var sessionExpiry = new Date(expiryTime);
+        
+        return Math.round( (sessionExpiry.getTime() - now.getTime()) / 1000 ) + 1// give 1 second to ensure when we redirect, the session is really expired;
+    }
+    
     
     function GetExpiryTime() {
         var name = "ImageServer_" + loginId + "=";
@@ -60,4 +78,54 @@
 	    return null;    
     }
     
+    function HideSessionWarning()
+    {
+        hideWarning = true;   
+        if (countdownTimer!=null)
+        {
+            clearTimeout(countdownTimer);
+            RefreshWarning();
+        }
+        //RefreshWarning();
+    }
+    
+    function RefreshWarning()
+    {   
+        if (!hideWarning)
+        {
+            UpdateCountdownPanel();
+            $("#<%= CountdownEffectPanel.ClientID %>:hidden").animate({height:"30px"});
+            $("#<%= CountdownBanner.ClientID %>:hidden").slideDown();
+            countdownTimer = setTimeout("Countdown()",1000);
+        }
+        else
+        {
+            $("#<%= CountdownEffectPanel.ClientID %>").hide();
+		    $("#<%= CountdownBanner.ClientID %>").hide();
+		    countdownTimer = setTimeout("Countdown()", 1000);//(timeLeft-showCountDownMinLength)*1000);
+        }
+    }
+    
+    function UpdateCountdownPanel()
+    {
+        var timeLeft = GetSecondsLeft();
+        $("#<%= SessionTimeoutWarningMessage.ClientID %>").html("No activity is detected. For security reason, this session will end in " + timeLeft + " seconds.");        
+    }
+    
 </script>
+
+
+<asp:Panel runat="server" ID="CountdownEffectPanel"></asp:Panel>
+        
+        
+<asp:UpdatePanel runat="server" UpdateMode="Conditional">
+    <Triggers>
+        <asp:AsyncPostBackTrigger ControlID="KeepAliveLink" EventName="Click" />
+    </Triggers>
+    <ContentTemplate>
+        <asp:Panel runat="server" ID="CountdownBanner"  CssClass="CountdownBanner">
+            <asp:Label runat="server" ID="SessionTimeoutWarningMessage" CssClass="SessionTimeoutWarningMessage"></asp:Label> 
+            <asp:Button runat="server" ID="KeepAliveLink" Text="Refresh" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
+        </asp:Panel>
+    </ContentTemplate>
+</asp:UpdatePanel>

@@ -38,9 +38,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                     else
                     {
                         service.ChangePassword(Username.Text, OriginalPassword.Value, NewPassword.Text);
-                        SessionInfo session = service.Login(Username.Text, NewPassword.Text);
-                        SessionManager.InitializeSession(session);
-                        Response.Redirect(FormsAuthentication.GetRedirectUrl(Username.Text, false));
+                        SessionManager.InitializeSession(Username.Text, NewPassword.Text);
                     }
                 }
                 catch (Exception ex)

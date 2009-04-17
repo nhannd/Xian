@@ -41,15 +41,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                     }
                     else
                     {
-                        service.ChangePassword(ChangePasswordUsername.Text, OriginalPassword.Text,
-                                               NewPassword.Text);
+                        service.ChangePassword(ChangePasswordUsername.Text, OriginalPassword.Text,NewPassword.Text);
+
                         session = service.Login(ChangePasswordUsername.Text, NewPassword.Text);
                         SessionManager.InitializeSession(session);
 
                         if (LoginPasswordChange.Checked)
                         {
                             Response.Redirect(
-                                FormsAuthentication.GetRedirectUrl(ChangePasswordUsername.Text, false));
+                                FormsAuthentication.GetRedirectUrl(ChangePasswordUsername.Text, false), false);
                         }
                         else
                         {

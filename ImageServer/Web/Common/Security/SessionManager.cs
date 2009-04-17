@@ -3,6 +3,7 @@ using System.Threading;
 using System.Web;
 using System.Web.Security;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
@@ -21,7 +22,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         /// </summary>
         /// <remarks>
         /// The session information is set by calling <see cref="InitializeSession(SessionInfo)"/>. It is null 
-        /// if the <see cref="InitializeSession(SessionInfo)"/> hasn't been called or <see cref="TerminateSession()"/> has been called.
+        /// if the <see cref="InitializeSession(SessionInfo)"/> hasn't been called.
         /// </remarks>
         public static SessionInfo Current
         {
@@ -97,7 +98,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         }
 
         /// <summary>
-        /// Intializes the session using the given username and password.
+        /// Logs in and intializes the session using the given username and password.
         /// </summary>
         /// <param name="username"></param>
         /// <param name="password"></param>
@@ -106,77 +107,55 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             using (LoginService service = new LoginService())
             {
                 SessionInfo session = service.Login(username, password);
+
                 InitializeSession(session);
+
+                HttpContext.Current.Response.Redirect(FormsAuthentication.GetRedirectUrl(username, false), false);
                 return session;
             }
-        }
-
-        /// <summary>
-        /// Terminates the current session and redirects users to the login page
-        /// </summary>
-        public static void TerminateSession()
-        {
-            TerminateSession("");
         }
 
 
         /// <summary>
         /// Terminates the current session and redirects users to the login page and displays the given message on the screen.
         /// </summary>
-        public static void TerminateSession(string error)
+        public static void TerminateSession(string reason)
         {
             SignOut();// force to signout by removing the authentication ticket
-            String queryString = String.Format("error={0}", error);
-            if (String.IsNullOrEmpty(error))
+            String queryString = String.Format("error={0}", reason);
+            if (!String.IsNullOrEmpty(reason))
             {
-                Platform.Log(LogLevel.Info, "Terminate session because {0}", error);
+                Platform.Log(LogLevel.Info, "Terminate session because {0}", reason);
             }
             FormsAuthentication.RedirectToLoginPage(queryString);
         }
 
         /// <summary>
-        /// Terminates the current session and optionally redirects users to the login page
-        /// </summary>
-        public static void TerminateSession(bool redirect)
-        {
-            if (HttpContext.Current.User.Identity.IsAuthenticated && HttpContext.Current.User.Identity is FormsIdentity)
-            {
-                FormsIdentity loginId = (FormsIdentity) HttpContext.Current.User.Identity;
-                HttpContext.Current.Application.Remove(loginId.Name);
-            }
-
-            SignOut();
-
-            if(redirect)
-            {
-                RedirectToLogin();
-            }
-        }
-
-
-        /// <summary>
-        /// Signs out (no direction)
+        /// Signs out the current users without redirection to the login screen.
         /// </summary>
         public static void SignOut()
         {
+            SessionInfo session = Current;
+            
             FormsAuthentication.SignOut();
+            
+            if (session!=null)
+            {
+                UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(
+                                                        ServerPlatform.AuditSource,
+                                                        EventIdentificationTypeEventOutcomeIndicator.Success,
+                                                        UserAuthenticationEventType.Logout);
+                audit.AddUserParticipant(new AuditPersonActiveParticipant(
+                                                session.Credentials.UserName,
+                                                null,
+                                                session.Credentials.DisplayName));
+                ServerPlatform.LogAuditMessage("UserAuthentication", audit);
+            }
+            
+
+        
         }
 
-        /// <summary>
-        /// Signals the session is timed out.
-        /// </summary>
-        public static void Timeout()
-        {
-            SignOut();// force to signout again when user clicks on something
-        }
-
-        /// <summary>
-        /// Redirects users to the login screen.
-        /// </summary>
-        public static void RedirectToLogin()
-        {
-            FormsAuthentication.RedirectToLoginPage();
-        }
 
         /// <summary>
         /// Gets or sets the session time out in minutes.
@@ -194,5 +173,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             }
         }
 
+        public static string LoginUrl
+        {
+            get
+            {
+                return FormsAuthentication.LoginUrl;
+            }
+        }
     }
 }

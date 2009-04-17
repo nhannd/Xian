@@ -14,6 +14,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 {
     public partial class SessionTimeout : System.Web.UI.UserControl
     {
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             //Set the interval of the timer to match the length of the timeout set for the session and

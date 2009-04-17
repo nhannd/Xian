@@ -17,7 +17,7 @@
        
 </head>
 <body id="MasterBody" class="GlobalBody">
-
+    
     <script type="text/javascript" src="<%= ResolveClientUrl("~/Scripts/NumberFormat154.js") %>"></script>
 
     <!-- this is special code that web service validation needs -->
@@ -28,22 +28,26 @@
         <asp:ScriptManager ID="GlobalScriptManager" runat="server" EnableScriptGlobalization="true"
             EnableScriptLocalization="true" OnAsyncPostBackError="GlobalScriptManager_AsyncPostBackError" >
         </asp:ScriptManager>   
-                   
-        <asp:Panel runat="server" CssClass="GlobalContentPanel">
-            <asp:Table runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
+        
+            
+        <asp:UpdatePanel runat="server" UpdateMode="Conditional">
+        <ContentTemplate>
+            <ccAsp:SessionTimeout runat="server" ID="SessionTimeout" />
+            <asp:Panel ID="Panel1" runat="server" CssClass="GlobalContentPanel">
+                <asp:Table ID="Table1" runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
                 <asp:TableRow>
                     <asp:TableCell>
 
                         <!-- Header Table -->
-                        <asp:Table runat="server">
+                        <asp:Table ID="Table2" runat="server">
                             <asp:TableRow VerticalAlign="Bottom">
                                 <asp:TableCell HorizontalAlign="Left" RowSpan="3">
                                     <asp:Image runat="server" ID="LogoImage" SkinID="Logo" />
                                 </asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow VerticalAlign="Bottom">
-                                <asp:TableCell runat="server" Width="50%">
-                                    <asp:Panel runat="server" CssClass="MainMenuPanel">
+                                <asp:TableCell ID="TableCell1" runat="server" Width="50%">
+                                    <asp:Panel ID="Panel2" runat="server" CssClass="MainMenuPanel">
                                         <asp:ContentPlaceHolder ID="MainMenuPlaceHolder" runat="server">
                                             <asp:SiteMapDataSource ID="MainMenuSiteMapDataSource" runat="server" ShowStartingNode="False" />
                                             <asp:Menu runat="server" ID="MainMenu" SkinID="MainMenu" DataSourceID="MainMenuSiteMapDataSource"
@@ -54,30 +58,29 @@
                                 </asp:TableCell>
                                 <asp:TableCell runat="server" Width="50%" HorizontalAlign="right" CssClass="MainMenuPanel" VerticalAlign="Bottom" ID="UserInformationCell">
                                         <asp:Panel ID="UserInformationPanel" runat="server" CssClass="UserInformationPanel">
-                                             <table runat="server"><tr><td>logged in as <b><asp:Label ID="Username" runat="server"></asp:Label></b></td><td id="AlertIndicatorCell"><asp:PlaceHolder runat="server" ID="AlertIndicatorPlaceHolder"></asp:PlaceHolder></td><td>| <asp:LinkButton ID="LogoutButton" runat="server" CssClass="UserInformationLink" OnClick="Logout_Click">Logout</asp:LinkButton></td></tr></table> 
+                                             <table id="Table3" runat="server"><tr><td>logged in as <b><asp:Label ID="Username" runat="server"></asp:Label></b></td><td id="AlertIndicatorCell"><asp:PlaceHolder runat="server" ID="AlertIndicatorPlaceHolder"></asp:PlaceHolder></td><td>| <asp:LinkButton ID="LogoutButton" runat="server" CssClass="UserInformationLink" OnClick="Logout_Click">Logout</asp:LinkButton></td></tr></table> 
                                         </asp:Panel>
                                 </asp:TableCell>
                                 <asp:TableCell VerticalAlign="Bottom">
-                                    <asp:Image runat="server" SkinID="MenuEdge" />
+                                    <asp:Image ID="Image1" runat="server" SkinID="MenuEdge" />
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
 
                         <!-- Content Table -->
-                        <asp:Table runat="server">
+                        <asp:Table ID="Table4" runat="server">
                             <asp:TableRow>
                                 <asp:TableCell CssClass="MainContentLeftEdge"></asp:TableCell>
                                 <asp:TableCell Width="100%">
                                     <asp:UpdatePanel ID="MainContentUpdatePanel" runat="server" UpdateMode="Conditional">
-                                        <ContentTemplate>
-                                                                                
+                                        <ContentTemplate>                         
                                             <asp:Panel ID="PageContentPanel" CssClass="MainContentPanel" runat="server">
                                                 <div>
                                                     <b class="MainContentCorners"><b class="MainContentCorners1"><b></b></b><b class="MainContentCorners2">
                                                         <b></b></b><b class="MainContentCorners3"></b><b class="MainContentCorners4"></b>
                                                         <b class="MainContentCorners5"></b></b>
                                                     <div class="MainContentCornersFG">
-                                                        <asp:Table runat="server" SkinID="MainContentTable">
+                                                        <asp:Table ID="Table5" runat="server" SkinID="MainContentTable">
                                                             <asp:tableRow>
                                                                 <asp:tablecell CssClass="MainContentTitle">
                                                                     <asp:ContentPlaceHolder ID="MainContentTitlePlaceHolder" runat="server">
@@ -102,23 +105,23 @@
                                 <asp:TableCell CssClass="MainContentRightEdge"></asp:TableCell>
                             </asp:TableRow>
                             <asp:TableRow VerticalAlign="Top">
-                                <asp:TableCell><asp:Image runat="server" SkinID="MainContentBottomLeftCorner" /></asp:TableCell>
+                                <asp:TableCell><asp:Image ID="Image2" runat="server" SkinID="MainContentBottomLeftCorner" /></asp:TableCell>
                                 <asp:TableCell>
                                     <asp:Panel ID="SpacerPanel" runat="server" CssClass="MainContentBottom">
-                                        <asp:Image runat="server" SkinID="Spacer" /></asp:Panel>
+                                        <asp:Image ID="Image3" runat="server" SkinID="Spacer" /></asp:Panel>
                                 </asp:TableCell>
                                 <asp:TableCell>
-                        <asp:Image runat="server" SkinID="MainContentBottomRightCorner" />
+                        <asp:Image ID="Image4" runat="server" SkinID="MainContentBottomRightCorner" />
                                 </asp:TableCell>
                             </asp:TableRow>
                         </asp:Table>
                     </asp:TableCell></asp:TableRow>
             </asp:Table>
-        </asp:Panel>
-
-        <ccAsp:SessionTimeout runat="server" ID="SessionTimeout" />                   
-
+            </asp:Panel>
         <asp:ContentPlaceHolder ID="DialogsPlaceHolder" runat="server" />
+        </ContentTemplate>
+        </asp:UpdatePanel>
+        
     </form>
     
     <script type="text/javascript">

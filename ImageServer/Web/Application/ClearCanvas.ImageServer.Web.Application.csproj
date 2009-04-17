@@ -1087,6 +1087,11 @@
     <Compile Include="Service References\FilesystemServiceProxy.cs">
       <DependentUpon>FilesystemServiceProxy.map</DependentUpon>
     </Compile>
+    <Compile Include="App_GlobalResources\SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
     <Compile Include="Services\FilesystemInfoService.asmx.cs">
       <DependentUpon>FilesystemInfoService.asmx</DependentUpon>
       <SubType>Component</SubType>
@@ -1094,11 +1099,6 @@
     <Compile Include="Services\ValidationServices.asmx.cs">
       <DependentUpon>ValidationServices.asmx</DependentUpon>
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="App_GlobalResources\SR.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>SR.resx</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -1497,15 +1497,15 @@
     <None Include="Scripts\CodeMirror\LICENSE" />
     <None Include="Service References\FilesystemServiceProxy.map" />
     <Content Include="App_Themes\Default\images\Indicators\HelpSmall.png" />
-    <Content Include="Services\FilesystemInfoService.asmx" />
-    <Content Include="Services\ValidationServices.asmx" />
     <EmbeddedResource Include="App_GlobalResources\SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Content Include="Web.sitemap" />
+    <Content Include="Services\FilesystemInfoService.asmx" />
+    <Content Include="Services\ValidationServices.asmx" />
     <Content Include="Services\webservice.htc" />
+    <Content Include="Web.sitemap" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">

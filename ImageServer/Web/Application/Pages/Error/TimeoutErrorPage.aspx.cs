@@ -19,19 +19,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-            TimeoutMinutes.Text = SessionManager.SessionTimeout.Minutes.ToString();
             Page.Title = App_GlobalResources.Titles.TimeoutErrorPageTitle;
         }
 
         protected override void Render(HtmlTextWriter writer)
         {
             base.Render(writer);
-            SessionManager.TerminateSession(false);
+            SessionManager.SignOut();
         }
 
         protected void Login_Click(Object sender, EventArgs e)
         {
-            SessionManager.RedirectToLogin();
+            Response.Redirect(SessionManager.LoginUrl);
         }
 
     }

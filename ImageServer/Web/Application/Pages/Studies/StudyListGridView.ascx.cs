@@ -196,10 +196,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             // We want to use our own pager control instead so let's hide it.
             StudyListControl.SelectedIndexChanged += StudyListControl_SelectedIndexChanged;
 
-            if(IsPostBack)
+            if(IsPostBack || Page.IsAsync)
             {
                 StudyListGrid.DataSource = StudyDataSourceObject;    
             } 
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (IsPostBack)
+            {
+                RefreshCurrentPage();
+            }
         }
 
         protected override void OnPreRender(EventArgs e)

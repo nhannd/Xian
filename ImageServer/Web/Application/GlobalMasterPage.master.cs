@@ -99,19 +99,8 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
 
     protected void Logout_Click(Object sender, EventArgs e)
     {
-    	SessionInfo session = SessionManager.Current;
-
-		UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(
-													ServerPlatform.AuditSource, 
-													EventIdentificationTypeEventOutcomeIndicator.Success, 
-													UserAuthenticationEventType.Logout);
-		audit.AddUserParticipant(new AuditPersonActiveParticipant(
-										session.Credentials.UserName, 
-										null, 
-										session.Credentials.DisplayName));
-		ServerPlatform.LogAuditMessage("UserAuthentication", audit);
-
-        SessionManager.TerminateSession();
+    	SessionManager.SignOut();
+        Response.Redirect(SessionManager.LoginUrl);
     }
 
     protected void GlobalScriptManager_AsyncPostBackError(object sender, AsyncPostBackErrorEventArgs e)

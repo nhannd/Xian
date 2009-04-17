@@ -8,16 +8,16 @@ Global.css - Defines the global styles for the entire web application relating
 {
 /*	background-color: #c5dee7; */
     background-color: #e3eaee;
-	margin:5px 5px 5px 5px;
 	font-family: Sans-Serif;
 	font-size: 14px;
+	margin: 0px;
 }
 
 /* Panel containing the contents of entire page */
 .GlobalContentPanel
 {
     background-color: Transparent;
-    position: static;
+	margin: 5px;
 }
 
 /*==================================================
@@ -457,3 +457,26 @@ pre
 	font-family: Sans-Serif;	
 	margin:0px;
 }
+
+.CountdownBanner
+{
+	z-index: 1000000; /* make it top-most , hopefully it's enough*/
+	display:none;
+	position:absolute;
+	width: 100%;
+	top:0px;
+	left:0px;
+	background-color: #ffff99;
+	padding: 5px;
+	color: red;
+	font-size: 100%;
+	text-align: center;
+	border-bottom: gray 1px solid; /*filter:alpha(opacity=90);*/
+}
+
+.CountdownEffectPanel
+{
+	display:none;
+	height:0px;
+}
+
