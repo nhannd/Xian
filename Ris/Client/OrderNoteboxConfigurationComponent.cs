@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client
 	[ButtonAction("apply", "folderexplorer-folders-toolbar/Configure", "Apply")]
 	[Tooltip("apply", "Configure Notebox Groups")]
 	[IconSet("apply", IconScheme.Colour, "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png")]
-	[ExtensionOf(typeof(OrderNoteboxFolderToolExtensionPoint))]
+	//[ExtensionOf(typeof(OrderNoteboxFolderToolExtensionPoint))]
 	public class OrderNoteboxConfigurationTool : Tool<IOrderNoteboxFolderToolContext>
 	{
 		public void Apply()

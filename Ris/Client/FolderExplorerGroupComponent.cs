@@ -219,7 +219,7 @@ namespace ClearCanvas.Ris.Client
 			// create tools
 			_toolSet = new ToolSet(new FolderExplorerGroupToolExtensionPoint(), new FolderExplorerGroupToolContext(this));
 
-			FolderExplorerComponentSettings.Default.UserFolderSystemCustomizationsChanged += OnUserFolderSystemCustomizationsChanged;
+			FolderExplorerComponentSettings.Default.ChangesCommitted += OnUserFolderSystemCustomizationsChanged;
 
 			base.Start();
 		}
@@ -245,7 +245,7 @@ namespace ClearCanvas.Ris.Client
 				DocumentManager.UnregisterFolderSystem(folderSystem);
 			}
 
-			FolderExplorerComponentSettings.Default.UserFolderSystemCustomizationsChanged -= OnUserFolderSystemCustomizationsChanged;
+			FolderExplorerComponentSettings.Default.ChangesCommitted -= OnUserFolderSystemCustomizationsChanged;
 
 			base.Stop();
 		}

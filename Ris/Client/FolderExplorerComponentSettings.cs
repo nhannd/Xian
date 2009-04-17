@@ -49,7 +49,8 @@ namespace ClearCanvas.Ris.Client
 		public delegate void InsertFolderDelegate(IFolder folder);
 
 		private XmlDocument _xmlDoc;
-		private event EventHandler _userFolderSystemCustomizationsChanged;
+		private event EventHandler _changesCommitted;
+        private bool _transactionPending;
 
 		private FolderExplorerComponentSettings()
 		{
@@ -83,12 +84,53 @@ namespace ClearCanvas.Ris.Client
 			CustomizeFolders(folderSystem.Folders, xmlFolderSystem, out ordered, out remainder);
 		}
 
+        /// <summary>
+        /// Begins a transaction.
+        /// </summary>
+        public void BeginTransaction()
+        {
+            _transactionPending = true;
+        }
+
+        /// <summary>
+        /// Rollsback the transaction.
+        /// </summary>
+        public void RollbackTransaction()
+        {
+            if (!_transactionPending)
+                throw new InvalidOperationException("Must call BeginTransaction() first.");
+
+            _xmlDoc = null;     // force xml doc to be reloaded from stored setting
+            _transactionPending = false;
+
+        }
+
+        /// <summary>
+        /// Commits the transaction.
+        /// </summary>
+        public void CommitTransaction()
+        {
+            if (!_transactionPending)
+                throw new InvalidOperationException("Must call BeginTransaction() first.");
+
+            // persist changes
+            Save();
+
+            _transactionPending = false;
+
+            // notify subscribers
+            EventsHelper.Fire(_changesCommitted, this, EventArgs.Empty);
+        }
+
 		/// <summary>
 		/// Saves the order of the specified folder sytems.
 		/// </summary>
 		/// <param name="folderSystems"></param>
 		public void SaveUserFolderSystemsOrder(IEnumerable<IFolderSystem> folderSystems)
 		{
+            if (!_transactionPending)
+                throw new InvalidOperationException("Must call BeginTransaction() first.");
+
 			XmlElement replacementFolderSystems = this.GetXmlDocument().CreateElement("folder-systems");
 
 			foreach (IFolderSystem folderSystem in folderSystems)
@@ -100,7 +142,6 @@ namespace ClearCanvas.Ris.Client
 			GetFolderSystemsNode().InnerXml = replacementFolderSystems.InnerXml;
 
 			this.FolderPathXml = _xmlDoc.OuterXml;
-			this.Save();
 		}
 
 		/// <summary>
@@ -110,7 +151,10 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="customizedFolders"></param>
 		public void SaveUserFoldersCustomizations(IFolderSystem folderSystem, List<IFolder> customizedFolders)
 		{
-			XmlElement xmlFolderSystem = FindXmlFolderSystem(folderSystem.Id);
+            if (!_transactionPending)
+                throw new InvalidOperationException("Must call BeginTransaction() first.");
+
+            XmlElement xmlFolderSystem = FindXmlFolderSystem(folderSystem.Id);
 			XmlElement replacementFolderSystem = CreateXmlFolderSystem(folderSystem.Id);
 
 			foreach (IFolder folder in customizedFolders)
@@ -126,28 +170,15 @@ namespace ClearCanvas.Ris.Client
 				folderSystemsNode.AppendChild(replacementFolderSystem);
 
 			this.FolderPathXml = _xmlDoc.OuterXml;
-			this.Save();
 		}
 
 		/// <summary>
-		/// Raises the <see cref="UserFolderSystemCustomizationsChanged"/> to indicate that all user 
-		/// customizations have been committed to the settings.
+		/// Indicates that the current user's folder/folder system customizations have been committed.
 		/// </summary>
-		/// <remarks>
-		/// Should be called following calls of <see cref="SaveUserFoldersCustomizations"/> and/or <see cref="SaveUserFolderSystemsOrder"/>
-		/// </remarks>
-		public void CompleteUserFolderSystemCustomizations()
+		public event EventHandler ChangesCommitted
 		{
-			EventsHelper.Fire(_userFolderSystemCustomizationsChanged, this, EventArgs.Empty);
-		}
-
-		/// <summary>
-		/// Indicates that the current user's folder/folder system customizations have changed.
-		/// </summary>
-		public event EventHandler UserFolderSystemCustomizationsChanged
-		{
-			add { _userFolderSystemCustomizationsChanged += value; }
-			remove { _userFolderSystemCustomizationsChanged -= value; }
+			add { _changesCommitted += value; }
+			remove { _changesCommitted -= value; }
 		}
 
 		#endregion

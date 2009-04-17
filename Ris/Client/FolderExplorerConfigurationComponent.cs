@@ -129,20 +129,32 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Save()
 		{
-			// Save the ordering of the folder systems
-			FolderExplorerComponentSettings.Default.SaveUserFolderSystemsOrder(
-				CollectionUtils.Map<FolderSystemConfigurationNode, IFolderSystem>(
-					_folderSystems, 
-					delegate(FolderSystemConfigurationNode node) { return node.FolderSystem; }));
+            FolderExplorerComponentSettings.Default.BeginTransaction();
 
-			CollectionUtils.ForEach(_folderSystems,
-				delegate(FolderSystemConfigurationNode node)
-					{
-						node.UpdateFolderPath();
-						FolderExplorerComponentSettings.Default.SaveUserFoldersCustomizations(node.FolderSystem, node.Folders);
-					});
+            try
+            {
+                // Save the ordering of the folder systems
+                FolderExplorerComponentSettings.Default.SaveUserFolderSystemsOrder(
+                    CollectionUtils.Map<FolderSystemConfigurationNode, IFolderSystem>(
+                        _folderSystems,
+                        delegate(FolderSystemConfigurationNode node) { return node.FolderSystem; }));
 
-			FolderExplorerComponentSettings.Default.CompleteUserFolderSystemCustomizations();
+                CollectionUtils.ForEach(_folderSystems,
+                    delegate(FolderSystemConfigurationNode node)
+                    {
+                        node.UpdateFolderPath();
+                        FolderExplorerComponentSettings.Default.SaveUserFoldersCustomizations(node.FolderSystem, node.Folders);
+                    });
+
+                // commit the changes
+                FolderExplorerComponentSettings.Default.CommitTransaction();
+            }
+            catch
+            {
+                // rollback changes
+                FolderExplorerComponentSettings.Default.RollbackTransaction();
+                throw;
+            }
 		}
 		
 		#endregion
