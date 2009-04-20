@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
@@ -6,6 +7,7 @@ using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.IO;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 {
@@ -42,14 +44,26 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				string studyInstanceUid = _parent.StudyInstanceUid;
 				string seriesInstanceUid = _parent.SeriesInstanceUid;
 				string sopInstanceUid = _parent.SopInstanceUid;
+				string transferSyntaxUid = _parent.TransferSyntaxUid;
 
 				lock (_syncLock)
 				{
 					if (!_alreadyRetrieved || force)
 					{
+						Stopwatch clock = new Stopwatch();
+						clock.Start();
+
 						_retrieveResult =
 							client.RetrievePixelData(aeTitle, studyInstanceUid, seriesInstanceUid, sopInstanceUid, _frameNumber - 1);
 						_alreadyRetrieved = true;
+
+						clock.Stop();
+
+						string message = String.Format("[Retrieve Info] Sop/Frame: {0}/{1}, Transfer Syntax: {2}, Bytes transferred: {3}, Elapsed (ms): {4}",
+						                               sopInstanceUid, _frameNumber, transferSyntaxUid,
+						                               _retrieveResult.MetaData.ContentLength, clock.Elapsed.TotalSeconds);
+
+						Platform.Log(LogLevel.Info, message);
 					}
 
 					result = _retrieveResult;
@@ -73,14 +87,30 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				//important: do not put a lock around this method; it will deadlock with the parent synclock
 				RetrievePixelData(false, out result);
 
+				string sopInstanceUid = _parent.SopInstanceUid;
+				string transferSyntaxUid = _parent.TransferSyntaxUid;
+
 				lock (_syncLock)
 				{
 					//free this memory up - the parent already has the uncompressed data.
 					_retrieveResult = null;
-					
+
+					Stopwatch clock = new Stopwatch();
+					clock.Start();
+
 					//synchronize the call to decompress; it's really already synchronized by
 					//the parent b/c it's only called from CreateFrameNormalizedPixelData, but it doesn't hurt.
-					return result.GetPixelData();
+					byte[] pixelData = result.GetPixelData();
+
+					clock.Stop();
+
+					string message = String.Format("[Decompress Info] Sop/Frame: {0}/{1}, Transfer Syntax: {2}, Uncompressed bytes: {3}, Elapsed (ms): {4}",
+												   sopInstanceUid, _frameNumber, transferSyntaxUid,
+												   pixelData.Length, clock.Elapsed.TotalSeconds);
+
+					Platform.Log(LogLevel.Info, message);
+
+					return pixelData;
 				}
 			}
 
