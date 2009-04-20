@@ -86,5 +86,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 				_folders.DoDragDrop(selection.Item, DragDropEffects.All);
 		}
 
+		private void _folders_ItemDrop(object sender, BindingTreeView.ItemDropEventArgs e)
+		{
+			_component.OnItemDropped(e.Item);
+		}
 	}
 }

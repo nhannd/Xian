@@ -289,6 +289,15 @@ namespace ClearCanvas.Ris.Client
 			remove { _onEditFolder -= value; }
 		}
 
+		public void OnItemDropped(object droppedItem)
+		{
+			if (droppedItem is DraggableTreeNode)
+			{
+				DraggableTreeNode droppedNode = (DraggableTreeNode) droppedItem;
+				this.SelectedFolderNode = new Selection(droppedNode);
+			}
+		}
+
 		#endregion
 
 		#region Folder Systems Helper
@@ -297,8 +306,6 @@ namespace ClearCanvas.Ris.Client
 		{
 			// Get a list of folder systems, initialize each of them so the folder list is populated
 			List<IFolderSystem> folderSystems = CollectionUtils.Cast<IFolderSystem>(new FolderSystemExtensionPoint().CreateExtensions());
-			CollectionUtils.ForEach(folderSystems,
-				delegate(IFolderSystem fs) { fs.Initialize(); });
 
 			List<IFolderSystem> remainder;
 			FolderExplorerComponentSettings.Default.ApplyUserFolderSystemsOrder(folderSystems, out folderSystems, out remainder);
@@ -365,6 +372,9 @@ namespace ClearCanvas.Ris.Client
 		{
 			if (folderSystemNode.SubTree != null)
 				return;
+
+			// Initialize the list of Folders
+			folderSystemNode.FolderSystem.Initialize();
 
 			// put folders in correct insertion order from XML
 			List<IFolder> orderedFolders;

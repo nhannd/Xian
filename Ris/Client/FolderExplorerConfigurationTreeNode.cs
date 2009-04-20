@@ -438,7 +438,7 @@ namespace ClearCanvas.Ris.Client
 
 		public DragDropKind CanAcceptDrop(DraggableTreeNode dropData, DragDropKind kind)
 		{
-			if (this == dropData || this == dropData.Parent || this.IsDescendentOf(dropData))
+			if (dropData == null || this == dropData || this == dropData.Parent || this.IsDescendentOf(dropData))
 				return DragDropKind.None;
 
 			return DragDropKind.Move;

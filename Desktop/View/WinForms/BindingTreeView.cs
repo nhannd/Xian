@@ -46,12 +46,28 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </summary>
     public partial class BindingTreeView : UserControl
     {
+		public class ItemDropEventArgs : EventArgs
+		{
+			private object _item;
+
+			public ItemDropEventArgs(object item)
+			{
+				_item = item;
+			}
+
+			public object Item
+			{
+				get { return _item; }
+			}
+		}
+
         private ITree _root;
         private BindingTreeLevelManager _rootLevelManager;
         private event EventHandler _selectionChanged;
         private event EventHandler _nodeMouseDoubleClicked;
 		private event EventHandler _nodeMouseClicked;
 		private event EventHandler<ItemDragEventArgs> _itemDrag;
+		private event EventHandler<ItemDropEventArgs> _itemDrop;
 
         private BindingTreeNode _dropTargetNode;
         private DragDropEffects _dropEffect;
@@ -315,6 +331,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             remove { _itemDrag -= value; }
         }
 
+		public event EventHandler<ItemDropEventArgs> ItemDrop
+		{
+			add { _itemDrop += value; }
+			remove { _itemDrop -= value; }
+		}
+
         #endregion
 
         #region Helper methods
@@ -543,7 +565,8 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // back to the initiator of the drag drop operation
                     e.Effect = GetDragDropEffect(result);
 
-					this.Selection = new Selection(dragDropData);
+					ItemDropEventArgs args = new ItemDropEventArgs(dragDropData);
+					EventsHelper.Fire(_itemDrop, this, args);
 				}
                 catch (Exception ex)
                 {

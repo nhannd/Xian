@@ -87,6 +87,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._folders.TreeForeColor = System.Drawing.SystemColors.WindowText;
 			this._folders.TreeLineColor = System.Drawing.Color.Black;
 			this._folders.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._folders_ItemDrag);
+			this._folders.ItemDrop += new System.EventHandler<ClearCanvas.Desktop.View.WinForms.BindingTreeView.ItemDropEventArgs>(this._folders_ItemDrop);
 			// 
 			// _folderSystemsGroupBox
 			// 
