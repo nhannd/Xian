@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             {               
                 command = new SqlCommand(String.Format("SELECT * FROM {0}",tempValue.Name), Context.Connection);
                 command.CommandType = CommandType.Text;
+				command.CommandTimeout = SqlServerSettings.Default.CommandTimeout;
 
                 myReader = command.ExecuteReader();
                 if (myReader == null)

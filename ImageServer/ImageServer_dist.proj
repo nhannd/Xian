@@ -47,6 +47,7 @@
 	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\ImageServer_Shreds_dist.config" />
 	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\Dicom\app.config" />
 	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Common\app.config" />
+	<ExecutableAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\app.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -61,6 +62,7 @@
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Streaming\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\WorkQueue\app.config" />
 	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\Hsm\app.config" />
+	<ShredHostAppConfigCreatorSourceFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\app.config" />
   </ItemGroup>
 
   <ItemGroup>
@@ -99,7 +101,6 @@
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Enterprise\Authentication\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll" />
-
   </ItemGroup>
 
   <ItemGroup>

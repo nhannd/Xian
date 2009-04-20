@@ -890,6 +890,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 command = new SqlCommand(String.Format("SELECT * FROM {0} WHERE GUID = @GUID",
                                                        _entityName), Context.Connection);
                 command.CommandType = CommandType.Text;
+            	command.CommandTimeout = SqlServerSettings.Default.CommandTimeout;
                 UpdateContext update = Context as UpdateContext;
                 if (update != null)
                     command.Transaction = update.Transaction;
@@ -967,6 +968,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 command = new SqlCommand();
                 command.Connection = Context.Connection;
                 command.CommandType = CommandType.Text;
+				command.CommandTimeout = SqlServerSettings.Default.CommandTimeout;
 
                 UpdateContext update = Context as UpdateContext;
                 if (update != null)
@@ -1009,7 +1011,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 command = new SqlCommand();
                 command.Connection = Context.Connection;
                 command.CommandType = CommandType.Text;
-                UpdateContext update = Context as UpdateContext;
+				command.CommandTimeout = SqlServerSettings.Default.CommandTimeout;
+				UpdateContext update = Context as UpdateContext;
 
                 if (update != null)
                     command.Transaction = update.Transaction;
@@ -1050,6 +1053,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 				command = new SqlCommand();
 				command.Connection = Context.Connection;
 				command.CommandType = CommandType.Text;
+				command.CommandTimeout = SqlServerSettings.Default.CommandTimeout;
 				UpdateContext update = Context as UpdateContext;
 
 				if (update != null)
@@ -1092,8 +1096,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 command = new SqlCommand();
                 command.Connection = Context.Connection;
                 command.CommandType = CommandType.Text;
-                UpdateContext update = Context as UpdateContext;
-
+				command.CommandTimeout = SqlServerSettings.Default.CommandTimeout;
+				
+				UpdateContext update = Context as UpdateContext;
                 if (update != null)
                     command.Transaction = update.Transaction;
 
@@ -1138,9 +1143,10 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 command = new SqlCommand();
                 command.Connection = Context.Connection;
                 command.CommandType = CommandType.Text;
-                UpdateContext update = Context as UpdateContext;
-
-                if (update != null)
+				command.CommandTimeout = SqlServerSettings.Default.CommandTimeout;
+				
+				UpdateContext update = Context as UpdateContext;
+				if (update != null)
                     command.Transaction = update.Transaction;
 
                 command.CommandText = GetUpdateSql(_entityName, command, criteria, parameters);
@@ -1182,8 +1188,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 command = new SqlCommand();
                 command.Connection = Context.Connection;
                 command.CommandType = CommandType.Text;
-                UpdateContext update = Context as UpdateContext;
+				command.CommandTimeout = SqlServerSettings.Default.CommandTimeout;
 
+				UpdateContext update = Context as UpdateContext;
                 if (update != null)
                     command.Transaction = update.Transaction;
 
@@ -1266,7 +1273,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 command = new SqlCommand();
                 command.Connection = Context.Connection;
                 command.CommandType = CommandType.Text;
-                UpdateContext update = Context as UpdateContext;
+				command.CommandTimeout = SqlServerSettings.Default.CommandTimeout;
+				
+				UpdateContext update = Context as UpdateContext;
                 if (update != null)
                     command.Transaction = update.Transaction;
 
@@ -1337,9 +1346,10 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 command = new SqlCommand();
                 command.Connection = Context.Connection;
                 command.CommandType = CommandType.Text;
-                UpdateContext update = Context as UpdateContext;
-
-                if (update != null)
+				command.CommandTimeout = SqlServerSettings.Default.CommandTimeout;
+				
+				UpdateContext update = Context as UpdateContext;
+				if (update != null)
                     command.Transaction = update.Transaction;
 
                 string deleteWhereClause = GetDeleteWhereClause(_entityName, command, criteria, null);
