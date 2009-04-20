@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuMagnification", "Select", Flags = ClickActionFlags.CheckAction)]
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarMagnification", "Select", "MagnificationMenuModel", Flags = ClickActionFlags.CheckAction)]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
-	[MouseToolButton(XMouseButtons.Left, true)]
+	[MouseToolButton(XMouseButtons.Left, false)]
 	[IconSet("activate", IconScheme.Colour, "Icons.MagnificationToolSmall.png", "Icons.MagnificationToolMedium.png", "Icons.MagnificationToolLarge.png")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
