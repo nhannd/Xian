@@ -32,11 +32,13 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
+using ClearCanvas.ImageServer.Web.Common.Utilities;
 
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
@@ -49,7 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     {
         private const string HighlightCssClass = " ConflictField ";
 
-        private delegate void ComparisonCallback();
+        private delegate void ComparisonCallback(bool different);
 
         #region private variables
 
@@ -198,27 +200,41 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             if (ReconcileDetails!=null)
             {
                 Compare(ReconcileDetails.ExistingStudy.Patient.Name, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name, 
-                   delegate { ConflictingNameLabel.CssClass += HighlightCssClass; });
+                   delegate(bool different)
+                       {
+                           Highlight(ConflictingNameLabel, different);
+                       });
+
                 Compare(ReconcileDetails.ExistingStudy.Patient.PatientID, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId,
-                    delegate { ConflictingPatientIDLabel.CssClass += HighlightCssClass; });
+                    delegate(bool different) { Highlight(ConflictingPatientIDLabel, different); });
                 Compare(ReconcileDetails.ExistingStudy.Patient.IssuerOfPatientID, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId,
-                    delegate { ConflictingPatientIssuerOfPatientID.CssClass += HighlightCssClass; });
+                    delegate(bool different) { Highlight(ConflictingPatientIssuerOfPatientID, different); });
                 Compare(ReconcileDetails.ExistingStudy.Patient.BirthDate, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate,
-                    delegate { ConflictingPatientBirthDate.CssClass += HighlightCssClass; });
+                    delegate(bool different) { Highlight(ConflictingPatientBirthDate, different); });
                 Compare(ReconcileDetails.ExistingStudy.Patient.Sex, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex,
-                    delegate { ConflictingPatientSex.CssClass += HighlightCssClass; });
+                    delegate(bool different) { Highlight(ConflictingPatientSex, different); });
                 Compare(ReconcileDetails.ExistingStudy.StudyDate, ReconcileDetails.ConflictingImageSet.StudyInfo.StudyDate,
-                    delegate { ConflictingStudyDate.CssClass += HighlightCssClass; });
+                    delegate(bool different) { Highlight(ConflictingStudyDate, different); });
                 Compare(ReconcileDetails.ExistingStudy.AccessionNumber, ReconcileDetails.ConflictingImageSet.StudyInfo.AccessionNumber,
-                    delegate { ConflictingAccessionNumberLabel.CssClass += HighlightCssClass; });
+                    delegate(bool different) { Highlight(ConflictingAccessionNumberLabel, different); });
 
             }
+        }
+
+        private void Highlight(WebControl control, bool highlight)
+        {
+            if (highlight)
+                HtmlUtility.AddCssClass(control, HighlightCssClass);
+            else
+                HtmlUtility.RemoveCssClass(control, HighlightCssClass);
         }
 
         private static void Compare(string value1, string value2, ComparisonCallback del)
         {
             if (!StringUtils.AreEqual(value1, value2, StringComparison.InvariantCultureIgnoreCase))
-                del();
+                del(true);
+            else
+                del(false);
         }
 
         /// <summary>

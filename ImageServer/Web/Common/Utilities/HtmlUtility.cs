@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Security;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.WebControls;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
 
@@ -46,5 +47,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
             if (value == null || value.Equals("")) return defaultValue;
             else return value;
         }
+
+         public static void AddCssClass(WebControl control, string cssClass)
+         {
+             control.CssClass += " " + cssClass;
+         }
+         
+        public static void RemoveCssClass(WebControl control, string cssClass)
+        {
+            control.CssClass = control.CssClass.Replace(" " + cssClass, "");
+        }
+
     }
+
+
 }
