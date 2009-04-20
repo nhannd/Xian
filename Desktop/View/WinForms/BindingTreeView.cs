@@ -46,18 +46,25 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </summary>
     public partial class BindingTreeView : UserControl
     {
-		public class ItemDropEventArgs : EventArgs
+		public class ItemDroppedEventArgs : EventArgs
 		{
-			private object _item;
+			private readonly object _item;
+			private readonly DragDropKind _kind;
 
-			public ItemDropEventArgs(object item)
+			public ItemDroppedEventArgs(object item, DragDropKind kind)
 			{
 				_item = item;
+				_kind = kind;
 			}
 
 			public object Item
 			{
 				get { return _item; }
+			}
+
+			public DragDropKind Kind
+			{
+				get { return _kind; }
 			}
 		}
 
@@ -67,7 +74,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private event EventHandler _nodeMouseDoubleClicked;
 		private event EventHandler _nodeMouseClicked;
 		private event EventHandler<ItemDragEventArgs> _itemDrag;
-		private event EventHandler<ItemDropEventArgs> _itemDrop;
+		private event EventHandler<ItemDroppedEventArgs> _itemDropped;
 
         private BindingTreeNode _dropTargetNode;
         private DragDropEffects _dropEffect;
@@ -331,10 +338,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             remove { _itemDrag -= value; }
         }
 
-		public event EventHandler<ItemDropEventArgs> ItemDrop
+		public event EventHandler<ItemDroppedEventArgs> ItemDropped
 		{
-			add { _itemDrop += value; }
-			remove { _itemDrop -= value; }
+			add { _itemDropped += value; }
+			remove { _itemDropped -= value; }
 		}
 
         #endregion
@@ -565,8 +572,12 @@ namespace ClearCanvas.Desktop.View.WinForms
                     // back to the initiator of the drag drop operation
                     e.Effect = GetDragDropEffect(result);
 
-					ItemDropEventArgs args = new ItemDropEventArgs(dragDropData);
-					EventsHelper.Fire(_itemDrop, this, args);
+					// Fire the item dropped event
+					if (e.Effect != DragDropEffects.None)
+					{
+						ItemDroppedEventArgs args = new ItemDroppedEventArgs(dragDropData, result);
+						EventsHelper.Fire(_itemDropped, this, args);
+					}
 				}
                 catch (Exception ex)
                 {

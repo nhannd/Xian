@@ -289,9 +289,9 @@ namespace ClearCanvas.Ris.Client
 			remove { _onEditFolder -= value; }
 		}
 
-		public void OnItemDropped(object droppedItem)
+		public void OnItemDropped(object droppedItem, DragDropKind kind)
 		{
-			if (droppedItem is DraggableTreeNode)
+			if (droppedItem is DraggableTreeNode && kind == DragDropKind.Move)
 			{
 				DraggableTreeNode droppedNode = (DraggableTreeNode) droppedItem;
 				this.SelectedFolderNode = new Selection(droppedNode);

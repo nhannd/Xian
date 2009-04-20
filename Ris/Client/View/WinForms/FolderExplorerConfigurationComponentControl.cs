@@ -83,12 +83,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			// send the node
 			if (selection.Item != null)
-				_folders.DoDragDrop(selection.Item, DragDropEffects.All);
+				_folders.DoDragDrop(selection.Item, DragDropEffects.Move);
 		}
 
-		private void _folders_ItemDrop(object sender, BindingTreeView.ItemDropEventArgs e)
+		private void _folders_ItemDropped(object sender, BindingTreeView.ItemDroppedEventArgs e)
 		{
-			_component.OnItemDropped(e.Item);
+			if (e.Item != null && e.Kind != DragDropKind.None)
+				_component.OnItemDropped(e.Item, e.Kind);
 		}
 	}
 }
