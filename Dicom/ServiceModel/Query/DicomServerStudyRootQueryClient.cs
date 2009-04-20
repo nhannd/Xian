@@ -6,32 +6,55 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.ServiceModel.Query;
 
-namespace ClearCanvas.ImageViewer.StudyLocator
+namespace ClearCanvas.Dicom.ServiceModel.Query
 {
-	internal abstract class DicomQueryClient : IDisposable
+	/// <summary>
+	/// A simple wrapper class that implements the <see cref="IStudyRootQuery"/> service contract,
+	/// but internally uses a <see cref="StudyRootFindScu"/>.
+	/// </summary>
+	public class DicomServerStudyRootQueryClient : IStudyRootQuery
 	{
 		private readonly string _localAE;
 		private readonly string _remoteAE;
 		private readonly string _remoteHost;
 		private readonly int _remotePort;
 
-		internal DicomQueryClient(string localAE, string remoteAE, string remoteHost, int remotePort)
+		public DicomServerStudyRootQueryClient(string localAETitle, string remoteAETitle, string remoteHost, int remotePort)
 		{
-			Platform.CheckForEmptyString(localAE, "localAE");
-			Platform.CheckForEmptyString(remoteAE, "remoteAE");
-			Platform.CheckForEmptyString(remoteHost, "remoteHost");
-			Platform.CheckArgumentRange(remotePort, 1, 65535, "remotePort");
-
-			_localAE = localAE;
-			_remoteAE = remoteAE;
+			_localAE = localAETitle;
+			_remoteAE = remoteAETitle;
 			_remoteHost = remoteHost;
 			_remotePort = remotePort;
 		}
 
-		protected IList<TIdentifier> Query<TIdentifier, TFindScu>(TIdentifier queryCriteria)
+		#region IStudyRootQuery Members
+
+		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
+		{
+			return Query<StudyRootStudyIdentifier, StudyRootFindScu>(queryCriteria);
+		}
+
+		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
+		{
+			return Query<SeriesIdentifier, StudyRootFindScu>(queryCriteria);
+		}
+
+		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
+		{
+			return Query<ImageIdentifier, StudyRootFindScu>(queryCriteria);
+		}
+
+		#endregion
+
+		private IList<TIdentifier> Query<TIdentifier, TFindScu>(TIdentifier queryCriteria)
 			where TIdentifier : Identifier, new()
 			where TFindScu : FindScuBase, new()
 		{
+			Platform.CheckForEmptyString(_localAE, "localAE");
+			Platform.CheckForEmptyString(_remoteAE, "remoteAE");
+			Platform.CheckForEmptyString(_remoteHost, "remoteHost");
+			Platform.CheckArgumentRange(_remotePort, 1, 65535, "remotePort");
+
 			if (queryCriteria == null)
 			{
 				string message = "The query identifier cannot be null.";
@@ -132,7 +155,7 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 				{
 					QueryFailedFault fault = new QueryFailedFault();
 					fault.Description = String.Format("An unexpected error has occurred ({0})",
-												   scu.FailureDescription ?? "no failure description provided");
+													  scu.FailureDescription ?? "no failure description provided");
 					Platform.Log(LogLevel.Error, e, fault.Description);
 					throw new FaultException<QueryFailedFault>(fault, fault.Description);
 				}
@@ -173,33 +196,6 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 			{
 				Platform.Log(LogLevel.Error, e);
 			}
-		}
-
-		#endregion
-	}
-
-	internal class StudyRootQueryClient : DicomQueryClient, IStudyRootQuery
-	{
-		public StudyRootQueryClient(string localAE, string remoteAE, string remoteHost, int remotePort)
-			: base(localAE, remoteAE, remoteHost, remotePort)
-		{
-		}
-
-		#region IStudyRootQuery Members
-
-		public IList<StudyRootStudyIdentifier> StudyQuery(StudyRootStudyIdentifier queryCriteria)
-		{
-			return Query<StudyRootStudyIdentifier, StudyRootFindScu>(queryCriteria);
-		}
-
-		public IList<SeriesIdentifier> SeriesQuery(SeriesIdentifier queryCriteria)
-		{
-			return Query<SeriesIdentifier, StudyRootFindScu>(queryCriteria);
-		}
-
-		public IList<ImageIdentifier> ImageQuery(ImageIdentifier queryCriteria)
-		{
-			return Query<ImageIdentifier, StudyRootFindScu>(queryCriteria);
 		}
 
 		#endregion

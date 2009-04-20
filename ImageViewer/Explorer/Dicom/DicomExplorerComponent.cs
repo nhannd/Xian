@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return component;
 		}
 
-		private static bool HasLocalDatastoreSupport()
+		internal static bool HasLocalDatastoreSupport()
 		{
 			try
 			{

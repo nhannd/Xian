@@ -8,6 +8,12 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyLocator
 {
+	//This stuff is temporary until we can fix the server tree.  Really need to do that soon.
+
+	public sealed class LocalStudyRootQueryExtensionPoint : ExtensionPoint<IStudyRootQuery>
+	{
+	}
+
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, UseSynchronizationContext = false, ConfigurationName = "StudyLocator", Namespace = QueryNamespace.Value)]
 	public class StudyLocator : IStudyRootQuery
 	{
@@ -141,26 +147,32 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 
 		private static IEnumerable<IStudyRootQuery> GetQueryInterfaces()
 		{
-			yield return new LocalDataStoreQueryClient();
+			IStudyRootQuery localDataStoreQuery;
+			try
+			{
+				localDataStoreQuery = (IStudyRootQuery)new LocalStudyRootQueryExtensionPoint().CreateExtension();
+			}
+			catch(NotSupportedException)
+			{
+				localDataStoreQuery = null;
+			}
+
+			if (localDataStoreQuery != null)
+				yield return localDataStoreQuery;
 
 			string localAE = ServerTree.GetClientAETitle();
-			foreach (IServerTreeNode server in GetDefaultServers())
+
+			ServerTree serverTree = new ServerTree();
+			foreach (Server server in DefaultServers.SelectFrom(serverTree))
 			{
 				if (server.IsServer)
 				{
 					Server dicomServer = (Server) server;
-					yield return new StudyRootQueryClient(localAE, dicomServer.AETitle, dicomServer.Host, dicomServer.Port);
+					DicomServerStudyRootQueryClient remoteQuery = 
+						new DicomServerStudyRootQueryClient(localAE, dicomServer.AETitle, dicomServer.Host, dicomServer.Port);
+					yield return remoteQuery;
 				}
 			}
-		}
-
-		private static IEnumerable<IServerTreeNode> GetDefaultServers()
-		{
-			ServerTree serverTree = new ServerTree();
-			yield return serverTree.RootNode.LocalDataStoreNode;
-
-			foreach (Server server in DefaultServers.SelectFrom(serverTree))
-				yield return server;
 		}
 	}
 }

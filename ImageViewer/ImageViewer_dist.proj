@@ -279,7 +279,9 @@
   </Target>
 
   <Target Name="Exclude Http Desktop Services">
+    <XmlFileRemoveNodes File="$(DistributionDesktopConfig)" XPath="//configuration/system.serviceModel/services/service/endpoint[contains(@binding, 'Http')]" />
     <XmlFileRemoveNodes File="$(DistributionDesktopConfig)" XPath="//configuration/system.serviceModel/services/service/host/baseAddresses/add[starts-with(@baseAddress, 'http')]" />
+    <XmlFileRemoveNodes File="$(DistributionDesktopConfig)" XPath="//configuration/system.serviceModel/behaviors/serviceBehaviors/behavior/serviceMetadata" />
   </Target>
   
   <Target Name="Copy ShredHost App Config">

@@ -70,6 +70,19 @@
       </PropertyGroup>
     </Otherwise>
   </Choose>
+
+  <Choose>
+    <When Condition="'$(PackageOption)' == 'Normal'" >
+      <PropertyGroup>
+        <BuildSuffix></BuildSuffix>
+      </PropertyGroup>
+    </When>
+    <Otherwise>
+      <PropertyGroup>
+        <BuildSuffix>_$(PackageOption)</BuildSuffix>
+      </PropertyGroup>
+    </Otherwise>
+  </Choose>
   
   <!-- set out some defaults -->
   <PropertyGroup>
@@ -80,7 +93,7 @@
   <Choose>
     <When Condition="$(DistributionBuild)">
       <PropertyGroup>
-        <DistributionDir>$(MSBuildProjectDirectory)\..\Distribution\Build\ImageViewer\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
+        <DistributionDir>$(MSBuildProjectDirectory)\..\Distribution\Build\ImageViewer$(BuildSuffix)\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
       </PropertyGroup>
     </When>
     <Otherwise>

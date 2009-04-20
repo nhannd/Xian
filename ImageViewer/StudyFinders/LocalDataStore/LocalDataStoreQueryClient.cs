@@ -5,11 +5,13 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.ServiceModel.Query;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.IO;
+using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.ImageViewer.StudyLocator;
 
-namespace ClearCanvas.ImageViewer.StudyLocator
+namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 {
+	[ExtensionOf(typeof(LocalStudyRootQueryExtensionPoint))]
 	internal class LocalDataStoreQueryClient : IStudyRootQuery
 	{
 		public LocalDataStoreQueryClient()
