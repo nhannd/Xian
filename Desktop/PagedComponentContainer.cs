@@ -133,14 +133,14 @@ namespace ClearCanvas.Desktop
 
 			protected override void OnItemAdded(ListEventArgs<TPage> e)
 			{
-				// create page host
-				_owner._mapPageToHost.Add(e.Item, new PageHost(_owner, e.Item));
+				// add page
+                _owner.AddPageHost(e.Item);
 
 				// fire event
 				base.OnItemAdded(e);
 
 				// if this is the first page, move to it
-				if (_owner.IsStarted && _owner._current == -1)
+				if (_owner.IsStarted && _owner.CurrentPageIndex == -1)
 					_owner.MoveTo(0);
 			}
 
@@ -155,7 +155,7 @@ namespace ClearCanvas.Desktop
 
 				// stop page component and remove page host
 				_owner.EnsureStopped(e.Item);
-				_owner._mapPageToHost.Remove(e.Item);
+                _owner.RemovePageHost(e.Item);
 			}
         }
 
@@ -329,7 +329,7 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
-        #region Helper methods
+        #region Protected API
 
         /// <summary>
         /// Moves to the page at the specified index.
@@ -356,9 +356,9 @@ namespace ClearCanvas.Desktop
             }
         }
 
-		/// <summary>
-		/// Ensures that the specified <see cref="ContainerPage"/> is started, regardless of whether or not it is visible.
-		/// </summary>
+        /// <summary>
+        /// Ensures that the specified <see cref="ContainerPage"/> is started, regardless of whether or not it is visible.
+        /// </summary>
         protected void EnsureStarted(ContainerPage page)
         {
             PageHost host = _mapPageToHost[page];
@@ -369,19 +369,47 @@ namespace ClearCanvas.Desktop
             }
         }
 
-		/// <summary>
-		/// Ensures that the specified <see cref="ContainerPage"/> is stopped, regardless of whether or not it is visible.
-		/// </summary>
-		/// <param name="page"></param>
-		protected void EnsureStopped(ContainerPage page)
-		{
-			PageHost host = _mapPageToHost[page];
-			if (host.IsStarted)
-			{
-				host.StopComponent();
-				page.Component.ModifiedChanged -= Component_ModifiedChanged;
-			}
-		}
+        /// <summary>
+        /// Ensures that the specified <see cref="ContainerPage"/> is stopped, regardless of whether or not it is visible.
+        /// </summary>
+        /// <param name="page"></param>
+        protected void EnsureStopped(ContainerPage page)
+        {
+            PageHost host = _mapPageToHost[page];
+            if (host.IsStarted)
+            {
+                host.StopComponent();
+                page.Component.ModifiedChanged -= Component_ModifiedChanged;
+            }
+        }
+
+        /// <summary>
+        /// Does nothing unless overridden.
+        /// </summary>
+        /// <remarks>
+        /// This method is called each time a child component's <see cref="IApplicationComponent.ModifiedChanged"/>
+        /// event has fired.  Override this method when custom handling is required for the container.
+        /// </remarks>
+        /// <param name="component">The component whose <see cref="IApplicationComponent.ModifiedChanged"/> event has fired.</param>
+        protected virtual void OnComponentModifiedChanged(IApplicationComponent component)
+        {
+        }
+
+        #endregion
+
+        #region Helper methods
+
+        private void AddPageHost(TPage page)
+        {
+            // create page host
+            _mapPageToHost.Add(page, new PageHost(this, page));
+        }
+
+        private void RemovePageHost(TPage page)
+        {
+            // remove page host
+            _mapPageToHost.Remove(page);
+        }
 
         /// <summary>
         /// Calls <see cref="IApplicationComponent.Stop"/> on all child components.
@@ -408,18 +436,6 @@ namespace ClearCanvas.Desktop
         {
             this.Modified = AnyPageModified();
             OnComponentModifiedChanged((IApplicationComponent)sender);
-        }
-
-		/// <summary>
-		/// Does nothing unless overridden.
-		/// </summary>
-		/// <remarks>
-		/// This method is called each time a child component's <see cref="IApplicationComponent.ModifiedChanged"/>
-		/// event has fired.  Override this method when custom handling is required for the container.
-		/// </remarks>
-		/// <param name="component">The component whose <see cref="IApplicationComponent.ModifiedChanged"/> event has fired.</param>
-        protected virtual void OnComponentModifiedChanged(IApplicationComponent component)
-        {
         }
 
         #endregion
