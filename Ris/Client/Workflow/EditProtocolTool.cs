@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 						Workspace firstDocument = CollectionUtils.FirstElement(documents);
 						firstDocument.Activate();
 
-						string message = string.Format(SR.MessageReportingComponentAlreadyOpened, firstDocument.Title, PersonNameFormat.Format(item.PatientName));
+						string message = string.Format(SR.MessageProtocollingComponentAlreadyOpened, firstDocument.Title, PersonNameFormat.Format(item.PatientName));
 						if (DialogBoxAction.No == this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo))
 						{
 							// Leave the existing document open
