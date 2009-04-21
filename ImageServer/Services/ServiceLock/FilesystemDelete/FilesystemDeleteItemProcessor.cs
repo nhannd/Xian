@@ -273,7 +273,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				stats.StudyStorageTime.Start();
                 // First, get the StudyStorage locations for the study, and calculate the disk usage.
                 StudyStorageLocation location;
-				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
+				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
 					continue;
 				stats.StudyStorageTime.End();
 
@@ -353,7 +353,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				stats.StudyStorageTime.Start();
 				// First, get the StudyStorage locations for the study, and calculate the disk usage.
 				StudyStorageLocation location;
-				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
+				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
 					continue;
 				stats.StudyStorageTime.End();
 
@@ -440,7 +440,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
 				stats.StudyStorageTime.Start();
         		// First, get the StudyStorage locations for the study, and calculate the disk usage.
 				StudyStorageLocation location;
-				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
+				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
 					continue;
 				stats.StudyStorageTime.End();
 
@@ -708,9 +708,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemDelete
             UpdateState(item, fs);
 
             DateTime scheduledTime;
-            if (!fs.Readable)
+            if (!fs.Online)
             {
-                Platform.Log(LogLevel.Info, "Filesystem {0} is not readable. Watermark is not checked at this point.", fs.Filesystem.Description);
+                Platform.Log(LogLevel.Info, "Filesystem {0} is not online. Watermark is not checked at this point.", fs.Filesystem.Description);
                 scheduledTime = Platform.Time.AddMinutes(settings.FilesystemDeleteRecheckDelay);
             }
             else

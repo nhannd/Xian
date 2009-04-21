@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemLossyCompress
 
 				// First, get the StudyStorage locations for the study, and calculate the disk usage.
 				StudyStorageLocation location;
-				if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
+				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(ReadContext, queueItem.StudyStorageKey, out location))
 					continue;
 
 				// Get the disk usage

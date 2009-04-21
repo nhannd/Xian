@@ -268,6 +268,27 @@ namespace ClearCanvas.ImageServer.Common
 			return false;
 		}
 
+		/// <summary>
+		/// Check if a filesystem is online.
+		/// </summary>
+		/// <param name="filesystemKey">The filesystem primary Key</param>
+		/// <returns></returns>
+		public bool CheckFilesystemOnline(ServerEntityKey filesystemKey)
+		{
+			lock (_lock)
+			{
+				ServerFilesystemInfo info;
+				if (!_filesystemList.TryGetValue(filesystemKey, out info))
+				{
+					LoadFilesystems();
+					_filesystemList.TryGetValue(filesystemKey, out info);
+				}
+				if (info != null)
+					return info.Online;
+			}
+			return false;
+		}
+
 		private List<FilesystemTierEnum> FindLowerTierFilesystems(ServerFilesystemInfo filesystem)
 		{
 		    List<FilesystemTierEnum> lowerTiers = new List<FilesystemTierEnum>();
@@ -318,7 +339,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// <param name="partitionKey">The primark key of the ServerPartition table.</param>
 		/// <param name="studyInstanceUid">The Study Instance UID of th estudy</param>
 		/// <returns></returns>
-		public bool GetStudyStorageLocation(IReadContext context, ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
+		public bool GetOnlineStudyStorageLocation(IReadContext context, ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
 		{
 			IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
 			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
@@ -328,7 +349,7 @@ namespace ClearCanvas.ImageServer.Common
 
 			foreach (StudyStorageLocation studyLocation in locationList)
 			{
-				if (CheckFilesystemReadable(studyLocation.FilesystemKey))
+				if (CheckFilesystemOnline(studyLocation.FilesystemKey))
 				{
 					location = studyLocation;
 					return true;
@@ -347,15 +368,22 @@ namespace ClearCanvas.ImageServer.Common
 		/// <param name="location">The returned storage location.</param>
 		/// <param name="partitionKey">The key for the server partition.</param>
 		/// <returns>true if a location was found, false otherwise.</returns>
-		public bool GetStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
+		public bool GetOnlineStudyStorageLocation(ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
 		{
 			using (IReadContext read = _store.OpenReadContext())
 			{
-				return GetStudyStorageLocation(read, partitionKey, studyInstanceUid, out location);
+				return GetOnlineStudyStorageLocation(read, partitionKey, studyInstanceUid, out location);
 			}
 		}
 
-		public bool GetStudyStorageLocation(IReadContext context, ServerEntityKey studyStorageKey, out StudyStorageLocation location)
+		/// <summary>
+		/// Retrieves the storage location from the database for the specified study storage key.  Checks if the filesystem is online.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="studyStorageKey"></param>
+		/// <param name="location"></param>
+		/// <returns></returns>
+		public bool GetOnlineStudyStorageLocation(IReadContext context, ServerEntityKey studyStorageKey, out StudyStorageLocation location)
 		{
 			IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
 			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
@@ -364,7 +392,7 @@ namespace ClearCanvas.ImageServer.Common
 
 			foreach (StudyStorageLocation studyLocation in locationList)
 			{
-				if (CheckFilesystemReadable(studyLocation.FilesystemKey))
+				if (CheckFilesystemOnline(studyLocation.FilesystemKey))
 				{
 					location = studyLocation;
 					return true;
@@ -382,11 +410,11 @@ namespace ClearCanvas.ImageServer.Common
 		/// <param name="studyStorageKey">The study storage key to get a location for.</param>
 		/// <param name="location">The returned storage location.</param>
 		/// <returns>true if a location was found, false otherwise.</returns>
-		public bool GetStudyStorageLocation(ServerEntityKey studyStorageKey, out StudyStorageLocation location)
+		public bool GetOnlineStudyStorageLocation(ServerEntityKey studyStorageKey, out StudyStorageLocation location)
 		{
 			using (IReadContext read = _store.OpenReadContext())
 			{
-				return GetStudyStorageLocation(read, studyStorageKey, out location);
+				return GetOnlineStudyStorageLocation(read, studyStorageKey, out location);
 			}
 		}
 		#endregion

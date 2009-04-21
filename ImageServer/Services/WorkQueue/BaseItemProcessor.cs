@@ -224,7 +224,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             StorageLocationLoadTime.Add(
                 delegate
                     {
-                    	found = FilesystemMonitor.Instance.GetStudyStorageLocation(item.StudyStorageKey, out _storageLocation);
+                    	found = FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(item.StudyStorageKey, out _storageLocation);
                     }
                 );
 
@@ -880,7 +880,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
             	if (!LoadStorageLocation(item))
             	{
             		Platform.Log(LogLevel.Warn,
-            		             "Unable to find readable storagelocation when processing {0) WorkQueue item, rescheduling",
+            		             "Unable to find readable StorageLocation when processing {0} WorkQueue item, rescheduling",
             		             item.WorkQueueTypeEnum.Description);
 					PostponeItem(item, item.ScheduledTime.AddMinutes(2), item.ExpirationTime.AddMinutes(2));
 					return;

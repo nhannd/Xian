@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// <returns>true if a location was found, false otherwise.</returns>
 		public bool GetStudyStorageLocation(ArchiveQueue queueItem)
 		{
-			return FilesystemMonitor.Instance.GetStudyStorageLocation(queueItem.StudyStorageKey, out _storageLocation);
+			return FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(queueItem.StudyStorageKey, out _storageLocation);
 		}
 
 		/// <summary>

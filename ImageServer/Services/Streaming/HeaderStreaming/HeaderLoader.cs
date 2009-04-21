@@ -89,7 +89,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 
                 if (partition != null)
                 {
-					if (!FilesystemMonitor.Instance.GetStudyStorageLocation(ctx, partition.Key, studyInstanceUid, out location))
+					if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(ctx, partition.Key, studyInstanceUid, out location))
 						location = null;
                 }
             }
