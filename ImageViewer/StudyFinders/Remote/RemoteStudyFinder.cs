@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Network.Scu;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -99,6 +100,10 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
 				studyItemList.Add(item);
 			}
+
+			AuditedInstances queriedInstances = new AuditedInstances();
+			studyItemList.ForEach(delegate(StudyItem study) { queriedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUID); });
+			AuditHelper.LogQueryStudies("Find Studies", selectedServer.AETitle, selectedServer.Host, queriedInstances, EventSource.CurrentUser, EventResult.Success);
 
 			return studyItemList;
         }

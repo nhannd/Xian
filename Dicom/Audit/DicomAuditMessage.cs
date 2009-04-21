@@ -205,7 +205,7 @@ namespace ClearCanvas.Dicom.Audit
 
 			if (auditSource.AuditSourceType.HasValue)
 			{
-				AuditSourceTypeCode = new AuditSourceIdentificationTypeAuditSourceTypeCode[0];
+				AuditSourceTypeCode = new AuditSourceIdentificationTypeAuditSourceTypeCode[1];
 				AuditSourceTypeCode[0] = new AuditSourceIdentificationTypeAuditSourceTypeCode(auditSource.AuditSourceType.Value);
 			}
 		}

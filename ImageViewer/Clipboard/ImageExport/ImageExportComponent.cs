@@ -35,6 +35,8 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.StudyManagement;
 using Path=System.IO.Path;
 
 #pragma warning disable 0419,1574,1587,1591
@@ -436,6 +438,29 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			return number;
 		}
 
+		private static AuditedInstances GetInstancesForAudit(IEnumerable<IClipboardItem> itemsToExport, string exportFilePath)
+		{
+			AuditedInstances exportedInstances = new AuditedInstances();
+			foreach (ClipboardItem clipboardItem in itemsToExport)
+			{
+				if (clipboardItem.Item is IPresentationImage && clipboardItem.Item is IImageSopProvider)
+				{
+					IImageSopProvider sopProv = (IImageSopProvider) clipboardItem.Item;
+					exportedInstances.AddInstance(sopProv.ImageSop.PatientId, sopProv.ImageSop.PatientsName, sopProv.ImageSop.StudyInstanceUID, exportFilePath);
+				}
+				else if (clipboardItem.Item is IDisplaySet)
+				{
+					foreach (IPresentationImage image in ((IDisplaySet) clipboardItem.Item).PresentationImages)
+					{
+						IImageSopProvider sopProv = image as IImageSopProvider;
+						if (sopProv != null)
+							exportedInstances.AddInstance(sopProv.ImageSop.PatientId, sopProv.ImageSop.PatientsName, sopProv.ImageSop.StudyInstanceUID, exportFilePath);
+					}
+				}
+			}
+			return exportedInstances;
+		}
+
 		#region Export
 
 		private void Export()
@@ -445,13 +470,28 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			if (NumberOfImagesToExport == 1)
 			{
-				if (!Directory.Exists(Path.GetDirectoryName(ExportFilePath ?? "")))
-					throw new FileNotFoundException("The specified export file path does not exist: " + ExportFilePath ?? "");
+				EventResult result = EventResult.Success;
+				AuditedInstances exportedInstances = GetInstancesForAudit(ItemsToExport, this.ExportFilePath);
 
-				ClipboardItem clipboardItem = (ClipboardItem)_itemsToExport[0];
+				try
+				{
+					if (!Directory.Exists(Path.GetDirectoryName(ExportFilePath ?? "")))
+						throw new FileNotFoundException("The specified export file path does not exist: " + ExportFilePath ?? "");
 
-				ExportImageParams exportParams = GetExportParams(clipboardItem);
-				SelectedImageExporter.Export((IPresentationImage)clipboardItem.Item, ExportFilePath, exportParams);
+					ClipboardItem clipboardItem = (ClipboardItem) _itemsToExport[0];
+
+					ExportImageParams exportParams = GetExportParams(clipboardItem);
+					SelectedImageExporter.Export((IPresentationImage) clipboardItem.Item, ExportFilePath, exportParams);
+				}
+				catch (Exception ex)
+				{
+					result = EventResult.SeriousFailure;
+					Platform.Log(LogLevel.Error, ex);
+				}
+				finally
+				{
+					AuditHelper.LogExportStudies("Export Images", exportedInstances, EventSource.CurrentUser, result);
+				}
 			}
 			else
 			{

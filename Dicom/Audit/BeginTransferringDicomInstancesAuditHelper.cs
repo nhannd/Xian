@@ -58,12 +58,31 @@ namespace ClearCanvas.Dicom.Audit
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.BeginTransferringDICOMInstances;
 			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
 
 			InternalAddAuditSource(auditSource);
 
 			InternalAddActiveDicomParticipant(parms);
+
+			InternalAddParticipantObject(patient.PatientId + patient.PatientsName, patient);
+		}
+
+		public BeginTransferringDicomInstancesAuditHelper(DicomAuditSource auditSource, EventIdentificationTypeEventOutcomeIndicator outcome,
+			string sourceAE, string sourceHost, string destinationAE, string destinationHost,
+			AuditPatientParticipantObject patient)
+		{
+			AuditMessage.EventIdentification = new EventIdentificationType();
+			AuditMessage.EventIdentification.EventID = CodedValueType.BeginTransferringDICOMInstances;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
+			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
+			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
+
+			InternalAddAuditSource(auditSource);
+
+			InternalAddActiveDicomParticipant(sourceAE, sourceHost, destinationAE, destinationHost);
 
 			InternalAddParticipantObject(patient.PatientId + patient.PatientsName, patient);
 		}

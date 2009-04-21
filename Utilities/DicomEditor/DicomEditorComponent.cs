@@ -39,6 +39,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities.Anonymization;
+using ClearCanvas.ImageViewer.Services.Auditing;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
@@ -175,6 +176,12 @@ namespace ClearCanvas.Utilities.DicomEditor
                 _component.UpdateComponent();
 			}
 
+			/// <summary>
+			/// Gets a value indicating the the current loaded file is stored on the local file system (even if only temporarily).
+			/// </summary>
+			/// <remarks>
+			/// This value serves to distinguish files that exist on the local file system versus those that may not, such as those from a streaming source.
+			/// </remarks>
         	public bool IsLocalFile
         	{
 				get { return _component.IsLocalFile; }
@@ -243,12 +250,23 @@ namespace ClearCanvas.Utilities.DicomEditor
 
     	public void SaveAll()
         {
+			AuditedInstances modifiedInstances = new AuditedInstances();
+
             for (int i = 0; i < _loadedFiles.Count; i++)
             {
 				//TODO: deal with saving mixtures of local and non-local files.
-                _loadedFiles[i].Save(DicomWriteOptions.Default);
+				DicomFile file = _loadedFiles[i];
+                file.Save(DicomWriteOptions.Default);
+
+				string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+				string patientId = file.DataSet[DicomTags.PatientId].ToString();
+				string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
+				modifiedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
+
                 _dirtyFlags[i] = false;
             }
+
+			AuditHelper.LogUpdateInstances("Modified by Dicom Editor", new string[0], modifiedInstances, EventSource.CurrentUser, EventResult.Success);
         }
 
         public bool TagExists(uint tag)

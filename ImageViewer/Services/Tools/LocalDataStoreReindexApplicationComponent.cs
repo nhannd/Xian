@@ -37,6 +37,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Common;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Common.Utilities;
 using System.Threading;
@@ -251,8 +252,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			try
 			{
 				client.Open();
+				string storageDirectory = client.GetConfiguration().StorageDirectory;
 				client.Reindex();
 				client.Close();
+
+				AuditHelper.LogImportStudies("Reindex", new AuditedInstances(true, storageDirectory), EventSource.CurrentUser, EventResult.Success);
 
 				this.ReindexEnabled = false;
 			}

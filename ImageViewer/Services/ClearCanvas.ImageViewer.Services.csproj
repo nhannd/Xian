@@ -35,6 +35,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Auditing\AuditHelper.cs" />
+    <Compile Include="Auditing\EventReceiptAction.cs" />
+    <Compile Include="Auditing\EventResult.cs" />
+    <Compile Include="Auditing\EventSource.cs" />
+    <Compile Include="Auditing\AuditedInstances.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="Automation\IDicomExplorerAutomation.cs" />
     <Compile Include="Automation\IViewerAutomationBridge.cs" />

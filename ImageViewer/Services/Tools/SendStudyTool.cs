@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
@@ -101,9 +102,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					return;
 			}
 
+			EventResult result = EventResult.Success;
+			AuditedInstances sentInstances = new AuditedInstances();
+
 			List<string> studyUids = new List<string>();
 			foreach (StudyItem item in this.Context.SelectedStudies)
+			{
 				studyUids.Add(item.StudyInstanceUID);
+				sentInstances.AddInstance(item.PatientId, item.PatientsName, item.StudyInstanceUID);
+			}
 
 			DicomSendServiceClient client = new DicomSendServiceClient();
 
@@ -130,11 +137,18 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			catch (EndpointNotFoundException)
 			{
 				client.Abort();
+				result = EventResult.SeriousFailure;
 				this.Context.DesktopWindow.ShowMessageBox(SR.MessageSendDicomServerServiceNotRunning, MessageBoxActions.Ok);
 			}
 			catch (Exception e)
 			{
+				result = EventResult.MajorFailure;
 				ExceptionHandler.Report(e, SR.MessageFailedToSendStudy, this.Context.DesktopWindow);
+			}
+			finally
+			{
+				foreach (Server destinationAE in serverTreeComponent.SelectedServers.Servers)
+					AuditHelper.LogBeginSendInstances("Send Studies", destinationAE.AETitle, destinationAE.Host, sentInstances, EventSource.CurrentUser, result);
 			}
 		}
 

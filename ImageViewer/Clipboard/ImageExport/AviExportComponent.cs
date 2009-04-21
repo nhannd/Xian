@@ -38,6 +38,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using System.Runtime.InteropServices;
+using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 {
@@ -315,6 +317,15 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 		{
 			List<IPresentationImage> imagesToDispose = new List<IPresentationImage>();
 
+			EventResult result = EventResult.Success;
+			AuditedInstances exportedInstances = new AuditedInstances();
+			foreach (IPresentationImage image in this.DisplaySet.PresentationImages)
+			{
+				IImageSopProvider sopProv = image as IImageSopProvider;
+				if (sopProv != null)
+					exportedInstances.AddInstance(sopProv.ImageSop.PatientId, sopProv.ImageSop.PatientsName, sopProv.ImageSop.StudyInstanceUID, this.FilePath);
+			}
+
 			try
 			{
 				ReportProgress(context, SR.MessageCreatingVideo, 0);
@@ -338,10 +349,12 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 			catch(Exception e)
 			{
 				_error = e;
+				result = EventResult.SeriousFailure;
 				Platform.Log(LogLevel.Error, e);
 			}
 			finally
 			{
+				AuditHelper.LogExportStudies("Export Video", exportedInstances, EventSource.CurrentUser, result);
 				imagesToDispose.ForEach(delegate(IPresentationImage image) { image.Dispose(); });
 			}
 		}

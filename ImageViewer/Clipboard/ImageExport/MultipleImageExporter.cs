@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Services.Auditing;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -125,6 +126,9 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 
 			private void Export(IBackgroundTaskContext context)
 			{
+				EventResult result = EventResult.Success;
+				AuditedInstances exportedInstances = GetInstancesForAudit(ItemsToExport, this._exportComponent.ExportFilePath);
+
 				try
 				{
 					_taskContext = context;
@@ -133,10 +137,12 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 				catch (Exception e)
 				{
 					_error = e;
+					result = EventResult.SeriousFailure;
 					Platform.Log(LogLevel.Error, e);
 				}
 				finally
 				{
+					AuditHelper.LogExportStudies("Export Images", exportedInstances, EventSource.CurrentUser, result);
 					_imagesToDispose.ForEach(delegate(IPresentationImage image) { image.Dispose(); });
 				}
 			}

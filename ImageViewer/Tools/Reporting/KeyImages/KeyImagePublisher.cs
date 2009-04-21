@@ -3,6 +3,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.KeyObjects;
 using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.Services;
@@ -210,6 +211,9 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			{
 				foreach (KeyValuePair<Server, List<DicomFile>> pair in _remotePublishingInfo)
 				{
+					EventResult result = EventResult.Success;
+					AuditedInstances updatedInstances = new AuditedInstances();
+
 					try
 					{
 						Server server = pair.Key;
@@ -221,19 +225,33 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 						destination.Port = server.Port;
 						destinationServers.Add(destination);
 
+						foreach (DicomFile file in documents)
+						{
+							string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+							string patientId = file.DataSet[DicomTags.PatientId].ToString();
+							string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
+							updatedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
+						}
+
 						DicomFilePublisher.PublishRemote(documents, destination, true);
 					}
 					catch (EndpointNotFoundException)
 					{
+						result = EventResult.MajorFailure;
 						remotePublishFailed = true;
 						Platform.Log(LogLevel.Error,
 						             "Unable to publish key images to default servers; the local dicom server does not appear to be running.");
 					}
 					catch (Exception e)
 					{
+						result = EventResult.SeriousFailure;
 						remotePublishFailed = true;
 						Platform.Log(LogLevel.Error, e,
 						             "An error occurred while attempting to publish key images to server {0}.", pair.Key.AETitle);
+					}
+					finally
+					{
+						AuditHelper.LogUpdateInstances("Create Key Images", new string[] {pair.Key.AETitle}, updatedInstances, EventSource.CurrentUser, result);
 					}
 				}
 			}

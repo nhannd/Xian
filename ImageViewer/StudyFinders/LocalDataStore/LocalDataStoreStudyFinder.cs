@@ -31,6 +31,8 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
@@ -89,6 +91,10 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 					studyItemList.Add(item);
 				}
 			}
+
+			AuditedInstances queriedInstances = new AuditedInstances();
+			studyItemList.ForEach(delegate(StudyItem study) { queriedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUID); });
+			AuditHelper.LogQueryStudies("Find Studies", null, null, queriedInstances, EventSource.CurrentUser, EventResult.Success);
 
             return studyItemList;
         }

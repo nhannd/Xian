@@ -39,6 +39,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Anonymization;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 using Path=System.IO.Path;
@@ -97,6 +98,8 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 		public void AnonymizeStudy()
 		{
+			StudyItem selectedStudy = this.Context.SelectedStudy;
+
 			_component = new AnonymizeStudyComponent(this.Context.SelectedStudy);
 			if (ApplicationComponentExitCode.Accepted == 
 				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, _component, SR.TitleAnonymizeStudy))
@@ -104,7 +107,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 				BackgroundTask task = null;
 				try
 				{
-					task = new BackgroundTask(Anonymize, false, this.Context.SelectedStudy.StudyInstanceUID);
+					task = new BackgroundTask(Anonymize, false, this.Context.SelectedStudy);
 					ProgressDialog.Show(task, this.Context.DesktopWindow, true);
 				}
 				catch(Exception e)
@@ -125,6 +128,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 		private void Anonymize(IBackgroundTaskContext context)
 		{
+			StudyItem study = (StudyItem)context.UserState;
+			AuditedInstances anonymizedInstances = new AuditedInstances();
+
 			try
 			{
 				_tempPath = String.Format(".\\temp\\{0}", Path.GetRandomFileName());
@@ -133,7 +139,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 				context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageAnonymizingStudy));
 
-				int numberOfSops = LocalStudyLoader.Start(new StudyLoaderArgs(this.Context.SelectedStudy.StudyInstanceUID, null));
+				int numberOfSops = LocalStudyLoader.Start(new StudyLoaderArgs(study.StudyInstanceUID, null));
 				if (numberOfSops <= 0)
 					return;
 
@@ -163,6 +169,11 @@ namespace ClearCanvas.Utilities.DicomEditor
 							DicomFile file = ((ILocalSopDataSource)sop.DataSource).File;
 							anonymizer.Anonymize(file);
 							file.Save(String.Format("{0}\\{1}.dcm", _tempPath, i));
+
+							string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
+							string patientId = file.DataSet[DicomTags.PatientId].ToString();
+							string patientsName = file.DataSet[DicomTags.PatientsName].ToString();
+							anonymizedInstances.AddInstance(patientId, patientsName, studyInstanceUid);
 						}
 					}
 
@@ -191,6 +202,8 @@ namespace ClearCanvas.Utilities.DicomEditor
 					client.Abort();
 					throw;
 				}
+
+				AuditHelper.LogCreateInstances("Create Anonymous Study", new string[0], anonymizedInstances, EventSource.CurrentUser, EventResult.Success);
 
 				context.Complete();
 			}

@@ -35,6 +35,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
@@ -70,6 +71,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			if (!Enabled || this.Context.SelectedServerGroup.IsLocalDatastore || this.Context.SelectedStudy == null)
                 return;
+
+			EventResult result = EventResult.Success;
 
 			Dictionary<ApplicationEntity, List<StudyInformation>> retrieveInformation = new Dictionary<ApplicationEntity, List<StudyInformation>>();
 			foreach (StudyItem item in this.Context.SelectedStudies)
@@ -112,11 +115,23 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			catch (EndpointNotFoundException)
 			{
 				client.Abort();
+				result = EventResult.MajorFailure;
 				this.Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
 			}
 			catch (Exception e)
 			{
+				result = EventResult.MajorFailure;
 				ExceptionHandler.Report(e, SR.MessageFailedToRetrieveStudy, this.Context.DesktopWindow);
+			}
+			finally
+			{
+				foreach (KeyValuePair<ApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
+				{
+					AuditedInstances requestedInstances = new AuditedInstances();
+					foreach (StudyInformation study in kvp.Value)
+						requestedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
+					AuditHelper.LogBeginReceiveInstances("Retrieve Studies", kvp.Key.AETitle, kvp.Key.Host, requestedInstances, EventSource.CurrentUser, result);
+				}
 			}
 		}
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
@@ -110,6 +111,8 @@ namespace ClearCanvas.ImageViewer.Services
 				request.IsBackground = isBackground;
 				client.Import(request);
 				client.Close();
+
+				AuditHelper.LogImportStudies("Publish Instances", new AuditedInstances(true, tempFileDirectory), EventSource.CurrentProcess, EventResult.Success);
 			}
 			catch (Exception e)
 			{

@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Services;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
@@ -133,6 +134,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						//ignore, because this is the scu, we don't want users to think an error has occurred
 						//in retrieving.
 					}
+
+					AuditRetrieveOperation(true);
 				}
 				catch (Exception e)
 				{
@@ -146,11 +149,24 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						OnRetrieveError(String.Format("An unexpected error has occurred in the Move Scu: {0}:{1}:{2} -> {3}; {4}",
 						                              base.RemoteAE, base.RemoteHost, base.RemotePort, base.ClientAETitle, e.Message));
 					}
+
+					AuditRetrieveOperation(false);
 				}
 				finally
 				{
 					Instance.OnRetrieveComplete(this);
 				}
+			}
+
+			private void AuditRetrieveOperation(bool noExceptions)
+			{
+				AuditedInstances receivedInstances = new AuditedInstances();
+				foreach (StudyInformation instance in this._studiesToRetrieve)
+					receivedInstances.AddInstance(instance.PatientId, instance.PatientsName, instance.StudyInstanceUid);
+				if (noExceptions)
+					AuditHelper.LogReceivedInstances("Send", this.RemoteAE, this.RemoteHost, receivedInstances, EventSource.CurrentProcess, EventResult.Success, EventReceiptAction.ActionUnknown);
+				else
+					AuditHelper.LogReceivedInstances("Send", this.RemoteAE, this.RemoteHost, receivedInstances, EventSource.CurrentProcess, EventResult.MajorFailure, EventReceiptAction.ActionUnknown);
 			}
 
 			private void OnBeginRetrieve()

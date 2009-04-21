@@ -75,10 +75,27 @@ namespace ClearCanvas.Dicom.Audit
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.Query;
 			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
 
 			InternalAddActiveDicomParticipant(parms);
+
+			InternalAddAuditSource(auditSource);
+		}
+
+		public QueryAuditHelper(DicomAuditSource auditSource,
+			EventIdentificationTypeEventOutcomeIndicator outcome,
+			string sourceAE, string sourceHost, string destinationAE, string destinationHost)
+		{
+			AuditMessage.EventIdentification = new EventIdentificationType();
+			AuditMessage.EventIdentification.EventID = CodedValueType.Query;
+			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.E;
+			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
+			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
+			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
+
+			InternalAddActiveDicomParticipant(sourceAE, sourceHost, destinationAE, destinationHost);
 
 			InternalAddAuditSource(auditSource);
 		}

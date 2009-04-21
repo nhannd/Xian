@@ -37,6 +37,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Authentication;
+using ClearCanvas.ImageViewer.Services.Auditing;
 
 namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 {
@@ -152,7 +153,9 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 				try
 				{
 					Login(userName, password);
+
 					//no exception = success.
+					AuditHelper.LogLogin("Login", userName, EventSource.GetOtherEventSource(ServiceSettings.Default.ApplicationServicesBaseUrl), EventResult.Success);
 					return true;
 				}
 				catch(FaultException<PasswordExpiredException>)
@@ -167,6 +170,7 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 				{
 					//TODO: resolve issues with Enterprise server faults - they don't provide enough info.
 					ReportException(e);
+					AuditHelper.LogLogin("Login", userName, EventSource.GetOtherEventSource(ServiceSettings.Default.ApplicationServicesBaseUrl), EventResult.SeriousFailure);
 				}
 
 				needLoginDialog = true;
@@ -233,13 +237,25 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 			if (Session.Current == null)
 				return;
 
-			Platform.GetService<IAuthenticationService>(
-				delegate(IAuthenticationService service)
-				{
-					IIdentity identity = Session.Current.Principal.Identity;
-					TerminateSessionRequest request = new TerminateSessionRequest(identity.Name, Session.Current.Token);
-					service.TerminateSession(request);
-				});
+			string userName = Session.Current.Principal.Identity.Name;
+
+			try
+			{
+				Platform.GetService<IAuthenticationService>(
+					delegate(IAuthenticationService service)
+						{
+							IIdentity identity = Session.Current.Principal.Identity;
+							TerminateSessionRequest request = new TerminateSessionRequest(identity.Name, Session.Current.Token);
+							service.TerminateSession(request);
+						});
+
+				AuditHelper.LogLogin("Logout", userName, EventSource.GetOtherEventSource(ServiceSettings.Default.ApplicationServicesBaseUrl), EventResult.Success);
+			}
+			catch (Exception)
+			{
+				AuditHelper.LogLogin("Logout", userName, EventSource.GetOtherEventSource(ServiceSettings.Default.ApplicationServicesBaseUrl), EventResult.SeriousFailure);
+				throw;
+			}
 		}
 
 		private static bool ChangePassword(string userName, string oldPassword, out string newPassword)

@@ -37,6 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Explorer.Local;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using System.ServiceModel;
 
@@ -78,9 +79,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
 			try
 			{
+				AuditedInstances importedPaths = new AuditedInstances();
+				filePaths.ForEach(delegate(string path) { importedPaths.AddPath(path); });
+
 				client.Open();
 				client.Import(request);
 				client.Close();
+
+				AuditHelper.LogImportStudies("Import", importedPaths, EventSource.CurrentUser, EventResult.Success);
 
 				LocalDataStoreActivityMonitorComponentManager.ShowImportComponent(this.Context.DesktopWindow);
 			}

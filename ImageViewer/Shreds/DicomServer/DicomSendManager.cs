@@ -7,6 +7,7 @@ using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.ImageViewer.Services;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Dicom.Network;
@@ -162,6 +163,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				try
 				{
 					SendInternal();
+					AuditSendOperation(true);
 				}
 				catch (Exception e)
 				{
@@ -174,9 +176,36 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					{
 						OnSendError(String.Format("An unexpected error occurred while processing the Store operation ({0}).", e.Message));
 					}
+
+					AuditSendOperation(false);
 				}
 
 				Instance.OnSendComplete(this);
+			}
+
+			private void AuditSendOperation(bool noExceptions)
+			{
+				if (noExceptions)
+				{
+					AuditedInstances sentInstances = new AuditedInstances();
+					AuditedInstances failedInstances = new AuditedInstances();
+					foreach (StorageInstance instance in this.StorageInstances)
+					{
+						if (instance.SendStatus.Status == DicomState.Success)
+							sentInstances.AddInstance(instance.PatientId, instance.PatientsName, instance.StudyInstanceUid);
+						else
+							failedInstances.AddInstance(instance.PatientId, instance.PatientsName, instance.StudyInstanceUid);
+					}
+					AuditHelper.LogSentInstances("Send", this.RemoteAE, this.RemoteHost, sentInstances, EventSource.CurrentProcess, EventResult.Success);
+					AuditHelper.LogSentInstances("Send", this.RemoteAE, this.RemoteHost, failedInstances, EventSource.CurrentProcess, EventResult.MinorFailure);
+				}
+				else
+				{
+					AuditedInstances sentInstances = new AuditedInstances();
+					foreach (StorageInstance instance in this.StorageInstances)
+						sentInstances.AddInstance(instance.PatientId, instance.PatientsName, instance.StudyInstanceUid);
+					AuditHelper.LogSentInstances("Send", this.RemoteAE, this.RemoteHost, sentInstances, EventSource.CurrentProcess, EventResult.MajorFailure);
+				}
 			}
 
 			private void SendInternal()

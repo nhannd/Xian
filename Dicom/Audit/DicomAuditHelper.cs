@@ -229,6 +229,15 @@ namespace ClearCanvas.Dicom.Audit
 			}
 		}
 
+		protected void InternalAddActiveDicomParticipant(string sourceAE, string sourceHost, string destinationAE, string destinationHost)
+		{
+			IPAddress x;
+			_participantList.Add(new AuditMessageActiveParticipant(CodedValueType.Source, "AETITLE=" + sourceAE, null, null,
+				sourceHost, IPAddress.TryParse(sourceHost, out x) ? NetworkAccessPointTypeEnum.IpAddress : NetworkAccessPointTypeEnum.MachineName, null));
+			_participantList.Add(new AuditMessageActiveParticipant(CodedValueType.Destination, "AETITLE=" + destinationAE, null, null,
+				destinationHost, IPAddress.TryParse(destinationHost, out x) ? NetworkAccessPointTypeEnum.IpAddress : NetworkAccessPointTypeEnum.MachineName, null));
+		}
+
 		protected void InternalAddAuditSource(DicomAuditSource auditSource)
 		{
 			_auditSourceList.Add(new AuditSourceIdentificationType(auditSource));

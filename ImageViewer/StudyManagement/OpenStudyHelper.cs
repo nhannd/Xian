@@ -139,16 +139,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <para>This method has been deprecated and will be removed in the future. Use the <see cref="OpenStudies(OpenStudyArgs)"/> overload instead.</para>
 		/// </remarks>
 		[Obsolete("This method has been deprecated and will be removed in the future. Use the OpenStudies(OpenStudyArgs) overload instead.")]
-		public static void OpenStudies(string studyLoaderName, string[] studyInstanceUids, WindowBehaviour windowBehaviour)
+		public static IImageViewer OpenStudies(string studyLoaderName, string[] studyInstanceUids, WindowBehaviour windowBehaviour)
 		{
-			OpenStudies(new OpenStudyArgs(studyInstanceUids, null, studyLoaderName, windowBehaviour));
+			return OpenStudies(new OpenStudyArgs(studyInstanceUids, null, studyLoaderName, windowBehaviour));
 		}
 
 		/// <summary>
 		/// Launches a new <see cref="ImageViewerComponent"/> with the specified studies.
 		/// </summary>
 		/// <param name="openStudyArgs">The <see cref="OpenStudyArgs"/> object containing information about the studies to be opened.</param>
-		public static void OpenStudies(OpenStudyArgs openStudyArgs)
+		public static IImageViewer OpenStudies(OpenStudyArgs openStudyArgs)
 		{
 			CodeClock codeClock = new CodeClock();
 			codeClock.Start();
@@ -162,6 +162,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			codeClock.Stop();
 			string message = String.Format("TTFI: {0}", codeClock.ToString());
 			Platform.Log(LogLevel.Info, message);
+
+			return imageViewer;
 		}
 
 		private static ImageViewerComponent OpenStudiesInternal(OpenStudyArgs openStudyArgs)

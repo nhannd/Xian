@@ -49,6 +49,7 @@ namespace ClearCanvas.Dicom.Audit
 			AuditMessage.EventIdentification = new EventIdentificationType();
 			AuditMessage.EventIdentification.EventID = CodedValueType.Import;
 			AuditMessage.EventIdentification.EventActionCode = EventIdentificationTypeEventActionCode.C;
+			AuditMessage.EventIdentification.EventActionCodeSpecified = true;
 			AuditMessage.EventIdentification.EventDateTime = Platform.Time.ToUniversalTime();
 			AuditMessage.EventIdentification.EventOutcomeIndicator = outcome;
 

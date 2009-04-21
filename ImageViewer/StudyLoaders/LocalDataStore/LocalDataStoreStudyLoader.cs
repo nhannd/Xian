@@ -32,6 +32,8 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.DataStore;
 using System;
@@ -52,14 +54,28 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
     		_sops = null;
 
-			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+    		EventResult result = EventResult.Success;
+			AuditedInstances loadedInstances = new AuditedInstances();
+			try
 			{
-				IStudy study = reader.GetStudy(studyLoaderArgs.StudyInstanceUid);
-				if (study == null)
-					throw new Exception("The specified study does not exist.");
+				using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+				{
+					IStudy study = reader.GetStudy(studyLoaderArgs.StudyInstanceUid);
+					if (study == null)
+					{
+						result = EventResult.MajorFailure;
+						loadedInstances.AddInstance(studyLoaderArgs.StudyInstanceUid);
+						throw new Exception("The specified study does not exist.");
+					}
+					loadedInstances.AddInstance(study.PatientId, study.PatientsName, study.StudyInstanceUid);
 
-				_sops = study.GetSopInstances().GetEnumerator();
-				return study.NumberOfStudyRelatedInstances;
+					_sops = study.GetSopInstances().GetEnumerator();
+					return study.NumberOfStudyRelatedInstances;
+				}
+			}
+			finally
+			{
+				AuditHelper.LogOpenStudies("Load Studies", new string[] {DicomServerConfigurationHelper.AETitle}, loadedInstances, EventSource.CurrentUser, result);
 			}
 		}
 

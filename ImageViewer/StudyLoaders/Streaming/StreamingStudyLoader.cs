@@ -7,6 +7,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Xml;
 using ClearCanvas.ImageViewer.Services.ServerTree;
@@ -29,13 +30,26 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			ApplicationEntity ae = studyLoaderArgs.Server as ApplicationEntity;
 			_ae = ae;
 
-			XmlDocument doc = RetrieveHeaderXml(studyLoaderArgs);
-			StudyXml studyXml = new StudyXml();
-			studyXml.SetMemento(doc);
+			EventResult result = EventResult.Success;
+			AuditedInstances loadedInstances = new AuditedInstances();
+			try
+			{
 
-			_instances = GetInstances(studyXml).GetEnumerator();
+				XmlDocument doc = RetrieveHeaderXml(studyLoaderArgs);
+				StudyXml studyXml = new StudyXml();
+				studyXml.SetMemento(doc);
 
-			return studyXml.NumberOfStudyRelatedInstances;
+				_instances = GetInstances(studyXml).GetEnumerator();
+
+				loadedInstances.AddInstance(studyXml.PatientId, studyXml.PatientsName, studyXml.StudyInstanceUid);
+
+				return studyXml.NumberOfStudyRelatedInstances;
+
+			} 
+			finally 
+			{
+				AuditHelper.LogOpenStudies("Load Studies", new string[] { ae.AETitle }, loadedInstances, EventSource.CurrentUser, result);
+			}
 		}
 
 		private IEnumerable<InstanceXml> GetInstances(StudyXml studyXml)

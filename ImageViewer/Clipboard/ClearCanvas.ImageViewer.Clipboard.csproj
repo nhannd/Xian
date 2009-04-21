@@ -123,6 +123,11 @@
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
+      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
+      <Name>ClearCanvas.ImageViewer.Services</Name>
+      <Private>False</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\CopyToClipboardToolLarge.png" />

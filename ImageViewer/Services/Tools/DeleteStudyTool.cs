@@ -35,6 +35,8 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Services.Auditing;
+using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
@@ -111,6 +113,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 							});
 
 				context.Complete(null);
+
+				AuditedInstances deletedInstances = new AuditedInstances();
+				((List<string>) context.UserState).ForEach(delegate(string studyInstanceUid) { deletedInstances.AddInstance(studyInstanceUid); });
+				AuditHelper.LogDeleteStudies("Delete", DicomServerConfigurationHelper.AETitle, deletedInstances, EventSource.CurrentUser, EventResult.Success);
 			}
 			catch(Exception e)
 			{
