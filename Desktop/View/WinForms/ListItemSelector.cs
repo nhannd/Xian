@@ -49,6 +49,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private event EventHandler _itemAdded;
         private event EventHandler _itemRemoved;
 
+    	private bool _readOnly;
+
         #endregion
 
         #region Constructor
@@ -82,6 +84,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 		}
 
         #region Public Properties
+
+		/// <summary>
+		/// Gets or sets whether or not the component is read only.  When true, the add item and remove item buttons are disabled.
+		/// </summary>
+    	public bool ReadOnly
+    	{
+			get { return _readOnly; }
+			set
+			{
+				_addItemButton.Enabled = !value;
+				_removeItemButton.Enabled = !value;
+			}
+    	}
 
         /// <summary>
         /// Indicates if toolbars should be displayed
@@ -220,6 +235,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void AddSelection(object sender, EventArgs e)
         {
+			if (_readOnly)
+				return;
+
 			int oldFirstDisplayedScrollingRowIndex = 0;
 			if (_availableItems.Table.Items.Count != 0)
 				oldFirstDisplayedScrollingRowIndex = _availableItems.FirstDisplayedScrollingRowIndex;
@@ -250,6 +268,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void RemoveSelection(object sender, EventArgs e)
         {
+			if (_readOnly)
+				return;
+
 			int oldFirstDisplayedScrollingRowIndex = 0;
 			if(_selectedItems.Table.Items.Count != 0)
 				oldFirstDisplayedScrollingRowIndex = _selectedItems.FirstDisplayedScrollingRowIndex;

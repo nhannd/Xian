@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client
     /// StaffStaffGroupEditorComponent class
     /// </summary>
     [AssociateView(typeof(StaffStaffGroupEditorComponentViewExtensionPoint))]
-    public class StaffStaffGroupEditorComponent : ApplicationComponent
+    public abstract class StaffStaffGroupEditorComponent : ApplicationComponent
     {
         class StaffGroupTable : Table<StaffGroupSummary>
         {
@@ -64,22 +64,24 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+    	private readonly bool _readOnly;
         private readonly StaffGroupTable _availableGroups;
         private readonly StaffGroupTable _selectedGroups;
 
 		/// <summary>
 		/// Protected constructor.
 		/// </summary>
-		protected StaffStaffGroupEditorComponent()
-			: this(new StaffGroupSummary[0], new StaffGroupSummary[0])
+		protected StaffStaffGroupEditorComponent(bool readOnly)
+			: this(new StaffGroupSummary[0], new StaffGroupSummary[0], readOnly)
 		{
 		}
 
         /// <summary>
         /// Constructs an editor to edit an existing staff profile
         /// </summary>
-        public StaffStaffGroupEditorComponent(IList<StaffGroupSummary> groups, IList<StaffGroupSummary> groupChoices)
+        public StaffStaffGroupEditorComponent(IList<StaffGroupSummary> groups, IList<StaffGroupSummary> groupChoices, bool readOnly)
         {
+			_readOnly = readOnly;
             _selectedGroups = new StaffGroupTable();
 			_availableGroups = new StaffGroupTable();
 
@@ -92,6 +94,11 @@ namespace ClearCanvas.Ris.Client
         }
 
         #region Presentation Model
+
+    	public bool ReadOnly
+    	{
+			get { return _readOnly; }
+    	}
 
         public ITable AvailableGroupsTable
         {
@@ -128,6 +135,34 @@ namespace ClearCanvas.Ris.Client
 						delegate(StaffGroupSummary y) { return x.StaffGroupRef.Equals(y.StaffGroupRef, true); });
 				}));
 		}
-
 	}
+
+	/// <summary>
+	/// Staff Group Editor that shows only non-elective staff groups.
+	/// </summary>
+	public class StaffNonElectiveStaffGroupEditorComponent : StaffStaffGroupEditorComponent
+	{
+		public StaffNonElectiveStaffGroupEditorComponent(IList<StaffGroupSummary> groups, IList<StaffGroupSummary> groupChoices, bool readOnly)
+			: base(groups, groupChoices, readOnly)
+        {
+			Initialize(
+				CollectionUtils.Reject(groups, delegate(StaffGroupSummary g) { return g.IsElective; }),
+				CollectionUtils.Reject(groupChoices, delegate(StaffGroupSummary g) { return g.IsElective; }));
+        }
+	}
+
+	/// <summary>
+	/// Staff Group Editor that shows only elective staff groups.
+	/// </summary>
+	public class StaffElectiveStaffGroupEditorComponent : StaffStaffGroupEditorComponent
+	{
+		public StaffElectiveStaffGroupEditorComponent(IList<StaffGroupSummary> groups, IList<StaffGroupSummary> groupChoices, bool readOnly)
+			: base(groups, groupChoices, readOnly)
+        {
+			Initialize(
+				CollectionUtils.Select(groups, delegate(StaffGroupSummary g) { return g.IsElective; }),
+				CollectionUtils.Select(groupChoices, delegate(StaffGroupSummary g) { return g.IsElective; }));
+        }
+	}
+
 }

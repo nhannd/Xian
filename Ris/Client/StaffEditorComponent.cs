@@ -33,17 +33,41 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
-using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using ClearCanvas.Enterprise.Common.Admin.UserAdmin;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
+	[MenuAction("launch", "global-menus/MenuTools/Edit Staff Detail", "Launch")]
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class StaffEditorTool : Tool<IDesktopToolContext>
+	{
+		public void Launch()
+		{
+			try
+			{
+				StaffEditorComponent component = new StaffEditorComponent(LoginSession.Current.Staff.StaffRef);
+
+				ApplicationComponent.LaunchAsDialog(
+					this.Context.DesktopWindow,
+					component,
+					SR.TitleStaff);
+			}
+			catch (Exception e)
+			{
+				// could not launch component
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
+		}
+	}
+
 	/// <summary>
 	/// Defines an interface for providing custom editing pages to be displayed in the staff editor.
 	/// </summary>
@@ -111,6 +135,7 @@ namespace ClearCanvas.Ris.Client
 
 		private EntityRef _staffRef;
 		private StaffDetail _staffDetail;
+		private string _staffUserName;
 
 		// return values for staff
 		private StaffSummary _staffSummary;
@@ -122,7 +147,8 @@ namespace ClearCanvas.Ris.Client
 		private AddressesSummaryComponent _addressesSummary;
 
 		private StaffDetailsEditorComponent _detailsEditor;
-		private StaffStaffGroupEditorComponent _groupsEditor;
+		private StaffStaffGroupEditorComponent _nonElectiveGroupsEditor;
+		private StaffStaffGroupEditorComponent _electiveGroupsEditor;
 
 		private List<IStaffEditorPage> _extensionPages;
 
@@ -173,6 +199,8 @@ namespace ClearCanvas.Ris.Client
 						_staffDetail = response.StaffDetail;
 					}
 
+					_staffUserName = _staffDetail.UserName;
+
 					this.Pages.Add(new NavigatorPage("Staff", _detailsEditor = new StaffDetailsEditorComponent(formDataResponse.StaffTypeChoices, formDataResponse.SexChoices)));
 					this.Pages.Add(new NavigatorPage("Staff/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
 					this.Pages.Add(new NavigatorPage("Staff/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
@@ -187,11 +215,11 @@ namespace ClearCanvas.Ris.Client
 					_addressesSummary.Subject = _staffDetail.Addresses;
 					_emailAddressesSummary.Subject = _staffDetail.EmailAddresses;
 
-					// allow modification of groups only iff the user has StaffGroup admin permissions
-					if (Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup))
-					{
-						this.Pages.Add(new NavigatorPage("Staff/Groups", _groupsEditor = new StaffStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices)));
-					}
+					// allow modification of non-elective groups only iff the user has StaffGroup admin permissions
+					bool nonElectiveGroupsReadOnly = Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup) == false;
+					string nonElectiveGroupsPageTitle = nonElectiveGroupsReadOnly ? "Staff/Groups (read only)" : "Staff/Groups";
+					this.Pages.Add(new NavigatorPage(nonElectiveGroupsPageTitle, _nonElectiveGroupsEditor = new StaffNonElectiveStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices, nonElectiveGroupsReadOnly)));
+					this.Pages.Add(new NavigatorPage("Staff/Elective Groups", _electiveGroupsEditor = new StaffElectiveStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices, false)));
 				});
 
 			// instantiate all extension pages
@@ -229,10 +257,15 @@ namespace ClearCanvas.Ris.Client
 				// give extension pages a chance to save data prior to commit
 				_extensionPages.ForEach(delegate(IStaffEditorPage page) { page.Save(); });
 
-				// update groups
-				if (_groupsEditor != null)
+				// update non-elective groups
+				_staffDetail.Groups = _nonElectiveGroupsEditor != null 
+					? new List<StaffGroupSummary>(_nonElectiveGroupsEditor.SelectedItems)
+					: new List<StaffGroupSummary>();
+
+				// update elective groups
+				if (_electiveGroupsEditor!= null)
 				{
-					_staffDetail.Groups = new List<StaffGroupSummary>(_groupsEditor.SelectedItems);
+					_staffDetail.Groups.AddRange(_electiveGroupsEditor.SelectedItems);
 				}
 
 				// add or update staff
@@ -254,7 +287,7 @@ namespace ClearCanvas.Ris.Client
 					});
 
 				// if necessary, update associated user account
-				if(!string.IsNullOrEmpty(_staffDetail.UserName))
+				if(_staffUserName != _staffDetail.UserName)
 				{
 					UpdateUserAccount(_staffDetail.UserName, _staffSummary);
 				}

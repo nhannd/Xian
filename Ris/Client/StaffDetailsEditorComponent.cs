@@ -30,6 +30,7 @@
 #endregion
 
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
@@ -86,6 +87,11 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		#region Presentation Model
+
+		public bool ReadOnly
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Staff) == false; }
+		}
 
         [ValidateNotNull]
         public string StaffType

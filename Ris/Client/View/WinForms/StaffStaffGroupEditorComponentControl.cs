@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _staffGroupSelector.SelectedItemsTable = _component.SelectedGroupsTable;
             _staffGroupSelector.ItemAdded += OnItemsAddedOrRemoved;
             _staffGroupSelector.ItemRemoved += OnItemsAddedOrRemoved;
-
+        	_staffGroupSelector.ReadOnly = _component.ReadOnly;
         }
 
         private void OnItemsAddedOrRemoved(object sender, EventArgs args)

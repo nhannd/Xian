@@ -66,6 +66,22 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
 			_billingNumber.DataBindings.Add("Value", _component, "BillingNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			SetReadOnlyMode(_component.ReadOnly);
+		}
+
+		private void SetReadOnlyMode(bool readOnly)
+		{
+			_familyName.ReadOnly = readOnly;
+			_givenName.ReadOnly = readOnly;
+			_middleName.ReadOnly = readOnly;
+			_staffId.ReadOnly = readOnly;
+			_title.ReadOnly = readOnly;
+			_licenseNumber.ReadOnly = readOnly;
+			_billingNumber.ReadOnly = readOnly;
+
+			_sex.Enabled = !readOnly;
+			_staffType.Enabled = !readOnly;
 		}
 	}
 }
