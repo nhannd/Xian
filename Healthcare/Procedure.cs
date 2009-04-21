@@ -161,7 +161,7 @@ namespace ClearCanvas.Healthcare
                         return Nullable.Compare(mps1.EndTime, mps2.EndTime);
                     });
 
-            	return maxMps != null ? maxMps.EndTime : null;
+                return maxMps != null ? maxMps.EndTime : null;
             }
         }
 
@@ -311,41 +311,41 @@ namespace ClearCanvas.Healthcare
             UpdateEndTime();
         }
 
-		/// <summary>
-		/// Gets the full history of this procedure, including procedure steps that 
-		/// are associated indirectly via linked workflows.
-		/// </summary>
-		/// <returns></returns>
-		public virtual List<ProcedureStep> GetWorkflowHistory()
-		{
-			List<ProcedureStep> x = new List<ProcedureStep>(_procedureSteps);
-			List<ProcedureStep> history = new List<ProcedureStep>(x);
-			while(x.Count > 0)
-			{
-				// obtain all procedure steps that are linked via steps in x
-				List<ProcedureStep> y = 
-					CollectionUtils.Concat<ProcedureStep>(
-						CollectionUtils.Map<ProcedureStep, List<ProcedureStep>>(
-							x,
-							delegate(ProcedureStep step)
-							{
-								return step.IsLinked ? step.LinkStep.GetRelatedProcedureSteps() : new List<ProcedureStep>();
-							}).ToArray());
+        /// <summary>
+        /// Gets the full history of this procedure, including procedure steps that 
+        /// are associated indirectly via linked workflows.
+        /// </summary>
+        /// <returns></returns>
+        public virtual List<ProcedureStep> GetWorkflowHistory()
+        {
+            List<ProcedureStep> x = new List<ProcedureStep>(_procedureSteps);
+            List<ProcedureStep> history = new List<ProcedureStep>(x);
+            while(x.Count > 0)
+            {
+                // obtain all procedure steps that are linked via steps in x
+                List<ProcedureStep> y = 
+                    CollectionUtils.Concat<ProcedureStep>(
+                        CollectionUtils.Map<ProcedureStep, List<ProcedureStep>>(
+                            x,
+                            delegate(ProcedureStep step)
+                            {
+                                return step.IsLinked ? step.LinkStep.GetRelatedProcedureSteps() : new List<ProcedureStep>();
+                            }).ToArray());
 
-				history.AddRange(y);
+                history.AddRange(y);
 
-				// set x = y so that the next time through the loop,
-				// we follow the next level of linking
-				x = y;
-			}
-			return history;
-		}
+                // set x = y so that the next time through the loop,
+                // we follow the next level of linking
+                x = y;
+            }
+            return history;
+        }
 
         #endregion
 
         #region Helper methods
 
-		/// <summary>
+        /// <summary>
         /// Called by a child procedure step to complete this procedure.
         /// </summary>
         protected internal virtual void Complete(DateTime completeTime)
@@ -355,13 +355,13 @@ namespace ClearCanvas.Healthcare
 
             SetStatus(ProcedureStatus.CM);
 
-			// over-write the end-time with actual completed time
-			// TODO: this is a bit of a hack to deal with linked procedures, and the fact that
-			// the final ProcedureStep may not exist in our ProcedureSteps collection, 
-			// if this procedure was linked to another for reporting.
-			// Ideally we should get rid of this at some point, when we build in better tracking
-			// of procedure linkages
-			_endTime = completeTime;
+            // over-write the end-time with actual completed time
+            // TODO: this is a bit of a hack to deal with linked procedures, and the fact that
+            // the final ProcedureStep may not exist in our ProcedureSteps collection, 
+            // if this procedure was linked to another for reporting.
+            // Ideally we should get rid of this at some point, when we build in better tracking
+            // of procedure linkages
+            _endTime = completeTime;
         }
 
         /// <summary>
@@ -467,6 +467,10 @@ namespace ClearCanvas.Healthcare
 
                 if (this.IsTerminated)
                     UpdateEndTime();
+
+                // Cancelled/discontinued procedures should not be left in downtime recovery mode.
+                if (_status == ProcedureStatus.CA || _status == ProcedureStatus.DC)
+                    this.DowntimeRecoveryMode = false;
 
                 // the order should never be null, unless this is a brand new instance that has not yet been assigned an order
                 if (_order != null)
