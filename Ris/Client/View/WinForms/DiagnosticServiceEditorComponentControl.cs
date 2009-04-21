@@ -38,7 +38,6 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Ris.Client.Admin;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {

@@ -31,43 +31,44 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Text;
+using System.Windows.Forms;
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="WorklistTimeWindowEditorComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="WorklistSelectorEditorComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(WorklistTimeWindowEditorComponentViewExtensionPoint))]
-    public class WorklistTimeWindowEditorComponentView : WinFormsView, IApplicationComponentView
+    public partial class WorklistSelectorEditorComponentControl : ApplicationComponentUserControl
     {
-        private WorklistTimeWindowEditorComponent _component;
-        private WorklistTimeWindowEditorComponentControl _control;
+        private WorklistSelectorEditorComponent _component;
 
-
-        #region IApplicationComponentView Members
-
-        public void SetComponent(IApplicationComponent component)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public WorklistSelectorEditorComponentControl(WorklistSelectorEditorComponent component)
+            :base(component)
         {
-            _component = (WorklistTimeWindowEditorComponent)component;
+            InitializeComponent();
+
+            _component = component;
+
+            _usersSelector.AvailableItemsTable = _component.AvailableItemsTable;
+            _usersSelector.SelectedItemsTable = _component.SelectedItemsTable;
+            _usersSelector.ItemAdded += OnItemsAddedOrRemoved;
+            _usersSelector.ItemRemoved += OnItemsAddedOrRemoved;
+
         }
 
-        #endregion
-
-        public override object GuiElement
+        private void OnItemsAddedOrRemoved(object sender, EventArgs args)
         {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new WorklistTimeWindowEditorComponentControl(_component);
-                }
-                return _control;
-            }
+            _component.ItemsAddedOrRemoved();
         }
+
     }
 }

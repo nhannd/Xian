@@ -35,34 +35,51 @@ namespace ClearCanvas.Ris.Client
 
 		public bool AddEnabled
 		{
-			//TODO: add more conditions
 			get { return this.Context.SelectedFolderSystem is IWorklistFolderSystem; }
 		}
 
 		public bool EditEnabled
 		{
-			//TODO: add more conditions
-			get { return this.Context.SelectedFolderSystem is IWorklistFolderSystem; }
+			get { return CanEdit(this.Context.SelectedFolder); }
 		}
 
 		public bool DeleteEnabled
 		{
 			//TODO: add more conditions
-			get { return this.Context.SelectedFolderSystem is IWorklistFolderSystem; }
+			get { return CanDelete(this.Context.SelectedFolder); }
 		}
 
 
 		public void Add()
 		{
-			
+			WorklistEditorComponent editor = new WorklistEditorComponent();
+			ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "New Worklist");
 		}
+
 		public void Edit()
 		{
-
+			if(CanEdit(this.Context.SelectedFolder))
+			{
+				IWorklistFolder folder = (IWorklistFolder)this.Context.SelectedFolder;
+				WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, false);
+				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "Edit Worklist");
+			}
 		}
+
 		public void Delete()
 		{
 
+		}
+
+		private bool CanEdit(IFolder folder)
+		{
+			IWorklistFolder wf = folder as IWorklistFolder;
+			return wf != null && !wf.IsStatic;
+		}
+
+		private bool CanDelete(IFolder folder)
+		{
+			return false;
 		}
 	}
 }

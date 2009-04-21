@@ -31,43 +31,51 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Text;
+using System.Windows.Forms;
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="WorklistSelectorEditorComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="WorklistDetailEditorComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(WorklistSelectorEditorComponentViewExtensionPoint))]
-    public class WorklistSelectorEditorComponentView : WinFormsView, IApplicationComponentView
+    public partial class WorklistDetailEditorComponentControl : ApplicationComponentUserControl
     {
-        private WorklistSelectorEditorComponent _component;
-        private WorklistSelectorEditorComponentControl _control;
+        private WorklistDetailEditorComponent _component;
 
-
-        #region IApplicationComponentView Members
-
-        public void SetComponent(IApplicationComponent component)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public WorklistDetailEditorComponentControl(WorklistDetailEditorComponent component)
+            :base(component)
         {
-            _component = (WorklistSelectorEditorComponent)component;
+            InitializeComponent();
+
+            _component = component;
+
+            _name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
+            _description.DataBindings.Add("Value", _component, "Description", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _worklistClass.DataBindings.Add("Value", _component, "WorklistClassName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _classDescription.DataBindings.Add("Value", _component, "WorklistClassDescription", true, DataSourceUpdateMode.OnPropertyChanged);
+            _okButton.DataBindings.Add("Visible", _component, "AcceptButtonVisible", true, DataSourceUpdateMode.Never);
+            _cancelButton.DataBindings.Add("Visible", _component, "CancelButtonVisible", true, DataSourceUpdateMode.Never);
+
         }
 
-        #endregion
-
-        public override object GuiElement
+        private void _okButton_Click(object sender, EventArgs e)
         {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new WorklistSelectorEditorComponentControl(_component);
-                }
-                return _control;
-            }
+            _component.Accept();
+        }
+
+        private void _cancelButton_Click(object sender, EventArgs e)
+        {
+            _component.Cancel();
         }
     }
 }

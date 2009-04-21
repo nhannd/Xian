@@ -37,23 +37,23 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="WorklistMultiDetailEditorComponent"/>
+    /// Provides a Windows Forms view onto <see cref="WorklistTimeWindowEditorComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(WorklistMultiDetailEditorComponentViewExtensionPoint))]
-    public class WorklistMultiDetailEditorComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(WorklistTimeWindowEditorComponentViewExtensionPoint))]
+    public class WorklistTimeWindowEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        private WorklistMultiDetailEditorComponent _component;
-        private WorklistMultiDetailEditorComponentControl _control;
+        private WorklistTimeWindowEditorComponent _component;
+        private WorklistTimeWindowEditorComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (WorklistMultiDetailEditorComponent)component;
+            _component = (WorklistTimeWindowEditorComponent)component;
         }
 
         #endregion
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new WorklistMultiDetailEditorComponentControl(_component);
+                    _control = new WorklistTimeWindowEditorComponentControl(_component);
                 }
                 return _control;
             }

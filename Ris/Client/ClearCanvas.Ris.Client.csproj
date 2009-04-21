@@ -152,6 +152,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PublishReportComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="RelativeTime.cs" />
     <Compile Include="SearchResultsFolder.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SessionManagerTool.cs" />
@@ -174,6 +175,9 @@
     <Compile Include="VisitSummaryTable.cs" />
     <Compile Include="WeakSearchCriteriaException.cs" />
     <Compile Include="WorkflowHistoryComponent.cs" />
+    <Compile Include="WorklistDetailEditorComponent.cs" />
+    <Compile Include="WorklistEditorComponent.cs" />
+    <Compile Include="WorklistFilterEditorComponent.cs" />
     <Compile Include="WorklistItemPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />
     <Compile Include="IFolderSystemContext.cs" />
@@ -297,6 +301,9 @@
     <Compile Include="WorkflowItemTool.cs" />
     <Compile Include="WorklistFolder.cs" />
     <Compile Include="WorklistFolderSystem.cs" />
+    <Compile Include="WorklistMultiDetailEditorComponent.cs" />
+    <Compile Include="WorklistSelectorEditorComponent.cs" />
+    <Compile Include="WorklistTimeWindowEditorComponent.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

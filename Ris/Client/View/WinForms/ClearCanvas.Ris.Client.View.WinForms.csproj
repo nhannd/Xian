@@ -401,6 +401,41 @@
       <DependentUpon>WorkflowHistoryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WorkflowHistoryComponentView.cs" />
+    <Compile Include="WorklistDetailEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistDetailEditorComponentControl.Designer.cs">
+      <DependentUpon>WorklistDetailEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistDetailEditorComponentView.cs" />
+    <Compile Include="WorklistFilterEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistFilterEditorComponentControl.Designer.cs">
+      <DependentUpon>WorklistFilterEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistFilterEditorComponentView.cs" />
+    <Compile Include="WorklistMultiDetailEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistMultiDetailEditorComponentControl.Designer.cs">
+      <DependentUpon>WorklistMultiDetailEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistMultiDetailEditorComponentView.cs" />
+    <Compile Include="WorklistSelectorEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistSelectorEditorComponentControl.Designer.cs">
+      <DependentUpon>WorklistSelectorEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistSelectorEditorComponentView.cs" />
+    <Compile Include="WorklistTimeWindowEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistTimeWindowEditorComponentControl.Designer.cs">
+      <DependentUpon>WorklistTimeWindowEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistTimeWindowEditorComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -655,6 +690,26 @@
     <EmbeddedResource Include="WorkflowHistoryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>WorkflowHistoryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistDetailEditorComponentControl.resx">
+      <DependentUpon>WorklistDetailEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistFilterEditorComponentControl.resx">
+      <DependentUpon>WorklistFilterEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistMultiDetailEditorComponentControl.resx">
+      <DependentUpon>WorklistMultiDetailEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistSelectorEditorComponentControl.resx">
+      <DependentUpon>WorklistSelectorEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistTimeWindowEditorComponentControl.resx">
+      <DependentUpon>WorklistTimeWindowEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

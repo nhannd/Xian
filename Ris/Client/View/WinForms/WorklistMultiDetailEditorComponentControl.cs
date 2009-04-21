@@ -31,43 +31,47 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Text;
+using System.Windows.Forms;
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="WorklistDetailEditorComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="WorklistMultiDetailEditorComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(WorklistDetailEditorComponentViewExtensionPoint))]
-    public class WorklistDetailEditorComponentView : WinFormsView, IApplicationComponentView
+    public partial class WorklistMultiDetailEditorComponentControl : ApplicationComponentUserControl
     {
-        private WorklistDetailEditorComponent _component;
-        private WorklistDetailEditorComponentControl _control;
+        private WorklistMultiDetailEditorComponent _component;
 
-
-        #region IApplicationComponentView Members
-
-        public void SetComponent(IApplicationComponent component)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public WorklistMultiDetailEditorComponentControl(WorklistMultiDetailEditorComponent component)
+            :base(component)
         {
-            _component = (WorklistDetailEditorComponent)component;
+            InitializeComponent();
+
+            _component = component;
+
+            _worklistCategory.DataSource = _component.CategoryChoices;
+            _worklistCategory.DataBindings.Add("Value", _component, "SelectedCategory", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _defaultName.DataBindings.Add("Value", _component, "DefaultWorklistName", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _worklistClassTableView.MenuModel = _component.WorklistActionModel;
+            _worklistClassTableView.ToolbarModel = _component.WorklistActionModel;
+            _worklistClassTableView.Table = _component.WorklistTable;
+            _worklistClassTableView.DataBindings.Add("Selection", _component, "SelectedWorklist", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
-        #endregion
-
-        public override object GuiElement
+        private void _worklistClassTableView_ItemDoubleClicked(object sender, EventArgs e)
         {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new WorklistDetailEditorComponentControl(_component);
-                }
-                return _control;
-            }
+            _component.EditSelectedWorklist();
         }
     }
 }

@@ -439,56 +439,11 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Days.
-        /// </summary>
-        internal static string DummyItemDays {
-            get {
-                return ResourceManager.GetString("DummyItemDays", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Hours.
-        /// </summary>
-        internal static string DummyItemHours {
-            get {
-                return ResourceManager.GetString("DummyItemHours", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to (None).
         /// </summary>
         internal static string DummyItemNone {
             get {
                 return ResourceManager.GetString("DummyItemNone", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Non-Portable.
-        /// </summary>
-        internal static string DummyItemNonPortable {
-            get {
-                return ResourceManager.GetString("DummyItemNonPortable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Portable.
-        /// </summary>
-        internal static string DummyItemPortable {
-            get {
-                return ResourceManager.GetString("DummyItemPortable", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to (Working Facility).
-        /// </summary>
-        internal static string DummyItemWorkingFacility {
-            get {
-                return ResourceManager.GetString("DummyItemWorkingFacility", resourceCulture);
             }
         }
         
@@ -619,15 +574,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to save Worklist.
-        /// </summary>
-        internal static string ExceptionSaveWorklist {
-            get {
-                return ResourceManager.GetString("ExceptionSaveWorklist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         internal static string LabelEdit {
@@ -682,24 +628,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &apos;To&apos; must be later or equal to &apos;From&apos;.
-        /// </summary>
-        internal static string MessageEndTimeMustBeGreaterOrEqualStartTime {
-            get {
-                return ResourceManager.GetString("MessageEndTimeMustBeGreaterOrEqualStartTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &apos;To&apos; must be later than &apos;From&apos;.
-        /// </summary>
-        internal static string MessageEndTimeMustBeGreaterThanStartTime {
-            get {
-                return ResourceManager.GetString("MessageEndTimeMustBeGreaterThanStartTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Contains invalid characters.
         /// </summary>
         internal static string MessageEnumCodeContainsInvalidChars {
@@ -750,78 +678,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string MessageWorklistMustHaveName {
             get {
                 return ResourceManager.GetString("MessageWorklistMustHaveName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Filters.
-        /// </summary>
-        internal static string NodeFilters {
-            get {
-                return ResourceManager.GetString("NodeFilters", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Group Subscribers.
-        /// </summary>
-        internal static string NodeGroupSubscribers {
-            get {
-                return ResourceManager.GetString("NodeGroupSubscribers", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Individual Subscribers.
-        /// </summary>
-        internal static string NodeIndividualSubscribers {
-            get {
-                return ResourceManager.GetString("NodeIndividualSubscribers", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Patient Locations.
-        /// </summary>
-        internal static string NodePatientLocations {
-            get {
-                return ResourceManager.GetString("NodePatientLocations", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Procedure Type Groups.
-        /// </summary>
-        internal static string NodeProcedureTypeGroups {
-            get {
-                return ResourceManager.GetString("NodeProcedureTypeGroups", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Time Window.
-        /// </summary>
-        internal static string NodeTimeWindow {
-            get {
-                return ResourceManager.GetString("NodeTimeWindow", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Worklist.
-        /// </summary>
-        internal static string NodeWorklist {
-            get {
-                return ResourceManager.GetString("NodeWorklist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string String1 {
-            get {
-                return ResourceManager.GetString("String1", resourceCulture);
             }
         }
         

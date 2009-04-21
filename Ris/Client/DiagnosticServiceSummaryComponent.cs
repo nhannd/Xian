@@ -7,12 +7,10 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Client.Admin;
 
 namespace ClearCanvas.Ris.Client
 {

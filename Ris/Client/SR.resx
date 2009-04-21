@@ -366,8 +366,23 @@
   <data name="ColumnWorkPhone" xml:space="preserve">
     <value>Work Phone</value>
   </data>
+  <data name="DummyItemDays" xml:space="preserve">
+    <value>Days</value>
+  </data>
+  <data name="DummyItemHours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
   <data name="DummyItemNone" xml:space="preserve">
-    <value>None</value>
+    <value>(None)</value>
+  </data>
+  <data name="DummyItemNonPortable" xml:space="preserve">
+    <value>Non-Portable</value>
+  </data>
+  <data name="DummyItemPortable" xml:space="preserve">
+    <value>Portable</value>
+  </data>
+  <data name="DummyItemWorkingFacility" xml:space="preserve">
+    <value>(Working Facility)</value>
   </data>
   <data name="ExceptioinFailedToDeleteTemporaryFiles" xml:space="preserve">
     <value>Failed to delete temporary files</value>
@@ -413,6 +428,9 @@
   </data>
   <data name="ExceptionSaveStaff" xml:space="preserve">
     <value>Unable to save Staff</value>
+  </data>
+  <data name="ExceptionSaveWorklist" xml:space="preserve">
+    <value>Unable to save Worklist</value>
   </data>
   <data name="ExceptionWeakSearchCriteria" xml:space="preserve">
     <value>Search criteria would return too many results.  Try repeating the search with different criteria.</value>
@@ -513,6 +531,12 @@
   <data name="MessageDowntimeOrderNote" xml:space="preserve">
     <value>This order is a downtime recovery order.</value>
   </data>
+  <data name="MessageEndTimeMustBeGreaterOrEqualStartTime" xml:space="preserve">
+    <value>'To' must be later or equal to 'From'</value>
+  </data>
+  <data name="MessageEndTimeMustBeGreaterThanStartTime" xml:space="preserve">
+    <value>'To' must be later than 'From'</value>
+  </data>
   <data name="MessageExternalPractitionerContactPointNotUnique" xml:space="preserve">
     <value>A contact point with the name '{0}' already exists.  Please enter a different name.</value>
   </data>
@@ -554,6 +578,30 @@
   </data>
   <data name="MessageUnknownErrorCommunicatingWithServer" xml:space="preserve">
     <value>An unknown error occured while attempting to communicate with the server.  See log for details.</value>
+  </data>
+  <data name="MessageWorklistMustHaveName" xml:space="preserve">
+    <value>Worklist must have a name.</value>
+  </data>
+  <data name="NodeFilters" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="NodeGroupSubscribers" xml:space="preserve">
+    <value>Group Subscribers</value>
+  </data>
+  <data name="NodeIndividualSubscribers" xml:space="preserve">
+    <value>Individual Subscribers</value>
+  </data>
+  <data name="NodePatientLocations" xml:space="preserve">
+    <value>Patient Locations</value>
+  </data>
+  <data name="NodeProcedureTypeGroups" xml:space="preserve">
+    <value>Procedure Type Groups</value>
+  </data>
+  <data name="NodeTimeWindow" xml:space="preserve">
+    <value>Time Window</value>
+  </data>
+  <data name="NodeWorklist" xml:space="preserve">
+    <value>Worklist</value>
   </data>
   <data name="OrderNoteCategoryGeneral" xml:space="preserve">
     <value>General</value>
