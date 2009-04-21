@@ -121,6 +121,16 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		[global::System.Configuration.ApplicationScopedSettingAttribute()]
+		[global::System.Configuration.DefaultSettingValueAttribute("worklist-preview.htm")]
+		public string WorklistPreviewPageUrl
+		{
+			get
+			{
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["WorklistPreviewPageUrl"]));
+			}
+		}
+
 		#region Home Page Preview settings
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]

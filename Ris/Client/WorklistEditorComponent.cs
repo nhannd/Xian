@@ -106,6 +106,7 @@ namespace ClearCanvas.Ris.Client
 		private WorklistSelectorEditorComponent<LocationSummary, LocationTable> _locationFilterComponent;
 		private WorklistSelectorEditorComponent<StaffSummary, StaffTable> _staffSubscribersComponent;
         private WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
+    	private WorklistPreviewComponent _previewComponent;
 
         /// <summary>
         /// Constructor to create a new worklist.
@@ -195,11 +196,20 @@ namespace ClearCanvas.Ris.Client
 
             this.Pages.Add(new NavigatorPage("NodeWorklist/NodeGroupSubscribers", _groupSubscribersComponent));
             this.Pages.Add(new NavigatorPage("NodeWorklist/NodeIndividualSubscribers", _staffSubscribersComponent));
+			this.Pages.Add(new NavigatorPage("NodeWorklist/Preview", _previewComponent = new WorklistPreviewComponent(_worklistDetail)));
+
+			this.CurrentPageChanged += WorklistEditorComponent_CurrentPageChanged;
 
             this.ValidationStrategy = new AllComponentsValidationStrategy();
 
             base.Start();
         }
+
+		private void WorklistEditorComponent_CurrentPageChanged(object sender, EventArgs e)
+		{
+			if (this.CurrentPage.Component == _previewComponent)
+				_previewComponent.Refresh();
+		}
 
         private void ProcedureTypeGroupClassChangedEventHandler(object sender, EventArgs e)
         {
