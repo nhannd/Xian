@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			}
 			else
 			{
-				base.Callout.Visible = true;
+				base.Callout.Visible = !string.IsNullOrEmpty(base.Callout.Text);
 				location = PointF.Empty;
 				coordinateSystem = CoordinateSystem.Destination;
 

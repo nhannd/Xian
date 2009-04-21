@@ -289,9 +289,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			{
 				case ShutterType.Polygon:
 					{
-						_primitiveGraphic = new PolyLineGraphic();
+						_primitiveGraphic = new PolylineGraphic();
 						image.OverlayGraphics.Add(_primitiveGraphic);
-						_graphicBuilder = new InteractivePolygonGraphicBuilder((PolyLineGraphic)_primitiveGraphic);
+						_graphicBuilder = new InteractivePolygonGraphicBuilder((PolylineGraphic)_primitiveGraphic);
 						break;
 					}
 				case ShutterType.Circle:
@@ -355,7 +355,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 			else if (_selectedShutterType == ShutterType.Polygon)
 			{
-				PolyLineGraphic polyLine = (PolyLineGraphic)_primitiveGraphic;
+				PolylineGraphic polyLine = (PolylineGraphic)_primitiveGraphic;
 				polyLine.CoordinateSystem = CoordinateSystem.Source;
 
 				List<Point> points = new List<Point>();

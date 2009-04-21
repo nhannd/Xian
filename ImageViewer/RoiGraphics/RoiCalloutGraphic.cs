@@ -150,10 +150,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		public void Update()
 		{
 			RoiGraphic roiGraphic = this.ParentGraphic;
-			if (roiGraphic != null)
-			{
-				this.Update(roiGraphic.CreateRoiInformation(), RoiAnalysisMode.Normal);
-			}
+			this.Update(roiGraphic.CreateRoiInformation(), RoiAnalysisMode.Normal);
 		}
 
 		public void Update(Roi roi)
@@ -173,7 +170,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			if (parent != null && !string.IsNullOrEmpty(parent.Name))
 				builder.AppendLine(parent.Name);
 
-			if (_showAnalysis && _roiAnalyzers.Count > 0)
+			if (_showAnalysis && _roiAnalyzers.Count > 0 && roi != null)
 			{
 				try
 				{
@@ -194,9 +191,13 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 				}
 			}
 
-			string text = builder.ToString().Trim();
-			base.Visible = (text.Length > 0);
-			base.Text = text;
+			base.Text = builder.ToString().Trim();
+		}
+
+		protected override void OnTextChanged(EventArgs e)
+		{
+			base.Visible = !(string.IsNullOrEmpty(base.Text));
+			base.OnTextChanged(e);
 		}
 	}
 }

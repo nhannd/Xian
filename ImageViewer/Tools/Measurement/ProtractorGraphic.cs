@@ -40,7 +40,7 @@ using ClearCanvas.ImageViewer.RoiGraphics;
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
 	[Cloneable]
-	internal class ProtractorGraphic : PolyLineGraphic
+	internal class ProtractorGraphic : PolylineGraphic
 	{
 		[CloneIgnore]
 		private InvariantArcPrimitive _arc;

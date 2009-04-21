@@ -10,6 +10,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 	public class RoiGraphic : AnnotationGraphic
 	{
 		private event EventHandler _roiChanged;
+		private event EventHandler _nameChanged;
 
 		[CloneIgnore]
 		private Roi _roi;
@@ -88,6 +89,12 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			remove { _roiChanged -= value; }
 		}
 
+		public event EventHandler NameChanged
+		{
+			add { _nameChanged += value; }
+			remove { _nameChanged -= value; }
+		}
+
 		public override Roi CreateRoiInformation()
 		{
 			return base.Subject.CreateRoiInformation();
@@ -99,6 +106,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			//Analyze(true);
 			//this.OnRoiChanged();
 			base.OnNameChanged();
+			EventsHelper.Fire(_nameChanged, this, new EventArgs());
 		}
 
 		protected override sealed void OnSubjectChanged()
@@ -146,10 +154,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		private void Analyze(bool responsive)
 		{
 			_roi = base.Subject.CreateRoiInformation();
-			if (_roi != null)
-			{
-				this.Callout.Update(_roi, responsive ? RoiAnalysisMode.Responsive : RoiAnalysisMode.Normal);
-			}
+			this.Callout.Update(_roi, responsive ? RoiAnalysisMode.Responsive : RoiAnalysisMode.Normal);
 		}
 
 		private static void SetTransformValidationPolicy(CompositeGraphic compositeGraphic)
@@ -182,7 +187,7 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 
 		public static RoiGraphic CreatePolygon()
 		{
-			RoiGraphic roiGraphic = new RoiGraphic(new PolygonControlGraphic(true, new MoveControlGraphic(new PolyLineGraphic())));
+			RoiGraphic roiGraphic = new RoiGraphic(new PolygonControlGraphic(true, new MoveControlGraphic(new PolylineGraphic(true))));
 			roiGraphic.State = roiGraphic.CreateInactiveState();
 			return roiGraphic;
 		}

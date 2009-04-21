@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 	public class DefineObliqueTool : MouseImageViewerTool
 	{
 		private MprImageViewerToolHelper _toolHelper;
-		private PolyLineGraphic _polyLine;
+		private PolylineGraphic _polyLine;
 		private InteractivePolylineGraphicBuilder _graphicBuilder;
 		private CompositeUndoableCommand _undoableCommand;
 		private bool _visible;
@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 
 			RemoveGraphic();
 
-			_polyLine = new PolyLineGraphic();
+			_polyLine = new PolylineGraphic();
 
 			StandardStatefulGraphic statefulPolyline = new StandardStatefulGraphic(new VerticesControlGraphic(new MoveControlGraphic(_polyLine)));
 			statefulPolyline.InactiveColor = Color.CornflowerBlue;

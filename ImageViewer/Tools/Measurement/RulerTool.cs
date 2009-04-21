@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		protected override IGraphic CreateGraphic()
 		{
-			return new VerticesControlGraphic(new MoveControlGraphic(new PolyLineGraphic()));
+			return new VerticesControlGraphic(new MoveControlGraphic(new PolylineGraphic()));
 		}
 
 		protected override InteractiveGraphicBuilder CreateGraphicBuilder(IGraphic graphic)

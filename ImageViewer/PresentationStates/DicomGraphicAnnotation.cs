@@ -160,8 +160,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		{
 			foreach (IGraphic graphic in base.Graphics)
 			{
-				if (graphic is PolyLineGraphic)
-					((PolyLineGraphic) graphic).Color = _color;
+				if (graphic is PolylineGraphic)
+					((PolylineGraphic) graphic).Color = _color;
 				else if (graphic is VectorGraphic)
 					((VectorGraphic) graphic).Color = _color;
 				else if (graphic is CalloutGraphic)
@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private static IGraphic CreatePolyline(IList<PointF> vertices)
 		{
-			PolyLineGraphic polyline = new PolyLineGraphic();
+			PolylineGraphic polyline = new PolylineGraphic();
 			for (int n = 0; n < vertices.Count; n++)
 				polyline.Add(vertices[n]);
 			return polyline;

@@ -53,12 +53,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </remarks>
 	[Cloneable]
 	[DicomSerializableGraphicAnnotation(typeof (PolylineGraphicAnnotationSerializer))]
-	public class PolyLineGraphic : CompositeGraphic, IPointsGraphic
+	public class PolylineGraphic : CompositeGraphic, IPointsGraphic
 	{
 		#region Private fields
 
 		private Color _color = Color.Yellow;
 		private LineStyle _lineStyle = LineStyle.Solid;
+		private bool _roiClosedOnly = false;
 		private event EventHandler<ListEventArgs<PointF>> _anchorPointChangedEvent;
 		private event EventHandler _anchorPointsChangedEvent;
 
@@ -71,15 +72,28 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#endregion
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="PolyLineGraphic"/>.
+		/// Initializes a new instance of <see cref="PolylineGraphic"/>.
 		/// </summary>
-		public PolyLineGraphic()
+		public PolylineGraphic()
 		{
 			_points = new PointsList(this);
 			Initialize();
 		}
 
-		protected PolyLineGraphic(PolyLineGraphic source, ICloningContext context)
+		/// <summary>
+		/// Initializes a new instance of <see cref="PolylineGraphic"/>.
+		/// </summary>
+		/// <param name="roiClosedOnly">
+		/// True if this graphic should only be treated as a
+		/// closed polygon for the purposes of ROI computation
+		/// (<seealso cref="PolylineGraphic.CreateRoiInformation"/>).
+		/// </param>
+		public PolylineGraphic(bool roiClosedOnly) : this()
+		{
+			_roiClosedOnly = roiClosedOnly;
+		}
+
+		protected PolylineGraphic(PolylineGraphic source, ICloningContext context)
 			: base()
 		{
 			context.CloneFields(source, this);
@@ -106,7 +120,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the colour of the <see cref="PolyLineGraphic"/>.
+		/// Gets or sets the colour of the <see cref="PolylineGraphic"/>.
 		/// </summary>
 		public Color Color
 		{
@@ -122,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets or sets the line style of the <see cref="PolyLineGraphic"/>.
+		/// Gets or sets the line style of the <see cref="PolylineGraphic"/>.
 		/// </summary>
 		public LineStyle LineStyle
 		{
@@ -138,7 +152,24 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets the number of anchor points in the <see cref="PolyLineGraphic"/>.
+		/// Gets or sets a value indicating that the <see cref="PolylineGraphic.CreateRoiInformation"/> method
+		/// should assume the shape should always be a closed polygon.
+		/// </summary>
+		/// <remarks>
+		/// If True, then <see cref="PolylineGraphic.CreateRoiInformation"/> will only ever return
+		/// <see cref="PolygonalRoi"/> objects (or null, if the shape is not a closed polygon).
+		/// If False, then the method will return <see cref="PolygonalRoi"/> or <see cref="LinearRoi"/>
+		/// depending on the current shape (or null, if the shape is neither a closed polygon nor
+		/// a line).
+		/// </remarks>
+		public virtual bool RoiClosedOnly
+		{
+			get { return _roiClosedOnly; }
+			set { _roiClosedOnly = value; }
+		}
+
+		/// <summary>
+		/// Gets the number of anchor points in the <see cref="PolylineGraphic"/>.
 		/// </summary>
 		public int Count
 		{
@@ -164,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Adds a new anchor point to the <see cref="PolyLineGraphic"/>.
+		/// Adds a new anchor point to the <see cref="PolylineGraphic"/>.
 		/// </summary>
 		/// <param name="point">The anchor point to be inserted.</param>
 		/// <remarks>
@@ -177,7 +208,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Inserts a new anchor point to the <see cref="PolyLineGraphic"/>.
+		/// Inserts a new anchor point to the <see cref="PolylineGraphic"/>.
 		/// </summary>
 		/// <param name="index">The zero-based index at which to insert the anchor point.</param>
 		/// <param name="point">The anchor point to be inserted.</param>
@@ -191,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Removes an anchor point from the <see cref="PolyLineGraphic"/>.
+		/// Removes an anchor point from the <see cref="PolylineGraphic"/>.
 		/// </summary>
 		/// <param name="index">The zero-based index of the anchor point to remove.</param>
 		public void RemoveAt(int index)
@@ -214,7 +245,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Removes all anchor points from the <see cref="PolyLineGraphic"/>.
+		/// Removes all anchor points from the <see cref="PolylineGraphic"/>.
 		/// </summary>
 		public void Clear()
 		{
@@ -272,7 +303,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		public override Roi CreateRoiInformation()
 		{
-			if (_points.Count == 2)
+			if (_points.Count == 2 && !_roiClosedOnly)
 			{
 				return new LinearRoi(this);
 			}
