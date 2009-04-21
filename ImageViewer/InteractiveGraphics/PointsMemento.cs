@@ -32,12 +32,14 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	internal class PointsMemento : List<PointF>, IEquatable<PointsMemento>
 	{
 		public PointsMemento() {}
+		public PointsMemento(int capacity) : base(capacity) {}
 
 		public override int GetHashCode()
 		{
@@ -56,8 +58,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return false;
 		}
 
-		#region IEquatable<PointsMemento> Members
-
 		public bool Equals(PointsMemento other)
 		{
 			if (this == other)
@@ -73,6 +73,20 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return true;
 		}
 
-		#endregion
+		public override string ToString()
+		{
+			const string separator = ", ";
+			StringBuilder sb = new StringBuilder();
+			sb.Append('{');
+			foreach (PointF f in this)
+			{
+				sb.Append(f.ToString());
+				sb.Append(separator);
+			}
+			if (this.Count > 0)
+				sb.Remove(sb.Length - separator.Length, separator.Length);
+			sb.Append('}');
+			return sb.ToString();
+		}
 	}
 }

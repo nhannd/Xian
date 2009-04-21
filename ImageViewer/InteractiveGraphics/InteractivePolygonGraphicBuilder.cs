@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public InteractivePolygonGraphicBuilder(int maximumVertices, IPointsGraphic pointsGraphic)
 			: base(pointsGraphic)
 		{
+			Platform.CheckArgumentRange(maximumVertices, 3, int.MaxValue, "maximumVertices");
 			_maximumVertices = maximumVertices;
 		}
 
@@ -76,8 +77,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected override void NotifyGraphicComplete()
 		{
-			base.NotifyGraphicComplete();
 			InstallSnapPointGraphic(false);
+			base.NotifyGraphicComplete();
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)
@@ -95,8 +96,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			// We're done creating
 			else if (_numberOfPointsAnchored >= 5 && mouseInformation.ClickCount >= 2)
 			{
-				InstallSnapPointGraphic(false);
-
 				this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
 				try
 				{
@@ -108,16 +107,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					this.Graphic.ResetCoordinateSystem();
 				}
 
-				base.NotifyGraphicComplete();
+				this.NotifyGraphicComplete();
 			}
 			// We're done creating
-			else if (_numberOfPointsAnchored >= 3 && AtOrigin(mouseInformation.Location) && mouseInformation.ClickCount == 1)
+			else if (_numberOfPointsAnchored >= 4 && AtOrigin(mouseInformation.Location) && mouseInformation.ClickCount == 1)
 			{
-				InstallSnapPointGraphic(false);
-				base.NotifyGraphicComplete();
+				this.NotifyGraphicComplete();
+			}
+			// We're done creating
+			else if (_numberOfPointsAnchored >= 3 && _numberOfPointsAnchored >= _maximumVertices && mouseInformation.ClickCount == 1)
+			{
+				this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
+				this.Graphic.Points.Add(this.Graphic.Points[0]);
+				this.Graphic.ResetCoordinateSystem();
+				this.NotifyGraphicComplete();
 			}
 			// We're in the middle of creating
-			else if (_numberOfPointsAnchored >= 2 && _maximumVertices > 2 && mouseInformation.ClickCount == 1)
+			else if (_numberOfPointsAnchored >= 2 && mouseInformation.ClickCount == 1)
 			{
 				this.Graphic.CoordinateSystem = CoordinateSystem.Destination;
 				this.Graphic.Points.Add(mouseInformation.Location);
@@ -125,6 +131,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 			else if (mouseInformation.ClickCount > 1)
 			{
+				// removes the extra click if the user multi-clicks and it doesn't otherwise have any meaning
 				_numberOfPointsAnchored--;
 			}
 

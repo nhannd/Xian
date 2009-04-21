@@ -55,8 +55,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return false;
 		}
 
-		#region IEquatable<PointMemento> Members
-
 		public bool Equals(PointMemento other)
 		{
 			if (other == null)
@@ -64,6 +62,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			return this.Point == other.Point;
 		}
 
-		#endregion
+		public override string ToString()
+		{
+			return this.Point.ToString();
+		}
 	}
 }
