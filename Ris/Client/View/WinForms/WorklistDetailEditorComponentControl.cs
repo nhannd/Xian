@@ -57,16 +57,37 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
 
             _component = component;
+			_component.PropertyChanged += _component_PropertyChanged;
 
             _name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
             _description.DataBindings.Add("Value", _component, "Description", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _worklistClass.DataBindings.Add("Value", _component, "WorklistClassName", true, DataSourceUpdateMode.OnPropertyChanged);
+			_category.DataSource = _component.CategoryChoices;
+			_category.DataBindings.Add("Value", _component, "SelectedCategory", true, DataSourceUpdateMode.OnPropertyChanged);
+        	_category.Enabled = _component.IsWorklistClassReadOnly;
+
+			_worklistClass.DataSource = _component.WorklistClassChoices;
+        	_worklistClass.Enabled = _component.IsWorklistClassReadOnly;
+			_worklistClass.Format += delegate(object sender, ListControlConvertEventArgs args)
+			                         {
+			                         	 args.Value = _component.FormatWorklistClass(args.ListItem);
+			                         };
+
+            _worklistClass.DataBindings.Add("Value", _component, "WorklistClass", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _classDescription.DataBindings.Add("Value", _component, "WorklistClassDescription", true, DataSourceUpdateMode.OnPropertyChanged);
             _okButton.DataBindings.Add("Visible", _component, "AcceptButtonVisible", true, DataSourceUpdateMode.Never);
             _cancelButton.DataBindings.Add("Visible", _component, "CancelButtonVisible", true, DataSourceUpdateMode.Never);
 
         }
+
+		private void _component_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		{
+			if(e.PropertyName == "WorklistClassChoices")
+			{
+				_worklistClass.DataSource = _component.WorklistClassChoices;
+			}
+		}
 
         private void _okButton_Click(object sender, EventArgs e)
         {

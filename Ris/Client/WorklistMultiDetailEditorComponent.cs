@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client
     /// WorklistMultiDetailEditorComponent class
     /// </summary>
     [AssociateView(typeof(WorklistMultiDetailEditorComponentViewExtensionPoint))]
-    public class WorklistMultiDetailEditorComponent : ApplicationComponent
+    public class WorklistMultiDetailEditorComponent : WorklistDetailEditorComponentBase
     {
         public class WorklistTableEntry
         {
@@ -98,26 +98,18 @@ namespace ClearCanvas.Ris.Client
         }
 
 
-
-        private readonly List<WorklistClassSummary> _worklistClasses;
-
-        private string[] _categoryChoices;
-        private string _selectedCategory;
-        private Table<WorklistTableEntry> _worklistTable;
+    	private Table<WorklistTableEntry> _worklistTable;
         private WorklistTableEntry _selectedWorklist;
         private string _defaultWorklistName;
 
-        private string _procedureTypeGroupClass;
-        private event EventHandler _procedureTypeGroupClassChanged;
-
-        private CrudActionModel _worklistActionModel;
+    	private CrudActionModel _worklistActionModel;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public WorklistMultiDetailEditorComponent(List<WorklistClassSummary> worklistClasses)
+			:base(worklistClasses)
         {
-            _worklistClasses = worklistClasses;
         }
 
         public override void Start()
@@ -134,18 +126,6 @@ namespace ClearCanvas.Ris.Client
             _worklistTable.Columns.Add(new TableColumn<WorklistTableEntry, string>("Description",
                 delegate(WorklistTableEntry item) { return item.Description; },
                 delegate(WorklistTableEntry item, string value) { item.Description = value; }, 1.0f));
-
-
-            _categoryChoices = CollectionUtils.Unique(
-                CollectionUtils.Map<WorklistClassSummary, string>(_worklistClasses,
-                    delegate(WorklistClassSummary wc) { return wc.CategoryName; })).ToArray();
-
-            if (_categoryChoices.Length > 0)
-            {
-                _selectedCategory = _categoryChoices[0];
-
-                UpdateWorklistClasses();
-            }
 
             _worklistActionModel = new CrudActionModel(false, true, false);
             _worklistActionModel.Edit.SetClickHandler(EditSelectedWorklist);
@@ -165,26 +145,7 @@ namespace ClearCanvas.Ris.Client
             base.Start();
         }
 
-        public string ProcedureTypeGroupClass
-        {
-            get { return _procedureTypeGroupClass; }
-            private set
-            {
-                if(_procedureTypeGroupClass != value)
-                {
-                    _procedureTypeGroupClass = value;
-                    EventsHelper.Fire(_procedureTypeGroupClassChanged, this, EventArgs.Empty);
-                }
-            }
-        }
-
-        public event EventHandler ProcedureTypeGroupClassChanged
-        {
-            add { _procedureTypeGroupClassChanged += value; }
-            remove { _procedureTypeGroupClassChanged -= value; }
-        }
-
-        public List<WorklistTableEntry> WorklistsToCreate
+    	public List<WorklistTableEntry> WorklistsToCreate
         {
             get
             {
@@ -195,27 +156,7 @@ namespace ClearCanvas.Ris.Client
 
         #region Presentation Model
 
-        public string[] CategoryChoices
-        {
-            get { return _categoryChoices; }
-        }
-
-        public string SelectedCategory
-        {
-            get { return _selectedCategory; }
-            set
-            {
-                if(value != _selectedCategory)
-                {
-                    _selectedCategory = value;
-                    this.Modified = true;
-                    UpdateWorklistClasses();
-                    NotifyPropertyChanged("SelectedCategory");
-                }
-            }
-        }
-
-        public string DefaultWorklistName
+    	public string DefaultWorklistName
         {
             get { return _defaultWorklistName; }
             set
@@ -265,7 +206,7 @@ namespace ClearCanvas.Ris.Client
                 detail.WorklistClass = _selectedWorklist.Class;
 
                 if(ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow,
-                    new WorklistDetailEditorComponent(detail, true),
+                    new WorklistDetailEditorComponent(detail, this.WorklistClasses, true, false),
                     "Edit Worklist") == ApplicationComponentExitCode.Accepted)
                 {
                     _selectedWorklist.Name = detail.Name;
@@ -277,19 +218,15 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        private void UpdateWorklistClasses()
-        {
-            List<WorklistClassSummary> worklistClassSubset = CollectionUtils.Select(_worklistClasses,
-                delegate(WorklistClassSummary wc) { return wc.CategoryName == _selectedCategory; });
+		protected override void UpdateWorklistClassChoices()
+		{
+			_worklistTable.Items.Clear();
+			_worklistTable.Items.AddRange(
+				CollectionUtils.Map<WorklistClassSummary, WorklistTableEntry>(this.WorklistClassChoices,
+					delegate(WorklistClassSummary wc) { return new WorklistTableEntry(wc, _defaultWorklistName); }));
 
-            _worklistTable.Items.Clear();
-            _worklistTable.Items.AddRange(
-                CollectionUtils.Map<WorklistClassSummary, WorklistTableEntry>(worklistClassSubset,
-                    delegate (WorklistClassSummary wc) { return new WorklistTableEntry(wc, _defaultWorklistName);}));
-
-            // all classes in subset should have the same procedureTypeGroupClass, so just grab the first one
-            this.ProcedureTypeGroupClass = CollectionUtils.FirstElement(worklistClassSubset).ProcedureTypeGroupClassName;
-        }
+			base.UpdateWorklistClassChoices();
+		}
 
         private void UpdateWorklistNamesAndDescriptions(string oldName, string newName)
         {

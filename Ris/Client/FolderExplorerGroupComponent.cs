@@ -484,7 +484,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				allActions = allActions.Union(_selectedFolderExplorer.ExportedActions);
 			}
-			return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-contextmenu", allActions);
+			return ActionModelRoot.CreateModel(this.GetType().FullName, site, allActions);
 		}
 
 		#endregion

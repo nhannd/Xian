@@ -281,6 +281,15 @@ namespace ClearCanvas.Ris.Application.Common
 				[AuthorityToken(Description = "Allow access to the downtime recovery operations.")]
 				public const string RecoveryOperations = "Workflow/Downtime/Recovery Operations";
 			}
+
+			public static class Worklist
+			{
+				[AuthorityToken(Description = "Allow creation, modification and deletion of personal worklists.")]
+				public const string Personal = "Workflow/Worklist/Personal";
+
+				[AuthorityToken(Description = "Allow creation, modification and deletion of group worklists.")]
+				public const string Group = "Workflow/Worklist/Group";
+			}
 		}
 
 		/// <summary>

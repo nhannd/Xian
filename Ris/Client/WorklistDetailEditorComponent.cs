@@ -34,9 +34,11 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using ClearCanvas.Desktop.Validation;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -52,22 +54,33 @@ namespace ClearCanvas.Ris.Client
     /// WorklistDetailEditorComponent class
     /// </summary>
     [AssociateView(typeof(WorklistDetailEditorComponentViewExtensionPoint))]
-    public class WorklistDetailEditorComponent : ApplicationComponent
+    public class WorklistDetailEditorComponent : WorklistDetailEditorComponentBase
     {
         private readonly WorklistAdminDetail _worklistDetail;
         private readonly bool _dialogMode;
+    	private readonly bool _isNew;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public WorklistDetailEditorComponent(WorklistAdminDetail detail, bool dialogMode)
+		public WorklistDetailEditorComponent(WorklistAdminDetail detail, List<WorklistClassSummary> worklistClasses, bool dialogMode, bool isNew)
+			:base(worklistClasses)
         {
             _worklistDetail = detail;
             _dialogMode = dialogMode;
+        	_isNew = isNew;
         }
 
+		public override void Start()
+		{
+			if (_worklistDetail.WorklistClass != null)
+			{
+				this.SelectedCategory = _worklistDetail.WorklistClass.CategoryName;
+			}
+			base.Start();
+		}
 
-        #region Presentation Model
+    	#region Presentation Model
 
         [ValidateNotNull]
         public string Name
@@ -90,14 +103,31 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public string WorklistClassName
-        {
-            get
-            {
-                return string.Format("{0} - {1}", _worklistDetail.WorklistClass.CategoryName,
-                                     _worklistDetail.WorklistClass.DisplayName);
-            }
-        }
+    	public bool IsWorklistClassReadOnly
+    	{
+			get { return !_isNew; }
+    	}
+
+		[ValidateNotNull]
+		public WorklistClassSummary WorklistClass
+    	{
+			get { return _worklistDetail.WorklistClass; }
+			set
+			{
+				if(!Equals(_worklistDetail.WorklistClass, value))
+				{
+					_worklistDetail.WorklistClass = value;
+					this.Modified = true;
+					NotifyPropertyChanged("WorklistClass");
+				}
+			}
+    	}
+
+		public string FormatWorklistClass(object item)
+		{
+			WorklistClassSummary summary = (WorklistClassSummary) item;
+			return summary.DisplayName;
+		}
 
         public string WorklistClassDescription
         {
@@ -128,5 +158,13 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
-    }
+
+		protected override void UpdateWorklistClassChoices()
+		{
+			// blank out the selected worklist class
+			_worklistDetail.WorklistClass = null;
+
+			base.UpdateWorklistClassChoices();
+		}
+	}
 }

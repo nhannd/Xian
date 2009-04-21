@@ -176,6 +176,7 @@
     <Compile Include="WeakSearchCriteriaException.cs" />
     <Compile Include="WorkflowHistoryComponent.cs" />
     <Compile Include="WorklistDetailEditorComponent.cs" />
+    <Compile Include="WorklistDetailEditorComponentBase.cs" />
     <Compile Include="WorklistEditorComponent.cs" />
     <Compile Include="WorklistFilterEditorComponent.cs" />
     <Compile Include="WorklistItemPreviewComponent.cs" />

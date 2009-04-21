@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client
 
 		public void Add()
 		{
-			WorklistEditorComponent editor = new WorklistEditorComponent();
+			WorklistEditorComponent editor = new WorklistEditorComponent(false);
 			ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "New Worklist");
 		}
 

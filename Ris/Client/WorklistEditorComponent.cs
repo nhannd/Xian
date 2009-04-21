@@ -93,13 +93,13 @@ namespace ClearCanvas.Ris.Client
         }
 
         private readonly Mode _mode;
+    	private readonly bool _multiCreate;
 
         private EntityRef _worklistRef;
         private readonly List<WorklistAdminSummary> _editedWorklistSummaries = new List<WorklistAdminSummary>();
         private WorklistAdminDetail _worklistDetail;
 
-        private WorklistDetailEditorComponent _detailComponent;
-        private WorklistMultiDetailEditorComponent _multiDetailComponent;
+        private WorklistDetailEditorComponentBase _detailComponent;
         private WorklistFilterEditorComponent _filterComponent;
         private WorklistTimeWindowEditorComponent _timeWindowComponent;
 		private WorklistSelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable> _procedureTypeGroupFilterComponent;
@@ -109,11 +109,12 @@ namespace ClearCanvas.Ris.Client
     	private WorklistPreviewComponent _previewComponent;
 
         /// <summary>
-        /// Constructor to create a new worklist.
+        /// Constructor to create new worklist(s).
         /// </summary>
-        public WorklistEditorComponent()
+        public WorklistEditorComponent(bool createMultiple)
         {
             _mode = Mode.Add;
+			_multiCreate = createMultiple;
         }
 
         /// <summary>
@@ -135,13 +136,12 @@ namespace ClearCanvas.Ris.Client
                 {
                     GetWorklistEditFormDataResponse formDataResponse = service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest());
 
+					// initialize _worklistDetail depending on add vs edit vs duplicate mode
                     List<ProcedureTypeGroupSummary> procedureTypeGroups = new List<ProcedureTypeGroupSummary>();
                     if (_mode == Mode.Add)
                     {
                         _worklistDetail = new WorklistAdminDetail();
                         _worklistDetail.FilterByWorkingFacility = true; // set this by default (Ticket #1848)
-                        _multiDetailComponent = new WorklistMultiDetailEditorComponent(formDataResponse.WorklistClasses);
-                        _multiDetailComponent.ProcedureTypeGroupClassChanged += ProcedureTypeGroupClassChangedEventHandler;
                     }
                     else
                     {
@@ -158,13 +158,25 @@ namespace ClearCanvas.Ris.Client
                         }
 
                         _worklistRef = response.Detail.EntityRef;
-                        _detailComponent = new WorklistDetailEditorComponent(_worklistDetail, false);
 
+						// determine initial set of proc type groups, since worklist class already known
                         ListProcedureTypeGroupsResponse groupsResponse = service.ListProcedureTypeGroups(
                             new ListProcedureTypeGroupsRequest(_worklistDetail.WorklistClass.ProcedureTypeGroupClassName));
                         procedureTypeGroups = groupsResponse.ProcedureTypeGroups;
                     }
 
+					// determine which main page to show (multi or single)
+					if (_mode == Mode.Add && _multiCreate)
+					{
+						_detailComponent = new WorklistMultiDetailEditorComponent(formDataResponse.WorklistClasses);
+					}
+					else
+					{
+						_detailComponent = new WorklistDetailEditorComponent(_worklistDetail, formDataResponse.WorklistClasses, false, _mode == Mode.Add);
+					}
+					_detailComponent.ProcedureTypeGroupClassChanged += ProcedureTypeGroupClassChangedEventHandler;
+
+					// create all other pages
                     _filterComponent = new WorklistFilterEditorComponent(_worklistDetail,
                         procedureTypeGroups, formDataResponse.FacilityChoices, formDataResponse.OrderPriorityChoices,
                         formDataResponse.PatientClassChoices);
@@ -183,7 +195,9 @@ namespace ClearCanvas.Ris.Client
                     _groupSubscribersComponent = new WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
                         formDataResponse.StaffGroupChoices, _worklistDetail.GroupSubscribers, delegate(StaffGroupSummary s) { return s.StaffGroupRef; });
                 });
-            this.Pages.Add(new NavigatorPage("NodeWorklist", _mode == Mode.Add ? (IApplicationComponent)_multiDetailComponent : (IApplicationComponent)_detailComponent));
+
+			// add pages
+            this.Pages.Add(new NavigatorPage("NodeWorklist", _detailComponent));
             this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters", _filterComponent));
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeProcedureTypeGroups", _procedureTypeGroupFilterComponent));
 			this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodePatientLocations", _locationFilterComponent));
@@ -217,7 +231,7 @@ namespace ClearCanvas.Ris.Client
                 delegate(IWorklistAdminService service)
                 {
                     ListProcedureTypeGroupsResponse groupsResponse = service.ListProcedureTypeGroups(
-                        new ListProcedureTypeGroupsRequest(_multiDetailComponent.ProcedureTypeGroupClass));
+                        new ListProcedureTypeGroupsRequest(_detailComponent.ProcedureTypeGroupClass));
 
 					_procedureTypeGroupFilterComponent.AllItems = groupsResponse.ProcedureTypeGroups;
                 });
@@ -291,20 +305,23 @@ namespace ClearCanvas.Ris.Client
             Platform.GetService<IWorklistAdminService>(
                 delegate(IWorklistAdminService service)
                 {
-                    if(_mode == Mode.Add)
+					if (_mode == Mode.Add && _multiCreate)
                     {
-                        foreach (WorklistMultiDetailEditorComponent.WorklistTableEntry entry in _multiDetailComponent.WorklistsToCreate)
-                        {
-                            _worklistDetail.Name = entry.Name;
-                            _worklistDetail.Description = entry.Description;
-                            _worklistDetail.WorklistClass = entry.Class;
+						// add each worklist in the multi editor
+						WorklistMultiDetailEditorComponent detailEditor = (WorklistMultiDetailEditorComponent) _detailComponent;
+						foreach (WorklistMultiDetailEditorComponent.WorklistTableEntry entry in detailEditor.WorklistsToCreate)
+						{
+							_worklistDetail.Name = entry.Name;
+							_worklistDetail.Description = entry.Description;
+							_worklistDetail.WorklistClass = entry.Class;
 
-                            AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail));
-                            _editedWorklistSummaries.Add(response.WorklistAdminSummary);
-                        }
+							AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail));
+							_editedWorklistSummaries.Add(response.WorklistAdminSummary);
+						}
                     }
-                    else if(_mode == Mode.Duplicate)
+                    else if((_mode == Mode.Add && !_multiCreate) || _mode == Mode.Duplicate)
                     {
+						// only 1 worklist to add
                         AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail));
                         _editedWorklistSummaries.Add(response.WorklistAdminSummary);
                     }

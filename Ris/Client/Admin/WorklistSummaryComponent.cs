@@ -203,7 +203,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         protected override bool AddItems(out IList<WorklistAdminSummary> addedItems)
         {
-            WorklistEditorComponent editor = new WorklistEditorComponent();
+            WorklistEditorComponent editor = new WorklistEditorComponent(true);
             ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
                 new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
 

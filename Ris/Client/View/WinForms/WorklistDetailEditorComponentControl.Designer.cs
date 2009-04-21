@@ -61,10 +61,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
 			this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._description = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
-			this._worklistClass = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._okButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._classDescription = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._category = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._worklistClass = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this.SuspendLayout();
 			// 
 			// _name
@@ -72,7 +73,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._name.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._name.LabelText = "Name";
-			this._name.Location = new System.Drawing.Point(20, 112);
+			this._name.Location = new System.Drawing.Point(20, 141);
 			this._name.Margin = new System.Windows.Forms.Padding(2);
 			this._name.Mask = "";
 			this._name.Name = "_name";
@@ -87,28 +88,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._description.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._description.LabelText = "Description";
-			this._description.Location = new System.Drawing.Point(20, 166);
+			this._description.Location = new System.Drawing.Point(20, 186);
 			this._description.Margin = new System.Windows.Forms.Padding(2);
 			this._description.Name = "_description";
-			this._description.Size = new System.Drawing.Size(492, 86);
+			this._description.Size = new System.Drawing.Size(492, 66);
 			this._description.TabIndex = 3;
 			this._description.Value = null;
-			// 
-			// _worklistClass
-			// 
-			this._worklistClass.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._worklistClass.LabelText = "Class";
-			this._worklistClass.Location = new System.Drawing.Point(20, 14);
-			this._worklistClass.Margin = new System.Windows.Forms.Padding(2);
-			this._worklistClass.Mask = "";
-			this._worklistClass.Name = "_worklistClass";
-			this._worklistClass.PasswordChar = '\0';
-			this._worklistClass.ReadOnly = true;
-			this._worklistClass.Size = new System.Drawing.Size(492, 41);
-			this._worklistClass.TabIndex = 0;
-			this._worklistClass.ToolTip = null;
-			this._worklistClass.Value = null;
 			// 
 			// _okButton
 			// 
@@ -135,7 +120,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._classDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
 			this._classDescription.LabelText = "Class Description";
-			this._classDescription.Location = new System.Drawing.Point(20, 63);
+			this._classDescription.Location = new System.Drawing.Point(20, 96);
 			this._classDescription.Margin = new System.Windows.Forms.Padding(2);
 			this._classDescription.Mask = "";
 			this._classDescription.Name = "_classDescription";
@@ -146,14 +131,45 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._classDescription.ToolTip = null;
 			this._classDescription.Value = null;
 			// 
+			// _category
+			// 
+			this._category.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._category.DataSource = null;
+			this._category.DisplayMember = "";
+			this._category.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._category.LabelText = "Category";
+			this._category.Location = new System.Drawing.Point(20, 6);
+			this._category.Margin = new System.Windows.Forms.Padding(2);
+			this._category.Name = "_category";
+			this._category.Size = new System.Drawing.Size(492, 41);
+			this._category.TabIndex = 6;
+			this._category.Value = null;
+			// 
+			// _worklistClass
+			// 
+			this._worklistClass.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this._worklistClass.DataSource = null;
+			this._worklistClass.DisplayMember = "";
+			this._worklistClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this._worklistClass.LabelText = "Class";
+			this._worklistClass.Location = new System.Drawing.Point(20, 51);
+			this._worklistClass.Margin = new System.Windows.Forms.Padding(2);
+			this._worklistClass.Name = "_worklistClass";
+			this._worklistClass.Size = new System.Drawing.Size(492, 41);
+			this._worklistClass.TabIndex = 7;
+			this._worklistClass.Value = null;
+			// 
 			// WorklistDetailEditorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._worklistClass);
+			this.Controls.Add(this._category);
 			this.Controls.Add(this._classDescription);
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._okButton);
-			this.Controls.Add(this._worklistClass);
 			this.Controls.Add(this._description);
 			this.Controls.Add(this._name);
 			this.Name = "WorklistDetailEditorComponentControl";
@@ -165,11 +181,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         #endregion
 
         private ClearCanvas.Desktop.View.WinForms.TextField _name;
-        private ClearCanvas.Desktop.View.WinForms.TextAreaField _description;
-        private ClearCanvas.Desktop.View.WinForms.TextField _worklistClass;
+		private ClearCanvas.Desktop.View.WinForms.TextAreaField _description;
         private System.Windows.Forms.Button _okButton;
         private System.Windows.Forms.Button _cancelButton;
         private ClearCanvas.Desktop.View.WinForms.TextField _classDescription;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _category;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _worklistClass;
 
     }
 }
