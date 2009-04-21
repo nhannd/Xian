@@ -124,7 +124,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			}
 		}
 
-		private readonly InstanceXml _instanceXml;
 		private readonly string _host;
 		private readonly string _aeTitle;
 		private readonly string _wadoUriPrefix;
@@ -136,7 +135,12 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		public StreamingSopDataSource(InstanceXml instanceXml, string host, string aeTitle, string wadoUriPrefix, int wadoServicePort)
 			: base(new DicomFile("", new DicomAttributeCollection(), instanceXml.Collection))
 		{
-			_instanceXml = instanceXml;
+			//These don't get set properly for instance xml.
+			DicomFile sourceFile = (DicomFile)SourceMessage;
+			sourceFile.TransferSyntaxUid = instanceXml.TransferSyntax.UidString;
+			sourceFile.MediaStorageSopInstanceUid = instanceXml.SopInstanceUid;
+			sourceFile.MetaInfo[DicomTags.SopClassUid].SetString(0, instanceXml.SopClass.Uid);
+
 			_host = host;
 			_aeTitle = aeTitle;
 			_wadoUriPrefix = wadoUriPrefix;
@@ -145,7 +149,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		private InstanceXmlDicomAttributeCollection AttributeCollection
 		{
-			get { return (InstanceXmlDicomAttributeCollection)_instanceXml.Collection; }	
+			get { return (InstanceXmlDicomAttributeCollection)((DicomFile)base.SourceMessage).DataSet; }	
 		}
 
 		public override DicomAttribute GetDicomAttribute(uint tag)
