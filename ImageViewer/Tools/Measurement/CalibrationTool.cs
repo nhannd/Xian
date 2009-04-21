@@ -33,6 +33,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Desktop;
@@ -162,23 +163,23 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 			image.Frame.NormalizedPixelSpacing.Calibrate(pixelSpacingHeight, pixelSpacingWidth);
 
+			// refresh any pixel spacing sensitive graphics in the overlay graphics layer (e.g. ROIs)
 			if (roiGraphic.ParentPresentationImage is IOverlayGraphicsProvider)
 			{
-				UpdateRoiGraphics(roiGraphic.ParentPresentationImage as IOverlayGraphicsProvider);
-				roiGraphic.ParentPresentationImage.Draw();
+				foreach (IGraphic graphic in ((IOverlayGraphicsProvider) roiGraphic.ParentPresentationImage).OverlayGraphics)
+					if (graphic is IPixelSpacingSensitiveGraphic)
+						((IPixelSpacingSensitiveGraphic) graphic).Refresh();
 			}
-		}
 
-		private static void UpdateRoiGraphics(IOverlayGraphicsProvider overlayProvider)
-		{
-			foreach (IGraphic graphic in overlayProvider.OverlayGraphics)
+			// refresh any pixel spacing sensitive graphics in the application graphics layer (e.g. scale graphics)
+			if (roiGraphic.ParentPresentationImage is IApplicationGraphicsProvider)
 			{
-				if (graphic is RoiGraphic)
-				{
-					RoiGraphic roiGraphic = graphic as RoiGraphic;
-					roiGraphic.Resume(true);
-				}
+				foreach (IGraphic graphic in ((IApplicationGraphicsProvider) roiGraphic.ParentPresentationImage).ApplicationGraphics)
+					if (graphic is IPixelSpacingSensitiveGraphic)
+						((IPixelSpacingSensitiveGraphic) graphic).Refresh();
 			}
+
+			roiGraphic.ParentPresentationImage.Draw();
 		}
 
 		public static void CalculatePixelSpacing(

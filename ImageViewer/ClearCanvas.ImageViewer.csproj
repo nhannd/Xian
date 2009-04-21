@@ -147,6 +147,7 @@
     <Compile Include="Graphics\InvariantArrowheadGraphic.cs" />
     <Compile Include="Graphics\InvariantLinePrimitive.cs" />
     <Compile Include="Graphics\ArrowGraphic.cs" />
+    <Compile Include="Imaging\IPixelSpacingSensitiveGraphic.cs" />
     <Compile Include="Imaging\OverlayData.cs" />
     <Compile Include="InteractiveGraphics\ContextMenuControlGraphic.cs" />
     <Compile Include="InteractiveGraphics\ControlGraphic.cs" />

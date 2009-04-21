@@ -1,13 +1,14 @@
 using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.RoiGraphics.Analyzers;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
 	[Cloneable]
-	public class RoiGraphic : AnnotationGraphic
+	public class RoiGraphic : AnnotationGraphic, IPixelSpacingSensitiveGraphic
 	{
 		private event EventHandler _roiChanged;
 		private event EventHandler _nameChanged;
@@ -107,6 +108,12 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 			//this.OnRoiChanged();
 			base.OnNameChanged();
 			EventsHelper.Fire(_nameChanged, this, new EventArgs());
+		}
+
+		public override void Refresh()
+		{
+			this.OnSubjectChanged();
+			base.Refresh();
 		}
 
 		protected override sealed void OnSubjectChanged()

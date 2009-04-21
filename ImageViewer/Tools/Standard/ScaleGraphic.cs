@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -11,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// <summary>
 	/// Generic scale graphic class.
 	/// </summary>
-	internal class ScaleGraphic : CompositeGraphic
+	internal class ScaleGraphic : CompositeGraphic, IPixelSpacingSensitiveGraphic
 	{
 		private event EventHandler _changed;
 		private readonly LinePrimitive _baseLine;
@@ -476,6 +477,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			width = 0;
 			height = 0;
 			return false;
+		}
+
+		void IPixelSpacingSensitiveGraphic.Refresh()
+		{
+			UpdateScale();
 		}
 
 		private class TickOffset
