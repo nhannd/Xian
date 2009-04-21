@@ -133,9 +133,8 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 			try
 			{
-				_tempPath = String.Format(".\\temp\\{0}", Path.GetRandomFileName());
+				_tempPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 				Directory.CreateDirectory(_tempPath);
-				_tempPath = Path.GetFullPath(_tempPath);
 
 				context.ReportProgress(new BackgroundTaskProgress(0, SR.MessageAnonymizingStudy));
 
@@ -154,6 +153,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 				}
 
 				string patientsSex = null;
+				List<string> filePaths = new List<string>();
 
 				for (int i = 0; i < numberOfSops; ++i)
 				{
@@ -166,9 +166,11 @@ namespace ClearCanvas.Utilities.DicomEditor
 
 						if (sop.DataSource is ILocalSopDataSource)
 						{
+							string filename = Path.Combine(_tempPath, string.Format("{0}.dcm", i));
 							DicomFile file = ((ILocalSopDataSource)sop.DataSource).File;
 							anonymizer.Anonymize(file);
-							file.Save(String.Format("{0}\\{1}.dcm", _tempPath, i));
+							filePaths.Add(filename);
+							file.Save(filename);
 
 							string studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
 							string patientId = file.DataSet[DicomTags.PatientId].ToString();
@@ -190,10 +192,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 					FileImportRequest request = new FileImportRequest();
 					request.BadFileBehaviour = BadFileBehaviour.Move;
 					request.FileImportBehaviour = FileImportBehaviour.Move;
-					List<string> filePaths = new List<string>();
-					filePaths.Add(_tempPath);
 					request.FilePaths = filePaths;
-					request.Recursive = true;
+					request.Recursive = false;
+					request.IsBackground = true;
 					client.Import(request);
 					client.Close();
 				}
