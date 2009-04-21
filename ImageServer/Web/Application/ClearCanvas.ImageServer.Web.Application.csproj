@@ -1599,7 +1599,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>1258</DevelopmentServerPort>
+          <DevelopmentServerPort>1422</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

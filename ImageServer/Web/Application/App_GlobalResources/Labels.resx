@@ -121,7 +121,10 @@
     <value>The following study/studies will be deleted:</value>
   </data>
   <data name="DeleteStudyConfirmReasonLabel" xml:space="preserve">
-    <value>Reason for deletion:</value>
+    <value>Reason For Deletion:</value>
+  </data>
+  <data name="DeleteStudyReasonDetailedDescription" xml:space="preserve">
+    <value>Detailed Description</value>
   </data>
   <data name="EditStudyDialog" xml:space="preserve">
     <value>Edit Study</value>

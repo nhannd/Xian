@@ -172,3 +172,16 @@
 {
 	padding-left:0px;
 }
+
+.ReasonForDeletionDropDownPanel
+{
+	border-right: gainsboro 1px solid;
+	border-top: gainsboro 1px solid;
+	border-left: gainsboro 1px solid;
+	border-bottom: gainsboro 1px solid;
+	background-color: whitesmoke;
+	padding-right: 5px;
+	padding-left: 5px;
+	padding-bottom: 5px;
+	padding-top: 5px;
+}

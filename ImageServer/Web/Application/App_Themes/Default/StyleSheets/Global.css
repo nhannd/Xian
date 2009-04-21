@@ -462,8 +462,8 @@ pre
 {
 	z-index: 1000000; /* make it top-most , hopefully it's enough*/
 	display:none;
-	position:absolute;
 	width: 100%;
+	position:fixed;
 	top:0px;
 	left:0px;
 	background-color: #ffff99;

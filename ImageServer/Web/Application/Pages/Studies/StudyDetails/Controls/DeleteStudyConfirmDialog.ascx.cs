@@ -178,12 +178,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
                     CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
                     criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
                     IList<CannedText> list = broker.Find(criteria);
-                    ReasonListBox.Items.Add(new ListItem(" - Select one -", ""));
+
+                    ReasonListBox.Items.Add(new ListItem("-- Select one --", ""));
                     foreach (CannedText text in list)
                     {
                         ReasonListBox.Items.Add(new ListItem(text.Label, text.Text));
                     }
-                    ReasonListBox.Items.Add(new ListItem("Other (Specify)", "Enter the reason here"));
                 }
             }
         }

@@ -11,7 +11,6 @@
             Sys.Application.add_load(page_load);
             function page_load()
             {            
-                $get('<%= ReasonSavePanel.ClientID %>').style.display = 'none';
                 var listbox = $get('<%= ReasonListBox.ClientID %>');
                 if (document.all) //IE6
                 {
@@ -28,119 +27,121 @@
                 var listbox = $get('<%= ReasonListBox.ClientID %>');
                 var textbox = $get('<%= Reason.ClientID %>');
                 textbox.value = listbox.options[listbox.selectedIndex].value;
-                if (listbox.selectedIndex==listbox.options.length-1)
-                {
-                    textbox.select();
-                    $get('<%= ReasonSavePanel.ClientID %>').style.display = ''; // show
-                }
-                else
-                {
-                    $get('<%= ReasonSavePanel.ClientID %>').style.display = 'none';                
-                }
+                
             }
         </script>
     
         <div class="ContentPanel">
         <div class="DialogPanelContent">
-        <table border="0" cellspacing="5" width="100%">
-            <tr>
-                <td>
-                    <table width="100%">
-                        <tr>
-                            <td>
-                                <asp:Label ID="Label1" runat="server" CssClass="DialogTextBoxLabel" 
-                                                Text='<%$ Resources:Labels, DeleteStudyConfirmDialog_StudyListingLabel %>'></asp:Label>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <asp:Repeater runat="server" ID="StudyListing">
-                                    <HeaderTemplate>
-                                        <table  cellspacing="0" width="100%" class="GlobalGridView"
-                                            style="border: solid 1px #3d98d1;">
-                                            <tr>
-                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                    Patient's Name</th>
-                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                    Patient Id</th>
-                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                    Study Date</th>
-                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                    Study Description</th>
-                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                    Accession #</th>
-                                                <th style="white-space:nowrap" class="GlobalGridViewHeader">
-                                                    Modality</th>
+            <div id="StudyList">
+                <table border="0" cellspacing="5" width="100%">
+                    <tr>
+                    <td>
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                    <asp:Label ID="Label1" runat="server" CssClass="DialogTextBoxLabel" 
+                                                    Text='<%$ Resources:Labels, DeleteStudyConfirmDialog_StudyListingLabel %>'></asp:Label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <asp:Repeater runat="server" ID="StudyListing">
+                                        <HeaderTemplate>
+                                            <table  cellspacing="0" width="100%" class="GlobalGridView"
+                                                style="border: solid 1px #3d98d1;">
+                                                <tr>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
+                                                        Patient's Name</th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
+                                                        Patient Id</th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
+                                                        Study Date</th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
+                                                        Study Description</th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
+                                                        Accession #</th>
+                                                    <th style="white-space:nowrap" class="GlobalGridViewHeader">
+                                                        Modality</th>
+                                                </tr>
+                                        </HeaderTemplate>
+                                        <ItemTemplate>
+                                            <tr class="GlobalGridViewRow">
+                                                <td>
+                                                    <%# Eval("PatientsName") %>
+                                                </td>
+                                                <td>
+                                                    <%# Eval("PatientId") %>
+                                                </td>
+                                                <td>
+                                                    <%# Eval("StudyDate") %>
+                                                </td>
+                                                <td>
+                                                    <%# Eval("StudyDescription") %>
+                                                </td>
+                                                <td>
+                                                    <%# HtmlUtility.GetEvalValue(Container.DataItem, "AccessionNumber", "&nbsp;")%>
+                                                </td>
+                                                <td>
+                                                    <%# Eval("Modalities")%>
+                                                </td>
                                             </tr>
-                                    </HeaderTemplate>
-                                    <ItemTemplate>
-                                        <tr class="GlobalGridViewRow">
-                                            <td>
-                                                <%# Eval("PatientsName") %>
-                                            </td>
-                                            <td>
-                                                <%# Eval("PatientId") %>
-                                            </td>
-                                            <td>
-                                                <%# Eval("StudyDate") %>
-                                            </td>
-                                            <td>
-                                                <%# Eval("StudyDescription") %>
-                                            </td>
-                                            <td>
-                                                <%# HtmlUtility.GetEvalValue(Container.DataItem, "AccessionNumber", "&nbsp;")%>
-                                            </td>
-                                            <td>
-                                                <%# Eval("Modalities")%>
-                                            </td>
-                                        </tr>
-                                    </ItemTemplate>
-                                    <FooterTemplate>
-                                        </table>
-                                    </FooterTemplate>
-                                </asp:Repeater>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <table width="100%" border="0" cellpadding="0" cellspacing="0">
-                        <tr>
-                            <td>
-                                <table>
-                                    <tr>
-                                        <td>
-                                            <asp:Label runat="server" CssClass="DialogTextBoxLabel" 
-                                                Text='<%$ Resources:Labels, DeleteStudyConfirmReasonLabel %>'></asp:Label> 
-                                            <asp:DropDownList runat="server" ID="ReasonListBox" />
-                                        </td>                                        
-                                        <td>
-                                            <ccAsp:InvalidInputIndicator ID="InvalidReasonIndicator" runat="server" SkinID="InvalidInputIndicator" />
-                                        </td>
-                                    </tr>
-                                </table>
-                                <table width="100%">
-                                    <tr>                                        
-                                        <td>
-                                            <asp:TextBox  Width="100%" Rows="3" ID="Reason" runat="server" TextMode="MultiLine" />                                            
-                                        </td>
-                                    </tr>
-                                    </table>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <asp:Panel runat="server" ID="ReasonSavePanel">
-                    Save this reason as <asp:TextBox runat="server" ID="SaveReasonAsName" />
-                    </asp:Panel>
-                </td>
-            </tr>
-        </table>
+                                        </ItemTemplate>
+                                        <FooterTemplate>
+                                            </table>
+                                        </FooterTemplate>
+                                    </asp:Repeater>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                </table>
+            </div>
+            <div id="ReasonPanel">
+                <table border="0">
+                    
+                    <tr valign="top">
+                        <td>
+                            <asp:Label ID="Label3" runat="server" CssClass="DialogTextBoxLabel" 
+                                            Text='<%$ Resources:Labels, DeleteStudyConfirmReasonLabel %>'></asp:Label> 
+                             
+                        </td>
+                        <td>
+                            <table cellpadding="0" cellspacing="0">
+                                <tr valign="top">
+                                    <td>
+                                        <asp:TextBox  Width="400px" Rows="3" ID="Reason" runat="server" TextMode="MultiLine" />                                            
+                                    </td>
+                                    <td>
+                                        <ccAsp:InvalidInputIndicator ID="InvalidReasonIndicator" runat="server" SkinID="InvalidInputIndicator" />
+                                    </td>
+                                    <td>
+                                        <asp:Button runat="server" ID="PredefinedReasonButton" OnClientClick="return false;" Text="..." ></asp:Button>
+                                        <asp:Panel runat="server" ID="ReasonForDeletionDropDownPanel" CssClass="ReasonForDeletionDropDownPanel">
+                                        <asp:Label ID="Label2" runat="server" ForeColor="#16425D" Font-Size="Smaller"
+                                                Text="Pre-defined Reasons:"></asp:Label><br />                            
+                                        <asp:DropDownList runat="server" ID="ReasonListBox"/>                                        
+                                        </asp:Panel>                                        
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            
+                        </td>
+                    </tr>
+                    <tr id="ReasonSavePanel">
+                        <td>
+                            <asp:Label ID="Label4" runat="server" CssClass="DialogTextBoxLabel" 
+                                                Text="Save this reason as"></asp:Label> 
+                                 
+                        </td>
+                        <td>
+                            <asp:TextBox runat="server" ID="SaveReasonAsName" />
+                        </td>
+                </tr>
+                </table>
+            </div>                
         </div>
         
         <table cellpadding="0" cellspacing="0" width="100%">
@@ -162,6 +163,10 @@
                                                 ValidationGroup="<%= ClientID %>"
                                                 Text="You must specify the reason for deleting the studies for future auditing purpose." Display="None" InvalidInputColor="#FAFFB5"></ccValidator:ConditionalRequiredFieldValidator>
        
-       
+       <aspAjax:PopupControlExtender ID="PopEx" runat="server"
+                        TargetControlID="PredefinedReasonButton"
+                        PopupControlID="ReasonForDeletionDropDownPanel"
+                        Position="Right"  />
+    
     </ContentTemplate>
 </ccAsp:ModalDialog>

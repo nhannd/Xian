@@ -8,13 +8,13 @@
   /* IE5.5+/Win - this is more specific than the IE 5.0 version */
   left: expression( ( ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
   top: expression( ( ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+  position: absolute;
 }
 </style>
 <![endif]>
 <![endif]-->
 
 <script type="text/javascript">
-
     var countdownTimer;
     var redirectPage = "<%= ResolveClientUrl("~/Pages/Error/TimeoutErrorPage.aspx") %>";
     var loginId = "<%= HttpContext.Current.User.Identity.Name %>";
@@ -53,7 +53,7 @@
         var expiryTime = GetExpiryTime();
         if (expiryTime==null)
         {
-            return 60;
+            return 0;
         }
         var now = new Date();
         var localTime = now.getTime();
@@ -63,7 +63,6 @@
         
         now = new Date(utc);
         var sessionExpiry = new Date(expiryTime);
-        
         return Math.round( (sessionExpiry.getTime() - now.getTime()) / 1000 ) + 1// give 1 second to ensure when we redirect, the session is really expired;
     }
     
@@ -73,10 +72,11 @@
 	    var ca = document.cookie.split(';');
 	    for(var i=0;i < ca.length;i++) {
 		    var c = ca[i];
-		    while (c.charAt(0)==' ') c = c.substring(1,c.length);
-		        if (c.indexOf(name) == 0) {
-		            return c.substring(name.length,c.length);
-		        }
+		    while (c.charAt(0)==' ') c = c.substring(1,c.length); // trim leading space
+		    
+		    if (c.indexOf(name) == 0) {
+		        return c.substring(name.length,c.length);
+		    }
 	    }   
 	    return null;    
     }
@@ -94,15 +94,15 @@
         if (!hideWarning)
         {
             UpdateCountdownPanel();
-            $("#<%= CountdownEffectPanel.ClientID %>:hidden").animate({height:"30px"});
             $("#<%= CountdownBanner.ClientID %>:hidden").slideDown();
+            $("#<%= CountdownEffectPanel.ClientID %>:hidden").animate({height:"30px"});
             countdownTimer = setTimeout("Countdown()",1000);
         }
         else
         {
             $("#<%= CountdownEffectPanel.ClientID %>").hide();
 		    $("#<%= CountdownBanner.ClientID %>").hide();
-		    countdownTimer = setTimeout("Countdown()", 1000);//(timeLeft-minCountdownLength)*1000);
+		    countdownTimer = setTimeout("Countdown()", 1000);
         }
     }
     

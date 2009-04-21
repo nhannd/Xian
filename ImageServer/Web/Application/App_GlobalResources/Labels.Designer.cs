@@ -70,11 +70,20 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reason for deletion:.
+        ///   Looks up a localized string similar to Reason For Deletion:.
         /// </summary>
         internal static string DeleteStudyConfirmReasonLabel {
             get {
                 return ResourceManager.GetString("DeleteStudyConfirmReasonLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Detailed Description.
+        /// </summary>
+        internal static string DeleteStudyReasonDetailedDescription {
+            get {
+                return ResourceManager.GetString("DeleteStudyReasonDetailedDescription", resourceCulture);
             }
         }
         
