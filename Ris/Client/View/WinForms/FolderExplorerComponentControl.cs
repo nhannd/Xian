@@ -54,7 +54,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _folderTreeView.Tree = _component.FolderTree;
             _folderTreeView.DataBindings.Add("Selection", _component, "SelectedFolderTreeNode", true, DataSourceUpdateMode.OnPropertyChanged);
             _folderTreeView.MenuModel = _component.FoldersContextMenuModel;
-            _folderTreeView.ToolbarModel = _component.FoldersToolbarModel;
 
             _component.SelectedFolderChanged += _component_SelectedFolderChanged;
         }
@@ -67,7 +66,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 				// Update action model based on the folder selected
 				_folderTreeView.MenuModel = _component.FoldersContextMenuModel;
-				_folderTreeView.ToolbarModel = _component.FoldersToolbarModel;
 			}
         }
     }

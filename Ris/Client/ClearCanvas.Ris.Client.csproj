@@ -160,6 +160,7 @@
     <Compile Include="StaffGroupSummaryComponent.cs" />
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="SummaryComponentBase.cs" />
+    <Compile Include="UserWorklistTool.cs" />
     <Compile Include="ViewImagesHelper.cs" />
     <Compile Include="VisitDetailsEditorComponent.cs" />
     <Compile Include="VisitDetailViewComponent.cs" />

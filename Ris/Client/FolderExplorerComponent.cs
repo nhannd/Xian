@@ -65,13 +65,16 @@ namespace ClearCanvas.Ris.Client
         private readonly IFolderSystem _folderSystem;
     	private Timer _folderInvalidateTimer;
 
+    	private readonly FolderExplorerGroupComponent _owner;
+
         /// <summary>
         /// Constructor
         /// </summary>
-        public FolderExplorerComponent(IFolderSystem folderSystem)
+        public FolderExplorerComponent(IFolderSystem folderSystem, FolderExplorerGroupComponent owner)
         {
 			_folderTreeRoot = new FolderTreeRoot(this);
             _folderSystem = folderSystem;
+        	_owner = owner;
         }
 
 		/// <summary>
@@ -257,19 +260,12 @@ namespace ClearCanvas.Ris.Client
             remove { _selectedFolderChanged -= value; }
         }
 
-        public ActionModelRoot FoldersContextMenuModel
+        public ActionModelNode FoldersContextMenuModel
         {
             get
             {
-                return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-contextmenu", _folderSystem.FolderTools.Actions);
-            }
-        }
-
-        public ActionModelNode FoldersToolbarModel
-        {
-            get
-            {
-				return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", _folderSystem.FolderTools.Actions);
+				// need to return the menu model for the entire Group component, rather than just our own
+            	return _owner.ContextMenuModel;
             }
         }
 

@@ -9,11 +9,35 @@ using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Ris.Client
 {
+	/// <summary>
+	/// Defines an interface to a context for tools that operate on a folder explorer group.
+	/// </summary>
 	public interface IFolderExplorerGroupToolContext : IToolContext
 	{
+		/// <summary>
+		/// Gets the desktop window.
+		/// </summary>
 		IDesktopWindow DesktopWindow { get; }
+
+		/// <summary>
+		/// Gets the selected folder system (the active folder explorer).
+		/// </summary>
 		IFolderSystem SelectedFolderSystem { get; }
-		void RebuildFolderExplorers();
+
+		/// <summary>
+		/// Occurs after the <see cref="SelectedFolderSystem"/> property changes.
+		/// </summary>
+		event EventHandler SelectedFolderSystemChanged;
+
+		/// <summary>
+		/// Gets the selected folder, or null if no folder is selected.
+		/// </summary>
+		IFolder SelectedFolder { get; }
+
+		/// <summary>
+		/// Occurs after the <see cref="SelectedFolder"/> property changes.
+		/// </summary>
+		event EventHandler SelectedFolderChanged;
 	}
 
 	[ExtensionPoint]
@@ -141,30 +165,30 @@ namespace ClearCanvas.Ris.Client
 
 			public IFolderSystem SelectedFolderSystem
 			{
-				get { return _owner._selectedFolderExplorer.FolderSystem; }
+				get { return _owner.SelectedFolderExplorer == null ? null : _owner.SelectedFolderExplorer.FolderSystem; }
 			}
 
-			public void RebuildFolderExplorers()
+			public event EventHandler SelectedFolderSystemChanged
 			{
-				_owner.Rebuild();
+				add { _owner.SelectedFolderExplorerChanged += value; }
+				remove { _owner.SelectedFolderExplorerChanged -= value; }
+			}
+
+			public IFolder SelectedFolder
+			{
+				get { return _owner.SelectedFolderExplorer == null ? null : _owner.SelectedFolderExplorer.SelectedFolder; }
+			}
+
+			public event EventHandler SelectedFolderChanged
+			{
+				add { _owner.SelectedFolderChanged += value; }
+				remove { _owner.SelectedFolderChanged -= value; }
 			}
 
 			#endregion
 		}
 
 		#endregion
-
-		//[ButtonAction("apply", "folderexplorer-folders-toolbar/Rebuild", "Rebuild")]
-		//[IconSet("apply", IconScheme.Colour, "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png", "Icons.OptionsToolSmall.png")]
-		//[ExtensionOf(typeof(FolderExplorerGroupToolExtensionPoint))]
-		//public class TestToool : Tool<IFolderExplorerGroupToolContext>
-		//{
-		//    public void Rebuild()
-		//    {
-		//        this.Context.Rebuild();
-		//    }
-		//}
-
 
 		private readonly List<IFolderSystem> _folderSystems;
 		private readonly FolderContentsComponent _contentComponent;
@@ -284,12 +308,15 @@ namespace ClearCanvas.Ris.Client
 		{
 			get
 			{
-				IActionSet allActions = _toolSet.Actions;
-				if (_selectedFolderExplorer != null)
-				{
-					allActions = allActions.Union(_selectedFolderExplorer.ExportedActions);
-				}
-				return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-toolbar", allActions);
+				return CreateActionModel("folderexplorer-folders-toolbar");
+			}
+		}
+
+		public ActionModelNode ContextMenuModel
+		{
+			get
+			{
+				return CreateActionModel("folderexplorer-folders-contextmenu");
 			}
 		}
 
@@ -418,7 +445,7 @@ namespace ClearCanvas.Ris.Client
 
 		private StackTabPage CreatePageForFolderSystem(IFolderSystem folderSystem)
 		{
-			FolderExplorerComponent explorer = new FolderExplorerComponent(folderSystem);
+			FolderExplorerComponent explorer = new FolderExplorerComponent(folderSystem, this);
 			folderSystem.SetContext(new FolderSystemContext(this, explorer, _contentComponent));
 			explorer.Initialized += FolderSystemInitializedEventHandler;
 			explorer.SelectedFolderChanged += OnSelectedFolderChanged;
@@ -442,6 +469,22 @@ namespace ClearCanvas.Ris.Client
 
 			return CollectionUtils.SelectFirst(_stackTabComponent.Pages,
 				delegate(StackTabPage page) { return ReferenceEquals(page.Component, explorer); });
+		}
+
+		/// <summary>
+		/// Creates an action model that is the union of the tools for this component plus
+		/// the tools for the currently selected folder explorer.
+		/// </summary>
+		/// <param name="site"></param>
+		/// <returns></returns>
+		private ActionModelNode CreateActionModel(string site)
+		{
+			IActionSet allActions = _toolSet.Actions;
+			if (_selectedFolderExplorer != null)
+			{
+				allActions = allActions.Union(_selectedFolderExplorer.ExportedActions);
+			}
+			return ActionModelRoot.CreateModel(this.GetType().FullName, "folderexplorer-folders-contextmenu", allActions);
 		}
 
 		#endregion

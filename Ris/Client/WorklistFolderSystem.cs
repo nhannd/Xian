@@ -10,6 +10,12 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
+	public interface IWorklistFolderSystem
+	{
+		
+	}
+
+
 	/// <summary>
 	/// Abstract base class for folder systems that consist of <see cref="WorklistFolder{TItem,TWorklistService}"/>s.
 	/// </summary>
@@ -19,7 +25,7 @@ namespace ClearCanvas.Ris.Client
 	/// <typeparam name="TItemToolExtensionPoint"></typeparam>
 	/// <typeparam name="TWorklistService"></typeparam>
 	public abstract class WorklistFolderSystem<TItem, TFolderExtensionPoint, TFolderToolExtensionPoint, TItemToolExtensionPoint, TWorklistService>
-		: WorkflowFolderSystem<TItem, TFolderToolExtensionPoint, TItemToolExtensionPoint>
+		: WorkflowFolderSystem<TItem, TFolderToolExtensionPoint, TItemToolExtensionPoint>, IWorklistFolderSystem
 		where TItem : DataContractBase
 		where TFolderExtensionPoint : ExtensionPoint<IWorklistFolder>, new()
 		where TFolderToolExtensionPoint : ExtensionPoint<ITool>, new()
