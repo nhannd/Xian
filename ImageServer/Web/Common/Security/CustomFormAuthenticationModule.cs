@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Web;
 using System.Web.Security;
 using ClearCanvas.Enterprise.Common;
@@ -48,6 +49,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                     // Initialize the session. This will throw exception if the session is no longer
                     // valid. For eg, time-out.
                     SessionManager.InitializeSession(session);
+                }
+
+                if (String.IsNullOrEmpty(Thread.CurrentThread.Name))
+                {
+                    String user = SessionManager.Current != null ? SessionManager.Current.User.Identity.Name : "Unknown";
+
+                    Thread.CurrentThread.Name =
+                        String.Format(SR.WebGUILogHeader, 
+                            HttpContext.Current.Request.UserHostAddress,
+                            HttpContext.Current.Request.Browser.Browser,
+                            HttpContext.Current.Request.Browser.Version,
+                            user);
                 }
                 
             }

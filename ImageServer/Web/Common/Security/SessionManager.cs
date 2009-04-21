@@ -43,7 +43,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             {
                 Thread.CurrentPrincipal = value.User;
                 HttpContext.Current.User = value.User;
+               
             }
+        
         }
 
         /// <summary>
@@ -107,9 +109,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             using (LoginService service = new LoginService())
             {
                 SessionInfo session = service.Login(username, password);
-
                 InitializeSession(session);
-
+                Platform.Log(LogLevel.Info, "{0} has successfully logged in.", username);                                
+                
                 HttpContext.Current.Response.Redirect(FormsAuthentication.GetRedirectUrl(username, false), false);
                 return session;
             }
