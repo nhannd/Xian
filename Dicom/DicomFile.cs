@@ -482,6 +482,7 @@ namespace ClearCanvas.Dicom
 
                     iStream.Seek(0, SeekOrigin.Begin);
                     dsr = new DicomStreamReader(iStream);
+					dsr.Filename = Filename;
                     dsr.TransferSyntax = TransferSyntax.ImplicitVrLittleEndian;
                     dsr.Dataset = _dataSet;
                     DicomReadStatus stat = dsr.Read(stopTag, options);
