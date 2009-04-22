@@ -118,10 +118,7 @@ namespace ClearCanvas.Desktop.Configuration
 
 		/// <summary>
 		/// Stores/adds all setting values to a particular <see cref="ConfigurationSection"/>, not just the ones 
-		/// that are different (default values are also stored).  The reason for storing all of the values is, in the local
-		/// file case, a value may or may not already be stored that needs to be changed back to the default (the newValues dictionary
-		/// will not contain an entry for that value) and it is arguably more labour intensive to perform removal of the value
-		/// than it is just to write out the entire section.
+		/// that are different (default values are also stored).
 		/// </summary>
 		/// <param name="sectionGroup">the parent section group (applicationSettings or userSettings)</param>
 		/// <param name="sectionName">the name of the <see cref="ClientSettingsSection"/> to change/store</param>
@@ -163,7 +160,7 @@ namespace ClearCanvas.Desktop.Configuration
 			foreach (PropertyInfo property in scopeProperties)
 			{
 				SettingElement element = clientSection.Settings.Get(property.Name);
-				string requiredValue = SettingsClassMetaDataReader.GetDefaultValue(property);
+				string requiredValue = element.Value.ValueXml.InnerText;
 				if (newValues.ContainsKey(property.Name))
 					requiredValue = newValues[property.Name];
 
