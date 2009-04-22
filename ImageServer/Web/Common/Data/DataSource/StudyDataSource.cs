@@ -32,6 +32,8 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -486,7 +488,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			if (!String.IsNullOrEmpty(StudyDate))
 			{
 				string key = DateTime.ParseExact(StudyDate, DateFormats, null).ToString(STUDYDATE_DATEFORMAT);
-				criteria.StudyDate.Like(key);
+				criteria.StudyDate.EqualTo(key);
 			}
 
 			if (!String.IsNullOrEmpty(StudyDescription))
@@ -524,9 +526,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			_list = new List<StudySummary>();
 
-		    
-			foreach (Study study in studyList)
-				_list.Add(StudySummaryAssembler.CreateStudySummary(study));
+			using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+			{
+				foreach (Study study in studyList)
+					_list.Add(StudySummaryAssembler.CreateStudySummary(read, study));
+			}
 
 			if (StudyFoundSet != null)
 				StudyFoundSet(_list);
@@ -557,11 +561,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		/// Returns an instance of <see cref="StudySummary"/> based on a <see cref="Study"/> object.
 		/// </summary>
 		/// <param name="study"></param>
+		/// <param name="read"></param>
 		/// <returns></returns>
 		/// <remark>
 		/// 
 		/// </remark>
-		static public StudySummary CreateStudySummary(Study study)
+		static public StudySummary CreateStudySummary(IPersistenceContext read, Study study)
 		{
 			StudySummary studySummary = new StudySummary();
 			StudyController controller = new StudyController();
@@ -575,17 +580,21 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			studySummary.StudyDate = study.StudyDate;
 			studySummary.StudyInstanceUid = study.StudyInstanceUid;
 			studySummary.StudyDescription = study.StudyDescription;
-			studySummary.ModalitiesInStudy = controller.GetModalitiesInStudy(study);
+			studySummary.ModalitiesInStudy = controller.GetModalitiesInStudy(read, study);
 			studySummary.StudyTime = study.StudyTime;
 			studySummary.StudyId = study.StudyId;
 			studySummary.TheStudy = study;
-			studySummary.ThePartition = ServerPartition.Load(study.ServerPartitionKey);
+
+			studySummary.ThePartition = ServerPartitionMonitor.Instance.FindPartition(study.ServerPartitionKey);
+			if (studySummary.ThePartition == null)
+				studySummary.ThePartition = ServerPartition.Load(read, study.ServerPartitionKey);
+
 			studySummary.ReferringPhysiciansName = study.ReferringPhysiciansName;
-			studySummary.TheStudyStorage = StudyStorage.Load(study.ServerPartitionKey, study.StudyInstanceUid);
+			studySummary.TheStudyStorage = StudyStorage.Load(read, study.ServerPartitionKey, study.StudyInstanceUid);
 			studySummary.StudyStatusEnum = studySummary.TheStudyStorage.StudyStatusEnum;
 			studySummary.QueueStudyStateEnum = studySummary.TheStudyStorage.QueueStudyStateEnum;
 
-			IList<ArchiveStudyStorage> archiveList = controller.GetArchiveStudyStorage(studySummary.TheStudyStorage.Key);
+			IList<ArchiveStudyStorage> archiveList = controller.GetArchiveStudyStorage(read, studySummary.TheStudyStorage.Key);
 			if (archiveList.Count > 0)
 				studySummary.TheArchiveLocation = CollectionUtils.FirstElement(archiveList);
 
@@ -594,15 +603,17 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			// the study is considered "locked" if it's being processed or some action which requires the lock has been scheduled
 			// No additional action should be allowed on the study until everything is completed.
-			studySummary.IsLocked = studySummary.IsProcessing || (studySummary.TheStudyStorage.QueueStudyStateEnum != QueueStudyStateEnum.Idle);
+			studySummary.IsLocked = studySummary.IsProcessing ||
+			                        (studySummary.TheStudyStorage.QueueStudyStateEnum != QueueStudyStateEnum.Idle);
 
-			IList<StudyIntegrityQueue> integrityQueueItems = controller.GetStudyIntegrityQueueItems(studySummary.TheStudyStorage.Key);
+			IList<StudyIntegrityQueue> integrityQueueItems =
+				controller.GetStudyIntegrityQueueItems(studySummary.TheStudyStorage.Key);
 
 			if (integrityQueueItems != null && integrityQueueItems.Count > 0)
 			{
 				studySummary.IsReconcileRequired = true;
 			}
-            
+
 			return studySummary;
 		}
 	}

@@ -98,15 +98,19 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		/// </summary>
 		public void DeleteStudy(ServerEntityKey studyKey, string reason)
         {
-            StudySummary study = StudySummaryAssembler.CreateStudySummary(Study.Load(studyKey));
-            if (study.IsReconcileRequired)
-            {
-                throw new ApplicationException(String.Format("Deleting the study is not allowed at this time : there are items to be reconciled."));
+			StudySummary study;
+			using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+			{
+				study = StudySummaryAssembler.CreateStudySummary(ctx, Study.Load(ctx, studyKey));
+				if (study.IsReconcileRequired)
+				{
+					throw new ApplicationException(
+						String.Format("Deleting the study is not allowed at this time : there are items to be reconciled."));
 
-                // NOTE: another check will occur when the delete is actually processed
-            }
+					// NOTE: another check will occur when the delete is actually processed
+				}
+			}
 
-				
 			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
                 LockStudyParameters lockParms = new LockStudyParameters();
@@ -280,8 +284,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		/// Returns a value indicating whether the specified study has been scheduled for delete.
 		/// </summary>
 		/// <param name="study"></param>
+		/// <param name="read"></param>
 		/// <returns></returns>
-		public string GetModalitiesInStudy(Study study)
+		public string GetModalitiesInStudy(IPersistenceContext read, Study study)
 		{
 			Platform.CheckForNullReference(study, "Study");
 			SeriesSearchAdaptor seriesAdaptor = new SeriesSearchAdaptor();
@@ -290,7 +295,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 			criteria.ServerPartitionKey.EqualTo(study.ServerPartitionKey);
 			criteria.StudyKey.EqualTo(study.Key);
 
-			IList<Series> seriesList = seriesAdaptor.Get(criteria);
+			IList<Series> seriesList = seriesAdaptor.Get(read, criteria);
 
 			List<string> modalities = new List<string>();
 			
@@ -362,7 +367,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         	return adaptor.Get(archiveStudyStorageCriteria);
         }
 
-    	public IList<ArchiveStudyStorage> GetArchiveStudyStorage(ServerEntityKey studyStorageKey)
+		public IList<ArchiveStudyStorage> GetArchiveStudyStorage(IPersistenceContext read, ServerEntityKey studyStorageKey)
         {
             Platform.CheckForNullReference(studyStorageKey, "studyStorageKey");
 
@@ -371,7 +376,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             archiveStudyStorageCriteria.StudyStorageKey.EqualTo(studyStorageKey);
         	archiveStudyStorageCriteria.ArchiveTime.SortDesc(0);
 
-            return adaptor.Get(archiveStudyStorageCriteria);
+            return adaptor.Get(read, archiveStudyStorageCriteria);
         }
 
         public IList<StudyStorageLocation> GetStudyStorageLocation(Study study)

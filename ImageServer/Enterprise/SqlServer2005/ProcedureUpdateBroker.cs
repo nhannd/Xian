@@ -68,6 +68,9 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 if (update != null)
                     command.Transaction = update.Transaction;
 
+				if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+					Platform.Log(LogLevel.Debug, "Executing stored procedure: {0}", _procedureName);
+
                 // Set parameters
                 SetParameters(command, criteria);
 

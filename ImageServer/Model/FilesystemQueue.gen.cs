@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public FilesystemQueue Load(IReadContext read, ServerEntityKey key)
+        static public FilesystemQueue Load(IPersistenceContext read, ServerEntityKey key)
         {
             IFilesystemQueueEntityBroker broker = read.GetBroker<IFilesystemQueueEntityBroker>();
             FilesystemQueue theObject = broker.Load(key);

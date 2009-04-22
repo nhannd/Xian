@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 							HsmStudyRestore archiver = new HsmStudyRestore(_hsmArchive);
 							_threadPool.Enqueue(queueItem, archiver.Run);
 						}
-						else if (CheckStop(5000))
+						else if (CheckStop(HsmSettings.Default.PollDelayMilliseconds))
 						{
 							Platform.Log(LogLevel.Info, "Shutting down {0} restore service.", _hsmArchive.PartitionArchive.Description);
 							return;
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 					catch (Exception e)
 					{
 						Platform.Log(LogLevel.Error, e, "Unexpected exception when querying for restore candidates.  Rescheduling.");
-						if (CheckStop(5000))
+						if (CheckStop(HsmSettings.Default.PollDelayMilliseconds))
 						{
 							Platform.Log(LogLevel.Info, "Shutting down {0} restore service.", _hsmArchive.PartitionArchive.Description);
 							return;
@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				}
 				else
 				{
-					if (CheckStop(5000))
+					if (CheckStop(HsmSettings.Default.PollDelayMilliseconds))
 					{
 						Platform.Log(LogLevel.Info, "Shutting down {0} restore service.", _hsmArchive.PartitionArchive.Description);
 						return;

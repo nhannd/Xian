@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public StudyStorage Load(IReadContext read, ServerEntityKey key)
+        static public StudyStorage Load(IPersistenceContext read, ServerEntityKey key)
         {
             IStudyStorageEntityBroker broker = read.GetBroker<IStudyStorageEntityBroker>();
             StudyStorage theObject = broker.Load(key);

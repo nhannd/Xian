@@ -562,7 +562,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			writer.WriteLine("                return Load(read, key);");
 			writer.WriteLine("            }");
 			writer.WriteLine("        }");
-			writer.WriteLine("        static public {0} Load(IReadContext read, ServerEntityKey key)", table.TableName);
+			writer.WriteLine("        static public {0} Load(IPersistenceContext read, ServerEntityKey key)", table.TableName);
 			writer.WriteLine("        {");
 			writer.WriteLine("            I{0}EntityBroker broker = read.GetBroker<I{0}EntityBroker>();", table.TableName);
 			writer.WriteLine("            {0} theObject = broker.Load(key);", table.TableName);

@@ -67,5 +67,14 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm {
                 return ((bool)(this["CompressZipFiles"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("15000")]
+        public int PollDelayMilliseconds {
+            get {
+                return ((int)(this["PollDelayMilliseconds"]));
+            }
+        }
     }
 }

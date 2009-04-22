@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public DatabaseVersion Load(IReadContext read, ServerEntityKey key)
+        static public DatabaseVersion Load(IPersistenceContext read, ServerEntityKey key)
         {
             IDatabaseVersionEntityBroker broker = read.GetBroker<IDatabaseVersionEntityBroker>();
             DatabaseVersion theObject = broker.Load(key);

@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public StudyHistory Load(IReadContext read, ServerEntityKey key)
+        static public StudyHistory Load(IPersistenceContext read, ServerEntityKey key)
         {
             IStudyHistoryEntityBroker broker = read.GetBroker<IStudyHistoryEntityBroker>();
             StudyHistory theObject = broker.Load(key);

@@ -217,7 +217,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public ServerPartition Load(IReadContext read, ServerEntityKey key)
+        static public ServerPartition Load(IPersistenceContext read, ServerEntityKey key)
         {
             IServerPartitionEntityBroker broker = read.GetBroker<IServerPartitionEntityBroker>();
             ServerPartition theObject = broker.Load(key);

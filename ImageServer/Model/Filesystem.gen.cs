@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public Filesystem Load(IReadContext read, ServerEntityKey key)
+        static public Filesystem Load(IPersistenceContext read, ServerEntityKey key)
         {
             IFilesystemEntityBroker broker = read.GetBroker<IFilesystemEntityBroker>();
             Filesystem theObject = broker.Load(key);

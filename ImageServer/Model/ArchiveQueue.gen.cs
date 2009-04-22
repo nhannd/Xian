@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public ArchiveQueue Load(IReadContext read, ServerEntityKey key)
+        static public ArchiveQueue Load(IPersistenceContext read, ServerEntityKey key)
         {
             IArchiveQueueEntityBroker broker = read.GetBroker<IArchiveQueueEntityBroker>();
             ArchiveQueue theObject = broker.Load(key);

@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public PartitionTransferSyntax Load(IReadContext read, ServerEntityKey key)
+        static public PartitionTransferSyntax Load(IPersistenceContext read, ServerEntityKey key)
         {
             IPartitionTransferSyntaxEntityBroker broker = read.GetBroker<IPartitionTransferSyntaxEntityBroker>();
             PartitionTransferSyntax theObject = broker.Load(key);

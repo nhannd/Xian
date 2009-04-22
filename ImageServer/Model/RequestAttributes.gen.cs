@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public RequestAttributes Load(IReadContext read, ServerEntityKey key)
+        static public RequestAttributes Load(IPersistenceContext read, ServerEntityKey key)
         {
             IRequestAttributesEntityBroker broker = read.GetBroker<IRequestAttributesEntityBroker>();
             RequestAttributes theObject = broker.Load(key);

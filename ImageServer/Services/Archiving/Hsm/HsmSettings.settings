@@ -17,5 +17,8 @@
     <Setting Name="CompressZipFiles" Type="System.Boolean" Scope="Application">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="PollDelayMilliseconds" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">15000</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

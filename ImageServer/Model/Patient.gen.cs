@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public Patient Load(IReadContext read, ServerEntityKey key)
+        static public Patient Load(IPersistenceContext read, ServerEntityKey key)
         {
             IPatientEntityBroker broker = read.GetBroker<IPatientEntityBroker>();
             Patient theObject = broker.Load(key);

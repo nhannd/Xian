@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public CannedText Load(IReadContext read, ServerEntityKey key)
+        static public CannedText Load(IPersistenceContext read, ServerEntityKey key)
         {
             ICannedTextEntityBroker broker = read.GetBroker<ICannedTextEntityBroker>();
             CannedText theObject = broker.Load(key);

@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public Series Load(IReadContext read, ServerEntityKey key)
+        static public Series Load(IPersistenceContext read, ServerEntityKey key)
         {
             ISeriesEntityBroker broker = read.GetBroker<ISeriesEntityBroker>();
             Series theObject = broker.Load(key);

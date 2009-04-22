@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public DevicePreferredTransferSyntax Load(IReadContext read, ServerEntityKey key)
+        static public DevicePreferredTransferSyntax Load(IPersistenceContext read, ServerEntityKey key)
         {
             IDevicePreferredTransferSyntaxEntityBroker broker = read.GetBroker<IDevicePreferredTransferSyntaxEntityBroker>();
             DevicePreferredTransferSyntax theObject = broker.Load(key);

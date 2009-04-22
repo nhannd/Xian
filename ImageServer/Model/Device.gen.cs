@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public Device Load(IReadContext read, ServerEntityKey key)
+        static public Device Load(IPersistenceContext read, ServerEntityKey key)
         {
             IDeviceEntityBroker broker = read.GetBroker<IDeviceEntityBroker>();
             Device theObject = broker.Load(key);

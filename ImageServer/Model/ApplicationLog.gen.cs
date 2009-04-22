@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public ApplicationLog Load(IReadContext read, ServerEntityKey key)
+        static public ApplicationLog Load(IPersistenceContext read, ServerEntityKey key)
         {
             IApplicationLogEntityBroker broker = read.GetBroker<IApplicationLogEntityBroker>();
             ApplicationLog theObject = broker.Load(key);

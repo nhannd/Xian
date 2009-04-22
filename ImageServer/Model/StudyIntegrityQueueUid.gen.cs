@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public StudyIntegrityQueueUid Load(IReadContext read, ServerEntityKey key)
+        static public StudyIntegrityQueueUid Load(IPersistenceContext read, ServerEntityKey key)
         {
             IStudyIntegrityQueueUidEntityBroker broker = read.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
             StudyIntegrityQueueUid theObject = broker.Load(key);

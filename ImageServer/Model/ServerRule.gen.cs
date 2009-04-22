@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public ServerRule Load(IReadContext read, ServerEntityKey key)
+        static public ServerRule Load(IPersistenceContext read, ServerEntityKey key)
         {
             IServerRuleEntityBroker broker = read.GetBroker<IServerRuleEntityBroker>();
             ServerRule theObject = broker.Load(key);

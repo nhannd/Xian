@@ -208,7 +208,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public StudyDeleteRecord Load(IReadContext read, ServerEntityKey key)
+        static public StudyDeleteRecord Load(IPersistenceContext read, ServerEntityKey key)
         {
             IStudyDeleteRecordEntityBroker broker = read.GetBroker<IStudyDeleteRecordEntityBroker>();
             StudyDeleteRecord theObject = broker.Load(key);

@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public Alert Load(IReadContext read, ServerEntityKey key)
+        static public Alert Load(IPersistenceContext read, ServerEntityKey key)
         {
             IAlertEntityBroker broker = read.GetBroker<IAlertEntityBroker>();
             Alert theObject = broker.Load(key);

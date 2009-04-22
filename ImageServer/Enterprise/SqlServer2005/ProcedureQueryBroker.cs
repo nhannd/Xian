@@ -105,6 +105,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 // Set parameters
                 SetParameters(command, criteria);
 
+				if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+					Platform.Log(LogLevel.Debug, "Executing stored procedure: {0}", _procedureName);
 
                 myReader = command.ExecuteReader();
                 if (myReader == null)

@@ -87,7 +87,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
         #region Private Methods
 
-		private static void AuditLog(AssociationParameters parms, DicomMessage requestMsg, EventIdentificationTypeEventOutcomeIndicator outcome)
+		/// <summary>
+		/// Helper method for logging audit information.
+		/// </summary>
+		/// <param name="parms"></param>
+		/// <param name="outcome"></param>
+		private static void AuditLog(AssociationParameters parms, EventIdentificationTypeEventOutcomeIndicator outcome)
 		{
 			QueryAuditHelper helper = new QueryAuditHelper(ServerPlatform.AuditSource,
 			                                               outcome, parms);
@@ -267,14 +272,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 		/// <param name="read">The connection to use to read the values.</param>
         /// <param name="response"></param>
         /// <param name="tagList"></param>
+		/// <param name="storage"></param>
         /// <param name="row">The <see cref="Study"/> table to populate the response from.</param>
-        private void PopulateStudy(IReadContext read, DicomMessage response, IList<uint> tagList, Study row)
+        private void PopulateStudy(IReadContext read, StudyStorage storage, DicomMessage response, IList<uint> tagList, Study row)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
 
-        	StudyStorage storage = StudyStorage.Load(read, Partition.Key, row.StudyInstanceUid);
 			if (storage.StudyStatusEnum == StudyStatusEnum.Nearline)
 				dataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
 			else
@@ -639,7 +644,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
-						AuditLog(server.AssociationParams, message,
+						AuditLog(server.AssociationParams,
 								 EventIdentificationTypeEventOutcomeIndicator.Success);
 					}
 					else
@@ -648,7 +653,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 						                         DicomStatuses.QueryRetrieveUnableToProcess);
-						AuditLog(server.AssociationParams, message,
+						AuditLog(server.AssociationParams,
 								 EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
 					}
                 	return;
@@ -657,7 +662,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
-			AuditLog(server.AssociationParams, message, EventIdentificationTypeEventOutcomeIndicator.Success);
+			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
         	return;
         }
 
@@ -760,7 +765,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 														return;
 
                                                     DicomMessage response = new DicomMessage();
-                                                    PopulateStudy(subRead, response, tagList, row);
+                                                    PopulateStudy(subRead, storage, response, tagList, row);
                                                     server.SendCFindResponse(presentationID, message.MessageId, response,
                                                                              DicomStatuses.Pending);
 											
@@ -774,7 +779,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
-						AuditLog(server.AssociationParams, message, EventIdentificationTypeEventOutcomeIndicator.Success);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
         
 					}
 					else if (DicomSettings.Default.MaxQueryResponses != -1
@@ -784,7 +789,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
-						AuditLog(server.AssociationParams, message, EventIdentificationTypeEventOutcomeIndicator.Success);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
         
 					}
 					else
@@ -793,7 +798,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 						                         DicomStatuses.ProcessingFailure);
-						AuditLog(server.AssociationParams, message,
+						AuditLog(server.AssociationParams,
 						         EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
 
 					}
@@ -804,7 +809,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-			AuditLog(server.AssociationParams, message, EventIdentificationTypeEventOutcomeIndicator.Success);
+			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
         
         	return;
         }
@@ -900,7 +905,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
-						AuditLog(server.AssociationParams, message, EventIdentificationTypeEventOutcomeIndicator.Success);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
         
 					}
 					else if (DicomSettings.Default.MaxQueryResponses != -1
@@ -911,7 +916,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Success);
-						AuditLog(server.AssociationParams, message, EventIdentificationTypeEventOutcomeIndicator.Success);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
         
 					}
 					else
@@ -920,7 +925,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 						                         DicomStatuses.ProcessingFailure);
-						AuditLog(server.AssociationParams, message, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
         
 					}
                 	return;
@@ -929,7 +934,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 DicomMessage finalResponse = new DicomMessage();
                 server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-				AuditLog(server.AssociationParams, message, EventIdentificationTypeEventOutcomeIndicator.Success);
+				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
         
             	return;
             }
@@ -1002,7 +1007,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				server.SendCFindResponse(presentationID, message.MessageId, failureResponse,
                                          DicomStatuses.QueryRetrieveUnableToProcess);
 
-				AuditLog(server.AssociationParams, message, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
+				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
 
             	return;
             }
@@ -1033,7 +1038,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
 
-						AuditLog(server.AssociationParams, message, EventIdentificationTypeEventOutcomeIndicator.Success);
+						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
 
 						return;
 					}
@@ -1058,7 +1063,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);
 
-			AuditLog(server.AssociationParams, message, EventIdentificationTypeEventOutcomeIndicator.Success);
+			AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
 
         	return;
         }

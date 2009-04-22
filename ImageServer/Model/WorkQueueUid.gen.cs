@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public WorkQueueUid Load(IReadContext read, ServerEntityKey key)
+        static public WorkQueueUid Load(IPersistenceContext read, ServerEntityKey key)
         {
             IWorkQueueUidEntityBroker broker = read.GetBroker<IWorkQueueUidEntityBroker>();
             WorkQueueUid theObject = broker.Load(key);

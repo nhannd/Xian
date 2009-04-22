@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public ServerSopClass Load(IReadContext read, ServerEntityKey key)
+        static public ServerSopClass Load(IPersistenceContext read, ServerEntityKey key)
         {
             IServerSopClassEntityBroker broker = read.GetBroker<IServerSopClassEntityBroker>();
             ServerSopClass theObject = broker.Load(key);

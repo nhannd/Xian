@@ -100,7 +100,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public FilesystemStudyStorage Load(IReadContext read, ServerEntityKey key)
+        static public FilesystemStudyStorage Load(IPersistenceContext read, ServerEntityKey key)
         {
             IFilesystemStudyStorageEntityBroker broker = read.GetBroker<IFilesystemStudyStorageEntityBroker>();
             FilesystemStudyStorage theObject = broker.Load(key);

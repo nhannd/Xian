@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageServer.Model
                 return Load(read, key);
             }
         }
-        static public ServiceLock Load(IReadContext read, ServerEntityKey key)
+        static public ServiceLock Load(IPersistenceContext read, ServerEntityKey key)
         {
             IServiceLockEntityBroker broker = read.GetBroker<IServiceLockEntityBroker>();
             ServiceLock theObject = broker.Load(key);

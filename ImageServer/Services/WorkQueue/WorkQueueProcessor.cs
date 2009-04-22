@@ -184,14 +184,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					catch (Exception e)
 					{
 						// Wait for only 1.5 seconds
-						Platform.Log(LogLevel.Error, "Exception occured: {0}. Retry later.", e.Message);
-						_terminateEvent.WaitOne(1500, false);
+						Platform.Log(LogLevel.Error, e, "Exception occured when processing WorkQueue item.");
+						_terminateEvent.WaitOne(3000, false);
 					}
 				}
 				else
 				{
 					// wait for new opening in the pool or termination
-					WaitHandle.WaitAny(new WaitHandle[] { _threadStop, _terminateEvent }, 1500, false);
+					WaitHandle.WaitAny(new WaitHandle[] { _threadStop, _terminateEvent }, 3000, false);
 					_threadStop.Reset();
 				}
 			}
