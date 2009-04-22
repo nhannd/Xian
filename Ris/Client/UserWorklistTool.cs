@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -52,8 +53,19 @@ namespace ClearCanvas.Ris.Client
 
 		public void Add()
 		{
+			if (!CanAdd())
+				return;
+
 			WorklistEditorComponent editor = new WorklistEditorComponent(false);
-			ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "New Worklist");
+			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "New Worklist");
+			if(exitCode == ApplicationComponentExitCode.Accepted)
+			{
+				IWorklistFolderSystem fs = (IWorklistFolderSystem) this.Context.SelectedFolderSystem;
+				foreach (WorklistAdminSummary worklist in editor.EditedWorklistSummaries)
+				{
+					fs.AddWorklistFolder(worklist);
+				}
+			}
 		}
 
 		public void Edit()
@@ -69,6 +81,11 @@ namespace ClearCanvas.Ris.Client
 		public void Delete()
 		{
 
+		}
+
+		private bool CanAdd()
+		{
+			return this.Context.SelectedFolderSystem is IWorklistFolderSystem;
 		}
 
 		private bool CanEdit(IFolder folder)

@@ -99,6 +99,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         [DataMember]
         public string Description;
 
+		[DataMember]
+		public bool IsUserWorklist;
+
         [DataMember]
         public WorklistClassSummary WorklistClass;
 

@@ -154,7 +154,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (this.SelectedItems.Count != 1) return;
 
                 WorklistAdminSummary worklist = CollectionUtils.FirstElement(this.SelectedItems);
-                WorklistEditorComponent editor = new WorklistEditorComponent(worklist.EntityRef, true);
+				WorklistEditorComponent editor = new WorklistEditorComponent(worklist.WorklistRef, true);
                 ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
                     new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
 
@@ -222,9 +222,9 @@ namespace ClearCanvas.Ris.Client.Admin
         protected override bool EditItems(IList<WorklistAdminSummary> items, out IList<WorklistAdminSummary> editedItems)
         {
             WorklistAdminSummary worklist = CollectionUtils.FirstElement(items);
-            WorklistEditorComponent editor = new WorklistEditorComponent(worklist.EntityRef, false);
+			WorklistEditorComponent editor = new WorklistEditorComponent(worklist.WorklistRef, false);
             ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
-                new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist + " - " + worklist.Name, null, DialogSizeHint.Medium));
+                new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist + " - " + worklist.DisplayName, null, DialogSizeHint.Medium));
 
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
@@ -250,7 +250,7 @@ namespace ClearCanvas.Ris.Client.Admin
 					Platform.GetService<IWorklistAdminService>(
 						delegate(IWorklistAdminService service)
 						{
-							service.DeleteWorklist(new DeleteWorklistRequest(item.EntityRef));
+							service.DeleteWorklist(new DeleteWorklistRequest(item.WorklistRef));
 						});
 
 					deletedItems.Add(item);
@@ -266,7 +266,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         protected override bool IsSameItem(WorklistAdminSummary x, WorklistAdminSummary y)
         {
-            return x.EntityRef.Equals(y.EntityRef, true);
+			return x.WorklistRef.Equals(y.WorklistRef, true);
         }
     }
 }

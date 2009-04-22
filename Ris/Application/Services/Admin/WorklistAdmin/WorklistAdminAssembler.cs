@@ -62,6 +62,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             WorklistAdminDetail detail = new WorklistAdminDetail(worklist.GetRef(), worklist.Name, worklist.Description,
                 CreateClassSummary(worklist.GetClass()));
 
+        	detail.IsUserWorklist = worklist.IsUserWorklist;
+
             if (worklist.ProcedureTypeGroupFilter.IsEnabled)
             {
                 ProcedureTypeGroupAssembler assembler = new ProcedureTypeGroupAssembler();
@@ -155,10 +157,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 CreateClassSummary(worklist.GetClass()));
         }
 
-        public void UpdateWorklist(Worklist worklist, WorklistAdminDetail detail, IPersistenceContext context)
+        public void UpdateWorklist(Worklist worklist, WorklistAdminDetail detail,
+			bool updateStaffSubscribers, bool updateGroupSubscribers, IPersistenceContext context)
         {
             worklist.Name = detail.Name;
             worklist.Description = detail.Description;
+
+			// do not update the worklist.Owner here!!! - once set, it should never be updated
             
             // procedure groups
             worklist.ProcedureTypeGroupFilter.Values.Clear();
@@ -252,21 +257,27 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             }
 
             // process subscriptions
-            worklist.StaffSubscribers.Clear();
-            worklist.StaffSubscribers.AddAll(
-                CollectionUtils.Map<StaffSummary, Staff>(detail.StaffSubscribers,
-                    delegate(StaffSummary summary)
-                    {
-                        return context.Load<Staff>(summary.StaffRef, EntityLoadFlags.Proxy);
-                    }));
+			if(updateStaffSubscribers)
+			{
+				worklist.StaffSubscribers.Clear();
+				worklist.StaffSubscribers.AddAll(
+					CollectionUtils.Map<StaffSummary, Staff>(detail.StaffSubscribers,
+						delegate(StaffSummary summary)
+						{
+							return context.Load<Staff>(summary.StaffRef, EntityLoadFlags.Proxy);
+						}));
+			}
 
-            worklist.GroupSubscribers.Clear();
-            worklist.GroupSubscribers.AddAll(
-                CollectionUtils.Map<StaffGroupSummary, StaffGroup>(detail.GroupSubscribers,
-                    delegate(StaffGroupSummary summary)
-                    {
-                        return context.Load<StaffGroup>(summary.StaffGroupRef, EntityLoadFlags.Proxy);
-                    }));
+			if(updateGroupSubscribers)
+			{
+				worklist.GroupSubscribers.Clear();
+				worklist.GroupSubscribers.AddAll(
+					CollectionUtils.Map<StaffGroupSummary, StaffGroup>(detail.GroupSubscribers,
+						delegate(StaffGroupSummary summary)
+						{
+							return context.Load<StaffGroup>(summary.StaffGroupRef, EntityLoadFlags.Proxy);
+						}));
+			}
         }
 
         public WorklistTimePoint CreateTimePoint(WorklistAdminDetail.TimePoint contract)

@@ -39,6 +39,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Desktop.Validation;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -94,6 +95,7 @@ namespace ClearCanvas.Ris.Client
 
         private readonly Mode _mode;
     	private readonly bool _multiCreate;
+    	private readonly bool _createUserWorklist;
 
         private EntityRef _worklistRef;
         private readonly List<WorklistAdminSummary> _editedWorklistSummaries = new List<WorklistAdminSummary>();
@@ -111,10 +113,11 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor to create new worklist(s).
         /// </summary>
-        public WorklistEditorComponent(bool createMultiple)
+        public WorklistEditorComponent(bool adminMode)
         {
             _mode = Mode.Add;
-			_multiCreate = createMultiple;
+			_multiCreate = adminMode;
+        	_createUserWorklist = !adminMode;
         }
 
         /// <summary>
@@ -130,8 +133,7 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
-
-            Platform.GetService<IWorklistAdminService>(
+			Platform.GetService<IWorklistAdminService>(
                 delegate(IWorklistAdminService service)
                 {
                     GetWorklistEditFormDataResponse formDataResponse = service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest());
@@ -141,6 +143,7 @@ namespace ClearCanvas.Ris.Client
                     if (_mode == Mode.Add)
                     {
                         _worklistDetail = new WorklistAdminDetail();
+						_worklistDetail.IsUserWorklist = _createUserWorklist;
                         _worklistDetail.FilterByWorkingFacility = true; // set this by default (Ticket #1848)
                     }
                     else
@@ -189,11 +192,18 @@ namespace ClearCanvas.Ris.Client
 
                     _timeWindowComponent = new WorklistTimeWindowEditorComponent(_worklistDetail);
 
-                    _staffSubscribersComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
-                        formDataResponse.StaffChoices, _worklistDetail.StaffSubscribers, delegate(StaffSummary s) { return s.StaffRef; });
+					if(ShowStaffSubscribersPage)
+					{
+						_staffSubscribersComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
+							formDataResponse.StaffChoices, _worklistDetail.StaffSubscribers, delegate(StaffSummary s) { return s.StaffRef; });
+					}
 
-                    _groupSubscribersComponent = new WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
-                        formDataResponse.StaffGroupChoices, _worklistDetail.GroupSubscribers, delegate(StaffGroupSummary s) { return s.StaffGroupRef; });
+					if(ShowGroupSubscribersPage)
+					{
+						//TODO: limit group choices if not admin to my groups only
+						_groupSubscribersComponent = new WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
+							formDataResponse.StaffGroupChoices, _worklistDetail.GroupSubscribers, delegate(StaffGroupSummary s) { return s.StaffGroupRef; });
+					}
                 });
 
 			// add pages
@@ -208,8 +218,15 @@ namespace ClearCanvas.Ris.Client
                 this.Pages.Add(new NavigatorPage("NodeWorklist/NodeTimeWindow", _timeWindowComponent));
             }
 
-            this.Pages.Add(new NavigatorPage("NodeWorklist/NodeGroupSubscribers", _groupSubscribersComponent));
-            this.Pages.Add(new NavigatorPage("NodeWorklist/NodeIndividualSubscribers", _staffSubscribersComponent));
+
+			if (ShowGroupSubscribersPage)
+			{
+				this.Pages.Add(new NavigatorPage("NodeWorklist/NodeGroupSubscribers", _groupSubscribersComponent));
+			}
+			if (ShowStaffSubscribersPage)
+			{
+				this.Pages.Add(new NavigatorPage("NodeWorklist/NodeIndividualSubscribers", _staffSubscribersComponent));
+			}
 			this.Pages.Add(new NavigatorPage("NodeWorklist/Preview", _previewComponent = new WorklistPreviewComponent(_worklistDetail)));
 
 			this.CurrentPageChanged += WorklistEditorComponent_CurrentPageChanged;
@@ -258,10 +275,10 @@ namespace ClearCanvas.Ris.Client
 			if (_locationFilterComponent.IsStarted)
 				_worklistDetail.PatientLocations = new List<LocationSummary>(_locationFilterComponent.SelectedItems);
 
-			if (_groupSubscribersComponent.IsStarted)
+			if (ShowGroupSubscribersPage && _groupSubscribersComponent.IsStarted)
                 _worklistDetail.GroupSubscribers = new List<StaffGroupSummary>(_groupSubscribersComponent.SelectedItems);
 
-            if(_staffSubscribersComponent.IsStarted)
+            if (ShowStaffSubscribersPage && _staffSubscribersComponent.IsStarted)
                 _worklistDetail.StaffSubscribers = new List<StaffSummary>(_staffSubscribersComponent.SelectedItems);
 
             if (this.HasValidationErrors)
@@ -300,6 +317,21 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
+    	private bool ShowStaffSubscribersPage
+    	{
+			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.Worklist); }
+    	}
+
+		private bool ShowGroupSubscribersPage
+		{
+			get
+			{	
+				return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.Worklist)
+					|| Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Worklist.Group);
+			}
+		}
+
+
         private void AddWorklists()
         {
             Platform.GetService<IWorklistAdminService>(
@@ -336,7 +368,7 @@ namespace ClearCanvas.Ris.Client
                 {
                     UpdateWorklistResponse response =
                         service.UpdateWorklist(new UpdateWorklistRequest(_worklistRef, _worklistDetail));
-                    _worklistRef = response.WorklistAdminSummary.EntityRef;
+					_worklistRef = response.WorklistAdminSummary.WorklistRef;
                     _editedWorklistSummaries.Add(response.WorklistAdminSummary);
                 });
         }

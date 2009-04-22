@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -42,6 +43,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 {
@@ -198,9 +200,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         [ReadOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
-        public LoadWorklistForEditResponse LoadWorklistForEdit(LoadWorklistForEditRequest request)
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
+		public LoadWorklistForEditResponse LoadWorklistForEdit(LoadWorklistForEditRequest request)
         {
             Worklist worklist = PersistenceContext.Load<Worklist>(request.EntityRef);
+			CheckAccess(worklist);
+
             WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
             WorklistAdminDetail adminDetail = adminAssembler.GetWorklistDetail(worklist, this.PersistenceContext);
             return new LoadWorklistForEditResponse(worklist.GetRef(), adminDetail);
@@ -208,6 +214,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         [UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
 		public AddWorklistResponse AddWorklist(AddWorklistRequest request)
         {
             if(string.IsNullOrEmpty(request.Detail.Name))
@@ -215,36 +223,68 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 throw new RequestValidationException(SR.ExceptionWorklistNameRequired);
             }
 
-            WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
+			// create instance of appropriate class
             Worklist worklist = WorklistFactory.Instance.CreateWorklist(request.Detail.WorklistClass.ClassName);
-            adminAssembler.UpdateWorklist(worklist, request.Detail, this.PersistenceContext);
+
+			// update properties
+        	UpdateWorklistHelper(request.Detail, worklist);
+
+			// check if the request is to create a User Worklist
+			// or if the user does not have full admin rights, in which case it is forced to be a user worklist
+			if (request.Detail.IsUserWorklist || !UserHasToken(AuthorityTokens.Admin.Data.Worklist))
+			{
+				// for user worklists, we set the owner to the current user
+				worklist.Owner = CurrentUserStaff;
+
+				// and add the current user staff as a subscriber
+				worklist.StaffSubscribers.Add(CurrentUserStaff);
+			}
+
+			// validate the subscriptions
+			worklist.ValidateSubscriptions();
 
             PersistenceContext.Lock(worklist, DirtyState.New);
             PersistenceContext.SynchState();
 
-            return new AddWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
+			WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
+			return new AddWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
         }
 
         [UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
 		public UpdateWorklistResponse UpdateWorklist(UpdateWorklistRequest request)
         {
-            Worklist worklist = this.PersistenceContext.Load<Worklist>(request.EntityRef);
+			Worklist worklist = this.PersistenceContext.Load<Worklist>(request.EntityRef);
 
-            WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
-            adminAssembler.UpdateWorklist(worklist, request.Detail, this.PersistenceContext);
+			// check if user can update
+			CheckAccess(worklist);
 
-            return new UpdateWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
+			// update
+			UpdateWorklistHelper(request.Detail, worklist);
+
+        	// validate the subscriptions
+			worklist.ValidateSubscriptions();
+
+			WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
+			return new UpdateWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
         }
 
-        [UpdateOperation]
+    	[UpdateOperation]
 		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
+		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
 		public DeleteWorklistResponse DeleteWorklist(DeleteWorklistRequest request)
         {
 			try
 			{
 				IWorklistBroker broker = PersistenceContext.GetBroker<IWorklistBroker>();
 				Worklist item = broker.Load(request.WorklistRef, EntityLoadFlags.Proxy);
+
+				// check if user can delete
+				CheckAccess(item);
+
 				broker.Delete(item);
 				PersistenceContext.SynchState();
 				return new DeleteWorklistResponse();
@@ -257,7 +297,36 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         #endregion
 
-        private List<Type> ListClassesHelper(List<string> classNames, List<string> categories, bool includeStatic)
+		private void CheckAccess(Worklist worklist)
+		{
+			// admin can access any worklist
+			if (UserHasToken(AuthorityTokens.Admin.Data.Worklist))
+				return;
+
+			// group/personal can only access worklists that they own
+			if (UserHasAnyTokens(AuthorityTokens.Workflow.Worklist.Group, AuthorityTokens.Workflow.Worklist.Personal)
+				&& Equals(worklist.Owner, this.CurrentUserStaff))
+				return;
+
+			throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
+		}
+
+		private void UpdateWorklistHelper(WorklistAdminDetail detail, Worklist worklist)
+		{
+			// establish some facts about this users authorizations
+			bool isFullAdminUser = UserHasToken(AuthorityTokens.Admin.Data.Worklist);
+			bool isGroupAdminUser = UserHasToken(AuthorityTokens.Workflow.Worklist.Group);
+
+			WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
+			adminAssembler.UpdateWorklist(
+				worklist,
+				detail,
+				isFullAdminUser,						// can only update staff subscribers if full admin
+				isFullAdminUser || isGroupAdminUser,	// can update groups if full admin or group admin
+				this.PersistenceContext);
+		}
+
+		private List<Type> ListClassesHelper(List<string> classNames, List<string> categories, bool includeStatic)
         {
             List<Type> worklistClasses = new List<Type>(WorklistFactory.Instance.ListWorklistClasses(true));
 

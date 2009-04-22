@@ -52,6 +52,17 @@ namespace ClearCanvas.Ris.Client
 		private EntityRef _worklistRef;
 
 		/// <summary>
+		/// Obtains the name of the worklist class associated with the specified folder class.
+		/// </summary>
+		/// <param name="folderClass"></param>
+		/// <returns></returns>
+		public static string GetWorklistClassName(Type folderClass)
+		{
+			FolderForWorklistClassAttribute a = AttributeUtils.GetAttribute<FolderForWorklistClassAttribute>(folderClass);
+			return a == null ? null : a.WorklistClassName;
+		}
+
+		/// <summary>
 		/// Constructor.
 		/// </summary>
 		/// <param name="itemsTable"></param>
@@ -94,12 +105,11 @@ namespace ClearCanvas.Ris.Client
 		/// Gets the name of the worklist class that this folder is associated with,
 		/// typically defined by the <see cref="FolderForWorklistClassAttribute"/>.
 		/// </summary>
-		public virtual string WorklistClassName
+		public string WorklistClassName
 		{
 			get
 			{
-				FolderForWorklistClassAttribute a = AttributeUtils.GetAttribute<FolderForWorklistClassAttribute>(this.GetType());
-				return a == null ? null : a.WorklistClassName;
+				return GetWorklistClassName(this.GetType());
 			}
 		}
 

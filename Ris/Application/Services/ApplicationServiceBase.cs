@@ -37,6 +37,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using System.ServiceModel;
 using ClearCanvas.Common.Utilities;
+using System;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -68,6 +69,39 @@ namespace ClearCanvas.Ris.Application.Services
         {
             get { return Thread.CurrentPrincipal.Identity.Name; }
         }
+
+		/// <summary>
+		/// Checks that the current user has the specified authority token.
+		/// </summary>
+		/// <param name="authorityToken"></param>
+		/// <returns></returns>
+		public bool UserHasToken(string authorityToken)
+		{
+			return Thread.CurrentPrincipal.IsInRole(authorityToken);
+		}
+
+		/// <summary>
+		/// Checks that the current user has all of the specified authority tokens.
+		/// </summary>
+		/// <param name="authorityTokens"></param>
+		/// <returns></returns>
+		public bool UserHasAllTokens(params string[] authorityTokens)
+		{
+			return authorityTokens.Length > 0 
+				&& CollectionUtils.TrueForAll(authorityTokens,
+					delegate(string t) { return UserHasToken(t); });
+		}
+
+		/// <summary>
+		/// Checks that the current user has at least one of the specified authority tokens.
+		/// </summary>
+		/// <param name="authorityTokens"></param>
+		/// <returns></returns>
+		public bool UserHasAnyTokens(params string[] authorityTokens)
+		{
+			return CollectionUtils.Contains(authorityTokens,
+				delegate(string t) { return UserHasToken(t); });
+		}
 
         /// <summary>
         /// Obtains the staff associated with the current user.  If no <see cref="Staff"/> is associated with the current user,

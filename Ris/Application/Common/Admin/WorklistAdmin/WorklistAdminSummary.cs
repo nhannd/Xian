@@ -35,7 +35,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 {
     [DataContract]
-    public class WorklistAdminSummary : DataContractBase
+	public class WorklistAdminSummary : WorklistSummary
     {
         /// <summary>
         /// No-args constructor needed by Oto scripts.
@@ -44,22 +44,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         {
         }
 
-        public WorklistAdminSummary(EntityRef entityRef, string name, string description, WorklistClassSummary worklistClass)
+        public WorklistAdminSummary(EntityRef worklistRef, string name, string description, WorklistClassSummary worklistClass)
+			:base(worklistRef, name, description, worklistClass.ClassName)
         {
-            EntityRef = entityRef;
-            Name = name;
-            Description = description;
             WorklistClass = worklistClass;
         }
 
-        [DataMember]
-        public EntityRef EntityRef;
-
-        [DataMember]
-        public string Name;
-
-        [DataMember]
-        public string Description;
 
         [DataMember]
         public WorklistClassSummary WorklistClass;

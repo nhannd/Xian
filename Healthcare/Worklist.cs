@@ -189,6 +189,8 @@ namespace ClearCanvas.Healthcare
         private ISet<Staff> _staffSubscribers;
         private ISet<StaffGroup> _groupSubscribers;
 
+		private Staff _owner;
+
         /// <summary>
         /// No-args constructor required by NHibernate.
         /// </summary>
@@ -214,6 +216,36 @@ namespace ClearCanvas.Healthcare
         {
             get { return GetClassName(this.GetClass()); }
         }
+
+		/// <summary>
+		/// Gets a value indicating whether this worklist is a user worklist.
+		/// </summary>
+    	public virtual bool IsUserWorklist
+    	{
+			get { return _owner != null; }
+    	}
+
+		/// <summary>
+		/// Ensures that all subscriptions to this worklist are valid.
+		/// </summary>
+		//TODO: should work this into the entity validation framework, but for now a manual call is required
+		public virtual void ValidateSubscriptions()
+		{
+			// if not a user-worklist, any subscriptions are valid
+			if (!IsUserWorklist)
+				return;
+
+			// validate that there is exactly one staff subscription, to the owner staff
+			if(_staffSubscribers.Count != 1 || !Equals(CollectionUtils.FirstElement(_staffSubscribers), _owner))
+				throw new EntityValidationException("Worklist must have exactly one staff subscription, to the owner staff.");
+
+			// validate that there are no group subscribers to which the owner does not belong
+			if (!CollectionUtils.TrueForAll(_groupSubscribers,
+				delegate(StaffGroup g) { return _owner.Groups.Contains(g); }))
+			{
+				throw new EntityValidationException("Staff groups to which the worklist owner does not belong cannot subscribe to this worklist.");
+			}
+		}
 
         #region Persistent Properties
 
@@ -254,6 +286,16 @@ namespace ClearCanvas.Healthcare
             get { return _description; }
             set { _description = value; }
         }
+
+		/// <summary>
+		/// Gets or sets the owner of the worklist, or null to indicate administrative ownership.
+		/// </summary>
+		[PersistentProperty]
+		public virtual Staff Owner
+    	{
+			get { return _owner; }
+			set { _owner = value; }
+    	}
 
         /// <summary>
         /// Gets the set of <see cref="Staff"/> that subscribe to this worklist.

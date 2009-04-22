@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Admin
         public WorklistAdminSummaryTable()
         {
             this.Columns.Add(new TableColumn<WorklistAdminSummary, string>("Name",
-                delegate(WorklistAdminSummary summary) { return summary.Name; },
+                delegate(WorklistAdminSummary summary) { return summary.DisplayName; },
                 0.5f));
 
             this.Columns.Add(new TableColumn<WorklistAdminSummary, string>("Class",

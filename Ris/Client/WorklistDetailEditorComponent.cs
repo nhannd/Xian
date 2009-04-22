@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _worklistDetail.WorklistClass; }
 			set
 			{
-				if(!Equals(_worklistDetail.WorklistClass, value))
+				if(!IsSame(_worklistDetail.WorklistClass, value))
 				{
 					_worklistDetail.WorklistClass = value;
 					this.Modified = true;
@@ -165,6 +165,15 @@ namespace ClearCanvas.Ris.Client
 			_worklistDetail.WorklistClass = null;
 
 			base.UpdateWorklistClassChoices();
+		}
+
+		private bool IsSame(WorklistClassSummary x, WorklistClassSummary y)
+		{
+			if (ReferenceEquals(x, y))
+				return true;
+			if (x == null || y == null)
+				return false;
+			return x.ClassName == y.ClassName;
 		}
 	}
 }
