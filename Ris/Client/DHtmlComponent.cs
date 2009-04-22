@@ -145,7 +145,21 @@ namespace ClearCanvas.Ris.Client
                 return dt == null ? "" : Format.DateTime(dt);
             }
 
-            public string FormatAddress(string jsml)
+			public string FormatRelativeTime(string isoTimeSpanString, string resolution)
+			{
+				int res;
+				int.TryParse(resolution, out res);
+
+				TimeSpan timeSpan;
+				TimeSpan.TryParse(isoTimeSpanString, out timeSpan);
+
+				if (res == 1440)
+					return new RelativeTimeInDays(timeSpan.Days).ToString();
+				else
+					return new RelativeTimeInHours(timeSpan.Hours).ToString();
+			}
+
+        	public string FormatAddress(string jsml)
             {
                 AddressDetail detail = JsmlSerializer.Deserialize<AddressDetail>(jsml);
                 return detail == null ? "" : AddressFormat.Format(detail);

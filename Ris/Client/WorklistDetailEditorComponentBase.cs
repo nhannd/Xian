@@ -28,7 +28,8 @@ namespace ClearCanvas.Ris.Client
 
 			if (_categoryChoices.Length > 0)
 			{
-				_selectedCategory = _categoryChoices[0];
+				if (string.IsNullOrEmpty(_selectedCategory))
+					_selectedCategory = _categoryChoices[0];
 
 				UpdateWorklistClassChoices();
 			}

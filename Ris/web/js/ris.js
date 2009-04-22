@@ -114,6 +114,11 @@ if(window.external)
 			return date ? window.external.FormatDateTime(date.toISOString()) : "";
 		},
 
+		formatRelativeTime: function(relativeTimeSpan, resolution)
+		{
+			return relativeTimeSpan ? window.external.FormatRelativeTime(relativeTimeSpan, resolution) : "";
+		},
+		
 		formatDescriptiveDateTime: function(dateTime)
 		{
 			if (dateTime == null)

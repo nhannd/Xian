@@ -239,7 +239,10 @@ namespace ClearCanvas.Ris.Client
 		private void WorklistEditorComponent_CurrentPageChanged(object sender, EventArgs e)
 		{
 			if (this.CurrentPage.Component == _previewComponent)
+			{
+				UpdateWorklistDetail();
 				_previewComponent.Refresh();
+			}
 		}
 
         private void ProcedureTypeGroupClassChangedEventHandler(object sender, EventArgs e)
@@ -263,23 +266,7 @@ namespace ClearCanvas.Ris.Client
 
         public override void Accept()
         {
-            if(_filterComponent.IsStarted)
-                _filterComponent.SaveData();
-
-            if(_timeWindowComponent.IsStarted)
-                _timeWindowComponent.SaveData();
-
-			if (_procedureTypeGroupFilterComponent.IsStarted)
-				_worklistDetail.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>(_procedureTypeGroupFilterComponent.SelectedItems);
-
-			if (_locationFilterComponent.IsStarted)
-				_worklistDetail.PatientLocations = new List<LocationSummary>(_locationFilterComponent.SelectedItems);
-
-			if (ShowGroupSubscribersPage && _groupSubscribersComponent.IsStarted)
-                _worklistDetail.GroupSubscribers = new List<StaffGroupSummary>(_groupSubscribersComponent.SelectedItems);
-
-            if (ShowStaffSubscribersPage && _staffSubscribersComponent.IsStarted)
-                _worklistDetail.StaffSubscribers = new List<StaffSummary>(_staffSubscribersComponent.SelectedItems);
+        	UpdateWorklistDetail();
 
             if (this.HasValidationErrors)
             {
@@ -331,6 +318,26 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		private void UpdateWorklistDetail()
+		{
+			if (_filterComponent.IsStarted)
+				_filterComponent.SaveData(); 
+			
+			if (_timeWindowComponent.IsStarted)
+				_timeWindowComponent.SaveData();
+
+			if (_procedureTypeGroupFilterComponent.IsStarted)
+				_worklistDetail.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>(_procedureTypeGroupFilterComponent.SelectedItems);
+
+			if (_locationFilterComponent.IsStarted)
+				_worklistDetail.PatientLocations = new List<LocationSummary>(_locationFilterComponent.SelectedItems);
+
+			if (ShowGroupSubscribersPage && _groupSubscribersComponent.IsStarted)
+				_worklistDetail.GroupSubscribers = new List<StaffGroupSummary>(_groupSubscribersComponent.SelectedItems);
+
+			if (ShowStaffSubscribersPage && _staffSubscribersComponent.IsStarted)
+				_worklistDetail.StaffSubscribers = new List<StaffSummary>(_staffSubscribersComponent.SelectedItems);
+		}
 
         private void AddWorklists()
         {
