@@ -51,7 +51,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     public partial class ResetWorkQueueDialog : UserControl
     {
         #region Private Members
-        private ServerEntityKey _workQueueItemKey;
         private Model.WorkQueue _workQueue;
         #endregion Private Members
 
@@ -71,17 +70,57 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
 
         #region Public Properties
+
         /// <summary>
         /// Sets / Gets the <see cref="ServerEntityKey"/> of the <see cref="WorkQueue"/> item associated with this dialog
         /// </summary>
-        /// 
         public ServerEntityKey WorkQueueItemKey
         {
-            get { return _workQueueItemKey; }
-            set { _workQueueItemKey = value; }
+            get
+            {
+                if (ViewState["WorkQueueItemKey"] == null) return null;
+                else return (ServerEntityKey)ViewState["WorkQueueItemKey"];
+            }
+            set
+            {
+                ViewState["WorkQueueItemKey"] = value;
+            }
+
+        }
+        public bool IsShown
+        {
+            get
+            {
+                if (ViewState["IsShown"] == null) return false;
+                else return (bool)ViewState["IsShown"];
+            }
+            set
+            {
+                ViewState["IsShown"] = value;
+            }
         }
 
+
+
         #endregion Public Properties
+
+
+        Model.WorkQueue WorkQueue
+        {
+            get
+            {
+                if (_workQueue == null)
+                {
+                    if (WorkQueueItemKey != null)
+                    {
+                        WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+                        _workQueue = adaptor.Get(WorkQueueItemKey);
+                    }
+                }
+
+                return _workQueue;
+            }
+        }
 
         #region Protected Methods
 
@@ -94,11 +133,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             MessageBox.Cancel += Hide;
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (Page.IsPostBack && IsShown)
+            {
+                DataBind();
+            }
+        }
+
         #endregion Protected Methods
 
         #region Private Methods
         void PreResetConfirmDialog_Confirmed(object data)
         {
+            Hide();
+
+
             ServerEntityKey key = data as ServerEntityKey;
 
             if (key != null)
@@ -174,12 +226,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         public override void DataBind()
         {
-            if (WorkQueueItemKey !=null)
+            if (WorkQueue != null)
             {
-                WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
-                _workQueue = adaptor.Get(WorkQueueItemKey);
+
+                if (WorkQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
+                {
+                    if (!String.IsNullOrEmpty(_workQueue.ProcessorID)) // somebody has claimed it
+                    {
+                        PreResetConfirmDialog.MessageType =
+                        MessageBox.MessageTypeEnum.INFORMATION;
+                        PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed;
+                        
+                    }
+                }
+                else
+                {
+                    PreResetConfirmDialog.Data = WorkQueueItemKey;
+                    PreResetConfirmDialog.MessageType =
+                        MessageBox.MessageTypeEnum.YESNO;
+                    PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueResetConfirm;
+                }
             }
-             
+            else
+            {
+                MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                MessageBox.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
+            }
+
             base.DataBind();
         }
 
@@ -192,31 +265,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
        
         public void Show()
         {
+            IsShown = true;
+            
             DataBind();
-
-            if (_workQueue!=null)
-            {
-
-                if (_workQueue.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
-                {
-                    if (!String.IsNullOrEmpty(_workQueue.ProcessorID)) // somebody has claimed it
-                    {
-                        PreResetConfirmDialog.MessageType =
-                        MessageBox.MessageTypeEnum.INFORMATION;
-                        PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueBeingProcessed;
-                        PreResetConfirmDialog.Show();
-                        return;
-                    }
-                    
-                }
-
-
-                PreResetConfirmDialog.Data = WorkQueueItemKey;
-                PreResetConfirmDialog.MessageType =
-                    MessageBox.MessageTypeEnum.YESNO;
-                PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueResetConfirm;
-                PreResetConfirmDialog.Show();
-            }
 
             if (OnShow != null) OnShow();
             
@@ -227,9 +278,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public void Hide()
         {
+            IsShown = false;
             if (OnHide != null) OnHide();
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+
             PreResetConfirmDialog.Close();
             MessageBox.Close();
+            if (IsShown)
+            {
+                if (WorkQueue != null)
+                {
+
+                    PreResetConfirmDialog.Show();
+                }
+                else
+                    MessageBox.Show();
+            }
+            base.OnPreRender(e);
         }
 
         #endregion Public Methods

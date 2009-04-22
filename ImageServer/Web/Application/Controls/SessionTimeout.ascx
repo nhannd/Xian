@@ -10,6 +10,7 @@
   top: expression( ( ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
   position: absolute;
 }
+
 </style>
 <![endif]>
 <![endif]-->
@@ -30,6 +31,16 @@
     
     function Countdown()
     {
+        var prm = Sys.WebForms.PageRequestManager.getInstance();
+        var updating = prm.get_isInAsyncPostBack();
+        if (updating)
+        {
+            $("#<%= CountdownEffectPanel.ClientID %>").hide();
+		    $("#<%= CountdownBanner.ClientID %>").hide();
+		    $("#DarkenBackground").hide();
+		    return;
+        }
+        
         timeLeft = GetSecondsLeft();
         if (timeLeft<= 0)
         {
@@ -69,7 +80,7 @@
     
     function GetExpiryTime() {
         var name = "ImageServer_" + loginId + "=";
-	    var ca = document.cookie.split(';');
+        var ca = document.cookie.split(';');
 	    for(var i=0;i < ca.length;i++) {
 		    var c = ca[i];
 		    while (c.charAt(0)==' ') c = c.substring(1,c.length); // trim leading space
@@ -86,23 +97,31 @@
         hideWarning = true;
         $("#<%= CountdownEffectPanel.ClientID %>").hide();
         $("#<%= CountdownBanner.ClientID %>").hide();
-		    
+		$("#DarkenBackground").hide();
     }
     
     function RefreshWarning()
     {   
-        if (!hideWarning)
+        var prm = Sys.WebForms.PageRequestManager.getInstance();
+        var updating = prm.get_isInAsyncPostBack();
+        if (!hideWarning && !updating)
         {
             UpdateCountdownPanel();
-            $("#<%= CountdownBanner.ClientID %>:hidden").slideDown();
-            $("#<%= CountdownEffectPanel.ClientID %>:hidden").animate({height:"30px"});
-            countdownTimer = setTimeout("Countdown()",1000);
+            $("#DarkenBackground").show();
+            $("#<%= CountdownBanner.ClientID %>:hidden").show();//slideDown();
+            $("#<%= CountdownEffectPanel.ClientID %>:hidden").show();//animate({height:"30px"});
+            
         }
         else
         {
             $("#<%= CountdownEffectPanel.ClientID %>").hide();
 		    $("#<%= CountdownBanner.ClientID %>").hide();
-		    countdownTimer = setTimeout("Countdown()", 1000);
+		    $("#DarkenBackground").hide();
+        }
+        
+        if (!updating)
+        {
+            countdownTimer = setTimeout("Countdown()", 1000 /* every second */);
         }
     }
     
@@ -117,15 +136,17 @@
 
 <asp:Panel runat="server" ID="CountdownEffectPanel"></asp:Panel>
         
-        
 <asp:UpdatePanel runat="server" UpdateMode="Conditional">
     <Triggers>
         <asp:AsyncPostBackTrigger ControlID="KeepAliveLink" EventName="Click" />
     </Triggers>
     <ContentTemplate>
+        <div id="DarkenBackground" class="DarkenBackground" style="display:none">
+        </div>
         <asp:Panel runat="server" ID="CountdownBanner"  CssClass="CountdownBanner">
             <asp:Label runat="server" ID="SessionTimeoutWarningMessage" CssClass="SessionTimeoutWarningMessage"></asp:Label> 
             <asp:Button runat="server" ID="KeepAliveLink" Text="Refresh" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
         </asp:Panel>
+        
     </ContentTemplate>
 </asp:UpdatePanel>

@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -87,6 +88,20 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         #endregion Protected Properties
 
         #region Public Properties
+
+        public bool IsShown
+        {
+            get
+            {
+                if (ViewState["IsShown"] == null) return false;
+                else return (bool) ViewState["IsShown"];
+            }   
+            set
+            {
+                ViewState["IsShown"] = value;
+            }
+        }
+
         /// <summary>
         /// Sets or gets the list of <see cref="ServerEntityKey"/> for the <see cref="Model.WorkQueue"/> to be edit
         /// </summary>
@@ -98,13 +113,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             set
             {
                 ViewState[ "_WorkQueueKeys"] = value;
-                _workQueues = null; // invalidate this list
             }
-        }
-
-        public ModalDialog ScheduleWorkQueueItemModalDialog
-        {
-            get { return ModalDialog; }
         }
 
         #endregion Public Properties
@@ -329,8 +338,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public void Hide()
         {
-            if (OnHide != null) OnHide();
-            ModalDialog.Hide();            
+            IsShown = false;
+            if (OnHide != null) OnHide(); 
+        }
+
+        protected override void OnPreRender(EventArgs e)
+        {
+            ModalDialog.Hide();
+            if (IsShown)
+            {
+                ModalDialog.Show();
+            }
+            base.OnPreRender(e);
         }
 
         /// <summary>
@@ -338,6 +357,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public void Show()
         {
+            IsShown = true;
+            
             DataBind();
 
             if (WorkQueues == null)

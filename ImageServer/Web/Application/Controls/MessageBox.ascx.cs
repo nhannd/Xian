@@ -66,8 +66,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         };
 
         #region Private Members
-        private string _message;
-        private string _title;
 
     	#endregion Private Members
 
@@ -120,10 +118,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         /// </summary>
         public string Message
         {
-            set { 
-                _message = value;  }
-            get { 
-                return _message;
+            set
+            {
+                ViewState["Message"] = value;
+            }
+            get
+            {
+                if (ViewState["Message"] == null)
+                    return String.Empty;
+                else
+                    return (string)ViewState["Message"];
             }
         }
 
@@ -132,9 +136,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
         /// </summary>
         public string Title
         {
-            get { return _title; }
-            set { 
-                _title = value;
+            set
+            {
+                ViewState["Title"] = value;
+            }
+            get
+            {
+                if (ViewState["Title"] == null)
+                    return String.Empty;
+                else
+                    return (string)ViewState["Title"];
             }
         }
 
@@ -211,8 +222,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                     break;
             }
 
-            MessageLabel.Text = _message;
-            ModalDialog.Title = _title;
+            MessageLabel.Text = Message;
+            ModalDialog.Title = Title;
 
             base.OnPreRender(e);
         }

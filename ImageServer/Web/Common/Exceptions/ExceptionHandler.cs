@@ -24,6 +24,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions
         {
             context = HttpContext.Current;
             Platform.Log(LogLevel.Error, e);
+            context.Items.Add(ImageServerConstants.ContextKeys.ErrorMessage, e.Message);
             context.Items.Add(ImageServerConstants.ContextKeys.StackTrace, e.StackTrace);
             context.Server.Transfer(ImageServerConstants.PageURLs.ErrorPage);   
         }

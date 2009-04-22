@@ -20,6 +20,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
     public partial class Default {
         
         /// <summary>
+        /// Panel1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel Panel1;
+        
+        /// <summary>
         /// Literal1 control.
         /// </summary>
         /// <remarks>
@@ -36,6 +45,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.DropDownList RefreshRateEnabled;
+        
+        /// <summary>
+        /// RefreshIntervalPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel RefreshIntervalPanel;
         
         /// <summary>
         /// RefreshRateTextBox control.
@@ -134,6 +152,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.Timer RefreshTimer;
+        protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.Timer RefreshTimer;
     }
 }

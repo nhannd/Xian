@@ -33,9 +33,9 @@ using System;
 using System.Web.UI;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 {
@@ -95,7 +95,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 else
                     return (bool)ViewState[ "AutoRefresh"];
             }
-            set { ViewState[ "AutoRefresh"] = value; }
+            set { 
+                ViewState["AutoRefresh"] = value;
+            }
         }
 
         #endregion Public Properties
@@ -159,14 +161,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             return interval;
         }
 
+        public void ResetRefresh(bool enableAutoRefresh)
+        {
+            AutoRefresh = enableAutoRefresh;
+            RefreshTimer.Reset(AutoRefresh);
+        }
+
+
         protected override void OnPreRender(EventArgs e)
         {
             if (WorkQueue==null)
             {
                 Visible = false;
             }
-
-            RefreshTimer.Enabled = AutoRefresh && Visible;
 
             if (RefreshTimer.Enabled)
             {
@@ -178,6 +185,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             UpdateToolBarButtons();
 
+            AutoRefreshIndicator.Visible = RefreshTimer.Enabled;
             base.OnPreRender(e);
         }
         
@@ -264,5 +272,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #endregion Public Methods
 
+        protected void OnAutoRefreshDisabled(object sender, TimerEventArgs e)
+        {
+            ScriptManager.RegisterStartupScript(this, GetType(), "AutoRefreshOff",
+                     "RaiseAppAlert('Auto refresh has been turned off due to inactivity.', 3000);",
+                     true);
+        }
     }
 }

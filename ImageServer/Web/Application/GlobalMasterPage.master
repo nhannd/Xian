@@ -13,7 +13,26 @@
     
     <ccAsp:JQuery ID="MainJQuery" runat="server" />
     
-    
+    <!--[if gte IE 5.5]>
+    <![if lt IE 7]>
+    <style type="text/css">
+        .PleaseWaitPanel {
+          /* IE5.5+/Win - this is more specific than the IE 5.0 version */
+          left: expression( ( ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
+          top: expression( ( ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+          position: absolute;
+        }
+
+        .DarkenBackground{
+          /* IE5.5+/Win - this is more specific than the IE 5.0 version */
+          left: expression( ( ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
+          top: expression( ( ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
+          position: absolute;
+        }
+    </style>
+    <![endif]>
+    <![endif]-->
+
        
 </head>
 <body id="MasterBody" class="GlobalBody">
@@ -29,8 +48,55 @@
             EnableScriptLocalization="true" OnAsyncPostBackError="GlobalScriptManager_AsyncPostBackError" >
         </asp:ScriptManager>   
         
-            
-        <asp:UpdatePanel runat="server" UpdateMode="Conditional">
+        
+        <script type="text/javascript">
+        $(document).ready(function(){
+            var prm = Sys.WebForms.PageRequestManager.getInstance();
+            prm.add_initializeRequest(StartAsyncRequest);
+            prm.add_endRequest(EndAsyncRequest);
+        });
+        
+        function StartAsyncRequest(){
+            window.status = "Updating...";
+        }
+        
+        function EndAsyncRequest(){
+            window.status = "";
+        }
+        
+        function RaiseAppAlert(html, stay)
+        {
+            $("#<%= AppAlertMessagePanel.ClientID %>").html(html).slideDown("normal",
+                function()
+                {
+                    setTimeout(function(){ $("#<%= AppAlertMessagePanel.ClientID %>").hide();}, stay);
+                }
+            );
+        }
+        </script>
+        
+        <asp:Panel runat="server" ID="AppAlertMessagePanel" CssClass="AppAlertMessagePanel">
+        
+        </asp:Panel>
+    
+        <asp:UpdateProgress runat="server" ID="UpdateProgress" AssociatedUpdatePanelID="MainContentContainerUpdatePanel" DisplayAfter="1000">
+            <ProgressTemplate>
+                <div class="PleaseWaitPanel">
+                    Please Wait... <asp:Image ID="Image5" runat="server" SkinID="AjaxLoadingYellow" />
+                </div>
+                <div class="DarkenBackground">                    
+                </div>                
+            </ProgressTemplate>
+        </asp:UpdateProgress> 
+        <asp:UpdateProgress runat="server" ID="UpdateProgress1" AssociatedUpdatePanelID="MainContentContainerUpdatePanel" DisplayAfter="0">
+            <ProgressTemplate>
+                <div class="ScreenBlocker">
+                    <!-- block mouse click while the screen is being updated -->              
+                </div>
+            </ProgressTemplate>
+        </asp:UpdateProgress>
+        
+        <asp:UpdatePanel runat="server" ID="MainContentContainerUpdatePanel" UpdateMode="Conditional">
         <ContentTemplate>
             <ccAsp:SessionTimeout runat="server" ID="SessionTimeout" />
             <asp:Panel ID="Panel1" runat="server" CssClass="GlobalContentPanel">

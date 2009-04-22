@@ -6,25 +6,25 @@
    
 <asp:UpdatePanel ID="SearchUpdatePanel" runat="server" UpdateMode="Conditional">
     <ContentTemplate>
-    <ccAsp:JQuery runat="server" ID="JQuery1" MultiSelect="true" Effects="true" />
-<script type="text/Javascript">
-Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
-Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
+        <ccAsp:JQuery runat="server" ID="JQuery1" MultiSelect="true" Effects="true" />
+        <script type="text/Javascript">
+        Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(MultiSelect);
+        Sys.WebForms.PageRequestManager.getInstance().add_pageLoaded(InputHover);
 
-function MultiSelect(){
-    $("#<%=TypeListBox.ClientID %>").multiSelect({
-        noneSelected: '',
-        oneOrMoreSelected: '% Selected',
-        style: 'width: 260px'
-    });
-    $("#<%=StatusListBox.ClientID %>").multiSelect({
-        noneSelected: '',
-        oneOrMoreSelected: '% Selected',
-        style: 'width: 130px;'
-    });
-}
-</script>
-            <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
+        function MultiSelect(){
+            $("#<%=TypeListBox.ClientID %>").multiSelect({
+                noneSelected: '',
+                oneOrMoreSelected: '% Selected',
+                style: 'width: 260px'
+            });
+            $("#<%=StatusListBox.ClientID %>").multiSelect({
+                noneSelected: '',
+                oneOrMoreSelected: '% Selected',
+                style: 'width: 130px;'
+            });
+        }
+        </script>
+        <asp:Table ID="Table" runat="server" Width="100%" CellPadding="0" CellSpacing="0" BorderWidth="0px">
                 <asp:TableRow>
                     <asp:TableCell>                          
                                 <asp:Panel ID="Panel6" runat="server" CssClass="SearchPanelContent" DefaultButton="SearchButton" >
@@ -103,7 +103,6 @@ function MultiSelect(){
                 </asp:TableRow>
 
             </asp:Table>
-
     </ContentTemplate>
 </asp:UpdatePanel>
 

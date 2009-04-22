@@ -55,6 +55,42 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.ScriptManager GlobalScriptManager;
     
     /// <summary>
+    /// AppAlertMessagePanel control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.WebControls.Panel AppAlertMessagePanel;
+    
+    /// <summary>
+    /// UpdateProgress control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.UpdateProgress UpdateProgress;
+    
+    /// <summary>
+    /// UpdateProgress1 control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.UpdateProgress UpdateProgress1;
+    
+    /// <summary>
+    /// MainContentContainerUpdatePanel control.
+    /// </summary>
+    /// <remarks>
+    /// Auto-generated field.
+    /// To modify move field declaration from designer file to code-behind file.
+    /// </remarks>
+    protected global::System.Web.UI.UpdatePanel MainContentContainerUpdatePanel;
+    
+    /// <summary>
     /// SessionTimeout control.
     /// </summary>
     /// <remarks>

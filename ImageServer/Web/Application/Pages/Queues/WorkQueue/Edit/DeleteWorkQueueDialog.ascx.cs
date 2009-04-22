@@ -20,8 +20,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
     public partial class DeleteWorkQueueDialog : UserControl
     {
         #region Private Members
-        private ServerEntityKey _workQueueItemKey;
         private Model.WorkQueue _workQueue;
+        
         #endregion Private Members
 
         #region Events
@@ -49,13 +49,34 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #region Public Properties
 
+        public bool IsShown
+        {
+            get
+            {
+                if (ViewState["IsShown"] == null) return false;
+                else return (bool) ViewState["IsShown"];
+            }
+            set
+            {
+                ViewState["IsShown"] = value;
+            }
+        }
+
         /// <summary>
         /// Sets / Gets the <see cref="ServerEntityKey"/> of the <see cref="WorkQueue"/> item associated with this dialog
         /// </summary>
         public ServerEntityKey WorkQueueItemKey
         {
-            get { return _workQueueItemKey; }
-            set { _workQueueItemKey = value; }
+            get
+            {
+                if (ViewState["WorkQueueItemKey"] == null) return null;
+                else return (ServerEntityKey)ViewState["WorkQueueItemKey"];
+            }
+            set
+            {
+                ViewState["WorkQueueItemKey"] = value;
+            }
+            
         }
 
         #endregion Public Properties
@@ -68,16 +89,29 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             PreDeleteConfirmDialog.Confirmed += PreDeleteConfirmDialog_Confirmed;
             PreDeleteConfirmDialog.Cancel += Hide;
+            MessageBox.Cancel += Hide;
+            MessageBox.Confirmed += delegate(object obj) { Hide(); };
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (Page.IsPostBack && IsShown)
+            {
+                DataBind();
+            }
+        }
+        
         #endregion Protected Methods
 
         #region Private Methods
 
         void PreDeleteConfirmDialog_Confirmed(object data)
         {
-            ServerEntityKey key = data as ServerEntityKey;
+            Hide();
 
+            ServerEntityKey key = data as ServerEntityKey;
             if (key != null)
             {
                 WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
@@ -135,8 +169,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                                          "PreResetConfirmDialog_Confirmed: Unable to delete work queue item. GUID={0} : {1}", item.GetKey().Key, e.StackTrace);
 
                         MessageBox.Message = String.Format(App_GlobalResources.SR.WorkQueueDeleteFailed_WithException, e.Message);
-                        MessageBox.MessageType =
-                            MessageBox.MessageTypeEnum.ERROR;
+                        MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
                         MessageBox.Show();
                     }
 
@@ -148,16 +181,38 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
         #endregion Private Methods
 
+
+        Model.WorkQueue WorkQueue
+        {
+            get
+            {
+                if (_workQueue==null)
+                {
+                    if (WorkQueueItemKey != null)
+                    {
+                        WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
+                        _workQueue = adaptor.Get(WorkQueueItemKey);
+                    }
+                }
+
+                return _workQueue;
+            }
+        }
         #region Public Methods
 
         public override void DataBind()
         {
-            if (WorkQueueItemKey != null)
+            if (WorkQueue != null)
             {
-                WorkQueueAdaptor adaptor = new WorkQueueAdaptor();
-                _workQueue = adaptor.Get(WorkQueueItemKey);
+                PreDeleteConfirmDialog.Data = WorkQueueItemKey;
+                PreDeleteConfirmDialog.MessageType = MessageBox.MessageTypeEnum.YESNO;
+                PreDeleteConfirmDialog.Message = App_GlobalResources.SR.WorkQueueDeleteConfirm;
             }
-
+            else
+            {
+                MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                MessageBox.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
+            }
             base.DataBind();
         }
 
@@ -169,18 +224,28 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </remarks>
         public void Show()
         {
+            IsShown = true;
             DataBind();
+            if (OnShow != null) OnShow();
+        }
 
-            if (_workQueue != null)
+        protected override void OnPreRender(EventArgs e)
+        {
+            MessageBox.Close();
+            PreDeleteConfirmDialog.Close();
+            if (IsShown)
             {
-                PreDeleteConfirmDialog.Data = WorkQueueItemKey;
-                PreDeleteConfirmDialog.MessageType =
-                    MessageBox.MessageTypeEnum.YESNO;
-                PreDeleteConfirmDialog.Message = App_GlobalResources.SR.WorkQueueDeleteConfirm;
-                PreDeleteConfirmDialog.Show();
+                if (WorkQueue != null)
+                {
+
+                    PreDeleteConfirmDialog.Show();
+                }
+                else
+                    MessageBox.Show();
             }
 
-            if (OnShow != null) OnShow();
+
+            base.OnPreRender(e);
         }
 
         /// <summary>
@@ -188,10 +253,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         /// </summary>
         public void Hide()
         {
+            IsShown = false; 
+
             if (OnHide != null) OnHide();
-            
-            PreDeleteConfirmDialog.Close();
-            MessageBox.Close();
         }
 
         #endregion Public Methods

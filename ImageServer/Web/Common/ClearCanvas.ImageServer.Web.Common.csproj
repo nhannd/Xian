@@ -140,6 +140,7 @@
     <Compile Include="UserProfile.cs" />
     <Compile Include="Utilities\HtmlUtility.cs" />
     <Compile Include="Utilities\NameFormatter.cs" />
+    <Compile Include="WebControls\UI\Timer.cs" />
     <Compile Include="WebControls\UI\AJAXScriptControl.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

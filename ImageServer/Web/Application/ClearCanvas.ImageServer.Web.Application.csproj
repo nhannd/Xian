@@ -1102,7 +1102,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Themes\Default\images\Background.png" />
     <Content Include="App_Themes\Default\images\blank.gif" />
     <Content Include="App_Themes\Default\images\Buttons\AddDisabled.png" />
     <Content Include="App_Themes\Default\images\Buttons\AddEnabled.png" />
@@ -1222,11 +1221,16 @@
     <Content Include="App_Themes\Default\images\Header\ClearCanvasLogo.png" />
     <Content Include="App_Themes\Default\images\Header\LocationEdge.png" />
     <Content Include="App_Themes\Default\images\Header\MenuHoverBackground.png" />
+    <Content Include="App_Themes\Default\images\Indicators\ajax-loader-blue.gif" />
+    <Content Include="App_Themes\Default\images\Indicators\ajax-loader-green.gif" />
+    <Content Include="App_Themes\Default\images\Indicators\ajax-loader-yellow.gif" />
     <Content Include="App_Themes\Default\images\Indicators\AlertIndicatorBackground.png" />
     <Content Include="App_Themes\Default\images\Indicators\IdeographicName.gif" />
     <Content Include="App_Themes\Default\images\Indicators\AutoRouteFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\MenuArrow.gif" />
     <Content Include="App_Themes\Default\images\Indicators\QueryFeature.png" />
+    <Content Include="App_Themes\Default\images\Indicators\RefreshEnabled.gif" />
+    <Content Include="App_Themes\Default\images\Indicators\RefreshEnabled.png" />
     <Content Include="App_Themes\Default\images\Indicators\RetrieveFeature.png" />
     <Content Include="App_Themes\Default\images\Indicators\Searching.gif" />
     <Content Include="App_Themes\Default\images\Indicators\StoreFeature.png" />
@@ -1599,7 +1603,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>1422</DevelopmentServerPort>
+          <DevelopmentServerPort>1065</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

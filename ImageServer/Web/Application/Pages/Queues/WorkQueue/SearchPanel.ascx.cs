@@ -274,6 +274,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         }
 
+        public override void DataBind()
+        {
+            base.DataBind();
+            SearchUpdatePanel.Update();
+        }
+
         protected void ViewItemButton_Click(object sender, ImageClickEventArgs e)
         {
 			if (workQueueItemList.SelectedItems == null)

@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
             catch(Exception e)
             {
-                Platform.Log(LogLevel.Error, "FindWorkQueue failed", e);
+                Platform.Log(LogLevel.Error, e, "Unable to retrieve work queue.");
             	return new List<WorkQueue>();
             }
         }

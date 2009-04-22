@@ -32,9 +32,8 @@
 using System;
 using System.Configuration;
 using System.Web.UI;
-using ClearCanvas.Dicom.Audit;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
 using ClearCanvas.ImageServer.Web.Common.Security;
@@ -99,7 +98,8 @@ public partial class GlobalMasterPage : System.Web.UI.MasterPage
 
     protected void Logout_Click(Object sender, EventArgs e)
     {
-    	SessionManager.SignOut();
+        Platform.Log(LogLevel.Info, "{0} has logged out.", SessionManager.Current.User.Identity.Name);
+        SessionManager.SignOut();
         Response.Redirect(SessionManager.LoginUrl);
     }
 

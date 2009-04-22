@@ -38,6 +38,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
+using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
@@ -45,6 +46,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
     [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.WorkQueue.Search)]
     public partial class Default : BasePage
     {
+
         #region Private members
 
         #endregion
@@ -62,11 +64,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             get
             {
                 if (ViewState["AutoRefresh"] == null)
-                    return true;
+                    return false;
                 else
                     return (bool)ViewState["AutoRefresh"];
             }
-            set { ViewState["AutoRefresh"] = value; }
+            set
+            {
+                ViewState["AutoRefresh"] = value;
+                RefreshTimer.Reset(value);
+            }
         }
 
         public int RefreshRate
@@ -89,7 +95,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             string controlName = Request.Params.Get("__EVENTTARGET");
             if(controlName != null && controlName.Equals(RefreshRateTextBox.ClientID))
             {
-                ((Default)Page).RefreshRate = Int32.Parse(RefreshRateTextBox.Text);                
+                RefreshRate = Int32.Parse(RefreshRateTextBox.Text);                
             }
 
         }
@@ -97,19 +103,19 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-
+            RefreshTimer.AutoDisabled += new EventHandler<TimerEventArgs>(RefreshTimer_AutoDisabled);
             ConfirmRescheduleDialog.Confirmed += ConfirmationContinueDialog_Confirmed;
             ScheduleWorkQueueDialog.WorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
             ScheduleWorkQueueDialog.OnShow += DisableRefresh;
-            ScheduleWorkQueueDialog.OnHide += EnableRefresh;
+            ScheduleWorkQueueDialog.OnHide += delegate() { RefreshTimer.Reset(AutoRefresh); };
             ResetWorkQueueDialog.WorkQueueItemReseted += ResetWorkQueueDialog_WorkQueueItemReseted;
             ResetWorkQueueDialog.OnShow += DisableRefresh;
-            ResetWorkQueueDialog.OnHide += EnableRefresh;
+            ResetWorkQueueDialog.OnHide += delegate() { RefreshTimer.Reset(AutoRefresh); };
             DeleteWorkQueueDialog.WorkQueueItemDeleted += DeleteWorkQueueDialog_WorkQueueItemDeleted;
             DeleteWorkQueueDialog.OnShow += DisableRefresh;
-            DeleteWorkQueueDialog.OnHide += EnableRefresh;
+            DeleteWorkQueueDialog.OnHide += delegate() { RefreshTimer.Reset(AutoRefresh); };
             InformationDialog.OnShow += DisableRefresh;
-            InformationDialog.OnHide += EnableRefresh;
+            InformationDialog.OnHide += delegate() { RefreshTimer.Reset(AutoRefresh); };
             ServerPartitionTabs.SetupLoadPartitionTabs(delegate(ServerPartition partition)
                                                            {
                                                                SearchPanel panel =
@@ -124,25 +130,34 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
             if (!Page.IsPostBack)
             {
-                RefreshRateTextBox.Text = WorkQueueSettings.Default.NormalRefreshIntervalSeconds.ToString();
-                RefreshTimer.Interval = Math.Max(WorkQueueSettings.Default.NormalRefreshIntervalSeconds * 1000, 5000);// min refresh rate: every 5 sec 
+                RefreshTimer.Interval = (int)TimeSpan.FromSeconds(Math.Max(WorkQueueSettings.Default.NormalRefreshIntervalSeconds, 5)).TotalMilliseconds;// min refresh rate: every 5 sec 
+                RefreshRateTextBox.Text = TimeSpan.FromMilliseconds(RefreshTimer.Interval).TotalSeconds.ToString();
                 DataBind();
             }
-
+            
             Page.Title = App_GlobalResources.Titles.WorkQueuePageTitle;
+            
+        }
+
+        void RefreshTimer_AutoDisabled(object sender, TimerEventArgs e)
+        {
+            ScriptManager.RegisterStartupScript(this, GetType(), "AutoRefreshOff",
+                     "RaiseAppAlert('Auto refresh has been turned off due to inactivity.', 3000);",
+                     true);
         }
 
         protected override void OnPreRender(EventArgs e)
         {
-            RefreshTimer.Enabled = ((Default)Page).AutoRefresh && Visible;
-            if (RefreshTimer.Enabled)
-            {
-                RefreshTimer.Interval = RefreshRate * 1000;
-            }
+            RefreshTimer.Enabled &= AutoRefresh && !DeleteWorkQueueDialog.IsShown && !ScheduleWorkQueueDialog.IsShown;
+            RefreshRateEnabled.SelectedValue = AutoRefresh && RefreshTimer.Enabled ? "Y" : "N";
+            RefreshTimer.Interval = (int)TimeSpan.FromSeconds(Int32.Parse(RefreshRateTextBox.Text)).TotalMilliseconds;// min refresh rate: every 5 sec 
+            RefreshIntervalPanel.Visible = RefreshRateEnabled.SelectedValue == "Y";
+
+            // If the request is casued by the refresh timer consecutively N times, 
+            // it is an indication that users are not using the screen, we should turn off the auto-refresh
 
             base.OnPreRender(e);
         }
-       
         #endregion Protected Methods
 
 
@@ -293,20 +308,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         private void DisableRefresh()
         {
-            AutoRefresh = false;
-        }
-
-        private void EnableRefresh()
-        {
-            //Reset the AutoRefresh to whatever the user has it set to.
-            if (RefreshRateEnabled.SelectedItem.Value.Equals("Y"))
-            {
-                AutoRefresh = true;
-            } else
-            {
-                AutoRefresh = false;
-            }
-            
+            RefreshTimer.Reset(false);
         }
 
         #endregion Private Methods

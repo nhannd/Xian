@@ -76,23 +76,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             set { ViewState[ "ItemNotAvailableAlertShown"] = value; }
         }
 
-
-        /// <summary>
-        /// Sets/Gets a value which indicates whether auto refresh is on
-        /// </summary>
-        public bool AutoRefresh
-        {
-            get
-            {
-                if (ViewState["AutoRefresh"] == null)
-                    return true;
-                else
-                    return (bool)ViewState["AutoRefresh"];
-            }
-            set { ViewState["AutoRefresh"] = value; }
-        }
-
-
         #endregion Protected Properties
 
         #region Protected Methods
@@ -101,30 +84,40 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             base.OnInit(e);
 
+            
+
             WorkQueueItemDetailsPanel.RescheduleButtonClick += WorkQueueItemDetailsPanel_RescheduleButtonClick;
             WorkQueueItemDetailsPanel.ResetButtonClick += WorkQueueItemDetailsPanel_ResetButtonClick;
             WorkQueueItemDetailsPanel.DeleteButtonClick += WorkQueueItemDetailsPanel_DeleteButtonClick;
             WorkQueueItemDetailsPanel.ReprocessButtonClick += WorkQueueItemDetailsPanel_ReprocessButtonClick;
 
             DeleteWorkQueueDialog.WorkQueueItemDeleted += DeleteWorkQueueDialog_WorkQueueItemDeleted;
+            DeleteWorkQueueDialog.OnShow += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            DeleteWorkQueueDialog.OnHide += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+
             ScheduleWorkQueueDialog.WorkQueueUpdated += ScheduleWorkQueueDialog_OnWorkQueueUpdated;
+            ScheduleWorkQueueDialog.OnShow += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            ScheduleWorkQueueDialog.OnHide += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+
             MessageBox.Confirmed += MessageBox_Confirmed;
+            MessageBox.OnShow += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            MessageBox.OnHide += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
 
             ResetWorkQueueDialog.WorkQueueItemReseted += ResetWorkQueueDialog_WorkQueueItemReseted;
-            
+            ResetWorkQueueDialog.OnShow += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+            ResetWorkQueueDialog.OnHide += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
+
             LoadWorkQueueItemKey();
 
             Page.Title = App_GlobalResources.Titles.WorkQueuePageTitle;
         }
 
         
-
-        
-
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             DataBind();
+            UpdatePanel.Update();
         }
 
 
@@ -146,6 +139,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             {
                 Message.Visible = false;
             }
+
+            WorkQueueItemDetailsPanel.AutoRefresh = !DeleteWorkQueueDialog.IsShown;
 
             base.OnPreRender(e);
         }
@@ -306,8 +301,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     {
                         MessageBox.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
                         MessageBox.MessageType =
-                                MessageBox.MessageTypeEnum.ERROR; 
-                        MessageBox.Show();
+                                MessageBox.MessageTypeEnum.ERROR;
                         ItemNotAvailableAlertShown = true;
                     }
 
