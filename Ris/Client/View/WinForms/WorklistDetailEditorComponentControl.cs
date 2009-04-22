@@ -64,10 +64,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			_category.DataSource = _component.CategoryChoices;
 			_category.DataBindings.Add("Value", _component, "SelectedCategory", true, DataSourceUpdateMode.OnPropertyChanged);
-        	_category.Enabled = _component.IsWorklistClassReadOnly;
+        	_category.Enabled = !_component.IsWorklistClassReadOnly;
 
 			_worklistClass.DataSource = _component.WorklistClassChoices;
-        	_worklistClass.Enabled = _component.IsWorklistClassReadOnly;
+        	_worklistClass.Enabled = !_component.IsWorklistClassReadOnly;
 			_worklistClass.Format += delegate(object sender, ListControlConvertEventArgs args)
 			                         {
 			                         	 args.Value = _component.FormatWorklistClass(args.ListItem);
