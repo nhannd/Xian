@@ -202,6 +202,45 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return query;
 		}
 
+		protected override void AddFilters(HqlProjectionQuery query, Worklist worklist, IWorklistQueryContext wqc)
+		{
+			base.AddFilters(query, worklist, wqc);
+
+			if(worklist.Is<ReportingWorklist>() && worklist.As<ReportingWorklist>().SupportsStaffRoleFilters)
+			{
+				ReportingWorklist reportingWorklist = worklist.As<ReportingWorklist>();
+
+				bool addWorklistCondition = false;
+
+				if(reportingWorklist.InterpretedByStaffFilter.IsEnabled)
+				{
+					query.Conditions.Add(new HqlCondition("rpp.Interpreter in elements(w.InterpretedByStaffFilter.Values)"));
+					addWorklistCondition = true;
+				}
+
+				if (reportingWorklist.TranscribedByStaffFilter.IsEnabled)
+				{
+					query.Conditions.Add(new HqlCondition("rpp.Transcriber in elements(w.TranscribedByStaffFilter.Values)"));
+					addWorklistCondition = true;
+				}
+
+				if (reportingWorklist.VerifiedByStaffFilter.IsEnabled)
+				{
+					query.Conditions.Add(new HqlCondition("rpp.Verifier in elements(w.VerifiedByStaffFilter.Values)"));
+					addWorklistCondition = true;
+				}
+
+				if (reportingWorklist.SupervisedByStaffFilter.IsEnabled)
+				{
+					query.Conditions.Add(new HqlCondition("rpp.Supervisor in elements(w.SupervisedByStaffFilter.Values)"));
+					addWorklistCondition = true;
+				}
+
+				if (addWorklistCondition)
+					AddWorklistCondition(worklist, query);
+			}
+		}
+
 		#endregion
 
 		#region Helpers

@@ -117,6 +117,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected static readonly HqlJoin JoinPatient = new HqlJoin("o.Patient", "p");
         protected static readonly HqlJoin JoinPatientProfile = new HqlJoin("p.Profiles", "pp");
 
+		protected static readonly HqlFrom hqlFromWorklist = new HqlFrom("Worklist", "w");
+
 		protected static readonly HqlCondition ConditionActiveProcedureStep = new HqlCondition("(ps.State in (?, ?))", ActivityStatus.SC, ActivityStatus.IP);
 
         protected static readonly HqlSelect[] DefaultCountProjection
@@ -194,7 +196,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         /// </summary>
         private static readonly Dictionary<WorklistTimeField, HqlSelect> _mapTimeFieldToHqlSelect = new Dictionary<WorklistTimeField, HqlSelect>();
 
-        /// <summary>
+    	/// <summary>
         /// Class initializer.
         /// </summary>
         static WorklistItemBrokerBase()
@@ -504,8 +506,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				|| worklist.PatientClassFilter.IsEnabled || worklist.PatientLocationFilter.IsEnabled
 				|| worklist.OrderingPractitionerFilter.IsEnabled)
             {
-                query.Froms.Add(new HqlFrom("Worklist", "w"));
-                query.Conditions.Add(new HqlCondition("w = ?", worklist));
+                AddWorklistCondition(worklist, query);
             }
 
             if(worklist.PortableFilter.IsEnabled)
@@ -516,7 +517,16 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             // note: worklist.TimeFilter is processed by the worklist class itself, and built into the criteria
         }
 
-        /// <summary>
+    	protected static void AddWorklistCondition(Worklist worklist, HqlProjectionQuery query)
+    	{
+			if (!query.Froms.Contains(hqlFromWorklist))
+			{
+				query.Froms.Add(hqlFromWorklist);
+				query.Conditions.Add(new HqlCondition("w = ?", worklist));
+			}
+    	}
+
+    	/// <summary>
         /// Adds conditions to the specified query according to the specified set of <see cref="WorklistItemSearchCriteria"/>
         /// objects.
         /// </summary>
