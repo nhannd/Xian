@@ -196,12 +196,14 @@ namespace ClearCanvas.Ris.Client.Workflow
 	[EnabledStateObserver("withImages", "Enabled", "EnabledChanged")]
 	[IconSetObserver("withImages", "withImagesIconSet", "LabelChanged")]
 	[LabelValueObserver("withImages", "withImagesLabel", "LabelChanged")]
+	[CheckedStateObserver("withImages", "WithImagesChecked", "ActiveToolChanged")]
 
 	[MenuAction("withoutImages", "folderexplorer-items-contextmenu/Edit Report and View Images", "ApplyWithoutImages")]
 	[ButtonAction("withoutImages", "editreport-toolbar-dropdown/Edit Report and ViewImages", "ApplyWithoutImagesAndSetDefault")]
 	[EnabledStateObserver("withoutImages", "Enabled", "EnabledChanged")]
 	[IconSetObserver("withoutImages", "withoutImagesIconSet", "LabelChanged")]
 	[LabelValueObserver("withoutImages", "withoutImagesLabel", "LabelChanged")]
+	[CheckedStateObserver("withoutImages", "WithoutImagesChecked", "ActiveToolChanged")]
 
 	[ActionPermission("group", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
 	[ActionPermission("withImages", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Report.Create)]
@@ -268,6 +270,16 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			add { this.Context.SelectionChanged += value; }
 			remove { this.Context.SelectionChanged -= value; }
+		}
+
+		public bool WithImagesChecked
+		{
+			get { return _selectedTool == _editReportWithImagesTool; }
+		}
+
+		public bool WithoutImagesChecked
+		{
+			get { return _selectedTool == _editReportWithoutImagesTool; }
 		}
 
 		#region Action delegates for top-level group button
@@ -340,6 +352,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 
 		#endregion
 
+		public event EventHandler ActiveToolChanged;
+
 		private void SetActiveTool(EditReportToolBase tool)
 		{
 			if(_selectedTool == tool)
@@ -377,6 +391,8 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 
 			ReportingSettings.Default.Save();
+
+			EventsHelper.Fire(ActiveToolChanged, this, EventArgs.Empty);
 		}
 	}
 }
