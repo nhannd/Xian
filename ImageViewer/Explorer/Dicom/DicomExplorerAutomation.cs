@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 												 }) as Server;
 
 			if (server == null)
-				throw new FaultException<ServerNotFoundFault>(new ServerNotFoundFault());
+				throw new FaultException<ServerNotFoundFault>(new ServerNotFoundFault(), String.Format("Server '{0}' not found.", aeTitle));
 
 			explorerComponent.ServerTreeComponent.SetSelection(server);
 			SetSearchCriteria(explorerComponent.SearchPanelComponent, request.SearchCriteria);
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			List<DicomExplorerComponent> explorerComponents = DicomExplorerComponent.GetActiveComponents();
 			if (explorerComponents.Count == 0)
-				throw new FaultException<DicomExplorerNotFoundFault>(new DicomExplorerNotFoundFault());
+				throw new FaultException<DicomExplorerNotFoundFault>(new DicomExplorerNotFoundFault(), "No dicom explorers were found.");
 
 			IDesktopWindow parentDesktopWindow;
 			IDesktopObject parentShelfOrWorkspace;

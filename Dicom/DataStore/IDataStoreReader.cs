@@ -36,6 +36,7 @@ namespace ClearCanvas.Dicom.DataStore
 {
 	public interface IDataStoreReader : IDisposable
     {
+		//TODO: just make this an int.
 		long GetStudyCount();
 		IStudy GetStudy(string studyInstanceUid);
         IEnumerable<IStudy> GetStudies();
