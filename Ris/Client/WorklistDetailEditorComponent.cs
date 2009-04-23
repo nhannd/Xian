@@ -58,21 +58,21 @@ namespace ClearCanvas.Ris.Client
         private readonly bool _dialogMode;
     	private readonly bool _isNew;
     	private readonly bool _adminMode;
+		private readonly List<StaffGroupSummary> _groupChoices;
 
     	private bool _isPersonal;
-    	private StaffGroupSummary _selectedGroup;
-    	private List<StaffGroupSummary> _groupChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-		public WorklistDetailEditorComponent(WorklistAdminDetail detail, List<WorklistClassSummary> worklistClasses, bool dialogMode, bool isNew, bool adminMode)
+		public WorklistDetailEditorComponent(WorklistAdminDetail detail, List<WorklistClassSummary> worklistClasses, List<StaffGroupSummary> ownerGroupChoices, bool dialogMode, bool isNew, bool adminMode)
 			:base(worklistClasses)
         {
             _worklistDetail = detail;
             _dialogMode = dialogMode;
         	_isNew = isNew;
 			_adminMode = adminMode;
+        	_groupChoices = ownerGroupChoices;
 
 			if(_isNew)
 			{
@@ -102,7 +102,7 @@ namespace ClearCanvas.Ris.Client
 			get { return !_adminMode; }
     	}
 
-    	public bool IsPersonalGroupRadioButtonEnabled
+    	public bool IsPersonalGroupSelectionEnabled
     	{
 			get { return _isNew && HasGroupAdminAuthority && HasPersonalAdminAuthority; }
     	}
@@ -146,12 +146,12 @@ namespace ClearCanvas.Ris.Client
 
     	public StaffGroupSummary SelectedGroup
     	{
-			get { return _selectedGroup; }
+			get { return _worklistDetail.OwnerGroup; }
 			set
 			{
-				if(!Equals(_selectedGroup, value))
+				if (!Equals(_worklistDetail.OwnerGroup, value))
 				{
-					_selectedGroup = value;
+					_worklistDetail.OwnerGroup = value;
 					this.Modified = true;
 					NotifyPropertyChanged("SelectedGroup");
 				}

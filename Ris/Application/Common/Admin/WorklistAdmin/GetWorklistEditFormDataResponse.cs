@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         public List<StaffSummary> StaffChoices;
 
         [DataMember]
-        public List<StaffGroupSummary> StaffGroupChoices;
+        public List<StaffGroupSummary> GroupSubscriberChoices;
 
         [DataMember]
         public List<FacilitySummary> FacilityChoices;
@@ -58,5 +58,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
         [DataMember]
         public List<EnumValueInfo> OrderPriorityChoices;
-    }
+
+		[DataMember]
+		public List<StaffGroupSummary> OwnerGroupChoices;
+	}
 }

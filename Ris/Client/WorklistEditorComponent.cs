@@ -174,11 +174,15 @@ namespace ClearCanvas.Ris.Client
                     // determine which main page to show (multi or single)
 					if (_mode == Mode.Add && _adminMode)
                     {
-                        _detailComponent = new WorklistMultiDetailEditorComponent(formDataResponse.WorklistClasses);
+						_detailComponent = new WorklistMultiDetailEditorComponent(formDataResponse.WorklistClasses, formDataResponse.OwnerGroupChoices);
                     }
                     else
                     {
-						_detailComponent = new WorklistDetailEditorComponent(_worklistDetail, formDataResponse.WorklistClasses, false, _mode == Mode.Add, _adminMode);
+						_detailComponent = new WorklistDetailEditorComponent(
+							_worklistDetail,
+							formDataResponse.WorklistClasses,
+							formDataResponse.OwnerGroupChoices,
+							false, _mode == Mode.Add, _adminMode);
                     }
                     _detailComponent.ProcedureTypeGroupClassChanged += ProcedureTypeGroupClassChangedEventHandler;
 
@@ -198,18 +202,18 @@ namespace ClearCanvas.Ris.Client
                     _interpretedByFilterComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
                         formDataResponse.StaffChoices, _worklistDetail.InterpretedByStaff, delegate(StaffSummary s) { return s.StaffRef; });
                     _transcribedByFilterComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
-                        formDataResponse.StaffChoices, _worklistDetail.TranscribedByStaff, delegate(StaffSummary s) { return s.StaffRef; });
+						formDataResponse.StaffChoices, _worklistDetail.TranscribedByStaff, delegate(StaffSummary s) { return s.StaffRef; });
                     _verifiedByFilterComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
-                        formDataResponse.StaffChoices, _worklistDetail.VerifiedByStaff, delegate(StaffSummary s) { return s.StaffRef; });
+						formDataResponse.StaffChoices, _worklistDetail.VerifiedByStaff, delegate(StaffSummary s) { return s.StaffRef; });
                     _supervisedByFilterComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
-                        formDataResponse.StaffChoices, _worklistDetail.SupervisedByStaff, delegate(StaffSummary s) { return s.StaffRef; });
+						formDataResponse.StaffChoices, _worklistDetail.SupervisedByStaff, delegate(StaffSummary s) { return s.StaffRef; });
 
                     if (ShowSubscriptionPages)
                     {
                         _staffSubscribersComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
-                            formDataResponse.StaffChoices, _worklistDetail.StaffSubscribers, delegate(StaffSummary s) { return s.StaffRef; });
+							formDataResponse.StaffChoices, _worklistDetail.StaffSubscribers, delegate(StaffSummary s) { return s.StaffRef; });
                         _groupSubscribersComponent = new WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
-                            formDataResponse.StaffGroupChoices, _worklistDetail.GroupSubscribers, delegate(StaffGroupSummary s) { return s.StaffGroupRef; });
+                            formDataResponse.GroupSubscriberChoices, _worklistDetail.GroupSubscribers, delegate(StaffGroupSummary s) { return s.StaffGroupRef; });
                     }
                 });
 

@@ -167,7 +167,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 });
 
             StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
-            response.StaffGroupChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
+            response.GroupSubscriberChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
 				this.PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(false),
                 delegate(StaffGroup item)
                 {
@@ -189,6 +189,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 				{
 					return locationAssembler.CreateLocationSummary(l);
 				});
+
+
+        	response.OwnerGroupChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
+        		this.CurrentUserStaff.ActiveGroups, // only current user's active staff groups should be choosable
+        		delegate(StaffGroup group)
+        		{
+        			return staffGroupAssembler.CreateSummary(group);
+        		});
 
 			response.OrderPriorityChoices = EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext);
             response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);

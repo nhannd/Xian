@@ -41,6 +41,7 @@ using System.Collections;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -57,8 +58,11 @@ namespace ClearCanvas.Ris.Client
     /// </summary>
     [AssociateView(typeof(WorklistMultiDetailEditorComponentViewExtensionPoint))]
     public class WorklistMultiDetailEditorComponent : WorklistDetailEditorComponentBase
-    {
-        public class WorklistTableEntry
+	{
+
+		#region Worklist TableEntry class
+
+		public class WorklistTableEntry
         {
             private bool _checked;
             private readonly WorklistClassSummary _worklistClass;
@@ -95,21 +99,24 @@ namespace ClearCanvas.Ris.Client
                 get { return _description; }
                 set { _description = value; }
             }
-        }
+		}
 
+		#endregion
 
-    	private Table<WorklistTableEntry> _worklistTable;
+		private Table<WorklistTableEntry> _worklistTable;
         private WorklistTableEntry _selectedWorklist;
         private string _defaultWorklistName;
+    	private List<StaffGroupSummary> _ownerGroupChoices;
 
     	private CrudActionModel _worklistActionModel;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public WorklistMultiDetailEditorComponent(List<WorklistClassSummary> worklistClasses)
+        public WorklistMultiDetailEditorComponent(List<WorklistClassSummary> worklistClasses, List<StaffGroupSummary> ownerGroupChoices)
 			:base(worklistClasses)
         {
+        	_ownerGroupChoices = ownerGroupChoices;
         }
 
         public override void Start()
@@ -205,8 +212,15 @@ namespace ClearCanvas.Ris.Client
                 detail.Description = _selectedWorklist.Description;
                 detail.WorklistClass = _selectedWorklist.Class;
 
+            	WorklistDetailEditorComponent editor =
+            		new WorklistDetailEditorComponent(
+						detail,
+						this.WorklistClasses,
+						_ownerGroupChoices,
+						true, false, true);
+
                 if(ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow,
-                    new WorklistDetailEditorComponent(detail, this.WorklistClasses, true, false, true),
+					editor,
                     "Edit Worklist") == ApplicationComponentExitCode.Accepted)
                 {
                     _selectedWorklist.Name = detail.Name;
