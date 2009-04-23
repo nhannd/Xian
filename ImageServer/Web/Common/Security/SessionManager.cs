@@ -89,11 +89,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                 //can check for session timeout.
                 //HttpCookie loginIdCookie = new HttpCookie("loginid", loginId);
                 HttpCookie expiryCookie = new HttpCookie("ImageServer_" + loginId, token.ExpiryTime.ToUniversalTime().ToString());
-                expiryCookie.Expires = token.ExpiryTime;
-
-                HttpContext.Current.Response.Cookies.Set(authCookie);
-                HttpContext.Current.Response.Cookies.Set(expiryCookie);
-
+                
+                HttpContext.Current.Response.Cookies.Add(authCookie);
+                HttpContext.Current.Response.Cookies.Add(expiryCookie);
+                
                 SessionTimeout = token.ExpiryTime - Platform.Time;
             }
 

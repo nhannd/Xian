@@ -6,12 +6,20 @@
 
 .DefaultModalDialogTitleBarLeft
 {
+	cursor: move;
+	text-align: center;
+	padding-top: 5px;
+	color: #205F87;
+	font-family: Sans-Serif;
+	font-weight:bold;
+	height:20px;
 	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG.png);
-	background-repeat:no-repeat;
+	background-repeat: repeat-x;
 	background-color: #b8d9ee;
+	border-bottom: #3D98D1 solid 1px;	
 	border-left: #3D98D1 solid 5px;
 	border-top: #3D98D1 solid 5px;
-	width: 1px;
+	width: 30px;
 }
 
 .DefaultModalDialogTitleBarTitle
@@ -37,12 +45,20 @@
 
 .DefaultModalDialogTitleBarRight
 {
-	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG-right.png);
-	background-repeat:no-repeat;
+	cursor: move;
+	text-align: center;
+	padding-top: 5px;
+	color: #205F87;
+	font-family: Sans-Serif;
+	font-weight:bold;
+	height:20px;
+	background-image: url(../../images/Controls/Dialog/DialogTitleBarBG.png);
+	background-repeat: repeat-x;
 	background-color: #b8d9ee;
+	border-bottom: #3D98D1 solid 1px;	
 	border-right: #3D98D1 solid 5px;
 	border-top: #3D98D1 solid 5px;
-	width: 1px;
+	width: 30px;
 }
 
 .DefaultModalDialogContent

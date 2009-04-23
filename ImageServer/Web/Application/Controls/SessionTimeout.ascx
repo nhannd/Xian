@@ -1,20 +1,6 @@
 <%@ Import namespace="ClearCanvas.ImageServer.Web.Common.Security"%>
 <%@ Control Language="C#" AutoEventWireup="true" CodeBehind="SessionTimeout.ascx.cs" Inherits="ClearCanvas.ImageServer.Web.Application.Controls.SessionTimeout" %>
 
-<!--[if gte IE 5.5]>
-<![if lt IE 7]>
-<style type="text/css">
-.CountdownBanner {
-  /* IE5.5+/Win - this is more specific than the IE 5.0 version */
-  left: expression( ( ( ignoreMe2 = document.documentElement.scrollLeft ? document.documentElement.scrollLeft : document.body.scrollLeft ) ) + 'px' );
-  top: expression( ( ( ignoreMe = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop ) ) + 'px' );
-  position: absolute;
-}
-
-</style>
-<![endif]>
-<![endif]-->
-
 <script type="text/javascript">
     var countdownTimer;
     var redirectPage = "<%= ResolveClientUrl("~/Pages/Error/TimeoutErrorPage.aspx") %>";
@@ -25,8 +11,8 @@
     Sys.Application.add_load(initCountdownTimer);
     
     function initCountdownTimer(){ 
-         hideWarning = true;
-         countdownTimer = setTimeout("Countdown()", 1000);
+        hideWarning = true;
+        countdownTimer = setTimeout("Countdown()", 2000);
     };
     
     function Countdown()
@@ -36,12 +22,13 @@
         if (updating)
         {
             $("#<%= CountdownEffectPanel.ClientID %>").hide();
-		    $("#<%= CountdownBanner.ClientID %>").hide();
+		    $("#<%= MessageBanner.ClientID %>").hide();
 		    $("#DarkenBackground").hide();
 		    return;
         }
         
         timeLeft = GetSecondsLeft();
+        
         if (timeLeft<= 0)
         {
             window.location = redirectPage;
@@ -62,6 +49,7 @@
     function GetSecondsLeft()
     {
         var expiryTime = GetExpiryTime();
+	    
         if (expiryTime==null)
         {
             return 0;
@@ -71,20 +59,22 @@
         var localOffset = now.getTimezoneOffset() * 60000;
         
         var utc = localTime + localOffset;
-        
         now = new Date(utc);
         var sessionExpiry = new Date(expiryTime);
-        return Math.round( (sessionExpiry.getTime() - now.getTime()) / 1000 ) + 1// give 1 second to ensure when we redirect, the session is really expired;
+        timeLeft = Math.round( (sessionExpiry.getTime() - now.getTime()) / 1000 ) + 1// give 1 second to ensure when we redirect, the session is really expired;
+        window.status  = expiryTime;
+        return timeLeft;
     }
     
     
     function GetExpiryTime() {
+    
         var name = "ImageServer_" + loginId + "=";
         var ca = document.cookie.split(';');
-	    for(var i=0;i < ca.length;i++) {
+        
+        for(var i=0;i < ca.length;i++) {
 		    var c = ca[i];
 		    while (c.charAt(0)==' ') c = c.substring(1,c.length); // trim leading space
-		    
 		    if (c.indexOf(name) == 0) {
 		        return c.substring(name.length,c.length);
 		    }
@@ -96,7 +86,7 @@
     {
         hideWarning = true;
         $("#<%= CountdownEffectPanel.ClientID %>").hide();
-        $("#<%= CountdownBanner.ClientID %>").hide();
+        $("#<%= MessageBanner.ClientID %>").hide();
 		$("#DarkenBackground").hide();
     }
     
@@ -108,20 +98,26 @@
         {
             UpdateCountdownPanel();
             $("#DarkenBackground").show();
-            $("#<%= CountdownBanner.ClientID %>:hidden").show();//slideDown();
-            $("#<%= CountdownEffectPanel.ClientID %>:hidden").show();//animate({height:"30px"});
+            $("#<%= CountdownEffectPanel.ClientID %>:hidden").show();//.animate({height:"30px"});
+            $("#<%= MessageBanner.ClientID %>:hidden").show();
             
         }
         else
         {
             $("#<%= CountdownEffectPanel.ClientID %>").hide();
-		    $("#<%= CountdownBanner.ClientID %>").hide();
+		    $("#<%= MessageBanner.ClientID %>").hide();
 		    $("#DarkenBackground").hide();
         }
         
         if (!updating)
         {
-            countdownTimer = setTimeout("Countdown()", 1000 /* every second */);
+            if (timeLeft > minCountdownLength)
+                countdownTimer = setTimeout("Countdown()", (timeLeft-minCountdownLength)*1000 );
+            else if (timeLeft>30)
+                countdownTimer = setTimeout("Countdown()", 5*1000 /* every 5 seconds */);
+            else
+                countdownTimer = setTimeout("Countdown()", 1000 /* every second */);
+               
         }
     }
     
@@ -134,19 +130,26 @@
 </script>
 
 
-<asp:Panel runat="server" ID="CountdownEffectPanel"></asp:Panel>
         
 <asp:UpdatePanel runat="server" UpdateMode="Conditional">
     <Triggers>
         <asp:AsyncPostBackTrigger ControlID="KeepAliveLink" EventName="Click" />
     </Triggers>
     <ContentTemplate>
-        <div id="DarkenBackground" class="DarkenBackground" style="display:none">
+        <div class="FixedPos">
+            <asp:Panel runat="server" ID="MessageBanner" CssClass="MessageBanner">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                    <td>
+                    <asp:Panel runat="server" ID="CountdownBanner" CssClass="CountdownBanner">
+                        <asp:Label runat="server" ID="SessionTimeoutWarningMessage" CssClass="SessionTimeoutWarningMessage"></asp:Label> 
+                        <asp:Button runat="server" ID="KeepAliveLink" Text="Refresh" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
+                    </asp:Panel></td>
+                    </tr>
+                </table>                
+            </asp:Panel>
         </div>
-        <asp:Panel runat="server" ID="CountdownBanner"  CssClass="CountdownBanner">
-            <asp:Label runat="server" ID="SessionTimeoutWarningMessage" CssClass="SessionTimeoutWarningMessage"></asp:Label> 
-            <asp:Button runat="server" ID="KeepAliveLink" Text="Refresh" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
-        </asp:Panel>
         
+        <asp:Panel runat="server" ID="CountdownEffectPanel" Height="40px" CssClass="CountdownEffectPanel"></asp:Panel>
     </ContentTemplate>
 </asp:UpdatePanel>

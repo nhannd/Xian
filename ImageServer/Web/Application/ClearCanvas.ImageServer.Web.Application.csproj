@@ -1263,6 +1263,7 @@
     <Content Include="App_Themes\Default\StyleSheets\Controls\ReconcileDialog.css" />
     <Content Include="App_Themes\Default\StyleSheets\Error.css" />
     <Content Include="App_Themes\Default\StyleSheets\Global.css" />
+    <Content Include="App_Themes\Default\StyleSheets\Layout.css" />
     <Content Include="App_Themes\Default\StyleSheets\Login.css" />
     <Content Include="App_Themes\Default\StyleSheets\Studies.css" />
     <Content Include="App_Themes\Default\StyleSheets\Controls\Calendar.css" />

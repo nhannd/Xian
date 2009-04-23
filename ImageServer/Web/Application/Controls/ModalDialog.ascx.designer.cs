@@ -110,6 +110,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls {
         protected global::System.Web.UI.WebControls.Label TitleLabel;
         
         /// <summary>
+        /// UpdateProgress control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdateProgress UpdateProgress;
+        
+        /// <summary>
         /// CustomizedTitleBarPanel control.
         /// </summary>
         /// <remarks>
@@ -162,5 +171,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::AjaxControlToolkit.ModalPopupExtender ModalPopupExtender;
+        
+        /// <summary>
+        /// UpdateProgress1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdateProgress UpdateProgress1;
     }
 }

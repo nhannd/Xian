@@ -4,10 +4,10 @@
 
 <asp:UpdatePanel ID="ModalDialogUpdatePanel" runat="server" UpdateMode="Conditional" >
     <ContentTemplate>
-    
         <!-- Dialog Box -->
         <asp:UpdatePanel ID="UpdatePanel1" runat="server" UpdateMode="Conditional">
             <ContentTemplate>
+                
                 <asp:Table ID="DialogContainer" runat="server" CellPadding="0" CellSpacing="0" BorderWidth="0px"
                     Height="100%" Style="display: none;">
                     <asp:TableRow ID="TableRow1" runat="server">
@@ -16,14 +16,19 @@
                                 <asp:Panel runat="server" ID="DefaultTitlePanel">
                                     <asp:Table ID="Table3" runat="server" CellPadding="0" CellSpacing="0" Width="100%">
                                         <asp:TableRow>
-                                            <asp:TableCell ID="TitleBarLeft" CssClass="DefaultModalDialogTitleBarLeft">
+                                            <asp:TableCell ID="TitleBarLeft" CssClass="DefaultModalDialogTitleBarLeft" Width="10px">
                                             </asp:TableCell>
                                             <asp:TableCell ID="TitleBarCenter" CssClass="DefaultModalDialogTitleBarTitle">
                                                     <asp:Panel runat="server" style="padding-bottom: 4px">
                                                         <asp:Label ID="TitleLabel" runat="server" Text="&nbsp;"></asp:Label>
-                                                    </asp:Panel>
+                                                        </asp:Panel>                                                    
                                             </asp:TableCell>
                                             <asp:TableCell CssClass="DefaultModalDialogTitleBarRight">
+                                                <asp:UpdateProgress runat="server" ID="UpdateProgress" AssociatedUpdatePanelID="UpdatePanel1" DisplayAfter="1000">
+                                                        <ProgressTemplate>
+                                                            <asp:Image ID="Image5" runat="server" SkinID="AjaxLoadingYellow" style="display:block" />     
+                                                        </ProgressTemplate>
+                                                </asp:UpdateProgress>
                                             </asp:TableCell>
                                         </asp:TableRow>
                                     </asp:Table>
@@ -42,7 +47,6 @@
                             </asp:Panel>
                         </asp:TableCell>
                     </asp:TableRow>
-
                 </asp:Table>
 
             </ContentTemplate>
@@ -61,3 +65,13 @@
 
     </ContentTemplate>
 </asp:UpdatePanel>
+
+<asp:UpdateProgress runat="server" ID="UpdateProgress1" AssociatedUpdatePanelID="UpdatePanel1" DisplayAfter="1000">
+    <ProgressTemplate>
+        <div class="ScreenBlocker" style="z-index:100003">
+            
+        </div>
+    </ProgressTemplate>
+</asp:UpdateProgress>
+                
+        
