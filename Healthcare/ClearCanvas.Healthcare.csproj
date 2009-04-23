@@ -284,6 +284,7 @@
     <Compile Include="Workflow\Reporting\WorklistItem.cs" />
     <Compile Include="Worklist.cs" />
     <Compile Include="WorklistAttributes.cs" />
+    <Compile Include="WorklistOwner.cs" />
     <Compile Include="WorklistSearchCriteria.cs" />
     <Compile Include="WorklistTimeField.cs" />
     <Compile Include="WorklistTimePoint.cs" />
