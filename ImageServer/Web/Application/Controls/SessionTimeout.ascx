@@ -32,6 +32,7 @@
         if (timeLeft<= 0)
         {
             window.location = redirectPage;
+            return;
         }
         else if (timeLeft > minCountdownLength)
         {
