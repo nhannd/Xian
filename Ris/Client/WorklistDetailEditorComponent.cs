@@ -73,11 +73,15 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			if (_worklistDetail.WorklistClass != null)
-			{
-				this.SelectedCategory = _worklistDetail.WorklistClass.CategoryName;
-			}
+			WorklistClassSummary wc = _worklistDetail.WorklistClass;
+
 			base.Start();
+
+			if (wc != null)
+			{
+				this.SelectedCategory = wc.CategoryName;
+			}
+			_worklistDetail.WorklistClass = wc;
 		}
 
     	#region Presentation Model
@@ -114,7 +118,7 @@ namespace ClearCanvas.Ris.Client
 			get { return _worklistDetail.WorklistClass; }
 			set
 			{
-				if(!IsSame(_worklistDetail.WorklistClass, value))
+				if(!Equals(_worklistDetail.WorklistClass, value))
 				{
 					_worklistDetail.WorklistClass = value;
 					this.Modified = true;
@@ -167,13 +171,5 @@ namespace ClearCanvas.Ris.Client
 			base.UpdateWorklistClassChoices();
 		}
 
-		private bool IsSame(WorklistClassSummary x, WorklistClassSummary y)
-		{
-			if (ReferenceEquals(x, y))
-				return true;
-			if (x == null || y == null)
-				return false;
-			return x.ClassName == y.ClassName;
-		}
 	}
 }

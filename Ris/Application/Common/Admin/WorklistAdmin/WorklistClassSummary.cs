@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 {
     [DataContract]
-    public class WorklistClassSummary : DataContractBase
+    public class WorklistClassSummary : DataContractBase, IEquatable<WorklistClassSummary>
     {
         /// <summary>
         /// No-args constructor required by Oto scripts.
@@ -48,5 +48,26 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
         [DataMember]
         public bool SupportsTimeWindow;
-    }
+
+		#region IEquatable overrides
+
+		public bool Equals(WorklistClassSummary worklistClassSummary)
+		{
+			if (worklistClassSummary == null) return false;
+			return Equals(ClassName, worklistClassSummary.ClassName);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(this, obj)) return true;
+			return Equals(obj as WorklistClassSummary);
+		}
+
+		public override int GetHashCode()
+		{
+			return ClassName != null ? ClassName.GetHashCode() : 0;
+		}
+
+		#endregion
+	}
 }
