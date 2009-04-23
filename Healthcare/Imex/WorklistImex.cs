@@ -192,11 +192,11 @@ namespace ClearCanvas.Healthcare.Imex
 
                 public WorklistTimePoint CreateTimePoint()
                 {
-                    if(this.FixedValue != null)
+                    if (this.FixedValue != null)
                         return new WorklistTimePoint(this.FixedValue.Value, this.Resolution);
-                    else if(this.RelativeValue != null)
+                    else if (this.RelativeValue != null)
                         return new WorklistTimePoint(TimeSpan.FromTicks(Int64.Parse(this.RelativeValue)), this.Resolution);
-                    else 
+                    else
                         return null;
                 }
 
@@ -353,8 +353,8 @@ namespace ClearCanvas.Healthcare.Imex
             ExportFilter(worklist.OrderingPractitionerFilter, data.Filters.OrderingPractitioners,
                 delegate(ExternalPractitioner item)
                 {
-                     return new WorklistData.PractitionerData(
-                         item.Name.FamilyName, item.Name.GivenName, item.LicenseNumber, item.BillingNumber);
+                    return new WorklistData.PractitionerData(
+                        item.Name.FamilyName, item.Name.GivenName, item.LicenseNumber, item.BillingNumber);
                 });
 
             ExportFilter(worklist.PatientClassFilter, data.Filters.PatientClasses,
@@ -367,10 +367,10 @@ namespace ClearCanvas.Healthcare.Imex
 
             //Bug #2429: don't forget to include the time filter
             data.Filters.TimeWindow.Enabled = worklist.TimeFilter.IsEnabled;
-            data.Filters.TimeWindow.Value = worklist.TimeFilter.Value == null ? null : 
+            data.Filters.TimeWindow.Value = worklist.TimeFilter.Value == null ? null :
                 new WorklistData.TimeRangeData(worklist.TimeFilter.Value);
 
-            if(worklist.Is<ReportingWorklist>())
+            if (worklist.Is<ReportingWorklist>() && worklist.As<ReportingWorklist>().SupportsStaffRoleFilters)
                 ExportReportingWorklistFilters(data, worklist.As<ReportingWorklist>());
 
             return data;
@@ -408,7 +408,7 @@ namespace ClearCanvas.Healthcare.Imex
                     criteria.Id.EqualTo(s.StaffId);
 
                     IList<Staff> staff = context.GetBroker<IStaffBroker>().Find(criteria);
-                    if(staff.Count == 1)
+                    if (staff.Count == 1)
                         worklist.StaffSubscribers.Add(CollectionUtils.FirstElement(staff));
                 }
             }
@@ -473,9 +473,9 @@ namespace ClearCanvas.Healthcare.Imex
 
                     // these criteria may not be provided (the data may not existed when exported),
                     // but if available, they help to ensure the correct practitioner is being mapped
-                    if(!string.IsNullOrEmpty(s.BillingNumber))
+                    if (!string.IsNullOrEmpty(s.BillingNumber))
                         criteria.BillingNumber.EqualTo(s.BillingNumber);
-                    if(!string.IsNullOrEmpty(s.LicenseNumber))
+                    if (!string.IsNullOrEmpty(s.LicenseNumber))
                         criteria.LicenseNumber.EqualTo(s.LicenseNumber);
 
                     IExternalPractitionerBroker broker = context.GetBroker<IExternalPractitionerBroker>();
@@ -512,7 +512,7 @@ namespace ClearCanvas.Healthcare.Imex
                                             ? null
                                             : data.Filters.TimeWindow.Value.CreateTimeRange();
 
-            if (worklist.Is<ReportingWorklist>())
+            if (worklist.Is<ReportingWorklist>() && worklist.As<ReportingWorklist>().SupportsStaffRoleFilters)
                 ImportReportingWorklistFilters(data, worklist.As<ReportingWorklist>(), context);
         }
 

@@ -141,10 +141,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     return staffGroupAssembler.CreateSummary(group);
                 });
 
-            if (worklist.Is<ReportingWorklist>())
+            // Some ReportingWorklists can support staff role filters, if that is true for this worklist,
+            // add those filters to the WorklistAdminDetail
+            if (worklist.Is<ReportingWorklist>() && worklist.As<ReportingWorklist>().SupportsStaffRoleFilters)
             {
-                detail.WorklistClass.SupportsReportingStaffRoleFilters =
-                    worklist.As<ReportingWorklist>().SupportsStaffRoleFilters;
+                detail.WorklistClass.SupportsReportingStaffRoleFilters = true;
                 AppendReportingWorklistDetails(detail, worklist.As<ReportingWorklist>(), context);
             }
 
@@ -309,7 +310,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                         }));
             }
 
-            if (worklist.Is<ReportingWorklist>())
+            // If the worklist supports staff role filters, process the filters provided.
+            if (worklist.Is<ReportingWorklist>() && worklist.As<ReportingWorklist>().SupportsStaffRoleFilters)
                 UpdateReportingWorklist(worklist.As<ReportingWorklist>(), detail, context);
         }
 
@@ -327,8 +329,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             if (staffs != null)
             {
                 staffFilter.Values.AddAll(CollectionUtils.Map<StaffSummary, Staff>(
-                                            staffs,
-                                            delegate(StaffSummary s) { return context.Load<Staff>(s.StaffRef, EntityLoadFlags.Proxy); }));
+                    staffs,
+                    delegate(StaffSummary s) { return context.Load<Staff>(s.StaffRef, EntityLoadFlags.Proxy); }));
 
             }
             staffFilter.IsEnabled = staffFilter.Values.Count > 0;
