@@ -9,7 +9,7 @@
             <ContentTemplate>
                 
                 <asp:Table ID="DialogContainer" runat="server" CellPadding="0" CellSpacing="0" BorderWidth="0px"
-                    Height="100%" Style="display: none;">
+                    Style="display: none;">
                     <asp:TableRow ID="TableRow1" runat="server">
                         <asp:TableCell>
                             <asp:Panel runat="server" ID="TitleBarPanel">
