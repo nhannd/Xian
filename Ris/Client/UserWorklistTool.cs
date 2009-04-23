@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client
 			if(CanEdit(this.Context.SelectedFolder))
 			{
 				IWorklistFolder folder = (IWorklistFolder)this.Context.SelectedFolder;
-				WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, false);
+				WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, false, false);
 				ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "Edit Worklist");
 			}
 		}

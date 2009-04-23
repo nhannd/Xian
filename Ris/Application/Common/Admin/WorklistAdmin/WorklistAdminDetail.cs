@@ -92,8 +92,18 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
         public bool IsUserWorklist
         {
-            get { return OwnerGroup != null || OwnerStaff != null; }
+			get { return IsStaffOwned || IsGroupOwned; }
         }
+
+    	public bool IsStaffOwned
+    	{
+			get { return OwnerStaff != null; }
+		}
+
+		public bool IsGroupOwned
+		{
+			get { return OwnerGroup != null; }
+		}
 
         [DataMember]
         public EntityRef EntityRef;

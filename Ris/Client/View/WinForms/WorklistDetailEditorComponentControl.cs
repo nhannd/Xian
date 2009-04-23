@@ -59,6 +59,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _component = component;
 			_component.PropertyChanged += _component_PropertyChanged;
 
+        	_ownerGroupBox.Visible = _component.IsOwnerPanelVisible;
+			_radioGroup.Enabled = _component.IsPersonalGroupRadioButtonEnabled;
+			_radioGroup.Checked = _component.IsGroup;
+			_radioPersonal.Enabled = _component.IsPersonalGroupRadioButtonEnabled;
+			_radioPersonal.DataBindings.Add("Checked", _component, "IsPersonal", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_groups.DataSource = _component.GroupChoices;
+			_groups.Format += delegate(object sender, ListControlConvertEventArgs args) { args.Value = _component.FormatGroup(args.ListItem); };
+			_groups.DataBindings.Add("Enabled", _component, "IsGroupChoicesEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_groups.DataBindings.Add("Value", _component, "SelectedGroup", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
             _description.DataBindings.Add("Value", _component, "Description", true, DataSourceUpdateMode.OnPropertyChanged);
 

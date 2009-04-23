@@ -32,13 +32,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using ClearCanvas.Desktop.Validation;
 using System.Collections;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -59,16 +60,32 @@ namespace ClearCanvas.Ris.Client
         private readonly WorklistAdminDetail _worklistDetail;
         private readonly bool _dialogMode;
     	private readonly bool _isNew;
+    	private readonly bool _adminMode;
+
+    	private bool _isPersonal;
+    	private StaffGroupSummary _selectedGroup;
+    	private List<StaffGroupSummary> _groupChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-		public WorklistDetailEditorComponent(WorklistAdminDetail detail, List<WorklistClassSummary> worklistClasses, bool dialogMode, bool isNew)
+		public WorklistDetailEditorComponent(WorklistAdminDetail detail, List<WorklistClassSummary> worklistClasses, bool dialogMode, bool isNew, bool adminMode)
 			:base(worklistClasses)
         {
             _worklistDetail = detail;
             _dialogMode = dialogMode;
         	_isNew = isNew;
+			_adminMode = adminMode;
+
+			if(_isNew)
+			{
+				// default to "personal" if user has authority
+				_isPersonal = HasPersonalAdminAuthority;
+			}
+			else
+			{
+				_isPersonal = _worklistDetail.IsStaffOwned;
+			}
         }
 
 		public override void Start()
@@ -85,6 +102,67 @@ namespace ClearCanvas.Ris.Client
 		}
 
     	#region Presentation Model
+
+    	public bool IsOwnerPanelVisible
+    	{
+			get { return !_adminMode; }
+    	}
+
+    	public bool IsPersonalGroupRadioButtonEnabled
+    	{
+			get { return _isNew && HasGroupAdminAuthority && HasPersonalAdminAuthority; }
+    	}
+
+		public bool IsPersonal
+		{
+			get { return _isPersonal; }
+			set
+			{
+				if(value != _isPersonal)
+				{
+					_isPersonal = value;
+					this.Modified = true;
+					NotifyPropertyChanged("IsPersonal");
+					NotifyPropertyChanged("IsGroup");
+				}
+			}
+		}
+
+		public bool IsGroup
+		{
+			get { return !this.IsPersonal; }
+			set { this.IsPersonal = !value; }
+		}
+
+    	public bool IsGroupChoicesEnabled
+    	{
+			get { return _isNew && HasGroupAdminAuthority && IsGroup; }
+    	}
+
+    	public IList GroupChoices
+    	{
+			get { return _groupChoices; }
+    	}
+
+		public string FormatGroup(object item)
+		{
+			StaffGroupSummary group = (StaffGroupSummary)item;
+			return group.Name;
+		}
+
+    	public StaffGroupSummary SelectedGroup
+    	{
+			get { return _selectedGroup; }
+			set
+			{
+				if(!Equals(_selectedGroup, value))
+				{
+					_selectedGroup = value;
+					this.Modified = true;
+					NotifyPropertyChanged("SelectedGroup");
+				}
+			}
+    	}
 
         [ValidateNotNull]
         public string Name
@@ -169,6 +247,16 @@ namespace ClearCanvas.Ris.Client
 			_worklistDetail.WorklistClass = null;
 
 			base.UpdateWorklistClassChoices();
+		}
+
+		private bool HasGroupAdminAuthority
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Worklist.Group); }
+		}
+
+		private bool HasPersonalAdminAuthority
+		{
+			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Worklist.Personal); }
 		}
 
 	}

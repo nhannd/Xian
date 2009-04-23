@@ -206,7 +206,7 @@ namespace ClearCanvas.Ris.Client
                 detail.WorklistClass = _selectedWorklist.Class;
 
                 if(ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow,
-                    new WorklistDetailEditorComponent(detail, this.WorklistClasses, true, false),
+                    new WorklistDetailEditorComponent(detail, this.WorklistClasses, true, false, true),
                     "Edit Worklist") == ApplicationComponentExitCode.Accepted)
                 {
                     _selectedWorklist.Name = detail.Name;
