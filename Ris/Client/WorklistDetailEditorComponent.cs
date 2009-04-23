@@ -29,17 +29,14 @@
 
 #endregion
 
-using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using ClearCanvas.Desktop.Validation;
-using System.Collections;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -86,19 +83,16 @@ namespace ClearCanvas.Ris.Client
 			{
 				_isPersonal = _worklistDetail.IsStaffOwned;
 			}
-        }
 
-		public override void Start()
-		{
+			// We need to remember the worklist class and set it back because setting the SelectedCategory will always set the worklist class to null 
+			// in the base class.  This code should be in the constructor instead of Start() because clearing worklist class in Start() may reset the 
+			// initial values passed into the constructor of other WorklistEditorComponent sub-editor component.
 			WorklistClassSummary wc = _worklistDetail.WorklistClass;
-
-			base.Start();
-
 			if (wc != null)
 			{
-				this.SelectedCategory = wc.CategoryName;
+				this.SelectedCategory = _worklistDetail.WorklistClass.CategoryName;
+				_worklistDetail.WorklistClass = wc;				
 			}
-			_worklistDetail.WorklistClass = wc;
 		}
 
     	#region Presentation Model

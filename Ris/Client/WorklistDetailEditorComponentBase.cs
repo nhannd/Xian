@@ -28,10 +28,13 @@ namespace ClearCanvas.Ris.Client
 
 			if (_categoryChoices.Length > 0)
 			{
-				if (string.IsNullOrEmpty(_selectedCategory))
+				// set the selected category if there is no existing one, or the existing selection is invalid.
+				if (string.IsNullOrEmpty(_selectedCategory) ||
+					!CollectionUtils.Contains(_categoryChoices, delegate(string category) { return Equals(category, _selectedCategory); }))
+				{
 					_selectedCategory = _categoryChoices[0];
-
-				UpdateWorklistClassChoices();
+					UpdateWorklistClassChoices();
+				}
 			}
 
 			base.Start();
