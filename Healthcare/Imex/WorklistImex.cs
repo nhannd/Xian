@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Enterprise.Core.Imex;
-using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 using System.Runtime.Serialization;
-using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Imex;
+using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare.Imex
 {
@@ -51,10 +50,10 @@ namespace ClearCanvas.Healthcare.Imex
             [DataContract]
             public class MultiValuedFilterData<TValue> : FilterData
             {
-				public MultiValuedFilterData()
-				{
-					this.Values = new List<TValue>();
-				}
+                public MultiValuedFilterData()
+                {
+                    this.Values = new List<TValue>();
+                }
 
                 [DataMember]
                 public List<TValue> Values;
@@ -70,50 +69,50 @@ namespace ClearCanvas.Healthcare.Imex
                 public string Class;
             }
 
-			[DataContract]
-			public class LocationData
-			{
-				public LocationData()
-				{
-				}
+            [DataContract]
+            public class LocationData
+            {
+                public LocationData()
+                {
+                }
 
-				public LocationData(string id)
-				{
-					this.Id = id;
-				}
+                public LocationData(string id)
+                {
+                    this.Id = id;
+                }
 
-				[DataMember]
-				public string Id;
-			}
+                [DataMember]
+                public string Id;
+            }
 
-			[DataContract]
-			public class PractitionerData
-			{
-				public PractitionerData()
-				{
+            [DataContract]
+            public class PractitionerData
+            {
+                public PractitionerData()
+                {
 
-				}
+                }
 
-				public PractitionerData(string familyName, string givenName, string licenseNumber, string billingNumber)
-				{
-					FamilyName = familyName;
-					GivenName = givenName;
-					LicenseNumber = licenseNumber;
-					BillingNumber = billingNumber;
-				}
+                public PractitionerData(string familyName, string givenName, string licenseNumber, string billingNumber)
+                {
+                    FamilyName = familyName;
+                    GivenName = givenName;
+                    LicenseNumber = licenseNumber;
+                    BillingNumber = billingNumber;
+                }
 
-				[DataMember]
-				public string FamilyName;
+                [DataMember]
+                public string FamilyName;
 
-				[DataMember]
-				public string GivenName;
+                [DataMember]
+                public string GivenName;
 
-				[DataMember]
-				public string LicenseNumber;
+                [DataMember]
+                public string LicenseNumber;
 
-				[DataMember]
-				public string BillingNumber;
-			}
+                [DataMember]
+                public string BillingNumber;
+            }
 
             [DataContract]
             public class EnumValueData
@@ -150,66 +149,66 @@ namespace ClearCanvas.Healthcare.Imex
                 public bool IncludeWorkingFacility;
             }
 
-			[DataContract]
-			public class TimeRangeData
-			{
-				public TimeRangeData()
-				{
-				}
+            [DataContract]
+            public class TimeRangeData
+            {
+                public TimeRangeData()
+                {
+                }
 
-				public TimeRangeData(WorklistTimeRange tr)
-				{
-					this.Start = tr.Start == null ? null : new TimePointData(tr.Start);
-					this.End = tr.End == null ? null : new TimePointData(tr.End);
-				}
+                public TimeRangeData(WorklistTimeRange tr)
+                {
+                    this.Start = tr.Start == null ? null : new TimePointData(tr.Start);
+                    this.End = tr.End == null ? null : new TimePointData(tr.End);
+                }
 
-				public WorklistTimeRange CreateTimeRange()
-				{
-					return new WorklistTimeRange(
-						this.Start == null ? null : this.Start.CreateTimePoint(),
-						this.End == null ? null : this.End.CreateTimePoint());
-				}
+                public WorklistTimeRange CreateTimeRange()
+                {
+                    return new WorklistTimeRange(
+                        this.Start == null ? null : this.Start.CreateTimePoint(),
+                        this.End == null ? null : this.End.CreateTimePoint());
+                }
 
-				[DataMember]
-				public TimePointData Start;
+                [DataMember]
+                public TimePointData Start;
 
-				[DataMember]
-				public TimePointData End;
-			}
+                [DataMember]
+                public TimePointData End;
+            }
 
-			[DataContract]
-			public class TimePointData
-			{
-				public TimePointData()
-				{
-				}
+            [DataContract]
+            public class TimePointData
+            {
+                public TimePointData()
+                {
+                }
 
-				public TimePointData(WorklistTimePoint tp)
-				{
-					this.FixedValue = tp.IsFixed ? tp.FixedValue : null;
-					this.RelativeValue = tp.IsRelative ? tp.RelativeValue.Value.Ticks.ToString() : null;
-					this.Resolution = tp.Resolution;
-				}
+                public TimePointData(WorklistTimePoint tp)
+                {
+                    this.FixedValue = tp.IsFixed ? tp.FixedValue : null;
+                    this.RelativeValue = tp.IsRelative ? tp.RelativeValue.Value.Ticks.ToString() : null;
+                    this.Resolution = tp.Resolution;
+                }
 
-				public WorklistTimePoint CreateTimePoint()
-				{
-					if(this.FixedValue != null)
-						return new WorklistTimePoint(this.FixedValue.Value, this.Resolution);
-					else if(this.RelativeValue != null)
-						return new WorklistTimePoint(TimeSpan.FromTicks(Int64.Parse(this.RelativeValue)), this.Resolution);
-					else 
-						return null;
-				}
+                public WorklistTimePoint CreateTimePoint()
+                {
+                    if(this.FixedValue != null)
+                        return new WorklistTimePoint(this.FixedValue.Value, this.Resolution);
+                    else if(this.RelativeValue != null)
+                        return new WorklistTimePoint(TimeSpan.FromTicks(Int64.Parse(this.RelativeValue)), this.Resolution);
+                    else 
+                        return null;
+                }
 
-				[DataMember]
-				public DateTime? FixedValue;
+                [DataMember]
+                public DateTime? FixedValue;
 
-				[DataMember]
-				public string RelativeValue;
+                [DataMember]
+                public string RelativeValue;
 
-				[DataMember]
-				public long Resolution;
-			}
+                [DataMember]
+                public long Resolution;
+            }
 
             [DataContract]
             public class FiltersData
@@ -219,11 +218,15 @@ namespace ClearCanvas.Healthcare.Imex
                     this.ProcedureTypeGroups = new MultiValuedFilterData<ProcedureTypeGroupData>();
                     this.Facilities = new FacilitiesFilterData();
                     this.OrderPriorities = new MultiValuedFilterData<EnumValueData>();
-					this.OrderingPractitioners = new MultiValuedFilterData<PractitionerData>();
+                    this.OrderingPractitioners = new MultiValuedFilterData<PractitionerData>();
                     this.PatientClasses = new MultiValuedFilterData<EnumValueData>();
-					this.PatientLocations = new MultiValuedFilterData<LocationData>();
+                    this.PatientLocations = new MultiValuedFilterData<LocationData>();
                     this.Portable = new SingleValuedFilterData<bool>();
-                	this.TimeWindow = new SingleValuedFilterData<TimeRangeData>();
+                    this.TimeWindow = new SingleValuedFilterData<TimeRangeData>();
+                    this.InterpretedByStaff = new MultiValuedFilterData<StaffSubscriberData>();
+                    this.TranscribedByStaff = new MultiValuedFilterData<StaffSubscriberData>();
+                    this.VerifiedByStaff = new MultiValuedFilterData<StaffSubscriberData>();
+                    this.SupervisedByStaff = new MultiValuedFilterData<StaffSubscriberData>();
                 }
 
                 [DataMember]
@@ -235,20 +238,32 @@ namespace ClearCanvas.Healthcare.Imex
                 [DataMember]
                 public MultiValuedFilterData<EnumValueData> OrderPriorities;
 
-				[DataMember]
-				public MultiValuedFilterData<PractitionerData> OrderingPractitioners;
+                [DataMember]
+                public MultiValuedFilterData<PractitionerData> OrderingPractitioners;
 
                 [DataMember]
                 public MultiValuedFilterData<EnumValueData> PatientClasses;
 
-				[DataMember]
-				public MultiValuedFilterData<LocationData> PatientLocations;
+                [DataMember]
+                public MultiValuedFilterData<LocationData> PatientLocations;
 
-				[DataMember]
+                [DataMember]
                 public SingleValuedFilterData<bool> Portable;
 
-				[DataMember]
-				public SingleValuedFilterData<TimeRangeData> TimeWindow;
+                [DataMember]
+                public SingleValuedFilterData<TimeRangeData> TimeWindow;
+
+                [DataMember]
+                public MultiValuedFilterData<StaffSubscriberData> InterpretedByStaff;
+
+                [DataMember]
+                public MultiValuedFilterData<StaffSubscriberData> TranscribedByStaff;
+
+                [DataMember]
+                public MultiValuedFilterData<StaffSubscriberData> VerifiedByStaff;
+
+                [DataMember]
+                public MultiValuedFilterData<StaffSubscriberData> SupervisedByStaff;
             }
 
             public WorklistData()
@@ -335,27 +350,49 @@ namespace ClearCanvas.Healthcare.Imex
             ExportFilter(worklist.OrderPriorityFilter, data.Filters.OrderPriorities,
                 delegate(OrderPriorityEnum item) { return new WorklistData.EnumValueData(item.Code); });
 
-			ExportFilter(worklist.OrderingPractitionerFilter, data.Filters.OrderingPractitioners,
-				delegate(ExternalPractitioner item)
-				{
-					 return new WorklistData.PractitionerData(
-						 item.Name.FamilyName, item.Name.GivenName, item.LicenseNumber, item.BillingNumber);
-				});
+            ExportFilter(worklist.OrderingPractitionerFilter, data.Filters.OrderingPractitioners,
+                delegate(ExternalPractitioner item)
+                {
+                     return new WorklistData.PractitionerData(
+                         item.Name.FamilyName, item.Name.GivenName, item.LicenseNumber, item.BillingNumber);
+                });
 
-			ExportFilter(worklist.PatientClassFilter, data.Filters.PatientClasses,
+            ExportFilter(worklist.PatientClassFilter, data.Filters.PatientClasses,
                 delegate(PatientClassEnum item) { return new WorklistData.EnumValueData(item.Code); });
-			ExportFilter(worklist.PatientLocationFilter, data.Filters.PatientLocations,
-				delegate(Location item) { return new WorklistData.LocationData(item.Id); });
+            ExportFilter(worklist.PatientLocationFilter, data.Filters.PatientLocations,
+                delegate(Location item) { return new WorklistData.LocationData(item.Id); });
 
             data.Filters.Portable.Enabled = worklist.PortableFilter.IsEnabled;
             data.Filters.Portable.Value = worklist.PortableFilter.Value;
 
-			//Bug #2429: don't forget to include the time filter
-			data.Filters.TimeWindow.Enabled = worklist.TimeFilter.IsEnabled;
-        	data.Filters.TimeWindow.Value = worklist.TimeFilter.Value == null ? null : 
-				new WorklistData.TimeRangeData(worklist.TimeFilter.Value);
+            //Bug #2429: don't forget to include the time filter
+            data.Filters.TimeWindow.Enabled = worklist.TimeFilter.IsEnabled;
+            data.Filters.TimeWindow.Value = worklist.TimeFilter.Value == null ? null : 
+                new WorklistData.TimeRangeData(worklist.TimeFilter.Value);
+
+            if(worklist.Is<ReportingWorklist>())
+                ExportReportingWorklistFilters(data, worklist.As<ReportingWorklist>());
 
             return data;
+        }
+
+        private void ExportReportingWorklistFilters(WorklistData data, ReportingWorklist worklist)
+        {
+            ExportStaffFilter(worklist.InterpretedByStaffFilter, data.Filters.InterpretedByStaff);
+            ExportStaffFilter(worklist.TranscribedByStaffFilter, data.Filters.TranscribedByStaff);
+            ExportStaffFilter(worklist.VerifiedByStaffFilter, data.Filters.VerifiedByStaff);
+            ExportStaffFilter(worklist.SupervisedByStaffFilter, data.Filters.SupervisedByStaff);
+        }
+
+        public void ExportStaffFilter(WorklistStaffFilter filter, WorklistData.MultiValuedFilterData<WorklistData.StaffSubscriberData> data)
+        {
+            ExportFilter(filter, data,
+                delegate(Staff staff)
+                {
+                    WorklistData.StaffSubscriberData s = new WorklistData.StaffSubscriberData();
+                    s.StaffId = staff.Id;
+                    return s;
+                });
         }
 
         protected override void Import(WorklistData data, IUpdateContext context)
@@ -401,8 +438,8 @@ namespace ClearCanvas.Healthcare.Imex
                     return CollectionUtils.FirstElement(broker.Find(criteria, ProcedureTypeGroup.GetSubClass(s.Class, context)));
                 });
 
-			//Bug #2284: don't forget to set the IncludeWorkingFacility property
-        	worklist.FacilityFilter.IncludeWorkingFacility = data.Filters.Facilities.IncludeWorkingFacility;
+            //Bug #2284: don't forget to set the IncludeWorkingFacility property
+            worklist.FacilityFilter.IncludeWorkingFacility = data.Filters.Facilities.IncludeWorkingFacility;
 
             ImportFilter(
                 worklist.FacilityFilter,
@@ -425,25 +462,25 @@ namespace ClearCanvas.Healthcare.Imex
                     return broker.Find<OrderPriorityEnum>(s.Code);
                 });
 
-			ImportFilter(
-				worklist.OrderingPractitionerFilter,
-				data.Filters.OrderingPractitioners,
-				delegate(WorklistData.PractitionerData s)
-				{
-					ExternalPractitionerSearchCriteria criteria = new ExternalPractitionerSearchCriteria();
-					criteria.Name.FamilyName.EqualTo(s.FamilyName);
-					criteria.Name.GivenName.EqualTo(s.GivenName);
+            ImportFilter(
+                worklist.OrderingPractitionerFilter,
+                data.Filters.OrderingPractitioners,
+                delegate(WorklistData.PractitionerData s)
+                {
+                    ExternalPractitionerSearchCriteria criteria = new ExternalPractitionerSearchCriteria();
+                    criteria.Name.FamilyName.EqualTo(s.FamilyName);
+                    criteria.Name.GivenName.EqualTo(s.GivenName);
 
-					// these criteria may not be provided (the data may not existed when exported),
-					// but if available, they help to ensure the correct practitioner is being mapped
-					if(!string.IsNullOrEmpty(s.BillingNumber))
-						criteria.BillingNumber.EqualTo(s.BillingNumber);
-					if(!string.IsNullOrEmpty(s.LicenseNumber))
-						criteria.LicenseNumber.EqualTo(s.LicenseNumber);
+                    // these criteria may not be provided (the data may not existed when exported),
+                    // but if available, they help to ensure the correct practitioner is being mapped
+                    if(!string.IsNullOrEmpty(s.BillingNumber))
+                        criteria.BillingNumber.EqualTo(s.BillingNumber);
+                    if(!string.IsNullOrEmpty(s.LicenseNumber))
+                        criteria.LicenseNumber.EqualTo(s.LicenseNumber);
 
-					IExternalPractitionerBroker broker = context.GetBroker<IExternalPractitionerBroker>();
-					return CollectionUtils.FirstElement(broker.Find(criteria));
-				});
+                    IExternalPractitionerBroker broker = context.GetBroker<IExternalPractitionerBroker>();
+                    return CollectionUtils.FirstElement(broker.Find(criteria));
+                });
 
             ImportFilter(
                 worklist.PatientClassFilter,
@@ -454,26 +491,50 @@ namespace ClearCanvas.Healthcare.Imex
                     return broker.Find<PatientClassEnum>(s.Code);
                 });
 
-			ImportFilter(
-				worklist.PatientLocationFilter,
-				data.Filters.PatientLocations,
-				delegate(WorklistData.LocationData s)
-				{
-					LocationSearchCriteria criteria = new LocationSearchCriteria();
-					criteria.Id.EqualTo(s.Id);
+            ImportFilter(
+                worklist.PatientLocationFilter,
+                data.Filters.PatientLocations,
+                delegate(WorklistData.LocationData s)
+                {
+                    LocationSearchCriteria criteria = new LocationSearchCriteria();
+                    criteria.Id.EqualTo(s.Id);
 
-					ILocationBroker broker = context.GetBroker<ILocationBroker>();
-					return CollectionUtils.FirstElement(broker.Find(criteria));
-				});
+                    ILocationBroker broker = context.GetBroker<ILocationBroker>();
+                    return CollectionUtils.FirstElement(broker.Find(criteria));
+                });
 
             worklist.PortableFilter.IsEnabled = data.Filters.Portable.Enabled;
             worklist.PortableFilter.Value = data.Filters.Portable.Value;
 
-			//Bug #2429: don't forget to include the time filter
-			worklist.TimeFilter.IsEnabled = data.Filters.TimeWindow.Enabled;
-        	worklist.TimeFilter.Value = data.Filters.TimeWindow == null || data.Filters.TimeWindow.Value == null
-        	                            	? null
-        	                            	: data.Filters.TimeWindow.Value.CreateTimeRange();
+            //Bug #2429: don't forget to include the time filter
+            worklist.TimeFilter.IsEnabled = data.Filters.TimeWindow.Enabled;
+            worklist.TimeFilter.Value = data.Filters.TimeWindow == null || data.Filters.TimeWindow.Value == null
+                                            ? null
+                                            : data.Filters.TimeWindow.Value.CreateTimeRange();
+
+            if (worklist.Is<ReportingWorklist>())
+                ImportReportingWorklistFilters(data, worklist.As<ReportingWorklist>(), context);
+        }
+
+        private void ImportReportingWorklistFilters(WorklistData data, ReportingWorklist worklist, IUpdateContext context)
+        {
+            ImportStaffFilter(worklist.InterpretedByStaffFilter, data.Filters.InterpretedByStaff, context);
+            ImportStaffFilter(worklist.TranscribedByStaffFilter, data.Filters.TranscribedByStaff, context);
+            ImportStaffFilter(worklist.VerifiedByStaffFilter, data.Filters.VerifiedByStaff, context);
+            ImportStaffFilter(worklist.SupervisedByStaffFilter, data.Filters.SupervisedByStaff, context);
+        }
+
+        private void ImportStaffFilter(WorklistStaffFilter filter, WorklistData.MultiValuedFilterData<WorklistData.StaffSubscriberData> staff, IUpdateContext context)
+        {
+            ImportFilter(filter, staff,
+                delegate(WorklistData.StaffSubscriberData s)
+                {
+                    StaffSearchCriteria criteria = new StaffSearchCriteria();
+                    criteria.Id.EqualTo(s.StaffId);
+
+                    IStaffBroker broker = context.GetBroker<IStaffBroker>();
+                    return CollectionUtils.FirstElement(broker.Find(criteria));
+                });
         }
 
         #endregion

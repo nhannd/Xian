@@ -1,5 +1,6 @@
 using System.Collections;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Workflow;
 
@@ -9,6 +10,19 @@ namespace ClearCanvas.Healthcare
 	[WorklistCategory("WorklistCategoryReporting")]
 	public abstract class ReportingWorklist : Worklist
 	{
+		private WorklistStaffFilter _interpretedByStaffFilter;
+		private WorklistStaffFilter _transcribedByStaffFilter;
+		private WorklistStaffFilter _verifiedByStaffFilter;
+		private WorklistStaffFilter _supervisedByStaffFilter;
+
+		public ReportingWorklist()
+		{
+			_interpretedByStaffFilter = new WorklistStaffFilter();
+			_transcribedByStaffFilter = new WorklistStaffFilter();
+			_verifiedByStaffFilter = new WorklistStaffFilter();
+			_supervisedByStaffFilter = new WorklistStaffFilter();
+		}
+
 		public override IList GetWorklistItems(IWorklistQueryContext wqc)
 		{
 			return (IList)wqc.GetBroker<IReportingWorklistItemBroker>().GetWorklistItems(this, wqc);
@@ -17,6 +31,59 @@ namespace ClearCanvas.Healthcare
 		public override int GetWorklistItemCount(IWorklistQueryContext wqc)
 		{
 			return wqc.GetBroker<IReportingWorklistItemBroker>().CountWorklistItems(this, wqc);
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistStaffFilter"/> for Interpreted By staff.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public WorklistStaffFilter InterpretedByStaffFilter
+		{
+			get { return _interpretedByStaffFilter; }
+			set { _interpretedByStaffFilter = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistStaffFilter"/> for Transcribed By staff.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public WorklistStaffFilter TranscribedByStaffFilter
+		{
+			get { return _transcribedByStaffFilter; }
+			set { _transcribedByStaffFilter = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistStaffFilter"/> for Verified By staff.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public WorklistStaffFilter VerifiedByStaffFilter
+		{
+			get { return _verifiedByStaffFilter; }
+			set { _verifiedByStaffFilter = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WorklistStaffFilter"/> for Supervisor staff.
+		/// </summary>
+		[PersistentProperty]
+		[EmbeddedValue]
+		public WorklistStaffFilter SupervisedByStaffFilter
+		{
+			get { return _supervisedByStaffFilter; }
+			set { _supervisedByStaffFilter = value; }
+		}
+
+		public virtual bool SupportsStaffRoleFilters
+		{
+			get
+			{
+				// TODO:  this should be false and overwritten to true in the reporting monitoring worklist
+				return true;
+			}
 		}
 	}
 

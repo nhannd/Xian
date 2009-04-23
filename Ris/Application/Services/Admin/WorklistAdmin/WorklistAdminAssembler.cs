@@ -29,15 +29,15 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
-using System;
 using Iesi.Collections.Generic;
-using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 {
@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 Worklist.GetCategory(worklistClass),
                 Worklist.GetDescription(worklistClass),
                 ptgClass == null ? null : ptgClass.Name,
-				ptgClass == null ? null : TerminologyTranslator.Translate(ptgClass),
+                ptgClass == null ? null : TerminologyTranslator.Translate(ptgClass),
                 Worklist.GetSupportsTimeFilter(worklistClass));
         }
 
@@ -92,13 +92,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     delegate(PatientClassEnum p) { return EnumUtils.GetEnumValueInfo(p); });
             }
 
-			if (worklist.PatientLocationFilter.IsEnabled)
-			{
-				LocationAssembler locationAssembler = new LocationAssembler();
-				detail.PatientLocations = CollectionUtils.Map<Location, LocationSummary>(
-					worklist.PatientLocationFilter.Values,
-					delegate(Location l) { return locationAssembler.CreateLocationSummary(l); });
-			}
+            if (worklist.PatientLocationFilter.IsEnabled)
+            {
+                LocationAssembler locationAssembler = new LocationAssembler();
+                detail.PatientLocations = CollectionUtils.Map<Location, LocationSummary>(
+                    worklist.PatientLocationFilter.Values,
+                    delegate(Location l) { return locationAssembler.CreateLocationSummary(l); });
+            }
 
             if (worklist.OrderPriorityFilter.IsEnabled)
             {
@@ -107,15 +107,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     delegate(OrderPriorityEnum p) { return EnumUtils.GetEnumValueInfo(p); });
             }
 
-			if (worklist.OrderingPractitionerFilter.IsEnabled)
-			{
-				ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
-				detail.OrderingPractitioners = CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary>(
-					worklist.OrderingPractitionerFilter.Values,
-					delegate(ExternalPractitioner p) { return assembler.CreateExternalPractitionerSummary(p, context); });
-			}
+            if (worklist.OrderingPractitionerFilter.IsEnabled)
+            {
+                ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
+                detail.OrderingPractitioners = CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary>(
+                    worklist.OrderingPractitionerFilter.Values,
+                    delegate(ExternalPractitioner p) { return assembler.CreateExternalPractitionerSummary(p, context); });
+            }
 
-            if(worklist.PortableFilter.IsEnabled)
+            if (worklist.PortableFilter.IsEnabled)
             {
                 detail.Portabilities = new List<bool>();
                 detail.Portabilities.Add(worklist.PortableFilter.Value);
@@ -123,9 +123,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             if (worklist.TimeFilter.IsEnabled && worklist.TimeFilter.Value != null)
             {
-                if(worklist.TimeFilter.Value.Start != null)
+                if (worklist.TimeFilter.Value.Start != null)
                     detail.StartTime = CreateTimePointContract(worklist.TimeFilter.Value.Start);
-                if(worklist.TimeFilter.Value.End != null)
+                if (worklist.TimeFilter.Value.End != null)
                     detail.EndTime = CreateTimePointContract(worklist.TimeFilter.Value.End);
             }
 
@@ -141,7 +141,37 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     return staffGroupAssembler.CreateSummary(group);
                 });
 
+            if (worklist.Is<ReportingWorklist>())
+            {
+                detail.WorklistClass.SupportsReportingStaffRoleFilters =
+                    worklist.As<ReportingWorklist>().SupportsStaffRoleFilters;
+                AppendReportingWorklistDetails(detail, worklist.As<ReportingWorklist>(), context);
+            }
+
             return detail;
+        }
+
+        public void AppendReportingWorklistDetails(WorklistAdminDetail detail, ReportingWorklist worklist, IPersistenceContext context)
+        {
+            if (worklist.InterpretedByStaffFilter.IsEnabled)
+                detail.InterpretedByStaff = GetStaffSummaries(worklist.InterpretedByStaffFilter.Values, context);
+
+            if (worklist.InterpretedByStaffFilter.IsEnabled)
+                detail.TranscribedByStaff = GetStaffSummaries(worklist.TranscribedByStaffFilter.Values, context);
+
+            if (worklist.InterpretedByStaffFilter.IsEnabled)
+                detail.VerifiedByStaff = GetStaffSummaries(worklist.VerifiedByStaffFilter.Values, context);
+
+            if (worklist.InterpretedByStaffFilter.IsEnabled)
+                detail.SupervisedByStaff = GetStaffSummaries(worklist.SupervisedByStaffFilter.Values, context);
+        }
+
+        private static List<StaffSummary> GetStaffSummaries(ISet<Staff> staffSet, IPersistenceContext context)
+        {
+            StaffAssembler assembler = new StaffAssembler();
+            return CollectionUtils.Map<Staff, StaffSummary>(
+                staffSet,
+                delegate(Staff staff) { return assembler.CreateStaffSummary(staff, context); });
         }
 
         public WorklistAdminDetail.TimePoint CreateTimePointContract(WorklistTimePoint tp)
@@ -161,16 +191,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         }
 
         public void UpdateWorklist(Worklist worklist, WorklistAdminDetail detail,
-			bool updateSubscribers, IPersistenceContext context)
+            bool updateSubscribers, IPersistenceContext context)
         {
             worklist.Name = detail.Name;
             worklist.Description = detail.Description;
 
-			// do not update the worklist.Owner here!!! - once set, it should never be updated
-            
+            // do not update the worklist.Owner here!!! - once set, it should never be updated
+
             // procedure groups
             worklist.ProcedureTypeGroupFilter.Values.Clear();
-            if(detail.ProcedureTypeGroups != null)
+            if (detail.ProcedureTypeGroups != null)
             {
                 worklist.ProcedureTypeGroupFilter.Values.AddAll(CollectionUtils.Map<ProcedureTypeGroupSummary, ProcedureTypeGroup>(
                     detail.ProcedureTypeGroups,
@@ -200,15 +230,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             }
             worklist.PatientClassFilter.IsEnabled = worklist.PatientClassFilter.Values.Count > 0;
 
-			// patient locations
-			worklist.PatientLocationFilter.Values.Clear();
-			if (detail.PatientLocations != null)
-			{
-				worklist.PatientLocationFilter.Values.AddAll(CollectionUtils.Map<LocationSummary, Location>(
-					detail.PatientLocations,
-					delegate(LocationSummary f) { return context.Load<Location>(f.LocationRef, EntityLoadFlags.Proxy); }));
-			}
-        	worklist.PatientLocationFilter.IsEnabled = worklist.PatientLocationFilter.Values.Count > 0;
+            // patient locations
+            worklist.PatientLocationFilter.Values.Clear();
+            if (detail.PatientLocations != null)
+            {
+                worklist.PatientLocationFilter.Values.AddAll(CollectionUtils.Map<LocationSummary, Location>(
+                    detail.PatientLocations,
+                    delegate(LocationSummary f) { return context.Load<Location>(f.LocationRef, EntityLoadFlags.Proxy); }));
+            }
+            worklist.PatientLocationFilter.IsEnabled = worklist.PatientLocationFilter.Values.Count > 0;
 
 
             // order priorities
@@ -221,21 +251,21 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             }
             worklist.OrderPriorityFilter.IsEnabled = worklist.OrderPriorityFilter.Values.Count > 0;
 
-			// ordering practitioners
-			worklist.OrderingPractitionerFilter.Values.Clear();
-			if(detail.OrderingPractitioners != null)
-			{
-				worklist.OrderingPractitionerFilter.Values.AddAll(CollectionUtils.Map<ExternalPractitionerSummary, ExternalPractitioner>(
-					detail.OrderingPractitioners,
-					delegate(ExternalPractitionerSummary p)
-					{
-						return context.Load<ExternalPractitioner>(p.PractitionerRef, EntityLoadFlags.Proxy);
-					}));
-			}
-        	worklist.OrderingPractitionerFilter.IsEnabled = worklist.OrderingPractitionerFilter.Values.Count > 0;
+            // ordering practitioners
+            worklist.OrderingPractitionerFilter.Values.Clear();
+            if (detail.OrderingPractitioners != null)
+            {
+                worklist.OrderingPractitionerFilter.Values.AddAll(CollectionUtils.Map<ExternalPractitionerSummary, ExternalPractitioner>(
+                    detail.OrderingPractitioners,
+                    delegate(ExternalPractitionerSummary p)
+                    {
+                        return context.Load<ExternalPractitioner>(p.PractitionerRef, EntityLoadFlags.Proxy);
+                    }));
+            }
+            worklist.OrderingPractitionerFilter.IsEnabled = worklist.OrderingPractitionerFilter.Values.Count > 0;
 
             // portable
-            if(detail.Portabilities != null)
+            if (detail.Portabilities != null)
             {
                 // put them into a set to guarantee uniqueness, in case the client sent a non-unique list
                 HashedSet<bool> set = new HashedSet<bool>(detail.Portabilities);
@@ -246,11 +276,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             }
 
             // time window filters
-            if(Worklist.GetSupportsTimeFilter(worklist.GetClass()))
+            if (Worklist.GetSupportsTimeFilter(worklist.GetClass()))
             {
                 WorklistTimePoint start = CreateTimePoint(detail.StartTime);
                 WorklistTimePoint end = CreateTimePoint(detail.EndTime);
-                if(start != null || end != null)
+                if (start != null || end != null)
                 {
                     worklist.TimeFilter.Value = new WorklistTimeRange(start, end);
                     worklist.TimeFilter.IsEnabled = true;
@@ -261,14 +291,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             // process subscriptions
             if (updateSubscribers)
-			{
-				worklist.StaffSubscribers.Clear();
-				worklist.StaffSubscribers.AddAll(
-					CollectionUtils.Map<StaffSummary, Staff>(detail.StaffSubscribers,
-						delegate(StaffSummary summary)
-						{
-							return context.Load<Staff>(summary.StaffRef, EntityLoadFlags.Proxy);
-						}));
+            {
+                worklist.StaffSubscribers.Clear();
+                worklist.StaffSubscribers.AddAll(
+                    CollectionUtils.Map<StaffSummary, Staff>(detail.StaffSubscribers,
+                        delegate(StaffSummary summary)
+                        {
+                            return context.Load<Staff>(summary.StaffRef, EntityLoadFlags.Proxy);
+                        }));
 
                 worklist.GroupSubscribers.Clear();
                 worklist.GroupSubscribers.AddAll(
@@ -278,6 +308,30 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                             return context.Load<StaffGroup>(summary.StaffGroupRef, EntityLoadFlags.Proxy);
                         }));
             }
+
+            if (worklist.Is<ReportingWorklist>())
+                UpdateReportingWorklist(worklist.As<ReportingWorklist>(), detail, context);
+        }
+
+        public void UpdateReportingWorklist(ReportingWorklist worklist, WorklistAdminDetail detail, IPersistenceContext context)
+        {
+            UpdateStaffFilter(worklist.InterpretedByStaffFilter, detail.InterpretedByStaff, context);
+            UpdateStaffFilter(worklist.TranscribedByStaffFilter, detail.TranscribedByStaff, context);
+            UpdateStaffFilter(worklist.VerifiedByStaffFilter, detail.VerifiedByStaff, context);
+            UpdateStaffFilter(worklist.SupervisedByStaffFilter, detail.SupervisedByStaff, context);
+        }
+
+        private static void UpdateStaffFilter(WorklistStaffFilter staffFilter, List<StaffSummary> staffs, IPersistenceContext context)
+        {
+            staffFilter.Values.Clear();
+            if (staffs != null)
+            {
+                staffFilter.Values.AddAll(CollectionUtils.Map<StaffSummary, Staff>(
+                                            staffs,
+                                            delegate(StaffSummary s) { return context.Load<Staff>(s.StaffRef, EntityLoadFlags.Proxy); }));
+
+            }
+            staffFilter.IsEnabled = staffFilter.Values.Count > 0;
         }
 
         public WorklistTimePoint CreateTimePoint(WorklistAdminDetail.TimePoint contract)

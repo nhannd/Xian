@@ -591,14 +591,29 @@
   <data name="NodeIndividualSubscribers" xml:space="preserve">
     <value>Individual Subscribers</value>
   </data>
+  <data name="NodeInterpretedBy" xml:space="preserve">
+    <value>Interpreted By</value>
+  </data>
   <data name="NodePatientLocations" xml:space="preserve">
     <value>Patient Locations</value>
   </data>
   <data name="NodeProcedureTypeGroups" xml:space="preserve">
     <value>Procedure Type Groups</value>
   </data>
+  <data name="NodeStaff" xml:space="preserve">
+    <value>Staff</value>
+  </data>
+  <data name="NodeSupervisedBy" xml:space="preserve">
+    <value>Supervised By</value>
+  </data>
   <data name="NodeTimeWindow" xml:space="preserve">
     <value>Time Window</value>
+  </data>
+  <data name="NodeTranscribedBy" xml:space="preserve">
+    <value>Transcribed By</value>
+  </data>
+  <data name="NodeVerifiedBy" xml:space="preserve">
+    <value>Verified By</value>
   </data>
   <data name="NodeWorklist" xml:space="preserve">
     <value>Worklist</value>

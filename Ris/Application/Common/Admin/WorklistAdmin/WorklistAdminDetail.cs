@@ -72,9 +72,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
             this.ProcedureTypeGroups = new List<ProcedureTypeGroupSummary>();
             this.Facilities = new List<FacilitySummary>();
             this.PatientClasses = new List<EnumValueInfo>();
-			this.PatientLocations = new List<LocationSummary>();
-			this.OrderPriorities = new List<EnumValueInfo>();
+            this.PatientLocations = new List<LocationSummary>();
+            this.OrderPriorities = new List<EnumValueInfo>();
             this.Portabilities = new List<bool>();
+
+            this.InterpretedByStaff = new List<StaffSummary>();
+            this.TranscribedByStaff = new List<StaffSummary>();
+            this.VerifiedByStaff = new List<StaffSummary>();
+            this.SupervisedByStaff = new List<StaffSummary>();
 
             this.StaffSubscribers = new List<StaffSummary>();
             this.GroupSubscribers = new List<StaffGroupSummary>();
@@ -129,22 +134,22 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         [DataMember]
         public List<FacilitySummary> Facilities;
 
-		[DataMember]
-		public bool FilterByWorkingFacility;
+        [DataMember]
+        public bool FilterByWorkingFacility;
 
         [DataMember]
         public List<EnumValueInfo> OrderPriorities;
 
-		[DataMember]
-		public List<ExternalPractitionerSummary> OrderingPractitioners;
-		
-		[DataMember]
+        [DataMember]
+        public List<ExternalPractitionerSummary> OrderingPractitioners;
+        
+        [DataMember]
         public List<EnumValueInfo> PatientClasses;
 
-		[DataMember]
-		public List<LocationSummary> PatientLocations;
+        [DataMember]
+        public List<LocationSummary> PatientLocations;
 
-		[DataMember]
+        [DataMember]
         public List<bool> Portabilities;
 
         [DataMember]
@@ -158,5 +163,17 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
         [DataMember]
         public List<StaffGroupSummary> GroupSubscribers;
+
+        [DataMember]
+        public List<StaffSummary> InterpretedByStaff;
+
+        [DataMember]
+        public List<StaffSummary> TranscribedByStaff;
+
+        [DataMember]
+        public List<StaffSummary> VerifiedByStaff;
+
+        [DataMember]
+        public List<StaffSummary> SupervisedByStaff;
     }
 }

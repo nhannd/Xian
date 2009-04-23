@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 {
@@ -16,8 +14,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         {
         }
 
-        public WorklistClassSummary(string className, string displayName, string categoryName, string description,
-            string procedureTypeGroupClassName, string procedureTypeGroupClassDisplayName, bool supportsTimeWindow)
+        public WorklistClassSummary(string className, string displayName, string categoryName, string description, 
+            string procedureTypeGroupClassName, string procedureTypeGroupClassDisplayName, 
+            bool supportsTimeWindow)
         {
             ClassName = className;
             DisplayName = displayName;
@@ -26,6 +25,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
             SupportsTimeWindow = supportsTimeWindow;
             Description = description;
             ProcedureTypeGroupClassDisplayName = procedureTypeGroupClassDisplayName;
+
+            SupportsReportingStaffRoleFilters = false;
         }
 
         [DataMember]
@@ -49,25 +50,28 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         [DataMember]
         public bool SupportsTimeWindow;
 
-		#region IEquatable overrides
+        [DataMember]
+        public bool SupportsReportingStaffRoleFilters;
 
-		public bool Equals(WorklistClassSummary worklistClassSummary)
-		{
-			if (worklistClassSummary == null) return false;
-			return Equals(ClassName, worklistClassSummary.ClassName);
-		}
+        #region IEquatable overrides
 
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(this, obj)) return true;
-			return Equals(obj as WorklistClassSummary);
-		}
+        public bool Equals(WorklistClassSummary worklistClassSummary)
+        {
+            if (worklistClassSummary == null) return false;
+            return Equals(ClassName, worklistClassSummary.ClassName);
+        }
 
-		public override int GetHashCode()
-		{
-			return ClassName != null ? ClassName.GetHashCode() : 0;
-		}
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            return Equals(obj as WorklistClassSummary);
+        }
 
-		#endregion
-	}
+        public override int GetHashCode()
+        {
+            return ClassName != null ? ClassName.GetHashCode() : 0;
+        }
+
+        #endregion
+    }
 }
