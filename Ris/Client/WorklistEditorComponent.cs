@@ -143,7 +143,6 @@ namespace ClearCanvas.Ris.Client
                     if (_mode == Mode.Add)
                     {
                         _worklistDetail = new WorklistAdminDetail();
-						_worklistDetail.IsUserWorklist = _createUserWorklist;
                         _worklistDetail.FilterByWorkingFacility = true; // set this by default (Ticket #1848)
                     }
                     else
@@ -192,15 +191,10 @@ namespace ClearCanvas.Ris.Client
 
                     _timeWindowComponent = new WorklistTimeWindowEditorComponent(_worklistDetail);
 
-					if(ShowStaffSubscribersPage)
+					if(ShowSubscriptionPages)
 					{
 						_staffSubscribersComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
 							formDataResponse.StaffChoices, _worklistDetail.StaffSubscribers, delegate(StaffSummary s) { return s.StaffRef; });
-					}
-
-					if(ShowGroupSubscribersPage)
-					{
-						//TODO: limit group choices if not admin to my groups only
 						_groupSubscribersComponent = new WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
 							formDataResponse.StaffGroupChoices, _worklistDetail.GroupSubscribers, delegate(StaffGroupSummary s) { return s.StaffGroupRef; });
 					}
@@ -218,14 +212,10 @@ namespace ClearCanvas.Ris.Client
                 this.Pages.Add(new NavigatorPage("NodeWorklist/NodeTimeWindow", _timeWindowComponent));
             }
 
-
-			if (ShowGroupSubscribersPage)
+			if (ShowSubscriptionPages)
 			{
-				this.Pages.Add(new NavigatorPage("NodeWorklist/NodeGroupSubscribers", _groupSubscribersComponent));
-			}
-			if (ShowStaffSubscribersPage)
-			{
-				this.Pages.Add(new NavigatorPage("NodeWorklist/NodeIndividualSubscribers", _staffSubscribersComponent));
+                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeGroupSubscribers", _groupSubscribersComponent));
+                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeIndividualSubscribers", _staffSubscribersComponent));
 			}
 			this.Pages.Add(new NavigatorPage("NodeWorklist/Preview", _previewComponent = new WorklistPreviewComponent(_worklistDetail)));
 
@@ -304,19 +294,10 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-    	private bool ShowStaffSubscribersPage
+    	private bool ShowSubscriptionPages
     	{
 			get { return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.Worklist); }
     	}
-
-		private bool ShowGroupSubscribersPage
-		{
-			get
-			{	
-				return Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.Worklist)
-					|| Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Workflow.Worklist.Group);
-			}
-		}
 
 		private void UpdateWorklistDetail()
 		{
@@ -332,10 +313,10 @@ namespace ClearCanvas.Ris.Client
 			if (_locationFilterComponent.IsStarted)
 				_worklistDetail.PatientLocations = new List<LocationSummary>(_locationFilterComponent.SelectedItems);
 
-			if (ShowGroupSubscribersPage && _groupSubscribersComponent.IsStarted)
+            if (ShowSubscriptionPages && _groupSubscribersComponent.IsStarted)
 				_worklistDetail.GroupSubscribers = new List<StaffGroupSummary>(_groupSubscribersComponent.SelectedItems);
 
-			if (ShowStaffSubscribersPage && _staffSubscribersComponent.IsStarted)
+			if (ShowSubscriptionPages && _staffSubscribersComponent.IsStarted)
 				_worklistDetail.StaffSubscribers = new List<StaffSummary>(_staffSubscribersComponent.SelectedItems);
 		}
 

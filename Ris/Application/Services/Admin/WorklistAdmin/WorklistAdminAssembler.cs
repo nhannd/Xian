@@ -62,7 +62,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             WorklistAdminDetail detail = new WorklistAdminDetail(worklist.GetRef(), worklist.Name, worklist.Description,
                 CreateClassSummary(worklist.GetClass()));
 
-        	detail.IsUserWorklist = worklist.IsUserWorklist;
+            StaffAssembler staffAssembler = new StaffAssembler();
+            StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
+            detail.OwnerStaff = worklist.Owner.IsStaffOwner ?
+                staffAssembler.CreateStaffSummary(worklist.Owner.Staff, context) : null;
+            detail.OwnerGroup = worklist.Owner.IsGroupOwner ?
+                staffGroupAssembler.CreateSummary(worklist.Owner.Group) : null;
 
             if (worklist.ProcedureTypeGroupFilter.IsEnabled)
             {
@@ -124,14 +129,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     detail.EndTime = CreateTimePointContract(worklist.TimeFilter.Value.End);
             }
 
-            StaffAssembler staffAssembler = new StaffAssembler();
             detail.StaffSubscribers = CollectionUtils.Map<Staff, StaffSummary>(worklist.StaffSubscribers,
                 delegate(Staff staff)
                 {
                     return staffAssembler.CreateStaffSummary(staff, context);
                 });
 
-            StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
             detail.GroupSubscribers = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(worklist.GroupSubscribers,
                 delegate(StaffGroup group)
                 {
@@ -158,7 +161,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         }
 
         public void UpdateWorklist(Worklist worklist, WorklistAdminDetail detail,
-			bool updateStaffSubscribers, bool updateGroupSubscribers, IPersistenceContext context)
+			bool updateSubscribers, IPersistenceContext context)
         {
             worklist.Name = detail.Name;
             worklist.Description = detail.Description;
@@ -257,7 +260,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             }
 
             // process subscriptions
-			if(updateStaffSubscribers)
+            if (updateSubscribers)
 			{
 				worklist.StaffSubscribers.Clear();
 				worklist.StaffSubscribers.AddAll(
@@ -266,18 +269,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 						{
 							return context.Load<Staff>(summary.StaffRef, EntityLoadFlags.Proxy);
 						}));
-			}
 
-			if(updateGroupSubscribers)
-			{
-				worklist.GroupSubscribers.Clear();
-				worklist.GroupSubscribers.AddAll(
-					CollectionUtils.Map<StaffGroupSummary, StaffGroup>(detail.GroupSubscribers,
-						delegate(StaffGroupSummary summary)
-						{
-							return context.Load<StaffGroup>(summary.StaffGroupRef, EntityLoadFlags.Proxy);
-						}));
-			}
+                worklist.GroupSubscribers.Clear();
+                worklist.GroupSubscribers.AddAll(
+                    CollectionUtils.Map<StaffGroupSummary, StaffGroup>(detail.GroupSubscribers,
+                        delegate(StaffGroupSummary summary)
+                        {
+                            return context.Load<StaffGroup>(summary.StaffGroupRef, EntityLoadFlags.Proxy);
+                        }));
+            }
         }
 
         public WorklistTimePoint CreateTimePoint(WorklistAdminDetail.TimePoint contract)

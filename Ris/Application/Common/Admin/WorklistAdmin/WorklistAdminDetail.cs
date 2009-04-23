@@ -90,6 +90,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
             WorklistClass = worklistClass;
         }
 
+        public bool IsUserWorklist
+        {
+            get { return OwnerGroup != null || OwnerStaff != null; }
+        }
+
         [DataMember]
         public EntityRef EntityRef;
 
@@ -99,8 +104,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         [DataMember]
         public string Description;
 
-		[DataMember]
-		public bool IsUserWorklist;
+        [DataMember]
+        public StaffSummary OwnerStaff;
+
+        [DataMember]
+        public StaffGroupSummary OwnerGroup;
 
         [DataMember]
         public WorklistClassSummary WorklistClass;

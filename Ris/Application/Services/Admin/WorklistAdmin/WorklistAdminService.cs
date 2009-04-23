@@ -233,15 +233,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			// or if the user does not have full admin rights, in which case it is forced to be a user worklist
 			if (request.Detail.IsUserWorklist || !UserHasToken(AuthorityTokens.Admin.Data.Worklist))
 			{
-				// for user worklists, we set the owner to the current user
-				worklist.Owner = CurrentUserStaff;
-
-				// and add the current user staff as a subscriber
-				worklist.StaffSubscribers.Add(CurrentUserStaff);
+                // if an owner group is specified, assign ownership to the group
+                if (request.Detail.OwnerGroup != null)
+                {
+                    StaffGroup group = PersistenceContext.Load<StaffGroup>(request.Detail.OwnerGroup.StaffGroupRef, EntityLoadFlags.Proxy);
+                    worklist.Owner = new WorklistOwner(group);
+                }
+                else
+                {
+                    // otherwise assign ownership to current user, regardless of whether a different owner staff specified
+                    worklist.Owner = new WorklistOwner(CurrentUserStaff);
+                }
 			}
-
-			// validate the subscriptions
-			worklist.ValidateSubscriptions();
 
             PersistenceContext.Lock(worklist, DirtyState.New);
             PersistenceContext.SynchState();
@@ -263,9 +266,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
 			// update
 			UpdateWorklistHelper(request.Detail, worklist);
-
-        	// validate the subscriptions
-			worklist.ValidateSubscriptions();
 
 			WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
 			return new UpdateWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
@@ -303,26 +303,28 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			if (UserHasToken(AuthorityTokens.Admin.Data.Worklist))
 				return;
 
-			// group/personal can only access worklists that they own
-			if (UserHasAnyTokens(AuthorityTokens.Workflow.Worklist.Group, AuthorityTokens.Workflow.Worklist.Personal)
-				&& Equals(worklist.Owner, this.CurrentUserStaff))
-				return;
+            // if worklist is staff-owned, and user has either group or personal token, they have access
+            if (worklist.Owner.IsStaffOwner && worklist.Owner.Staff.Equals(this.CurrentUserStaff)
+                 && UserHasAnyTokens(AuthorityTokens.Workflow.Worklist.Group, AuthorityTokens.Workflow.Worklist.Personal))
+                return;
+
+            // if worklist is group-owned, user must have group token and be a member of the group
+            if (worklist.Owner.IsGroupOwner && worklist.Owner.Group.Members.Contains(this.CurrentUserStaff)
+                && UserHasToken(AuthorityTokens.Workflow.Worklist.Group))
+                return;
 
 			throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
 		}
 
 		private void UpdateWorklistHelper(WorklistAdminDetail detail, Worklist worklist)
 		{
-			// establish some facts about this users authorizations
 			bool isFullAdminUser = UserHasToken(AuthorityTokens.Admin.Data.Worklist);
-			bool isGroupAdminUser = UserHasToken(AuthorityTokens.Workflow.Worklist.Group);
 
 			WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
 			adminAssembler.UpdateWorklist(
 				worklist,
 				detail,
-				isFullAdminUser,						// can only update staff subscribers if full admin
-				isFullAdminUser || isGroupAdminUser,	// can update groups if full admin or group admin
+				isFullAdminUser,						// can only update subscribers if full admin
 				this.PersistenceContext);
 		}
 
