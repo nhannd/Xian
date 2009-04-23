@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 
 		private List<Server> _defaultServers;
 		private List<Server> _allServers;
-		private Dictionary<Frame, DicomSoftcopyPresentationState> _framePresentationStates;
+		private List<KeyValuePair<Frame, DicomSoftcopyPresentationState>> _framePresentationStates;
 
 		public KeyImagePublisher(KeyImageInformation information, bool publishToSourceServer)
 		{
@@ -40,13 +40,13 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			_localPublishingInfo = new List<DicomFile>();
 		}
 
-		private Dictionary<Frame, DicomSoftcopyPresentationState> SourceFrames
+		private List<KeyValuePair<Frame, DicomSoftcopyPresentationState>> SourceFrames
 		{
 			get
 			{
 				if (_framePresentationStates == null)
 				{
-					_framePresentationStates = new Dictionary<Frame, DicomSoftcopyPresentationState>();
+					_framePresentationStates = new List<KeyValuePair<Frame, DicomSoftcopyPresentationState>>();
 					foreach (IClipboardItem item in _sourceInformation.ClipboardItems)
 					{
 						IImageSopProvider provider = item.Item as IImageSopProvider;
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 							DicomSoftcopyPresentationState presentationState = null;
 							if (item.Item is IPresentationImage && DicomSoftcopyPresentationState.IsSupported((IPresentationImage)item.Item))
 								presentationState = DicomSoftcopyPresentationState.Create((IPresentationImage) item.Item);
-							_framePresentationStates.Add(provider.Frame, presentationState);
+							_framePresentationStates.Add(new KeyValuePair<Frame, DicomSoftcopyPresentationState>(provider.Frame, presentationState));
 						}
 					}
 				}

@@ -134,6 +134,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Gets or sets the value of CurrentRequestedProcedureEvidenceSequence in the underlying collection. Type 1.
 		/// </summary>
+		/// <remarks>
+		/// The helper class <see cref="HierarchicalSopInstanceReferenceDictionary"/> can be used to assist in creating
+		/// an evidence sequence with minimal repetition.
+		/// </remarks>
 		public IHierarchicalSopInstanceReferenceMacro[] CurrentRequestedProcedureEvidenceSequence
 		{
 			get

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
@@ -16,7 +17,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 {
 	public class KeyImageSerializer
 	{
-		private readonly Dictionary<Frame, DicomSoftcopyPresentationState> _framePresentationStates;
+		private readonly FramePresentationList _framePresentationStates;
 		//private readonly List<string> _docTitleMods;
 		private DateTime _datetime;
 		private string _description;
@@ -25,11 +26,11 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 		public KeyImageSerializer()
 		{
-			_framePresentationStates = new Dictionary<Frame, DicomSoftcopyPresentationState>();
+			_framePresentationStates = new FramePresentationList();
 			_datetime = Platform.Time;
 		}
 
-		public IDictionary<Frame, DicomSoftcopyPresentationState> FramePresentationStates
+		public IList<KeyValuePair<Frame, DicomSoftcopyPresentationState>> FramePresentationStates
 		{
 			get { return _framePresentationStates; }
 		}
@@ -71,7 +72,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 			List<DicomFile> keyObjectDocuments = new List<DicomFile>();
 			List<IHierarchicalSopInstanceReferenceMacro> identicalDocuments = new List<IHierarchicalSopInstanceReferenceMacro>();
 			Dictionary<string, KeyObjectSelectionDocumentIod> koDocumentsByStudy = new Dictionary<string, KeyObjectSelectionDocumentIod>();
-			foreach (Frame frame in _framePresentationStates.Keys)
+			foreach (Frame frame in (IEnumerable<Frame>)_framePresentationStates)
 			{
 				string studyInstanceUid = frame.StudyInstanceUID;
 				if (!koDocumentsByStudy.ContainsKey(studyInstanceUid))
@@ -113,7 +114,7 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 				iod.SrDocumentContent.ConceptNameCodeSequence = _docTitle;
 
 				List<IContentSequence> contentList = new List<IContentSequence>();
-				List<IHierarchicalSopInstanceReferenceMacro> currentRequestedProcedureEvidenceList = new List<IHierarchicalSopInstanceReferenceMacro>();
+				EvidenceDictionary currentRequestedProcedureEvidenceList = new EvidenceDictionary();
 
 				Dictionary<ImageSop, List<int>> frameMap = new Dictionary<ImageSop, List<int>>();
 				foreach (KeyValuePair<Frame,DicomSoftcopyPresentationState> framePRPair in _framePresentationStates)
@@ -168,33 +169,13 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 					contentList.Add(koDescription);
 				}
 
-				// create evidence sequence using the map built earlier
+				// add each unique sop to the evidence list using the map built earlier
 				foreach (ImageSop sop in frameMap.Keys)
-				{
-					IHierarchicalSopInstanceReferenceMacro currentRequestedProcedureEvidence = iod.KeyObjectDocument.CreateCurrentRequestedProcedureEvidenceSequence();
-					{
-						currentRequestedProcedureEvidence.StudyInstanceUid = sop.StudyInstanceUID;
+					currentRequestedProcedureEvidenceList.Add(sop);
 
-						IHierarchicalSeriesInstanceReferenceMacro referencedSeries = currentRequestedProcedureEvidence.CreateReferencedSeriesSequence();
-						{
-							referencedSeries.InitializeAttributes();
-							referencedSeries.SeriesInstanceUid = sop.SeriesInstanceUID;
-							referencedSeries.RetrieveAeTitle = sop[DicomTags.RetrieveAeTitle].ToString();
-							referencedSeries.StorageMediaFileSetId = sop[DicomTags.StorageMediaFileSetId].GetString(0, string.Empty);
-							referencedSeries.StorageMediaFileSetUid = sop[DicomTags.StorageMediaFileSetUid].GetString(0, string.Empty);
-
-							IReferencedSopSequence referencedSop = referencedSeries.CreateReferencedSopSequence();
-							{
-								referencedSop.InitializeAttributes();
-								referencedSop.ReferencedSopClassUid = sop.SopClassUID;
-								referencedSop.ReferencedSopInstanceUid = sop.SopInstanceUID;
-							}
-							referencedSeries.ReferencedSopSequence = new IReferencedSopSequence[] {referencedSop};
-						}
-						currentRequestedProcedureEvidence.ReferencedSeriesSequence = new IHierarchicalSeriesInstanceReferenceMacro[] {referencedSeries};
-					}
-					currentRequestedProcedureEvidenceList.Add(currentRequestedProcedureEvidence);
-				}
+				// add each referenced presentation state to the evidence list as well
+				foreach (DicomSoftcopyPresentationState state in (IEnumerable<DicomSoftcopyPresentationState>) _framePresentationStates)
+					currentRequestedProcedureEvidenceList.Add(state);
 
 				// set the content and the evidence sequences
 				iod.SrDocumentContent.ContentSequence = contentList.ToArray();
@@ -346,5 +327,157 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 
 			return iod;
 		}
+
+		#region FramePresentationList Class
+
+		private class FramePresentationList : IList<KeyValuePair<Frame, DicomSoftcopyPresentationState>>, IEnumerable<Frame>, IEnumerable<DicomSoftcopyPresentationState>
+		{
+			private readonly List<KeyValuePair<Frame, DicomSoftcopyPresentationState>> _list = new List<KeyValuePair<Frame, DicomSoftcopyPresentationState>>();
+
+			public int IndexOf(KeyValuePair<Frame, DicomSoftcopyPresentationState> item)
+			{
+				return _list.IndexOf(item);
+			}
+
+			public void Insert(int index, KeyValuePair<Frame, DicomSoftcopyPresentationState> item)
+			{
+				Platform.CheckForNullReference(item, "item");
+				Platform.CheckForNullReference(item.Key, "item");
+				_list.Insert(index, item);
+			}
+
+			public void RemoveAt(int index)
+			{
+				_list.RemoveAt(index);
+			}
+
+			public KeyValuePair<Frame, DicomSoftcopyPresentationState> this[int index]
+			{
+				get { return _list[index]; }
+				set
+				{
+					Platform.CheckForNullReference(value, "value");
+					Platform.CheckForNullReference(value.Key, "value");
+					_list[index] = value;
+				}
+			}
+
+			public void Add(KeyValuePair<Frame, DicomSoftcopyPresentationState> item)
+			{
+				Platform.CheckForNullReference(item, "item");
+				Platform.CheckForNullReference(item.Key, "item");
+				_list.Add(item);
+			}
+
+			public void Clear()
+			{
+				_list.Clear();
+			}
+
+			public bool Contains(KeyValuePair<Frame, DicomSoftcopyPresentationState> item)
+			{
+				return _list.Contains(item);
+			}
+
+			public void CopyTo(KeyValuePair<Frame, DicomSoftcopyPresentationState>[] array, int arrayIndex)
+			{
+				_list.CopyTo(array, arrayIndex);
+			}
+
+			public int Count
+			{
+				get { return _list.Count; }
+			}
+
+			public bool IsReadOnly
+			{
+				get { return false; }
+			}
+
+			public bool Remove(KeyValuePair<Frame, DicomSoftcopyPresentationState> item)
+			{
+				return _list.Remove(item);
+			}
+
+			public IEnumerator<KeyValuePair<Frame, DicomSoftcopyPresentationState>> GetEnumerator()
+			{
+				return _list.GetEnumerator();
+			}
+
+			IEnumerator<Frame> IEnumerable<Frame>.GetEnumerator()
+			{
+				foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> pair in _list)
+					yield return pair.Key;
+			}
+
+			IEnumerator<DicomSoftcopyPresentationState> IEnumerable<DicomSoftcopyPresentationState>.GetEnumerator()
+			{
+				foreach (KeyValuePair<Frame, DicomSoftcopyPresentationState> pair in _list)
+					yield return pair.Value;
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return this.GetEnumerator();
+			}
+		}
+
+		#endregion
+
+		#region EvidenceDictionary Class
+
+		private class EvidenceDictionary : HierarchicalSopInstanceReferenceDictionary
+		{
+			private readonly Dictionary<string, SeriesInfo> _seriesInfo = new Dictionary<string, SeriesInfo>();
+
+			public void Add(Sop sop)
+			{
+				bool result = base.TryAddReference(sop.StudyInstanceUID, sop.SeriesInstanceUID, sop.SopClassUID, sop.SopInstanceUID);
+				if (result && !_seriesInfo.ContainsKey(sop.SeriesInstanceUID))
+				{
+					SeriesInfo seriesInfo = new SeriesInfo();
+					seriesInfo.RetrieveAeTitle = sop[DicomTags.RetrieveAeTitle].ToString();
+					seriesInfo.StorageMediaFileSetId = sop[DicomTags.StorageMediaFileSetId].GetString(0, string.Empty);
+					seriesInfo.StorageMediaFileSetUid = sop[DicomTags.StorageMediaFileSetUid].GetString(0, string.Empty);
+					_seriesInfo.Add(sop.SeriesInstanceUID, seriesInfo);
+				}
+			}
+
+			public void Add(DicomSoftcopyPresentationState state)
+			{
+				IDicomAttributeProvider dataset = state.DicomFile.DataSet;
+				bool result = base.TryAddReference(dataset[DicomTags.StudyInstanceUid], state.PresentationSeriesUid, state.PresentationSopClassUid, state.PresentationInstanceUid);
+				if (result && !_seriesInfo.ContainsKey(state.PresentationSeriesUid))
+				{
+					SeriesInfo seriesInfo = new SeriesInfo();
+					seriesInfo.RetrieveAeTitle = dataset[DicomTags.RetrieveAeTitle].ToString();
+					seriesInfo.StorageMediaFileSetId = dataset[DicomTags.StorageMediaFileSetId].GetString(0, string.Empty);
+					seriesInfo.StorageMediaFileSetUid = dataset[DicomTags.StorageMediaFileSetUid].GetString(0, string.Empty);
+					_seriesInfo.Add(state.PresentationSeriesUid, seriesInfo);
+				}
+			}
+
+			protected override IHierarchicalSeriesInstanceReferenceMacro CreateSeriesReference(string seriesInstanceUid)
+			{
+				IHierarchicalSeriesInstanceReferenceMacro reference = base.CreateSeriesReference(seriesInstanceUid);
+				if (_seriesInfo.ContainsKey(seriesInstanceUid))
+				{
+					SeriesInfo seriesInfo = _seriesInfo[seriesInstanceUid];
+					reference.RetrieveAeTitle = seriesInfo.RetrieveAeTitle;
+					reference.StorageMediaFileSetId = seriesInfo.StorageMediaFileSetId;
+					reference.StorageMediaFileSetUid = seriesInfo.StorageMediaFileSetUid;
+				}
+				return reference;
+			}
+
+			private class SeriesInfo
+			{
+				public string RetrieveAeTitle = "";
+				public string StorageMediaFileSetId = "";
+				public string StorageMediaFileSetUid = "";
+			}
+		}
+
+		#endregion
 	}
 }

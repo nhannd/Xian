@@ -220,6 +220,7 @@
     <Compile Include="Iod\ContextGroups\ContextGroupBase.cs" />
     <Compile Include="Iod\ContextGroups\KeyObjectSelectionDocumentTitle.cs" />
     <Compile Include="Iod\ContinuityOfContent.cs" />
+    <Compile Include="Iod\HierarchicalSopInstanceReferenceDictionary.cs" />
     <Compile Include="Iod\ImageSopInstanceReferenceDictionary.cs" />
     <Compile Include="Iod\IodBase.cs" />
     <Compile Include="Iod\Iods\ColorSoftcopyPresentationStateIod.cs" />
