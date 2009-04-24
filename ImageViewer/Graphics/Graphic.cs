@@ -148,9 +148,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _parentPresentationImage; }
 		}
 
+		/// <summary>
+		/// Called when the value of the <see cref="ParentPresentationImage"/> property changes.
+		/// </summary>
+		/// <param name="oldParentPresentationImage">A reference to the old parent presentation image.</param>
+		/// <param name="newParentPresentationImage">A reference to the new parent presentation image.</param>
+		protected virtual void OnParentPresentationImageChanged(IPresentationImage oldParentPresentationImage, IPresentationImage newParentPresentationImage) { }
+
 		internal virtual void SetParentPresentationImage(IPresentationImage parentPresentationImage)
 		{
-			_parentPresentationImage = parentPresentationImage;
+			if (_parentPresentationImage != parentPresentationImage)
+			{
+				IPresentationImage oldParent = _parentPresentationImage;
+				_parentPresentationImage = parentPresentationImage;
+				this.OnParentPresentationImageChanged(oldParent, parentPresentationImage);
+			}
 		}
 
 		/// <summary>

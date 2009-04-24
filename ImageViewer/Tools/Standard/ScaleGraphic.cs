@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -12,13 +11,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// <summary>
 	/// Generic scale graphic class.
 	/// </summary>
-	internal class ScaleGraphic : CompositeGraphic, IPixelSpacingSensitiveGraphic
+	internal class ScaleGraphic : CompositeGraphic
 	{
 		private event EventHandler _changed;
 		private readonly LinePrimitive _baseLine;
 		private readonly List<LinePrimitive> _ticklines = new List<LinePrimitive>();
 		private PointF _point1, _point2;
 		private bool _isMirrored;
+		private bool _isDirty;
 		private bool _visible;
 
 		/// <summary>
@@ -27,6 +27,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public ScaleGraphic()
 		{
 			base.Graphics.Add(_baseLine = new LinePrimitive());
+			_isDirty = false;
 		}
 
 		/// <summary>
@@ -200,7 +201,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		protected virtual void OnChanged()
 		{
-			UpdateScale();
+			_isDirty = true;
 			EventsHelper.Fire(_changed, this, EventArgs.Empty);
 		}
 
@@ -254,12 +255,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		protected virtual void UpdateScale()
 		{
-			if (!_visible) // no point recomputing the scale if client code has made us invisible
+			// no point recomputing the scale if client code has made us invisible or we aren't on screen
+			if (!_visible || (base.ParentPresentationImage != null && base.ParentPresentationImage.ClientRectangle.IsEmpty))
+			{
+				_isDirty = true;
 				return;
+			}
 
+			base.CoordinateSystem = CoordinateSystem.Destination;
 			try
 			{
-				base.CoordinateSystem = CoordinateSystem.Destination;
 				PointF pt0 = this.Point1;
 				PointF pt1 = this.Point2;
 
@@ -300,6 +305,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				{
 					base.Visible = false;
 				}
+
+				_isDirty = false;
 			}
 			finally
 			{
@@ -329,6 +336,32 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				tick.Dispose();
 			}
 			return _ticklines.AsReadOnly();
+		}
+
+		protected override void OnParentPresentationImageChanged(IPresentationImage oldParentPresentationImage, IPresentationImage newParentPresentationImage)
+		{
+			IImageSopProvider sopProvider = oldParentPresentationImage as IImageSopProvider;
+			if (sopProvider != null)
+				sopProvider.Frame.NormalizedPixelSpacing.Calibrated -= OnNormalizedPixelSpacingCalibrated;
+
+			base.OnParentPresentationImageChanged(oldParentPresentationImage, newParentPresentationImage);
+
+			sopProvider = newParentPresentationImage as IImageSopProvider;
+			if (sopProvider != null)
+				sopProvider.Frame.NormalizedPixelSpacing.Calibrated += OnNormalizedPixelSpacingCalibrated;
+		}
+
+		public override void OnDrawing() {
+			if (_isDirty)
+				this.UpdateScale();
+
+			base.OnDrawing();
+		}
+
+		private void OnNormalizedPixelSpacingCalibrated(object sender, EventArgs e)
+		{
+			_isDirty = true;
+			this.Draw();
 		}
 
 		/// <summary>
@@ -477,11 +510,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			width = 0;
 			height = 0;
 			return false;
-		}
-
-		void IPixelSpacingSensitiveGraphic.Refresh()
-		{
-			UpdateScale();
 		}
 
 		private class TickOffset

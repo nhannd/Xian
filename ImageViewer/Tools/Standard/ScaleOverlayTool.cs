@@ -7,7 +7,6 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -54,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			return null;
 		}
 
-		private class CompositeScaleGraphic : CompositeGraphic, IPixelSpacingSensitiveGraphic
+		private class CompositeScaleGraphic : CompositeGraphic
 		{
 			private event EventHandler _changed;
 			private readonly ScaleGraphic _horizontalScale;
@@ -136,12 +135,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			{
 				EventsHelper.Fire(_changed, this, EventArgs.Empty);
 				base.Draw();
-			}
-
-			void IPixelSpacingSensitiveGraphic.Refresh()
-			{
-				((IPixelSpacingSensitiveGraphic) _horizontalScale).Refresh();
-				((IPixelSpacingSensitiveGraphic) _verticalScale).Refresh();
 			}
 
 			/// <summary>

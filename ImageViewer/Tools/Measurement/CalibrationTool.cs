@@ -162,23 +162,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				out pixelSpacingHeight);
 
 			image.Frame.NormalizedPixelSpacing.Calibrate(pixelSpacingHeight, pixelSpacingWidth);
-
-			// refresh any pixel spacing sensitive graphics in the overlay graphics layer (e.g. ROIs)
-			if (roiGraphic.ParentPresentationImage is IOverlayGraphicsProvider)
-			{
-				foreach (IGraphic graphic in ((IOverlayGraphicsProvider) roiGraphic.ParentPresentationImage).OverlayGraphics)
-					if (graphic is IPixelSpacingSensitiveGraphic)
-						((IPixelSpacingSensitiveGraphic) graphic).Refresh();
-			}
-
-			// refresh any pixel spacing sensitive graphics in the application graphics layer (e.g. scale graphics)
-			if (roiGraphic.ParentPresentationImage is IApplicationGraphicsProvider)
-			{
-				foreach (IGraphic graphic in ((IApplicationGraphicsProvider) roiGraphic.ParentPresentationImage).ApplicationGraphics)
-					if (graphic is IPixelSpacingSensitiveGraphic)
-						((IPixelSpacingSensitiveGraphic) graphic).Refresh();
-			}
-
 			roiGraphic.ParentPresentationImage.Draw();
 		}
 

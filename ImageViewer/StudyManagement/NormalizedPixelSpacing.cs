@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -44,6 +45,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </remarks>
 	public class NormalizedPixelSpacing : PixelSpacing
 	{
+		private event EventHandler _calibrated;
 		private Frame _frame;
 
 		/// <summary>
@@ -53,6 +55,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			_frame = frame;
 			Initialize();
+		}
+
+		/// <summary>
+		/// Event fired when the pixel spacing is calibrated.
+		/// </summary>
+		public event EventHandler Calibrated
+		{
+			add { _calibrated += value; }
+			remove { _calibrated -= value; }
 		}
 
 		/// <summary>
@@ -68,6 +79,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			this.Row = pixelSpacingRow;
 			this.Column = pixelSpacingColumn;
+			EventsHelper.Fire(_calibrated, this, new EventArgs());
 		}
 
 		private void Initialize()

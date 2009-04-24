@@ -1,14 +1,14 @@
 using System;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.RoiGraphics.Analyzers;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.RoiGraphics
 {
 	[Cloneable]
-	public class RoiGraphic : AnnotationGraphic, IPixelSpacingSensitiveGraphic
+	public class RoiGraphic : AnnotationGraphic
 	{
 		private event EventHandler _roiChanged;
 		private event EventHandler _nameChanged;
@@ -114,6 +114,32 @@ namespace ClearCanvas.ImageViewer.RoiGraphics
 		{
 			this.OnSubjectChanged();
 			base.Refresh();
+		}
+
+		protected override void OnParentPresentationImageChanged(IPresentationImage oldParentPresentationImage, IPresentationImage newParentPresentationImage)
+		{
+			IImageSopProvider sopProvider = oldParentPresentationImage as IImageSopProvider;
+			if (sopProvider != null)
+				sopProvider.Frame.NormalizedPixelSpacing.Calibrated -= OnNormalizedPixelSpacingCalibrated;
+
+			base.OnParentPresentationImageChanged(oldParentPresentationImage, newParentPresentationImage);
+
+			sopProvider = newParentPresentationImage as IImageSopProvider;
+			if (sopProvider != null)
+				sopProvider.Frame.NormalizedPixelSpacing.Calibrated += OnNormalizedPixelSpacingCalibrated;
+		}
+
+		/// <summary>
+		/// Called when the underlying image's pixel spacing is recalibrated.
+		/// </summary>
+		protected virtual void OnImageCalibrated()
+		{
+			this.Refresh();
+		}
+
+		private void OnNormalizedPixelSpacingCalibrated(object sender, EventArgs e)
+		{
+			this.OnImageCalibrated();
 		}
 
 		protected override sealed void OnSubjectChanged()
