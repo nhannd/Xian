@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Client
         /// Constructor
         /// </summary>
 		public WorklistDetailEditorComponent(WorklistAdminDetail detail, List<WorklistClassSummary> worklistClasses, List<StaffGroupSummary> ownerGroupChoices, WorklistEditorMode editorMode, bool adminMode, bool dialogMode)
-			:base(worklistClasses)
+			:base(worklistClasses, detail.WorklistClass)
         {
             _worklistDetail = detail;
             _dialogMode = dialogMode;
@@ -82,16 +82,6 @@ namespace ClearCanvas.Ris.Client
 			else
 			{
 				_isPersonal = _worklistDetail.IsStaffOwned;
-			}
-
-			// We need to remember the worklist class and set it back because setting the SelectedCategory will always set the worklist class to null 
-			// in the base class.  This code should be in the constructor instead of Start() because clearing worklist class in Start() may reset the 
-			// initial values passed into the constructor of other WorklistEditorComponent sub-editor component.
-			WorklistClassSummary wc = _worklistDetail.WorklistClass;
-			if (wc != null)
-			{
-				this.SelectedCategory = _worklistDetail.WorklistClass.CategoryName;
-				_worklistDetail.WorklistClass = wc;				
 			}
 		}
 
@@ -181,7 +171,7 @@ namespace ClearCanvas.Ris.Client
 
     	public bool IsWorklistClassReadOnly
     	{
-            get { return _editorMode != WorklistEditorMode.Edit; }
+            get { return _editorMode == WorklistEditorMode.Edit; }
     	}
 
 		[ValidateNotNull]
@@ -237,8 +227,9 @@ namespace ClearCanvas.Ris.Client
 
 		protected override void UpdateWorklistClassChoices()
 		{
-			// blank out the selected worklist class
-			_worklistDetail.WorklistClass = null;
+			// blank out the selected worklist class if not in the new set of choices
+			if(!this.WorklistClassChoices.Contains(_worklistDetail.WorklistClass))
+				_worklistDetail.WorklistClass = null;
 
 			base.UpdateWorklistClassChoices();
 		}

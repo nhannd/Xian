@@ -172,7 +172,7 @@ namespace ClearCanvas.Ris.Client
 
         private static void AddNewWorklistsToFolderSystem(IEnumerable<WorklistAdminSummary> worklists, IWorklistFolderSystem fs)
         {
-            foreach (WorklistSummary worklist in worklists)
+			foreach (WorklistAdminSummary worklist in worklists)
             {
                 // try to add worklist to this folder system
                 IWorklistFolder folder = fs.AddWorklistFolder(worklist);
@@ -211,7 +211,7 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         /// <param name="folder"></param>
         /// <returns></returns>
-        private bool CheckAccess(IFolder folder)
+        private static bool CheckAccess(IFolder folder)
         {
             IWorklistFolder wf = folder as IWorklistFolder;
 
@@ -235,12 +235,12 @@ namespace ClearCanvas.Ris.Client
             get { return this.Context.SelectedFolderSystem is IWorklistFolderSystem; }
         }
 
-        private bool HasGroupAdminAuthority
+        private static bool HasGroupAdminAuthority
         {
             get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Worklist.Group); }
         }
 
-        private bool HasPersonalAdminAuthority
+        private static bool HasPersonalAdminAuthority
         {
             get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Worklist.Personal); }
         }

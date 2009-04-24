@@ -4,38 +4,39 @@ using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client
 {
 	public abstract class WorklistDetailEditorComponentBase : ApplicationComponent
 	{
 		private readonly List<WorklistClassSummary> _worklistClasses;
+		private readonly WorklistClassSummary _initialClass;
 		private string[] _categoryChoices;
 		private string _selectedCategory;
 		private string _procedureTypeGroupClass;
 		private event EventHandler _procedureTypeGroupClassChanged;
 
-		public WorklistDetailEditorComponentBase(List<WorklistClassSummary> worklistClasses)
+		public WorklistDetailEditorComponentBase(List<WorklistClassSummary> worklistClasses, WorklistClassSummary initialClass)
         {
             _worklistClasses = worklistClasses;
-        }
+			_initialClass = initialClass ?? CollectionUtils.FirstElement(_worklistClasses);
+		}
 
 		public override void Start()
 		{
+			// get unique category choices
 			_categoryChoices = CollectionUtils.Unique(
 				CollectionUtils.Map<WorklistClassSummary, string>(_worklistClasses,
 					delegate(WorklistClassSummary wc) { return wc.CategoryName; })).ToArray();
 
-			if (_categoryChoices.Length > 0)
+			// determine initial selections
+			if (_initialClass != null)
 			{
-				// set the selected category if there is no existing one, or the existing selection is invalid.
-				if (string.IsNullOrEmpty(_selectedCategory) ||
-					!CollectionUtils.Contains(_categoryChoices, delegate(string category) { return Equals(category, _selectedCategory); }))
-				{
-					_selectedCategory = _categoryChoices[0];
-					UpdateWorklistClassChoices();
-				}
+				_selectedCategory = _initialClass.CategoryName;
 			}
+
+			UpdateWorklistClassChoices();
 
 			base.Start();
 		}
@@ -83,21 +84,18 @@ namespace ClearCanvas.Ris.Client
 
 		public IList WorklistClassChoices
 		{
-			get { return this.WorklistClassChoicesCore; }
+			get { return this.GetWorklistClassChoicesForCategory(_selectedCategory); }
 		}
 
-		#endregion 
+		#endregion
 
 		/// <summary>
 		/// Gets the choices for the currently selected category.
 		/// </summary>
-		protected List<WorklistClassSummary> WorklistClassChoicesCore
+		protected List<WorklistClassSummary> GetWorklistClassChoicesForCategory(string category)
 		{
-			get
-			{
-				return CollectionUtils.Select(_worklistClasses,
-					delegate(WorklistClassSummary wc) { return wc.CategoryName == _selectedCategory; });
-			}
+			return CollectionUtils.Select(_worklistClasses,
+					  delegate(WorklistClassSummary wc) { return wc.CategoryName == category; });
 		}
 
 		/// <summary>
@@ -113,7 +111,8 @@ namespace ClearCanvas.Ris.Client
 			NotifyPropertyChanged("WorklistClassChoices");
 
 			// all classes in subset should have the same procedureTypeGroupClass, so just grab the first one
-			this.ProcedureTypeGroupClass = CollectionUtils.FirstElement(this.WorklistClassChoicesCore).ProcedureTypeGroupClassName;
+			// use property rather than member var, so that the event is fired!
+			this.ProcedureTypeGroupClass = CollectionUtils.FirstElement(this.GetWorklistClassChoicesForCategory(_selectedCategory)).ProcedureTypeGroupClassName;
 		}
 	}
 }

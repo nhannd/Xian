@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client
         /// Constructor
         /// </summary>
         public WorklistMultiDetailEditorComponent(List<WorklistClassSummary> worklistClasses, List<StaffGroupSummary> ownerGroupChoices)
-			:base(worklistClasses)
+			:base(worklistClasses, null)
         {
         	_ownerGroupChoices = ownerGroupChoices;
         }

@@ -125,9 +125,6 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor edit or duplicate a worklist.
         /// </summary>
-        /// <param name="entityRef"></param>
-        /// <param name="duplicate">Specify true to duplicate the worklist, false to edit the existing copy.</param>
-        /// <param name="adminMode"></param>
         public WorklistEditorComponent(EntityRef entityRef, WorklistEditorMode editorMode, bool adminMode)
         {
             _mode = editorMode;
@@ -323,7 +320,7 @@ namespace ClearCanvas.Ris.Client
 
         private bool ShowSubscriptionPages
         {
-			get { return _adminMode && Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.Worklist); }
+			get { return _adminMode && !_worklistDetail.IsUserWorklist && Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.Worklist); }
         }
 
         private bool ShowReportingStaffRoleFilters
@@ -374,7 +371,7 @@ namespace ClearCanvas.Ris.Client
             Platform.GetService<IWorklistAdminService>(
                 delegate(IWorklistAdminService service)
                 {
-					if (_mode == WorklistEditorMode.Add && _adminMode)
+					if (_detailComponent is WorklistMultiDetailEditorComponent)
                     {
                         // add each worklist in the multi editor
                         WorklistMultiDetailEditorComponent detailEditor = (WorklistMultiDetailEditorComponent)_detailComponent;
@@ -384,14 +381,14 @@ namespace ClearCanvas.Ris.Client
                             _worklistDetail.Description = entry.Description;
                             _worklistDetail.WorklistClass = entry.Class;
 
-                            AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail));
+                            AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail, !_adminMode));
                             _editedWorklistSummaries.Add(response.WorklistAdminSummary);
                         }
                     }
-                    else if ((_mode == WorklistEditorMode.Add && !_adminMode) || _mode == WorklistEditorMode.Duplicate)
+                    else
                     {
                         // only 1 worklist to add
-                        AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail));
+                        AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail, !_adminMode));
                         _editedWorklistSummaries.Add(response.WorklistAdminSummary);
                     }
 

@@ -38,7 +38,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class StaffSummary : DataContractBase, ICloneable
+    public class StaffSummary : DataContractBase, ICloneable, IEquatable<StaffSummary>
     {
         public StaffSummary(EntityRef staffRef, string staffId, EnumValueInfo staffType, PersonNameDetail personNameDetail, bool deactivated)
         {
@@ -81,5 +81,22 @@ namespace ClearCanvas.Ris.Application.Common
         }
 
         #endregion
+
+    	public bool Equals(StaffSummary staffSummary)
+    	{
+    		if (staffSummary == null) return false;
+    		return Equals(StaffRef, staffSummary.StaffRef);
+    	}
+
+    	public override bool Equals(object obj)
+    	{
+    		if (ReferenceEquals(this, obj)) return true;
+    		return Equals(obj as StaffSummary);
+    	}
+
+    	public override int GetHashCode()
+    	{
+    		return StaffRef != null ? StaffRef.GetHashCode() : 0;
+    	}
     }
 }

@@ -101,8 +101,16 @@ namespace ClearCanvas.Ris.Client
 				if(value != null)
 					_available.Items.AddRange(value);
 
-				// clear selected, since may contain groups that are no longer valid choices
-				_selected.Items.Clear();
+				// remove any selected items that are no longer valid choices,
+				// and any available items that are already selected
+				List<TSummary> selectedItems = new List<TSummary>(_selected.Items);
+				foreach (TSummary item in selectedItems)
+				{
+					if (_available.Items.Contains(item))
+						_available.Items.Remove(item);
+					else
+						_selected.Items.Remove(item);
+				}
 			}
 		}
 
