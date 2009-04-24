@@ -201,27 +201,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 {
                     if (wq.WorkQueueStatusEnum == WorkQueueStatusEnum.InProgress)
                     {
-                        // prompt the user first
-                        if (_workQueues.Count > 1)
-                        {
-                            PreApplyChangeConfirmDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleConfirm_OneOrMoreAreBeingProcessed;
-                        }
-                        else
-                        {
-                            PreApplyChangeConfirmDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleConfirm_ItemBeingProcessed;
-                        }
-                        PreApplyChangeConfirmDialog.Title = "Warning";
-                        PreApplyChangeConfirmDialog.MessageType =
-                            MessageBox.MessageTypeEnum.YESNO;
-                        PreApplyChangeConfirmDialog.Show();
-                        prompt = true;
-                        break;
+                        MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleConfirm_ItemBeingProcessed;
+                        MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
+                        MessageDialog.Show();
+                        return; // don't apply the changes
                     }
                     else if (wq.WorkQueueStatusEnum == WorkQueueStatusEnum.Failed)
                     {
                         MessageDialog.Message = App_GlobalResources.SR.WorkQueueRescheduleFailed_ItemHasFailed;
-                        MessageDialog.MessageType =
-                            MessageBox.MessageTypeEnum.ERROR;
+                        MessageDialog.MessageType = MessageBox.MessageTypeEnum.ERROR;
                         MessageDialog.Show();
                         return; // don't apply the changes
                     }

@@ -907,7 +907,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This workqueue item is being processed. &lt;br&gt; Although you can save the changes you have made. They may be overwritten by the server when after the item is processed.&lt;P&gt; Do you want to continue ?.
+        ///   Looks up a localized string similar to Unable to reschedule the selected item because it is being processed..
         /// </summary>
         internal static string WorkQueueRescheduleConfirm_ItemBeingProcessed {
             get {
@@ -916,7 +916,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to At least one of the workqueue items is being processed. &lt;br&gt; Although you can save the changes you have made. They may be overwritten by the server when after the item is processed.&lt;P&gt; Do you want to continue ?.
+        ///   Looks up a localized string similar to Unable to reschedule the selected item because it is being processed. .
         /// </summary>
         internal static string WorkQueueRescheduleConfirm_OneOrMoreAreBeingProcessed {
             get {

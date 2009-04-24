@@ -319,10 +319,10 @@
     <value>This work queue item is no longer available in the system</value>
   </data>
   <data name="WorkQueueRescheduleConfirm_ItemBeingProcessed" xml:space="preserve">
-    <value>This workqueue item is being processed. &lt;br&gt; Although you can save the changes you have made. They may be overwritten by the server when after the item is processed.&lt;P&gt; Do you want to continue ?</value>
+    <value>Unable to reschedule the selected item because it is being processed.</value>
   </data>
   <data name="WorkQueueRescheduleConfirm_OneOrMoreAreBeingProcessed" xml:space="preserve">
-    <value>At least one of the workqueue items is being processed. &lt;br&gt; Although you can save the changes you have made. They may be overwritten by the server when after the item is processed.&lt;P&gt; Do you want to continue ?</value>
+    <value>Unable to reschedule the selected item because it is being processed. </value>
   </data>
   <data name="WorkQueueRescheduleFailed_Exception" xml:space="preserve">
     <value>Unable to reschedule this/these work queue item: {0}</value>
