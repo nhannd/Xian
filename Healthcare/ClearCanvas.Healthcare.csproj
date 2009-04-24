@@ -136,6 +136,7 @@
     <Compile Include="ProtocolResolutionStep.cs" />
     <Compile Include="RelevanceGroup.cs" />
     <Compile Include="ReportingWorklists.cs" />
+    <Compile Include="ReportTrackingWorklists.cs" />
     <Compile Include="ResultCommunicationMode.cs" />
     <Compile Include="ResultRecipient.cs" />
     <Compile Include="StaffGroup.cs" />

@@ -70,6 +70,20 @@ namespace ClearCanvas.Healthcare
                 return (ISearchCondition)criteria.ProcedureStep.EndTime;
             });
 
+		public static readonly WorklistTimeField ReportPartPreliminaryTime = new WorklistTimeField(
+			delegate(WorklistItemSearchCriteria criteria)
+			{
+				ReportingWorklistItemSearchCriteria c = (ReportingWorklistItemSearchCriteria) criteria;
+				return (ISearchCondition)c.ReportPart.PreliminaryTime;
+			});
+
+		public static readonly WorklistTimeField ReportPartCompletedTime = new WorklistTimeField(
+			delegate(WorklistItemSearchCriteria criteria)
+			{
+				ReportingWorklistItemSearchCriteria c = (ReportingWorklistItemSearchCriteria)criteria;
+				return (ISearchCondition)c.ReportPart.CompletedTime;
+			});
+
 
         private readonly Converter<WorklistItemSearchCriteria, ISearchCondition> _mapping;
 

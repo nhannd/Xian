@@ -228,6 +228,7 @@
     <EmbeddedResource Include="Mappings\TranscriptionWorklists.hbm.xml" />
     <EmbeddedResource Include="Mappings\TranscriptionReviewStep.hbm.xml" />
     <EmbeddedResource Include="Mappings\TranscriptionRejectReason.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ReportingTrackingWorklists.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\PatientNoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />

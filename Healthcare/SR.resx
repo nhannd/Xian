@@ -438,6 +438,24 @@
   <data name="ReportingToBeReviewedReportWorklistDescription" xml:space="preserve">
     <value>Lists procoedures with reports that need to be reviewed.</value>
   </data>
+  <data name="ReportingTrackingReportCorrectedWorklist" xml:space="preserve">
+    <value>Reports Corrected</value>
+  </data>
+  <data name="ReportingTrackingReportCorrectedWorklistDescription" xml:space="preserve">
+    <value>Lists procoedures with reports that are corrected.</value>
+  </data>
+  <data name="ReportingTrackingReportDraftWorklist" xml:space="preserve">
+    <value>Reports In Draft</value>
+  </data>
+  <data name="ReportingTrackingReportDraftWorklistDescription" xml:space="preserve">
+    <value>Lists procoedures with reports that are in draft.</value>
+  </data>
+  <data name="ReportingTrackingReportFinalWorklist" xml:space="preserve">
+    <value>Reports Finalized</value>
+  </data>
+  <data name="ReportingTrackingReportFinalWorklistDescription" xml:space="preserve">
+    <value>Lists procoedures with reports that are finalized.</value>
+  </data>
   <data name="SexEnum" xml:space="preserve">
     <value>Sex</value>
   </data>
@@ -482,6 +500,9 @@
   </data>
   <data name="WorklistCategoryReporting" xml:space="preserve">
     <value>Reporting</value>
+  </data>
+  <data name="WorklistCategoryReportingTracking" xml:space="preserve">
+    <value>Reporting Tracking</value>
   </data>
   <data name="WorklistCategoryTranscription" xml:space="preserve">
     <value>Transcription</value>

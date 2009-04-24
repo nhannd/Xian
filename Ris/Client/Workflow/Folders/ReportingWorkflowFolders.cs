@@ -37,6 +37,8 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 {
 	public class Reporting
 	{
+		#region Reporting Worklists
+
 		[ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.ReportingToBeReportedWorklist)]
 		[FolderPath("To be Reported", true)]
@@ -93,6 +95,35 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		{
 		}
 
+		#endregion
+
+		#region Reporting Tracking Worklists
+
+		[ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.ReportingTrackingReportDraftWorklist)]
+		[FolderPath("Report in Draft", true)]
+		public class ReportInDraftFolder : ReportingWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.ReportingTrackingReportFinalWorklist)]
+		[FolderPath("Report Finalized", true)]
+		public class ReportFinalizedFolder : ReportingWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.ReportingTrackingReportCorrectedWorklist)]
+		[FolderPath("Report Corrected", true)]
+		public class ReportCorrectedFolder : ReportingWorkflowFolder
+		{
+		}
+
+		#endregion
+
+		#region Protocol Worklists
+
 		[ExtensionOf(typeof(ProtocolWorkflowFolderExtensionPoint))]
 		[FolderForWorklistClass(WorklistClassNames.ReportingToBeProtocolledWorklist)]
 		[FolderPath("To be Protocolled", true)]
@@ -142,6 +173,8 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		public class RejectedProtocolFolder : ReportingWorkflowFolder
 		{
 		}
+
+		#endregion
 
 		[FolderPath("Search Results")]
 		public class ReportingSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItem, IReportingWorkflowService>

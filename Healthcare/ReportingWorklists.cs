@@ -279,31 +279,4 @@ namespace ClearCanvas.Healthcare
 			return new WorklistItemSearchCriteria[] { unsupervised, supervised };
 		}
 	}
-
-	public abstract class ReportingTrackingWorklist : ReportingWorklist
-	{
-		public override bool SupportsStaffRoleFilters
-		{
-			get { return true; }
-		}
-	}
-
-	/// <summary>
-	/// ReportingDraftTrackingWorklist entity
-	/// </summary>
-	[ExtensionOf(typeof(WorklistExtensionPoint))]
-	[WorklistSupportsTimeFilter(true)]
-	[WorklistClassDescription("ReportingDraftTrackingWorklistDescription")]
-	public class ReportingDraftTrackingWorklist : ReportingTrackingWorklist
-	{
-		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
-		{
-			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(InterpretationStep);
-			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.IP });
-			ApplyTimeCriteria(criteria, WorklistTimeField.ProcedureStepStartTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
-			return new WorklistItemSearchCriteria[] { criteria };
-		}
-	}
-
 }

@@ -209,7 +209,7 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                return _worklistDetail.WorklistClass.Description;
+				return _worklistDetail.WorklistClass == null ? null : _worklistDetail.WorklistClass.Description;
             }
         }
 

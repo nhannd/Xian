@@ -47,6 +47,18 @@ namespace ClearCanvas.Healthcare
             }
         }
 
+		public ReportSearchCriteria Report
+		{
+			get
+			{
+				if (!this.SubCriteria.ContainsKey("Report"))
+				{
+					this.SubCriteria["Report"] = new ReportSearchCriteria("Report");
+				}
+				return (ReportSearchCriteria)this.SubCriteria["Report"];
+			}
+		}
+
         public ProtocolSearchCriteria Protocol
         {
             get

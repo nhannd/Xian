@@ -157,13 +157,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             if (worklist.InterpretedByStaffFilter.IsEnabled)
                 detail.InterpretedByStaff = GetStaffSummaries(worklist.InterpretedByStaffFilter.Values, context);
 
-            if (worklist.InterpretedByStaffFilter.IsEnabled)
+            if (worklist.TranscribedByStaffFilter.IsEnabled)
                 detail.TranscribedByStaff = GetStaffSummaries(worklist.TranscribedByStaffFilter.Values, context);
 
-            if (worklist.InterpretedByStaffFilter.IsEnabled)
+            if (worklist.VerifiedByStaffFilter.IsEnabled)
                 detail.VerifiedByStaff = GetStaffSummaries(worklist.VerifiedByStaffFilter.Values, context);
 
-            if (worklist.InterpretedByStaffFilter.IsEnabled)
+            if (worklist.SupervisedByStaffFilter.IsEnabled)
                 detail.SupervisedByStaff = GetStaffSummaries(worklist.SupervisedByStaffFilter.Values, context);
         }
 

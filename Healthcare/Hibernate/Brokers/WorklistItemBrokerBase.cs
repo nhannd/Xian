@@ -107,6 +107,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         protected static readonly HqlSelect SelectProcedureStepScheduledStartTime = new HqlSelect("ps.Scheduling.StartTime");
         protected static readonly HqlSelect SelectProcedureStepStartTime = new HqlSelect("ps.StartTime");
         protected static readonly HqlSelect SelectProcedureStepEndTime = new HqlSelect("ps.EndTime");
+		protected static readonly HqlSelect SelectReportPartPreliminaryTime = new HqlSelect("rpp.PreliminaryTime");
+		protected static readonly HqlSelect SelectReportPartCompletedTime = new HqlSelect("rpp.CompletedTime");
 
         protected static readonly HqlJoin JoinProcedure = new HqlJoin("ps.Procedure", "rp");
         protected static readonly HqlJoin JoinProcedureType = new HqlJoin("rp.Type", "rpt");
@@ -220,6 +222,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStepScheduledStartTime, SelectProcedureStepScheduledStartTime);
             _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStepStartTime, SelectProcedureStepStartTime);
             _mapTimeFieldToHqlSelect.Add(WorklistTimeField.ProcedureStepEndTime, SelectProcedureStepEndTime);
+			_mapTimeFieldToHqlSelect.Add(WorklistTimeField.ReportPartPreliminaryTime, SelectReportPartPreliminaryTime);
+			_mapTimeFieldToHqlSelect.Add(WorklistTimeField.ReportPartCompletedTime, SelectReportPartCompletedTime);
        }
 
         #endregion

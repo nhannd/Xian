@@ -43,5 +43,4 @@
   <subclass name="ReportingToBeReviewedReportWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_TOBEREVIEWEDREPORT"/>
   <subclass name="ReportingToBeProtocolledWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_TOBEPROTOCOLLED"/>
   <subclass name="ReportingToBeReviewedProtocolWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_TOBEREVIEWEDPROTOCOL"/>
-	<subclass name="ReportingDraftTrackingWorklist" extends="ReportingWorklist" discriminator-value="REPORTING_DRAFTTRACKING"/>
 </hibernate-mapping>
