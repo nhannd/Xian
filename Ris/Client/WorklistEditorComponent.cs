@@ -40,6 +40,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -167,6 +168,10 @@ namespace ClearCanvas.Ris.Client
                             new ListProcedureTypeGroupsRequest(_worklistDetail.WorklistClass.ProcedureTypeGroupClassName));
                         procedureTypeGroups = groupsResponse.ProcedureTypeGroups;
                     }
+
+					// sort worklist classes so they appear alphabetically in editor
+					formDataResponse.WorklistClasses = CollectionUtils.Sort(formDataResponse.WorklistClasses,
+						delegate(WorklistClassSummary x, WorklistClassSummary y) { return x.DisplayName.CompareTo(y.DisplayName); });
 
                     // determine which main page to show (multi or single)
 					if (_mode == WorklistEditorMode.Add && _adminMode)
@@ -304,6 +309,10 @@ namespace ClearCanvas.Ris.Client
                     {
                         UpdateWorklist();
                     }
+
+					// save any modified user settings
+					WorklistEditorComponentSettings.Default.Save();
+
                     this.Exit(ApplicationComponentExitCode.Accepted);
                 }
                 catch (Exception e)

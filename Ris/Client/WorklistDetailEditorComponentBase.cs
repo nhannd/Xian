@@ -25,10 +25,11 @@ namespace ClearCanvas.Ris.Client
 
 		public override void Start()
 		{
-			// get unique category choices
-			_categoryChoices = CollectionUtils.Unique(
-				CollectionUtils.Map<WorklistClassSummary, string>(_worklistClasses,
-					delegate(WorklistClassSummary wc) { return wc.CategoryName; })).ToArray();
+			// get unique category choices, sorted alphabetically
+			_categoryChoices = CollectionUtils.Sort(
+									CollectionUtils.Unique(
+										CollectionUtils.Map<WorklistClassSummary, string>(_worklistClasses,
+										delegate(WorklistClassSummary wc) { return wc.CategoryName; }))).ToArray();
 
 			// determine initial selections
 			if (_initialClass != null)
@@ -108,6 +109,9 @@ namespace ClearCanvas.Ris.Client
 
 		protected virtual void UpdateWorklistClassChoices()
 		{
+			// update stored setting, but don't save yet
+			WorklistEditorComponentSettings.Default.DefaultWorklistCategory = _selectedCategory;
+
 			NotifyPropertyChanged("WorklistClassChoices");
 
 			// all classes in subset should have the same procedureTypeGroupClass, so just grab the first one

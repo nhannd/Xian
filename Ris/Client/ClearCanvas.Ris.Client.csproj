@@ -179,6 +179,12 @@
     <Compile Include="WorklistDetailEditorComponent.cs" />
     <Compile Include="WorklistDetailEditorComponentBase.cs" />
     <Compile Include="WorklistEditorComponent.cs" />
+    <Compile Include="WorklistEditorComponentSettings.cs" />
+    <Compile Include="WorklistEditorComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>WorklistEditorComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WorklistFilterEditorComponent.cs" />
     <Compile Include="WorklistItemPreviewComponent.cs" />
     <Compile Include="FolderContentsComponent.cs" />
@@ -389,6 +395,10 @@
     <None Include="WebServicesSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>WebServicesSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="WorklistEditorComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WorklistEditorComponentSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

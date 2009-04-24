@@ -37,6 +37,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -66,7 +67,7 @@ namespace ClearCanvas.Ris.Client
         /// Constructor
         /// </summary>
 		public WorklistDetailEditorComponent(WorklistAdminDetail detail, List<WorklistClassSummary> worklistClasses, List<StaffGroupSummary> ownerGroupChoices, WorklistEditorMode editorMode, bool adminMode, bool dialogMode)
-			:base(worklistClasses, detail.WorklistClass)
+			:base(worklistClasses, GetDefaultWorklistClass(worklistClasses, detail))
         {
             _worklistDetail = detail;
             _dialogMode = dialogMode;
@@ -84,6 +85,9 @@ namespace ClearCanvas.Ris.Client
 				// default to "personal" if not a user worklist (this could happen when duplicating from an admin worklist)
 				_isPersonal = !_worklistDetail.IsUserWorklist || _worklistDetail.IsStaffOwned;
 			}
+
+			// update the class to the default (if this is a new worklist)
+        	_worklistDetail.WorklistClass = GetDefaultWorklistClass(worklistClasses, detail);
 		}
 
     	#region Presentation Model
@@ -184,6 +188,11 @@ namespace ClearCanvas.Ris.Client
 				if(!Equals(_worklistDetail.WorklistClass, value))
 				{
 					_worklistDetail.WorklistClass = value;
+					if(_worklistDetail.WorklistClass != null)
+					{
+						// update settings, but don't save
+						WorklistEditorComponentSettings.Default.DefaultWorklistClass = _worklistDetail.WorklistClass.ClassName;
+					}
 					this.Modified = true;
 					NotifyPropertyChanged("WorklistClass");
 				}
@@ -244,6 +253,14 @@ namespace ClearCanvas.Ris.Client
 		{
 			get { return Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.Worklist.Personal); }
 		}
+
+		private static WorklistClassSummary GetDefaultWorklistClass(List<WorklistClassSummary> worklistClasses, WorklistAdminDetail detail)
+		{
+			return detail.WorklistClass
+				?? CollectionUtils.SelectFirst(worklistClasses,
+					delegate(WorklistClassSummary w) { return w.ClassName == WorklistEditorComponentSettings.Default.DefaultWorklistClass; });
+		}
+
 
 	}
 }

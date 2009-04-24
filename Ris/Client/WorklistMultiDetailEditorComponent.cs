@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client
         /// Constructor
         /// </summary>
         public WorklistMultiDetailEditorComponent(List<WorklistClassSummary> worklistClasses, List<StaffGroupSummary> ownerGroupChoices)
-			:base(worklistClasses, null)
+			: base(worklistClasses, GetDefaultWorklistClass(worklistClasses))
         {
         	_ownerGroupChoices = ownerGroupChoices;
         }
@@ -271,5 +271,11 @@ namespace ClearCanvas.Ris.Client
             _worklistActionModel.Edit.Enabled = _selectedWorklist != null;
         }
 
+		private static WorklistClassSummary GetDefaultWorklistClass(List<WorklistClassSummary> worklistClasses)
+		{
+			// return the first class that matches the saved default category
+			return CollectionUtils.SelectFirst(worklistClasses,
+				delegate(WorklistClassSummary w) { return w.CategoryName == WorklistEditorComponentSettings.Default.DefaultWorklistCategory; });
+		}
     }
 }
