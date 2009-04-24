@@ -81,7 +81,8 @@ namespace ClearCanvas.Ris.Client
 			}
 			else
 			{
-				_isPersonal = _worklistDetail.IsStaffOwned;
+				// default to "personal" if not a user worklist (this could happen when duplicating from an admin worklist)
+				_isPersonal = !_worklistDetail.IsUserWorklist || _worklistDetail.IsStaffOwned;
 			}
 		}
 

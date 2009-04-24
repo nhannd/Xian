@@ -213,7 +213,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 		public LoadWorklistForEditResponse LoadWorklistForEdit(LoadWorklistForEditRequest request)
         {
             Worklist worklist = PersistenceContext.Load<Worklist>(request.EntityRef);
-			CheckAccess(worklist.Owner);
 
             WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
             WorklistAdminDetail adminDetail = adminAssembler.GetWorklistDetail(worklist, this.PersistenceContext);
@@ -316,6 +315,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			}
 		}
 
+		/// <summary>
+		/// Checks whether the current user has access to worklists owned by the specified worklist owner.
+		/// </summary>
+		/// <param name="owner"></param>
 		private void CheckAccess(WorklistOwner owner)
 		{
 			// admin can access any worklist

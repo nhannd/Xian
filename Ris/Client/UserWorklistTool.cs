@@ -16,24 +16,28 @@ namespace ClearCanvas.Ris.Client
     /// </summary>
 	[ButtonAction("add", "folderexplorer-folders-toolbar/New Worklist", "Add")]
 	[MenuAction("add", "folderexplorer-folders-contextmenu/New Worklist", "Add")]
+	[IconSet("add", CrudActionModel.IconAddResource)]
 	[Tooltip("add", "Add a new worklist")]
 	[EnabledStateObserver("add", "AddEnabled", "EnablementChanged")]
     [VisibleStateObserver("add", "Visible", "VisibleChanged")]
 
 	[ButtonAction("edit", "folderexplorer-folders-toolbar/Edit Worklist", "Edit")]
 	[MenuAction("edit", "folderexplorer-folders-contextmenu/Edit Worklist", "Edit")]
+	[IconSet("edit", CrudActionModel.IconEditResource)]
 	[Tooltip("edit", "Edit worklist")]
 	[EnabledStateObserver("edit", "EditEnabled", "EnablementChanged")]
     [VisibleStateObserver("edit", "Visible", "VisibleChanged")]
 
     [ButtonAction("duplicate", "folderexplorer-folders-toolbar/Duplicate Worklist", "Duplicate")]
     [MenuAction("duplicate", "folderexplorer-folders-contextmenu/Duplicate Worklist", "Duplicate")]
-    [Tooltip("duplicate", "Duplicate worklist")]
+	[IconSet("duplicate", "Icons.DuplicateSmall.png")]
+	[Tooltip("duplicate", "Duplicate worklist")]
     [EnabledStateObserver("duplicate", "DuplicateEnabled", "EnablementChanged")]
     [VisibleStateObserver("duplicate", "Visible", "VisibleChanged")]
 
 	[ButtonAction("delete", "folderexplorer-folders-toolbar/Delete Worklist", "Delete")]
 	[MenuAction("delete", "folderexplorer-folders-contextmenu/Delete Worklist", "Delete")]
+	[IconSet("delete", CrudActionModel.IconDeleteResource)]
 	[Tooltip("delete", "Delete worklist")]
 	[EnabledStateObserver("delete", "DeleteEnabled", "EnablementChanged")]
     [VisibleStateObserver("delete", "Visible", "VisibleChanged")]
@@ -94,12 +98,20 @@ namespace ClearCanvas.Ris.Client
 			if (!CanAdd())
 				return;
 
-			WorklistEditorComponent editor = new WorklistEditorComponent(false);
-			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "New Worklist");
-			if(exitCode == ApplicationComponentExitCode.Accepted)
+			try
 			{
-				IWorklistFolderSystem fs = (IWorklistFolderSystem) this.Context.SelectedFolderSystem;
-                AddNewWorklistsToFolderSystem(editor.EditedWorklistSummaries, fs);
+				WorklistEditorComponent editor = new WorklistEditorComponent(false);
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "New Worklist");
+				if (exitCode == ApplicationComponentExitCode.Accepted)
+				{
+					IWorklistFolderSystem fs = (IWorklistFolderSystem)this.Context.SelectedFolderSystem;
+					AddNewWorklistsToFolderSystem(editor.EditedWorklistSummaries, fs);
+				}
+
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 		}
 
@@ -109,14 +121,22 @@ namespace ClearCanvas.Ris.Client
             if (!CanEdit(folder))
                 return;
 
-			WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, WorklistEditorMode.Edit, false);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "Edit Worklist");
-            if (exitCode == ApplicationComponentExitCode.Accepted)
-            {
-                // refresh the folder
-                IWorklistFolderSystem fs = (IWorklistFolderSystem)this.Context.SelectedFolderSystem;
-                fs.InvalidateFolder(folder);
-            }
+			try
+			{
+				WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, WorklistEditorMode.Edit, false);
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "Edit Worklist");
+				if (exitCode == ApplicationComponentExitCode.Accepted)
+				{
+					// refresh the folder
+					IWorklistFolderSystem fs = (IWorklistFolderSystem)this.Context.SelectedFolderSystem;
+					fs.InvalidateFolder(folder);
+				}
+
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
 		}
 
         public void Duplicate()
@@ -125,14 +145,21 @@ namespace ClearCanvas.Ris.Client
             if (!CanDuplicate(folder))
                 return;
 
-            WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, WorklistEditorMode.Duplicate, false);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "New Worklist");
-            if (exitCode == ApplicationComponentExitCode.Accepted)
-            {
-                IWorklistFolderSystem fs = (IWorklistFolderSystem)this.Context.SelectedFolderSystem;
-                AddNewWorklistsToFolderSystem(editor.EditedWorklistSummaries, fs);
-            }
-        }
+			try
+			{
+				WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, WorklistEditorMode.Duplicate, false);
+				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "New Worklist");
+				if (exitCode == ApplicationComponentExitCode.Accepted)
+				{
+					IWorklistFolderSystem fs = (IWorklistFolderSystem)this.Context.SelectedFolderSystem;
+					AddNewWorklistsToFolderSystem(editor.EditedWorklistSummaries, fs);
+				}
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
+		}
 
 		public void Delete()
 		{

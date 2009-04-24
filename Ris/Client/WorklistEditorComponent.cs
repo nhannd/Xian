@@ -210,9 +210,15 @@ namespace ClearCanvas.Ris.Client
                     if (ShowSubscriptionPages)
                     {
                         _staffSubscribersComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
-                            formDataResponse.StaffChoices, _worklistDetail.StaffSubscribers, delegate(StaffSummary s) { return s.StaffRef; });
+							formDataResponse.StaffChoices,
+							_worklistDetail.StaffSubscribers,
+							delegate(StaffSummary s) { return s.StaffRef; },
+							SubscriptionPagesReadOnly);
                         _groupSubscribersComponent = new WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
-                            formDataResponse.GroupSubscriberChoices, _worklistDetail.GroupSubscribers, delegate(StaffGroupSummary s) { return s.StaffGroupRef; });
+                            formDataResponse.GroupSubscriberChoices,
+							_worklistDetail.GroupSubscribers,
+							delegate(StaffGroupSummary s) { return s.StaffGroupRef; },
+							SubscriptionPagesReadOnly);
                     }
                 });
 
@@ -320,8 +326,13 @@ namespace ClearCanvas.Ris.Client
 
         private bool ShowSubscriptionPages
         {
-			get { return _adminMode && !_worklistDetail.IsUserWorklist && Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.Worklist); }
+			get { return _adminMode && Thread.CurrentPrincipal.IsInRole(Application.Common.AuthorityTokens.Admin.Data.Worklist); }
         }
+
+    	private bool SubscriptionPagesReadOnly
+    	{
+			get { return _worklistDetail.IsUserWorklist; }
+    	}
 
         private bool ShowReportingStaffRoleFilters
         {

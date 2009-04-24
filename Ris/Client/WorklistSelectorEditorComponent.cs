@@ -51,7 +51,19 @@ namespace ClearCanvas.Ris.Client
 
     public abstract class WorklistSelectorEditorComponent : ApplicationComponent
     {
-        public abstract ITable AvailableItemsTable { get; }
+		private readonly bool _isReadOnly;
+
+		public WorklistSelectorEditorComponent(bool isReadOnly)
+		{
+			_isReadOnly = isReadOnly;
+		}
+
+		public bool IsReadOnly
+		{
+			get { return _isReadOnly; }
+		}
+
+		public abstract ITable AvailableItemsTable { get; }
         public abstract ITable SelectedItemsTable { get; }
 
         public void ItemsAddedOrRemoved()
@@ -74,13 +86,25 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor
         /// </summary>
-        public WorklistSelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider)
-        {
+        public WorklistSelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider, bool isReadOnly)
+			:base(isReadOnly)
+		{
             _available = new TTable();
             _selected = new TTable();
 
             _selected.Items.AddRange(selectedItems);
             _available.Items.AddRange(Subtract(selectedItems, allItems, identityProvider));
+        }
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="allItems"></param>
+		/// <param name="selectedItems"></param>
+		/// <param name="identityProvider"></param>
+        public WorklistSelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider)
+			:this(allItems, selectedItems, identityProvider, false)
+		{
         }
 
 		/// <summary>

@@ -62,6 +62,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _usersSelector.SelectedItemsTable = _component.SelectedItemsTable;
             _usersSelector.ItemAdded += OnItemsAddedOrRemoved;
             _usersSelector.ItemRemoved += OnItemsAddedOrRemoved;
+        	_usersSelector.ReadOnly = _component.IsReadOnly;
 
         }
 
