@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
@@ -56,6 +57,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
 
         #region Events
+        public new event EventHandler<WorkQueueItemResetErrorEventArgs> Error;
+
 
         public delegate void WorkQueueItemResetListener(Model.WorkQueue item);
         public event WorkQueueItemResetListener WorkQueueItemReseted;
@@ -130,7 +133,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
             PreResetConfirmDialog.Confirmed += PreResetConfirmDialog_Confirmed;
             PreResetConfirmDialog.Cancel += Hide;
-            MessageBox.Cancel += Hide;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -150,7 +152,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
             Hide();
 
-
             ServerEntityKey key = data as ServerEntityKey;
 
             if (key != null)
@@ -159,10 +160,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 Model.WorkQueue item = adaptor.Get(key);
                 if (item == null)
                 {
-                    MessageBox.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
-                    MessageBox.MessageType =
-                        MessageBox.MessageTypeEnum.ERROR;
-                    MessageBox.Show();
+                    String errorMessage = String.Format(App_GlobalResources.SR.WorkQueueNotAvailable);
+                    EventsHelper.Fire(Error, this, new WorkQueueItemResetErrorEventArgs(errorMessage, null));
                 }
                 else
                 {
@@ -175,43 +174,26 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     if (expirationTime < scheduledTime)
                         expirationTime = scheduledTime.AddSeconds(WorkQueueSettings.Default.WorkQueueExpireDelaySeconds);
 
-                    bool successful = false;
                     try
                     {
                         List<Model.WorkQueue> items = new List<Model.WorkQueue>();
                         items.Add(item);
 
-                        successful = controller.ResetWorkQueueItems(items, scheduledTime, expirationTime);
-                        if (successful)
-                        {
-                            Platform.Log(LogLevel.Info, "Work Queue item reset by user :  Key={0}", item.GetKey());
+                        controller.ResetWorkQueueItems(items, scheduledTime, expirationTime);
 
-                            if (WorkQueueItemReseted != null)
-                                WorkQueueItemReseted(item);
+                        Platform.Log(LogLevel.Info, "{0} Work Queue item reset:  Key={1}.", item.WorkQueueTypeEnum, item.GetKey() );
+                        if (WorkQueueItemReseted != null)
+                            WorkQueueItemReseted(item);
 
-                            if (OnHide != null) OnHide();
-                        }
-                        else
-                        {
-                            Platform.Log(LogLevel.Error,
-                                         "PreResetConfirmDialog_Confirmed: Unable to reset work queue item. Key={0}", item.GetKey());
-
-                            MessageBox.Message = App_GlobalResources.SR.WorkQueueResetFailed;
-                            MessageBox.MessageType =
-                                MessageBox.MessageTypeEnum.ERROR;
-                            MessageBox.Show();
-                        }
-
+                        if (OnHide != null) OnHide();
                     }
                     catch (Exception e)
                     {
-                        Platform.Log(LogLevel.Error,
-                                         "PreResetConfirmDialog_Confirmed: Unable to reset work queue item. Key={0}. Error: {1}", item.GetKey().Key, e.StackTrace);
+                        Platform.Log(LogLevel.Error, e, "Unable to reset {0} work queue item. Key={1}.", item.WorkQueueTypeEnum, item.GetKey());
 
-                        MessageBox.Message = App_GlobalResources.SR.WorkQueueResetFailed;
-                        MessageBox.MessageType =
-                            MessageBox.MessageTypeEnum.ERROR;
-                        MessageBox.Show();
+                        String errorMessage = String.Format(App_GlobalResources.SR.WorkQueueResetFailed, e.Message);
+
+                        EventsHelper.Fire(Error, this, new WorkQueueItemResetErrorEventArgs(errorMessage, e));
                     }
 
                 }
@@ -247,11 +229,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                     PreResetConfirmDialog.Message = App_GlobalResources.SR.WorkQueueResetConfirm;
                 }
             }
-            else
-            {
-                MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
-                MessageBox.Message = App_GlobalResources.SR.WorkQueueNotAvailable;
-            }
 
             base.DataBind();
         }
@@ -286,7 +263,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
         {
 
             PreResetConfirmDialog.Close();
-            MessageBox.Close();
             if (IsShown)
             {
                 if (WorkQueue != null)
@@ -294,13 +270,35 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 
                     PreResetConfirmDialog.Show();
                 }
-                else
-                    MessageBox.Show();
             }
             base.OnPreRender(e);
         }
 
         #endregion Public Methods
 
+    }
+
+    public class WorkQueueItemResetErrorEventArgs:EventArgs
+    {
+        private string _errorMessage;
+        private Exception _exception;
+
+        public WorkQueueItemResetErrorEventArgs(string error, Exception exception)
+        {
+            ErrorMessage = error;
+            Exception = exception;
+        }
+
+        public string ErrorMessage
+        {
+            get { return _errorMessage; }
+            set { _errorMessage = value; }
+        }
+
+        public Exception Exception
+        {
+            get { return _exception; }
+            set { _exception = value; }
+        }
     }
 }

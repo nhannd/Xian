@@ -37,6 +37,7 @@ using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
+using ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
@@ -50,11 +51,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         #region Private members
 
         #endregion
-
-        public Edit.ScheduleWorkQueueDialog ScheduleWorkQueueItemDialog
-        {
-            get { return this.ScheduleWorkQueueDialog; }
-        }
 
         /// <summary>
         /// Sets/Gets a value which indicates whether auto refresh is on
@@ -331,6 +327,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected void RefreshTimer_Tick(object sender, EventArgs e)
         {
             ServerPartitionTabs.Update(true);
+        }
+
+        protected void OnResetWorkQueueError(object sender, WorkQueueItemResetErrorEventArgs e)
+        {
+            MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
+            MessageBox.Message = e.ErrorMessage;
+            MessageBox.Show();
+            UpdatePanel.Update();
         }
     }
 }

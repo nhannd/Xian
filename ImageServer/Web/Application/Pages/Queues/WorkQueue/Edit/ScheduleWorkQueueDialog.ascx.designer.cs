@@ -38,6 +38,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit {
         protected global::System.Web.UI.WebControls.Panel Panel1;
         
         /// <summary>
+        /// TestUpdatePanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel TestUpdatePanel;
+        
+        /// <summary>
         /// WorkQueueItemList control.
         /// </summary>
         /// <remarks>
@@ -81,15 +90,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::ClearCanvas.ImageServer.Web.Common.WebControls.UI.ToolbarButton Cancel;
-        
-        /// <summary>
-        /// RefreshTimer control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.Timer RefreshTimer;
         
         /// <summary>
         /// PreOpenConfirmDialog control.

@@ -340,7 +340,7 @@
     <value>Are you sure you want to reset this item to Pending?</value>
   </data>
   <data name="WorkQueueResetFailed" xml:space="preserve">
-    <value>Unable to reset this work queue item. Please contact server administrator.</value>
+    <value>Unable to reset this work queue item. Please contact server administrator.&lt;P&gt;{0}</value>
   </data>
   <data name="StudyScheduledForReconcile" xml:space="preserve">
     <value>This study has been scheduled for reconciliation.</value>

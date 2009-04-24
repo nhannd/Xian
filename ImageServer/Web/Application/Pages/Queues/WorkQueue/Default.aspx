@@ -66,16 +66,17 @@
         <tr>
             <td>
                 <asp:Panel runat="server" ID="PageContent">
-                    <asp:UpdatePanel ID="UpdatePanel" runat="server">
+                    <asp:UpdatePanel ID="UpdatePanel" runat="server" UpdateMode="Conditional">
                         <ContentTemplate>
                             <ccAsp:ServerPartitionTabs ID="ServerPartitionTabs" runat="server" />
                             <asp:Label ID="Label1" runat="server" Style="left: 70px; position: relative;" Text="Label"
                                 Visible="False" Width="305px"></asp:Label>
                                 
+                            <ccAsp:MessageBox runat="server" ID="MessageBox"/>
                             <ccAsp:MessageBox runat="server" ID="ConfirmRescheduleDialog"/>
                             <ccAsp:MessageBox runat="server" ID="InformationDialog" MessageType="INFORMATION" Title=""/>
                             <localAsp:ScheduleWorkQueueDialog runat="server" ID="ScheduleWorkQueueDialog"/>
-                            <localAsp:ResetWorkQueueDialog ID="ResetWorkQueueDialog" runat="server" />
+                            <localAsp:ResetWorkQueueDialog ID="ResetWorkQueueDialog" runat="server" OnError="OnResetWorkQueueError"/>
                             <localAsp:DeleteWorkQueueDialog ID="DeleteWorkQueueDialog" runat="server" />
     
                             <!-- the timer should be inside the update panel so that it doesn't continue running while postback is happening -->

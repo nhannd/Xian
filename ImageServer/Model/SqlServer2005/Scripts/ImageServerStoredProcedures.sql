@@ -1042,7 +1042,8 @@ BEGIN
 			ProcessorID=NULL,					/* may be picked up by another processor */
 			FailureCount = FailureCount+1,		/* has failed once. This is needed to prevent endless reset later on*/
 			ScheduledTime = @RescheduleTime,
-			ExpirationTime = @RetryExpirationTime
+			ExpirationTime = @RetryExpirationTime,
+			FailureDescription = ''''
 		WHERE	GUID IN (SELECT WorkQueueGuid FROM #RetryList)
 
 

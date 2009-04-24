@@ -104,6 +104,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             MessageBox.OnHide += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
 
             ResetWorkQueueDialog.WorkQueueItemReseted += ResetWorkQueueDialog_WorkQueueItemReseted;
+            ResetWorkQueueDialog.Error += new EventHandler<WorkQueueItemResetErrorEventArgs>(ResetWorkQueueDialog_Error);
             ResetWorkQueueDialog.OnShow += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
             ResetWorkQueueDialog.OnHide += delegate() { WorkQueueItemDetailsPanel.ResetRefresh(true); };
 
@@ -112,6 +113,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
             Page.Title = App_GlobalResources.Titles.WorkQueuePageTitle;
         }
 
+        void ResetWorkQueueDialog_Error(object sender, WorkQueueItemResetErrorEventArgs e)
+        {
+            MessageBox.Message = e.ErrorMessage;
+            MessageBox.MessageType = MessageBox.MessageTypeEnum.ERROR;
+            MessageBox.Show();
+            UpdatePanel.Update();
+        }
         
         protected override void OnLoad(EventArgs e)
         {

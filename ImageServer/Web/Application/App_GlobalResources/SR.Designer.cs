@@ -970,7 +970,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to reset this work queue item. Please contact server administrator..
+        ///   Looks up a localized string similar to Unable to reset this work queue item. Please contact server administrator.&lt;P&gt;{0}.
         /// </summary>
         internal static string WorkQueueResetFailed {
             get {

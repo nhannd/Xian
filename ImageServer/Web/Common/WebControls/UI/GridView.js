@@ -288,8 +288,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         ////////////////////////////////////////////////////////////////////////////////////////////
         _selectRow : function (row)
         {
-            debugger
-        
+       
             if (this.get_element() && !this.get_element().disabled ) 
             {
                 if (this._SelectionMode=='Multiple')

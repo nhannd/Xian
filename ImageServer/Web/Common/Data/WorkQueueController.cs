@@ -315,25 +315,20 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <param name="items">List of <see cref="WorkQueue"/>  to be reset</param>
         /// <param name="newScheduledTime">The new scheduled start date/time for the entries</param>
         /// <param name="expirationTime">The new expiration start date/time for the entries</param>
-        /// <returns>
-        /// A value indicating whether all <see cref="WorkQueue"/> in <paramref name="items"/> have been reset successfully.
-        /// If one or more item cannot be reset, <b>false</b> will be returned and all changes are not committed.
-        /// </returns>
-        public bool ResetWorkQueueItems(IList<WorkQueue> items, DateTime newScheduledTime, DateTime expirationTime)
+        public void ResetWorkQueueItems(IList<WorkQueue> items, DateTime newScheduledTime, DateTime expirationTime)
         {
             if (items == null || items.Count==0)
-                return false;
+                return;
 
             
             WorkQueueUpdateColumns columns = new WorkQueueUpdateColumns();
             columns.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-            columns.ProcessorID = "";
+            columns.ProcessorID = String.Empty;
             columns.FailureCount = 0;
+            columns.FailureDescription = String.Empty;
             columns.ScheduledTime = newScheduledTime;
             columns.ExpirationTime = expirationTime;
 
-
-            bool result = true;
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
             using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
@@ -343,8 +338,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                 {
                     if (!workQueueBroker.Update(item.Key, columns))
                     {
-                        result = false;
-                        break;                        
+                        throw new Exception(String.Format("Unable to reset {0} entry {1}. Please check the log.", item.WorkQueueTypeEnum, item.Key));
                     }
 
                 	WorkQueueUidSelectCriteria uidCritiera = new WorkQueueUidSelectCriteria();
@@ -354,16 +348,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 					uidColumns.Failed = false;
 
                 	IWorkQueueUidEntityBroker workQueueUidBroker = ctx.GetBroker<IWorkQueueUidEntityBroker>();
-                	workQueueUidBroker.Update(uidCritiera, uidColumns);
+                    workQueueUidBroker.Update(uidCritiera, uidColumns); // note: Update() returns 0 if there's no WorkQueueUid for the entry
                 }
 
-                if (result)
-                    ctx.Commit();
+                ctx.Commit();
             }
-
-            return result;
         }
-
 
 		public bool ReprocessWorkQueueItem(WorkQueue item)
 		{
