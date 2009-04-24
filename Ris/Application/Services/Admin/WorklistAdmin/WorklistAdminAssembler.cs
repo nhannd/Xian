@@ -155,24 +155,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         public void AppendReportingWorklistDetails(WorklistAdminDetail detail, ReportingWorklist worklist, IPersistenceContext context)
         {
             if (worklist.InterpretedByStaffFilter.IsEnabled)
-                detail.InterpretedByStaff = GetStaffSummaries(worklist.InterpretedByStaffFilter.Values, context);
+                SetStaffListFromFilter(detail.InterpretedByStaff, worklist.InterpretedByStaffFilter, context);
 
             if (worklist.TranscribedByStaffFilter.IsEnabled)
-                detail.TranscribedByStaff = GetStaffSummaries(worklist.TranscribedByStaffFilter.Values, context);
+                SetStaffListFromFilter(detail.InterpretedByStaff, worklist.InterpretedByStaffFilter, context);
 
             if (worklist.VerifiedByStaffFilter.IsEnabled)
-                detail.VerifiedByStaff = GetStaffSummaries(worklist.VerifiedByStaffFilter.Values, context);
+                SetStaffListFromFilter(detail.InterpretedByStaff, worklist.InterpretedByStaffFilter, context);
 
             if (worklist.SupervisedByStaffFilter.IsEnabled)
-                detail.SupervisedByStaff = GetStaffSummaries(worklist.SupervisedByStaffFilter.Values, context);
+                SetStaffListFromFilter(detail.InterpretedByStaff, worklist.InterpretedByStaffFilter, context);
         }
 
-        private static List<StaffSummary> GetStaffSummaries(ISet<Staff> staffSet, IPersistenceContext context)
+        private static void SetStaffListFromFilter(WorklistAdminDetail.StaffList stafflist, WorklistStaffFilter filter, IPersistenceContext context)
         {
             StaffAssembler assembler = new StaffAssembler();
-            return CollectionUtils.Map<Staff, StaffSummary>(
-                staffSet,
+            stafflist.Staff = CollectionUtils.Map<Staff, StaffSummary>(
+                filter.Values,
                 delegate(Staff staff) { return assembler.CreateStaffSummary(staff, context); });
+            stafflist.IncludeCurrentUser = filter.IncludeCurrentStaff;
         }
 
         public WorklistAdminDetail.TimePoint CreateTimePointContract(WorklistTimePoint tp)
@@ -328,15 +329,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             UpdateStaffFilter(worklist.SupervisedByStaffFilter, detail.SupervisedByStaff, context);
         }
 
-        private static void UpdateStaffFilter(WorklistStaffFilter staffFilter, List<StaffSummary> staffs, IPersistenceContext context)
+        private static void UpdateStaffFilter(WorklistStaffFilter staffFilter, WorklistAdminDetail.StaffList stafflist, IPersistenceContext context)
         {
             staffFilter.Values.Clear();
-            if (staffs != null)
+            if (stafflist != null)
             {
                 staffFilter.Values.AddAll(CollectionUtils.Map<StaffSummary, Staff>(
-                    staffs,
+                    stafflist.Staff,
                     delegate(StaffSummary s) { return context.Load<Staff>(s.StaffRef, EntityLoadFlags.Proxy); }));
 
+                staffFilter.IncludeCurrentStaff = stafflist.IncludeCurrentUser;
             }
             staffFilter.IsEnabled = staffFilter.Values.Count > 0;
         }

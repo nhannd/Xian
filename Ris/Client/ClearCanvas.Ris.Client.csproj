@@ -159,6 +159,7 @@
     <Compile Include="StaffGroupEditorComponent.cs" />
     <Compile Include="StaffGroupLookupHandler.cs" />
     <Compile Include="StaffGroupSummaryComponent.cs" />
+    <Compile Include="StaffSelectorEditorComponent.cs" />
     <Compile Include="StaffStaffGroupEditorComponent.cs" />
     <Compile Include="SummaryComponentBase.cs" />
     <Compile Include="UserWorklistTool.cs" />

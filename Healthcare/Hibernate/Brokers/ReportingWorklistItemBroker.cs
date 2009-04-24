@@ -32,13 +32,12 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Workflow;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -80,7 +79,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 					criteria.ProcedureStepClass = typeof(ReportingProcedureStep);
 					criteria.ProcedureStep.EqualTo(ps);
-                    criteria.TimeField = WorklistTimeField.ProcedureStepScheduledStartTime;
+					criteria.TimeField = WorklistTimeField.ProcedureStepScheduledStartTime;
 					return criteria;
 				}).ToArray();
 
@@ -105,7 +104,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 					ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 					criteria.ProcedureStepClass = typeof(ProtocolProcedureStep);
 					criteria.ProcedureStep.EqualTo(ps);
-                    criteria.TimeField = WorklistTimeField.ProcedureStepCreationTime;
+					criteria.TimeField = WorklistTimeField.ProcedureStepCreationTime;
 					return criteria;
 				}).ToArray();
 
@@ -206,39 +205,51 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		{
 			base.AddFilters(query, worklist, wqc);
 
-			if(worklist.Is<ReportingWorklist>() && worklist.As<ReportingWorklist>().SupportsStaffRoleFilters)
+			if (worklist.Is<ReportingWorklist>() && worklist.As<ReportingWorklist>().SupportsStaffRoleFilters)
 			{
 				ReportingWorklist reportingWorklist = worklist.As<ReportingWorklist>();
 
 				bool addWorklistCondition = false;
 
-				if(reportingWorklist.InterpretedByStaffFilter.IsEnabled)
+				if (reportingWorklist.InterpretedByStaffFilter.IsEnabled)
 				{
-					query.Conditions.Add(new HqlCondition("rpp.Interpreter in elements(w.InterpretedByStaffFilter.Values)"));
+					AddCondition(query, reportingWorklist.InterpretedByStaffFilter, wqc, "Interpreter", "InterpretedByStaffFilter");
 					addWorklistCondition = true;
 				}
 
 				if (reportingWorklist.TranscribedByStaffFilter.IsEnabled)
 				{
-					query.Conditions.Add(new HqlCondition("rpp.Transcriber in elements(w.TranscribedByStaffFilter.Values)"));
+					AddCondition(query, reportingWorklist.TranscribedByStaffFilter, wqc, "Transcriber", "TranscribedByStaffFilter");
 					addWorklistCondition = true;
 				}
 
 				if (reportingWorklist.VerifiedByStaffFilter.IsEnabled)
 				{
-					query.Conditions.Add(new HqlCondition("rpp.Verifier in elements(w.VerifiedByStaffFilter.Values)"));
+					AddCondition(query, reportingWorklist.VerifiedByStaffFilter, wqc, "Verifier", "VerifiedByStaffFilter");
 					addWorklistCondition = true;
 				}
 
 				if (reportingWorklist.SupervisedByStaffFilter.IsEnabled)
 				{
-					query.Conditions.Add(new HqlCondition("rpp.Supervisor in elements(w.SupervisedByStaffFilter.Values)"));
+					AddCondition(query, reportingWorklist.SupervisedByStaffFilter, wqc, "Supervisor", "SupervisedByStaffFilter");
 					addWorklistCondition = true;
 				}
 
 				if (addWorklistCondition)
 					AddWorklistCondition(worklist, query);
 			}
+		}
+
+		private static void AddCondition(HqlProjectionQuery query, WorklistStaffFilter staffFilter, IWorklistQueryContext wqc, 
+			string reportPartField, string worklistFilterName)
+		{
+			HqlOr or = new HqlOr();
+			or.Conditions.Add(new HqlCondition("rpp." + reportPartField + " in elements(w." + worklistFilterName + ".Values)"));
+			if (staffFilter.IncludeCurrentStaff && wqc.Staff != null)
+			{
+				or.Conditions.Add(new HqlCondition("rpp." + reportPartField + " = ?", wqc.Staff));
+			}
+			query.Conditions.Add(or);
 		}
 
 		#endregion
@@ -268,7 +279,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				from.Joins.Add(JoinReportPart);
 				from.Joins.Add(JoinReport);
 
-				if(stepClass == typeof(PublicationStep))
+				if (stepClass == typeof(PublicationStep))
 					query.Conditions.Add(ConditionMostRecentPublicationStep);
 
 				if (!isCountQuery)

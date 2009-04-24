@@ -149,6 +149,23 @@ namespace ClearCanvas.Healthcare.Imex
                 public bool IncludeWorkingFacility;
             }
 
+			[DataContract]
+			public class StaffFilterData : MultiValuedFilterData<StaffSubscriberData>
+			{
+				public StaffFilterData()
+				{
+				}
+
+				public StaffFilterData(MultiValuedFilterData<StaffSubscriberData> s)
+				{
+					this.Enabled = s.Enabled;
+					this.Values = s.Values;
+				}
+
+				[DataMember]
+				public bool IncludeCurrentStaff;
+			}
+
             [DataContract]
             public class TimeRangeData
             {
@@ -223,10 +240,10 @@ namespace ClearCanvas.Healthcare.Imex
                     this.PatientLocations = new MultiValuedFilterData<LocationData>();
                     this.Portable = new SingleValuedFilterData<bool>();
                     this.TimeWindow = new SingleValuedFilterData<TimeRangeData>();
-                    this.InterpretedByStaff = new MultiValuedFilterData<StaffSubscriberData>();
-                    this.TranscribedByStaff = new MultiValuedFilterData<StaffSubscriberData>();
-                    this.VerifiedByStaff = new MultiValuedFilterData<StaffSubscriberData>();
-                    this.SupervisedByStaff = new MultiValuedFilterData<StaffSubscriberData>();
+					this.InterpretedByStaff = new StaffFilterData();
+					this.TranscribedByStaff = new StaffFilterData();
+					this.VerifiedByStaff = new StaffFilterData();
+					this.SupervisedByStaff = new StaffFilterData();
                 }
 
                 [DataMember]
@@ -254,16 +271,16 @@ namespace ClearCanvas.Healthcare.Imex
                 public SingleValuedFilterData<TimeRangeData> TimeWindow;
 
                 [DataMember]
-                public MultiValuedFilterData<StaffSubscriberData> InterpretedByStaff;
+				public StaffFilterData InterpretedByStaff;
 
                 [DataMember]
-                public MultiValuedFilterData<StaffSubscriberData> TranscribedByStaff;
+				public StaffFilterData TranscribedByStaff;
 
                 [DataMember]
-                public MultiValuedFilterData<StaffSubscriberData> VerifiedByStaff;
+				public StaffFilterData VerifiedByStaff;
 
                 [DataMember]
-                public MultiValuedFilterData<StaffSubscriberData> SupervisedByStaff;
+				public StaffFilterData SupervisedByStaff;
             }
 
             public WorklistData()
@@ -384,7 +401,7 @@ namespace ClearCanvas.Healthcare.Imex
             ExportStaffFilter(worklist.SupervisedByStaffFilter, data.Filters.SupervisedByStaff);
         }
 
-        public void ExportStaffFilter(WorklistStaffFilter filter, WorklistData.MultiValuedFilterData<WorklistData.StaffSubscriberData> data)
+		public void ExportStaffFilter(WorklistStaffFilter filter, WorklistData.StaffFilterData data)
         {
             ExportFilter(filter, data,
                 delegate(Staff staff)
@@ -393,6 +410,7 @@ namespace ClearCanvas.Healthcare.Imex
                     s.StaffId = staff.Id;
                     return s;
                 });
+			data.IncludeCurrentStaff = filter.IncludeCurrentStaff;
         }
 
         protected override void Import(WorklistData data, IUpdateContext context)
@@ -524,7 +542,7 @@ namespace ClearCanvas.Healthcare.Imex
             ImportStaffFilter(worklist.SupervisedByStaffFilter, data.Filters.SupervisedByStaff, context);
         }
 
-        private void ImportStaffFilter(WorklistStaffFilter filter, WorklistData.MultiValuedFilterData<WorklistData.StaffSubscriberData> staff, IUpdateContext context)
+		private void ImportStaffFilter(WorklistStaffFilter filter, WorklistData.StaffFilterData staff, IUpdateContext context)
         {
             ImportFilter(filter, staff,
                 delegate(WorklistData.StaffSubscriberData s)
@@ -535,6 +553,7 @@ namespace ClearCanvas.Healthcare.Imex
                     IStaffBroker broker = context.GetBroker<IStaffBroker>();
                     return CollectionUtils.FirstElement(broker.Find(criteria));
                 });
+			filter.IncludeCurrentStaff = staff.IncludeCurrentStaff;
         }
 
         #endregion

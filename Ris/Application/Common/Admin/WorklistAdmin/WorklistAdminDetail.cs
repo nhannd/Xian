@@ -66,6 +66,20 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
             public long Resolution;
         }
 
+        [DataContract]
+        public class StaffList
+        {
+            public StaffList()
+            {
+                this.Staff = new List<StaffSummary>();
+            }
+
+            [DataMember]
+            public List<StaffSummary> Staff;
+
+            [DataMember]
+            public bool IncludeCurrentUser;
+        }
 
         public WorklistAdminDetail()
         {
@@ -76,10 +90,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
             this.OrderPriorities = new List<EnumValueInfo>();
             this.Portabilities = new List<bool>();
 
-            this.InterpretedByStaff = new List<StaffSummary>();
-            this.TranscribedByStaff = new List<StaffSummary>();
-            this.VerifiedByStaff = new List<StaffSummary>();
-            this.SupervisedByStaff = new List<StaffSummary>();
+            this.InterpretedByStaff = new StaffList();
+            this.TranscribedByStaff = new StaffList();
+            this.VerifiedByStaff = new StaffList();
+            this.SupervisedByStaff = new StaffList();
 
             this.StaffSubscribers = new List<StaffSummary>();
             this.GroupSubscribers = new List<StaffGroupSummary>();
@@ -97,18 +111,18 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
         public bool IsUserWorklist
         {
-			get { return IsStaffOwned || IsGroupOwned; }
+            get { return IsStaffOwned || IsGroupOwned; }
         }
 
-    	public bool IsStaffOwned
-    	{
-			get { return OwnerStaff != null; }
-		}
+        public bool IsStaffOwned
+        {
+            get { return OwnerStaff != null; }
+        }
 
-		public bool IsGroupOwned
-		{
-			get { return OwnerGroup != null; }
-		}
+        public bool IsGroupOwned
+        {
+            get { return OwnerGroup != null; }
+        }
 
         [DataMember]
         public EntityRef EntityRef;
@@ -142,7 +156,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
         [DataMember]
         public List<ExternalPractitionerSummary> OrderingPractitioners;
-        
+
         [DataMember]
         public List<EnumValueInfo> PatientClasses;
 
@@ -165,15 +179,15 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         public List<StaffGroupSummary> GroupSubscribers;
 
         [DataMember]
-        public List<StaffSummary> InterpretedByStaff;
+        public StaffList InterpretedByStaff;
 
         [DataMember]
-        public List<StaffSummary> TranscribedByStaff;
+        public StaffList TranscribedByStaff;
 
         [DataMember]
-        public List<StaffSummary> VerifiedByStaff;
+        public StaffList VerifiedByStaff;
 
         [DataMember]
-        public List<StaffSummary> SupervisedByStaff;
+        public StaffList SupervisedByStaff;
     }
 }

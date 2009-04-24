@@ -203,5 +203,16 @@ namespace ClearCanvas.Healthcare
 	/// </summary>
 	public class WorklistStaffFilter : WorklistMultiValuedFilter<Staff>
 	{
+		private bool _includeCurrentStaff;
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the current staff should be included
+		/// in the worklist query.
+		/// </summary>
+		public bool IncludeCurrentStaff
+		{
+			get { return _includeCurrentStaff; }
+			set { _includeCurrentStaff = value; }
+		}
 	}
 }

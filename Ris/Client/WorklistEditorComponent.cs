@@ -31,15 +31,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Desktop.Validation;
-using System.Threading;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Client
         }
 
         private readonly WorklistEditorMode _mode;
-    	private readonly bool _adminMode;
+        private readonly bool _adminMode;
 
         private EntityRef _worklistRef;
         private readonly List<WorklistAdminSummary> _editedWorklistSummaries = new List<WorklistAdminSummary>();
@@ -102,10 +102,10 @@ namespace ClearCanvas.Ris.Client
 
         private WorklistDetailEditorComponentBase _detailComponent;
         private WorklistFilterEditorComponent _filterComponent;
-        private WorklistSelectorEditorComponent<StaffSummary, StaffTable> _interpretedByFilterComponent;
-        private WorklistSelectorEditorComponent<StaffSummary, StaffTable> _transcribedByFilterComponent;
-        private WorklistSelectorEditorComponent<StaffSummary, StaffTable> _verifiedByFilterComponent;
-        private WorklistSelectorEditorComponent<StaffSummary, StaffTable> _supervisedByFilterComponent;
+        private StaffSelectorEditorComponent _interpretedByFilterComponent;
+        private StaffSelectorEditorComponent _transcribedByFilterComponent;
+        private StaffSelectorEditorComponent _verifiedByFilterComponent;
+        private StaffSelectorEditorComponent _supervisedByFilterComponent;
         private WorklistTimeWindowEditorComponent _timeWindowComponent;
         private WorklistSelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable> _procedureTypeGroupFilterComponent;
         private WorklistSelectorEditorComponent<LocationSummary, LocationTable> _locationFilterComponent;
@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client
         public WorklistEditorComponent(bool adminMode)
         {
             _mode = WorklistEditorMode.Add;
-			_adminMode = adminMode;
+            _adminMode = adminMode;
         }
 
         /// <summary>
@@ -129,7 +129,7 @@ namespace ClearCanvas.Ris.Client
         {
             _mode = editorMode;
             _worklistRef = entityRef;
-        	_adminMode = adminMode;
+            _adminMode = adminMode;
         }
 
         public override void Start()
@@ -198,19 +198,19 @@ namespace ClearCanvas.Ris.Client
 
                     _timeWindowComponent = new WorklistTimeWindowEditorComponent(_worklistDetail);
 
-                    _interpretedByFilterComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
-                        formDataResponse.StaffChoices, _worklistDetail.InterpretedByStaff, delegate(StaffSummary s) { return s.StaffRef; });
-                    _transcribedByFilterComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
-						formDataResponse.StaffChoices, _worklistDetail.TranscribedByStaff, delegate(StaffSummary s) { return s.StaffRef; });
-                    _verifiedByFilterComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
-						formDataResponse.StaffChoices, _worklistDetail.VerifiedByStaff, delegate(StaffSummary s) { return s.StaffRef; });
-                    _supervisedByFilterComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
-						formDataResponse.StaffChoices, _worklistDetail.SupervisedByStaff, delegate(StaffSummary s) { return s.StaffRef; });
+                    _interpretedByFilterComponent = new StaffSelectorEditorComponent(
+                        formDataResponse.StaffChoices, _worklistDetail.InterpretedByStaff.Staff, _worklistDetail.InterpretedByStaff.IncludeCurrentUser);
+                    _transcribedByFilterComponent = new StaffSelectorEditorComponent(
+                        formDataResponse.StaffChoices, _worklistDetail.TranscribedByStaff.Staff, _worklistDetail.TranscribedByStaff.IncludeCurrentUser);
+                    _verifiedByFilterComponent = new StaffSelectorEditorComponent(
+                        formDataResponse.StaffChoices, _worklistDetail.VerifiedByStaff.Staff, _worklistDetail.VerifiedByStaff.IncludeCurrentUser);
+                    _supervisedByFilterComponent = new StaffSelectorEditorComponent(
+                        formDataResponse.StaffChoices, _worklistDetail.SupervisedByStaff.Staff, _worklistDetail.SupervisedByStaff.IncludeCurrentUser);
 
                     if (ShowSubscriptionPages)
                     {
                         _staffSubscribersComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffTable>(
-							formDataResponse.StaffChoices, _worklistDetail.StaffSubscribers, delegate(StaffSummary s) { return s.StaffRef; });
+                            formDataResponse.StaffChoices, _worklistDetail.StaffSubscribers, delegate(StaffSummary s) { return s.StaffRef; });
                         _groupSubscribersComponent = new WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
                             formDataResponse.GroupSubscriberChoices, _worklistDetail.GroupSubscribers, delegate(StaffGroupSummary s) { return s.StaffGroupRef; });
                     }
@@ -354,16 +354,28 @@ namespace ClearCanvas.Ris.Client
                 _worklistDetail.StaffSubscribers = new List<StaffSummary>(_staffSubscribersComponent.SelectedItems);
 
             if (ShowReportingStaffRoleFilters && _interpretedByFilterComponent.IsStarted)
-                _worklistDetail.InterpretedByStaff = new List<StaffSummary>(_interpretedByFilterComponent.SelectedItems);
+            {
+            	_worklistDetail.InterpretedByStaff.Staff = new List<StaffSummary>(_interpretedByFilterComponent.SelectedItems);
+            	_worklistDetail.InterpretedByStaff.IncludeCurrentUser = _interpretedByFilterComponent.IncludeCurrentUser;
+            }
 
             if (ShowReportingStaffRoleFilters && _transcribedByFilterComponent.IsStarted)
-                _worklistDetail.TranscribedByStaff = new List<StaffSummary>(_transcribedByFilterComponent.SelectedItems);
+            {
+            	_worklistDetail.TranscribedByStaff.Staff = new List<StaffSummary>(_transcribedByFilterComponent.SelectedItems);
+            	_worklistDetail.TranscribedByStaff.IncludeCurrentUser = _transcribedByFilterComponent.IncludeCurrentUser;
+            }
 
             if (ShowReportingStaffRoleFilters && _verifiedByFilterComponent.IsStarted)
-                _worklistDetail.VerifiedByStaff = new List<StaffSummary>(_verifiedByFilterComponent.SelectedItems);
+            {
+            	_worklistDetail.VerifiedByStaff.Staff = new List<StaffSummary>(_verifiedByFilterComponent.SelectedItems);
+            	_worklistDetail.VerifiedByStaff.IncludeCurrentUser = _verifiedByFilterComponent.IncludeCurrentUser;
+            }
 
             if (ShowReportingStaffRoleFilters && _supervisedByFilterComponent.IsStarted)
-                _worklistDetail.SupervisedByStaff = new List<StaffSummary>(_supervisedByFilterComponent.SelectedItems);
+            {
+            	_worklistDetail.SupervisedByStaff.Staff = new List<StaffSummary>(_supervisedByFilterComponent.SelectedItems);
+            	_worklistDetail.SupervisedByStaff.IncludeCurrentUser = _supervisedByFilterComponent.IncludeCurrentUser;
+            }
         }
 
         private void AddWorklists()
@@ -406,6 +418,5 @@ namespace ClearCanvas.Ris.Client
                     _editedWorklistSummaries.Add(response.WorklistAdminSummary);
                 });
         }
-
     }
 }

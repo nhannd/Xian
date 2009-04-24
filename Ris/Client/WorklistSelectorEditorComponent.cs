@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Gets the list of selected items.
 		/// </summary>
-		public IList<TSummary> SelectedItems
+		public virtual IList<TSummary> SelectedItems
         {
             get { return _selected.Items; }
         }
