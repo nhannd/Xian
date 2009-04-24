@@ -129,6 +129,7 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		private static DicomServerConfiguration _configuration;
 		private static event EventHandler _changed;
 		private static bool _refreshing;
+		private static string _offlineAeTitle = null;
 
 		internal static event EventHandler Changed
 		{
@@ -207,6 +208,28 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 			{
 				Refresh(false);
 				return DicomServerConfiguration.AETitle; 
+			}
+		}
+
+		/// <summary>
+		/// Gets the current AETitle if the server is running, or the last known AETitle if the server is not running.
+		/// </summary>
+		public static string OfflineAETitle
+		{
+			get
+			{
+				try
+				{
+					Refresh(false);
+					_offlineAeTitle = DicomServerConfiguration.AETitle;
+				}
+				catch(EndpointNotFoundException)
+				{
+					if (_offlineAeTitle == null)
+						_offlineAeTitle = new ServerTree.ServerTree().RootNode.LocalDataStoreNode.OfflineAE;
+				}
+
+				return _offlineAeTitle;
 			}
 		}
 

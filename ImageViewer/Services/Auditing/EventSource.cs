@@ -90,12 +90,12 @@ namespace ClearCanvas.ImageViewer.Services.Auditing
 		{
 			protected override DicomAuditSource AsDicomAuditSource()
 			{
-				return new DicomAuditSource(DicomServerConfigurationHelper.AETitle, string.Empty, AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem);
+				return new DicomAuditSource(DicomServerConfigurationHelper.OfflineAETitle, string.Empty, AuditSourceTypeCodeEnum.ApplicationServerProcessTierInMultiTierSystem);
 			}
 
 			protected override AuditActiveParticipant AsAuditActiveParticipant()
 			{
-				return new AuditProcessActiveParticipant(DicomServerConfigurationHelper.AETitle);
+				return new AuditProcessActiveParticipant(DicomServerConfigurationHelper.OfflineAETitle);
 			}
 		}
 

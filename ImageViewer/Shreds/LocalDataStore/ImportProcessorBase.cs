@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
@@ -55,6 +56,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				public FileImportJobInformation FileImportJobInformation
 				{
 					get { return _fileImportJobInformation; }
+				}
+
+				public void DisableAuditing()
+				{
+					base.Audit = false;
 				}
 			}
 
@@ -129,6 +135,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					FileImportInformation fileImportInformation =
 						new FileImportInformation(jobInformation, file, jobInformation.FileImportBehaviour,
 						                          jobInformation.BadFileBehaviour);
+
+					if(this.GetType() == typeof(ReindexProcessor))
+						fileImportInformation.DisableAuditing();
+
 					AddToImportQueue(fileImportInformation);
 				}
 			}

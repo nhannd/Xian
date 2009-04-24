@@ -252,11 +252,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			try
 			{
 				client.Open();
-				string storageDirectory = client.GetConfiguration().StorageDirectory;
 				client.Reindex();
 				client.Close();
 
-				AuditHelper.LogImportStudies("Reindex", new AuditedInstances(true, storageDirectory), EventSource.CurrentUser, EventResult.Success);
+				AuditHelper.LogImportStudies("Reindex", new AuditedInstances(), EventSource.CurrentUser, EventResult.Success);
 
 				this.ReindexEnabled = false;
 			}

@@ -150,6 +150,9 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 
 				bool changPassword = false;
 
+				// attempt to re-enable auditing, in case it was turned off in an earlier session
+				AuditHelper.Enabled = true;
+
 				try
 				{
 					Login(userName, password);

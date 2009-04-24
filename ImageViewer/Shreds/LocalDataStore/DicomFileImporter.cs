@@ -39,6 +39,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using System.Xml;
 
@@ -91,6 +92,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				private readonly FileImportBehaviour _importBehaviour;
 				private readonly BadFileBehaviour _badFileBehaviour;
 
+				private bool _audit = true;
+
 				#endregion
 
 				#region Results / Errors
@@ -122,6 +125,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				private FileImportInformation()
 				{
+				}
+
+				public bool Audit
+				{
+					get { return _audit; }
+					protected set { _audit = value; }
 				}
 
 				public string SourceFile
@@ -687,6 +696,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				if (items.Count == 0)
 					return;
 
+				EventResult result = EventResult.Success;
+				AuditedInstances importedInstances = new AuditedInstances();
+
 #if DEBUG
 				CodeClock clock = new CodeClock();
 				clock.Start();
@@ -699,6 +711,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
                             IFileImportInformation info = item.FileImportInformation;
                             store.UpdateSopInstance(info.File);
+
+							FileImportInformation auditingInfo = item.FileImportInformation;
+							if(auditingInfo.Audit)
+								importedInstances.AddInstance(auditingInfo.PatientId, auditingInfo.PatientsName, auditingInfo.StudyInstanceUid, auditingInfo.FileName);
 						}
 
 						store.Commit();
@@ -718,7 +734,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						((IFileImportInformation)item.FileImportInformation).Error = new Exception(error, e);
 						item.FileImportJobStatusReportDelegate(item.FileImportInformation);
 					}
+					result = EventResult.MajorFailure;
 				}
+				finally
+				{
+					AuditHelper.LogImportStudies("Imported", importedInstances, EventSource.CurrentProcess, result);
+				}
+
 #if DEBUG
 				clock.Stop();
 				Console.WriteLine(String.Format("Update took {0} seconds", clock.Seconds));

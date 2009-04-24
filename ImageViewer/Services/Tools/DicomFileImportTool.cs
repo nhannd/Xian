@@ -79,14 +79,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
 			try
 			{
-				AuditedInstances importedPaths = new AuditedInstances();
-				filePaths.ForEach(delegate(string path) { importedPaths.AddPath(path); });
-
 				client.Open();
 				client.Import(request);
 				client.Close();
 
-				AuditHelper.LogImportStudies("Import", importedPaths, EventSource.CurrentUser, EventResult.Success);
+				AuditHelper.LogImportStudies("Import", new AuditedInstances(), EventSource.CurrentUser, EventResult.Success);
 
 				LocalDataStoreActivityMonitorComponentManager.ShowImportComponent(this.Context.DesktopWindow);
 			}
