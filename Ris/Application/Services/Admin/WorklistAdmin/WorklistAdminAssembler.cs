@@ -154,17 +154,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         public void AppendReportingWorklistDetails(WorklistAdminDetail detail, ReportingWorklist worklist, IPersistenceContext context)
         {
-            if (worklist.InterpretedByStaffFilter.IsEnabled)
+			if (worklist.InterpretedByStaffFilter.IsEnabled || worklist.InterpretedByStaffFilter.IncludeCurrentStaff)
                 SetStaffListFromFilter(detail.InterpretedByStaff, worklist.InterpretedByStaffFilter, context);
 
             if (worklist.TranscribedByStaffFilter.IsEnabled)
-                SetStaffListFromFilter(detail.InterpretedByStaff, worklist.InterpretedByStaffFilter, context);
+				SetStaffListFromFilter(detail.InterpretedByStaff, worklist.TranscribedByStaffFilter, context);
 
             if (worklist.VerifiedByStaffFilter.IsEnabled)
-                SetStaffListFromFilter(detail.InterpretedByStaff, worklist.InterpretedByStaffFilter, context);
+				SetStaffListFromFilter(detail.InterpretedByStaff, worklist.VerifiedByStaffFilter, context);
 
             if (worklist.SupervisedByStaffFilter.IsEnabled)
-                SetStaffListFromFilter(detail.InterpretedByStaff, worklist.InterpretedByStaffFilter, context);
+				SetStaffListFromFilter(detail.InterpretedByStaff, worklist.SupervisedByStaffFilter, context);
         }
 
         private static void SetStaffListFromFilter(WorklistAdminDetail.StaffList stafflist, WorklistStaffFilter filter, IPersistenceContext context)
