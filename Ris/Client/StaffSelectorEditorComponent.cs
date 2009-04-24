@@ -12,7 +12,7 @@ namespace ClearCanvas.Ris.Client
 			public DummyItem()
 			{
 				this.Name = new PersonNameDetail();
-				this.Name.FamilyName = "ME";
+				this.Name.FamilyName = SR.DummyItemUser;
 				this.StaffId = "";
 				this.StaffType = new EnumValueInfo("", "");
 				this.StaffRef = new EntityRef(typeof(DummyItem), new object(), 0);

@@ -381,6 +381,9 @@
   <data name="DummyItemPortable" xml:space="preserve">
     <value>Portable</value>
   </data>
+  <data name="DummyItemUser" xml:space="preserve">
+    <value>[User]</value>
+  </data>
   <data name="DummyItemWorkingFacility" xml:space="preserve">
     <value>(Working Facility)</value>
   </data>

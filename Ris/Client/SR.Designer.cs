@@ -853,6 +853,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to [User].
+        /// </summary>
+        internal static string DummyItemUser {
+            get {
+                return ResourceManager.GetString("DummyItemUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to (Working Facility).
         /// </summary>
         internal static string DummyItemWorkingFacility {
