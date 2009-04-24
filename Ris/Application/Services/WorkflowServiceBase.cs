@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Application.Services
 					PersistenceContext.GetBroker<IWorklistBroker>().Find(CurrentUserStaff, request.WorklistTokens),
 					delegate(Worklist worklist)
 					{
-						return assembler.GetWorklistSummary(worklist);
+						return assembler.GetWorklistSummary(worklist, PersistenceContext);
 					}));
 		}
 

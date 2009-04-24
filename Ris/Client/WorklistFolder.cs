@@ -10,6 +10,27 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
+    /// <summary>
+    /// Describes worklist ownership options.
+    /// </summary>
+    public enum WorklistOwnership
+    {
+        /// <summary>
+        /// Worklist is owned by administrators.
+        /// </summary>
+        Admin,
+
+        /// <summary>
+        /// Worklist is owned by a staff person.
+        /// </summary>
+        Staff,
+
+        /// <summary>
+        /// Worklist is owned by a staff group.
+        /// </summary>
+        Group
+    }
+
 	/// <summary>
 	/// Internal inteface used to initialize a <see cref="WorkflowFolder"/> once,
 	/// without having to define a constructor.
@@ -19,11 +40,7 @@ namespace ClearCanvas.Ris.Client
 		/// <summary>
 		/// Initializes this folder with the specified arguments.
 		/// </summary>
-		/// <param name="path"></param>
-		/// <param name="worklistRef"></param>
-		/// <param name="description"></param>
-		/// <param name="isStatic"></param>
-		void Initialize(Path path, EntityRef worklistRef, string description, bool isStatic);
+		void Initialize(Path path, EntityRef worklistRef, string description, WorklistOwnership ownership, string ownerName);
 	}
 
 	public interface IWorklistFolder : IFolder
@@ -37,6 +54,16 @@ namespace ClearCanvas.Ris.Client
 		/// Gets the name of the worklist class that this folder is associated with.
 		/// </summary>
 		string WorklistClassName { get;}
+
+        /// <summary>
+        /// Gets the ownership of the worklist associated with this folder.
+        /// </summary>
+        WorklistOwnership Ownership { get; }
+
+        /// <summary>
+        /// Gets the name of the worklist owner, or null if not applicable.
+        /// </summary>
+        string OwnerName { get; }
 	}
 
 
@@ -50,6 +77,8 @@ namespace ClearCanvas.Ris.Client
 		where TWorklistService : IWorklistService<TItem>
 	{
 		private EntityRef _worklistRef;
+        private WorklistOwnership _ownership;
+        private string _ownerName;
 
 		/// <summary>
 		/// Obtains the name of the worklist class associated with the specified folder class.
@@ -73,12 +102,15 @@ namespace ClearCanvas.Ris.Client
 
 		#region IInitializeWorklistFolder Members
 
-		void IInitializeWorklistFolder.Initialize(Path path, EntityRef worklistRef, string description, bool isStatic)
+		void IInitializeWorklistFolder.Initialize(Path path, EntityRef worklistRef, string description, WorklistOwnership ownership, string ownerName)
 		{
-			this.FolderPath = path;
 			_worklistRef = worklistRef;
-			this.Tooltip = description;
-			this.IsStatic = isStatic;
+            _ownership = ownership;
+            _ownerName = ownerName;
+
+            this.FolderPath = path;
+            this.Tooltip = description;
+			this.IsStatic = false;  // folder is not static
 		}
 
 		#endregion
@@ -112,6 +144,22 @@ namespace ClearCanvas.Ris.Client
 				return GetWorklistClassName(this.GetType());
 			}
 		}
+
+        /// <summary>
+        /// Gets the ownership of the worklist associated with this folder.
+        /// </summary>
+        public WorklistOwnership Ownership
+        {
+            get { return _ownership; }
+        }
+
+        /// <summary>
+        /// Gets the name of the worklist owner, or null if not applicable.
+        /// </summary>
+        public string OwnerName
+        {
+            get { return _ownerName; }
+        }
 
 		#endregion
 

@@ -42,18 +42,31 @@ namespace ClearCanvas.Ris.Application.Common
 
 		}
 
-        public WorklistSummary(EntityRef worklistRef, string displayName, string description, string className)
+        public WorklistSummary(EntityRef worklistRef, string displayName, string description,
+            string className, StaffSummary ownerStaff, StaffGroupSummary ownerGroup)
         {
             WorklistRef = worklistRef;
             DisplayName = displayName;
             Description = description;
             ClassName = className;
+            OwnerStaff = ownerStaff;
+            OwnerGroup = ownerGroup;
         }
 
-		//public WorklistSummary(EntityRef worklistRef, string displayName, string description)
-		//    : this(worklistRef, displayName, description, "")
-		//{
-		//}
+        public bool IsUserWorklist
+        {
+            get { return IsStaffOwned || IsGroupOwned; }
+        }
+
+        public bool IsStaffOwned
+        {
+            get { return OwnerStaff != null; }
+        }
+
+        public bool IsGroupOwned
+        {
+            get { return OwnerGroup != null; }
+        }
 
         [DataMember]
         public EntityRef WorklistRef;
@@ -66,5 +79,11 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public string ClassName;
+
+        [DataMember]
+        public StaffSummary OwnerStaff;
+
+        [DataMember]
+        public StaffGroupSummary OwnerGroup;
     }
 }

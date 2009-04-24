@@ -10,7 +10,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-	public interface IWorklistFolderSystem
+	public interface IWorklistFolderSystem : IFolderSystem
 	{
 		IWorklistFolder AddWorklistFolder(WorklistSummary worklist);
 	}
@@ -165,13 +165,35 @@ namespace ClearCanvas.Ris.Client
 			}
 
 			// init folder
-			initFolder.Initialize(path, worklist.WorklistRef, worklist.Description, false);
+			initFolder.Initialize(
+                path,
+                worklist.WorklistRef,
+                worklist.Description,
+                GetWorklistOwnership(worklist),
+                GetWorklistOwnerName(worklist)
+                );
 
 			// add to folders list
 			this.Folders.Add(folder);
 
 			return folder;
 		}
+
+        private WorklistOwnership GetWorklistOwnership(WorklistSummary worklist)
+        {
+            return worklist.IsUserWorklist ?
+                (worklist.IsStaffOwned ? WorklistOwnership.Staff : WorklistOwnership.Group)
+                : WorklistOwnership.Admin;
+        }
+
+        private string GetWorklistOwnerName(WorklistSummary worklist)
+        {
+            if (worklist.IsStaffOwned)
+                return Formatting.StaffNameAndRoleFormat.Format(worklist.OwnerStaff);
+            if (worklist.IsGroupOwned)
+                return worklist.OwnerGroup.Name;
+            return null;
+        }
 
 		#endregion
 

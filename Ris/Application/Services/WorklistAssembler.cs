@@ -31,14 +31,23 @@
 
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Ris.Application.Services
 {
     public class WorklistAssembler
     {
-        public WorklistSummary GetWorklistSummary(Worklist worklist)
+        public WorklistSummary GetWorklistSummary(Worklist worklist, IPersistenceContext context)
         {
-            return new WorklistSummary(worklist.GetRef(), worklist.Name, worklist.Description, worklist.ClassName);
+            StaffAssembler staffAssembler = new StaffAssembler();
+            StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
+            return new WorklistSummary(
+                worklist.GetRef(),
+                worklist.Name,
+                worklist.Description,
+                worklist.ClassName,
+                worklist.Owner.IsStaffOwner ? staffAssembler.CreateStaffSummary(worklist.Owner.Staff, context) : null,
+                worklist.Owner.IsGroupOwner ? groupAssembler.CreateSummary(worklist.Owner.Group) : null);
         }
     }
 }

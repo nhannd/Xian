@@ -44,8 +44,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         {
         }
 
-        public WorklistAdminSummary(EntityRef worklistRef, string name, string description, WorklistClassSummary worklistClass)
-			:base(worklistRef, name, description, worklistClass.ClassName)
+        public WorklistAdminSummary(
+            EntityRef worklistRef,
+            string name,
+            string description,
+            WorklistClassSummary worklistClass,
+            StaffSummary ownerStaff,
+            StaffGroupSummary ownerGroup)
+			:base(worklistRef, name, description, worklistClass.ClassName, ownerStaff, ownerGroup)
         {
             WorklistClass = worklistClass;
         }
