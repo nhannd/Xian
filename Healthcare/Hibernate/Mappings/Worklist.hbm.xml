@@ -10,14 +10,23 @@
 
     <!-- the ClassName is persisted only for the purpose of enforcing the unique constraint -->
     <property name="FullClassName" type="String">
-      <column name="FullClassName_" unique-key="WorklistNameAndClassName" not-null="true" length="200"/>
+      <column name="FullClassName_" unique-key="WorklistUniqueKey" not-null="true" length="200"/>
     </property>
     
     <property name="Name" type="String">
-      <column name="Name_" unique-key="WorklistNameAndClassName" not-null="true" length="200"/>
+      <column name="Name_" unique-key="WorklistUniqueKey" not-null="true" length="200"/>
     </property>
     
     <property name="Description" column="Description_" type="String" length="1024"/>
+
+    <component name="Owner" class="WorklistOwner">
+      <many-to-one name="Staff" class="Staff">
+        <column name="OwnerStaffOID_" unique-key="WorklistUniqueKey"/>
+      </many-to-one>
+      <many-to-one name="Group" class="StaffGroup">
+        <column name="OwnerGroupOID_" unique-key="WorklistUniqueKey"/>
+      </many-to-one>
+    </component>
 
     <component name="ProcedureTypeGroupFilter" class="WorklistProcedureTypeGroupFilter">
       <property name="IsEnabled" type="Boolean" column="ProcedureTypeGroupFilterIsEnabled_"/>

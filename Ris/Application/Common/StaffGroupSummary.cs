@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
-    public class StaffGroupSummary : DataContractBase
+    public class StaffGroupSummary : DataContractBase, IEquatable<StaffGroupSummary>
     {
         public StaffGroupSummary(EntityRef groupRef, string name, string description, bool isElective, bool deactivated)
         {
@@ -39,5 +39,23 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
 		public bool Deactivated;
-	}
+
+
+    	public bool Equals(StaffGroupSummary staffGroupSummary)
+    	{
+    		if (staffGroupSummary == null) return false;
+    		return Equals(StaffGroupRef, staffGroupSummary.StaffGroupRef);
+    	}
+
+    	public override bool Equals(object obj)
+    	{
+    		if (ReferenceEquals(this, obj)) return true;
+    		return Equals(obj as StaffGroupSummary);
+    	}
+
+    	public override int GetHashCode()
+    	{
+    		return StaffGroupRef != null ? StaffGroupRef.GetHashCode() : 0;
+    	}
+    }
 }

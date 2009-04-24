@@ -44,7 +44,7 @@ namespace ClearCanvas.Healthcare
     /// <summary>
     /// Worklist entity.  Represents a worklist.
     /// </summary>
-    [UniqueKey("WorklistClassAndName", new string[] { "Name", "FullClassName" })]
+	[UniqueKey("WorklistUniqueKey", new string[] { "Name", "FullClassName", "Owner.Staff", "Owner.Group" })]
     public abstract class Worklist : Entity, IWorklist
     {
         /// <summary>
