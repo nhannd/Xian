@@ -155,6 +155,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
 														};
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            if (Page.IsPostBack)
+            {
+                DataBind();
+            }
+        }
+
         protected void WorkQueueListControl_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (WorkQueueKeys!=null)
