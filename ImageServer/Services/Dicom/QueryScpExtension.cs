@@ -60,6 +60,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
         private readonly List<SupportedSop> _list = new List<SupportedSop>();
 		private bool _cancelReceived = false;
+		private Queue<DicomMessage> _responseQueue = new Queue<DicomMessage>(DicomSettings.Default.BufferedQueryResponses);
         #endregion
 
         #region Contructors
@@ -569,6 +570,19 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 cond.EqualTo(val);
         }
 
+		private void SendBufferedResponses(DicomServer server, byte presentationId, DicomMessage requestMessage)
+		{
+			while (_responseQueue.Count > 0)
+			{
+				DicomMessage response = _responseQueue.Dequeue();
+				server.SendCFindResponse(presentationId, requestMessage.MessageId, response,
+						 DicomStatuses.Pending);
+
+				if (_cancelReceived)
+					throw new DicomException("DICOM C-Cancel Received");
+			}
+		}
+
         /// <summary>
         /// Method for processing Patient level queries.
         /// </summary>
@@ -618,16 +632,23 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 													throw new DicomException("DICOM C-Cancel Received");
 
                                             	resultCount++;
-												if (DicomSettings.Default.MaxQueryResponses != -1 
+												if (DicomSettings.Default.MaxQueryResponses != -1
 													&& DicomSettings.Default.MaxQueryResponses < resultCount)
+												{
+													SendBufferedResponses(server, presentationID, message);
 													throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
+												}
 
-												DicomMessage response = new DicomMessage();
+                                            	DicomMessage response = new DicomMessage();
 												PopulatePatient(response, tagList, row);
-												server.SendCFindResponse(presentationID, message.MessageId, response,
-																		 DicomStatuses.Pending);
+                                            	_responseQueue.Enqueue(response);
 
+												if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
+													SendBufferedResponses(server, presentationID, message);
                                             });
+
+                	SendBufferedResponses(server, presentationID, message);
+
                 }
                 catch (Exception e)
                 {
@@ -755,7 +776,10 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 													resultCount++;
 													if (DicomSettings.Default.MaxQueryResponses != -1
 														&& DicomSettings.Default.MaxQueryResponses < resultCount)
+													{
+														SendBufferedResponses(server, presentationID, message);
 														throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
+													}
 
                                                 	StudyStorage storage =
                                                 		StudyStorage.Load(subRead, row.ServerPartitionKey,
@@ -766,11 +790,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 
                                                     DicomMessage response = new DicomMessage();
                                                     PopulateStudy(subRead, storage, response, tagList, row);
-                                                    server.SendCFindResponse(presentationID, message.MessageId, response,
-                                                                             DicomStatuses.Pending);
+													_responseQueue.Enqueue(response);
+
+													if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
+														SendBufferedResponses(server, presentationID, message);
 											
                                                 });
-                    }
+						SendBufferedResponses(server, presentationID, message);
+					}
                 }
                 catch (Exception e)
                 {
@@ -888,15 +915,20 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 															resultCount++;
 															if (DicomSettings.Default.MaxQueryResponses != -1
 																&& DicomSettings.Default.MaxQueryResponses < resultCount)
+															{
+																SendBufferedResponses(server, presentationID, message);
 																throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
+															}
 
-                                                            DicomMessage response = new DicomMessage();
+                                                        	DicomMessage response = new DicomMessage();
                                                             PopulateSeries(subRead, message, response, tagList, row);
-                                                            server.SendCFindResponse(presentationID, message.MessageId,
-                                                                                     response,
-                                                                                     DicomStatuses.Pending);														
-                                                        });
-                    }
+															_responseQueue.Enqueue(response);
+
+															if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
+																SendBufferedResponses(server, presentationID, message);
+														});
+						SendBufferedResponses(server, presentationID, message);
+					}
                 }
                 catch (Exception e)
                 {
@@ -1048,17 +1080,22 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 						if (DicomSettings.Default.MaxQueryResponses != -1
 							&& DicomSettings.Default.MaxQueryResponses < resultCount)
 						{
+							SendBufferedResponses(server, presentationID, message);
 							Platform.Log(LogLevel.Warn, "Maximum Configured Query Responses Exceeded: " + resultCount);
 							break;
 						}
 
 						DicomMessage response = new DicomMessage();
 						PopulateInstance(message, response, tagList, theInstanceStream);
-						server.SendCFindResponse(presentationID, message.MessageId, response,
-						                         DicomStatuses.Pending);			
+						_responseQueue.Enqueue(response);
+
+						if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
+							SendBufferedResponses(server, presentationID, message);
 					}
                 }
             }
+
+			SendBufferedResponses(server, presentationID, message);
 
             DicomMessage finalResponse = new DicomMessage();
             server.SendCFindResponse(presentationID, message.MessageId, finalResponse, DicomStatuses.Success);

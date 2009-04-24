@@ -1671,9 +1671,9 @@ namespace ClearCanvas.Dicom.Network
 
                 PDataTFStream pdustream;
                 if (_assoc.RemoteMaximumPduLength == 0 || _assoc.RemoteMaximumPduLength > _assoc.LocalMaximumPduLength)
-                    pdustream = new PDataTFStream(this, pcid, _assoc.LocalMaximumPduLength, total);
+					pdustream = new PDataTFStream(this, pcid, _assoc.LocalMaximumPduLength, total, NetworkSettings.Default.CombineCommandDataPdu);
                 else
-                    pdustream = new PDataTFStream(this, pcid, _assoc.RemoteMaximumPduLength, total);
+					pdustream = new PDataTFStream(this, pcid, _assoc.RemoteMaximumPduLength, total, NetworkSettings.Default.CombineCommandDataPdu);
                 pdustream.OnTick += delegate
                                         {
                                             OnSendDimseProgress(pcid, command, dataset);

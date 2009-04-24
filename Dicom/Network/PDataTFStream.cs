@@ -69,10 +69,11 @@ namespace ClearCanvas.Dicom.Network
         private byte[] _bytes;
         private MemoryStream _buffer;
         private readonly NetworkBase _networkBase;
+    	private bool _combineCommandData;
         #endregion
 
         #region Public Constructors
-        public PDataTFStream(NetworkBase networkBase, byte pcid, uint max, uint total)
+        public PDataTFStream(NetworkBase networkBase, byte pcid, uint max, uint total, bool combineCommandData)
         {
             _command = true;
             _pcid = pcid;
@@ -80,6 +81,7 @@ namespace ClearCanvas.Dicom.Network
             _pdu = new PDataTF();
             _buffer = new MemoryStream((int)total + 1024);
             _networkBase = networkBase;
+        	_combineCommandData = combineCommandData;
         }
         #endregion
 
@@ -91,9 +93,10 @@ namespace ClearCanvas.Dicom.Network
             get { return _command; }
             set
             {
-                CreatePDV();
+                CreatePDV(true);
                 _command = value;
-                WritePDU(true);
+				if (!_combineCommandData)
+					WritePDU(true);
             }
         }
         #endregion
@@ -112,7 +115,7 @@ namespace ClearCanvas.Dicom.Network
             return _pdu.GetLengthOfPDVs();
         }
 
-        private bool CreatePDV()
+        private bool CreatePDV(bool isLast)
         {
             uint len = Math.Min(GetBufferLength(), _max - (CurrentPduSize() + 6));
 
@@ -123,7 +126,7 @@ namespace ClearCanvas.Dicom.Network
             }
             _buffer.Read(_bytes, 0, (int)len);
 
-            PDV pdv = new PDV(_pcid, _bytes, _command, false);
+            PDV pdv = new PDV(_pcid, _bytes, _command, isLast);
             _pdu.PDVs.Add(pdv);
 
             return pdv.IsLastFragment;
@@ -133,7 +136,7 @@ namespace ClearCanvas.Dicom.Network
         {
             if (_pdu.PDVs.Count == 0 || ((CurrentPduSize() + 6) < _max && GetBufferLength() > 0))
             {
-                CreatePDV();
+                CreatePDV(last);
             }
             if (_pdu.PDVs.Count > 0)
             {

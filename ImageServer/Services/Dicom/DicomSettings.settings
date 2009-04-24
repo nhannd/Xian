@@ -11,5 +11,8 @@
     <Setting Name="MaxQueryResponses" Type="System.Int32" Scope="Application">
       <Value Profile="(Default)">-1</Value>
     </Setting>
+    <Setting Name="BufferedQueryResponses" Type="System.Int32" Scope="Application">
+      <Value Profile="(Default)">50</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

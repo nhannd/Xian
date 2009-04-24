@@ -119,7 +119,7 @@ namespace ClearCanvas.Dicom.Network
             _socket.SendTimeout = parameters.WriteTimeout;
             _socket.LingerState = new LingerOption(false, 0);
             // Nagle option
-			_socket.NoDelay = false;
+			_socket.NoDelay = parameters.DisableNagle;
         }
 
         private void Connect(IPEndPoint ep)

@@ -233,6 +233,7 @@ namespace ClearCanvas.Dicom.Network
         private IPEndPoint _remoteEndPoint;
         private string _remoteHostname;
         private int _remotePort;
+		private bool _disableNagle = NetworkSettings.Default.DisableNagle;
 
         // Sizes that result in PDUs that are multiples of the MTU work better.
         // Setting these values to an even multiple of the TCP/IP maximum
@@ -398,6 +399,15 @@ namespace ClearCanvas.Dicom.Network
             get { return _connectTimeout; }
             set { _connectTimeout = value; }
         }
+
+		/// <summary>
+		/// Flag to set if the Nagle algorithm is disabled for connections
+		/// </summary>
+    	public bool DisableNagle
+    	{
+			get { return _disableNagle; }
+			set { _disableNagle = value; }
+    	}
 
         /// <summary>
         /// Called AE (association acceptor AE) for the association
