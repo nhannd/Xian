@@ -42,8 +42,8 @@ namespace ClearCanvas.Desktop.Actions
     /// Icons should be supplied in several sizes so that different displays can be accomodated without
     /// having to scale the images:
     /// <list type="bullet">
-    /// <item>small: 16 x 16</item>
-    /// <item>medium: 32 x 32</item>
+    /// <item>small: 24 x 24</item>
+    /// <item>medium: 48 x 48</item>
     /// <item>large: 64 x 64</item>
     /// </list>
     /// The attribute may appear more than once for a given action ID, in order to specify 
@@ -52,7 +52,7 @@ namespace ClearCanvas.Desktop.Actions
     /// </remarks>
     public class IconSetAttribute : ActionDecoratorAttribute
     {
-        private IconSet _iconSet;
+        private readonly IconSet _iconSet;
 
         /// <summary>
         /// Attribute constructor.
@@ -67,6 +67,17 @@ namespace ClearCanvas.Desktop.Actions
         {
             _iconSet = new IconSet(scheme, smallIcon, mediumIcon, largeIcon);
         }
+
+		///<summary>
+		/// Attribute constructor.
+		///</summary>
+		/// <param name="actionID">The logical action identifier to which this attribute applies.</param>
+		///<param name="icon">The resource name of the icon.</param>
+		public IconSetAttribute(string actionID, string icon)
+			: base(actionID)
+		{
+			_iconSet = new IconSet(icon);
+		}
 
         /// <summary>
         /// The <see cref="IconSet"/> derived from this attribute.
