@@ -154,7 +154,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (this.SelectedItems.Count != 1) return;
 
                 WorklistAdminSummary worklist = CollectionUtils.FirstElement(this.SelectedItems);
-				WorklistEditorComponent editor = new WorklistEditorComponent(worklist.WorklistRef, true, true);
+				WorklistEditorComponent editor = new WorklistEditorComponent(worklist.WorklistRef, WorklistEditorMode.Duplicate, true);
                 ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
                     new DialogBoxCreationArgs(editor, SR.TitleAddWorklist, null, DialogSizeHint.Medium));
 
@@ -222,7 +222,7 @@ namespace ClearCanvas.Ris.Client.Admin
         protected override bool EditItems(IList<WorklistAdminSummary> items, out IList<WorklistAdminSummary> editedItems)
         {
             WorklistAdminSummary worklist = CollectionUtils.FirstElement(items);
-			WorklistEditorComponent editor = new WorklistEditorComponent(worklist.WorklistRef, false, true);
+			WorklistEditorComponent editor = new WorklistEditorComponent(worklist.WorklistRef, WorklistEditorMode.Edit, true);
             ApplicationComponentExitCode exitCode = LaunchAsDialog(this.Host.DesktopWindow,
                 new DialogBoxCreationArgs(editor, SR.TitleUpdateWorklist + " - " + worklist.DisplayName, null, DialogSizeHint.Medium));
 

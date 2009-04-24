@@ -7,6 +7,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using System.Threading;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -24,6 +25,12 @@ namespace ClearCanvas.Ris.Client
 	[Tooltip("edit", "Edit worklist")]
 	[EnabledStateObserver("edit", "EditEnabled", "EnablementChanged")]
     [VisibleStateObserver("edit", "Visible", "VisibleChanged")]
+
+    [ButtonAction("duplicate", "folderexplorer-folders-toolbar/Duplicate Worklist", "Duplicate")]
+    [MenuAction("duplicate", "folderexplorer-folders-contextmenu/Duplicate Worklist", "Duplicate")]
+    [Tooltip("duplicate", "Duplicate worklist")]
+    [EnabledStateObserver("duplicate", "DuplicateEnabled", "EnablementChanged")]
+    [VisibleStateObserver("duplicate", "Visible", "VisibleChanged")]
 
 	[ButtonAction("delete", "folderexplorer-folders-toolbar/Delete Worklist", "Delete")]
 	[MenuAction("delete", "folderexplorer-folders-contextmenu/Delete Worklist", "Delete")]
@@ -72,6 +79,11 @@ namespace ClearCanvas.Ris.Client
 			get { return CanEdit(this.Context.SelectedFolder); }
 		}
 
+        public bool DuplicateEnabled
+        {
+            get { return CanDuplicate(this.Context.SelectedFolder); }
+        }
+
 		public bool DeleteEnabled
 		{
 			get { return CanDelete(this.Context.SelectedFolder); }
@@ -87,17 +99,7 @@ namespace ClearCanvas.Ris.Client
 			if(exitCode == ApplicationComponentExitCode.Accepted)
 			{
 				IWorklistFolderSystem fs = (IWorklistFolderSystem) this.Context.SelectedFolderSystem;
-				foreach (WorklistAdminSummary worklist in editor.EditedWorklistSummaries)
-				{
-                    // try to add worklist to this folder system
-					IWorklistFolder folder = fs.AddWorklistFolder(worklist);
-
-                    // if add was successful, refresh the folder
-                    if (folder != null)
-                    {
-                        fs.InvalidateFolder(folder);
-                    }
-				}
+                AddNewWorklistsToFolderSystem(editor.EditedWorklistSummaries, fs);
 			}
 		}
 
@@ -107,7 +109,7 @@ namespace ClearCanvas.Ris.Client
             if (!CanEdit(folder))
                 return;
 
-			WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, false, false);
+			WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, WorklistEditorMode.Edit, false);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "Edit Worklist");
             if (exitCode == ApplicationComponentExitCode.Accepted)
             {
@@ -116,6 +118,21 @@ namespace ClearCanvas.Ris.Client
                 fs.InvalidateFolder(folder);
             }
 		}
+
+        public void Duplicate()
+        {
+            IWorklistFolder folder = (IWorklistFolder)this.Context.SelectedFolder;
+            if (!CanDuplicate(folder))
+                return;
+
+            WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, WorklistEditorMode.Duplicate, false);
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, "New Worklist");
+            if (exitCode == ApplicationComponentExitCode.Accepted)
+            {
+                IWorklistFolderSystem fs = (IWorklistFolderSystem)this.Context.SelectedFolderSystem;
+                AddNewWorklistsToFolderSystem(editor.EditedWorklistSummaries, fs);
+            }
+        }
 
 		public void Delete()
 		{
@@ -153,9 +170,24 @@ namespace ClearCanvas.Ris.Client
 
         #region Helpers
 
+        private static void AddNewWorklistsToFolderSystem(IEnumerable<WorklistAdminSummary> worklists, IWorklistFolderSystem fs)
+        {
+            foreach (WorklistSummary worklist in worklists)
+            {
+                // try to add worklist to this folder system
+                IWorklistFolder folder = fs.AddWorklistFolder(worklist);
+
+                // if add was successful, refresh the folder
+                if (folder != null)
+                {
+                    fs.InvalidateFolder(folder);
+                }
+            }
+        }
+
         private bool CanAdd()
 		{
-            return IsWorklistFolderSystem;
+            return IsWorklistFolderSystem && (HasGroupAdminAuthority || HasPersonalAdminAuthority);
 		}
 
 		private bool CanEdit(IFolder folder)
@@ -163,7 +195,13 @@ namespace ClearCanvas.Ris.Client
             return CheckAccess(folder);
 		}
 
-		private bool CanDelete(IFolder folder)
+        private bool CanDuplicate(IFolder folder)
+        {
+            // must be able to add, folder must be a worklist folder, and must not be static
+            return CanAdd() && (folder is IWorklistFolder) && !folder.IsStatic;
+        }
+
+        private bool CanDelete(IFolder folder)
 		{
             return CheckAccess(folder);
         }

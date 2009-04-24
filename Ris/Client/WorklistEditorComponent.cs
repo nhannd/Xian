@@ -43,6 +43,13 @@ using System.Threading;
 
 namespace ClearCanvas.Ris.Client
 {
+    public enum WorklistEditorMode
+    {
+        Add,
+        Edit,
+        Duplicate
+    }
+
     /// <summary>
     /// WorklistEditorComponent class
     /// </summary>
@@ -86,14 +93,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        enum Mode
-        {
-            Add,
-            Edit,
-            Duplicate
-        }
-
-        private readonly Mode _mode;
+        private readonly WorklistEditorMode _mode;
     	private readonly bool _adminMode;
 
         private EntityRef _worklistRef;
@@ -118,7 +118,7 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         public WorklistEditorComponent(bool adminMode)
         {
-            _mode = Mode.Add;
+            _mode = WorklistEditorMode.Add;
 			_adminMode = adminMode;
         }
 
@@ -128,9 +128,9 @@ namespace ClearCanvas.Ris.Client
         /// <param name="entityRef"></param>
         /// <param name="duplicate">Specify true to duplicate the worklist, false to edit the existing copy.</param>
         /// <param name="adminMode"></param>
-        public WorklistEditorComponent(EntityRef entityRef, bool duplicate, bool adminMode)
+        public WorklistEditorComponent(EntityRef entityRef, WorklistEditorMode editorMode, bool adminMode)
         {
-            _mode = duplicate ? Mode.Duplicate : Mode.Edit;
+            _mode = editorMode;
             _worklistRef = entityRef;
         	_adminMode = adminMode;
         }
@@ -144,7 +144,7 @@ namespace ClearCanvas.Ris.Client
 
                     // initialize _worklistDetail depending on add vs edit vs duplicate mode
                     List<ProcedureTypeGroupSummary> procedureTypeGroups = new List<ProcedureTypeGroupSummary>();
-                    if (_mode == Mode.Add)
+                    if (_mode == WorklistEditorMode.Add)
                     {
                         _worklistDetail = new WorklistAdminDetail();
                         _worklistDetail.FilterByWorkingFacility = true; // set this by default (Ticket #1848)
@@ -157,7 +157,7 @@ namespace ClearCanvas.Ris.Client
 
                         _worklistDetail = response.Detail;
 
-                        if (_mode == Mode.Duplicate)
+                        if (_mode == WorklistEditorMode.Duplicate)
                         {
                             _worklistDetail.EntityRef = null;
                             _worklistDetail.Name = _worklistDetail.Name + " copy";
@@ -172,7 +172,7 @@ namespace ClearCanvas.Ris.Client
                     }
 
                     // determine which main page to show (multi or single)
-					if (_mode == Mode.Add && _adminMode)
+					if (_mode == WorklistEditorMode.Add && _adminMode)
                     {
 						_detailComponent = new WorklistMultiDetailEditorComponent(formDataResponse.WorklistClasses, formDataResponse.OwnerGroupChoices);
                     }
@@ -182,7 +182,9 @@ namespace ClearCanvas.Ris.Client
 							_worklistDetail,
 							formDataResponse.WorklistClasses,
 							formDataResponse.OwnerGroupChoices,
-							false, _mode == Mode.Add, _adminMode);
+                            _mode,
+                            _adminMode,
+                            false);
                     }
                     _detailComponent.ProcedureTypeGroupClassChanged += ProcedureTypeGroupClassChangedEventHandler;
 
@@ -291,7 +293,7 @@ namespace ClearCanvas.Ris.Client
             {
                 try
                 {
-                    if (_mode == Mode.Add || _mode == Mode.Duplicate)
+                    if (_mode == WorklistEditorMode.Add || _mode == WorklistEditorMode.Duplicate)
                     {
                         AddWorklists();
                     }
@@ -372,7 +374,7 @@ namespace ClearCanvas.Ris.Client
             Platform.GetService<IWorklistAdminService>(
                 delegate(IWorklistAdminService service)
                 {
-					if (_mode == Mode.Add && _adminMode)
+					if (_mode == WorklistEditorMode.Add && _adminMode)
                     {
                         // add each worklist in the multi editor
                         WorklistMultiDetailEditorComponent detailEditor = (WorklistMultiDetailEditorComponent)_detailComponent;
@@ -386,7 +388,7 @@ namespace ClearCanvas.Ris.Client
                             _editedWorklistSummaries.Add(response.WorklistAdminSummary);
                         }
                     }
-                    else if ((_mode == Mode.Add && !_adminMode) || _mode == Mode.Duplicate)
+                    else if ((_mode == WorklistEditorMode.Add && !_adminMode) || _mode == WorklistEditorMode.Duplicate)
                     {
                         // only 1 worklist to add
                         AddWorklistResponse response = service.AddWorklist(new AddWorklistRequest(_worklistDetail));

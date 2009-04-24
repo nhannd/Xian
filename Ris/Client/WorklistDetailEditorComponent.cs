@@ -55,8 +55,8 @@ namespace ClearCanvas.Ris.Client
     public class WorklistDetailEditorComponent : WorklistDetailEditorComponentBase
     {
         private readonly WorklistAdminDetail _worklistDetail;
+        private readonly WorklistEditorMode _editorMode;
         private readonly bool _dialogMode;
-    	private readonly bool _isNew;
     	private readonly bool _adminMode;
 		private readonly List<StaffGroupSummary> _groupChoices;
 
@@ -65,16 +65,16 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor
         /// </summary>
-		public WorklistDetailEditorComponent(WorklistAdminDetail detail, List<WorklistClassSummary> worklistClasses, List<StaffGroupSummary> ownerGroupChoices, bool dialogMode, bool isNew, bool adminMode)
+		public WorklistDetailEditorComponent(WorklistAdminDetail detail, List<WorklistClassSummary> worklistClasses, List<StaffGroupSummary> ownerGroupChoices, WorklistEditorMode editorMode, bool adminMode, bool dialogMode)
 			:base(worklistClasses)
         {
             _worklistDetail = detail;
             _dialogMode = dialogMode;
-        	_isNew = isNew;
+            _editorMode = editorMode;
 			_adminMode = adminMode;
         	_groupChoices = ownerGroupChoices;
 
-			if(_isNew)
+			if(_editorMode == WorklistEditorMode.Add)
 			{
 				// default to "personal" if user has authority
 				_isPersonal = HasPersonalAdminAuthority;
@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client
 
     	public bool IsPersonalGroupSelectionEnabled
     	{
-			get { return _isNew && HasGroupAdminAuthority && HasPersonalAdminAuthority; }
+			get { return _editorMode != WorklistEditorMode.Edit && HasGroupAdminAuthority && HasPersonalAdminAuthority; }
     	}
 
 		public bool IsPersonal
@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Client
 
     	public bool IsGroupChoicesEnabled
     	{
-			get { return _isNew && HasGroupAdminAuthority && IsGroup; }
+            get { return _editorMode != WorklistEditorMode.Edit && HasGroupAdminAuthority && IsGroup; }
     	}
 
     	public IList GroupChoices
@@ -181,7 +181,7 @@ namespace ClearCanvas.Ris.Client
 
     	public bool IsWorklistClassReadOnly
     	{
-			get { return !_isNew; }
+            get { return _editorMode != WorklistEditorMode.Edit; }
     	}
 
 		[ValidateNotNull]

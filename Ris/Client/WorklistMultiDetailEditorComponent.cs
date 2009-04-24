@@ -217,7 +217,9 @@ namespace ClearCanvas.Ris.Client
 						detail,
 						this.WorklistClasses,
 						_ownerGroupChoices,
-						true, false, true);
+                        WorklistEditorMode.Edit,
+                        true,
+                        true);
 
                 if(ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow,
 					editor,
