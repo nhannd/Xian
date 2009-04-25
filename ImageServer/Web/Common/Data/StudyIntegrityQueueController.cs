@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
@@ -117,8 +118,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				row.StudyHistoryKey = history.GetKey();
 				row.WorkQueueTypeEnum = WorkQueueTypeEnum.ReconcileStudy;
 				row.WorkQueueStatusEnum = WorkQueueStatusEnum.Pending;
-				row.ScheduledTime = DateTime.Now;
-				row.ExpirationTime = DateTime.Now.AddHours(1);
+                row.ScheduledTime = Platform.Time;
+                row.ExpirationTime = Platform.Time.AddHours(1);
 				WorkQueue newWorkQueueItem = workQueueAdaptor.Add(context, row);
 
 				StudyIntegrityQueueUidAdaptor studyIntegrityQueueUidAdaptor = new StudyIntegrityQueueUidAdaptor();

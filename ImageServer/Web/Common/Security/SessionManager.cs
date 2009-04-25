@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                 FormsAuthenticationTicket authTicket = new
                     FormsAuthenticationTicket(1,  // version
                                  loginId,         // user name
-                                 DateTime.Now,    // creation
+                                 Platform.Time,    // creation
                                  token.ExpiryTime,// Expiration
                                  false,           // Persistent
                                  data);           // User data

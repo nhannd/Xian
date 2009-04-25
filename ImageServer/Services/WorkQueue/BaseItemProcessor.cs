@@ -445,8 +445,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                                 parms.QueueStudyStateEnum = QueueStudyStateEnum.Idle;
                         }
                         else if (status == WorkQueueProcessorStatus.Complete
-							|| (status == WorkQueueProcessorStatus.Idle) 
-                            && item.ExpirationTime < Platform.Time)
+							|| (status == WorkQueueProcessorStatus.Idle && item.ExpirationTime < Platform.Time))
 						{
 							parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Completed;
 							parms.FailureCount = item.FailureCount;

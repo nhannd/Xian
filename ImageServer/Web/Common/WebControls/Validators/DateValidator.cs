@@ -30,7 +30,7 @@
 #endregion
 
 using System;
-using System.Drawing;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 {
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
     {
         #region Private Members
 
-        private DateTime _today = DateTime.Now;
+        private DateTime _today = Platform.Time.Date;
 
         #endregion Private Members
 

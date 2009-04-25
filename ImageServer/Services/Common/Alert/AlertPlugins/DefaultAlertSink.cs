@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Alert.AlertPlugins
             columns.AlertLevelEnum = AlertLevelEnum.GetEnum(alert.Level.ToString());
             columns.Component = alert.Source.Name;
             columns.Content = doc;
-            columns.InsertTime = DateTime.Now;
+            columns.InsertTime = Platform.Time;
             columns.Source = alert.Source.Host;
             columns.TypeCode = alert.Code;
 

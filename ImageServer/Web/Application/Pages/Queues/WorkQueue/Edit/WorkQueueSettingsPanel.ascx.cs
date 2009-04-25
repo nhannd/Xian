@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
 
@@ -171,7 +172,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit
                 {
                     DateTime dt = DateTime.ParseExact(NewScheduleDate.Text, CalendarExtender.Format, null);
 
-                    DateTime time = DateTime.Now; 
+                    DateTime time = Platform.Time; 
                     
                     if(NewScheduleTime.Text.Contains("_") == false)
                     {

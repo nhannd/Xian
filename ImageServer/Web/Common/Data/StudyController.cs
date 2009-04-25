@@ -129,8 +129,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 				insertParms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.Medium;
 			    insertParms.ServerPartitionKey = study.ThePartition.Key;
 				insertParms.StudyStorageKey = study.TheStudyStorage.Key;
-				insertParms.ScheduledTime = DateTime.Now; // spread by 15 seconds
-				insertParms.ExpirationTime = DateTime.Now.AddMinutes(1);
+                insertParms.ScheduledTime = Platform.Time; // spread by 15 seconds
+                insertParms.ExpirationTime = Platform.Time.AddMinutes(1);
 
 			    WebDeleteStudyData extendedData = new WebDeleteStudyData();
                 extendedData.Reason = reason;

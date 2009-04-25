@@ -32,6 +32,7 @@
 
 using System;
 using System.Web.UI;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities;
 
@@ -73,7 +74,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.SeriesDetails
 
                 if (bdate!=null)
                 {
-                    TimeSpan age = DateTime.Now - bdate.Value;
+                    TimeSpan age = Platform.Time - bdate.Value;
                     if (age > TimeSpan.FromDays(365))
                     {
                         PatientAge.Text = String.Format("{0:0}", age.TotalDays / 365);

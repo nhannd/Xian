@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Model;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
@@ -176,13 +177,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
                 FilesystemServiceProxy.FilesystemInfo fsInfo = client.GetFilesystemInfo(fs.FilesystemPath);
 
                 _serviceIsOffline = false;
-                _lastServiceAvailableTime = DateTime.Now;
+                _lastServiceAvailableTime = Platform.Time;
                 return 100.0f - ((float)fsInfo.FreeSizeInKB) / fsInfo.SizeInKB * 100.0F;
             }
             catch (Exception)
             {
                 _serviceIsOffline = true;
-                _lastServiceAvailableTime = DateTime.Now;
+                _lastServiceAvailableTime = Platform.Time;
             }
             finally
             {
@@ -340,7 +341,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
         #region Private Static members
         static private bool _serviceIsOffline = false;
-        static private DateTime _lastServiceAvailableTime = DateTime.Now;
+        static private DateTime _lastServiceAvailableTime = Platform.Time;
 
         /// <summary>
         /// Return a value indicating whether the last web service call was successful.
@@ -348,7 +349,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
         /// <returns></returns>
         static private bool isServiceAvailable()
         {
-            TimeSpan elapsed = DateTime.Now - _lastServiceAvailableTime;
+            TimeSpan elapsed = Platform.Time - _lastServiceAvailableTime;
             return (!_serviceIsOffline || /*service was offline but */ elapsed.Seconds > 15);
         }
 
