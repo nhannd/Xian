@@ -157,14 +157,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 			if (worklist.InterpretedByStaffFilter.IsEnabled || worklist.InterpretedByStaffFilter.IncludeCurrentStaff)
                 SetStaffListFromFilter(detail.InterpretedByStaff, worklist.InterpretedByStaffFilter, context);
 
-            if (worklist.TranscribedByStaffFilter.IsEnabled)
-				SetStaffListFromFilter(detail.InterpretedByStaff, worklist.TranscribedByStaffFilter, context);
+			if (worklist.TranscribedByStaffFilter.IsEnabled || worklist.TranscribedByStaffFilter.IncludeCurrentStaff)
+				SetStaffListFromFilter(detail.TranscribedByStaff, worklist.TranscribedByStaffFilter, context);
 
-            if (worklist.VerifiedByStaffFilter.IsEnabled)
-				SetStaffListFromFilter(detail.InterpretedByStaff, worklist.VerifiedByStaffFilter, context);
+			if (worklist.VerifiedByStaffFilter.IsEnabled || worklist.VerifiedByStaffFilter.IncludeCurrentStaff)
+				SetStaffListFromFilter(detail.VerifiedByStaff, worklist.VerifiedByStaffFilter, context);
 
-            if (worklist.SupervisedByStaffFilter.IsEnabled)
-				SetStaffListFromFilter(detail.InterpretedByStaff, worklist.SupervisedByStaffFilter, context);
+			if (worklist.SupervisedByStaffFilter.IsEnabled || worklist.SupervisedByStaffFilter.IncludeCurrentStaff)
+				SetStaffListFromFilter(detail.SupervisedByStaff, worklist.SupervisedByStaffFilter, context);
         }
 
         private static void SetStaffListFromFilter(WorklistAdminDetail.StaffList stafflist, WorklistStaffFilter filter, IPersistenceContext context)

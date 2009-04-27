@@ -23,9 +23,9 @@ namespace ClearCanvas.Healthcare
 		protected override WorklistItemSearchCriteria[] GetInvariantCriteriaCore(IWorklistQueryContext wqc)
 		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
-			criteria.ProcedureStepClass = typeof(InterpretationStep);
-			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.IP });
-			criteria.Report.Status.In(new ReportStatus[] { ReportStatus.D, ReportStatus.P });
+			criteria.ProcedureStepClass = typeof(ReportingProcedureStep);
+			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.IP });
+			criteria.ReportPart.Report.Status.In(new ReportStatus[] { ReportStatus.D, ReportStatus.P });
 			ApplyTimeCriteria(criteria, WorklistTimeField.ReportPartPreliminaryTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new ReportingWorklistItemSearchCriteria[] { criteria };
 		}
@@ -43,9 +43,7 @@ namespace ClearCanvas.Healthcare
 		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(PublicationStep);
-			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM }); 
-			criteria.Report.Status.EqualTo(ReportStatus.F);
-			criteria.ReportPart.Index.EqualTo(0);
+			criteria.ReportPart.Report.Status.EqualTo(ReportStatus.F);
 			ApplyTimeCriteria(criteria, WorklistTimeField.ReportPartCompletedTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new ReportingWorklistItemSearchCriteria[] { criteria };
 		}
@@ -63,9 +61,7 @@ namespace ClearCanvas.Healthcare
 		{
 			ReportingWorklistItemSearchCriteria criteria = new ReportingWorklistItemSearchCriteria();
 			criteria.ProcedureStepClass = typeof(PublicationStep);
-			criteria.ProcedureStep.State.In(new ActivityStatus[] { ActivityStatus.SC, ActivityStatus.CM });
-			criteria.Report.Status.EqualTo(ReportStatus.C);
-			criteria.ReportPart.Index.MoreThan(0);
+			criteria.ReportPart.Report.Status.EqualTo(ReportStatus.C);
 			ApplyTimeCriteria(criteria, WorklistTimeField.ReportPartCompletedTime, null, WorklistOrdering.PrioritizeOldestItems, wqc);
 			return new ReportingWorklistItemSearchCriteria[] { criteria };
 
