@@ -88,6 +88,13 @@ namespace ClearCanvas.Ris.Client
 
 			// update the class to the default (if this is a new worklist)
         	_worklistDetail.WorklistClass = GetDefaultWorklistClass(worklistClasses, detail);
+
+            this.Validation.Add(
+                new ValidationRule("SelectedGroup",
+                    delegate
+                    {
+                        return new ValidationResult(_adminMode || _isPersonal, "Value Required");
+                    }));
 		}
 
     	#region Presentation Model

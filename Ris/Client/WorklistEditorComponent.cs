@@ -96,6 +96,8 @@ namespace ClearCanvas.Ris.Client
 
         private readonly WorklistEditorMode _mode;
         private readonly bool _adminMode;
+        private readonly string _initialClassName;
+        private readonly IList<string> _worklistClassChoices;
 
         private EntityRef _worklistRef;
         private readonly List<WorklistAdminSummary> _editedWorklistSummaries = new List<WorklistAdminSummary>();
@@ -118,9 +120,19 @@ namespace ClearCanvas.Ris.Client
         /// Constructor to create new worklist(s).
         /// </summary>
         public WorklistEditorComponent(bool adminMode)
+            :this(adminMode, null, null)
+        {
+        }
+
+        /// <summary>
+        /// Constructor to create new worklist(s) with limited choices of class.
+        /// </summary>
+        public WorklistEditorComponent(bool adminMode, IList<string> worklistClassChoices, string selectedClass)
         {
             _mode = WorklistEditorMode.Add;
             _adminMode = adminMode;
+            _worklistClassChoices = worklistClassChoices;
+            _initialClassName = selectedClass;
         }
 
         /// <summary>
@@ -146,6 +158,19 @@ namespace ClearCanvas.Ris.Client
                     {
                         _worklistDetail = new WorklistAdminDetail();
                         _worklistDetail.FilterByWorkingFacility = true; // set this by default (Ticket #1848)
+
+                        // limit class choices if specified
+                        if (_worklistClassChoices != null)
+                        {
+                            formDataResponse.WorklistClasses =
+                                CollectionUtils.Select(formDataResponse.WorklistClasses,
+                                delegate(WorklistClassSummary wc) { return _worklistClassChoices.Contains(wc.ClassName); });
+                        }
+
+                        // establish initial class name
+                        _worklistDetail.WorklistClass =
+                            CollectionUtils.SelectFirst(formDataResponse.WorklistClasses,
+                                delegate(WorklistClassSummary wc) { return wc.ClassName == _initialClassName; });
                     }
                     else
                     {
@@ -249,8 +274,8 @@ namespace ClearCanvas.Ris.Client
 
             if (ShowSubscriptionPages)
             {
-                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeGroupSubscribers", _groupSubscribersComponent));
-                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeIndividualSubscribers", _staffSubscribersComponent));
+                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeGroupSubscribers", _groupSubscribersComponent));
+                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeStaffSubscribers", _staffSubscribersComponent));
             }
             this.Pages.Add(new NavigatorPage("NodeWorklist/Preview", _previewComponent = new WorklistPreviewComponent(_worklistDetail)));
 

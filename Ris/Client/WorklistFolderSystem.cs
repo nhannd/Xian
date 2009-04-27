@@ -7,11 +7,25 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
 	public interface IWorklistFolderSystem : IFolderSystem
 	{
+        /// <summary>
+        /// Gets a list of class names of worklist classes supported by this folder system.
+        /// </summary>
+        IList<string> SupportedWorklistClasses { get; }
+
+
+        /// <summary>
+        /// Attempts to add the specified worklist to this folder system.
+        /// </summary>
+        /// <remarks>
+        /// Returns the new folder if successful, or null if this folder system does not support the
+        /// specified worklist class.
+        /// </remarks>
 		IWorklistFolder AddWorklistFolder(WorklistSummary worklist);
 	}
 
@@ -43,7 +57,27 @@ namespace ClearCanvas.Ris.Client
 
 		#region IWorklistFolderSystem Members
 
-		public IWorklistFolder AddWorklistFolder(WorklistSummary worklist)
+        /// <summary>
+        /// Gets a list of class names of worklist classes supported by this folder system.
+        /// </summary>
+        public IList<string> SupportedWorklistClasses
+        {
+            get
+            {
+                return CollectionUtils.Map<ExtensionInfo, string>(
+                    new TFolderExtensionPoint().ListExtensions(),
+                    delegate(ExtensionInfo info) { return GetWorklistClassForFolderClass(info.ExtensionClass); });
+            }
+        }
+
+        /// <summary>
+        /// Attempts to add the specified worklist to this folder system.
+        /// </summary>
+        /// <remarks>
+        /// Returns the new folder if successful, or null if this folder system does not support the
+        /// specified worklist class.
+        /// </remarks>
+        public IWorklistFolder AddWorklistFolder(WorklistSummary worklist)
 		{
 			return AddWorklistFolderHelper(worklist);
 		}
@@ -147,7 +181,7 @@ namespace ClearCanvas.Ris.Client
 				.CreateExtension(
 					delegate (ExtensionInfo info)
 					{
-						return worklist.ClassName == WorklistFolder<TItem, TWorklistService>.GetWorklistClassName(info.ExtensionClass);
+                        return worklist.ClassName == GetWorklistClassForFolderClass(info.ExtensionClass);
 					});
 
 			if (folder == null || !(folder is IInitializeWorklistFolder))
@@ -178,6 +212,11 @@ namespace ClearCanvas.Ris.Client
 
 			return folder;
 		}
+
+        private string GetWorklistClassForFolderClass(Type folderClass)
+        {
+            return WorklistFolder<TItem, TWorklistService>.GetWorklistClassName(folderClass);
+        }
 
         private WorklistOwnership GetWorklistOwnership(WorklistSummary worklist)
         {

@@ -589,10 +589,7 @@
     <value>Filters</value>
   </data>
   <data name="NodeGroupSubscribers" xml:space="preserve">
-    <value>Group Subscribers</value>
-  </data>
-  <data name="NodeIndividualSubscribers" xml:space="preserve">
-    <value>Individual Subscribers</value>
+    <value>Groups</value>
   </data>
   <data name="NodeInterpretedBy" xml:space="preserve">
     <value>Interpreted By</value>
@@ -605,6 +602,12 @@
   </data>
   <data name="NodeStaff" xml:space="preserve">
     <value>Staff</value>
+  </data>
+  <data name="NodeStaffSubscribers" xml:space="preserve">
+    <value>Staff</value>
+  </data>
+  <data name="NodeSubscribers" xml:space="preserve">
+    <value>Subscribers</value>
   </data>
   <data name="NodeSupervisedBy" xml:space="preserve">
     <value>Supervised By</value>
