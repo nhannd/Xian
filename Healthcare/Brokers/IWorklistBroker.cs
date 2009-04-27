@@ -29,39 +29,31 @@
 
 #endregion
 
-using System.Collections;
-using ClearCanvas.Enterprise.Core;
 using System.Collections.Generic;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
-    public interface IWorklistBroker : IEntityBroker<Worklist, WorklistSearchCriteria>
-    {
+	public interface IWorklistBroker : IEntityBroker<Worklist, WorklistSearchCriteria>
+	{
 		/// <summary>
 		/// Finds worklists matching specified class names and assigned to specified staff.
 		/// </summary>
 		/// <param name="staff"></param>
 		/// <param name="worklistClassNames"></param>
 		/// <returns></returns>
-        IList<Worklist> Find(Staff staff, IEnumerable<string> worklistClassNames);
-
-		/// <summary>
-		/// Finds worklists of the specified class names.
-		/// </summary>
-		/// <param name="worklistClassNames"></param>
-		/// <param name="page"></param>
-		/// <returns></returns>
-        IList<Worklist> Find(IEnumerable<string> worklistClassNames, SearchResultPage page);
+		IList<Worklist> Find(Staff staff, IEnumerable<string> worklistClassNames);
 
 		/// <summary>
 		/// Finds worklists matching the specified name (which may contain wildcards) and class names.
 		/// </summary>
-		/// <param name="name"></param>
+		/// <param name="name">If empty, no name criteria is applied.</param>
+		/// <param name="includeUserAndGroupWorklists"></param>
 		/// <param name="worklistClassNames"></param>
 		/// <param name="page"></param>
 		/// <returns></returns>
-		IList<Worklist> Find(string name, IEnumerable<string> worklistClassNames, SearchResultPage page);
+		IList<Worklist> Find(string name, bool includeUserAndGroupWorklists, IEnumerable<string> worklistClassNames, SearchResultPage page);
 
 		/// <summary>
 		/// Finds one worklist with the specified name and class name.
@@ -69,6 +61,6 @@ namespace ClearCanvas.Healthcare.Brokers
 		/// <param name="name"></param>
 		/// <param name="worklistClassName"></param>
 		/// <returns></returns>
-        Worklist FindOne(string name, string worklistClassName);
-    }
+		Worklist FindOne(string name, string worklistClassName);
+	}
 }

@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     /// Requests a list of worklist, according to the specified filters.
     /// </summary>
     [DataContract]
-	public class ListWorklistsRequest : ListRequestBase
+    public class ListWorklistsRequest : ListRequestBase
     {
         /// <summary>
         /// Filters the results by the specified class names.
@@ -58,10 +58,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         [DataMember]
         public bool IncludeStatic;
 
-		/// <summary>
-		/// Filters the results by the specified name.
-		/// </summary>
-		[DataMember]
-		public string WorklistName;
+        /// <summary>
+        /// Specifies whether user and group owned worklists should be returned in the results.
+        /// </summary>
+        [DataMember]
+        public bool IncludeUserAndGroupOwned;
+
+        /// <summary>
+        /// Filters the results by the specified name.
+        /// </summary>
+        [DataMember]
+        public string WorklistName;
     }
 }

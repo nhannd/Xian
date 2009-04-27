@@ -31,6 +31,7 @@
 
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -52,6 +53,18 @@ namespace ClearCanvas.Ris.Client.Admin
             this.Columns.Add(new TableColumn<WorklistAdminSummary, string>("Description",
                 delegate(WorklistAdminSummary summary) { return summary.Description; },
                 1.5f));
+
+            this.Columns.Add(new TableColumn<WorklistAdminSummary, string>("Owner",
+                delegate(WorklistAdminSummary summary)
+                {
+                    if (summary.OwnerStaff != null)
+                        return PersonNameFormat.Format(summary.OwnerStaff.Name);
+                    else if (summary.OwnerGroup != null)
+                        return summary.OwnerGroup.Name;
+                    else
+                        return "";
+                },
+                1.0f));
         }
     }
 }

@@ -40,6 +40,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
 			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+			this._includeUserAndGroupWorklists = new System.Windows.Forms.CheckBox();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.panel1.SuspendLayout();
 			this.flowLayoutPanel1.SuspendLayout();
@@ -76,6 +77,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			// 
 			// panel1
 			// 
+			this.panel1.Controls.Add(this._includeUserAndGroupWorklists);
 			this.panel1.Controls.Add(this._clearButton);
 			this.panel1.Controls.Add(this._searchButton);
 			this.panel1.Controls.Add(this._classComboBox);
@@ -92,7 +94,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._clearButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this._clearButton.FlatAppearance.BorderSize = 0;
 			this._clearButton.Image = global::ClearCanvas.Ris.Client.Admin.View.WinForms.SR.ClearFilterSmall;
-			this._clearButton.Location = new System.Drawing.Point(410, 20);
+			this._clearButton.Location = new System.Drawing.Point(583, 18);
 			this._clearButton.Margin = new System.Windows.Forms.Padding(0);
 			this._clearButton.Name = "_clearButton";
 			this._clearButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
@@ -110,7 +112,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._searchButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this._searchButton.FlatAppearance.BorderSize = 0;
 			this._searchButton.Image = global::ClearCanvas.Ris.Client.Admin.View.WinForms.SR.SearchToolSmall;
-			this._searchButton.Location = new System.Drawing.Point(379, 20);
+			this._searchButton.Location = new System.Drawing.Point(552, 18);
 			this._searchButton.Margin = new System.Windows.Forms.Padding(0);
 			this._searchButton.Name = "_searchButton";
 			this._searchButton.Size = new System.Drawing.Size(30, 30);
@@ -171,6 +173,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._cancelButton.TabIndex = 1;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
+			this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
 			// 
 			// _okButton
 			// 
@@ -183,6 +186,16 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this._okButton.UseVisualStyleBackColor = true;
 			this._okButton.Click += new System.EventHandler(this._okButton_Click);
 			// 
+			// _userGroupCheckbox
+			// 
+			this._includeUserAndGroupWorklists.AutoSize = true;
+			this._includeUserAndGroupWorklists.Location = new System.Drawing.Point(383, 26);
+			this._includeUserAndGroupWorklists.Name = "_includeUserAndGroupWorklists";
+			this._includeUserAndGroupWorklists.Size = new System.Drawing.Size(166, 17);
+			this._includeUserAndGroupWorklists.TabIndex = 7;
+			this._includeUserAndGroupWorklists.Text = "Include User/Group Worklists";
+			this._includeUserAndGroupWorklists.UseVisualStyleBackColor = true;
+			// 
 			// WorklistSummaryComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -192,6 +205,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			this.Size = new System.Drawing.Size(645, 487);
 			this.tableLayoutPanel1.ResumeLayout(false);
 			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
 			this.flowLayoutPanel1.ResumeLayout(false);
 			this.ResumeLayout(false);
 
@@ -210,5 +224,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 		private System.Windows.Forms.Button _clearButton;
 		private System.Windows.Forms.ToolTip toolTip1;
 		private System.Windows.Forms.Button _searchButton;
+		private System.Windows.Forms.CheckBox _includeUserAndGroupWorklists;
 	}
 }

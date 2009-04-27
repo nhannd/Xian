@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens;
 using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -42,8 +41,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
-using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
-using System.Threading;
+using AuthorityTokens = ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 {
@@ -61,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 delegate(Type t) { return Worklist.GetCategory(t); });
 
             // in case some worklist classes did not have assigned categories
-            CollectionUtils.Remove(categories, delegate (string s) { return s == null;} );
+            CollectionUtils.Remove(categories, delegate(string s) { return s == null; });
 
             return new ListWorklistCategoriesResponse(CollectionUtils.Unique(categories));
         }
@@ -89,19 +87,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             Platform.CheckForNullReference(request, "request");
             List<Type> worklistClasses =
                 ListClassesHelper(request.ClassNames, request.Categories, request.IncludeStatic);
-            
+
             // grab the persistent worklists
             IWorklistBroker broker = PersistenceContext.GetBroker<IWorklistBroker>();
             List<string> persistentClassNames = CollectionUtils.Select(worklistClasses,
                 delegate(Type t) { return !Worklist.GetIsStatic(t); })
                 .ConvertAll<string>(delegate(Type t) { return Worklist.GetClassName(t); });
 
-			IList<Worklist> worklists = string.IsNullOrEmpty(request.WorklistName) ?
-				broker.Find(persistentClassNames, request.Page)
-				: broker.Find(request.WorklistName, persistentClassNames, request.Page);
+            IList<Worklist> worklists = broker.Find(request.WorklistName, request.IncludeUserAndGroupOwned, persistentClassNames, request.Page);
 
             // optionally include the static ones
-            if(request.IncludeStatic)
+            if (request.IncludeStatic)
             {
                 foreach (Type worklistClass in worklistClasses)
                 {
@@ -160,7 +156,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             StaffAssembler staffAssembler = new StaffAssembler();
             response.StaffChoices = CollectionUtils.Map<Staff, StaffSummary>(
-				this.PersistenceContext.GetBroker<IStaffBroker>().FindAll(false),
+                this.PersistenceContext.GetBroker<IStaffBroker>().FindAll(false),
                 delegate(Staff item)
                 {
                     return staffAssembler.CreateStaffSummary(item, PersistenceContext);
@@ -168,7 +164,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             StaffGroupAssembler staffGroupAssembler = new StaffGroupAssembler();
             response.GroupSubscriberChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
-				this.PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(false),
+                this.PersistenceContext.GetBroker<IStaffGroupBroker>().FindAll(false),
                 delegate(StaffGroup item)
                 {
                     return staffGroupAssembler.CreateSummary(item);
@@ -176,29 +172,29 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             response.FacilityChoices = CollectionUtils.Map<Facility, FacilitySummary>(
-				this.PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
+                this.PersistenceContext.GetBroker<IFacilityBroker>().FindAll(false),
                 delegate(Facility f)
                 {
                     return facilityAssembler.CreateFacilitySummary(f);
                 });
 
-			LocationAssembler locationAssembler = new LocationAssembler();
-			response.PatientLocationChoices = CollectionUtils.Map<Location, LocationSummary>(
-				this.PersistenceContext.GetBroker<ILocationBroker>().FindAll(false),
-				delegate(Location l)
-				{
-					return locationAssembler.CreateLocationSummary(l);
-				});
+            LocationAssembler locationAssembler = new LocationAssembler();
+            response.PatientLocationChoices = CollectionUtils.Map<Location, LocationSummary>(
+                this.PersistenceContext.GetBroker<ILocationBroker>().FindAll(false),
+                delegate(Location l)
+                {
+                    return locationAssembler.CreateLocationSummary(l);
+                });
 
 
-        	response.OwnerGroupChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
-        		this.CurrentUserStaff.ActiveGroups, // only current user's active staff groups should be choosable
-        		delegate(StaffGroup group)
-        		{
-        			return staffGroupAssembler.CreateSummary(group);
-        		});
+            response.OwnerGroupChoices = CollectionUtils.Map<StaffGroup, StaffGroupSummary>(
+                this.CurrentUserStaff.ActiveGroups, // only current user's active staff groups should be choosable
+                delegate(StaffGroup group)
+                {
+                    return staffGroupAssembler.CreateSummary(group);
+                });
 
-			response.OrderPriorityChoices = EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext);
+            response.OrderPriorityChoices = EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext);
             response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);
 
             return response;
@@ -208,9 +204,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         [ReadOperation]
         [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
-		public LoadWorklistForEditResponse LoadWorklistForEdit(LoadWorklistForEditRequest request)
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
+        public LoadWorklistForEditResponse LoadWorklistForEdit(LoadWorklistForEditRequest request)
         {
             Worklist worklist = PersistenceContext.Load<Worklist>(request.EntityRef);
 
@@ -220,135 +216,135 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         }
 
         [UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
-		public AddWorklistResponse AddWorklist(AddWorklistRequest request)
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
+        public AddWorklistResponse AddWorklist(AddWorklistRequest request)
         {
-            if(string.IsNullOrEmpty(request.Detail.Name))
+            if (string.IsNullOrEmpty(request.Detail.Name))
             {
                 throw new RequestValidationException(SR.ExceptionWorklistNameRequired);
             }
 
-			// create instance of worklist owner
-			WorklistOwner owner = CreateOwner(request.Detail, request.IsUserWorklist);
+            // create instance of worklist owner
+            WorklistOwner owner = CreateOwner(request.Detail, request.IsUserWorklist);
 
-			// ensure user has access to create this worklist
-			CheckAccess(owner);
+            // ensure user has access to create this worklist
+            CheckAccess(owner);
 
-			// create instance of appropriate class
+            // create instance of appropriate class
             Worklist worklist = WorklistFactory.Instance.CreateWorklist(request.Detail.WorklistClass.ClassName);
 
-			// set owner
-        	worklist.Owner = owner;
+            // set owner
+            worklist.Owner = owner;
 
-			// update properties
-        	UpdateWorklistHelper(request.Detail, worklist);
+            // update properties
+            UpdateWorklistHelper(request.Detail, worklist);
 
             PersistenceContext.Lock(worklist, DirtyState.New);
             PersistenceContext.SynchState();
 
-			WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
-			return new AddWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
+            WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
+            return new AddWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
         }
 
         [UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
-		public UpdateWorklistResponse UpdateWorklist(UpdateWorklistRequest request)
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
+        public UpdateWorklistResponse UpdateWorklist(UpdateWorklistRequest request)
         {
-			Worklist worklist = this.PersistenceContext.Load<Worklist>(request.EntityRef);
+            Worklist worklist = this.PersistenceContext.Load<Worklist>(request.EntityRef);
 
-			// check if user can update
-			CheckAccess(worklist.Owner);
+            // check if user can update
+            CheckAccess(worklist.Owner);
 
-			// update
-			UpdateWorklistHelper(request.Detail, worklist);
+            // update
+            UpdateWorklistHelper(request.Detail, worklist);
 
-			WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
-			return new UpdateWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
+            WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
+            return new UpdateWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
         }
 
-    	[UpdateOperation]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
-		[PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
-		public DeleteWorklistResponse DeleteWorklist(DeleteWorklistRequest request)
+        [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Admin.Data.Worklist)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Personal)]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.Workflow.Worklist.Group)]
+        public DeleteWorklistResponse DeleteWorklist(DeleteWorklistRequest request)
         {
-			try
-			{
-				IWorklistBroker broker = PersistenceContext.GetBroker<IWorklistBroker>();
-				Worklist item = broker.Load(request.WorklistRef, EntityLoadFlags.Proxy);
+            try
+            {
+                IWorklistBroker broker = PersistenceContext.GetBroker<IWorklistBroker>();
+                Worklist item = broker.Load(request.WorklistRef, EntityLoadFlags.Proxy);
 
-				// check if user can delete
-				CheckAccess(item.Owner);
+                // check if user can delete
+                CheckAccess(item.Owner);
 
-				broker.Delete(item);
-				PersistenceContext.SynchState();
-				return new DeleteWorklistResponse();
-			}
-			catch (PersistenceException)
-			{
-				throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, TerminologyTranslator.Translate(typeof(Worklist))));
-			}
+                broker.Delete(item);
+                PersistenceContext.SynchState();
+                return new DeleteWorklistResponse();
+            }
+            catch (PersistenceException)
+            {
+                throw new RequestValidationException(string.Format(SR.ExceptionFailedToDelete, TerminologyTranslator.Translate(typeof(Worklist))));
+            }
         }
 
         #endregion
 
-		private WorklistOwner CreateOwner(WorklistAdminDetail detail, bool userWorklist)
-		{
-			// if not creating a user worklist, the owner is Admin
-			if (!userWorklist)
-				return WorklistOwner.Admin;
+        private WorklistOwner CreateOwner(WorklistAdminDetail detail, bool userWorklist)
+        {
+            // if not creating a user worklist, the owner is Admin
+            if (!userWorklist)
+                return WorklistOwner.Admin;
 
-			// if an owner group is specified, assign ownership to the group
-			if (detail.IsGroupOwned)
-			{
-				StaffGroup group = PersistenceContext.Load<StaffGroup>(detail.OwnerGroup.StaffGroupRef, EntityLoadFlags.Proxy);
-				return new WorklistOwner(group);
-			}
-			else
-			{
-				// otherwise assign ownership to current user, regardless of whether a different owner staff specified
-				return new WorklistOwner(CurrentUserStaff);
-			}
-		}
+            // if an owner group is specified, assign ownership to the group
+            if (detail.IsGroupOwned)
+            {
+                StaffGroup group = PersistenceContext.Load<StaffGroup>(detail.OwnerGroup.StaffGroupRef, EntityLoadFlags.Proxy);
+                return new WorklistOwner(group);
+            }
+            else
+            {
+                // otherwise assign ownership to current user, regardless of whether a different owner staff specified
+                return new WorklistOwner(CurrentUserStaff);
+            }
+        }
 
-		/// <summary>
-		/// Checks whether the current user has access to worklists owned by the specified worklist owner.
-		/// </summary>
-		/// <param name="owner"></param>
-		private void CheckAccess(WorklistOwner owner)
-		{
-			// admin can access any worklist
-			if (UserHasToken(AuthorityTokens.Admin.Data.Worklist))
-				return;
+        /// <summary>
+        /// Checks whether the current user has access to worklists owned by the specified worklist owner.
+        /// </summary>
+        /// <param name="owner"></param>
+        private void CheckAccess(WorklistOwner owner)
+        {
+            // admin can access any worklist
+            if (UserHasToken(AuthorityTokens.Admin.Data.Worklist))
+                return;
 
-			// if worklist is staff-owned, and user has personal token, they have access
-			if (owner.IsStaffOwner && owner.Staff.Equals(this.CurrentUserStaff)
-				 && UserHasToken(AuthorityTokens.Workflow.Worklist.Personal))
-				return;
+            // if worklist is staff-owned, and user has personal token, they have access
+            if (owner.IsStaffOwner && owner.Staff.Equals(this.CurrentUserStaff)
+                 && UserHasToken(AuthorityTokens.Workflow.Worklist.Personal))
+                return;
 
-			// if worklist is group-owned, user must have group token and be a member of the group
-			if (owner.IsGroupOwner && owner.Group.Members.Contains(this.CurrentUserStaff)
-				&& UserHasToken(AuthorityTokens.Workflow.Worklist.Group))
-				return;
+            // if worklist is group-owned, user must have group token and be a member of the group
+            if (owner.IsGroupOwner && owner.Group.Members.Contains(this.CurrentUserStaff)
+                && UserHasToken(AuthorityTokens.Workflow.Worklist.Group))
+                return;
 
-			throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
-		}
+            throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
+        }
 
-		private void UpdateWorklistHelper(WorklistAdminDetail detail, Worklist worklist)
-		{
-			WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
-			adminAssembler.UpdateWorklist(
-				worklist,
-				detail,
-				worklist.Owner.IsAdminOwner,	// only update subscribers iff the worklist is admin owned
-				this.PersistenceContext);
-		}
+        private void UpdateWorklistHelper(WorklistAdminDetail detail, Worklist worklist)
+        {
+            WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
+            adminAssembler.UpdateWorklist(
+                worklist,
+                detail,
+                worklist.Owner.IsAdminOwner,	// only update subscribers iff the worklist is admin owned
+                this.PersistenceContext);
+        }
 
-		private List<Type> ListClassesHelper(List<string> classNames, List<string> categories, bool includeStatic)
+        private List<Type> ListClassesHelper(List<string> classNames, List<string> categories, bool includeStatic)
         {
             List<Type> worklistClasses = new List<Type>(WorklistFactory.Instance.ListWorklistClasses(true));
 

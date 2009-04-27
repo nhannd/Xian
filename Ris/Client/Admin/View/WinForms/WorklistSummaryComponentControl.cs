@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
@@ -33,6 +28,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			_classComboBox.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatWorklistClassChoicesItem(e.ListItem); };
 
 			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
+			_includeUserAndGroupWorklists.DataBindings.Add("Checked", _component, "IncludeUserAndGroupOwnedWorklists", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_okButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
 			_okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");

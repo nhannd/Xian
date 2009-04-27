@@ -29,18 +29,14 @@
 
 #endregion
 
-using System.Collections;
+using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Authentication;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Hibernate;
-using ClearCanvas.Healthcare.Brokers;
-using NHibernate;
-using ClearCanvas.Common.Utilities;
-using System.Collections.Generic;
 using ClearCanvas.Enterprise.Hibernate.Hql;
-using System.Text;
+using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -59,24 +55,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return ExecuteHql<Worklist>(query);
         }
 
-        public IList<Worklist> Find(IEnumerable<string> worklistClassNames, SearchResultPage page)
+        public IList<Worklist> Find(string name, bool includeUserAndGroupWorklists, IEnumerable<string> worklistClassNames, SearchResultPage page)
         {
             HqlProjectionQuery query = GetBaseQuery();
+
+            if (!string.IsNullOrEmpty(name))
+                query.Conditions.Add(new HqlCondition("w.Name like ?", string.Format("%{0}%", name)));
+
+            if (!includeUserAndGroupWorklists)
+                query.Conditions.Add(new HqlCondition("(w.Owner.Staff is null and w.Owner.Group is null)"));
+
             AddClassConditions(query, worklistClassNames);
             query.Page = page;
 
             return ExecuteHql<Worklist>(query);
         }
-
-		public IList<Worklist> Find(string name, IEnumerable<string> worklistClassNames, SearchResultPage page)
-		{
-			HqlProjectionQuery query = GetBaseQuery();
-			query.Conditions.Add(new HqlCondition("w.Name like ?", string.Format("%{0}%", name)));
-			AddClassConditions(query, worklistClassNames);
-			query.Page = page;
-
-			return ExecuteHql<Worklist>(query);
-		}
 
         public Worklist FindOne(string name, string worklistClassName)
         {
@@ -85,7 +78,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             query.Conditions.Add(new HqlCondition("w.class = " + worklistClassName));
 
             IList<Worklist> worklists = ExecuteHql<Worklist>(query);
-            if(worklists.Count == 0)
+            if (worklists.Count == 0)
                 throw new EntityNotFoundException(string.Format("Worklist {0}, class {1} not found.", name, worklistClassName), null);
 
             return CollectionUtils.FirstElement(worklists);
