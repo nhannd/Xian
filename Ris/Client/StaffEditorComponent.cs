@@ -45,7 +45,7 @@ using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 
 namespace ClearCanvas.Ris.Client
 {
-	[MenuAction("launch", "global-menus/MenuTools/Edit Staff Detail", "Launch")]
+	[MenuAction("launch", "global-menus/MenuTools/Staff Profile", "Launch")]
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class StaffEditorTool : Tool<IDesktopToolContext>
 	{
@@ -217,9 +217,9 @@ namespace ClearCanvas.Ris.Client
 
 					// allow modification of non-elective groups only iff the user has StaffGroup admin permissions
 					bool nonElectiveGroupsReadOnly = Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.StaffGroup) == false;
-					string nonElectiveGroupsPageTitle = nonElectiveGroupsReadOnly ? "Staff/Groups (read only)" : "Staff/Groups";
+					string nonElectiveGroupsPageTitle = nonElectiveGroupsReadOnly ? "Staff/Groups/Non-elective (read only)" : "Staff/Groups/Non-elective";
 					this.Pages.Add(new NavigatorPage(nonElectiveGroupsPageTitle, _nonElectiveGroupsEditor = new StaffNonElectiveStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices, nonElectiveGroupsReadOnly)));
-					this.Pages.Add(new NavigatorPage("Staff/Elective Groups", _electiveGroupsEditor = new StaffElectiveStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices, false)));
+					this.Pages.Add(new NavigatorPage("Staff/Groups/Elective", _electiveGroupsEditor = new StaffElectiveStaffGroupEditorComponent(_staffDetail.Groups, formDataResponse.StaffGroupChoices, false)));
 				});
 
 			// instantiate all extension pages

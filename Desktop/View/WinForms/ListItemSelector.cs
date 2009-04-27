@@ -93,6 +93,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			get { return _readOnly; }
 			set
 			{
+				_readOnly = value;
 				_addItemButton.Enabled = !value;
 				_removeItemButton.Enabled = !value;
 			}
