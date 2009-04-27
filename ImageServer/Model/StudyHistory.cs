@@ -17,13 +17,16 @@ namespace ClearCanvas.ImageServer.Model
         /// <returns></returns>
         static public IList<StudyHistory> Find(StudyStorageLocation storageLocation)
         {
-            IReadContext readContext = _store.OpenReadContext();
-            IStudyHistoryEntityBroker broker = readContext.GetBroker<IStudyHistoryEntityBroker>();
-            StudyHistorySelectCriteria criteria = new StudyHistorySelectCriteria();
-            criteria.StudyStorageKey.EqualTo(storageLocation.GetKey());
-            criteria.StudyHistoryTypeEnum.EqualTo(StudyHistoryTypeEnum.StudyReconciled);
-            IList<StudyHistory> historyList = broker.Find(criteria);
-            return historyList;
+            using(IReadContext readContext = _store.OpenReadContext())
+            {
+                IStudyHistoryEntityBroker broker = readContext.GetBroker<IStudyHistoryEntityBroker>();
+                StudyHistorySelectCriteria criteria = new StudyHistorySelectCriteria();
+                criteria.StudyStorageKey.EqualTo(storageLocation.GetKey());
+                criteria.StudyHistoryTypeEnum.EqualTo(StudyHistoryTypeEnum.StudyReconciled);
+                IList<StudyHistory> historyList = broker.Find(criteria);
+                return historyList;
+            }
+            
         }
 
     }

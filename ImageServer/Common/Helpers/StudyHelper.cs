@@ -42,10 +42,11 @@ namespace ClearCanvas.ImageServer.Common.Helpers
         /// <param name="message"></param>
         /// <param name="studyStorage"></param>
         /// <returns></returns>
-        static public DifferenceCollection Compare(DicomMessageBase message, StudyStorageLocation studyStorage)
+        static public DifferenceCollection Compare(DicomMessageBase message, Study study, ServerPartition partition)
         {
             StudyComparer comparer = new StudyComparer();
-            return comparer.Compare(message, studyStorage.Study, studyStorage.ServerPartition.GetComparisonOptions());
+
+            return comparer.Compare(message, study, partition.GetComparisonOptions());
         }
     }
 }

@@ -40,6 +40,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -83,9 +84,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
     public abstract class BaseItemProcessor: IWorkQueueItemProcessor
     {
         private string _name = "Work Queue";
-        
         private IReadContext _readContext;
-
         private TimeSpanStatistics _storageLocationLoadTime = new TimeSpanStatistics();
         private TimeSpanStatistics _uidsLoadTime = new TimeSpanStatistics();
         private TimeSpanStatistics _dBUpdateTime = new TimeSpanStatistics();
@@ -101,15 +100,23 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         
         #region Protected Properties
 
-        protected IReadContext ReadContext
-        {
-            get { return _readContext; }
-        }
-
         protected StudyStorageLocation StorageLocation
         {
             get { return _storageLocation; }
 			set { _storageLocation = value; }
+        }
+
+        protected IReadContext ReadContext
+        {
+            get
+            {
+                if (_readContext==null)
+                {
+                    _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+                    
+                }
+                return _readContext;
+            }
         }
 
         protected IList<WorkQueueUid> WorkQueueUidList
@@ -194,20 +201,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     if (_theStudy==null)
                     {
-                        _theStudy = Study.Find(StorageLocation.StudyInstanceUid, ServerPartition);
+                        _theStudy = Study.Find(ReadContext, StorageLocation.StudyInstanceUid, ServerPartition);
                     }
                 }
                 return _theStudy;
             }
-        }
-
-        #endregion
-
-        #region Contructors
-
-        protected BaseItemProcessor()
-        {
-            _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
         }
 
         #endregion
@@ -237,11 +235,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// <param name="item">The WorkQueue item.</param>
         protected void LoadUids(Model.WorkQueue item)
         {
+            
             if (_uidList==null)
             {
                 UidsLoadTime.Add(delegate
                         {
-                            IWorkQueueUidEntityBroker select = _readContext.GetBroker<IWorkQueueUidEntityBroker>();
+                            IWorkQueueUidEntityBroker select = ReadContext.GetBroker<IWorkQueueUidEntityBroker>();
 
                             WorkQueueUidSelectCriteria parms = new WorkQueueUidSelectCriteria();
 
@@ -861,7 +860,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         /// </summary>
         public virtual void Dispose()
         {
-            if (_readContext != null)
+            if (_readContext!=null)
             {
                 _readContext.Dispose();
                 _readContext = null;

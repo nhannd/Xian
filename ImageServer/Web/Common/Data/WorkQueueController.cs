@@ -59,9 +59,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         /// <returns></returns>
 		static public StudyStorageLocation GetLoadStorageLocation(WorkQueue item)
         {
-        	using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-        	{
-				IQueryStudyStorageLocation select = ctx.GetBroker<IQueryStudyStorageLocation>();
+
+            IQueryStudyStorageLocation select = HttpContextData.Current.ReadContext.GetBroker<IQueryStudyStorageLocation>();
 
         		StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
         		parms.StudyStorageKey = item.StudyStorageKey;
@@ -83,7 +82,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         		}
 
         		return storages[0];
-        	}
+        	
         }
 
 
@@ -189,15 +188,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             try
             {
                 IList<WorkQueue> list;
-                
-                IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
 
-                using (IReadContext ctx = _store.OpenReadContext())
-                {
-                    IWebQueryWorkQueue broker = ctx.GetBroker<IWebQueryWorkQueue>();
-                    list = broker.Find(parameters);
-                }
-
+                IWebQueryWorkQueue broker = HttpContextData.Current.ReadContext.GetBroker<IWebQueryWorkQueue>();
+                list = broker.Find(parameters);
                 return list;
             }
             catch(Exception e)

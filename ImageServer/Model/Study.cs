@@ -27,11 +27,14 @@ namespace ClearCanvas.ImageServer.Model
                 {
                     if (_series == null)
                     {
-                        IReadContext readContext = _store.OpenReadContext();
-                        ISeriesEntityBroker broker = readContext.GetBroker<ISeriesEntityBroker>();
-                        SeriesSelectCriteria criteria = new SeriesSelectCriteria();
-                        criteria.StudyKey.EqualTo(this.GetKey());
-                        _series = broker.Find(criteria);
+                        using(IReadContext readContext = _store.OpenReadContext())
+                        {
+                            ISeriesEntityBroker broker = readContext.GetBroker<ISeriesEntityBroker>();
+                            SeriesSelectCriteria criteria = new SeriesSelectCriteria();
+                            criteria.StudyKey.EqualTo(this.GetKey());
+                            _series = broker.Find(criteria);
+                        }
+                        
                     }
                 }
                 return _series;
@@ -59,7 +62,6 @@ namespace ClearCanvas.ImageServer.Model
 
         #endregion
 
-
         /// <summary>
         /// Find a <see cref="Study"/> with the specified study instance uid on the given partition.
         /// </summary>
@@ -67,15 +69,16 @@ namespace ClearCanvas.ImageServer.Model
         /// <param name="partition"></param>
         /// <returns></returns>
         /// 
-        static public Study Find(String studyInstanceUid, ServerPartition partition)
+        static public Study Find(IPersistenceContext context, String studyInstanceUid, ServerPartition partition)
         {
-            IReadContext readContext = _store.OpenReadContext();
-            IStudyEntityBroker broker = readContext.GetBroker<IStudyEntityBroker>();
+
+            IStudyEntityBroker broker = context.GetBroker<IStudyEntityBroker>();
             StudySelectCriteria criteria = new StudySelectCriteria();
             criteria.ServerPartitionKey.EqualTo(partition.GetKey());
             criteria.StudyInstanceUid.EqualTo(studyInstanceUid);
             Study study = broker.FindOne(criteria);
             return study;
+           
         }
     }
 }

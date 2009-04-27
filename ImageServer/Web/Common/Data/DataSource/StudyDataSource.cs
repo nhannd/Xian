@@ -526,11 +526,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			_list = new List<StudySummary>();
 
-			using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-			{
-				foreach (Study study in studyList)
-					_list.Add(StudySummaryAssembler.CreateStudySummary(read, study));
-			}
+			foreach (Study study in studyList)
+                _list.Add(StudySummaryAssembler.CreateStudySummary(HttpContextData.Current.ReadContext, study));
 
 			if (StudyFoundSet != null)
 				StudyFoundSet(_list);

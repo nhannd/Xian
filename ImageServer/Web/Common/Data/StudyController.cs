@@ -82,15 +82,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
 			Platform.CheckForNullReference(studyStorageKey, "storageKey");
 
-            using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IStudyIntegrityQueueEntityBroker integrityQueueBroker = ctx.GetBroker<IStudyIntegrityQueueEntityBroker>();
-                StudyIntegrityQueueSelectCriteria parms = new StudyIntegrityQueueSelectCriteria();
 
-				parms.StudyStorageKey.EqualTo(studyStorageKey);
+            IStudyIntegrityQueueEntityBroker integrityQueueBroker = HttpContextData.Current.ReadContext.GetBroker<IStudyIntegrityQueueEntityBroker>();
+            StudyIntegrityQueueSelectCriteria parms = new StudyIntegrityQueueSelectCriteria();
 
-                return integrityQueueBroker.Find(parms);
-            }
+			parms.StudyStorageKey.EqualTo(studyStorageKey);
+
+            return integrityQueueBroker.Find(parms);
+        
         }
 
 		/// <summary>
@@ -99,17 +98,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		public void DeleteStudy(ServerEntityKey studyKey, string reason)
         {
 			StudySummary study;
-			using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-			{
-				study = StudySummaryAssembler.CreateStudySummary(ctx, Study.Load(ctx, studyKey));
-				if (study.IsReconcileRequired)
-				{
-					throw new ApplicationException(
-						String.Format("Deleting the study is not allowed at this time : there are items to be reconciled."));
 
-					// NOTE: another check will occur when the delete is actually processed
-				}
+            study = StudySummaryAssembler.CreateStudySummary(HttpContextData.Current.ReadContext, Study.Load(HttpContextData.Current.ReadContext, studyKey));
+			if (study.IsReconcileRequired)
+			{
+				throw new ApplicationException(
+					String.Format("Deleting the study is not allowed at this time : there are items to be reconciled."));
+
+				// NOTE: another check will occur when the delete is actually processed
 			}
+			
 
 			using (IUpdateContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
@@ -383,31 +381,30 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             Platform.CheckForNullReference(study, "Study");
 
-            using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-            {
-                IQueryStudyStorageLocation select = ctx.GetBroker<IQueryStudyStorageLocation>();
-                StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
+            
+            IQueryStudyStorageLocation select = HttpContextData.Current.ReadContext.GetBroker<IQueryStudyStorageLocation>();
+            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
 
-                parms.StudyStorageKey = GetStudyStorageGUID(study);
+            parms.StudyStorageKey = GetStudyStorageGUID(study);
 
-                IList<StudyStorageLocation> storage = select.Find(parms);
+            IList<StudyStorageLocation> storage = select.Find(parms);
 
-                if (storage == null)
-				{
-					storage = new List<StudyStorageLocation>();
-				    Platform.Log(LogLevel.Warn, "Unable to find storage location for Study item: {0}",
-                                 study.GetKey().ToString());
-                }
-
-                if (storage.Count > 1)
-                {
-                    Platform.Log(LogLevel.Warn,
-                                 "StudyController:GetStudyStorageLocation: multiple study storage found for study {0}",
-                                 study.GetKey().Key);
-                }
-
-                return storage;
+            if (storage == null)
+			{
+				storage = new List<StudyStorageLocation>();
+			    Platform.Log(LogLevel.Warn, "Unable to find storage location for Study item: {0}",
+                             study.GetKey().ToString());
             }
+
+            if (storage.Count > 1)
+            {
+                Platform.Log(LogLevel.Warn,
+                             "StudyController:GetStudyStorageLocation: multiple study storage found for study {0}",
+                             study.GetKey().Key);
+            }
+
+            return storage;
+        
         }
 		public StudyStorage GetStudyStorage(Study study)
 		{

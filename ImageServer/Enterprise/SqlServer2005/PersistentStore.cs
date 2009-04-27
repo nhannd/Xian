@@ -46,8 +46,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
     [ExtensionOf(typeof(PersistentStoreExtensionPoint))]
     public class PersistentStore : IPersistentStore
     {
+        private static readonly object _syncRoot = new object();
+        private static int _connectionCounter = 0;
         private String _connectionString;
         private ITransactionNotifier _transactionNotifier;
+        private int _maxPoolSize;
 
         #region IPersistentStore Members
 
@@ -90,6 +93,8 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
             {
                 // Retrieve the partial connection string.
                 _connectionString = settings.ConnectionString;
+                SqlConnectionStringBuilder sb = new SqlConnectionStringBuilder(_connectionString);
+                _maxPoolSize = sb.MaxPoolSize;
             }
         }
 
@@ -108,8 +113,25 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 				try
 				{
 					SqlConnection connection = new SqlConnection(_connectionString);
-					connection.Open();
-					return connection;
+                    connection.Open();
+                    connection.Disposed += new EventHandler(Connection_Disposed);
+					
+                    lock(_syncRoot)
+				    {
+                        _connectionCounter++;
+                        if (SqlServerSettings.Default.ConnectionPoolUsageWarningLevel<=0)
+                        {
+                            Platform.Log(LogLevel.Warn, "# Db Connections={0}", _connectionCounter);
+                        }
+                        else if (_connectionCounter > _maxPoolSize / SqlServerSettings.Default.ConnectionPoolUsageWarningLevel)
+                        {
+                            if (_connectionCounter%3==0)
+                            {
+                                Platform.Log(LogLevel.Warn, "# Db Connections={0}", _connectionCounter);
+                            }
+                        }
+                    }
+				    return connection;
 				}
 				catch (SqlException e)
 				{
@@ -128,6 +150,14 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 			}
 		}
 
+        void Connection_Disposed(object sender, EventArgs e)
+        {
+            lock (_syncRoot)
+            {
+                _connectionCounter --;
+            }
+        }
+
     	public IReadContext OpenReadContext()
         {
             try
@@ -142,7 +172,7 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 
                 throw new PersistenceException("Unexpected exception opening database connection for reading", e);
             }
-            }
+        }
 
         public IUpdateContext OpenUpdateContext(UpdateContextSyncMode mode)
         {

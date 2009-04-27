@@ -15,8 +15,6 @@ namespace ClearCanvas.ImageServer.Common.Helpers
     
     public static class StorageHelper
     {
-        static private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
-    	
         /// <summary>
         /// Returns the name of the directory in the filesytem
         /// where the study with the specified information will be stored.
@@ -79,7 +77,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
             }
 
 
-            using (IUpdateContext updateContext = _store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            using (IUpdateContext updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
                 IQueryStudyStorageLocation locQuery = updateContext.GetBroker<IQueryStudyStorageLocation>();
                 StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
@@ -97,7 +95,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
                         return null;
                     }
 
-                    IInsertStudyStorage locInsert = _store.OpenReadContext().GetBroker<IInsertStudyStorage>();
+                    IInsertStudyStorage locInsert = updateContext.GetBroker<IInsertStudyStorage>();
                     InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
                     insertParms.ServerPartitionKey = partition.GetKey();
                     insertParms.StudyInstanceUid = studyInstanceUid;

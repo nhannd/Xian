@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Web;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
@@ -62,10 +63,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
         public IList<TServerEntity> Get()
         {
-			using (IReadContext context = PersistentStore.OpenReadContext())
-            {
-				return Get(context);
-            }
+            return Get(HttpContextData.Current.ReadContext);
         }
 		public IList<TServerEntity> Get(IPersistenceContext context)
 		{
@@ -78,10 +76,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 		public TServerEntity Get(ServerEntityKey key)
 		{
-			using (IReadContext context = PersistentStore.OpenReadContext())
-			{
-				return Get(context, key);
-			}
+            return Get(HttpContextData.Current.ReadContext, key);
 		}
 
 		public TServerEntity Get(IPersistenceContext context, ServerEntityKey key)
@@ -92,11 +87,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
     	public IList<TServerEntity> Get(TCriteria criteria)
         {
-			using (IReadContext context = PersistentStore.OpenReadContext())
-            {
-				return Get(context, criteria);
-            }
+            return Get(HttpContextData.Current.ReadContext, criteria);
         }
+
 		public IList<TServerEntity> Get(IPersistenceContext context, TCriteria criteria)
 		{
 
@@ -106,10 +99,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 		}
 		public IList<TServerEntity> GetRange(TCriteria criteria, int startIndex, int maxRows)
 		{
-			using (IReadContext context = PersistentStore.OpenReadContext())
-			{
-				return GetRange(context, criteria, startIndex, maxRows);
-			}
+            return GetRange(HttpContextData.Current.ReadContext, criteria, startIndex, maxRows);
 		}
 		public IList<TServerEntity> GetRange(IPersistenceContext context, TCriteria criteria, int startIndex, int maxRows)
 		{
@@ -119,19 +109,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
     	public int GetCount(TCriteria criteria)
 		{
-			using (IReadContext context = PersistentStore.OpenReadContext())
-			{
-				TIEntity select = context.GetBroker<TIEntity>();
-				return select.Count(criteria);
-			}
+            TIEntity select = HttpContextData.Current.ReadContext.GetBroker<TIEntity>();
+			return select.Count(criteria);
 		}
 
 		public TServerEntity GetFirst(TCriteria criteria)
 		{
-			using (IReadContext context = PersistentStore.OpenReadContext())
-			{
-				return GetFirst(context, criteria);
-			}
+            return GetFirst(HttpContextData.Current.ReadContext, criteria);
 		}
 
 		public TServerEntity GetFirst(IPersistenceContext context, TCriteria criteria)

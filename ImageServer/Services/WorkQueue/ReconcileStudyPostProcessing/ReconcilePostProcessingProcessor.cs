@@ -56,9 +56,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 		protected override void ProcessFile(Model.WorkQueueUid queueUid, string path, ClearCanvas.Dicom.Utilities.Xml.StudyXml stream)
 		{
 			DicomFile file = LoadDicomFile(path);
-			if (StorageLocation.Study != null)
+			if (Study != null)
 			{
-				DifferenceCollection list = StudyHelper.Compare(file, StorageLocation);
+                DifferenceCollection list = StudyHelper.Compare(file, Study, ServerPartition);
 				if (list != null && list.Count > 0)
 				{
 					Platform.Log(LogLevel.Warn, "Dicom file contains information inconsistent with the study in the system");

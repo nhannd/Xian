@@ -300,7 +300,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             _newStudyFolder = _oldStudyFolder;
             _newStudyInstanceUid = _oldStudyInstanceUid;
 
-            _study = _studyLocation.Study;
+            _study = _studyLocation.LoadStudy(UpdateContext);
             _totalSopCount = _study.NumberOfStudyRelatedInstances;
             _curPatient = _study.Patient;
             _oldPatientInfo = new PatientInfo();
@@ -488,7 +488,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         private void LoadEntities()
         {
             _storage = StudyStorage.Load(_studyLocation.GetKey());
-            _study = Study.Find(_studyLocation.StudyInstanceUid, _partition);
+            _study = _storage.LoadStudy(UpdateContext);
         }
 
         private void UpdateDatabase()

@@ -187,19 +187,24 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                 return;
             else
             {
-                Context.DestStorageLocation = FindOrCreateStudyStorageLocation(file, updateContext);
+                Context.DestStorageLocation = FindOrCreateStudyStorageLocation(file);
             }
         }
 
-        private StudyStorageLocation FindOrCreateStudyStorageLocation(DicomFile file, IUpdateContext updateContext)
+        private StudyStorageLocation FindOrCreateStudyStorageLocation(DicomFile file)
         {
+            Platform.CheckForNullReference(UpdateContext, "UpdateContext");
+            Platform.CheckForNullReference(file, "file");
+            Platform.CheckForNullReference(Context, "Context");
+            Platform.CheckForNullReference(Context.Partition, "Context.Partition");
+            
+            
             String studyInstanceUid = file.DataSet[DicomTags.StudyInstanceUid].ToString();
             String studyDate = file.DataSet[DicomTags.StudyDate].ToString();
 
-            String folder = StorageHelper.ResolveStorageFolder(Context.Partition, studyInstanceUid, studyDate, updateContext, true);
+            String folder = StorageHelper.ResolveStorageFolder(Context.Partition, studyInstanceUid, studyDate, UpdateContext, true);
             
-            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-            IQueryStudyStorageLocation locQuery = updateContext.GetBroker<IQueryStudyStorageLocation>();
+            IQueryStudyStorageLocation locQuery = UpdateContext.GetBroker<IQueryStudyStorageLocation>();
             StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
             locParms.StudyInstanceUid = studyInstanceUid;
             locParms.ServerPartitionKey = Context.Partition.GetKey();
@@ -209,7 +214,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             {
                 // INSERT NEW LOCATION INTO DB
 
-                IStudyStorageEntityBroker selectBroker = updateContext.GetBroker<IStudyStorageEntityBroker>();
+                IStudyStorageEntityBroker selectBroker = UpdateContext.GetBroker<IStudyStorageEntityBroker>();
                 StudyStorageSelectCriteria criteria = new StudyStorageSelectCriteria();
 
                 criteria.ServerPartitionKey.EqualTo(Context.Partition.GetKey());
@@ -231,7 +236,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                     return null;
                 }
 
-                IInsertStudyStorage locInsert = store.OpenReadContext().GetBroker<IInsertStudyStorage>();
+                IInsertStudyStorage locInsert = UpdateContext.GetBroker<IInsertStudyStorage>();
                 InsertStudyStorageParameters insertParms = new InsertStudyStorageParameters();
                 insertParms.ServerPartitionKey = Context.Partition.GetKey();
                 insertParms.StudyInstanceUid = studyInstanceUid;
@@ -314,6 +319,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                 throw new ApplicationException(
                     String.Format("Cannot create study folder: {0}", _processor.FailureReason));
             }
+
+            Platform.Log(LogLevel.Info, "New study folder created: {0}", destPath);
         }
 
         protected override void OnUndo()

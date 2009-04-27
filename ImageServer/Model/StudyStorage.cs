@@ -17,17 +17,7 @@ namespace ClearCanvas.ImageServer.Model
 		#endregion
 		
 		#region Public Properties
-        public Study Study
-        {
-            get
-            {
-                if (_study==null)
-                {
-                    _study = Study.Find(this.StudyInstanceUid, this.ServerPartition);
-                }
-                return _study;
-            }
-        }
+        
 
         public ServerPartition ServerPartition
         {
@@ -42,6 +32,16 @@ namespace ClearCanvas.ImageServer.Model
         }
 		
 		#endregion
+		
+		public Study LoadStudy(IPersistenceContext context)
+        {
+            if (_study==null)
+            {
+                _study = Study.Find(context, this.StudyInstanceUid, this.ServerPartition);
+            }
+            return _study;
+            
+        }
 		
         public void Archive(IUpdateContext context)
         {

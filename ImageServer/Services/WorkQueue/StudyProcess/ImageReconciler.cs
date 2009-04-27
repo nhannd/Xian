@@ -39,6 +39,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Data;
@@ -60,6 +61,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     class ImageReconciler
     {
         #region Private Members
+        private IReadContext _readContext;
         private ServerPartition _partition;
         private Study _existingStudy;
         private StudyStorageLocation _existingStudyLocation;
@@ -97,6 +99,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             get { return _existingStudy; }
             set { _existingStudy = value; }
+        }
+
+        public IReadContext ReadContext
+        {
+            get { return _readContext; }
+            set { _readContext = value; }
         }
 
         #endregion
@@ -175,7 +183,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             Platform.CheckForNullReference(ExistingStudyLocation, "ExistingStudyLocation");
 
-            DifferenceCollection list = StudyHelper.Compare(message, ExistingStudyLocation);
+            
+            DifferenceCollection list = StudyHelper.Compare(message, this.ExistingStudy, this.Partition);
 
             if (list.Count == 1)
             {
@@ -312,6 +321,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                     {
                         throw new ApplicationException(String.Format("Unable to schedule image reconcilation : {0}", processor.FailureReason));
                     }
+
                 }
                 Platform.Log(LogLevel.Info, "SOP {0} has been scheduled for manual reconciliation.", _sopInstanceUid);
             }
@@ -321,13 +331,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 if (_reconcileContext.History.DestStudyStorageKey != null)
                 {
-                    StudyStorage destStorage = StudyStorage.Load(_reconcileContext.History.DestStudyStorageKey);
+                    StudyStorage destStorage = StudyStorage.Load(ReadContext, _reconcileContext.History.DestStudyStorageKey);
                     Debug.Assert(destStorage != null);
 
                     _reconcileContext.DestinationStudyLocation = StudyStorageLocation.FindStorageLocations(destStorage)[0];
                     Debug.Assert(_reconcileContext.DestinationStudyLocation != null);
-
-                    Study destStudy = Study.Find(destStorage.StudyInstanceUid, _partition); // note: assuming destination partition is the same as the current one
+                    Study destStudy = destStorage.LoadStudy(ReadContext);
                     Debug.Assert(destStudy != null);
                 }
                 

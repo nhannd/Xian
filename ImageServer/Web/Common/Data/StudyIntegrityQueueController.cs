@@ -244,7 +244,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             ReconcileStudyWorkQueueData data = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(queue.QueueData);
             _conflictingImageDetails = data.Details;
             _conflictingImageDescriptor = XmlUtils.Deserialize<ImageSetDescriptor>(queue.StudyData);
-            _existingStudyInfo = new StudyInformation( new ServerEntityAttributeProvider(StudyStorage.Load(queue.StudyStorageKey).Study));
+            StudyStorage storage = StudyStorage.Load(HttpContextData.Current.ReadContext, queue.StudyStorageKey);
+            Study study = storage.LoadStudy(HttpContextData.Current.ReadContext);
+            _existingStudyInfo = new StudyInformation(new ServerEntityAttributeProvider(study));
         }
 
         public StudyInformation ExistingStudyInfo

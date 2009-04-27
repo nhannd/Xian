@@ -219,23 +219,23 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
-        public Study Study
-        {
-            get
-            {
-                lock (_syncRoot)
-                {
-                    if (_study == null)
-                    {
-                        _study = Study.Find(StudyInstanceUid, ServerPartition);
-                    }
-                }
-                return _study;
-            }
-        }
+        
         #endregion
 
         #region Public Methods
+        
+        public Study LoadStudy(IPersistenceContext context)
+        {
+            lock (_syncRoot)
+            {
+                if (_study == null)
+                {
+                    _study = Study.Find(context, StudyInstanceUid, ServerPartition);
+                }
+            }
+            return _study;
+            
+        }
         public string GetStudyPath()
         {
             string path = Path.Combine(FilesystemPath, PartitionFolder);

@@ -34,6 +34,7 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -44,12 +45,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 
 	public class PurgeStudyItemProcessor : BaseItemProcessor
 	{
-		#region Private Members
-
-		private ServerPartition _partition;
-
-		#endregion
-
 		#region Private Methods
 		private void RemoveFilesystem()
 		{
@@ -89,7 +84,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 				if (false == delete.Execute(parms))
 				{
 					Platform.Log(LogLevel.Error, "Unexpected error when trying to delete study: {0} on partition {1}",
-								 StorageLocation.StudyInstanceUid, _partition.Description);
+								 StorageLocation.StudyInstanceUid, ServerPartition.Description);
 				}
 				else
 				{
@@ -110,8 +105,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 
 		protected override void ProcessItem(Model.WorkQueue item)
 		{
-			_partition = ServerPartition.Load(ReadContext, item.ServerPartitionKey);
-
 			Platform.Log(LogLevel.Info,
 			             "Purging study {0} for Patient {1} (PatientId:{2} A#:{3}) on partition {4}",
 			             Study.StudyInstanceUid, Study.PatientsName, Study.PatientId,

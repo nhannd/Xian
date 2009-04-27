@@ -37,7 +37,6 @@ using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Helpers;
@@ -53,8 +52,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     {
         #region Private Members
         private Model.WorkQueue _item;
-        private IReadContext _readContext;
-        private IUpdateContext _updateContext;
         private ServerPartition _partition;
         private StudyStorageLocation _storageLocation;
         private Study _study;
@@ -82,29 +79,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         {
             get { return _item; }
             set { _item = value; }
-        }
-
-        public IReadContext ReadContext
-        {
-            get
-            {
-                if (_readContext == null)
-                    _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-                return _readContext;
-            }
-            set { _readContext = value; }
-        }
-
-
-        public IUpdateContext UpdateContext
-        {
-            get
-            {
-                if (_updateContext == null)
-                    _updateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
-                return _updateContext;
-            }
-            set { _updateContext = value; }
         }
 
         public Study Study
@@ -208,7 +182,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
             else
             {
-                DifferenceCollection list = StudyHelper.Compare(message,  StorageLocation);
+                DifferenceCollection list = StudyHelper.Compare(message, Study, ServerPartition);
 
                 if (list != null && list.Count > 0)
                 {
@@ -383,6 +357,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             if (_reconciler==null)
             {
                 _reconciler = new ImageReconciler();
+                _reconciler.ReadContext = ReadContext;
                 _reconciler.ExistingStudy = _context.Study;
                 _reconciler.ExistingStudyLocation = StorageLocation;
                 _reconciler.Partition = _context.Partition;

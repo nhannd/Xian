@@ -94,32 +94,31 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public IEnumerable Select(int startRowIndex, int maxRows)
 		{
-			using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-			{
-				IStudyDeleteRecordEntityBroker broker = ctx.GetBroker<IStudyDeleteRecordEntityBroker>();
-				StudyDeleteRecordSelectCriteria criteria = new StudyDeleteRecordSelectCriteria();
-				if (!String.IsNullOrEmpty(AccessionNumber))
-					criteria.AccessionNumber.Like("%"+AccessionNumber+"%");
-				if (!String.IsNullOrEmpty(PatientId))
-					criteria.PatientId.Like("%" + PatientId + "%");
-				if (!String.IsNullOrEmpty(PatientsName))
-					criteria.PatientsName.Like("%" + PatientsName + "%");
-				if (!String.IsNullOrEmpty(StudyDescription))
-					criteria.StudyDescription.Like("%" + StudyDescription + "%");
-				if (StudyDate!=null)
-					criteria.StudyDate.Like("%" + DateParser.ToDicomString(StudyDate.Value) + "%");
+			
+			IStudyDeleteRecordEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IStudyDeleteRecordEntityBroker>();
+			StudyDeleteRecordSelectCriteria criteria = new StudyDeleteRecordSelectCriteria();
+			if (!String.IsNullOrEmpty(AccessionNumber))
+				criteria.AccessionNumber.Like("%"+AccessionNumber+"%");
+			if (!String.IsNullOrEmpty(PatientId))
+				criteria.PatientId.Like("%" + PatientId + "%");
+			if (!String.IsNullOrEmpty(PatientsName))
+				criteria.PatientsName.Like("%" + PatientsName + "%");
+			if (!String.IsNullOrEmpty(StudyDescription))
+				criteria.StudyDescription.Like("%" + StudyDescription + "%");
+			if (StudyDate!=null)
+				criteria.StudyDate.Like("%" + DateParser.ToDicomString(StudyDate.Value) + "%");
 
-				criteria.Timestamp.SortDesc(0);
-				IList<StudyDeleteRecord> list = broker.Find(criteria, startRowIndex, maxRows);
+			criteria.Timestamp.SortDesc(0);
+			IList<StudyDeleteRecord> list = broker.Find(criteria, startRowIndex, maxRows);
 
-				_studies = CollectionUtils.Map<StudyDeleteRecord, DeletedStudyInfo>(
-					list, delegate(StudyDeleteRecord record)
-					      	{
-					      		return DeletedStudyInfoAssembler.CreateDeletedStudyInfo(record);
-					      	});
+			_studies = CollectionUtils.Map<StudyDeleteRecord, DeletedStudyInfo>(
+				list, delegate(StudyDeleteRecord record)
+				      	{
+				      		return DeletedStudyInfoAssembler.CreateDeletedStudyInfo(record);
+				      	});
 
-				return _studies;
-			}
+			return _studies;
+		
 		}
 
 		public int SelectCount()
@@ -135,11 +134,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				criteria.StudyDescription.Like("%" + StudyDescription + "%");
 			if (StudyDate != null)
 				criteria.StudyDate.Like("%" + DateParser.ToDicomString(StudyDate.Value) + "%");
-			using (IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-			{
-				IStudyDeleteRecordEntityBroker broker = ctx.GetBroker<IStudyDeleteRecordEntityBroker>();
-				return broker.Count(criteria);
-			}
+
+            IStudyDeleteRecordEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IStudyDeleteRecordEntityBroker>();
+		    return broker.Count(criteria);
 		}
 	}
 

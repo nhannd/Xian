@@ -32,12 +32,12 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
+using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Exceptions;
@@ -150,23 +150,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails
             if (_partition == null)
                 return;
 
-			using (IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-			{
-				StudyAdaptor studyAdaptor = new StudyAdaptor();
-				StudySelectCriteria criteria = new StudySelectCriteria();
-				criteria.StudyInstanceUid.EqualTo(_studyInstanceUid);
-				criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
-				Study study = studyAdaptor.GetFirst(read, criteria);
+		
+			StudyAdaptor studyAdaptor = new StudyAdaptor();
+			StudySelectCriteria criteria = new StudySelectCriteria();
+			criteria.StudyInstanceUid.EqualTo(_studyInstanceUid);
+			criteria.ServerPartitionKey.EqualTo(Partition.GetKey());
+			Study study = studyAdaptor.GetFirst(HttpContextData.Current.ReadContext, criteria);
 
-				if (study != null)
-					_study = StudySummaryAssembler.CreateStudySummary(read, study);
-				else
-				{
-					StudyNotFoundException exception =
-						new StudyNotFoundException(_studyInstanceUid, "The Study is null in Default.aspx -> LoadStudy()");
-					ExceptionHandler.ThrowException(exception);
-				}
+			if (study != null)
+                _study = StudySummaryAssembler.CreateStudySummary(HttpContextData.Current.ReadContext, study);
+			else
+			{
+				StudyNotFoundException exception =
+					new StudyNotFoundException(_studyInstanceUid, "The Study is null in Default.aspx -> LoadStudy()");
+				ExceptionHandler.ThrowException(exception);
 			}
+			
         	StudyDetailsPanel.Study = _study;
             StudyDetailsPanel.DataBind();
         }

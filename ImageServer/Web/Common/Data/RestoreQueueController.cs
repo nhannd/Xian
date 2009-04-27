@@ -57,11 +57,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
 				IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
 
-				using (IReadContext ctx = _store.OpenReadContext())
-				{
-					IWebQueryRestoreQueue broker = ctx.GetBroker<IWebQueryRestoreQueue>();
-					list = broker.Find(parameters);
-				}
+                IWebQueryRestoreQueue broker = HttpContextData.Current.ReadContext.GetBroker<IWebQueryRestoreQueue>();
+				list = broker.Find(parameters);
 
 				return list;
 			}

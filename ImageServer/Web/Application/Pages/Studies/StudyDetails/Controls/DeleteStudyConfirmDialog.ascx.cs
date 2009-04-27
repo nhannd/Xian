@@ -10,6 +10,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Security;
 
@@ -172,19 +173,18 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             if (ReasonListBox.Items.Count == 0)
             {
                 IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-                using (IReadContext context = store.OpenReadContext())
-                {
-                    ICannedTextEntityBroker broker = context.GetBroker<ICannedTextEntityBroker>();
-                    CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
-                    criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
-                    IList<CannedText> list = broker.Find(criteria);
 
-                    ReasonListBox.Items.Add(new ListItem("-- Select one --", ""));
-                    foreach (CannedText text in list)
-                    {
-                        ReasonListBox.Items.Add(new ListItem(text.Label, text.Text));
-                    }
+                ICannedTextEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<ICannedTextEntityBroker>();
+                CannedTextSelectCriteria criteria = new CannedTextSelectCriteria();
+                criteria.Category.EqualTo(REASON_CANNEDTEXT_CATEGORY);
+                IList<CannedText> list = broker.Find(criteria);
+
+                ReasonListBox.Items.Add(new ListItem("-- Select one --", ""));
+                foreach (CannedText text in list)
+                {
+                    ReasonListBox.Items.Add(new ListItem(text.Label, text.Text));
                 }
+                
             }
         }
 

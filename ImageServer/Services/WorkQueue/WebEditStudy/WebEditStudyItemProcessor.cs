@@ -120,10 +120,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         {
             Debug.Assert(ServerPartition != null);
             Debug.Assert(StorageLocation != null);
-
+            
             _filesystem = FilesystemMonitor.Instance.GetFilesystemInfo(StorageLocation.FilesystemKey);
-            _study = Study.Find(StorageLocation.StudyInstanceUid, ServerPartition);
-            _patient = Patient.Load(_study.PatientKey);
+            _study = StorageLocation.LoadStudy(ReadContext);
+            _patient = Patient.Load(ReadContext, _study.PatientKey);
 
         }
 
