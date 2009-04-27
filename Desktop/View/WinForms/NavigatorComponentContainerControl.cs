@@ -32,13 +32,14 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class NavigatorComponentContainerControl : CustomUserControl
     {
-        private NavigatorComponentContainer _component;
-        private Dictionary<NavigatorPage, TreeNode> _nodeMap;
+        private readonly NavigatorComponentContainer _component;
+        private readonly Dictionary<NavigatorPage, TreeNode> _nodeMap;
 
 		public NavigatorComponentContainerControl(NavigatorComponentContainer component)
 		{
@@ -49,7 +50,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             _nodeMap = new Dictionary<NavigatorPage, TreeNode>();
 
             _component = component;
-            _component.CurrentPageChanged += new EventHandler(_component_CurrentNodeChanged);
+            _component.CurrentPageChanged += _component_CurrentNodeChanged;
+			_component.Pages.ItemAdded += Pages_ItemAdded;
+			_component.Pages.ItemRemoved += Pages_ItemRemoved;
 
 			if (!_component.ShowApply)
 			{
@@ -75,14 +78,32 @@ namespace ClearCanvas.Desktop.View.WinForms
                 AddTreeNode(page, _treeView.Nodes, 0);
             }
 
-            // expand first-level of tree
-            foreach (TreeNode treeNode in _treeView.Nodes)
-            {
-                treeNode.Expand();
-            }
+			if(_component.StartFullyExpanded)
+			{
+				// expand entire tree
+				_treeView.ExpandAll();
+			}
+			else
+			{
+				// expand first-level of tree
+				foreach (TreeNode treeNode in _treeView.Nodes)
+				{
+					treeNode.Expand();
+				}
+			}
 
             ShowPage(_component.CurrentPage);
         }
+
+		private void Pages_ItemAdded(object sender, ListEventArgs<NavigatorPage> e)
+		{
+			AddTreeNode(e.Item, _treeView.Nodes, 0);
+		}
+
+		private void Pages_ItemRemoved(object sender, ListEventArgs<NavigatorPage> e)
+		{
+			RemoveTreeNode(e.Item);
+		}
 
         private void _component_CurrentNodeChanged(object sender, EventArgs e)
         {
@@ -133,6 +154,16 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+		private void RemoveTreeNode(NavigatorPage page)
+		{
+			// find node in map and remove it
+			TreeNode node = _nodeMap[page];
+			_nodeMap.Remove(page);
+
+			// remove node from tree, recursively removing parent nodes if empty
+			RemoveNode(node);
+		}
+
         private void ShowPage(NavigatorPage page)
         {
             // get the control to show
@@ -176,9 +207,47 @@ namespace ClearCanvas.Desktop.View.WinForms
             NavigatorPage page = (NavigatorPage)e.Node.Tag;
             if (page == null)
             {
-                // no page associated with this node, select another node?
+                // no page associated with this node, so cancel this selection
                 e.Cancel = true;
+
+				// attempt to select the next selectable node
+				TreeNode nextNode = FindNextNode(e.Node, delegate(TreeNode n) { return n.Tag != null; });
+				if(nextNode != null)
+					_treeView.SelectedNode = nextNode;
             }
         }
-    }
+
+		/// <summary>
+		/// Performs in-order traversal, returns the next node that matches the specified condition.
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="condition"></param>
+		/// <returns></returns>
+		private static TreeNode FindNextNode(TreeNode node, Predicate<TreeNode> condition)
+		{
+			if (condition(node))
+				return node;
+
+			foreach (TreeNode child in node.Nodes)
+			{
+				TreeNode n = FindNextNode(child, condition);
+				if (n != null)
+					return n;
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Removes the specified node and all childless antecedants.
+		/// </summary>
+		/// <param name="node"></param>
+		private static void RemoveNode(TreeNode node)
+		{
+			TreeNode parent = node.Parent;
+			node.Remove();
+			if (parent.Nodes.Count == 0)
+				RemoveNode(parent);
+		}
+
+	}
 }

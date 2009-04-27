@@ -66,6 +66,8 @@ namespace ClearCanvas.Desktop
 		private bool _applyEnabled;
 		private event EventHandler _applyEnabledChanged;
 
+    	private bool _startFullyExpanded;
+
         /// <summary>
         /// Default constructor.
         /// </summary>
@@ -85,6 +87,17 @@ namespace ClearCanvas.Desktop
 		
 		#region Presentation Model
 
+		/// <summary>
+		/// Gets a value indicating whether the components starts with the entire tree expanded.
+		/// </summary>
+		/// <remarks>
+		/// Setting this value has no effect after the component has started.
+		/// </remarks>
+    	public bool StartFullyExpanded
+    	{
+			get { return _startFullyExpanded; }
+			set { _startFullyExpanded = value; }
+    	}
 
         /// <summary>
         /// Advances to the next page.
