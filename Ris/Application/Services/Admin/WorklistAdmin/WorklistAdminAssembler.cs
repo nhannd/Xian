@@ -340,7 +340,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
                 staffFilter.IncludeCurrentStaff = stafflist.IncludeCurrentUser;
             }
-            staffFilter.IsEnabled = staffFilter.Values.Count > 0;
+            staffFilter.IsEnabled = staffFilter.Values.Count > 0 || staffFilter.IncludeCurrentStaff;
         }
 
         public WorklistTimePoint CreateTimePoint(WorklistAdminDetail.TimePoint contract)
