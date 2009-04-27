@@ -129,7 +129,7 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, WorklistEditorMode.Edit, false);
+				WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, false);
 				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Context.DesktopWindow,
                     new DialogBoxCreationArgs(editor, "Edit Worklist" + " - " + folder.Name, null, DialogSizeHint.Medium));
@@ -155,13 +155,15 @@ namespace ClearCanvas.Ris.Client
 
 			try
 			{
-				WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, WorklistEditorMode.Duplicate, false);
+				IWorklistFolderSystem fs = (IWorklistFolderSystem)this.Context.SelectedFolderSystem;
+				string initialWorklistClassName = folder == null ? null : folder.WorklistClassName;
+
+				WorklistEditorComponent editor = new WorklistEditorComponent(folder.WorklistRef, false, fs.SupportedWorklistClasses, initialWorklistClassName);
 				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Context.DesktopWindow,
                     new DialogBoxCreationArgs(editor, "New Worklist", null, DialogSizeHint.Medium));
                 if (exitCode == ApplicationComponentExitCode.Accepted)
 				{
-					IWorklistFolderSystem fs = (IWorklistFolderSystem)this.Context.SelectedFolderSystem;
 					AddNewWorklistsToFolderSystem(editor.EditedWorklistSummaries, fs);
 				}
 			}

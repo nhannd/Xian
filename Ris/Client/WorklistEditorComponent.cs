@@ -135,15 +135,27 @@ namespace ClearCanvas.Ris.Client
             _initialClassName = selectedClass;
         }
 
+		/// <summary>
+		/// Constructor to edit a worklist.
+		/// </summary>
+		public WorklistEditorComponent(EntityRef entityRef, bool adminMode)
+		{
+			_mode = WorklistEditorMode.Edit;
+			_worklistRef = entityRef;
+			_adminMode = adminMode;
+		}
+
         /// <summary>
-        /// Constructor edit or duplicate a worklist.
+        /// Constructor to duplicate a worklist.
         /// </summary>
-        public WorklistEditorComponent(EntityRef entityRef, WorklistEditorMode editorMode, bool adminMode)
+		public WorklistEditorComponent(EntityRef entityRef, bool adminMode, IList<string> worklistClassChoices, string selectedClass)
         {
-            _mode = editorMode;
+            _mode = WorklistEditorMode.Duplicate;
             _worklistRef = entityRef;
             _adminMode = adminMode;
-        }
+			_worklistClassChoices = worklistClassChoices;
+			_initialClassName = selectedClass;
+		}
 
         public override void Start()
         {
@@ -152,20 +164,12 @@ namespace ClearCanvas.Ris.Client
                 {
                     GetWorklistEditFormDataResponse formDataResponse = service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest());
 
-                    // initialize _worklistDetail depending on add vs edit vs duplicate mode
+					// initialize _worklistDetail depending on add vs edit vs duplicate mode
                     List<ProcedureTypeGroupSummary> procedureTypeGroups = new List<ProcedureTypeGroupSummary>();
                     if (_mode == WorklistEditorMode.Add)
                     {
                         _worklistDetail = new WorklistAdminDetail();
                         _worklistDetail.FilterByWorkingFacility = true; // set this by default (Ticket #1848)
-
-                        // limit class choices if specified
-                        if (_worklistClassChoices != null)
-                        {
-                            formDataResponse.WorklistClasses =
-                                CollectionUtils.Select(formDataResponse.WorklistClasses,
-                                delegate(WorklistClassSummary wc) { return _worklistClassChoices.Contains(wc.ClassName); });
-                        }
 
                         // establish initial class name
                         _worklistDetail.WorklistClass =
@@ -193,6 +197,14 @@ namespace ClearCanvas.Ris.Client
                             new ListProcedureTypeGroupsRequest(_worklistDetail.WorklistClass.ProcedureTypeGroupClassName));
                         procedureTypeGroups = groupsResponse.ProcedureTypeGroups;
                     }
+
+					// limit class choices if filter specified
+					if (_worklistClassChoices != null)
+					{
+						formDataResponse.WorklistClasses =
+							CollectionUtils.Select(formDataResponse.WorklistClasses,
+							delegate(WorklistClassSummary wc) { return _worklistClassChoices.Contains(wc.ClassName); });
+					}
 
 					// sort worklist classes so they appear alphabetically in editor
 					formDataResponse.WorklistClasses = CollectionUtils.Sort(formDataResponse.WorklistClasses,
