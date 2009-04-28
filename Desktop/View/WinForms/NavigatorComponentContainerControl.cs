@@ -38,10 +38,85 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class NavigatorComponentContainerControl : CustomUserControl
     {
-        private readonly NavigatorComponentContainer _component;
-        private readonly Dictionary<NavigatorPage, TreeNode> _nodeMap;
+        #region TreeUpdater helper class
 
-		public NavigatorComponentContainerControl(NavigatorComponentContainer component)
+        /// <summary>
+        /// Builds or updates the tree from a collection of navigator pages. Performs a
+        /// non-destructive update (e.g. does not remove nodes that no longer have pages).
+        /// </summary>
+        class TreeUpdater
+        {
+            private IEnumerable<NavigatorPage> _pages;
+            private TreeNodeCollection _rootNodes;
+            private List<TreeNode> _visitedNodes;
+
+            public TreeUpdater(IEnumerable<NavigatorPage> pages, TreeNodeCollection rootNodes)
+            {
+                _pages = pages;
+                _rootNodes = rootNodes;
+                _visitedNodes = new List<TreeNode>();
+            }
+
+            public Dictionary<NavigatorPage, TreeNode> UpdateTree()
+            {
+                // insert any new pages into tree
+                Dictionary<NavigatorPage, TreeNode> pageMap = new Dictionary<NavigatorPage, TreeNode>();
+                foreach (NavigatorPage page in _pages)
+                {
+                    InsertTreeNode(page, _rootNodes, 0, pageMap);
+                }
+                return pageMap;
+            }
+
+            private void InsertTreeNode(NavigatorPage page, TreeNodeCollection treeNodes, int depth, Dictionary<NavigatorPage, TreeNode> pageMap)
+            {
+                PathSegment segment = page.Path.Segments[depth];
+
+                // see if node for this segment already exists
+                TreeNode treeNode = CollectionUtils.FirstElement(treeNodes.Find(segment.LocalizedText, false));
+                if (treeNode == null)
+                {
+                    // need to create the node, however, we can't just add it to the end of the child collection,
+                    // we need to insert it at the appropriate place, which is just after the last "visited" node
+                    // find first unvisited node, which indicates the insertion point
+                    int i = 0;
+                    for (; i < treeNodes.Count; i++)
+                    {
+                        if (!_visitedNodes.Contains(treeNodes[i]))
+                            break;
+                    }
+
+                    // insert new node
+                    treeNode = treeNodes.Insert(i, segment.LocalizedText, segment.LocalizedText);
+                }
+
+                if (depth < page.Path.Segments.Count - 1)
+                {
+                    // recur on next path segment
+                    InsertTreeNode(page, treeNode.Nodes, depth + 1, pageMap);
+                }
+                else
+                {
+                    // this is the last path segment
+                    treeNode.Tag = page;
+                    pageMap.Add(page, treeNode);
+                }
+
+                // remember that this node has now been "visited"
+                _visitedNodes.Add(treeNode);
+
+            }
+        }
+
+        #endregion
+
+
+        private readonly NavigatorComponentContainer _component;
+        private Dictionary<NavigatorPage, TreeNode> _nodeMap;
+
+        #region Constructor
+
+        public NavigatorComponentContainerControl(NavigatorComponentContainer component)
 		{
             InitializeComponent();
 
@@ -72,11 +147,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             _backButton.DataBindings.Add("Enabled", _component, "BackEnabled");
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");
 
-            // add a node to the tree for each page
-            foreach (NavigatorPage page in _component.Pages)
-            {
-                AddTreeNode(page, _treeView.Nodes, 0);
-            }
+            // build the tree
+            UpdateTree();
 
 			if(_component.StartFullyExpanded)
 			{
@@ -95,9 +167,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             ShowPage(_component.CurrentPage);
         }
 
-		private void Pages_ItemAdded(object sender, ListEventArgs<NavigatorPage> e)
+        #endregion
+
+        #region Component event handlers
+
+        private void Pages_ItemAdded(object sender, ListEventArgs<NavigatorPage> e)
 		{
-			AddTreeNode(e.Item, _treeView.Nodes, 0);
+            UpdateTree();
 		}
 
 		private void Pages_ItemRemoved(object sender, ListEventArgs<NavigatorPage> e)
@@ -109,6 +185,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             ShowPage(_component.CurrentPage);
         }
+
+        #endregion
+
+        #region GUI event handlers
 
         private void _cancelButton_Click(object sender, EventArgs e)
         {
@@ -133,25 +213,34 @@ namespace ClearCanvas.Desktop.View.WinForms
             _component.Back();
         }
 
-        private void AddTreeNode(NavigatorPage page, TreeNodeCollection treeNodes, int depth)
+        private void _treeView_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            PathSegment segment = page.Path.Segments[depth];
+            _component.CurrentPage = (NavigatorPage)e.Node.Tag;
+        }
 
-            TreeNode[] matches = treeNodes.Find(segment.LocalizedText, false);
-            TreeNode treeNode = (matches.Length > 0) ? matches[0] :
-                    treeNodes.Add(segment.LocalizedText, segment.LocalizedText);
+        private void _treeView_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            NavigatorPage page = (NavigatorPage)e.Node.Tag;
+            if (page == null)
+            {
+                // no page associated with this node, so cancel this selection
+                e.Cancel = true;
 
-            if (depth < page.Path.Segments.Count - 1)
-            {
-                // recur on next path segment
-                AddTreeNode(page, treeNode.Nodes, depth + 1);
+                // attempt to select the next selectable node
+                TreeNode nextNode = FindNextNode(e.Node, delegate(TreeNode n) { return n.Tag != null; });
+                if (nextNode != null)
+                    _treeView.SelectedNode = nextNode;
             }
-            else
-            {
-                // this is the last path segment
-                treeNode.Tag = page;
-                _nodeMap.Add(page, treeNode);
-            }
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private void UpdateTree()
+        {
+            TreeUpdater updater = new TreeUpdater(_component.Pages, _treeView.Nodes);
+            _nodeMap = updater.UpdateTree();
         }
 
 		private void RemoveTreeNode(NavigatorPage page)
@@ -197,25 +286,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             _treeView.SelectedNode = _nodeMap[page];
         }
 
-        private void _treeView_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            _component.CurrentPage = (NavigatorPage)e.Node.Tag;
-        }
-
-        private void _treeView_BeforeSelect(object sender, TreeViewCancelEventArgs e)
-        {
-            NavigatorPage page = (NavigatorPage)e.Node.Tag;
-            if (page == null)
-            {
-                // no page associated with this node, so cancel this selection
-                e.Cancel = true;
-
-				// attempt to select the next selectable node
-				TreeNode nextNode = FindNextNode(e.Node, delegate(TreeNode n) { return n.Tag != null; });
-				if(nextNode != null)
-					_treeView.SelectedNode = nextNode;
-            }
-        }
 
 		/// <summary>
 		/// Performs in-order traversal, returns the next node that matches the specified condition.
@@ -237,17 +307,18 @@ namespace ClearCanvas.Desktop.View.WinForms
 			return null;
 		}
 
-		/// <summary>
-		/// Removes the specified node and all childless antecedants.
-		/// </summary>
-		/// <param name="node"></param>
-		private static void RemoveNode(TreeNode node)
-		{
-			TreeNode parent = node.Parent;
-			node.Remove();
-			if (parent.Nodes.Count == 0)
-				RemoveNode(parent);
-		}
+        /// <summary>
+        /// Removes the specified node and all childless antecedants.
+        /// </summary>
+        /// <param name="node"></param>
+        private static void RemoveNode(TreeNode node)
+        {
+            TreeNode parent = node.Parent;
+            node.Remove();
+            if (parent.Nodes.Count == 0)
+                RemoveNode(parent);
+        }
 
-	}
+        #endregion
+    }
 }
