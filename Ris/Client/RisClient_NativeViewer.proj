@@ -42,8 +42,8 @@
     <DistributionBuild>false</DistributionBuild>
     <FullViewer>false</FullViewer>
     <!-- Default, triceratops options -->
-    <DefaultOptions>ExcludeHttpDesktopServices+ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeHelpUpdate+ExcludeDatabase</DefaultOptions>
-    <FullViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeHelpUpdate</FullViewerOptions>
+    <DefaultOptions>ExcludeHttpDesktopServices+ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyBrowser+ExcludeStudyComposer+ExcludeDicomEditor+ExcludeHelpUpdate+ExcludeDatabase+ExcludeShredHostService+ExcludeServiceTools+ExcludeStudyFilters+ExcludeReporting</DefaultOptions>	
+    <FullViewerOptions>ExcludeEFilmAutomation+ExcludeEnterprise+ExcludeStudyComposer+ExcludeStudyFilters</FullViewerOptions>
   </PropertyGroup>
 
   <Choose>
@@ -51,12 +51,14 @@
       <PropertyGroup>
         <SolutionConfiguration>$(Configuration) Full Viewer</SolutionConfiguration>
         <Options>$(FullViewerOptions)</Options>
+		<BuildSuffix>FullViewer</BuildSuffix>
       </PropertyGroup>
     </When>
     <Otherwise>
       <PropertyGroup>
         <SolutionConfiguration>$(Configuration)</SolutionConfiguration>
         <Options>$(DefaultOptions)</Options>
+		<BuildSuffix>ThinViewer</BuildSuffix>
       </PropertyGroup>
     </Otherwise>
   </Choose>
@@ -64,7 +66,7 @@
   <Choose>
     <When Condition="$(DistributionBuild)">
       <PropertyGroup>
-        <DistributionDir>$(MSBuildProjectDirectory)\..\..\Distribution\Build\RisClient_NativeViewer\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
+        <DistributionDir>$(MSBuildProjectDirectory)\..\..\Distribution\Build\RisClient_$(BuildSuffix)\$(PlatformSubFolder)\$(Configuration)</DistributionDir>
       </PropertyGroup>
     </When>
     <Otherwise>
