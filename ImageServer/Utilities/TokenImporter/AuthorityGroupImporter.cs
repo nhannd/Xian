@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageServer.Utilities
             }
             Console.WriteLine("*********************************************");
 
-            using(AuthorityAdminService service = new AuthorityAdminService())
+            using(AuthorityManagement service = new AuthorityManagement())
             {
                 Console.WriteLine("Loading default groups into the server...");
                 if (!service.ImportAuthorityGroups(groups))

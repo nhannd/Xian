@@ -9,11 +9,11 @@ namespace ClearCanvas.ImageServer.Enterprise.Admin
     /// <summary>
     /// Wrapper for <see cref="IAuthorityGroupAdminService"/> service.
     /// </summary>
-    public sealed class AuthorityAdminService : IDisposable
+    public sealed class AuthorityManagement : IDisposable
     {
         private IAuthorityGroupAdminService _service;
 
-        public AuthorityAdminService()
+        public AuthorityManagement()
         {
             _service =  Platform.GetService<IAuthorityGroupAdminService>();
         }

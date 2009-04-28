@@ -128,6 +128,8 @@
     <Compile Include="Modules\ErrorModule.cs" />
     <Compile Include="Modules\HttpContextDataManagementModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Security\XmlMembershipProvider.cs" />
+    <Compile Include="Security\XmlRoleProvider.cs" />
     <Compile Include="Security\CustomFormAuthenticationModule.cs" />
     <Compile Include="Security\SessionManager.cs" />
     <Compile Include="Service References\FilesystemServiceProxy.cs">

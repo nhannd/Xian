@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
             if (maximumRows == 0) return new List<UserGroupRowData>();
 
-            using(AuthorityAdminService service = new AuthorityAdminService())
+            using(AuthorityManagement service = new AuthorityManagement())
             {
                 IList<AuthorityGroupSummary> list = service.ListAllAuthorityGroups();
                 IList<AuthorityGroupSummary> filteredList = new List<AuthorityGroupSummary>();

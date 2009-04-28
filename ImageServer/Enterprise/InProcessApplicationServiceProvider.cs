@@ -20,7 +20,6 @@ namespace ClearCanvas.ImageServer.Enterprise
         {
             if (_serviceFactory.HasService(serviceType))
             {
-                Platform.Log(LogLevel.Info, "Accessing {0} using {1}", serviceType, this.GetType());
                 return _serviceFactory.GetService(serviceType);
             }
             else

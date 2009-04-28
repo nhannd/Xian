@@ -79,6 +79,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                 Platform.Log(LogLevel.Error, ex, "Unable to contact A/A server");
                 ShowError(ErrorMessages.CannotContactEnterpriseServer);
             }
+            catch (Exception ex)
+            {
+                Platform.Log(LogLevel.Error, ex, "Login error:");
+                ShowError(ex.Message);
+            }
         }
 
         public void ChangePassword(object sender, EventArgs e)

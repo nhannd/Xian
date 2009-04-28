@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             }
 
             List<UserRowData> users = null;
-            using (UserAdminService service = new UserAdminService())
+            using (UserManagement service = new UserManagement())
             {
                 ListUsersRequest filter = new ListUsersRequest();
                 filter.UserName = UserName;

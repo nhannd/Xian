@@ -8,11 +8,11 @@ namespace ClearCanvas.ImageServer.Enterprise.Admin
     /// <summary>
     /// Wrapper for <see cref="IUserAdminService"/> service.
     /// </summary>
-    public sealed class UserAdminService : IDisposable
+    public sealed class UserManagement : IDisposable
     {
         private IUserAdminService _service;
 
-        public UserAdminService()
+        public UserManagement()
         {
             _service = Platform.GetService<IUserAdminService>();
         }

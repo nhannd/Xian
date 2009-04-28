@@ -122,7 +122,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.UserManagement.Use
         {
             if (Page.IsPostBack == false)
             {
-                 using(AuthorityAdminService service = new AuthorityAdminService())
+                using (AuthorityManagement service = new AuthorityManagement())
                  {
                     IList<AuthorityGroupSummary> list = service.ListAllAuthorityGroups();
                     IList<ListItem> items = CollectionUtils.Map<AuthorityGroupSummary, ListItem>(

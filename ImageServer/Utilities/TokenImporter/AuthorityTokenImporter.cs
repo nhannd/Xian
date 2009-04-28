@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageServer.Utilities
                     }
                 );
 
-            using(AuthorityAdminService service = new AuthorityAdminService())
+            using(AuthorityManagement service = new AuthorityManagement())
             {
                 Console.WriteLine("Loading tokens into the server...");
                 service.ImportAuthorityTokens(tokens);

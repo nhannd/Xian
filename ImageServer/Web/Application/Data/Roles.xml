@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Users>
+	<User UserName="admin">
+		<AuthorityToken>PACS/Configure/Devices</AuthorityToken>
+		<AuthorityToken>PACS/Configure/ServerPartitions</AuthorityToken>
+		<AuthorityToken>PACS/Configure/FileSystems</AuthorityToken>
+		<AuthorityToken>PACS/Configure/ServerRules</AuthorityToken>
+		<AuthorityToken>PACS/Configure/ServiceScheduling</AuthorityToken>
+		<AuthorityToken>PACS/Configure/PartitionArchive</AuthorityToken>
+		<AuthorityToken>PACS/Alert/View</AuthorityToken>
+		<AuthorityToken>PACS/Alert/Delete</AuthorityToken>
+		<AuthorityToken>PACS/ApplicationLog/Search</AuthorityToken>
+		<AuthorityToken>PACS/StudyDeleteHistory/Search</AuthorityToken>
+		<AuthorityToken>PACS/StudyDeleteHistory/View</AuthorityToken>
+		<AuthorityToken>PACS/Study/Search</AuthorityToken>
+		<AuthorityToken>PACS/Study/View</AuthorityToken>
+		<AuthorityToken>PACS/Study/Move</AuthorityToken>
+		<AuthorityToken>PACS/Study/Delete</AuthorityToken>
+		<AuthorityToken>PACS/Study/Edit</AuthorityToken>
+		<AuthorityToken>PACS/Study/Restore</AuthorityToken>
+		<AuthorityToken>PACS/WorkQueue/Search</AuthorityToken>
+		<AuthorityToken>PACS/WorkQueue/View</AuthorityToken>
+		<AuthorityToken>PACS/WorkQueue/Reschedule</AuthorityToken>
+		<AuthorityToken>PACS/WorkQueue/Reset</AuthorityToken>
+		<AuthorityToken>PACS/WorkQueue/Delete</AuthorityToken>
+		<AuthorityToken>PACS/WorkQueue/Reprocess</AuthorityToken>
+		<AuthorityToken>PACS/ArchiveQueue/Search</AuthorityToken>
+		<AuthorityToken>PACS/ArchiveQueue/Delete</AuthorityToken>
+		<AuthorityToken>PACS/RestoreQueue/Search</AuthorityToken>
+		<AuthorityToken>PACS/RestoreQueue/Delete</AuthorityToken>
+		<AuthorityToken>PACS/StudyIntegrityQueue/Search</AuthorityToken>
+		<AuthorityToken>PACS/StudyIntegrityQueue/Reconcile</AuthorityToken>
+	</User>	
+</Users>

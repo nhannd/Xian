@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
             if (maximumRows == 0) return new List<TokenRowData>();
 
-            using(AuthorityAdminService service = new AuthorityAdminService())
+            using(AuthorityManagement service = new AuthorityManagement())
             {
                 IList<AuthorityTokenSummary> tokens = service.ListAuthorityTokens();
                 List<TokenRowData> tokenRows = CollectionUtils.Map<AuthorityTokenSummary, TokenRowData>(

@@ -28,16 +28,16 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         {
             get
             {
-               if (Thread.CurrentPrincipal is CustomPrincipal)
-               {
-                   CustomPrincipal p = Thread.CurrentPrincipal as CustomPrincipal;
-                   return new SessionInfo(p);
+                if (Thread.CurrentPrincipal is CustomPrincipal)
+                {
+                    CustomPrincipal p = Thread.CurrentPrincipal as CustomPrincipal;
+                    return new SessionInfo(p);
                    
-               }
-               else
-               {
-                   return null;
-               }
+                }
+                else
+                {
+                    return null;
+                }
             }
             set
             {
@@ -74,11 +74,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
                 String data = String.Format("{0}|{1}|{2}", token.Id, displayName, authorities);
                 FormsAuthenticationTicket authTicket = new
                     FormsAuthenticationTicket(1,  // version
-                                 loginId,         // user name
-                                 Platform.Time,    // creation
-                                 token.ExpiryTime,// Expiration
-                                 false,           // Persistent
-                                 data);           // User data
+                                              loginId,         // user name
+                                              Platform.Time,    // creation
+                                              token.ExpiryTime,// Expiration
+                                              false,           // Persistent
+                                              data);           // User data
 
                 // Now encrypt the ticket.
                 string encryptedTicket = FormsAuthentication.Encrypt(authTicket);
@@ -143,13 +143,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
             if (session!=null)
             {
                 UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(
-                                                        ServerPlatform.AuditSource,
-                                                        EventIdentificationTypeEventOutcomeIndicator.Success,
-                                                        UserAuthenticationEventType.Logout);
+                    ServerPlatform.AuditSource,
+                    EventIdentificationTypeEventOutcomeIndicator.Success,
+                    UserAuthenticationEventType.Logout);
                 audit.AddUserParticipant(new AuditPersonActiveParticipant(
-                                                session.Credentials.UserName,
-                                                null,
-                                                session.Credentials.DisplayName));
+                                             session.Credentials.UserName,
+                                             null,
+                                             session.Credentials.DisplayName));
                 ServerPlatform.LogAuditMessage("UserAuthentication", audit);
             }
             

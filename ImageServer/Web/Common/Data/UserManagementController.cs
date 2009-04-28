@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             List<UserRowData> data = null;
             
-            using(UserAdminService service = new UserAdminService())
+            using(UserManagement service = new UserManagement())
             {
                 data = CollectionUtils.Map<UserSummary, UserRowData>(
                     service.FindUsers(new ListUsersRequest()),
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool success = false;
 
-            using(UserAdminService service = new UserAdminService())
+            using(UserManagement service = new UserManagement())
             {
                 try
                 {
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool success = false;
 
-            using(UserAdminService service = new UserAdminService())
+            using(UserManagement service = new UserManagement())
             {
                 try
                 {
@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool exists = false;
 
-            using(UserAdminService service = new UserAdminService())
+            using(UserManagement service = new UserManagement())
             {
                 ListUsersRequest filter = new ListUsersRequest();
                 filter.ExactMatchOnly = true;
@@ -159,7 +159,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool success = false;
 
-            using(UserAdminService service = new UserAdminService())
+            using(UserManagement service = new UserManagement())
             {
                 try
                 {
@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool success = false;
 
-            using(UserAdminService service = new UserAdminService())
+            using(UserManagement service = new UserManagement())
             {
                 try
                 {
@@ -201,7 +201,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool exists = false;
 
-            using (AuthorityAdminService service = new AuthorityAdminService())
+            using (AuthorityManagement service = new AuthorityManagement())
             {
                 IList<AuthorityGroupSummary> list = service.ListAllAuthorityGroups();
 
@@ -225,7 +225,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool success = false;
 
-            using(AuthorityAdminService service = new AuthorityAdminService())
+            using(AuthorityManagement service = new AuthorityManagement())
             {
                 List<AuthorityTokenSummary> tokens = new List<AuthorityTokenSummary>();
 
@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool success = false;
 
-            using(AuthorityAdminService service = new AuthorityAdminService())
+            using(AuthorityManagement service = new AuthorityManagement())
         
             {
                 AuthorityGroupDetail detail = new AuthorityGroupDetail();
@@ -268,7 +268,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool success = false;
 
-            using(AuthorityAdminService service = new AuthorityAdminService())
+            using(AuthorityManagement service = new AuthorityManagement())
             {
                 try
                 {
@@ -288,7 +288,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
         {
             bool success = false;
 
-            using(AuthorityAdminService service = new AuthorityAdminService())
+            using(AuthorityManagement service = new AuthorityManagement())
             {
                    List<AuthorityTokenSummary> tokenList = new List<AuthorityTokenSummary>();
 
