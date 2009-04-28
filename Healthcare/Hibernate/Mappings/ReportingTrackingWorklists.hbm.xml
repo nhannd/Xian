@@ -5,7 +5,9 @@
   <subclass name="ReportingTrackingWorklist" extends="ReportingWorklist" discriminator-value="REPORTINGTRACKING"/>
 
   <!-- concrete classes -->
-  <subclass name="ReportingTrackingReportDraftWorklist" extends="ReportingTrackingWorklist" discriminator-value="REPORTINGTRACKING_DRAFT"/>
-  <subclass name="ReportingTrackingReportFinalWorklist" extends="ReportingTrackingWorklist" discriminator-value="REPORTINGTRACKING_FINAL"/>
-  <subclass name="ReportingTrackingReportCorrectedWorklist" extends="ReportingTrackingWorklist" discriminator-value="REPORTINGTRACKING_CORRECTED"/>
+  <subclass name="ReportingTrackingActiveWorklist" extends="ReportingTrackingWorklist" discriminator-value="REPORTINGTRACKING_ACTIVE"/>
+  <subclass name="ReportingTrackingDraftWorklist" extends="ReportingTrackingWorklist" discriminator-value="REPORTINGTRACKING_DRAFT"/>
+  <subclass name="ReportingTrackingPreliminaryWorklist" extends="ReportingTrackingWorklist" discriminator-value="REPORTINGTRACKING_PRELIMINARY"/>
+  <subclass name="ReportingTrackingFinalWorklist" extends="ReportingTrackingWorklist" discriminator-value="REPORTINGTRACKING_FINAL"/>
+  <subclass name="ReportingTrackingCorrectedWorklist" extends="ReportingTrackingWorklist" discriminator-value="REPORTINGTRACKING_CORRECTED"/>
 </hibernate-mapping>

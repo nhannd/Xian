@@ -1024,56 +1024,92 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Reports that are currently active.
+        /// </summary>
+        internal static string ReportingTrackingActiveWorklist {
+            get {
+                return ResourceManager.GetString("ReportingTrackingActiveWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists active procedures that are currently in reporting by a radiologist..
+        /// </summary>
+        internal static string ReportingTrackingActiveWorklistDescription {
+            get {
+                return ResourceManager.GetString("ReportingTrackingActiveWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reports Corrected.
         /// </summary>
-        internal static string ReportingTrackingReportCorrectedWorklist {
+        internal static string ReportingTrackingCorrectedWorklist {
             get {
-                return ResourceManager.GetString("ReportingTrackingReportCorrectedWorklist", resourceCulture);
+                return ResourceManager.GetString("ReportingTrackingCorrectedWorklist", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Lists procoedures with reports that are corrected..
         /// </summary>
-        internal static string ReportingTrackingReportCorrectedWorklistDescription {
+        internal static string ReportingTrackingCorrectedWorklistDescription {
             get {
-                return ResourceManager.GetString("ReportingTrackingReportCorrectedWorklistDescription", resourceCulture);
+                return ResourceManager.GetString("ReportingTrackingCorrectedWorklistDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Reports In Draft.
         /// </summary>
-        internal static string ReportingTrackingReportDraftWorklist {
+        internal static string ReportingTrackingDraftWorklist {
             get {
-                return ResourceManager.GetString("ReportingTrackingReportDraftWorklist", resourceCulture);
+                return ResourceManager.GetString("ReportingTrackingDraftWorklist", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Lists procoedures with reports that are in draft..
         /// </summary>
-        internal static string ReportingTrackingReportDraftWorklistDescription {
+        internal static string ReportingTrackingDraftWorklistDescription {
             get {
-                return ResourceManager.GetString("ReportingTrackingReportDraftWorklistDescription", resourceCulture);
+                return ResourceManager.GetString("ReportingTrackingDraftWorklistDescription", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Reports Finalized.
         /// </summary>
-        internal static string ReportingTrackingReportFinalWorklist {
+        internal static string ReportingTrackingFinalWorklist {
             get {
-                return ResourceManager.GetString("ReportingTrackingReportFinalWorklist", resourceCulture);
+                return ResourceManager.GetString("ReportingTrackingFinalWorklist", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Lists procoedures with reports that are finalized..
         /// </summary>
-        internal static string ReportingTrackingReportFinalWorklistDescription {
+        internal static string ReportingTrackingFinalWorklistDescription {
             get {
-                return ResourceManager.GetString("ReportingTrackingReportFinalWorklistDescription", resourceCulture);
+                return ResourceManager.GetString("ReportingTrackingFinalWorklistDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reports in preliminary status.
+        /// </summary>
+        internal static string ReportingTrackingPreliminaryWorklist {
+            get {
+                return ResourceManager.GetString("ReportingTrackingPreliminaryWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Lists procoedures with reports that are in preliminary status..
+        /// </summary>
+        internal static string ReportingTrackingPreliminaryWorklistDescription {
+            get {
+                return ResourceManager.GetString("ReportingTrackingPreliminaryWorklistDescription", resourceCulture);
             }
         }
         

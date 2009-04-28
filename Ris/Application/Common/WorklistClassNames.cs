@@ -124,13 +124,19 @@ namespace ClearCanvas.Ris.Application.Common
 		#region Reporting Tracking
 
 		[WorklistClassName]
-		public const string ReportingTrackingReportDraftWorklist = "ReportingTrackingReportDraftWorklist";
-		
-		[WorklistClassName]
-		public const string ReportingTrackingReportFinalWorklist = "ReportingTrackingReportFinalWorklist";
+		public const string ReportingTrackingActiveWorklist = "ReportingTrackingActiveWorklist";
 
 		[WorklistClassName]
-		public const string ReportingTrackingReportCorrectedWorklist = "ReportingTrackingReportCorrectedWorklist";
+		public const string ReportingTrackingDraftWorklist = "ReportingTrackingDraftWorklist";
+
+		[WorklistClassName]
+		public const string ReportingTrackingPreliminaryWorklist = "ReportingTrackingPreliminaryWorklist";
+
+		[WorklistClassName]
+		public const string ReportingTrackingFinalWorklist = "ReportingTrackingFinalWorklist";
+
+		[WorklistClassName]
+		public const string ReportingTrackingCorrectedWorklist = "ReportingTrackingCorrectedWorklist";
 
 		#endregion
 

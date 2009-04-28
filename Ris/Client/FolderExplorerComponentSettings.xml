@@ -35,6 +35,11 @@
     <folder-class class="TranscriptionReviewFolder" />
     <folder-class class="AwaitingReviewFolder" />
     <folder-class class="VerifiedFolder" />
+    <folder-class class="ReportingTrackingActiveFolder" />
+    <folder-class class="ReportingTrackingDraftFolder" />
+    <folder-class class="ReportingTrackingPreliminaryFolder" />
+    <folder-class class="ReportingTrackingFinalFolder" />
+    <folder-class class="ReportingTrackingCorrectedFolder" />
     <folder-class class="ReportingSearchFolder" />
   </folder-system>
   <folder-system id="ClearCanvas.Ris.Client.Workflow.ProtocolWorkflowFolderSystem">

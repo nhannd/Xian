@@ -438,23 +438,35 @@
   <data name="ReportingToBeReviewedReportWorklistDescription" xml:space="preserve">
     <value>Lists procoedures with reports that need to be reviewed.</value>
   </data>
-  <data name="ReportingTrackingReportCorrectedWorklist" xml:space="preserve">
+  <data name="ReportingTrackingActiveWorklist" xml:space="preserve">
+    <value>Reports that are currently active</value>
+  </data>
+  <data name="ReportingTrackingActiveWorklistDescription" xml:space="preserve">
+    <value>Lists active procedures that are currently in reporting by a radiologist.</value>
+  </data>
+  <data name="ReportingTrackingCorrectedWorklist" xml:space="preserve">
     <value>Reports Corrected</value>
   </data>
-  <data name="ReportingTrackingReportCorrectedWorklistDescription" xml:space="preserve">
+  <data name="ReportingTrackingCorrectedWorklistDescription" xml:space="preserve">
     <value>Lists procoedures with reports that are corrected.</value>
   </data>
-  <data name="ReportingTrackingReportDraftWorklist" xml:space="preserve">
+  <data name="ReportingTrackingDraftWorklist" xml:space="preserve">
     <value>Reports In Draft</value>
   </data>
-  <data name="ReportingTrackingReportDraftWorklistDescription" xml:space="preserve">
+  <data name="ReportingTrackingDraftWorklistDescription" xml:space="preserve">
     <value>Lists procoedures with reports that are in draft.</value>
   </data>
-  <data name="ReportingTrackingReportFinalWorklist" xml:space="preserve">
+  <data name="ReportingTrackingFinalWorklist" xml:space="preserve">
     <value>Reports Finalized</value>
   </data>
-  <data name="ReportingTrackingReportFinalWorklistDescription" xml:space="preserve">
+  <data name="ReportingTrackingFinalWorklistDescription" xml:space="preserve">
     <value>Lists procoedures with reports that are finalized.</value>
+  </data>
+  <data name="ReportingTrackingPreliminaryWorklist" xml:space="preserve">
+    <value>Reports in preliminary status</value>
+  </data>
+  <data name="ReportingTrackingPreliminaryWorklistDescription" xml:space="preserve">
+    <value>Lists procoedures with reports that are in preliminary status.</value>
   </data>
   <data name="SexEnum" xml:space="preserve">
     <value>Sex</value>

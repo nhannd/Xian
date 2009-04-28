@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Client
         private WorklistSelectorEditorComponent<LocationSummary, LocationTable> _locationFilterComponent;
         private WorklistSelectorEditorComponent<StaffSummary, StaffTable> _staffSubscribersComponent;
         private WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
-        private WorklistPreviewComponent _previewComponent;
+        private WorklistSummaryComponent _summaryComponent;
 
         /// <summary>
         /// Constructor to create new worklist(s).
@@ -289,7 +289,7 @@ namespace ClearCanvas.Ris.Client
                 this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeGroupSubscribers", _groupSubscribersComponent));
                 this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeStaffSubscribers", _staffSubscribersComponent));
             }
-            this.Pages.Add(new NavigatorPage("NodeWorklist/Preview", _previewComponent = new WorklistPreviewComponent(_worklistDetail)));
+			this.Pages.Add(new NavigatorPage("NodeWorklist/Summary", _summaryComponent = new WorklistSummaryComponent(_worklistDetail, _adminMode)));
 
             this.CurrentPageChanged += WorklistEditorComponent_CurrentPageChanged;
 
@@ -300,10 +300,31 @@ namespace ClearCanvas.Ris.Client
 
         private void WorklistEditorComponent_CurrentPageChanged(object sender, EventArgs e)
         {
-            if (this.CurrentPage.Component == _previewComponent)
+			// Update the summary page when it is active
+            if (this.CurrentPage.Component == _summaryComponent)
             {
-                UpdateWorklistDetail();
-                _previewComponent.Refresh();
+				UpdateWorklistDetail();
+
+				if (_detailComponent is WorklistMultiDetailEditorComponent)
+				{
+					WorklistMultiDetailEditorComponent detailEditor = (WorklistMultiDetailEditorComponent)_detailComponent;
+
+					List<string> names = new List<string>();
+					List<string> descriptions = new List<string>();
+					List<WorklistClassSummary> classes = new List<WorklistClassSummary>();
+
+					CollectionUtils.ForEach(detailEditor.WorklistsToCreate,
+							delegate(WorklistMultiDetailEditorComponent.WorklistTableEntry entry)
+								{
+									names.Add(entry.Name);
+									descriptions.Add(entry.Description);
+									classes.Add(entry.Class);
+								});
+
+					_summaryComponent.SetMultipleWorklistInfo(names, descriptions, classes);
+				}
+
+                _summaryComponent.Refresh();
             }
         }
 

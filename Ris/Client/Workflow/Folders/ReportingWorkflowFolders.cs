@@ -100,23 +100,37 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		#region Reporting Tracking Worklists
 
 		[ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.ReportingTrackingReportDraftWorklist)]
-		[FolderPath("Report in Draft", true)]
-		public class ReportInDraftFolder : ReportingWorkflowFolder
+		[FolderForWorklistClass(WorklistClassNames.ReportingTrackingActiveWorklist)]
+		[FolderPath("Tracking/Active", true)]
+		public class ReportingTrackingActiveFolder : ReportingWorkflowFolder
 		{
 		}
 
 		[ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.ReportingTrackingReportFinalWorklist)]
-		[FolderPath("Report Finalized", true)]
-		public class ReportFinalizedFolder : ReportingWorkflowFolder
+		[FolderForWorklistClass(WorklistClassNames.ReportingTrackingDraftWorklist)]
+		[FolderPath("Tracking/Draft", true)]
+		public class ReportingTrackingDraftFolder : ReportingWorkflowFolder
 		{
 		}
 
 		[ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
-		[FolderForWorklistClass(WorklistClassNames.ReportingTrackingReportCorrectedWorklist)]
-		[FolderPath("Report Corrected", true)]
-		public class ReportCorrectedFolder : ReportingWorkflowFolder
+		[FolderForWorklistClass(WorklistClassNames.ReportingTrackingPreliminaryWorklist)]
+		[FolderPath("Tracking/Preliminary", true)]
+		public class ReportingTrackingPreliminaryFolder : ReportingWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.ReportingTrackingFinalWorklist)]
+		[FolderPath("Tracking/Finalized", true)]
+		public class ReportingTrackingFinalFolder : ReportingWorkflowFolder
+		{
+		}
+
+		[ExtensionOf(typeof(ReportingWorkflowFolderExtensionPoint))]
+		[FolderForWorklistClass(WorklistClassNames.ReportingTrackingCorrectedWorklist)]
+		[FolderPath("Tracking/Corrected", true)]
+		public class ReportingTrackingCorrectedFolder : ReportingWorkflowFolder
 		{
 		}
 

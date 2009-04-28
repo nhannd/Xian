@@ -117,6 +117,9 @@ namespace ClearCanvas.Ris.Client
 				if(value != _isPersonal)
 				{
 					_isPersonal = value;
+					if (_isPersonal)
+						this.SelectedGroup = null;
+
 					this.Modified = true;
 					NotifyPropertyChanged("IsPersonal");
 					NotifyPropertyChanged("IsGroup");

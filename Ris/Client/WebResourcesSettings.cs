@@ -122,12 +122,12 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		[global::System.Configuration.ApplicationScopedSettingAttribute()]
-		[global::System.Configuration.DefaultSettingValueAttribute("worklist-preview.htm")]
-		public string WorklistPreviewPageUrl
+		[global::System.Configuration.DefaultSettingValueAttribute("worklist-summary.htm")]
+		public string WorklistSummaryPageUrl
 		{
 			get
 			{
-				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["WorklistPreviewPageUrl"]));
+				return WebResourceAbsoluteUrlHelper.FromRelative((string)(this["WorklistSummaryPageUrl"]));
 			}
 		}
 
