@@ -1809,18 +1809,38 @@ BEGIN
 	SET NOCOUNT ON;
 
     -- Insert statements for procedure here
-	SELECT GUID from RequestAttributes 
-	WHERE
-		SeriesGUID = @SeriesGUID
-		AND RequestedProcedureId = @RequestedProcedureId
-		AND ScheduledProcedureStepId = @ScheduledProcedureStepId
-
-	if @@ROWCOUNT = 0
+    if (@RequestedProcedureId is not null or @ScheduledProcedureStepId is not null)
 	BEGIN
-		INSERT into RequestAttributes
-			(GUID, SeriesGUID, RequestedProcedureId, ScheduledProcedureStepId)
-		VALUES
-			(newid(), @SeriesGUID, @RequestedProcedureId, @ScheduledProcedureStepId)
+		if @RequestedProcedureId is null
+		BEGIN
+			SELECT GUID from RequestAttributes 
+			WHERE
+				SeriesGUID = @SeriesGUID
+				AND ScheduledProcedureStepId = @ScheduledProcedureStepId
+		END
+		ELSE IF @ScheduledProcedureStepId is null
+		BEGIN
+			SELECT GUID from RequestAttributes 
+			WHERE
+				SeriesGUID = @SeriesGUID
+				AND RequestedProcedureId = @RequestedProcedureId
+		END
+		ELSE
+		BEGIN
+			SELECT GUID from RequestAttributes 
+			WHERE
+				SeriesGUID = @SeriesGUID
+				AND RequestedProcedureId = @RequestedProcedureId
+				AND ScheduledProcedureStepId = @ScheduledProcedureStepId
+		END
+
+		if @@ROWCOUNT = 0
+		BEGIN
+			INSERT into RequestAttributes
+				(GUID, SeriesGUID, RequestedProcedureId, ScheduledProcedureStepId)
+			VALUES
+				(newid(), @SeriesGUID, @RequestedProcedureId, @ScheduledProcedureStepId)
+		END
 	END
 END
 ' 
