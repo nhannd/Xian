@@ -41,7 +41,9 @@ using ClearCanvas.ImageServer.Model.EntityBrokers;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 {
-	
+	/// <summary>
+	/// Processor for archiving the ApplicationLog from the database.
+	/// </summary>
 	public class ApplicationLogArchiveItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
 	{
 		
@@ -104,7 +106,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 			DateTime scheduledTime;
 			if (!archiveFilesystem.Writeable)
 			{
-				Platform.Log(LogLevel.Info, "Filesystem {0} is not writeable. Unable to archive log files.", archiveFilesystem.Filesystem.Description);
+				Platform.Log(LogLevel.Warn, "Filesystem {0} is not writeable. Unable to archive log files.", archiveFilesystem.Filesystem.Description);
 				scheduledTime = Platform.Time.AddMinutes(settings.ApplicationLogRecheckDelay);
 			}
 			else
@@ -128,63 +130,116 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.ArchiveApplicationLog
 
 		private bool ArchiveLogs(ServerFilesystemInfo archiveFs)
 		{
-			string archivePath = Path.Combine(archiveFs.Filesystem.FilesystemPath, "ApplicationLog");
+			try
+			{
+				string archivePath = Path.Combine(archiveFs.Filesystem.FilesystemPath, "ApplicationLog");
 
-			DateTime cutOffTime = Platform.Time.Date.AddDays(ServiceLockSettings.Default.ApplicationLogCachedDays*-1);
+				ApplicationLogSelectCriteria criteria = new ApplicationLogSelectCriteria();
+				criteria.Timestamp.SortAsc(0);
+				IApplicationLogEntityBroker broker = ReadContext.GetBroker<IApplicationLogEntityBroker>();
+				ApplicationLog firstLog = broker.FindOne(criteria);
+				if (firstLog == null)
+					return true;
+
+				DateTime currentCutOffTime = firstLog.Timestamp.AddMinutes(5);
+
+				int cachedDays = ServiceLockSettings.Default.ApplicationLogCachedDays;
+				if (cachedDays < 0) cachedDays = 0;
+
+				DateTime cutOffTime = Platform.Time.Date.AddDays(cachedDays * -1);
+
+				if (currentCutOffTime > cutOffTime)
+					return true;
+
+				using (
+					ImageServerLogWriter<ApplicationLog> writer =
+						new ImageServerLogWriter<ApplicationLog>(archivePath, "ApplicationLog"))
+				{
+					while (currentCutOffTime < cutOffTime)
+					{
+						if (!ArchiveTimeRange(writer, currentCutOffTime))
+						{
+							writer.FlushLog();
+							return false;
+						}
+						currentCutOffTime = currentCutOffTime.AddMinutes(5);
+					}
+
+					// Now flush the last potential 5 minutes.
+					if (!ArchiveTimeRange(writer, cutOffTime))
+					{
+						writer.FlushLog();
+						return false;
+					}
+
+					writer.FlushLog();
+				}
+
+				return true;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when writing log file.");
+				return false;
+			}
+		}
+
+		private bool ArchiveTimeRange(ImageServerLogWriter<ApplicationLog> writer, DateTime cutOffTime)
+		{
+
 			ApplicationLogSelectCriteria criteria = new ApplicationLogSelectCriteria();
 			criteria.Timestamp.LessThan(cutOffTime);
 			criteria.Timestamp.SortAsc(0);
 
 			IApplicationLogEntityBroker broker = ReadContext.GetBroker<IApplicationLogEntityBroker>();
 
-			ImageServerLogWriter<ApplicationLog> writer = new ImageServerLogWriter<ApplicationLog>(archivePath, "ApplicationLog");
-			List<ServerEntityKey> keyList = new List<ServerEntityKey>(500);
+			List<ServerEntityKey> keyList = new List<ServerEntityKey>(1000);
 			try
 			{
 				broker.Find(criteria, delegate(ApplicationLog result)
-				                      	{
-				                      		keyList.Add(result.Key);
+										{
+											keyList.Add(result.Key);
 
-				                      		if (writer.WriteLog(result,result.Timestamp))
-				                      		{
+											if (writer.WriteLog(result, result.Timestamp))
+											{
 												// The logs been flushed, delete the log entries cached.
-				                      			using (
-				                      				IUpdateContext update =
-				                      					PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
-				                      			{
-				                      				IApplicationLogEntityBroker updateBroker = update.GetBroker<IApplicationLogEntityBroker>();
+												// Purposely use a read context here, even though we're doing
+												// an update, so we don't use transaction wrappers, optimization
+												// is more important at this point.
+												using (
+													IReadContext update =
+														PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+												{
+													IApplicationLogEntityBroker updateBroker = update.GetBroker<IApplicationLogEntityBroker>();
 													foreach (ServerEntityKey key in keyList)
-				                      					updateBroker.Delete(key);
-				                      				update.Commit();
-				                      			}
-												keyList = new List<ServerEntityKey>();
-				                      		}
-				                      	});
-
-				writer.FlushLog();
+														updateBroker.Delete(key);
+												}
+												keyList = new List<ServerEntityKey>(1000);
+											}
+										});
 
 				if (keyList.Count > 0)
 				{
+					// Purposely use a read context here, even though we're doing an update, so we 
+					// don't have to do an explicit commit and don't use transaction wrappers.
 					using (
-						IUpdateContext update =
-							PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
+						IReadContext update =
+							PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
 					{
 						IApplicationLogEntityBroker updateBroker = update.GetBroker<IApplicationLogEntityBroker>();
 						foreach (ServerEntityKey key in keyList)
 							updateBroker.Delete(key);
-						update.Commit();
 					}
 				}
 			}
 			catch (Exception e)
 			{
-				Platform.Log(LogLevel.Error,e,"Unexpected exception when purging log files.");
-				writer.Dispose();
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when purging log files.");
 				return false;
 			}
-			writer.Dispose();
 
 			return true;
 		}
+
 	}
 }
