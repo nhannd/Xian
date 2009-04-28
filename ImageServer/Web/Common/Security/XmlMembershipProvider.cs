@@ -51,23 +51,31 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
 
     class XmlMembershipProvider: MembershipProvider
     {
+        private object _syncRoot = new object();
         private string _path;
 
         private Dictionary<string, XmlMembershipUser> _users;
 
         private void ReadData()
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load(_path);
-
-            _users = new Dictionary<string, XmlMembershipUser>();
-            foreach (XmlNode node in doc.SelectNodes("//Users/User"))
+            if (_users==null)
             {
-                XmlMembershipUser user = XmlUtils.Deserialize<XmlMembershipUser>(node);
-                if (user.IsApproved)
+                lock(_syncRoot)
                 {
-                    _users.Add(user.UserName, user);
+                    XmlDocument doc = new XmlDocument();
+                    doc.Load(_path);
+
+                    _users = new Dictionary<string, XmlMembershipUser>();
+                    foreach (XmlNode node in doc.SelectNodes("//Users/User"))
+                    {
+                        XmlMembershipUser user = XmlUtils.Deserialize<XmlMembershipUser>(node);
+                        if (user.IsApproved)
+                        {
+                            _users.Add(user.UserName, user);
+                        }
+                    }
                 }
+                
             }
         }
 
@@ -76,18 +84,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
         {
             base.Initialize(name, config);
 
-            // Initialize _XmlFileName and make sure the path
-            // is app-relative
             _path = config["file"];
 
             if (String.IsNullOrEmpty(_path))
-                _path = "~/Data/Users.xml";
+                _path = "~/Users.xml";
 
             _path = HostingEnvironment.MapPath(_path);
             Platform.CheckTrue(File.Exists(_path), String.Format("File {0} doesn't exist", _path));
-
-            
-
         }
         
         public override string ApplicationName

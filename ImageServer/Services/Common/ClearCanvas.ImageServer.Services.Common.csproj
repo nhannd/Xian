@@ -45,7 +45,6 @@
     <Compile Include="Alert\AlertPlugins\DefaultAlertSink.cs" />
     <Compile Include="Alert\AlertService.cs" />
     <Compile Include="Alert\IAlertServiceExtension.cs" />
-    <Compile Include="Audit\DefaultAuditService.cs" />
     <Compile Include="Authentication\DefaultAuthenticationService.cs" />
     <Compile Include="Authentication\SessionTokenManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -75,9 +74,6 @@
       <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
       <Name>ClearCanvas.ImageServer.Model</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Alert\NewFolder1\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -7,51 +7,52 @@ using System.Web.Hosting;
 using System.Web.Security;
 using System.Xml;
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise.Authentication;
 
 namespace ClearCanvas.ImageServer.Web.Common.Security
 {
-    class XmlRoleProvider:RoleProvider
+    class DefaultRoleProvider:RoleProvider
     {
-        private string _path;
-        private Dictionary<string, List<string>> _roles = new Dictionary<string, List<string>>();
-
+        private string[] _allTokens;
         public override void Initialize(string name, System.Collections.Specialized.NameValueCollection config)
         {
             base.Initialize(name, config);
 
-            // Initialize _XmlFileName and make sure the path
-            // is app-relative
-            _path = config["file"];
-
-            if (String.IsNullOrEmpty(_path))
-                _path = "~/Data/Roles.xml";
-
-            _path = HostingEnvironment.MapPath(_path);
-            Platform.CheckTrue(File.Exists(_path), String.Format("File {0} doesn't exist", _path));
-
-        }
-        private void ReadData()
-        {
-            XmlDocument doc = new XmlDocument();
-            using (Stream stream = File.OpenRead(_path))
-            {
-                doc.Load(stream);
-
-                _roles = new Dictionary<string, List<string>>();
-                foreach (XmlNode node in doc.SelectNodes("//Users/User"))
+            _allTokens = new string[]
                 {
-                    string username = node.Attributes["UserName"].Value;
-                    List<string> tokens = new List<string>();
-                    foreach (XmlNode authorityNode in node.SelectNodes("AuthorityToken"))
-                    {
-                        tokens.Add(authorityNode.InnerText);
-                    }
-                    _roles.Add(username, tokens);
-                }
-            }
+                    AuthorityTokens.Admin.Alert.Delete,
+                    AuthorityTokens.Admin.Alert.View,
+                    AuthorityTokens.Admin.ApplicationLog.Search,
+                    AuthorityTokens.Admin.Configuration.Devices,
+                    AuthorityTokens.Admin.Configuration.FileSystems,
+                    AuthorityTokens.Admin.Configuration.PartitionArchive,
+                    AuthorityTokens.Admin.Configuration.ServerPartitions,
+                    AuthorityTokens.Admin.Configuration.ServerRules,
+                    AuthorityTokens.Admin.Configuration.ServiceScheduling,
+                    AuthorityTokens.Admin.StudyDeleteHistory.Delete,
+                    AuthorityTokens.Admin.StudyDeleteHistory.Search,
+                    AuthorityTokens.Admin.StudyDeleteHistory.View,
+                    AuthorityTokens.ArchiveQueue.Delete,
+                    AuthorityTokens.ArchiveQueue.Search,
+                    AuthorityTokens.RestoreQueue.Delete,
+                    AuthorityTokens.RestoreQueue.Search,
+                    AuthorityTokens.Study.Delete,
+                    AuthorityTokens.Study.Edit,
+                    AuthorityTokens.Study.Move,
+                    AuthorityTokens.Study.Restore,
+                    AuthorityTokens.Study.Search,
+                    AuthorityTokens.Study.View,
+                    AuthorityTokens.StudyIntegrityQueue.Reconcile,
+                    AuthorityTokens.StudyIntegrityQueue.Search,
+                    AuthorityTokens.WorkQueue.Delete,
+                    AuthorityTokens.WorkQueue.Reprocess,
+                    AuthorityTokens.WorkQueue.Reschedule,
+                    AuthorityTokens.WorkQueue.Reset,
+                    AuthorityTokens.WorkQueue.Search,
+                    AuthorityTokens.WorkQueue.View
+                };
 
         }
-
         public override void AddUsersToRoles(string[] usernames, string[] roleNames)
         {
             throw new Exception("The method or operation is not implemented.");
@@ -91,11 +92,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Security
 
         public override string[] GetRolesForUser(string username)
         {
-            ReadData();
-            if (!_roles.ContainsKey(username))
-                throw new SecurityException("No authority specified for this user");
-
-            return _roles[username].ToArray();
+            return _allTokens;
         }
 
         public override string[] GetUsersInRole(string roleName)

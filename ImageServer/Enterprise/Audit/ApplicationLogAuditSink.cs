@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageServer.Enterprise.Audit
         /// <param name="entry"></param>
         public void WriteEntry(AuditEntryInfo entry)
         {
-            Platform.Log(LogLevel.Info, entry.Details);
+            
         }
 
         #endregion

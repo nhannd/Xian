@@ -1301,8 +1301,7 @@
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\SessionTimeout.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
-    <Content Include="Data\Roles.xml" />
-    <Content Include="Data\Users.xml" />
+    <Content Include="Users.xml" />
     <Content Include="Default.aspx" />
     <Content Include="Images\favicon.ico" />
     <Content Include="Images\ImageServerLogo.png" />
