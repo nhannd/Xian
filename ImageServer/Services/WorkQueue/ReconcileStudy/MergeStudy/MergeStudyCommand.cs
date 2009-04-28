@@ -278,7 +278,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 
 
                 Platform.Log(LogLevel.Debug, "Saving {0}", destPath);
-                processor.AddCommand(new SaveDicomFileCommand(destPath, file, false));
+                processor.AddCommand(new SaveDicomFileCommand(destPath, file, false, true));
                 processor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
 
                 UpdateWorkQueueCommand.CommandParameters parameters = new UpdateWorkQueueCommand.CommandParameters();

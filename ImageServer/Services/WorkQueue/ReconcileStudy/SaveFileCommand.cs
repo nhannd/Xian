@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
                 return;
             }
 
-            _processor.AddCommand(new SaveDicomFileCommand(destPath, file, false));
+            _processor.AddCommand(new SaveDicomFileCommand(destPath, file, false, true));
 
             if (!_processor.Execute())
             {

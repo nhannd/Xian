@@ -36,6 +36,9 @@ using System;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
 {
+	/// <summary>
+	/// Class for saving a DicomFile instance in memory to disk.
+	/// </summary>
 	public class SaveDicomFileCommand : ServerCommand, IDisposable
 	{
 		#region Private Members
@@ -43,10 +46,19 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private string _backupPath;
 		private readonly DicomFile _file;
 		private readonly bool _failOnExists;
+		private readonly bool _saveTemp;
 		private bool _fileCreated = false;
 		#endregion
 
-		public SaveDicomFileCommand(string path, DicomFile file, bool failOnExists)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="path">The path to save the file.</param>
+		/// <param name="file">The file to save.</param>
+		/// <param name="failOnExists">If the file already exists, the file will save.</param>
+		/// <param name="saveTemp">Save the file to a temporary file first, then move to the final file.  This 
+		/// reduces the likelyhood of having partial files if a crash in the service occurs when the file is being written.</param>
+		public SaveDicomFileCommand(string path, DicomFile file, bool failOnExists, bool saveTemp)
 			: base("Save DICOM Message", true)
 		{
 			Platform.CheckForNullReference(path, "File name");
@@ -55,6 +67,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			_path = path;
 			_file = file;
 			_failOnExists = failOnExists;
+			_saveTemp = saveTemp;
 		}
 
 	    private void Backup()
@@ -76,18 +89,34 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             }
 	    }
 
-
 	    protected override void OnExecute()
 		{
             if (RequiresRollback)
                 Backup();
 
-			using (FileStream stream = FileStreamOpener.OpenForSoleUpdate(_path, FileMode.Create))
+	    	string path;
+			if (_saveTemp)
+			{
+				path = String.Format("{0}_tmp", _path);
+				if (File.Exists(path))
+					File.Delete(path);
+			}
+			else
+				path = _path;
+
+	    	using (FileStream stream = FileStreamOpener.OpenForSoleUpdate(path, FileMode.Create))
 			{
 				// Set _fileCreated here, because the file has been opened.
-				_fileCreated = true;
+				if (!_saveTemp)
+					_fileCreated = true;
 				_file.Save(stream, DicomWriteOptions.Default);
 				stream.Close();
+			}
+
+			if (_saveTemp)
+			{
+				File.Move(path, _path);
+				_fileCreated = true;
 			}
 		}
 

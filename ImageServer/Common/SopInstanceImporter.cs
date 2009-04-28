@@ -218,7 +218,7 @@ namespace ClearCanvas.ImageServer.Common
                     }
 
                     DicomFile file = ConvertToDicomFile(message, path, sourceAE);
-                    processor.AddCommand(new SaveDicomFileCommand(path, file, true));
+                    processor.AddCommand(new SaveDicomFileCommand(path, file, true, true));
 
                     processor.AddCommand(new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
 

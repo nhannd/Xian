@@ -257,15 +257,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
         protected override void OnExecute(IUpdateContext updateContext)
         {
             Statistics.ProcessTime.Start();
-
             
             Initialize();
+
             PrintUpdateCommands();
+
             if (RequiresRollback)
-            {
                 BackupFilesystem();
-            }
+
             UpdateFilesystem();
+
             UpdateDatabase();
 
             Statistics.ProcessTime.End();
@@ -702,7 +703,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
                     // overwrite it
                 }
 
-                SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file, false);
+                SaveDicomFileCommand saveCommand = new SaveDicomFileCommand(destPath, file, false, true);
                 filesystemUpdateProcessor.AddCommand(saveCommand);
 
                 if (!filesystemUpdateProcessor.Execute())
