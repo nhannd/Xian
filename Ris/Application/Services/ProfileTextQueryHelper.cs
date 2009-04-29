@@ -52,8 +52,10 @@ namespace ClearCanvas.Ris.Application.Services
             _assembler = new PatientProfileAssembler();
         }
 
-        protected override PatientProfileSearchCriteria[] BuildCriteria(string query)
+        protected override PatientProfileSearchCriteria[] BuildCriteria(TextQueryRequest request)
         {
+            string query = request.TextQuery;
+
             // this will hold all criteria
             List<PatientProfileSearchCriteria> criteria = new List<PatientProfileSearchCriteria>();
 

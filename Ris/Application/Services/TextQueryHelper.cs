@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Application.Services
         public delegate bool TestCriteriaSpecificityDelegate(TSearchCriteria[] where, int threshold);
         public delegate IList<TDomainItem> DoQueryDelegate(TSearchCriteria[] where, SearchResultPage page);
 
-		private readonly Converter<string, TSearchCriteria[]> _buildCriteriaCallback;
+        private readonly Converter<TextQueryRequest, TSearchCriteria[]> _buildCriteriaCallback;
 		private readonly Converter<TDomainItem, TSummary> _summaryAssembler;
         private readonly DoQueryDelegate _queryCallback;
 		private readonly TestCriteriaSpecificityDelegate _specificityCallback;
@@ -114,7 +114,7 @@ namespace ClearCanvas.Ris.Application.Services
         /// <param name="countCallback"></param>
         /// <param name="queryCallback"></param>
         public TextQueryHelper(
-			Converter<string, TSearchCriteria[]> criteriaBuilder,
+            Converter<TextQueryRequest, TSearchCriteria[]> criteriaBuilder,
 			Converter<TDomainItem, TSummary> summaryAssembler,
 			TestCriteriaSpecificityDelegate countCallback,
 			DoQueryDelegate queryCallback)
@@ -128,15 +128,12 @@ namespace ClearCanvas.Ris.Application.Services
         public TextQueryResponse<TSummary> Query(TextQueryRequest request)
         {
             Platform.CheckForNullReference(request, "request");
-            Platform.CheckMemberIsSet(request.TextQuery, "TextQuery");
             Platform.CheckArgumentRange(request.SpecificityThreshold, 0, 1000, "SpecificityThreshold");
 
-
-            if (string.IsNullOrEmpty(request.TextQuery))
+            if (!ValidateRequest(request))
                 return new TextQueryResponse<TSummary>(true, new List<TSummary>());
 
-
-            TSearchCriteria[] where = BuildCriteria(request.TextQuery.Trim());
+            TSearchCriteria[] where = BuildCriteria(request);
 
 			// augment criteria to exclude de-activated items if specified
 			if(!request.IncludeDeactivated && AttributeUtils.HasAttribute<DeactivationFlagAttribute>(typeof(TDomainItem)))
@@ -168,11 +165,17 @@ namespace ClearCanvas.Ris.Application.Services
                         }));
         }
 
-        protected virtual TSearchCriteria[] BuildCriteria(string query)
+        protected virtual bool ValidateRequest(TextQueryRequest request)
+        {
+            // default validation - just ensure the text is not empty
+            return request.TextQuery != null && request.TextQuery.Trim().Length > 0;
+        }
+
+        protected virtual TSearchCriteria[] BuildCriteria(TextQueryRequest request)
         {
             if(_buildCriteriaCallback == null)
                 throw new NotImplementedException("Method must be overridden or a delegate supplied.");
-            return _buildCriteriaCallback(query);
+            return _buildCriteriaCallback(request);
         }
 
         protected virtual bool TestSpecificity(TSearchCriteria[] where, int threshold)

@@ -56,8 +56,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 
 			TextQueryHelper<DiagnosticService, DiagnosticServiceSearchCriteria, DiagnosticServiceSummary> helper
 				= new TextQueryHelper<DiagnosticService, DiagnosticServiceSearchCriteria, DiagnosticServiceSummary>(
-					delegate(string rawQuery)
+                    delegate
 					{
+                        string rawQuery = request.TextQuery;
+
 						IList<string> terms = TextQueryHelper.ParseTerms(rawQuery);
 						List<DiagnosticServiceSearchCriteria> criteria = new List<DiagnosticServiceSearchCriteria>();
 

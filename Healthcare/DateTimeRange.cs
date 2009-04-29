@@ -209,6 +209,29 @@ namespace ClearCanvas.Healthcare {
 
         #endregion
 
+        /// <summary>
+        /// Applies this datetime range to the specified search condition.
+        /// </summary>
+        /// <param name="searchCondition"></param>
+        public void ApplyToSearchCondition(ISearchCondition searchCondition)
+        {
+            // if both upper and lower bounded, use the between operator, otherwise use the >= and < operators
+            // note that in SQL server, BETWEEN a AND b means a <= x < b (it is asymmetrical), however
+            // this is not necessarily the case in other database servers... not much we can do about this.
+            if (IsLowerBounded && IsUpperBounded)
+            {
+                searchCondition.Between(_from, _until);
+            }
+            else if (IsLowerBounded)
+            {
+                searchCondition.MoreThanOrEqualTo(_from);
+            }
+            else if (IsUpperBounded)
+            {
+                searchCondition.LessThan(_until);
+            }
+        }
+
         private static int CompareUpper(DateTime? x, DateTime? y)
         {
             DateTime x1 = x ?? DateTime.MaxValue;

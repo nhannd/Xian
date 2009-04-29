@@ -61,8 +61,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
 
             TextQueryHelper<StaffGroup, StaffGroupSearchCriteria, StaffGroupSummary> helper
                 = new TextQueryHelper<StaffGroup, StaffGroupSearchCriteria, StaffGroupSummary>(
-                    delegate(string rawQuery)
+                    delegate
                     {
+                        string rawQuery = request.TextQuery;
+
                         // allow matching on name (assume entire query is a name which may contain spaces)
                         StaffGroupSearchCriteria nameCriteria = new StaffGroupSearchCriteria();
                         nameCriteria.Name.StartsWith(rawQuery);

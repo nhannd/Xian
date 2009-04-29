@@ -154,8 +154,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
 
             TextQueryHelper<ExternalPractitioner, ExternalPractitionerSearchCriteria, ExternalPractitionerSummary> helper
                 = new TextQueryHelper<ExternalPractitioner, ExternalPractitionerSearchCriteria, ExternalPractitionerSummary>(
-                    delegate(string rawQuery)
+                    delegate
                     {
+                        string rawQuery = request.TextQuery;
+
                         List<ExternalPractitionerSearchCriteria> criteria = new List<ExternalPractitionerSearchCriteria>();
 
                         // build criteria against names

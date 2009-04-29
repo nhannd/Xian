@@ -66,18 +66,25 @@ namespace ClearCanvas.Ris.Application.Services
 
 		#region Overrides
 
-		protected override WorklistItemSearchCriteria[] BuildCriteria(string query)
+        protected override bool ValidateRequest(TextQueryRequest request)
         {
+            // the TextQuery field may be empty iff the UseAdvancedSearch flag is set
+            return base.ValidateRequest(request) || ((WorklistItemTextQueryRequest)request).UseAdvancedSearch;
+        }
+
+        protected override WorklistItemSearchCriteria[] BuildCriteria(TextQueryRequest request)
+        {
+            WorklistItemTextQueryRequest req = (WorklistItemTextQueryRequest)request;
 			List<WorklistItemSearchCriteria> criteria = new List<WorklistItemSearchCriteria>();
 
 			if ((_options & WorklistItemTextQueryOptions.PatientOrder) == WorklistItemTextQueryOptions.PatientOrder)
 			{
-				criteria.AddRange(BuildCriteriaForPatientOrderSearch(query));
+                criteria.AddRange(BuildCriteriaForPatientOrderSearch(req));
 			}
 
 			if ((_options & WorklistItemTextQueryOptions.ProcedureStepStaff) == WorklistItemTextQueryOptions.ProcedureStepStaff)
 			{
-				criteria.AddRange(BuildCriteriaForStaffSearch(query));
+                criteria.AddRange(BuildCriteriaForStaffSearch(req));
 			}
 
 			// add constraint for downtime vs live procedures
@@ -115,8 +122,10 @@ namespace ClearCanvas.Ris.Application.Services
     		}
     	}
 
-		private List<WorklistItemSearchCriteria> BuildCriteriaForPatientOrderSearch(string query)
+        private List<WorklistItemSearchCriteria> BuildCriteriaForPatientOrderSearch(WorklistItemTextQueryRequest request)
 		{
+            string query = request.TextQuery;
+
 			// this will hold all criteria
 			List<WorklistItemSearchCriteria> criteria = new List<WorklistItemSearchCriteria>();
 
@@ -163,9 +172,11 @@ namespace ClearCanvas.Ris.Application.Services
 			return criteria;
 		}
 
-		private List<WorklistItemSearchCriteria> BuildCriteriaForStaffSearch(string query)
+        private List<WorklistItemSearchCriteria> BuildCriteriaForStaffSearch(WorklistItemTextQueryRequest request)
 		{
-			// this will hold all criteria
+            string query = request.TextQuery;
+
+            // this will hold all criteria
 			List<WorklistItemSearchCriteria> criteria = new List<WorklistItemSearchCriteria>();
 
 			// build criteria against names

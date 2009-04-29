@@ -212,8 +212,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 
 			TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary> helper
 				= new TextQueryHelper<Staff, StaffSearchCriteria, StaffSummary>(
-					delegate(string rawQuery)
+                    delegate
 					{
+                        string rawQuery = request.TextQuery;
+
 						// this will hold all criteria
 						List<StaffSearchCriteria> criteria = new List<StaffSearchCriteria>();
 
