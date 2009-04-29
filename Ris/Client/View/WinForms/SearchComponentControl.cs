@@ -44,13 +44,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             InitializeComponent();
             _component = component;
 
-			_searchField.DataBindings.Add("Value", _component, "SearchString", true, DataSourceUpdateMode.OnPropertyChanged);
 			_accession.DataBindings.Add("Value", _component, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
-			_patientIdMrn.DataBindings.Add("Value", _component, "PatientIdMrn", true, DataSourceUpdateMode.OnPropertyChanged);
+			_mrn.DataBindings.Add("Value", _component, "PatientIdMrn", true, DataSourceUpdateMode.OnPropertyChanged);
 			_healthcard.DataBindings.Add("Value", _component, "HealthcardNumber", true, DataSourceUpdateMode.OnPropertyChanged);
-			_patientName.DataBindings.Add("Value", _component, "PatientName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_startDate.DataBindings.Add("Value", _component, "StartDate", true, DataSourceUpdateMode.OnPropertyChanged);
-			_stopDate.DataBindings.Add("Value", _component, "StopDate", true, DataSourceUpdateMode.OnPropertyChanged);
+			_familyName.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
+			_givenName.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
+			_fromDate.DataBindings.Add("Value", _component, "FromDate", true, DataSourceUpdateMode.OnPropertyChanged);
+			_untilDate.DataBindings.Add("Value", _component, "UntilDate", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_orderingPractitioner.DataBindings.Add("Value", _component, "OrderingPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
 			_orderingPractitioner.LookupHandler = _component.OrderingPractitionerLookupHandler;
@@ -58,7 +58,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_procedureType.DataBindings.Add("Value", _component, "ProcedureType", true, DataSourceUpdateMode.OnPropertyChanged);
         	_procedureType.Enabled = false;
 			
-			_activeOnly.DataBindings.Add("Checked", _component, "ShowActiveOnly", true, DataSourceUpdateMode.OnPropertyChanged);
             _keepOpen.DataBindings.Add("Checked", _component, "KeepOpen", true, DataSourceUpdateMode.OnPropertyChanged);
             _searchButton.DataBindings.Add("Enabled", _component, "SearchEnabled");
         }

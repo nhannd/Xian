@@ -64,13 +64,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 		private void _searchButton_Click(object sender, EventArgs e)
 		{
-			_component.Search(new SearchParams(_searchTextBox.Text, false));
+			_component.Search(new SearchParams(_searchTextBox.Text));
 		}
 
 		private void _searchTextBox_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Enter)
-				_component.Search(new SearchParams(_searchTextBox.Text, false));
+				_component.Search(new SearchParams(_searchTextBox.Text));
 		}
 
 		private void _searchTextBox_TextChanged(object sender, EventArgs e)

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
@@ -122,7 +121,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="query"></param>
 		/// <param name="specificityThreshold"></param>
 		/// <returns></returns>
-		protected abstract TextQueryResponse<TItem> DoQuery(string query, int specificityThreshold);
+		protected abstract TextQueryResponse<TItem> DoQuery(SearchParams query, int specificityThreshold);
 
 		#endregion
 
@@ -146,7 +145,7 @@ namespace ClearCanvas.Ris.Client
 					{
 						try
 						{
-							TextQueryResponse<TItem> response = DoQuery(this.SearchParams.TextSearch, SearchCriteriaSpecificityThreshold);
+							TextQueryResponse<TItem> response = DoQuery(this.SearchParams, SearchCriteriaSpecificityThreshold);
 							if (response.TooManyMatches)
 								throw new WeakSearchCriteriaException();
 							taskContext.Complete(response.Matches ?? new List<TItem>());
@@ -202,21 +201,35 @@ namespace ClearCanvas.Ris.Client
 		{
         }
 
-        protected override TextQueryResponse<TItem> DoQuery(string query, int specificityThreshold)
+        protected override TextQueryResponse<TItem> DoQuery(SearchParams query, int specificityThreshold)
         {
-            TextQueryResponse<TItem> response = null;
-            Platform.GetService<TWorklistService>(
-                delegate(TWorklistService service)
-                {
-					WorklistItemTextQueryOptions options = WorklistItemTextQueryOptions.PatientOrder
-						| (DowntimeRecovery.InDowntimeRecoveryMode ? WorklistItemTextQueryOptions.DowntimeRecovery : 0);
+			WorklistItemTextQueryOptions options = WorklistItemTextQueryOptions.PatientOrder
+				| (DowntimeRecovery.InDowntimeRecoveryMode ? WorklistItemTextQueryOptions.DowntimeRecovery : 0);
 
-                    response = service.SearchWorklists(
-						new WorklistItemTextQueryRequest(
-							query, specificityThreshold, ProcedureStepClassName, options));
-                });
-            return response;
+			return DoQueryCore(query, specificityThreshold, options, this.ProcedureStepClassName);
         }
+
+		protected static TextQueryResponse<TItem> DoQueryCore(SearchParams query, int specificityThreshold, WorklistItemTextQueryOptions options, string procedureStepClassName)
+        {
+			TextQueryResponse<TItem> response = null;
+
+			WorklistItemTextQueryRequest request = new WorklistItemTextQueryRequest(
+						query.TextSearch, specificityThreshold, procedureStepClassName, options);
+
+			if (query.UseAdvancedSearch)
+			{
+				request.UseAdvancedSearch = query.UseAdvancedSearch;
+				request.SearchFields = query.SearchFields;
+			}
+
+			Platform.GetService<TWorklistService>(
+				delegate(TWorklistService service)
+				{
+					response = service.SearchWorklists(request);
+				});
+
+			return response;
+		}
 
         protected abstract string ProcedureStepClassName { get; }
     }

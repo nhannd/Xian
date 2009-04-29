@@ -29,45 +29,37 @@ namespace ClearCanvas.Ris.Client.Workflow.Folders
 		}
 
 		[FolderPath("Search Results")]
-		public class RadiologistAdminSearchFolder : SearchResultsFolder<ReportingWorklistItem>
+		public class RadiologistAdminSearchFolder : WorklistSearchResultsFolder<ReportingWorklistItem, IReportingWorkflowService>
 		{
 			public RadiologistAdminSearchFolder()
 				: base(new ReportingWorklistTable())
 			{
 			}
 
-			protected override TextQueryResponse<ReportingWorklistItem> DoQuery(string query, int specificityThreshold)
+			protected override string ProcedureStepClassName
+			{
+				//TODO: having the client specify the class name isn't a terribly good idea, but
+				//it is the only way to get things working right now
+				//This class uses two different ProcedureStepClassNames for query.  So this property is actually not used.
+				get { return "ReportingProcedureStep and ProtocolAssignmentStep"; }
+			}
+
+			protected override TextQueryResponse<ReportingWorklistItem> DoQuery(SearchParams query, int specificityThreshold)
 			{
 				TextQueryResponse<ReportingWorklistItem> response;
 
-				//TODO: having the client specify the class name isn't a terribly good idea, but
-				//it is the only way to get things working right now
-				response = DoQuery(query, specificityThreshold, "ReportingProcedureStep");
+				WorklistItemTextQueryOptions options = WorklistItemTextQueryOptions.ProcedureStepStaff
+					| (DowntimeRecovery.InDowntimeRecoveryMode ? WorklistItemTextQueryOptions.DowntimeRecovery : 0);
+
+				response = DoQueryCore(query, specificityThreshold, options, "ReportingProcedureStep");
 				if (response.TooManyMatches)
 					return response;
 
 				List<ReportingWorklistItem> storeMatches = new List<ReportingWorklistItem>(response.Matches);
-				response = DoQuery(query, specificityThreshold, "ProtocolAssignmentStep");
+				response = DoQueryCore(query, specificityThreshold, options, "ProtocolAssignmentStep");
 
 				if (!response.TooManyMatches)
 					response.Matches.AddRange(storeMatches);
-
-				return response;
-			}
-
-			private static TextQueryResponse<ReportingWorklistItem> DoQuery(string query, int specificityThreshold, string procedureStepClassName)
-			{
-				TextQueryResponse<ReportingWorklistItem> response = null;
-				Platform.GetService<IReportingWorkflowService>(
-					delegate(IReportingWorkflowService service)
-					{
-						WorklistItemTextQueryOptions options = WorklistItemTextQueryOptions.ProcedureStepStaff
-							| (DowntimeRecovery.InDowntimeRecoveryMode ? WorklistItemTextQueryOptions.DowntimeRecovery : 0);
-
-						response = service.SearchWorklists(
-							new WorklistItemTextQueryRequest(
-								query, specificityThreshold, procedureStepClassName, options));
-					});
 
 				return response;
 			}

@@ -30,29 +30,47 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
-using System.Text;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
     public class SearchParams
     {
-        public SearchParams(string textSearch, bool showActiveOnly)
+		/// <summary>
+		/// Constructor for text-based search.
+		/// </summary>
+        public SearchParams(string textSearch)
         {
             this.TextSearch = textSearch;
-            this.ShowActiveOnly = showActiveOnly;
         }
 
-        public string TextSearch;
-        public bool ShowActiveOnly;
+		/// <summary>
+		/// Constructor for advance search
+		/// </summary>
+		public SearchParams(WorklistItemTextQueryRequest.AdvancedSearchFields searchFields)
+		{
+			this.UseAdvancedSearch = true;
+			this.SearchFields = searchFields;
+		}
+		
+		/// <summary>
+		/// Specifies the query text.
+		/// </summary>
+		public string TextSearch;
+
+		/// <summary>
+		/// Specifies that "advanced" mode should be used, in which case the text query is ignored
+		/// and the search is based on the content of the <see cref="SearchFields"/> member.
+		/// </summary>
+		public bool UseAdvancedSearch;
+
+		/// <summary>
+		/// Data used in the advanced search mode.
+		/// </summary>
+		public WorklistItemTextQueryRequest.AdvancedSearchFields SearchFields;
     }
 
     /// <summary>
@@ -71,20 +89,12 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(SearchComponentViewExtensionPoint))]
     public class SearchComponent : ApplicationComponent
     {
-    	private string _searchString;
+		private readonly SearchParams _searchParams;
 
-		// Filters
-    	private string _accessionNumber;
-    	private string _patientIdMrn;
-    	private string _healthcardNumber;
-    	private string _patientName;
-    	private DateTime? _startDate;
-    	private DateTime? _stopDate;
-		private ProcedureTypeSummary _procedureType;
-		private ExternalPractitionerSummary _orderingPractitioner;
+		private ProcedureTypeSummary _selectedProcedureType;
+		private ExternalPractitionerSummary _selectedOrderingPractitioner;
 		private ExternalPractitionerLookupHandler _orderingPractitionerLookupHandler;
 
-		private bool _showActiveOnly;
 		private bool _keepOpen;
 
 		private static SearchComponent _instance;
@@ -92,8 +102,7 @@ namespace ClearCanvas.Ris.Client
 
         private SearchComponent()
         {
-            // True by default
-            _showActiveOnly = true;
+			_searchParams = new SearchParams(new WorklistItemTextQueryRequest.AdvancedSearchFields());
         }
 
         public static Shelf Launch(IDesktopWindow desktopWindow)
@@ -152,66 +161,63 @@ namespace ClearCanvas.Ris.Client
 
         #region Public Member
 
-		public string SearchString
-		{
-			get { return _searchString; }
-			private set
-			{
-				_searchString = value;
-
-				NotifyPropertyChanged("SearchString");
-				NotifyPropertyChanged("SearchEnabled");
-				UpdateDisplay();
-			}
-		}
-
         public string AccessionNumber
         {
-			get { return _accessionNumber; }
+			get { return _searchParams.SearchFields.AccessionNumber; }
             set
             {
-            	_accessionNumber = value;
-            	UpdateSearchString();
+				_searchParams.SearchFields.AccessionNumber = value;
+				UpdateDisplay();
             }
         }
 
 		public string PatientIdMrn
 		{
-			get { return _patientIdMrn; }
+			get { return _searchParams.SearchFields.Mrn; }
 			set
 			{
-				_patientIdMrn = value;
-				UpdateSearchString();
+				_searchParams.SearchFields.Mrn = value;
+				UpdateDisplay();
 			}
 		}
 
 		public string HealthcardNumber
 		{
-			get { return _healthcardNumber; }
+			get { return _searchParams.SearchFields.HealthcardNumber; }
 			set
 			{
-				_healthcardNumber = value;
-				UpdateSearchString();
+				_searchParams.SearchFields.HealthcardNumber = value;
+				UpdateDisplay();
 			}
 		}
 
-		public string PatientName
+		public string FamilyName
 		{
-			get { return _patientName; }
+			get { return _searchParams.SearchFields.FamilyName; }
 			set
 			{
-				_patientName = value;
-				UpdateSearchString();
+				_searchParams.SearchFields.FamilyName = value;
+				UpdateDisplay();
 			}
 		}
 
+    	public string GivenName
+    	{
+			get { return _searchParams.SearchFields.GivenName; }
+			set
+			{
+				_searchParams.SearchFields.GivenName = value;
+				UpdateDisplay();
+			}
+    	}
 		public ExternalPractitionerSummary OrderingPractitioner
 		{
-			get { return _orderingPractitioner; }
+			get { return _selectedOrderingPractitioner; }
 			set
 			{
-				_orderingPractitioner = value;
-				UpdateSearchString();
+				_selectedOrderingPractitioner = value;
+				_searchParams.SearchFields.OrderingPractitionerRef = value == null ? null : value.PractitionerRef;
+				UpdateDisplay();
 			}
 		}
 
@@ -222,39 +228,34 @@ namespace ClearCanvas.Ris.Client
 
     	public ProcedureTypeSummary ProcedureType
     	{
-			get { return _procedureType; }
+			get { return _selectedProcedureType; }
 			set
 			{
-				_procedureType = value;
-				UpdateSearchString();
+				_selectedProcedureType = value;
+				_searchParams.SearchFields.ProcedureTypeRef = value == null ? null : value.ProcedureTypeRef;
+				UpdateDisplay();
 			}
     	}
 
-		public DateTime? StartDate
+		public DateTime? FromDate
     	{
-			get { return _startDate; }
+			get { return _searchParams.SearchFields.FromDate; }
 			set
 			{
-				_startDate = value;
-				UpdateSearchString();
+				_searchParams.SearchFields.FromDate = value;
+				UpdateDisplay();
 			}
 		}
 
-		public DateTime? StopDate
+		public DateTime? UntilDate
 		{
-			get { return _stopDate; }
+			get { return _searchParams.SearchFields.UntilDate; }
 			set
 			{
-				_stopDate = value;
-				UpdateSearchString();
+				_searchParams.SearchFields.UntilDate = value;
+				UpdateDisplay();
 			}
 		}
-
-		public bool ShowActiveOnly
-        {
-            get { return _showActiveOnly; }
-            set { _showActiveOnly = value; }
-        }
 
         public bool KeepOpen
         {
@@ -264,7 +265,18 @@ namespace ClearCanvas.Ris.Client
 
         public bool SearchEnabled
         {
-            get { return !string.IsNullOrEmpty(_searchString); }
+			get
+			{
+				return !string.IsNullOrEmpty(_searchParams.SearchFields.AccessionNumber)
+					   || !string.IsNullOrEmpty(_searchParams.SearchFields.Mrn)
+					   || !string.IsNullOrEmpty(_searchParams.SearchFields.HealthcardNumber)
+					   || !string.IsNullOrEmpty(_searchParams.SearchFields.FamilyName)
+					   || !string.IsNullOrEmpty(_searchParams.SearchFields.GivenName)
+					   || _searchParams.SearchFields.OrderingPractitionerRef != null
+					   || _searchParams.SearchFields.ProcedureTypeRef != null
+					   || _searchParams.SearchFields.FromDate != null
+					   || _searchParams.SearchFields.UntilDate != null;
+			}
         }
 
         public void Search()
@@ -276,8 +288,8 @@ namespace ClearCanvas.Ris.Client
             }
 
             ISearchDataHandler searchHandler = GetActiveWorkspaceSearchHandler();
-            if (searchHandler != null)
-				searchHandler.SearchParams = new SearchParams(_searchString, _showActiveOnly);
+			if (searchHandler != null)
+				searchHandler.SearchParams = _searchParams;;
 
             // always turn the validation errors off after a successful search
             this.ShowValidation(false);
@@ -295,61 +307,6 @@ namespace ClearCanvas.Ris.Client
 		}
 		
         #endregion
-
-		private void UpdateSearchString()
-		{
-			StringBuilder builder = new StringBuilder();
-			
-			if (!string.IsNullOrEmpty(_accessionNumber))
-			{
-				builder.Append(" a:");
-				builder.Append(_accessionNumber);
-			}
-
-			if (!string.IsNullOrEmpty(_patientIdMrn))
-			{
-				builder.Append(" pid/mrn:");
-				builder.Append(_patientIdMrn);
-			}
-
-			if (!string.IsNullOrEmpty(_healthcardNumber))
-			{
-				builder.Append(" h:");
-				builder.Append(_healthcardNumber);
-			}
-
-			if (!string.IsNullOrEmpty(_patientName))
-			{
-				builder.Append(" pn:");
-				builder.Append(_patientName);
-			}
-
-			if (_orderingPractitioner != null)
-			{
-				builder.Append(" op:");
-				builder.Append(PersonNameFormat.Format(_orderingPractitioner.Name));
-			}
-
-			if (_procedureType != null)
-			{
-				builder.Append(" proc:");
-				builder.Append(_procedureType.Name);
-			}
-
-			if (_startDate != null)
-			{
-				builder.Append(" start:");
-				builder.Append(Format.Date(_startDate));
-			}
-
-			if (_stopDate != null)
-			{
-				builder.Append(" end:");
-				builder.Append(Format.Date(_stopDate));
-			}
-
-			this.SearchString = builder.ToString();
-		}
 
         private static void Workspaces_ItemActivationChanged(object sender, ItemEventArgs<Workspace> e)
         {
