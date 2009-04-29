@@ -39,7 +39,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// 
 			// _findButton
 			// 
-			this._findButton.Dock = System.Windows.Forms.DockStyle.Bottom;
 			this._findButton.Image = ((System.Drawing.Image)(resources.GetObject("_findButton.Image")));
 			this._findButton.Location = new System.Drawing.Point(0, 13);
 			this._findButton.Margin = new System.Windows.Forms.Padding(0, 2, 2, 2);
@@ -76,7 +75,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._inputField.Location = new System.Drawing.Point(0, 0);
 			this._inputField.Margin = new System.Windows.Forms.Padding(0);
 			this._inputField.Name = "_inputField";
-			this._inputField.Size = new System.Drawing.Size(150, 41);
+			this._inputField.Size = new System.Drawing.Size(150, 43);
 			this._inputField.TabIndex = 0;
 			this._inputField.Value = null;
 			this._inputField.Format += new System.Windows.Forms.ListControlConvertEventHandler(this._inputField_Format);
@@ -89,7 +88,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.panel1.Location = new System.Drawing.Point(151, 2);
 			this.panel1.Margin = new System.Windows.Forms.Padding(1, 2, 0, 2);
 			this.panel1.Name = "panel1";
-			this.panel1.Size = new System.Drawing.Size(25, 37);
+			this.panel1.Size = new System.Drawing.Size(25, 39);
 			this.panel1.TabIndex = 1;
 			// 
 			// LookupField
@@ -97,7 +96,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.tableLayoutPanel1);
-			this.Margin = new System.Windows.Forms.Padding(0);
+			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "LookupField";
 			this.Size = new System.Drawing.Size(176, 41);
 			this.tableLayoutPanel1.ResumeLayout(false);

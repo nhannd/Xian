@@ -69,9 +69,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._fromDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._untilDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+			this._procedureType = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._keepOpen = new System.Windows.Forms.CheckBox();
 			this._searchButton = new System.Windows.Forms.Button();
-			this._procedureType = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._filterGroupBox.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -79,13 +79,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _accession
 			// 
 			this.tableLayoutPanel1.SetColumnSpan(this._accession, 2);
+			this._accession.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._accession.LabelText = "Accession #";
 			this._accession.Location = new System.Drawing.Point(2, 2);
 			this._accession.Margin = new System.Windows.Forms.Padding(2);
 			this._accession.Mask = "";
 			this._accession.Name = "_accession";
 			this._accession.PasswordChar = '\0';
-			this._accession.Size = new System.Drawing.Size(136, 41);
+			this._accession.Size = new System.Drawing.Size(136, 42);
 			this._accession.TabIndex = 0;
 			this._accession.ToolTip = null;
 			this._accession.Value = null;
@@ -136,13 +137,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _mrn
 			// 
 			this.tableLayoutPanel1.SetColumnSpan(this._mrn, 2);
+			this._mrn.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._mrn.LabelText = "MRN";
 			this._mrn.Location = new System.Drawing.Point(142, 2);
 			this._mrn.Margin = new System.Windows.Forms.Padding(2);
 			this._mrn.Mask = "";
 			this._mrn.Name = "_mrn";
 			this._mrn.PasswordChar = '\0';
-			this._mrn.Size = new System.Drawing.Size(136, 41);
+			this._mrn.Size = new System.Drawing.Size(136, 42);
 			this._mrn.TabIndex = 1;
 			this._mrn.ToolTip = null;
 			this._mrn.Value = null;
@@ -150,13 +152,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _healthcard
 			// 
 			this.tableLayoutPanel1.SetColumnSpan(this._healthcard, 2);
+			this._healthcard.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._healthcard.LabelText = "Healthcard #";
 			this._healthcard.Location = new System.Drawing.Point(282, 2);
 			this._healthcard.Margin = new System.Windows.Forms.Padding(2);
 			this._healthcard.Mask = "";
 			this._healthcard.Name = "_healthcard";
 			this._healthcard.PasswordChar = '\0';
-			this._healthcard.Size = new System.Drawing.Size(138, 41);
+			this._healthcard.Size = new System.Drawing.Size(142, 42);
 			this._healthcard.TabIndex = 2;
 			this._healthcard.ToolTip = null;
 			this._healthcard.Value = null;
@@ -164,13 +167,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _familyName
 			// 
 			this.tableLayoutPanel1.SetColumnSpan(this._familyName, 3);
+			this._familyName.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._familyName.LabelText = "Family Name";
 			this._familyName.Location = new System.Drawing.Point(2, 48);
 			this._familyName.Margin = new System.Windows.Forms.Padding(2);
 			this._familyName.Mask = "";
 			this._familyName.Name = "_familyName";
 			this._familyName.PasswordChar = '\0';
-			this._familyName.Size = new System.Drawing.Size(206, 41);
+			this._familyName.Size = new System.Drawing.Size(206, 42);
 			this._familyName.TabIndex = 3;
 			this._familyName.ToolTip = null;
 			this._familyName.Value = null;
@@ -178,23 +182,22 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _givenName
 			// 
 			this.tableLayoutPanel1.SetColumnSpan(this._givenName, 3);
+			this._givenName.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._givenName.LabelText = "Given Name";
 			this._givenName.Location = new System.Drawing.Point(212, 48);
 			this._givenName.Margin = new System.Windows.Forms.Padding(2);
 			this._givenName.Mask = "";
 			this._givenName.Name = "_givenName";
 			this._givenName.PasswordChar = '\0';
-			this._givenName.Size = new System.Drawing.Size(209, 41);
+			this._givenName.Size = new System.Drawing.Size(212, 42);
 			this._givenName.TabIndex = 4;
 			this._givenName.ToolTip = null;
 			this._givenName.Value = null;
 			// 
 			// _orderingPractitioner
 			// 
-			this._orderingPractitioner.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
 			this.tableLayoutPanel1.SetColumnSpan(this._orderingPractitioner, 3);
+			this._orderingPractitioner.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._orderingPractitioner.LabelText = "Ordered By";
 			this._orderingPractitioner.Location = new System.Drawing.Point(2, 94);
 			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
@@ -206,6 +209,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _fromDate
 			// 
 			this.tableLayoutPanel1.SetColumnSpan(this._fromDate, 3);
+			this._fromDate.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._fromDate.LabelText = "From Date";
 			this._fromDate.Location = new System.Drawing.Point(2, 140);
 			this._fromDate.Margin = new System.Windows.Forms.Padding(2);
@@ -213,13 +217,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._fromDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._fromDate.Name = "_fromDate";
 			this._fromDate.Nullable = true;
-			this._fromDate.Size = new System.Drawing.Size(206, 41);
+			this._fromDate.Size = new System.Drawing.Size(206, 44);
 			this._fromDate.TabIndex = 7;
 			this._fromDate.Value = new System.DateTime(2009, 4, 28, 16, 56, 44, 343);
 			// 
 			// _untilDate
 			// 
 			this.tableLayoutPanel1.SetColumnSpan(this._untilDate, 3);
+			this._untilDate.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._untilDate.LabelText = "Until Date";
 			this._untilDate.Location = new System.Drawing.Point(212, 140);
 			this._untilDate.Margin = new System.Windows.Forms.Padding(2);
@@ -227,9 +232,21 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._untilDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._untilDate.Name = "_untilDate";
 			this._untilDate.Nullable = true;
-			this._untilDate.Size = new System.Drawing.Size(209, 44);
+			this._untilDate.Size = new System.Drawing.Size(212, 44);
 			this._untilDate.TabIndex = 8;
 			this._untilDate.Value = new System.DateTime(2009, 4, 28, 16, 56, 47, 203);
+			// 
+			// _procedureType
+			// 
+			this.tableLayoutPanel1.SetColumnSpan(this._procedureType, 3);
+			this._procedureType.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._procedureType.LabelText = "ProcedureType";
+			this._procedureType.Location = new System.Drawing.Point(212, 94);
+			this._procedureType.Margin = new System.Windows.Forms.Padding(2);
+			this._procedureType.Name = "_procedureType";
+			this._procedureType.Size = new System.Drawing.Size(212, 42);
+			this._procedureType.TabIndex = 6;
+			this._procedureType.Value = null;
 			// 
 			// _keepOpen
 			// 
@@ -254,20 +271,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._searchButton.Text = "Search";
 			this._searchButton.UseVisualStyleBackColor = true;
 			this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
-			// 
-			// _procedureType
-			// 
-			this._procedureType.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this.tableLayoutPanel1.SetColumnSpan(this._procedureType, 3);
-			this._procedureType.LabelText = "ProcedureType";
-			this._procedureType.Location = new System.Drawing.Point(212, 94);
-			this._procedureType.Margin = new System.Windows.Forms.Padding(2);
-			this._procedureType.Name = "_procedureType";
-			this._procedureType.Size = new System.Drawing.Size(212, 42);
-			this._procedureType.TabIndex = 6;
-			this._procedureType.Value = null;
 			// 
 			// SearchComponentControl
 			// 

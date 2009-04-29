@@ -120,6 +120,7 @@ namespace ClearCanvas.Ris.Client
     	private NavigatorPage _verifiedByFilterComponentPage;
     	private NavigatorPage _supervisedByFilterComponentPage;
     	private NavigatorPage _timeWindowComponentPage;
+    	private NavigatorPage _summaryComponentPage;
 
     	/// <summary>
         /// Constructor to create new worklist(s).
@@ -290,7 +291,7 @@ namespace ClearCanvas.Ris.Client
                 this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeGroupSubscribers", _groupSubscribersComponent));
                 this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeStaffSubscribers", _staffSubscribersComponent));
             }
-			this.Pages.Add(new NavigatorPage("NodeWorklist/Summary", _summaryComponent = new WorklistSummaryComponent(_worklistDetail, _adminMode)));
+			this.Pages.Add(_summaryComponentPage = new NavigatorPage("NodeWorklist/Summary", _summaryComponent = new WorklistSummaryComponent(_worklistDetail, _adminMode)));
 
             this.CurrentPageChanged += WorklistEditorComponent_CurrentPageChanged;
 
@@ -314,15 +315,29 @@ namespace ClearCanvas.Ris.Client
 
     		// add the time filter page, if the class supports it (or if the class is not known, in the case of an add)
     		bool showTimeFilter = _worklistDetail.WorklistClass == null || _worklistDetail.WorklistClass.SupportsTimeWindow;
-    		ShowPage(_timeWindowComponentPage, showTimeFilter);
+    		ShowPage(_timeWindowComponentPage, showTimeFilter, _summaryComponentPage);
     	}
 
     	private void ShowPage(NavigatorPage page, bool show)
+    	{
+    		ShowPage(page, show, null);
+    	}
+
+    	private void ShowPage(NavigatorPage page, bool show, NavigatorPage insertBeforePage)
 		{
 			if (show)
 			{
 				if (this.Pages.Contains(page) == false)
-					this.Pages.Add(page);
+				{
+					if (insertBeforePage == null)
+						this.Pages.Add(page);
+					else
+					{
+						int index = this.Pages.IndexOf(insertBeforePage);
+						this.Pages.Insert(index, page);
+					}
+					
+				}
 			}
 			else
 			{
