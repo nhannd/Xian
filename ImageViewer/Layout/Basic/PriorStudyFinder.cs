@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					break;
 
 				PatientInformation info = new PatientInformation(patient);
-				PatientInformation reconciled = reconciliationStrategy.ReconcilePatient(info);
+				PatientInformation reconciled = reconciliationStrategy.ReconcileSearchCriteria(info);
 				if (!patientIds.Contains(reconciled.PatientId))
 					patientIds.Add(reconciled.PatientId);
 			}
@@ -105,8 +105,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				{
 					StudyRootStudyIdentifier identifier = new StudyRootStudyIdentifier();
 					identifier.PatientId = patientId;
-					if (DefaultPatientReconciliationSettings.Default.PatientIdSearchAppendWildcard)
-						identifier.PatientId = identifier.PatientId  + "*";
 
 					IList<StudyRootStudyIdentifier> studies = bridge.StudyQuery(identifier);
 					foreach (StudyRootStudyIdentifier study in studies)

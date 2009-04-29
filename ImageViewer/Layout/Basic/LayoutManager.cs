@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		protected override IImageSet CreateImageSet(Study study)
 		{
 			PatientInformation info = new PatientInformation(study.ParentPatient);
-			PatientInformation reconciled = reconciliationStrategy.ReconcilePatient(info);
+			PatientInformation reconciled = reconciliationStrategy.ReconcilePatientInformation(info);
 
 			ImageSet imageSet = (ImageSet)base.CreateImageSet(study);
 			imageSet.PatientInfo = String.Format("{0} · {1}",

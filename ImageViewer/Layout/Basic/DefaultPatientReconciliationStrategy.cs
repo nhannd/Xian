@@ -90,9 +90,17 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_applicator = new XmlActionsApplicator(DefaultActions.GetStandardActions());
 		}
 
-		#region IPatientAutoReconciliationService Members
+		public PatientInformation ReconcileSearchCriteria(PatientInformation patient)
+		{
+			return Reconcile(patient, DefaultPatientReconciliationSettings.Default.SearchReconciliationRulesXml, "search-reconciliation-rules");
+		}
 
-		public PatientInformation ReconcilePatient(PatientInformation patient)
+		public PatientInformation ReconcilePatientInformation(PatientInformation patient)
+		{
+			return Reconcile(patient, DefaultPatientReconciliationSettings.Default.PatientReconciliationRulesXml, "patient-reconciliation-rules");
+		}
+
+		private PatientInformation Reconcile(PatientInformation patient, XmlDocument rulesDocument, string rulesElementName)
 		{
 			PatientInformation returnPatient = patient.Clone();
 			if (String.IsNullOrEmpty(patient.PatientId))
@@ -100,11 +108,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			returnPatient.PatientId = returnPatient.PatientId.Trim();
 
-			XmlDocument document = DefaultPatientReconciliationSettings.Default.RulesXml;
-			XmlElement rulesNode = document.SelectSingleNode("//patient-reconciliation-rules") as XmlElement;
+			XmlElement rulesNode = rulesDocument.SelectSingleNode("//" + rulesElementName) as XmlElement;
 			if (rulesNode != null)
 			{
-				foreach(XmlNode ruleNode in rulesNode.SelectNodes("rule"))
+				foreach (XmlNode ruleNode in rulesNode.SelectNodes("rule"))
 				{
 					XmlElement ruleElement = ruleNode as XmlElement;
 					if (ruleElement != null)
@@ -117,7 +124,5 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			return returnPatient;
 		}
-
-		#endregion
 	}
 }

@@ -25,19 +25,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool PatientIdSearchAppendWildcard {
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<patient-reconciliation-rules />")]
+        public global::System.Xml.XmlDocument PatientReconciliationRulesXml {
             get {
-                return ((bool)(this["PatientIdSearchAppendWildcard"]));
+                return ((global::System.Xml.XmlDocument)(this["PatientReconciliationRulesXml"]));
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<patient-reconciliation-rules />")]
-        public global::System.Xml.XmlDocument RulesXml {
+        [global::System.Configuration.DefaultSettingValueAttribute("<?xml version=\"1.0\" encoding=\"utf-16\"?>\r\n<search-reconciliation-rules />")]
+        public global::System.Xml.XmlDocument SearchReconciliationRulesXml {
             get {
-                return ((global::System.Xml.XmlDocument)(this["RulesXml"]));
+                return ((global::System.Xml.XmlDocument)(this["SearchReconciliationRulesXml"]));
             }
         }
     }
