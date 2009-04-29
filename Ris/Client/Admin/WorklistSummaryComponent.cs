@@ -56,6 +56,7 @@ namespace ClearCanvas.Ris.Client.Admin
 																					 SR.DummyItemNone,
 																					 SR.DummyItemNone,
 																					 SR.DummyItemNone,
+																					 false,
 																					 false);
 		private readonly object _duplicateWorklistActionKey = new object();
 		private string _name;
