@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sop-classes>
+  <sop-class description="Computed Radiography Image Storage" uid="1.2.840.10008.5.1.4.1.1.1" />
+  <sop-class description="CT Image Storage" uid="1.2.840.10008.5.1.4.1.1.2" />
+  <sop-class description="Digital Intra-oral X-Ray Image Storage – For Presentation" uid="1.2.840.10008.5.1.4.1.1.1.3" />
+  <sop-class description="Digital Intra-oral X-Ray Image Storage – For Processing" uid="1.2.840.10008.5.1.4.1.1.1.3.1" />
+  <sop-class description="Digital Mammography X-Ray Image Storage – For Presentation" uid="1.2.840.10008.5.1.4.1.1.1.2" />
+  <sop-class description="Digital Mammography X-Ray Image Storage – For Processing" uid="1.2.840.10008.5.1.4.1.1.1.2.1" />
+  <sop-class description="Digital X-Ray Image Storage – For Presentation" uid="1.2.840.10008.5.1.4.1.1.1.1" />
+  <sop-class description="Digital X-Ray Image Storage – For Processing" uid="1.2.840.10008.5.1.4.1.1.1.1.1" />
+  <sop-class description="Enhanced CT Image Storage" uid="1.2.840.10008.5.1.4.1.1.2.1" />
+  <sop-class description="Enhanced MR Image Storage" uid="1.2.840.10008.5.1.4.1.1.4.1" />
+  <sop-class description="Enhanced XA Image Storage" uid="1.2.840.10008.5.1.4.1.1.12.1.1" />
+  <sop-class description="Enhanced XRF Image Storage" uid="1.2.840.10008.5.1.4.1.1.12.2.1" />
+  <sop-class description="MR Image Storage" uid="1.2.840.10008.5.1.4.1.1.4" />
+  <sop-class description="Multi-frame Grayscale Byte Secondary Capture Image Storage" uid="1.2.840.10008.5.1.4.1.1.7.2" />
+  <sop-class description="Multi-frame Grayscale Word Secondary Capture Image Storage" uid="1.2.840.10008.5.1.4.1.1.7.3" />
+  <sop-class description="Multi-frame Single Bit Secondary Capture Image Storage" uid="1.2.840.10008.5.1.4.1.1.7.1" />
+  <sop-class description="Multi-frame True Color Secondary Capture Image Storage" uid="1.2.840.10008.5.1.4.1.1.7.4" />
+  <sop-class description="Nuclear Medicine Image  Storage (Retired)" uid="1.2.840.10008.5.1.4.1.1.5" />
+  <sop-class description="Nuclear Medicine Image Storage" uid="1.2.840.10008.5.1.4.1.1.20" />
+  <sop-class description="Ophthalmic Photography 16 Bit Image Storage" uid="1.2.840.10008.5.1.4.1.1.77.1.5.2" />
+  <sop-class description="Ophthalmic Photography 8 Bit Image Storage" uid="1.2.840.10008.5.1.4.1.1.77.1.5.1" />
+  <sop-class description="Ophthalmic Tomography Image Storage" uid="1.2.840.10008.5.1.4.1.1.77.1.5.4" />
+  <sop-class description="Positron Emission Tomography Image Storage" uid="1.2.840.10008.5.1.4.1.1.128" />
+  <sop-class description="RT Image Storage" uid="1.2.840.10008.5.1.4.1.1.481.1" />
+  <sop-class description="Secondary Capture Image Storage" uid="1.2.840.10008.5.1.4.1.1.7" />
+  <sop-class description="Ultrasound Image Storage" uid="1.2.840.10008.5.1.4.1.1.6.1" />
+  <sop-class description="Ultrasound Image Storage (Retired)" uid="1.2.840.10008.5.1.4.1.1.6" />
+  <sop-class description="Ultrasound Multi-frame Image Storage" uid="1.2.840.10008.5.1.4.1.1.3.1" />
+  <sop-class description="Ultrasound Multi-frame Image Storage (Retired)" uid="1.2.840.10008.5.1.4.1.1.3" />
+  <sop-class description="Video Endoscopic Image Storage" uid="1.2.840.10008.5.1.4.1.1.77.1.1.1" />
+  <sop-class description="Video Microscopic Image Storage" uid="1.2.840.10008.5.1.4.1.1.77.1.2.1" />
+  <sop-class description="Video Photographic Image Storage" uid="1.2.840.10008.5.1.4.1.1.77.1.4.1" />
+  <sop-class description="VL Endoscopic Image Storage" uid="1.2.840.10008.5.1.4.1.1.77.1.1" />
+  <sop-class description="VL Microscopic Image Storage" uid="1.2.840.10008.5.1.4.1.1.77.1.2" />
+  <sop-class description="VL Photographic Image Storage" uid="1.2.840.10008.5.1.4.1.1.77.1.4" />
+  <sop-class description="VL Slide-Coordinates Microscopic Image Storage" uid="1.2.840.10008.5.1.4.1.1.77.1.3" />
+  <sop-class description="X-Ray 3D Angiographic Image Storage" uid="1.2.840.10008.5.1.4.1.1.13.1.1" />
+  <sop-class description="X-Ray 3D Craniofacial Image Storage" uid="1.2.840.10008.5.1.4.1.1.13.1.2" />
+  <sop-class description="X-Ray Angiographic Bi-Plane Image Storage (Retired)" uid="1.2.840.10008.5.1.4.1.1.12.3" />
+  <sop-class description="X-Ray Angiographic Image Storage" uid="1.2.840.10008.5.1.4.1.1.12.1" />
+  <sop-class description="X-Ray Radiofluoroscopic Image Storage" uid="1.2.840.10008.5.1.4.1.1.12.2" />
+</sop-classes>

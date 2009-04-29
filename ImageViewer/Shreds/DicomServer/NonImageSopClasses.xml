@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<sop-classes>
+  <sop-class description="Key Object Selection Document Storage" uid="1.2.840.10008.5.1.4.1.1.88.59" />
+  <sop-class description="Pseudo-Color Softcopy Presentation State Storage SOP Class" uid="1.2.840.10008.5.1.4.1.1.11.3" />
+  <sop-class description="Color Softcopy Presentation State Storage SOP Class" uid="1.2.840.10008.5.1.4.1.1.11.2" />
+  <sop-class description="Grayscale Softcopy Presentation State Storage SOP Class" uid="1.2.840.10008.5.1.4.1.1.11.1" />
+</sop-classes>

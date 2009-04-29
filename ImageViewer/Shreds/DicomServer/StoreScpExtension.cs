@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scp;
 using ClearCanvas.Dicom.Utilities;
@@ -13,100 +12,90 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
 	[ExtensionOf(typeof(DicomScpExtensionPoint<IDicomServerContext>))]
-	public class StoreScpExtension : ScpExtension, IDicomScp<IDicomServerContext>
+	public class ImageStorageScpExtension : StoreScpExtension
 	{
-		public StoreScpExtension()
+		public ImageStorageScpExtension()
 			: base(GetSupportedSops())
-		{
-		}
-
-		private new static IEnumerable<SopClass> GetSupportedSopClasses()
-		{
-			//TODO: load this from a setting or xml file
-			yield return SopClass.ComputedRadiographyImageStorage;
-			yield return SopClass.CtImageStorage;
-			
-			yield return SopClass.DigitalIntraOralXRayImageStorageForPresentation;
-			yield return SopClass.DigitalIntraOralXRayImageStorageForProcessing;
-
-			yield return SopClass.DigitalMammographyXRayImageStorageForPresentation;
-			yield return SopClass.DigitalMammographyXRayImageStorageForProcessing;
-
-			yield return SopClass.DigitalXRayImageStorageForPresentation;
-			yield return SopClass.DigitalXRayImageStorageForProcessing;
-
-			yield return SopClass.EnhancedCtImageStorage;
-			yield return SopClass.EnhancedMrImageStorage;
-
-			yield return SopClass.EnhancedXaImageStorage;
-
-			yield return SopClass.EnhancedXrfImageStorage;
-
-			yield return SopClass.MrImageStorage;
-
-			yield return SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorage;
-			yield return SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage;
-			yield return SopClass.MultiFrameSingleBitSecondaryCaptureImageStorage;
-			yield return SopClass.MultiFrameTrueColorSecondaryCaptureImageStorage;
-
-			yield return SopClass.NuclearMedicineImageStorageRetired;
-			yield return SopClass.NuclearMedicineImageStorage;
-
-			yield return SopClass.OphthalmicPhotography16BitImageStorage;
-			yield return SopClass.OphthalmicPhotography8BitImageStorage;
-			yield return SopClass.OphthalmicTomographyImageStorage;
-
-			yield return SopClass.PositronEmissionTomographyImageStorage;
-
-			yield return SopClass.RtImageStorage;
-
-			yield return SopClass.SecondaryCaptureImageStorage;
-
-			yield return SopClass.UltrasoundImageStorage;
-			yield return SopClass.UltrasoundImageStorageRetired;
-			yield return SopClass.UltrasoundMultiFrameImageStorage;
-			yield return SopClass.UltrasoundMultiFrameImageStorageRetired;
-
-			yield return SopClass.VideoEndoscopicImageStorage;
-			yield return SopClass.VideoMicroscopicImageStorage;
-			yield return SopClass.VideoPhotographicImageStorage;
-
-			yield return SopClass.VlEndoscopicImageStorage;
-			yield return SopClass.VlMicroscopicImageStorage;
-			yield return SopClass.VlPhotographicImageStorage;
-			yield return SopClass.VlSlideCoordinatesMicroscopicImageStorage;
-
-			yield return SopClass.XRay3dAngiographicImageStorage;
-			yield return SopClass.XRay3dCraniofacialImageStorage;
-
-			yield return SopClass.XRayAngiographicBiPlaneImageStorageRetired;
-			yield return SopClass.XRayAngiographicImageStorage;
-
-			yield return SopClass.XRayRadiofluoroscopicImageStorage;
-		}
+		{}
 
 		private static IEnumerable<SupportedSop> GetSupportedSops()
 		{
-			TransferSyntax[] codecSyntaxes = DicomCodecRegistry.GetCodecTransferSyntaxes();
-
-			foreach (SopClass sopClass in GetSupportedSopClasses())
+			foreach (SopClass sopClass in GetSopClasses(DicomServerSettings.Instance.ImageStorageSopClasses))
 			{
-				SupportedSop sop = new SupportedSop();
-				sop.SopClass = sopClass;
-				sop.SyntaxList.Add(TransferSyntax.ExplicitVrLittleEndian);
-				sop.SyntaxList.Add(TransferSyntax.ImplicitVrLittleEndian);
+				SupportedSop supportedSop = new SupportedSop();
+				supportedSop.SopClass = sopClass;
 
-				//TODO: should we maybe order them according to preference?
-				foreach (TransferSyntax syntax in codecSyntaxes)
+				supportedSop.AddSyntax(TransferSyntax.ExplicitVrLittleEndian);
+				supportedSop.AddSyntax(TransferSyntax.ImplicitVrLittleEndian);
+
+				foreach (TransferSyntax transferSyntax in GetTransferSyntaxes(DicomServerSettings.Instance.StorageTransferSyntaxes))
 				{
-					if (syntax.UidString != TransferSyntax.ExplicitVrLittleEndian.UidString
-						&& syntax.UidString != TransferSyntax.ImplicitVrLittleEndian.UidString)
+					if (transferSyntax.DicomUid.UID != TransferSyntax.ExplicitVrLittleEndianUid &&
+						transferSyntax.DicomUid.UID != TransferSyntax.ImplicitVrLittleEndianUid)
 					{
-						sop.SyntaxList.Add(syntax);
+						supportedSop.AddSyntax(transferSyntax);
 					}
 				}
 
-				yield return sop;
+				yield return supportedSop;
+			}
+		}
+	}
+
+	[ExtensionOf(typeof(DicomScpExtensionPoint<IDicomServerContext>))]
+	public class NonImageStorageScpExtension : StoreScpExtension
+	{
+		public NonImageStorageScpExtension()
+			: base(GetSupportedSops())
+		{ }
+
+		private static IEnumerable<SupportedSop> GetSupportedSops()
+		{
+			foreach (SopClass sopClass in GetSopClasses(DicomServerSettings.Instance.NonImageStorageSopClasses))
+			{
+				SupportedSop supportedSop = new SupportedSop();
+				supportedSop.SopClass = sopClass;
+				supportedSop.AddSyntax(TransferSyntax.ExplicitVrLittleEndian);
+				supportedSop.AddSyntax(TransferSyntax.ImplicitVrLittleEndian);
+				yield return supportedSop;
+			}
+		}
+	}
+
+	public abstract class StoreScpExtension : ScpExtension, IDicomScp<IDicomServerContext>
+	{
+		protected StoreScpExtension(IEnumerable<SupportedSop> supportedSops)
+			: base(supportedSops)
+		{
+		}
+
+		protected static IEnumerable<SopClass> GetSopClasses(SopClassConfigurationElementCollection config)
+		{
+			foreach (SopClassConfigurationElement element in config)
+			{
+				if (!String.IsNullOrEmpty(element.Uid))
+				{
+					SopClass sopClass = SopClass.GetSopClass(element.Uid);
+					if (sopClass != null)
+						yield return sopClass;
+				}
+			}
+		}
+
+		protected static IEnumerable<TransferSyntax> GetTransferSyntaxes(TransferSyntaxConfigurationElementCollection config)
+		{
+			foreach (TransferSyntaxConfigurationElement element in config)
+			{
+				if (!String.IsNullOrEmpty(element.Uid))
+				{
+					TransferSyntax syntax = TransferSyntax.GetTransferSyntax(element.Uid);
+					if (syntax != null)
+					{
+						//at least for now, restrict to available codecs for compressed syntaxes.
+						if (!syntax.Encapsulated || ClearCanvas.Dicom.Codec.DicomCodecRegistry.GetCodec(syntax) != null)
+							yield return syntax;
+					}
+				}
 			}
 		}
 
