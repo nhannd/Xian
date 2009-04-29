@@ -144,6 +144,15 @@
     <Compile Include="IEPrintBackgroundSettings.cs" />
     <Compile Include="ProcedureEditorComponent.cs" />
     <Compile Include="FolderRefreshTool.cs" />
+    <Compile Include="ProcedureTypeEditorComponent.cs" />
+    <Compile Include="ProcedureTypeLookupHandler.cs" />
+    <Compile Include="ProcedureTypeLookupSettings.cs" />
+    <Compile Include="ProcedureTypeLookupSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ProcedureTypeLookupSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ProcedureTypeSummaryComponent.cs" />
     <Compile Include="ProcedureTypeSummaryTable.cs" />
     <Compile Include="PublishReportComponent.cs" />
     <Compile Include="PublishReportComponentSettings.cs" />
@@ -379,6 +388,10 @@
     <None Include="PatientSearchComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PatientSearchComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="ProcedureTypeLookupSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ProcedureTypeLookupSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="PublishReportComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

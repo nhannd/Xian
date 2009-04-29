@@ -29,57 +29,46 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-
-using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Ris.Client.Admin;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="ProcedureTypeEditorComponent"/>.
+    /// Provides a Windows Forms view onto <see cref="ProcedureTypeEditorComponent"/>.
     /// </summary>
-    public partial class ProcedureTypeEditorComponentControl : ApplicationComponentUserControl
+    [ExtensionOf(typeof(ProcedureTypeEditorComponentViewExtensionPoint))]
+    public class ProcedureTypeEditorComponentView : WinFormsView, IApplicationComponentView
     {
         private ProcedureTypeEditorComponent _component;
+        private ProcedureTypeEditorComponentControl _control;
+
+        #region IApplicationComponentView Members
 
         /// <summary>
-        /// Constructor.
+        /// Called by the host to assign this view to a component.
         /// </summary>
-        public ProcedureTypeEditorComponentControl(ProcedureTypeEditorComponent component)
-            :base(component)
+        public void SetComponent(IApplicationComponent component)
         {
-			_component = component;
-            InitializeComponent();
+            _component = (ProcedureTypeEditorComponent)component;
+        }
 
-			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
-			_id.DataBindings.Add("Value", _component, "ID", true, DataSourceUpdateMode.OnPropertyChanged);
-			_acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+        #endregion
 
-			_baseType.DataSource = _component.BaseTypeChoices;
-			_baseType.DataBindings.Add("Value", _component, "BaseType", true, DataSourceUpdateMode.OnPropertyChanged);
-			_baseType.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatBaseTypeItem(e.ListItem); };
-
-        	Control xmlEditor = (Control) _component.XmlEditorHost.ComponentView.GuiElement;
-        	xmlEditor.Dock = DockStyle.Fill;
-			_xmlEditorPanel.Controls.Add(xmlEditor);
-		}
-
-		private void _acceptButton_Click(object sender, EventArgs e)
-		{
-			_component.Accept();
-		}
-
-		private void _cancelButton_Click(object sender, EventArgs e)
-		{
-			_component.Cancel();
-		}
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new ProcedureTypeEditorComponentControl(_component);
+                }
+                return _control;
+            }
+        }
     }
 }

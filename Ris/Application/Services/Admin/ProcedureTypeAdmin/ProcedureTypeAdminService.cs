@@ -22,6 +22,53 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ProcedureTypeAdmin
 		#region IProcedureTypeAdminService Members
 
 		[ReadOperation]
+		public TextQueryResponse<ProcedureTypeSummary> TextQuery(TextQueryRequest request)
+		{
+			IProcedureTypeBroker broker = PersistenceContext.GetBroker<IProcedureTypeBroker>();
+			ProcedureTypeAssembler assembler = new ProcedureTypeAssembler();
+
+			TextQueryHelper<ProcedureType, ProcedureTypeSearchCriteria, ProcedureTypeSummary> helper
+				= new TextQueryHelper<ProcedureType, ProcedureTypeSearchCriteria, ProcedureTypeSummary>(
+					delegate
+					{
+						string rawQuery = request.TextQuery;
+
+						IList<string> terms = TextQueryHelper.ParseTerms(rawQuery);
+						List<ProcedureTypeSearchCriteria> criteria = new List<ProcedureTypeSearchCriteria>();
+
+						// allow matching on name (assume entire query is a name which may contain spaces)
+						ProcedureTypeSearchCriteria nameCriteria = new ProcedureTypeSearchCriteria();
+						nameCriteria.Name.StartsWith(rawQuery);
+						criteria.Add(nameCriteria);
+
+						// allow matching of any term against ID
+						criteria.AddRange(CollectionUtils.Map<string, ProcedureTypeSearchCriteria>(terms,
+									 delegate(string term)
+									 {
+										 ProcedureTypeSearchCriteria c = new ProcedureTypeSearchCriteria();
+										 c.Id.StartsWith(term);
+										 return c;
+									 }));
+
+						return criteria.ToArray();
+					},
+					delegate(ProcedureType pt)
+					{
+						return assembler.CreateSummary(pt);
+					},
+					delegate(ProcedureTypeSearchCriteria[] criteria, int threshold)
+					{
+						return broker.Count(criteria) <= threshold;
+					},
+					delegate(ProcedureTypeSearchCriteria[] criteria, SearchResultPage page)
+					{
+						return broker.Find(criteria, page);
+					});
+
+			return helper.Query(request);
+		}
+
+		[ReadOperation]
 		public ListProcedureTypesResponse ListProcedureTypes(ListProcedureTypesRequest request)
 		{
 			Platform.CheckForNullReference(request, "request");

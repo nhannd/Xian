@@ -92,6 +92,7 @@ namespace ClearCanvas.Ris.Client
 		private readonly SearchParams _searchParams;
 
 		private ProcedureTypeSummary _selectedProcedureType;
+		private ProcedureTypeLookupHandler _procedureTypeLookupHandler; 
 		private ExternalPractitionerSummary _selectedOrderingPractitioner;
 		private ExternalPractitionerLookupHandler _orderingPractitionerLookupHandler;
 
@@ -155,6 +156,7 @@ namespace ClearCanvas.Ris.Client
 		public override void Start()
 		{
 			_orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
+			_procedureTypeLookupHandler = new ProcedureTypeLookupHandler(this.Host.DesktopWindow);
 
 			base.Start();
 		}
@@ -236,6 +238,11 @@ namespace ClearCanvas.Ris.Client
 				UpdateDisplay();
 			}
     	}
+
+		public ILookupHandler ProcedureTypeLookupHandler
+		{
+			get { return _procedureTypeLookupHandler; }
+		}
 
 		public DateTime? FromDate
     	{

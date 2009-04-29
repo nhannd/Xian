@@ -30,19 +30,16 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin;
-using System.Collections;
-using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin;
 
-namespace ClearCanvas.Ris.Client.Admin
+namespace ClearCanvas.Ris.Client
 {
 	/// <summary>
 	/// Extension point for views onto <see cref="ProcedureTypeEditorComponent"/>.
@@ -214,7 +211,7 @@ namespace ClearCanvas.Ris.Client.Admin
 				catch (Exception e)
 				{
 					ExceptionHandler.Report(e, "Unable to save procedure type", this.Host.DesktopWindow,
-						delegate()
+						delegate
 						{
 							this.Exit(ApplicationComponentExitCode.Error);
 						});

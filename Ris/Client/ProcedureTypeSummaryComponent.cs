@@ -1,18 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin;
-using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client.Admin
+namespace ClearCanvas.Ris.Client
 {
 	[MenuAction("launch", "global-menus/Admin/Procedure Types", "Launch")]
 	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.ProcedureType)]
@@ -61,10 +57,20 @@ namespace ClearCanvas.Ris.Client.Admin
 	/// ProcedureTypeSummaryComponent class.
 	/// </summary>
 	[AssociateView(typeof(ProcedureTypeSummaryComponentViewExtensionPoint))]
-	public class ProcedureTypeSummaryComponent : SummaryComponentBase<ProcedureTypeSummary, ProcedureTypeTable, ListProcedureTypesRequest>
+	public class ProcedureTypeSummaryComponent : SummaryComponentBase<ProcedureTypeSummary, ProcedureTypeSummaryTable, ListProcedureTypesRequest>
 	{
 		private string _id;
 		private string _name;
+
+		public ProcedureTypeSummaryComponent()
+		{
+
+		}
+
+		public ProcedureTypeSummaryComponent(bool dialogMode)
+			: base(dialogMode)
+		{
+		}
 
 		/// <summary>
 		/// Override this method to perform custom initialization of the action model,

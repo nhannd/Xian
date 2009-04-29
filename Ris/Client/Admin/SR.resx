@@ -342,9 +342,6 @@
   <data name="TitleAddNoteCategory" xml:space="preserve">
     <value>Add Note Category</value>
   </data>
-  <data name="TitleAddProcedureType" xml:space="preserve">
-    <value>Add Procedure Type</value>
-  </data>
   <data name="TitleAddProcedureTypeGroup" xml:space="preserve">
     <value>Add Procedure Type Group</value>
   </data>
@@ -449,9 +446,6 @@
   </data>
   <data name="TitleUpdateNoteCategory" xml:space="preserve">
     <value>Update Note Category</value>
-  </data>
-  <data name="TitleUpdateProcedureType" xml:space="preserve">
-    <value>Edit Procedure Type</value>
   </data>
   <data name="TitleUpdateProcedureTypeGroup" xml:space="preserve">
     <value>Update Procedure Type Group</value>

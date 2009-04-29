@@ -328,6 +328,13 @@
       <DependentUpon>OrderNoteConversationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="OrderNoteConversationComponentView.cs" />
+    <Compile Include="ProcedureTypeEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProcedureTypeEditorComponentControl.Designer.cs">
+      <DependentUpon>ProcedureTypeEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProcedureTypeEditorComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -680,6 +687,10 @@
     <EmbeddedResource Include="ListBoxView.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ListBoxView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProcedureTypeEditorComponentControl.resx">
+      <DependentUpon>ProcedureTypeEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\Splash.png" />
     <EmbeddedResource Include="SR.resx">

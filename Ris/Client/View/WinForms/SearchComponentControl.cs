@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			_orderingPractitioner.LookupHandler = _component.OrderingPractitionerLookupHandler;
 
 			_procedureType.DataBindings.Add("Value", _component, "ProcedureType", true, DataSourceUpdateMode.OnPropertyChanged);
-        	_procedureType.Enabled = false;
+			_procedureType.LookupHandler = _component.ProcedureTypeLookupHandler;
 			
             _keepOpen.DataBindings.Add("Checked", _component, "KeepOpen", true, DataSourceUpdateMode.OnPropertyChanged);
             _searchButton.DataBindings.Add("Enabled", _component, "SearchEnabled");

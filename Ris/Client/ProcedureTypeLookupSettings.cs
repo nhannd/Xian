@@ -29,51 +29,20 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
+using System.Configuration;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Ris.Client.Admin;
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Provides a Windows Forms view onto <see cref="ProcedureTypeEditorComponent"/>.
-    /// </summary>
-    [ExtensionOf(typeof(ProcedureTypeEditorComponentViewExtensionPoint))]
-    public class ProcedureTypeEditorComponentView : WinFormsView, IApplicationComponentView
-    {
-        private ProcedureTypeEditorComponent _component;
-        private ProcedureTypeEditorComponentControl _control;
 
-        #region IApplicationComponentView Members
-
-        /// <summary>
-        /// Called by the host to assign this view to a component.
-        /// </summary>
-        public void SetComponent(IApplicationComponent component)
-        {
-            _component = (ProcedureTypeEditorComponent)component;
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Gets the underlying GUI component for this view.
-        /// </summary>
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new ProcedureTypeEditorComponentControl(_component);
-                }
-                return _control;
-            }
-        }
-    }
+	// TODO add a description of the purpose of the settings group here
+	[SettingsGroupDescription("")]
+	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	internal sealed partial class ProcedureTypeLookupSettings
+	{
+		private ProcedureTypeLookupSettings()
+		{
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
+		}
+	}
 }

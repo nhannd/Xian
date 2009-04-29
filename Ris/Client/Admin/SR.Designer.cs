@@ -736,15 +736,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Procedure Type.
-        /// </summary>
-        internal static string TitleAddProcedureType {
-            get {
-                return ResourceManager.GetString("TitleAddProcedureType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add Procedure Type Group.
         /// </summary>
         internal static string TitleAddProcedureTypeGroup {
@@ -1056,15 +1047,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleUpdateNoteCategory {
             get {
                 return ResourceManager.GetString("TitleUpdateNoteCategory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Edit Procedure Type.
-        /// </summary>
-        internal static string TitleUpdateProcedureType {
-            get {
-                return ResourceManager.GetString("TitleUpdateProcedureType", resourceCulture);
             }
         }
         

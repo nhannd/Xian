@@ -12,6 +12,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ProcedureTypeAdmin
 	public interface IProcedureTypeAdminService
 	{
 		/// <summary>
+		/// Returns a list of procedure type based on a textual query.
+		/// </summary>
+		/// <param name="request"></param>
+		/// <returns></returns>
+		[OperationContract]
+		TextQueryResponse<ProcedureTypeSummary> TextQuery(TextQueryRequest request);
+
+		/// <summary>
 		/// Summary list of all items.
 		/// </summary>
 		[OperationContract]
