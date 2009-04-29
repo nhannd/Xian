@@ -38,6 +38,28 @@ namespace ClearCanvas.Ris.Application.Common
 
             [DataMember]
             public DateTime? UntilDate;
+
+			/// <summary>
+			/// Checks if all search fields are empty.
+			/// </summary>
+			/// <returns></returns>
+			public bool IsEmpty()
+			{
+				return IsEmpty(FamilyName)
+				       && IsEmpty(GivenName)
+				       && IsEmpty(Mrn)
+				       && IsEmpty(HealthcardNumber)
+				       && IsEmpty(AccessionNumber)
+				       && ProcedureTypeRef == null
+				       && OrderingPractitionerRef == null
+				       && FromDate == null
+				       && UntilDate == null;
+			}
+
+			private static bool IsEmpty(string s)
+			{
+				return s == null || s.Trim().Length == 0;
+			}
         }
 
         /// <summary>

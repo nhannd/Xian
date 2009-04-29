@@ -311,11 +311,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 }
 
                 // search for patients
-				HqlProjectionQuery patientQuery = BuildPatientSearchQuery(where, false);
-				List<TItem> patients = DoQuery(patientQuery);
+				if (whereSelectPatient.Length > 0)
+				{
+					HqlProjectionQuery patientQuery = BuildPatientSearchQuery(whereSelectPatient, false);
+					List<TItem> patients = DoQuery(patientQuery);
 
-                // add any patients for which there is no result
-                results = MergeResults(results, patients, delegate(TItem item) { return item.PatientRef; });
+					// add any patients for which there is no result
+					results = MergeResults(results, patients, delegate(TItem item) { return item.PatientRef; });
+				}
 			}
 
     		return results;

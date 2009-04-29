@@ -73,8 +73,15 @@ namespace ClearCanvas.Ris.Application.Services
 
         protected override bool ValidateRequest(TextQueryRequest request)
         {
-            // the TextQuery field may be empty iff the UseAdvancedSearch flag is set
-            return base.ValidateRequest(request) || ((WorklistItemTextQueryRequest)request).UseAdvancedSearch;
+			// if the UseAdvancedSearch flag is set, check if the Search fields are empty
+			WorklistItemTextQueryRequest req = (WorklistItemTextQueryRequest)request;
+			if (req.UseAdvancedSearch)
+			{
+				return req.SearchFields != null && !req.SearchFields.IsEmpty();
+			}
+
+			// otherwise, do base behaviour (check text query)
+			return base.ValidateRequest(request);
         }
 
         protected override WorklistItemSearchCriteria[] BuildCriteria(TextQueryRequest request)
@@ -138,7 +145,7 @@ namespace ClearCanvas.Ris.Application.Services
 			List<WorklistItemSearchCriteria> wheres = new List<WorklistItemSearchCriteria>();
 
 			// construct a base criteria object from the request values
-			WorklistItemSearchCriteria criteria = new WorklistItemSearchCriteria();
+			WorklistItemSearchCriteria criteria = new WorklistItemSearchCriteria(_procedureStepClass);
 
 			if (!string.IsNullOrEmpty(searchParams.Mrn))
 				criteria.PatientProfile.Mrn.Id.StartsWith(searchParams.Mrn.Trim());

@@ -55,6 +55,8 @@ namespace ClearCanvas.Healthcare
         protected WorklistItemSearchCriteria(WorklistItemSearchCriteria other)
             : base(other)
         {
+        	_procedureStepClass = other._procedureStepClass;
+        	_timeField = other._timeField;
         }
 
         public override object Clone()
