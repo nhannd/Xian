@@ -49,11 +49,11 @@ namespace ClearCanvas.Healthcare.Brokers
 		/// Finds worklists matching the specified name (which may contain wildcards) and class names.
 		/// </summary>
 		/// <param name="name">If empty, no name criteria is applied.</param>
-		/// <param name="includeUserAndGroupWorklists"></param>
+		/// <param name="includeUserDefinedWorklists"></param>
 		/// <param name="worklistClassNames"></param>
 		/// <param name="page"></param>
 		/// <returns></returns>
-		IList<Worklist> Find(string name, bool includeUserAndGroupWorklists, IEnumerable<string> worklistClassNames, SearchResultPage page);
+		IList<Worklist> Find(string name, bool includeUserDefinedWorklists, IEnumerable<string> worklistClassNames, SearchResultPage page);
 
 		/// <summary>
 		/// Finds one worklist with the specified name and class name.

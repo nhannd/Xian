@@ -5,7 +5,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-	public class StaffSelectorEditorComponent : WorklistSelectorEditorComponent<StaffSummary, StaffTable>
+	public class StaffSelectorEditorComponent : WorklistSelectorEditorComponent<StaffSummary, StaffSelectorTable>
 	{
 		public class DummyItem : StaffSummary
 		{

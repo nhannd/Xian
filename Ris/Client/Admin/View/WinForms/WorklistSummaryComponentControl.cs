@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 			_classComboBox.Format += delegate(object sender, ListControlConvertEventArgs e) { e.Value = _component.FormatWorklistClassChoicesItem(e.ListItem); };
 
 			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
-			_includeUserAndGroupWorklists.DataBindings.Add("Checked", _component, "IncludeUserAndGroupOwnedWorklists", true, DataSourceUpdateMode.OnPropertyChanged);
+			_includeUserDefinedWorklists.DataBindings.Add("Checked", _component, "IncludeUserDefinedWorklists", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_okButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
 			_okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");

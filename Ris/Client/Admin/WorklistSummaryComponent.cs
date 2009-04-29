@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client.Admin
 		private string _name;
 		private WorklistClassSummary _worklistClass;
 		private ArrayList _worklistClassChoices = new ArrayList();
-		private bool _includeUserAndGroupOwnedWorklists;
+		private bool _includeUseDefinedWorklists;
 
 		public override void Start()
 		{
@@ -115,10 +115,10 @@ namespace ClearCanvas.Ris.Client.Admin
 			set { _name = value; }
 		}
 
-		public bool IncludeUserAndGroupOwnedWorklists
+		public bool IncludeUserDefinedWorklists
 		{
-			get { return _includeUserAndGroupOwnedWorklists; }
-			set { _includeUserAndGroupOwnedWorklists = value; }
+			get { return _includeUseDefinedWorklists; }
+			set { _includeUseDefinedWorklists = value; }
 		}
 
 		public object SelectedWorklistClass
@@ -198,7 +198,7 @@ namespace ClearCanvas.Ris.Client.Admin
 						new string[] { } : new string[] { _worklistClass.ClassName };
 					request.ClassNames = new List<string>(classNames);
 					request.WorklistName = _name;
-					request.IncludeUserAndGroupOwned = _includeUserAndGroupOwnedWorklists;
+					request.IncludeUserDefinedWorklists = _includeUseDefinedWorklists;
 
 					listResponse = service.ListWorklists(request);
 				});

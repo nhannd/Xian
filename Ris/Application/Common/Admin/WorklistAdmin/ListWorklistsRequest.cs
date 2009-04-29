@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         /// Specifies whether user and group owned worklists should be returned in the results.
         /// </summary>
         [DataMember]
-        public bool IncludeUserAndGroupOwned;
+        public bool IncludeUserDefinedWorklists;
 
         /// <summary>
         /// Filters the results by the specified name.

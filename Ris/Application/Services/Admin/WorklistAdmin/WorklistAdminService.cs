@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 delegate(Type t) { return !Worklist.GetIsStatic(t); })
                 .ConvertAll<string>(delegate(Type t) { return Worklist.GetClassName(t); });
 
-            IList<Worklist> worklists = broker.Find(request.WorklistName, request.IncludeUserAndGroupOwned, persistentClassNames, request.Page);
+            IList<Worklist> worklists = broker.Find(request.WorklistName, request.IncludeUserDefinedWorklists, persistentClassNames, request.Page);
 
             // optionally include the static ones
             if (request.IncludeStatic)

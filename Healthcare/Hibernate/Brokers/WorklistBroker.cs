@@ -55,14 +55,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return ExecuteHql<Worklist>(query);
         }
 
-        public IList<Worklist> Find(string name, bool includeUserAndGroupWorklists, IEnumerable<string> worklistClassNames, SearchResultPage page)
+        public IList<Worklist> Find(string name, bool includeUserDefinedWorklists, IEnumerable<string> worklistClassNames, SearchResultPage page)
         {
             HqlProjectionQuery query = GetBaseQuery();
 
             if (!string.IsNullOrEmpty(name))
                 query.Conditions.Add(new HqlCondition("w.Name like ?", string.Format("%{0}%", name)));
 
-            if (!includeUserAndGroupWorklists)
+            if (!includeUserDefinedWorklists)
                 query.Conditions.Add(new HqlCondition("(w.Owner.Staff is null and w.Owner.Group is null)"));
 
             AddClassConditions(query, worklistClassNames);
