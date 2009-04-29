@@ -115,8 +115,13 @@ namespace ClearCanvas.Ris.Client
         private WorklistSelectorEditorComponent<StaffSummary, StaffSelectorTable> _staffSubscribersComponent;
         private WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
         private WorklistSummaryComponent _summaryComponent;
+    	private NavigatorPage _interpretedByFilterComponentPage;
+    	private NavigatorPage _transcribedByFilterComponentPage;
+    	private NavigatorPage _verifiedByFilterComponentPage;
+    	private NavigatorPage _supervisedByFilterComponentPage;
+    	private NavigatorPage _timeWindowComponentPage;
 
-        /// <summary>
+    	/// <summary>
         /// Constructor to create new worklist(s).
         /// </summary>
         public WorklistEditorComponent(bool adminMode)
@@ -226,6 +231,7 @@ namespace ClearCanvas.Ris.Client
                             false);
                     }
                     _detailComponent.ProcedureTypeGroupClassChanged += ProcedureTypeGroupClassChangedEventHandler;
+                	_detailComponent.WorklistClassChanged += OnWorklistClassChanged;
 
                     // create all other pages
                     _filterComponent = new WorklistFilterEditorComponent(_worklistDetail,
@@ -270,21 +276,16 @@ namespace ClearCanvas.Ris.Client
             this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeProcedureTypeGroups", _procedureTypeGroupFilterComponent));
             this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodePatientLocations", _locationFilterComponent));
 
-            if (_worklistDetail.WorklistClass == null || ShowReportingStaffRoleFilters)
-            {
-                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeInterpretedBy", _interpretedByFilterComponent));
-                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeTranscribedBy", _transcribedByFilterComponent));
-                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeVerifiedBy", _verifiedByFilterComponent));
-                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeSupervisedBy", _supervisedByFilterComponent));
-            }
+			_interpretedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeInterpretedBy", _interpretedByFilterComponent);
+			_transcribedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeTranscribedBy", _transcribedByFilterComponent);
+			_verifiedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeVerifiedBy", _verifiedByFilterComponent);
+			_supervisedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeSupervisedBy", _supervisedByFilterComponent);
 
-            // add the time filter page, if the class supports it (or if the class is not known, in the case of an add)
-            if (_worklistDetail.WorklistClass == null || _worklistDetail.WorklistClass.SupportsTimeWindow)
-            {
-                this.Pages.Add(new NavigatorPage("NodeWorklist/NodeTimeWindow", _timeWindowComponent));
-            }
+			_timeWindowComponentPage = new NavigatorPage("NodeWorklist/NodeTimeWindow", _timeWindowComponent);
 
-            if (ShowSubscriptionPages)
+			ShowWorklistCategoryDependantPages();
+
+        	if (ShowSubscriptionPages)
             {
                 this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeGroupSubscribers", _groupSubscribersComponent));
                 this.Pages.Add(new NavigatorPage("NodeWorklist/NodeSubscribers/NodeStaffSubscribers", _staffSubscribersComponent));
@@ -298,7 +299,39 @@ namespace ClearCanvas.Ris.Client
             base.Start();
         }
 
-        private void WorklistEditorComponent_CurrentPageChanged(object sender, EventArgs e)
+    	private void OnWorklistClassChanged(object sender, EventArgs e)
+    	{
+    		ShowWorklistCategoryDependantPages();
+    	}
+
+    	private void ShowWorklistCategoryDependantPages()
+    	{
+    		bool showStaffFilters = _worklistDetail.WorklistClass == null || ShowReportingStaffRoleFilters;
+    		ShowPage(_interpretedByFilterComponentPage, showStaffFilters);
+    		ShowPage(_transcribedByFilterComponentPage, showStaffFilters);
+    		ShowPage(_verifiedByFilterComponentPage, showStaffFilters);
+    		ShowPage(_supervisedByFilterComponentPage, showStaffFilters);
+
+    		// add the time filter page, if the class supports it (or if the class is not known, in the case of an add)
+    		bool showTimeFilter = _worklistDetail.WorklistClass == null || _worklistDetail.WorklistClass.SupportsTimeWindow;
+    		ShowPage(_timeWindowComponentPage, showTimeFilter);
+    	}
+
+    	private void ShowPage(NavigatorPage page, bool show)
+		{
+			if (show)
+			{
+				if (this.Pages.Contains(page) == false)
+					this.Pages.Add(page);
+			}
+			else
+			{
+				if (this.Pages.Contains(page) == true)
+					this.Pages.Remove(page);
+			}
+		}
+
+    	private void WorklistEditorComponent_CurrentPageChanged(object sender, EventArgs e)
         {
 			// Update the summary page when it is active
             if (this.CurrentPage.Component == _summaryComponent)

@@ -31,20 +31,18 @@
 
 using System;
 using System.Collections;
-using ClearCanvas.Enterprise.Core;
-using Iesi.Collections;
-using Iesi.Collections.Generic;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
+using Iesi.Collections.Generic;
 
 namespace ClearCanvas.Healthcare
 {
     /// <summary>
     /// Worklist entity.  Represents a worklist.
     /// </summary>
-	[UniqueKey("WorklistUniqueKey", new string[] { "Name", "FullClassName", "Owner.Staff", "Owner.Group" })]
+    [UniqueKey("WorklistUniqueKey", new string[] { "Name", "FullClassName", "Owner.Staff", "Owner.Group" })]
     public abstract class Worklist : Entity, IWorklist
     {
         /// <summary>
@@ -161,6 +159,19 @@ namespace ClearCanvas.Healthcare
         }
 
         /// <summary>
+        /// Gets a value indicating whether the specified worklist class supports time-filters, as specified by
+        /// the <see cref="WorklistSupportsTimeFilterAttribute"/>.
+        /// </summary>
+        /// <param name="worklistClass"></param>
+        /// <returns></returns>
+        public static bool GetSupportsReportingStaffRoleFilter(Type worklistClass)
+        {
+            WorklistSupportsReportingStaffRoleFilterAttribute a =
+                AttributeUtils.GetAttribute<WorklistSupportsReportingStaffRoleFilterAttribute>(worklistClass, true);
+            return a == null ? false : a.SupportsReportingStaffRoleFilter;
+        }
+
+        /// <summary>
         /// Gets a value indicating whether the specified worklist class behaves as a singleton, as specified by
         /// the <see cref="StaticWorklistAttribute"/>.
         /// </summary>
@@ -180,9 +191,9 @@ namespace ClearCanvas.Healthcare
         private WorklistProcedureTypeGroupFilter _procedureTypeGroupFilter;
         private WorklistFacilityFilter _facilityFilter;
         private WorklistPatientClassFilter _patientClassFilter;
-    	private WorklistPatientLocationFilter _patientLocationFilter;
+        private WorklistPatientLocationFilter _patientLocationFilter;
         private WorklistOrderPriorityFilter _orderPriorityFilter;
-    	private WorklistPractitionerFilter _orderingPractitionerFilter;
+        private WorklistPractitionerFilter _orderingPractitionerFilter;
         private WorklistPortableFilter _portableFilter;
         private WorklistTimeFilter _timeFilter;
 
@@ -203,9 +214,9 @@ namespace ClearCanvas.Healthcare
             _procedureTypeGroupFilter = new WorklistProcedureTypeGroupFilter();
             _facilityFilter = new WorklistFacilityFilter();
             _patientClassFilter = new WorklistPatientClassFilter();
-			_patientLocationFilter = new WorklistPatientLocationFilter();
+            _patientLocationFilter = new WorklistPatientLocationFilter();
             _orderPriorityFilter = new WorklistOrderPriorityFilter();
-			_orderingPractitionerFilter = new WorklistPractitionerFilter();
+            _orderingPractitionerFilter = new WorklistPractitionerFilter();
             _portableFilter = new WorklistPortableFilter();
             _timeFilter = new WorklistTimeFilter();
         }
@@ -258,14 +269,14 @@ namespace ClearCanvas.Healthcare
             set { _description = value; }
         }
 
-		/// <summary>
-		/// Gets or sets the owner of the worklist.
-		/// </summary>
-		[PersistentProperty]
+        /// <summary>
+        /// Gets or sets the owner of the worklist.
+        /// </summary>
+        [PersistentProperty]
         public virtual WorklistOwner Owner
-    	{
-			get { return _owner == null ? WorklistOwner.Admin : _owner; }
-			set
+        {
+            get { return _owner == null ? WorklistOwner.Admin : _owner; }
+            set
             {
                 if (!Equals(_owner, value))
                 {
@@ -285,7 +296,7 @@ namespace ClearCanvas.Healthcare
                     }
                 }
             }
-    	}
+        }
 
         /// <summary>
         /// Gets the set of <see cref="Staff"/> that subscribe to this worklist.
@@ -340,16 +351,16 @@ namespace ClearCanvas.Healthcare
             set { _patientClassFilter = value; }
         }
 
-		/// <summary>
-		/// Gets or sets the <see cref="WorklistPatientLocationFilter"/>.
-		/// </summary>
-		[PersistentProperty]
-		[EmbeddedValue]
-		public WorklistPatientLocationFilter PatientLocationFilter
-		{
-			get { return _patientLocationFilter; }
-			set { _patientLocationFilter = value; }
-		}
+        /// <summary>
+        /// Gets or sets the <see cref="WorklistPatientLocationFilter"/>.
+        /// </summary>
+        [PersistentProperty]
+        [EmbeddedValue]
+        public WorklistPatientLocationFilter PatientLocationFilter
+        {
+            get { return _patientLocationFilter; }
+            set { _patientLocationFilter = value; }
+        }
 
         /// <summary>
         /// Gets or sets the <see cref="WorklistOrderPriorityFilter"/>.
@@ -362,16 +373,16 @@ namespace ClearCanvas.Healthcare
             set { _orderPriorityFilter = value; }
         }
 
-		/// <summary>
-		/// Gets or sets the <see cref="WorklistPractitionerFilter"/> for the ordering practitioner.
-		/// </summary>
-		[PersistentProperty]
-		[EmbeddedValue]
-		public WorklistPractitionerFilter OrderingPractitionerFilter
-		{
-			get { return _orderingPractitionerFilter; }
-			set { _orderingPractitionerFilter = value; }
-		}
+        /// <summary>
+        /// Gets or sets the <see cref="WorklistPractitionerFilter"/> for the ordering practitioner.
+        /// </summary>
+        [PersistentProperty]
+        [EmbeddedValue]
+        public WorklistPractitionerFilter OrderingPractitionerFilter
+        {
+            get { return _orderingPractitionerFilter; }
+            set { _orderingPractitionerFilter = value; }
+        }
 
         /// <summary>
         /// Gets or sets the <see cref="WorklistPortableFilter"/>.
@@ -424,27 +435,27 @@ namespace ClearCanvas.Healthcare
 
         #region Helpers
 
-		/// <summary>
-		/// Gets the criteria that define the invariant aspects of this worklist.
-		/// </summary>
-		/// <param name="wqc"></param>
-		/// <remarks>
-		/// This method is called by the worklist brokers and is not intended for use by application code.
-		/// </remarks>
-		/// <returns></returns>
-		public WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
-		{
-			WorklistItemSearchCriteria[] criteria = GetInvariantCriteriaCore(wqc);
+        /// <summary>
+        /// Gets the criteria that define the invariant aspects of this worklist.
+        /// </summary>
+        /// <param name="wqc"></param>
+        /// <remarks>
+        /// This method is called by the worklist brokers and is not intended for use by application code.
+        /// </remarks>
+        /// <returns></returns>
+        public WorklistItemSearchCriteria[] GetInvariantCriteria(IWorklistQueryContext wqc)
+        {
+            WorklistItemSearchCriteria[] criteria = GetInvariantCriteriaCore(wqc);
 
-			// augment the criteria with the downtime flag
-			foreach (WorklistItemSearchCriteria criterion in criteria)
-			{
-				criterion.Procedure.DowntimeRecoveryMode.EqualTo(wqc.DowntimeRecoveryMode);
-			}
-			return criteria;
-		}
+            // augment the criteria with the downtime flag
+            foreach (WorklistItemSearchCriteria criterion in criteria)
+            {
+                criterion.Procedure.DowntimeRecoveryMode.EqualTo(wqc.DowntimeRecoveryMode);
+            }
+            return criteria;
+        }
 
-		protected void ApplyTimeCriteria(WorklistItemSearchCriteria criteria, WorklistTimeField timeField, WorklistTimeRange defaultValue, WorklistOrdering ordering, IWorklistQueryContext wqc)
+        protected void ApplyTimeCriteria(WorklistItemSearchCriteria criteria, WorklistTimeField timeField, WorklistTimeRange defaultValue, WorklistOrdering ordering, IWorklistQueryContext wqc)
         {
             criteria.TimeField = timeField;
             ISearchCondition searchCondition = timeField.GetSearchCondition(criteria);
@@ -461,9 +472,9 @@ namespace ClearCanvas.Healthcare
         /// </remarks>
         /// <param name="condition"></param>
         /// <param name="defaultValue"></param>
-		/// <param name="ordering"></param>
-		/// <param name="wqc"></param>
-		private void ApplyTimeRange(ISearchCondition condition, WorklistTimeRange defaultValue, WorklistOrdering ordering, IWorklistQueryContext wqc)
+        /// <param name="ordering"></param>
+        /// <param name="wqc"></param>
+        private void ApplyTimeRange(ISearchCondition condition, WorklistTimeRange defaultValue, WorklistOrdering ordering, IWorklistQueryContext wqc)
         {
             // apply ordering
             if (ordering == WorklistOrdering.PrioritizeOldestItems)
@@ -472,7 +483,7 @@ namespace ClearCanvas.Healthcare
                 condition.SortDesc(0);
 
             // apply range filtering, if supported by this class
-			// note: time filter is not applied in downtime recovery mode
+            // note: time filter is not applied in downtime recovery mode
             if (GetSupportsTimeFilter(this.GetClass()) && !wqc.DowntimeRecoveryMode)
             {
                 WorklistTimeRange range = _timeFilter.IsEnabled ? _timeFilter.Value : defaultValue;

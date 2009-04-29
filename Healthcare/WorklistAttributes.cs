@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Healthcare
 {
@@ -9,7 +7,7 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     public abstract class WorklistAttribute : Attribute
     {
-        
+
     }
 
     /// <summary>
@@ -55,7 +53,7 @@ namespace ClearCanvas.Healthcare
 
         public Type ProcedureTypeGroupClass
         {
-            get { return _procedureTypeGroupClass; }    
+            get { return _procedureTypeGroupClass; }
         }
     }
 
@@ -79,6 +77,29 @@ namespace ClearCanvas.Healthcare
         public bool SupportsTimeFilter
         {
             get { return _supportsTimeFilter; }
+        }
+    }
+
+    /// <summary>
+    /// When applied to a subclass of <see cref="Worklist"/>, indicates whether the class supports time filters.
+    /// If this attribute is not applied, it is assumed that the class <b>does not</b> support time filtering.
+    /// </summary>
+    /// <remarks>
+    /// This attribute is inherited.
+    /// </remarks>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
+    public class WorklistSupportsReportingStaffRoleFilterAttribute : WorklistAttribute
+    {
+        private readonly bool _supportsReportingStaffRoleFilter;
+
+        public WorklistSupportsReportingStaffRoleFilterAttribute(bool supportsReportingStaffRoleFilter)
+        {
+            _supportsReportingStaffRoleFilter = supportsReportingStaffRoleFilter;
+        }
+
+        public bool SupportsReportingStaffRoleFilter
+        {
+            get { return _supportsReportingStaffRoleFilter; }
         }
     }
 

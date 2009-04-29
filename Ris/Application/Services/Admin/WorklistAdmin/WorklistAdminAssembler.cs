@@ -54,7 +54,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 Worklist.GetDescription(worklistClass),
                 ptgClass == null ? null : ptgClass.Name,
                 ptgClass == null ? null : TerminologyTranslator.Translate(ptgClass),
-                Worklist.GetSupportsTimeFilter(worklistClass));
+                Worklist.GetSupportsTimeFilter(worklistClass),
+                Worklist.GetSupportsReportingStaffRoleFilter(worklistClass));
         }
 
         public WorklistAdminDetail GetWorklistDetail(Worklist worklist, IPersistenceContext context)
@@ -143,28 +144,25 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
             // Some ReportingWorklists can support staff role filters, if that is true for this worklist,
             // add those filters to the WorklistAdminDetail
-            if (worklist.Is<ReportingWorklist>() && worklist.As<ReportingWorklist>().SupportsStaffRoleFilters)
-            {
-                detail.WorklistClass.SupportsReportingStaffRoleFilters = true;
+            if (Worklist.GetSupportsReportingStaffRoleFilter(worklist.GetClass()))
                 AppendReportingWorklistDetails(detail, worklist.As<ReportingWorklist>(), context);
-            }
 
             return detail;
         }
 
         public void AppendReportingWorklistDetails(WorklistAdminDetail detail, ReportingWorklist worklist, IPersistenceContext context)
         {
-			if (worklist.InterpretedByStaffFilter.IsEnabled || worklist.InterpretedByStaffFilter.IncludeCurrentStaff)
+            if (worklist.InterpretedByStaffFilter.IsEnabled || worklist.InterpretedByStaffFilter.IncludeCurrentStaff)
                 SetStaffListFromFilter(detail.InterpretedByStaff, worklist.InterpretedByStaffFilter, context);
 
-			if (worklist.TranscribedByStaffFilter.IsEnabled || worklist.TranscribedByStaffFilter.IncludeCurrentStaff)
-				SetStaffListFromFilter(detail.TranscribedByStaff, worklist.TranscribedByStaffFilter, context);
+            if (worklist.TranscribedByStaffFilter.IsEnabled || worklist.TranscribedByStaffFilter.IncludeCurrentStaff)
+                SetStaffListFromFilter(detail.TranscribedByStaff, worklist.TranscribedByStaffFilter, context);
 
-			if (worklist.VerifiedByStaffFilter.IsEnabled || worklist.VerifiedByStaffFilter.IncludeCurrentStaff)
-				SetStaffListFromFilter(detail.VerifiedByStaff, worklist.VerifiedByStaffFilter, context);
+            if (worklist.VerifiedByStaffFilter.IsEnabled || worklist.VerifiedByStaffFilter.IncludeCurrentStaff)
+                SetStaffListFromFilter(detail.VerifiedByStaff, worklist.VerifiedByStaffFilter, context);
 
-			if (worklist.SupervisedByStaffFilter.IsEnabled || worklist.SupervisedByStaffFilter.IncludeCurrentStaff)
-				SetStaffListFromFilter(detail.SupervisedByStaff, worklist.SupervisedByStaffFilter, context);
+            if (worklist.SupervisedByStaffFilter.IsEnabled || worklist.SupervisedByStaffFilter.IncludeCurrentStaff)
+                SetStaffListFromFilter(detail.SupervisedByStaff, worklist.SupervisedByStaffFilter, context);
         }
 
         private static void SetStaffListFromFilter(WorklistAdminDetail.StaffList stafflist, WorklistStaffFilter filter, IPersistenceContext context)
@@ -317,7 +315,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             }
 
             // If the worklist supports staff role filters, process the filters provided.
-            if (worklist.Is<ReportingWorklist>() && worklist.As<ReportingWorklist>().SupportsStaffRoleFilters)
+            if (Worklist.GetSupportsReportingStaffRoleFilter(worklist.GetClass()))
                 UpdateReportingWorklist(worklist.As<ReportingWorklist>(), detail, context);
         }
 

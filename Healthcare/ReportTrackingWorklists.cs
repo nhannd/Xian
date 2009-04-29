@@ -4,12 +4,9 @@ using ClearCanvas.Workflow;
 namespace ClearCanvas.Healthcare
 {
 	[WorklistCategory("WorklistCategoryReportingTracking")]
+	[WorklistSupportsReportingStaffRoleFilter(true)]
 	public abstract class ReportingTrackingWorklist : ReportingWorklist
 	{
-		public override bool SupportsStaffRoleFilters
-		{
-			get { return true; }
-		}
 	}
 
 	/// <summary>

@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 
         public WorklistClassSummary(string className, string displayName, string categoryName, string description, 
             string procedureTypeGroupClassName, string procedureTypeGroupClassDisplayName, 
-            bool supportsTimeWindow)
+            bool supportsTimeWindow, bool supportsReportingStaffRoleFilters)
         {
             ClassName = className;
             DisplayName = displayName;
@@ -24,9 +24,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
             ProcedureTypeGroupClassName = procedureTypeGroupClassName;
             SupportsTimeWindow = supportsTimeWindow;
             Description = description;
-            ProcedureTypeGroupClassDisplayName = procedureTypeGroupClassDisplayName;
-
-            SupportsReportingStaffRoleFilters = false;
+			ProcedureTypeGroupClassDisplayName = procedureTypeGroupClassDisplayName;
+            SupportsReportingStaffRoleFilters = supportsReportingStaffRoleFilters;
         }
 
         [DataMember]

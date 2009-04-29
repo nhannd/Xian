@@ -76,11 +76,6 @@ namespace ClearCanvas.Healthcare
 			get { return _supervisedByStaffFilter; }
 			set { _supervisedByStaffFilter = value; }
 		}
-
-		public virtual bool SupportsStaffRoleFilters
-		{
-			get { return false; }
-		}
 	}
 
 	/// <summary>

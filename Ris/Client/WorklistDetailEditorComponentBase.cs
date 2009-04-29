@@ -16,6 +16,7 @@ namespace ClearCanvas.Ris.Client
 		private string _selectedCategory;
 		private string _procedureTypeGroupClass;
 		private event EventHandler _procedureTypeGroupClassChanged;
+		private event EventHandler _worklistClassChanged;
 
 		public WorklistDetailEditorComponentBase(List<WorklistClassSummary> worklistClasses, WorklistClassSummary initialClass)
         {
@@ -61,6 +62,12 @@ namespace ClearCanvas.Ris.Client
 		{
 			add { _procedureTypeGroupClassChanged += value; }
 			remove { _procedureTypeGroupClassChanged -= value; }
+		}
+
+		public event EventHandler WorklistClassChanged
+		{
+			add { _worklistClassChanged += value; }
+			remove { _worklistClassChanged -= value; }
 		}
 
 		public string[] CategoryChoices
@@ -113,6 +120,8 @@ namespace ClearCanvas.Ris.Client
 			WorklistEditorComponentSettings.Default.DefaultWorklistCategory = _selectedCategory;
 
 			NotifyPropertyChanged("WorklistClassChoices");
+
+			EventsHelper.Fire(_worklistClassChanged, this, EventArgs.Empty);
 
 			// all classes in subset should have the same procedureTypeGroupClass, so just grab the first one
 			// use property rather than member var, so that the event is fired!

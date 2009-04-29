@@ -205,7 +205,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 		{
 			base.AddFilters(query, worklist, wqc);
 
-			if (worklist.Is<ReportingWorklist>() && worklist.As<ReportingWorklist>().SupportsStaffRoleFilters)
+			if (Worklist.GetSupportsReportingStaffRoleFilter(worklist.GetClass()))
 			{
 				ReportingWorklist reportingWorklist = worklist.As<ReportingWorklist>();
 
