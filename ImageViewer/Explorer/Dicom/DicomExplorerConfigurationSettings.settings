@@ -11,5 +11,8 @@
     <Setting Name="NameSeparator" Type="System.Char" Scope="Application">
       <Value Profile="(Default)">,</Value>
     </Setting>
+    <Setting Name="ShowNumberOfImagesInStudy" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

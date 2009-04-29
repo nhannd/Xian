@@ -135,6 +135,9 @@
   <data name="ColumnHeadingModality" xml:space="preserve">
     <value>Modality</value>
   </data>
+  <data name="ColumnHeadingNumberOfImages" xml:space="preserve">
+    <value># Images</value>
+  </data>
   <data name="ColumnHeadingPatientId" xml:space="preserve">
     <value>Patient ID</value>
   </data>

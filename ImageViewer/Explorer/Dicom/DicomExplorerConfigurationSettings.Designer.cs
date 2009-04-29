@@ -55,5 +55,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
                 return ((char)(this["NameSeparator"]));
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowNumberOfImagesInStudy {
+            get {
+                return ((bool)(this["ShowNumberOfImagesInStudy"]));
+            }
+            set {
+                this["ShowNumberOfImagesInStudy"] = value;
+            }
+        }
     }
 }

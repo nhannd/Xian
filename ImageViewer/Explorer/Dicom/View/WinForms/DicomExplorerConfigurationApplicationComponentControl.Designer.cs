@@ -60,22 +60,34 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         private void InitializeComponent()
         {
 			this._showPhoneticIdeographicNames = new System.Windows.Forms.CheckBox();
+			this._showNumberOfImages = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
 			// 
 			// _showPhoneticIdeographicNames
 			// 
 			this._showPhoneticIdeographicNames.AutoSize = true;
-			this._showPhoneticIdeographicNames.Location = new System.Drawing.Point(11, 11);
+			this._showPhoneticIdeographicNames.Location = new System.Drawing.Point(12, 46);
 			this._showPhoneticIdeographicNames.Name = "_showPhoneticIdeographicNames";
 			this._showPhoneticIdeographicNames.Size = new System.Drawing.Size(210, 17);
-			this._showPhoneticIdeographicNames.TabIndex = 0;
+			this._showPhoneticIdeographicNames.TabIndex = 1;
 			this._showPhoneticIdeographicNames.Text = "Show phonetic and ideographic names";
 			this._showPhoneticIdeographicNames.UseVisualStyleBackColor = true;
+			// 
+			// _showNumberOfImages
+			// 
+			this._showNumberOfImages.AutoSize = true;
+			this._showNumberOfImages.Location = new System.Drawing.Point(12, 13);
+			this._showNumberOfImages.Name = "_showNumberOfImages";
+			this._showNumberOfImages.Size = new System.Drawing.Size(178, 17);
+			this._showNumberOfImages.TabIndex = 0;
+			this._showNumberOfImages.Text = "Show number of images in study";
+			this._showNumberOfImages.UseVisualStyleBackColor = true;
 			// 
 			// DicomExplorerConfigurationApplicationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._showNumberOfImages);
 			this.Controls.Add(this._showPhoneticIdeographicNames);
 			this.Name = "DicomExplorerConfigurationApplicationComponentControl";
 			this.Size = new System.Drawing.Size(329, 210);
@@ -87,5 +99,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         #endregion
 
 		private System.Windows.Forms.CheckBox _showPhoneticIdeographicNames;
+		private System.Windows.Forms.CheckBox _showNumberOfImages;
     }
 }

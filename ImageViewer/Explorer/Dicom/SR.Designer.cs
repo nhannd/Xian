@@ -115,6 +115,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to # Images.
+        /// </summary>
+        internal static string ColumnHeadingNumberOfImages {
+            get {
+                return ResourceManager.GetString("ColumnHeadingNumberOfImages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Patient ID.
         /// </summary>
         internal static string ColumnHeadingPatientId {

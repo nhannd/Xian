@@ -54,6 +54,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	public class DicomExplorerConfigurationApplicationComponent : ConfigurationApplicationComponent
 	{
 		private bool _showPhoneticIdeographicNames = false;
+		private bool _showNumberOfImagesInStudy = false;
 
 		/// <summary>
 		/// Constructor
@@ -71,6 +72,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			set 
 			{ 
 				_showPhoneticIdeographicNames = value;
+				NotifyPropertyChanged("ShowPhoneticIdeographicNames");
+				this.Modified = true;
+			}
+		}
+
+		public bool ShowNumberOfImagesInStudy
+		{
+			get
+			{
+				return _showNumberOfImagesInStudy;
+			}
+			set
+			{
+				_showNumberOfImagesInStudy = value;
+				NotifyPropertyChanged("ShowNumberOfImagesInStudy");
 				this.Modified = true;
 			}
 		}
@@ -78,6 +94,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public override void Start()
 		{
 			_showPhoneticIdeographicNames = DicomExplorerConfigurationSettings.Default.ShowIdeographicName;
+			_showNumberOfImagesInStudy = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
 			base.Start();
 		}
 
@@ -90,6 +107,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			DicomExplorerConfigurationSettings.Default.ShowIdeographicName = this.ShowPhoneticIdeographicNames;
 			DicomExplorerConfigurationSettings.Default.ShowPhoneticName = this.ShowPhoneticIdeographicNames;
+			DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy = this.ShowNumberOfImagesInStudy;
 			DicomExplorerConfigurationSettings.Default.Save();
 		}
 	}

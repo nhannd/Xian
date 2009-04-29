@@ -609,7 +609,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingStudyDescription,
 					delegate(StudyItem item) { return item.StudyDescription; },
-                    2.5f);
+                    2.0f);
 
 			studyList.Columns.Add(column);
 
@@ -617,6 +617,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					SR.ColumnHeadingModality,
                     delegate(StudyItem item) { return item.ModalitiesInStudy; },
                     0.5f);
+
+			studyList.Columns.Add(column);
+
+			column = new TableColumn<StudyItem, string>(
+			SR.ColumnHeadingNumberOfImages,
+			delegate(StudyItem item)
+			{
+				return (item.NumberOfStudyRelatedInstances == 0) ? "" : item.NumberOfStudyRelatedInstances.ToString();
+			},
+			0.5f);
+
+			column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
 
 			studyList.Columns.Add(column);
 		}
@@ -774,7 +786,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == "ShowIdeographicName" ||
-				e.PropertyName == "ShowPhoneticName")
+				e.PropertyName == "ShowPhoneticName" || 
+				e.PropertyName == "ShowNumberOfImagesInStudy")
 			{
 				// Iterate through all the tables from all servers and turn off
 				// the appropriate columns.
@@ -784,7 +797,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					{
 						if (column.Name == SR.ColumnHeadingPhoneticName ||
 							column.Name == SR.ColumnHeadingIdeographicName)
+						{
 							column.Visible = DicomExplorerConfigurationSettings.Default.ShowIdeographicName;
+						}
+						else if (column.Name == SR.ColumnHeadingNumberOfImages)
+						{
+							column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
+						}
 					}
 				}
 			}

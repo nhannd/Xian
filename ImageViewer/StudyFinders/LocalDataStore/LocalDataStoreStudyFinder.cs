@@ -70,6 +70,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
             collection[DicomTags.ModalitiesInStudy].SetStringValue(queryParams["ModalitiesInStudy"]);
             collection[DicomTags.SpecificCharacterSet].SetStringValue("");
 			collection[DicomTags.StudyInstanceUid].SetStringValue(queryParams["StudyInstanceUid"]);
+			collection[DicomTags.NumberOfStudyRelatedInstances].SetStringValue("");
 
             StudyItemList studyItemList = new StudyItemList();
 			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
@@ -86,6 +87,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 					item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
 					item.AccessionNumber = result[DicomTags.AccessionNumber].ToString();
 					item.StudyInstanceUID = result[DicomTags.StudyInstanceUid].ToString();
+					item.NumberOfStudyRelatedInstances = result[DicomTags.NumberOfStudyRelatedInstances].GetUInt32(0, 0);
 					item.StudyLoaderName = this.Name;
 
 					studyItemList.Add(item);

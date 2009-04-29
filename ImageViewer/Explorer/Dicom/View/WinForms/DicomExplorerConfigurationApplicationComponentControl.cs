@@ -54,6 +54,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			BindingSource bindingSource = new BindingSource();
 			bindingSource.DataSource = _component;
 
+			_showNumberOfImages.DataBindings.Add("Checked", bindingSource, "ShowNumberOfImagesInStudy", true, DataSourceUpdateMode.OnPropertyChanged);
 			_showPhoneticIdeographicNames.DataBindings.Add("Checked", bindingSource, "ShowPhoneticIdeographicNames", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
     }
