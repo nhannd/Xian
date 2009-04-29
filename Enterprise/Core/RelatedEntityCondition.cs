@@ -66,6 +66,13 @@ namespace ClearCanvas.Enterprise.Core
             _baseTableColumn = baseTableColumn;
             _relatedTableColumn = relatedTableColumn;
         }
+
+        protected RelatedEntityCondition(RelatedEntityCondition<T> other)
+            :base(other)
+        {
+            _baseTableColumn = other._baseTableColumn;
+            _relatedTableColumn = other._relatedTableColumn;
+        }
         #endregion
 
         #region IRelatedEntityCondition<T> Members
@@ -81,5 +88,10 @@ namespace ClearCanvas.Enterprise.Core
         }
 
         #endregion
+
+        public override object Clone()
+        {
+            return new RelatedEntityCondition<T>(this);
+        }
     }
 }

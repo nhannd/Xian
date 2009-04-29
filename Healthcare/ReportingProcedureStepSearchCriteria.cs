@@ -53,6 +53,20 @@ namespace ClearCanvas.Healthcare
 		{
 		}
 
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected ReportingProcedureStepSearchCriteria(ReportingProcedureStepSearchCriteria other)
+            : base(other)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new ReportingProcedureStepSearchCriteria(this);
+        }
+
         public ReportPartSearchCriteria ReportPart
         {
 	  		get

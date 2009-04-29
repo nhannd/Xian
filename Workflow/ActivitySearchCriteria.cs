@@ -53,6 +53,15 @@ namespace ClearCanvas.Workflow
 		{
 		}
 
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected ActivitySearchCriteria(ActivitySearchCriteria other)
+            : base(other)
+        {
+        }
+
 		
 	  	public ActivitySchedulingSearchCriteria Scheduling
 	  	{

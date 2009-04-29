@@ -54,5 +54,25 @@ namespace ClearCanvas.ImageServer.Enterprise
         public EntitySelectCriteria()
         {
         }
+
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected EntitySelectCriteria(EntitySelectCriteria other)
+            : base(other)
+        {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override object Clone()
+        {
+            // temporary measure to avoid breaking build
+            // TODO: implement this properly in generated sub-classes
+            throw new System.Exception("The method or operation is not implemented.");
+        }
     }
 }

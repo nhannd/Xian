@@ -53,6 +53,20 @@ namespace ClearCanvas.Workflow
 		{
 		}
 
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected PerformedStepSearchCriteria(PerformedStepSearchCriteria other)
+            : base(other)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new PerformedStepSearchCriteria(this);
+        }
+
         public ISearchCondition<PerformedStepStatus> Status
         {
             get

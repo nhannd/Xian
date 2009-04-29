@@ -28,6 +28,20 @@ namespace <%= namespace %>
 			:base(key)
 		{
 		}
+		
+		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		protected <%= searchCriteriaClassName %>(<%= searchCriteriaClassName %> other)
+			:base(other)
+		{
+		}
+		
+		public override object Clone()
+        {
+            return new <%= searchCriteriaClassName %>(this);
+        }
+
 
 		<% searchableFields.each do |f| %>
 	  	public <%= f.searchCriteriaReturnType %> <%= f.accessorName %>

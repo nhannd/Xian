@@ -57,7 +57,20 @@ namespace ClearCanvas.Workflow {
 			:base(key)
 		{
 		}
-		
+
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected ActivitySchedulingSearchCriteria(ActivitySchedulingSearchCriteria other)
+            : base(other)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new ActivitySchedulingSearchCriteria(this);
+        }
  
         public ISearchCondition<DateTime?> StartTime
 	  	{

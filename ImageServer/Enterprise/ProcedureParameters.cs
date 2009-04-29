@@ -39,5 +39,20 @@ namespace ClearCanvas.ImageServer.Enterprise
             : base(key)
         {
         }
+
+
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected ProcedureParameters(ProcedureParameters other)
+            : base(other)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new ProcedureParameters(this);
+        }
     }
 }

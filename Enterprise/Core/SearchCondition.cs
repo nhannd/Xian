@@ -52,6 +52,15 @@ namespace ClearCanvas.Enterprise.Core
         {
         }
 
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected SearchCondition(SearchCondition<T> other)
+            :base(other)
+        {
+        }
+
         public void EqualTo(T val)
         {
             SetCondition(SearchConditionTest.Equal, val);
@@ -182,5 +191,10 @@ namespace ClearCanvas.Enterprise.Core
         }
 
         #endregion
+
+        public override object Clone()
+        {
+            return new SearchCondition<T>(this);
+        }
     }
 }

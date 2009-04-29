@@ -20,6 +20,27 @@ namespace ClearCanvas.Healthcare
         private bool _sentByMe;
         private bool _isAcknowledged;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public NoteboxItemSearchCriteria()
+        {
+        }
+
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected NoteboxItemSearchCriteria(NoteboxItemSearchCriteria other)
+            : base(other)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new NoteboxItemSearchCriteria(this);
+        }
+
         public bool SentToMe
         {
             get { return _sentToMe; }

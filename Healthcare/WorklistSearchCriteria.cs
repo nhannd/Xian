@@ -50,6 +50,20 @@ namespace ClearCanvas.Healthcare
         {
         }
 
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected WorklistSearchCriteria(WorklistSearchCriteria other)
+            : base(other)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new WorklistSearchCriteria(this);
+        }
+
         public ISearchCondition<string> Name
         {
             get

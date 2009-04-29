@@ -60,7 +60,7 @@ namespace ClearCanvas.Enterprise.Core
     /// <summary>
     /// Type-independent base class for the <see cref="SearchCondition{T}"/> and <see cref="RelatedEntityCondition{T}"/> classes.
     /// </summary>
-    public class SearchConditionBase : SearchCriteria
+    public abstract class SearchConditionBase : SearchCriteria
     {
         private object[] _values;
         private SearchConditionTest _test;
@@ -68,16 +68,29 @@ namespace ClearCanvas.Enterprise.Core
         private bool _sortDirection;
 
         public SearchConditionBase()
-            : this(null)
+            : this((string)null)
         {
         }
 
-        public SearchConditionBase(string name)
-            :base(name)
+        public SearchConditionBase(string key)
+            : base(key)
         {
             _test = SearchConditionTest.None;
             _sortPosition = -1;     // do not sort on this field
             _sortDirection = true;    // default sort direction to ascending
+        }
+
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected SearchConditionBase(SearchConditionBase other)
+            :base(other)
+        {
+            _values = other._values;
+            _test = other._test;
+            _sortPosition = other._sortPosition;
+            _sortDirection = other._sortDirection;
         }
 
         /// <summary>

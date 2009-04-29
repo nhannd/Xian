@@ -48,6 +48,21 @@ namespace ClearCanvas.Healthcare
     		_procedureStepClass = procedureStepClass;
     	}
 
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected WorklistItemSearchCriteria(WorklistItemSearchCriteria other)
+            : base(other)
+        {
+        }
+
+        public override object Clone()
+        {
+            return new WorklistItemSearchCriteria(this);
+        }
+
+
     	public PatientProfileSearchCriteria PatientProfile
         {
             get

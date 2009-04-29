@@ -48,6 +48,15 @@ namespace ClearCanvas.Enterprise.Core
         {
         }
 
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected EntitySearchCriteria(EntitySearchCriteria<TEntity> other)
+            :base(other)
+        {
+        }
+
         public void EqualTo(TEntity entity)
         {
             this.OID.EqualTo(entity.OID);

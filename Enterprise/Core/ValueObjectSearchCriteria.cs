@@ -45,5 +45,14 @@ namespace ClearCanvas.Enterprise.Core
         public ValueObjectSearchCriteria()
         {
         }
-    }
+
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected ValueObjectSearchCriteria(ValueObjectSearchCriteria other)
+            :base(other)
+        {
+        }
+   }
 }

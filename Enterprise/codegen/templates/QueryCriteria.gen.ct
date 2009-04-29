@@ -20,6 +20,19 @@ namespace <%= namespace %>
 		public <%= className %>()
 		{
 		}
+		
+		/// <summary>
+		/// Copy constructor
+		/// </summary>
+		protected <%= className %>(<%= className %> other)
+			:base(other)
+		{
+		}
+		
+		public override object Clone()
+        {
+            return new <%= className %>(this);
+        }
 	
 		<% fields.each do |f| %>
 	  	public <%= f.searchCriteriaReturnType %> <%= f.accessorName %>

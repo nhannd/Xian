@@ -40,7 +40,7 @@ namespace ClearCanvas.Enterprise.Core
     /// 
     /// 
     /// </summary>
-    public abstract class SearchCriteria
+    public abstract class SearchCriteria : ICloneable
     {
         private string _key;
         private Dictionary<string, SearchCriteria> _subCriteria;
@@ -52,8 +52,23 @@ namespace ClearCanvas.Enterprise.Core
         }
 
         public SearchCriteria()
-            :this(null)
+            :this((string)null)
         {
+        }
+
+        /// <summary>
+        /// Copy constructor.
+        /// </summary>
+        /// <param name="other"></param>
+        protected SearchCriteria(SearchCriteria other)
+        {
+            _key = other._key;
+            _subCriteria = new Dictionary<string, SearchCriteria>();
+
+            foreach (KeyValuePair<string, SearchCriteria> kvp in other._subCriteria)
+            {
+                _subCriteria.Add(kvp.Key, (SearchCriteria)kvp.Value.Clone());
+            }
         }
 
         /// <summary>
@@ -84,5 +99,11 @@ namespace ClearCanvas.Enterprise.Core
                 return true;
             }
         }
+
+        #region ICloneable Members
+
+        public abstract object Clone();
+
+        #endregion
     }
 }
