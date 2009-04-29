@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,52 +43,59 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public DatabaseVersionSelectCriteria()
         : base("DatabaseVersion_")
         {}
+        public DatabaseVersionSelectCriteria(DatabaseVersionSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new DatabaseVersionSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Build_")]
-        public ISearchCondition<System.String> Build
+        public ISearchCondition<String> Build
         {
             get
             {
               if (!SubCriteria.ContainsKey("Build_"))
               {
-                 SubCriteria["Build_"] = new SearchCondition<System.String>("Build_");
+                 SubCriteria["Build_"] = new SearchCondition<String>("Build_");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Build_"];
+              return (ISearchCondition<String>)SubCriteria["Build_"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Major_")]
-        public ISearchCondition<System.String> Major
+        public ISearchCondition<String> Major
         {
             get
             {
               if (!SubCriteria.ContainsKey("Major_"))
               {
-                 SubCriteria["Major_"] = new SearchCondition<System.String>("Major_");
+                 SubCriteria["Major_"] = new SearchCondition<String>("Major_");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Major_"];
+              return (ISearchCondition<String>)SubCriteria["Major_"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Minor_")]
-        public ISearchCondition<System.String> Minor
+        public ISearchCondition<String> Minor
         {
             get
             {
               if (!SubCriteria.ContainsKey("Minor_"))
               {
-                 SubCriteria["Minor_"] = new SearchCondition<System.String>("Minor_");
+                 SubCriteria["Minor_"] = new SearchCondition<String>("Minor_");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Minor_"];
+              return (ISearchCondition<String>)SubCriteria["Minor_"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Revision_")]
-        public ISearchCondition<System.String> Revision
+        public ISearchCondition<String> Revision
         {
             get
             {
               if (!SubCriteria.ContainsKey("Revision_"))
               {
-                 SubCriteria["Revision_"] = new SearchCondition<System.String>("Revision_");
+                 SubCriteria["Revision_"] = new SearchCondition<String>("Revision_");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Revision_"];
+              return (ISearchCondition<String>)SubCriteria["Revision_"];
             } 
         }
     }

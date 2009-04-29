@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,6 +43,13 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public AlertSelectCriteria()
         : base("Alert")
         {}
+        public AlertSelectCriteria(AlertSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new AlertSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="AlertCategoryEnum")]
         public ISearchCondition<AlertCategoryEnum> AlertCategoryEnum
         {
@@ -66,63 +75,63 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Component")]
-        public ISearchCondition<System.String> Component
+        public ISearchCondition<String> Component
         {
             get
             {
               if (!SubCriteria.ContainsKey("Component"))
               {
-                 SubCriteria["Component"] = new SearchCondition<System.String>("Component");
+                 SubCriteria["Component"] = new SearchCondition<String>("Component");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Component"];
+              return (ISearchCondition<String>)SubCriteria["Component"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
-        public ISearchCondition<System.Xml.XmlDocument> Content
+        public ISearchCondition<XmlDocument> Content
         {
             get
             {
               if (!SubCriteria.ContainsKey("Content"))
               {
-                 SubCriteria["Content"] = new SearchCondition<System.Xml.XmlDocument>("Content");
+                 SubCriteria["Content"] = new SearchCondition<XmlDocument>("Content");
               }
-              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["Content"];
+              return (ISearchCondition<XmlDocument>)SubCriteria["Content"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="InsertTime")]
-        public ISearchCondition<System.DateTime> InsertTime
+        public ISearchCondition<DateTime> InsertTime
         {
             get
             {
               if (!SubCriteria.ContainsKey("InsertTime"))
               {
-                 SubCriteria["InsertTime"] = new SearchCondition<System.DateTime>("InsertTime");
+                 SubCriteria["InsertTime"] = new SearchCondition<DateTime>("InsertTime");
               }
-              return (ISearchCondition<System.DateTime>)SubCriteria["InsertTime"];
+              return (ISearchCondition<DateTime>)SubCriteria["InsertTime"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Source")]
-        public ISearchCondition<System.String> Source
+        public ISearchCondition<String> Source
         {
             get
             {
               if (!SubCriteria.ContainsKey("Source"))
               {
-                 SubCriteria["Source"] = new SearchCondition<System.String>("Source");
+                 SubCriteria["Source"] = new SearchCondition<String>("Source");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Source"];
+              return (ISearchCondition<String>)SubCriteria["Source"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="TypeCode")]
-        public ISearchCondition<System.Int32> TypeCode
+        public ISearchCondition<Int32> TypeCode
         {
             get
             {
               if (!SubCriteria.ContainsKey("TypeCode"))
               {
-                 SubCriteria["TypeCode"] = new SearchCondition<System.Int32>("TypeCode");
+                 SubCriteria["TypeCode"] = new SearchCondition<Int32>("TypeCode");
               }
-              return (ISearchCondition<System.Int32>)SubCriteria["TypeCode"];
+              return (ISearchCondition<Int32>)SubCriteria["TypeCode"];
             } 
         }
     }

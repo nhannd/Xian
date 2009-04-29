@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
@@ -72,83 +73,83 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _modality;
-        private System.Int32 _numberOfSeriesRelatedInstances;
-        private System.String _performedProcedureStepStartDate;
-        private System.String _performedProcedureStepStartTime;
-        private System.String _seriesDescription;
-        private System.String _seriesInstanceUid;
-        private System.String _seriesNumber;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
-        private System.String _sourceApplicationEntityTitle;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyKey;
+        private String _modality;
+        private Int32 _numberOfSeriesRelatedInstances;
+        private String _performedProcedureStepStartDate;
+        private String _performedProcedureStepStartTime;
+        private String _seriesDescription;
+        private String _seriesInstanceUid;
+        private String _seriesNumber;
+        private ServerEntityKey _serverPartitionKey;
+        private String _sourceApplicationEntityTitle;
+        private ServerEntityKey _studyKey;
         #endregion
 
         #region Public Properties
         [DicomField(DicomTags.Modality, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="Modality")]
-        public System.String Modality
+        public String Modality
         {
         get { return _modality; }
         set { _modality = value; }
         }
         [DicomField(DicomTags.NumberOfSeriesRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="NumberOfSeriesRelatedInstances")]
-        public System.Int32 NumberOfSeriesRelatedInstances
+        public Int32 NumberOfSeriesRelatedInstances
         {
         get { return _numberOfSeriesRelatedInstances; }
         set { _numberOfSeriesRelatedInstances = value; }
         }
         [DicomField(DicomTags.PerformedProcedureStepStartDate, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="PerformedProcedureStepStartDate")]
-        public System.String PerformedProcedureStepStartDate
+        public String PerformedProcedureStepStartDate
         {
         get { return _performedProcedureStepStartDate; }
         set { _performedProcedureStepStartDate = value; }
         }
         [DicomField(DicomTags.PerformedProcedureStepStartTime, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="PerformedProcedureStepStartTime")]
-        public System.String PerformedProcedureStepStartTime
+        public String PerformedProcedureStepStartTime
         {
         get { return _performedProcedureStepStartTime; }
         set { _performedProcedureStepStartTime = value; }
         }
         [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesDescription")]
-        public System.String SeriesDescription
+        public String SeriesDescription
         {
         get { return _seriesDescription; }
         set { _seriesDescription = value; }
         }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesInstanceUid")]
-        public System.String SeriesInstanceUid
+        public String SeriesInstanceUid
         {
         get { return _seriesInstanceUid; }
         set { _seriesInstanceUid = value; }
         }
         [DicomField(DicomTags.SeriesNumber, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SeriesNumber")]
-        public System.String SeriesNumber
+        public String SeriesNumber
         {
         get { return _seriesNumber; }
         set { _seriesNumber = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
         [DicomField(DicomTags.SourceApplicationEntityTitle, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="SourceApplicationEntityTitle")]
-        public System.String SourceApplicationEntityTitle
+        public String SourceApplicationEntityTitle
         {
         get { return _sourceApplicationEntityTitle; }
         set { _sourceApplicationEntityTitle = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Series", ColumnName="StudyGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyKey
+        public ServerEntityKey StudyKey
         {
         get { return _studyKey; }
         set { _studyKey = value; }

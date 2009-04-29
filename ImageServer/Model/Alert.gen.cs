@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -67,11 +68,11 @@ namespace ClearCanvas.ImageServer.Model
         #region Private Members
         private AlertCategoryEnum _alertCategoryEnum;
         private AlertLevelEnum _alertLevelEnum;
-        private System.String _component;
-        private System.Xml.XmlDocument _content;
-        private System.DateTime _insertTime;
-        private System.String _source;
-        private System.Int32 _typeCode;
+        private String _component;
+        private XmlDocument _content;
+        private DateTime _insertTime;
+        private String _source;
+        private Int32 _typeCode;
         #endregion
 
         #region Public Properties
@@ -88,31 +89,31 @@ namespace ClearCanvas.ImageServer.Model
         set { _alertLevelEnum = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Component")]
-        public System.String Component
+        public String Component
         {
         get { return _component; }
         set { _component = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
-        public System.Xml.XmlDocument Content
+        public XmlDocument Content
         {
         get { return _content; }
         set { _content = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="InsertTime")]
-        public System.DateTime InsertTime
+        public DateTime InsertTime
         {
         get { return _insertTime; }
         set { _insertTime = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Source")]
-        public System.String Source
+        public String Source
         {
         get { return _source; }
         set { _source = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="TypeCode")]
-        public System.Int32 TypeCode
+        public Int32 TypeCode
         {
         get { return _typeCode; }
         set { _typeCode = value; }

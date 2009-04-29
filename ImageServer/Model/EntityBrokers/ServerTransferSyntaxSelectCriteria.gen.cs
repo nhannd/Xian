@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,40 +43,47 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServerTransferSyntaxSelectCriteria()
         : base("ServerTransferSyntax")
         {}
+        public ServerTransferSyntaxSelectCriteria(ServerTransferSyntaxSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new ServerTransferSyntaxSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Description")]
-        public ISearchCondition<System.String> Description
+        public ISearchCondition<String> Description
         {
             get
             {
               if (!SubCriteria.ContainsKey("Description"))
               {
-                 SubCriteria["Description"] = new SearchCondition<System.String>("Description");
+                 SubCriteria["Description"] = new SearchCondition<String>("Description");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Description"];
+              return (ISearchCondition<String>)SubCriteria["Description"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Lossless")]
-        public ISearchCondition<System.Boolean> Lossless
+        public ISearchCondition<Boolean> Lossless
         {
             get
             {
               if (!SubCriteria.ContainsKey("Lossless"))
               {
-                 SubCriteria["Lossless"] = new SearchCondition<System.Boolean>("Lossless");
+                 SubCriteria["Lossless"] = new SearchCondition<Boolean>("Lossless");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Lossless"];
+              return (ISearchCondition<Boolean>)SubCriteria["Lossless"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Uid")]
-        public ISearchCondition<System.String> Uid
+        public ISearchCondition<String> Uid
         {
             get
             {
               if (!SubCriteria.ContainsKey("Uid"))
               {
-                 SubCriteria["Uid"] = new SearchCondition<System.String>("Uid");
+                 SubCriteria["Uid"] = new SearchCondition<String>("Uid");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Uid"];
+              return (ISearchCondition<String>)SubCriteria["Uid"];
             } 
         }
     }

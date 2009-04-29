@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -43,20 +45,20 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        {}
        [DicomField(DicomTags.RequestedProcedureId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="RequestedProcedureId")]
-        public System.String RequestedProcedureId
+        public String RequestedProcedureId
         {
-            set { SubParameters["RequestedProcedureId"] = new EntityUpdateColumn<System.String>("RequestedProcedureId", value); }
+            set { SubParameters["RequestedProcedureId"] = new EntityUpdateColumn<String>("RequestedProcedureId", value); }
         }
        [DicomField(DicomTags.ScheduledProcedureStepId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="ScheduledProcedureStepId")]
-        public System.String ScheduledProcedureStepId
+        public String ScheduledProcedureStepId
         {
-            set { SubParameters["ScheduledProcedureStepId"] = new EntityUpdateColumn<System.String>("ScheduledProcedureStepId", value); }
+            set { SubParameters["ScheduledProcedureStepId"] = new EntityUpdateColumn<String>("ScheduledProcedureStepId", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="SeriesGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey SeriesKey
+        public ServerEntityKey SeriesKey
         {
-            set { SubParameters["SeriesKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("SeriesKey", value); }
+            set { SubParameters["SeriesKey"] = new EntityUpdateColumn<ServerEntityKey>("SeriesKey", value); }
         }
     }
 }

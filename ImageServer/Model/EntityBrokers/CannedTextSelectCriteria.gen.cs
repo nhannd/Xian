@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,40 +43,47 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public CannedTextSelectCriteria()
         : base("CannedText")
         {}
+        public CannedTextSelectCriteria(CannedTextSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new CannedTextSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Category")]
-        public ISearchCondition<System.String> Category
+        public ISearchCondition<String> Category
         {
             get
             {
               if (!SubCriteria.ContainsKey("Category"))
               {
-                 SubCriteria["Category"] = new SearchCondition<System.String>("Category");
+                 SubCriteria["Category"] = new SearchCondition<String>("Category");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Category"];
+              return (ISearchCondition<String>)SubCriteria["Category"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Label")]
-        public ISearchCondition<System.String> Label
+        public ISearchCondition<String> Label
         {
             get
             {
               if (!SubCriteria.ContainsKey("Label"))
               {
-                 SubCriteria["Label"] = new SearchCondition<System.String>("Label");
+                 SubCriteria["Label"] = new SearchCondition<String>("Label");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Label"];
+              return (ISearchCondition<String>)SubCriteria["Label"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Text")]
-        public ISearchCondition<System.String> Text
+        public ISearchCondition<String> Text
         {
             get
             {
               if (!SubCriteria.ContainsKey("Text"))
               {
-                 SubCriteria["Text"] = new SearchCondition<System.String>("Text");
+                 SubCriteria["Text"] = new SearchCondition<String>("Text");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Text"];
+              return (ISearchCondition<String>)SubCriteria["Text"];
             } 
         }
     }

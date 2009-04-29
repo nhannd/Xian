@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class DevicePreferredTransferSyntaxUpdateColumns : EntityUpdateColumns
@@ -41,19 +43,19 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("DevicePreferredTransferSyntax")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="DeviceGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey DeviceKey
+        public ServerEntityKey DeviceKey
         {
-            set { SubParameters["DeviceKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("DeviceKey", value); }
+            set { SubParameters["DeviceKey"] = new EntityUpdateColumn<ServerEntityKey>("DeviceKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerSopClassGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerSopClassKey
+        public ServerEntityKey ServerSopClassKey
         {
-            set { SubParameters["ServerSopClassKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerSopClassKey", value); }
+            set { SubParameters["ServerSopClassKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerSopClassKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerTransferSyntaxGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerTransferSyntaxKey
+        public ServerEntityKey ServerTransferSyntaxKey
         {
-            set { SubParameters["ServerTransferSyntaxKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerTransferSyntaxKey", value); }
+            set { SubParameters["ServerTransferSyntaxKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerTransferSyntaxKey", value); }
         }
     }
 }

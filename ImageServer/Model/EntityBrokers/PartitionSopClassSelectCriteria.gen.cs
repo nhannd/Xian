@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,40 +43,47 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public PartitionSopClassSelectCriteria()
         : base("PartitionSopClass")
         {}
+        public PartitionSopClassSelectCriteria(PartitionSopClassSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new PartitionSopClassSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="Enabled")]
-        public ISearchCondition<System.Boolean> Enabled
+        public ISearchCondition<Boolean> Enabled
         {
             get
             {
               if (!SubCriteria.ContainsKey("Enabled"))
               {
-                 SubCriteria["Enabled"] = new SearchCondition<System.Boolean>("Enabled");
+                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
+              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerPartitionGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
+        public ISearchCondition<ServerEntityKey> ServerPartitionKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("ServerPartitionKey"))
               {
-                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey");
+                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerSopClassGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerSopClassKey
+        public ISearchCondition<ServerEntityKey> ServerSopClassKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("ServerSopClassKey"))
               {
-                 SubCriteria["ServerSopClassKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerSopClassKey");
+                 SubCriteria["ServerSopClassKey"] = new SearchCondition<ServerEntityKey>("ServerSopClassKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerSopClassKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerSopClassKey"];
             } 
         }
     }

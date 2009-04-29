@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,40 +43,47 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServerSopClassSelectCriteria()
         : base("ServerSopClass")
         {}
+        public ServerSopClassSelectCriteria(ServerSopClassSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new ServerSopClassSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="Description")]
-        public ISearchCondition<System.String> Description
+        public ISearchCondition<String> Description
         {
             get
             {
               if (!SubCriteria.ContainsKey("Description"))
               {
-                 SubCriteria["Description"] = new SearchCondition<System.String>("Description");
+                 SubCriteria["Description"] = new SearchCondition<String>("Description");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Description"];
+              return (ISearchCondition<String>)SubCriteria["Description"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="NonImage")]
-        public ISearchCondition<System.Boolean> NonImage
+        public ISearchCondition<Boolean> NonImage
         {
             get
             {
               if (!SubCriteria.ContainsKey("NonImage"))
               {
-                 SubCriteria["NonImage"] = new SearchCondition<System.Boolean>("NonImage");
+                 SubCriteria["NonImage"] = new SearchCondition<Boolean>("NonImage");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["NonImage"];
+              return (ISearchCondition<Boolean>)SubCriteria["NonImage"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerSopClass", ColumnName="SopClassUid")]
-        public ISearchCondition<System.String> SopClassUid
+        public ISearchCondition<String> SopClassUid
         {
             get
             {
               if (!SubCriteria.ContainsKey("SopClassUid"))
               {
-                 SubCriteria["SopClassUid"] = new SearchCondition<System.String>("SopClassUid");
+                 SubCriteria["SopClassUid"] = new SearchCondition<String>("SopClassUid");
               }
-              return (ISearchCondition<System.String>)SubCriteria["SopClassUid"];
+              return (ISearchCondition<String>)SubCriteria["SopClassUid"];
             } 
         }
     }

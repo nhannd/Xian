@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Common;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;

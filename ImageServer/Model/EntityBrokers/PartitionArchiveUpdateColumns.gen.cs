@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class PartitionArchiveUpdateColumns : EntityUpdateColumns
@@ -41,9 +43,9 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("PartitionArchive")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveDelayHours")]
-        public System.Int32 ArchiveDelayHours
+        public Int32 ArchiveDelayHours
         {
-            set { SubParameters["ArchiveDelayHours"] = new EntityUpdateColumn<System.Int32>("ArchiveDelayHours", value); }
+            set { SubParameters["ArchiveDelayHours"] = new EntityUpdateColumn<Int32>("ArchiveDelayHours", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveTypeEnum")]
         public ArchiveTypeEnum ArchiveTypeEnum
@@ -51,29 +53,29 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             set { SubParameters["ArchiveTypeEnum"] = new EntityUpdateColumn<ArchiveTypeEnum>("ArchiveTypeEnum", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ConfigurationXml")]
-        public System.Xml.XmlDocument ConfigurationXml
+        public XmlDocument ConfigurationXml
         {
-            set { SubParameters["ConfigurationXml"] = new EntityUpdateColumn<System.Xml.XmlDocument>("ConfigurationXml", value); }
+            set { SubParameters["ConfigurationXml"] = new EntityUpdateColumn<XmlDocument>("ConfigurationXml", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Description")]
-        public System.String Description
+        public String Description
         {
-            set { SubParameters["Description"] = new EntityUpdateColumn<System.String>("Description", value); }
+            set { SubParameters["Description"] = new EntityUpdateColumn<String>("Description", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
-            set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
+            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ReadOnly")]
-        public System.Boolean ReadOnly
+        public Boolean ReadOnly
         {
-            set { SubParameters["ReadOnly"] = new EntityUpdateColumn<System.Boolean>("ReadOnly", value); }
+            set { SubParameters["ReadOnly"] = new EntityUpdateColumn<Boolean>("ReadOnly", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
-            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
     }
 }

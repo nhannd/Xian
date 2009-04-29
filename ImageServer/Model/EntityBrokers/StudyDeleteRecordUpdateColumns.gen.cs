@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -43,86 +45,86 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        {}
        [DicomField(DicomTags.AccessionNumber, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="AccessionNumber")]
-        public System.String AccessionNumber
+        public String AccessionNumber
         {
-            set { SubParameters["AccessionNumber"] = new EntityUpdateColumn<System.String>("AccessionNumber", value); }
+            set { SubParameters["AccessionNumber"] = new EntityUpdateColumn<String>("AccessionNumber", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ArchiveInfo")]
-        public System.Xml.XmlDocument ArchiveInfo
+        public XmlDocument ArchiveInfo
         {
-            set { SubParameters["ArchiveInfo"] = new EntityUpdateColumn<System.Xml.XmlDocument>("ArchiveInfo", value); }
+            set { SubParameters["ArchiveInfo"] = new EntityUpdateColumn<XmlDocument>("ArchiveInfo", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="BackupPath")]
-        public System.String BackupPath
+        public String BackupPath
         {
-            set { SubParameters["BackupPath"] = new EntityUpdateColumn<System.String>("BackupPath", value); }
+            set { SubParameters["BackupPath"] = new EntityUpdateColumn<String>("BackupPath", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ExtendedInfo")]
-        public System.String ExtendedInfo
+        public String ExtendedInfo
         {
-            set { SubParameters["ExtendedInfo"] = new EntityUpdateColumn<System.String>("ExtendedInfo", value); }
+            set { SubParameters["ExtendedInfo"] = new EntityUpdateColumn<String>("ExtendedInfo", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="FilesystemGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
+        public ServerEntityKey FilesystemKey
         {
-            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey", value); }
+            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ServerEntityKey>("FilesystemKey", value); }
         }
        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientId")]
-        public System.String PatientId
+        public String PatientId
         {
-            set { SubParameters["PatientId"] = new EntityUpdateColumn<System.String>("PatientId", value); }
+            set { SubParameters["PatientId"] = new EntityUpdateColumn<String>("PatientId", value); }
         }
        [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientsName")]
-        public System.String PatientsName
+        public String PatientsName
         {
-            set { SubParameters["PatientsName"] = new EntityUpdateColumn<System.String>("PatientsName", value); }
+            set { SubParameters["PatientsName"] = new EntityUpdateColumn<String>("PatientsName", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Reason")]
-        public System.String Reason
+        public String Reason
         {
-            set { SubParameters["Reason"] = new EntityUpdateColumn<System.String>("Reason", value); }
+            set { SubParameters["Reason"] = new EntityUpdateColumn<String>("Reason", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ServerPartitionAE")]
-        public System.String ServerPartitionAE
+        public String ServerPartitionAE
         {
-            set { SubParameters["ServerPartitionAE"] = new EntityUpdateColumn<System.String>("ServerPartitionAE", value); }
+            set { SubParameters["ServerPartitionAE"] = new EntityUpdateColumn<String>("ServerPartitionAE", value); }
         }
        [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDate")]
-        public System.String StudyDate
+        public String StudyDate
         {
-            set { SubParameters["StudyDate"] = new EntityUpdateColumn<System.String>("StudyDate", value); }
+            set { SubParameters["StudyDate"] = new EntityUpdateColumn<String>("StudyDate", value); }
         }
        [DicomField(DicomTags.StudyDescription, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDescription")]
-        public System.String StudyDescription
+        public String StudyDescription
         {
-            set { SubParameters["StudyDescription"] = new EntityUpdateColumn<System.String>("StudyDescription", value); }
+            set { SubParameters["StudyDescription"] = new EntityUpdateColumn<String>("StudyDescription", value); }
         }
        [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyId")]
-        public System.String StudyId
+        public String StudyId
         {
-            set { SubParameters["StudyId"] = new EntityUpdateColumn<System.String>("StudyId", value); }
+            set { SubParameters["StudyId"] = new EntityUpdateColumn<String>("StudyId", value); }
         }
        [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyInstanceUid")]
-        public System.String StudyInstanceUid
+        public String StudyInstanceUid
         {
-            set { SubParameters["StudyInstanceUid"] = new EntityUpdateColumn<System.String>("StudyInstanceUid", value); }
+            set { SubParameters["StudyInstanceUid"] = new EntityUpdateColumn<String>("StudyInstanceUid", value); }
         }
        [DicomField(DicomTags.StudyTime, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyTime")]
-        public System.String StudyTime
+        public String StudyTime
         {
-            set { SubParameters["StudyTime"] = new EntityUpdateColumn<System.String>("StudyTime", value); }
+            set { SubParameters["StudyTime"] = new EntityUpdateColumn<String>("StudyTime", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Timestamp")]
-        public System.DateTime Timestamp
+        public DateTime Timestamp
         {
-            set { SubParameters["Timestamp"] = new EntityUpdateColumn<System.DateTime>("Timestamp", value); }
+            set { SubParameters["Timestamp"] = new EntityUpdateColumn<DateTime>("Timestamp", value); }
         }
     }
 }

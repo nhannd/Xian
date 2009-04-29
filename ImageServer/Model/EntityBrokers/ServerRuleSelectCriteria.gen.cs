@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,76 +43,83 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServerRuleSelectCriteria()
         : base("ServerRule")
         {}
+        public ServerRuleSelectCriteria(ServerRuleSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new ServerRuleSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="DefaultRule")]
-        public ISearchCondition<System.Boolean> DefaultRule
+        public ISearchCondition<Boolean> DefaultRule
         {
             get
             {
               if (!SubCriteria.ContainsKey("DefaultRule"))
               {
-                 SubCriteria["DefaultRule"] = new SearchCondition<System.Boolean>("DefaultRule");
+                 SubCriteria["DefaultRule"] = new SearchCondition<Boolean>("DefaultRule");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["DefaultRule"];
+              return (ISearchCondition<Boolean>)SubCriteria["DefaultRule"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="Enabled")]
-        public ISearchCondition<System.Boolean> Enabled
+        public ISearchCondition<Boolean> Enabled
         {
             get
             {
               if (!SubCriteria.ContainsKey("Enabled"))
               {
-                 SubCriteria["Enabled"] = new SearchCondition<System.Boolean>("Enabled");
+                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
+              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ExemptRule")]
-        public ISearchCondition<System.Boolean> ExemptRule
+        public ISearchCondition<Boolean> ExemptRule
         {
             get
             {
               if (!SubCriteria.ContainsKey("ExemptRule"))
               {
-                 SubCriteria["ExemptRule"] = new SearchCondition<System.Boolean>("ExemptRule");
+                 SubCriteria["ExemptRule"] = new SearchCondition<Boolean>("ExemptRule");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["ExemptRule"];
+              return (ISearchCondition<Boolean>)SubCriteria["ExemptRule"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleName")]
-        public ISearchCondition<System.String> RuleName
+        public ISearchCondition<String> RuleName
         {
             get
             {
               if (!SubCriteria.ContainsKey("RuleName"))
               {
-                 SubCriteria["RuleName"] = new SearchCondition<System.String>("RuleName");
+                 SubCriteria["RuleName"] = new SearchCondition<String>("RuleName");
               }
-              return (ISearchCondition<System.String>)SubCriteria["RuleName"];
+              return (ISearchCondition<String>)SubCriteria["RuleName"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleXml")]
-        public ISearchCondition<System.Xml.XmlDocument> RuleXml
+        public ISearchCondition<XmlDocument> RuleXml
         {
             get
             {
               if (!SubCriteria.ContainsKey("RuleXml"))
               {
-                 SubCriteria["RuleXml"] = new SearchCondition<System.Xml.XmlDocument>("RuleXml");
+                 SubCriteria["RuleXml"] = new SearchCondition<XmlDocument>("RuleXml");
               }
-              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["RuleXml"];
+              return (ISearchCondition<XmlDocument>)SubCriteria["RuleXml"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerPartitionGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
+        public ISearchCondition<ServerEntityKey> ServerPartitionKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("ServerPartitionKey"))
               {
-                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey");
+                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleApplyTimeEnum")]

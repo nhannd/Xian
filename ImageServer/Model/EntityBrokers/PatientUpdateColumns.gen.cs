@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -43,50 +45,50 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        {}
        [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="IssuerOfPatientId")]
-        public System.String IssuerOfPatientId
+        public String IssuerOfPatientId
         {
-            set { SubParameters["IssuerOfPatientId"] = new EntityUpdateColumn<System.String>("IssuerOfPatientId", value); }
+            set { SubParameters["IssuerOfPatientId"] = new EntityUpdateColumn<String>("IssuerOfPatientId", value); }
         }
        [DicomField(DicomTags.NumberOfPatientRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedInstances")]
-        public System.Int32 NumberOfPatientRelatedInstances
+        public Int32 NumberOfPatientRelatedInstances
         {
-            set { SubParameters["NumberOfPatientRelatedInstances"] = new EntityUpdateColumn<System.Int32>("NumberOfPatientRelatedInstances", value); }
+            set { SubParameters["NumberOfPatientRelatedInstances"] = new EntityUpdateColumn<Int32>("NumberOfPatientRelatedInstances", value); }
         }
        [DicomField(DicomTags.NumberOfPatientRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedSeries")]
-        public System.Int32 NumberOfPatientRelatedSeries
+        public Int32 NumberOfPatientRelatedSeries
         {
-            set { SubParameters["NumberOfPatientRelatedSeries"] = new EntityUpdateColumn<System.Int32>("NumberOfPatientRelatedSeries", value); }
+            set { SubParameters["NumberOfPatientRelatedSeries"] = new EntityUpdateColumn<Int32>("NumberOfPatientRelatedSeries", value); }
         }
        [DicomField(DicomTags.NumberOfPatientRelatedStudies, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedStudies")]
-        public System.Int32 NumberOfPatientRelatedStudies
+        public Int32 NumberOfPatientRelatedStudies
         {
-            set { SubParameters["NumberOfPatientRelatedStudies"] = new EntityUpdateColumn<System.Int32>("NumberOfPatientRelatedStudies", value); }
+            set { SubParameters["NumberOfPatientRelatedStudies"] = new EntityUpdateColumn<Int32>("NumberOfPatientRelatedStudies", value); }
         }
        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="PatientId")]
-        public System.String PatientId
+        public String PatientId
         {
-            set { SubParameters["PatientId"] = new EntityUpdateColumn<System.String>("PatientId", value); }
+            set { SubParameters["PatientId"] = new EntityUpdateColumn<String>("PatientId", value); }
         }
        [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="PatientsName")]
-        public System.String PatientsName
+        public String PatientsName
         {
-            set { SubParameters["PatientsName"] = new EntityUpdateColumn<System.String>("PatientsName", value); }
+            set { SubParameters["PatientsName"] = new EntityUpdateColumn<String>("PatientsName", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
-            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
        [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="SpecificCharacterSet")]
-        public System.String SpecificCharacterSet
+        public String SpecificCharacterSet
         {
-            set { SubParameters["SpecificCharacterSet"] = new EntityUpdateColumn<System.String>("SpecificCharacterSet", value); }
+            set { SubParameters["SpecificCharacterSet"] = new EntityUpdateColumn<String>("SpecificCharacterSet", value); }
         }
     }
 }

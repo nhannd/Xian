@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,76 +43,83 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServerPartitionSelectCriteria()
         : base("ServerPartition")
         {}
+        public ServerPartitionSelectCriteria(ServerPartitionSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new ServerPartitionSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptAnyDevice")]
-        public ISearchCondition<System.Boolean> AcceptAnyDevice
+        public ISearchCondition<Boolean> AcceptAnyDevice
         {
             get
             {
               if (!SubCriteria.ContainsKey("AcceptAnyDevice"))
               {
-                 SubCriteria["AcceptAnyDevice"] = new SearchCondition<System.Boolean>("AcceptAnyDevice");
+                 SubCriteria["AcceptAnyDevice"] = new SearchCondition<Boolean>("AcceptAnyDevice");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["AcceptAnyDevice"];
+              return (ISearchCondition<Boolean>)SubCriteria["AcceptAnyDevice"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AeTitle")]
-        public ISearchCondition<System.String> AeTitle
+        public ISearchCondition<String> AeTitle
         {
             get
             {
               if (!SubCriteria.ContainsKey("AeTitle"))
               {
-                 SubCriteria["AeTitle"] = new SearchCondition<System.String>("AeTitle");
+                 SubCriteria["AeTitle"] = new SearchCondition<String>("AeTitle");
               }
-              return (ISearchCondition<System.String>)SubCriteria["AeTitle"];
+              return (ISearchCondition<String>)SubCriteria["AeTitle"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AuditDeleteStudy")]
-        public ISearchCondition<System.Boolean> AuditDeleteStudy
+        public ISearchCondition<Boolean> AuditDeleteStudy
         {
             get
             {
               if (!SubCriteria.ContainsKey("AuditDeleteStudy"))
               {
-                 SubCriteria["AuditDeleteStudy"] = new SearchCondition<System.Boolean>("AuditDeleteStudy");
+                 SubCriteria["AuditDeleteStudy"] = new SearchCondition<Boolean>("AuditDeleteStudy");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["AuditDeleteStudy"];
+              return (ISearchCondition<Boolean>)SubCriteria["AuditDeleteStudy"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AutoInsertDevice")]
-        public ISearchCondition<System.Boolean> AutoInsertDevice
+        public ISearchCondition<Boolean> AutoInsertDevice
         {
             get
             {
               if (!SubCriteria.ContainsKey("AutoInsertDevice"))
               {
-                 SubCriteria["AutoInsertDevice"] = new SearchCondition<System.Boolean>("AutoInsertDevice");
+                 SubCriteria["AutoInsertDevice"] = new SearchCondition<Boolean>("AutoInsertDevice");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["AutoInsertDevice"];
+              return (ISearchCondition<Boolean>)SubCriteria["AutoInsertDevice"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DefaultRemotePort")]
-        public ISearchCondition<System.Int32> DefaultRemotePort
+        public ISearchCondition<Int32> DefaultRemotePort
         {
             get
             {
               if (!SubCriteria.ContainsKey("DefaultRemotePort"))
               {
-                 SubCriteria["DefaultRemotePort"] = new SearchCondition<System.Int32>("DefaultRemotePort");
+                 SubCriteria["DefaultRemotePort"] = new SearchCondition<Int32>("DefaultRemotePort");
               }
-              return (ISearchCondition<System.Int32>)SubCriteria["DefaultRemotePort"];
+              return (ISearchCondition<Int32>)SubCriteria["DefaultRemotePort"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Description")]
-        public ISearchCondition<System.String> Description
+        public ISearchCondition<String> Description
         {
             get
             {
               if (!SubCriteria.ContainsKey("Description"))
               {
-                 SubCriteria["Description"] = new SearchCondition<System.String>("Description");
+                 SubCriteria["Description"] = new SearchCondition<String>("Description");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Description"];
+              return (ISearchCondition<String>)SubCriteria["Description"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DuplicateSopPolicyEnum")]
@@ -126,123 +135,123 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Enabled")]
-        public ISearchCondition<System.Boolean> Enabled
+        public ISearchCondition<Boolean> Enabled
         {
             get
             {
               if (!SubCriteria.ContainsKey("Enabled"))
               {
-                 SubCriteria["Enabled"] = new SearchCondition<System.Boolean>("Enabled");
+                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
+              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchAccessionNumber")]
-        public ISearchCondition<System.Boolean> MatchAccessionNumber
+        public ISearchCondition<Boolean> MatchAccessionNumber
         {
             get
             {
               if (!SubCriteria.ContainsKey("MatchAccessionNumber"))
               {
-                 SubCriteria["MatchAccessionNumber"] = new SearchCondition<System.Boolean>("MatchAccessionNumber");
+                 SubCriteria["MatchAccessionNumber"] = new SearchCondition<Boolean>("MatchAccessionNumber");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["MatchAccessionNumber"];
+              return (ISearchCondition<Boolean>)SubCriteria["MatchAccessionNumber"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchIssuerOfPatientId")]
-        public ISearchCondition<System.Boolean> MatchIssuerOfPatientId
+        public ISearchCondition<Boolean> MatchIssuerOfPatientId
         {
             get
             {
               if (!SubCriteria.ContainsKey("MatchIssuerOfPatientId"))
               {
-                 SubCriteria["MatchIssuerOfPatientId"] = new SearchCondition<System.Boolean>("MatchIssuerOfPatientId");
+                 SubCriteria["MatchIssuerOfPatientId"] = new SearchCondition<Boolean>("MatchIssuerOfPatientId");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["MatchIssuerOfPatientId"];
+              return (ISearchCondition<Boolean>)SubCriteria["MatchIssuerOfPatientId"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientId")]
-        public ISearchCondition<System.Boolean> MatchPatientId
+        public ISearchCondition<Boolean> MatchPatientId
         {
             get
             {
               if (!SubCriteria.ContainsKey("MatchPatientId"))
               {
-                 SubCriteria["MatchPatientId"] = new SearchCondition<System.Boolean>("MatchPatientId");
+                 SubCriteria["MatchPatientId"] = new SearchCondition<Boolean>("MatchPatientId");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientId"];
+              return (ISearchCondition<Boolean>)SubCriteria["MatchPatientId"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsBirthDate")]
-        public ISearchCondition<System.Boolean> MatchPatientsBirthDate
+        public ISearchCondition<Boolean> MatchPatientsBirthDate
         {
             get
             {
               if (!SubCriteria.ContainsKey("MatchPatientsBirthDate"))
               {
-                 SubCriteria["MatchPatientsBirthDate"] = new SearchCondition<System.Boolean>("MatchPatientsBirthDate");
+                 SubCriteria["MatchPatientsBirthDate"] = new SearchCondition<Boolean>("MatchPatientsBirthDate");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientsBirthDate"];
+              return (ISearchCondition<Boolean>)SubCriteria["MatchPatientsBirthDate"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsName")]
-        public ISearchCondition<System.Boolean> MatchPatientsName
+        public ISearchCondition<Boolean> MatchPatientsName
         {
             get
             {
               if (!SubCriteria.ContainsKey("MatchPatientsName"))
               {
-                 SubCriteria["MatchPatientsName"] = new SearchCondition<System.Boolean>("MatchPatientsName");
+                 SubCriteria["MatchPatientsName"] = new SearchCondition<Boolean>("MatchPatientsName");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientsName"];
+              return (ISearchCondition<Boolean>)SubCriteria["MatchPatientsName"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsSex")]
-        public ISearchCondition<System.Boolean> MatchPatientsSex
+        public ISearchCondition<Boolean> MatchPatientsSex
         {
             get
             {
               if (!SubCriteria.ContainsKey("MatchPatientsSex"))
               {
-                 SubCriteria["MatchPatientsSex"] = new SearchCondition<System.Boolean>("MatchPatientsSex");
+                 SubCriteria["MatchPatientsSex"] = new SearchCondition<Boolean>("MatchPatientsSex");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["MatchPatientsSex"];
+              return (ISearchCondition<Boolean>)SubCriteria["MatchPatientsSex"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="PartitionFolder")]
-        public ISearchCondition<System.String> PartitionFolder
+        public ISearchCondition<String> PartitionFolder
         {
             get
             {
               if (!SubCriteria.ContainsKey("PartitionFolder"))
               {
-                 SubCriteria["PartitionFolder"] = new SearchCondition<System.String>("PartitionFolder");
+                 SubCriteria["PartitionFolder"] = new SearchCondition<String>("PartitionFolder");
               }
-              return (ISearchCondition<System.String>)SubCriteria["PartitionFolder"];
+              return (ISearchCondition<String>)SubCriteria["PartitionFolder"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Port")]
-        public ISearchCondition<System.Int32> Port
+        public ISearchCondition<Int32> Port
         {
             get
             {
               if (!SubCriteria.ContainsKey("Port"))
               {
-                 SubCriteria["Port"] = new SearchCondition<System.Int32>("Port");
+                 SubCriteria["Port"] = new SearchCondition<Int32>("Port");
               }
-              return (ISearchCondition<System.Int32>)SubCriteria["Port"];
+              return (ISearchCondition<Int32>)SubCriteria["Port"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="StudyCount")]
-        public ISearchCondition<System.Int32> StudyCount
+        public ISearchCondition<Int32> StudyCount
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyCount"))
               {
-                 SubCriteria["StudyCount"] = new SearchCondition<System.Int32>("StudyCount");
+                 SubCriteria["StudyCount"] = new SearchCondition<Int32>("StudyCount");
               }
-              return (ISearchCondition<System.Int32>)SubCriteria["StudyCount"];
+              return (ISearchCondition<Int32>)SubCriteria["StudyCount"];
             } 
         }
     }

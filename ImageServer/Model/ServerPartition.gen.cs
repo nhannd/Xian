@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -85,58 +86,58 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.Boolean _acceptAnyDevice;
-        private System.String _aeTitle;
-        private System.Boolean _auditDeleteStudy;
-        private System.Boolean _autoInsertDevice;
-        private System.Int32 _defaultRemotePort;
-        private System.String _description;
+        private Boolean _acceptAnyDevice;
+        private String _aeTitle;
+        private Boolean _auditDeleteStudy;
+        private Boolean _autoInsertDevice;
+        private Int32 _defaultRemotePort;
+        private String _description;
         private DuplicateSopPolicyEnum _duplicateSopPolicyEnum;
-        private System.Boolean _enabled;
-        private System.Boolean _matchAccessionNumber;
-        private System.Boolean _matchIssuerOfPatientId;
-        private System.Boolean _matchPatientId;
-        private System.Boolean _matchPatientsBirthDate;
-        private System.Boolean _matchPatientsName;
-        private System.Boolean _matchPatientsSex;
-        private System.String _partitionFolder;
-        private System.Int32 _port;
-        private System.Int32 _studyCount;
+        private Boolean _enabled;
+        private Boolean _matchAccessionNumber;
+        private Boolean _matchIssuerOfPatientId;
+        private Boolean _matchPatientId;
+        private Boolean _matchPatientsBirthDate;
+        private Boolean _matchPatientsName;
+        private Boolean _matchPatientsSex;
+        private String _partitionFolder;
+        private Int32 _port;
+        private Int32 _studyCount;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AcceptAnyDevice")]
-        public System.Boolean AcceptAnyDevice
+        public Boolean AcceptAnyDevice
         {
         get { return _acceptAnyDevice; }
         set { _acceptAnyDevice = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AeTitle")]
-        public System.String AeTitle
+        public String AeTitle
         {
         get { return _aeTitle; }
         set { _aeTitle = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AuditDeleteStudy")]
-        public System.Boolean AuditDeleteStudy
+        public Boolean AuditDeleteStudy
         {
         get { return _auditDeleteStudy; }
         set { _auditDeleteStudy = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="AutoInsertDevice")]
-        public System.Boolean AutoInsertDevice
+        public Boolean AutoInsertDevice
         {
         get { return _autoInsertDevice; }
         set { _autoInsertDevice = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="DefaultRemotePort")]
-        public System.Int32 DefaultRemotePort
+        public Int32 DefaultRemotePort
         {
         get { return _defaultRemotePort; }
         set { _defaultRemotePort = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Description")]
-        public System.String Description
+        public String Description
         {
         get { return _description; }
         set { _description = value; }
@@ -148,61 +149,61 @@ namespace ClearCanvas.ImageServer.Model
         set { _duplicateSopPolicyEnum = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchAccessionNumber")]
-        public System.Boolean MatchAccessionNumber
+        public Boolean MatchAccessionNumber
         {
         get { return _matchAccessionNumber; }
         set { _matchAccessionNumber = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchIssuerOfPatientId")]
-        public System.Boolean MatchIssuerOfPatientId
+        public Boolean MatchIssuerOfPatientId
         {
         get { return _matchIssuerOfPatientId; }
         set { _matchIssuerOfPatientId = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientId")]
-        public System.Boolean MatchPatientId
+        public Boolean MatchPatientId
         {
         get { return _matchPatientId; }
         set { _matchPatientId = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsBirthDate")]
-        public System.Boolean MatchPatientsBirthDate
+        public Boolean MatchPatientsBirthDate
         {
         get { return _matchPatientsBirthDate; }
         set { _matchPatientsBirthDate = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsName")]
-        public System.Boolean MatchPatientsName
+        public Boolean MatchPatientsName
         {
         get { return _matchPatientsName; }
         set { _matchPatientsName = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="MatchPatientsSex")]
-        public System.Boolean MatchPatientsSex
+        public Boolean MatchPatientsSex
         {
         get { return _matchPatientsSex; }
         set { _matchPatientsSex = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="PartitionFolder")]
-        public System.String PartitionFolder
+        public String PartitionFolder
         {
         get { return _partitionFolder; }
         set { _partitionFolder = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="Port")]
-        public System.Int32 Port
+        public Int32 Port
         {
         get { return _port; }
         set { _port = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerPartition", ColumnName="StudyCount")]
-        public System.Int32 StudyCount
+        public Int32 StudyCount
         {
         get { return _studyCount; }
         set { _studyCount = value; }

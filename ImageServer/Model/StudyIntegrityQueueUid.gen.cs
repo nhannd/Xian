@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
@@ -60,36 +61,36 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _seriesDescription;
-        private System.String _seriesInstanceUid;
-        private System.String _sopInstanceUid;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyIntegrityQueueKey;
+        private String _seriesDescription;
+        private String _seriesInstanceUid;
+        private String _sopInstanceUid;
+        private ServerEntityKey _studyIntegrityQueueKey;
         #endregion
 
         #region Public Properties
         [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
-        public System.String SeriesDescription
+        public String SeriesDescription
         {
         get { return _seriesDescription; }
         set { _seriesDescription = value; }
         }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesInstanceUid")]
-        public System.String SeriesInstanceUid
+        public String SeriesInstanceUid
         {
         get { return _seriesInstanceUid; }
         set { _seriesInstanceUid = value; }
         }
         [DicomField(DicomTags.SopInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SopInstanceUid")]
-        public System.String SopInstanceUid
+        public String SopInstanceUid
         {
         get { return _sopInstanceUid; }
         set { _sopInstanceUid = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyIntegrityQueueKey
+        public ServerEntityKey StudyIntegrityQueueKey
         {
         get { return _studyIntegrityQueueKey; }
         set { _studyIntegrityQueueKey = value; }

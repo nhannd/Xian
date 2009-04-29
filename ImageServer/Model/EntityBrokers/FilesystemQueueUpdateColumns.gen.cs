@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -42,9 +44,9 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("FilesystemQueue")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
+        public ServerEntityKey FilesystemKey
         {
-            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey", value); }
+            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ServerEntityKey>("FilesystemKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemQueueTypeEnum")]
         public FilesystemQueueTypeEnum FilesystemQueueTypeEnum
@@ -52,25 +54,25 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             set { SubParameters["FilesystemQueueTypeEnum"] = new EntityUpdateColumn<FilesystemQueueTypeEnum>("FilesystemQueueTypeEnum", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="QueueXml")]
-        public System.Xml.XmlDocument QueueXml
+        public XmlDocument QueueXml
         {
-            set { SubParameters["QueueXml"] = new EntityUpdateColumn<System.Xml.XmlDocument>("QueueXml", value); }
+            set { SubParameters["QueueXml"] = new EntityUpdateColumn<XmlDocument>("QueueXml", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="ScheduledTime")]
-        public System.DateTime ScheduledTime
+        public DateTime ScheduledTime
         {
-            set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<System.DateTime>("ScheduledTime", value); }
+            set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<DateTime>("ScheduledTime", value); }
         }
        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="SeriesInstanceUid")]
-        public System.String SeriesInstanceUid
+        public String SeriesInstanceUid
         {
-            set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<System.String>("SeriesInstanceUid", value); }
+            set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<String>("SeriesInstanceUid", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="StudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        public ServerEntityKey StudyStorageKey
         {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
     }
 }

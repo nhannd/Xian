@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,40 +43,47 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public FilesystemSelectCriteria()
         : base("Filesystem")
         {}
+        public FilesystemSelectCriteria(FilesystemSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new FilesystemSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Description")]
-        public ISearchCondition<System.String> Description
+        public ISearchCondition<String> Description
         {
             get
             {
               if (!SubCriteria.ContainsKey("Description"))
               {
-                 SubCriteria["Description"] = new SearchCondition<System.String>("Description");
+                 SubCriteria["Description"] = new SearchCondition<String>("Description");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Description"];
+              return (ISearchCondition<String>)SubCriteria["Description"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Enabled")]
-        public ISearchCondition<System.Boolean> Enabled
+        public ISearchCondition<Boolean> Enabled
         {
             get
             {
               if (!SubCriteria.ContainsKey("Enabled"))
               {
-                 SubCriteria["Enabled"] = new SearchCondition<System.Boolean>("Enabled");
+                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
+              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemPath")]
-        public ISearchCondition<System.String> FilesystemPath
+        public ISearchCondition<String> FilesystemPath
         {
             get
             {
               if (!SubCriteria.ContainsKey("FilesystemPath"))
               {
-                 SubCriteria["FilesystemPath"] = new SearchCondition<System.String>("FilesystemPath");
+                 SubCriteria["FilesystemPath"] = new SearchCondition<String>("FilesystemPath");
               }
-              return (ISearchCondition<System.String>)SubCriteria["FilesystemPath"];
+              return (ISearchCondition<String>)SubCriteria["FilesystemPath"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemTierEnum")]
@@ -90,51 +99,51 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="HighWatermark")]
-        public ISearchCondition<System.Decimal> HighWatermark
+        public ISearchCondition<Decimal> HighWatermark
         {
             get
             {
               if (!SubCriteria.ContainsKey("HighWatermark"))
               {
-                 SubCriteria["HighWatermark"] = new SearchCondition<System.Decimal>("HighWatermark");
+                 SubCriteria["HighWatermark"] = new SearchCondition<Decimal>("HighWatermark");
               }
-              return (ISearchCondition<System.Decimal>)SubCriteria["HighWatermark"];
+              return (ISearchCondition<Decimal>)SubCriteria["HighWatermark"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="LowWatermark")]
-        public ISearchCondition<System.Decimal> LowWatermark
+        public ISearchCondition<Decimal> LowWatermark
         {
             get
             {
               if (!SubCriteria.ContainsKey("LowWatermark"))
               {
-                 SubCriteria["LowWatermark"] = new SearchCondition<System.Decimal>("LowWatermark");
+                 SubCriteria["LowWatermark"] = new SearchCondition<Decimal>("LowWatermark");
               }
-              return (ISearchCondition<System.Decimal>)SubCriteria["LowWatermark"];
+              return (ISearchCondition<Decimal>)SubCriteria["LowWatermark"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="ReadOnly")]
-        public ISearchCondition<System.Boolean> ReadOnly
+        public ISearchCondition<Boolean> ReadOnly
         {
             get
             {
               if (!SubCriteria.ContainsKey("ReadOnly"))
               {
-                 SubCriteria["ReadOnly"] = new SearchCondition<System.Boolean>("ReadOnly");
+                 SubCriteria["ReadOnly"] = new SearchCondition<Boolean>("ReadOnly");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["ReadOnly"];
+              return (ISearchCondition<Boolean>)SubCriteria["ReadOnly"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="WriteOnly")]
-        public ISearchCondition<System.Boolean> WriteOnly
+        public ISearchCondition<Boolean> WriteOnly
         {
             get
             {
               if (!SubCriteria.ContainsKey("WriteOnly"))
               {
-                 SubCriteria["WriteOnly"] = new SearchCondition<System.Boolean>("WriteOnly");
+                 SubCriteria["WriteOnly"] = new SearchCondition<Boolean>("WriteOnly");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["WriteOnly"];
+              return (ISearchCondition<Boolean>)SubCriteria["WriteOnly"];
             } 
         }
     }

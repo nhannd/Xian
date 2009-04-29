@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class ApplicationLogUpdateColumns : EntityUpdateColumns
@@ -41,34 +43,34 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("ApplicationLog")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Exception")]
-        public System.String Exception
+        public String Exception
         {
-            set { SubParameters["Exception"] = new EntityUpdateColumn<System.String>("Exception", value); }
+            set { SubParameters["Exception"] = new EntityUpdateColumn<String>("Exception", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Host")]
-        public System.String Host
+        public String Host
         {
-            set { SubParameters["Host"] = new EntityUpdateColumn<System.String>("Host", value); }
+            set { SubParameters["Host"] = new EntityUpdateColumn<String>("Host", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="LogLevel")]
-        public System.String LogLevel
+        public String LogLevel
         {
-            set { SubParameters["LogLevel"] = new EntityUpdateColumn<System.String>("LogLevel", value); }
+            set { SubParameters["LogLevel"] = new EntityUpdateColumn<String>("LogLevel", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Message")]
-        public System.String Message
+        public String Message
         {
-            set { SubParameters["Message"] = new EntityUpdateColumn<System.String>("Message", value); }
+            set { SubParameters["Message"] = new EntityUpdateColumn<String>("Message", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Thread")]
-        public System.String Thread
+        public String Thread
         {
-            set { SubParameters["Thread"] = new EntityUpdateColumn<System.String>("Thread", value); }
+            set { SubParameters["Thread"] = new EntityUpdateColumn<String>("Thread", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Timestamp")]
-        public System.DateTime Timestamp
+        public DateTime Timestamp
         {
-            set { SubParameters["Timestamp"] = new EntityUpdateColumn<System.DateTime>("Timestamp", value); }
+            set { SubParameters["Timestamp"] = new EntityUpdateColumn<DateTime>("Timestamp", value); }
         }
     }
 }

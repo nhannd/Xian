@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class FilesystemStudyStorageUpdateColumns : EntityUpdateColumns
@@ -41,24 +43,24 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("FilesystemStudyStorage")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="FilesystemGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
+        public ServerEntityKey FilesystemKey
         {
-            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey", value); }
+            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ServerEntityKey>("FilesystemKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerTransferSyntaxKey
+        public ServerEntityKey ServerTransferSyntaxKey
         {
-            set { SubParameters["ServerTransferSyntaxKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerTransferSyntaxKey", value); }
+            set { SubParameters["ServerTransferSyntaxKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerTransferSyntaxKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyFolder")]
-        public System.String StudyFolder
+        public String StudyFolder
         {
-            set { SubParameters["StudyFolder"] = new EntityUpdateColumn<System.String>("StudyFolder", value); }
+            set { SubParameters["StudyFolder"] = new EntityUpdateColumn<String>("StudyFolder", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        public ServerEntityKey StudyStorageKey
         {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
     }
 }

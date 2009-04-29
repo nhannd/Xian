@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,40 +43,47 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public StudyStorageSelectCriteria()
         : base("StudyStorage")
         {}
+        public StudyStorageSelectCriteria(StudyStorageSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new StudyStorageSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="InsertTime")]
-        public ISearchCondition<System.DateTime> InsertTime
+        public ISearchCondition<DateTime> InsertTime
         {
             get
             {
               if (!SubCriteria.ContainsKey("InsertTime"))
               {
-                 SubCriteria["InsertTime"] = new SearchCondition<System.DateTime>("InsertTime");
+                 SubCriteria["InsertTime"] = new SearchCondition<DateTime>("InsertTime");
               }
-              return (ISearchCondition<System.DateTime>)SubCriteria["InsertTime"];
+              return (ISearchCondition<DateTime>)SubCriteria["InsertTime"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="LastAccessedTime")]
-        public ISearchCondition<System.DateTime> LastAccessedTime
+        public ISearchCondition<DateTime> LastAccessedTime
         {
             get
             {
               if (!SubCriteria.ContainsKey("LastAccessedTime"))
               {
-                 SubCriteria["LastAccessedTime"] = new SearchCondition<System.DateTime>("LastAccessedTime");
+                 SubCriteria["LastAccessedTime"] = new SearchCondition<DateTime>("LastAccessedTime");
               }
-              return (ISearchCondition<System.DateTime>)SubCriteria["LastAccessedTime"];
+              return (ISearchCondition<DateTime>)SubCriteria["LastAccessedTime"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="Lock")]
-        public ISearchCondition<System.Boolean> Lock
+        public ISearchCondition<Boolean> Lock
         {
             get
             {
               if (!SubCriteria.ContainsKey("Lock"))
               {
-                 SubCriteria["Lock"] = new SearchCondition<System.Boolean>("Lock");
+                 SubCriteria["Lock"] = new SearchCondition<Boolean>("Lock");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Lock"];
+              return (ISearchCondition<Boolean>)SubCriteria["Lock"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="QueueStudyStateEnum")]
@@ -90,27 +99,27 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="ServerPartitionGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
+        public ISearchCondition<ServerEntityKey> ServerPartitionKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("ServerPartitionKey"))
               {
-                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey");
+                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyInstanceUid")]
-        public ISearchCondition<System.String> StudyInstanceUid
+        public ISearchCondition<String> StudyInstanceUid
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyInstanceUid"))
               {
-                 SubCriteria["StudyInstanceUid"] = new SearchCondition<System.String>("StudyInstanceUid");
+                 SubCriteria["StudyInstanceUid"] = new SearchCondition<String>("StudyInstanceUid");
               }
-              return (ISearchCondition<System.String>)SubCriteria["StudyInstanceUid"];
+              return (ISearchCondition<String>)SubCriteria["StudyInstanceUid"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyStatusEnum")]

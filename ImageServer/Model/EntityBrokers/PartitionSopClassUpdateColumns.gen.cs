@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class PartitionSopClassUpdateColumns : EntityUpdateColumns
@@ -41,19 +43,19 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("PartitionSopClass")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
-            set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
+            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
-            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerSopClassGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerSopClassKey
+        public ServerEntityKey ServerSopClassKey
         {
-            set { SubParameters["ServerSopClassKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerSopClassKey", value); }
+            set { SubParameters["ServerSopClassKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerSopClassKey", value); }
         }
     }
 }

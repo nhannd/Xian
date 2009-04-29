@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -67,31 +68,31 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _description;
-        private System.Boolean _enabled;
-        private System.String _filesystemPath;
+        private String _description;
+        private Boolean _enabled;
+        private String _filesystemPath;
         private FilesystemTierEnum _filesystemTierEnum;
-        private System.Decimal _highWatermark;
-        private System.Decimal _lowWatermark;
-        private System.Boolean _readOnly;
-        private System.Boolean _writeOnly;
+        private Decimal _highWatermark;
+        private Decimal _lowWatermark;
+        private Boolean _readOnly;
+        private Boolean _writeOnly;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Description")]
-        public System.String Description
+        public String Description
         {
         get { return _description; }
         set { _description = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemPath")]
-        public System.String FilesystemPath
+        public String FilesystemPath
         {
         get { return _filesystemPath; }
         set { _filesystemPath = value; }
@@ -103,25 +104,25 @@ namespace ClearCanvas.ImageServer.Model
         set { _filesystemTierEnum = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="HighWatermark")]
-        public System.Decimal HighWatermark
+        public Decimal HighWatermark
         {
         get { return _highWatermark; }
         set { _highWatermark = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="LowWatermark")]
-        public System.Decimal LowWatermark
+        public Decimal LowWatermark
         {
         get { return _lowWatermark; }
         set { _lowWatermark = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="ReadOnly")]
-        public System.Boolean ReadOnly
+        public Boolean ReadOnly
         {
         get { return _readOnly; }
         set { _readOnly = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="WriteOnly")]
-        public System.Boolean WriteOnly
+        public Boolean WriteOnly
         {
         get { return _writeOnly; }
         set { _writeOnly = value; }

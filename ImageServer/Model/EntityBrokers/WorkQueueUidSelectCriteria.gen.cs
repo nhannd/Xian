@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,88 +43,95 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public WorkQueueUidSelectCriteria()
         : base("WorkQueueUid")
         {}
+        public WorkQueueUidSelectCriteria(WorkQueueUidSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new WorkQueueUidSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Duplicate")]
-        public ISearchCondition<System.Boolean> Duplicate
+        public ISearchCondition<Boolean> Duplicate
         {
             get
             {
               if (!SubCriteria.ContainsKey("Duplicate"))
               {
-                 SubCriteria["Duplicate"] = new SearchCondition<System.Boolean>("Duplicate");
+                 SubCriteria["Duplicate"] = new SearchCondition<Boolean>("Duplicate");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Duplicate"];
+              return (ISearchCondition<Boolean>)SubCriteria["Duplicate"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Extension")]
-        public ISearchCondition<System.String> Extension
+        public ISearchCondition<String> Extension
         {
             get
             {
               if (!SubCriteria.ContainsKey("Extension"))
               {
-                 SubCriteria["Extension"] = new SearchCondition<System.String>("Extension");
+                 SubCriteria["Extension"] = new SearchCondition<String>("Extension");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Extension"];
+              return (ISearchCondition<String>)SubCriteria["Extension"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Failed")]
-        public ISearchCondition<System.Boolean> Failed
+        public ISearchCondition<Boolean> Failed
         {
             get
             {
               if (!SubCriteria.ContainsKey("Failed"))
               {
-                 SubCriteria["Failed"] = new SearchCondition<System.Boolean>("Failed");
+                 SubCriteria["Failed"] = new SearchCondition<Boolean>("Failed");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Failed"];
+              return (ISearchCondition<Boolean>)SubCriteria["Failed"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="FailureCount")]
-        public ISearchCondition<System.Int16> FailureCount
+        public ISearchCondition<Int16> FailureCount
         {
             get
             {
               if (!SubCriteria.ContainsKey("FailureCount"))
               {
-                 SubCriteria["FailureCount"] = new SearchCondition<System.Int16>("FailureCount");
+                 SubCriteria["FailureCount"] = new SearchCondition<Int16>("FailureCount");
               }
-              return (ISearchCondition<System.Int16>)SubCriteria["FailureCount"];
+              return (ISearchCondition<Int16>)SubCriteria["FailureCount"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SeriesInstanceUid")]
-        public ISearchCondition<System.String> SeriesInstanceUid
+        public ISearchCondition<String> SeriesInstanceUid
         {
             get
             {
               if (!SubCriteria.ContainsKey("SeriesInstanceUid"))
               {
-                 SubCriteria["SeriesInstanceUid"] = new SearchCondition<System.String>("SeriesInstanceUid");
+                 SubCriteria["SeriesInstanceUid"] = new SearchCondition<String>("SeriesInstanceUid");
               }
-              return (ISearchCondition<System.String>)SubCriteria["SeriesInstanceUid"];
+              return (ISearchCondition<String>)SubCriteria["SeriesInstanceUid"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SopInstanceUid")]
-        public ISearchCondition<System.String> SopInstanceUid
+        public ISearchCondition<String> SopInstanceUid
         {
             get
             {
               if (!SubCriteria.ContainsKey("SopInstanceUid"))
               {
-                 SubCriteria["SopInstanceUid"] = new SearchCondition<System.String>("SopInstanceUid");
+                 SubCriteria["SopInstanceUid"] = new SearchCondition<String>("SopInstanceUid");
               }
-              return (ISearchCondition<System.String>)SubCriteria["SopInstanceUid"];
+              return (ISearchCondition<String>)SubCriteria["SopInstanceUid"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="WorkQueueGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> WorkQueueKey
+        public ISearchCondition<ServerEntityKey> WorkQueueKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("WorkQueueKey"))
               {
-                 SubCriteria["WorkQueueKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("WorkQueueKey");
+                 SubCriteria["WorkQueueKey"] = new SearchCondition<ServerEntityKey>("WorkQueueKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["WorkQueueKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["WorkQueueKey"];
             } 
         }
     }

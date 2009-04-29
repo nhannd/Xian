@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class ArchiveQueueUpdateColumns : EntityUpdateColumns
@@ -46,29 +48,29 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             set { SubParameters["ArchiveQueueStatusEnum"] = new EntityUpdateColumn<ArchiveQueueStatusEnum>("ArchiveQueueStatusEnum", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="FailureDescription")]
-        public System.String FailureDescription
+        public String FailureDescription
         {
-            set { SubParameters["FailureDescription"] = new EntityUpdateColumn<System.String>("FailureDescription", value); }
+            set { SubParameters["FailureDescription"] = new EntityUpdateColumn<String>("FailureDescription", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="PartitionArchiveGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey PartitionArchiveKey
+        public ServerEntityKey PartitionArchiveKey
         {
-            set { SubParameters["PartitionArchiveKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("PartitionArchiveKey", value); }
+            set { SubParameters["PartitionArchiveKey"] = new EntityUpdateColumn<ServerEntityKey>("PartitionArchiveKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ProcessorId")]
-        public System.String ProcessorId
+        public String ProcessorId
         {
-            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<System.String>("ProcessorId", value); }
+            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<String>("ProcessorId", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="ScheduledTime")]
-        public System.DateTime ScheduledTime
+        public DateTime ScheduledTime
         {
-            set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<System.DateTime>("ScheduledTime", value); }
+            set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<DateTime>("ScheduledTime", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveQueue", ColumnName="StudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        public ServerEntityKey StudyStorageKey
         {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
     }
 }

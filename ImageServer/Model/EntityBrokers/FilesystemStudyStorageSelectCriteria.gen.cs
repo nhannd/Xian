@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,52 +43,59 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public FilesystemStudyStorageSelectCriteria()
         : base("FilesystemStudyStorage")
         {}
+        public FilesystemStudyStorageSelectCriteria(FilesystemStudyStorageSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new FilesystemStudyStorageSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="FilesystemGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> FilesystemKey
+        public ISearchCondition<ServerEntityKey> FilesystemKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("FilesystemKey"))
               {
-                 SubCriteria["FilesystemKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey");
+                 SubCriteria["FilesystemKey"] = new SearchCondition<ServerEntityKey>("FilesystemKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["FilesystemKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["FilesystemKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerTransferSyntaxKey
+        public ISearchCondition<ServerEntityKey> ServerTransferSyntaxKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("ServerTransferSyntaxKey"))
               {
-                 SubCriteria["ServerTransferSyntaxKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerTransferSyntaxKey");
+                 SubCriteria["ServerTransferSyntaxKey"] = new SearchCondition<ServerEntityKey>("ServerTransferSyntaxKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerTransferSyntaxKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerTransferSyntaxKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyFolder")]
-        public ISearchCondition<System.String> StudyFolder
+        public ISearchCondition<String> StudyFolder
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyFolder"))
               {
-                 SubCriteria["StudyFolder"] = new SearchCondition<System.String>("StudyFolder");
+                 SubCriteria["StudyFolder"] = new SearchCondition<String>("StudyFolder");
               }
-              return (ISearchCondition<System.String>)SubCriteria["StudyFolder"];
+              return (ISearchCondition<String>)SubCriteria["StudyFolder"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyStorageGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyStorageKey
+        public ISearchCondition<ServerEntityKey> StudyStorageKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyStorageKey"))
               {
-                 SubCriteria["StudyStorageKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey");
+                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["StudyStorageKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
             } 
         }
     }

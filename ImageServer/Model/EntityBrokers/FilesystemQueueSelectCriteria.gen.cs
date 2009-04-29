@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,16 +43,23 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public FilesystemQueueSelectCriteria()
         : base("FilesystemQueue")
         {}
+        public FilesystemQueueSelectCriteria(FilesystemQueueSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new FilesystemQueueSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> FilesystemKey
+        public ISearchCondition<ServerEntityKey> FilesystemKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("FilesystemKey"))
               {
-                 SubCriteria["FilesystemKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey");
+                 SubCriteria["FilesystemKey"] = new SearchCondition<ServerEntityKey>("FilesystemKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["FilesystemKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["FilesystemKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemQueueTypeEnum")]
@@ -66,51 +75,51 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="QueueXml")]
-        public ISearchCondition<System.Xml.XmlDocument> QueueXml
+        public ISearchCondition<XmlDocument> QueueXml
         {
             get
             {
               if (!SubCriteria.ContainsKey("QueueXml"))
               {
-                 SubCriteria["QueueXml"] = new SearchCondition<System.Xml.XmlDocument>("QueueXml");
+                 SubCriteria["QueueXml"] = new SearchCondition<XmlDocument>("QueueXml");
               }
-              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["QueueXml"];
+              return (ISearchCondition<XmlDocument>)SubCriteria["QueueXml"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="ScheduledTime")]
-        public ISearchCondition<System.DateTime> ScheduledTime
+        public ISearchCondition<DateTime> ScheduledTime
         {
             get
             {
               if (!SubCriteria.ContainsKey("ScheduledTime"))
               {
-                 SubCriteria["ScheduledTime"] = new SearchCondition<System.DateTime>("ScheduledTime");
+                 SubCriteria["ScheduledTime"] = new SearchCondition<DateTime>("ScheduledTime");
               }
-              return (ISearchCondition<System.DateTime>)SubCriteria["ScheduledTime"];
+              return (ISearchCondition<DateTime>)SubCriteria["ScheduledTime"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="SeriesInstanceUid")]
-        public ISearchCondition<System.String> SeriesInstanceUid
+        public ISearchCondition<String> SeriesInstanceUid
         {
             get
             {
               if (!SubCriteria.ContainsKey("SeriesInstanceUid"))
               {
-                 SubCriteria["SeriesInstanceUid"] = new SearchCondition<System.String>("SeriesInstanceUid");
+                 SubCriteria["SeriesInstanceUid"] = new SearchCondition<String>("SeriesInstanceUid");
               }
-              return (ISearchCondition<System.String>)SubCriteria["SeriesInstanceUid"];
+              return (ISearchCondition<String>)SubCriteria["SeriesInstanceUid"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="StudyStorageGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyStorageKey
+        public ISearchCondition<ServerEntityKey> StudyStorageKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyStorageKey"))
               {
-                 SubCriteria["StudyStorageKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey");
+                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["StudyStorageKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
             } 
         }
     }

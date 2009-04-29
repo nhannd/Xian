@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -42,41 +44,41 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("WorkQueueUid")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Duplicate")]
-        public System.Boolean Duplicate
+        public Boolean Duplicate
         {
-            set { SubParameters["Duplicate"] = new EntityUpdateColumn<System.Boolean>("Duplicate", value); }
+            set { SubParameters["Duplicate"] = new EntityUpdateColumn<Boolean>("Duplicate", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Extension")]
-        public System.String Extension
+        public String Extension
         {
-            set { SubParameters["Extension"] = new EntityUpdateColumn<System.String>("Extension", value); }
+            set { SubParameters["Extension"] = new EntityUpdateColumn<String>("Extension", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="Failed")]
-        public System.Boolean Failed
+        public Boolean Failed
         {
-            set { SubParameters["Failed"] = new EntityUpdateColumn<System.Boolean>("Failed", value); }
+            set { SubParameters["Failed"] = new EntityUpdateColumn<Boolean>("Failed", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="FailureCount")]
-        public System.Int16 FailureCount
+        public Int16 FailureCount
         {
-            set { SubParameters["FailureCount"] = new EntityUpdateColumn<System.Int16>("FailureCount", value); }
+            set { SubParameters["FailureCount"] = new EntityUpdateColumn<Int16>("FailureCount", value); }
         }
        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SeriesInstanceUid")]
-        public System.String SeriesInstanceUid
+        public String SeriesInstanceUid
         {
-            set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<System.String>("SeriesInstanceUid", value); }
+            set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<String>("SeriesInstanceUid", value); }
         }
        [DicomField(DicomTags.SopInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SopInstanceUid")]
-        public System.String SopInstanceUid
+        public String SopInstanceUid
         {
-            set { SubParameters["SopInstanceUid"] = new EntityUpdateColumn<System.String>("SopInstanceUid", value); }
+            set { SubParameters["SopInstanceUid"] = new EntityUpdateColumn<String>("SopInstanceUid", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="WorkQueueGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey WorkQueueKey
+        public ServerEntityKey WorkQueueKey
         {
-            set { SubParameters["WorkQueueKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("WorkQueueKey", value); }
+            set { SubParameters["WorkQueueKey"] = new EntityUpdateColumn<ServerEntityKey>("WorkQueueKey", value); }
         }
     }
 }

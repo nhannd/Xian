@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
@@ -64,17 +65,17 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey;
+        private ServerEntityKey _filesystemKey;
         private FilesystemQueueTypeEnum _filesystemQueueTypeEnum;
-        private System.Xml.XmlDocument _queueXml;
-        private System.DateTime _scheduledTime;
-        private System.String _seriesInstanceUid;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
+        private XmlDocument _queueXml;
+        private DateTime _scheduledTime;
+        private String _seriesInstanceUid;
+        private ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="FilesystemGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
+        public ServerEntityKey FilesystemKey
         {
         get { return _filesystemKey; }
         set { _filesystemKey = value; }
@@ -86,26 +87,26 @@ namespace ClearCanvas.ImageServer.Model
         set { _filesystemQueueTypeEnum = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="QueueXml")]
-        public System.Xml.XmlDocument QueueXml
+        public XmlDocument QueueXml
         {
         get { return _queueXml; }
         set { _queueXml = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="ScheduledTime")]
-        public System.DateTime ScheduledTime
+        public DateTime ScheduledTime
         {
         get { return _scheduledTime; }
         set { _scheduledTime = value; }
         }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="SeriesInstanceUid")]
-        public System.String SeriesInstanceUid
+        public String SeriesInstanceUid
         {
         get { return _seriesInstanceUid; }
         set { _seriesInstanceUid = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemQueue", ColumnName="StudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        public ServerEntityKey StudyStorageKey
         {
         get { return _studyStorageKey; }
         set { _studyStorageKey = value; }

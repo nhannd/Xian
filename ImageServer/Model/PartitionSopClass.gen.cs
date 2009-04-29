@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -57,26 +58,26 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.Boolean _enabled;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverSopClassKey;
+        private Boolean _enabled;
+        private ServerEntityKey _serverPartitionKey;
+        private ServerEntityKey _serverSopClassKey;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionSopClass", ColumnName="ServerSopClassGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerSopClassKey
+        public ServerEntityKey ServerSopClassKey
         {
         get { return _serverSopClassKey; }
         set { _serverSopClassKey = value; }

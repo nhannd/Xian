@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -65,18 +66,18 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.Int32 _archiveDelayHours;
+        private Int32 _archiveDelayHours;
         private ArchiveTypeEnum _archiveTypeEnum;
-        private System.Xml.XmlDocument _configurationXml;
-        private System.String _description;
-        private System.Boolean _enabled;
-        private System.Boolean _readOnly;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
+        private XmlDocument _configurationXml;
+        private String _description;
+        private Boolean _enabled;
+        private Boolean _readOnly;
+        private ServerEntityKey _serverPartitionKey;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ArchiveDelayHours")]
-        public System.Int32 ArchiveDelayHours
+        public Int32 ArchiveDelayHours
         {
         get { return _archiveDelayHours; }
         set { _archiveDelayHours = value; }
@@ -88,31 +89,31 @@ namespace ClearCanvas.ImageServer.Model
         set { _archiveTypeEnum = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ConfigurationXml")]
-        public System.Xml.XmlDocument ConfigurationXml
+        public XmlDocument ConfigurationXml
         {
         get { return _configurationXml; }
         set { _configurationXml = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Description")]
-        public System.String Description
+        public String Description
         {
         get { return _description; }
         set { _description = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ReadOnly")]
-        public System.Boolean ReadOnly
+        public Boolean ReadOnly
         {
         get { return _readOnly; }
         set { _readOnly = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="PartitionArchive", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }

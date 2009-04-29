@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
@@ -68,68 +69,68 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _issuerOfPatientId;
-        private System.Int32 _numberOfPatientRelatedInstances;
-        private System.Int32 _numberOfPatientRelatedSeries;
-        private System.Int32 _numberOfPatientRelatedStudies;
-        private System.String _patientId;
-        private System.String _patientsName;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
-        private System.String _specificCharacterSet;
+        private String _issuerOfPatientId;
+        private Int32 _numberOfPatientRelatedInstances;
+        private Int32 _numberOfPatientRelatedSeries;
+        private Int32 _numberOfPatientRelatedStudies;
+        private String _patientId;
+        private String _patientsName;
+        private ServerEntityKey _serverPartitionKey;
+        private String _specificCharacterSet;
         #endregion
 
         #region Public Properties
         [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="IssuerOfPatientId")]
-        public System.String IssuerOfPatientId
+        public String IssuerOfPatientId
         {
         get { return _issuerOfPatientId; }
         set { _issuerOfPatientId = value; }
         }
         [DicomField(DicomTags.NumberOfPatientRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedInstances")]
-        public System.Int32 NumberOfPatientRelatedInstances
+        public Int32 NumberOfPatientRelatedInstances
         {
         get { return _numberOfPatientRelatedInstances; }
         set { _numberOfPatientRelatedInstances = value; }
         }
         [DicomField(DicomTags.NumberOfPatientRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedSeries")]
-        public System.Int32 NumberOfPatientRelatedSeries
+        public Int32 NumberOfPatientRelatedSeries
         {
         get { return _numberOfPatientRelatedSeries; }
         set { _numberOfPatientRelatedSeries = value; }
         }
         [DicomField(DicomTags.NumberOfPatientRelatedStudies, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="NumberOfPatientRelatedStudies")]
-        public System.Int32 NumberOfPatientRelatedStudies
+        public Int32 NumberOfPatientRelatedStudies
         {
         get { return _numberOfPatientRelatedStudies; }
         set { _numberOfPatientRelatedStudies = value; }
         }
         [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="PatientId")]
-        public System.String PatientId
+        public String PatientId
         {
         get { return _patientId; }
         set { _patientId = value; }
         }
         [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="PatientsName")]
-        public System.String PatientsName
+        public String PatientsName
         {
         get { return _patientsName; }
         set { _patientsName = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
         [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Patient", ColumnName="SpecificCharacterSet")]
-        public System.String SpecificCharacterSet
+        public String SpecificCharacterSet
         {
         get { return _specificCharacterSet; }
         set { _specificCharacterSet = value; }

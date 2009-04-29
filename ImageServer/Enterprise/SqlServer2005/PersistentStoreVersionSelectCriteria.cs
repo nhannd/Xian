@@ -38,6 +38,12 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 		public PersistentStoreVersionSelectCriteria()
 			: base("DatabaseVersion_")
 		{ }
+
+		public override object Clone()
+		{
+			throw new System.NotImplementedException();
+		}
+
 		[EntityFieldDatabaseMappingAttribute(TableName = "DatabaseVersion_", ColumnName = "Build_")]
 		public ISearchCondition<System.String> Build
 		{

@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,40 +43,47 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public RequestAttributesSelectCriteria()
         : base("RequestAttributes")
         {}
+        public RequestAttributesSelectCriteria(RequestAttributesSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new RequestAttributesSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="RequestedProcedureId")]
-        public ISearchCondition<System.String> RequestedProcedureId
+        public ISearchCondition<String> RequestedProcedureId
         {
             get
             {
               if (!SubCriteria.ContainsKey("RequestedProcedureId"))
               {
-                 SubCriteria["RequestedProcedureId"] = new SearchCondition<System.String>("RequestedProcedureId");
+                 SubCriteria["RequestedProcedureId"] = new SearchCondition<String>("RequestedProcedureId");
               }
-              return (ISearchCondition<System.String>)SubCriteria["RequestedProcedureId"];
+              return (ISearchCondition<String>)SubCriteria["RequestedProcedureId"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="ScheduledProcedureStepId")]
-        public ISearchCondition<System.String> ScheduledProcedureStepId
+        public ISearchCondition<String> ScheduledProcedureStepId
         {
             get
             {
               if (!SubCriteria.ContainsKey("ScheduledProcedureStepId"))
               {
-                 SubCriteria["ScheduledProcedureStepId"] = new SearchCondition<System.String>("ScheduledProcedureStepId");
+                 SubCriteria["ScheduledProcedureStepId"] = new SearchCondition<String>("ScheduledProcedureStepId");
               }
-              return (ISearchCondition<System.String>)SubCriteria["ScheduledProcedureStepId"];
+              return (ISearchCondition<String>)SubCriteria["ScheduledProcedureStepId"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="SeriesGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> SeriesKey
+        public ISearchCondition<ServerEntityKey> SeriesKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("SeriesKey"))
               {
-                 SubCriteria["SeriesKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("SeriesKey");
+                 SubCriteria["SeriesKey"] = new SearchCondition<ServerEntityKey>("SeriesKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["SeriesKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["SeriesKey"];
             } 
         }
     }

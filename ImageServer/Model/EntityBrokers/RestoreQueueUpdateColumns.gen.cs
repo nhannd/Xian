@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class RestoreQueueUpdateColumns : EntityUpdateColumns
@@ -41,19 +43,19 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("RestoreQueue")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ArchiveStudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ArchiveStudyStorageKey
+        public ServerEntityKey ArchiveStudyStorageKey
         {
-            set { SubParameters["ArchiveStudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ArchiveStudyStorageKey", value); }
+            set { SubParameters["ArchiveStudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("ArchiveStudyStorageKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="FailureDescription")]
-        public System.String FailureDescription
+        public String FailureDescription
         {
-            set { SubParameters["FailureDescription"] = new EntityUpdateColumn<System.String>("FailureDescription", value); }
+            set { SubParameters["FailureDescription"] = new EntityUpdateColumn<String>("FailureDescription", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ProcessorId")]
-        public System.String ProcessorId
+        public String ProcessorId
         {
-            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<System.String>("ProcessorId", value); }
+            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<String>("ProcessorId", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="RestoreQueueStatusEnum")]
         public RestoreQueueStatusEnum RestoreQueueStatusEnum
@@ -61,14 +63,14 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             set { SubParameters["RestoreQueueStatusEnum"] = new EntityUpdateColumn<RestoreQueueStatusEnum>("RestoreQueueStatusEnum", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ScheduledTime")]
-        public System.DateTime ScheduledTime
+        public DateTime ScheduledTime
         {
-            set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<System.DateTime>("ScheduledTime", value); }
+            set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<DateTime>("ScheduledTime", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="StudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        public ServerEntityKey StudyStorageKey
         {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
     }
 }

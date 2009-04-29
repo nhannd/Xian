@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
@@ -66,30 +67,30 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.DateTime _insertTime;
-        private System.DateTime _lastAccessedTime;
-        private System.Boolean _lock;
+        private DateTime _insertTime;
+        private DateTime _lastAccessedTime;
+        private Boolean _lock;
         private QueueStudyStateEnum _queueStudyStateEnum;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
-        private System.String _studyInstanceUid;
+        private ServerEntityKey _serverPartitionKey;
+        private String _studyInstanceUid;
         private StudyStatusEnum _studyStatusEnum;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="InsertTime")]
-        public System.DateTime InsertTime
+        public DateTime InsertTime
         {
         get { return _insertTime; }
         set { _insertTime = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="LastAccessedTime")]
-        public System.DateTime LastAccessedTime
+        public DateTime LastAccessedTime
         {
         get { return _lastAccessedTime; }
         set { _lastAccessedTime = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="Lock")]
-        public System.Boolean Lock
+        public Boolean Lock
         {
         get { return _lock; }
         set { _lock = value; }
@@ -101,14 +102,14 @@ namespace ClearCanvas.ImageServer.Model
         set { _queueStudyStateEnum = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
         [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyStorage", ColumnName="StudyInstanceUid")]
-        public System.String StudyInstanceUid
+        public String StudyInstanceUid
         {
         get { return _studyInstanceUid; }
         set { _studyInstanceUid = value; }

@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class DatabaseVersionUpdateColumns : EntityUpdateColumns
@@ -41,24 +43,24 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("DatabaseVersion_")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Build_")]
-        public System.String Build
+        public String Build
         {
-            set { SubParameters["Build"] = new EntityUpdateColumn<System.String>("Build", value); }
+            set { SubParameters["Build"] = new EntityUpdateColumn<String>("Build", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Major_")]
-        public System.String Major
+        public String Major
         {
-            set { SubParameters["Major"] = new EntityUpdateColumn<System.String>("Major", value); }
+            set { SubParameters["Major"] = new EntityUpdateColumn<String>("Major", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Minor_")]
-        public System.String Minor
+        public String Minor
         {
-            set { SubParameters["Minor"] = new EntityUpdateColumn<System.String>("Minor", value); }
+            set { SubParameters["Minor"] = new EntityUpdateColumn<String>("Minor", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Revision_")]
-        public System.String Revision
+        public String Revision
         {
-            set { SubParameters["Revision"] = new EntityUpdateColumn<System.String>("Revision", value); }
+            set { SubParameters["Revision"] = new EntityUpdateColumn<String>("Revision", value); }
         }
     }
 }

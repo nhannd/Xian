@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -59,33 +60,33 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey;
-        private System.String _studyFolder;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
+        private ServerEntityKey _filesystemKey;
+        private ServerEntityKey _serverTransferSyntaxKey;
+        private String _studyFolder;
+        private ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="FilesystemGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
+        public ServerEntityKey FilesystemKey
         {
         get { return _filesystemKey; }
         set { _filesystemKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerTransferSyntaxKey
+        public ServerEntityKey ServerTransferSyntaxKey
         {
         get { return _serverTransferSyntaxKey; }
         set { _serverTransferSyntaxKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyFolder")]
-        public System.String StudyFolder
+        public String StudyFolder
         {
         get { return _studyFolder; }
         set { _studyFolder = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="FilesystemStudyStorage", ColumnName="StudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        public ServerEntityKey StudyStorageKey
         {
         get { return _studyStorageKey; }
         set { _studyStorageKey = value; }

@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
@@ -58,28 +59,28 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _requestedProcedureId;
-        private System.String _scheduledProcedureStepId;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _seriesKey;
+        private String _requestedProcedureId;
+        private String _scheduledProcedureStepId;
+        private ServerEntityKey _seriesKey;
         #endregion
 
         #region Public Properties
         [DicomField(DicomTags.RequestedProcedureId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="RequestedProcedureId")]
-        public System.String RequestedProcedureId
+        public String RequestedProcedureId
         {
         get { return _requestedProcedureId; }
         set { _requestedProcedureId = value; }
         }
         [DicomField(DicomTags.ScheduledProcedureStepId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="ScheduledProcedureStepId")]
-        public System.String ScheduledProcedureStepId
+        public String ScheduledProcedureStepId
         {
         get { return _scheduledProcedureStepId; }
         set { _scheduledProcedureStepId = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RequestAttributes", ColumnName="SeriesGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey SeriesKey
+        public ServerEntityKey SeriesKey
         {
         get { return _seriesKey; }
         set { _seriesKey = value; }

@@ -118,7 +118,6 @@
     <Compile Include="EntityBrokers\WorkQueuePriorityEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueTypeEnumBroker.gen.cs" />
-    <Compile Include="EntityBrokers\WorkQueueTypeQueueStudyStateEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueUidEntityBroker.gen.cs" />
     <Compile Include="Brokers\QueryModalitiesInStudy.cs" />
     <Compile Include="Brokers\QueryPartitionSopClasses.cs" />

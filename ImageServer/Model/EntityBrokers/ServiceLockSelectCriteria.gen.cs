@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,64 +43,71 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ServiceLockSelectCriteria()
         : base("ServiceLock")
         {}
+        public ServiceLockSelectCriteria(ServiceLockSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new ServiceLockSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Enabled")]
-        public ISearchCondition<System.Boolean> Enabled
+        public ISearchCondition<Boolean> Enabled
         {
             get
             {
               if (!SubCriteria.ContainsKey("Enabled"))
               {
-                 SubCriteria["Enabled"] = new SearchCondition<System.Boolean>("Enabled");
+                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
+              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="FilesystemGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> FilesystemKey
+        public ISearchCondition<ServerEntityKey> FilesystemKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("FilesystemKey"))
               {
-                 SubCriteria["FilesystemKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey");
+                 SubCriteria["FilesystemKey"] = new SearchCondition<ServerEntityKey>("FilesystemKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["FilesystemKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["FilesystemKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Lock")]
-        public ISearchCondition<System.Boolean> Lock
+        public ISearchCondition<Boolean> Lock
         {
             get
             {
               if (!SubCriteria.ContainsKey("Lock"))
               {
-                 SubCriteria["Lock"] = new SearchCondition<System.Boolean>("Lock");
+                 SubCriteria["Lock"] = new SearchCondition<Boolean>("Lock");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Lock"];
+              return (ISearchCondition<Boolean>)SubCriteria["Lock"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ProcessorId")]
-        public ISearchCondition<System.String> ProcessorId
+        public ISearchCondition<String> ProcessorId
         {
             get
             {
               if (!SubCriteria.ContainsKey("ProcessorId"))
               {
-                 SubCriteria["ProcessorId"] = new SearchCondition<System.String>("ProcessorId");
+                 SubCriteria["ProcessorId"] = new SearchCondition<String>("ProcessorId");
               }
-              return (ISearchCondition<System.String>)SubCriteria["ProcessorId"];
+              return (ISearchCondition<String>)SubCriteria["ProcessorId"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ScheduledTime")]
-        public ISearchCondition<System.DateTime> ScheduledTime
+        public ISearchCondition<DateTime> ScheduledTime
         {
             get
             {
               if (!SubCriteria.ContainsKey("ScheduledTime"))
               {
-                 SubCriteria["ScheduledTime"] = new SearchCondition<System.DateTime>("ScheduledTime");
+                 SubCriteria["ScheduledTime"] = new SearchCondition<DateTime>("ScheduledTime");
               }
-              return (ISearchCondition<System.DateTime>)SubCriteria["ScheduledTime"];
+              return (ISearchCondition<DateTime>)SubCriteria["ScheduledTime"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ServiceLockTypeEnum")]
@@ -114,15 +123,15 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="State")]
-        public ISearchCondition<System.Xml.XmlDocument> State
+        public ISearchCondition<XmlDocument> State
         {
             get
             {
               if (!SubCriteria.ContainsKey("State"))
               {
-                 SubCriteria["State"] = new SearchCondition<System.Xml.XmlDocument>("State");
+                 SubCriteria["State"] = new SearchCondition<XmlDocument>("State");
               }
-              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["State"];
+              return (ISearchCondition<XmlDocument>)SubCriteria["State"];
             } 
         }
     }

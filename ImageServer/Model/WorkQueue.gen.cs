@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -79,17 +80,17 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.Xml.XmlDocument _data;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _deviceKey;
-        private System.DateTime _expirationTime;
-        private System.Int32 _failureCount;
-        private System.String _failureDescription;
-        private System.DateTime _insertTime;
-        private System.String _processorID;
-        private System.DateTime _scheduledTime;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyHistoryKey;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
+        private XmlDocument _data;
+        private ServerEntityKey _deviceKey;
+        private DateTime _expirationTime;
+        private Int32 _failureCount;
+        private String _failureDescription;
+        private DateTime _insertTime;
+        private String _processorID;
+        private DateTime _scheduledTime;
+        private ServerEntityKey _serverPartitionKey;
+        private ServerEntityKey _studyHistoryKey;
+        private ServerEntityKey _studyStorageKey;
         private WorkQueuePriorityEnum _workQueuePriorityEnum;
         private WorkQueueStatusEnum _workQueueStatusEnum;
         private WorkQueueTypeEnum _workQueueTypeEnum;
@@ -97,67 +98,67 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="Data")]
-        public System.Xml.XmlDocument Data
+        public XmlDocument Data
         {
         get { return _data; }
         set { _data = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="DeviceGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey DeviceKey
+        public ServerEntityKey DeviceKey
         {
         get { return _deviceKey; }
         set { _deviceKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ExpirationTime")]
-        public System.DateTime ExpirationTime
+        public DateTime ExpirationTime
         {
         get { return _expirationTime; }
         set { _expirationTime = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="FailureCount")]
-        public System.Int32 FailureCount
+        public Int32 FailureCount
         {
         get { return _failureCount; }
         set { _failureCount = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="FailureDescription")]
-        public System.String FailureDescription
+        public String FailureDescription
         {
         get { return _failureDescription; }
         set { _failureDescription = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="InsertTime")]
-        public System.DateTime InsertTime
+        public DateTime InsertTime
         {
         get { return _insertTime; }
         set { _insertTime = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ProcessorID")]
-        public System.String ProcessorID
+        public String ProcessorID
         {
         get { return _processorID; }
         set { _processorID = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ScheduledTime")]
-        public System.DateTime ScheduledTime
+        public DateTime ScheduledTime
         {
         get { return _scheduledTime; }
         set { _scheduledTime = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="StudyHistoryGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyHistoryKey
+        public ServerEntityKey StudyHistoryKey
         {
         get { return _studyHistoryKey; }
         set { _studyHistoryKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="StudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        public ServerEntityKey StudyStorageKey
         {
         get { return _studyStorageKey; }
         set { _studyStorageKey = value; }

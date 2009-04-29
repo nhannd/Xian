@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -63,47 +64,47 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _exception;
-        private System.String _host;
-        private System.String _logLevel;
-        private System.String _message;
-        private System.String _thread;
-        private System.DateTime _timestamp;
+        private String _exception;
+        private String _host;
+        private String _logLevel;
+        private String _message;
+        private String _thread;
+        private DateTime _timestamp;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Exception")]
-        public System.String Exception
+        public String Exception
         {
         get { return _exception; }
         set { _exception = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Host")]
-        public System.String Host
+        public String Host
         {
         get { return _host; }
         set { _host = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="LogLevel")]
-        public System.String LogLevel
+        public String LogLevel
         {
         get { return _logLevel; }
         set { _logLevel = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Message")]
-        public System.String Message
+        public String Message
         {
         get { return _message; }
         set { _message = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Thread")]
-        public System.String Thread
+        public String Thread
         {
         get { return _thread; }
         set { _thread = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Timestamp")]
-        public System.DateTime Timestamp
+        public DateTime Timestamp
         {
         get { return _timestamp; }
         set { _timestamp = value; }

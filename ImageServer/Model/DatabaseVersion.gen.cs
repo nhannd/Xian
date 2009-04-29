@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -59,33 +60,33 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _build_;
-        private System.String _major_;
-        private System.String _minor_;
-        private System.String _revision_;
+        private String _build_;
+        private String _major_;
+        private String _minor_;
+        private String _revision_;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Build_")]
-        public System.String Build
+        public String Build
         {
         get { return _build_; }
         set { _build_ = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Major_")]
-        public System.String Major
+        public String Major
         {
         get { return _major_; }
         set { _major_ = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Minor_")]
-        public System.String Minor
+        public String Minor
         {
         get { return _minor_; }
         set { _minor_ = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DatabaseVersion_", ColumnName="Revision_")]
-        public System.String Revision
+        public String Revision
         {
         get { return _revision_; }
         set { _revision_ = value; }

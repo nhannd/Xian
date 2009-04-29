@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class ArchiveStudyStorageUpdateColumns : EntityUpdateColumns
@@ -41,29 +43,29 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("ArchiveStudyStorage")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ArchiveTime")]
-        public System.DateTime ArchiveTime
+        public DateTime ArchiveTime
         {
-            set { SubParameters["ArchiveTime"] = new EntityUpdateColumn<System.DateTime>("ArchiveTime", value); }
+            set { SubParameters["ArchiveTime"] = new EntityUpdateColumn<DateTime>("ArchiveTime", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ArchiveXml")]
-        public System.Xml.XmlDocument ArchiveXml
+        public XmlDocument ArchiveXml
         {
-            set { SubParameters["ArchiveXml"] = new EntityUpdateColumn<System.Xml.XmlDocument>("ArchiveXml", value); }
+            set { SubParameters["ArchiveXml"] = new EntityUpdateColumn<XmlDocument>("ArchiveXml", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="PartitionArchiveGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey PartitionArchiveKey
+        public ServerEntityKey PartitionArchiveKey
         {
-            set { SubParameters["PartitionArchiveKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("PartitionArchiveKey", value); }
+            set { SubParameters["PartitionArchiveKey"] = new EntityUpdateColumn<ServerEntityKey>("PartitionArchiveKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerTransferSyntaxKey
+        public ServerEntityKey ServerTransferSyntaxKey
         {
-            set { SubParameters["ServerTransferSyntaxKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerTransferSyntaxKey", value); }
+            set { SubParameters["ServerTransferSyntaxKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerTransferSyntaxKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="StudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        public ServerEntityKey StudyStorageKey
         {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
     }
 }

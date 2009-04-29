@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class FilesystemUpdateColumns : EntityUpdateColumns
@@ -41,19 +43,19 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("Filesystem")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Description")]
-        public System.String Description
+        public String Description
         {
-            set { SubParameters["Description"] = new EntityUpdateColumn<System.String>("Description", value); }
+            set { SubParameters["Description"] = new EntityUpdateColumn<String>("Description", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
-            set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
+            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemPath")]
-        public System.String FilesystemPath
+        public String FilesystemPath
         {
-            set { SubParameters["FilesystemPath"] = new EntityUpdateColumn<System.String>("FilesystemPath", value); }
+            set { SubParameters["FilesystemPath"] = new EntityUpdateColumn<String>("FilesystemPath", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="FilesystemTierEnum")]
         public FilesystemTierEnum FilesystemTierEnum
@@ -61,24 +63,24 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             set { SubParameters["FilesystemTierEnum"] = new EntityUpdateColumn<FilesystemTierEnum>("FilesystemTierEnum", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="HighWatermark")]
-        public System.Decimal HighWatermark
+        public Decimal HighWatermark
         {
-            set { SubParameters["HighWatermark"] = new EntityUpdateColumn<System.Decimal>("HighWatermark", value); }
+            set { SubParameters["HighWatermark"] = new EntityUpdateColumn<Decimal>("HighWatermark", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="LowWatermark")]
-        public System.Decimal LowWatermark
+        public Decimal LowWatermark
         {
-            set { SubParameters["LowWatermark"] = new EntityUpdateColumn<System.Decimal>("LowWatermark", value); }
+            set { SubParameters["LowWatermark"] = new EntityUpdateColumn<Decimal>("LowWatermark", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="ReadOnly")]
-        public System.Boolean ReadOnly
+        public Boolean ReadOnly
         {
-            set { SubParameters["ReadOnly"] = new EntityUpdateColumn<System.Boolean>("ReadOnly", value); }
+            set { SubParameters["ReadOnly"] = new EntityUpdateColumn<Boolean>("ReadOnly", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Filesystem", ColumnName="WriteOnly")]
-        public System.Boolean WriteOnly
+        public Boolean WriteOnly
         {
-            set { SubParameters["WriteOnly"] = new EntityUpdateColumn<System.Boolean>("WriteOnly", value); }
+            set { SubParameters["WriteOnly"] = new EntityUpdateColumn<Boolean>("WriteOnly", value); }
         }
     }
 }

@@ -64,15 +64,10 @@ namespace ClearCanvas.ImageServer.Enterprise
         {
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public override object Clone()
-        {
-            // temporary measure to avoid breaking build
-            // TODO: implement this properly in generated sub-classes
-            throw new System.Exception("The method or operation is not implemented.");
-        }
+    	/// <summary>
+    	/// 
+    	/// </summary>
+    	/// <returns></returns>
+    	public override abstract object Clone();
     }
 }

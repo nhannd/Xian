@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -67,49 +68,49 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.Boolean _defaultRule;
-        private System.Boolean _enabled;
-        private System.Boolean _exemptRule;
-        private System.String _ruleName;
-        private System.Xml.XmlDocument _ruleXml;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
+        private Boolean _defaultRule;
+        private Boolean _enabled;
+        private Boolean _exemptRule;
+        private String _ruleName;
+        private XmlDocument _ruleXml;
+        private ServerEntityKey _serverPartitionKey;
         private ServerRuleApplyTimeEnum _serverRuleApplyTimeEnum;
         private ServerRuleTypeEnum _serverRuleTypeEnum;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="DefaultRule")]
-        public System.Boolean DefaultRule
+        public Boolean DefaultRule
         {
         get { return _defaultRule; }
         set { _defaultRule = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ExemptRule")]
-        public System.Boolean ExemptRule
+        public Boolean ExemptRule
         {
         get { return _exemptRule; }
         set { _exemptRule = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleName")]
-        public System.String RuleName
+        public String RuleName
         {
         get { return _ruleName; }
         set { _ruleName = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleXml")]
-        public System.Xml.XmlDocument RuleXml
+        public XmlDocument RuleXml
         {
         get { return _ruleXml; }
         set { _ruleXml = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }

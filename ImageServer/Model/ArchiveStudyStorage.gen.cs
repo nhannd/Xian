@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -61,40 +62,40 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.DateTime _archiveTime;
-        private System.Xml.XmlDocument _archiveXml;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _partitionArchiveKey;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
+        private DateTime _archiveTime;
+        private XmlDocument _archiveXml;
+        private ServerEntityKey _partitionArchiveKey;
+        private ServerEntityKey _serverTransferSyntaxKey;
+        private ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ArchiveTime")]
-        public System.DateTime ArchiveTime
+        public DateTime ArchiveTime
         {
         get { return _archiveTime; }
         set { _archiveTime = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ArchiveXml")]
-        public System.Xml.XmlDocument ArchiveXml
+        public XmlDocument ArchiveXml
         {
         get { return _archiveXml; }
         set { _archiveXml = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="PartitionArchiveGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey PartitionArchiveKey
+        public ServerEntityKey PartitionArchiveKey
         {
         get { return _partitionArchiveKey; }
         set { _partitionArchiveKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="ServerTransferSyntaxGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerTransferSyntaxKey
+        public ServerEntityKey ServerTransferSyntaxKey
         {
         get { return _serverTransferSyntaxKey; }
         set { _serverTransferSyntaxKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ArchiveStudyStorage", ColumnName="StudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        public ServerEntityKey StudyStorageKey
         {
         get { return _studyStorageKey; }
         set { _studyStorageKey = value; }

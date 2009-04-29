@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class ServerRuleUpdateColumns : EntityUpdateColumns
@@ -41,34 +43,34 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("ServerRule")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="DefaultRule")]
-        public System.Boolean DefaultRule
+        public Boolean DefaultRule
         {
-            set { SubParameters["DefaultRule"] = new EntityUpdateColumn<System.Boolean>("DefaultRule", value); }
+            set { SubParameters["DefaultRule"] = new EntityUpdateColumn<Boolean>("DefaultRule", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
-            set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
+            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ExemptRule")]
-        public System.Boolean ExemptRule
+        public Boolean ExemptRule
         {
-            set { SubParameters["ExemptRule"] = new EntityUpdateColumn<System.Boolean>("ExemptRule", value); }
+            set { SubParameters["ExemptRule"] = new EntityUpdateColumn<Boolean>("ExemptRule", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleName")]
-        public System.String RuleName
+        public String RuleName
         {
-            set { SubParameters["RuleName"] = new EntityUpdateColumn<System.String>("RuleName", value); }
+            set { SubParameters["RuleName"] = new EntityUpdateColumn<String>("RuleName", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="RuleXml")]
-        public System.Xml.XmlDocument RuleXml
+        public XmlDocument RuleXml
         {
-            set { SubParameters["RuleXml"] = new EntityUpdateColumn<System.Xml.XmlDocument>("RuleXml", value); }
+            set { SubParameters["RuleXml"] = new EntityUpdateColumn<XmlDocument>("RuleXml", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
-            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerRule", ColumnName="ServerRuleApplyTimeEnum")]
         public ServerRuleApplyTimeEnum ServerRuleApplyTimeEnum

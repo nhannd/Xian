@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -43,26 +45,26 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        {}
        [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
-        public System.String SeriesDescription
+        public String SeriesDescription
         {
-            set { SubParameters["SeriesDescription"] = new EntityUpdateColumn<System.String>("SeriesDescription", value); }
+            set { SubParameters["SeriesDescription"] = new EntityUpdateColumn<String>("SeriesDescription", value); }
         }
        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesInstanceUid")]
-        public System.String SeriesInstanceUid
+        public String SeriesInstanceUid
         {
-            set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<System.String>("SeriesInstanceUid", value); }
+            set { SubParameters["SeriesInstanceUid"] = new EntityUpdateColumn<String>("SeriesInstanceUid", value); }
         }
        [DicomField(DicomTags.SopInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SopInstanceUid")]
-        public System.String SopInstanceUid
+        public String SopInstanceUid
         {
-            set { SubParameters["SopInstanceUid"] = new EntityUpdateColumn<System.String>("SopInstanceUid", value); }
+            set { SubParameters["SopInstanceUid"] = new EntityUpdateColumn<String>("SopInstanceUid", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyIntegrityQueueKey
+        public ServerEntityKey StudyIntegrityQueueKey
         {
-            set { SubParameters["StudyIntegrityQueueKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyIntegrityQueueKey", value); }
+            set { SubParameters["StudyIntegrityQueueKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyIntegrityQueueKey", value); }
         }
     }
 }

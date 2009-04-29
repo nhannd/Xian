@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
@@ -82,118 +83,118 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _accessionNumber;
-        private System.Xml.XmlDocument _archiveInfo;
-        private System.String _backupPath;
-        private System.String _extendedInfo;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey;
-        private System.String _patientId;
-        private System.String _patientsName;
-        private System.String _reason;
-        private System.String _serverPartitionAE;
-        private System.String _studyDate;
-        private System.String _studyDescription;
-        private System.String _studyId;
-        private System.String _studyInstanceUid;
-        private System.String _studyTime;
-        private System.DateTime _timestamp;
+        private String _accessionNumber;
+        private XmlDocument _archiveInfo;
+        private String _backupPath;
+        private String _extendedInfo;
+        private ServerEntityKey _filesystemKey;
+        private String _patientId;
+        private String _patientsName;
+        private String _reason;
+        private String _serverPartitionAE;
+        private String _studyDate;
+        private String _studyDescription;
+        private String _studyId;
+        private String _studyInstanceUid;
+        private String _studyTime;
+        private DateTime _timestamp;
         #endregion
 
         #region Public Properties
         [DicomField(DicomTags.AccessionNumber, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="AccessionNumber")]
-        public System.String AccessionNumber
+        public String AccessionNumber
         {
         get { return _accessionNumber; }
         set { _accessionNumber = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ArchiveInfo")]
-        public System.Xml.XmlDocument ArchiveInfo
+        public XmlDocument ArchiveInfo
         {
         get { return _archiveInfo; }
         set { _archiveInfo = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="BackupPath")]
-        public System.String BackupPath
+        public String BackupPath
         {
         get { return _backupPath; }
         set { _backupPath = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ExtendedInfo")]
-        public System.String ExtendedInfo
+        public String ExtendedInfo
         {
         get { return _extendedInfo; }
         set { _extendedInfo = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="FilesystemGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
+        public ServerEntityKey FilesystemKey
         {
         get { return _filesystemKey; }
         set { _filesystemKey = value; }
         }
         [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientId")]
-        public System.String PatientId
+        public String PatientId
         {
         get { return _patientId; }
         set { _patientId = value; }
         }
         [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientsName")]
-        public System.String PatientsName
+        public String PatientsName
         {
         get { return _patientsName; }
         set { _patientsName = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Reason")]
-        public System.String Reason
+        public String Reason
         {
         get { return _reason; }
         set { _reason = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ServerPartitionAE")]
-        public System.String ServerPartitionAE
+        public String ServerPartitionAE
         {
         get { return _serverPartitionAE; }
         set { _serverPartitionAE = value; }
         }
         [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDate")]
-        public System.String StudyDate
+        public String StudyDate
         {
         get { return _studyDate; }
         set { _studyDate = value; }
         }
         [DicomField(DicomTags.StudyDescription, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDescription")]
-        public System.String StudyDescription
+        public String StudyDescription
         {
         get { return _studyDescription; }
         set { _studyDescription = value; }
         }
         [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyId")]
-        public System.String StudyId
+        public String StudyId
         {
         get { return _studyId; }
         set { _studyId = value; }
         }
         [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyInstanceUid")]
-        public System.String StudyInstanceUid
+        public String StudyInstanceUid
         {
         get { return _studyInstanceUid; }
         set { _studyInstanceUid = value; }
         }
         [DicomField(DicomTags.StudyTime, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyTime")]
-        public System.String StudyTime
+        public String StudyTime
         {
         get { return _studyTime; }
         set { _studyTime = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Timestamp")]
-        public System.DateTime Timestamp
+        public DateTime Timestamp
         {
         get { return _timestamp; }
         set { _timestamp = value; }

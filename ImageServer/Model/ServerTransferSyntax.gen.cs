@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
@@ -58,27 +59,27 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _description;
-        private System.Boolean _lossless;
-        private System.String _uid;
+        private String _description;
+        private Boolean _lossless;
+        private String _uid;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Description")]
-        public System.String Description
+        public String Description
         {
         get { return _description; }
         set { _description = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Lossless")]
-        public System.Boolean Lossless
+        public Boolean Lossless
         {
         get { return _lossless; }
         set { _lossless = value; }
         }
         [DicomField(DicomTags.Uid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="ServerTransferSyntax", ColumnName="Uid")]
-        public System.String Uid
+        public String Uid
         {
         get { return _uid; }
         set { _uid = value; }

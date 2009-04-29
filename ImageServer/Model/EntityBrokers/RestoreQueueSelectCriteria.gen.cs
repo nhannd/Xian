@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,40 +43,47 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public RestoreQueueSelectCriteria()
         : base("RestoreQueue")
         {}
+        public RestoreQueueSelectCriteria(RestoreQueueSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new RestoreQueueSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ArchiveStudyStorageGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ArchiveStudyStorageKey
+        public ISearchCondition<ServerEntityKey> ArchiveStudyStorageKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("ArchiveStudyStorageKey"))
               {
-                 SubCriteria["ArchiveStudyStorageKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ArchiveStudyStorageKey");
+                 SubCriteria["ArchiveStudyStorageKey"] = new SearchCondition<ServerEntityKey>("ArchiveStudyStorageKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ArchiveStudyStorageKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ArchiveStudyStorageKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="FailureDescription")]
-        public ISearchCondition<System.String> FailureDescription
+        public ISearchCondition<String> FailureDescription
         {
             get
             {
               if (!SubCriteria.ContainsKey("FailureDescription"))
               {
-                 SubCriteria["FailureDescription"] = new SearchCondition<System.String>("FailureDescription");
+                 SubCriteria["FailureDescription"] = new SearchCondition<String>("FailureDescription");
               }
-              return (ISearchCondition<System.String>)SubCriteria["FailureDescription"];
+              return (ISearchCondition<String>)SubCriteria["FailureDescription"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ProcessorId")]
-        public ISearchCondition<System.String> ProcessorId
+        public ISearchCondition<String> ProcessorId
         {
             get
             {
               if (!SubCriteria.ContainsKey("ProcessorId"))
               {
-                 SubCriteria["ProcessorId"] = new SearchCondition<System.String>("ProcessorId");
+                 SubCriteria["ProcessorId"] = new SearchCondition<String>("ProcessorId");
               }
-              return (ISearchCondition<System.String>)SubCriteria["ProcessorId"];
+              return (ISearchCondition<String>)SubCriteria["ProcessorId"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="RestoreQueueStatusEnum")]
@@ -90,27 +99,27 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="ScheduledTime")]
-        public ISearchCondition<System.DateTime> ScheduledTime
+        public ISearchCondition<DateTime> ScheduledTime
         {
             get
             {
               if (!SubCriteria.ContainsKey("ScheduledTime"))
               {
-                 SubCriteria["ScheduledTime"] = new SearchCondition<System.DateTime>("ScheduledTime");
+                 SubCriteria["ScheduledTime"] = new SearchCondition<DateTime>("ScheduledTime");
               }
-              return (ISearchCondition<System.DateTime>)SubCriteria["ScheduledTime"];
+              return (ISearchCondition<DateTime>)SubCriteria["ScheduledTime"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="RestoreQueue", ColumnName="StudyStorageGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyStorageKey
+        public ISearchCondition<ServerEntityKey> StudyStorageKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyStorageKey"))
               {
-                 SubCriteria["StudyStorageKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey");
+                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["StudyStorageKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
             } 
         }
     }

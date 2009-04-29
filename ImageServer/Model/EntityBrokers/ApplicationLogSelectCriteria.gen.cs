@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,76 +43,83 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public ApplicationLogSelectCriteria()
         : base("ApplicationLog")
         {}
+        public ApplicationLogSelectCriteria(ApplicationLogSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new ApplicationLogSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Exception")]
-        public ISearchCondition<System.String> Exception
+        public ISearchCondition<String> Exception
         {
             get
             {
               if (!SubCriteria.ContainsKey("Exception"))
               {
-                 SubCriteria["Exception"] = new SearchCondition<System.String>("Exception");
+                 SubCriteria["Exception"] = new SearchCondition<String>("Exception");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Exception"];
+              return (ISearchCondition<String>)SubCriteria["Exception"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Host")]
-        public ISearchCondition<System.String> Host
+        public ISearchCondition<String> Host
         {
             get
             {
               if (!SubCriteria.ContainsKey("Host"))
               {
-                 SubCriteria["Host"] = new SearchCondition<System.String>("Host");
+                 SubCriteria["Host"] = new SearchCondition<String>("Host");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Host"];
+              return (ISearchCondition<String>)SubCriteria["Host"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="LogLevel")]
-        public ISearchCondition<System.String> LogLevel
+        public ISearchCondition<String> LogLevel
         {
             get
             {
               if (!SubCriteria.ContainsKey("LogLevel"))
               {
-                 SubCriteria["LogLevel"] = new SearchCondition<System.String>("LogLevel");
+                 SubCriteria["LogLevel"] = new SearchCondition<String>("LogLevel");
               }
-              return (ISearchCondition<System.String>)SubCriteria["LogLevel"];
+              return (ISearchCondition<String>)SubCriteria["LogLevel"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Message")]
-        public ISearchCondition<System.String> Message
+        public ISearchCondition<String> Message
         {
             get
             {
               if (!SubCriteria.ContainsKey("Message"))
               {
-                 SubCriteria["Message"] = new SearchCondition<System.String>("Message");
+                 SubCriteria["Message"] = new SearchCondition<String>("Message");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Message"];
+              return (ISearchCondition<String>)SubCriteria["Message"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Thread")]
-        public ISearchCondition<System.String> Thread
+        public ISearchCondition<String> Thread
         {
             get
             {
               if (!SubCriteria.ContainsKey("Thread"))
               {
-                 SubCriteria["Thread"] = new SearchCondition<System.String>("Thread");
+                 SubCriteria["Thread"] = new SearchCondition<String>("Thread");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Thread"];
+              return (ISearchCondition<String>)SubCriteria["Thread"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ApplicationLog", ColumnName="Timestamp")]
-        public ISearchCondition<System.DateTime> Timestamp
+        public ISearchCondition<DateTime> Timestamp
         {
             get
             {
               if (!SubCriteria.ContainsKey("Timestamp"))
               {
-                 SubCriteria["Timestamp"] = new SearchCondition<System.DateTime>("Timestamp");
+                 SubCriteria["Timestamp"] = new SearchCondition<DateTime>("Timestamp");
               }
-              return (ISearchCondition<System.DateTime>)SubCriteria["Timestamp"];
+              return (ISearchCondition<DateTime>)SubCriteria["Timestamp"];
             } 
         }
     }

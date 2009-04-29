@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -65,42 +66,42 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _description;
-        private System.DateTime _insertTime;
-        private System.Xml.XmlDocument _queueData;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
-        private System.Xml.XmlDocument _studyData;
+        private String _description;
+        private DateTime _insertTime;
+        private XmlDocument _queueData;
+        private ServerEntityKey _serverPartitionKey;
+        private XmlDocument _studyData;
         private StudyIntegrityReasonEnum _studyIntegrityReasonEnum;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey;
+        private ServerEntityKey _studyStorageKey;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Description")]
-        public System.String Description
+        public String Description
         {
         get { return _description; }
         set { _description = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="InsertTime")]
-        public System.DateTime InsertTime
+        public DateTime InsertTime
         {
         get { return _insertTime; }
         set { _insertTime = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="QueueData")]
-        public System.Xml.XmlDocument QueueData
+        public XmlDocument QueueData
         {
         get { return _queueData; }
         set { _queueData = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyData")]
-        public System.Xml.XmlDocument StudyData
+        public XmlDocument StudyData
         {
         get { return _studyData; }
         set { _studyData = value; }
@@ -112,7 +113,7 @@ namespace ClearCanvas.ImageServer.Model
         set { _studyIntegrityReasonEnum = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        public ServerEntityKey StudyStorageKey
         {
         get { return _studyStorageKey; }
         set { _studyStorageKey = value; }

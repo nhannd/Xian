@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,148 +43,155 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public DeviceSelectCriteria()
         : base("Device")
         {}
+        public DeviceSelectCriteria(DeviceSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new DeviceSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
-        public ISearchCondition<System.String> AeTitle
+        public ISearchCondition<String> AeTitle
         {
             get
             {
               if (!SubCriteria.ContainsKey("AeTitle"))
               {
-                 SubCriteria["AeTitle"] = new SearchCondition<System.String>("AeTitle");
+                 SubCriteria["AeTitle"] = new SearchCondition<String>("AeTitle");
               }
-              return (ISearchCondition<System.String>)SubCriteria["AeTitle"];
+              return (ISearchCondition<String>)SubCriteria["AeTitle"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowAutoRoute")]
-        public ISearchCondition<System.Boolean> AllowAutoRoute
+        public ISearchCondition<Boolean> AllowAutoRoute
         {
             get
             {
               if (!SubCriteria.ContainsKey("AllowAutoRoute"))
               {
-                 SubCriteria["AllowAutoRoute"] = new SearchCondition<System.Boolean>("AllowAutoRoute");
+                 SubCriteria["AllowAutoRoute"] = new SearchCondition<Boolean>("AllowAutoRoute");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["AllowAutoRoute"];
+              return (ISearchCondition<Boolean>)SubCriteria["AllowAutoRoute"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowQuery")]
-        public ISearchCondition<System.Boolean> AllowQuery
+        public ISearchCondition<Boolean> AllowQuery
         {
             get
             {
               if (!SubCriteria.ContainsKey("AllowQuery"))
               {
-                 SubCriteria["AllowQuery"] = new SearchCondition<System.Boolean>("AllowQuery");
+                 SubCriteria["AllowQuery"] = new SearchCondition<Boolean>("AllowQuery");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["AllowQuery"];
+              return (ISearchCondition<Boolean>)SubCriteria["AllowQuery"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowRetrieve")]
-        public ISearchCondition<System.Boolean> AllowRetrieve
+        public ISearchCondition<Boolean> AllowRetrieve
         {
             get
             {
               if (!SubCriteria.ContainsKey("AllowRetrieve"))
               {
-                 SubCriteria["AllowRetrieve"] = new SearchCondition<System.Boolean>("AllowRetrieve");
+                 SubCriteria["AllowRetrieve"] = new SearchCondition<Boolean>("AllowRetrieve");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["AllowRetrieve"];
+              return (ISearchCondition<Boolean>)SubCriteria["AllowRetrieve"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowStorage")]
-        public ISearchCondition<System.Boolean> AllowStorage
+        public ISearchCondition<Boolean> AllowStorage
         {
             get
             {
               if (!SubCriteria.ContainsKey("AllowStorage"))
               {
-                 SubCriteria["AllowStorage"] = new SearchCondition<System.Boolean>("AllowStorage");
+                 SubCriteria["AllowStorage"] = new SearchCondition<Boolean>("AllowStorage");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["AllowStorage"];
+              return (ISearchCondition<Boolean>)SubCriteria["AllowStorage"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Description")]
-        public ISearchCondition<System.String> Description
+        public ISearchCondition<String> Description
         {
             get
             {
               if (!SubCriteria.ContainsKey("Description"))
               {
-                 SubCriteria["Description"] = new SearchCondition<System.String>("Description");
+                 SubCriteria["Description"] = new SearchCondition<String>("Description");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Description"];
+              return (ISearchCondition<String>)SubCriteria["Description"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Dhcp")]
-        public ISearchCondition<System.Boolean> Dhcp
+        public ISearchCondition<Boolean> Dhcp
         {
             get
             {
               if (!SubCriteria.ContainsKey("Dhcp"))
               {
-                 SubCriteria["Dhcp"] = new SearchCondition<System.Boolean>("Dhcp");
+                 SubCriteria["Dhcp"] = new SearchCondition<Boolean>("Dhcp");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Dhcp"];
+              return (ISearchCondition<Boolean>)SubCriteria["Dhcp"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Enabled")]
-        public ISearchCondition<System.Boolean> Enabled
+        public ISearchCondition<Boolean> Enabled
         {
             get
             {
               if (!SubCriteria.ContainsKey("Enabled"))
               {
-                 SubCriteria["Enabled"] = new SearchCondition<System.Boolean>("Enabled");
+                 SubCriteria["Enabled"] = new SearchCondition<Boolean>("Enabled");
               }
-              return (ISearchCondition<System.Boolean>)SubCriteria["Enabled"];
+              return (ISearchCondition<Boolean>)SubCriteria["Enabled"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="IpAddress")]
-        public ISearchCondition<System.String> IpAddress
+        public ISearchCondition<String> IpAddress
         {
             get
             {
               if (!SubCriteria.ContainsKey("IpAddress"))
               {
-                 SubCriteria["IpAddress"] = new SearchCondition<System.String>("IpAddress");
+                 SubCriteria["IpAddress"] = new SearchCondition<String>("IpAddress");
               }
-              return (ISearchCondition<System.String>)SubCriteria["IpAddress"];
+              return (ISearchCondition<String>)SubCriteria["IpAddress"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
-        public ISearchCondition<System.Int32> Port
+        public ISearchCondition<Int32> Port
         {
             get
             {
               if (!SubCriteria.ContainsKey("Port"))
               {
-                 SubCriteria["Port"] = new SearchCondition<System.Int32>("Port");
+                 SubCriteria["Port"] = new SearchCondition<Int32>("Port");
               }
-              return (ISearchCondition<System.Int32>)SubCriteria["Port"];
+              return (ISearchCondition<Int32>)SubCriteria["Port"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ServerPartitionGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerPartitionKey
+        public ISearchCondition<ServerEntityKey> ServerPartitionKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("ServerPartitionKey"))
               {
-                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey");
+                 SubCriteria["ServerPartitionKey"] = new SearchCondition<ServerEntityKey>("ServerPartitionKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerPartitionKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerPartitionKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ThrottleMaxConnections")]
-        public ISearchCondition<System.Int16> ThrottleMaxConnections
+        public ISearchCondition<Int16> ThrottleMaxConnections
         {
             get
             {
               if (!SubCriteria.ContainsKey("ThrottleMaxConnections"))
               {
-                 SubCriteria["ThrottleMaxConnections"] = new SearchCondition<System.Int16>("ThrottleMaxConnections");
+                 SubCriteria["ThrottleMaxConnections"] = new SearchCondition<Int16>("ThrottleMaxConnections");
               }
-              return (ISearchCondition<System.Int16>)SubCriteria["ThrottleMaxConnections"];
+              return (ISearchCondition<Int16>)SubCriteria["ThrottleMaxConnections"];
             } 
         }
     }

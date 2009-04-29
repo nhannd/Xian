@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class AlertUpdateColumns : EntityUpdateColumns
@@ -51,29 +53,29 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             set { SubParameters["AlertLevelEnum"] = new EntityUpdateColumn<AlertLevelEnum>("AlertLevelEnum", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Component")]
-        public System.String Component
+        public String Component
         {
-            set { SubParameters["Component"] = new EntityUpdateColumn<System.String>("Component", value); }
+            set { SubParameters["Component"] = new EntityUpdateColumn<String>("Component", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Content")]
-        public System.Xml.XmlDocument Content
+        public XmlDocument Content
         {
-            set { SubParameters["Content"] = new EntityUpdateColumn<System.Xml.XmlDocument>("Content", value); }
+            set { SubParameters["Content"] = new EntityUpdateColumn<XmlDocument>("Content", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="InsertTime")]
-        public System.DateTime InsertTime
+        public DateTime InsertTime
         {
-            set { SubParameters["InsertTime"] = new EntityUpdateColumn<System.DateTime>("InsertTime", value); }
+            set { SubParameters["InsertTime"] = new EntityUpdateColumn<DateTime>("InsertTime", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="Source")]
-        public System.String Source
+        public String Source
         {
-            set { SubParameters["Source"] = new EntityUpdateColumn<System.String>("Source", value); }
+            set { SubParameters["Source"] = new EntityUpdateColumn<String>("Source", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Alert", ColumnName="TypeCode")]
-        public System.Int32 TypeCode
+        public Int32 TypeCode
         {
-            set { SubParameters["TypeCode"] = new EntityUpdateColumn<System.Int32>("TypeCode", value); }
+            set { SubParameters["TypeCode"] = new EntityUpdateColumn<Int32>("TypeCode", value); }
         }
     }
 }

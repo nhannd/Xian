@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class ServiceLockUpdateColumns : EntityUpdateColumns
@@ -41,29 +43,29 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("ServiceLock")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
-            set { SubParameters["Enabled"] = new EntityUpdateColumn<System.Boolean>("Enabled", value); }
+            set { SubParameters["Enabled"] = new EntityUpdateColumn<Boolean>("Enabled", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="FilesystemGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
+        public ServerEntityKey FilesystemKey
         {
-            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey", value); }
+            set { SubParameters["FilesystemKey"] = new EntityUpdateColumn<ServerEntityKey>("FilesystemKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Lock")]
-        public System.Boolean Lock
+        public Boolean Lock
         {
-            set { SubParameters["Lock"] = new EntityUpdateColumn<System.Boolean>("Lock", value); }
+            set { SubParameters["Lock"] = new EntityUpdateColumn<Boolean>("Lock", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ProcessorId")]
-        public System.String ProcessorId
+        public String ProcessorId
         {
-            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<System.String>("ProcessorId", value); }
+            set { SubParameters["ProcessorId"] = new EntityUpdateColumn<String>("ProcessorId", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ScheduledTime")]
-        public System.DateTime ScheduledTime
+        public DateTime ScheduledTime
         {
-            set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<System.DateTime>("ScheduledTime", value); }
+            set { SubParameters["ScheduledTime"] = new EntityUpdateColumn<DateTime>("ScheduledTime", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ServiceLockTypeEnum")]
         public ServiceLockTypeEnum ServiceLockTypeEnum
@@ -71,9 +73,9 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             set { SubParameters["ServiceLockTypeEnum"] = new EntityUpdateColumn<ServiceLockTypeEnum>("ServiceLockTypeEnum", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="State")]
-        public System.Xml.XmlDocument State
+        public XmlDocument State
         {
-            set { SubParameters["State"] = new EntityUpdateColumn<System.Xml.XmlDocument>("State", value); }
+            set { SubParameters["State"] = new EntityUpdateColumn<XmlDocument>("State", value); }
         }
     }
 }

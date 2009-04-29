@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -65,42 +66,42 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.Boolean _enabled;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _filesystemKey;
-        private System.Boolean _lock;
-        private System.String _processorId;
-        private System.DateTime _scheduledTime;
+        private Boolean _enabled;
+        private ServerEntityKey _filesystemKey;
+        private Boolean _lock;
+        private String _processorId;
+        private DateTime _scheduledTime;
         private ServiceLockTypeEnum _serviceLockTypeEnum;
-        private System.Xml.XmlDocument _state;
+        private XmlDocument _state;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="FilesystemGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey FilesystemKey
+        public ServerEntityKey FilesystemKey
         {
         get { return _filesystemKey; }
         set { _filesystemKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="Lock")]
-        public System.Boolean Lock
+        public Boolean Lock
         {
         get { return _lock; }
         set { _lock = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ProcessorId")]
-        public System.String ProcessorId
+        public String ProcessorId
         {
         get { return _processorId; }
         set { _processorId = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="ScheduledTime")]
-        public System.DateTime ScheduledTime
+        public DateTime ScheduledTime
         {
         get { return _scheduledTime; }
         set { _scheduledTime = value; }
@@ -112,7 +113,7 @@ namespace ClearCanvas.ImageServer.Model
         set { _serviceLockTypeEnum = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="ServiceLock", ColumnName="State")]
-        public System.Xml.XmlDocument State
+        public XmlDocument State
         {
         get { return _state; }
         set { _state = value; }

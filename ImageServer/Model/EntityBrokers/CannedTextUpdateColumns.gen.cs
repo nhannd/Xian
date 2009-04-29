@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class CannedTextUpdateColumns : EntityUpdateColumns
@@ -41,19 +43,19 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("CannedText")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Category")]
-        public System.String Category
+        public String Category
         {
-            set { SubParameters["Category"] = new EntityUpdateColumn<System.String>("Category", value); }
+            set { SubParameters["Category"] = new EntityUpdateColumn<String>("Category", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Label")]
-        public System.String Label
+        public String Label
         {
-            set { SubParameters["Label"] = new EntityUpdateColumn<System.String>("Label", value); }
+            set { SubParameters["Label"] = new EntityUpdateColumn<String>("Label", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Text")]
-        public System.String Text
+        public String Text
         {
-            set { SubParameters["Text"] = new EntityUpdateColumn<System.String>("Text", value); }
+            set { SubParameters["Text"] = new EntityUpdateColumn<String>("Text", value); }
         }
     }
 }

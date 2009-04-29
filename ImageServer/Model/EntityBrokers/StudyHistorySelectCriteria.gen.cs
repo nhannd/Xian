@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,52 +43,59 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public StudyHistorySelectCriteria()
         : base("StudyHistory")
         {}
+        public StudyHistorySelectCriteria(StudyHistorySelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new StudyHistorySelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="ChangeDescription")]
-        public ISearchCondition<System.Xml.XmlDocument> ChangeDescription
+        public ISearchCondition<XmlDocument> ChangeDescription
         {
             get
             {
               if (!SubCriteria.ContainsKey("ChangeDescription"))
               {
-                 SubCriteria["ChangeDescription"] = new SearchCondition<System.Xml.XmlDocument>("ChangeDescription");
+                 SubCriteria["ChangeDescription"] = new SearchCondition<XmlDocument>("ChangeDescription");
               }
-              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["ChangeDescription"];
+              return (ISearchCondition<XmlDocument>)SubCriteria["ChangeDescription"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="DestStudyStorageGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> DestStudyStorageKey
+        public ISearchCondition<ServerEntityKey> DestStudyStorageKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("DestStudyStorageKey"))
               {
-                 SubCriteria["DestStudyStorageKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("DestStudyStorageKey");
+                 SubCriteria["DestStudyStorageKey"] = new SearchCondition<ServerEntityKey>("DestStudyStorageKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["DestStudyStorageKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["DestStudyStorageKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="InsertTime")]
-        public ISearchCondition<System.DateTime> InsertTime
+        public ISearchCondition<DateTime> InsertTime
         {
             get
             {
               if (!SubCriteria.ContainsKey("InsertTime"))
               {
-                 SubCriteria["InsertTime"] = new SearchCondition<System.DateTime>("InsertTime");
+                 SubCriteria["InsertTime"] = new SearchCondition<DateTime>("InsertTime");
               }
-              return (ISearchCondition<System.DateTime>)SubCriteria["InsertTime"];
+              return (ISearchCondition<DateTime>)SubCriteria["InsertTime"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyData")]
-        public ISearchCondition<System.Xml.XmlDocument> StudyData
+        public ISearchCondition<XmlDocument> StudyData
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyData"))
               {
-                 SubCriteria["StudyData"] = new SearchCondition<System.Xml.XmlDocument>("StudyData");
+                 SubCriteria["StudyData"] = new SearchCondition<XmlDocument>("StudyData");
               }
-              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["StudyData"];
+              return (ISearchCondition<XmlDocument>)SubCriteria["StudyData"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyHistoryTypeEnum")]
@@ -102,15 +111,15 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyHistory", ColumnName="StudyStorageGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> StudyStorageKey
+        public ISearchCondition<ServerEntityKey> StudyStorageKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyStorageKey"))
               {
-                 SubCriteria["StudyStorageKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey");
+                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["StudyStorageKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
             } 
         }
     }

@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,40 +43,47 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public DevicePreferredTransferSyntaxSelectCriteria()
         : base("DevicePreferredTransferSyntax")
         {}
+        public DevicePreferredTransferSyntaxSelectCriteria(DevicePreferredTransferSyntaxSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new DevicePreferredTransferSyntaxSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="DeviceGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> DeviceKey
+        public ISearchCondition<ServerEntityKey> DeviceKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("DeviceKey"))
               {
-                 SubCriteria["DeviceKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("DeviceKey");
+                 SubCriteria["DeviceKey"] = new SearchCondition<ServerEntityKey>("DeviceKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["DeviceKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["DeviceKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerSopClassGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerSopClassKey
+        public ISearchCondition<ServerEntityKey> ServerSopClassKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("ServerSopClassKey"))
               {
-                 SubCriteria["ServerSopClassKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerSopClassKey");
+                 SubCriteria["ServerSopClassKey"] = new SearchCondition<ServerEntityKey>("ServerSopClassKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerSopClassKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerSopClassKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerTransferSyntaxGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> ServerTransferSyntaxKey
+        public ISearchCondition<ServerEntityKey> ServerTransferSyntaxKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("ServerTransferSyntaxKey"))
               {
-                 SubCriteria["ServerTransferSyntaxKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerTransferSyntaxKey");
+                 SubCriteria["ServerTransferSyntaxKey"] = new SearchCondition<ServerEntityKey>("ServerTransferSyntaxKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["ServerTransferSyntaxKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["ServerTransferSyntaxKey"];
             } 
         }
     }

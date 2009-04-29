@@ -437,6 +437,8 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 
 			WriterHeader(writer, EntityImplementationNamespace);
 
+			writer.WriteLine("    using System;");
+			writer.WriteLine("    using System.Xml;");
 			writer.WriteLine("    using ClearCanvas.Common;");
 			writer.WriteLine("    using ClearCanvas.ImageServer.Enterprise;");
 			writer.WriteLine("    using {0};", EntityInterfaceNamespace);
@@ -463,6 +465,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			WriterHeader(writer, ModelNamespace);
 
 			writer.WriteLine("    using System;");
+			writer.WriteLine("    using System.Xml;");
 			bool bDicomReference = false;
 			foreach (Column col in table.Columns)
 			{
@@ -526,7 +529,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 					if (col.ColumnName.EndsWith("Enum"))
 						writer.WriteLine("        private {0} {1};", col.ColumnName, col.VariableName);
 					else
-						writer.WriteLine("        private {0} {1};", col.ColumnType, col.VariableName);
+						writer.WriteLine("        private {0} {1};", col.ColumnType.Name, col.VariableName);
 				}
 			}
 			writer.WriteLine("        #endregion");
@@ -545,7 +548,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 					if (col.ColumnName.EndsWith("Enum"))
 						writer.WriteLine("        public {0} {1}", col.ColumnName, col.ColumnName);
 					else
-						writer.WriteLine("        public {0} {1}", col.ColumnType, col.ColumnName);
+						writer.WriteLine("        public {0} {1}", col.ColumnType.Name, col.ColumnName);
 					writer.WriteLine("        {");
 					writer.WriteLine("        get {{ return {0}; }}", col.VariableName);
 					writer.WriteLine("        set {{ {0} = value; }}", col.VariableName);
@@ -608,6 +611,8 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 
 			WriterHeader(writer, EntityInterfaceNamespace);
 
+			writer.WriteLine("    using System;");
+			writer.WriteLine("    using System.Xml;");
 			writer.WriteLine("    using ClearCanvas.Enterprise.Core;");
 			writer.WriteLine("    using ClearCanvas.ImageServer.Enterprise;");
 			writer.WriteLine("");
@@ -617,12 +622,19 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			writer.WriteLine("        public {0}SelectCriteria()", table.TableName);
 			writer.WriteLine("        : base(\"{0}\")", table.DatabaseTableName);
 			writer.WriteLine("        {}");
+			writer.WriteLine("        public {0}SelectCriteria({0}SelectCriteria other)", table.TableName);
+			writer.WriteLine("        : base(other)");
+			writer.WriteLine("        {}");
+			writer.WriteLine("        public override object Clone()");
+			writer.WriteLine("        {");
+			writer.WriteLine("            return new {0}SelectCriteria(this);", table.TableName);
+			writer.WriteLine("        }");
 
 			foreach (Column col in table.Columns)
 			{
 				if (!col.ColumnName.Equals("Key"))
 				{
-					string colType = col.ColumnName.EndsWith("Enum") ? col.ColumnName : col.ColumnType.ToString();
+					string colType = col.ColumnName.EndsWith("Enum") ? col.ColumnName : col.ColumnType.Name;
 					string colName = col.DatabaseColumnName;
 					writer.WriteLine("        [EntityFieldDatabaseMappingAttribute(TableName=\"{0}\", ColumnName=\"{1}\")]", table.DatabaseTableName, col.DatabaseColumnName.Replace("Key", "GUID"));
 					writer.WriteLine("        public ISearchCondition<{0}> {1}", colType, col.ColumnName);
@@ -667,6 +679,9 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 					}
 				}
 			}
+
+			writer.WriteLine("    using System;");
+			writer.WriteLine("    using System.Xml;");
 			if (bDicomReference)
 				writer.WriteLine("    using ClearCanvas.Dicom;");
 
@@ -683,7 +698,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.CodeGenerator
 			{
 				if (!col.ColumnName.Equals("Key"))
 				{
-					string colType = col.ColumnName.EndsWith("Enum") ? col.ColumnName : col.ColumnType.ToString();
+					string colType = col.ColumnName.EndsWith("Enum") ? col.ColumnName : col.ColumnType.Name;
 					string colName = col.ColumnName;
 					DicomTag tag = DicomTagDictionary.GetDicomTag(col.ColumnName);
 					if (tag != null)

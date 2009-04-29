@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Dicom;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
@@ -88,147 +89,147 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _accessionNumber;
-        private System.String _issuerOfPatientId;
-        private System.Int32 _numberOfStudyRelatedInstances;
-        private System.Int32 _numberOfStudyRelatedSeries;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _patientKey;
-        private System.String _patientId;
-        private System.String _patientsAge;
-        private System.String _patientsBirthDate;
-        private System.String _patientsName;
-        private System.String _patientsSex;
-        private System.String _referringPhysiciansName;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
-        private System.String _specificCharacterSet;
-        private System.String _studyDate;
-        private System.String _studyDescription;
-        private System.String _studyId;
-        private System.String _studyInstanceUid;
-        private System.String _studyTime;
+        private String _accessionNumber;
+        private String _issuerOfPatientId;
+        private Int32 _numberOfStudyRelatedInstances;
+        private Int32 _numberOfStudyRelatedSeries;
+        private ServerEntityKey _patientKey;
+        private String _patientId;
+        private String _patientsAge;
+        private String _patientsBirthDate;
+        private String _patientsName;
+        private String _patientsSex;
+        private String _referringPhysiciansName;
+        private ServerEntityKey _serverPartitionKey;
+        private String _specificCharacterSet;
+        private String _studyDate;
+        private String _studyDescription;
+        private String _studyId;
+        private String _studyInstanceUid;
+        private String _studyTime;
         #endregion
 
         #region Public Properties
         [DicomField(DicomTags.AccessionNumber, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="AccessionNumber")]
-        public System.String AccessionNumber
+        public String AccessionNumber
         {
         get { return _accessionNumber; }
         set { _accessionNumber = value; }
         }
         [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="IssuerOfPatientId")]
-        public System.String IssuerOfPatientId
+        public String IssuerOfPatientId
         {
         get { return _issuerOfPatientId; }
         set { _issuerOfPatientId = value; }
         }
         [DicomField(DicomTags.NumberOfStudyRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="NumberOfStudyRelatedInstances")]
-        public System.Int32 NumberOfStudyRelatedInstances
+        public Int32 NumberOfStudyRelatedInstances
         {
         get { return _numberOfStudyRelatedInstances; }
         set { _numberOfStudyRelatedInstances = value; }
         }
         [DicomField(DicomTags.NumberOfStudyRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="NumberOfStudyRelatedSeries")]
-        public System.Int32 NumberOfStudyRelatedSeries
+        public Int32 NumberOfStudyRelatedSeries
         {
         get { return _numberOfStudyRelatedSeries; }
         set { _numberOfStudyRelatedSeries = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey PatientKey
+        public ServerEntityKey PatientKey
         {
         get { return _patientKey; }
         set { _patientKey = value; }
         }
         [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientId")]
-        public System.String PatientId
+        public String PatientId
         {
         get { return _patientId; }
         set { _patientId = value; }
         }
         [DicomField(DicomTags.PatientsAge, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsAge")]
-        public System.String PatientsAge
+        public String PatientsAge
         {
         get { return _patientsAge; }
         set { _patientsAge = value; }
         }
         [DicomField(DicomTags.PatientsBirthDate, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsBirthDate")]
-        public System.String PatientsBirthDate
+        public String PatientsBirthDate
         {
         get { return _patientsBirthDate; }
         set { _patientsBirthDate = value; }
         }
         [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsName")]
-        public System.String PatientsName
+        public String PatientsName
         {
         get { return _patientsName; }
         set { _patientsName = value; }
         }
         [DicomField(DicomTags.PatientsSex, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="PatientsSex")]
-        public System.String PatientsSex
+        public String PatientsSex
         {
         get { return _patientsSex; }
         set { _patientsSex = value; }
         }
         [DicomField(DicomTags.ReferringPhysiciansName, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ReferringPhysiciansName")]
-        public System.String ReferringPhysiciansName
+        public String ReferringPhysiciansName
         {
         get { return _referringPhysiciansName; }
         set { _referringPhysiciansName = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
         [DicomField(DicomTags.SpecificCharacterSet, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="SpecificCharacterSet")]
-        public System.String SpecificCharacterSet
+        public String SpecificCharacterSet
         {
         get { return _specificCharacterSet; }
         set { _specificCharacterSet = value; }
         }
         [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyDate")]
-        public System.String StudyDate
+        public String StudyDate
         {
         get { return _studyDate; }
         set { _studyDate = value; }
         }
         [DicomField(DicomTags.StudyDescription, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyDescription")]
-        public System.String StudyDescription
+        public String StudyDescription
         {
         get { return _studyDescription; }
         set { _studyDescription = value; }
         }
         [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyId")]
-        public System.String StudyId
+        public String StudyId
         {
         get { return _studyId; }
         set { _studyId = value; }
         }
         [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyInstanceUid")]
-        public System.String StudyInstanceUid
+        public String StudyInstanceUid
         {
         get { return _studyInstanceUid; }
         set { _studyInstanceUid = value; }
         }
         [DicomField(DicomTags.StudyTime, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyTime")]
-        public System.String StudyTime
+        public String StudyTime
         {
         get { return _studyTime; }
         set { _studyTime = value; }

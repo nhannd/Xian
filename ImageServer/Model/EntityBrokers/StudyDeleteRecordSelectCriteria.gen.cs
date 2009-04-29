@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
 
@@ -41,184 +43,191 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public StudyDeleteRecordSelectCriteria()
         : base("StudyDeleteRecord")
         {}
+        public StudyDeleteRecordSelectCriteria(StudyDeleteRecordSelectCriteria other)
+        : base(other)
+        {}
+        public override object Clone()
+        {
+            return new StudyDeleteRecordSelectCriteria(this);
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="AccessionNumber")]
-        public ISearchCondition<System.String> AccessionNumber
+        public ISearchCondition<String> AccessionNumber
         {
             get
             {
               if (!SubCriteria.ContainsKey("AccessionNumber"))
               {
-                 SubCriteria["AccessionNumber"] = new SearchCondition<System.String>("AccessionNumber");
+                 SubCriteria["AccessionNumber"] = new SearchCondition<String>("AccessionNumber");
               }
-              return (ISearchCondition<System.String>)SubCriteria["AccessionNumber"];
+              return (ISearchCondition<String>)SubCriteria["AccessionNumber"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ArchiveInfo")]
-        public ISearchCondition<System.Xml.XmlDocument> ArchiveInfo
+        public ISearchCondition<XmlDocument> ArchiveInfo
         {
             get
             {
               if (!SubCriteria.ContainsKey("ArchiveInfo"))
               {
-                 SubCriteria["ArchiveInfo"] = new SearchCondition<System.Xml.XmlDocument>("ArchiveInfo");
+                 SubCriteria["ArchiveInfo"] = new SearchCondition<XmlDocument>("ArchiveInfo");
               }
-              return (ISearchCondition<System.Xml.XmlDocument>)SubCriteria["ArchiveInfo"];
+              return (ISearchCondition<XmlDocument>)SubCriteria["ArchiveInfo"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="BackupPath")]
-        public ISearchCondition<System.String> BackupPath
+        public ISearchCondition<String> BackupPath
         {
             get
             {
               if (!SubCriteria.ContainsKey("BackupPath"))
               {
-                 SubCriteria["BackupPath"] = new SearchCondition<System.String>("BackupPath");
+                 SubCriteria["BackupPath"] = new SearchCondition<String>("BackupPath");
               }
-              return (ISearchCondition<System.String>)SubCriteria["BackupPath"];
+              return (ISearchCondition<String>)SubCriteria["BackupPath"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ExtendedInfo")]
-        public ISearchCondition<System.String> ExtendedInfo
+        public ISearchCondition<String> ExtendedInfo
         {
             get
             {
               if (!SubCriteria.ContainsKey("ExtendedInfo"))
               {
-                 SubCriteria["ExtendedInfo"] = new SearchCondition<System.String>("ExtendedInfo");
+                 SubCriteria["ExtendedInfo"] = new SearchCondition<String>("ExtendedInfo");
               }
-              return (ISearchCondition<System.String>)SubCriteria["ExtendedInfo"];
+              return (ISearchCondition<String>)SubCriteria["ExtendedInfo"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="FilesystemGUID")]
-        public ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey> FilesystemKey
+        public ISearchCondition<ServerEntityKey> FilesystemKey
         {
             get
             {
               if (!SubCriteria.ContainsKey("FilesystemKey"))
               {
-                 SubCriteria["FilesystemKey"] = new SearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("FilesystemKey");
+                 SubCriteria["FilesystemKey"] = new SearchCondition<ServerEntityKey>("FilesystemKey");
               }
-              return (ISearchCondition<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>)SubCriteria["FilesystemKey"];
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["FilesystemKey"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientId")]
-        public ISearchCondition<System.String> PatientId
+        public ISearchCondition<String> PatientId
         {
             get
             {
               if (!SubCriteria.ContainsKey("PatientId"))
               {
-                 SubCriteria["PatientId"] = new SearchCondition<System.String>("PatientId");
+                 SubCriteria["PatientId"] = new SearchCondition<String>("PatientId");
               }
-              return (ISearchCondition<System.String>)SubCriteria["PatientId"];
+              return (ISearchCondition<String>)SubCriteria["PatientId"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="PatientsName")]
-        public ISearchCondition<System.String> PatientsName
+        public ISearchCondition<String> PatientsName
         {
             get
             {
               if (!SubCriteria.ContainsKey("PatientsName"))
               {
-                 SubCriteria["PatientsName"] = new SearchCondition<System.String>("PatientsName");
+                 SubCriteria["PatientsName"] = new SearchCondition<String>("PatientsName");
               }
-              return (ISearchCondition<System.String>)SubCriteria["PatientsName"];
+              return (ISearchCondition<String>)SubCriteria["PatientsName"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Reason")]
-        public ISearchCondition<System.String> Reason
+        public ISearchCondition<String> Reason
         {
             get
             {
               if (!SubCriteria.ContainsKey("Reason"))
               {
-                 SubCriteria["Reason"] = new SearchCondition<System.String>("Reason");
+                 SubCriteria["Reason"] = new SearchCondition<String>("Reason");
               }
-              return (ISearchCondition<System.String>)SubCriteria["Reason"];
+              return (ISearchCondition<String>)SubCriteria["Reason"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="ServerPartitionAE")]
-        public ISearchCondition<System.String> ServerPartitionAE
+        public ISearchCondition<String> ServerPartitionAE
         {
             get
             {
               if (!SubCriteria.ContainsKey("ServerPartitionAE"))
               {
-                 SubCriteria["ServerPartitionAE"] = new SearchCondition<System.String>("ServerPartitionAE");
+                 SubCriteria["ServerPartitionAE"] = new SearchCondition<String>("ServerPartitionAE");
               }
-              return (ISearchCondition<System.String>)SubCriteria["ServerPartitionAE"];
+              return (ISearchCondition<String>)SubCriteria["ServerPartitionAE"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDate")]
-        public ISearchCondition<System.String> StudyDate
+        public ISearchCondition<String> StudyDate
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyDate"))
               {
-                 SubCriteria["StudyDate"] = new SearchCondition<System.String>("StudyDate");
+                 SubCriteria["StudyDate"] = new SearchCondition<String>("StudyDate");
               }
-              return (ISearchCondition<System.String>)SubCriteria["StudyDate"];
+              return (ISearchCondition<String>)SubCriteria["StudyDate"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyDescription")]
-        public ISearchCondition<System.String> StudyDescription
+        public ISearchCondition<String> StudyDescription
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyDescription"))
               {
-                 SubCriteria["StudyDescription"] = new SearchCondition<System.String>("StudyDescription");
+                 SubCriteria["StudyDescription"] = new SearchCondition<String>("StudyDescription");
               }
-              return (ISearchCondition<System.String>)SubCriteria["StudyDescription"];
+              return (ISearchCondition<String>)SubCriteria["StudyDescription"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyId")]
-        public ISearchCondition<System.String> StudyId
+        public ISearchCondition<String> StudyId
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyId"))
               {
-                 SubCriteria["StudyId"] = new SearchCondition<System.String>("StudyId");
+                 SubCriteria["StudyId"] = new SearchCondition<String>("StudyId");
               }
-              return (ISearchCondition<System.String>)SubCriteria["StudyId"];
+              return (ISearchCondition<String>)SubCriteria["StudyId"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyInstanceUid")]
-        public ISearchCondition<System.String> StudyInstanceUid
+        public ISearchCondition<String> StudyInstanceUid
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyInstanceUid"))
               {
-                 SubCriteria["StudyInstanceUid"] = new SearchCondition<System.String>("StudyInstanceUid");
+                 SubCriteria["StudyInstanceUid"] = new SearchCondition<String>("StudyInstanceUid");
               }
-              return (ISearchCondition<System.String>)SubCriteria["StudyInstanceUid"];
+              return (ISearchCondition<String>)SubCriteria["StudyInstanceUid"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="StudyTime")]
-        public ISearchCondition<System.String> StudyTime
+        public ISearchCondition<String> StudyTime
         {
             get
             {
               if (!SubCriteria.ContainsKey("StudyTime"))
               {
-                 SubCriteria["StudyTime"] = new SearchCondition<System.String>("StudyTime");
+                 SubCriteria["StudyTime"] = new SearchCondition<String>("StudyTime");
               }
-              return (ISearchCondition<System.String>)SubCriteria["StudyTime"];
+              return (ISearchCondition<String>)SubCriteria["StudyTime"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyDeleteRecord", ColumnName="Timestamp")]
-        public ISearchCondition<System.DateTime> Timestamp
+        public ISearchCondition<DateTime> Timestamp
         {
             get
             {
               if (!SubCriteria.ContainsKey("Timestamp"))
               {
-                 SubCriteria["Timestamp"] = new SearchCondition<System.DateTime>("Timestamp");
+                 SubCriteria["Timestamp"] = new SearchCondition<DateTime>("Timestamp");
               }
-              return (ISearchCondition<System.DateTime>)SubCriteria["Timestamp"];
+              return (ISearchCondition<DateTime>)SubCriteria["Timestamp"];
             } 
         }
     }

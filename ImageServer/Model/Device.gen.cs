@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -75,89 +76,89 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _aeTitle;
-        private System.Boolean _allowAutoRoute;
-        private System.Boolean _allowQuery;
-        private System.Boolean _allowRetrieve;
-        private System.Boolean _allowStorage;
-        private System.String _description;
-        private System.Boolean _dhcp;
-        private System.Boolean _enabled;
-        private System.String _ipAddress;
-        private System.Int32 _port;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey;
-        private System.Int16 _throttleMaxConnections;
+        private String _aeTitle;
+        private Boolean _allowAutoRoute;
+        private Boolean _allowQuery;
+        private Boolean _allowRetrieve;
+        private Boolean _allowStorage;
+        private String _description;
+        private Boolean _dhcp;
+        private Boolean _enabled;
+        private String _ipAddress;
+        private Int32 _port;
+        private ServerEntityKey _serverPartitionKey;
+        private Int16 _throttleMaxConnections;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AeTitle")]
-        public System.String AeTitle
+        public String AeTitle
         {
         get { return _aeTitle; }
         set { _aeTitle = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowAutoRoute")]
-        public System.Boolean AllowAutoRoute
+        public Boolean AllowAutoRoute
         {
         get { return _allowAutoRoute; }
         set { _allowAutoRoute = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowQuery")]
-        public System.Boolean AllowQuery
+        public Boolean AllowQuery
         {
         get { return _allowQuery; }
         set { _allowQuery = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowRetrieve")]
-        public System.Boolean AllowRetrieve
+        public Boolean AllowRetrieve
         {
         get { return _allowRetrieve; }
         set { _allowRetrieve = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="AllowStorage")]
-        public System.Boolean AllowStorage
+        public Boolean AllowStorage
         {
         get { return _allowStorage; }
         set { _allowStorage = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Description")]
-        public System.String Description
+        public String Description
         {
         get { return _description; }
         set { _description = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Dhcp")]
-        public System.Boolean Dhcp
+        public Boolean Dhcp
         {
         get { return _dhcp; }
         set { _dhcp = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Enabled")]
-        public System.Boolean Enabled
+        public Boolean Enabled
         {
         get { return _enabled; }
         set { _enabled = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="IpAddress")]
-        public System.String IpAddress
+        public String IpAddress
         {
         get { return _ipAddress; }
         set { _ipAddress = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="Port")]
-        public System.Int32 Port
+        public Int32 Port
         {
         get { return _port; }
         set { _port = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
         get { return _serverPartitionKey; }
         set { _serverPartitionKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="Device", ColumnName="ThrottleMaxConnections")]
-        public System.Int16 ThrottleMaxConnections
+        public Int16 ThrottleMaxConnections
         {
         get { return _throttleMaxConnections; }
         set { _throttleMaxConnections = value; }

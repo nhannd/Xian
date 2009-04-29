@@ -33,6 +33,8 @@
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
+    using System;
+    using System.Xml;
     using ClearCanvas.ImageServer.Enterprise;
 
    public class StudyIntegrityQueueUpdateColumns : EntityUpdateColumns
@@ -41,29 +43,29 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        : base("StudyIntegrityQueue")
        {}
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="Description")]
-        public System.String Description
+        public String Description
         {
-            set { SubParameters["Description"] = new EntityUpdateColumn<System.String>("Description", value); }
+            set { SubParameters["Description"] = new EntityUpdateColumn<String>("Description", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="InsertTime")]
-        public System.DateTime InsertTime
+        public DateTime InsertTime
         {
-            set { SubParameters["InsertTime"] = new EntityUpdateColumn<System.DateTime>("InsertTime", value); }
+            set { SubParameters["InsertTime"] = new EntityUpdateColumn<DateTime>("InsertTime", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="QueueData")]
-        public System.Xml.XmlDocument QueueData
+        public XmlDocument QueueData
         {
-            set { SubParameters["QueueData"] = new EntityUpdateColumn<System.Xml.XmlDocument>("QueueData", value); }
+            set { SubParameters["QueueData"] = new EntityUpdateColumn<XmlDocument>("QueueData", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="ServerPartitionGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
-            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("ServerPartitionKey", value); }
+            set { SubParameters["ServerPartitionKey"] = new EntityUpdateColumn<ServerEntityKey>("ServerPartitionKey", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyData")]
-        public System.Xml.XmlDocument StudyData
+        public XmlDocument StudyData
         {
-            set { SubParameters["StudyData"] = new EntityUpdateColumn<System.Xml.XmlDocument>("StudyData", value); }
+            set { SubParameters["StudyData"] = new EntityUpdateColumn<XmlDocument>("StudyData", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyIntegrityReasonEnum")]
         public StudyIntegrityReasonEnum StudyIntegrityReasonEnum
@@ -71,9 +73,9 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
             set { SubParameters["StudyIntegrityReasonEnum"] = new EntityUpdateColumn<StudyIntegrityReasonEnum>("StudyIntegrityReasonEnum", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="StudyStorageGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey StudyStorageKey
+        public ServerEntityKey StudyStorageKey
         {
-            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ClearCanvas.ImageServer.Enterprise.ServerEntityKey>("StudyStorageKey", value); }
+            set { SubParameters["StudyStorageKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyStorageKey", value); }
         }
     }
 }

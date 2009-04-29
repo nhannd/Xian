@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -57,26 +58,26 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private System.String _category;
-        private System.String _label;
-        private System.String _text;
+        private String _category;
+        private String _label;
+        private String _text;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Category")]
-        public System.String Category
+        public String Category
         {
         get { return _category; }
         set { _category = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Label")]
-        public System.String Label
+        public String Label
         {
         get { return _label; }
         set { _label = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="CannedText", ColumnName="Text")]
-        public System.String Text
+        public String Text
         {
         get { return _text; }
         set { _text = value; }

@@ -34,6 +34,7 @@
 namespace ClearCanvas.ImageServer.Model
 {
     using System;
+    using System.Xml;
     using ClearCanvas.Enterprise.Core;
     using ClearCanvas.ImageServer.Enterprise;
     using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -57,26 +58,26 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _deviceKey;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverSopClassKey;
-        private ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverTransferSyntaxKey;
+        private ServerEntityKey _deviceKey;
+        private ServerEntityKey _serverSopClassKey;
+        private ServerEntityKey _serverTransferSyntaxKey;
         #endregion
 
         #region Public Properties
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="DeviceGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey DeviceKey
+        public ServerEntityKey DeviceKey
         {
         get { return _deviceKey; }
         set { _deviceKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerSopClassGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerSopClassKey
+        public ServerEntityKey ServerSopClassKey
         {
         get { return _serverSopClassKey; }
         set { _serverSopClassKey = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="DevicePreferredTransferSyntax", ColumnName="ServerTransferSyntaxGUID")]
-        public ClearCanvas.ImageServer.Enterprise.ServerEntityKey ServerTransferSyntaxKey
+        public ServerEntityKey ServerTransferSyntaxKey
         {
         get { return _serverTransferSyntaxKey; }
         set { _serverTransferSyntaxKey = value; }
