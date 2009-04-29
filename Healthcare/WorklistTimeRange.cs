@@ -84,7 +84,10 @@ namespace ClearCanvas.Healthcare
 
         private static void ApplyRange(ISearchCondition condition, bool hasLower, DateTime lower, bool hasUpper, DateTime upper)
         {
-            if (hasLower && hasUpper)
+			// if both upper and lower bounded, use the between operator, otherwise use the >= and < operators
+			// note that in SQL server, BETWEEN a AND b means a <= x < b (it is asymmetrical), however
+			// this is not necessarily the case in other database servers... not much we can do about this.
+			if (hasLower && hasUpper)
             {
                 condition.Between(lower, upper);
             }
@@ -94,7 +97,7 @@ namespace ClearCanvas.Healthcare
             }
             else if (hasUpper)
             {
-                condition.LessThanOrEqualTo(upper);
+                condition.LessThan(upper);
             }
         }
 

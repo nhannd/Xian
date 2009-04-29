@@ -32,10 +32,12 @@
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using System;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -48,6 +50,7 @@ namespace ClearCanvas.Ris.Application.Services
     	private readonly Type _procedureStepClass;
     	private readonly IWorklistItemBroker<TDomainItem> _broker;
     	private readonly WorklistItemTextQueryOptions _options;
+    	private readonly IPersistenceContext _context;
 
 		/// <summary>
 		/// Constructor.
@@ -56,12 +59,14 @@ namespace ClearCanvas.Ris.Application.Services
 			IWorklistItemBroker<TDomainItem> broker,
 			Converter<TDomainItem, TSummary> summaryAssembler,
 			Type procedureStepClass,
-			WorklistItemTextQueryOptions options)
+			WorklistItemTextQueryOptions options,
+			IPersistenceContext context)
 			: base(null, summaryAssembler, null, null)
 		{
 			_broker = broker;
 			_procedureStepClass = procedureStepClass;
 			_options = options;
+			_context = context;
 		}
 
 		#region Overrides
@@ -79,12 +84,12 @@ namespace ClearCanvas.Ris.Application.Services
 
 			if ((_options & WorklistItemTextQueryOptions.PatientOrder) == WorklistItemTextQueryOptions.PatientOrder)
 			{
-                criteria.AddRange(BuildCriteriaForPatientOrderSearch(req));
+                criteria.AddRange(BuildPatientOrderSearchCriteria(req));
 			}
 
 			if ((_options & WorklistItemTextQueryOptions.ProcedureStepStaff) == WorklistItemTextQueryOptions.ProcedureStepStaff)
 			{
-                criteria.AddRange(BuildCriteriaForStaffSearch(req));
+                criteria.AddRange(BuildStaffSearchCriteria(req));
 			}
 
 			// add constraint for downtime vs live procedures
@@ -108,21 +113,98 @@ namespace ClearCanvas.Ris.Application.Services
 
 		#endregion
 
-		#region Helpers
+		#region Patient Criteria builders
 
-    	private bool IncludeDegenerateItems
-    	{
-    		get
-    		{
-				// generally, if the search query is being used on patients/orders, then it makes sense to include
-				// degenerate items
-				// conversely, if this flag is not present, then including degenerate items would mean result in an open query
-				// on the entire database which would obviously not be desirable
-    			return (_options & WorklistItemTextQueryOptions.PatientOrder) == WorklistItemTextQueryOptions.PatientOrder;
-    		}
-    	}
+		private List<WorklistItemSearchCriteria> BuildPatientOrderSearchCriteria(WorklistItemTextQueryRequest request)
+        {
+			if(request.UseAdvancedSearch)
+			{
+				return BuildAdvancedPatientOrderSearchCriteria(request);
+			}
+			else
+			{
+				return BuildAdHocPatientOrderSearchCriteria(request);
+			}
+        	
+        }
 
-        private List<WorklistItemSearchCriteria> BuildCriteriaForPatientOrderSearch(WorklistItemTextQueryRequest request)
+		private List<WorklistItemSearchCriteria> BuildAdvancedPatientOrderSearchCriteria(WorklistItemTextQueryRequest request)
+		{
+			Platform.CheckMemberIsSet(request.SearchFields, "SearchFields");
+
+			WorklistItemTextQueryRequest.AdvancedSearchFields searchParams = request.SearchFields;
+
+
+			List<WorklistItemSearchCriteria> wheres = new List<WorklistItemSearchCriteria>();
+
+			// construct a base criteria object from the request values
+			WorklistItemSearchCriteria criteria = new WorklistItemSearchCriteria();
+
+			if (!string.IsNullOrEmpty(searchParams.Mrn))
+				criteria.PatientProfile.Mrn.Id.StartsWith(searchParams.Mrn.Trim());
+
+			if (!string.IsNullOrEmpty(searchParams.FamilyName))
+				criteria.PatientProfile.Name.FamilyName.StartsWith(searchParams.FamilyName.Trim());
+
+			if (!string.IsNullOrEmpty(searchParams.GivenName))
+				criteria.PatientProfile.Name.GivenName.StartsWith(searchParams.GivenName.Trim());
+
+			if (!string.IsNullOrEmpty(searchParams.HealthcardNumber))
+				criteria.PatientProfile.Healthcard.Id.StartsWith(searchParams.HealthcardNumber.Trim());
+
+			if (!string.IsNullOrEmpty(searchParams.AccessionNumber))
+				criteria.Order.AccessionNumber.StartsWith(searchParams.AccessionNumber.Trim());
+
+			if (searchParams.OrderingPractitionerRef != null)
+			{
+				ExternalPractitioner orderedBy = _context.Load<ExternalPractitioner>(searchParams.OrderingPractitionerRef, EntityLoadFlags.Proxy);
+				criteria.Order.OrderingPractitioner.EqualTo(orderedBy);
+			}
+
+			if (searchParams.ProcedureTypeRef != null)
+			{
+				ProcedureType pt = _context.Load<ProcedureType>(searchParams.ProcedureTypeRef, EntityLoadFlags.Proxy);
+				criteria.Procedure.Type.EqualTo(pt);
+			}
+
+			if(searchParams.FromDate != null || searchParams.UntilDate != null)
+			{
+				// the goal here is to use the date-range in an approximate fashion, to search for procedures
+				// that were performed "around" that time-frame
+				// therefore, the date-range is applied to muliple dates, and these are OR'd
+
+				// use "day" resolution on the start and end times, because we don't care about time
+				WorklistTimePoint start = searchParams.FromDate == null ? null
+					: new WorklistTimePoint(searchParams.FromDate.Value, WorklistTimePoint.Resolutions.Day);
+				WorklistTimePoint end = searchParams.UntilDate == null ? null
+					: new WorklistTimePoint(searchParams.UntilDate.Value, WorklistTimePoint.Resolutions.Day);
+
+				WorklistTimeRange dateRange = new WorklistTimeRange(start, end);
+				DateTime now = Platform.Time;
+
+				WorklistItemSearchCriteria procSchedDateCriteria = (WorklistItemSearchCriteria)criteria.Clone();
+				dateRange.Apply((ISearchCondition)procSchedDateCriteria.Procedure.ScheduledStartTime, now);
+				wheres.Add(procSchedDateCriteria);
+
+				WorklistItemSearchCriteria procStartDateCriteria = (WorklistItemSearchCriteria)criteria.Clone();
+				dateRange.Apply((ISearchCondition)procStartDateCriteria.Procedure.StartTime, now);
+				wheres.Add(procStartDateCriteria);
+
+				WorklistItemSearchCriteria procEndDateCriteria = (WorklistItemSearchCriteria)criteria.Clone();
+				dateRange.Apply((ISearchCondition)procEndDateCriteria.Procedure.EndTime, now);
+				wheres.Add(procEndDateCriteria);
+
+			}
+			else
+			{
+				// no date range, so just need a single criteria
+				wheres.Add(criteria);
+			}
+
+			return wheres;
+		}
+
+        private List<WorklistItemSearchCriteria> BuildAdHocPatientOrderSearchCriteria(WorklistItemTextQueryRequest request)
 		{
             string query = request.TextQuery;
 
@@ -172,7 +254,24 @@ namespace ClearCanvas.Ris.Application.Services
 			return criteria;
 		}
 
-        private List<WorklistItemSearchCriteria> BuildCriteriaForStaffSearch(WorklistItemTextQueryRequest request)
+		#endregion
+
+		#region Staff Criteria builders
+
+		private IEnumerable<WorklistItemSearchCriteria> BuildStaffSearchCriteria(WorklistItemTextQueryRequest request)
+		{
+			if (request.UseAdvancedSearch)
+			{
+				// advanced search not supported here
+				throw new NotSupportedException();
+			}
+			else
+			{
+				return BuildAdHocStaffSearchCriteria(request);
+			}
+		}
+
+		private List<WorklistItemSearchCriteria> BuildAdHocStaffSearchCriteria(WorklistItemTextQueryRequest request)
 		{
             string query = request.TextQuery;
 
@@ -234,5 +333,17 @@ namespace ClearCanvas.Ris.Application.Services
 		}
 
 		#endregion
+
+		private bool IncludeDegenerateItems
+		{
+			get
+			{
+				// generally, if the search query is being used on patients/orders, then it makes sense to include
+				// degenerate items
+				// conversely, if this flag is not present, then including degenerate items would mean result in an open query
+				// on the entire database which would obviously not be desirable
+				return (_options & WorklistItemTextQueryOptions.PatientOrder) == WorklistItemTextQueryOptions.PatientOrder;
+			}
+		}
 	}
 }

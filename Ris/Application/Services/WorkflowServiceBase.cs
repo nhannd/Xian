@@ -194,7 +194,7 @@ namespace ClearCanvas.Ris.Application.Services
 				: ProcedureStep.GetSubClass(request.ProcedureStepClassName, PersistenceContext);
 
 			WorklistItemTextQueryHelper<TItem, TSummary> helper =
-				new WorklistItemTextQueryHelper<TItem, TSummary>(broker, mapCallback, procedureStepClass, request.Options);
+				new WorklistItemTextQueryHelper<TItem, TSummary>(broker, mapCallback, procedureStepClass, request.Options, PersistenceContext);
 
 			return helper.Query(request);
 		}
