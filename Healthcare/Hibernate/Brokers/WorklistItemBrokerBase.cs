@@ -75,6 +75,68 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     public abstract class WorklistItemBrokerBase<TItem> : Broker, IWorklistItemBroker<TItem>
 		where TItem : WorklistItemBase
     {
+        #region IWorklistItemSearchContext implementation
+
+        class SearchContext : IWorklistItemSearchContext<TItem>
+        {
+            private WorklistItemBrokerBase<TItem> _owner;
+            private WorklistItemSearchCriteria[] _searchCriteria;
+            private bool _includeDegenerate;
+            private int _threshold;
+
+            public SearchContext(WorklistItemBrokerBase<TItem> owner, WorklistItemSearchCriteria[] criteria,
+                bool includeDegenerate, int threshold)
+            {
+                _owner = owner;
+                _searchCriteria = criteria;
+                _includeDegenerate = includeDegenerate;
+                _threshold = threshold;
+            }
+
+            public bool IncludeDegenerate
+            {
+                get { return _includeDegenerate; }
+            }
+
+            public WorklistItemSearchCriteria[] SearchCriteria
+            {
+                get { return _searchCriteria; }
+            }
+
+            public int Threshold
+            {
+                get { return _threshold; }
+            }
+
+            public HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
+            {
+                return _owner.BuildWorklistItemSearchQuery(where, countQuery);
+            }
+
+            public HqlProjectionQuery BuildProcedureSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
+            {
+                return _owner.BuildProcedureSearchQuery(where, countQuery);
+            }
+
+            public HqlProjectionQuery BuildPatientSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
+            {
+                return _owner.BuildPatientSearchQuery(where, countQuery);
+            }
+
+            public List<TItem> DoQuery(HqlQuery query)
+            {
+                return _owner.DoQuery(query);
+            }
+
+            public int DoQueryCount(HqlQuery query)
+            {
+                return _owner.DoQueryCount(query);
+            }
+        }
+
+        #endregion
+
+
         #region Hql Constants
 
         protected static readonly HqlSelect SelectProcedureStep = new HqlSelect("ps");
@@ -228,6 +290,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #endregion
 
+        private IWorklistItemSearchExecutionStrategy<TItem> _searchExecutionStrategy =
+            new OptimizedWorklistItemSearchExecutionStrategy<TItem>();
+
+
         #region Public Members
 
         /// <summary>
@@ -265,63 +331,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     	/// </summary>
     	public IList<TItem> GetSearchResults(WorklistItemSearchCriteria[] where, bool includeDegenerate)
     	{
-			List<TItem> results = new List<TItem>();
-
-			// the search criteria is broken up to gain performance. See #2416.
-			WorklistItemSearchCriteria[] whereSelectPatient = WorklistItemSearchCriteriaUtility.Select(where, "PatientProfile");
-			WorklistItemSearchCriteria[] whereExcludePatient = WorklistItemSearchCriteriaUtility.Exclude(where, "PatientProfile");
-				
-			// search for worklist items, delegating the task of designing the query to the subclass
-			if (whereSelectPatient.Length > 0)
-			{
-				HqlProjectionQuery patientOnlyWorklistItemQuery = BuildWorklistItemSearchQuery(whereSelectPatient, false);
-                if (patientOnlyWorklistItemQuery != null)
-                {
-                    results = MergeResults(results, DoQuery(patientOnlyWorklistItemQuery),
-                        delegate(TItem item) { return item.ProcedureRef; });
-                }
-			}
-
-			if (whereExcludePatient.Length > 0)
-			{
-				HqlProjectionQuery patientExcludedWorklistItemQuery = BuildWorklistItemSearchQuery(whereExcludePatient, false);
-                if (patientExcludedWorklistItemQuery != null)
-                {
-                    results = MergeResults(results, DoQuery(patientExcludedWorklistItemQuery),
-                        delegate(TItem item) { return item.ProcedureRef; });
-                }
-			}
-
-			if (includeDegenerate)
-			{
-				// search for procedures
-				List<TItem> procedures = new List<TItem>();
-				if (whereSelectPatient.Length > 0)
-				{
-					HqlProjectionQuery patientBasedProcedureQuery = BuildProcedureSearchQuery(whereSelectPatient, false);
-                    results = MergeResults(results, DoQuery(patientBasedProcedureQuery),
-                        delegate(TItem item) { return item.ProcedureRef; });
-                }
-
-				if (whereExcludePatient.Length > 0)
-				{
-					HqlProjectionQuery patientExcludedProcedureQuery = BuildProcedureSearchQuery(whereExcludePatient, false);
-                    results = MergeResults(results, DoQuery(patientExcludedProcedureQuery),
-                        delegate(TItem item) { return item.ProcedureRef; });
-                }
-
-                // search for patients
-				if (whereSelectPatient.Length > 0)
-				{
-					HqlProjectionQuery patientQuery = BuildPatientSearchQuery(whereSelectPatient, false);
-					List<TItem> patients = DoQuery(patientQuery);
-
-					// add any patients for which there is no result
-					results = MergeResults(results, patients, delegate(TItem item) { return item.PatientRef; });
-				}
-			}
-
-    		return results;
+            SearchContext wisc = new SearchContext(this, where, includeDegenerate, 0);
+            return _searchExecutionStrategy.GetSearchResults(wisc);
 		}
 
     	/// <summary>
@@ -329,68 +340,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     	/// </summary>
 		public bool EstimateSearchResultsCount(WorklistItemSearchCriteria[] where, int threshold, bool includeDegenerate, out int count)
     	{
-    		count = 0;
-
-			// if includeDegenerate == true, we don't actually need to do a query for "active worklist items", e.g. ProcedureSteps,
-			// because the degenerate set is by definition a superset of the active items
-			if(includeDegenerate)
-			{
-				// Strategy:
-				// Assume that only 4 search fields are really valid: Patient name, MRN, Healthcard, and Accession #.
-				// The approach taken here is to perform a patient count query and a procedure count query.
-				// The patient query will count all potential patient matches based on Patient name, MRN and Healthcard.
-				// The procedure count query will count all potential procedure matches based on Patient name, MRN and Healthcard, and Accession #.
-				// If either count exceeds the threshold, we can bail immediately.
-				// Otherwise, the counts must be combined.  Note that each count represents a potentially overlapping
-				// set of items, so there is no possible way to determine an 'exact' count (hence the word Estimate).
-				// However, we know that the true count is a) greater than or equal to the maximum of either independent count, and
-				// b) less than or equal to the sum of both counts.  Therefore, choose the midpoint of this number as a
-				// 'good enough' estimate.
-
-				// count number of patient matches
-				HqlProjectionQuery patientCountQuery = BuildPatientSearchQuery(where, true);
-				int numPatients = DoQueryCount(patientCountQuery);
-
-				// if this number exceeds threshold, bail
-				if (numPatients > threshold)
-					return false;
-
-				// count number of procedure matcheswith patient criteria only
-				int numProcedures = 0;
-				WorklistItemSearchCriteria[] whereSelectPatient = WorklistItemSearchCriteriaUtility.Select(where, "PatientProfile");
-				if (whereSelectPatient.Length > 0)
-				{
-					HqlProjectionQuery procedureCountQuery = BuildProcedureSearchQuery(whereSelectPatient, true);
-					numProcedures += DoQueryCount(procedureCountQuery);
-
-					// if this number exceeds threshold, bail
-					if (numProcedures > threshold)
-						return false;
-				}
-
-				WorklistItemSearchCriteria[] whereExcludePatient = WorklistItemSearchCriteriaUtility.Exclude(where, "PatientProfile");
-				if (whereExcludePatient.Length > 0)
-				{
-					HqlProjectionQuery procedureCountQuery = BuildProcedureSearchQuery(whereExcludePatient, true);
-					numProcedures += DoQueryCount(procedureCountQuery);
-
-					// if this number exceeds threshold, bail
-					if (numProcedures > threshold)
-						return false;
-				}
-
-				// combine the two numbers to produce a guess at the actual number of results
-				count = (Math.Max(numPatients, numProcedures) + numPatients + numProcedures) / 2;
-			}
-			else
-			{
-				// search for worklist items, delegating the task of designing the query to the subclass
-				HqlProjectionQuery worklistItemCountQuery = BuildWorklistItemSearchQuery(where, true);
-				count = DoQueryCount(worklistItemCountQuery);
-			}
-
-			// return whether the count exceeded the threshold
-    		return count <= threshold;
+            SearchContext wisc = new SearchContext(this, where, includeDegenerate, threshold);
+            return _searchExecutionStrategy.EstimateSearchResultsCount(wisc, out count);
     	}
 
     	#endregion
@@ -703,9 +654,22 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				countQuery ? DefaultCountProjection : PatientSearchProjection);
 
 			// create a copy of the criteria that contains only the patient profile criteria, as none of the others are relevant
-			WorklistItemSearchCriteria[] patientCriteria = WorklistItemSearchCriteriaUtility.Filter(where, "PatientProfile");
+            // TODO: use SearchCriteria.Clone() !!!
+            WorklistItemSearchCriteria[] patientCriteria = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(where,
+                delegate(WorklistItemSearchCriteria criteria)
+                {
+                    WorklistItemSearchCriteria copy = new WorklistItemSearchCriteria();
+                    // copy only the filter key
+                    if (criteria.SubCriteria.ContainsKey("PatientProfile"))
+                        copy.SubCriteria["PatientProfile"] = criteria.SubCriteria["PatientProfile"];
 
-			// add the criteria, but do not attempt to constrain the patient profile
+                    return copy;
+                })
+                .FindAll(delegate(WorklistItemSearchCriteria sc) { return !sc.IsEmpty; }) // remove any empties!
+                .ToArray();
+
+
+            // add the criteria, but do not attempt to constrain the patient profile
 			// (since this is a patient search, the working facility must be used to constrain the profile)
 			AddConditions(patientQuery, patientCriteria, false, false);
 
@@ -744,101 +708,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return (int)ExecuteHqlUnique<long>(query);
         }
 
-        /// <summary>
-        /// Returns a new list containing all items in primary, plus any items in secondary that were not
-        /// already in primary according to the specified identity provider.  The arguments are not modified.
-        /// </summary>
-        /// <param name="primary"></param>
-        /// <param name="secondary"></param>
-        /// <param name="identityProvider"></param>
-        /// <returns></returns>
-        private static List<TItem> MergeResults(List<TItem> primary, List<TItem> secondary,
-            Converter<TItem, EntityRef> identityProvider)
-        {
-            // note that we do not modify the arguments
-            List<TItem> merged = new List<TItem>(primary);
-            foreach (TItem s in secondary)
-            {
-                if (!CollectionUtils.Contains(primary,
-                     delegate(TItem p) { return identityProvider(s).Equals(identityProvider(p), true); }))
-                {
-                    merged.Add(s);
-                }
-            }
-            return merged;
-        }
 
         #endregion
     }
-
-	public static class WorklistItemSearchCriteriaUtility
-	{
-		/// <summary>
-		/// Returns all criteria with only the filter key, as none of the others are relevant
-		/// </summary>
-		/// <param name="where"></param>
-		/// <param name="filterKey"></param>
-		/// <returns></returns>
-		public static WorklistItemSearchCriteria[] Filter(IEnumerable<WorklistItemSearchCriteria> where, string filterKey)
-		{
-			List<WorklistItemSearchCriteria> filteredCriteria = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(where,
-				delegate(WorklistItemSearchCriteria criteria)
-				{
-					WorklistItemSearchCriteria copy = new WorklistItemSearchCriteria();
-					// copy only the filter key
-					if (criteria.SubCriteria.ContainsKey(filterKey))
-						copy.SubCriteria[filterKey] = criteria.SubCriteria[filterKey];
-
-					return copy;
-				});
-
-			return filteredCriteria.ToArray();
-		}
-
-		/// <summary>
-		/// Returns all criteria without the filter key
-		/// </summary>
-		/// <param name="where"></param>
-		/// <param name="filterKey"></param>
-		/// <returns></returns>
-		public static WorklistItemSearchCriteria[] FilterOut(IEnumerable<WorklistItemSearchCriteria> where, string filterKey)
-		{
-			List<WorklistItemSearchCriteria> filteredCriteria = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(where,
-				delegate(WorklistItemSearchCriteria criteria)
-				{
-					WorklistItemSearchCriteria copy = new WorklistItemSearchCriteria();
-					// Copy every key except for the filter key
-					CollectionUtils.ForEach(criteria.SubCriteria.Keys,
-						delegate(string key)
-						{
-							if (!Equals(key, filterKey))
-								copy.SubCriteria[key] = criteria.SubCriteria[key];
-						});
-
-					return copy;
-				});
-
-			return filteredCriteria.ToArray();
-		}
-
-		public static WorklistItemSearchCriteria[] Select(IEnumerable<WorklistItemSearchCriteria> where, string key)
-		{
-			// create a copy of the criteria that exclude the filter criteria
-			return CollectionUtils.Select(where,
-				delegate(WorklistItemSearchCriteria criteria)
-					{
-						return criteria.SubCriteria.ContainsKey(key);
-					}).ToArray();
-		}
-
-		public static WorklistItemSearchCriteria[] Exclude(IEnumerable<WorklistItemSearchCriteria> where, string key)
-		{
-			// create a copy of the criteria that exclude the filter criteria
-			return CollectionUtils.Select(where,
-				delegate(WorklistItemSearchCriteria criteria)
-					{
-						return !criteria.SubCriteria.ContainsKey(key);
-					}).ToArray();
-		}
-	}
 }
