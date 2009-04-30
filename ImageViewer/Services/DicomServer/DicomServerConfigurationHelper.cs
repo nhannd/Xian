@@ -223,7 +223,7 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 					Refresh(false);
 					_offlineAeTitle = DicomServerConfiguration.AETitle;
 				}
-				catch(EndpointNotFoundException)
+				catch(Exception)
 				{
 					if (_offlineAeTitle == null)
 						_offlineAeTitle = new ServerTree.ServerTree().RootNode.LocalDataStoreNode.OfflineAE;
