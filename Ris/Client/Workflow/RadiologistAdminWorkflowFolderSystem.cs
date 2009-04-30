@@ -59,6 +59,11 @@ namespace ClearCanvas.Ris.Client.Workflow
 			}
 		}
 
+		public override bool AdvancedSearchEnabled
+		{
+			get { return false; }
+		}
+
 		public override string SearchMessage
 		{
 			get { return SR.MessageRadiologistAdminSearchMessage; }

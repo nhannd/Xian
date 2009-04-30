@@ -37,15 +37,15 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class SearchParams
-    {
+	public class SearchParams
+	{
 		/// <summary>
 		/// Constructor for text-based search.
 		/// </summary>
-        public SearchParams(string textSearch)
-        {
-            this.TextSearch = textSearch;
-        }
+		public SearchParams(string textSearch)
+		{
+			this.TextSearch = textSearch;
+		}
 
 		/// <summary>
 		/// Constructor for advance search
@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client
 			this.UseAdvancedSearch = true;
 			this.SearchFields = searchFields;
 		}
-		
+
 		/// <summary>
 		/// Specifies the query text.
 		/// </summary>
@@ -71,87 +71,90 @@ namespace ClearCanvas.Ris.Client
 		/// Data used in the advanced search mode.
 		/// </summary>
 		public WorklistItemTextQueryRequest.AdvancedSearchFields SearchFields;
-    }
+	}
 
-    /// <summary>
-    /// Defines an interface for handling the Search Data
-    /// </summary>
-    public interface ISearchDataHandler
-    {
-        SearchParams SearchParams { set; }
-    }
+	/// <summary>
+	/// Defines an interface for handling the Search Data
+	/// </summary>
+	public interface ISearchDataHandler
+	{
+		bool SearchEnabled { get; }
+		SearchParams SearchParams { set; }
+		event EventHandler SearchEnabledChanged;
+	}
 
-    [ExtensionPoint]
-    public class SearchComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	[ExtensionPoint]
+	public class SearchComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    [AssociateView(typeof(SearchComponentViewExtensionPoint))]
-    public class SearchComponent : ApplicationComponent
-    {
+	[AssociateView(typeof(SearchComponentViewExtensionPoint))]
+	public class SearchComponent : ApplicationComponent
+	{
 		private readonly SearchParams _searchParams;
 
 		private ProcedureTypeSummary _selectedProcedureType;
-		private ProcedureTypeLookupHandler _procedureTypeLookupHandler; 
+		private ProcedureTypeLookupHandler _procedureTypeLookupHandler;
 		private ExternalPractitionerSummary _selectedOrderingPractitioner;
 		private ExternalPractitionerLookupHandler _orderingPractitionerLookupHandler;
 
 		private bool _keepOpen;
 
 		private static SearchComponent _instance;
-        private static Shelf _searchComponentShelf;
+		private static Shelf _searchComponentShelf;
+		private static ISearchDataHandler _activeSearchHandler = GetActiveWorkspaceSearchHandler();
 
-        private SearchComponent()
-        {
+		private SearchComponent()
+		{
 			_searchParams = new SearchParams(new WorklistItemTextQueryRequest.AdvancedSearchFields());
-        }
+		}
 
-        public static Shelf Launch(IDesktopWindow desktopWindow)
-        {
-            try
-            {
-                if (_searchComponentShelf != null)
-                {
-                    _searchComponentShelf.Activate();
-                }
-                else
-                {
-                    desktopWindow.Workspaces.ItemActivationChanged += Workspaces_ItemActivationChanged;
+		public static Shelf Launch(IDesktopWindow desktopWindow)
+		{
+			try
+			{
+				if (_searchComponentShelf != null)
+				{
+					_searchComponentShelf.Activate();
+				}
+				else
+				{
+					desktopWindow.Workspaces.ItemActivationChanged += Workspaces_ItemActivationChanged;
 
-                    _searchComponentShelf = LaunchAsShelf(
-                        desktopWindow,
-                        Instance,
-                        SR.TitleSearch,
-                        ShelfDisplayHint.DockFloat);
+					_searchComponentShelf = LaunchAsShelf(
+						desktopWindow,
+						Instance,
+						SR.TitleSearch,
+						ShelfDisplayHint.DockFloat);
 
-                    _searchComponentShelf.Closed += delegate
-                            {
-                                desktopWindow.Workspaces.ItemActivationChanged -= Workspaces_ItemActivationChanged;
-                                _searchComponentShelf = null;
-                            };
+					_searchComponentShelf.Closed += delegate
+							{
+								desktopWindow.Workspaces.ItemActivationChanged -= Workspaces_ItemActivationChanged;
+								_searchComponentShelf = null;
+							};
 
-                    UpdateDisplay();
-                }
-            }
-            catch (Exception e)
-            {
-                // cannot start component
-                ExceptionHandler.Report(e, desktopWindow);
-            }
+					UpdateDisplay();
+				}
+			}
+			catch (Exception e)
+			{
+				// cannot start component
+				ExceptionHandler.Report(e, desktopWindow);
+			}
 
-            return _searchComponentShelf;
-        }
+			return _searchComponentShelf;
+		}
 
-        public static SearchComponent Instance
-        {
-            get
-            {
-                if (_instance == null)
-                    _instance = new SearchComponent();
+		public static SearchComponent Instance
+		{
+			get
+			{
+				if (_instance == null)
+					_instance = new SearchComponent();
 
-                return _instance;
-            }
-        }
+				return _instance;
+			}
+		}
 
 		public override void Start()
 		{
@@ -161,17 +164,17 @@ namespace ClearCanvas.Ris.Client
 			base.Start();
 		}
 
-        #region Public Member
+		#region Public Member
 
-        public string AccessionNumber
-        {
+		public string AccessionNumber
+		{
 			get { return _searchParams.SearchFields.AccessionNumber; }
-            set
-            {
+			set
+			{
 				_searchParams.SearchFields.AccessionNumber = value;
 				UpdateDisplay();
-            }
-        }
+			}
+		}
 
 		public string PatientIdMrn
 		{
@@ -203,15 +206,15 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-    	public string GivenName
-    	{
+		public string GivenName
+		{
 			get { return _searchParams.SearchFields.GivenName; }
 			set
 			{
 				_searchParams.SearchFields.GivenName = value;
 				UpdateDisplay();
 			}
-    	}
+		}
 		public ExternalPractitionerSummary OrderingPractitioner
 		{
 			get { return _selectedOrderingPractitioner; }
@@ -228,8 +231,8 @@ namespace ClearCanvas.Ris.Client
 			get { return _orderingPractitionerLookupHandler; }
 		}
 
-    	public ProcedureTypeSummary ProcedureType
-    	{
+		public ProcedureTypeSummary ProcedureType
+		{
 			get { return _selectedProcedureType; }
 			set
 			{
@@ -237,7 +240,7 @@ namespace ClearCanvas.Ris.Client
 				_searchParams.SearchFields.ProcedureTypeRef = value == null ? null : value.ProcedureTypeRef;
 				UpdateDisplay();
 			}
-    	}
+		}
 
 		public ILookupHandler ProcedureTypeLookupHandler
 		{
@@ -245,7 +248,7 @@ namespace ClearCanvas.Ris.Client
 		}
 
 		public DateTime? FromDate
-    	{
+		{
 			get { return _searchParams.SearchFields.FromDate; }
 			set
 			{
@@ -264,73 +267,90 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
-        public bool KeepOpen
-        {
-            get { return _keepOpen; }
-            set { _keepOpen = value; }
-        }
+		public bool KeepOpen
+		{
+			get { return _keepOpen; }
+			set { _keepOpen = value; }
+		}
 
-        public bool SearchEnabled
-        {
+		public bool SearchEnabled
+		{
 			get
 			{
-				return !string.IsNullOrEmpty(_searchParams.SearchFields.AccessionNumber)
-					   || !string.IsNullOrEmpty(_searchParams.SearchFields.Mrn)
-					   || !string.IsNullOrEmpty(_searchParams.SearchFields.HealthcardNumber)
-					   || !string.IsNullOrEmpty(_searchParams.SearchFields.FamilyName)
-					   || !string.IsNullOrEmpty(_searchParams.SearchFields.GivenName)
-					   || _searchParams.SearchFields.OrderingPractitionerRef != null
-					   || _searchParams.SearchFields.ProcedureTypeRef != null
-					   || _searchParams.SearchFields.FromDate != null
-					   || _searchParams.SearchFields.UntilDate != null;
+				return this.ComponentEnabled
+					&& (!string.IsNullOrEmpty(_searchParams.SearchFields.AccessionNumber)
+						|| !string.IsNullOrEmpty(_searchParams.SearchFields.Mrn)
+						|| !string.IsNullOrEmpty(_searchParams.SearchFields.HealthcardNumber)
+						|| !string.IsNullOrEmpty(_searchParams.SearchFields.FamilyName)
+						|| !string.IsNullOrEmpty(_searchParams.SearchFields.GivenName)
+						|| _searchParams.SearchFields.OrderingPractitionerRef != null
+						|| _searchParams.SearchFields.ProcedureTypeRef != null
+						|| _searchParams.SearchFields.FromDate != null
+						|| _searchParams.SearchFields.UntilDate != null);
 			}
-        }
+		}
 
-        public void Search()
-        {
-            if (this.HasValidationErrors)
-            {
+		public bool ComponentEnabled
+		{
+			get { return _activeSearchHandler == null ? false : _activeSearchHandler.SearchEnabled; }
+		}
+
+		public void Search()
+		{
+			if (this.HasValidationErrors)
+			{
 				this.ShowValidation(true);
-            	return;
-            }
+				return;
+			}
 
-            ISearchDataHandler searchHandler = GetActiveWorkspaceSearchHandler();
-			if (searchHandler != null)
-				searchHandler.SearchParams = _searchParams;;
+			if (_activeSearchHandler != null)
+				_activeSearchHandler.SearchParams = _searchParams; ;
 
-            // always turn the validation errors off after a successful search
-            this.ShowValidation(false);
+			// always turn the validation errors off after a successful search
+			this.ShowValidation(false);
 
-            if (!_keepOpen)
-            {
-                this.Host.Exit();
-            }
-        }
-		
-        #endregion
+			if (!_keepOpen)
+			{
+				this.Host.Exit();
+			}
+		}
 
-        private static void Workspaces_ItemActivationChanged(object sender, ItemEventArgs<Workspace> e)
-        {
-            UpdateDisplay();
-        }
+		#endregion
 
-        private static ISearchDataHandler GetActiveWorkspaceSearchHandler()
-        {
-            Workspace activeWorkspace = _searchComponentShelf.DesktopWindow.ActiveWorkspace;
-            if (activeWorkspace != null && activeWorkspace.Component is ISearchDataHandler)
-                return (ISearchDataHandler) (activeWorkspace.Component);
+		private static void Workspaces_ItemActivationChanged(object sender, ItemEventArgs<Workspace> e)
+		{
+			UpdateDisplay();
+		}
 
-            return null;
-        }
+		private static ISearchDataHandler GetActiveWorkspaceSearchHandler()
+		{
+			if (_searchComponentShelf == null)
+				return null;
 
-        private static void UpdateDisplay()
-        {
-            ISearchDataHandler searchHandler = GetActiveWorkspaceSearchHandler();
-            if (searchHandler != null)
-            {
-                // Use this to update the SearchComponentControl when a workspace that implement ISearchDataHandler is active
-                // Do something here
-            }
-        }
-    }
+			Workspace activeWorkspace = _searchComponentShelf.DesktopWindow.ActiveWorkspace;
+			if (activeWorkspace != null && activeWorkspace.Component is ISearchDataHandler)
+				return (ISearchDataHandler)(activeWorkspace.Component);
+
+			return null;
+		}
+
+		private static void UpdateDisplay()
+		{
+			if (_activeSearchHandler != null)
+				_activeSearchHandler.SearchEnabledChanged -= OnSearchEnabledChanged;
+
+			_activeSearchHandler = GetActiveWorkspaceSearchHandler();
+			if (_activeSearchHandler != null)
+				_activeSearchHandler.SearchEnabledChanged += OnSearchEnabledChanged;
+
+			Instance.NotifyPropertyChanged("ComponentEnabled");
+			Instance.NotifyPropertyChanged("SearchEnabled");
+		}
+
+		private static void OnSearchEnabledChanged(object sender, EventArgs e)
+		{
+			Instance.NotifyPropertyChanged("ComponentEnabled");
+			Instance.NotifyPropertyChanged("SearchEnabled");
+		}
+	}
 }

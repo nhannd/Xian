@@ -366,6 +366,14 @@ namespace ClearCanvas.Ris.Client
 			get { return true; }
 		}
 
+		/// <summary>
+		/// Gets a value indicating whether this folder system supports advanced searching.
+		/// </summary>
+		public virtual bool AdvancedSearchEnabled
+		{
+			get { return true; }
+		}
+
 		public virtual string SearchMessage
 		{
 			get { return SR.MessageSearchMessageDefault; }

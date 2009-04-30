@@ -66,12 +66,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._healthcard = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._familyName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._givenName = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._fromDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._untilDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-			this._procedureType = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._keepOpen = new System.Windows.Forms.CheckBox();
 			this._searchButton = new System.Windows.Forms.Button();
+			this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+			this._procedureType = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._filterGroupBox.SuspendLayout();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
@@ -194,18 +194,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._givenName.ToolTip = null;
 			this._givenName.Value = null;
 			// 
-			// _orderingPractitioner
-			// 
-			this.tableLayoutPanel1.SetColumnSpan(this._orderingPractitioner, 3);
-			this._orderingPractitioner.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._orderingPractitioner.LabelText = "Ordered By";
-			this._orderingPractitioner.Location = new System.Drawing.Point(2, 94);
-			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
-			this._orderingPractitioner.Name = "_orderingPractitioner";
-			this._orderingPractitioner.Size = new System.Drawing.Size(206, 42);
-			this._orderingPractitioner.TabIndex = 5;
-			this._orderingPractitioner.Value = null;
-			// 
 			// _fromDate
 			// 
 			this.tableLayoutPanel1.SetColumnSpan(this._fromDate, 3);
@@ -236,18 +224,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._untilDate.TabIndex = 8;
 			this._untilDate.Value = new System.DateTime(2009, 4, 28, 16, 56, 47, 203);
 			// 
-			// _procedureType
-			// 
-			this.tableLayoutPanel1.SetColumnSpan(this._procedureType, 3);
-			this._procedureType.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._procedureType.LabelText = "ProcedureType";
-			this._procedureType.Location = new System.Drawing.Point(212, 94);
-			this._procedureType.Margin = new System.Windows.Forms.Padding(2);
-			this._procedureType.Name = "_procedureType";
-			this._procedureType.Size = new System.Drawing.Size(212, 42);
-			this._procedureType.TabIndex = 6;
-			this._procedureType.Value = null;
-			// 
 			// _keepOpen
 			// 
 			this._keepOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -271,6 +247,30 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._searchButton.Text = "Search";
 			this._searchButton.UseVisualStyleBackColor = true;
 			this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
+			// 
+			// _orderingPractitioner
+			// 
+			this.tableLayoutPanel1.SetColumnSpan(this._orderingPractitioner, 3);
+			this._orderingPractitioner.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._orderingPractitioner.LabelText = "Ordered By";
+			this._orderingPractitioner.Location = new System.Drawing.Point(2, 94);
+			this._orderingPractitioner.Margin = new System.Windows.Forms.Padding(2);
+			this._orderingPractitioner.Name = "_orderingPractitioner";
+			this._orderingPractitioner.Size = new System.Drawing.Size(206, 42);
+			this._orderingPractitioner.TabIndex = 5;
+			this._orderingPractitioner.Value = null;
+			// 
+			// _procedureType
+			// 
+			this.tableLayoutPanel1.SetColumnSpan(this._procedureType, 3);
+			this._procedureType.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._procedureType.LabelText = "ProcedureType";
+			this._procedureType.Location = new System.Drawing.Point(212, 94);
+			this._procedureType.Margin = new System.Windows.Forms.Padding(2);
+			this._procedureType.Name = "_procedureType";
+			this._procedureType.Size = new System.Drawing.Size(212, 42);
+			this._procedureType.TabIndex = 6;
+			this._procedureType.Value = null;
 			// 
 			// SearchComponentControl
 			// 

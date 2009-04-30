@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -135,20 +134,25 @@ namespace ClearCanvas.Ris.Client
 
 		#endregion
 
-        /// <summary>
-        /// Gets a value indicating whether this folder system supports searching.
-        /// </summary>
-        bool SearchEnabled { get; }
+		/// <summary>
+		/// Gets a value indicating whether this folder system supports searching.
+		/// </summary>
+		bool SearchEnabled { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether this folder system supports advanced searching.
+		/// </summary>
+		bool AdvancedSearchEnabled { get; }
 
 		/// <summary>
 		/// Get a message to describe the type of search performed.
 		/// </summary>
 		string SearchMessage { get; }
 
-        /// <summary>
-        /// Performs a search, if enabled.
-        /// </summary>
-        /// <param name="params"></param>
-        void ExecuteSearch(SearchParams @params);
+		/// <summary>
+		/// Performs a search, if enabled.
+		/// </summary>
+		/// <param name="params"></param>
+		void ExecuteSearch(SearchParams @params);
 	}
 }

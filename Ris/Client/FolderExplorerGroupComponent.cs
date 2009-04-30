@@ -66,6 +66,17 @@ namespace ClearCanvas.Ris.Client
 			set { Search(value); }
 		}
 
+		bool ISearchDataHandler.SearchEnabled
+		{
+			get { return this.AdvancedSearchEnabled; }
+		}
+
+		public event EventHandler SearchEnabledChanged
+		{
+			add { _selectedFolderExplorerChanged += value; }
+			remove { _selectedFolderExplorerChanged -= value; }
+		}
+
 		#endregion
 
 		#region IFolderSystemContext implementation
@@ -323,6 +334,11 @@ namespace ClearCanvas.Ris.Client
 		public bool SearchEnabled
 		{
 			get { return _selectedFolderExplorer == null ? false : this._selectedFolderExplorer.FolderSystem.SearchEnabled; }
+		}
+
+		public bool AdvancedSearchEnabled
+		{
+			get { return _selectedFolderExplorer == null ? false : this._selectedFolderExplorer.FolderSystem.AdvancedSearchEnabled; }
 		}
 
 		public string SearchMessage

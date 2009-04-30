@@ -92,6 +92,12 @@ namespace ClearCanvas.Ris.Client
 			get { return false; }
 		}
 
+		public override bool AdvancedSearchEnabled
+		{
+			// searching not currently supported
+			get { return false; }
+		}
+
 		// We can't lazy initialize this folder system, because the title bar needs to show the status.
 		public override bool LazyInitialize
 		{

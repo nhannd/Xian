@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.Desktop;
 using System.Collections.Generic;
 
@@ -80,6 +81,17 @@ namespace ClearCanvas.Ris.Client
 		public SearchParams SearchParams
 		{
 			set { _folderSystemGroup.SearchParams = value; }
+		}
+
+		public bool SearchEnabled
+		{
+			get { return _folderSystemGroup.AdvancedSearchEnabled; }
+		}
+
+		public event EventHandler SearchEnabledChanged
+		{
+			add { _folderSystemGroup.SearchEnabledChanged += value; }
+			remove { _folderSystemGroup.SearchEnabledChanged -= value; }
 		}
 
 		#endregion
