@@ -676,10 +676,7 @@ BEGIN
 	declare @WorkQueueGUID as uniqueidentifier
 
 	declare @PendingStatusEnum as smallint
-	declare @IdleStatusEnum as smallint
-
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
-	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 
 	BEGIN TRANSACTION
 
@@ -889,36 +886,33 @@ BEGIN
 	declare @WorkQueueGUID as uniqueidentifier
 
 	declare @PendingStatusEnum as int
-	declare @IdleStatusEnum as int
-	declare @AutoRouteTypeEnum as int
-
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
-	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 
 	BEGIN TRANSACTION
 
     -- Insert statements for procedure here
 	IF @DeviceGUID is not null
 	BEGIN
-		SELECT @WorkQueueGUID = GUID from WorkQueue 
+		SELECT @WorkQueueGUID = GUID from WorkQueue WITH (NOLOCK)
 			where StudyStorageGUID = @StudyStorageGUID
 			AND WorkQueueTypeEnum = @WorkQueueTypeEnum
 			AND DeviceGUID = @DeviceGUID
 	END
 	ELSE IF @StudyHistoryGUID is not null
 	BEGIN
-		SELECT @WorkQueueGUID = GUID from WorkQueue 
+		SELECT @WorkQueueGUID = GUID from WorkQueue WITH (NOLOCK)
 			where StudyStorageGUID = @StudyStorageGUID
 			AND WorkQueueTypeEnum = @WorkQueueTypeEnum
 			AND StudyHistoryGUID = @StudyHistoryGUID
 	END
 	ELSE
 	BEGIN
-		SELECT @WorkQueueGUID = GUID from WorkQueue 
+		SELECT @WorkQueueGUID = GUID from WorkQueue WITH (NOLOCK)
 			where StudyStorageGUID = @StudyStorageGUID
 			AND WorkQueueTypeEnum = @WorkQueueTypeEnum
 	END
-	if @@ROWCOUNT = 0
+
+	if @WorkQueueGUID is null
 	BEGIN
 		set @WorkQueueGUID = NEWID();
 
@@ -1082,6 +1076,7 @@ EXEC dbo.sp_executesql @statement = N'
 --		Jan 9, 2008:	Fixed clustering bug
 --      Sep 4, 2008:    Added @WorkQueueStatusEnumList parameter
 --      Oct 8, 2008:    Added @WorkQueuePriorityEnum parameter
+--      Apr 30, 2009:   Added UPDLOCK on selects to lock the found row
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryWorkQueue] 
 	@ProcessorID varchar(256),
@@ -1116,6 +1111,8 @@ BEGIN
 	select @PendingStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Pending''
 	select @IdleStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''Idle''
 	select @InProgressStatusEnum = Enum from WorkQueueStatusEnum where Lookup = ''In Progress''
+
+	BEGIN TRANSACTION
 	
     IF @WorkQueueTypeEnumList is null
 	BEGIN
@@ -1123,7 +1120,7 @@ BEGIN
 		BEGIN
 			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
 				@WorkQueueGUID = WorkQueue.GUID 
-			FROM WorkQueue WITH (READPAST)
+			FROM WorkQueue WITH (READPAST,UPDLOCK)
 			WHERE
 				ScheduledTime < getdate() 
 				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
@@ -1134,7 +1131,7 @@ BEGIN
 		BEGIN
 			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
 				@WorkQueueGUID = WorkQueue.GUID 
-			FROM WorkQueue WITH (READPAST)
+			FROM WorkQueue WITH (READPAST,UPDLOCK)
 			WHERE
 				ScheduledTime < getdate() 
 				AND EXISTS (SELECT GUID FROM StudyStorage WITH (READPAST) WHERE WorkQueue.StudyStorageGUID = StudyStorage.GUID AND StudyStorage.Lock = 0)
@@ -1174,7 +1171,7 @@ BEGIN
 		BEGIN
 			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
 					@WorkQueueGUID = WorkQueue.GUID 
-			FROM WorkQueue WITH (READPAST)
+			FROM WorkQueue WITH (READPAST,UPDLOCK)
 			JOIN
 				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 			WHERE
@@ -1188,7 +1185,7 @@ BEGIN
 		BEGIN
 			SELECT TOP (1) @StudyStorageGUID = WorkQueue.StudyStorageGUID,
 					@WorkQueueGUID = WorkQueue.GUID 
-			FROM WorkQueue WITH (READPAST)
+			FROM WorkQueue WITH (READPAST,UPDLOCK)
 			JOIN
 				StudyStorage ON StudyStorage.GUID = WorkQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 			WHERE
@@ -1202,7 +1199,6 @@ BEGIN
 	END
 
 	-- We have a record, now do the updates
-	BEGIN TRANSACTION
 
 	UPDATE StudyStorage
 		SET Lock = 1, LastAccessedTime = getdate()
@@ -1409,6 +1405,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Author:		Steve Wranovsky
 -- Create date: November 14, 2007
 -- Description:	Query for ServiceLock rows
+-- History:
+--      Apr 30, 2009:   Added UPDLOCK on selects to lock the found row
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryServiceLock] 
 	-- Add the parameters for the stored procedure here
@@ -1435,7 +1433,7 @@ BEGIN
     IF @ServiceLockTypeEnum = 0
 	BEGIN
 		SELECT TOP (1) @ServiceLockGUID = ServiceLock.GUID 
-		FROM ServiceLock WITH (READPAST)
+		FROM ServiceLock WITH (READPAST,UPDLOCK)
 		WHERE
 			Enabled = 1
 			AND ScheduledTime < getdate() 
@@ -1445,7 +1443,7 @@ BEGIN
 	ELSE
 	BEGIN
 		SELECT TOP (1) @ServiceLockGUID = ServiceLock.GUID 
-		FROM ServiceLock WITH (READPAST)
+		FROM ServiceLock WITH (READPAST,UPDLOCK)
 		WHERE
 			Enabled = 1
 			AND ScheduledTime < getdate() 
@@ -2536,6 +2534,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Author:		Steve Wranovsky
 -- Create date: July 14, 2008
 -- Description:	Query for entries in the ArchiveQueue
+-- History:
+--      Apr 30, 2009:   Added UPDLOCK on selects to lock the found row
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryArchiveQueue] 
 	-- Add the parameters for the stored procedure here
@@ -2564,10 +2564,12 @@ BEGIN
 
 	select @PendingStatusEnum = Enum from ArchiveQueueStatusEnum where Lookup = ''Pending''
 	select @InProgressStatusEnum = Enum from ArchiveQueueStatusEnum where Lookup = ''In Progress''
+
+	BEGIN TRANSACTION
 	
 	SELECT TOP (1) @StudyStorageGUID = ArchiveQueue.StudyStorageGUID,
 		@ArchiveQueueGUID = ArchiveQueue.GUID 
-	FROM ArchiveQueue WITH (READPAST)
+	FROM ArchiveQueue WITH (READPAST, UPDLOCK)
 	JOIN
 		StudyStorage ON StudyStorage.GUID = ArchiveQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 	WHERE
@@ -2580,7 +2582,6 @@ BEGIN
 	if @@ROWCOUNT != 0
 	BEGIN
 		-- We have a record, now do the updates
-		BEGIN TRANSACTION
 
 		UPDATE StudyStorage
 			SET Lock = 1, LastAccessedTime = getdate()
@@ -2608,6 +2609,7 @@ BEGIN
 	END
 	ELSE
 	BEGIN
+		ROLLBACK TRANSACTION
 		-- No matching rows, just create a GUID that will not find any rows.
 		SET @ArchiveQueueGUID = newid()
 	END	
@@ -2632,6 +2634,8 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 -- Author:		Steve Wranovsky
 -- Create date: July 14, 2008
 -- Description:	Query for entries in the RestoreQueue
+-- History:
+--      Apr 30, 2009:   Added UPDLOCK on selects to lock the found row
 -- =============================================
 CREATE PROCEDURE [dbo].[QueryRestoreQueue] 
 	@PartitionArchiveGUID uniqueidentifier,
@@ -2656,10 +2660,12 @@ BEGIN
 	declare @InProgressStatusEnum as int
 
 	select @InProgressStatusEnum = Enum from RestoreQueueStatusEnum where Lookup = ''In Progress''
+
+	BEGIN TRANSACTION
 	
 	SELECT TOP (1) @StudyStorageGUID = RestoreQueue.StudyStorageGUID,
 		@RestoreQueueGUID = RestoreQueue.GUID 
-	FROM RestoreQueue WITH (READPAST)
+	FROM RestoreQueue WITH (READPAST,UPDLOCK)
 	JOIN
 		StudyStorage ON StudyStorage.GUID = RestoreQueue.StudyStorageGUID AND StudyStorage.Lock = 0
 	JOIN
@@ -2673,7 +2679,6 @@ BEGIN
 	IF @@ROWCOUNT != 0
 	BEGIN
 		-- We have a record, now do the updates
-		BEGIN TRANSACTION
 
 		UPDATE StudyStorage
 			SET Lock = 1, LastAccessedTime = getdate()
@@ -2701,6 +2706,7 @@ BEGIN
 	END
 	ELSE
 	BEGIN	
+		ROLLBACK TRANSACTION
 		-- No eligible rows, just reset the GUID
 		SET @RestoreQueueGUID = newid()
 	END	
