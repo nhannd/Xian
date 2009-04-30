@@ -162,6 +162,7 @@
     <Compile Include="WorklistFactory.cs" />
     <Compile Include="WorklistFilters.cs" />
     <Compile Include="WorklistItemBase.cs" />
+    <Compile Include="WorklistItemSearchArgs.cs" />
     <Compile Include="WorklistItemSearchCriteria.cs" />
     <Compile Include="ReportingWorklistItemSearchCriteria.cs" />
     <Compile Include="ModalityWorklistItemSearchCriteria.cs" />

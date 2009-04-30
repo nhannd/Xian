@@ -10,8 +10,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     public interface IWorklistItemSearchContext<TItem>
         where TItem : WorklistItemBase
     {
-        bool IncludeDegenerate { get; }
-        WorklistItemSearchCriteria[] SearchCriteria { get; }
+        bool IncludeDegenerateProcedureItems { get; }
+		bool IncludeDegeneratePatientItems { get; }
+		WorklistItemSearchCriteria[] SearchCriteria { get; }
         int Threshold { get; }
 
         HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery);

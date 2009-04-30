@@ -137,18 +137,19 @@ namespace ClearCanvas.Enterprise.Core
 
 		/// <summary>
 		/// Creates a new object that is a copy of the current instance, including only the sub-criteria
-		/// that are included by the specified filter.  The filter is applied recursively to sub-criteria.
+		/// that are included by the specified filter.  The filter is optionally applied recursively to sub-criteria.
 		/// </summary>
 		/// <param name="subCriteriaFilter"></param>
+		/// <param name="recursive"></param>
 		/// <returns></returns>
-		public SearchCriteria Clone(Predicate<SearchCriteria> subCriteriaFilter)
+		public SearchCriteria Clone(Predicate<SearchCriteria> subCriteriaFilter, bool recursive)
 		{
 			// this implementation is not particularly efficient, but it was the simplest 
 			// way to do it given the default Clone() overload
-			// we clone the entire criteria object, then recursively remove any sub-criteria
+			// we clone the entire criteria object, then remove any sub-criteria
 			// that don't satisfy the filter
 			SearchCriteria copy = (SearchCriteria) this.Clone();
-			FilterSubCriteria(subCriteriaFilter);
+			copy.FilterSubCriteria(subCriteriaFilter, recursive);
 			return copy;
 		}
 
@@ -194,7 +195,8 @@ namespace ClearCanvas.Enterprise.Core
 		/// Recursively removes sub-criteria from this instance that do not satisfy the filter condition.
 		/// </summary>
 		/// <param name="subCriteriaFilter"></param>
-		private void FilterSubCriteria(Predicate<SearchCriteria> subCriteriaFilter)
+		/// <param name="recursive"></param>
+		private void FilterSubCriteria(Predicate<SearchCriteria> subCriteriaFilter, bool recursive)
 		{
 			List<string> keys = new List<string>(_subCriteria.Keys);
 			foreach (string key in keys)
@@ -207,8 +209,9 @@ namespace ClearCanvas.Enterprise.Core
 				}
 				else
 				{
-					// retain immediate sub-criteria, but apply filter recursively
-					subCriteria.FilterSubCriteria(subCriteriaFilter);
+					// retain immediate sub-criteria, but optionally apply filter recursively
+					if(recursive)
+						subCriteria.FilterSubCriteria(subCriteriaFilter, recursive);
 				}
 			}
 		}

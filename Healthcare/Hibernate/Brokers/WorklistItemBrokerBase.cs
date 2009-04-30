@@ -79,33 +79,33 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         class SearchContext : IWorklistItemSearchContext<TItem>
         {
-            private WorklistItemBrokerBase<TItem> _owner;
-            private WorklistItemSearchCriteria[] _searchCriteria;
-            private bool _includeDegenerate;
-            private int _threshold;
+            private readonly WorklistItemBrokerBase<TItem> _owner;
+        	private readonly WorklistItemSearchArgs _args;
 
-            public SearchContext(WorklistItemBrokerBase<TItem> owner, WorklistItemSearchCriteria[] criteria,
-                bool includeDegenerate, int threshold)
+        	public SearchContext(WorklistItemBrokerBase<TItem> owner, WorklistItemSearchArgs args)
             {
                 _owner = owner;
-                _searchCriteria = criteria;
-                _includeDegenerate = includeDegenerate;
-                _threshold = threshold;
+        		_args = args;
             }
 
-            public bool IncludeDegenerate
-            {
-                get { return _includeDegenerate; }
-            }
+        	public bool IncludeDegenerateProcedureItems
+        	{
+        		get { return _args.IncludeDegenerateProcedureItems; }
+        	}
 
-            public WorklistItemSearchCriteria[] SearchCriteria
+        	public bool IncludeDegeneratePatientItems
+        	{
+        		get { return _args.IncludeDegeneratePatientItems; }
+        	}
+
+        	public WorklistItemSearchCriteria[] SearchCriteria
             {
-                get { return _searchCriteria; }
+                get { return _args.SearchCriteria; }
             }
 
             public int Threshold
             {
-                get { return _threshold; }
+                get { return _args.Threshold; }
             }
 
             public HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery)
@@ -290,10 +290,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #endregion
 
-        private IWorklistItemSearchExecutionStrategy<TItem> _searchExecutionStrategy =
-            new OptimizedWorklistItemSearchExecutionStrategy<TItem>();
-
-
         #region Public Members
 
         /// <summary>
@@ -329,19 +325,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     	/// <summary>
     	/// Performs a search using the specified criteria.
     	/// </summary>
-    	public IList<TItem> GetSearchResults(WorklistItemSearchCriteria[] where, bool includeDegenerate)
+		public IList<TItem> GetSearchResults(WorklistItemSearchArgs args)
     	{
-            SearchContext wisc = new SearchContext(this, where, includeDegenerate, 0);
-            return _searchExecutionStrategy.GetSearchResults(wisc);
+			SearchContext wisc = new SearchContext(this, args);
+    		IWorklistItemSearchExecutionStrategy<TItem> strategy = new OptimizedWorklistItemSearchExecutionStrategy<TItem>();
+			return strategy.GetSearchResults(wisc);
 		}
 
     	/// <summary>
     	/// Gets an approximate count of the results that a search using the specified criteria would return.
     	/// </summary>
-		public bool EstimateSearchResultsCount(WorklistItemSearchCriteria[] where, int threshold, bool includeDegenerate, out int count)
+		public bool EstimateSearchResultsCount(WorklistItemSearchArgs args, out int count)
     	{
-            SearchContext wisc = new SearchContext(this, where, includeDegenerate, threshold);
-            return _searchExecutionStrategy.EstimateSearchResultsCount(wisc, out count);
+            SearchContext wisc = new SearchContext(this, args);
+			IWorklistItemSearchExecutionStrategy<TItem> strategy = new OptimizedWorklistItemSearchExecutionStrategy<TItem>();
+			return strategy.EstimateSearchResultsCount(wisc, out count);
     	}
 
     	#endregion
@@ -654,30 +652,22 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				countQuery ? DefaultCountProjection : PatientSearchProjection);
 
 			// create a copy of the criteria that contains only the patient profile criteria, as none of the others are relevant
-            // TODO: use SearchCriteria.Clone() !!!
             WorklistItemSearchCriteria[] patientCriteria = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(where,
                 delegate(WorklistItemSearchCriteria criteria)
                 {
-                    WorklistItemSearchCriteria copy = new WorklistItemSearchCriteria();
-                    // copy only the filter key
-                    if (criteria.SubCriteria.ContainsKey("PatientProfile"))
-                        copy.SubCriteria["PatientProfile"] = criteria.SubCriteria["PatientProfile"];
-
-                    return copy;
+                	return (WorklistItemSearchCriteria) criteria.Clone(
+                	                                    	delegate(SearchCriteria subCriteria)
+                	                                    	{
+                	                                    		return subCriteria.GetKey() == "PatientProfile";
+                	                                    	}, false);
                 })
                 .FindAll(delegate(WorklistItemSearchCriteria sc) { return !sc.IsEmpty; }) // remove any empties!
                 .ToArray();
 
 
             // add the criteria, but do not attempt to constrain the patient profile
-			// (since this is a patient search, the working facility must be used to constrain the profile)
 			AddConditions(patientQuery, patientCriteria, false, false);
 
-			// constrain patient profile to the working facility, if known
-			//if (workingFacility != null)
-			//{
-			//    patientQuery.Conditions.Add(new HqlCondition("pp.Mrn.AssigningAuthority = ?", workingFacility.InformationAuthority));
-			//}
 			return patientQuery;
 		}
 
