@@ -47,6 +47,30 @@ namespace ClearCanvas.Ris.Application.Services
         where TDomainItem : WorklistItemBase
         where TSummary : DataContractBase
     {
+		class TextQueryCriteria : WorklistItemSearchCriteria
+		{
+			private readonly bool _includeDegeneratePatientItems;
+			private readonly bool _includeDegenerateProcedureItems;
+
+			public TextQueryCriteria(WorklistItemSearchCriteria that, bool includeDegeneratePatientItems, bool includeDegenerateProcedureItems)
+				:base(that)
+			{
+				_includeDegeneratePatientItems = includeDegeneratePatientItems;
+				_includeDegenerateProcedureItems = includeDegenerateProcedureItems;
+			}
+
+			public bool IncludeDegeneratePatientItems
+			{
+				get { return _includeDegeneratePatientItems; }
+			}
+
+			public bool IncludeDegenerateProcedureItems
+			{
+				get { return _includeDegenerateProcedureItems; }
+			}
+		}
+
+
     	private readonly Type _procedureStepClass;
     	private readonly IWorklistItemBroker<TDomainItem> _broker;
     	private readonly WorklistItemTextQueryOptions _options;
@@ -104,18 +128,42 @@ namespace ClearCanvas.Ris.Application.Services
 										WorklistItemTextQueryOptions.DowntimeRecovery;
 			criteria.ForEach(delegate(WorklistItemSearchCriteria c) { c.Procedure.DowntimeRecoveryMode.EqualTo(downtimeRecoveryMode); });
 
-        	return criteria.ToArray();
+			// this is a silly hack to append additional information (degenerate flags) into the criteria so that we can
+			// pass them on to the TestSpecificity and DoQuery methods
+        	List<WorklistItemSearchCriteria> augmented = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(
+        		criteria,
+        		delegate(WorklistItemSearchCriteria c)
+        		{
+					return new TextQueryCriteria(c,
+						ShouldIncludeDegeneratePatientItems(req),
+						ShouldIncludeDegenerateProcedureItems(req));
+        		});
+
+			return augmented.ToArray();
 		}
 
 		protected override bool TestSpecificity(WorklistItemSearchCriteria[] where, int threshold)
 		{
+			TextQueryCriteria c = (TextQueryCriteria) CollectionUtils.FirstElement(where);
+			WorklistItemSearchArgs searchArgs = new WorklistItemSearchArgs(
+				where,
+				c.IncludeDegeneratePatientItems,
+				c.IncludeDegenerateProcedureItems,
+				threshold);
+
 			int count;
-			return _broker.EstimateSearchResultsCount(where, threshold, IncludeDegenerateItems, out count);
+			return _broker.EstimateSearchResultsCount(searchArgs, out count);
 		}
 
 		protected override IList<TDomainItem> DoQuery(WorklistItemSearchCriteria[] where, SearchResultPage page)
 		{
-			return _broker.GetSearchResults(where, IncludeDegenerateItems);
+			TextQueryCriteria c = (TextQueryCriteria)CollectionUtils.FirstElement(where);
+			WorklistItemSearchArgs searchArgs = new WorklistItemSearchArgs(
+				where,
+				c.IncludeDegeneratePatientItems,
+				c.IncludeDegenerateProcedureItems);
+
+			return _broker.GetSearchResults(searchArgs);
 		}
 
 		#endregion
@@ -332,16 +380,22 @@ namespace ClearCanvas.Ris.Application.Services
 
 		#endregion
 
-		private bool IncludeDegenerateItems
+		private bool ShouldIncludeDegenerateProcedureItems(WorklistItemTextQueryRequest request)
 		{
-			get
-			{
-				// generally, if the search query is being used on patients/orders, then it makes sense to include
-				// degenerate items
-				// conversely, if this flag is not present, then including degenerate items would mean result in an open query
-				// on the entire database which would obviously not be desirable
-				return (_options & WorklistItemTextQueryOptions.PatientOrder) == WorklistItemTextQueryOptions.PatientOrder;
-			}
+			// generally, if the search query is being used on patients/orders, then it makes sense to include
+			// degenerate procedure items
+			// conversely, if this flag is not present, then including degenerate items could result in an open query
+			// on the entire database which would obviously not be desirable
+			return (_options & WorklistItemTextQueryOptions.PatientOrder) == WorklistItemTextQueryOptions.PatientOrder;
+		}
+
+		private bool ShouldIncludeDegeneratePatientItems(WorklistItemTextQueryRequest request)
+		{
+			// include degenerate patient items iff
+			// 1) degen procedure items are being included, and
+			// 2) advanced search is not being used, or it is being used and all non-patient search criteria are empty
+			return ShouldIncludeDegenerateProcedureItems(request)
+			       && (!request.UseAdvancedSearch || request.SearchFields.IsNonPatientFieldsEmpty());
 		}
 
 		/// <summary>

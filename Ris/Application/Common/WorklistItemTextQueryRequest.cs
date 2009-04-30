@@ -56,6 +56,19 @@ namespace ClearCanvas.Ris.Application.Common
 				       && UntilDate == null;
 			}
 
+			/// <summary>
+			/// Checks if non-patient search fields are emtpy.
+			/// </summary>
+			/// <returns></returns>
+			public bool IsNonPatientFieldsEmpty()
+			{
+				return IsEmpty(AccessionNumber)
+					   && ProcedureTypeRef == null
+					   && OrderingPractitionerRef == null
+					   && FromDate == null
+					   && UntilDate == null;
+			}
+
 			private static bool IsEmpty(string s)
 			{
 				return s == null || s.Trim().Length == 0;
