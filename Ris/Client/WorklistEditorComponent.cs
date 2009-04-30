@@ -122,45 +122,56 @@ namespace ClearCanvas.Ris.Client
     	private NavigatorPage _timeWindowComponentPage;
     	private NavigatorPage _summaryComponentPage;
 
-    	/// <summary>
-        /// Constructor to create new worklist(s).
-        /// </summary>
-        public WorklistEditorComponent(bool adminMode)
-            : this(adminMode, null, null)
-        {
-        }
+		/// <summary>
+		/// Constructor to create new worklist(s).
+		/// </summary>
+		public WorklistEditorComponent(bool adminMode)
+			: this(null, adminMode, WorklistEditorMode.Add, null, null)
+		{
+		}
 
-        /// <summary>
-        /// Constructor to create new worklist(s) with limited choices of class.
-        /// </summary>
-        public WorklistEditorComponent(bool adminMode, IList<string> worklistClassChoices, string selectedClass)
-        {
-            _mode = WorklistEditorMode.Add;
-            _adminMode = adminMode;
-            _worklistClassChoices = worklistClassChoices;
-            _initialClassName = selectedClass;
-        }
+		/// <summary>
+		/// Constructor to create new worklist(s) with limited choices of class.
+		/// </summary>
+		public WorklistEditorComponent(bool adminMode, IList<string> worklistClassChoices, string selectedClass)
+			: this(null, adminMode, WorklistEditorMode.Add, worklistClassChoices, selectedClass)
+		{
+		}
 
-        /// <summary>
+		/// <summary>
 		/// Constructor to edit a worklist.
-        /// </summary>
+		/// </summary>
 		public WorklistEditorComponent(EntityRef entityRef, bool adminMode)
-        {
-			_mode = WorklistEditorMode.Edit;
-            _worklistRef = entityRef;
-            _adminMode = adminMode;
-        }
+			: this(entityRef, adminMode, WorklistEditorMode.Edit, null, null)
+		{
+		}
 
-        /// <summary>
-        /// Constructor to duplicate a worklist.
-        /// </summary>
+		/// <summary>
+		/// Constructor to duplicate a worklist.
+		/// </summary>
 		public WorklistEditorComponent(EntityRef entityRef, bool adminMode, IList<string> worklistClassChoices, string selectedClass)
-        {
-            _mode = WorklistEditorMode.Duplicate;
-            _worklistRef = entityRef;
-            _adminMode = adminMode;
+			: this(entityRef, adminMode, WorklistEditorMode.Duplicate, worklistClassChoices, selectedClass)
+		{
+		}
+
+		/// <summary>
+		/// Private constructor.
+		/// </summary>
+		/// <param name="entityRef"></param>
+		/// <param name="adminMode"></param>
+		/// <param name="editMode"></param>
+		/// <param name="worklistClassChoices"></param>
+		/// <param name="selectedClass"></param>
+		private WorklistEditorComponent(EntityRef entityRef, bool adminMode, WorklistEditorMode editMode, IList<string> worklistClassChoices, string selectedClass)
+		{
+			_worklistRef = entityRef;
+			_adminMode = adminMode;
+			_mode = editMode;
 			_worklistClassChoices = worklistClassChoices;
 			_initialClassName = selectedClass;
+
+			// start with entire tree expanded
+			this.StartFullyExpanded = true;
 		}
 
         public override void Start()
