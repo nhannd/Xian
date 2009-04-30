@@ -674,6 +674,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Complete (one or more failures)..
+        /// </summary>
+        internal static string MessageCompleteWithFailures {
+            get {
+                return ResourceManager.GetString("MessageCompleteWithFailures", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed: unable to clear data store prior to reindex operation..
         /// </summary>
         internal static string MessageFailedToClearDatabase {

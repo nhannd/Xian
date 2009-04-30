@@ -248,7 +248,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 						if (jobInformation.ProgressItem.IsComplete())
 						{
-							jobInformation.ProgressItem.StatusMessage = SR.MessageComplete;
+							jobInformation.ProgressItem.StatusMessage = SR.MessageCompleteWithFailures;
 							jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
 						}
 
@@ -277,7 +277,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						if (jobInformation.ProgressItem.IsComplete())
 						{
 							jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
-							jobInformation.ProgressItem.StatusMessage = SR.MessageComplete;
+							
+							if (jobInformation.ProgressItem.TotalDataStoreCommitFailures == 0)
+								jobInformation.ProgressItem.StatusMessage = SR.MessageComplete;
+							else
+								jobInformation.ProgressItem.StatusMessage = SR.MessageCompleteWithFailures;
 						}
 
 						importedSopInformation = new ImportedSopInstanceInformation();

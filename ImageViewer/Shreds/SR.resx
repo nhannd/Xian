@@ -322,6 +322,9 @@ Please check the service logs for more details.</value>
   <data name="MessageComplete" xml:space="preserve">
     <value>Complete.</value>
   </data>
+  <data name="MessageCompleteWithFailures" xml:space="preserve">
+    <value>Complete (one or more failures).</value>
+  </data>
   <data name="MessageFailedToClearDatabase" xml:space="preserve">
     <value>Failed: unable to clear data store prior to reindex operation.</value>
   </data>
