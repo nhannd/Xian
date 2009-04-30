@@ -115,6 +115,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 			if (_saveTemp)
 			{
+				if (File.Exists(_path))
+					File.Delete(_path);
 				File.Move(path, _path);
 				_fileCreated = true;
 			}
