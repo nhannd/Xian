@@ -306,12 +306,6 @@ namespace ClearCanvas.Ris.Client
                 this.Host.Exit();
             }
         }
-
-		public string FormatProcedureType(object item)
-		{
-			ProcedureTypeSummary rpt = (ProcedureTypeSummary)item;
-			return string.Format("{0} ({1})", rpt.Name, rpt.Id);
-		}
 		
         #endregion
 
