@@ -369,7 +369,7 @@
     <Compile Include="Network\Scu\VerificationScu.cs" />
     <Compile Include="Network\SupportedSop.cs" />
     <Compile Include="ServiceModel\Query\Comparers.cs" />
-    <Compile Include="ServiceModel\Query\DicomServerStudyRootQueryClient.cs" />
+    <Compile Include="ServiceModel\Query\DicomStudyRootQuery.cs" />
     <Compile Include="ServiceModel\Query\FaultContracts.cs" />
     <Compile Include="ServiceModel\Query\ImageIdentifier.cs" />
     <Compile Include="ServiceModel\Query\IPatientRootQuery.cs" />

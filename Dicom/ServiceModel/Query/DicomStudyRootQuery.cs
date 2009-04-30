@@ -12,14 +12,14 @@ namespace ClearCanvas.Dicom.ServiceModel.Query
 	/// A simple wrapper class that implements the <see cref="IStudyRootQuery"/> service contract,
 	/// but internally uses a <see cref="StudyRootFindScu"/>.
 	/// </summary>
-	public class DicomServerStudyRootQueryClient : IStudyRootQuery
+	public class DicomStudyRootQuery : IStudyRootQuery
 	{
 		private readonly string _localAE;
 		private readonly string _remoteAE;
 		private readonly string _remoteHost;
 		private readonly int _remotePort;
 
-		public DicomServerStudyRootQueryClient(string localAETitle, string remoteAETitle, string remoteHost, int remotePort)
+		public DicomStudyRootQuery(string localAETitle, string remoteAETitle, string remoteHost, int remotePort)
 		{
 			_localAE = localAETitle;
 			_remoteAE = remoteAETitle;

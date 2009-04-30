@@ -168,8 +168,8 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 				if (server.IsServer)
 				{
 					Server dicomServer = (Server) server;
-					DicomServerStudyRootQueryClient remoteQuery = 
-						new DicomServerStudyRootQueryClient(localAE, dicomServer.AETitle, dicomServer.Host, dicomServer.Port);
+					DicomStudyRootQuery remoteQuery = 
+						new DicomStudyRootQuery(localAE, dicomServer.AETitle, dicomServer.Host, dicomServer.Port);
 					yield return remoteQuery;
 				}
 			}
