@@ -32,11 +32,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
-    /// Set of possible test conditions.
+    /// Defines the set of possible test conditions.
     /// </summary>
     public enum SearchConditionTest
     {
@@ -67,60 +68,104 @@ namespace ClearCanvas.Enterprise.Core
         private int _sortPosition;
         private bool _sortDirection;
 
-        public SearchConditionBase()
-            : this((string)null)
-        {
-        }
+		#region Constructors
 
-        public SearchConditionBase(string key)
-            : base(key)
-        {
-            _test = SearchConditionTest.None;
-            _sortPosition = -1;     // do not sort on this field
-            _sortDirection = true;    // default sort direction to ascending
-        }
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		protected SearchConditionBase()
+			: this((string)null)
+		{
+		}
 
-        /// <summary>
-        /// Copy constructor.
-        /// </summary>
-        /// <param name="other"></param>
-        protected SearchConditionBase(SearchConditionBase other)
-            :base(other)
-        {
-            _values = other._values;
-            _test = other._test;
-            _sortPosition = other._sortPosition;
-            _sortDirection = other._sortDirection;
-        }
+		/// <summary>
+		/// Constructs a search condition with the specified key.
+		/// </summary>
+		/// <param name="key"></param>
+		protected SearchConditionBase(string key)
+			: base(key)
+		{
+			_test = SearchConditionTest.None;
+			_sortPosition = -1;     // do not sort on this field
+			_sortDirection = true;    // default sort direction to ascending
+		}
 
-        /// <summary>
-        /// Returns the test that this condition uses.
+		/// <summary>
+		/// Copy constructor.
+		/// </summary>
+		/// <param name="other"></param>
+		protected SearchConditionBase(SearchConditionBase other)
+			: base(other)
+		{
+			_values = other._values;
+			_test = other._test;
+			_sortPosition = other._sortPosition;
+			_sortDirection = other._sortDirection;
+		}
+
+		#endregion
+
+		#region Public API
+
+		/// <summary>
+		/// Specifies an ascending sort on the property associated with this condition.
+		/// </summary>
+		/// <param name="position"></param>
+		public void SortAsc(int position)
+		{
+			_sortPosition = position;
+			_sortDirection = true;
+		}
+
+		/// <summary>
+		/// Specifies a descending sort on the property associated with this condition.
+		/// </summary>
+		/// <param name="position"></param>
+		public void SortDesc(int position)
+		{
+			_sortPosition = position;
+			_sortDirection = false;
+		}
+
+		/// <summary>
+		/// Gets a value indicating if this criteria instance is empty, that is,
+		/// it does not specify a condition.
+		/// </summary>
+		public override bool IsEmpty
+		{
+			get
+			{
+				return _test == SearchConditionTest.None && _sortPosition == -1;
+			}
+		}
+
+		#endregion
+
+		#region API for brokers that consume this criteria
+
+		/// <summary>
+		/// Gets the <see cref="SearchConditionTest"/> that this condition uses.
         /// </summary>
         public SearchConditionTest Test
         {
             get { return _test; }
         }
 
-        public override bool IsEmpty
-        {
-            get
-            {
-                return _test == SearchConditionTest.None && _sortPosition == -1;
-            }
-        }
-
         /// <summary>
-        /// Returns the set of values that this condition uses to test against.  The number of values in the set
-        /// depends on the type test being performed.  Most tests test agains a single value, but Between requires
-        /// 2 values and In can work with any number of values.  Null and NotNull do not test against any values.
+        /// Gets the set of values that this condition tests against.
         /// </summary>
+        /// <remarks>
+		/// The number of values in the set depends on the type test being performed.
+		/// Most tests test agains a single value, but Between requires 2 values and
+		/// In can work with any number of values.  Null and NotNull do not test against any values.
+        /// </remarks>
         public object[] Values
         {
             get { return _values; }
         }
 
         /// <summary>
-        /// The relative priority of this sort constraint.
+        /// Gets the relative priority of this sort directive, or -1 if this instance does not specify a sort directive.
         /// </summary>
         public int SortPosition
         {
@@ -128,26 +173,44 @@ namespace ClearCanvas.Enterprise.Core
         }
 
         /// <summary>
-        /// The direction of this sort constraint.  True for ascending, false for descending.
+        /// Gets the direction of this sort constraint (true for ascending, false for descending).
         /// </summary>
         public bool SortDirection
         {
             get { return _sortDirection; }
-        }
+		}
 
-        public void SortAsc(int position)
-        {
-            _sortPosition = position;
-            _sortDirection = true;
-        }
+		#endregion
 
-        public void SortDesc(int position)
-        {
-            _sortPosition = position;
-            _sortDirection = false;
-        }
+		#region Overrides
 
-        protected void SetCondition(SearchConditionTest test, params object[] values)
+		/// <summary>
+    	/// Gets a text representation of the condition and sort information represented by this instance.
+    	/// </summary>
+    	/// <param name="prefix"></param>
+    	/// <returns></returns>
+    	protected override string[] Dump(string prefix)
+		{
+			List<string> lines = new List<string>();
+			if(_test != SearchConditionTest.None)
+			{
+				string condition = string.Format("{0}.{1}({2})", prefix, _test,
+					StringUtilities.Combine(_values, ",", delegate(object val) { return val.ToString(); }));
+				lines.Add(condition);
+			}
+			if(_sortPosition > -1)
+			{
+				string sort = string.Format("{0}.{1}({2})", prefix, _sortDirection ? "SortAsc" : "SortDesc", _sortPosition);
+				lines.Add(sort);
+			}
+			return lines.ToArray();
+		}
+
+		#endregion
+
+		#region Protected API
+
+		protected void SetCondition(SearchConditionTest test, params object[] values)
         {
             // do not set a condition if any value is null
             foreach (object val in values)
@@ -160,9 +223,12 @@ namespace ClearCanvas.Enterprise.Core
             _values = values;
         }
 
-        protected bool IsNullValue(object val)
+        protected static bool IsNullValue(object val)
         {
             return val == null || val.ToString().Length == 0;
-        }
-    }
+		}
+
+		#endregion
+
+	}
 }
