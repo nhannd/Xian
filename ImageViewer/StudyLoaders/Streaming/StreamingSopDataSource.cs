@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 						                               sopInstanceUid, _frameNumber, transferSyntaxUid,
 						                               _retrieveResult.MetaData.ContentLength, clock.Elapsed.TotalSeconds);
 
-						Platform.Log(LogLevel.Info, message);
+						Platform.Log(LogLevel.Debug, message);
 					}
 
 					result = _retrieveResult;
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 												   sopInstanceUid, _frameNumber, transferSyntaxUid,
 												   pixelData.Length, clock.Elapsed.TotalSeconds);
 
-					Platform.Log(LogLevel.Info, message);
+					Platform.Log(LogLevel.Debug, message);
 
 					return pixelData;
 				}
