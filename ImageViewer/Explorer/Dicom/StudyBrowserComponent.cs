@@ -698,7 +698,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 							{
 								int index = GetStudyIndex(item.StudyInstanceUID);
 								//just update this since the rest won't change.
-								studyTable.Items[index].ModalitiesInStudy = item.ModalitiesInStudy;
+								UpdateItem(studyTable.Items[index], item);
 								studyTable.Items.NotifyItemUpdated(index);
 							}
 						}
@@ -740,6 +740,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					String.Format(SR.FormatStudiesFound, _searchResults[_selectedServerGroup.GroupID].StudyList.Items.Count,
 					              _selectedServerGroup.Name);
 			}
+		}
+
+		private void UpdateItem(StudyItem existingItem, StudyItem sourceItem)
+		{
+			//TODO: later, make each item have a 'changed' event for the properties instead of doing this.
+			existingItem.AccessionNumber = sourceItem.AccessionNumber;
+			existingItem.ModalitiesInStudy = sourceItem.ModalitiesInStudy;
+			existingItem.NumberOfStudyRelatedInstances = sourceItem.NumberOfStudyRelatedInstances;
+			existingItem.PatientId = sourceItem.PatientId;
+			existingItem.PatientsName = sourceItem.PatientsName;
+			existingItem.PatientsBirthDate = sourceItem.PatientsBirthDate;
+			existingItem.SpecificCharacterSet = sourceItem.SpecificCharacterSet;
+			existingItem.StudyDate = sourceItem.StudyDate;
+			existingItem.StudyDescription = sourceItem.StudyDescription;
 		}
 
 		private void OnSopInstanceImported(object sender, ItemEventArgs<ImportedSopInstanceInformation> e)
