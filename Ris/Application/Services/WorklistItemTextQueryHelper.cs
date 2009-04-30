@@ -147,20 +147,11 @@ namespace ClearCanvas.Ris.Application.Services
 			// construct a base criteria object from the request values
 			WorklistItemSearchCriteria criteria = new WorklistItemSearchCriteria(_procedureStepClass);
 
-			if (!string.IsNullOrEmpty(searchParams.Mrn))
-				criteria.PatientProfile.Mrn.Id.StartsWith(searchParams.Mrn.Trim());
-
-			if (!string.IsNullOrEmpty(searchParams.FamilyName))
-				criteria.PatientProfile.Name.FamilyName.StartsWith(searchParams.FamilyName.Trim());
-
-			if (!string.IsNullOrEmpty(searchParams.GivenName))
-				criteria.PatientProfile.Name.GivenName.StartsWith(searchParams.GivenName.Trim());
-
-			if (!string.IsNullOrEmpty(searchParams.HealthcardNumber))
-				criteria.PatientProfile.Healthcard.Id.StartsWith(searchParams.HealthcardNumber.Trim());
-
-			if (!string.IsNullOrEmpty(searchParams.AccessionNumber))
-				criteria.Order.AccessionNumber.StartsWith(searchParams.AccessionNumber.Trim());
+			ApplyStringValue(criteria.PatientProfile.Mrn.Id, searchParams.Mrn);
+			ApplyStringValue(criteria.PatientProfile.Name.FamilyName, searchParams.FamilyName);
+			ApplyStringValue(criteria.PatientProfile.Name.GivenName, searchParams.GivenName);
+			ApplyStringValue(criteria.PatientProfile.Healthcard.Id, searchParams.HealthcardNumber);
+			ApplyStringValue(criteria.Order.AccessionNumber, searchParams.AccessionNumber);
 
 			if (searchParams.OrderingPractitionerRef != null)
 			{
@@ -352,5 +343,23 @@ namespace ClearCanvas.Ris.Application.Services
 				return (_options & WorklistItemTextQueryOptions.PatientOrder) == WorklistItemTextQueryOptions.PatientOrder;
 			}
 		}
+
+		/// <summary>
+		/// Applies specified string value to specified condition, if the value is non-empty.
+		/// </summary>
+		/// <param name="condition"></param>
+		/// <param name="value"></param>
+		private static void ApplyStringValue(ISearchCondition<string> condition, string value)
+		{
+			if(value != null)
+			{
+				string trimmed = value.Trim();
+				if (!string.IsNullOrEmpty(trimmed))
+				{
+					condition.StartsWith(trimmed);
+				}
+			}
+		}
+
 	}
 }
