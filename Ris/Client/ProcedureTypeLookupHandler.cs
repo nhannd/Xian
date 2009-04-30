@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client
 
         public override string FormatItem(ProcedureTypeSummary item)
         {
-            return item.Name;
+			return string.Format("{0} ({1})", item.Name, item.Id);
         }
     }
 }

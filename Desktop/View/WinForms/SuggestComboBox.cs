@@ -97,6 +97,11 @@ namespace ClearCanvas.Desktop.View.WinForms
                     {
                         items.Add(value);
                     }
+                    else
+                    {
+                        // if value is null or DBNull, clear the text
+                        this.Text = null;
+                    }
 
                     UpdateListItems(items);
                     this.SelectedItem = value;

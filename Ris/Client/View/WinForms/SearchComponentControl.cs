@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _accession.DataBindings.Add("Value", _component, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
             _accession.DataBindings.Add("Enabled", _component, "ComponentEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            _mrn.DataBindings.Add("Value", _component, "PatientIdMrn", true, DataSourceUpdateMode.OnPropertyChanged);
+            _mrn.DataBindings.Add("Value", _component, "Mrn", true, DataSourceUpdateMode.OnPropertyChanged);
             _mrn.DataBindings.Add("Enabled", _component, "ComponentEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcard.DataBindings.Add("Value", _component, "HealthcardNumber", true, DataSourceUpdateMode.OnPropertyChanged);
             _healthcard.DataBindings.Add("Enabled", _component, "ComponentEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -78,5 +78,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
                 _component.Search();
             }
         }
+
+		private void _clearButton_Click(object sender, EventArgs e)
+		{
+			_component.Clear();
+		}
     }
 }

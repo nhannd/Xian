@@ -172,17 +172,17 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_searchParams.SearchFields.AccessionNumber = value;
-				UpdateDisplay();
+				NotifyPropertyChanged("AccessionNumber");
 			}
 		}
 
-		public string PatientIdMrn
+		public string Mrn
 		{
 			get { return _searchParams.SearchFields.Mrn; }
 			set
 			{
 				_searchParams.SearchFields.Mrn = value;
-				UpdateDisplay();
+				NotifyPropertyChanged("Mrn");
 			}
 		}
 
@@ -192,7 +192,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_searchParams.SearchFields.HealthcardNumber = value;
-				UpdateDisplay();
+				NotifyPropertyChanged("HealthcardNumber");
 			}
 		}
 
@@ -202,7 +202,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_searchParams.SearchFields.FamilyName = value;
-				UpdateDisplay();
+				NotifyPropertyChanged("FamilyName");
 			}
 		}
 
@@ -212,7 +212,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_searchParams.SearchFields.GivenName = value;
-				UpdateDisplay();
+				NotifyPropertyChanged("GivenName");
 			}
 		}
 		public ExternalPractitionerSummary OrderingPractitioner
@@ -222,7 +222,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				_selectedOrderingPractitioner = value;
 				_searchParams.SearchFields.OrderingPractitionerRef = value == null ? null : value.PractitionerRef;
-				UpdateDisplay();
+				NotifyPropertyChanged("OrderingPractitioner");
 			}
 		}
 
@@ -238,7 +238,7 @@ namespace ClearCanvas.Ris.Client
 			{
 				_selectedProcedureType = value;
 				_searchParams.SearchFields.ProcedureTypeRef = value == null ? null : value.ProcedureTypeRef;
-				UpdateDisplay();
+				NotifyPropertyChanged("ProcedureType");
 			}
 		}
 
@@ -253,7 +253,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_searchParams.SearchFields.FromDate = value;
-				UpdateDisplay();
+				NotifyPropertyChanged("FromDate");
 			}
 		}
 
@@ -263,7 +263,7 @@ namespace ClearCanvas.Ris.Client
 			set
 			{
 				_searchParams.SearchFields.UntilDate = value;
-				UpdateDisplay();
+				NotifyPropertyChanged("UntilDate");
 			}
 		}
 
@@ -315,6 +315,19 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		public void Clear()
+		{
+			this.AccessionNumber = null;
+			this.Mrn = null;
+			this.HealthcardNumber = null;
+			this.FamilyName = null;
+			this.GivenName = null;
+			this.OrderingPractitioner = null;
+			this.ProcedureType = null;
+			this.FromDate = null;
+			this.UntilDate = null;
+		}
+		
 		#endregion
 
 		private static void Workspaces_ItemActivationChanged(object sender, ItemEventArgs<Workspace> e)
