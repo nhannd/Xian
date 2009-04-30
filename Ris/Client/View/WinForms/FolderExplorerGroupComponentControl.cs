@@ -6,21 +6,21 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="FolderExplorerGroupComponent"/>
-    /// </summary>
+	/// <summary>
+	/// Provides a Windows Forms user-interface for <see cref="FolderExplorerGroupComponent"/>
+	/// </summary>
 	public partial class FolderExplorerGroupComponentControl : ApplicationComponentUserControl
-    {
-        private readonly FolderExplorerGroupComponent _component;
+	{
+		private readonly FolderExplorerGroupComponent _component;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public FolderExplorerGroupComponentControl(FolderExplorerGroupComponent component)
-            :base(component)
-        {
-            InitializeComponent();
-            _component = component;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public FolderExplorerGroupComponentControl(FolderExplorerGroupComponent component)
+			: base(component)
+		{
+			InitializeComponent();
+			_component = component;
 
 			_component.SelectedFolderExplorerChanged += delegate
 				{
@@ -33,11 +33,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
 			this.DataBindings.Add("SearchTextBoxEnabled", _component, "SearchEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 			this.DataBindings.Add("SearchTextBoxMessage", _component, "SearchMessage", true, DataSourceUpdateMode.OnPropertyChanged);
+			this.DataBindings.Add("SearchButtonEnabled", _component, "SearchEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			this.DataBindings.Add("AdvancedSearchButtonEnabled", _component, "AdvancedSearchEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 		}
 
 		#region Properties
 
-    	// used by databinding within this control only
+		// used by databinding within this control only
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public bool SearchTextBoxEnabled
 		{
@@ -53,6 +55,22 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			set { _searchTextBox.ToolTipText = value; }
 		}
 
+		// used by databinding within this control only
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool SearchButtonEnabled
+		{
+			get { return _searchButton.Enabled; }
+			set { _searchButton.Enabled = value; }
+		}
+
+		// used by databinding within this control only
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+		public bool AdvancedSearchButtonEnabled
+		{
+			get { return _advancedSearch.Enabled; }
+			set { _advancedSearch.Enabled = value; }
+		}
+
 		#endregion
 
 		#region Event Handlers
@@ -62,25 +80,20 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			InitializeToolStrip();
 		}
 
-		private void _searchButton_Click(object sender, EventArgs e)
-		{
-			_component.Search(new SearchParams(_searchTextBox.Text));
-		}
-
 		private void _searchTextBox_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Enter)
 				_component.Search(new SearchParams(_searchTextBox.Text));
 		}
 
-		private void _searchTextBox_TextChanged(object sender, EventArgs e)
+		private void _searchButton_ButtonClick(object sender, EventArgs e)
 		{
-			_searchButton.Enabled = _searchTextBox.Enabled && !string.IsNullOrEmpty(_searchTextBox.Text);
+			_component.Search(new SearchParams(_searchTextBox.Text));
 		}
 
-		private void _searchTextBox_EnabledChanged(object sender, EventArgs e)
+		private void _advancedSearch_Click(object sender, EventArgs e)
 		{
-			_searchButton.Enabled = _searchTextBox.Enabled && !string.IsNullOrEmpty(_searchTextBox.Text);
+			_component.AdvancedSearch();
 		}
 
 		#endregion

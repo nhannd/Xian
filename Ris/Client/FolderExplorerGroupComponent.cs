@@ -348,7 +348,18 @@ namespace ClearCanvas.Ris.Client
 
 		public void Search(SearchParams searchParams)
 		{
+			if (!searchParams.UseAdvancedSearch && string.IsNullOrEmpty(searchParams.TextSearch))
+			{
+				this.Host.ShowMessageBox(this.SearchMessage, MessageBoxActions.Ok);
+				return;
+			}
+
 			this.SelectedFolderExplorer.ExecuteSearch(searchParams);
+		}
+
+		public void AdvancedSearch()
+		{
+			SearchComponent.Launch(this.Host.DesktopWindow);
 		}
 
 		#endregion

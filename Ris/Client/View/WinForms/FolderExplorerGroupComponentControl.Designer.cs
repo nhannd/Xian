@@ -32,7 +32,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FolderExplorerGroupComponentControl));
 			this._toolStrip = new System.Windows.Forms.ToolStrip();
 			this._searchTextBox = new System.Windows.Forms.ToolStripTextBox();
-			this._searchButton = new System.Windows.Forms.ToolStripButton();
+			this._searchButton = new System.Windows.Forms.ToolStripSplitButton();
+			this._advancedSearch = new System.Windows.Forms.ToolStripMenuItem();
 			this._groupPanel = new System.Windows.Forms.Panel();
 			this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._toolStrip.SuspendLayout();
@@ -57,19 +58,26 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._searchTextBox.Name = "_searchTextBox";
 			this._searchTextBox.Size = new System.Drawing.Size(100, 31);
 			this._searchTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this._searchTextBox_KeyDown);
-			this._searchTextBox.EnabledChanged += new System.EventHandler(this._searchTextBox_EnabledChanged);
-			this._searchTextBox.TextChanged += new System.EventHandler(this._searchTextBox_TextChanged);
 			// 
-			// _searchButton
+			// _searchButton2
 			// 
 			this._searchButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this._searchButton.Enabled = false;
-			this._searchButton.Image = ((System.Drawing.Image)(resources.GetObject("_searchButton.Image")));
+			this._searchButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this._advancedSearch});
+			this._searchButton.Image = ((System.Drawing.Image)(resources.GetObject("_searchButton2.Image")));
 			this._searchButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this._searchButton.Name = "_searchButton";
-			this._searchButton.Size = new System.Drawing.Size(28, 28);
+			this._searchButton.Name = "_searchButton2";
+			this._searchButton.Size = new System.Drawing.Size(40, 28);
 			this._searchButton.Text = "Search";
-			this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
+			this._searchButton.ButtonClick += new System.EventHandler(this._searchButton_ButtonClick);
+			// 
+			// _advancedSearch
+			// 
+			this._advancedSearch.Image = ((System.Drawing.Image)(resources.GetObject("_advancedSearch.Image")));
+			this._advancedSearch.Name = "_advancedSearch";
+			this._advancedSearch.Size = new System.Drawing.Size(192, 30);
+			this._advancedSearch.Text = "Advanced Search ...";
+			this._advancedSearch.Click += new System.EventHandler(this._advancedSearch_Click);
 			// 
 			// _groupPanel
 			// 
@@ -107,6 +115,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.ToolStripTextBox _searchTextBox;
 		private System.Windows.Forms.Panel _groupPanel;
 		private System.Windows.Forms.ContextMenuStrip _contextMenu;
-		private System.Windows.Forms.ToolStripButton _searchButton;
+		private System.Windows.Forms.ToolStripSplitButton _searchButton;
+		private System.Windows.Forms.ToolStripMenuItem _advancedSearch;
     }
 }
