@@ -1,6 +1,6 @@
-#region License
+﻿#region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -36,7 +36,7 @@ using ClearCanvas.Common;
 [assembly: AssemblyConfiguration("Release")]
 [assembly: AssemblyCompany("ClearCanvas Inc")]
 [assembly: AssemblyProduct("Image Viewer")]
-[assembly: AssemblyCopyright("Copyright (c) 2006-2008")]
+[assembly: AssemblyCopyright("Copyright (c) 2009")]
 [assembly: AssemblyVersion("0.95.1815.10455")]
 [assembly: AssemblyFileVersion("0.95.1815.10455")]
 [assembly: Plugin]

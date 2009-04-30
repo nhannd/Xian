@@ -1,6 +1,6 @@
-#region License
+ï»¿#region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -73,7 +73,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <summary>
         /// Identification of the physician(s) administering the Series. One or more items 
         /// shall be included in this sequence. If more than one Item, the number and
-        /// order shall correspond to the value of Performing Physician’s Name (0008,1050), if present.
+        /// order shall correspond to the value of Performing Physicianï¿½s Name (0008,1050), if present.
         /// </summary>
         /// <value>The performing physician identification sequence list.</value>
         public SequenceIodList<PersonIdentificationMacro> PerformingPhysicianIdentificationSequenceList
@@ -97,7 +97,7 @@ namespace ClearCanvas.Dicom.Iod.Sequences
         /// <summary>
         /// Identification of the operator(s) supporting the Series. One or more items shall be 
         /// included in this sequence. If more than one Item, the number and
-        /// order shall correspond to the value of Operators’ Name (0008,1070), if present.
+        /// order shall correspond to the value of Operatorsï¿½ Name (0008,1070), if present.
         /// </summary>
         /// <value>The operator identification sequence list.</value>
         public SequenceIodList<PersonIdentificationMacro> OperatorIdentificationSequenceList

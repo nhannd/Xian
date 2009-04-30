@@ -1,6 +1,6 @@
-#region License
+ï»¿#region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -72,7 +72,7 @@ namespace ClearCanvas.Common.Statistics
                 if (duration.Ticks > TICKSPERMILISECONDS)
                     return String.Format("{0:0} ms", duration.TotalMilliseconds);
                 if (duration.Ticks > TICKSPERMICROECONDS)
-                    return String.Format("{0:0} µs", duration.Ticks / TICKSPERMICROECONDS);
+                    return String.Format("{0:0} ï¿½s", duration.Ticks / TICKSPERMICROECONDS);
                 else
                     return String.Format("{0:0} ns", duration.Ticks / TICKSPERNANOSECONDS);
             }
@@ -89,7 +89,7 @@ namespace ClearCanvas.Common.Statistics
                 if (duration.Ticks > TICKSPERMILISECONDS)
                     return String.Format("{0:0.00} ms", duration.TotalMilliseconds);
                 if (duration.Ticks > TICKSPERMICROECONDS)
-                    return String.Format("{0:0.00} µs", duration.Ticks / TICKSPERMICROECONDS);
+                    return String.Format("{0:0.00} ï¿½s", duration.Ticks / TICKSPERMICROECONDS);
                 else
                     return String.Format("{0:0.00} ns", duration.Ticks / TICKSPERNANOSECONDS);
                 

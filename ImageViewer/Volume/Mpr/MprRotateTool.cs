@@ -1,6 +1,6 @@
-#region License
+ï»¿#region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -215,7 +215,7 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 /******************************************************/
 /*  GetKeyState Utility                               */
 /*  by: Steve Whitley                                 */
-/*  © 2005 NullFX Software                            */
+/*  ï¿½ 2005 NullFX Software                            */
 /*                                                    */
 /* NULLFX SOFTWARE DISCLAIMS ALL WARRANTIES,          */
 /* RESPONSIBILITIES, AND LIABILITIES ASSOCIATED WITH  */

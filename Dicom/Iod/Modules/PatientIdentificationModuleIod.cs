@@ -1,6 +1,6 @@
-#region License
+ï»¿#region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -168,8 +168,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
         }
         
         //TODO: Patient's Insurance Plan Code Sequence
-        //TODO: Patient’s Primary Language Code Sequence
-        //TODO: Patient’s Primary Language Code Modifier Sequence
+        //TODO: Patientï¿½s Primary Language Code Sequence
+        //TODO: Patientï¿½s Primary Language Code Modifier Sequence
 
         /// <summary>
         /// Gets or sets the size of the patients (in meters)

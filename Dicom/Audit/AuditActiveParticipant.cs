@@ -1,3 +1,34 @@
+ï»¿#region License
+
+// Copyright (c) 2009, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -80,15 +111,15 @@ namespace ClearCanvas.Dicom.Audit
 		/// </para>
 		/// <para>
 		/// When importing or exporting data, e.g. by means of media, the UserID field is used both to identify people
-		/// and to identify the media itself. When the Role ID Code is EV(110154, DCM, “Destination Media”) or
-		/// EV(110155, DCM, “Source Media”), the UserID may be:
+		/// and to identify the media itself. When the Role ID Code is EV(110154, DCM, ï¿½Destination Mediaï¿½) or
+		/// EV(110155, DCM, ï¿½Source Mediaï¿½), the UserID may be:
 		/// </para>
 		/// <list>
 		/// <item>
 		/// a. a URI (the preferred form) identifying the source or destination,
 		/// </item>
 		/// <item>
-		/// b. an email address of the form “mailto:user@address”
+		/// b. an email address of the form ï¿½mailto:user@addressï¿½
 		/// </item>
 		/// <item>
 		/// c. a description of the media type (e.g. DVD) together with a description of its identifying label, as a
@@ -130,12 +161,12 @@ namespace ClearCanvas.Dicom.Audit
 		/// listed as:
 		/// </para>
 		/// <para>
-		///  AETITLES=aetitle1;aetitle2;…
+		///  AETITLES=aetitle1;aetitle2;ï¿½
 		/// </para>
 		/// <para>
 		///  When importing or exporting data, e.g. by means of media, the Alternate UserID field is used both to
-		///  identify people and to identify the media itself. When the Role ID Code is EV(110154, DCM, “Destination
-		///  Media”) or EV(110155, DCM, “Source Media”), the Alternate UserID may be any machine readable
+		///  identify people and to identify the media itself. When the Role ID Code is EV(110154, DCM, ï¿½Destination
+		///  Mediaï¿½) or EV(110155, DCM, ï¿½Source Mediaï¿½), the Alternate UserID may be any machine readable
 		///  identifications on the media, such as media serial number, volume label, DICOMDIR SOP Instance UID.
 		/// </para>
 		/// </remarks>
@@ -157,7 +188,7 @@ namespace ClearCanvas.Dicom.Audit
 		/// <para>
 		/// From DICOM Supplment 95:
 		/// A human readable identification of the participant, which serves to further clarify who or what the
-		/// participant is. If the participant is a person, the person’s name shall be used. If the participant is a
+		/// participant is. If the participant is a person, the personï¿½s name shall be used. If the participant is a
 		/// process, then the process name shall be used.
 		/// </para>
 		/// </remarks>

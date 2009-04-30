@@ -1,6 +1,6 @@
-#region License
+ï»¿#region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -107,7 +107,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
         /// <summary>
         /// Distance in mm from the source to the surface of the patient closest to the source during this Performed Procedure Step.
-        /// Note: This may be an estimated value based on assumptions about the patient’s body size and habitus.
+        /// Note: This may be an estimated value based on assumptions about the patientï¿½s body size and habitus.
         /// </summary>
         /// <value>The distance source to entrance.</value>
         public float DistanceSourceToEntrance
@@ -118,7 +118,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
         /// <summary>
         /// Average entrance dose value measured in dGy at the surface of the patient during this Performed Procedure Step.
-        /// Note: This may be an estimated value based on assumptions about the patient’s body size and habitus.
+        /// Note: This may be an estimated value based on assumptions about the patientï¿½s body size and habitus.
         /// </summary>
         /// <value>The entrance dose.</value>
         public ushort EntranceDose
@@ -129,7 +129,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 
         /// <summary>
         /// Average entrance dose value measured in mGy at the surface of the patient during this Performed Procedure Step.
-        /// Note: This may be an estimated value based on assumptions about the patient’s body size and habitus.
+        /// Note: This may be an estimated value based on assumptions about the patientï¿½s body size and habitus.
         /// </summary>
         /// <value>The entrance dose in mgy.</value>
         public float EntranceDoseInMgy
@@ -163,7 +163,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
         /// Procedure Step and measured in dGy*cm*cm, including fluoroscopy.
         /// <para>Notes: 1. The sum of the area dose product of all images of a Series or a Study may not result in
         /// the total area dose product to which the patient was exposed.</para>
-        /// <para>2. This may be an estimated value based on assumptions about the patient’s body size and habitus.</para>
+        /// <para>2. This may be an estimated value based on assumptions about the patientï¿½s body size and habitus.</para>
         /// </summary>
         /// <value>The image and fluoroscopy area dose product.</value>
         public float ImageAndFluoroscopyAreaDoseProduct

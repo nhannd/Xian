@@ -1,6 +1,6 @@
-#region License
+ï»¿#region License
 
-// Copyright (c) 2006-2008, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -62,7 +62,7 @@ namespace ClearCanvas.Dicom.Iod.Macros
         /// <summary>
         /// A coded entry which identifies a person.
         /// <para>The Code Meaning attribute, though it will be encoded with a VR of LO, 
-        /// may be encoded according to the rules of the PN VR (e.g. caret ‘^’ delimiters 
+        /// may be encoded according to the rules of the PN VR (e.g. caret ï¿½^ï¿½ delimiters 
         /// shall separate name components), except that a single component (i.e. the
         /// whole name unseparated by caret delimiters) is not permitted. Name component 
         /// groups for use with multi-byte character sets are permitted, as long as they fit 

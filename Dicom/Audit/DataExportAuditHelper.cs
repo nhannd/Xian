@@ -1,6 +1,6 @@
-#region License
+ï»¿#region License
 
-// Copyright (c) 2006-2009, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -39,7 +39,7 @@ namespace ClearCanvas.Dicom.Audit
 	/// </summary>
 	/// <remarks>
 	/// This message describes the event of exporting data from a system, implying that the data is leaving
-	/// control of the system’s security domain. Examples of exporting include printing to paper, recording on film,
+	/// control of the systemï¿½s security domain. Examples of exporting include printing to paper, recording on film,
 	/// creation of a .pdf or HTML file, conversion to another format for storage in an EHR, writing to removable
 	/// media, or sending via e-mail. Multiple patients may be described in one event message.
 	/// </remarks>

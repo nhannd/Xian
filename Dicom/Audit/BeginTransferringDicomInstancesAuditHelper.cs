@@ -1,6 +1,6 @@
-#region License
+ï»¿#region License
 
-// Copyright (c) 2006-2009, ClearCanvas Inc.
+// Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -41,7 +41,7 @@ namespace ClearCanvas.Dicom.Audit
 	/// <remarks>
 	/// <para>
 	/// This message describes the event of a system begining to transfer a set of DICOM instances from one
-	/// node to another node within control of the system’s security domain. This message may only include
+	/// node to another node within control of the systemï¿½s security domain. This message may only include
 	/// information about a single patient.
 	/// </para>
 	/// <para>
