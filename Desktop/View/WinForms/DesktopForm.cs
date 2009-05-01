@@ -47,6 +47,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </remarks>
     public partial class DesktopForm : DotNetMagicForm
     {
+    	private DesktopViewSettings _viewSettings;
         private ActionModelNode _menuModel;
         private ActionModelNode _toolbarModel;
 
@@ -72,6 +73,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				InitializeTabControl(_tabbedGroups.ActiveLeaf.TabControl);
 			}
+
+        	_viewSettings = DesktopViewSettings.Default;
+			_toolbar.LayoutStyle = _viewSettings.LocalToolStripLayoutStyle;
+			_viewSettings.PropertyChanged += OnViewSettingsPropertyChanged;
         }
 
         #region Public properties
@@ -132,6 +137,22 @@ namespace ClearCanvas.Desktop.View.WinForms
             InitializeTabControl(tabControl);
         }
 
+		private void OnViewSettingsPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+		{
+			if (e.PropertyName == "LocalToolStripLayoutStyle")
+			{
+				if (_viewSettings.LocalToolStripLayoutStyle == ToolStripLayoutStyle.Flow && _toolbar.Orientation == Orientation.Vertical)
+				{
+					// for some reason, switching to flow layout while vertical causes the toolbar to take up the entire screen
+					// thus, we force the toolbar to the horizontal orientation in the top panel when wrapped.
+					_toolStripContainer.SuspendLayout();
+					_toolbar.Parent.Controls.Remove(_toolbar);
+					_toolStripContainer.TopToolStripPanel.Controls.Add(_toolbar);
+					_toolStripContainer.ResumeLayout(true);
+				}
+				_toolbar.LayoutStyle = _viewSettings.LocalToolStripLayoutStyle;
+			}
+		}
 
         #endregion
 

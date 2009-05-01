@@ -18,5 +18,8 @@
       <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
 &lt;desktops /&gt;</Value>
     </Setting>
+    <Setting Name="LocalToolStripLayoutStyle" Type="System.Windows.Forms.ToolStripLayoutStyle" Scope="User">
+      <Value Profile="(Default)">StackWithOverflow</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

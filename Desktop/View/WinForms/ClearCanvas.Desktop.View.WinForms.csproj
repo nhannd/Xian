@@ -71,6 +71,13 @@
     <Compile Include="ComboBoxField.Designer.cs">
       <DependentUpon>ComboBoxField.cs</DependentUpon>
     </Compile>
+    <Compile Include="DesktopViewConfig.cs" />
+    <Compile Include="DesktopViewConfigComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopViewConfigComponentControl.Designer.cs">
+      <DependentUpon>DesktopViewConfigComponentControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="DragDropObject.cs" />
     <Compile Include="DropDownButtonToolbarItem.cs">
       <SubType>Component</SubType>
@@ -465,6 +472,10 @@
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Configuration\ClearCanvas.Desktop.Configuration.csproj">
+      <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
+      <Name>ClearCanvas.Desktop.Configuration</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
@@ -480,6 +491,10 @@
     <Content Include="FileBrowser\Images\BrowserForward.png" />
     <Content Include="FileBrowser\Images\BrowserUp.png" />
     <None Include="Resources\ClearFilterMini.png" />
+    <EmbeddedResource Include="DesktopViewConfigComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DesktopViewConfigComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="GalleryComponentControl.resx">
       <DependentUpon>GalleryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>

@@ -49,6 +49,12 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (disposing)
             {
+				if(_viewSettings != null)
+				{
+					_viewSettings.PropertyChanged -= OnViewSettingsPropertyChanged;
+					_viewSettings = null;
+				}
+
 				if (_mainMenu != null)
 				{
 					_mainMenu.Dispose();
