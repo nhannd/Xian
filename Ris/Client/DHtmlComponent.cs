@@ -154,9 +154,14 @@ namespace ClearCanvas.Ris.Client
 				TimeSpan.TryParse(isoTimeSpanString, out timeSpan);
 
 				if (res == 1440)
+				{
 					return new RelativeTimeInDays(timeSpan.Days).ToString();
+				}
 				else
-					return new RelativeTimeInHours(timeSpan.Hours).ToString();
+				{
+					int hours = timeSpan.Days*24 + timeSpan.Hours;
+					return new RelativeTimeInHours(hours).ToString();
+				}
 			}
 
         	public string FormatAddress(string jsml)
