@@ -467,6 +467,12 @@ namespace ClearCanvas.ImageViewer
 			get { return _priorStudyLoader.IsActive; }
 		}
 
+		public event EventHandler IsLoadingPriorsChanged
+		{
+			add { _priorStudyLoader.IsActiveChanged += value; }
+			remove { _priorStudyLoader.IsActiveChanged -= value; }
+		}
+
 		/// <summary>
 		/// Gets a string containing the patients currently loaded in this
 		/// <see cref="ImageViewerComponent"/>.

@@ -35,6 +35,7 @@ using System;
 using ClearCanvas.Common;
 using System.Threading;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -66,6 +67,8 @@ namespace ClearCanvas.ImageViewer
 			private readonly List<SingleStudyLoader> _singleStudyLoaders;
 
 			private volatile bool _isActive = false;
+			private event EventHandler _isActiveChanged;
+
 			private volatile bool _stop = false;
 
 			private Thread _thread;
@@ -87,7 +90,21 @@ namespace ClearCanvas.ImageViewer
 
 			public bool IsActive
 			{
-				get { return _isActive; }	
+				get { return _isActive; }
+				private set
+				{
+					if (_isActive == value)
+						return;
+
+					_isActive = value;
+					EventsHelper.Fire(_isActiveChanged, this, EventArgs.Empty);
+				}
+			}
+
+			public event EventHandler IsActiveChanged
+			{
+				add { _isActiveChanged += value; }	
+				remove { _isActiveChanged -= value; }	
 			}
 
 			public void Start()
@@ -99,7 +116,7 @@ namespace ClearCanvas.ImageViewer
 					return;
 
 				_stop = false;
-				_isActive = true;
+				IsActive = true;
 				_synchronizationContext = SynchronizationContext.Current;
 				_thread = new Thread(Run);
 				_thread.IsBackground = false;
@@ -187,7 +204,7 @@ namespace ClearCanvas.ImageViewer
 
 			private void OnComplete(object nothing)
 			{
-				_isActive = false;
+				IsActive = false;
 				int completeFailures = GetCompleteFailures();
 				int partialFailures = GetPartialFailures();
 

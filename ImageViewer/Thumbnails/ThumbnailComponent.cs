@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 		private readonly BindingList<IGalleryItem> _thumbnails;
 		private IEnumerator<IGalleryItem> _loadThumbnailIterator;
-
+		
 		public ThumbnailComponent(IDesktopWindow desktopWindow)
 		{
 			_desktopWindow = desktopWindow;
@@ -89,6 +89,26 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		}
 
 		#endregion
+
+		private void UpdateTreeInfo()
+		{
+			if (_activeViewer == null)
+			{
+				SetCurrentTreeInfo(_dummyTreeInfo);
+			}
+			else
+			{
+				if (!_viewerTreeInfo.ContainsKey(_activeViewer))
+				{
+					ObservableList<IImageSet> imageSets = _activeViewer.LogicalWorkspace.ImageSets;
+					string primaryStudyInstanceUid = GetPrimaryStudyInstanceUid(_activeViewer.StudyTree);
+					ImageSetTreeInfo info = new ImageSetTreeInfo(imageSets, primaryStudyInstanceUid);
+					_viewerTreeInfo.Add(_activeViewer, info);
+				}
+
+				SetCurrentTreeInfo(_viewerTreeInfo[_activeViewer]);
+			}
+		}
 
 		private void SetCurrentTreeInfo(ImageSetTreeInfo currentTreeInfo)
 		{
@@ -132,6 +152,32 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			RefreshThumbnails();
 		}
 
+		private void OnLoadingPriorsChanged(object sender, EventArgs e)
+		{
+			UpdateTitle();
+		}
+
+		private void UpdateTitle()
+		{
+			if (_activeViewer != null && _activeViewer.IsLoadingPriors)
+				base.Host.Title = SR.TitleThumbnailsLoadingPriors;
+			else
+				base.Host.Title = SR.TitleThumbnails;
+		}
+
+		internal static IShelf Launch(IDesktopWindow desktopWindow)
+		{
+			ThumbnailComponent component = new ThumbnailComponent(desktopWindow);
+			Shelf shelf = LaunchAsShelf(
+				desktopWindow,
+				component,
+				SR.TitleThumbnails,
+				"Thumbnails",
+				ShelfDisplayHint.DockTop | ShelfDisplayHint.DockAutoHide);
+
+			return shelf;
+		}
+
 		/// <summary>
 		/// Called by the host to initialize the application component.
 		/// </summary>
@@ -139,9 +185,10 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		{
 			_desktopWindow.Workspaces.ItemActivationChanged += OnActiveWorkspaceChanged;
 			_desktopWindow.Workspaces.ItemClosed += OnWorkspaceClosed;
-
+			
 			SetImageViewer(_desktopWindow.ActiveWorkspace);
-
+			UpdateTreeInfo();
+			
 			base.Start();
 		}
 
@@ -158,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			_desktopWindow.Workspaces.ItemActivationChanged -= OnActiveWorkspaceChanged;
 			_desktopWindow.Workspaces.ItemClosed -= OnWorkspaceClosed;
 
-			_activeViewer = null;
+			SetImageViewer(null);
 			ClearThumbnails();
 
 			base.Stop();
@@ -167,6 +214,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		private void OnActiveWorkspaceChanged(object sender, ItemEventArgs<Workspace> e)
 		{
 			SetImageViewer(e.Item);
+			UpdateTreeInfo();
 		}
 
 		private static void OnWorkspaceClosed(object sender, ClosedItemEventArgs<Workspace> e)
@@ -192,24 +240,18 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 		private void SetImageViewer(Workspace workspace)
 		{
 			IImageViewer viewer = CastToImageViewer(workspace);
-			if (viewer == null)
-			{
-				_activeViewer = null;
-				SetCurrentTreeInfo(_dummyTreeInfo);
-			}
-			else if (viewer != _activeViewer)
-			{
-				_activeViewer = viewer;
-				if (!_viewerTreeInfo.ContainsKey(_activeViewer))
-				{
-					ObservableList<IImageSet> imageSets = _activeViewer.LogicalWorkspace.ImageSets;
-					string primaryStudyInstanceUid = GetPrimaryStudyInstanceUid(_activeViewer.StudyTree);
-					ImageSetTreeInfo info = new ImageSetTreeInfo(imageSets, primaryStudyInstanceUid);
-					_viewerTreeInfo.Add(_activeViewer, info);
-				}
+			if (viewer == _activeViewer)
+				return;
 
-				SetCurrentTreeInfo(_viewerTreeInfo[_activeViewer]);
-			}
+			if (_activeViewer != null)
+				_activeViewer.IsLoadingPriorsChanged -= OnLoadingPriorsChanged;
+
+			_activeViewer = viewer;
+
+			if (_activeViewer != null)
+				_activeViewer.IsLoadingPriorsChanged += OnLoadingPriorsChanged;
+
+			UpdateTitle();
 		}
 
 		#region Thumbnail Methods

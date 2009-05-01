@@ -72,13 +72,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				{
 					IDesktopWindow desktopWindow = this.Context.DesktopWindow;
 
-					IShelf shelf = ApplicationComponent.LaunchAsShelf(
-						desktopWindow,
-						new ThumbnailComponent(desktopWindow),
-						SR.TitleThumbnails,
-						"Thumbnails",
-						ShelfDisplayHint.DockTop | ShelfDisplayHint.DockAutoHide);
-
+					IShelf shelf = ThumbnailComponent.Launch(desktopWindow);
 					shelf.Closed += delegate
 					                	{
 					                		_shelves.Remove(desktopWindow);

@@ -135,6 +135,9 @@
   <data name="TitleThumbnails" xml:space="preserve">
     <value>Thumbnails</value>
   </data>
+  <data name="TitleThumbnailsLoadingPriors" xml:space="preserve">
+    <value>Thumbnails (Loading Priors ... )</value>
+  </data>
   <data name="ToolbarShowThumbnails" xml:space="preserve">
     <value>Thumbnails</value>
   </data>

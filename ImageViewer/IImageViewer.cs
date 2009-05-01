@@ -105,6 +105,8 @@ namespace ClearCanvas.ImageViewer
 
 		bool IsLoadingPriors { get; }
 
+		event EventHandler IsLoadingPriorsChanged;
+		
 		/// <summary>
 		/// Loads a study with a specific Study Instance UID from a specific source.
 		/// </summary>
