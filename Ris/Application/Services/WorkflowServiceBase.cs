@@ -175,7 +175,7 @@ namespace ClearCanvas.Ris.Application.Services
         }
 
 		/// <summary>
-		/// Helper method that implements the logic for performing text searches on worklists.
+		/// Helper method that implements the logic for performing searches on worklists.
 		/// </summary>
 		/// <typeparam name="TItem"></typeparam>
 		/// <typeparam name="TSummary"></typeparam>

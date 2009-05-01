@@ -38,49 +38,138 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
-    public interface IWorklistItemSearchContext<TItem>
+	/// <summary>
+	/// Defines an interface to an object that encapsulates information about a search to be executed.
+	/// </summary>
+	/// <typeparam name="TItem"></typeparam>
+    interface IWorklistItemSearchContext<TItem>
         where TItem : WorklistItemBase
     {
+		/// <summary>
+		/// Gets a value indicating whether degenerate procedure worklist items should be included
+		/// in the search results.
+		/// </summary>
         bool IncludeDegenerateProcedureItems { get; }
+
+		/// <summary>
+		/// Gets a value indicating whether degenerate patient worklist items should be included
+		/// in the search results.
+		/// </summary>
 		bool IncludeDegeneratePatientItems { get; }
+
+		/// <summary>
+		/// Gets the search criteria.
+		/// </summary>
 		WorklistItemSearchCriteria[] SearchCriteria { get; }
+
+		/// <summary>
+		/// Gets the maximum number of allowed hits.  A search that would return more hits should not execute.
+		/// </summary>
         int Threshold { get; }
 
+		/// <summary>
+		/// Obtains the HQL query to search for full (non-degenerate) worklist items.
+		/// </summary>
+		/// <param name="where"></param>
+		/// <param name="countQuery"></param>
+		/// <returns></returns>
         HqlProjectionQuery BuildWorklistItemSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery);
+
+		/// <summary>
+		/// Obtains the HQL query to search for degenerate procedure worklist items.
+		/// </summary>
+		/// <param name="where"></param>
+		/// <param name="countQuery"></param>
+		/// <returns></returns>
         HqlProjectionQuery BuildProcedureSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery);
+
+		/// <summary>
+		/// Obtains the HQL query to search for degenerate patient worklist items.
+		/// </summary>
+		/// <param name="where"></param>
+		/// <param name="countQuery"></param>
+		/// <returns></returns>
         HqlProjectionQuery BuildPatientSearchQuery(WorklistItemSearchCriteria[] where, bool countQuery);
+
+		/// <summary>
+		/// Executes the specified query.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <returns></returns>
         List<TItem> DoQuery(HqlQuery query);
+
+		/// <summary>
+		/// Executes the specified count query.
+		/// </summary>
+		/// <param name="query"></param>
+		/// <returns></returns>
         int DoQueryCount(HqlQuery query);
     }
 
-
-    public interface IWorklistItemSearchExecutionStrategy<TItem>
+	/// <summary>
+	/// Defines an interface to a class that encapsulates a strategy for executing a worklist search.
+	/// </summary>
+	/// <typeparam name="TItem"></typeparam>
+    interface IWorklistItemSearchExecutionStrategy<TItem>
         where TItem : WorklistItemBase
     {
+		/// <summary>
+		/// Executes a search, returning a list of hits.
+		/// </summary>
+		/// <param name="wisc"></param>
+		/// <returns></returns>
         IList<TItem> GetSearchResults(IWorklistItemSearchContext<TItem> wisc);
+
+		/// <summary>
+		/// Estimates the hit count for the specified search, unless the count exceeds a specified
+		/// threshold, in which case the method returns false and no count is obtained.
+		/// </summary>
+		/// <param name="wisc"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
         bool EstimateSearchResultsCount(IWorklistItemSearchContext<TItem> wisc, out int count);
     }
 
-    public abstract class WorklistItemSearchExecutionStrategy<TItem> : IWorklistItemSearchExecutionStrategy<TItem>
+	/// <summary>
+	/// Abstract base implementation of <see cref="IWorklistItemSearchExecutionStrategy{TItem}"/>.
+	/// </summary>
+	/// <typeparam name="TItem"></typeparam>
+    abstract class WorklistItemSearchExecutionStrategy<TItem> : IWorklistItemSearchExecutionStrategy<TItem>
         where TItem : WorklistItemBase
     {
         #region IWorklistItemSearchExecutionStrategy<TItem> Members
 
-        public abstract IList<TItem> GetSearchResults(IWorklistItemSearchContext<TItem> wisc);
+		/// <summary>
+		/// Executes a search, returning a list of hits.
+		/// </summary>
+		/// <param name="wisc"></param>
+		/// <returns></returns>
+		public abstract IList<TItem> GetSearchResults(IWorklistItemSearchContext<TItem> wisc);
 
-        public abstract bool EstimateSearchResultsCount(IWorklistItemSearchContext<TItem> wisc, out int count);
+		/// <summary>
+		/// Estimates the hit count for the specified search, unless the count exceeds a specified
+		/// threshold, in which case the method returns false and no count is obtained.
+		/// </summary>
+		/// <param name="wisc"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		public abstract bool EstimateSearchResultsCount(IWorklistItemSearchContext<TItem> wisc, out int count);
 
         #endregion
 
         /// <summary>
-        /// Returns a new list containing all items in primary, plus any items in secondary that were not
-        /// already in primary according to the specified identity provider.  The arguments are not modified.
+        /// Performs a union of the primary and secondary sets.
         /// </summary>
+        /// <remarks>
+        /// The specified identity-provider is used to determine identity of two items, hence whether the same logical
+        /// item appears in both sets.  If the same logical item appears in both sets, the actual item from the primary set will
+        /// always be chosen.  The union is returned as a new list (the arguments are not modified).
+        /// </remarks>
         /// <param name="primary"></param>
         /// <param name="secondary"></param>
         /// <param name="identityProvider"></param>
         /// <returns></returns>
-        protected static List<TItem> MergeResults(List<TItem> primary, List<TItem> secondary,
+        protected static List<TItem> UnionMerge(List<TItem> primary, List<TItem> secondary,
             Converter<TItem, EntityRef> identityProvider)
         {
             // note that we do not modify the arguments

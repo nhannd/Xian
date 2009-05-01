@@ -35,37 +35,109 @@ using System.Text;
 using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
+	/// <summary>
+	/// </summary>
+	/// <remarks>
+	/// The current ad-hoc query design consists of a single string query
+	/// which is parsed into a set of names and identifiers, which are matched on only a small subset of 
+	/// fields:
+	/// 
+	/// M = Patient MRN
+	/// N = Patient Name
+	/// H = Healthcard Number
+	/// A = Accession Number
+	/// 
+	/// If the query string parsing results in multiple values, those values are combined using OR logic.
+	/// eg. M + N + H + A
+	/// 
+	/// The search criteria also include a condition on the Downtime Recovery Mode flag (D), in order to
+	/// partition the procedure space into Downtime-Recovery procedures vs Live procedures.  Hence,
+	/// the boolean expression for the complete query is always of the form:
+	/// 
+	/// D(M + N + H + A)
+	/// 
+	/// When this query form is processed into a set of <see cref="WorklistItemSearchCriteria"/> objects,
+	/// the resulting array can be visualized as a sparse matrix of boolean variables. 
+	/// The fixed query form DM + DN + DH + DA means the resulting condition matrix will *always* have
+	/// the following general form:
+	/// 
+	/// [M 1 D]
+	/// [N 1 D]
+	/// [H 1 D]
+	/// [1 A D]
+	/// 
+	/// The optimization employed by this strategy is to split the above matrix into two parts:
+	/// 
+	/// [M 1 D]
+	/// [N 1 D]
+	/// [H 1 D]
+	/// 
+	/// and 
+	/// 
+	/// [1 A D]
+	/// 
+	/// (eg rows that contain patient conditions, and rows that do not).
+	/// Two queries are then executed: one query for the first 3 rows, and a second query for 
+	/// the last row.  Because the matrix was split horizontally, the result sets of each query
+	/// can simply be unioned together.
+	/// 
+	/// The rational for this strategy is based on the empirical observation that SQL Server
+	/// is able to determine an efficient query plan for a D(M + N + H) query and a DA query
+	/// independently, but it does not seem to be able to find an efficient query plan for the
+	/// full D(M + N + H + A) query.  It is not known why this is the case, but clearly the fact
+	/// that M, N, H reside in the same table, whereas A resides in a different table, plays a role.
+	/// 
+	/// In contrast, the so-called "Advanced Search" design yields a condition matrix of an entirely
+	/// different form that generally looks something like:
+	/// 
+	/// [M N H A X.... D]
+	/// [M N H A Y.... D]
+	/// [M N H A Z.... D]
+	/// 
+	/// where X, Y, Z are conditions on the procedure scheduled, start, and end times.  Hence it is not
+	/// clear whether this strategy performs better or worse than the <see cref="DefaultWorklistItemSearchExecutionStrategy{TItem}"/>
+	/// in this case.
+	/// </remarks>
+	/// <typeparam name="TItem"></typeparam>
     class OptimizedWorklistItemSearchExecutionStrategy<TItem> : WorklistItemSearchExecutionStrategy<TItem>
         where TItem : WorklistItemBase
     {
-        public override IList<TItem> GetSearchResults(IWorklistItemSearchContext<TItem> wisc)
+    	private const string PatientProfileKey = "PatientProfile";
+
+		/// <summary>
+		/// Executes a search, returning a list of hits.
+		/// </summary>
+		/// <param name="wisc"></param>
+		/// <returns></returns>
+		public override IList<TItem> GetSearchResults(IWorklistItemSearchContext<TItem> wisc)
         {
             List<TItem> results = new List<TItem>();
 
             // the search criteria is broken up to gain performance. See #2416.
-            WorklistItemSearchCriteria[] whereSelectPatient = Select(wisc.SearchCriteria, "PatientProfile");
-            WorklistItemSearchCriteria[] whereExcludePatient = Exclude(wisc.SearchCriteria, "PatientProfile");
+            WorklistItemSearchCriteria[] criteriaWithPatientConditions = SelectCriteriaWithPatientConditions(wisc.SearchCriteria);
+            WorklistItemSearchCriteria[] criteriaWithoutPatientConditions = ExcludeCriteriaWithPatientConditions(wisc.SearchCriteria);
 
             // search for worklist items, delegating the task of designing the query to the subclass
-            if (whereSelectPatient.Length > 0)
+            if (criteriaWithPatientConditions.Length > 0)
             {
-                HqlProjectionQuery patientOnlyWorklistItemQuery = wisc.BuildWorklistItemSearchQuery(whereSelectPatient, false);
+                HqlProjectionQuery patientOnlyWorklistItemQuery = wisc.BuildWorklistItemSearchQuery(criteriaWithPatientConditions, false);
                 if (patientOnlyWorklistItemQuery != null)
                 {
-                    results = MergeResults(results, wisc.DoQuery(patientOnlyWorklistItemQuery),
+                    results = UnionMerge(results, wisc.DoQuery(patientOnlyWorklistItemQuery),
                         delegate(TItem item) { return item.ProcedureRef; });
                 }
             }
 
-            if (whereExcludePatient.Length > 0)
+            if (criteriaWithoutPatientConditions.Length > 0)
             {
-                HqlProjectionQuery patientExcludedWorklistItemQuery = wisc.BuildWorklistItemSearchQuery(whereExcludePatient, false);
+                HqlProjectionQuery patientExcludedWorklistItemQuery = wisc.BuildWorklistItemSearchQuery(criteriaWithoutPatientConditions, false);
                 if (patientExcludedWorklistItemQuery != null)
                 {
-                    results = MergeResults(results, wisc.DoQuery(patientExcludedWorklistItemQuery),
+                    results = UnionMerge(results, wisc.DoQuery(patientExcludedWorklistItemQuery),
                         delegate(TItem item) { return item.ProcedureRef; });
                 }
             }
@@ -74,18 +146,18 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             if (wisc.IncludeDegenerateProcedureItems)
             {
             	// search for procedures
-            	if (whereSelectPatient.Length > 0)
+            	if (criteriaWithPatientConditions.Length > 0)
             	{
-            		HqlProjectionQuery patientBasedProcedureQuery = wisc.BuildProcedureSearchQuery(whereSelectPatient, false);
-            		results = MergeResults(results, wisc.DoQuery(patientBasedProcedureQuery),
+            		HqlProjectionQuery patientBasedProcedureQuery = wisc.BuildProcedureSearchQuery(criteriaWithPatientConditions, false);
+            		results = UnionMerge(results, wisc.DoQuery(patientBasedProcedureQuery),
             		                       delegate(TItem item) { return item.ProcedureRef; });
             	}
 
-            	if (whereExcludePatient.Length > 0)
+            	if (criteriaWithoutPatientConditions.Length > 0)
             	{
             		HqlProjectionQuery patientExcludedProcedureQuery =
-            			wisc.BuildProcedureSearchQuery(whereExcludePatient, false);
-            		results = MergeResults(results, wisc.DoQuery(patientExcludedProcedureQuery),
+            			wisc.BuildProcedureSearchQuery(criteriaWithoutPatientConditions, false);
+            		results = UnionMerge(results, wisc.DoQuery(patientExcludedProcedureQuery),
             		                       delegate(TItem item) { return item.ProcedureRef; });
             	}
             }
@@ -94,19 +166,26 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			if (wisc.IncludeDegeneratePatientItems)
 			{
         		// search for patients
-                if (whereSelectPatient.Length > 0)
+                if (criteriaWithPatientConditions.Length > 0)
                 {
-                    HqlProjectionQuery patientQuery = wisc.BuildPatientSearchQuery(whereSelectPatient, false);
+                    HqlProjectionQuery patientQuery = wisc.BuildPatientSearchQuery(criteriaWithPatientConditions, false);
                     List<TItem> patients = wisc.DoQuery(patientQuery);
 
                     // add any patients for which there is no result
-                    results = MergeResults(results, patients, delegate(TItem item) { return item.PatientRef; });
+                    results = UnionMerge(results, patients, delegate(TItem item) { return item.PatientRef; });
                 }
             }
 
             return results;
         }
 
+		/// <summary>
+		/// Estimates the hit count for the specified search, unless the count exceeds a specified
+		/// threshold, in which case the method returns false and no count is obtained.
+		/// </summary>
+		/// <param name="wisc"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
 		public override bool EstimateSearchResultsCount(IWorklistItemSearchContext<TItem> wisc, out int count)
 		{
 			count = 0;
@@ -155,10 +234,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			if (wisc.IncludeDegenerateProcedureItems)
 			{
 				// find procedures based on the patient search fields
-				WorklistItemSearchCriteria[] whereSelectPatient = Select(wisc.SearchCriteria, "PatientProfile");
-				if (whereSelectPatient.Length > 0)
+				WorklistItemSearchCriteria[] criteriaWithPatientConditions = SelectCriteriaWithPatientConditions(wisc.SearchCriteria);
+				if (criteriaWithPatientConditions.Length > 0)
 				{
-					HqlProjectionQuery procedureCountQuery = wisc.BuildProcedureSearchQuery(whereSelectPatient, true);
+					HqlProjectionQuery procedureCountQuery = wisc.BuildProcedureSearchQuery(criteriaWithPatientConditions, true);
 					numProcedures += wisc.DoQueryCount(procedureCountQuery);
 
 					// if this number exceeds threshold, bail
@@ -167,10 +246,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 				}
 
 				// find procedures based on the order search fields
-				WorklistItemSearchCriteria[] whereExcludePatient = Exclude(wisc.SearchCriteria, "PatientProfile");
-				if (whereExcludePatient.Length > 0)
+				WorklistItemSearchCriteria[] criteriaWithoutPatientConditions = ExcludeCriteriaWithPatientConditions(wisc.SearchCriteria);
+				if (criteriaWithoutPatientConditions.Length > 0)
 				{
-					HqlProjectionQuery procedureCountQuery = wisc.BuildProcedureSearchQuery(whereExcludePatient, true);
+					HqlProjectionQuery procedureCountQuery = wisc.BuildProcedureSearchQuery(criteriaWithoutPatientConditions, true);
 					numProcedures += wisc.DoQueryCount(procedureCountQuery);
 
 					// if this number exceeds threshold, bail
@@ -186,60 +265,31 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 			return count <= wisc.Threshold;
 		}
 
-        /// <summary>
-        /// Returns all criteria with only the filter key, as none of the others are relevant
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="filterKey"></param>
-        /// <returns></returns>
-        public static WorklistItemSearchCriteria[] Filter(IEnumerable<WorklistItemSearchCriteria> where, string filterKey)
-        {
-            return CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(
-				where,
-                delegate(WorklistItemSearchCriteria criteria)
-                {
-                	return (WorklistItemSearchCriteria) criteria.Clone(
-                	                                    	delegate(SearchCriteria subCriteria)
-                	                                    	{
-                	                                    		return subCriteria.GetKey() == filterKey;
-                	                                    	}, false);
-                }).ToArray();
-        }
-
-        /// <summary>
-        /// Returns all criteria without the filter key
-        /// </summary>
-        /// <param name="where"></param>
-        /// <param name="filterKey"></param>
-        /// <returns></returns>
-        public static WorklistItemSearchCriteria[] FilterOut(IEnumerable<WorklistItemSearchCriteria> where, string filterKey)
-        {
-            return CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(where,
-                delegate(WorklistItemSearchCriteria criteria)
-                {
-					return (WorklistItemSearchCriteria)criteria.Clone(
-															delegate(SearchCriteria subCriteria)
-															{
-																return subCriteria.GetKey() != filterKey;
-															}, false);
-				}).ToArray();
-        }
-
-        public static WorklistItemSearchCriteria[] Select(IEnumerable<WorklistItemSearchCriteria> where, string key)
+		/// <summary>
+		/// Returns only those <see cref="WorklistItemSearchCriteria"/> elements that have patient search conditions present.
+		/// </summary>
+		/// <param name="where"></param>
+		/// <returns></returns>
+		private static WorklistItemSearchCriteria[] SelectCriteriaWithPatientConditions(IEnumerable<WorklistItemSearchCriteria> where)
         {
             return CollectionUtils.Select(where,
                 delegate(WorklistItemSearchCriteria criteria)
                 {
-                    return criteria.SubCriteria.ContainsKey(key);
+					return criteria.SubCriteria.ContainsKey(PatientProfileKey);
                 }).ToArray();
         }
 
-        public static WorklistItemSearchCriteria[] Exclude(IEnumerable<WorklistItemSearchCriteria> where, string key)
+		/// <summary>
+		/// Returns only those <see cref="WorklistItemSearchCriteria"/> elements that do not have patient search conditions present.
+		/// </summary>
+		/// <param name="where"></param>
+		/// <returns></returns>
+		private static WorklistItemSearchCriteria[] ExcludeCriteriaWithPatientConditions(IEnumerable<WorklistItemSearchCriteria> where)
         {
             return CollectionUtils.Select(where,
                 delegate(WorklistItemSearchCriteria criteria)
                 {
-                    return !criteria.SubCriteria.ContainsKey(key);
+					return !criteria.SubCriteria.ContainsKey(PatientProfileKey);
                 }).ToArray();
         }
     }

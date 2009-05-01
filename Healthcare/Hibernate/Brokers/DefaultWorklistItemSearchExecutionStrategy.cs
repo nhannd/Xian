@@ -37,10 +37,37 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
+	/// <summary>
+	/// Encapsulates the default worklist search execution strategy.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// The default strategy is the naive implementation.  It sends the minimum possible number of queries
+	/// to the database to perform the search, which means it relies on the database entirely to optimize
+	/// the execution of those queries.
+	/// </para>
+	/// <para>
+	/// The concept of "degenerate" worklist items requires some explanation.  If a worklist item is thought of
+	/// as a tuple containing Patient Profile, Order, Procedure, and Procedure Step information
+	/// e.g.
+	/// ( pp, o, rp, ps )
+	/// the a "degenerate procedure" worklist item is an item of the form
+	/// ( pp, o, rp, null )
+	/// and a "degenerate patient" worklist item is an item of the form
+	/// ( pp, null, null, null )
+	/// 
+	/// </para>
+	/// </remarks>
+	/// <typeparam name="TItem"></typeparam>
     class DefaultWorklistItemSearchExecutionStrategy<TItem> : WorklistItemSearchExecutionStrategy<TItem>
         where TItem : WorklistItemBase
     {
-        public override IList<TItem> GetSearchResults(IWorklistItemSearchContext<TItem> wisc)
+		/// <summary>
+		/// Executes a search, returning a list of hits.
+		/// </summary>
+		/// <param name="wisc"></param>
+		/// <returns></returns>
+		public override IList<TItem> GetSearchResults(IWorklistItemSearchContext<TItem> wisc)
         {
             List<TItem> results = new List<TItem>();
 
@@ -50,7 +77,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             HqlProjectionQuery worklistItemQuery = wisc.BuildWorklistItemSearchQuery(where, false);
             if (worklistItemQuery != null)
             {
-                results = MergeResults(results, wisc.DoQuery(worklistItemQuery),
+                results = UnionMerge(results, wisc.DoQuery(worklistItemQuery),
                     delegate(TItem item) { return item.ProcedureRef; });
             }
 
@@ -59,7 +86,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             {
             	// search for procedures
             	HqlProjectionQuery procedureQuery = wisc.BuildProcedureSearchQuery(where, false);
-            	results = MergeResults(results, wisc.DoQuery(procedureQuery),
+            	results = UnionMerge(results, wisc.DoQuery(procedureQuery),
             	                       delegate(TItem item) { return item.ProcedureRef; });
             }
 
@@ -70,14 +97,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 HqlProjectionQuery patientQuery = wisc.BuildPatientSearchQuery(where, false);
 
                 // add any patients for which there is no result
-                results = MergeResults(results, wisc.DoQuery(patientQuery),
+                results = UnionMerge(results, wisc.DoQuery(patientQuery),
 					delegate(TItem item) { return item.PatientRef; });
             }
 
             return results;
         }
 
-        public override bool EstimateSearchResultsCount(IWorklistItemSearchContext<TItem> wisc, out int count)
+		/// <summary>
+		/// Estimates the hit count for the specified search, unless the count exceeds a specified
+		/// threshold, in which case the method returns false and no count is obtained.
+		/// </summary>
+		/// <param name="wisc"></param>
+		/// <param name="count"></param>
+		/// <returns></returns>
+		public override bool EstimateSearchResultsCount(IWorklistItemSearchContext<TItem> wisc, out int count)
         {
 			count = 0;
 

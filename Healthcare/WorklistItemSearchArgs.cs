@@ -35,6 +35,9 @@ using System.Text;
 
 namespace ClearCanvas.Healthcare
 {
+	/// <summary>
+	/// Holds arguments passed to a worklist item broker to perform a search.
+	/// </summary>
 	public class WorklistItemSearchArgs
 	{
 		private readonly bool _includeDegeneratePatientItems;
@@ -42,7 +45,13 @@ namespace ClearCanvas.Healthcare
 		private readonly int _threshold;
 		private readonly WorklistItemSearchCriteria[] _searchCriteria;
 
-
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="searchCriteria"></param>
+		/// <param name="includeDegeneratePatientItems"></param>
+		/// <param name="includeDegenerateProcedureItems"></param>
+		/// <param name="threshold"></param>
 		public WorklistItemSearchArgs(
 			WorklistItemSearchCriteria[] searchCriteria,
 			bool includeDegeneratePatientItems,
@@ -55,6 +64,12 @@ namespace ClearCanvas.Healthcare
 			_searchCriteria = searchCriteria;
 		}
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="searchCriteria"></param>
+		/// <param name="includeDegeneratePatientItems"></param>
+		/// <param name="includeDegenerateProcedureItems"></param>
 		public WorklistItemSearchArgs(
 			WorklistItemSearchCriteria[] searchCriteria,
 			bool includeDegeneratePatientItems,

@@ -47,6 +47,10 @@ namespace ClearCanvas.Ris.Application.Services
         where TDomainItem : WorklistItemBase
         where TSummary : DataContractBase
     {
+		/// <summary>
+		/// This class is needed as a hacky way to get some boolean flags passed around,
+		/// without having to modify the <see cref="TextQueryHelper"/> super-class.
+		/// </summary>
 		class TextQueryCriteria : WorklistItemSearchCriteria
 		{
 			private readonly bool _includeDegeneratePatientItems;
@@ -115,7 +119,7 @@ namespace ClearCanvas.Ris.Application.Services
 
 			if ((_options & WorklistItemTextQueryOptions.PatientOrder) == WorklistItemTextQueryOptions.PatientOrder)
 			{
-                criteria.AddRange(BuildPatientOrderSearchCriteria(req));
+                criteria.AddRange(BuildProcedureSearchCriteria(req));
 			}
 
 			if ((_options & WorklistItemTextQueryOptions.ProcedureStepStaff) == WorklistItemTextQueryOptions.ProcedureStepStaff)
@@ -129,7 +133,7 @@ namespace ClearCanvas.Ris.Application.Services
 			criteria.ForEach(delegate(WorklistItemSearchCriteria c) { c.Procedure.DowntimeRecoveryMode.EqualTo(downtimeRecoveryMode); });
 
 			// this is a silly hack to append additional information (degenerate flags) into the criteria so that we can
-			// pass them on to the TestSpecificity and DoQuery methods
+			// pass them on to the TestSpecificity and DoQuery methods (didn't want to refactor the superclass)
         	List<WorklistItemSearchCriteria> augmented = CollectionUtils.Map<WorklistItemSearchCriteria, WorklistItemSearchCriteria>(
         		criteria,
         		delegate(WorklistItemSearchCriteria c)
@@ -170,20 +174,20 @@ namespace ClearCanvas.Ris.Application.Services
 
 		#region Patient Criteria builders
 
-		private List<WorklistItemSearchCriteria> BuildPatientOrderSearchCriteria(WorklistItemTextQueryRequest request)
+		private List<WorklistItemSearchCriteria> BuildProcedureSearchCriteria(WorklistItemTextQueryRequest request)
         {
 			if(request.UseAdvancedSearch)
 			{
-				return BuildAdvancedPatientOrderSearchCriteria(request);
+				return BuildAdvancedProcedureSearchCriteria(request);
 			}
 			else
 			{
-				return BuildAdHocPatientOrderSearchCriteria(request);
+				return BuildTextQueryProcedureSearchCriteria(request);
 			}
         	
         }
 
-		private List<WorklistItemSearchCriteria> BuildAdvancedPatientOrderSearchCriteria(WorklistItemTextQueryRequest request)
+		private List<WorklistItemSearchCriteria> BuildAdvancedProcedureSearchCriteria(WorklistItemTextQueryRequest request)
 		{
 			Platform.CheckMemberIsSet(request.SearchFields, "SearchFields");
 
@@ -250,7 +254,7 @@ namespace ClearCanvas.Ris.Application.Services
 			return wheres;
 		}
 
-        private List<WorklistItemSearchCriteria> BuildAdHocPatientOrderSearchCriteria(WorklistItemTextQueryRequest request)
+        private List<WorklistItemSearchCriteria> BuildTextQueryProcedureSearchCriteria(WorklistItemTextQueryRequest request)
 		{
             string query = request.TextQuery;
 
@@ -313,11 +317,11 @@ namespace ClearCanvas.Ris.Application.Services
 			}
 			else
 			{
-				return BuildAdHocStaffSearchCriteria(request);
+				return BuildTextQueryStaffSearchCriteria(request);
 			}
 		}
 
-		private List<WorklistItemSearchCriteria> BuildAdHocStaffSearchCriteria(WorklistItemTextQueryRequest request)
+		private List<WorklistItemSearchCriteria> BuildTextQueryStaffSearchCriteria(WorklistItemTextQueryRequest request)
 		{
             string query = request.TextQuery;
 
