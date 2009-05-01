@@ -127,7 +127,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (_content != null)
             {
-                _content.Title = title;
+				_content.Title = title;
+				_content.FullTitle = title;
             }
         }
 
