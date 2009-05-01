@@ -150,11 +150,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                     // Load the study Xml file, this is used to generate the list of dicom files to archive.
                     LoadStudyXml(studyXmlFile);
 
-                    DicomMessage message = LoadMessageFromStudyXml();
+                    DicomFile file = LoadFileFromStudyXml();
 
-                	string patientsName = message.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
-					string patientId = message.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
-					string accessionNumber = message.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
+                	string patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, string.Empty);
+					string patientId = file.DataSet[DicomTags.PatientId].GetString(0, string.Empty);
+					string accessionNumber = file.DataSet[DicomTags.AccessionNumber].GetString(0, string.Empty);
 
                 	Platform.Log(LogLevel.Info,
                 	             "Starting archival of study {0} for Patient {1} (PatientId:{2} A#:{3}) on Partition {4} on archive {5}",
@@ -203,7 +203,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         commandProcessor.AddCommand(new InsertArchiveStudyStorageCommand(queueItem.StudyStorageKey, queueItem.PartitionArchiveKey, queueItem.GetKey(), _storageLocation.ServerTransferSyntaxKey, _archiveXml));
 
                         // Apply the rules engine.
-                        ServerActionContext context = new ServerActionContext(message, _storageLocation.FilesystemKey, _hsmArchive.PartitionArchive.ServerPartitionKey, queueItem.StudyStorageKey);
+                        ServerActionContext context = new ServerActionContext(file, _storageLocation.FilesystemKey, _hsmArchive.PartitionArchive.ServerPartitionKey, queueItem.StudyStorageKey);
 
                         context.CommandProcessor = commandProcessor;
 
@@ -254,27 +254,40 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// Simple class to load a sample image file from the study.
 		/// </summary>
 		/// <returns></returns>
-		private DicomMessage LoadMessageFromStudyXml()
+		private DicomFile LoadFileFromStudyXml()
 		{
-			DicomMessage defaultMessage = null;
+			DicomFile defaultFile = null;
+			string path;
 			foreach (SeriesXml seriesXml in _studyXml)
 				foreach (InstanceXml instanceXml in seriesXml)
 				{
 					// Skip non-image objects
 					if (instanceXml.SopClass.Equals(SopClass.KeyObjectSelectionDocumentStorage)
-						|| instanceXml.SopClass.Equals(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass)
-						|| instanceXml.SopClass.Equals(SopClass.BlendingSoftcopyPresentationStateStorageSopClass)
-						|| instanceXml.SopClass.Equals(SopClass.ColorSoftcopyPresentationStateStorageSopClass))
+					    || instanceXml.SopClass.Equals(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass)
+					    || instanceXml.SopClass.Equals(SopClass.BlendingSoftcopyPresentationStateStorageSopClass)
+					    || instanceXml.SopClass.Equals(SopClass.ColorSoftcopyPresentationStateStorageSopClass))
 					{
-						if (defaultMessage == null)
-							defaultMessage = new DicomMessage(new DicomAttributeCollection(), instanceXml.Collection);
+						if (defaultFile == null)
+						{
+							path = Path.Combine(_storageLocation.GetStudyPath(), seriesXml.SeriesInstanceUid);
+							path = Path.Combine(path, instanceXml.SopInstanceUid);
+							path += ".dcm";
+							defaultFile = new DicomFile(path);
+							defaultFile.Load(path);
+						}
 						continue;
 					}
 
-					return new DicomMessage(new DicomAttributeCollection(), instanceXml.Collection);
+					path = Path.Combine(_storageLocation.GetStudyPath(), seriesXml.SeriesInstanceUid);
+					path = Path.Combine(path, instanceXml.SopInstanceUid);
+					path += ".dcm";
+					defaultFile = new DicomFile(path);
+					defaultFile.Load(path);
+
+					return defaultFile;
 				}
 
-			return defaultMessage;
+			return defaultFile;
 		}
 	}
 }
