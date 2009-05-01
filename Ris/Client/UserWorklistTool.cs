@@ -212,7 +212,7 @@ namespace ClearCanvas.Ris.Client
 
             // confirm deletion
             if (this.Context.DesktopWindow.ShowMessageBox(
-                "Are you sure you want to delete the selected folder?", MessageBoxActions.OkCancel)
+                "Are you sure you want to delete the selected worklist?", MessageBoxActions.OkCancel)
                 != DialogBoxAction.Ok)
                 return;
 
