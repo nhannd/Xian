@@ -49,8 +49,8 @@ namespace ClearCanvas.Ris.Client
 		}
 	}
 
-	//[ButtonAction("search", "folderexplorer-folders-toolbar/Advance Search", "Search")]
-	[MenuAction("search", "folderexplorer-folders-contextmenu/Advance Search", "Search")]
+	//[ButtonAction("search", "folderexplorer-folders-toolbar/Advanced Search ...", "Search")]
+	[MenuAction("search", "folderexplorer-folders-contextmenu/Advanced Search ...", "Search")]
 	[Tooltip("search", "Search")]
 	[IconSet("search", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
 	[ExtensionOf(typeof(FolderExplorerGroupToolExtensionPoint))]

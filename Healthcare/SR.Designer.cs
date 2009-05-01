@@ -1024,7 +1024,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reports that are currently active.
+        ///   Looks up a localized string similar to Active.
         /// </summary>
         internal static string ReportingTrackingActiveWorklist {
             get {
@@ -1042,7 +1042,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reports Corrected.
+        ///   Looks up a localized string similar to Corrected.
         /// </summary>
         internal static string ReportingTrackingCorrectedWorklist {
             get {
@@ -1060,7 +1060,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reports In Draft.
+        ///   Looks up a localized string similar to Draft.
         /// </summary>
         internal static string ReportingTrackingDraftWorklist {
             get {
@@ -1078,7 +1078,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reports Finalized.
+        ///   Looks up a localized string similar to Final.
         /// </summary>
         internal static string ReportingTrackingFinalWorklist {
             get {
@@ -1096,7 +1096,7 @@ namespace ClearCanvas.Healthcare {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reports in preliminary status.
+        ///   Looks up a localized string similar to Preliminary.
         /// </summary>
         internal static string ReportingTrackingPreliminaryWorklist {
             get {

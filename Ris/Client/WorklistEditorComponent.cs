@@ -115,6 +115,7 @@ namespace ClearCanvas.Ris.Client
         private WorklistSelectorEditorComponent<StaffSummary, StaffSelectorTable> _staffSubscribersComponent;
         private WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
         private WorklistSummaryComponent _summaryComponent;
+    	private NavigatorPage _patientLocationComponentPage;
     	private NavigatorPage _interpretedByFilterComponentPage;
     	private NavigatorPage _transcribedByFilterComponentPage;
     	private NavigatorPage _verifiedByFilterComponentPage;
@@ -286,7 +287,7 @@ namespace ClearCanvas.Ris.Client
             this.Pages.Add(new NavigatorPage("NodeWorklist", _detailComponent));
             this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters", _filterComponent));
             this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodeProcedureTypeGroups", _procedureTypeGroupFilterComponent));
-            this.Pages.Add(new NavigatorPage("NodeWorklist/NodeFilters/NodePatientLocations", _locationFilterComponent));
+            this.Pages.Add(_patientLocationComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodePatientLocations", _locationFilterComponent));
 
 			_interpretedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeInterpretedBy", _interpretedByFilterComponent);
 			_transcribedByFilterComponentPage = new NavigatorPage("NodeWorklist/NodeFilters/NodeStaff/NodeTranscribedBy", _transcribedByFilterComponent);
@@ -319,22 +320,40 @@ namespace ClearCanvas.Ris.Client
     	private void ShowWorklistCategoryDependantPages()
     	{
     		bool showStaffFilters = _worklistDetail.WorklistClass == null || ShowReportingStaffRoleFilters;
-    		ShowPage(_interpretedByFilterComponentPage, showStaffFilters);
-    		ShowPage(_transcribedByFilterComponentPage, showStaffFilters);
-    		ShowPage(_verifiedByFilterComponentPage, showStaffFilters);
-    		ShowPage(_supervisedByFilterComponentPage, showStaffFilters);
+			ShowAfterPage(_interpretedByFilterComponentPage, showStaffFilters, _patientLocationComponentPage);
+			ShowAfterPage(_transcribedByFilterComponentPage, showStaffFilters, _interpretedByFilterComponentPage);
+			ShowAfterPage(_verifiedByFilterComponentPage, showStaffFilters, _transcribedByFilterComponentPage);
+			ShowAfterPage(_supervisedByFilterComponentPage, showStaffFilters, _verifiedByFilterComponentPage);
 
     		// add the time filter page, if the class supports it (or if the class is not known, in the case of an add)
     		bool showTimeFilter = _worklistDetail.WorklistClass == null || _worklistDetail.WorklistClass.SupportsTimeWindow;
-    		ShowPage(_timeWindowComponentPage, showTimeFilter, _summaryComponentPage);
+    		ShowBeforePage(_timeWindowComponentPage, showTimeFilter, _summaryComponentPage);
     	}
 
-    	private void ShowPage(NavigatorPage page, bool show)
-    	{
-    		ShowPage(page, show, null);
-    	}
+		private void ShowAfterPage(NavigatorPage page, bool show, NavigatorPage insertAfterPage)
+		{
+			if (show)
+			{
+				if (this.Pages.Contains(page) == false)
+				{
+					if (insertAfterPage == null)
+						this.Pages.Add(page);
+					else
+					{
+						int index = this.Pages.IndexOf(insertAfterPage);
+						this.Pages.Insert(index + 1, page);
+					}
 
-    	private void ShowPage(NavigatorPage page, bool show, NavigatorPage insertBeforePage)
+				}
+			}
+			else
+			{
+				if (this.Pages.Contains(page))
+					this.Pages.Remove(page);
+			}
+		}
+
+    	private void ShowBeforePage(NavigatorPage page, bool show, NavigatorPage insertBeforePage)
 		{
 			if (show)
 			{
@@ -352,7 +371,7 @@ namespace ClearCanvas.Ris.Client
 			}
 			else
 			{
-				if (this.Pages.Contains(page) == true)
+				if (this.Pages.Contains(page))
 					this.Pages.Remove(page);
 			}
 		}
@@ -435,7 +454,7 @@ namespace ClearCanvas.Ris.Client
                 catch (Exception e)
                 {
                     ExceptionHandler.Report(e, SR.ExceptionSaveWorklist, this.Host.DesktopWindow,
-                        delegate()
+                        delegate
                         {
                             this.Exit(ApplicationComponentExitCode.Error);
                         });

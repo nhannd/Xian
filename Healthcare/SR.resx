@@ -439,31 +439,31 @@
     <value>Lists procoedures with reports that need to be reviewed.</value>
   </data>
   <data name="ReportingTrackingActiveWorklist" xml:space="preserve">
-    <value>Reports that are currently active</value>
+    <value>Active</value>
   </data>
   <data name="ReportingTrackingActiveWorklistDescription" xml:space="preserve">
     <value>Lists active procedures that are currently in reporting by a radiologist.</value>
   </data>
   <data name="ReportingTrackingCorrectedWorklist" xml:space="preserve">
-    <value>Reports Corrected</value>
+    <value>Corrected</value>
   </data>
   <data name="ReportingTrackingCorrectedWorklistDescription" xml:space="preserve">
     <value>Lists procoedures with reports that are corrected.</value>
   </data>
   <data name="ReportingTrackingDraftWorklist" xml:space="preserve">
-    <value>Reports In Draft</value>
+    <value>Draft</value>
   </data>
   <data name="ReportingTrackingDraftWorklistDescription" xml:space="preserve">
     <value>Lists procoedures with reports that are in draft.</value>
   </data>
   <data name="ReportingTrackingFinalWorklist" xml:space="preserve">
-    <value>Reports Finalized</value>
+    <value>Final</value>
   </data>
   <data name="ReportingTrackingFinalWorklistDescription" xml:space="preserve">
     <value>Lists procoedures with reports that are finalized.</value>
   </data>
   <data name="ReportingTrackingPreliminaryWorklist" xml:space="preserve">
-    <value>Reports in preliminary status</value>
+    <value>Preliminary</value>
   </data>
   <data name="ReportingTrackingPreliminaryWorklistDescription" xml:space="preserve">
     <value>Lists procoedures with reports that are in preliminary status.</value>

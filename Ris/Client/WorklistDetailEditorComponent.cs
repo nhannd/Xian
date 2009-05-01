@@ -93,7 +93,8 @@ namespace ClearCanvas.Ris.Client
                 new ValidationRule("SelectedGroup",
                     delegate
                     {
-                        return new ValidationResult(_adminMode || _isPersonal, "Value Required");
+                        bool success = _adminMode || this.IsPersonal || (this.IsGroup && this.SelectedGroup != null);
+                        return new ValidationResult(success, "Value Required");
                     }));
 		}
 
@@ -205,6 +206,7 @@ namespace ClearCanvas.Ris.Client
 					}
 					this.Modified = true;
 					NotifyPropertyChanged("WorklistClass");
+					NotifyPropertyChanged("WorklistClassDescription");
 				}
 			}
     	}
