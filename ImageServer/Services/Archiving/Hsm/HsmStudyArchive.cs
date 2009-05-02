@@ -62,7 +62,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		private StudyStorageLocation _storageLocation;
 		private readonly HsmArchive _hsmArchive;
 		private XmlDocument _archiveXml;
-		private ServerRulesEngine _rulesEngine;
 
 		/// <summary>
 		/// Retrieves the storage location fromthe database for the specified study.
@@ -104,9 +103,6 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
             {
                 try
                 {
-                    _rulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyArchived, _hsmArchive.ServerPartition.GetKey());
-                    _rulesEngine.Load();
-
                     if (!GetStudyStorageLocation(queueItem))
                     {
                         Platform.Log(LogLevel.Error,
@@ -202,12 +198,11 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         // Update the database.
                         commandProcessor.AddCommand(new InsertArchiveStudyStorageCommand(queueItem.StudyStorageKey, queueItem.PartitionArchiveKey, queueItem.GetKey(), _storageLocation.ServerTransferSyntaxKey, _archiveXml));
 
-                        // Apply the rules engine.
-                        ServerActionContext context = new ServerActionContext(file, _storageLocation.FilesystemKey, _hsmArchive.PartitionArchive.ServerPartitionKey, queueItem.StudyStorageKey);
 
-                        context.CommandProcessor = commandProcessor;
-
-                        _rulesEngine.Execute(context);
+                    	StudyRulesEngine studyEngine =
+                    		new StudyRulesEngine(_storageLocation, _hsmArchive.ServerPartition, _studyXml);
+                    	studyEngine.Apply(ServerRuleApplyTimeEnum.StudyArchived, commandProcessor);
+						
 
                         if (!commandProcessor.Execute())
                         {

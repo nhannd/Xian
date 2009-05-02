@@ -604,8 +604,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 					&& item.ExpirationTime <= Platform.Time)
 				{
 					// Run Study / Series Rules Engine.
-					StudyRulesEngine engine = new StudyRulesEngine(StorageLocation);
-					engine.Apply();
+					StudyRulesEngine engine = new StudyRulesEngine(StorageLocation, ServerPartition);
+					engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed);
 									
 					// Delete the queue entry.
 					PostProcessing(item,

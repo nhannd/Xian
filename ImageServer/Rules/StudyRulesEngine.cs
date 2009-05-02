@@ -52,13 +52,24 @@ namespace ClearCanvas.ImageServer.Rules
 		private ServerRulesEngine _seriesRulesEngine;
 		private ServerRulesEngine _studyRulesEngine;
 		private readonly ServerPartition _partition;
+		private StudyXml _studyXml = null;
 		#endregion
 
 		#region Constructors
-		public StudyRulesEngine(StudyStorageLocation location)
+		public StudyRulesEngine(StudyStorageLocation location, ServerPartition partition)
 		{
 			_location = location;
-			_partition = ServerPartition.Load(_location.ServerPartitionKey);
+			_partition = partition;
+			if (_partition == null)
+				_partition = ServerPartition.Load(_location.ServerPartitionKey);
+		}
+		public StudyRulesEngine(StudyStorageLocation location, ServerPartition partition, StudyXml studyXml)
+		{
+			_studyXml = studyXml;
+			_location = location;
+			_partition = partition;
+			if (_partition == null)
+				_partition = ServerPartition.Load(_location.ServerPartitionKey);
 		}
 		#endregion
 
@@ -80,24 +91,38 @@ namespace ClearCanvas.ImageServer.Rules
 		/// level rules.
 		/// </para>
 		/// </remarks>
-		public void Apply()
+		public void Apply(ServerRuleApplyTimeEnum applyTime)
 		{
-			_studyRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.StudyProcessed, _location.ServerPartitionKey);
-			_studyRulesEngine.Load();
 
 			ServerCommandProcessor theProcessor = new ServerCommandProcessor("Study Rule Processor");
+
+			Apply(applyTime, theProcessor);
+
+			if (false == theProcessor.Execute())
+			{
+				Platform.Log(LogLevel.Error,
+				             "Unexpected failure processing Study level rules for study {0} on partition {1} for {2} apply time",
+				             _location.StudyInstanceUid, _partition.Description, applyTime.Description);
+			}
+		}
+
+		public void Apply(ServerRuleApplyTimeEnum applyTime, ServerCommandProcessor theProcessor)
+		{
+			_studyRulesEngine = new ServerRulesEngine(applyTime, _location.ServerPartitionKey);
+			_studyRulesEngine.Load();
+
 			List<string> files = GetFirstInstanceInEachStudySeries();
 			if (files.Count == 0)
 			{
 				string message =
 					String.Format("Unexectedly unable to find SOP instances for rules engine in each series in study: {0}",
-								  _location.StudyInstanceUid);
+					              _location.StudyInstanceUid);
 				Platform.Log(LogLevel.Error, message);
 				throw new ApplicationException(message);
 			}
 
-			Platform.Log(LogLevel.Info, "Processing Study Level rules for study {0} on partition {1}",
-						 _location.StudyInstanceUid, _partition.Description);
+			Platform.Log(LogLevel.Info, "Processing Study Level rules for study {0} on partition {1} at {2} apply time",
+			             _location.StudyInstanceUid, _partition.Description, applyTime.Description);
 
 			foreach (string seriesFilePath in files)
 			{
@@ -107,21 +132,21 @@ namespace ClearCanvas.ImageServer.Rules
 					new ServerActionContext(theFile, _location.FilesystemKey, _location.ServerPartitionKey, _location.Key);
 				context.CommandProcessor = theProcessor;
 				_studyRulesEngine.Execute(context);
+
 				ProcessSeriesRules(theFile, theProcessor);
 			}
 
-			// This is a bit kludgy, but we had a problem with studies with only 1 image incorectlly
-			// having archive requests inserted when they were scheduled for deletion.  Calling
-			// this command here so that if a delete is inserted at the study level, we will remove
-			// the previously inserted archive request for the study.  Note also this has to be done
-			// after the rules engine is executed.
-			theProcessor.AddCommand(new InsertArchiveQueueCommand(_location.ServerPartitionKey, _location.Key));
-
-			if (false == theProcessor.Execute())
+			if (applyTime.Equals(ServerRuleApplyTimeEnum.StudyProcessed))
 			{
-				Platform.Log(LogLevel.Error, "Unexpected failure processing Study level rules for study {0}", _location.StudyInstanceUid);
+				// This is a bit kludgy, but we had a problem with studies with only 1 image incorectlly
+				// having archive requests inserted when they were scheduled for deletion.  Calling
+				// this command here so that if a delete is inserted at the study level, we will remove
+				// the previously inserted archive request for the study.  Note also this has to be done
+				// after the rules engine is executed.
+				theProcessor.AddCommand(new InsertArchiveQueueCommand(_location.ServerPartitionKey, _location.Key));
 			}
 		}
+
 		#endregion
 
 		#region Private Methods
@@ -132,38 +157,60 @@ namespace ClearCanvas.ImageServer.Rules
 		private List<string> GetFirstInstanceInEachStudySeries()
 		{
 			List<string> fileList = new List<string>();
-			string studyPath = _location.GetStudyPath();
-			string studyXml = Path.Combine(studyPath, _location.StudyInstanceUid + ".xml");
 
-			if (!File.Exists(studyXml))
+			if (_studyXml == null)
 			{
-				return fileList;
+				string studyPath = _location.GetStudyPath();
+				string studyXml = Path.Combine(studyPath, _location.StudyInstanceUid + ".xml");
+
+				if (!File.Exists(studyXml))
+				{
+					return fileList;
+				}
+
+				_studyXml = new StudyXml();
+
+				using (FileStream stream = FileStreamOpener.OpenForRead(studyXml, FileMode.Open))
+				{
+					XmlDocument theDoc = new XmlDocument();
+					StudyXmlIo.Read(theDoc, stream);
+					stream.Close();
+					_studyXml.SetMemento(theDoc);
+				}
 			}
 
-			FileStream stream = FileStreamOpener.OpenForRead(studyXml, FileMode.Open);
-			XmlDocument theDoc = new XmlDocument();
-			StudyXmlIo.Read(theDoc, stream);
-			stream.Close();
-			stream.Dispose();
-			StudyXml xml = new StudyXml();
-			xml.SetMemento(theDoc);
-
-			IEnumerator<SeriesXml> seriesEnumerator = xml.GetEnumerator();
-			while (seriesEnumerator.MoveNext())
+			// Note, we try and force ourselves to have an uncompressed 
+			// image, if one exists.  That way the rules will be reapplied on the object
+			// if necessary for compression.
+			foreach (SeriesXml seriesXml in _studyXml)
 			{
-				SeriesXml seriesXml = seriesEnumerator.Current;
-				IEnumerator<InstanceXml> instanceEnumerator = seriesXml.GetEnumerator();
-				if (instanceEnumerator.MoveNext())
+				InstanceXml saveInstance = null;
+
+				foreach (InstanceXml instance in seriesXml)
 				{
-					InstanceXml instance = instanceEnumerator.Current;
-					string path = Path.Combine(studyPath, seriesXml.SeriesInstanceUid);
-					path = Path.Combine(path, instance.SopInstanceUid + ".dcm");
+					if (instance.TransferSyntax.Encapsulated)
+					{
+						if (saveInstance == null)
+							saveInstance = instance;
+					}
+					else
+					{
+						saveInstance = instance;
+						break;
+					}
+				}
+
+				if (saveInstance != null)
+				{
+					string path = Path.Combine(_location.GetStudyPath(), seriesXml.SeriesInstanceUid);
+					path = Path.Combine(path, saveInstance.SopInstanceUid + ".dcm");
 					fileList.Add(path);
 				}
 			}
 
 			return fileList;
 		}
+
 		/// <summary>
 		/// Method for applying rules when a new series has been inserted.
 		/// </summary>

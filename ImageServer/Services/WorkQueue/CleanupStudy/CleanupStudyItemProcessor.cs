@@ -91,8 +91,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.CleanupStudy
 					Platform.Log(LogLevel.Info, "Applying rules engine to study being cleaned up to ensure disk management is applied.");
 
 					// Run Study / Series Rules Engine.
-					StudyRulesEngine engine = new StudyRulesEngine(StorageLocation);
-					engine.Apply();
+					StudyRulesEngine engine = new StudyRulesEngine(StorageLocation,ServerPartition);
+					engine.Apply(ServerRuleApplyTimeEnum.StudyProcessed);
 
 					PostProcessing(item,
 								   WorkQueueProcessorStatus.Complete,
