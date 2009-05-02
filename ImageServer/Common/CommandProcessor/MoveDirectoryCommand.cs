@@ -29,10 +29,7 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 
@@ -46,7 +43,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
     /// If <see cref="ServerCommand.RequiresRollback"/> is set to <b>true</b>, the <see cref="MoveDirectoryCommand"/>
     /// will perform necessary backup so that the original source and destination directories can be restored when <see cref="OnUndo"/> is called.
     /// </remark>
-    public class MoveDirectoryCommand : ServerCommand, IDisposable
+    public class MoveDirectoryCommand : ServerCommand
     {
         #region Private Members
         private readonly string _src;
@@ -73,6 +70,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             }
 
             DirectoryUtility.Move(_src, _dest);
+
+			DirectoryUtility.DeleteIfExists(_src, true);
+
         }
 
         private void Backup()
@@ -123,15 +123,5 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             }
 
         }
-
-        #region IDisposable Members
-
-        public void Dispose()
-        {
-            // Backup directories are created inside the context temporary folder.
-            // They will be deleted automatically
-        }
-
-        #endregion
     }
 }

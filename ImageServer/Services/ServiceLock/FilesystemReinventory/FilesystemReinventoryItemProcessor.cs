@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -82,6 +83,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 
                 foreach(DirectoryInfo dateDir in partitionDir.GetDirectories())
                 {
+					if (dateDir.FullName.EndsWith("Deleted")
+						|| dateDir.FullName.EndsWith("Reconcile"))
+						continue;
+
                     foreach(DirectoryInfo studyDir in dateDir.GetDirectories())
                     {
 						// Check for Cancel message
@@ -205,6 +210,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemReinventory
 							}
                         }
                     }
+
+					// Cleanup the date directory, if its empty.
+                	DirectoryUtility.DeleteIfEmpty(dateDir.FullName);
                 }
             }
         }

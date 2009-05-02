@@ -37,6 +37,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -88,6 +89,10 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 
 				foreach (DirectoryInfo dateDir in partitionDir.GetDirectories())
 				{
+					if (dateDir.FullName.EndsWith("Deleted")
+					    || dateDir.FullName.EndsWith("Reconcile"))
+						continue;
+
 					foreach (DirectoryInfo studyDir in dateDir.GetDirectories())
 					{
 						String studyInstanceUid = studyDir.Name;
@@ -127,6 +132,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 							}
 						}
 					}
+
+					// Cleanup the parent date directory, if its empty
+					DirectoryUtility.DeleteIfEmpty(dateDir.FullName);
 				}
 			}
 

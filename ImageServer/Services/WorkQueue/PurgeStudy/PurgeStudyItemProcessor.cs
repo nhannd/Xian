@@ -29,12 +29,10 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -49,22 +47,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.PurgeStudy
 		private void RemoveFilesystem()
 		{
 			string path = StorageLocation.GetStudyPath();
-			try
-			{
-				if (Directory.Exists(path))
-				{
-					Directory.Delete(path, true);
-
-					DirectoryInfo info = Directory.GetParent(path);
-					DirectoryInfo[] subdirs = info.GetDirectories();
-					if (subdirs.Length == 0)
-						Directory.Delete(info.FullName);
-				}
-			}
-			catch (Exception e)
-			{
-				Platform.Log(LogLevel.Error, e, "Unexpected exception when trying to delete directory: {0}", path);
-			}
+			DirectoryUtility.DeleteIfExists(path, true);
 		}
 
 		private void RemoveDatabase(Model.WorkQueue item)

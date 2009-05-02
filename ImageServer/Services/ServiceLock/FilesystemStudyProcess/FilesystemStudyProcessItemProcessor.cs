@@ -39,6 +39,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Rules;
@@ -172,26 +173,34 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemStudyProcess
                 // Since we found a partition, we should find a rules engine too.
                 ServerRulesEngine engine = _engines[partition];
 
-                foreach (DirectoryInfo dateDir in partitionDir.GetDirectories())
-                {
-                    foreach (DirectoryInfo studyDir in dateDir.GetDirectories())
-                    {
-                        String studyInstanceUid = studyDir.Name;
-                        try
-                        {
-                            StudyStorageLocation location = LoadStorageLocation(partition.GetKey(), studyInstanceUid);
-                            ProcessStudy(location, engine);
-                            _stats.NumStudies++;
+				foreach (DirectoryInfo dateDir in partitionDir.GetDirectories())
+				{
+					if (dateDir.FullName.EndsWith("Deleted")
+					    || dateDir.FullName.EndsWith("Reconcile"))
+						continue;
+
+					foreach (DirectoryInfo studyDir in dateDir.GetDirectories())
+					{
+						String studyInstanceUid = studyDir.Name;
+						try
+						{
+							StudyStorageLocation location = LoadStorageLocation(partition.GetKey(), studyInstanceUid);
+							ProcessStudy(location, engine);
+							_stats.NumStudies++;
 
 							if (CancelPending) return;
-                        }
-                        catch (Exception e)
-                        {
-                            Platform.Log(LogLevel.Error, e,
-                                         "Unexpected error while processing study: {0} on partition {1}.", studyInstanceUid, partition.Description);
-                        }                        
-                    }
-                }
+						}
+						catch (Exception e)
+						{
+							Platform.Log(LogLevel.Error, e,
+							             "Unexpected error while processing study: {0} on partition {1}.", studyInstanceUid,
+							             partition.Description);
+						}
+					}
+
+					// Cleanup the directory, if its empty.
+					DirectoryUtility.DeleteIfEmpty(dateDir.FullName);
+				}
             }
         }
 

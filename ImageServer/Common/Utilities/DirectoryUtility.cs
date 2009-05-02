@@ -30,14 +30,21 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageServer.Common.Utilities
 {
+	/// <summary>
+	/// Static Class containing utilities for manipulating directories.
+	/// </summary>
     public static class DirectoryUtility
     {
+		/// <summary>
+		/// Calculate the size of a folder.
+		/// </summary>
+		/// <param name="folder"></param>
+		/// <returns></returns>
         public static float CalculateFolderSize(string folder)
         {
             float folderSize = 0.0f;
@@ -85,6 +92,11 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             DeleteIfExists(source);
         }
 
+		/// <summary>
+		/// Recursively copy a directory
+		/// </summary>
+		/// <param name="sourceDirectory"></param>
+		/// <param name="targetDirectory"></param>
         public static void Copy(string sourceDirectory, string targetDirectory)
         {
             DirectoryInfo diSource = new DirectoryInfo(sourceDirectory);
@@ -113,34 +125,55 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             {
                 DirectoryInfo nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
                 InternalCopy(diSourceSubDir, nextTargetSubDir);
-
             }
         }
 
+		/// <summary>
+		/// Delete a directory if it exists.  Do not delete the parent directory if its empty.
+		/// </summary>
+		/// <param name="dir"></param>
         public static void DeleteIfExists(string dir)
         {
             DeleteIfExists(dir, false);
         }
 
+		/// <summary>
+		/// Delete a directory if its empty.
+		/// </summary>
+		/// <param name="path"></param>
+		/// <returns></returns>
         public static bool DeleteIfEmpty(string path)
         {
-            if (Directory.Exists(path))
-            {
-                if (Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0)
-                {
-                    Directory.Delete(path, true);
-                    return true;
-                }
-                else
-                {
-                    // not empty
-                    return false;
-                }
-            }
+			try
+			{
+				if (Directory.Exists(path))
+				{
+					if (Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0)
+					{
+						Directory.Delete(path, true);
+						return true;
+					}
+					else
+					{
+						// not empty
+						return false;
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when attempting to delete directory: {0}", path);
+				return false;
+			}
 
-            return true;// not exist = empty 
+			return true;// not exist = empty 
         }
 
+		/// <summary>
+		/// Delete any empty subdirectories
+		/// </summary>
+		/// <param name="path"></param>
+		/// <param name="recursive"></param>
         public static void DeleteEmptySubDirectories(string path, bool recursive)
         {
             if (Directory.Exists(path))
@@ -155,23 +188,29 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             }
         }
 
-
+		/// <summary>
+		/// Delete a directory if it exists.
+		/// </summary>
+		/// <param name="dir"></param>
+		/// <param name="deleteParentIfEmpty"></param>
         public static void DeleteIfExists(string dir, bool deleteParentIfEmpty)
         {
-            DirectoryInfo parent = Directory.GetParent(dir);
-            if (Directory.Exists(dir))
-                Directory.Delete(dir, true);
+			try
+			{
+				DirectoryInfo parent = Directory.GetParent(dir);
+				if (Directory.Exists(dir))
+					Directory.Delete(dir, true);
 
-            if (deleteParentIfEmpty)
-            {
-                // delete the parent too
-                DeleteIfEmpty(parent.FullName);
-            }
-            
-            
+				if (deleteParentIfEmpty)
+				{
+					// delete the parent too
+					DeleteIfEmpty(parent.FullName);
+				}
+			}
+			catch(Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Unexpected exception when deleting directory {0}", dir);
+			}
         }
-
-
     }
-    
 }
