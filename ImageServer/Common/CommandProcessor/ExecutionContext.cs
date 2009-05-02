@@ -32,6 +32,7 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Common.CommandProcessor
@@ -48,6 +49,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         protected string _backupDirectory;
         private readonly object _sync = new object();
         private readonly ExecutionContext _inheritFrom;
+        private IReadContext _readContext;
 
         #endregion
 
@@ -141,7 +143,19 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             get { return _current; }
         }
 
-        
+        public IPersistenceContext ReadContext
+        {
+            get
+            {
+                lock(SyncRoot)
+                {
+                    if (_readContext == null)
+                        _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+                }
+
+                return _readContext;
+            }
+        }
 
         #region IDisposable Members
 
@@ -175,6 +189,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             }
             finally
             {
+            	if (_readContext!=null)
+            	{
+            		_readContext.Dispose();
+            		_readContext = null;
+            	}
                 // reset the current context for the thread
                 _current = _inheritFrom;
             }

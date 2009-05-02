@@ -60,6 +60,7 @@
     </Compile>
     <Compile Include="Diagnostics\RandomError.cs" />
     <Compile Include="Diagnostics\Settings.cs" />
+    <Compile Include="DuplicateSopHandler.cs" />
     <Compile Include="EnumInfoAttribute.cs" />
     <Compile Include="Data\ImageSetDescriptor.cs" />
     <Compile Include="Data\ImageSetDetails.cs" />
@@ -89,6 +90,7 @@
     <Compile Include="ICancelable.cs" />
     <Compile Include="ImageServerCommonConfiguration.cs" />
     <Compile Include="ImageServerLogWriter.cs" />
+    <Compile Include="InsertDuplicateQueueEntryCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CommandProcessor\RenameFileCommand.cs" />
     <Compile Include="CommandProcessor\SaveDicomFileCommand.cs" />

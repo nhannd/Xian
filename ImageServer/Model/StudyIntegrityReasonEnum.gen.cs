@@ -44,6 +44,7 @@ public partial class StudyIntegrityReasonEnum : ServerEnum
 {
       #region Private Static Members
       private static readonly StudyIntegrityReasonEnum _InconsistentData = GetEnum("InconsistentData");
+      private static readonly StudyIntegrityReasonEnum _Duplicate = GetEnum("Duplicate");
       #endregion
 
       #region Public Static Properties
@@ -53,6 +54,13 @@ public partial class StudyIntegrityReasonEnum : ServerEnum
       public static StudyIntegrityReasonEnum InconsistentData
       {
           get { return _InconsistentData; }
+      }
+      /// <summary>
+      /// Duplicates were received and need to be reconciled.
+      /// </summary>
+      public static StudyIntegrityReasonEnum Duplicate
+      {
+          get { return _Duplicate; }
       }
 
       #endregion

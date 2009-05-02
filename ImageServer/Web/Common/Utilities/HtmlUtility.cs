@@ -42,6 +42,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Utilities
 {
     public static class HtmlUtility
     {
+        public static string ConditionalString(bool condition, string s1, string s2)
+        {
+            return condition ? s1 : s2;
+        }
+
     	///
     	/// Encode a string so that it is suitable for rendering in an Html page.
     	/// Also ensure all Xml escape characters are encoded properly.

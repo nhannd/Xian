@@ -84,10 +84,20 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         /// </summary>
         /// <param name="description"></param>
 	    public ServerCommandProcessor(string description)
-            : this(description, CommandProcessor.ExecutionContext.Current)
+            : this(description, GetOrCreateCurrentExectionContext())
 		{
             
 		}
+
+        private static ExecutionContext GetOrCreateCurrentExectionContext()
+        {
+            if (CommandProcessor.ExecutionContext.Current == null)
+            {
+                return new ExecutionContext();
+            }
+            else
+                return CommandProcessor.ExecutionContext.Current;
+        }
 
         /// <summary>
         /// Creates an instance of <see cref="ServerCommandProcessor"/> using

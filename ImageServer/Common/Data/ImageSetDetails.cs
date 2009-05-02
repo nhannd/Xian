@@ -54,8 +54,6 @@ namespace ClearCanvas.ImageServer.Common.Data
         public ImageSetDetails(IDicomAttributeProvider attributeProvider)
         {
             StudyInfo = new StudyInformation(attributeProvider);
-            SopInstanceCount = 1;
-
         }
 
         #endregion
@@ -86,9 +84,7 @@ namespace ClearCanvas.ImageServer.Common.Data
         /// <param name="message"></param>
         public void InsertFile(DicomMessageBase message)
         {
-            ImageSetDetails fileDetails = new ImageSetDetails(message.DataSet);
-            StudyInfo.Add(fileDetails.StudyInfo.Series);
-            SopInstanceCount++;
+            StudyInfo.Add(message);
         }
         #endregion
     }

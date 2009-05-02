@@ -565,6 +565,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		/// </remark>
 		static public StudySummary CreateStudySummary(IPersistenceContext read, Study study)
 		{
+            if (study==null)
+			{
+			    return null;
+			}
+
 			StudySummary studySummary = new StudySummary();
 			StudyController controller = new StudyController();
 

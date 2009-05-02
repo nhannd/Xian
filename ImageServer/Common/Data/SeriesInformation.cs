@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageServer.Common.Data
         private string _seriesInstanceUid;
         private string _seriesDescription;
         private string _modality;
-        private int _numberOfInstances = 1;
+        private int _numberOfInstances = 0;
         #endregion
 
         #region Constructors

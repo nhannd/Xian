@@ -50,6 +50,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new StudyIntegrityQueueUidSelectCriteria(this);
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Receiver")]
+        public ISearchCondition<String> Receiver
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Receiver"))
+              {
+                 SubCriteria["Receiver"] = new SearchCondition<String>("Receiver");
+              }
+              return (ISearchCondition<String>)SubCriteria["Receiver"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
         public ISearchCondition<String> SeriesDescription
         {
@@ -86,6 +98,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["SopInstanceUid"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Source")]
+        public ISearchCondition<String> Source
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Source"))
+              {
+                 SubCriteria["Source"] = new SearchCondition<String>("Source");
+              }
+              return (ISearchCondition<String>)SubCriteria["Source"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
         public ISearchCondition<ServerEntityKey> StudyIntegrityQueueKey
         {
@@ -96,6 +120,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["StudyIntegrityQueueKey"] = new SearchCondition<ServerEntityKey>("StudyIntegrityQueueKey");
               }
               return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyIntegrityQueueKey"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Timestamp")]
+        public ISearchCondition<DateTime> Timestamp
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("Timestamp"))
+              {
+                 SubCriteria["Timestamp"] = new SearchCondition<DateTime>("Timestamp");
+              }
+              return (ISearchCondition<DateTime>)SubCriteria["Timestamp"];
             } 
         }
     }

@@ -42,9 +42,12 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 	public class CreateDirectoryCommand : ServerCommand
 	{
 		#region Private Members
-		private readonly string _directory;
-		private bool _created = false;
+		protected string _directory;
+        protected bool _created = false;
 		#endregion
+
+        private GetDirectoryDelegateMethod GetDirectoryDelegate;
+        public delegate string GetDirectoryDelegateMethod();
 
 		public CreateDirectoryCommand(string directory)
 			: base("Create Directory", true)
@@ -54,8 +57,20 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 			_directory = directory;
 		}
 
+        public CreateDirectoryCommand(GetDirectoryDelegateMethod getDirectoryDelegate)
+            : base("Create Directory", true)
+        {
+            Platform.CheckForNullReference(getDirectoryDelegate, "getDirectoryDelegate");
+            GetDirectoryDelegate = getDirectoryDelegate;
+        }
+
 		protected override void OnExecute()
 		{
+            if (String.IsNullOrEmpty(_directory) && GetDirectoryDelegate!=null)
+            {
+                _directory = GetDirectoryDelegate();
+            }
+
 			if (Directory.Exists(_directory))
 			{
 				_created = false;

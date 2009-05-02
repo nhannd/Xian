@@ -177,10 +177,18 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
 						if (parm2.Output)
 							throw new PersistenceException("Unsupported output parameter type: XmlDocument", null);
 
-                        XmlNodeReader reader = new XmlNodeReader(parm2.Value.DocumentElement);                        
-                        SqlXml xml = new SqlXml(reader);
-
-                        command.Parameters.AddWithValue(sqlParmName, xml);
+                        if (parm2.Value.DocumentElement!=null)
+                        {
+                            XmlNodeReader reader = new XmlNodeReader(parm2.Value.DocumentElement);
+                            SqlXml xml = new SqlXml(reader);
+                            command.Parameters.AddWithValue(sqlParmName, xml);
+                        }
+                        else
+                        {
+                            SqlXml xml = new SqlXml();
+                            command.Parameters.AddWithValue(sqlParmName, xml);
+                        }
+                        
                     }
                 }
                 else

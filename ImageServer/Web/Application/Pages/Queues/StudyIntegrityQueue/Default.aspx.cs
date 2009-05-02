@@ -58,10 +58,23 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         public void OnReconcileItem(ReconcileDetails details)
         {
-            ReconcileDialog.ReconcileDetails = details;
-            ReconcileDialog.StudyIntegrityQueueItem = details.StudyIntegrityQueueItem;
-            ReconcileDialog.Show();
+            if (details.StudyIntegrityQueueItem.StudyIntegrityReasonEnum == StudyIntegrityReasonEnum.Duplicate)
+            {
+                DuplicateSopReconcileDialog.StudyIntegrityQueueItem = details.StudyIntegrityQueueItem;
+                DuplicateSopReconcileDialog.ReconcileDetails = details;
+
+                DuplicateSopReconcileDialog.DataBind();
+                DuplicateSopReconcileDialog.Show();
+            }
+            else
+            {
+                ReconcileDialog.ReconcileDetails = details;
+                ReconcileDialog.StudyIntegrityQueueItem = details.StudyIntegrityQueueItem;
+                ReconcileDialog.Show();
+            }
+            
         }
+    
 
 
         public void UpdateUI()

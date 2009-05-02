@@ -351,6 +351,21 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
+        /// <summary>
+		/// Returns the path of the sop instance with the specified series and sop instance uid.
+		/// </summary>
+		/// <param name="seriesInstanceUid"></param>
+		/// <param name="sopInstanceUid)"></param>
+		/// <returns>null if not found, else the value.</returns>
+        public String GetSopInstancePath(string seriesInstanceUid, string sopInstanceUid)
+        {
+            String path = StringUtilities.Combine(new String[] {
+                                                          GetStudyPath(), seriesInstanceUid, sopInstanceUid
+                                                      }, Path.DirectorySeparatorChar.ToString());
+
+            return path + ".dcm";
+        }
+
 		/// <summary>
 		/// Query for the latest archival record for a study.
 		/// </summary>

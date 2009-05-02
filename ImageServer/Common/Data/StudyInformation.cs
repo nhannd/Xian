@@ -92,8 +92,7 @@ namespace ClearCanvas.ImageServer.Common.Data
 
             PatientInfo = new PatientInformation(attributeProvider);
             SeriesInformation series = new SeriesInformation(attributeProvider);
-            if (!String.IsNullOrEmpty(series.SeriesInstanceUid))
-                Add(series);
+            Add(series);
         }
 
         #endregion
@@ -167,32 +166,31 @@ namespace ClearCanvas.ImageServer.Common.Data
         /// <summary>
         /// Adds a <see cref="SeriesInformation"/> data
         /// </summary>
-        /// <param name="series"></param>
-        public void Add(SeriesInformation series)
+        /// <param name="message"></param>
+        public void Add(DicomMessageBase message)
         {
-            SeriesInformation theSeries = Series.Find(delegate(SeriesInformation ser) { return ser.SeriesInstanceUid == series.SeriesInstanceUid; });
+            string seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].ToString();
+            SeriesInformation theSeries = Series.Find(delegate(SeriesInformation ser)
+                                                          {
+                                                              return ser.SeriesInstanceUid == seriesInstanceUid;
+                                                          });
             if (theSeries==null)
             {
-                this.Series.Add(series);
+                SeriesInformation newSeries = new SeriesInformation(message.DataSet);
+                newSeries.NumberOfInstances = 1;
+                this.Series.Add(newSeries);
             }
             else
             {
-
                 theSeries.NumberOfInstances++;
             }
         }
 
-        /// <summary>
-        /// Adds a list of <see cref="SeriesInformation"/> data
-        /// </summary>
-        /// <param name="series"></param>
-        public void Add(IEnumerable<SeriesInformation> series)
+        public void Add(SeriesInformation series)
         {
-           foreach(SeriesInformation ser in series)
-           {
-               Add(ser);
-           }
-       }
+            Series.Add(series);
+        }
+
        #endregion
 
        #region Public Static Methods

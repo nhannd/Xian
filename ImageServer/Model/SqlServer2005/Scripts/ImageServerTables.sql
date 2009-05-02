@@ -1238,7 +1238,7 @@ CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueue] ON [dbo].[StudyIntegrityQueue
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
 GO
 
-/****** Object:  Table [dbo].[StudyIntegrityQueueUid]    Script Date: 01/23/2009 16:59:12 ******/
+/****** Object:  Table [dbo].[StudyIntegrityQueueUid]    Script Date: 04/30/2009 19:55:24 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -1248,23 +1248,51 @@ GO
 CREATE TABLE [dbo].[StudyIntegrityQueueUid](
 	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_StudyIntegrityQueueUid_GUID]  DEFAULT (newid()),
 	[StudyIntegrityQueueGUID] [uniqueidentifier] NOT NULL,
-	[SeriesDescription] [nvarchar](64),
-	[SeriesInstanceUid] [varchar](64)  NOT NULL,
-	[SopInstanceUid] [varchar](64)  NOT NULL,
+	[SeriesDescription] [nvarchar](64) NULL,
+	[SeriesInstanceUid] [varchar](64) NOT NULL,
+	[SopInstanceUid] [varchar](64) NOT NULL,
+	[Source] [varchar](512) NULL,
+	[Receiver] [varchar](512) NULL,
+	[Timestamp] [datetime] NULL,
  CONSTRAINT [PK_StudyIntegrityQueueUid] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
+)WITH (IGNORE_DUP_KEY = OFF) ON [INDEXES]
 ) ON [QUEUES]
+
 GO
-SET ANSI_PADDING OFF
-GO
+
+ALTER TABLE [dbo].[StudyIntegrityQueueUid]  WITH CHECK ADD  CONSTRAINT [FK_StudyIntegrityQueueUid_StudyIntegrityQueue] FOREIGN KEY([StudyIntegrityQueueGUID])
+REFERENCES [dbo].[StudyIntegrityQueue] ([GUID])
+
+/****** Object:  Index [IX_StudyIntegrityQueueUid]    Script Date: 05/01/2009 15:48:04 ******/
 CREATE CLUSTERED INDEX [IX_StudyIntegrityQueueUid] ON [dbo].[StudyIntegrityQueueUid] 
 (
 	[StudyIntegrityQueueGUID] ASC
-)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [QUEUES]
-GO
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [QUEUES]
 
+GO
+/****** Object:  Index [IX_StudyIntegrityQueueUid_Receiver]    Script Date: 05/01/2009 15:49:13 ******/
+CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueueUid_Receiver] ON [dbo].[StudyIntegrityQueueUid] 
+(
+	[Receiver] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+GO
+/****** Object:  Index [IX_StudyIntegrityQueueUid_SeriesInstanceUid]    Script Date: 05/01/2009 15:49:26 ******/
+CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueueUid_SeriesInstanceUid] ON [dbo].[StudyIntegrityQueueUid] 
+(
+	[SeriesInstanceUid] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+GO
+/****** Object:  Index [IX_StudyIntegrityQueueUid_Source]    Script Date: 05/01/2009 15:49:35 ******/
+CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueueUid_Source] ON [dbo].[StudyIntegrityQueueUid] 
+(
+	[Source] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+
+GO
 
 /****** Object:  Table [dbo].[StudyHistory]    Script Date: 01/23/2009 16:59:12 ******/
 SET ANSI_NULLS ON

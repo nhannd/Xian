@@ -734,10 +734,6 @@ VALUES(newid(),101,'RejectDuplicates','Reject Duplicates','Send a DICOM C-STORE-
 GO
 
 INSERT INTO [ImageServer].[dbo].DuplicateSopPolicyEnum([GUID],[Enum],[Lookup],[Description],[LongDescription])
-VALUES(newid(),102,'AcceptLatest','Accept Latest','Keep the latest object received.')
-GO
-
-INSERT INTO [ImageServer].[dbo].DuplicateSopPolicyEnum([GUID],[Enum],[Lookup],[Description],[LongDescription])
 VALUES(newid(),103,'CompareDuplicates','Compare Duplicates','Process duplicate objects received and compare them to originals flagging any differences as a failure.')
 GO
 
@@ -862,9 +858,15 @@ GO
 INSERT INTO [ImageServer].[dbo].[StudyIntegrityReasonEnum]
            ([GUID],[Enum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),100,'InconsistentData','Inconsistent Data Reconciliation','Images must be reconciled because of inconsistent data.')
+           (newid(),100,'InconsistentData','Inconsistent Data','Images must be reconciled because of inconsistent data.')
 GO
 
+-- StudyIntegrityReasonEnum inserts
+INSERT INTO [ImageServer].[dbo].[StudyIntegrityReasonEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),101,'Duplicate','Duplicate','Duplicates were received and need to be reconciled.')
+GO
 
 -- StudyHistoryTypeEnum inserts
 INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]

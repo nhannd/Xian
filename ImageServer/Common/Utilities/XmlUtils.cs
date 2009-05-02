@@ -78,8 +78,8 @@ namespace ClearCanvas.ImageServer.Common.Utilities
         public static T Deserialize<T>(XmlNode node)
             where T:class
         {
-            Platform.CheckForNullReference(node, "node");
-
+            if (node == null)
+                return null;
             return Deserialize<T>(new XmlNodeReader(node));
         }
 

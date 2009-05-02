@@ -31,6 +31,7 @@
 
 using System;
 using System.IO;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
@@ -78,7 +79,7 @@ namespace ClearCanvas.ImageServer.Common
             _partition = partition;
         }
 
-        public DicomSopProcessingResult Import(DicomMessageBase message, string sourceAE)
+        private DicomSopProcessingResult Import(DicomMessageBase message, string sourceAE, string sourceId, string receiverId)
         {
             Platform.CheckForNullReference(message, "message");
             String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
@@ -174,85 +175,39 @@ namespace ClearCanvas.ImageServer.Common
                     String basePath;
                     bool dupImage = false;
                     string extension = null;
-
-                    processor.AddCommand(new CreateDirectoryCommand(path));
-
-                    path = Path.Combine(path, studyLocation.PartitionFolder);
-                    processor.AddCommand(new CreateDirectoryCommand(path));
-
-                    path = Path.Combine(path, studyLocation.StudyFolder);
-                    processor.AddCommand(new CreateDirectoryCommand(path));
-
-                    path = Path.Combine(path, studyLocation.StudyInstanceUid);
-                    processor.AddCommand(new CreateDirectoryCommand(path));
-
-                    path = Path.Combine(path, seriesInstanceUid);
-                    processor.AddCommand(new CreateDirectoryCommand(path));
-
-                    basePath = path = Path.Combine(path, sopInstanceUid);
-                    path += ".dcm";
-
-                    if (File.Exists(path))
-                    {
-                        result.Duplicate = true;
+                    String finalDest = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
+                    DicomFile file = ConvertToDicomFile(message, finalDest, sourceAE);
                         
-                        if (_partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.SendSuccess))
-                        {
-                            result.DicomStatus = DicomStatuses.Success;
-
-                            Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, sending success response {0}", sopInstanceUid);
-                            return result;
-                        }
-                        else if (_partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.RejectDuplicates))
-                        {
-                            failureMessage = String.Format("Duplicate SOP Instance received, rejecting {0}", sopInstanceUid);
-                            Platform.Log(LogLevel.Info, failureMessage);
-                            SetError(result, DicomStatuses.DuplicateSOPInstance, failureMessage);
-                            throw new ApplicationException("Duplicate SOP Instance received.");
-                        }
-                        else if (_partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.AcceptLatest))
-                        {
-                            TransferSyntax studyStorageSyntax =
-                                TransferSyntax.GetTransferSyntax(studyLocation.TransferSyntaxUid);
-                            if (!studyStorageSyntax.UidString.Equals(message.TransferSyntax.UidString)
-                                && (message.TransferSyntax.Encapsulated || studyStorageSyntax.Encapsulated))
-                            {
-                                failureMessage = String.Format( "Duplicate SOP received, but transfer syntax has changed, db syntax: {0}, message syntax: {1}",
-                                        studyLocation.TransferSyntaxUid, message.TransferSyntax.Name);
-
-                                Platform.Log(LogLevel.Info, failureMessage);
-                                return result;
-                            }
-                            else
-                            {
-                                Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, replacing previous file {0}", sopInstanceUid);
-                                dupPath = path + "_dup_old";
-                                processor.AddCommand(new RenameFileCommand(path, dupPath));
-                                dupImage = true;
-                            }
-                        }
-                        else if (_partition.DuplicateSopPolicyEnum.Equals(DuplicateSopPolicyEnum.CompareDuplicates))
-                        {
-                            Platform.Log(LogLevel.Info, "Duplicate SOP Instance received, processing {0}", sopInstanceUid);
-                            for (int i = 1; i < 999; i++)
-                            {
-                                extension = String.Format("dup{0}.dcm", i);
-                                string newPath = basePath + "." + extension;
-                                if (!File.Exists(newPath))
-                                {
-                                    dupImage = true;
-                                    path = newPath;
-                                    break;
-                                }
-                            }
-                        }
+                    if (File.Exists(finalDest))
+                    {
+                        DuplicateSopHandler handler = new DuplicateSopHandler(sourceId, receiverId, processor, _partition, studyLocation);
+                        result = handler.Handle(file);
                     }
+                    else
+                    {
+                        processor.AddCommand(new CreateDirectoryCommand(path));
 
-                    DicomFile file = ConvertToDicomFile(message, path, sourceAE);
-                    processor.AddCommand(new SaveDicomFileCommand(path, file, true, true));
+                        path = Path.Combine(path, studyLocation.PartitionFolder);
+                        processor.AddCommand(new CreateDirectoryCommand(path));
 
-                    processor.AddCommand(new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
+                        path = Path.Combine(path, studyLocation.StudyFolder);
+                        processor.AddCommand(new CreateDirectoryCommand(path));
 
+                        path = Path.Combine(path, studyLocation.StudyInstanceUid);
+                        processor.AddCommand(new CreateDirectoryCommand(path));
+
+                        path = Path.Combine(path, seriesInstanceUid);
+                        processor.AddCommand(new CreateDirectoryCommand(path));
+
+                        basePath = path = Path.Combine(path, sopInstanceUid);
+                        path += ".dcm";
+
+                        processor.AddCommand(new SaveDicomFileCommand(path, file, true, true));
+
+                        processor.AddCommand(new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
+
+                    }
+                    
                     if (processor.Execute())
                     {
                         result.DicomStatus = DicomStatuses.Success;
@@ -346,6 +301,30 @@ namespace ClearCanvas.ImageServer.Common
                 file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
 
             return file;
+        }
+
+        public DicomSopProcessingResult ImportFromNetworkStream(DicomMessage message, ServerAssociationParameters association)
+        {
+            Platform.CheckForNullReference(message, "message");
+            Platform.CheckForNullReference(association, "association");
+            String sourceId =
+                String.Format("AE:{0}@{1}:{2}", association.CallingAE, association.RemoteEndPoint.Address,
+                              association.RemoteEndPoint.Port);
+
+            String receiverId =
+                            String.Format("AE:{0}@{1}:{2}", association.CalledAE, association.LocalEndPoint.Address,
+                                          association.LocalEndPoint.Port);
+
+            return Import(message, association.CallingAE, sourceId, receiverId);
+        }
+
+        public DicomSopProcessingResult ImportFromFilesystemStream(DicomFile file)
+        {
+            Platform.CheckForNullReference(file, "file");
+            FileInfo fileInfo = new FileInfo(file.Filename);
+
+            String receiverId = ServiceTools.ServerInstanceId;
+            return Import(file, "DirectoryImport", fileInfo.Directory.FullName, receiverId);
         }
     }
 }

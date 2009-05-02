@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -154,6 +154,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
         private StudyInfo _existingStudy;
         private ImageSetDetails _conflictingImages;
 
+
         public ReconcileDetails(StudyIntegrityQueue queueItem)
         {
             this._item = queueItem;
@@ -199,6 +200,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	{
 		#region Private members
 
+	    private StudyIntegrityReasonEnum _reason;
 		private string _existingPatientId;
 		private string _existingPatientName;
 		private string _existingAccessionNumber;
@@ -216,6 +218,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 	    #endregion Private members
 
 		#region Public Properties
+
+	    public bool StudyExists
+	    {
+            get { return StudySummary != null; }
+	    }
 
 		public StudySummary StudySummary
 		{
@@ -303,6 +310,9 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		{
 			get
 			{
+                if (!StudyExists)
+                    return false;
+
 				if (_study.IsLocked || _study.IsNearline || _study.IsLocked || _study.IsProcessing)
 					return false;
 				else
@@ -310,7 +320,13 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			}
 		}
 
-		#endregion Public Properties
+	    public StudyIntegrityReasonEnum Reason
+	    {
+	        get { return _reason; }
+	        set { _reason = value; }
+	    }
+
+	    #endregion Public Properties
 	}
 
 	public class StudyIntegrityQueueDataSource
@@ -438,54 +454,55 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		/// </remark>
 		private StudyIntegrityQueueSummary CreateStudyIntegrityQueueSummary(StudyIntegrityQueue item)
 		{
-		
+            StudyIntegrityQueueSummary summary = new StudyIntegrityQueueSummary();
+                
 			StudyStorageAdaptor ssAdaptor = new StudyStorageAdaptor();
             StudyStorage storages = ssAdaptor.Get(HttpContextData.Current.ReadContext, item.StudyStorageKey);
-			StudyAdaptor studyAdaptor = new StudyAdaptor();
-			StudySelectCriteria studycriteria = new StudySelectCriteria();
-			studycriteria.StudyInstanceUid.EqualTo(storages.StudyInstanceUid);
-			studycriteria.ServerPartitionKey.EqualTo(item.ServerPartitionKey);
-            IList<Study> studyList = studyAdaptor.Get(HttpContextData.Current.ReadContext, studycriteria);
-			Study study = null;
+            try
+            {
+                summary.Reason = item.StudyIntegrityReasonEnum;
+                summary.TheStudyIntegrityQueueItem = item;
+                summary.ThePartition = Partition;
 
-			if (studyList == null || studyList.Count == 0)
-			{
-				throw new StudyNotFoundException(storages.StudyInstanceUid, "Unable to locate the study");
-			}
+                ReconcileStudyQueueDescription queueDescription = new ReconcileStudyQueueDescription();
+                queueDescription.Parse(item.Description);
 
-			study = studyList[0];
+                summary.ConflictingPatientId = queueDescription.ConflictingPatientId;
+                summary.ConflictingPatientName = queueDescription.ConflictingPatientName;
+                summary.ConflictingAccessionNumber = queueDescription.ConflictingAccessionNumber;
+                summary.ReceivedTime = item.InsertTime;
+
+                ReconcileStudyWorkQueueData queueData =
+                    XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
+
+                List<string> modalities = new List<string>();
+                List<SeriesInformation> seriesList = queueData.Details.StudyInfo.Series;
+                foreach (SeriesInformation series in seriesList)
+                {
+                    if (!modalities.Contains(series.Modality))
+                        modalities.Add(series.Modality);
+                }
+                summary.ConflictingModalities = modalities.ToArray();
+
+                // Fetch existing study info. Note: this is done last because the study may not exist.
+                Study study = storages.LoadStudy(HttpContextData.Current.ReadContext);
+                summary.StudySummary = StudySummaryAssembler.CreateStudySummary(HttpContextData.Current.ReadContext, study);
+                if (summary.StudySummary!=null)
+                {
+                    summary.StudyInstanceUID = summary.StudySummary.StudyInstanceUid;
+                    summary.ExistingPatientName = summary.StudySummary.PatientsName;
+                    summary.ExistingPatientId = summary.StudySummary.PatientId;
+                    summary.ExistingAccessionNumber = summary.StudySummary.AccessionNumber;
+                }
+                
+            }
+            catch(StudyNotFoundException studyNotFoundException)
+            {
+                // Study record may not exist. For eg, duplicate arrives but the existing study hasn't been processed.
+            }
 
 
-			StudyIntegrityQueueSummary summary = new StudyIntegrityQueueSummary();
-			summary.TheStudyIntegrityQueueItem = item;
-			summary.ThePartition = Partition;
-
-			ReconcileStudyQueueDescription queueDescription = new ReconcileStudyQueueDescription();
-			queueDescription.Parse(item.Description);
-            summary.StudySummary = StudySummaryAssembler.CreateStudySummary(HttpContextData.Current.ReadContext, study);
-			summary.StudyInstanceUID = summary.StudySummary.StudyInstanceUid;
-			summary.ExistingPatientName = queueDescription.ExistingPatientName;
-			summary.ExistingPatientId = queueDescription.ExistingPatientId;
-			summary.ExistingAccessionNumber = queueDescription.ExistingAccessionNumber;
-			summary.ConflictingPatientId = queueDescription.ConflictingPatientId;
-			summary.ConflictingPatientName = queueDescription.ConflictingPatientName;
-			summary.ConflictingAccessionNumber = queueDescription.ConflictingAccessionNumber;
-			summary.ReceivedTime = item.InsertTime;
-
-			ReconcileStudyWorkQueueData queueData =
-				XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
-
-			List<string> modalities = new List<string>();
-			List<SeriesInformation> seriesList = queueData.Details.StudyInfo.Series;
-			foreach (SeriesInformation series in seriesList)
-			{
-				if (!modalities.Contains(series.Modality))
-					modalities.Add(series.Modality);
-			}
-			summary.ConflictingModalities = modalities.ToArray();
-
-			return summary;
-			
+            return summary;
 		}
 
 		private StudyIntegrityQueueSelectCriteria GetStudyIntegrityQueueCriteria()

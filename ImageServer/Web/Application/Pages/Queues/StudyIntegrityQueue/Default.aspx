@@ -3,6 +3,7 @@
     Title="Study Integrity Queue | ClearCanvas ImageServer" %>
 
 <%@ Register Src="ReconcileDialog.ascx" TagName="ReconcileDialog" TagPrefix="localAsp" %>
+<%@ Register Src="DuplicateSopDialog.ascx" TagName="DuplicateSopReconcileDialog" TagPrefix="localAsp" %>
 
 <asp:Content runat="server" ID="MainContentTitle" ContentPlaceHolderID="MainContentTitlePlaceHolder"><asp:Literal ID="Literal1" runat="server" Text="<%$Resources:Titles,StudyIntegrityQueue%>" /></asp:Content>
     
@@ -16,4 +17,5 @@
     </asp:Panel>    
     
     <localAsp:ReconcileDialog ID="ReconcileDialog" runat="server" /> 
+     <localAsp:DuplicateSopReconcileDialog ID="DuplicateSopReconcileDialog" runat="server" /> 
 </asp:Content>

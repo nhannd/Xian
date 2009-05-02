@@ -35,6 +35,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
@@ -52,6 +53,7 @@ namespace ClearCanvas.ImageServer.TestApp
         private List<string> _lastNames = new List<string>();
         private List<string> _givenNames = new List<string>();
         private List<string> _seriesDesc = new List<string>();
+        private List<DicomFile> _prevSentFiles = new List<DicomFile>();
         public TestSendImagesForm()
         {
             InitializeComponent();
@@ -85,37 +87,103 @@ namespace ClearCanvas.ImageServer.TestApp
 
         private void SendRandom_Click(object sender, EventArgs e)
         {
-            Random ran = new Random();
-            String seriesDescription = _seriesDesc[ran.Next(_seriesDesc.Count)];
+            SendImages();
+        }
 
-            if (InputBox("Series Description", "Series Description:", ref seriesDescription) == DialogResult.OK)
-            {
+        private void SendImages()
+        {
+            Random ran = new Random();
+            textBox1.Clear();
+            
                 _seriesMap = new Dictionary<string, string>();
+                _prevSentFiles = new List<DicomFile>();
+                List<StorageScu> scuClients = new List<StorageScu>();
+                for (int i = 0; i < AssociationPerStudy.Value; i++)
+                {
+                    StorageScu scu =
+                        new StorageScu(LocalAE.Text + i, ServerAE.Text, ServerHost.Text, int.Parse(ServerPort.Text));
+                    scu.ImageStoreCompleted += new EventHandler<StorageInstance>(scu_ImageStoreCompleted);
+                    scuClients.Add(scu);
+                }
 
                 do
                 {
-                    using (StorageScu scu = new StorageScu(LocalAE.Text, ServerAE.Text, ServerHost.Text, int.Parse(ServerPort.Text)))
-                    {
-                        string[] seriesUids = new string[_seriesToFilesMap.Count];
-                        _seriesToFilesMap.Keys.CopyTo(seriesUids, 0);
-                        String seriesToUse = seriesUids[ran.Next(_seriesToFilesMap.Count)];
-                        List<string> files = _seriesToFilesMap[seriesToUse];
-                        foreach (string path in files)
-                        {
-                            DicomFile file = new DicomFile(path);
-                            file.Load();
+                    String seriesDescription = _seriesDesc[ran.Next(_seriesDesc.Count)];
+                    string[] seriesUids = new string[_seriesToFilesMap.Count];
+                    _seriesToFilesMap.Keys.CopyTo(seriesUids, 0);
+                    String seriesToUse = seriesUids[ran.Next(_seriesToFilesMap.Count)];
+                    List<string> files = _seriesToFilesMap[seriesToUse];
 
-                            RandomizeFile(file, seriesDescription);
-                            scu.AddStorageInstance(new StorageInstance(file));
-                            if (ran.Next() % 20 == 0)
-                                break; // don't use all images
+                
+                    foreach (string path in files)
+                    {
+                        DicomFile file = new DicomFile(path);
+                        file.Load();
+
+                        RandomizeFile(file, seriesDescription);
+                        _prevSentFiles.Add(file);
+
+
+                        foreach (StorageScu client in scuClients)
+                        {
+                            client.AddStorageInstance(new StorageInstance(file));
                         }
-                        scu.Send();
-                        scu.Join();
+
+
+                        if (ran.Next() % 20 == 0)
+                            break; // don't use all images
                     }
+                    
+
                 } while (ran.Next() % 3 != 0);
 
+                Log(String.Format("Sending {0} images using {1} client(s)", _prevSentFiles.Count, scuClients.Count));
+                foreach (StorageScu scu in scuClients)
+                {
+                    scu.BeginSend(InstanceSent, scu);
+                    Thread.Sleep(ran.Next(300, 1000));
+                }
+            
+        }
+
+        void scu_ImageStoreCompleted(object sender, StorageInstance e)
+        {
+            StorageScu scu = sender as StorageScu;
+            Random rand = new Random();
+            //Thread.Sleep(rand.Next(300, 1000));
+            textBox1.BeginInvoke(new LogDelegate(Log),  e.SopInstanceUid);
+                                                     
+        }
+
+        private void InstanceSent(IAsyncResult ar)
+        {
+        }
+
+
+        private void ResendImages()
+        {
+            if (_prevSentFiles != null && _prevSentFiles.Count>0)
+            {
+                using (StorageScu scu = new StorageScu(LocalAE.Text, ServerAE.Text, ServerHost.Text, int.Parse(ServerPort.Text)))
+                {
+                    foreach (DicomFile file in _prevSentFiles)
+                    {
+                        file.DataSet[DicomTags.PatientsName].SetStringValue(PatientsName.Text);
+                        file.DataSet[DicomTags.PatientId].SetStringValue(PatientsId.Text);
+                        file.DataSet[DicomTags.IssuerOfPatientId].SetStringValue(IssuerOfPatientsId.Text);
+                        file.DataSet[DicomTags.PatientsSex].SetStringValue(PatientsSex.Text );
+                        file.DataSet[DicomTags.PatientsBirthDate].SetStringValue(PatientsBirthdate.Text);
+                        file.DataSet[DicomTags.AccessionNumber].SetStringValue(AccessionNumber.Text);
+                        file.DataSet[DicomTags.AccessionNumber].SetStringValue(AccessionNumber.Text);
+                        file.DataSet[DicomTags.StudyDate].SetStringValue(StudyDate.Text);
+                        scu.AddStorageInstance(new StorageInstance(file));
+                    }
+                    scu.ImageStoreCompleted += new EventHandler<StorageInstance>(scu_ImageStoreCompleted);
+                    scu.Send();
+                    scu.Join();
+                }
             }
+            
         }
 
         private void RandomizeFile(DicomFile file, String seriesDescription)
@@ -150,47 +218,52 @@ namespace ClearCanvas.ImageServer.TestApp
 
         }
 
-        public static DialogResult InputBox(string title, string promptText, ref string value)
-        {
-            Form form = new Form();
-            Label label = new Label();
-            TextBox textBox = new TextBox();
-            Button buttonOk = new Button();
-            Button buttonCancel = new Button();
+        //public DialogResult InputBox(string title, string promptText, ref string value)
+        //{
+        //    if (_autoRunOn)
+        //    {
+        //        return DialogResult.OK;
+        //    }
 
-            form.Text = title;
-            label.Text = promptText;
-            textBox.Text = value;
+        //    Form form = new Form();
+        //    Label label = new Label();
+        //    TextBox textBox = new TextBox();
+        //    Button buttonOk = new Button();
+        //    Button buttonCancel = new Button();
 
-            buttonOk.Text = "OK";
-            buttonCancel.Text = "Cancel";
-            buttonOk.DialogResult = DialogResult.OK;
-            buttonCancel.DialogResult = DialogResult.Cancel;
+        //    form.Text = title;
+        //    label.Text = promptText;
+        //    textBox.Text = value;
 
-            label.SetBounds(9, 20, 372, 13);
-            textBox.SetBounds(12, 36, 372, 20);
-            buttonOk.SetBounds(228, 72, 75, 23);
-            buttonCancel.SetBounds(309, 72, 75, 23);
+        //    buttonOk.Text = "OK";
+        //    buttonCancel.Text = "Cancel";
+        //    buttonOk.DialogResult = DialogResult.OK;
+        //    buttonCancel.DialogResult = DialogResult.Cancel;
 
-            label.AutoSize = true;
-            textBox.Anchor = textBox.Anchor | AnchorStyles.Right;
-            buttonOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+        //    label.SetBounds(9, 20, 372, 13);
+        //    textBox.SetBounds(12, 36, 372, 20);
+        //    buttonOk.SetBounds(228, 72, 75, 23);
+        //    buttonCancel.SetBounds(309, 72, 75, 23);
 
-            form.ClientSize = new Size(396, 107);
-            form.Controls.AddRange(new Control[] { label, textBox, buttonOk, buttonCancel });
-            form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
-            form.FormBorderStyle = FormBorderStyle.FixedDialog;
-            form.StartPosition = FormStartPosition.CenterScreen;
-            form.MinimizeBox = false;
-            form.MaximizeBox = false;
-            form.AcceptButton = buttonOk;
-            form.CancelButton = buttonCancel;
+        //    label.AutoSize = true;
+        //    textBox.Anchor = textBox.Anchor | AnchorStyles.Right;
+        //    buttonOk.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+        //    buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 
-            DialogResult dialogResult = form.ShowDialog();
-            value = textBox.Text;
-            return dialogResult;
-        }
+        //    form.ClientSize = new Size(396, 107);
+        //    form.Controls.AddRange(new Control[] { label, textBox, buttonOk, buttonCancel });
+        //    form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
+        //    form.FormBorderStyle = FormBorderStyle.FixedDialog;
+        //    form.StartPosition = FormStartPosition.CenterScreen;
+        //    form.MinimizeBox = false;
+        //    form.MaximizeBox = false;
+        //    form.AcceptButton = buttonOk;
+        //    form.CancelButton = buttonCancel;
+
+        //    DialogResult dialogResult = form.ShowDialog();
+        //    value = textBox.Text;
+        //    return dialogResult;
+        //}
 
         private void LoadSamples_Click(object sender, EventArgs e)
         {
@@ -219,6 +292,12 @@ namespace ClearCanvas.ImageServer.TestApp
                       },
                       true);
 
+
+                RandomPatient.Enabled = true;
+                NewStudy.Enabled = true;
+                GenerateImages.Enabled = true;
+                AutoRun.Enabled = true;
+                Resend.Enabled = true;
             }
         }
 
@@ -260,6 +339,83 @@ namespace ClearCanvas.ImageServer.TestApp
         {
             InitNewStudy();
         }
+
+        private bool _autoRunOn = false;
+        private System.Windows.Forms.Timer _timer = new System.Windows.Forms.Timer();
+        private Thread _sendThread;
+        public delegate void LogDelegate(string message);
+
+        private void Log(string message)
+        {
+            textBox1.Text +=Environment.NewLine + message; 
+        }
+        
+        private void AutoRun_Click(object sender, EventArgs e)
+        {
+            _autoRunOn = !_autoRunOn;
+
+            AutoRun.Text = _autoRunOn ? "Stop" : "Auto Run";
+            RandomPatient.Enabled = !_autoRunOn;
+            NewStudy.Enabled = !_autoRunOn;
+            GenerateImages.Enabled = !_autoRunOn;
+            LoadSamples.Enabled = !_autoRunOn;
+            Resend.Enabled = !_autoRunOn;
+            AssociationPerStudy.Enabled = !_autoRunOn;
+
+            if (_autoRunOn)
+            {
+                
+                _sendThread = new Thread(delegate()
+                                             {
+                                                 do
+                                                 {
+                                                     Random rand = new Random();
+
+                                                     if (rand.Next() % 5 == 0)
+                                                         AssociationPerStudy.Value = rand.Next(1, 3);
+                                                     else
+                                                         AssociationPerStudy.Value = 1;
+
+                                                     textBox1.BeginInvoke(new LogDelegate(Log), "Sending...");
+                                                     
+                                                     try
+                                                     {
+                                                         if (rand.Next() % 10 == 0)
+                                                         {
+                                                             ResendImages();
+                                                         }
+                                                         else
+                                                         {
+                                                             if (rand.Next() % 3 == 0)
+                                                                 InitNewPatient();
+
+                                                             if (rand.Next() % 3 == 0)
+                                                                 InitNewStudy();
+
+                                                             SendImages();
+                                                         }
+                                                     }
+                                                     catch(Exception ex)
+                                                     {
+                                                         
+                                                     }
+
+                                                     textBox1.BeginInvoke(new LogDelegate(Log), "Paused");
+
+                                                     Thread.Sleep(rand.Next(1000, 5000));
+                                                 } while (_autoRunOn);
+                                             });
+
+                _sendThread.Start();
+
+            }
+        }
+
+        private void Resend_Click(object sender, EventArgs e)
+        {
+            ResendImages();
+        }
+
     }
 
     

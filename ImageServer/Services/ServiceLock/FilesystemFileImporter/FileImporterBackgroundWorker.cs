@@ -97,7 +97,8 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
-            Thread.CurrentThread.Name = String.Format("Import Files to {0}", _parms.PartitionAE);
+            Thread.CurrentThread.Name = String.Format("Import Files to {0} [{1}]", 
+                    _parms.PartitionAE, Thread.CurrentThread.ManagedThreadId);
             
             if (_parms.Directory.Exists)
             {
@@ -163,7 +164,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                         skipped = _skippedStudies.Contains(studyInstanceUid);
                         if (!skipped)
                         {
-                            DicomSopProcessingResult result = _importer.Import(file, "Importer");
+                            DicomSopProcessingResult result = _importer.ImportFromFilesystemStream(file);
                             if (result.Sussessful)
                             {
                                 if (result.Duplicate)

@@ -45,7 +45,6 @@ public partial class DuplicateSopPolicyEnum : ServerEnum
       #region Private Static Members
       private static readonly DuplicateSopPolicyEnum _SendSuccess = GetEnum("SendSuccess");
       private static readonly DuplicateSopPolicyEnum _RejectDuplicates = GetEnum("RejectDuplicates");
-      private static readonly DuplicateSopPolicyEnum _AcceptLatest = GetEnum("AcceptLatest");
       private static readonly DuplicateSopPolicyEnum _CompareDuplicates = GetEnum("CompareDuplicates");
       #endregion
 
@@ -63,13 +62,6 @@ public partial class DuplicateSopPolicyEnum : ServerEnum
       public static DuplicateSopPolicyEnum RejectDuplicates
       {
           get { return _RejectDuplicates; }
-      }
-      /// <summary>
-      /// Keep the latest object received.
-      /// </summary>
-      public static DuplicateSopPolicyEnum AcceptLatest
-      {
-          get { return _AcceptLatest; }
       }
       /// <summary>
       /// Process duplicate objects received and compare them to originals flagging any differences as a failure.

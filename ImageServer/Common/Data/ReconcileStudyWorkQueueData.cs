@@ -52,7 +52,12 @@ namespace ClearCanvas.ImageServer.Common.Data
 
         public ImageSetDetails Details
         {
-            get { return _details; }
+            get
+            {
+                if (_details == null)
+                    _details = new ImageSetDetails();
+                return _details;
+            }
             set { _details = value; }
         }
     }

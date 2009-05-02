@@ -43,6 +43,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public StudyIntegrityQueueUidUpdateColumns()
        : base("StudyIntegrityQueueUid")
        {}
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Receiver")]
+        public String Receiver
+        {
+            set { SubParameters["Receiver"] = new EntityUpdateColumn<String>("Receiver", value); }
+        }
        [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
         public String SeriesDescription
@@ -61,10 +66,20 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["SopInstanceUid"] = new EntityUpdateColumn<String>("SopInstanceUid", value); }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Source")]
+        public String Source
+        {
+            set { SubParameters["Source"] = new EntityUpdateColumn<String>("Source", value); }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
         public ServerEntityKey StudyIntegrityQueueKey
         {
             set { SubParameters["StudyIntegrityQueueKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyIntegrityQueueKey", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Timestamp")]
+        public DateTime Timestamp
+        {
+            set { SubParameters["Timestamp"] = new EntityUpdateColumn<DateTime>("Timestamp", value); }
         }
     }
 }

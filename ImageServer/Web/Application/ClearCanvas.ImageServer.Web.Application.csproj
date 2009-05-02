@@ -305,6 +305,13 @@
     <Compile Include="Pages\Queues\ArchiveQueue\ResetArchiveQueueDialog.ascx.designer.cs">
       <DependentUpon>ResetArchiveQueueDialog.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx.cs">
+      <DependentUpon>DuplicateSopDialog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx.designer.cs">
+      <DependentUpon>DuplicateSopDialog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Code\DefaultStudyHistoryRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\IStudyHistoryColumnControlFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\ReconcileStudyRendererFactory.cs" />
@@ -1301,6 +1308,7 @@
     <Content Include="Controls\ServerPartitionTabs.ascx" />
     <Content Include="Controls\SessionTimeout.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
+    <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
     <Content Include="Users.xml" />
     <Content Include="Default.aspx" />
     <Content Include="Images\favicon.ico" />
@@ -1606,7 +1614,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>3987</DevelopmentServerPort>
+          <DevelopmentServerPort>4947</DevelopmentServerPort>
           <DevelopmentServerVPath>/ImageServer</DevelopmentServerVPath>
           <IISUrl>
           </IISUrl>

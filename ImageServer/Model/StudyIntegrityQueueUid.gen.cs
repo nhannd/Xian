@@ -47,27 +47,42 @@ namespace ClearCanvas.ImageServer.Model
         public StudyIntegrityQueueUid():base("StudyIntegrityQueueUid")
         {}
         public StudyIntegrityQueueUid(
-             System.String _seriesDescription_
+             System.String _receiver_
+            ,System.String _seriesDescription_
             ,System.String _seriesInstanceUid_
             ,System.String _sopInstanceUid_
+            ,System.String _source_
             ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyIntegrityQueueKey_
+            ,System.DateTime _timestamp_
             ):base("StudyIntegrityQueueUid")
         {
+            _receiver = _receiver_;
             _seriesDescription = _seriesDescription_;
             _seriesInstanceUid = _seriesInstanceUid_;
             _sopInstanceUid = _sopInstanceUid_;
+            _source = _source_;
             _studyIntegrityQueueKey = _studyIntegrityQueueKey_;
+            _timestamp = _timestamp_;
         }
         #endregion
 
         #region Private Members
+        private String _receiver;
         private String _seriesDescription;
         private String _seriesInstanceUid;
         private String _sopInstanceUid;
+        private String _source;
         private ServerEntityKey _studyIntegrityQueueKey;
+        private DateTime _timestamp;
         #endregion
 
         #region Public Properties
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Receiver")]
+        public String Receiver
+        {
+        get { return _receiver; }
+        set { _receiver = value; }
+        }
         [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
         public String SeriesDescription
@@ -89,11 +104,23 @@ namespace ClearCanvas.ImageServer.Model
         get { return _sopInstanceUid; }
         set { _sopInstanceUid = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Source")]
+        public String Source
+        {
+        get { return _source; }
+        set { _source = value; }
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
         public ServerEntityKey StudyIntegrityQueueKey
         {
         get { return _studyIntegrityQueueKey; }
         set { _studyIntegrityQueueKey = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Timestamp")]
+        public DateTime Timestamp
+        {
+        get { return _timestamp; }
+        set { _timestamp = value; }
         }
         #endregion
 
@@ -124,10 +151,13 @@ namespace ClearCanvas.ImageServer.Model
         {
             IStudyIntegrityQueueUidEntityBroker broker = update.GetBroker<IStudyIntegrityQueueUidEntityBroker>();
             StudyIntegrityQueueUidUpdateColumns updateColumns = new StudyIntegrityQueueUidUpdateColumns();
+            updateColumns.Receiver = entity.Receiver;
             updateColumns.SeriesDescription = entity.SeriesDescription;
             updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
             updateColumns.SopInstanceUid = entity.SopInstanceUid;
+            updateColumns.Source = entity.Source;
             updateColumns.StudyIntegrityQueueKey = entity.StudyIntegrityQueueKey;
+            updateColumns.Timestamp = entity.Timestamp;
             StudyIntegrityQueueUid newEntity = broker.Insert(updateColumns);
             return newEntity;
         }

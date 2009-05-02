@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Common.Utilities;
@@ -245,8 +246,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             {
                 if (row.RowType == DataControlRowType.DataRow)
                 {
-                    CustomizeRowAttribute(e.Row);
-                    HighlightDifference(e.Row);
+                    StudyIntegrityQueueSummary item = row.DataItem as StudyIntegrityQueueSummary;
+                    row.FindControl("ExistingStudyTable").Visible = item.StudyExists;
+                    row.FindControl("StudyNotAvailableLabel").Visible = !item.StudyExists;
+                    if (item.StudyExists)
+                    {
+                        CustomizeRowAttribute(e.Row);
+                        HighlightDifference(e.Row);  
+                    }
                 }
             }
         }

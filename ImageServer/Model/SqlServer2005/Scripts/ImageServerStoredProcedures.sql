@@ -150,6 +150,12 @@ DROP PROCEDURE [dbo].[LockStudy]
 GO
 
 
+/****** Object:  StoredProcedure [dbo].[InsertDuplicateSopReceivedQueue]    Script Date: 05/01/2009 15:53:56 ******/
+IF  EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertDuplicateSopReceivedQueue]') AND type in (N'P', N'PC'))
+DROP PROCEDURE [dbo].[InsertDuplicateSopReceivedQueue]
+GO
+
+
 /****** Object:  StoredProcedure [dbo].[LockStudy]    Script Date: 10/15/2008 16:45:14 ******/
 SET ANSI_NULLS ON
 GO
@@ -3425,3 +3431,86 @@ END
 END
 GO
 
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[InsertDuplicateSopReceivedQueue]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: May 01, 2009
+-- Description:	Insert or update "Duplicate" StudyIntegrity Queue record
+--				
+-- =============================================
+CREATE PROCEDURE [dbo].[InsertDuplicateSopReceivedQueue] 
+	-- Add the parameters for the stored procedure here
+	@Description nvarchar(1024) = null,
+	@ServerPartitionGUID uniqueidentifier,
+	@StudyStorageGUID uniqueidentifier,
+	@StudyInstanceUid varchar(64),
+	@SeriesInstanceUid varchar(64),
+	@SeriesDescription nvarchar(64),
+	@SopInstanceUid varchar(64),
+	@Source varchar(512),
+	@Receiver varchar(512),
+	@Timestamp datetime,
+	@StudyData xml,
+	@QueueData xml
+AS
+BEGIN
+	
+	DECLARE @Guid uniqueidentifier
+	DECLARE @TypeDuplicateSop smallint
+
+	SELECT	@TypeDuplicateSop=Enum FROM StudyIntegrityReasonEnum WHERE Lookup=''Duplicate''
+
+	BEGIN TRANSACTION
+
+	-- Find the entry with the same info
+	SELECT TOP 1 @Guid = siq.GUID
+			FROM  StudyIntegrityQueue  siq
+			JOIN  StudyIntegrityQueueUid uid ON uid.StudyIntegrityQueueGUID = siq.GUID
+			WHERE siq.StudyStorageGUID = @StudyStorageGUID AND siq.StudyIntegrityReasonEnum=@TypeDuplicateSop 
+				AND CONVERT(nvarchar(max), siq.StudyData) = CONVERT(nvarchar(max), @StudyData)
+				AND uid.Source = @Source AND uid.Receiver = @Receiver
+			AND siq.GUID NOT IN (	
+				SELECT StudyIntegrityQueueGUID FROM StudyIntegrityQueueUid uid2
+				WHERE uid2.SeriesInstanceUID=@SeriesInstanceUid
+				AND uid2.SopInstanceUID=@SopInstanceUid
+			)			
+	GROUP BY siq.GUID
+	ORDER BY MAX(siq.InsertTime) DESC
+
+	IF @@ROWCOUNT = 0
+	BEGIN
+		-- No duplicate sop queue for the study for the same source/receiver
+		SET @Guid = newid()
+		INSERT INTO [StudyIntegrityQueue]
+           ([GUID],[ServerPartitionGUID],[StudyStorageGUID],[InsertTime],[Description],
+			[StudyData],[QueueData],[StudyIntegrityReasonEnum])
+		VALUES
+           (@Guid,@ServerPartitionGUID,@StudyStorageGUID,getdate(), @Description
+           ,@StudyData, @QueueData, @TypeDuplicateSop )
+
+	END
+
+	-- Insert the Uid
+	INSERT INTO [StudyIntegrityQueueUid]
+       ([GUID],[StudyIntegrityQueueGUID],[SeriesDescription],[SeriesInstanceUid],[SopInstanceUid]
+       ,[Source],[Receiver],[Timestamp])
+	VALUES
+       (newid(),@Guid, @SeriesDescription,@SeriesInstanceUid,@SopInstanceUid
+       ,@Source,@Receiver, @Timestamp)
+	
+	COMMIT TRANSACTION
+	
+	SELECT * FROM [dbo].[StudyIntegrityQueue] WHERE GUID=@Guid
+
+END
+'
+END
+GO
