@@ -321,17 +321,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
             return listOfChildrenServers;
 		}
 		
-		public List<IServerTreeNode> FindCheckedServers()
-		{
-			return FindCheckedServers(this.RootNode.ServerGroupNode);
-		}
-
-    	public List<IServerTreeNode> FindCheckedServers(ServerGroup serverGroup)
-		{
-			return FindChildServers(serverGroup).FindAll(delegate(IServerTreeNode node) { return node.IsChecked; });
-		}
-
-		public ServerGroup FindServerGroup(string path)
+    	public ServerGroup FindServerGroup(string path)
 		{
 			return FindServerGroup(this.RootNode.ServerGroupNode, path);
 		}
@@ -652,6 +642,63 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
     			childServerGroup.ChangeParentPath(_path);
     		}
     	}
+
+		public bool IsEntireGroupChecked()
+		{
+			return IsEntireGroupChecked(this);
+		}
+
+		public bool IsEntireGroupUnchecked()
+		{
+			return IsEntireGroupUnchecked(this);
+		}
+
+		public List<Server> GetCheckedServers(bool recursive)
+		{
+			List<Server> checkedServers = new List<Server>();
+			if (recursive)
+			{
+				foreach (ServerGroup childGroup in ChildGroups)
+					checkedServers.AddRange(childGroup.GetCheckedServers(true));
+			}
+
+			checkedServers.AddRange(CollectionUtils.Select(ChildServers, delegate(Server server) { return server.IsChecked; }));
+			return checkedServers;
+		}
+
+		private static bool IsEntireGroupChecked(ServerGroup group)
+		{
+			foreach (Server server in group.ChildServers)
+			{
+				if (!server.IsChecked)
+					return false;
+			}
+
+			foreach (ServerGroup subGroup in group.ChildGroups)
+			{
+				if (!IsEntireGroupChecked(subGroup))
+					return false;
+			}
+
+			return true;
+		}
+
+		private static bool IsEntireGroupUnchecked(ServerGroup group)
+		{
+			foreach (Server server in group.ChildServers)
+			{
+				if (server.IsChecked)
+					return false;
+			}
+
+			foreach (ServerGroup subGroup in group.ChildGroups)
+			{
+				if (!IsEntireGroupUnchecked(subGroup))
+					return false;
+			}
+
+			return true;
+		}
 
     	public override string ToString()
     	{

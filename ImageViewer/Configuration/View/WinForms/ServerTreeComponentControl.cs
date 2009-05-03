@@ -98,8 +98,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 			}
 
 			BuildServerTreeView(_aeTreeView, _component.ServerTree);
-			SelectNode(_lastClickedNode);
-			_component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
+			SetInitialSelection();
 		}
 
 		#region CheckState Handling
@@ -113,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 		private void OnServerGroupChecked(TreeNode serverGroupNode)
 		{
 			ServerGroup group = (ServerGroup)serverGroupNode.Tag;
-			SetGroupCheck(serverGroupNode, !IsEntireGroupChecked(group));
+			SetGroupCheck(serverGroupNode, !group.IsEntireGroupChecked());
 			UpdateServerGroups();
 		}
 
@@ -178,10 +177,10 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 			if (serverGroupNode.Tag is ServerGroup)
 			{
-				ServerGroup group = serverGroupNode.Tag as ServerGroup;
+				ServerGroup group = (ServerGroup)serverGroupNode.Tag;
 
-				bool isEntireGroupChecked = IsEntireGroupChecked(group);
-				bool isEntireGroupUnchecked = IsEntireGroupUnchecked(group);
+				bool isEntireGroupChecked = group.IsEntireGroupChecked();
+				bool isEntireGroupUnchecked = group.IsEntireGroupUnchecked();
 				
 				if (isEntireGroupUnchecked)
 					serverGroupNode.StateImageIndex = (int)CheckState.Unchecked;
@@ -190,40 +189,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 				else
 					serverGroupNode.StateImageIndex = (int)CheckState.Partial;
 			}
-		}
-
-		private bool IsEntireGroupChecked(ServerGroup group)
-		{
-			foreach (Server server in group.ChildServers)
-			{
-				if (!server.IsChecked)
-					return false;
-			}
-
-			foreach (ServerGroup subGroup in group.ChildGroups)
-			{
-				if (!IsEntireGroupChecked(subGroup))
-					return false;
-			}
-
-			return true;
-		}
-
-		private bool IsEntireGroupUnchecked(ServerGroup group)
-		{
-			foreach (Server server in group.ChildServers)
-			{
-				if (server.IsChecked)
-					return false;
-			}
-
-			foreach (ServerGroup subGroup in group.ChildGroups)
-			{
-				if (!IsEntireGroupUnchecked(subGroup))
-					return false;
-			}
-
-			return true;
 		}
 
 		#endregion
@@ -264,9 +229,51 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
 		#endregion
 
+		private void SetInitialSelection()
+		{
+			SelectCurrentServerTreeNode();
+
+			if (this._aeTreeView.SelectedNode == null)
+			{
+				if (_component.ShowLocalDataStoreNode)
+					SelectLocalDataStoreNode();
+				else
+					SelectRootServerGroupNode();
+			}
+			else if (_component.ServerTree.CurrentNode is ServerGroup)
+			{
+				//expand if it's a group
+				this._aeTreeView.SelectedNode.Expand();
+			}
+
+			_lastClickedNode = _aeTreeView.SelectedNode;
+			if (_lastClickedNode != null)
+				_component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
+		}
+
 		private void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			TreeNode foundNode = FindNode(_component.ServerTree.CurrentNode, _aeTreeView.Nodes);
+			SelectCurrentServerTreeNode();
+		}
+
+		private void SelectLocalDataStoreNode()
+		{
+			SelectServerTreeNode(_component.ServerTree.RootNode.LocalDataStoreNode);
+		}
+
+		private void SelectRootServerGroupNode()
+		{
+			SelectServerTreeNode(_component.ServerTree.RootNode.ServerGroupNode);
+		}
+
+		private void SelectCurrentServerTreeNode()
+		{
+			SelectServerTreeNode(_component.ServerTree.CurrentNode);
+		}
+
+		private void SelectServerTreeNode(IServerTreeNode serverTreeNode)
+		{
+			TreeNode foundNode = FindNode(serverTreeNode, _aeTreeView.Nodes);
 			if (foundNode != null)
 				SelectNode(foundNode);
 		}
@@ -400,7 +407,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 				localDataStoreTreeNode.ToolTipText = dicomServerTree.RootNode.LocalDataStoreNode.ToString();
 				SetIcon(dicomServerTree.RootNode.LocalDataStoreNode, localDataStoreTreeNode);
 				treeView.Nodes.Add(localDataStoreTreeNode);
-				_lastClickedNode = localDataStoreTreeNode;
 			}
 
             // build the default server group
@@ -412,9 +418,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             BuildNextTreeLevel(firstServerGroup);
 			
 			firstServerGroup.Expand();//expand main group by default.
-
-			if (!_component.ShowLocalDataStoreNode)
-				_lastClickedNode = firstServerGroup;
 
 			UpdateServerGroups();
 		}

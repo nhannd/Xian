@@ -37,6 +37,8 @@ using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Services.ServerTree;
+using ClearCanvas.ImageViewer.Configuration;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -108,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			SearchPanelComponent searchPanel = new SearchPanelComponent(studyBrowserComponent);
 
-			studyBrowserComponent.SelectServerGroup(serverTreeComponent.SelectedServers);
+			SelectDefaultServerNode(serverTreeComponent);
 
 			try
 			{
@@ -141,6 +143,56 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			component._studyBrowserComponent = studyBrowserComponent;
 			component._serverTreeComponent = serverTreeComponent;
 			return component;
+		}
+
+		private static void SelectDefaultServerNode(ServerTreeComponent serverTreeComponent)
+		{
+			IServerTreeNode initialSelection = null;
+			if (serverTreeComponent.ShowLocalDataStoreNode)
+			{
+				initialSelection = serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode;
+			}
+			else
+			{
+				ServerTree serverTree = serverTreeComponent.ServerTree;
+
+				List<Server> defaultServers = DefaultServers.SelectFrom(serverTree);
+				if (defaultServers.Count > 0)
+				{
+					initialSelection = defaultServers[0];
+					while(true)
+					{
+						ServerGroup parent = serverTree.FindServerGroup(initialSelection.ParentPath);
+						if (parent == null)
+							break;
+
+						if (AllChildServersAreDefaults(parent, defaultServers))
+							initialSelection = parent;
+						else 
+							break;
+					}
+				}
+			}
+
+			if (initialSelection != null)
+				serverTreeComponent.SetSelection(initialSelection);
+		}
+
+		private static bool AllChildServersAreDefaults(ServerGroup parent, List<Server> defaultServers)
+		{
+			foreach (Server server in parent.ChildServers)
+			{
+				if (!defaultServers.Contains(server))
+					return false;
+			}
+
+			foreach (ServerGroup serverGroup in parent.ChildGroups)
+			{
+				if (!AllChildServersAreDefaults(serverGroup, defaultServers))
+					return false;
+			}
+
+			return true;
 		}
 
 		internal static bool HasLocalDatastoreSupport()

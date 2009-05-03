@@ -103,7 +103,8 @@ namespace ClearCanvas.ImageViewer.Configuration.ServerTree
 
 		private void OnServerTreeUpdated(object sender, EventArgs e)
 		{
-			List<IServerTreeNode> selectedServers = _serverTreeComponent.ServerTree.FindCheckedServers();
+			List<Server> selectedServers = 
+				_serverTreeComponent.ServerTree.RootNode.ServerGroupNode.GetCheckedServers(true);
 
 			List<string> selectedPaths = CollectionUtils.Map<IServerTreeNode, string>(selectedServers,
 												delegate(IServerTreeNode node) { return node.Path; });
