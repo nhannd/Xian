@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -39,6 +36,13 @@ namespace ClearCanvas.ImageServer.Model
 {
     public partial class WorkQueue
     {
+        #region Private Members
+        private readonly object _syncLock = new object();
+        private StudyStorage _studyStorage;
+        private Study _study;
+        #endregion
+
+
         /// <summary>
         /// Delete the Work Queue record from the system.
         /// </summary>
@@ -48,11 +52,47 @@ namespace ClearCanvas.ImageServer.Model
         {
             IWorkQueueUidEntityBroker workQueueUidBroker = context.GetBroker<IWorkQueueUidEntityBroker>();
             WorkQueueUidSelectCriteria criteria = new WorkQueueUidSelectCriteria();
-            criteria.WorkQueueKey.EqualTo(this.GetKey());
+            criteria.WorkQueueKey.EqualTo(GetKey());
             workQueueUidBroker.Delete(criteria);
 
             IWorkQueueEntityBroker workQueueBroker = context.GetBroker<IWorkQueueEntityBroker>();
-            return workQueueBroker.Delete(this.GetKey());
+            return workQueueBroker.Delete(GetKey());
+        }
+
+        /// <summary>
+        /// Loads the related <see cref="Study"/> entity.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public Study LoadStudy(IPersistenceContext context)
+        {
+            StudyStorage storage = LoadStudyStorage(context);
+
+            if (_study == null)
+            {
+                lock (_syncLock)
+                {
+                    _study = storage.LoadStudy(context);
+                }
+            }
+            return _study;
+        }
+
+        /// <summary>
+        /// Loads the related <see cref="StudyStorage"/> entity.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        private StudyStorage LoadStudyStorage(IPersistenceContext context)
+        {
+            if (_studyStorage==null)
+            {
+                lock(_syncLock)
+                {
+                    _studyStorage = StudyStorage.Load(context, StudyStorageKey); 
+                }
+            }
+            return _studyStorage;
         }
     }
 }

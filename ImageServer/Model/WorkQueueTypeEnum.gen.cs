@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -57,6 +57,7 @@ public partial class WorkQueueTypeEnum : ServerEnum
       private static readonly WorkQueueTypeEnum _ReconcileStudy = GetEnum("ReconcileStudy");
       private static readonly WorkQueueTypeEnum _ReconcileCleanup = GetEnum("ReconcileCleanup");
       private static readonly WorkQueueTypeEnum _ReconcilePostProcess = GetEnum("ReconcilePostProcess");
+      private static readonly WorkQueueTypeEnum _ProcessDuplicate = GetEnum("ProcessDuplicate");
       #endregion
 
       #region Public Static Properties
@@ -157,6 +158,13 @@ public partial class WorkQueueTypeEnum : ServerEnum
       public static WorkQueueTypeEnum ReconcilePostProcess
       {
           get { return _ReconcilePostProcess; }
+      }
+      /// <summary>
+      /// Process duplicate.
+      /// </summary>
+      public static WorkQueueTypeEnum ProcessDuplicate
+      {
+          get { return _ProcessDuplicate; }
       }
 
       #endregion
