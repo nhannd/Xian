@@ -38,6 +38,7 @@ using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
@@ -58,13 +59,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         #region private variables
 
-        // The server partitions that the new device can be associated with
-        // This list will be determined by the user level permission.
-        private IList<ServerPartition> _partitions = new List<ServerPartition>();
-
         private Model.StudyIntegrityQueue _item = null;
         private ReconcileDetails _details = null;
-
+        private bool _consistentData = false;
         #endregion
 
         #region public members
@@ -81,7 +78,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             set
             {
                 _item = value;
-                ViewState[ "StudyIntegrityQueueItem"] = _item.GetKey();
+                ViewState["QueueItem"] = _item.GetKey();
             }
         }
 
@@ -97,6 +94,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 }
         }
 
+        public bool DataIsConsistent
+        {
+            get { return _consistentData; }
+        }
 
         #endregion // public members
 
@@ -110,18 +111,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         #region Protected methods
 
-        /// <summary>
-        /// Handles event when user clicks on "OK" button.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void OKButton_Click(object sender, EventArgs e)
-        {
-            ServerEntityKey itemKey = ViewState[ "StudyIntegrityQueueItem"] as ServerEntityKey;
-            StudyIntegrityQueueController controller = new StudyIntegrityQueueController();
-
-            Close();
-        }
 
         /// <summary>
         /// Handles event when user clicks on "Cancel" button.
@@ -144,6 +133,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         public void Show()
         {
             DataBind();
+            _consistentData = true;
             HighlightDifferences();
             Page.Validate();
             DuplicateSopReconcileModalDialog.Show();
@@ -159,13 +149,9 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             IList<StudyStorageLocation> studyLocations = StudyStorageLocation.FindStorageLocations(storage);
             StudyLocation.Text = studyLocations[0].GetStudyPath();
 
-            String path = studyLocations[0].FilesystemPath;
-            path = Path.Combine(path, studyLocations[0].PartitionFolder);
-            path = Path.Combine(path, "Duplicate");
-            path = Path.Combine(path, studyLocations[0].StudyInstanceUid);
-            path = Path.Combine(path, StudyIntegrityQueueItem.GetKey().Key.ToString());
-            
-            DuplicateSopLocation.Text = path;
+            DuplicateSopReceivedQueue entry = new DuplicateSopReceivedQueue(StudyIntegrityQueueItem);
+
+            DuplicateSopLocation.Text = entry.GetDuplicateSopFolder();
             base.DataBind();
         }
 
@@ -198,7 +184,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         private void Highlight(WebControl control, bool highlight)
         {
             if (highlight)
+            {
+                _consistentData = false;
                 HtmlUtility.AddCssClass(control, HighlightCssClass);
+            }
             else
                 HtmlUtility.RemoveCssClass(control, HighlightCssClass);
         }
@@ -220,5 +209,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         }
 
         #endregion Public methods
+
+        protected void OKButton_Click(object sender, ImageClickEventArgs e)
+        {
+            ServerEntityKey itemKey = ViewState["QueueItem"] as ServerEntityKey;
+            DuplicateSopEntryController controller = new DuplicateSopEntryController();
+            ProcessDuplicateAction action = ReplaceExistingSopRadioButton.Checked
+                                                ? ProcessDuplicateAction.Overwrite
+                                                : ProcessDuplicateAction.Delete;
+            controller.Process(itemKey, action);
+            Close();
+        }
     }
 }

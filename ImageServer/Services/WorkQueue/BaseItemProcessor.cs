@@ -201,7 +201,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 {
                     if (_theStudy==null)
                     {
-                        _theStudy = Study.Find(ReadContext, StorageLocation.StudyInstanceUid, ServerPartition);
+                        _theStudy = WorkQueueItem.LoadStudy(ReadContext);
                     }
                 }
                 return _theStudy;

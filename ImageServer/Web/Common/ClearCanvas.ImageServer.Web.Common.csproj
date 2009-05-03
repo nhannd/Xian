@@ -58,6 +58,7 @@
     <Compile Include="Data\AlertAdaptor.cs" />
     <Compile Include="Data\AlertController.cs" />
     <Compile Include="Data\DataSource\BaseDatasource.cs" />
+    <Compile Include="Data\DuplicateSopEntryController.cs" />
     <Compile Include="HttpContextData.cs" />
     <Compile Include="Data\StudyDeleteReasonAdaptor.cs" />
     <Compile Include="Data\UserManagementController.cs" />

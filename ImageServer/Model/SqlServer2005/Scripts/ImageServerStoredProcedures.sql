@@ -733,6 +733,8 @@ EXEC dbo.sp_executesql @statement = N'
 --  May 14, 2008, Changed order so StudyLocks are released after updates
 --  Oct 01, 2008, Added UpdateQueueStudyState
 --  Oct 23, 2008, Removed UpdateQueueStudyState
+--  May 03, 2009, Fixed bug when completing and deleting the work queue while more work queue uids are being 
+--                by another process. When this happens, the entry is now left in Pending status.
 -- =============================================
 CREATE PROCEDURE [dbo].[UpdateWorkQueue] 
 	-- Add the parameters for the stored procedure here
@@ -777,18 +779,30 @@ BEGIN
 		SELECT @ServerPartitionGUID=ServerPartitionGUID, @StudyInstanceUid=StudyInstanceUid
 		FROM StudyStorage WHERE GUID = @StudyStorageGUID 
 
-		-- Completed
-		DELETE FROM WorkQueue where GUID = @WorkQueueGUID
+		-- Completed... delete the entry if there's no more Work Queue Uid (inserted by another process)
+		DELETE FROM WorkQueue
+		WHERE WorkQueue.GUID = @WorkQueueGUID
+			AND NOT EXISTS( SELECT * FROM WorkQueueUid uid WHERE uid.WorkQueueGUID = WorkQueue.GUID)
 
-		if @QueueStudyStateEnum is not NULL
+		IF @@ROWCOUNT<>0
 		BEGIN
-			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate(), QueueStudyStateEnum=@QueueStudyStateEnum  
-			WHERE GUID = @StudyStorageGUID AND Lock = 1
-		END
+			if @QueueStudyStateEnum is not NULL
+			BEGIN
+				UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate(), QueueStudyStateEnum=@QueueStudyStateEnum  
+				WHERE GUID = @StudyStorageGUID AND Lock = 1
+			END
+			ELSE
+			BEGIN		
+				UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
+				WHERE GUID = @StudyStorageGUID AND Lock = 1
+			END
+		END		
 		ELSE
-		BEGIN		
-			UPDATE StudyStorage set Lock = 0, LastAccessedTime = getdate() 
-			WHERE GUID = @StudyStorageGUID AND Lock = 1
+		BEGIN
+		    -- Current process thought it had completed the entry but 
+		    -- another process may have had inserted more uid. We need to leave the entry in Pending.
+			UPDATE WorkQueue SET [WorkQueueStatusEnum]=@PendingStatusEnum 
+			WHERE GUID = @WorkQueueGUID
 		END
 	END
 	ELSE if  @WorkQueueStatusEnum = @FailedStatusEnum
@@ -3201,9 +3215,10 @@ BEGIN
 EXEC dbo.sp_executesql @statement = N'-- =============================================
 -- Author:		Thanh Huynh
 -- Create date: September 05, 2008
--- Last update: Nov 06, 2008
+-- Last update: May 01, 2009
 -- Description:	Insert or update StudyIntegrity Queue based on supplied data
---				
+--
+-- May 01, 2009: Include StudyIntegrityReasonEnum in the Select statement
 -- Nov 06, 2008: Change to insert [StudyIntegrityQueueUid] record only if it doesn''t exist.
 --
 -- =============================================
@@ -3234,8 +3249,10 @@ BEGIN
 	FROM	[dbo].[StudyIntegrityQueue]
 	WHERE	[ServerPartitionGUID]=@ServerPartitionGUID 
 			AND  [StudyStorageGUID]=@StudyStorageGUID
+			AND  [StudyIntegrityReasonEnum] = @StudyIntegrityReasonEnum
 			AND	 CONVERT(nvarchar(max), [StudyData]) = CONVERT(nvarchar(max), @StudyData)
-	
+	ORDER BY [InsertTime] DESC	
+
 	IF @@ROWCOUNT = 0
 	BEGIN
 		-- PRINT ''Not found''

@@ -69,6 +69,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                     {
                         ReconcileDetails.SeriesDetails seriesDetails = new ReconcileDetails.SeriesDetails();
                         seriesDetails.Description = theSeries.SeriesDescription;
+                        seriesDetails.SeriesInstanceUid = theSeries.SeriesInstanceUid;
                         seriesDetails.Modalitiy = theSeries.Modality;
                         seriesDetails.NumberOfInstances = theSeries.NumberOfSeriesRelatedInstances;
                         return seriesDetails;

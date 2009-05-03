@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
@@ -49,6 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             private string _description;
             private int _numberOfInstances;
             private string _modality;
+            private string _seriesInstanceUid;
 
             public string Description
             {
@@ -66,6 +66,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             {
                 get { return _numberOfInstances; }
                 set { _numberOfInstances = value; }
+            }
+
+            public string SeriesInstanceUid
+            {
+                get { return _seriesInstanceUid; }
+                set { _seriesInstanceUid = value; }
             }
         }
 
@@ -337,7 +343,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 		#endregion
 
 		#region Private Members
-		private StudyIntegrityQueueController _searchController = new StudyIntegrityQueueController();
+		private readonly StudyIntegrityQueueController _searchController = new StudyIntegrityQueueController();
 		private string _description;
 		private string _patientName;
 		private string _patientId;
@@ -496,7 +502,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 }
                 
             }
-            catch(StudyNotFoundException studyNotFoundException)
+            catch(StudyNotFoundException)
             {
                 // Study record may not exist. For eg, duplicate arrives but the existing study hasn't been processed.
             }

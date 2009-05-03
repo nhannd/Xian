@@ -78,7 +78,7 @@
 .ReconcileGridViewPanel
 {
     width: 100%; 
-    height: 200px;
+    height: 180px;
     overflow: scroll; 
     background: #FFFFFF; 
     border-left: solid 1px #16425D; 
@@ -149,3 +149,11 @@
     text-decoration: none;
 }
 
+.ReplaceExistingSopAdvancedOptionPanel
+{
+	border-right: lightslategray 1px solid;
+	border-top: lightslategray 1px solid;
+	border-left: lightslategray 1px solid;
+	border-bottom: lightslategray 1px solid;
+	padding: 5px;
+}

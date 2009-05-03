@@ -83,6 +83,7 @@
     <Compile Include="EntityBrokers\DatabaseVersionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\DeviceEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\DuplicateSopEntryEntityBroker.cs" />
     <Compile Include="EntityBrokers\DuplicateSopPolicyEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemQueueEntityBroker.gen.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="EntityBrokers\StudyStorageEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueuePriorityEnumBroker.gen.cs" />
+    <Compile Include="EntityBrokers\WorkQueueProcessDuplicateSopBroker.cs" />
     <Compile Include="EntityBrokers\WorkQueueStatusEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueTypeEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueUidEntityBroker.gen.cs" />

@@ -83,6 +83,11 @@ INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
            (newid(),113,'ReconcilePostProcess','Process Reconciled Images','Process reconciled images.')
 GO
 
+INSERT INTO [ImageServer].[dbo].[WorkQueueTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),114,'ProcessDuplicate','Process Duplicate','Process duplicate.')
+GO
 
 -- WorkQueueStatusEnum inserts
 INSERT INTO [ImageServer].[dbo].[WorkQueueStatusEnum]

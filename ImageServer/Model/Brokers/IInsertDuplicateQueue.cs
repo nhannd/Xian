@@ -8,11 +8,6 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public class DuplicateSopReceivedQueue : StudyIntegrityQueue
-    {
-
-    }
-
     public interface IInsertDuplicateSopReceivedQueue : IProcedureQueryBroker<InsertDuplicateSopReceivedQueueParameters, DuplicateSopReceivedQueue>
     {
     }

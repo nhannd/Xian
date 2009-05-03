@@ -852,7 +852,11 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                 else
                 {
                     valuesText.AppendFormat(", @{0}", sqlParmName);
-                    command.Parameters.AddWithValue("@" + sqlParmName, parm.Value);
+
+                    if (parm.Value==null)
+                        command.Parameters.AddWithValue("@" + sqlParmName, DBNull.Value);
+                    else
+                        command.Parameters.AddWithValue("@" + sqlParmName, parm.Value);
                 }
             }
             intoText.Append(")");

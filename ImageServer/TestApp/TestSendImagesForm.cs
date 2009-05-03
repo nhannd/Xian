@@ -143,7 +143,14 @@ namespace ClearCanvas.ImageServer.TestApp
                     scu.BeginSend(InstanceSent, scu);
                     Thread.Sleep(ran.Next(300, 1000));
                 }
-            
+
+                foreach (StorageScu scu in scuClients)
+                {
+                    scu.Join();
+                    scu.Dispose();
+                }
+
+                
         }
 
         void scu_ImageStoreCompleted(object sender, StorageInstance e)

@@ -1,10 +1,37 @@
 <%@ Control Language="C#" AutoEventWireup="true" Inherits="ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue.DuplicateSopDialog"
     Codebehind="DuplicateSopDialog.ascx.cs" %>
+    
+<script type="text/javascript">
+    Sys.Application.add_load(function()
+        {
+            var okButton = $find("<%= OKButton.ClientID %>");
+            var replaceExistingRadio = $("#<%= ReplaceExistingSopRadioButton.ClientID %>");
+            var deleteDuplicateRadio = $("#<%= DeleteDuplicateRadioButton.ClientID %>");
+            
+            okButton.set_enable(false);            
+            replaceExistingRadio.attr("checked", false);
+            deleteDuplicateRadio.attr("checked", false);
+            
+            replaceExistingRadio.click(
+                function(ev)
+                {
+                    okButton.set_enable(true);
+                }
+            );
+            
+            deleteDuplicateRadio.click(
+                function(ev)
+                {
+                    okButton.set_enable(true);    
+                }
+            );
+        });
+</script>
 
 <ccAsp:ModalDialog ID="DuplicateSopReconcileModalDialog" runat="server" Title="Duplicate SOP Reconciliation">
-    <ContentTemplate>
-        <aspAjax:TabContainer runat="server" ID="TabContainer"  Height="500px"  Width="950px">
-            <aspAjax:TabPanel runat="server" id="OverviewTab" HeaderText="Overview" Height="100%"  >
+    <ContentTemplate>       
+        <aspAjax:TabContainer runat="server" ID="TabContainer"  Width="950px">
+            <aspAjax:TabPanel runat="server" id="OverviewTab" HeaderText="Overview" Height="100%" >
                 <ContentTemplate>                
                     <asp:Panel ID="Panel1" runat="server" CssClass="ReconcilePanel">
                         <asp:Table ID="Table1" runat="server">
@@ -62,10 +89,14 @@
                                                                 <div class="SeriesInformation">
                                                                 <table cellpadding="0" cellspacing="0" width="100%">
                                                                     <tr><td style="padding: 0px 12px 0px 4px;">
-                                                                        <div class="ReconcileGridViewPanel">
+                                                                        <div class="ReconcileGridViewPanel" style="height:150px;">
                                                                     <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ExistingPatientSeriesGridView" width="400px" BackColor="white" GridLines="Horizontal" BorderColor="Transparent" AutoGenerateColumns="false">
                                                                         <Columns>
-						                                                    <asp:BoundField HeaderText="Description" DataField="Description" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
+						                                                    <asp:TemplateField HeaderText="Description" HeaderStyle-HorizontalAlign="left" ItemStyle-HorizontalAlign="Left">						                                                        
+						                                                        <ItemTemplate>
+						                                                            <asp:Label runat="server" ID="SeriesDescription" Text='<%# Eval("Description") %>' ToolTip='<%# Eval("SeriesInstanceUid") %>'></asp:Label>
+						                                                        </ItemTemplate>
+						                                                    </asp:TemplateField>
 						                                                    <asp:BoundField HeaderText="Modalitiy" DataField="Modalitiy" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />                    
 						                                                    <asp:BoundField HeaderText="Instances" DataField="NumberOfInstances" />
 						                                                </Columns>
@@ -131,10 +162,14 @@
                                                                 <div class="SeriesInformation">
                                                                 <table cellpadding="0" cellspacing="0" width="100%">
                                                                     <tr><td style="padding: 0px 12px 0px 4px;">
-                                                                <div class="ReconcileGridViewPanel">
+                                                                <div class="ReconcileGridViewPanel" style="height:150px;">
                                                                     <asp:GridView runat="server" CssClass="ReconcileSeriesGridView" ID="ConflictingPatientSeriesGridView" width="420px" BackColor="white" GridLines="Horizontal" BorderColor="Transparent" AutoGenerateColumns="false">
                                                                         <Columns>
-						                                                    <asp:BoundField HeaderText="Description" DataField="SeriesDescription" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />
+						                                                    <asp:TemplateField HeaderText="Description" HeaderStyle-HorizontalAlign="left" ItemStyle-HorizontalAlign="Left">						                                                        
+						                                                        <ItemTemplate>
+						                                                            <asp:Label runat="server" ID="SeriesDescription" Text='<%# Eval("SeriesDescription") %>' ToolTip='<%# Eval("SeriesInstanceUid") %>'></asp:Label>
+						                                                        </ItemTemplate>
+						                                                    </asp:TemplateField>
 						                                                    <asp:BoundField HeaderText="Modalitiy" DataField="Modality" HeaderStyle-HorizontalAlign="Left" ItemStyle-HorizontalAlign="Left" />                    
 						                                                    <asp:BoundField HeaderText="Instances" DataField="NumberOfInstances" />
 						                                                </Columns>
@@ -149,12 +184,23 @@
                                                         </asp:TableRow>
                                                         <asp:TableRow>
                                                             <asp:TableCell style="padding: 0px 10px 10px 10px;">
-                                                                <table cellpadding="0" cellspacing="0" width="100%" class="ReconcileButtonsTable">
-                                                                    <tr style="padding-left: 5px; padding-top: 5px;padding-bottom: 5px;">
-                                                                        <td><asp:radiobutton runat="server" ID="ReplaceExistingSopRadioButton" Text=" Replace Existing SOP" GroupName="DuplicateSopDecision" Checked="true"/></td>
-                                                                        <td><asp:radiobutton runat="server" ID="DeleteDuplicateRadioButton" Text=" Delete Duplicates" GroupName="DuplicateSopDecision" CssClass="ReconcileRadioButton"/></td>
-                                                                    </tr>
-                                                                </table>                                        
+                                                                <asp:Panel ID="Panel2" runat="server" CssClass="ReconcileButtonsTable">
+                                                                    <asp:Table runat="server" ID="OptionTable" Width="100%" CellPadding="0" CellSpacing="0">
+                                                                        <asp:TableRow style="padding-left: 5px; padding-top: 5px;padding-bottom: 5px;">
+                                                                            <asp:TableCell><asp:radiobutton runat="server" ID="ReplaceExistingSopRadioButton" Text=" Overwrite Existing" GroupName="DuplicateSopDecision" Checked="true"/></asp:TableCell>
+                                                                            <asp:TableCell><asp:radiobutton runat="server" ID="DeleteDuplicateRadioButton" Text=" Delete Duplicates" GroupName="DuplicateSopDecision" CssClass="ReconcileRadioButton"/></asp:TableCell>
+                                                                        </asp:TableRow>
+                                                                        <%--<asp:TableRow runat="server" ID="ReplaceExistingSopAdvancedOption" style="padding: 5px;">
+                                                                            <asp:TableCell ColumnSpan="2">
+                                                                                <asp:Panel ID="Panel3" runat="server" CssClass="ReplaceExistingSopAdvancedOptionPanel">
+                                                                                    Duplicates contain information which does not match the existing study. Do you want to                                                          
+                                                                                    <asp:RadioButton runat="server" ID="UpdateStudyRadioBox" GroupName="ReplaceAdvanceOption" Text="update the entire study" Checked="false"/> or
+                                                                                    <asp:RadioButton runat="server" ID="ReplaceSopOnlyRadioBox" GroupName="ReplaceAdvanceOption" Text="just replace the existing instances" Checked="false"/>?
+                                                                                </asp:Panel>                                                                                
+                                                                            </asp:TableCell>
+                                                                        </asp:TableRow>--%>
+                                                                    </asp:Table>
+                                                                </asp:Panel>                                                                                                    
                                                             </asp:TableCell>
                                                         </asp:TableRow>
                                                     </asp:Table>                                    
@@ -166,8 +212,8 @@
             </aspAjax:TabPanel>
             <aspAjax:TabPanel runat="server" id="DetailsTab" HeaderText="Additional Info">
                 <ContentTemplate>
-                    <asp:Panel runat="server" Height="100%">
-                        <asp:Panel ID="Panel3" runat="server" CssClass="ReconcilePanel">
+                    <asp:Panel ID="Panel4" runat="server" Height="100%">
+                        <asp:Panel ID="Panel5" runat="server" CssClass="ReconcilePanel">
                         <table>
                             <tr>
                                 <td>Study Location</td><td><asp:Label runat="server" ID="StudyLocation"></asp:Label></td>
@@ -186,9 +232,9 @@
         <table cellpadding="0" cellspacing="0" width="100%">
             <tr>
                 <td align="right">
-                    <asp:Panel ID="Panel2" runat="server" CssClass="DefaultModalDialogButtonPanel">
-                        <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="OKButton" OnClick="OKButton_Click" Enabled="false" />
-                        <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" Enabled="false" />
+                    <asp:Panel ID="Panel6" runat="server" CssClass="DefaultModalDialogButtonPanel">
+                        <ccUI:ToolbarButton ID="OKButton" runat="server" SkinID="OKButton" OnClick="OKButton_Click" />
+                        <ccUI:ToolbarButton ID="CancelButton" runat="server" SkinID="CancelButton" OnClick="CancelButton_Click" />
                     </asp:Panel>
                 </td>
             </tr>

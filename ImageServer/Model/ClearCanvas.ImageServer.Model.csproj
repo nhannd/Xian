@@ -94,6 +94,7 @@
     <Compile Include="DevicePreferredTransferSyntax.cs" />
     <Compile Include="DevicePreferredTransferSyntax.gen.cs" />
     <Compile Include="DuplicateSopPolicyEnum.gen.cs" />
+    <Compile Include="DuplicateSopQueueEntry.cs" />
     <Compile Include="EntityBrokers\AlertSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\AlertUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\ApplicationLogSelectCriteria.gen.cs" />
@@ -114,6 +115,8 @@
     <Compile Include="EntityBrokers\DevicePreferredTransferSyntaxUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\DeviceSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\DeviceUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\DuplicateSopReceivedQueueSelectCriteria.cs" />
+    <Compile Include="EntityBrokers\DuplicateSopReceivedQueueUpdateColumns.cs" />
     <Compile Include="EntityBrokers\FilesystemQueueSelectCriteria.cs" />
     <Compile Include="EntityBrokers\FilesystemQueueSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\FilesystemQueueUpdateColumns.gen.cs" />
@@ -133,6 +136,7 @@
     <Compile Include="EntityBrokers\IDatabaseVersionEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDeviceEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IDevicePreferredTransferSyntaxEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IDuplicateSopEntryEntityBroker.cs" />
     <Compile Include="EntityBrokers\IDuplicateSopPolicyEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IFilesystemEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IFilesystemQueueEntityBroker.gen.cs" />
@@ -142,6 +146,7 @@
     <Compile Include="EntityBrokers\IPartitionSopClassEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IPartitionTransferSyntaxEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IPatientEntityBroker.gen.cs" />
+    <Compile Include="EntityBrokers\IProcessDuplicateSopWorkQueueEntryBroker.cs" />
     <Compile Include="EntityBrokers\IQueueStudyStateEnumBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRequestAttributesEntityBroker.gen.cs" />
     <Compile Include="EntityBrokers\IRestoreQueueEntityBroker.gen.cs" />
@@ -209,6 +214,8 @@
     <Compile Include="EntityBrokers\StudyStorageSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\StudyStorageUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\StudyUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\WorkQueueProcessDuplicateSop.cs" />
+    <Compile Include="EntityBrokers\WorkQueueProcessDuplicateSopUpdateColumns.cs" />
     <Compile Include="EntityBrokers\WorkQueueSelectCriteria.cs" />
     <Compile Include="EntityBrokers\WorkQueueSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\WorkQueueUidSelectCriteria.gen.cs" />
@@ -311,6 +318,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Parameters\StudyStorageLocationQueryParameters.cs" />
     <Compile Include="WorkQueuePriorityEnum.gen.cs" />
+    <Compile Include="WorkQueueProcessDuplicateSop.cs" />
     <Compile Include="WorkQueueStatusEnum.gen.cs" />
     <Compile Include="Parameters\WorkQueueQueryParameters.cs" />
     <Compile Include="Parameters\InsertWorkQueueParameters.cs" />
