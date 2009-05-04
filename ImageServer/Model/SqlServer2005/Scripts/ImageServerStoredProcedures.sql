@@ -779,7 +779,7 @@ BEGIN
 		SELECT @ServerPartitionGUID=ServerPartitionGUID, @StudyInstanceUid=StudyInstanceUid
 		FROM StudyStorage WHERE GUID = @StudyStorageGUID 
 
-		-- Completed... delete the entry if there's no more Work Queue Uid (inserted by another process)
+		-- Completed... delete the entry if there''s no more Work Queue Uid (inserted by another process)
 		DELETE FROM WorkQueue
 		WHERE WorkQueue.GUID = @WorkQueueGUID
 			AND NOT EXISTS( SELECT * FROM WorkQueueUid uid WHERE uid.WorkQueueGUID = WorkQueue.GUID)
