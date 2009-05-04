@@ -49,10 +49,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (disposing)
             {
-				if(_viewSettings != null)
+				if(_toolstripSettings != null)
 				{
-					_viewSettings.PropertyChanged -= OnViewSettingsPropertyChanged;
-					_viewSettings = null;
+					_toolstripSettings.PropertyChanged -= OnToolStripSettingsPropertyChanged;
+					_toolstripSettings = null;
 				}
 
 				if (_mainMenu != null)

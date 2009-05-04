@@ -195,6 +195,9 @@
   <data name="TitleSettingsManagement" xml:space="preserve">
     <value>Settings Management</value>
   </data>
+  <data name="TitleToolbar" xml:space="preserve">
+    <value>Toolbar</value>
+  </data>
   <data name="TitleType" xml:space="preserve">
     <value>Type</value>
   </data>

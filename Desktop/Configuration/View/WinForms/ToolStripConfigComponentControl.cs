@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -31,41 +31,26 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing;
+using System.Data;
 using System.Text;
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.Configuration;
+using System.Windows.Forms;
 using ClearCanvas.Desktop.Configuration.Standard;
 
-namespace ClearCanvas.Desktop.Configuration.Tools
+namespace ClearCanvas.Desktop.Configuration.View.WinForms
 {
-	/// <summary>
-	/// Provides common <see cref="IConfigurationPage"/>s for settings defined in the framework.
-	/// </summary>
-	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
-	public class StandardOptionsConfigurationPageProvider : IConfigurationPageProvider
+	public partial class ToolStripConfigComponentControl : UserControl
 	{
-		/// <summary>
-		/// Constructor.
-		/// </summary>
-		public StandardOptionsConfigurationPageProvider()
-		{ 
-		}
+		private readonly ToolStripConfigComponent _component;
 
-		#region IConfigurationPageProvider Members
-
-		/// <summary>
-		/// Gets all the <see cref="IConfigurationPage"/>s for this provider.
-		/// </summary>
-		public IEnumerable<IConfigurationPage> GetPages()
+		public ToolStripConfigComponentControl(ToolStripConfigComponent component)
 		{
-			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
+			InitializeComponent();
 
-			listPages.Add(new ConfigurationPage<DateFormatApplicationComponent>("TitleDateFormat"));
-			listPages.Add(new ConfigurationPage<ToolStripConfigComponent>("TitleToolbar"));
-		
-			return listPages.AsReadOnly();
+			_component = component;
+
+			_chkWrapGlobalToolbars.DataBindings.Add("Checked", _component, "WrapLongToolstrips", false, DataSourceUpdateMode.OnPropertyChanged);
 		}
-
-		#endregion
 	}
 }

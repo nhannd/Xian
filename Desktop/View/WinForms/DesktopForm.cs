@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.Actions;
@@ -47,7 +48,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// </remarks>
     public partial class DesktopForm : DotNetMagicForm
     {
-    	private DesktopViewSettings _viewSettings;
+		private ToolStripSettingsHelper _toolstripSettings;
         private ActionModelNode _menuModel;
         private ActionModelNode _toolbarModel;
 
@@ -74,9 +75,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 				InitializeTabControl(_tabbedGroups.ActiveLeaf.TabControl);
 			}
 
-        	_viewSettings = DesktopViewSettings.Default;
-			_toolbar.LayoutStyle = _viewSettings.LocalToolStripLayoutStyle;
-			_viewSettings.PropertyChanged += OnViewSettingsPropertyChanged;
+        	_toolstripSettings = ToolStripSettingsHelper.Default;
+			_toolstripSettings.PropertyChanged += OnToolStripSettingsPropertyChanged;
+			OnToolStripSettingsPropertyChanged(_toolstripSettings, new PropertyChangedEventArgs("WrapLongToolstrips"));
         }
 
         #region Public properties
@@ -137,22 +138,22 @@ namespace ClearCanvas.Desktop.View.WinForms
             InitializeTabControl(tabControl);
         }
 
-		private void OnViewSettingsPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-		{
-			if (e.PropertyName == "LocalToolStripLayoutStyle")
-			{
-				if (_viewSettings.LocalToolStripLayoutStyle == ToolStripLayoutStyle.Flow && _toolbar.Orientation == Orientation.Vertical)
-				{
-					// for some reason, switching to flow layout while vertical causes the toolbar to take up the entire screen
-					// thus, we force the toolbar to the horizontal orientation in the top panel when wrapped.
-					_toolStripContainer.SuspendLayout();
-					_toolbar.Parent.Controls.Remove(_toolbar);
-					_toolStripContainer.TopToolStripPanel.Controls.Add(_toolbar);
-					_toolStripContainer.ResumeLayout(true);
-				}
-				_toolbar.LayoutStyle = _viewSettings.LocalToolStripLayoutStyle;
-			}
-		}
+    	private void OnToolStripSettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
+    	{
+    		if (e.PropertyName == "WrapLongToolstrips")
+    		{
+    			if (_toolstripSettings.WrapLongToolstrips && _toolbar.Orientation == Orientation.Vertical)
+    			{
+    				// for some reason, switching to flow layout while vertical causes the toolbar to take up the entire screen
+    				// thus, we force the toolbar to the horizontal orientation in the top panel when wrapped.
+    				_toolStripContainer.SuspendLayout();
+    				_toolStripContainer.TopToolStripPanel.Join(_toolbar);
+    				_toolStripContainer.TopToolStripPanel.Join(_mainMenu);
+    				_toolStripContainer.ResumeLayout(true);
+    			}
+    			_toolbar.LayoutStyle = _toolstripSettings.WrapLongToolstrips ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
+    		}
+    	}
 
         #endregion
 

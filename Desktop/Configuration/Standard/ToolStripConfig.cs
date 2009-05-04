@@ -29,62 +29,28 @@
 
 #endregion
 
-using System.Collections.Generic;
-using System.Windows.Forms;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Configuration;
 
-namespace ClearCanvas.Desktop.View.WinForms
+namespace ClearCanvas.Desktop.Configuration.Standard
 {
-	[ExtensionOf(typeof (ConfigurationPageProviderExtensionPoint))]
-	public sealed class DesktopViewConfigPageProvider : IConfigurationPageProvider
-	{
-		public IEnumerable<IConfigurationPage> GetPages()
-		{
-			yield return new ConfigurationPage<DesktopViewConfigComponent>("ItemDesktop");
-		}
-	}
-
 	[ExtensionPoint]
-	public sealed class DesktopViewConfigComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
+	public sealed class ToolStripConfigComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> {}
 
-	[ExtensionOf(typeof (DesktopViewConfigComponentViewExtensionPoint))]
-	public sealed class DesktopViewConfigComponentView : WinFormsView, IApplicationComponentView
+	[AssociateView(typeof (ToolStripConfigComponentViewExtensionPoint))]
+	public sealed class ToolStripConfigComponent : ConfigurationApplicationComponent
 	{
-		private DesktopViewConfigComponent _component;
-		private DesktopViewConfigComponentControl _control;
+		private ToolStripSettingsHelper _settings;
+		private bool _wrapLongToolstrips;
 
-		public void SetComponent(IApplicationComponent component)
+		public bool WrapLongToolstrips
 		{
-			_component = (DesktopViewConfigComponent) component;
-		}
-
-		public override object GuiElement
-		{
-			get
-			{
-				if (_control == null)
-					_control = new DesktopViewConfigComponentControl(_component);
-				return _control;
-			}
-		}
-	}
-
-	[AssociateView(typeof (DesktopViewConfigComponentViewExtensionPoint))]
-	public sealed class DesktopViewConfigComponent : ConfigurationApplicationComponent
-	{
-		private DesktopViewSettings _settings;
-		private ToolStripLayoutStyle _localToolStripLayoutStyle;
-
-		public ToolStripLayoutStyle LocalToolStripLayoutStyle
-		{
-			get { return _localToolStripLayoutStyle; }
+			get { return _wrapLongToolstrips; }
 			set
 			{
-				if (_localToolStripLayoutStyle != value)
+				if (_wrapLongToolstrips != value)
 				{
-					_localToolStripLayoutStyle = value;
-					base.NotifyPropertyChanged("LocalToolStripLayoutStyle");
+					_wrapLongToolstrips = value;
+					base.NotifyPropertyChanged("WrapLongToolstrips");
 					base.Modified = true;
 				}
 			}
@@ -94,8 +60,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			base.Start();
 
-			_settings = DesktopViewSettings.Default;
-			_localToolStripLayoutStyle = _settings.LocalToolStripLayoutStyle;
+			_settings = ToolStripSettingsHelper.Default;
+			_wrapLongToolstrips = _settings.WrapLongToolstrips;
 		}
 
 		public override void Stop()
@@ -107,7 +73,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		public override void Save()
 		{
-			_settings.LocalToolStripLayoutStyle = _localToolStripLayoutStyle;
+			_settings.WrapLongToolstrips = _wrapLongToolstrips;
 			_settings.Save();
 		}
 	}

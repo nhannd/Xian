@@ -65,6 +65,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Standard\DateFormatApplicationComponent.cs" />
+    <Compile Include="Standard\ToolStripConfig.cs" />
     <Compile Include="Tools\OptionsTool.cs" />
     <Compile Include="Tools\StandardOptionsConfigurationPageProvider.cs" />
   </ItemGroup>

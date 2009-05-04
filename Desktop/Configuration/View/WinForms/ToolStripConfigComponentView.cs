@@ -29,41 +29,30 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
-using System.Windows.Forms;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop.Configuration.Standard;
+using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.Desktop.View.WinForms
+namespace ClearCanvas.Desktop.Configuration.View.WinForms
 {
-	public partial class DesktopViewConfigComponentControl : UserControl, INotifyPropertyChanged
+	[ExtensionOf(typeof (ToolStripConfigComponentViewExtensionPoint))]
+	public sealed class ToolStripConfigComponentView : WinFormsView, IApplicationComponentView
 	{
-		public event PropertyChangedEventHandler PropertyChanged;
-		private readonly DesktopViewConfigComponent _component;
+		private ToolStripConfigComponent _component;
+		private ToolStripConfigComponentControl _control;
 
-		public DesktopViewConfigComponentControl(DesktopViewConfigComponent component)
+		public void SetComponent(IApplicationComponent component)
 		{
-			InitializeComponent();
-
-			_component = component;
-
-			_chkWrapGlobalToolbars.DataBindings.Add("Checked", this, "WrapToolbars", false, DataSourceUpdateMode.OnPropertyChanged);
+			_component = (ToolStripConfigComponent) component;
 		}
 
-		public bool WrapToolbars
+		public override object GuiElement
 		{
-			get { return _component.LocalToolStripLayoutStyle == ToolStripLayoutStyle.Flow; }
-			set
+			get
 			{
-				if(this.WrapToolbars != value)
-				{
-					_component.LocalToolStripLayoutStyle = value ? ToolStripLayoutStyle.Flow : ToolStripLayoutStyle.StackWithOverflow;
-					EventsHelper.Fire(this.PropertyChanged, this, new PropertyChangedEventArgs("WrapToolbars"));
-				}
+				if (_control == null)
+					_control = new ToolStripConfigComponentControl(_component);
+				return _control;
 			}
 		}
 	}
