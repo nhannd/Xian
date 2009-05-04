@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private static void SelectDefaultServerNode(ServerTreeComponent serverTreeComponent)
 		{
-			IServerTreeNode initialSelection = null;
+			IServerTreeNode initialSelection;
 			if (serverTreeComponent.ShowLocalDataStoreNode)
 			{
 				initialSelection = serverTreeComponent.ServerTree.RootNode.LocalDataStoreNode;
@@ -157,42 +157,54 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				ServerTree serverTree = serverTreeComponent.ServerTree;
 
 				List<Server> defaultServers = DefaultServers.SelectFrom(serverTree);
-				if (defaultServers.Count > 0)
-				{
-					initialSelection = defaultServers[0];
-					while(true)
-					{
-						ServerGroup parent = serverTree.FindServerGroup(initialSelection.ParentPath);
-						if (parent == null)
-							break;
-
-						if (AllChildServersAreDefaults(parent, defaultServers))
-							initialSelection = parent;
-						else 
-							break;
-					}
-				}
+				CheckDefaultServers(serverTree, defaultServers);
+				initialSelection = GetFirstDefaultServerOrGroup(serverTree.RootNode.ServerGroupNode);
+				UncheckAllServers(serverTree);
 			}
 
 			if (initialSelection != null)
 				serverTreeComponent.SetSelection(initialSelection);
 		}
 
-		private static bool AllChildServersAreDefaults(ServerGroup parent, List<Server> defaultServers)
+		private static IServerTreeNode GetFirstDefaultServerOrGroup(ServerGroup serverGroup)
 		{
-			foreach (Server server in parent.ChildServers)
+			//consider groups and servers at this level
+			foreach (ServerGroup group in serverGroup.ChildGroups)
 			{
-				if (!defaultServers.Contains(server))
-					return false;
+				if (group.IsEntireGroupChecked())
+					return group;
 			}
 
-			foreach (ServerGroup serverGroup in parent.ChildGroups)
+			foreach (Server server in serverGroup.ChildServers)
 			{
-				if (!AllChildServersAreDefaults(serverGroup, defaultServers))
-					return false;
+				if (server.IsChecked)
+					return server;
 			}
 
-			return true;
+			//repeat for children of the groups at this level
+			foreach (ServerGroup group in serverGroup.ChildGroups)
+			{
+				IServerTreeNode defaultServerOrGroup = GetFirstDefaultServerOrGroup(group);
+				if (defaultServerOrGroup != null)
+					return defaultServerOrGroup;
+			}
+
+			return null;
+		}
+
+		private static void CheckDefaultServers(ServerTree serverTree, List<Server> defaultServers)
+		{
+			foreach (Server server in serverTree.FindChildServers())
+			{
+				if (defaultServers.Contains(server))
+					server.IsChecked = true;
+			}
+		}
+
+		private static void UncheckAllServers(ServerTree serverTree)
+		{
+			foreach (Server server in serverTree.FindChildServers())
+				server.IsChecked = false;
 		}
 
 		internal static bool HasLocalDatastoreSupport()

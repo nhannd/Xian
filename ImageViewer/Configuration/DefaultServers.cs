@@ -50,7 +50,9 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		public static List<Server> SelectFrom(Services.ServerTree.ServerTree serverTree)
 		{
-			List<Server> allServers = serverTree.RootNode.ServerGroupNode.ChildServers;
+			List<Server> allServers = CollectionUtils.Map<IServerTreeNode, Server>(serverTree.FindChildServers(),
+				delegate(IServerTreeNode server) { return (Server) server; });
+			
 			return SelectFrom(allServers);
 		}
 
