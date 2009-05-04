@@ -51,7 +51,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
             ImageStreamingServerSettings settings = ImageStreamingServerSettings.Default;
             UriBuilder uriBuilder = new UriBuilder();
             uriBuilder.Scheme = Uri.UriSchemeHttp;
-            uriBuilder.Host = "localhost";
+            String local = Dns.GetHostName();
+            IPHostEntry ipEntry = Dns.GetHostEntry(local);
+            IPAddress[] addr = ipEntry.AddressList;
+            uriBuilder.Host = addr[0].ToString();
             uriBuilder.Port = settings.Port;
             uriBuilder.Path = settings.Path;
             return uriBuilder.Uri;
