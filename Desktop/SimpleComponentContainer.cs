@@ -49,45 +49,43 @@ namespace ClearCanvas.Desktop
     [AssociateView(typeof(SimpleComponentContainerViewExtensionPoint))]
     public class SimpleComponentContainer : ApplicationComponentContainer
     {
-		private class ContainedComponentHost : ApplicationComponentHost
+        private class HostImpl : ContainedComponentHost
         {
-            private SimpleComponentContainer _owner;
-
-			internal ContainedComponentHost(
-				SimpleComponentContainer owner,
-				IApplicationComponent component)
-				: base(component)
+            internal HostImpl(
+                SimpleComponentContainer owner,
+                IApplicationComponent component)
+                : base(owner, component)
             {
-				Platform.CheckForNullReference(owner, "owner");
-                _owner = owner;
             }
 
             #region ApplicationComponentHost overrides
 
 			/// <summary>
-			/// Gets the associated desktop window.
+			/// Contained components will use the comand history provided by the host that 
+			/// owns the container.
 			/// </summary>
-			public override DesktopWindow DesktopWindow
-            {
-				get { return _owner.Host.DesktopWindow; }
-            }
+			public override CommandHistory CommandHistory
+			{
+				get
+				{
+					return OwnerHost.CommandHistory;
+				}
+			}
 
 			/// <summary>
-			/// Gets or sets the title displayed in the user-interface.
-			/// </summary>
-			/// <exception cref="NotSupportedException">The host does not support titles.</exception>
-			public override string Title
+            /// Gets or sets the title displayed in the user-interface.
+            /// </summary>
+            public override string Title
             {
-				get { return _owner.Host.Title; }
-				set { _owner.Host.Title = value; }
+                set { OwnerHost.Title = value; }
             }
 
             #endregion
         }
 
 
-		private IApplicationComponent _component;
-        private ContainedComponentHost _componentHost;
+		private readonly IApplicationComponent _component;
+        private readonly HostImpl _componentHost;
 
         /// <summary>
         /// Constructor.
@@ -95,7 +93,7 @@ namespace ClearCanvas.Desktop
         public SimpleComponentContainer(IApplicationComponent component)
 		{
 			_component = component;
-            _componentHost = new ContainedComponentHost(this, _component);
+            _componentHost = new HostImpl(this, _component);
 		}
 
 		/// <summary>

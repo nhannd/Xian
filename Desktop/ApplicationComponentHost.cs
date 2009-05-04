@@ -39,7 +39,7 @@ namespace ClearCanvas.Desktop
     /// </summary>
     public abstract class ApplicationComponentHost : IApplicationComponentHost
     {
-        private IApplicationComponent _component;
+        private readonly IApplicationComponent _component;
         private IApplicationComponentView _componentView;
 
         /// <summary>

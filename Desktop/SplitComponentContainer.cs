@@ -68,48 +68,27 @@ namespace ClearCanvas.Desktop
     {
 		/// <summary>
 		/// A host for a <see cref="SplitPane"/>.
-		/// </summary>
-        private class SplitPaneHost : ApplicationComponentHost
+		/// </summary>        
+        private class SplitPaneHost : ContainedComponentHost
         {
-            private SplitComponentContainer _owner;
-
-            internal SplitPaneHost(
-				SplitComponentContainer owner,
-				SplitPane pane)
-                :base(pane.Component)
+            internal SplitPaneHost(SplitComponentContainer owner,
+                SplitPane pane)
+                : base(owner, pane.Component)
             {
-				Platform.CheckForNullReference(owner, "owner");
-
-                _owner = owner;
-            }
-
-            #region ApplicationComponentHost overrides
-
-			/// <summary>
-			/// Gets the associated desktop window.
-			/// </summary>
-			public override DesktopWindow DesktopWindow
-            {
-                get { return _owner.Host.DesktopWindow; }
             }
 
 			/// <summary>
-			/// Gets the title displayed in the user-interface.
+			/// Contained components will use the comand history provided by the host that 
+			/// owns the container.
 			/// </summary>
-			/// <remarks>
-			/// The title cannot be set.
-			/// </remarks>
-			/// <exception cref="NotSupportedException">The host does not support titles.</exception>
-			public override string Title
-            {
-                get { return _owner.Host.Title; }
-                // individual components cannot set the title for the container
-                set { throw new NotSupportedException(); }
-            }
-            
-            #endregion
-        }
-
+			public override CommandHistory CommandHistory
+			{
+				get
+				{
+					return OwnerHost.CommandHistory;
+				}
+			}
+		}
 
 		private SplitPane _pane1;
 		private SplitPane _pane2;

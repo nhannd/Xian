@@ -85,41 +85,13 @@ namespace ClearCanvas.Desktop
     {
         /// <summary>
         /// Defines an application component host for one page.
-        /// </summary>
-        private class PageHost : ApplicationComponentHost
+        /// </summary>        
+        private class PageHost : ContainedComponentHost
         {
-            private readonly PagedComponentContainer<TPage> _container;
-
             internal PageHost(PagedComponentContainer<TPage> container, ContainerPage page)
-                : base(page.Component)
+                : base(container, page.Component)
             {
-                _container = container;
             }
-
-            #region ApplicationComponentHost overrides
-
-			/// <summary>
-			/// Gets the <see cref="DesktopWindow"/> that owns the <see cref="PagedComponentContainer{TPage}"/>.
-			/// </summary>
-            public override DesktopWindow DesktopWindow
-            {
-                get { return _container.Host.DesktopWindow; }
-            }
-
-			/// <summary>
-			/// Gets the title of the <see cref="PagedComponentContainer{TPage}"/>.
-			/// </summary>
-			/// <remarks>
-			/// The set method is unsupported and will throw an exception.
-			/// </remarks>
-            public override string Title
-            {
-                get { return _container.Host.Title; }
-                // individual components cannot set the title for the container
-                set { throw new NotSupportedException(); }
-            }
-            
-            #endregion
         }
 
         private class PageList : ObservableList<TPage>

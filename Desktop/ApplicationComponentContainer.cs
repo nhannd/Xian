@@ -31,6 +31,8 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Common;
+using System;
 
 namespace ClearCanvas.Desktop
 {
@@ -38,8 +40,69 @@ namespace ClearCanvas.Desktop
     /// Abstract base class for application components that act as containers for other application components.
     /// </summary>
     public abstract class ApplicationComponentContainer : ApplicationComponent, IApplicationComponentContainer
-    {
-        private IApplicationComponentContainerValidationStrategy _validationStrategy;
+	{
+		#region ContainedComponentHost class
+
+		/// <summary>
+        /// Defines an application component host appropriate for the components the 
+        /// <see cref="ApplicationComponentContainer"/> will contain.  The host overrides delegate to
+        /// the host of the parent container.
+        /// </summary>
+        protected class ContainedComponentHost : ApplicationComponentHost
+        {
+            private readonly ApplicationComponentContainer _owner;
+
+            /// <summary>
+            /// Contruct the contained sub host with the <see cref="ApplicationComponentContainer"/>
+            /// owner that will provide access to the real host.  The contained component is passed
+            /// to the base <see cref="ApplicationComponentHost"/>.
+            /// </summary>
+            /// <param name="owner"></param>
+            /// <param name="component"></param>
+            public ContainedComponentHost(
+                ApplicationComponentContainer owner,
+                IApplicationComponent component)
+                : base(component)
+            {
+                Platform.CheckForNullReference(owner, "owner");
+
+                _owner = owner;
+            }
+
+            /// <summary>
+            /// Gets the associated desktop window.
+            /// </summary>
+            public override DesktopWindow DesktopWindow
+            {
+                get { return OwnerHost.DesktopWindow; }
+            }
+
+            /// <summary>
+            /// Gets the title displayed in the user-interface.
+            /// </summary>
+            /// <remarks>
+            /// The title generally cannot be set.  This behavior is inherited from the 
+            /// base.
+            /// </remarks>
+            /// <exception cref="NotSupportedException">The host does not support setting the title.</exception>
+            public override string Title
+            {
+                get { return OwnerHost.Title; }
+            }
+
+            /// <summary>
+            /// Provide access to the owning host in case subclasses need to override host behavior not 
+            /// already handled by this class.
+            /// </summary>
+            protected IApplicationComponentHost OwnerHost
+            {
+                get { return _owner.Host; }
+            }
+		}
+
+		#endregion
+
+		private IApplicationComponentContainerValidationStrategy _validationStrategy;
 
         /// <summary>
         /// Default constructor.

@@ -69,47 +69,17 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// A host for <see cref="TabGroup"/>s.
 		/// </summary>
-        private class TabGroupHost : ApplicationComponentHost
+        private class TabGroupHost : ContainedComponentHost
         {
-            private TabGroupComponentContainer _owner;
-
-            /// <summary>
-            /// Constructor.
-            /// </summary>
-            /// <param name="owner">The container that owns this host.</param>
-            /// <param name="tabGroup">The <see cref="TabGroup"/> that is hosted by this object.</param>
-			internal TabGroupHost(TabGroupComponentContainer owner, TabGroup tabGroup)
-                : base(tabGroup.Component)
+            internal TabGroupHost(
+                TabGroupComponentContainer owner, TabGroup tabGroup)
+                : base(owner, tabGroup.Component)
             {
-                Platform.CheckForNullReference(owner, "owner");
-                _owner = owner;
             }
-
-			#region ApplicationComponentHost overrides
-
-			/// <summary>
-			/// Gets the title of the parent container.
-			/// </summary>
-            public override string Title
-            {
-                get { return _owner.Host.Title; }
-                // individual components cannot set the title for the container
-                set { throw new NotSupportedException(); }
-            }
-
-			/// <summary>
-			/// Gets the <see cref="IDesktopWindow"/> that owns the parent container.
-			/// </summary>
-            public override DesktopWindow DesktopWindow
-            {
-                get { return _owner.Host.DesktopWindow; }
-            }
-
-            #endregion
         }
 
-        private List<TabGroup> _tabGroups;
-        private LayoutDirection _layoutDirection;
+        private readonly List<TabGroup> _tabGroups;
+        private readonly LayoutDirection _layoutDirection;
 
         /// <summary>
         /// Constructor.
@@ -137,7 +107,7 @@ namespace ClearCanvas.Desktop
 		/// </summary>
 		public IList<TabGroup> TabGroups
         {
-            get { return _tabGroups.AsReadOnly(); ; }
+            get { return _tabGroups.AsReadOnly(); }
         }
 
 		/// <summary>
@@ -155,7 +125,7 @@ namespace ClearCanvas.Desktop
         {
             foreach (TabGroup tg in _tabGroups)
             {
-                if (CollectionUtils.Contains<TabPage>(tg.Component.Pages,
+                if (CollectionUtils.Contains(tg.Component.Pages,
                     delegate(TabPage tp) { return tp == page; }))
                 {
                     return tg;

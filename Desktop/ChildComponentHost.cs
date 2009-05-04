@@ -38,7 +38,7 @@ namespace ClearCanvas.Desktop
 	/// </summary>
     public class ChildComponentHost : ApplicationComponentHost
     {
-        private IApplicationComponentHost _parentHost;
+        private readonly IApplicationComponentHost _parentHost;
 
 		/// <summary>
 		/// Constructor.
