@@ -244,9 +244,9 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                         for (int i = 0; i < rows.Length; i++)
                         {
                             int rowIndex = rows[i];
-							if (rowIndex < Rows.Count)
-							{
-								Rows[rowIndex].RowState = DataControlRowState.Normal;
+							if (rowIndex < Rows.Count && rowIndex >= 0)
+							{                                
+                                Rows[rowIndex].RowState = DataControlRowState.Normal;
 								Rows[rowIndex].Attributes["selected"] = "false";
 							}
                         }
@@ -321,8 +321,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         {
             base.OnPreRender(e);
             
-            
-            
             if (!DesignMode)
             {
                 ScriptManager sm = ScriptManager.GetCurrent(Page);
@@ -344,7 +342,6 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                 if (row.RowType==DataControlRowType.DataRow)
                 {
                     
-
                     if (_selectedRows.ContainsKey(row.RowIndex))
                     {
                         row.RowState = DataControlRowState.Selected;

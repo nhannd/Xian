@@ -87,7 +87,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
         getSelectedRowElements : function() {
             var rows = this.get_element().rows;
-                                  
+                                              
             if (rows!=undefined && rows!=null)
             {
                 var selectedRows = new Array();                
