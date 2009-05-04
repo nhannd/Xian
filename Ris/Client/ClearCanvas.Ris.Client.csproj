@@ -319,6 +319,7 @@
     <Compile Include="WorklistFolder.cs" />
     <Compile Include="WorklistFolderSystem.cs" />
     <Compile Include="WorklistMultiDetailEditorComponent.cs" />
+    <Compile Include="WorklistPropertiesTool.cs" />
     <Compile Include="WorklistSummaryComponent.cs" />
     <Compile Include="WorklistSelectorEditorComponent.cs" />
     <Compile Include="WorklistTimeWindowEditorComponent.cs" />
