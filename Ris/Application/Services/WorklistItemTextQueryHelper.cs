@@ -211,6 +211,12 @@ namespace ClearCanvas.Ris.Application.Services
 				criteria.Order.OrderingPractitioner.EqualTo(orderedBy);
 			}
 
+			if (searchParams.DiagnosticServiceRef != null)
+			{
+				DiagnosticService ds = _context.Load<DiagnosticService>(searchParams.DiagnosticServiceRef, EntityLoadFlags.Proxy);
+				criteria.Order.DiagnosticService.EqualTo(ds);
+			}
+
 			if (searchParams.ProcedureTypeRef != null)
 			{
 				ProcedureType pt = _context.Load<ProcedureType>(searchParams.ProcedureTypeRef, EntityLoadFlags.Proxy);

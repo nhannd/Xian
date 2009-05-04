@@ -93,6 +93,9 @@ namespace ClearCanvas.Ris.Client
 	{
 		private readonly SearchParams _searchParams;
 
+		private DiagnosticServiceSummary _selectedDiagnosticService;
+		private DiagnosticServiceLookupHandler _diagnosticServiceLookupHandler;
+
 		private ProcedureTypeSummary _selectedProcedureType;
 		private ProcedureTypeLookupHandler _procedureTypeLookupHandler;
 		private ExternalPractitionerSummary _selectedOrderingPractitioner;
@@ -160,6 +163,7 @@ namespace ClearCanvas.Ris.Client
 		{
 			_orderingPractitionerLookupHandler = new ExternalPractitionerLookupHandler(this.Host.DesktopWindow);
 			_procedureTypeLookupHandler = new ProcedureTypeLookupHandler(this.Host.DesktopWindow);
+			_diagnosticServiceLookupHandler = new DiagnosticServiceLookupHandler(this.Host.DesktopWindow);
 
 			base.Start();
 		}
@@ -231,6 +235,22 @@ namespace ClearCanvas.Ris.Client
 			get { return _orderingPractitionerLookupHandler; }
 		}
 
+		public DiagnosticServiceSummary DiagnosticService
+		{
+			get { return _selectedDiagnosticService; }
+			set
+			{
+				_selectedDiagnosticService = value;
+				_searchParams.SearchFields.DiagnosticServiceRef = value == null ? null : value.DiagnosticServiceRef;
+				NotifyPropertyChanged("DiagnosticService");
+			}
+		}
+
+		public ILookupHandler DiagnosticServiceLookupHandler
+		{
+			get { return _diagnosticServiceLookupHandler; }
+		}
+
 		public ProcedureTypeSummary ProcedureType
 		{
 			get { return _selectedProcedureType; }
@@ -284,6 +304,7 @@ namespace ClearCanvas.Ris.Client
 						|| !string.IsNullOrEmpty(_searchParams.SearchFields.FamilyName)
 						|| !string.IsNullOrEmpty(_searchParams.SearchFields.GivenName)
 						|| _searchParams.SearchFields.OrderingPractitionerRef != null
+						|| _searchParams.SearchFields.DiagnosticServiceRef != null
 						|| _searchParams.SearchFields.ProcedureTypeRef != null
 						|| _searchParams.SearchFields.FromDate != null
 						|| _searchParams.SearchFields.UntilDate != null);
@@ -323,6 +344,7 @@ namespace ClearCanvas.Ris.Client
 			this.FamilyName = null;
 			this.GivenName = null;
 			this.OrderingPractitioner = null;
+			this.DiagnosticService = null;
 			this.ProcedureType = null;
 			this.FromDate = null;
 			this.UntilDate = null;

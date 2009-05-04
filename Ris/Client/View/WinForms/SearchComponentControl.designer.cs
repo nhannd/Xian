@@ -60,8 +60,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
 			this._accession = new ClearCanvas.Desktop.View.WinForms.TextField();
-			this._filterGroupBox = new System.Windows.Forms.GroupBox();
-			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._mrn = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._healthcard = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._familyName = new ClearCanvas.Desktop.View.WinForms.TextField();
@@ -71,10 +69,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._keepOpen = new System.Windows.Forms.CheckBox();
 			this._searchButton = new System.Windows.Forms.Button();
 			this._clearButton = new System.Windows.Forms.Button();
+			this._outerFlowLayoutPanel = new System.Windows.Forms.FlowLayoutPanel();
 			this._orderingPractitioner = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
+			this._diagnosticService = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
 			this._procedureType = new ClearCanvas.Ris.Client.View.WinForms.LookupField();
-			this._filterGroupBox.SuspendLayout();
-			this.flowLayoutPanel1.SuspendLayout();
+			this.panel1 = new System.Windows.Forms.Panel();
+			this.panel2 = new System.Windows.Forms.Panel();
+			this._outerFlowLayoutPanel.SuspendLayout();
+			this.panel1.SuspendLayout();
+			this.panel2.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// _accession
@@ -89,36 +92,6 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._accession.TabIndex = 0;
 			this._accession.ToolTip = null;
 			this._accession.Value = null;
-			// 
-			// _filterGroupBox
-			// 
-			this._filterGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-						| System.Windows.Forms.AnchorStyles.Left)
-						| System.Windows.Forms.AnchorStyles.Right)));
-			this._filterGroupBox.Controls.Add(this.flowLayoutPanel1);
-			this._filterGroupBox.Location = new System.Drawing.Point(4, 3);
-			this._filterGroupBox.Name = "_filterGroupBox";
-			this._filterGroupBox.Size = new System.Drawing.Size(454, 261);
-			this._filterGroupBox.TabIndex = 0;
-			this._filterGroupBox.TabStop = false;
-			this._filterGroupBox.Text = "Filters";
-			// 
-			// flowLayoutPanel1
-			// 
-			this.flowLayoutPanel1.Controls.Add(this._accession);
-			this.flowLayoutPanel1.Controls.Add(this._mrn);
-			this.flowLayoutPanel1.Controls.Add(this._healthcard);
-			this.flowLayoutPanel1.Controls.Add(this._familyName);
-			this.flowLayoutPanel1.Controls.Add(this._givenName);
-			this.flowLayoutPanel1.Controls.Add(this._orderingPractitioner);
-			this.flowLayoutPanel1.Controls.Add(this._procedureType);
-			this.flowLayoutPanel1.Controls.Add(this._fromDate);
-			this.flowLayoutPanel1.Controls.Add(this._untilDate);
-			this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 16);
-			this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-			this.flowLayoutPanel1.Size = new System.Drawing.Size(448, 242);
-			this.flowLayoutPanel1.TabIndex = 0;
 			// 
 			// _mrn
 			// 
@@ -175,63 +148,80 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			// _fromDate
 			// 
 			this._fromDate.LabelText = "From Date";
-			this._fromDate.Location = new System.Drawing.Point(212, 140);
+			this._fromDate.Location = new System.Drawing.Point(2, 186);
 			this._fromDate.Margin = new System.Windows.Forms.Padding(2);
 			this._fromDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._fromDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._fromDate.Name = "_fromDate";
 			this._fromDate.Nullable = true;
-			this._fromDate.Size = new System.Drawing.Size(206, 44);
-			this._fromDate.TabIndex = 7;
+			this._fromDate.Size = new System.Drawing.Size(206, 42);
+			this._fromDate.TabIndex = 8;
 			this._fromDate.Value = new System.DateTime(2009, 4, 28, 16, 56, 44, 343);
 			// 
 			// _untilDate
 			// 
 			this._untilDate.LabelText = "Until Date";
-			this._untilDate.Location = new System.Drawing.Point(2, 188);
+			this._untilDate.Location = new System.Drawing.Point(212, 186);
 			this._untilDate.Margin = new System.Windows.Forms.Padding(2);
 			this._untilDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
 			this._untilDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
 			this._untilDate.Name = "_untilDate";
 			this._untilDate.Nullable = true;
-			this._untilDate.Size = new System.Drawing.Size(206, 44);
-			this._untilDate.TabIndex = 8;
+			this._untilDate.Size = new System.Drawing.Size(206, 42);
+			this._untilDate.TabIndex = 9;
 			this._untilDate.Value = new System.DateTime(2009, 4, 28, 16, 56, 47, 203);
 			// 
 			// _keepOpen
 			// 
-			this._keepOpen.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
 			this._keepOpen.AutoSize = true;
-			this._keepOpen.Location = new System.Drawing.Point(201, 270);
+			this._keepOpen.Location = new System.Drawing.Point(123, 3);
 			this._keepOpen.Name = "_keepOpen";
 			this._keepOpen.Padding = new System.Windows.Forms.Padding(0, 6, 0, 0);
 			this._keepOpen.Size = new System.Drawing.Size(80, 23);
-			this._keepOpen.TabIndex = 1;
+			this._keepOpen.TabIndex = 0;
 			this._keepOpen.Text = "Keep Open";
 			this._keepOpen.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this._keepOpen.UseVisualStyleBackColor = true;
 			// 
 			// _searchButton
 			// 
-			this._searchButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._searchButton.Location = new System.Drawing.Point(287, 270);
+			this._searchButton.Location = new System.Drawing.Point(3, 5);
 			this._searchButton.Name = "_searchButton";
-			this._searchButton.Size = new System.Drawing.Size(81, 24);
-			this._searchButton.TabIndex = 2;
+			this._searchButton.Size = new System.Drawing.Size(98, 24);
+			this._searchButton.TabIndex = 0;
 			this._searchButton.Text = "Search";
 			this._searchButton.UseVisualStyleBackColor = true;
 			this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
 			// 
 			// _clearButton
 			// 
-			this._clearButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this._clearButton.Location = new System.Drawing.Point(374, 270);
+			this._clearButton.Location = new System.Drawing.Point(107, 5);
 			this._clearButton.Name = "_clearButton";
-			this._clearButton.Size = new System.Drawing.Size(81, 24);
-			this._clearButton.TabIndex = 3;
+			this._clearButton.Size = new System.Drawing.Size(98, 24);
+			this._clearButton.TabIndex = 1;
 			this._clearButton.Text = "Clear";
 			this._clearButton.UseVisualStyleBackColor = true;
 			this._clearButton.Click += new System.EventHandler(this._clearButton_Click);
+			// 
+			// _outerFlowLayoutPanel
+			// 
+			this._outerFlowLayoutPanel.Controls.Add(this._accession);
+			this._outerFlowLayoutPanel.Controls.Add(this._mrn);
+			this._outerFlowLayoutPanel.Controls.Add(this._healthcard);
+			this._outerFlowLayoutPanel.Controls.Add(this._familyName);
+			this._outerFlowLayoutPanel.Controls.Add(this._givenName);
+			this._outerFlowLayoutPanel.Controls.Add(this._orderingPractitioner);
+			this._outerFlowLayoutPanel.Controls.Add(this._diagnosticService);
+			this._outerFlowLayoutPanel.Controls.Add(this._procedureType);
+			this._outerFlowLayoutPanel.Controls.Add(this._fromDate);
+			this._outerFlowLayoutPanel.Controls.Add(this._untilDate);
+			this._outerFlowLayoutPanel.Controls.Add(this.panel1);
+			this._outerFlowLayoutPanel.Controls.Add(this.panel2);
+			this._outerFlowLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+			this._outerFlowLayoutPanel.Location = new System.Drawing.Point(0, 0);
+			this._outerFlowLayoutPanel.Name = "_outerFlowLayoutPanel";
+			this._outerFlowLayoutPanel.Size = new System.Drawing.Size(431, 283);
+			this._outerFlowLayoutPanel.TabIndex = 0;
 			// 
 			// _orderingPractitioner
 			// 
@@ -243,39 +233,65 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._orderingPractitioner.TabIndex = 5;
 			this._orderingPractitioner.Value = null;
 			// 
+			// _diagnosticService
+			// 
+			this._diagnosticService.LabelText = "Imaging Service";
+			this._diagnosticService.Location = new System.Drawing.Point(2, 140);
+			this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
+			this._diagnosticService.Name = "_diagnosticService";
+			this._diagnosticService.Size = new System.Drawing.Size(206, 42);
+			this._diagnosticService.TabIndex = 6;
+			this._diagnosticService.Value = null;
+			// 
 			// _procedureType
 			// 
 			this._procedureType.LabelText = "Procedure Type";
-			this._procedureType.Location = new System.Drawing.Point(2, 140);
+			this._procedureType.Location = new System.Drawing.Point(212, 140);
 			this._procedureType.Margin = new System.Windows.Forms.Padding(2);
 			this._procedureType.Name = "_procedureType";
 			this._procedureType.Size = new System.Drawing.Size(206, 42);
-			this._procedureType.TabIndex = 6;
+			this._procedureType.TabIndex = 7;
 			this._procedureType.Value = null;
+			// 
+			// panel1
+			// 
+			this.panel1.Controls.Add(this._keepOpen);
+			this.panel1.Location = new System.Drawing.Point(2, 232);
+			this.panel1.Margin = new System.Windows.Forms.Padding(2);
+			this.panel1.Name = "panel1";
+			this.panel1.Size = new System.Drawing.Size(206, 42);
+			this.panel1.TabIndex = 10;
+			// 
+			// panel2
+			// 
+			this.panel2.Controls.Add(this._clearButton);
+			this.panel2.Controls.Add(this._searchButton);
+			this.panel2.Location = new System.Drawing.Point(212, 232);
+			this.panel2.Margin = new System.Windows.Forms.Padding(2);
+			this.panel2.Name = "panel2";
+			this.panel2.Size = new System.Drawing.Size(206, 42);
+			this.panel2.TabIndex = 11;
 			// 
 			// SearchComponentControl
 			// 
 			this.AcceptButton = this._searchButton;
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._keepOpen);
-			this.Controls.Add(this._searchButton);
-			this.Controls.Add(this._clearButton);
-			this.Controls.Add(this._filterGroupBox);
+			this.Controls.Add(this._outerFlowLayoutPanel);
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "SearchComponentControl";
-			this.Size = new System.Drawing.Size(458, 297);
-			this._filterGroupBox.ResumeLayout(false);
-			this.flowLayoutPanel1.ResumeLayout(false);
+			this.Size = new System.Drawing.Size(431, 283);
+			this._outerFlowLayoutPanel.ResumeLayout(false);
+			this.panel1.ResumeLayout(false);
+			this.panel1.PerformLayout();
+			this.panel2.ResumeLayout(false);
 			this.ResumeLayout(false);
-			this.PerformLayout();
 
         }
 
         #endregion
 
 		private ClearCanvas.Desktop.View.WinForms.TextField _accession;
-		private System.Windows.Forms.GroupBox _filterGroupBox;
 		private LookupField _orderingPractitioner;
 		private ClearCanvas.Desktop.View.WinForms.TextField _familyName;
 		private ClearCanvas.Desktop.View.WinForms.TextField _healthcard;
@@ -286,7 +302,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 		private System.Windows.Forms.Button _searchButton;
 		private ClearCanvas.Desktop.View.WinForms.TextField _givenName;
 		private LookupField _procedureType;
-		private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Button _clearButton;
+		private System.Windows.Forms.FlowLayoutPanel _outerFlowLayoutPanel;
+		private LookupField _diagnosticService;
+		private System.Windows.Forms.Panel panel1;
+		private System.Windows.Forms.Panel panel2;
     }
 }

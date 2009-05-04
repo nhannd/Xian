@@ -63,7 +63,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _orderingPractitioner.DataBindings.Add("Enabled", _component, "ComponentEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _orderingPractitioner.LookupHandler = _component.OrderingPractitionerLookupHandler;
 
-            _procedureType.DataBindings.Add("Value", _component, "ProcedureType", true, DataSourceUpdateMode.OnPropertyChanged);
+			_diagnosticService.DataBindings.Add("Value", _component, "DiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
+			_diagnosticService.DataBindings.Add("Enabled", _component, "ComponentEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+			_diagnosticService.LookupHandler = _component.DiagnosticServiceLookupHandler;
+			
+			_procedureType.DataBindings.Add("Value", _component, "ProcedureType", true, DataSourceUpdateMode.OnPropertyChanged);
             _procedureType.DataBindings.Add("Enabled", _component, "ComponentEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _procedureType.LookupHandler = _component.ProcedureTypeLookupHandler;
 

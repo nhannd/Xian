@@ -58,6 +58,9 @@ namespace ClearCanvas.Ris.Application.Common
             [DataMember]
             public string AccessionNumber;
 
+        	[DataMember]
+			public EntityRef DiagnosticServiceRef;
+
             [DataMember]
             public EntityRef ProcedureTypeRef;
 
@@ -81,6 +84,7 @@ namespace ClearCanvas.Ris.Application.Common
 				       && IsEmpty(Mrn)
 				       && IsEmpty(HealthcardNumber)
 				       && IsEmpty(AccessionNumber)
+					   && DiagnosticServiceRef == null
 				       && ProcedureTypeRef == null
 				       && OrderingPractitionerRef == null
 				       && FromDate == null
@@ -94,6 +98,7 @@ namespace ClearCanvas.Ris.Application.Common
 			public bool IsNonPatientFieldsEmpty()
 			{
 				return IsEmpty(AccessionNumber)
+					   && DiagnosticServiceRef == null
 					   && ProcedureTypeRef == null
 					   && OrderingPractitionerRef == null
 					   && FromDate == null
