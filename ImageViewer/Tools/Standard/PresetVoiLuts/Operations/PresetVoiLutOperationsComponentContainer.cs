@@ -44,17 +44,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 	[AssociateView(typeof(PresetVoiLutOperationComponentContainerViewExtensionPoint))]
 	public sealed class PresetVoiLutOperationsComponentContainer : ApplicationComponentContainer
 	{
-		public sealed class PresetVoiLutOperationComponentHost : ApplicationComponentHost
+        public sealed class PresetVoiLutOperationComponentHost : ApplicationComponentContainer.SubHost
 		{
-			private readonly PresetVoiLutOperationsComponentContainer _owner;
-
-			internal PresetVoiLutOperationComponentHost(PresetVoiLutOperationsComponentContainer owner, IPresetVoiLutOperationComponent hostedComponent)
-				:base(hostedComponent)
+			internal PresetVoiLutOperationComponentHost(PresetVoiLutOperationsComponentContainer owner, 
+                IPresetVoiLutOperationComponent hostedComponent)
+				:base(owner, hostedComponent)
 			{
-				Platform.CheckForNullReference(owner, "owner"); 
-				Platform.CheckForNullReference(hostedComponent, "hostedComponent");
-				_owner = owner;
-				hostedComponent.SetHost(this);
 			}
 
 			public bool HasAssociatedView
@@ -65,18 +60,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			public new IPresetVoiLutOperationComponent Component
 			{
 				get { return (IPresetVoiLutOperationComponent)base.Component; }
-			}
-
-			public override DesktopWindow DesktopWindow
-			{
-				get { return _owner.Host.DesktopWindow; }
-			}
-
-			public override string Title
-			{
-				get { return _owner.Host.Title; }
-				// individual components cannot set the title for the container
-				set { throw new NotSupportedException(); }
 			}
 		}
 
