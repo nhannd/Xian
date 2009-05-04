@@ -23,7 +23,6 @@
         {
             $("#<%= CountdownEffectPanel.ClientID %>").hide();
 		    $("#<%= MessageBanner.ClientID %>").hide();
-		    $("#DarkenBackground").hide();
 		    return;
         }
         
@@ -69,7 +68,7 @@
     
     
     function GetExpiryTime() {
-    
+       
         var name = "ImageServer_" + loginId + "=";
         var ca = document.cookie.split(';');
         
@@ -86,9 +85,8 @@
     function HideSessionWarning()
     {
         hideWarning = true;
-        $("#<%= CountdownEffectPanel.ClientID %>").hide();
-        $("#<%= MessageBanner.ClientID %>").hide();
-		$("#DarkenBackground").hide();
+        $("#<%= CountdownEffectPanel.ClientID %>").slideUp();
+        $("#<%= MessageBanner.ClientID %>").slideUp();
     }
     
     function RefreshWarning()
@@ -98,16 +96,14 @@
         if (!hideWarning && !updating)
         {
             UpdateCountdownPanel();
-            $("#DarkenBackground").show();
             $("#<%= CountdownEffectPanel.ClientID %>:hidden").show();//.animate({height:"30px"});
             $("#<%= MessageBanner.ClientID %>:hidden").show();
             
         }
         else
         {
-            $("#<%= CountdownEffectPanel.ClientID %>").hide();
-		    $("#<%= MessageBanner.ClientID %>").hide();
-		    $("#DarkenBackground").hide();
+            $("#<%= CountdownEffectPanel.ClientID %>").slideUp();
+		    $("#<%= MessageBanner.ClientID %>").slideUp();
         }
         
         if (!updating)
@@ -125,7 +121,7 @@
     function UpdateCountdownPanel()
     {
         var timeLeft = GetSecondsLeft();
-        $("#<%= SessionTimeoutWarningMessage.ClientID %>").html("No activity is detected. For security reason, this session will end in " + timeLeft + " seconds.");        
+        $("#<%= SessionTimeoutWarningMessage.ClientID %>").html("No activity is detected. For security reasons, this session will end in " + timeLeft + " seconds.");        
     }
     
 </script>
@@ -144,7 +140,7 @@
                     <td>
                     <asp:Panel runat="server" ID="CountdownBanner" CssClass="CountdownBanner">
                         <asp:Label runat="server" ID="SessionTimeoutWarningMessage" CssClass="SessionTimeoutWarningMessage"></asp:Label> 
-                        <asp:Button runat="server" ID="KeepAliveLink" Text="Refresh" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
+                        <asp:Button runat="server" ID="KeepAliveLink" Text="Cancel" Font-Size="12px" UseSubmitBehavior="false" OnClientClick="HideSessionWarning()"></asp:Button>           
                     </asp:Panel></td>
                     </tr>
                 </table>                

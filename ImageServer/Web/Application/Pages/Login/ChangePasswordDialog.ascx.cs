@@ -50,10 +50,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             ErrorMessage.Text = String.Empty;
             ErrorMessagePanel.Visible = false; 
             ModalDialog1.Show();
+            Panel1.DefaultButton = "OKButton";
         }
 
         public void Cancel_Click(object sender, EventArgs e)
         {
+            Panel1.DefaultButton = "";
+            
             ModalDialog1.Hide();
         }
 

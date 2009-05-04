@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
         protected void Page_Load(object sender, EventArgs e)
         {
             DataBind();
+
         }
 
         protected void LoginClicked(object sender, EventArgs e)

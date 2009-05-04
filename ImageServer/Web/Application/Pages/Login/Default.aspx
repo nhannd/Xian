@@ -26,7 +26,7 @@
             Version: <%= String.IsNullOrEmpty(ServerPlatform.VersionString) ? "Unknown" : ServerPlatform.VersionString%>
     </div>
     
-    <div id="LoginSplash">
+    <asp:Panel ID="LoginSplash" DefaultButton="LoginButton" runat="server">
         <div id="LoginCredentials">
         
         <asp:Panel style="background: #8FC3E4; padding: 2px 7px 2px 7px;" runat="server" ID="ErrorMessagePanel"
@@ -53,7 +53,7 @@
         </div>
                         
             
-    </div>         
+    </asp:Panel>         
     
     <asp:UpdatePanel runat="server">
         <ContentTemplate>
