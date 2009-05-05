@@ -44,17 +44,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 	[AssociateView(typeof(PresetVoiLutOperationComponentContainerViewExtensionPoint))]
 	public sealed class PresetVoiLutOperationsComponentContainer : ApplicationComponentContainer
 	{
-        public sealed class PresetVoiLutOperationComponentHost : ApplicationComponentContainer.SubHost
+        private sealed class PresetVoiLutOperationComponentHost : ApplicationComponentContainer.ContainedComponentHost
 		{
 			internal PresetVoiLutOperationComponentHost(PresetVoiLutOperationsComponentContainer owner, 
                 IPresetVoiLutOperationComponent hostedComponent)
 				:base(owner, hostedComponent)
 			{
-			}
-
-			public bool HasAssociatedView
-			{
-				get { return base.Component.GetType().IsDefined(typeof(AssociateViewAttribute), false); }
 			}
 
 			public new IPresetVoiLutOperationComponent Component
@@ -82,7 +77,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 			_componentHost = new PresetVoiLutOperationComponentHost(this, component);
 		}
 
-		public PresetVoiLutOperationComponentHost ComponentHost
+		private IPresetVoiLutOperationComponent ContainedComponent
+		{
+			get { return ((PresetVoiLutOperationComponentHost) ComponentHost).Component; }
+		}
+
+		public ApplicationComponentHost ComponentHost
 		{
 			get { return _componentHost; }
 		}
@@ -113,10 +113,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 		{
 			get
 			{
-				if (!ComponentHost.Component.Valid)
+				if (!ContainedComponent.Valid)
 					return false;
 
-				switch (ComponentHost.Component.EditContext)
+				switch (ContainedComponent.EditContext)
 				{
 					case EditContext.Edit:
 						return this.Modified;
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 
 		internal PresetVoiLut GetPresetVoiLut()
 		{
-			PresetVoiLut preset = new PresetVoiLut(ComponentHost.Component.GetOperation());
+			PresetVoiLut preset = new PresetVoiLut(ContainedComponent.GetOperation());
 			preset.KeyStroke = _selectedKeyStroke.KeyStroke;
 			return preset;
 		}
@@ -160,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 		{
 			base.Modified = false;
 			base.Start();
-			ComponentHost.Component.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(ComponentPropertyChanged);
+			ContainedComponent.PropertyChanged += ComponentPropertyChanged;
 			ComponentHost.StartComponent();
 
 			this.ExitCode = ApplicationComponentExitCode.None;
@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations
 		public override void Stop()
 		{
 			ComponentHost.StopComponent();
-			ComponentHost.Component.PropertyChanged -= new System.ComponentModel.PropertyChangedEventHandler(ComponentPropertyChanged);
+			ContainedComponent.PropertyChanged -= ComponentPropertyChanged;
 			base.Stop();
 		}
 

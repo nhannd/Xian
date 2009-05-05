@@ -34,6 +34,7 @@ using System.Windows.Forms;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Operations;
+using System;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
@@ -58,9 +59,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 			_okButton.DataBindings.Add("Enabled", source, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
-			if (_component.ComponentHost.HasAssociatedView)
+			IApplicationComponentView customEditView;
+			try
 			{
-				IApplicationComponentView customEditView = _component.ComponentHost.ComponentView;
+				customEditView = _component.ComponentHost.ComponentView;
+
 				Size sizeBefore = _tableLayoutPanel.Size;
 
 				_tableLayoutPanel.Controls.Add(customEditView.GuiElement as Control);
@@ -69,6 +72,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 				Size sizeAfter = _tableLayoutPanel.Size;
 
 				this.Size += (sizeAfter - sizeBefore);
+			}
+			catch(NotSupportedException)
+			{
 			}
 
 			base.AcceptButton = _okButton;
