@@ -160,10 +160,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				CheckDefaultServers(serverTree, defaultServers);
 				initialSelection = GetFirstDefaultServerOrGroup(serverTree.RootNode.ServerGroupNode);
 				UncheckAllServers(serverTree);
+
+				if (initialSelection == null)
+					initialSelection = serverTree.RootNode.ServerGroupNode;
 			}
 
-			if (initialSelection != null)
-				serverTreeComponent.SetSelection(initialSelection);
+			serverTreeComponent.SetSelection(initialSelection);
 		}
 
 		private static IServerTreeNode GetFirstDefaultServerOrGroup(ServerGroup serverGroup)
