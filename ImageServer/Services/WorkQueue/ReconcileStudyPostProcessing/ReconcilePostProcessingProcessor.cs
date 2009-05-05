@@ -29,9 +29,12 @@
 
 #endregion
 
+using System;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common.Helpers;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessing
@@ -55,10 +58,25 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 
 		protected override void ProcessFile(Model.WorkQueueUid queueUid, string path, ClearCanvas.Dicom.Utilities.Xml.StudyXml stream)
 		{
-			DicomFile file = LoadDicomFile(path);
+			SopInstanceProcessor processor = new SopInstanceProcessor(_context);
+
+			DicomFile file;
+			long fileSize;
+			FileInfo fileInfo = new FileInfo(path);
+			fileSize = fileInfo.Length;
+
+			processor.InstanceStats.FileLoadTime.Start();
+			file = new DicomFile(path);
+			file.Load(DicomReadOptions.StorePixelDataReferences);
+			processor.InstanceStats.FileLoadTime.End();
+			processor.InstanceStats.FileSize = (ulong)fileSize;
+			string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:" + fileInfo.Name);
+			processor.InstanceStats.Description = sopInstanceUid;
+
+
 			if (Study != null)
 			{
-                DifferenceCollection list = StudyHelper.Compare(file, Study, ServerPartition);
+				DifferenceCollection list = StudyHelper.Compare(file, Study, ServerPartition);
 				if (list != null && list.Count > 0)
 				{
 					Platform.Log(LogLevel.Warn, "Dicom file contains information inconsistent with the study in the system");
@@ -66,7 +84,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 
 			}
 
-			InsertInstance(file, stream, queueUid);
+	
+			processor.ProcessFile(file, stream, queueUid.Duplicate);
+
+			_statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
+			if (String.IsNullOrEmpty(processor.Modality) == false)
+				_statistics.Modality = processor.Modality;
+
+			// Update the statistics
+			_statistics.NumInstances++;
+
 		}
 	}
 }

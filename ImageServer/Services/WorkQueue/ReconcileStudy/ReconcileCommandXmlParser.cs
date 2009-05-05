@@ -32,7 +32,7 @@
 using System;
 using System.Xml;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common.Data;
+using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.Discard;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;

@@ -40,42 +40,42 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;
 
-namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
+namespace ClearCanvas.ImageServer.Core.Process
 {
-    /// <summary>
-    /// Insert DICOM file into a <see cref="StudyXml"/> file and save to disk.
-    /// </summary>
-    public class InsertStudyXmlCommand : ServerCommand
-    {
-        #region Private Members
+	/// <summary>
+	/// Insert DICOM file into a <see cref="StudyXml"/> file and save to disk.
+	/// </summary>
+	public class InsertStudyXmlCommand : ServerCommand
+	{
+		#region Private Members
 
-        private readonly DicomFile _file;
-        private readonly StudyXml _stream;
-        private readonly StudyStorageLocation _studyStorageLocation;
+		private readonly DicomFile _file;
+		private readonly StudyXml _stream;
+		private readonly StudyStorageLocation _studyStorageLocation;
 
-        #endregion
+		#endregion
 
-        #region Private Static Members
-        private static readonly StudyXmlOutputSettings _outputSettings = ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings;
-        #endregion
+		#region Private Static Members
+		private static readonly StudyXmlOutputSettings _outputSettings = ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings;
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        public InsertStudyXmlCommand(DicomFile file, StudyXml stream, StudyStorageLocation storageLocation)
-            : base("Insert into Study XML", true)
-        {
-            Platform.CheckForNullReference(file, "Dicom File object");
-            Platform.CheckForNullReference(stream, "StudyStream object");
-            Platform.CheckForNullReference(storageLocation, "Study Storage Location");
+		public InsertStudyXmlCommand(DicomFile file, StudyXml stream, StudyStorageLocation storageLocation)
+			: base("Insert into Study XML", true)
+		{
+			Platform.CheckForNullReference(file, "Dicom File object");
+			Platform.CheckForNullReference(stream, "StudyStream object");
+			Platform.CheckForNullReference(storageLocation, "Study Storage Location");
 
-            _file = file;
-            _stream = stream;
-            _studyStorageLocation = storageLocation;
-        }
+			_file = file;
+			_stream = stream;
+			_studyStorageLocation = storageLocation;
+		}
 
-        #endregion
+		#endregion
 
-        #region Private Methods
+		#region Private Methods
 
 		private static void WriteStudyStream(string streamFile, string gzStreamFile, StudyXml theStream)
 		{
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 						File.Delete(tmpGzStreamFile);
 
 					using (FileStream xmlStream = FileStreamOpener.OpenForSoleUpdate(tmpStreamFile, FileMode.CreateNew),
-									  gzipStream = FileStreamOpener.OpenForSoleUpdate(tmpGzStreamFile, FileMode.CreateNew))
+					                  gzipStream = FileStreamOpener.OpenForSoleUpdate(tmpGzStreamFile, FileMode.CreateNew))
 					{
 						StudyXmlIo.WriteXmlAndGzip(doc, xmlStream, gzipStream);
 						xmlStream.Close();
@@ -121,12 +121,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 				}
 		}
        
-        #endregion
+		#endregion
 
-        #region Overridden Protected Methods
+		#region Overridden Protected Methods
 
-        protected override void OnExecute()
-        {
+		protected override void OnExecute()
+		{
 			long fileSize = 0;
 			if (File.Exists(_file.Filename))
 			{
@@ -135,34 +135,34 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 				fileSize = finfo.Length;
 			}
 
-            // Setup the insert parameters
-            if (false == _stream.AddFile(_file, fileSize))
-            {
-                Platform.Log(LogLevel.Error, "Unexpected error adding SOP to XML Study Descriptor for file {0}",
-                             _file.Filename);
-                throw new ApplicationException("Unexpected error adding SOP to XML Study Descriptor for SOP: " +
-                                               _file.MediaStorageSopInstanceUid);
-            }
+			// Setup the insert parameters
+			if (false == _stream.AddFile(_file, fileSize))
+			{
+				Platform.Log(LogLevel.Error, "Unexpected error adding SOP to XML Study Descriptor for file {0}",
+				             _file.Filename);
+				throw new ApplicationException("Unexpected error adding SOP to XML Study Descriptor for SOP: " +
+				                               _file.MediaStorageSopInstanceUid);
+			}
 
-            // Write it back out.  We flush it out with every added image so that if a failure happens,
-            // we can recover properly.
+			// Write it back out.  We flush it out with every added image so that if a failure happens,
+			// we can recover properly.
 			string streamFile =
-        		Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml");
-        	string gzStreamFile = streamFile + ".gz";
+				Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml");
+			string gzStreamFile = streamFile + ".gz";
 
-        	WriteStudyStream(streamFile, gzStreamFile, _stream);
-        }
+			WriteStudyStream(streamFile, gzStreamFile, _stream);
+		}
 
-        protected override void OnUndo()
-        {
-            _stream.RemoveFile(_file);
+		protected override void OnUndo()
+		{
+			_stream.RemoveFile(_file);
 
 			string streamFile =
 				Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml");
 			string gzStreamFile = streamFile + ".gz";
 			WriteStudyStream(streamFile, gzStreamFile, _stream);
-        }
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

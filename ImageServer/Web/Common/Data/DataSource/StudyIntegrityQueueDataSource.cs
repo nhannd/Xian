@@ -31,8 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -163,7 +163,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
         public ReconcileDetails(StudyIntegrityQueue queueItem)
         {
-            this._item = queueItem;
+            _item = queueItem;
         }
 
 

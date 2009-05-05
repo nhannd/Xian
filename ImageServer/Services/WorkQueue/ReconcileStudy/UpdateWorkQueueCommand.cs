@@ -31,7 +31,6 @@
 
 using System;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Model;

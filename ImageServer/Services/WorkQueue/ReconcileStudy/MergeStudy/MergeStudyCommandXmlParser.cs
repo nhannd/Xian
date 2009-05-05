@@ -32,9 +32,9 @@
 using System;
 using System.Collections.Generic;
 using System.Xml;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Edit;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 {

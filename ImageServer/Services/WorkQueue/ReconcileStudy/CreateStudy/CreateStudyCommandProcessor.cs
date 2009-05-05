@@ -29,12 +29,9 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Data;
+using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
@@ -92,9 +89,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
             }
         }
 
-        #endregion
-
-        
+        #endregion      
     }
     
 }

@@ -33,7 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageServer.Common.Data;
+using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code;

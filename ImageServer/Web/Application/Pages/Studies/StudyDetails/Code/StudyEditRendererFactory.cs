@@ -31,12 +31,11 @@
 
 using System.Text;
 using System.Web.UI;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Data;
+using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
-
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Code
 {

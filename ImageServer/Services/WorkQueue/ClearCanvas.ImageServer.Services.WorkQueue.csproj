@@ -83,8 +83,6 @@
     <Compile Include="ReconcileStudy\ProcessAsIs\ReconcileProcessAsIsProcessor.cs" />
     <Compile Include="ReconcileStudy\ReconcileDescriptionParser.cs" />
     <Compile Include="ReconcileStudy\UpdateWorkQueueCommand.cs" />
-    <Compile Include="StudyProcess\ImageReconciler.cs" />
-    <Compile Include="StudyProcess\InsertMergeHistoryCommand.cs" />
     <Compile Include="WebEditStudy\IWebEditStudyCommandCompiler.cs" />
     <Compile Include="WebEditStudy\WebEditStudyHistoryRecord.cs" />
     <Compile Include="WebEditStudy\WebEditStudyCommandCompiler.cs" />
@@ -112,10 +110,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="StudyProcess\InsertSIQReconcileStudyCommand.cs" />
-    <Compile Include="StudyProcess\InsertReconcileStudyCommand.cs" />
-    <Compile Include="StudyProcess\MoveReconcileImageCommand.cs" />
-    <Compile Include="StudyProcess\ReconcileImageContext.cs" />
     <Compile Include="TierMigrate\TierMigrateStudyFactoryExtension.cs" />
     <Compile Include="TierMigrate\TierMigrateDatabaseUpdateCommand.cs" />
     <Compile Include="TierMigrate\TierMigrateItemProcessor.cs" />
@@ -124,7 +118,6 @@
     <Compile Include="UpdateStudyXmlCommand.cs" />
     <Compile Include="WebEditStudy\WebEditStudyItemProcessor.cs" />
     <Compile Include="WebEditStudy\WebEditStudyFactoryExtension.cs" />
-    <Compile Include="StudyProcess\InstanceStatistics.cs" />
     <Compile Include="StudyProcess\StudyProcessStatistics.cs" />
     <Compile Include="WebDeleteStudy\WebDeleteStudyItemProcessor.cs" />
     <Compile Include="WebDeleteStudy\WebDeleteStudyFactoryExtension.cs" />
@@ -134,8 +127,6 @@
     <Compile Include="WorkQueueSettings.cs" />
     <Compile Include="IWorkQueueItemProcessor.cs" />
     <Compile Include="IWorkQueueProcessorFactory.cs" />
-    <Compile Include="StudyProcess\InsertInstanceCommand.cs" />
-    <Compile Include="StudyProcess\InsertStudyXmlCommand.cs" />
     <Compile Include="StudyProcess\StudyProcessFactoryExtension.cs" />
     <Compile Include="StudyProcess\StudyProcessItemProcessor.cs">
     </Compile>
@@ -168,6 +159,10 @@
     <ProjectReference Include="..\..\Common\ClearCanvas.ImageServer.Common.csproj">
       <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
       <Name>ClearCanvas.ImageServer.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\ClearCanvas.ImageServer.Core.csproj">
+      <Project>{64DD80D0-2B72-46C0-8F6E-382CA1EAFF9D}</Project>
+      <Name>ClearCanvas.ImageServer.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Enterprise\ClearCanvas.ImageServer.Enterprise.csproj">
       <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>

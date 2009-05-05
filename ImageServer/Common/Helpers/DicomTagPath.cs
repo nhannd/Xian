@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
         public string HexString()
         {
             StringBuilder tagPath = new StringBuilder();
-            tagPath.Append(StringUtilities.Combine<DicomTag>(Parents, ",",
+            tagPath.Append(StringUtilities.Combine(Parents, ",",
                                                              delegate(DicomTag tag) { return tag.HexString; }));
             if (tagPath.Length > 0)
                 tagPath.Append(",");
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageServer.Common.Helpers
     }
 
 
-    class DicomTagPathConverter : TypeConverter
+    public class DicomTagPathConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {

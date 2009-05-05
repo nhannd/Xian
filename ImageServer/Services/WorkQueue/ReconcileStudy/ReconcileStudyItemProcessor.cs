@@ -33,8 +33,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Common;
-using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 

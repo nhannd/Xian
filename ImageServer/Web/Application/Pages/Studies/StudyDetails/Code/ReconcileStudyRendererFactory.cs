@@ -30,7 +30,7 @@
 #endregion
 
 using System.Web.UI;
-using ClearCanvas.ImageServer.Common.Data;
+using ClearCanvas.ImageServer.Core.Data;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 

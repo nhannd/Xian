@@ -81,6 +81,7 @@
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Web\Services\Shreds\bin\$(Configuration)\ClearCanvas.ImageServer.Web.Services.Shreds.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\Hsm\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.Hsm.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Core\bin\$(Configuration)\ClearCanvas.ImageServer.Core.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
   </ItemGroup>

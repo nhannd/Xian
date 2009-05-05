@@ -31,72 +31,19 @@
 
 using System;
 using System.IO;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Helpers;
+using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
-    /// <summary>
-    /// Encapsulates the context of the 'StudyProcess' operation.
-    /// </summary>
-    internal class StudyProcessorContext
-    {
-        #region Private Members
-        private Model.WorkQueue _item;
-        private ServerPartition _partition;
-        private StudyStorageLocation _storageLocation;
-        private Study _study;
-        #endregion
-
-        #region Constructors
-
-        public StudyProcessorContext(Model.WorkQueue item)
-        {
-            _item = item;
-            _partition = ServerPartition.Load(item.ServerPartitionKey);
-        }
-
-        #endregion
-
-        #region Public Properties
-
-        public ServerPartition Partition
-        {
-            get { return _partition; }
-            set { _partition = value; }
-        }
-
-        public Model.WorkQueue WorkQueueItem
-        {
-            get { return _item; }
-            set { _item = value; }
-        }
-
-        public Study Study
-        {
-            get { return _study; }
-            set { _study = value; }
-        }
-
-        public StudyStorageLocation StorageLocation
-        {
-            get { return _storageLocation; }
-            set { _storageLocation = value; }
-        }
-
-        #endregion
-    }
-
-
+ 
     /// <summary>
     /// Processor for 'StudyProcess' <see cref="WorkQueue"/> entries.
     /// </summary>
@@ -105,10 +52,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #region Private Members
         private ServerRulesEngine _sopProcessedRulesEngine;
 
-        private StudyProcessStatistics _statistics;
-        private InstanceStatistics _instanceStats;
-        private StudyProcessorContext _context;
-        private ImageReconciler _reconciler =null;
+        protected StudyProcessStatistics _statistics;
+    	protected StudyProcessorContext _context;
 
         #endregion
 
@@ -119,8 +64,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         #region Constructors
         public StudyProcessItemProcessor()
         {
-            _statistics = new StudyProcessStatistics();
-            
+            _statistics = new StudyProcessStatistics();            
         }
 
         #endregion Constructors
@@ -155,65 +99,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             else throw new ApplicationException(failureReason);
         }
 
-        /// <summary>
-        /// Returns a value indicating whether the Dicom image must be reconciled.
-        /// </summary>
-        /// <param name="uid"></param>
-        /// <param name="message">The Dicom message</param>
-        /// <returns></returns>
-		private bool ShouldReconcile(WorkQueueUid uid, DicomMessageBase message)
-        {
-            Platform.CheckForNullReference(_context, "_context");
-            Platform.CheckForNullReference(message, "message");
-            Platform.CheckForNullReference(uid, "uid");
 
-            string studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, String.Empty);
-            
-            if (_context.Study == null || _context.Study.StudyInstanceUid != studyInstanceUid)
-            {
-                _context.Study = Study;
-                // Note: if this is the first image in the study, _study will still be null at this point
-            }
-
-            if (_context.Study == null )
-            {
-                // the study doesn't exist in the database
-                return false;
-            }
-            else
-            {
-                DifferenceCollection list = StudyHelper.Compare(message, Study, ServerPartition);
-
-                if (list != null && list.Count > 0)
-                {
-                    LogDifferences(message, list);
-
-					// Duplicate sops are governed by the duplicate policy
-                    if (uid.Duplicate)
-                    {
-                        Platform.Log(LogLevel.Warn, "Duplicate sop. Ignore the difference.");
-                        return false;
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        private void LogDifferences(DicomMessageBase message, DifferenceCollection list)
-        {
-            string sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Found {0} issue(s) in SOP {1}\n", list.Count, sopInstanceUid);
-            sb.Append(list.ToString());
-            Platform.Log(LogLevel.Warn, sb.ToString());
-        }
 
 
         /// <summary>
@@ -224,148 +110,33 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
         protected virtual void ProcessFile(WorkQueueUid queueUid, string path, StudyXml stream)
         {
-            DicomFile file = LoadDicomFile(path);
-        
-            if (ShouldReconcile(queueUid, file))
-            {
-                ScheduleReconcile(queueUid, file);
-            }
-            else
-            {
-                InsertInstance(file, stream, queueUid);
-            } 
-            
-        }
+			SopInstanceProcessor processor = new SopInstanceProcessor(_context);
+ 
+			DicomFile file;
+			long fileSize;
+			FileInfo fileInfo = new FileInfo(path);
+			fileSize = fileInfo.Length;
 
-        protected DicomFile LoadDicomFile(string path)
-        {
-            DicomFile file;
-            long fileSize;
-            FileInfo fileInfo = new FileInfo(path);
-            fileSize = fileInfo.Length;
-            
-            _instanceStats.FileLoadTime.Start();
-            file = new DicomFile(path);
-            file.Load(DicomReadOptions.StorePixelDataReferences);
-            _instanceStats.FileLoadTime.End();
-            _instanceStats.FileSize = (ulong) fileSize;
-            string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:"+fileInfo.Name);
-            _instanceStats.Description = sopInstanceUid;
-            return file;
-        }
+			processor.InstanceStats.FileLoadTime.Start();
+			file = new DicomFile(path);
+			file.Load(DicomReadOptions.StorePixelDataReferences);
+			processor.InstanceStats.FileLoadTime.End();
+			processor.InstanceStats.FileSize = (ulong)fileSize;
+			string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:" + fileInfo.Name);
+			processor.InstanceStats.Description = sopInstanceUid;
+		
+		
+        	processor.ProcessFile(file, stream, queueUid.Duplicate);
+			
+			_statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
+			if (String.IsNullOrEmpty(processor.Modality) == false)
+				_statistics.Modality = processor.Modality;
 
-        /// <summary>
-        /// Inserts an instance into the system
-        /// </summary>
-        /// <param name="file"></param>
-        /// <param name="stream"></param>
-        /// <param name="queueUid"></param>
-        protected void InsertInstance(DicomFile file, StudyXml stream, WorkQueueUid queueUid)
-        {
-            Platform.CheckForNullReference(_context, "_context");
-            Platform.CheckForNullReference(_context.WorkQueueItem, "_context.WorkQueueItem");
+			// Update the statistics
+			_statistics.NumInstances++;
 
-            using (ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM file"))
-            {
-                InsertInstanceCommand insertInstanceCommand = null;
-                InsertStudyXmlCommand insertStudyXmlCommand = null;
-            
-                String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, String.Empty);
-                String modality = file.DataSet[DicomTags.Modality].GetString(0, String.Empty);
-
-                try
-                {
-
-                    // Update the StudyStream object
-                    insertStudyXmlCommand = new InsertStudyXmlCommand(file, stream, StorageLocation);
-                    processor.AddCommand(insertStudyXmlCommand);
-
-                    // Insert into the database, but only if its not a duplicate so the counts don't get off
-                    if (!queueUid.Duplicate)
-                    {
-                        insertInstanceCommand = new InsertInstanceCommand(file, StorageLocation);
-                        processor.AddCommand(insertInstanceCommand);
-                    }
-
-                    // Create a context for applying actions from the rules engine
-                    ServerActionContext context =
-                        new ServerActionContext(file, StorageLocation.FilesystemKey, _context.WorkQueueItem.ServerPartitionKey, _context.WorkQueueItem.StudyStorageKey);
-                    context.CommandProcessor = processor;
-
-                    // Run the rules engine against the object.
-                    _sopProcessedRulesEngine.Execute(context);
-
-                    // Do insert into the archival queue.  Note that we re-run this with each object processed
-                    // so that the scheduled time is pushed back each time.  Note, however, if the study only 
-                    // has one image, we could incorrectly insert an ArchiveQueue request, since the 
-                    // study rules haven't been run.  We re-run the command when the study processed
-                    // rules are run to remove out the archivequeue request again, if it isn't needed.
-                    context.CommandProcessor.AddCommand(
-                            new InsertArchiveQueueCommand(_context.WorkQueueItem.ServerPartitionKey, StorageLocation.GetKey()));
-
-                    // Do the actual processing
-                    if (!processor.Execute())
-                    {
-                        Platform.Log(LogLevel.Error, "Failure processing command {0} for SOP: {1}", processor.Description, file.MediaStorageSopInstanceUid);
-                        Platform.Log(LogLevel.Error, "File that failed processing: {0}", file.Filename);
-                        throw new ApplicationException("Unexpected failure (" + processor.FailureReason + ") executing command for SOP: " + file.MediaStorageSopInstanceUid);
-                    }
-                    else
-                    {
-                        Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.",
-                                 processor.Description);
-                    processor.Rollback();
-                    throw new ApplicationException("Unexpected exception when processing file.", e);
-                }
-                finally
-                {
-                    if (insertInstanceCommand != null && insertInstanceCommand.Statistics.IsSet)
-                        _instanceStats.InsertDBTime.Add(insertInstanceCommand.Statistics);
-                    if (insertStudyXmlCommand != null && insertStudyXmlCommand.Statistics.IsSet)
-                        _instanceStats.InsertStreamTime.Add(insertStudyXmlCommand.Statistics);
-
-
-                    _statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
-                    if (String.IsNullOrEmpty(modality) == false)
-                        _statistics.Modality = modality;
-
-                    // Update the statistics
-                    _statistics.NumInstances++;
-                }
-            }            
         }
         
-        /// <summary>
-        /// Schedules a reconciliation for the specified <see cref="DicomFile"/>
-        /// </summary>
-        /// <param name="queueUid"></param>
-        /// <param name="file"></param>
-        private void ScheduleReconcile(WorkQueueUid queueUid, DicomFile file)
-        {
-            ImageReconciler reconciler = GetReconciler();
-            reconciler.ReconcileImage(file, queueUid.Duplicate);
-        }
-
-        private ImageReconciler GetReconciler()
-        {
-            //TODO: Need to make it thread-safe?
-            if (_reconciler==null)
-            {
-                _reconciler = new ImageReconciler();
-                _reconciler.ReadContext = ReadContext;
-                _reconciler.ExistingStudy = _context.Study;
-                _reconciler.ExistingStudyLocation = StorageLocation;
-                _reconciler.Partition = _context.Partition;
-                
-            }
-            return _reconciler;
-        }
-
 
         /// <summary>
         /// Process all of the SOP Instances associated with a <see cref="WorkQueue"/> item.
@@ -493,8 +264,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(uid, "uid");
 
-            _instanceStats = new InstanceStatistics();
-            _instanceStats.ProcessTime.Start();
         }
 
         /// <summary>
@@ -507,21 +276,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(uid, "uid");
 
-            if (_sopProcessedRulesEngine != null)
-            {
-                if (_sopProcessedRulesEngine.Statistics.LoadTime.IsSet)
-                    _instanceStats.SopRulesLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
 
-                if (_sopProcessedRulesEngine.Statistics.ExecutionTime.IsSet)
-                    _instanceStats.SopEngineExecutionTime.Add(_sopProcessedRulesEngine.Statistics.ExecutionTime);
-
-
-                _sopProcessedRulesEngine.Statistics.Reset();
-            }
-
-			_instanceStats.ProcessTime.End();
-
-            _statistics.AddSubStats(_instanceStats);
         }
 
         #endregion
@@ -578,7 +333,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                 _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, item.ServerPartitionKey);
                                 _sopProcessedRulesEngine.Load();
                                 _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
-            
+                            	_context.SopProcessedRulesEngine = _sopProcessedRulesEngine;
+                            	_context.ReadContext = ReadContext;
                                 _context.StorageLocation = StorageLocation;
 
 								if (Study != null)

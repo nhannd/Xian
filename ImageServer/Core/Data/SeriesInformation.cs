@@ -32,60 +32,66 @@
 using System.Xml.Serialization;
 using ClearCanvas.Dicom;
 
-namespace ClearCanvas.ImageServer.Common.Data
+namespace ClearCanvas.ImageServer.Core.Data
 {
-    /// <summary>
-    /// Represents the serializable detailed information of an image set.
-    /// </summary>
-    [XmlRoot("Details")]
-    public class ImageSetDetails
-    {
-        #region Private Fields
-        private StudyInformation _studyInfo=new StudyInformation();
-        private int _sopCount;
-        #endregion
+	/// <summary>
+	/// Represents serializable series information.
+	/// </summary>
+	[XmlRoot("Series")]
+	public class SeriesInformation
+	{
+		#region Private Members
+		private string _seriesInstanceUid;
+		private string _seriesDescription;
+		private string _modality;
+		private int _numberOfInstances = 0;
+		#endregion
 
-        #region Constructors
+		#region Constructors
 
-        public ImageSetDetails()
-        {
-        }
+		public SeriesInformation()
+		{
+		}
 
-        public ImageSetDetails(IDicomAttributeProvider attributeProvider)
-        {
-            StudyInfo = new StudyInformation(attributeProvider);
-        }
+		public SeriesInformation(IDicomAttributeProvider attributeProvider)
+		{
+			if (attributeProvider[DicomTags.SeriesInstanceUid] != null)
+				SeriesInstanceUid = attributeProvider[DicomTags.SeriesInstanceUid].ToString();
+			if (attributeProvider[DicomTags.SeriesDescription] != null)
+				SeriesDescription = attributeProvider[DicomTags.SeriesDescription].ToString();
+			if (attributeProvider[DicomTags.Modality] != null)
+				Modality = attributeProvider[DicomTags.Modality].ToString();
 
-        #endregion
+		}
 
-        #region Public Properties
+		#endregion
 
-        public int SopInstanceCount
-        {
-            get { return _sopCount; }
-            set { _sopCount = value; }
-        }
+		#region Public Properties
+		[XmlAttribute]
+		public string SeriesInstanceUid
+		{
+			get { return _seriesInstanceUid; }
+			set { _seriesInstanceUid = value; }
+		}
+		[XmlAttribute]
+		public string Modality
+		{
+			get { return _modality; }
+			set { _modality = value; }
+		}
+		public string SeriesDescription
+		{
+			get { return _seriesDescription; }
+			set { _seriesDescription = value; }
+		}
 
-        /// <summary>
-        /// Gets or sets the <see cref="StudyInformation"/> of the image set.
-        /// </summary>
-        public StudyInformation StudyInfo
-        {
-            get{ return _studyInfo;}
-            set { _studyInfo = value; }
-        }
+		public int NumberOfInstances
+		{
+			get { return _numberOfInstances; }
+			set { _numberOfInstances = value; }
+		}
 
-        #endregion
+		#endregion
 
-        #region Public Methods
-        /// <summary>
-        /// Inserts a <see cref="DicomMessageBase"/> into the set.
-        /// </summary>
-        /// <param name="message"></param>
-        public void InsertFile(DicomMessageBase message)
-        {
-            StudyInfo.Add(message);
-        }
-        #endregion
-    }
+	}
 }

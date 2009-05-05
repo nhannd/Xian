@@ -29,7 +29,6 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;

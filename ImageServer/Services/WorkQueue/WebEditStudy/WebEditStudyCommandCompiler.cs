@@ -33,8 +33,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Edit;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 {

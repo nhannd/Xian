@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
     /// <summary>
     /// Store performance statistics of a study processor.
     /// </summary>
-    internal class StudyProcessStatistics : StatisticsSet
+    public class StudyProcessStatistics : StatisticsSet
     {
         #region Public Properties
 

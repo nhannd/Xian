@@ -31,15 +31,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Common.CommandProcessor;
-using ClearCanvas.ImageServer.Common.Data;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -53,9 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 	{
         private readonly StudyIntegrityQueueAdaptor _adaptor = new StudyIntegrityQueueAdaptor();
 
-	    private const string SetTag = "<SetTag TagPath=\"{0}\" Value=\"{1}\"/>";
-
-        public IList<StudyIntegrityQueue> GetStudyIntegrityQueueItems(StudyIntegrityQueueSelectCriteria criteria)
+		public IList<StudyIntegrityQueue> GetStudyIntegrityQueueItems(StudyIntegrityQueueSelectCriteria criteria)
         {
             return _adaptor.Get(criteria);
         }

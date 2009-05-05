@@ -29,36 +29,63 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml.Serialization;
+using ClearCanvas.Dicom;
 
-namespace ClearCanvas.ImageServer.Common.Data
+namespace ClearCanvas.ImageServer.Core.Data
 {
-    /// <summary>
-    /// Represents the information encoded in the <see cref="StudyIntegrityQueue.QueueData"/> column of a <see cref="StudyIntegrityQueue"/> record.
-    /// </summary>
-    public class ReconcileStudyWorkQueueData
-    {
-        private string _storagePath;
-        private ImageSetDetails _details;
+	/// <summary>
+	/// Represents the serializable detailed information of an image set.
+	/// </summary>
+	[XmlRoot("Details")]
+	public class ImageSetDetails
+	{
+		#region Private Fields
+		private StudyInformation _studyInfo=new StudyInformation();
+		private int _sopCount;
+		#endregion
 
-        public string StoragePath
-        {
-            get { return _storagePath; }
-            set { _storagePath = value; }
-        }
+		#region Constructors
 
-        public ImageSetDetails Details
-        {
-            get
-            {
-                if (_details == null)
-                    _details = new ImageSetDetails();
-                return _details;
-            }
-            set { _details = value; }
-        }
-    }
+		public ImageSetDetails()
+		{
+		}
+
+		public ImageSetDetails(IDicomAttributeProvider attributeProvider)
+		{
+			StudyInfo = new StudyInformation(attributeProvider);
+		}
+
+		#endregion
+
+		#region Public Properties
+
+		public int SopInstanceCount
+		{
+			get { return _sopCount; }
+			set { _sopCount = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="StudyInformation"/> of the image set.
+		/// </summary>
+		public StudyInformation StudyInfo
+		{
+			get{ return _studyInfo;}
+			set { _studyInfo = value; }
+		}
+
+		#endregion
+
+		#region Public Methods
+		/// <summary>
+		/// Inserts a <see cref="DicomMessageBase"/> into the set.
+		/// </summary>
+		/// <param name="message"></param>
+		public void InsertFile(DicomMessageBase message)
+		{
+			StudyInfo.Add(message);
+		}
+		#endregion
+	}
 }

@@ -29,25 +29,31 @@
 
 #endregion
 
-using System;
-
-namespace ClearCanvas.ImageServer.Common.Data
+namespace ClearCanvas.ImageServer.Core.Data
 {
-    /// <summary>
-    /// Represents action used for study reconciliation
-    /// </summary>
-    public enum StudyReconcileAction
-    {
-        [EnumInfoAttribute(ShortDescription = "Discard", LongDescription = "Discarded conflicting images")]
-        Discard,
+	/// <summary>
+	/// Represents the information encoded in the <see cref="Model.StudyIntegrityQueue.QueueData"/> column of a <see cref="Model.StudyIntegrityQueue"/> record.
+	/// </summary>
+	public class ReconcileStudyWorkQueueData
+	{
+		private string _storagePath;
+		private ImageSetDetails _details;
 
-        [EnumInfoAttribute(ShortDescription = "Merge", LongDescription = "Merged study and conflicting images")]
-        Merge,
+		public string StoragePath
+		{
+			get { return _storagePath; }
+			set { _storagePath = value; }
+		}
 
-        [EnumInfoAttribute(ShortDescription = "Split Studies", LongDescription = "Created new study from conflicting images")]
-        CreateNewStudy,
-
-        [EnumInfoAttribute(ShortDescription = "Process As Is", LongDescription = "Processed the images normally")]
-        ProcessAsIs
-    }
+		public ImageSetDetails Details
+		{
+			get
+			{
+				if (_details == null)
+					_details = new ImageSetDetails();
+				return _details;
+			}
+			set { _details = value; }
+		}
+	}
 }

@@ -54,11 +54,10 @@ namespace ClearCanvas.ImageServer.Model
                 StudyHistorySelectCriteria criteria = new StudyHistorySelectCriteria();
                 criteria.StudyStorageKey.EqualTo(storageLocation.GetKey());
                 criteria.StudyHistoryTypeEnum.EqualTo(StudyHistoryTypeEnum.StudyReconciled);
+				criteria.InsertTime.SortAsc(0);
                 IList<StudyHistory> historyList = broker.Find(criteria);
                 return historyList;
-            }
-            
+            }            
         }
-
     }
 }

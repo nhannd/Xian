@@ -61,26 +61,12 @@
     </Compile>
     <Compile Include="Diagnostics\RandomError.cs" />
     <Compile Include="Diagnostics\Settings.cs" />
-    <Compile Include="DuplicateSopHandler.cs" />
     <Compile Include="EnumInfoAttribute.cs" />
-    <Compile Include="Data\ImageSetDescriptor.cs" />
-    <Compile Include="Data\ImageSetDetails.cs" />
-    <Compile Include="Data\PatientInformation.cs" />
-    <Compile Include="Data\ReconcileStudyWorkQueueData.cs" />
-    <Compile Include="Data\SeriesInformation.cs" />
-    <Compile Include="Data\ServerEntityAttributeProvider.cs" />
-    <Compile Include="Data\StudyInformation.cs" />
-    <Compile Include="Data\StudyReconcileAction.cs" />
-    <Compile Include="Data\StudyReconcileDescriptor.cs" />
     <Compile Include="Helpers\DicomTagPath.cs" />
     <Compile Include="CommandProcessor\FileDeleteCommand.cs" />
-    <Compile Include="CommandProcessor\BaseImageLevelUpdateCommand.cs" />
-    <Compile Include="Helpers\ImageUpdateCommandBuilder.cs" />
     <Compile Include="CommandProcessor\InsertArchiveQueueCommand.cs" />
     <Compile Include="CommandProcessor\IServerCommand.cs" />
     <Compile Include="CommandProcessor\MoveDirectoryCommand.cs" />
-    <Compile Include="CommandProcessor\SetTagCommand.cs" />
-    <Compile Include="CommandProcessor\UpdateDicomFileCommand.cs" />
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="Helpers\StorageHelper.cs" />
@@ -91,7 +77,6 @@
     <Compile Include="ICancelable.cs" />
     <Compile Include="ImageServerCommonConfiguration.cs" />
     <Compile Include="ImageServerLogWriter.cs" />
-    <Compile Include="InsertDuplicateQueueEntryCommand.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CommandProcessor\RenameFileCommand.cs" />
     <Compile Include="CommandProcessor\SaveDicomFileCommand.cs" />
@@ -110,7 +95,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="ServerPlatform.cs" />
-    <Compile Include="SopInstanceImporter.cs" />
     <Compile Include="ThreadedService.cs" />
     <Compile Include="Utilities\DicomNameUtils.cs" />
     <Compile Include="Utilities\DirectoryUtility.cs" />

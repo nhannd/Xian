@@ -45,6 +45,7 @@
 	<PluginFiles Include="$(ProjectDir)\..\..\Rules\JpegCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.JpegCodec.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\Rules\RleCodec\bin\$(Configuration)\ClearCanvas.ImageServer.Rules.RleCodec.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\Services\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Common.dll"/>
+	<PluginFiles Include="$(ProjectDir)\..\..\Core\bin\$(Configuration)\ClearCanvas.ImageServer.Core.dll"/>
 	<PluginFiles Include="$(ProjectDir)\..\..\Enterprise\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.dll"/>
 	<ConfigFiles Include="$(ProjectDir)\..\..\..\ImageServer\Executable\Logging.config"/>
   </ItemGroup>
