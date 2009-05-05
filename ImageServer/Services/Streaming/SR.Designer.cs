@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The study {0} does on exist on the partition {1}..
+        ///   Looks up a localized string similar to The study {0} does not exist on the partition {1}..
         /// </summary>
         internal static string FaultNotExists {
             get {
@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Server {0} has been disabled.
+        ///   Looks up a localized string similar to Server Partition {0} has been disabled..
         /// </summary>
         internal static string FaultPartitionDisabled {
             get {

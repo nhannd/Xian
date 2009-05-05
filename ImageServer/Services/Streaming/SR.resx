@@ -139,10 +139,10 @@
     <value>The Study is nearline.</value>
   </data>
   <data name="FaultNotExists" xml:space="preserve">
-    <value>The study {0} does on exist on the partition {1}.</value>
+    <value>The study {0} does not exist on the partition {1}.</value>
   </data>
   <data name="FaultPartitionDisabled" xml:space="preserve">
-    <value>Server {0} has been disabled</value>
+    <value>Server Partition {0} has been disabled.</value>
   </data>
   <data name="FaultPartitionNotExists" xml:space="preserve">
     <value>Server Partition {0} does not exist.</value>

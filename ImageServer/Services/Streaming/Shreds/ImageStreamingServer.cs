@@ -195,7 +195,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 			}
             catch (WADOException e)
             {
-                context.Response.StatusCode = e.ErrorCode;
+                context.Response.StatusCode = e.GetHttpCode();
                 context.Response.StatusDescription = e.Message;
             }
             catch (HttpException e)
@@ -206,6 +206,11 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
             catch (ServerTransientError e)
             {
                 context.Response.StatusCode = (int) HttpStatusCode.NoContent;
+                context.Response.StatusDescription = e.Message;
+            }
+            catch(StudyNotFoundException e)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 context.Response.StatusDescription = e.Message;
             }
             catch (Exception e)
