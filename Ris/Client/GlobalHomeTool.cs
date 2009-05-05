@@ -30,10 +30,10 @@
 #endregion
 
 using System;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using System.Threading;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -46,6 +46,7 @@ namespace ClearCanvas.Ris.Client
 	[Tooltip("launch", "Go to home page")]
 	[IconSet("launch", IconScheme.Colour, "Icons.GlobalHomeToolSmall.png", "Icons.GlobalHomeToolMedium.png", "Icons.GlobalHomeToolLarge.png")]
 	[VisibleStateObserver("launch", "Visible", "VisibleChanged")]
+	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Homepage)]
 
 	[MenuAction("toggleDowntimeMode", "global-menus/MenuTools/Downtime Mode", "ToggleDowntimeMode", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("toggleDowntimeMode", "DowntimeModeChecked", "DowntimeModeCheckedChanged")]
@@ -53,21 +54,23 @@ namespace ClearCanvas.Ris.Client
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
 	public class GlobalHomeTool : WorklistPreviewHomeTool<FolderSystemExtensionPoint>
 	{
-        private static DesktopWindow _risWindow;
+		private static DesktopWindow _risWindow;
 
 		public override void Initialize()
 		{
 			base.Initialize();
 
 			// automatically launch home page on startup, only if current user is a Staff
-			if (LoginSession.Current.IsStaff && HomePageSettings.Default.ShowHomepageOnStartUp
-                && _risWindow == null)
+			if (LoginSession.Current.IsStaff 
+				&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Homepage)
+				&& HomePageSettings.Default.ShowHomepageOnStartUp
+				&& _risWindow == null)
 			{
 				Launch();
 
-                // bug 3087: remember which window is the RIS window, so that we don't launch this
-                // in the viewer window
-                _risWindow = this.Context.DesktopWindow;
+				// bug 3087: remember which window is the RIS window, so that we don't launch this
+				// in the viewer window
+				_risWindow = this.Context.DesktopWindow;
 			}
 		}
 
@@ -101,11 +104,11 @@ namespace ClearCanvas.Ris.Client
 		public bool Visible
 		{
 			get
-            {
-                // bug 3087: only visible in the RIS window
-                return LoginSession.Current.IsStaff && 
-                    (_risWindow == null || _risWindow == this.Context.DesktopWindow);
-            }
+			{
+				// bug 3087: only visible in the RIS window
+				return LoginSession.Current.IsStaff &&
+					(_risWindow == null || _risWindow == this.Context.DesktopWindow);
+			}
 		}
 
 		public event EventHandler VisibleChanged

@@ -29,10 +29,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
@@ -46,6 +44,9 @@ namespace ClearCanvas.Ris.Client
 
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
+			if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Homepage))
+				return new IConfigurationPage[] {}; 
+			
 			return new IConfigurationPage[] { new HomepageConfigurationPage() };
 		}
 

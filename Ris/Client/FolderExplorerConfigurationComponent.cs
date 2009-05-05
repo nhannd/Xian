@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -52,6 +53,9 @@ namespace ClearCanvas.Ris.Client
 		public IEnumerable<IConfigurationPage> GetPages()
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
+
+			if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Homepage))
+				return listPages;
 
 			listPages.Add(new ConfigurationPage<FolderExplorerConfigurationComponent>(SR.FolderExplorerConfigurationPagePath));
 

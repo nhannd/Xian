@@ -38,6 +38,9 @@ namespace ClearCanvas.Ris.Application.Common
 	/// </summary>
 	public static class AuthorityTokens
 	{
+		[AuthorityToken(Description = "Allow access to the RIS homepage.")]
+		public const string Homepage = "Ris/Homepage";
+
 		/// <summary>
 		/// Tokens that allow access to administrative functionality.
 		/// </summary>
@@ -289,6 +292,12 @@ namespace ClearCanvas.Ris.Application.Common
 
 				[AuthorityToken(Description = "Allow creation, modification and deletion of group worklists.")]
 				public const string Group = "Workflow/Worklist/Group";
+			}
+
+			public static class StaffProfile
+			{
+				[AuthorityToken(Description = "Allow access to the Staff Profile tool.")]
+				public const string Update = "Workflow/Staff Profile/Update";
 			}
 		}
 
