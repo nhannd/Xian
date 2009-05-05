@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -29,45 +29,30 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
+using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="StaffGroupEditorComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="StaffGroupDetailsEditorComponent"/>.
     /// </summary>
-    [ExtensionOf(typeof(StaffGroupEditorComponentViewExtensionPoint))]
-    public class StaffGroupEditorComponentView : WinFormsView, IApplicationComponentView
+    public partial class StaffGroupDetailsEditorComponentControl : ApplicationComponentUserControl
     {
-        private StaffGroupEditorComponent _component;
-        private StaffGroupEditorComponentControl _control;
+        private StaffGroupDetailsEditorComponent _component;
 
-
-        #region IApplicationComponentView Members
-
-        public void SetComponent(IApplicationComponent component)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public StaffGroupDetailsEditorComponentControl(StaffGroupDetailsEditorComponent component)
+            :base(component)
         {
-            _component = (StaffGroupEditorComponent)component;
-        }
+			_component = component;
+            InitializeComponent();
 
-        #endregion
-
-        public override object GuiElement
-        {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new StaffGroupEditorComponentControl(_component);
-                }
-                return _control;
-            }
-        }
+			_name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
+			_description.DataBindings.Add("Value", _component, "Description", true, DataSourceUpdateMode.OnPropertyChanged);
+			_electiveCheckbox.DataBindings.Add("Checked", _component, "IsElective", true, DataSourceUpdateMode.OnPropertyChanged);
+		}
     }
 }

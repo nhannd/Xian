@@ -31,57 +31,94 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin;
 using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Ris.Client
 {
-    /// <summary>
-    /// Extension point for views onto <see cref="StaffGroupEditorComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class StaffGroupEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	/// <summary>
+	/// Defines an interface for providing custom editing pages to be displayed in the staff group editor.
+	/// </summary>
+	public interface IStaffGroupEditorPageProvider : IExtensionPageProvider<IStaffGroupEditorPage, IStaffGroupEditorContext>
+	{
+	}
 
-    /// <summary>
-    /// StaffGroupEditorComponent class
-    /// </summary>
-    [AssociateView(typeof(StaffGroupEditorComponentViewExtensionPoint))]
-    public class StaffGroupEditorComponent : ApplicationComponent
+	/// <summary>
+	/// Defines an interface for providing a custom editor page with access to the editor context.
+	/// </summary>
+	public interface IStaffGroupEditorContext
+	{
+		EntityRef StaffGroupRef { get; }
+	}
+
+	/// <summary>
+	/// Defines an interface to a custom staff group editor page.
+	/// </summary>
+	public interface IStaffGroupEditorPage : IExtensionPage
+	{
+		void Save();
+	}
+
+	/// <summary>
+	/// Defines an extension point for adding custom pages to the staff group editor.
+	/// </summary>
+	public class StaffGroupEditorPageProviderExtensionPoint : ExtensionPoint<IStaffGroupEditorPageProvider>
+	{
+	}
+
+	/// <summary>
+	/// Allows editing of staff group information.
+	/// </summary>
+	public class StaffGroupEditorComponent : NavigatorComponentContainer
     {
-        class StaffTable : Table<StaffSummary>
-        {
-            public StaffTable()
-            {
-                this.Columns.Add(new TableColumn<StaffSummary, string>("Name",
-                    delegate(StaffSummary item) { return PersonNameFormat.Format(item.Name); }, 1.0f));
-                this.Columns.Add(new TableColumn<StaffSummary, string>("Role",
-                    delegate(StaffSummary item) { return item.StaffType.Value; }, 0.5f));
-            }
-        }
+		#region StaffGroupEditorContext
+
+		class EditorContext : IStaffGroupEditorContext
+		{
+			private readonly StaffGroupEditorComponent _owner;
+
+			public EditorContext(StaffGroupEditorComponent owner)
+			{
+				_owner = owner;
+			}
+
+			public EntityRef StaffGroupRef
+			{
+				get { return _owner._staffGroupRef; }
+			}
+		}
+
+		#endregion
+
+		class StaffTable : Table<StaffSummary>
+		{
+			public StaffTable()
+			{
+				this.Columns.Add(new TableColumn<StaffSummary, string>("Name",
+					delegate(StaffSummary item) { return PersonNameFormat.Format(item.Name); }, 1.0f));
+				this.Columns.Add(new TableColumn<StaffSummary, string>("Role",
+					delegate(StaffSummary item) { return item.StaffType.Value; }, 0.5f));
+			}
+		}
 
         private EntityRef _staffGroupRef;
         private StaffGroupDetail _staffGroupDetail;
 
-        private StaffTable _availableStaff;
-        private StaffTable _selectedStaff;
-
         // return value
         private StaffGroupSummary _staffGroupSummary;
 
+    	private StaffGroupDetailsEditorComponent _detailsEditor;
+    	private SelectorEditorComponent<StaffSummary, StaffTable> _staffEditor;
+
+		private List<IStaffGroupEditorPage> _extensionPages;
+
         /// <summary>
-        /// Constructor
+        /// Constructs an editor to edit a new staff
         /// </summary>
         public StaffGroupEditorComponent()
         {
@@ -95,21 +132,25 @@ namespace ClearCanvas.Ris.Client
             _staffGroupRef = staffGroupRef;
         }
 
-        public StaffGroupSummary StaffGroupSummary
+		/// <summary>
+		/// Gets summary of staff group that was added or edited
+		/// </summary>
+		public StaffGroupSummary StaffGroupSummary
         {
             get { return _staffGroupSummary; }
         }
 
         public override void Start()
         {
-            _availableStaff = new StaffTable();
-            _selectedStaff = new StaffTable();
+			List<StaffSummary> allStaffs = new List<StaffSummary>();
 
             Platform.GetService<IStaffGroupAdminService>(
                 delegate(IStaffGroupAdminService service)
                 {
                     LoadStaffGroupEditorFormDataResponse formDataResponse = service.LoadStaffGroupEditorFormData(
                         new LoadStaffGroupEditorFormDataRequest());
+
+					allStaffs = formDataResponse.AllStaff;
 
                     if (_staffGroupRef == null)
                     {
@@ -122,74 +163,35 @@ namespace ClearCanvas.Ris.Client
                         _staffGroupDetail = response.StaffGroup;
                     }
 
-                    _selectedStaff.Items.AddRange(_staffGroupDetail.Members);
-                    _availableStaff.Items.AddRange(CollectionUtils.Reject(formDataResponse.AllStaff,
-                        delegate(StaffSummary x)
-                        {
-                            return CollectionUtils.Contains(_staffGroupDetail.Members,
-                                delegate(StaffSummary y) { return x.StaffRef.Equals(y.StaffRef, true); });
-                        }));
                 });
+
+        	_detailsEditor = new StaffGroupDetailsEditorComponent();
+			_detailsEditor.StaffGroupDetail = _staffGroupDetail;
+
+			_staffEditor = new SelectorEditorComponent<StaffSummary, StaffTable>(allStaffs, _staffGroupDetail.Members,
+				delegate(StaffSummary staff) { return staff.StaffRef; });
+
+			this.Pages.Add(new NavigatorPage("Staff Group", _detailsEditor));
+			this.Pages.Add(new NavigatorPage("Staff Group/Staffs", _staffEditor));
+
+			// instantiate all extension pages
+			_extensionPages = new List<IStaffGroupEditorPage>();
+			foreach (IStaffGroupEditorPageProvider pageProvider in new StaffGroupEditorPageProviderExtensionPoint().CreateExtensions())
+			{
+				_extensionPages.AddRange(pageProvider.GetPages(new EditorContext(this)));
+			}
+
+			// add extension pages to navigator
+			// the navigator will start those components if the user goes to that page
+			foreach (IStaffGroupEditorPage page in _extensionPages)
+			{
+				this.Pages.Add(new NavigatorPage(page.Path.LocalizedPath, page.GetComponent()));
+			}
 
             base.Start();
         }
 
-        #region Presentation Model
-
-        [ValidateNotNull]
-        public string GroupName
-        {
-            get { return _staffGroupDetail.Name; }
-            set
-            {
-                if(_staffGroupDetail.Name != value)
-                {
-                    _staffGroupDetail.Name = value;
-                    this.Modified = true;
-                    NotifyPropertyChanged("GroupName");
-                }
-            }
-        }
-
-        public string GroupDescription
-        {
-            get { return _staffGroupDetail.Description; }
-            set
-            {
-                if (_staffGroupDetail.Description != value)
-                {
-                    _staffGroupDetail.Description = value;
-                    this.Modified = true;
-                    NotifyPropertyChanged("GroupDescription");
-                }
-            }
-        }
-
-		public bool IsElective
-		{
-			get { return _staffGroupDetail.IsElective; }
-			set
-			{
-				if (_staffGroupDetail.IsElective != value)
-				{
-					_staffGroupDetail.IsElective = value;
-					this.Modified = true;
-					NotifyPropertyChanged("IsElective");
-				}
-			}
-		}
-
-        public ITable AvailableStaffTable
-        {
-            get { return _availableStaff; }
-        }
-
-        public ITable SelectedStaffTable
-        {
-            get { return _selectedStaff; }
-        }
-
-        public void Accept()
+        public override void Accept()
         {
             if (this.HasValidationErrors)
             {
@@ -199,7 +201,11 @@ namespace ClearCanvas.Ris.Client
 
             try
             {
-                _staffGroupDetail.Members = new List<StaffSummary>(_selectedStaff.Items);
+				// give extension pages a chance to save data prior to commit
+				_extensionPages.ForEach(delegate(IStaffGroupEditorPage page) { page.Save(); });
+
+				// Update staffs
+				_staffGroupDetail.Members = new List<StaffSummary>(_staffEditor.SelectedItems);
 
                 Platform.GetService<IStaffGroupAdminService>(
                     delegate(IStaffGroupAdminService service)
@@ -225,18 +231,11 @@ namespace ClearCanvas.Ris.Client
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, "Unable to save Staff Group", this.Host.DesktopWindow,
-                    delegate()
+                    delegate
                     {
                         this.Exit(ApplicationComponentExitCode.Error);
                     });
             }
         }
-
-        public void Cancel()
-        {
-            this.Exit(ApplicationComponentExitCode.None);
-        }
-
-        #endregion
     }
 }

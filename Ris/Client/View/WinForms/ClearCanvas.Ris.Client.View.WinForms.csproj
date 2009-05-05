@@ -373,13 +373,13 @@
       <DependentUpon>StaffDetailsEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffDetailsEditorComponentView.cs" />
-    <Compile Include="StaffGroupEditorComponentControl.cs">
+    <Compile Include="StaffGroupDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="StaffGroupEditorComponentControl.Designer.cs">
-      <DependentUpon>StaffGroupEditorComponentControl.cs</DependentUpon>
+    <Compile Include="StaffGroupDetailsEditorComponentControl.Designer.cs">
+      <DependentUpon>StaffGroupDetailsEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="StaffGroupEditorComponentView.cs" />
+    <Compile Include="StaffGroupDetailsEditorComponentView.cs" />
     <Compile Include="StaffStaffGroupEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -637,10 +637,6 @@
       <DependentUpon>StaffDetailsEditorComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="StaffGroupEditorComponentControl.resx">
-      <DependentUpon>StaffGroupEditorComponentControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="StaffStaffGroupEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StaffStaffGroupEditorComponentControl.cs</DependentUpon>
@@ -697,6 +693,10 @@
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StaffGroupDetailsEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StaffGroupDetailsEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorkflowHistoryComponentControl.resx">
       <SubType>Designer</SubType>

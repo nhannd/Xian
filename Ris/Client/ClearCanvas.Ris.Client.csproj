@@ -165,6 +165,7 @@
     <Compile Include="SearchResultsFolder.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SessionManagerTool.cs" />
+    <Compile Include="StaffGroupDetailsEditorComponent.cs" />
     <Compile Include="StaffGroupEditorComponent.cs" />
     <Compile Include="StaffGroupLookupHandler.cs" />
     <Compile Include="StaffGroupSummaryComponent.cs" />

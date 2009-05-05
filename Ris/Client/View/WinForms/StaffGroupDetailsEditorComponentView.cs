@@ -1,6 +1,6 @@
-﻿#region License
+#region License
 
-// Copyright (c) 2009, ClearCanvas Inc.
+// Copyright (c) 2006-2008, ClearCanvas Inc.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without modification, 
@@ -31,48 +31,48 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Text;
-using System.Windows.Forms;
 
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="StaffGroupEditorComponent"/>
+    /// Provides a Windows Forms view onto <see cref="StaffGroupDetailsEditorComponent"/>.
     /// </summary>
-    public partial class StaffGroupEditorComponentControl : ApplicationComponentUserControl
+    [ExtensionOf(typeof(StaffGroupDetailsEditorComponentViewExtensionPoint))]
+    public class StaffGroupDetailsEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        private StaffGroupEditorComponent _component;
+        private StaffGroupDetailsEditorComponent _component;
+        private StaffGroupDetailsEditorComponentControl _control;
+
+        #region IApplicationComponentView Members
 
         /// <summary>
-        /// Constructor
+        /// Called by the host to assign this view to a component.
         /// </summary>
-        public StaffGroupEditorComponentControl(StaffGroupEditorComponent component)
-            :base(component)
+        public void SetComponent(IApplicationComponent component)
         {
-            InitializeComponent();
-
-            _component = component;
-            _name.DataBindings.Add("Value", _component, "GroupName", true, DataSourceUpdateMode.OnPropertyChanged);
-            _description.DataBindings.Add("Value", _component, "GroupDescription", true, DataSourceUpdateMode.OnPropertyChanged);
-			_electiveCheckbox.DataBindings.Add("Checked", _component, "IsElective", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            _staffMemberSelector.AvailableItemsTable = _component.AvailableStaffTable;
-            _staffMemberSelector.SelectedItemsTable = _component.SelectedStaffTable;
+            _component = (StaffGroupDetailsEditorComponent)component;
         }
 
-        private void _okButton_Click(object sender, EventArgs e)
-        {
-            _component.Accept();
-        }
+        #endregion
 
-        private void _cancelButton_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Gets the underlying GUI component for this view.
+        /// </summary>
+        public override object GuiElement
         {
-            _component.Cancel();
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new StaffGroupDetailsEditorComponentControl(_component);
+                }
+                return _control;
+            }
         }
     }
 }
