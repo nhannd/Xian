@@ -31,6 +31,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.ServiceModel.Description;
+using System.ServiceModel.Security;
 using System.Text;
 using System.ServiceModel;
 using ClearCanvas.Common;
@@ -54,7 +56,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
         private Uri _baseAddress;
         private IServiceHostConfiguration _configuration;
         private UserNamePasswordValidator _userValidator = new DefaultUserValidator();
-        private IAuthorizationPolicy _authorizationPolicy = new DefaultAuthorizationPolicy();
+		private ServiceCredentials _serviceCredentials = new DefaultServiceCredentials();
         private bool _sendExceptionDetailToClient = false;
         private bool _enablePerformanceLogging = false;
         private int _maxReceivedMessageSize = 1000000;
@@ -62,7 +64,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 
 
 
-        private List<ServiceHost> _serviceHosts = new List<ServiceHost>();
+        private readonly List<ServiceHost> _serviceHosts = new List<ServiceHost>();
 
         /// <summary>
         /// Constructs a service mount that hosts services on the specified base URI
@@ -162,15 +164,15 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
         }
 
         /// <summary>
-        /// Gets or sets the authorization policy that is used to authorize authenticated services.
+        /// Gets or sets the credentials object that is used to establish authorization policies for authenticated services.
         /// </summary>
         /// <remarks>
         /// Must be set prior to calling <see cref="AddServices"/>.
         /// </remarks>
-        public IAuthorizationPolicy AuthorizationPolicy
+        public ServiceCredentials Credentials
         {
-            get { return _authorizationPolicy; }
-            set { _authorizationPolicy = value; }
+            get { return _serviceCredentials; }
+            set { _serviceCredentials = value; }
         }
 
         /// <summary>
@@ -306,14 +308,28 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
             // create service host
             ServiceHost host = new ServiceHost(serviceClass, uri);
 
-            // build service according to binding
+			// if authenticated
+			if (authenticated)
+			{
+				// replace the built-in ServiceCredentials object with our own (must be done prior to configuration)
+				// this will install custom authorization policy
+				host.Description.Behaviors.Remove<ServiceCredentials>();
+				host.Description.Behaviors.Add(_serviceCredentials);
+
+				// set authentication model to custom, and supply user validator
+				host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Custom;
+				host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = _userValidator;
+
+				// set authorization mode to custom
+				host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
+			}
+
+			// build service according to binding
             _configuration.ConfigureServiceHost(host,
                 new ServiceHostConfigurationArgs(
                     contractAttribute.ServiceContract,
                     uri, authenticated,
-                    _maxReceivedMessageSize,
-                    authenticated ? _userValidator : null,
-                    authenticated ? _authorizationPolicy : null));
+                    _maxReceivedMessageSize));
 
             // add behaviour to inject AOP proxy service factory
             host.Description.Behaviors.Add(new ServiceFactoryInjectionServiceBehavior(contractAttribute.ServiceContract, serviceFactory));

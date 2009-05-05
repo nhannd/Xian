@@ -43,14 +43,12 @@ namespace ClearCanvas.Enterprise.Common
     public struct ServiceHostConfigurationArgs
     {
         public ServiceHostConfigurationArgs(Type serviceContract, Uri hostUri, bool authenticated,
-			int maxReceivedMessageSize, UserNamePasswordValidator userNamePasswordValidator, IAuthorizationPolicy authorizationPolicy)
+			int maxReceivedMessageSize)
         {
             ServiceContract = serviceContract;
             HostUri = hostUri;
             Authenticated = authenticated;
             MaxReceivedMessageSize = maxReceivedMessageSize;
-			UserNamePasswordValidator = userNamePasswordValidator;
-        	AuthorizationPolicy = authorizationPolicy;
         }
 
 		/// <summary>
@@ -72,17 +70,5 @@ namespace ClearCanvas.Enterprise.Common
 		/// The maximum allowable size of received messages, in bytes.
 		/// </summary>
         public int MaxReceivedMessageSize;
-
-		/// <summary>
-		/// An instance of a <see cref="UserNamePasswordValidator"/>, that an authenticated service will use
-		/// to perform authentication.
-		/// </summary>
-    	public UserNamePasswordValidator UserNamePasswordValidator;
-
-		/// <summary>
-		/// An instance of a <see cref="IAuthorizationPolicy"/>, that an authenticated service will use
-		/// to perform authorization checks.
-		/// </summary>
-    	public IAuthorizationPolicy AuthorizationPolicy;
     }
 }

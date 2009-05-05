@@ -77,20 +77,6 @@ namespace ClearCanvas.Enterprise.Common.ServiceConfiguration.Server
 			// set up the certificate - required for WSHttpBinding
 			host.Credentials.ServiceCertificate.SetCertificate(
 				StoreLocation.LocalMachine, StoreName.My, X509FindType.FindBySubjectName, args.HostUri.Host);
-
-            if (args.Authenticated)
-			{
-				// set up authentication model
-				host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Custom;
-				host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = args.UserNamePasswordValidator;
-
-
-				// set up authorization
-				List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
-				policies.Add(args.AuthorizationPolicy);
-				host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
-				host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
-			}
 		}
 
 		#endregion

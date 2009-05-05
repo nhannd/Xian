@@ -38,6 +38,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Core.ServiceModel
 {
@@ -55,14 +56,16 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
         /// Implemenation of <see cref="IPrincipal"/> that determines role information
         /// for the user via the <see cref="IAuthenticationService"/>.
         /// </summary>
-        class DefaultPrincipal : IPrincipal
+        class Principal : IPrincipal, IUserCredentialsProvider
         {
             private readonly IIdentity _identity;
+        	private readonly SessionToken _sessionToken;
             private string[] _authorityTokens;
 
-            public DefaultPrincipal(IIdentity identity)
+            public Principal(IIdentity identity, SessionToken sessionToken)
             {
                 _identity = identity;
+            	_sessionToken = sessionToken;
             }
 
             public IIdentity Identity
@@ -70,7 +73,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
                 get { return _identity; }
             }
 
-            public bool IsInRole(string role)
+        	public bool IsInRole(string role)
             {
                 // initialize auth tokens if this is the first call
                 if (_authorityTokens == null)
@@ -78,23 +81,44 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
                     Platform.GetService<IAuthenticationService>(
                         delegate(IAuthenticationService service)
                         {
-                            // TODO: we are supposed to pass session token here but we don't have access to it
-                            _authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name, null)).AuthorityTokens;
+							_authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name, _sessionToken)).AuthorityTokens;
                         });
                 }
 
                 // check that the user was granted this token
                 return CollectionUtils.Contains(_authorityTokens, delegate(string token) { return token == role; });
             }
-        }
+
+			#region IUserCredentialsProvider Members
+
+			string IUserCredentialsProvider.UserName
+			{
+				get { return _identity.Name; }
+			}
+
+			string IUserCredentialsProvider.SessionTokenId
+			{
+				get { return _sessionToken.Id; }
+			}
+
+			#endregion
+		}
 
         #endregion
 
-        string id = Guid.NewGuid().ToString();
+    	private readonly string _id = Guid.NewGuid().ToString();
+    	private readonly string _userName;
+		private readonly SessionToken _sessionToken;
+
+		public DefaultAuthorizationPolicy(string userName, SessionToken sessionToken)
+		{
+			_userName = userName;
+			_sessionToken = sessionToken;
+		}
 
 		public string Id
 		{
-			get { return this.id; }
+			get { return _id; }
 		}
 
 		public ClaimSet Issuer
@@ -109,11 +133,18 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 				return false;
 
 			IList<IIdentity> identities = obj as IList<IIdentity>;
-			if (obj == null || identities.Count <= 0)
+			if (obj == null)
 				return false;
 
-            IIdentity clientIdentity = identities[0];
-            context.Properties["Principal"] = new DefaultPrincipal(clientIdentity);
+			// find the matching identity
+			IIdentity clientIdentity = CollectionUtils.SelectFirst(identities,
+				delegate(IIdentity i) { return i.Name == _userName; });
+
+			if (clientIdentity == null)
+				return false;
+
+			// set the principal
+            context.Properties["Principal"] = new Principal(clientIdentity, _sessionToken);
 
 			return true;
 		}
