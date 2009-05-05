@@ -74,10 +74,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._folderTreeView.Margin = new System.Windows.Forms.Padding(2);
 			this._folderTreeView.Name = "_folderTreeView";
 			this._folderTreeView.ShowLines = false;
-			this._folderTreeView.ShowRootLines = false;
 			this._folderTreeView.ShowToolbar = false;
 			this._folderTreeView.Size = new System.Drawing.Size(183, 500);
 			this._folderTreeView.TabIndex = 1;
+			this._folderTreeView.TreeBackColor = System.Drawing.SystemColors.Window;
+			this._folderTreeView.TreeForeColor = System.Drawing.SystemColors.WindowText;
+			this._folderTreeView.TreeLineColor = System.Drawing.Color.Black;
 			// 
 			// FolderExplorerComponentControl
 			// 
