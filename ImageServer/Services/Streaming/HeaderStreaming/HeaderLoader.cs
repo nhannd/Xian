@@ -61,15 +61,14 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
             _partitionAE = context.Parameters.ServerAETitle;
 			_statistics.FindStudyFolder.Start();
             string sessionId = context.CallerAE;
+            
             ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(_partitionAE);
             StudyStorageLoader storageLoader = new StudyStorageLoader(sessionId);
             storageLoader.CacheEnabled = ImageStreamingServerSettings.Default.EnableCache;
             storageLoader.CacheRetentionTime = ImageStreamingServerSettings.Default.CacheRetentionWindow;
             StudyLocation = storageLoader.Find(_studyInstanceUid, partition);
-			if (StudyLocation == null)
-				_faultDescription = storageLoader.FaultDescription;
 
-			_statistics.FindStudyFolder.End();
+            _statistics.FindStudyFolder.End();
         }
 
         #endregion

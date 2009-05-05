@@ -47,9 +47,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
         {
             get
             {
-                string path = Path.Combine(StorageLocation.GetStudyPath(), SeriesInstanceUid);
-                path = Path.Combine(path, ObjectUid + ".dcm");
-                return path;
+                return StorageLocation.GetSopInstancePath(SeriesInstanceUid, ObjectUid);
             }
         }
         

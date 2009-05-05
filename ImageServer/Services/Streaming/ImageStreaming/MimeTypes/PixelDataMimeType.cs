@@ -74,9 +74,13 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.MimeTypes
             {
                 int frame = int.Parse(context.Request.QueryString["frameNumber"]);
 
-                if (frame < 0 || frame >= context.PixelData.NumberOfFrames)
+                if (frame < 0)
                 {
-                    throw new WADOException(HttpStatusCode.BadRequest, String.Format("Requested FrameNumber {0} is in invalid range", frame));
+                    throw new WADOException(HttpStatusCode.BadRequest, String.Format("Requested FrameNumber {0} cannot be negative.", frame));
+                }
+                else if (frame >= context.PixelData.NumberOfFrames)
+                {
+                    throw new WADOException(HttpStatusCode.BadRequest, String.Format("Requested FrameNumber {0} exceeds the number of frames in the image.", frame));
                 }
 
                 output.ContentType = OutputMimeType;

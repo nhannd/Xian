@@ -135,8 +135,12 @@ namespace ClearCanvas.ImageServer.Common
                     if (listener.IsListening)
                     {
                         context = listener.EndGetContext(result);
-                        Platform.Log(LogLevel.Debug, "Handling http request");
-                        Platform.Log(LogLevel.Debug, "{0}", context.Request.Url.AbsoluteUri);
+                        if (Platform.IsLogLevelEnabled(LogLevel.Debug))
+                        {
+                            Platform.Log(LogLevel.Debug, "Handling http request");
+                            Platform.Log(LogLevel.Debug, "{0}", context.Request.Url.AbsoluteUri);
+                        }
+
                         // signal the listener that it can now accept another connection
                         state.WaitEvent.Set();
 
@@ -166,26 +170,6 @@ namespace ClearCanvas.ImageServer.Common
                     }
                 }
                 
-            }
-            finally
-            {
-                //if (context != null)
-                //{
-                //    if (context.Response.StatusCode == (int)HttpStatusCode.OK)
-                //        Platform.Log(LogLevel.Debug, "Request completed successfully");
-                //    else
-                //        Platform.Log(LogLevel.Error, "{0}:{1}", context.Response.StatusCode, HttpUtility.HtmlDecode(context.Response.StatusDescription));
-
-                //    try
-                //    {
-                //        context.Response.Close();
-
-                //    }catch(Exception ex)
-                //    {
-                //        Platform.Log(LogLevel.Error, ex);
-                //    }
-                //}
-
             }
 
         }

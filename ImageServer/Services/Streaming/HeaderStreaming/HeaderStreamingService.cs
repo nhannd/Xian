@@ -35,6 +35,7 @@ using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
+using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 {
@@ -107,7 +108,19 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 			{
 				throw new FaultException(e.Message);
 			}
-			catch (Exception e)
+            catch(StudyNotFoundException e)
+            {
+                throw new FaultException(e.Message);
+            }
+            catch (StudyNotOnlineException e)
+            {
+                throw new FaultException(e.Message);
+            }
+            catch (StudyAccessException e)
+            {
+                throw new FaultException(e.Message);
+            }
+            catch (Exception e)
 			{
 				if (!(e is FaultException))
 					Platform.Log(LogLevel.Error, e, "Unable to process study header request from {0}", callingAETitle);

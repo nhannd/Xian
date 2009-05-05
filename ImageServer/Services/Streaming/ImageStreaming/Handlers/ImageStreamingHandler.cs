@@ -71,17 +71,11 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             StudyStorageLoader storageLoader = new StudyStorageLoader(sessionId);
             storageLoader.CacheEnabled = ImageStreamingServerSettings.Default.EnableCache;
             storageLoader.CacheRetentionTime = ImageStreamingServerSettings.Default.CacheRetentionWindow;
-            StudyStorageLocation location = storageLoader.Find(streamingContext.StudyInstanceUid, partition);
-            if (location==null)
-            	throw new WADOException(HttpStatusCode.NotFound, storageLoader.FaultDescription);
-
-            streamingContext.StorageLocation = location;
+            streamingContext.StorageLocation = storageLoader.Find(streamingContext.StudyInstanceUid, partition);
 
             if (!File.Exists(streamingContext.ImagePath))
                 throw new WADOException(HttpStatusCode.NotFound, SR.FaultNotExists);
 
-            if (streamingContext.StorageLocation.Lock)
-                throw new WADOException(HttpStatusCode.Forbidden, SR.FaultLocked);
             
             // convert the dicom image into the appropriate mime type
             WADOResponse response = new WADOResponse();

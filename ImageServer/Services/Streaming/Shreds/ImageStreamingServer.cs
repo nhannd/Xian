@@ -41,6 +41,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming;
+using ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 {
@@ -82,8 +83,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
     {
         #region Private Fields
         private readonly List<IPEndPoint> _currentRequests = new List<IPEndPoint>();
-        private WADORequestProcessor _processor;
-		#endregion
+        #endregion
 
 	    		
         #region Constructor
@@ -95,9 +95,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 	        : base(SR.ImageStreamingServerDisplayName,
                 UriHelper.GetConfiguredUri())
 		{
-			HttpRequestReceived += OnHttpRequestReceived;
-            _processor = new WADORequestProcessor();
-				
+            HttpRequestReceived += OnHttpRequestReceived;
+            	
 		}
 
         
@@ -189,20 +188,42 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 			try
 			{
 			    Validate(context);
-                _processor.Process(context);
+
+                WADORequestProcessor processor = new WADORequestProcessor();
+                processor.Process(context);
 				
 			}
-			catch (HttpException e)
+            catch (WADOException e)
+            {
+                context.Response.StatusCode = e.ErrorCode;
+                context.Response.StatusDescription = e.Message;
+            }
+            catch (HttpException e)
+            {
+                context.Response.StatusCode = e.GetHttpCode();
+                context.Response.StatusDescription = e.Message;
+            }
+            catch (ServerTransientError e)
+            {
+                context.Response.StatusCode = (int) HttpStatusCode.NoContent;
+                context.Response.StatusDescription = e.Message;
+            }
+            catch (Exception e)
 			{
-				context.Response.StatusCode = e.GetHttpCode();
-				if (e.InnerException!=null)
+                context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
+                
+                if (e.InnerException!=null)
 					context.Response.StatusDescription = HttpUtility.HtmlEncode(e.InnerException.Message);
 				else
 					context.Response.StatusDescription = HttpUtility.HtmlEncode(e.Message);
+
+			    Platform.Log(LogLevel.Error, e);
                 
 			}
             finally
 			{
+                context.Response.OutputStream.Flush();
+                context.Response.OutputStream.Close();
 			    RemoveContext(context);
 			}
 

@@ -63,8 +63,9 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
         public IWADORequestTypeHandler GetHandler(string requestType)
         {
-            if (_handlers.ContainsKey(requestType.ToUpper()))
-                return _handlers[requestType];
+            String type = requestType.ToUpper();
+            if (_handlers.ContainsKey(type))
+                return _handlers[type];
             else
                 throw new WADOException(HttpStatusCode.BadRequest, String.Format("Unsupported RequestType {0}", requestType));
 

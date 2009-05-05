@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Net;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
 using ClearCanvas.Enterprise.Core;
@@ -40,6 +41,36 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 {
+    public class ServerTransientError:Exception
+    {
+        public ServerTransientError(String message)
+            : base(message)
+        {
+        }
+    }
+
+    public class StudyNotFoundException : Exception
+    {
+        public StudyNotFoundException(String message) : base(message)
+        {
+        }
+    }
+
+    public class StudyNotOnlineException : ServerTransientError
+    {
+        public StudyNotOnlineException(String message)
+            : base(message)
+        {
+        }
+    }
+
+    public class StudyAccessException : ServerTransientError
+    {
+        public StudyAccessException(String message) : base(message)
+        {
+        }
+    }
+
     class StudyStorageLoader
 	{
 		#region Private Members
@@ -48,7 +79,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
         private readonly string _sessionId;
         private bool _cacheEnabled = true;
         private TimeSpan _cacheRetentionTime = TimeSpan.FromSeconds(10); //default
-    	private string _faultDescription = String.Empty;
 		#endregion
 
 		#region Public Properties
@@ -69,21 +99,21 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             set { _cacheRetentionTime = value; }
 		}
 
-		public string FaultDescription
-		{
-			get { return _faultDescription; }
-			set { _faultDescription = value; }
-		}
 		#endregion
 
 		#region Public Methods
+
 		private void CheckNearline(string studyInstanceUid, ServerPartition partition)
 		{
 			StudyStorage storage = StudyStorage.Load(partition.Key, studyInstanceUid);
-			if (storage != null && storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
-			{
-				FaultDescription = SR.FaultNearline;
+            
+            if (storage==null)
+            {
+                throw new StudyNotFoundException(String.Format(SR.FaultNotExists, studyInstanceUid, partition.AeTitle));
+            }
 
+			if (storage.StudyStatusEnum.Equals(StudyStatusEnum.Nearline))
+			{
 				using (
 					IUpdateContext updateContext =
 						PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
@@ -99,14 +129,15 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 						updateContext.Commit();
 				}
 			}
-			else if (storage != null)
-			{
-				FaultDescription = SR.FaultFilesystemOffline;
-			}
-			else
-				FaultDescription = String.Format(SR.FaultNotExists, studyInstanceUid, partition.AeTitle);
 		}
 
+        /// <summary>
+        /// Finds the <see cref="StudyStorageLocation"/> for the specified study
+        /// </summary>
+        /// <param name="studyInstanceUid"></param>
+        /// <param name="partition"></param>
+        /// <returns></returns>
+        /// 
     	public StudyStorageLocation Find(string studyInstanceUid, ServerPartition partition)
         {
             TimeSpan STATS_WINDOW = TimeSpan.FromMinutes(1);
@@ -117,55 +148,67 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 				{
 					CheckNearline(studyInstanceUid, partition);
 				}
-            	return location;
             }
-
-            Session session = _serverSessions[_sessionId];
-            StudyStorageCache cache ;
-            lock (session)
+            else
             {
-                cache = session["StorageLocationCache"] as StudyStorageCache;
-
-                if (cache == null)
+                Session session = _serverSessions[_sessionId];
+                StudyStorageCache cache;
+                lock (session)
                 {
-                    cache = new StudyStorageCache();
-                    cache.RetentionTime = CacheRetentionTime;
-                    session.Add("StorageLocationCache", cache);
+                    cache = session["StorageLocationCache"] as StudyStorageCache;
+
+                    if (cache == null)
+                    {
+                        cache = new StudyStorageCache();
+                        cache.RetentionTime = CacheRetentionTime;
+                        session.Add("StorageLocationCache", cache);
+                    }
                 }
-            }
+
+                // lock the cache instead of the list so that we won't block requests from other
+                // clients if we need to fetch from the database.
+                lock (cache)
+                {
+                    location = cache.Find(studyInstanceUid);
+                    if (location == null)
+                    {
+                        _statistics.Misses++;
+                        if (FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(partition.Key, studyInstanceUid, out location))
+                        {
+                            cache.Insert(location, studyInstanceUid);
+                            Platform.Log(LogLevel.Info, "Cache (since {0}): Hits {1} [{3:0}%], Miss {2}",
+                                         _statistics.StartTime,
+                                         _statistics.Hits, _statistics.Misses,
+                                         (float)_statistics.Hits / (_statistics.Hits + _statistics.Misses) * 100f);
+                        }
+                        else
+                        {
+                            CheckNearline(studyInstanceUid, partition);
+                        }
+                    }
+                    else
+                    {
+                        _statistics.Hits++;
+                    }
+
+                    if (_statistics.ElapsedTime > STATS_WINDOW)
+                    {
+                        _statistics.Reset();
+                    }
+
+                }
             
-            // lock the cache instead of the list so that we won't block requests from other
-            // clients if we need to fetch from the database.
-            lock (cache)
-            {
-                location = cache.Find(studyInstanceUid);
-                if (location == null)
-                {
-                    _statistics.Misses++;
-					if (FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(partition.Key, studyInstanceUid, out location))
-					{
-						cache.Insert(location, studyInstanceUid);
-						Platform.Log(LogLevel.Info, "Cache (since {0}): Hits {1} [{3:0}%], Miss {2}",
-						             _statistics.StartTime,
-						             _statistics.Hits, _statistics.Misses,
-						             (float) _statistics.Hits/(_statistics.Hits + _statistics.Misses)*100f);
-					}
-					else
-					{
-						CheckNearline(studyInstanceUid, partition);
-					}
-                }
-                else
-                {
-                    _statistics.Hits++;
-                }
-
-                if (_statistics.ElapsedTime > STATS_WINDOW)
-                {
-                    _statistics.Reset();
-                }
-                
             }
+
+            if (location == null)
+                throw new StudyNotOnlineException(String.Format(SR.FaultStudyIsNearline, studyInstanceUid));
+
+            if (location.QueueStudyStateEnum != QueueStudyStateEnum.Idle)
+                throw new StudyAccessException(String.Format(SR.FaultStudyAccessRestricted, studyInstanceUid, location.QueueStudyStateEnum));
+
+            if (location.Lock)
+                throw new StudyAccessException(SR.FaultLocked);
+            
             return location;
 		}
 		#endregion
