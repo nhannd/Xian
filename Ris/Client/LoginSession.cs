@@ -82,7 +82,13 @@ namespace ClearCanvas.Ris.Client
                     delegate(ILoginService service)
                     {
                         LoginResponse response = service.Login(
-							new LoginRequest(userName, password, facility == null ? null : facility.FacilityRef, GetIPAddress(), GetMachineID()));
+							new LoginRequest(
+								userName,
+								password,
+								facility == null ? null : facility.FacilityRef,
+								Dns.GetHostName(),
+								GetIPAddress(),
+								GetMachineID()));
 
                         // if the call succeeded, construct a generic principal object on this thread, containing
                         // the set of authority tokens for this user

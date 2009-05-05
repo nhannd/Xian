@@ -37,11 +37,12 @@ namespace ClearCanvas.Ris.Application.Common.Login
     [DataContract]
     public class LoginRequest : LoginServiceRequestBase
     {
-		public LoginRequest(string user, string password, EntityRef workingFacility, string clientIP, string clientMachineID)
+		public LoginRequest(string user, string password, EntityRef workingFacility, string hostName, string clientIP, string clientMachineID)
 			: base(user, clientIP, clientMachineID)
         {
             this.Password = password;
             this.WorkingFacility = workingFacility;
+			this.HostName = hostName;
         }
 
         /// <summary>
@@ -49,6 +50,12 @@ namespace ClearCanvas.Ris.Application.Common.Login
         /// </summary>
         [DataMember]
         public string Password;
+
+		/// <summary>
+		/// Name of the host computer that is logging in.
+		/// </summary>
+		[DataMember]
+		public string HostName;
 
         /// <summary>
         /// Specifies the current working facility for the user.  If null, the last known working facility will be used.

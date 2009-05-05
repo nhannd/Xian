@@ -76,6 +76,7 @@ namespace ClearCanvas.Ris.Application.Services.Login
 
             string user = request.UserName;
             string password = StringUtilities.EmptyIfNull(request.Password);
+        	string hostName = StringUtilities.NullIfEmpty(request.HostName) ?? StringUtilities.NullIfEmpty(request.ClientIP);
 
             // obtain the set of authority tokens for the user
             // note that we don't need to be authenticated to access IAuthenticationService
@@ -92,7 +93,8 @@ namespace ClearCanvas.Ris.Application.Services.Login
                         // note that PasswordExpiredException is part of the fault contract of this method,
                         // so we don't catch it
 
-                        token = service.InitiateSession(new InitiateSessionRequest(user, password)).SessionToken;
+						// TODO: app name shouldn't be hardcoded
+                        token = service.InitiateSession(new InitiateSessionRequest(user, "RIS", hostName, password)).SessionToken;
 
                         authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(user, token)).AuthorityTokens;
 
