@@ -95,11 +95,12 @@ namespace ClearCanvas.Enterprise.Authentication {
         }
 
         /// <summary>
-        /// Gets a value indicating if the <see cref="ExpiryTime"/> has been exceeded.
+        /// Gets a value indicating if the <see cref="ExpiryTime"/> has been exceeded
+        /// with respect to the current time.
         /// </summary>
-        public bool IsExpired
+        public bool IsExpired(DateTime currentTime)
         {
-            get { return _expiryTime.HasValue && _expiryTime < Platform.Time; }
+			return _expiryTime.HasValue && _expiryTime < currentTime;
         }
 
         #region Utilities

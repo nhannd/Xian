@@ -31,13 +31,16 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens;
 using System.Text;
-
+using ClearCanvas.Enterprise.Common;
 using Iesi.Collections;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Core;
 using Iesi.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 
 namespace ClearCanvas.Enterprise.Authentication {
@@ -48,6 +51,8 @@ namespace ClearCanvas.Enterprise.Authentication {
     /// </summary>
 	public partial class User : Entity
 	{
+		private AuthenticationSettings _settings;
+
         #region Public methods
 
         /// <summary>
@@ -90,8 +95,7 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// <param name="newPassword"></param>
         public virtual void ChangePassword(string newPassword)
         {
-            AuthenticationSettings settings = new AuthenticationSettings();
-            DateTime? expiryTime = Platform.Time.AddDays(settings.PasswordExpiryDays);
+            DateTime? expiryTime = Platform.Time.AddDays(this.Settings.PasswordExpiryDays);
             _password = Authentication.Password.CreatePassword(newPassword, expiryTime);
         }
 
@@ -101,25 +105,118 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// </summary>
         public virtual void ResetPassword()
         {
-            AuthenticationSettings settings = new AuthenticationSettings();
             _password = Authentication.Password.CreateTemporaryPassword();
         }
 
         /// <summary>
         /// Gets a value indicating whether this account is currently active.
         /// </summary>
-        public virtual bool IsActive
+        public virtual bool IsActive(DateTime currentTime)
         {
-            get
-            {
-                DateTime currentTime = Platform.Time;
-                return _enabled
-                       && (_validFrom == null || _validFrom < currentTime)
-                       && (_validUntil == null || _validUntil > currentTime);
-            }
+            return _enabled
+                   && (_validFrom == null || _validFrom < currentTime)
+                   && (_validUntil == null || _validUntil > currentTime);
         }
 
+		/// <summary>
+		/// Initiates a new session for this user, updating the <see cref="Sessions"/> collection and returning
+		/// the new session.
+		/// </summary>
+		/// <param name="application"></param>
+		/// <param name="hostName"></param>
+		/// <param name="password"></param>
+		/// <returns></returns>
+		public virtual UserSession InitiateSession(string application, string hostName, string password)
+		{
+			Platform.CheckForNullReference(application, "application");
+			Platform.CheckForNullReference(hostName, "hostName");
+			Platform.CheckForNullReference(password, "password");
+
+			// check host name against white-list
+			if (!CheckWhiteList(this.Settings.HostNameWhiteList, hostName))
+				throw new Exception("Access denied");	//TODO throw correct exception type
+
+			// check application name against white-list
+			if(!CheckWhiteList(this.Settings.ApplicationWhiteList, application))
+				throw new Exception("Access denied");	//TODO throw correct exception type
+
+			DateTime startTime = Platform.Time;
+
+			// check account is active and password correct
+			if (!IsActive(startTime) || !_password.Verify(password))
+			{
+				// account not active, or invalid password
+				// the error message is deliberately vague
+				throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
+			}
+
+			// check if password expired
+			if (_password.IsExpired(startTime))
+				throw new PasswordExpiredException();
+
+			// create new session
+			UserSession session = new UserSession(
+				this,
+				hostName,
+				application,
+				Guid.NewGuid().ToString("N"),
+				startTime,
+				startTime.AddMinutes(this.Settings.UserSessionTimeoutMinutes));
+
+			_sessions.Add(session);
+
+			// update last login time
+			_lastLoginTime = startTime;
+
+			return session;
+		}
+
+		/// <summary>
+		/// Terminates any expired sessions and returns a list of them.
+		/// </summary>
+		/// <returns></returns>
+		public virtual List<UserSession> TerminateExpiredSessions()
+		{
+			// find any expired sessions
+			List<UserSession> expiredSessions = CollectionUtils.Select(_sessions,
+				delegate(UserSession session)
+				{
+					return session.IsExpired;
+				});
+
+			// terminate them
+			foreach (UserSession session in expiredSessions)
+			{
+				session.Terminate();
+			}
+
+			// return the list
+			return expiredSessions;
+		}
+
         #endregion
+
+    	private AuthenticationSettings Settings
+    	{
+    		get
+    		{
+    			if(_settings == null)
+					_settings = new AuthenticationSettings();
+    			return _settings;
+    		}
+    	}
+
+		private bool CheckWhiteList(string commaDelimitedList, string value)
+		{
+			if (commaDelimitedList == null)
+				return true;
+
+			List<string> items = CollectionUtils.Map<string, string>(
+				commaDelimitedList.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
+				delegate(string s) { return s.Trim(); });
+
+			return items.Count == 0 || items.Contains(value.Trim());
+		}
 
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom

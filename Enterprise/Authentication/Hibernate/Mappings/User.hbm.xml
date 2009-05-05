@@ -17,15 +17,14 @@
     <property name="ValidUntil" column="ValidUntil_" type="DateTime"/>
     <property name="Enabled" column="Enabled_" type="Boolean" not-null="true"/>
     <property name="CreationTime" column="CreationTime_" type="DateTime" not-null="true" access="nosetter.camelcase-underscore"/>
-    <property name="LastLoginTime" column="LastLoginTime_" type="DateTime"/>
-    <set name="AuthorityGroups" table="AuthorityGroupUser_" lazy="true" cascade="all" access="nosetter.camelcase-underscore">
+    <property name="LastLoginTime" column="LastLoginTime_" type="DateTime" access="nosetter.camelcase-underscore"/>
+    <set name="AuthorityGroups" table="AuthorityGroupUser_" lazy="true" cascade="all">
       <key column="UserOID_"/>
-      <many-to-many column="AuthorityGroupOID_" class="AuthorityGroup" fetch="join"/>
+      <many-to-many column="AuthorityGroupOID_" class="AuthorityGroup"/>
     </set>
-    
-    <!-- In reality one user will ever be associated with a given session, but the many-to-one mapping provides
-          better performance when the 2nd-level cache is enabled, because the UserSession object can simply be
-          retrieved from the cache -->
-    <many-to-one name="CurrentSession" class="UserSession" column="CurrentSessionOID_" not-null="false" cascade="all"/>
+    <set name="Sessions" lazy="true" inverse="true" cascade="all-delete-orphan">
+      <key column="UserOID_"/>
+      <one-to-many class="UserSession"/>
+    </set>
   </class>
 </hibernate-mapping>

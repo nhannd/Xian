@@ -20,5 +20,11 @@
     <Setting Name="ValidPasswordMessage" Description="User friendly description of a valid password" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Password must contain only letters and numbers, and be 8-16 characters long</Value>
     </Setting>
+    <Setting Name="ApplicationWhiteList" Description="Comma delimited list of valid application names.  If blank, all application names are valid." Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="HostNameWhiteList" Description="Comma delimited list of valid host names.  If blank, all host names are valid." Type="System.String" Scope="Application">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

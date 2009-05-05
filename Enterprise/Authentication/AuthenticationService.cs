@@ -53,33 +53,19 @@ namespace ClearCanvas.Enterprise.Authentication
         {
 			Platform.CheckForNullReference(request, "request");
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
+			Platform.CheckMemberIsSet(request.Application, "Application");
+			Platform.CheckMemberIsSet(request.HostName, "HostName");
 			Platform.CheckMemberIsSet(request.Password, "Password");
 
-            DateTime currentTime = Platform.Time;
 
-            // check user account is valid and password is correct
-            User user = GetVerifiedUser(request.UserName, request.Password);
+            // find user
+			User user = GetUser(request.UserName);
 
-            // check if password expired
-            if(user.Password.IsExpired)
-                throw new PasswordExpiredException();
+			// clean-up any expired sessions
+			RemoveExpiredSessions(user);
 
-            // update last login time
-            user.LastLoginTime = currentTime;
-
-            UserSession session = user.CurrentSession;
-            if (session == null)
-            {
-                session = new UserSession();
-                user.CurrentSession = session;
-            }
-
-            // generate a new session id
-            session.SessionId = Guid.NewGuid().ToString("N");
-
-            // set the expiration time
-            AuthenticationSettings settings = new AuthenticationSettings();
-            session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
+			// initiate new session
+    		UserSession session = user.InitiateSession(request.Application, request.HostName, request.Password);
 
 			// get authority tokens if requested
 			string[] authorizations = request.GetAuthorizations ? 	
@@ -96,8 +82,16 @@ namespace ClearCanvas.Enterprise.Authentication
 			Platform.CheckMemberIsSet(request.CurrentPassword, "CurrentPassword");
 			Platform.CheckMemberIsSet(request.NewPassword, "NewPassword");
 
-            // this will fail if the currentPassword is not valid, the account is not active or whatever
-            User user = GetVerifiedUser(request.UserName, request.CurrentPassword);
+        	DateTime now = Platform.Time;
+            User user = GetUser(request.UserName);
+
+			// ensure account is active and the current password is correct
+			if (!user.IsActive(now) || !user.Password.Verify(request.CurrentPassword))
+			{
+				// account not active, or invalid password
+				// the error message is deliberately vague
+				throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
+			}
 
             // change the password
             user.ChangePassword(request.NewPassword);
@@ -112,22 +106,9 @@ namespace ClearCanvas.Enterprise.Authentication
 			Platform.CheckMemberIsSet(request.UserName, "UserName");
 			Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
 			Platform.CheckMemberIsSet(request.SessionToken.Id, "SessionToken.Id");
-            AuthenticationSettings settings = new AuthenticationSettings();
-            DateTime currentTime = Platform.Time;
 
-            User user = GetVerifiedUser(request.UserName, request.SessionToken);
-			UserSession session = user.CurrentSession;
-
-            // if session timeouts are enabled, check expiry time
-            if (settings.UserSessionTimeoutEnabled && session.ExpiryTime < currentTime)
-            {
-                // session has expired
-                // the error message is deliberately vague
-                throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
-            }
-
-            // renew the expiration time
-            session.ExpiryTime = currentTime.AddMinutes(settings.UserSessionTimeoutMinutes);
+			UserSession session = GetSession(request.SessionToken);
+			session.ValidateAndRenew(request.UserName);
 
 			// get authority tokens if requested
 			string[] authorizations = request.GetAuthorizations ?
@@ -144,15 +125,22 @@ namespace ClearCanvas.Enterprise.Authentication
 			Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
 			Platform.CheckMemberIsSet(request.SessionToken.Id, "SessionToken.Id");
 
-			User user = GetVerifiedUser(request.UserName, request.SessionToken);
+			// validate the session
+			UserSession session = GetSession(request.SessionToken);
+			session.ValidateAndRenew(request.UserName);
 
-            // set the current session to null
-            UserSession session = user.CurrentSession;
-            user.CurrentSession = null;
+			// remember user before terminating session
+        	User user = session.User;
+
+			// terminate it
+			session.Terminate();
 
             // delete the session object
             IUserSessionBroker broker = PersistenceContext.GetBroker<IUserSessionBroker>();
             broker.Delete(session);
+
+			// while we're at it, clean-up any other expired sessions for that user
+			RemoveExpiredSessions(user);
 
 			return new TerminateSessionResponse();
         }
@@ -176,47 +164,45 @@ namespace ClearCanvas.Enterprise.Authentication
 
         #endregion
 
-        /// <summary>
-        /// Obtains user object for specified username and password.  Verifies that the user account
-        /// is active and that the password is correct.  Does NOT check if the password has expired.
-        /// </summary>
-        /// <param name="userName"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        private User GetVerifiedUser(string userName, string password)
-        {
-            User user = GetUserByUserName(userName);
+		/// <summary>
+		/// Gets the session identified by the specified session token.
+		/// </summary>
+		/// <param name="sessionToken"></param>
+		/// <returns></returns>
+		private UserSession GetSession(SessionToken sessionToken)
+		{
+			UserSessionSearchCriteria where = new UserSessionSearchCriteria();
+			where.SessionId.EqualTo(sessionToken.Id);
 
-            if (!user.IsActive || !user.Password.Verify(password))
-            {
-                // account not active, or invalid password
-                // the error message is deliberately vague
-                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
-            }
-            return user;
-        }
+			// use query caching here to hopefully speed this up a bit
+			IList<UserSession> sessions = PersistenceContext.GetBroker<IUserSessionBroker>().Find(
+				new UserSessionSearchCriteria[] { where }, new SearchResultPage(0, 1), true);
 
-        /// <summary>
-        /// Gets the user specified by the user name, verifying that the supplied session token
-        /// matches the user.  If the session token does not match the user, and exception is thrown.
-        /// </summary>
-        /// <remarks>
-        /// This method does not check if the session has expired.
-        /// </remarks>
-        /// <param name="userName"></param>
-        /// <param name="sessionToken"></param>
-        /// <returns></returns>
-        private User GetVerifiedUser(string userName, SessionToken sessionToken)
-        {
-            User user = GetUserByUserName(userName);
-            if (!user.IsActive || user.CurrentSession == null || user.CurrentSession.SessionId != sessionToken.Id)
-            {
-                // account not active, or invalid session token
-                // the error message is deliberately vague
-                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
-            }
-            return user;
-        }
+			if (sessions.Count == 0)
+			{
+				// non-existant session
+				// the error message is deliberately vague
+				throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
+			}
+			return CollectionUtils.FirstElement(sessions);
+		}
+
+		/// <summary>
+		/// Performance clean-up of any expired sessions that may be left over for the specified user.
+		/// </summary>
+		/// <param name="user"></param>
+		private void RemoveExpiredSessions(User user)
+		{
+			List<UserSession> expiredSessions = user.TerminateExpiredSessions();
+
+			// delete the session objects
+			IUserSessionBroker broker = PersistenceContext.GetBroker<IUserSessionBroker>();
+			foreach (UserSession session in expiredSessions)
+			{
+				broker.Delete(session);
+			}
+		}
+
 
         /// <summary>
         /// Gets the user specified by the user name, or throws an exception if no such user exists.
@@ -226,7 +212,7 @@ namespace ClearCanvas.Enterprise.Authentication
         /// </remarks>
         /// <param name="userName"></param>
         /// <returns></returns>
-        private User GetUserByUserName(string userName)
+        private User GetUser(string userName)
         {
             UserSearchCriteria criteria = new UserSearchCriteria();
             criteria.UserName.EqualTo(userName);

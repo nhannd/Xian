@@ -40,10 +40,12 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 	[DataContract]
 	public class InitiateSessionRequest : DataContractBase
 	{
-		public InitiateSessionRequest(string user, string password)
+		public InitiateSessionRequest(string user, string application, string hostName, string password)
 		{
 			this.UserName = user;
 			this.Password = password;
+			this.Application = application;
+			this.HostName = hostName;
 		}
 
 		/// <summary>
@@ -51,6 +53,18 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 		/// </summary>
 		[DataMember]
 		public string UserName;
+
+		/// <summary>
+		/// Application name.
+		/// </summary>
+		[DataMember]
+		public string Application;
+
+		/// <summary>
+		/// Host computer name.
+		/// </summary>
+		[DataMember]
+		public string HostName;
 
 		/// <summary>
 		/// Password.
