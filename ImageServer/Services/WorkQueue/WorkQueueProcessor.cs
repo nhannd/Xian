@@ -33,11 +33,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
+using Alert=ClearCanvas.ImageServer.Common.Alert;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue
 {
@@ -134,6 +136,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		/// </remarks>
 		public void Run()
 		{
+			DateTime lastCheck = Platform.Time;
 			if (!_threadPool.Active)
 				_threadPool.Start();
 
@@ -144,8 +147,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				if (_stop)
 					return;
 
-				if (_threadPool.CanQueueItem)
+				if (_threadPool.CanQueueItem
+					&& WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB > 0 
+					&& SystemResources.GetAvailableMemory(SizeUnits.Megabytes) > WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB)
 				{
+					lastCheck = Platform.Time;
 					try
 					{
 						Model.WorkQueue queueListItem = GetWorkQueueItem(ServiceTools.ProcessorId);
@@ -190,6 +196,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				}
 				else
 				{
+					if (lastCheck.AddMinutes(60) < Platform.Time)
+					{
+						lastCheck = Platform.Time;
+						ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, "WorkQueue", AlertTypeCodes.NoResources,
+						                     "Unable to process WorkQueue entries, Minimum memory not available, minimum MB required: {0}, current MB available:{1}",
+						                     WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB,
+						                     SystemResources.GetAvailableMemory(SizeUnits.Megabytes));
+					}
 					// wait for new opening in the pool or termination
 					WaitHandle.WaitAny(new WaitHandle[] { _threadStop, _terminateEvent }, 3000, false);
 					_threadStop.Reset();

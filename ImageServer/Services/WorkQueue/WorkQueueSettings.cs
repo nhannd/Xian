@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 		public const int DefaultWorkQueueThreadCount = 10;
 		public const int DefaultPriorityWorkQueueThreadCount = 2;
 		public const int DefaultMemoryLimitedWorkQueueThreadCount = 4;
+		public const int DefaultWorkQueueMinimumFreeMemoryMB = 256;
 		public const string DefaultNonMemoryLimitedWorkQueueTypes = "DeleteStudy,WebDeleteStudy,MigrateStudy,PurgeStudy";
         
 		private static WorkQueueSettings _instance;
@@ -198,6 +199,15 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			get { return ((string)(this["NonMemoryLimitedWorkQueueTypes"])); }
 			set { this["NonMemoryLimitedWorkQueueTypes"] = value; }
 		}
+
+		
+		[ConfigurationProperty("WorkQueueMinimumFreeMemoryMB", DefaultValue = DefaultWorkQueueMinimumFreeMemoryMB)]
+		public int WorkQueueMinimumFreeMemoryMB
+		{
+			get { return ((int)(this["WorkQueueMinimumFreeMemoryMB"])); }
+			set { this["WorkQueueMinimumFreeMemoryMB"] = value; }
+		}
+
 		#endregion
 
 		public override object Clone()
@@ -218,6 +228,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			clone.MemoryLimitedWorkQueueThreadCount = _instance.MemoryLimitedWorkQueueThreadCount;
 			clone.NonMemoryLimitedWorkQueueTypes = _instance.NonMemoryLimitedWorkQueueTypes;
 		    clone.CompletedWorkQueueDelayDeleteSeconds = _instance.CompletedWorkQueueDelayDeleteSeconds;
+			clone.WorkQueueMinimumFreeMemoryMB = _instance.WorkQueueMinimumFreeMemoryMB;
 			return clone;
 		}
 	}
