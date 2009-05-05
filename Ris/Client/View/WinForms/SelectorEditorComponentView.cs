@@ -31,45 +31,43 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Text;
-using System.Windows.Forms;
 
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="WorklistSelectorEditorComponent"/>
+    /// Provides a Windows Forms view onto <see cref="SelectorEditorComponent"/>
     /// </summary>
-    public partial class WorklistSelectorEditorComponentControl : ApplicationComponentUserControl
+    [ExtensionOf(typeof(SelectorEditorComponentViewExtensionPoint))]
+    public class SelectorEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        private WorklistSelectorEditorComponent _component;
+        private SelectorEditorComponent _component;
+        private SelectorEditorComponentControl _control;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public WorklistSelectorEditorComponentControl(WorklistSelectorEditorComponent component)
-            :base(component)
+
+        #region IApplicationComponentView Members
+
+        public void SetComponent(IApplicationComponent component)
         {
-            InitializeComponent();
-
-            _component = component;
-
-            _usersSelector.AvailableItemsTable = _component.AvailableItemsTable;
-            _usersSelector.SelectedItemsTable = _component.SelectedItemsTable;
-            _usersSelector.ItemAdded += OnItemsAddedOrRemoved;
-            _usersSelector.ItemRemoved += OnItemsAddedOrRemoved;
-        	_usersSelector.ReadOnly = _component.IsReadOnly;
-
+            _component = (SelectorEditorComponent)component;
         }
 
-        private void OnItemsAddedOrRemoved(object sender, EventArgs args)
-        {
-            _component.ItemsAddedOrRemoved();
-        }
+        #endregion
 
+        public override object GuiElement
+        {
+            get
+            {
+                if (_control == null)
+                {
+                    _control = new SelectorEditorComponentControl(_component);
+                }
+                return _control;
+            }
+        }
     }
 }

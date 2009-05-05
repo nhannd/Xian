@@ -31,7 +31,7 @@
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class WorklistSelectorEditorComponentControl
+    partial class SelectorEditorComponentControl
     {
         /// <summary> 
         /// Required designer variable.

@@ -30,44 +30,39 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="WorklistSelectorEditorComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="SelectorEditorComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(WorklistSelectorEditorComponentViewExtensionPoint))]
-    public class WorklistSelectorEditorComponentView : WinFormsView, IApplicationComponentView
+    public partial class SelectorEditorComponentControl : ApplicationComponentUserControl
     {
-        private WorklistSelectorEditorComponent _component;
-        private WorklistSelectorEditorComponentControl _control;
+        private SelectorEditorComponent _component;
 
-
-        #region IApplicationComponentView Members
-
-        public void SetComponent(IApplicationComponent component)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public SelectorEditorComponentControl(SelectorEditorComponent component)
+            :base(component)
         {
-            _component = (WorklistSelectorEditorComponent)component;
+            InitializeComponent();
+
+            _component = component;
+
+            _usersSelector.AvailableItemsTable = _component.AvailableItemsTable;
+            _usersSelector.SelectedItemsTable = _component.SelectedItemsTable;
+            _usersSelector.ItemAdded += OnItemsAddedOrRemoved;
+            _usersSelector.ItemRemoved += OnItemsAddedOrRemoved;
+        	_usersSelector.ReadOnly = _component.IsReadOnly;
+
         }
 
-        #endregion
-
-        public override object GuiElement
+        private void OnItemsAddedOrRemoved(object sender, EventArgs args)
         {
-            get
-            {
-                if (_control == null)
-                {
-                    _control = new WorklistSelectorEditorComponentControl(_component);
-                }
-                return _control;
-            }
+            _component.ItemsAddedOrRemoved();
         }
+
     }
 }

@@ -110,10 +110,10 @@ namespace ClearCanvas.Ris.Client
         private StaffSelectorEditorComponent _verifiedByFilterComponent;
         private StaffSelectorEditorComponent _supervisedByFilterComponent;
         private WorklistTimeWindowEditorComponent _timeWindowComponent;
-        private WorklistSelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable> _procedureTypeGroupFilterComponent;
-        private WorklistSelectorEditorComponent<LocationSummary, LocationTable> _locationFilterComponent;
-        private WorklistSelectorEditorComponent<StaffSummary, StaffSelectorTable> _staffSubscribersComponent;
-        private WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
+        private SelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable> _procedureTypeGroupFilterComponent;
+        private SelectorEditorComponent<LocationSummary, LocationTable> _locationFilterComponent;
+        private SelectorEditorComponent<StaffSummary, StaffSelectorTable> _staffSubscribersComponent;
+        private SelectorEditorComponent<StaffGroupSummary, StaffGroupTable> _groupSubscribersComponent;
         private WorklistSummaryComponent _summaryComponent;
     	private NavigatorPage _patientLocationComponentPage;
     	private NavigatorPage _interpretedByFilterComponentPage;
@@ -251,10 +251,10 @@ namespace ClearCanvas.Ris.Client
                         procedureTypeGroups, formDataResponse.FacilityChoices, formDataResponse.OrderPriorityChoices,
                         formDataResponse.PatientClassChoices);
 
-                    _procedureTypeGroupFilterComponent = new WorklistSelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable>(
+                    _procedureTypeGroupFilterComponent = new SelectorEditorComponent<ProcedureTypeGroupSummary, ProcedureTypeGroupTable>(
                         procedureTypeGroups, _worklistDetail.ProcedureTypeGroups, delegate(ProcedureTypeGroupSummary s) { return s.ProcedureTypeGroupRef; });
 
-                    _locationFilterComponent = new WorklistSelectorEditorComponent<LocationSummary, LocationTable>(
+                    _locationFilterComponent = new SelectorEditorComponent<LocationSummary, LocationTable>(
                         formDataResponse.PatientLocationChoices, _worklistDetail.PatientLocations, delegate(LocationSummary s) { return s.LocationRef; });
 
                     _timeWindowComponent = new WorklistTimeWindowEditorComponent(_worklistDetail);
@@ -270,12 +270,12 @@ namespace ClearCanvas.Ris.Client
 
                     if (ShowSubscriptionPages)
                     {
-                        _staffSubscribersComponent = new WorklistSelectorEditorComponent<StaffSummary, StaffSelectorTable>(
+                        _staffSubscribersComponent = new SelectorEditorComponent<StaffSummary, StaffSelectorTable>(
                             formDataResponse.StaffChoices,
                             _worklistDetail.StaffSubscribers,
                             delegate(StaffSummary s) { return s.StaffRef; },
                             SubscriptionPagesReadOnly);
-                        _groupSubscribersComponent = new WorklistSelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
+                        _groupSubscribersComponent = new SelectorEditorComponent<StaffGroupSummary, StaffGroupTable>(
                             formDataResponse.GroupSubscriberChoices,
                             _worklistDetail.GroupSubscribers,
                             delegate(StaffGroupSummary s) { return s.StaffGroupRef; },

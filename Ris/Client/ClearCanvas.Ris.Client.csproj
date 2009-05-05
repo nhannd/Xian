@@ -321,7 +321,7 @@
     <Compile Include="WorklistMultiDetailEditorComponent.cs" />
     <Compile Include="WorklistPropertiesTool.cs" />
     <Compile Include="WorklistSummaryComponent.cs" />
-    <Compile Include="WorklistSelectorEditorComponent.cs" />
+    <Compile Include="SelectorEditorComponent.cs" />
     <Compile Include="WorklistTimeWindowEditorComponent.cs" />
   </ItemGroup>
   <ItemGroup>

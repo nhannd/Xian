@@ -42,18 +42,18 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Client
 {
     /// <summary>
-    /// Extension point for views onto <see cref="WorklistSelectorEditorComponent"/>
+	/// Extension point for views onto <see cref="SelectorEditorComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class WorklistSelectorEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public class SelectorEditorComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
-    public abstract class WorklistSelectorEditorComponent : ApplicationComponent
+    public abstract class SelectorEditorComponent : ApplicationComponent
     {
 		private readonly bool _isReadOnly;
 
-		public WorklistSelectorEditorComponent(bool isReadOnly)
+		public SelectorEditorComponent(bool isReadOnly)
 		{
 			_isReadOnly = isReadOnly;
 		}
@@ -73,10 +73,10 @@ namespace ClearCanvas.Ris.Client
     }
 
     /// <summary>
-    /// WorklistSelectorEditorComponent class
+	/// SelectorEditorComponent class
     /// </summary>
-    [AssociateView(typeof(WorklistSelectorEditorComponentViewExtensionPoint))]
-    public class WorklistSelectorEditorComponent<TSummary, TTable> : WorklistSelectorEditorComponent
+    [AssociateView(typeof(SelectorEditorComponentViewExtensionPoint))]
+    public class SelectorEditorComponent<TSummary, TTable> : SelectorEditorComponent
         where TSummary : DataContractBase
         where TTable : Table<TSummary>, new()
     {
@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor
         /// </summary>
-        public WorklistSelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider, bool isReadOnly)
+        public SelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider, bool isReadOnly)
 			:base(isReadOnly)
 		{
             _available = new TTable();
@@ -102,7 +102,7 @@ namespace ClearCanvas.Ris.Client
 		/// <param name="allItems"></param>
 		/// <param name="selectedItems"></param>
 		/// <param name="identityProvider"></param>
-        public WorklistSelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider)
+        public SelectorEditorComponent(IEnumerable<TSummary> allItems, IEnumerable<TSummary> selectedItems, Converter<TSummary, EntityRef> identityProvider)
 			:this(allItems, selectedItems, identityProvider, false)
 		{
         }

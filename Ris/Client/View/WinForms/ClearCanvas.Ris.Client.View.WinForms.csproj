@@ -429,13 +429,13 @@
       <DependentUpon>WorklistMultiDetailEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="WorklistMultiDetailEditorComponentView.cs" />
-    <Compile Include="WorklistSelectorEditorComponentControl.cs">
+    <Compile Include="SelectorEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="WorklistSelectorEditorComponentControl.Designer.cs">
-      <DependentUpon>WorklistSelectorEditorComponentControl.cs</DependentUpon>
+    <Compile Include="SelectorEditorComponentControl.Designer.cs">
+      <DependentUpon>SelectorEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="WorklistSelectorEditorComponentView.cs" />
+    <Compile Include="SelectorEditorComponentView.cs" />
     <Compile Include="WorklistTimeWindowEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -714,8 +714,8 @@
       <DependentUpon>WorklistMultiDetailEditorComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="WorklistSelectorEditorComponentControl.resx">
-      <DependentUpon>WorklistSelectorEditorComponentControl.cs</DependentUpon>
+    <EmbeddedResource Include="SelectorEditorComponentControl.resx">
+      <DependentUpon>SelectorEditorComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="WorklistTimeWindowEditorComponentControl.resx">
