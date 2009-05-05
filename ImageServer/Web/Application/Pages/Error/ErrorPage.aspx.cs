@@ -68,9 +68,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Error
 
         protected void Logout_Click(Object sender, EventArgs e)
         {
-            String afterLoginUrl = UserProfile.GetDefaultUrl();
-            SessionManager.SignOut();
-            Response.Redirect(afterLoginUrl); // because we have signed out, this will actually force the user to login.
+            SessionManager.SignOut();           
+            Response.Redirect(ImageServerConstants.PageURLs.LoginPage);
         }
 
     }

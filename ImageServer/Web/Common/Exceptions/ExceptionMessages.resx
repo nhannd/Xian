@@ -127,7 +127,7 @@
     <value>You are not authorized to view this page.</value>
   </data>
   <data name="AuthorizationRequiredDescription" xml:space="preserve">
-    <value>This message is being displayed because you attempted to access an ImageServer page that requires authorization that is not part of your user profile.</value>
+    <value>This message is being displayed because you attempted to access an ImageServer page that requires authorization that is not part of your user profile. You can go to the default page that is part of your user profile by selecting the "Default Page" button below.</value>
   </data>
   <data name="EmptyLogMessage" xml:space="preserve">
     <value>No Message Provided.</value>

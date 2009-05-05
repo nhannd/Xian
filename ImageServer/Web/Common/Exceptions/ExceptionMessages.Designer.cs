@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Exceptions {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This message is being displayed because you attempted to access an ImageServer page that requires authorization that is not part of your user profile..
+        ///   Looks up a localized string similar to This message is being displayed because you attempted to access an ImageServer page that requires authorization that is not part of your user profile. You can go to the default page that is part of your user profile by selecting the &quot;Default Page&quot; button below..
         /// </summary>
         internal static string AuthorizationRequiredDescription {
             get {
