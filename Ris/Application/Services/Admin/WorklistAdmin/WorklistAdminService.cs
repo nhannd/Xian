@@ -344,7 +344,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 this.PersistenceContext);
         }
 
-        private List<Type> ListClassesHelper(List<string> classNames, List<string> categories, bool includeStatic)
+        public static List<Type> ListClassesHelper(List<string> classNames, List<string> categories, bool includeStatic)
         {
             List<Type> worklistClasses = new List<Type>(WorklistFactory.Instance.ListWorklistClasses(true));
 
