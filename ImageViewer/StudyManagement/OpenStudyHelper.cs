@@ -183,12 +183,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public void AddStudy(string studyInstanceUid, object server, string studyLoaderName)
 		{
-			LoadStudyArgs existing = CollectionUtils.SelectFirst(_studiesToOpen,
-							delegate(LoadStudyArgs args) { return args.StudyInstanceUid == studyInstanceUid; });
-			
-			if (existing != null)
-				_studiesToOpen.Remove(existing);
-
 			_studiesToOpen.Add(new LoadStudyArgs(studyInstanceUid, server, studyLoaderName));
 		}
 
