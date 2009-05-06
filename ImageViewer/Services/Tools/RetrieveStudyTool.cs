@@ -69,16 +69,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void RetrieveStudy()
 		{
-			if (!Enabled || this.Context.SelectedServerGroup.IsLocalDatastore || this.Context.SelectedStudy == null)
+			if (!Enabled || Context.SelectedServerGroup.IsLocalDatastore || Context.SelectedStudy == null)
                 return;
 
 			EventResult result = EventResult.Success;
 
 			Dictionary<ApplicationEntity, List<StudyInformation>> retrieveInformation = new Dictionary<ApplicationEntity, List<StudyInformation>>();
-			foreach (StudyItem item in this.Context.SelectedStudies)
+			foreach (StudyItem item in Context.SelectedStudies)
 			{
-				if (!retrieveInformation.ContainsKey(item.Server))
-					retrieveInformation[item.Server] = new List<StudyInformation>();
+				ApplicationEntity applicationEntity = item.Server as ApplicationEntity;
+				if (applicationEntity != null && !retrieveInformation.ContainsKey(applicationEntity))
+					retrieveInformation[applicationEntity] = new List<StudyInformation>();
 
 				StudyInformation studyInformation = new StudyInformation();
 				studyInformation.PatientId = item.PatientId;
@@ -89,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				studyInformation.StudyDescription = item.StudyDescription;
 				studyInformation.StudyInstanceUid = item.StudyInstanceUID;
 
-				retrieveInformation[item.Server].Add(studyInformation);
+				retrieveInformation[applicationEntity].Add(studyInformation);
 			}
 
 			DicomServerServiceClient client = new DicomServerServiceClient();
@@ -110,18 +111,18 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 				client.Close();
 
-				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);
+				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(Context.DesktopWindow);
 			}
 			catch (EndpointNotFoundException)
 			{
 				client.Abort();
 				result = EventResult.MajorFailure;
-				this.Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
+				Context.DesktopWindow.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning, MessageBoxActions.Ok);
 			}
 			catch (Exception e)
 			{
 				result = EventResult.MajorFailure;
-				ExceptionHandler.Report(e, SR.MessageFailedToRetrieveStudy, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, SR.MessageFailedToRetrieveStudy, Context.DesktopWindow);
 			}
 			finally
 			{
@@ -137,9 +138,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void SetDoubleClickHandler()
 		{
-			if (!this.Context.SelectedServerGroup.IsLocalDatastore &&
-				!this.Context.SelectedServerGroup.IsOnlyStreamingServers())
-				this.Context.DefaultActionHandler = RetrieveStudy;
+			if (!Context.SelectedServerGroup.IsLocalDatastore && Context.SelectedServerGroup.IsOnlyNonStreamingServers())
+				Context.DefaultActionHandler = RetrieveStudy;
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
@@ -155,8 +155,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void UpdateEnabled()
 		{
-			this.Enabled = (this.Context.SelectedStudy != null &&
-			                !this.Context.SelectedServerGroup.IsLocalDatastore &&
+			Enabled = (Context.SelectedStudy != null &&
+			                !Context.SelectedServerGroup.IsLocalDatastore &&
 			                LocalDataStoreActivityMonitor.IsConnected);
 		}
 	}

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer;
@@ -37,9 +38,12 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
+	#region OpenStudyArgs
+
 	/// <summary>
 	/// Holds the parameters that specify the studies to be opened using the <see cref="OpenStudyHelper"/>
 	/// </summary>
+	[Obsolete("This class will be removed in a future version.  Please use an instance of OpenStudyHelper instead.")]
 	public class OpenStudyArgs
 	{
 		private string[] _studyInstanceUids;
@@ -105,18 +109,121 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get { return _windowBehaviour; }
 		}
-
 	}
+
+	#endregion
 
 	/// <summary>
 	/// Helper class to create, populate and launch an <see cref="ImageViewerComponent"/>.
 	/// </summary>
-	public static class OpenStudyHelper
+	public class OpenStudyHelper
 	{
-		private static IDesktopWindow DesktopWindow
+		private WindowBehaviour _windowBehaviour = WindowBehaviour.Auto;
+		private bool _loadPriors = true;
+		private bool _launchViewer = true;
+		private string _title;
+		private readonly List<LoadStudyArgs> _studiesToOpen = new List<LoadStudyArgs>();
+
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public OpenStudyHelper()
 		{
-			get { return Application.ActiveDesktopWindow; }
 		}
+
+		#region Launch Options
+
+		/// <summary>
+		/// Gets whether or not the call to <see cref="OpenStudies()"/> should launch the new <see cref="ImageViewerComponent"/>,
+		/// or simply load the studies into the new <see cref="ImageViewerComponent"/>.
+		/// </summary>
+		public bool LaunchViewer
+		{
+			get { return _launchViewer; }
+			set { _launchViewer = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the <see cref="WindowBehaviour"/> for launching the <see cref="ImageViewerComponent"/>.
+		/// </summary>
+		public WindowBehaviour WindowBehaviour
+		{
+			get { return _windowBehaviour; }
+			set { _windowBehaviour = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the title that should be used for the workspace in which the <see cref="ImageViewerComponent"/>
+		/// will be launced.
+		/// </summary>
+		/// <remarks>
+		/// The default value is null, which means that the title will be automatically figured out.
+		/// </remarks>
+		public string Title
+		{
+			get { return _title; }
+			set { _title = value; }
+		}
+	
+		/// <summary>
+		/// Gets or sets whether or not the <see cref="ImageViewerComponent"/> should load any prior studies.
+		/// </summary>
+		public bool LoadPriors
+		{
+			get { return _loadPriors; }
+			set { _loadPriors = value; }
+		}
+
+		#endregion
+
+		#region Add Study Methods
+
+		/// <summary>
+		/// Adds a study to the list of studies to be opened.
+		/// </summary>
+		public void AddStudy(string studyInstanceUid, object server, string studyLoaderName)
+		{
+			LoadStudyArgs existing = CollectionUtils.SelectFirst(_studiesToOpen,
+							delegate(LoadStudyArgs args) { return args.StudyInstanceUid == studyInstanceUid; });
+			
+			if (existing != null)
+				_studiesToOpen.Remove(existing);
+
+			_studiesToOpen.Add(new LoadStudyArgs(studyInstanceUid, server, studyLoaderName));
+		}
+
+		#endregion
+
+		#region Open/Launch Methods
+
+		/// <summary>
+		/// Loads the list of studies into an <see cref="ImageViewerComponent"/> and launches it
+		/// in a <see cref="Workspace"/>, unless <see cref="LaunchViewer"/> is false.
+		/// </summary>
+		public ImageViewerComponent OpenStudies()
+		{
+			CodeClock codeClock = new CodeClock();
+			codeClock.Start();
+
+			ImageViewerComponent imageViewer = null;
+
+			BlockingOperation.Run(delegate { imageViewer = OpenStudiesInternal(); });
+
+			if (imageViewer != null && _launchViewer)
+			{
+				LaunchImageViewerArgs args = new LaunchImageViewerArgs(_windowBehaviour);
+				args.Title = this.Title;
+				ImageViewerComponent.Launch(imageViewer, args);
+			}
+
+			codeClock.Stop();
+			string message = String.Format("TTFI: {0}", codeClock);
+			Platform.Log(LogLevel.Debug, message);
+
+			return imageViewer;
+		}
+
+		#region Static Helpers
 
 		/// <summary>
 		/// Launches a new <see cref="ImageViewerComponent"/> with the specified local files.
@@ -127,9 +234,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			if (localFileList.Length == 0)
 				throw new ArgumentException("localFileList array cannot be empty.");
 
-			ImageViewerComponent viewer = OpenFilesInternal(localFileList);
+			ImageViewerComponent viewer = OpenFiles(localFileList);
 			if (viewer != null)
-				Launch(viewer, windowBehaviour);
+				ImageViewerComponent.Launch(viewer, new LaunchImageViewerArgs(windowBehaviour));
 		}
 
 		/// <summary>
@@ -138,43 +245,33 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <remarks>
 		/// <para>This method has been deprecated and will be removed in the future. Use the <see cref="OpenStudies(OpenStudyArgs)"/> overload instead.</para>
 		/// </remarks>
-		[Obsolete("This method has been deprecated and will be removed in the future. Use the OpenStudies(OpenStudyArgs) overload instead.")]
+		[Obsolete("This method will be removed in a future version.  Please use an instance of OpenStudyHelper instead.")]
 		public static IImageViewer OpenStudies(string studyLoaderName, string[] studyInstanceUids, WindowBehaviour windowBehaviour)
 		{
-			return OpenStudies(new OpenStudyArgs(studyInstanceUids, null, studyLoaderName, windowBehaviour));
+			OpenStudyHelper helper = new OpenStudyHelper();
+			helper.WindowBehaviour = windowBehaviour;
+			foreach (string studyInstanceUid in studyInstanceUids)
+				helper.AddStudy(studyInstanceUid, null, studyLoaderName);
+
+			return helper.OpenStudies();
 		}
 
 		/// <summary>
 		/// Launches a new <see cref="ImageViewerComponent"/> with the specified studies.
 		/// </summary>
 		/// <param name="openStudyArgs">The <see cref="OpenStudyArgs"/> object containing information about the studies to be opened.</param>
+		[Obsolete("This method will be removed in a future version.  Please use an instance of OpenStudyHelper instead.")]
 		public static IImageViewer OpenStudies(OpenStudyArgs openStudyArgs)
 		{
-			CodeClock codeClock = new CodeClock();
-			codeClock.Start();
+			OpenStudyHelper helper = new OpenStudyHelper();
+			helper.WindowBehaviour = openStudyArgs.WindowBehaviour;
+			foreach (string studyInstanceUid in openStudyArgs.StudyInstanceUids)
+				helper.AddStudy(studyInstanceUid, openStudyArgs.Server, openStudyArgs.StudyLoaderName);
 
-			ImageViewerComponent imageViewer = null;
-			BlockingOperation.Run(delegate { imageViewer = OpenStudiesInternal(openStudyArgs); });
-
-			if (imageViewer != null)
-				Launch(imageViewer, openStudyArgs.WindowBehaviour);
-
-			codeClock.Stop();
-			string message = String.Format("TTFI: {0}", codeClock.ToString());
-			Platform.Log(LogLevel.Info, message);
-
-			return imageViewer;
+			return helper.OpenStudies();
 		}
 
-		private static ImageViewerComponent OpenStudiesInternal(OpenStudyArgs openStudyArgs)
-		{
-			if (openStudyArgs.StudyInstanceUids.Length == 1)
-				return OpenSingleStudyWithPriors(openStudyArgs);
-			else
-				return OpenMultipleStudiesInSingleWorkspace(openStudyArgs);
-		}
-
-		private static ImageViewerComponent OpenFilesInternal(string[] localFileList)
+		private static ImageViewerComponent OpenFiles(string[] localFileList)
 		{
 			//don't find priors for files loaded off the local disk.
 			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended, null);
@@ -185,13 +282,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			try
 			{
-				imageViewer.LoadImages(localFileList, DesktopWindow, out cancelled);
+				imageViewer.LoadImages(localFileList, Application.ActiveDesktopWindow, out cancelled);
 			}
 			catch (OpenStudyException e)
 			{
 				anyFailures = true;
 				successfulImagesInLoadFailure = e.SuccessfulImages;
-				ExceptionHandler.Report(e, DesktopWindow);
+				ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
 			}
 
 			if (cancelled || (anyFailures && successfulImagesInLoadFailure == 0))
@@ -203,19 +300,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return imageViewer;
 		}
 
-		// Okay, the method name is deceptive--it doesn't actually
-		// open priors yet
-		private static ImageViewerComponent OpenSingleStudyWithPriors(OpenStudyArgs openStudyArgs)
+		#endregion
+
+		private ImageViewerComponent OpenStudiesInternal()
 		{
-			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+			if (_studiesToOpen.Count == 1)
+				return OpenSingleStudy();
+			else
+				return OpenMultipleStudies();
+		}
+
+		private ImageViewerComponent OpenSingleStudy()
+		{
+			ImageViewerComponent imageViewer = CreateImageViewer();
 
 			try
 			{
-				imageViewer.LoadStudy(CreateLoadStudyArgs(openStudyArgs, openStudyArgs.StudyInstanceUids[0]));
+				imageViewer.LoadStudy(_studiesToOpen[0]);
 			}
 			catch (OpenStudyException e)
 			{
-				ExceptionHandler.Report(e, DesktopWindow);
+				ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
 				if (e.SuccessfulImages == 0)
 				{
 					imageViewer.Dispose();
@@ -226,25 +331,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return imageViewer;
 		}
 
-		private static ImageViewerComponent OpenMultipleStudiesInSingleWorkspace(OpenStudyArgs openStudyArgs)
+		private ImageViewerComponent OpenMultipleStudies()
 		{
-			ImageViewerComponent imageViewer = new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+			ImageViewerComponent imageViewer = CreateImageViewer();
 			int completelySuccessfulStudies = 0;
 			int successfulImagesInLoadFailure = 0;
 
-			foreach (string studyInstanceUid in openStudyArgs.StudyInstanceUids)
+			foreach (LoadStudyArgs args in _studiesToOpen)
 			{
 				try
 				{
-					imageViewer.LoadStudy(CreateLoadStudyArgs(openStudyArgs, studyInstanceUid));
+					imageViewer.LoadStudy(args);
 					completelySuccessfulStudies++;
 				}
 				catch (OpenStudyException e)
 				{
+					//TODO: collect exceptions and report only one error.
+
 					// Study failed to load completely; keep track of how many
 					// images in the study actually did load
 					successfulImagesInLoadFailure += e.SuccessfulImages;
-					ExceptionHandler.Report(e, DesktopWindow);
+					ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
 				}
 			}
 
@@ -259,20 +366,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return imageViewer;
 		}
 
-		private static void Launch(ImageViewerComponent imageViewer, WindowBehaviour windowBehaviour)
-		{
-			// Open the images in a separate window
-			if (windowBehaviour == WindowBehaviour.Separate)
-				ImageViewerComponent.LaunchInSeparateWindow(imageViewer);
-			// Open the images in the same window
-			else
-				ImageViewerComponent.LaunchInActiveWindow(imageViewer);
-		}
+		#endregion
 
-		private static LoadStudyArgs CreateLoadStudyArgs(OpenStudyArgs args, string studyInstanceUid)
+		private ImageViewerComponent CreateImageViewer()
 		{
-			return new LoadStudyArgs(studyInstanceUid, args.Server, args.StudyLoaderName);
+			if (_loadPriors)
+				return new ImageViewerComponent(LayoutManagerCreationParameters.Extended);
+			else
+				return new ImageViewerComponent(LayoutManagerCreationParameters.Extended, PriorStudyFinder.Null);
 		}
 	}
-
 }

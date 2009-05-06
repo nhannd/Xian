@@ -30,15 +30,12 @@
 #endregion
 
 using System;
-using System.Security.Policy;
-using System.ServiceModel.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.StudyManagement;
-using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -64,82 +61,129 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			base.Initialize();
 		}
 
-		private void OpenStudy()
+		public void OpenStudy()
 		{
 			try
 			{
-				if (!PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.View))
+				int numberOfSelectedStudies = GetNumberOfSelectedStudies();
+				if (numberOfSelectedStudies == 0)
 					return;
 
-				if (this.Context.SelectedServerGroup.IsLocalDatastore)
+				if (!PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.View))
 				{
-					OpenStudyHelper.OpenStudies(new OpenStudyArgs(GetStudyInstanceUids(), null, "DICOM_LOCAL", ViewerLaunchSettings.WindowBehaviour));
+					Context.DesktopWindow.ShowMessageBox(SR.MessageOpenStudyPermissionDenied, MessageBoxActions.Ok);
+					return;
+				}
+
+				int numberOfLoadableStudies = GetNumberOfLoadableStudies();
+				if (numberOfLoadableStudies != numberOfSelectedStudies)
+				{
+					int numberOfNonLoadableStudies = numberOfSelectedStudies - numberOfLoadableStudies;
+					string message;
+					if (numberOfSelectedStudies == 1)
+					{
+						message = SR.MessageCannotOpenNonStreamingStudy;
+					}
+					else
+					{
+						if (numberOfNonLoadableStudies == 1)
+							message = SR.MessageOneNonStreamingStudyCannotBeOpened;
+						else 
+							message = String.Format(SR.MessageFormatXNonStreamingStudiesCannotBeOpened, numberOfNonLoadableStudies);
+					}
+
+					Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
+					return;
+				}
+
+				OpenStudyHelper helper = new OpenStudyHelper();
+				helper.WindowBehaviour = ViewerLaunchSettings.WindowBehaviour;
+				if (Context.SelectedServerGroup.IsLocalDatastore)
+				{
+					foreach (StudyItem study in Context.SelectedStudies)
+						helper.AddStudy(study.StudyInstanceUID, study.Server, "DICOM_LOCAL");
 				}
 				else
 				{
-					OpenStudyHelper.OpenStudies(
-						new OpenStudyArgs(GetStudyInstanceUids(), this.Context.SelectedStudy.Server, "CC_STREAMING", ViewerLaunchSettings.WindowBehaviour));
+					foreach (StudyItem study in Context.SelectedStudies)
+						helper.AddStudy(study.StudyInstanceUID, study.Server, "CC_STREAMING");
 				}
+
+				helper.OpenStudies();
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, Context.DesktopWindow);
 			}
-		}
-
-		private string[] GetStudyInstanceUids()
-		{
-			string[] uids = new string[this.Context.SelectedStudies.Count];
-			for (int i = 0; i < this.Context.SelectedStudies.Count; ++i)
-				uids[i] = this.Context.SelectedStudies[i].StudyInstanceUID;
-
-			return uids;
 		}
 
 		private void SetDoubleClickHandler()
 		{
-			if (this.Context.SelectedServerGroup.IsLocalDatastore ||
-				this.Context.SelectedServerGroup.IsOnlyStreamingServers())
-				this.Context.DefaultActionHandler = OpenStudy;
+			if (Context.SelectedServerGroup.IsLocalDatastore || Context.SelectedServerGroup.HasAnyStreamingServers())
+				Context.DefaultActionHandler = OpenStudy;
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)
 		{
-			// If the results aren't from the local machine, then we don't
-			// even care whether a study has been selected or not
-			if (!this.Context.SelectedServerGroup.IsLocalDatastore &&
-				!this.Context.SelectedServerGroup.IsOnlyStreamingServers())
-				return;
-
-			base.OnSelectedStudyChanged(sender, e);
+			UpdateEnabled();
 		}
 
 		protected override void OnSelectedServerChanged(object sender, EventArgs e)
 		{
-			if (this.Context.SelectedServerGroup.IsLocalDatastore)
-			{
-				if (this.Context.SelectedStudy != null)
-					this.Enabled = true;
-				else
-					this.Enabled = false;
+			UpdateEnabled();
+		}
 
-				SetDoubleClickHandler();
+		private void UpdateEnabled()
+		{
+			if (Context.SelectedServerGroup.IsLocalDatastore)
+			{
+				if (Context.SelectedStudy != null)
+					Enabled = true;
+				else
+					Enabled = false;
 			}
 			else
 			{
-				if (this.Context.SelectedServerGroup.IsOnlyStreamingServers())
+				if (Context.SelectedStudy != null)
 				{
-					if (this.Context.SelectedStudy != null)
-						this.Enabled = true;
+					if (Context.SelectedServerGroup.IsOnlyNonStreamingServers())
+						Enabled = false;
 					else
-						this.Enabled = false;
-
-					SetDoubleClickHandler();
+						Enabled = true;
 				}
 				else
-					this.Enabled = false;
+					Enabled = false;
 			}
+
+			SetDoubleClickHandler();
 		}
 
+		private int GetNumberOfSelectedStudies()
+		{
+			if (Context.SelectedStudy == null)
+				return 0;
+
+			return Context.SelectedStudies.Count;
+		}
+
+		private int GetNumberOfLoadableStudies()
+		{
+			int number = 0;
+
+			if (Context.SelectedStudy != null)
+			{
+				if (Context.SelectedServerGroup.IsLocalDatastore)
+					return Context.SelectedStudies.Count;
+
+				foreach (StudyItem study in Context.SelectedStudies)
+				{
+					ApplicationEntity server = study.Server as ApplicationEntity;
+					if (server != null && server.IsStreaming)
+						++number;
+				}
+			}
+
+			return number;
+		}
 	}
 }

@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 			{
 				foreach (DicomAttributeCollection result in reader.Query(collection))
 				{
-					StudyItem item = new StudyItem();
+					StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].ToString(), null, this.Name);
 					item.SpecificCharacterSet = result.SpecificCharacterSet;
 					item.PatientId = result[DicomTags.PatientId].ToString();
 					item.PatientsName = new PersonName(result[DicomTags.PatientsName].ToString());
@@ -86,9 +86,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 					item.StudyDescription = result[DicomTags.StudyDescription].ToString();
 					item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
 					item.AccessionNumber = result[DicomTags.AccessionNumber].ToString();
-					item.StudyInstanceUID = result[DicomTags.StudyInstanceUid].ToString();
 					item.NumberOfStudyRelatedInstances = result[DicomTags.NumberOfStudyRelatedInstances].GetUInt32(0, 0);
-					item.StudyLoaderName = this.Name;
 
 					studyItemList.Add(item);
 				}

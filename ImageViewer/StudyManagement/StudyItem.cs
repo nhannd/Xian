@@ -32,9 +32,9 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Desktop;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Utilities;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -46,32 +46,44 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public class ApplicationEntity
 	{
+		private readonly string _name;
 		private readonly string _host;
 		private readonly string _aeTitle;
 		private readonly int _port;
+		private readonly bool _isStreaming;
 		private readonly int _headerServicePort;
 		private readonly int _wadoServicePort;
 
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="host"></param>
-		/// <param name="aeTitle"></param>
-		/// <param name="port"></param>
-		/// <param name="headerServicePort"></param>
-		/// <param name="wadoServicePort"></param>
 		public ApplicationEntity(
 			string host, 
-			string aeTitle, 
+			string aeTitle,
+			string name,
 			int port,
+			bool isStreaming,
 			int headerServicePort,
 			int wadoServicePort)
 		{
 			_host = host;
 			_aeTitle = aeTitle;
+			_name = name;
 			_port = port;
+			_isStreaming = isStreaming;
 			_headerServicePort = headerServicePort;
 			_wadoServicePort = wadoServicePort;
+
+			if (_isStreaming && (_headerServicePort <= 0 || _wadoServicePort <= 0))
+				throw new ArgumentException("Invalid streaming parameters");
+		}
+
+		/// <summary>
+		/// Gets the friendly name.
+		/// </summary>
+		public string Name
+		{
+			get { return _name; }	
 		}
 
 		/// <summary>
@@ -99,6 +111,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
+		/// Gets whether or not the server is a streaming server.
+		/// </summary>
+		public bool IsStreaming
+		{
+			get { return _isStreaming; }
+		}
+	
+		/// <summary>
 		/// Header service port for image streaming.
 		/// </summary>
 		public int HeaderServicePort
@@ -116,7 +136,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public override string ToString()
 		{
-			return (_aeTitle ?? "unknown");
+			return (_name ?? "Unknown");
 		}
 	}
 
@@ -128,8 +148,22 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Initializes a new instance of <see cref="StudyItem"/>.
 		/// </summary>
+		[Obsolete("Use StudyItem(string, object, string) instead.")]
 		public StudyItem()
 		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="StudyItem"/>.
+		/// </summary>
+		public StudyItem(string studyInstanceUid, object server, string studyLoaderName)
+		{
+			Platform.CheckForEmptyString(studyInstanceUid, "studyInstanceUid");
+			Platform.CheckForEmptyString(studyLoaderName, "studyLoaderName");
+
+			_studyInstanceUID = studyInstanceUid;
+			_server = server;
+			_studyLoaderName = studyLoaderName;
 		}
 
 		/// <summary>
@@ -234,7 +268,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets or sets the server.
 		/// </summary>
-		public ApplicationEntity Server
+		public object Server
 		{
 			get { return _server; }
 			set { _server = value; }
@@ -267,7 +301,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         private string _modalitiesInStudy;
         private uint _numberOfStudyRelatedInstances;
         private string _specificCharacterSet;
-		private ApplicationEntity _server;
+		private object _server;
         private PersonName _patientsName;
         #endregion
 	}

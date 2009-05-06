@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			StudyItemList studyItemList = new StudyItemList();
 			foreach (DicomAttributeCollection result in results)
 			{
-				StudyItem item = new StudyItem();
+				StudyItem item = new StudyItem(result[DicomTags.StudyInstanceUid].GetString(0, ""), selectedServer, this.Name);
 
 				//TODO: add DicomField attributes to the StudyItem class (implement typeconverter for PersonName class).
 				item.PatientsBirthDate = result[DicomTags.PatientsBirthDate].GetString(0, "");
@@ -91,12 +91,8 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				item.PatientId = result[DicomTags.PatientId].GetString(0, "");
 				item.PatientsName = new PersonName(result[DicomTags.PatientsName].GetString(0, ""));
 				item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
-				item.StudyInstanceUID = result[DicomTags.StudyInstanceUid].GetString(0, "");
 				item.NumberOfStudyRelatedInstances = result[DicomTags.NumberOfStudyRelatedInstances].GetUInt32(0, 0);
 				item.SpecificCharacterSet = result.SpecificCharacterSet;
-
-				item.StudyLoaderName = this.Name;
-				item.Server = selectedServer;
 
 				studyItemList.Add(item);
 			}

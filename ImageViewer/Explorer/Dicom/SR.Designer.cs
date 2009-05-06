@@ -115,11 +115,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to # Images.
+        ///   Looks up a localized string similar to Instances.
         /// </summary>
-        internal static string ColumnHeadingNumberOfImages {
+        internal static string ColumnHeadingNumberOfInstances {
             get {
-                return ResourceManager.GetString("ColumnHeadingNumberOfImages", resourceCulture);
+                return ResourceManager.GetString("ColumnHeadingNumberOfInstances", resourceCulture);
             }
         }
         
@@ -138,6 +138,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string ColumnHeadingPhoneticName {
             get {
                 return ResourceManager.GetString("ColumnHeadingPhoneticName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Server.
+        /// </summary>
+        internal static string ColumnHeadingServer {
+            get {
+                return ResourceManager.GetString("ColumnHeadingServer", resourceCulture);
             }
         }
         
@@ -196,12 +205,30 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The selected study is on a non-streaming server and cannot be opened..
+        /// </summary>
+        internal static string MessageCannotOpenNonStreamingStudy {
+            get {
+                return ResourceManager.GetString("MessageCannotOpenNonStreamingStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This query could take a long time to complete because you have not specified any filters.
         ///Are you sure you want to continue?.
         /// </summary>
         internal static string MessageConfirmContinueOpenSearch {
             get {
                 return ResourceManager.GetString("MessageConfirmContinueOpenSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} of the selected studies are on a non-streaming server and cannot be opened..
+        /// </summary>
+        internal static string MessageFormatXNonStreamingStudiesCannotBeOpened {
+            get {
+                return ResourceManager.GetString("MessageFormatXNonStreamingStudiesCannotBeOpened", resourceCulture);
             }
         }
         
@@ -224,6 +251,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string MessageInvalidPatientsName {
             get {
                 return ResourceManager.GetString("MessageInvalidPatientsName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One of the selected studies is on a non-streaming server and cannot be opened..
+        /// </summary>
+        internal static string MessageOneNonStreamingStudyCannotBeOpened {
+            get {
+                return ResourceManager.GetString("MessageOneNonStreamingStudyCannotBeOpened", resourceCulture);
             }
         }
         

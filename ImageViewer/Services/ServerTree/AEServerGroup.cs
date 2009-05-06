@@ -35,30 +35,31 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 {
 	public class AEServerGroup
 	{
-        private List<IServerTreeNode> _servers;
-        private string _name;
+		private List<IServerTreeNode> _servers;
+		private string _name;
 		private string _groupID;
 
 		public AEServerGroup()
 		{
-        }
+		}
 
-        public List<IServerTreeNode> Servers
-        {
-            get {
-                if (_servers == null)
-                    _servers = new List<IServerTreeNode>();
-                return _servers; 
-            }
-            set { _servers = value; }
-        }
+		public List<IServerTreeNode> Servers
+		{
+			get
+			{
+				if (_servers == null)
+					_servers = new List<IServerTreeNode>();
+				return _servers;
+			}
+			set { _servers = value; }
+		}
 
-        public string Name
+		public string Name
 		{
 			get { return _name; }
 			set { _name = value; }
 		}
-	
+
 		public string GroupID
 		{
 			get { return _groupID; }
@@ -69,14 +70,68 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 		{
 			get
 			{
-                if (_servers.Count != 1)
+				if (_servers.Count != 1)
 					return false;
 
-                if (_servers[0].IsLocalDataStore)
+				if (_servers[0].IsLocalDataStore)
 					return true;
 				else
 					return false;
 			}
+		}
+
+		public bool HasAnyNonStreamingServers()
+		{
+			if (_servers.Count == 0)
+				return false;
+
+			foreach (IServerTreeNode node in _servers)
+			{
+				if (node.IsServer)
+				{
+					Server server = node as Server;
+					if (server == null || !server.IsStreaming)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		public bool HasAnyStreamingServers()
+		{
+			if (_servers.Count == 0)
+				return false;
+
+			foreach (IServerTreeNode node in _servers)
+			{
+				if (node.IsServer)
+				{
+					Server server = node as Server;
+					if (server != null && server.IsStreaming)
+						return true;
+				}
+			}
+
+			return false;
+		}
+
+		public bool IsOnlyNonStreamingServers()
+		{
+			if (_servers.Count == 0)
+				return false;
+
+			foreach (IServerTreeNode node in _servers)
+			{
+				if (node.IsServer)
+				{
+					Server server = node as Server;
+					if (server != null && server.IsStreaming)
+						return false;
+				}
+			}
+
+			return true;
 		}
 
 		public bool IsOnlyStreamingServers()
@@ -89,13 +144,12 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 				if (node.IsServer)
 				{
 					Server server = node as Server;
-
-					if (!server.IsStreaming)
+					if (server == null || !server.IsStreaming)
 						return false;
 				}
 			}
 
 			return true;
 		}
-    }
+	}
 }

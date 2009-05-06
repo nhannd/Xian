@@ -186,21 +186,18 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			try
 			{
-				OpenStudyHelper.OpenStudies(new OpenStudyArgs(GetStudyInstanceUids(), null, "DICOM_LOCAL", ViewerLaunchSettings.WindowBehaviour));
+				OpenStudyHelper helper = new OpenStudyHelper();
+				helper.WindowBehaviour = ViewerLaunchSettings.WindowBehaviour;
+
+				foreach (ReceiveQueueItem item in Context.SelectedItems)
+					helper.AddStudy(item.StudyInformation.StudyInstanceUid, null, "DICOM_LOCAL");
+
+				helper.OpenStudies();
 			}
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
-		}
-
-		private string[] GetStudyInstanceUids()
-		{
-			return CollectionUtils.Map<ReceiveQueueItem, string>(this.Context.SelectedItems, 
-										delegate(ReceiveQueueItem item)
-											{
-												return item.StudyInformation.StudyInstanceUid;
-											}).ToArray();
 		}
 	}
 }

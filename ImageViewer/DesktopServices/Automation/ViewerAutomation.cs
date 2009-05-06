@@ -441,7 +441,8 @@ namespace ClearCanvas.ImageViewer.DesktopServices.Automation
 					if (server != null && server.IsStreaming)
 					{
 						serverMap[info.SourceAETitle] =
-							new ApplicationEntity(server.Host, server.AETitle, server.Port, server.HeaderServicePort, server.WadoServicePort);
+							new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port, 
+							server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
 					}
 				}
 			}

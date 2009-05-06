@@ -157,21 +157,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private StudyItem ConvertToStudyItem(StudyRootStudyIdentifier study)
 		{
-			StudyItem item = new StudyItem();
+			string studyLoaderName;
+			ApplicationEntity applicationEntity = null;
+
 			IServerTreeNode node = FindServer(study.RetrieveAeTitle);
 			if (node.IsLocalDataStore)
 			{
-				item.StudyLoaderName = "DICOM_LOCAL";
+				studyLoaderName = "DICOM_LOCAL";
 			}
 			else if (node.IsServer)
 			{
-				Server server = (Server) node;
+				Server server = (Server)node;
 				if (server.IsStreaming)
-					item.StudyLoaderName = "CC_STREAMING";
+					studyLoaderName = "CC_STREAMING";
 				else
-					item.StudyLoaderName = "DICOM_REMOTE";
+					studyLoaderName = "DICOM_REMOTE";
 
-				item.Server = new ApplicationEntity(server.Host, server.AETitle, server.Port, server.HeaderServicePort, server.WadoServicePort);
+				applicationEntity = new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port,
+											server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
 			}
 			else // (node == null)
 			{
@@ -182,6 +185,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				return null;
 			}
 
+			StudyItem item = new StudyItem(study.StudyInstanceUid, applicationEntity, studyLoaderName);
 			item.AccessionNumber = study.AccessionNumber;
 			item.ModalitiesInStudy = DicomStringHelper.GetDicomStringArray(study.ModalitiesInStudy ?? new string[0]);
 			item.NumberOfStudyRelatedInstances = (uint)(study.NumberOfStudyRelatedInstances ?? 0);
@@ -191,7 +195,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			item.SpecificCharacterSet = study.SpecificCharacterSet;
 			item.StudyDate = study.StudyDate;
 			item.StudyDescription = study.StudyDescription;
-			item.StudyInstanceUID = study.StudyInstanceUid;
 
 			return item;
 		}

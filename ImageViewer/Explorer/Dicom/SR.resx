@@ -135,14 +135,17 @@
   <data name="ColumnHeadingModality" xml:space="preserve">
     <value>Modality</value>
   </data>
-  <data name="ColumnHeadingNumberOfImages" xml:space="preserve">
-    <value># Images</value>
+  <data name="ColumnHeadingNumberOfInstances" xml:space="preserve">
+    <value>Instances</value>
   </data>
   <data name="ColumnHeadingPatientId" xml:space="preserve">
     <value>Patient ID</value>
   </data>
   <data name="ColumnHeadingPhoneticName" xml:space="preserve">
     <value>Phonetic Name</value>
+  </data>
+  <data name="ColumnHeadingServer" xml:space="preserve">
+    <value>Server</value>
   </data>
   <data name="ColumnHeadingStudyDate" xml:space="preserve">
     <value>Study Date</value>
@@ -162,9 +165,15 @@
   <data name="MenuOpenStudy" xml:space="preserve">
     <value>Open</value>
   </data>
+  <data name="MessageCannotOpenNonStreamingStudy" xml:space="preserve">
+    <value>The selected study is on a non-streaming server and cannot be opened.</value>
+  </data>
   <data name="MessageConfirmContinueOpenSearch" xml:space="preserve">
     <value>This query could take a long time to complete because you have not specified any filters.
 Are you sure you want to continue?</value>
+  </data>
+  <data name="MessageFormatXNonStreamingStudiesCannotBeOpened" xml:space="preserve">
+    <value>{0} of the selected studies are on a non-streaming server and cannot be opened.</value>
   </data>
   <data name="MessageFromDateCannotBeAfterToDate" xml:space="preserve">
     <value>From date cannot be after To date.</value>
@@ -175,6 +184,9 @@ Are you sure you want to continue?</value>
 - Last, First
 - , First
 - Last,</value>
+  </data>
+  <data name="MessageOneNonStreamingStudyCannotBeOpened" xml:space="preserve">
+    <value>One of the selected studies is on a non-streaming server and cannot be opened.</value>
   </data>
   <data name="MessageOpenStudyPermissionDenied" xml:space="preserve">
     <value>Permission to view a study is denied.</value>

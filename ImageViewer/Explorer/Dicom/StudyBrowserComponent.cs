@@ -197,6 +197,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private ISelection _currentSelection;
 		private event EventHandler _selectedStudyChangedEvent;
 		private ClickHandlerDelegate _defaultActionHandler;
+		private OpenStudyTool _openStudyTool;
 		private ToolSet _toolSet;
 
 		private AEServerGroup _selectedServerGroup;
@@ -302,6 +303,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
 			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
 
+			// Because the OpenStudyTool is in the same assembly, this is ok.  Even though it's an extension, it's
+			// reasonable to say that the 'open study' action is generic enough that it is default functionality
+			// that is part of the component.  If the extension were disabled via configuration, then this would
+			// simply evaluate to null.
+			_openStudyTool = CollectionUtils.SelectFirst(_toolSet.Tools, delegate(ITool tool) { return tool is OpenStudyTool; }) as OpenStudyTool;
+
 			_localDataStoreEventBroker = LocalDataStoreActivityMonitor.CreatEventBroker();
 			_localDataStoreEventBroker.SopInstanceImported += OnSopInstanceImported;
 			_localDataStoreEventBroker.InstanceDeleted += OnInstanceDeleted;
@@ -339,6 +346,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 				_searchResults.Add(_selectedServerGroup.GroupID, searchResult);
 			}
+
+			UpdateServerColumnVisibility();
 
 			ProcessReceivedAndRemovedStudies();
 
@@ -415,6 +424,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (_defaultActionHandler != null)
 			{
 				_defaultActionHandler();
+			}
+			else if (_openStudyTool != null)
+			{
+				//fall back to the open study tool.
+				_openStudyTool.OpenStudy();
 			}
 		}
 
@@ -510,12 +524,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					else if (serverNode.IsServer)
 					{
 						Server server = (Server)serverNode;
-						ApplicationEntity ae = new ApplicationEntity(
-							server.Host, 
-							server.AETitle, 
-							server.Port,
-							server.HeaderServicePort,
-							server.WadoServicePort);
+						ApplicationEntity ae = new ApplicationEntity(server.Host, server.AETitle, server.Name, server.Port,
+														server.IsStreaming, server.HeaderServicePort, server.WadoServicePort);
 
 						serverStudyItemList = ImageViewerComponent.FindStudy(queryParams, ae, "DICOM_REMOTE");
 					}
@@ -620,8 +630,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			studyList.Columns.Add(column);
 
-			column = new TableColumn<StudyItem, string>(
-			SR.ColumnHeadingNumberOfImages,
+			column = new TableColumn<StudyItem, string>(SR.ColumnHeadingNumberOfInstances,
 			delegate(StudyItem item)
 			{
 				return (item.NumberOfStudyRelatedInstances == 0) ? "" : item.NumberOfStudyRelatedInstances.ToString();
@@ -629,6 +638,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			0.5f);
 
 			column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
+
+			studyList.Columns.Add(column);
+
+			column = new TableColumn<StudyItem, string>(SR.ColumnHeadingServer,
+				delegate(StudyItem item)
+				{
+					return (item.Server == null) ? "" : item.Server.ToString();
+				},
+				0.4f);
 
 			studyList.Columns.Add(column);
 		}
@@ -797,6 +815,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			this.ResultsTitle = _searchResults[_selectedServerGroup.GroupID].ResultsTitle;
 		}
 
+		private void UpdateServerColumnVisibility()
+		{
+			TableColumnBase<StudyItem> serverColumn = null;
+			foreach (TableColumnBase<StudyItem> column in _searchResults[_selectedServerGroup.GroupID].StudyList.Columns)
+			{
+				if (column.Name == SR.ColumnHeadingServer)
+				{
+					serverColumn = column;
+					break;
+				}
+			}
+
+			if (serverColumn != null)
+			{
+				if (_selectedServerGroup.IsLocalDatastore || _selectedServerGroup.Servers.Count == 1)
+					serverColumn.Visible = false;
+				else
+					serverColumn.Visible = true;
+			}
+		}
+
 		private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == "ShowIdeographicName" ||
@@ -814,7 +853,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						{
 							column.Visible = DicomExplorerConfigurationSettings.Default.ShowIdeographicName;
 						}
-						else if (column.Name == SR.ColumnHeadingNumberOfImages)
+						else if (column.Name == SR.ColumnHeadingNumberOfInstances)
 						{
 							column.Visible = DicomExplorerConfigurationSettings.Default.ShowNumberOfImagesInStudy;
 						}
