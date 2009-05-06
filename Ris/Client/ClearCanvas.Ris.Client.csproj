@@ -620,9 +620,6 @@
     <EmbeddedResource Include="Icons\UserFolderOpenSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\UserFolderClosedSmall2.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\GroupFolderClosedLarge.png" />
     <EmbeddedResource Include="Icons\GroupFolderClosedMedium.png" />
     <EmbeddedResource Include="Icons\GroupFolderClosedSmall.png" />
