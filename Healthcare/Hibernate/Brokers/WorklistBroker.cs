@@ -46,6 +46,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region IWorklistBroker Members
 
+		public IList<Worklist> Find(StaffGroup staffGroup)
+		{
+			HqlProjectionQuery query = GetBaseQuery();
+			AddStaffGroupConditions(query, staffGroup);
+
+			return ExecuteHql<Worklist>(query);
+		}
+
         public IList<Worklist> Find(Staff staff, IEnumerable<string> worklistClassNames)
         {
             HqlProjectionQuery query = GetBaseQuery();
@@ -114,5 +122,15 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             staffOr.Conditions.Add(new HqlCondition("s in (select elements(sg.Members) from StaffGroup sg where sg in elements(w.GroupSubscribers))"));
             query.Conditions.Add(staffOr);
         }
+
+		private void AddStaffGroupConditions(HqlProjectionQuery query, StaffGroup staffGroup)
+		{
+			query.Froms.Add(new HqlFrom("StaffGroup", "sg"));
+			query.Conditions.Add(new HqlCondition("sg = ?", staffGroup));
+
+			HqlOr staffGroupOr = new HqlOr();
+			staffGroupOr.Conditions.Add(new HqlCondition("sg in elements(w.GroupSubscribers)"));
+			query.Conditions.Add(staffGroupOr);
+		}
     }
 }

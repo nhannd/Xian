@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
             WorklistClassSummary worklistClass,
             StaffSummary ownerStaff,
             StaffGroupSummary ownerGroup)
-			:base(worklistRef, name, description, worklistClass.ClassName, ownerStaff, ownerGroup)
+			: base(worklistRef, name, description, worklistClass.ClassName, worklistClass.CategoryName, worklistClass.DisplayName, ownerStaff, ownerGroup)
         {
             WorklistClass = worklistClass;
         }

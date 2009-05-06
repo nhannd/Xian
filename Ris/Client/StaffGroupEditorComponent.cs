@@ -38,6 +38,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin;
 using ClearCanvas.Ris.Client.Formatting;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -106,6 +107,20 @@ namespace ClearCanvas.Ris.Client
 			}
 		}
 
+		class WorklistTable : Table<WorklistSummary>
+		{
+			public WorklistTable()
+			{
+				this.Columns.Add(new TableColumn<WorklistSummary, string>("Name",
+					delegate(WorklistSummary summary) { return summary.DisplayName; },
+					0.5f));
+
+				this.Columns.Add(new TableColumn<WorklistSummary, string>("Class",
+					delegate(WorklistSummary summary) { return string.Concat(summary.ClassCategoryName, " - ", summary.ClassDisplayName); },
+					0.5f));
+			}
+        }
+
         private EntityRef _staffGroupRef;
         private StaffGroupDetail _staffGroupDetail;
 
@@ -114,6 +129,7 @@ namespace ClearCanvas.Ris.Client
 
     	private StaffGroupDetailsEditorComponent _detailsEditor;
     	private SelectorEditorComponent<StaffSummary, StaffTable> _staffEditor;
+		private SelectorEditorComponent<WorklistSummary, WorklistTable> _worklistEditor;
 
 		private List<IStaffGroupEditorPage> _extensionPages;
 
@@ -142,15 +158,13 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
-			List<StaffSummary> allStaffs = new List<StaffSummary>();
+        	LoadStaffGroupEditorFormDataResponse formDataResponse = null;
 
             Platform.GetService<IStaffGroupAdminService>(
                 delegate(IStaffGroupAdminService service)
                 {
-                    LoadStaffGroupEditorFormDataResponse formDataResponse = service.LoadStaffGroupEditorFormData(
+                    formDataResponse = service.LoadStaffGroupEditorFormData(
                         new LoadStaffGroupEditorFormDataRequest());
-
-					allStaffs = formDataResponse.AllStaff;
 
                     if (_staffGroupRef == null)
                     {
@@ -162,17 +176,22 @@ namespace ClearCanvas.Ris.Client
                         _staffGroupRef = response.StaffGroup.StaffGroupRef;
                         _staffGroupDetail = response.StaffGroup;
                     }
-
                 });
 
         	_detailsEditor = new StaffGroupDetailsEditorComponent();
 			_detailsEditor.StaffGroupDetail = _staffGroupDetail;
 
-			_staffEditor = new SelectorEditorComponent<StaffSummary, StaffTable>(allStaffs, _staffGroupDetail.Members,
+			_staffEditor = new SelectorEditorComponent<StaffSummary, StaffTable>(formDataResponse.AllStaff, _staffGroupDetail.Members,
 				delegate(StaffSummary staff) { return staff.StaffRef; });
+
+			bool isWorklistEditorReadOnly = Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Admin.Data.Worklist) == false;
+			_worklistEditor = new SelectorEditorComponent<WorklistSummary, WorklistTable>(formDataResponse.AllAdminWorklists, _staffGroupDetail.Worklists,
+				delegate(WorklistSummary worklist) { return worklist.WorklistRef; },
+				isWorklistEditorReadOnly);
 
 			this.Pages.Add(new NavigatorPage("Staff Group", _detailsEditor));
 			this.Pages.Add(new NavigatorPage("Staff Group/Staffs", _staffEditor));
+			this.Pages.Add(new NavigatorPage(isWorklistEditorReadOnly ? "Staff Group/Worklists (read only)" : "Staff Group/Worklists", _worklistEditor));
 
 			// instantiate all extension pages
 			_extensionPages = new List<IStaffGroupEditorPage>();
@@ -206,6 +225,9 @@ namespace ClearCanvas.Ris.Client
 
 				// Update staffs
 				_staffGroupDetail.Members = new List<StaffSummary>(_staffEditor.SelectedItems);
+
+				if (!_worklistEditor.IsReadOnly)
+            		_staffGroupDetail.Worklists = new List<WorklistSummary>(_worklistEditor.SelectedItems);
 
                 Platform.GetService<IStaffGroupAdminService>(
                     delegate(IStaffGroupAdminService service)

@@ -43,14 +43,16 @@ namespace ClearCanvas.Ris.Application.Common
         public StaffGroupDetail()
         {
             this.Members = new List<StaffSummary>();
+			this.Worklists = new List<WorklistSummary>();
         }
 
-        public StaffGroupDetail(EntityRef groupRef, string name, string description, bool isElective, List<StaffSummary> members, bool deactivated)
+        public StaffGroupDetail(EntityRef groupRef, string name, string description, bool isElective, List<StaffSummary> members, List<WorklistSummary> worklists, bool deactivated)
         {
             this.StaffGroupRef = groupRef;
             this.Name = name;
             this.Description = description;
             this.Members = members;
+        	this.Worklists = worklists;
         	this.IsElective = isElective;
         	this.Deactivated = deactivated;
         }
@@ -69,6 +71,9 @@ namespace ClearCanvas.Ris.Application.Common
 
 		[DataMember]
         public List<StaffSummary> Members;
+
+    	[DataMember]
+		public List<WorklistSummary> Worklists;
 
 		[DataMember]
 		public bool Deactivated;

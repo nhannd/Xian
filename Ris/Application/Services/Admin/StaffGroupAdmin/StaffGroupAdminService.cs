@@ -31,19 +31,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Ris.Application.Common;
-using System.Security.Permissions;
-using System.ServiceModel;
 using ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin;
+using ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin;
 using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
+using System.Threading;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
 {
@@ -129,10 +129,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
         public LoadStaffGroupEditorFormDataResponse LoadStaffGroupEditorFormData(LoadStaffGroupEditorFormDataRequest request)
         {
 			IList<Staff> allStaff = PersistenceContext.GetBroker<IStaffBroker>().FindAll(false);
-            StaffAssembler assembler = new StaffAssembler();
+
+			List<Type> worklistClasses = WorklistAdminService.ListClassesHelper(null, null, false);
+
+			// grab the persistent worklists
+			IWorklistBroker broker = PersistenceContext.GetBroker<IWorklistBroker>();
+			List<string> persistentClassNames = CollectionUtils.Select(worklistClasses,
+				delegate(Type t) { return !Worklist.GetIsStatic(t); })
+				.ConvertAll<string>(delegate(Type t) { return Worklist.GetClassName(t); });
+
+			IList<Worklist> adminWorklists = broker.Find(null, false, persistentClassNames, null);
+			
+			StaffAssembler staffAssembler = new StaffAssembler();
+			WorklistAssembler worklistAssembler = new WorklistAssembler();
             return new LoadStaffGroupEditorFormDataResponse(
                 CollectionUtils.Map<Staff, StaffSummary>(allStaff,
-                    delegate(Staff staff) { return assembler.CreateStaffSummary(staff, PersistenceContext); }));
+					delegate(Staff staff) { return staffAssembler.CreateStaffSummary(staff, PersistenceContext); }),
+				CollectionUtils.Map<Worklist, WorklistSummary>(adminWorklists,
+					delegate(Worklist worklist) { return worklistAssembler.GetWorklistSummary(worklist, PersistenceContext); }));
         }
 
         [UpdateOperation]
@@ -145,7 +159,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
             StaffGroup item = new StaffGroup();
 
             StaffGroupAssembler assembler = new StaffGroupAssembler();
-            assembler.UpdateStaffGroup(item, request.StaffGroup, PersistenceContext);
+			bool worklistEditable = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.Worklist);
+			assembler.UpdateStaffGroup(item, request.StaffGroup, worklistEditable, PersistenceContext);
 
             PersistenceContext.Lock(item, DirtyState.New);
             PersistenceContext.SynchState();
@@ -164,7 +179,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffGroupAdmin
             StaffGroup item = PersistenceContext.Load<StaffGroup>(request.StaffGroup.StaffGroupRef);
 
             StaffGroupAssembler assembler = new StaffGroupAssembler();
-            assembler.UpdateStaffGroup(item, request.StaffGroup, PersistenceContext);
+			bool worklistEditable = Thread.CurrentPrincipal.IsInRole(AuthorityTokens.Admin.Data.Worklist);
+            assembler.UpdateStaffGroup(item, request.StaffGroup, worklistEditable, PersistenceContext);
 
             PersistenceContext.SynchState();
 

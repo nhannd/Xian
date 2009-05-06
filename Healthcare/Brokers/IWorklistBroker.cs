@@ -38,6 +38,13 @@ namespace ClearCanvas.Healthcare.Brokers
 	public interface IWorklistBroker : IEntityBroker<Worklist, WorklistSearchCriteria>
 	{
 		/// <summary>
+		/// Finds worklists assigned to specified staff group.
+		/// </summary>
+		/// <param name="staffGroup"></param>
+		/// <returns></returns>
+		IList<Worklist> Find(StaffGroup staffGroup);
+
+		/// <summary>
 		/// Finds worklists matching specified class names and assigned to specified staff.
 		/// </summary>
 		/// <param name="staff"></param>

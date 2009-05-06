@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
@@ -40,12 +38,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffGroupAdmin
     [DataContract]
     public class LoadStaffGroupEditorFormDataResponse : DataContractBase
     {
-        public LoadStaffGroupEditorFormDataResponse(List<StaffSummary> allStaff)
+		public LoadStaffGroupEditorFormDataResponse(List<StaffSummary> allStaff, List<WorklistSummary> allAdminWorklists)
         {
             this.AllStaff = allStaff;
+        	this.AllAdminWorklists = allAdminWorklists;
         }
 
         [DataMember]
         public List<StaffSummary> AllStaff;
+
+		[DataMember]
+		public List<WorklistSummary> AllAdminWorklists;
     }
 }

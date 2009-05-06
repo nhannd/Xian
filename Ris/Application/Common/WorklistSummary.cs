@@ -43,13 +43,15 @@ namespace ClearCanvas.Ris.Application.Common
 		}
 
         public WorklistSummary(EntityRef worklistRef, string displayName, string description,
-            string className, StaffSummary ownerStaff, StaffGroupSummary ownerGroup)
+			string className, string classCategoryName, string classDisplayName, StaffSummary ownerStaff, StaffGroupSummary ownerGroup)
         {
             WorklistRef = worklistRef;
             DisplayName = displayName;
             Description = description;
             ClassName = className;
-            OwnerStaff = ownerStaff;
+			ClassCategoryName = classCategoryName;
+			ClassDisplayName = classDisplayName;
+			OwnerStaff = ownerStaff;
             OwnerGroup = ownerGroup;
         }
 
@@ -77,8 +79,14 @@ namespace ClearCanvas.Ris.Application.Common
         [DataMember]
         public string Description;
 
-        [DataMember]
+		[DataMember]
         public string ClassName;
+
+		[DataMember]
+		public string ClassCategoryName;
+
+		[DataMember]
+		public string ClassDisplayName;
 
         [DataMember]
         public StaffSummary OwnerStaff;

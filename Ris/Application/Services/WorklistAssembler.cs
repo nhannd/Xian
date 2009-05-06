@@ -41,12 +41,14 @@ namespace ClearCanvas.Ris.Application.Services
         {
             StaffAssembler staffAssembler = new StaffAssembler();
             StaffGroupAssembler groupAssembler = new StaffGroupAssembler();
-            return new WorklistSummary(
-                worklist.GetRef(),
-                worklist.Name,
-                worklist.Description,
-                worklist.ClassName,
-                worklist.Owner.IsStaffOwner ? staffAssembler.CreateStaffSummary(worklist.Owner.Staff, context) : null,
+        	return new WorklistSummary(
+        		worklist.GetRef(),
+        		worklist.Name,
+        		worklist.Description,
+        		worklist.ClassName,
+				Worklist.GetCategory(worklist.GetClass()),
+        		Worklist.GetDisplayName(worklist.GetClass()),
+				worklist.Owner.IsStaffOwner ? staffAssembler.CreateStaffSummary(worklist.Owner.Staff, context) : null,
                 worklist.Owner.IsGroupOwner ? groupAssembler.CreateSummary(worklist.Owner.Group) : null);
         }
     }
