@@ -58,18 +58,18 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming
 
             if (String.IsNullOrEmpty(studyUid))
             {
-                throw new WADOException(HttpStatusCode.BadRequest, String.Format("studyUID parameter is not required"));
+                throw new WADOException(HttpStatusCode.BadRequest, String.Format("studyUID parameter is required"));
             }
 
             if (String.IsNullOrEmpty(seriesUid))
             {
-                throw new WADOException(HttpStatusCode.BadRequest, String.Format("seriesUid parameter is not required"));
+                throw new WADOException(HttpStatusCode.BadRequest, String.Format("seriesUid parameter is required"));
                 
             }
 
             if (String.IsNullOrEmpty(objectUid))
             {
-                throw new WADOException(HttpStatusCode.BadRequest, String.Format("objectUid parameter is not required"));
+                throw new WADOException(HttpStatusCode.BadRequest, String.Format("objectUid parameter is required"));
             }
         }
         

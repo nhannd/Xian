@@ -92,8 +92,8 @@ namespace ClearCanvas.ImageServer.Common
         /// Creates an instance of <see cref="HttpServer"/> on a specified address.
         /// </summary>
         /// <param name="serverName">Name of the Http server</param>
-        /// <param name="uri">The Uri where the server will listen at</param>
-        public HttpServer(string serverName, Uri uri) : base(uri)
+        public HttpServer(string serverName, int port, string path) : 
+            base(port, path)
         {
             _name = serverName;
         }

@@ -47,31 +47,23 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 {
     internal static class UriHelper
     {
-        public static Uri GetConfiguredUri()
+        private static int SegmentCount
         {
-            ImageStreamingServerSettings settings = ImageStreamingServerSettings.Default;
-            UriBuilder uriBuilder = new UriBuilder();
-            uriBuilder.Scheme = Uri.UriSchemeHttp;
-            String local = Dns.GetHostName();
-            IPHostEntry ipEntry = Dns.GetHostEntry(local);
-            IPAddress[] addr = ipEntry.AddressList;
-            uriBuilder.Host = addr[0].ToString();
-            uriBuilder.Port = settings.Port;
-            uriBuilder.Path = settings.Path;
-            return uriBuilder.Uri;
+            get
+            {
+                String testUrl = String.Format("http://localhost:{0}{1}", ImageStreamingServerSettings.Default.Port, ImageStreamingServerSettings.Default.Path);
+                UriBuilder builder = new UriBuilder(testUrl);
+                return builder.Uri.Segments.Length;
+            }
         }
-
 
         public static string GetServerAE(HttpListenerContext context)
         {
-            Uri listeningUri = GetConfiguredUri();
-            if (context.Request.Url.AbsolutePath.Length > listeningUri.AbsolutePath.Length)
-            {
-                string serverAE = context.Request.Url.AbsolutePath.Substring(listeningUri.AbsolutePath.Length);
-                return serverAE;
-            }
-            else
+            string[] requestSegments = context.Request.Url.Segments;
+            if (requestSegments.Length <= SegmentCount)
                 return String.Empty;
+
+            return requestSegments[SegmentCount];
         }
     }
 
@@ -93,7 +85,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
 	    /// </summary>
 	    public ImageStreamingServer()
 	        : base(SR.ImageStreamingServerDisplayName,
-                UriHelper.GetConfiguredUri())
+                ImageStreamingServerSettings.Default.Port,
+                ImageStreamingServerSettings.Default.Path)
 		{
             HttpRequestReceived += OnHttpRequestReceived;
             	
@@ -107,12 +100,12 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
         
         private static void Validate(HttpListenerContext context)
         {
-            Uri listeningUri = UriHelper.GetConfiguredUri();
             string serverAE = UriHelper.GetServerAE(context);
 
             if (String.IsNullOrEmpty(serverAE))
             {
-                throw new HttpException((int)HttpStatusCode.BadRequest, String.Format("Partition AE Title is required after {0}", listeningUri));
+                throw new HttpException((int)HttpStatusCode.BadRequest, 
+                    String.Format("Partition AE Title is required after {0}", ImageStreamingServerSettings.Default.Path));
             }
 
 
@@ -120,11 +113,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming.Shreds
             if (partition == null)
             {
                 throw new HttpException((int)HttpStatusCode.BadRequest, String.Format("Partition AE {0} is invalid", serverAE));
-            }
-
-            if (!partition.Enabled)
-            {
-                throw new WADOException(HttpStatusCode.Forbidden, String.Format("Partition {0} is disabled", serverAE));
             }
 
             string requestType = context.Request.QueryString["requestType"] ?? "";

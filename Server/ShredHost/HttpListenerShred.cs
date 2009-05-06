@@ -90,9 +90,10 @@ namespace ClearCanvas.Server.ShredHost
     {
         #region Private Members
         private HttpListener _listener;
-        private readonly Uri _uri;
         private string _name;
         private HttpListenerAsyncState _syncState;
+        private int _port;
+        private string _path;
 
         #endregion
 
@@ -101,10 +102,10 @@ namespace ClearCanvas.Server.ShredHost
         /// <summary>
         /// Creates an instance of <see cref="HttpListenerShred"/> to listern at the specified address.
         /// </summary>
-        /// <param name="uri">The URI where the listen will listens at</param>
-        public HttpListenerShred(Uri uri)
+        public HttpListenerShred(int port, string path)
         {
-            _uri = uri;
+            _port = port;
+            _path = path;
         }
 
         #endregion
@@ -116,9 +117,10 @@ namespace ClearCanvas.Server.ShredHost
         /// <summary>
         /// Gets the URI where the shred is listening at for incoming http requests.
         /// </summary>
-        public Uri BaseUri
+        public String BaseUri
         {
-            get { return _uri; }
+            get { return String.Format("{0}://+:{1}{2}", 
+                    Uri.UriSchemeHttp, _port, _path); }
         }
 
 
@@ -140,7 +142,7 @@ namespace ClearCanvas.Server.ShredHost
             Platform.Log(LogLevel.Info, "Started listening at {0}", BaseUri);
 
             _listener = new HttpListener(); ;
-            _listener.Prefixes.Add(BaseUri.AbsoluteUri);
+            _listener.Prefixes.Add(BaseUri);
             _listener.Start();
 
             
