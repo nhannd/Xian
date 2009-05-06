@@ -111,6 +111,9 @@ namespace ClearCanvas.Ris.Client
         private WorklistOwnership _ownership;
         private string _ownerName;
 
+        private static readonly IconSet _closedUserWorklistIconSet = new IconSet("UserFolderClosedSmall.png");
+        private static readonly IconSet _openUserWorklistIconSet = new IconSet("UserFolderOpenSmall.png");
+
 		/// <summary>
 		/// Obtains the name of the worklist class associated with the specified folder class.
 		/// </summary>
@@ -129,11 +132,25 @@ namespace ClearCanvas.Ris.Client
 		protected WorklistFolder(Table<TItem> itemsTable)
 			: base(itemsTable)
 		{
-		}
+        }
 
-		#region IInitializeWorklistFolder Members
+        #region Folder overrides
 
-		void IInitializeWorklistFolder.Initialize(Path path, EntityRef worklistRef, string description, WorklistOwnership ownership, string ownerName)
+        protected override IconSet ClosedIconSet
+        {
+            get { return _ownership == WorklistOwnership.Admin ? base.ClosedIconSet : _closedUserWorklistIconSet; } 
+        }
+
+        protected override IconSet OpenIconSet
+        {
+            get { return _ownership == WorklistOwnership.Admin ? base.OpenIconSet : _openUserWorklistIconSet; }
+        }
+
+        #endregion
+
+        #region IInitializeWorklistFolder Members
+
+        void IInitializeWorklistFolder.Initialize(Path path, EntityRef worklistRef, string description, WorklistOwnership ownership, string ownerName)
 		{
 			_worklistRef = worklistRef;
             _ownership = ownership;

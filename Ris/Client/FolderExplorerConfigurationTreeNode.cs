@@ -754,7 +754,7 @@ namespace ClearCanvas.Ris.Client
 
 		public override IconSet IconSet
 		{
-			get { return new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenSmall.png", "FolderOpenSmall.png"); ; }
+            get { return _folder.IconSet; }
 		}
 
 		public override IResourceResolver ResourceResolver
