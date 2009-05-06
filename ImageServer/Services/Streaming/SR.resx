@@ -148,7 +148,7 @@
     <value>Server Partition {0} does not exist.</value>
   </data>
   <data name="FaultStudyAccessRestricted" xml:space="preserve">
-    <value>Access to study {0} is temporary restricted because its current state is {1}. Please try again later.</value>
+    <value>Access to study {0} is temporarily restricted because its current state is {1}. Please try again later.</value>
   </data>
   <data name="FaultStudyIsNearline" xml:space="preserve">
     <value>Study {0} is nearline. It will be restored momentarily. Please try again later.</value>

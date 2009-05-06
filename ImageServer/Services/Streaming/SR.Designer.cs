@@ -151,7 +151,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Access to study {0} is temporary restricted because its current state is {1}. Please try again later..
+        ///   Looks up a localized string similar to Access to study {0} is temporarily restricted because its current state is {1}. Please try again later..
         /// </summary>
         internal static string FaultStudyAccessRestricted {
             get {
