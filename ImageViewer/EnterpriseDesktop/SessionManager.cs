@@ -38,6 +38,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.ImageViewer.Services.Auditing;
+using System.Net;
 
 namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 {
@@ -223,7 +224,7 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 			Platform.GetService<IAuthenticationService>(
 				delegate(IAuthenticationService service)
 				{
-					InitiateSessionRequest request = new InitiateSessionRequest(userName, password);
+					InitiateSessionRequest request = new InitiateSessionRequest(userName, Application.Name, Environment.MachineName, password);
 					request.GetAuthorizations = true;
 					InitiateSessionResponse response = service.InitiateSession(request);
 
