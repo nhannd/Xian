@@ -121,22 +121,22 @@ namespace ClearCanvas.ImageViewer.Common
 			public class Study
 			{
 				[AuthorityToken(Description = "Generic user permission to search the study data in the viewer.")]
-				public const string Search = "Workflow/Viewer/Study/Search";
+				public const string Search = "Viewer/Workflow/Study/Search";
 
 				[AuthorityToken(Description = "Generic user permission to export study data from the viewer.")]
-				public const string Export = "Workflow/Viewer/Study/Export";
+				public const string Export = "Viewer/Workflow/Study/Export";
 
 				[AuthorityToken(Description = "Generic user permission to view study data in the viewer.")]
-				public const string View = "Workflow/Viewer/Study/View";
+				public const string View = "Viewer/Workflow/Study/View";
 
 				[AuthorityToken(Description = "Generic user permission to create a new study in the viewer.")]
-				public const string Create = "Workflow/Viewer/Study/Create";
+				public const string Create = "Viewer/Workflow/Study/Create";
 
 				[AuthorityToken(Description = "Generic user permission to modify study data in the viewer.")]
-				public const string Modify = "Workflow/Viewer/Study/Modify";
+				public const string Modify = "Viewer/Workflow/Study/Modify";
 
 				[AuthorityToken(Description = "Generic user permission to delete a study from the viewer.")]
-				public const string Delete = "Workflow/Viewer/Study/Delete";
+				public const string Delete = "Viewer/Workflow/Study/Delete";
 			}
 		}
 	}

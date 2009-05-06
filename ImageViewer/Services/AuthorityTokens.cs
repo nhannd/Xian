@@ -75,26 +75,26 @@ namespace ClearCanvas.ImageViewer.Services
 			public class System
 			{
 				[AuthorityToken(Description = "Allows administrative configuration of Diskspace Management.")]
-				public const string DiskspaceManagement = "Admin/System/Viewer/Diskspace Management";
+				public const string DiskspaceManagement = "Viewer/Admin/System/Diskspace Management";
 
 				[AuthorityToken(Description = "Allows administrative configuration of the viewer Data Store.")]
-				public const string DataStore = "Admin/System/Viewer/Data Store";
+				public const string DataStore = "Viewer/Admin/System/Data Store";
 
 				[AuthorityToken(Description = "Allows administrative configuration of the viewer DICOM Server.")]
-				public const string DicomServer = "Admin/System/Viewer/DICOM Server";
+				public const string DicomServer = "Viewer/Admin/System/DICOM Server";
 			}
 		}
 
 		public class Management
 		{
 			[AuthorityToken(Description = "Allow management of the viewer services (e.g restarting shred host).")]
-			public const string Services = "Management/Viewer/Services";
+			public const string Services = "Viewer/Management/Services";
 
 			[AuthorityToken(Description = "Allow management of the Data Store (e.g. Reindexing).")]
-			public const string DataStore = "Management/Viewer/Data Store";
+			public const string DataStore = "Viewer/Management/Data Store";
 
 			[AuthorityToken(Description = "Allow management of the viewer DICOM Server.")]
-			public const string DicomServer = "Management/Viewer/DICOM Server";
+			public const string DicomServer = "Viewer/Management/DICOM Server";
 		}
 	}
 }
