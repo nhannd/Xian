@@ -198,7 +198,8 @@ namespace ClearCanvas.ImageServer.Core
 						path = Path.Combine(path, seriesInstanceUid);
 						processor.AddCommand(new CreateDirectoryCommand(path));
 
-						path += ".dcm";
+                        path = Path.Combine(path, sopInstanceUid);
+                        path += ".dcm";
 
 						processor.AddCommand(new SaveDicomFileCommand(path, file, true, true));
 
