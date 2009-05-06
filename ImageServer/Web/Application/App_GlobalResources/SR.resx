@@ -423,4 +423,10 @@
   <data name="MultipleArchiveQueueResetConfirm" xml:space="preserve">
     <value>Are you sure you want to reset these items to Pending?</value>
   </data>
+  <data name="MultipleAlertDelete" xml:space="preserve">
+    <value>Are you sure you want to delete these Alert items?</value>
+  </data>
+  <data name="SingleAlertDelete" xml:space="preserve">
+    <value>Are you sure you want to delete this Alert item?</value>
+  </data>
 </root>

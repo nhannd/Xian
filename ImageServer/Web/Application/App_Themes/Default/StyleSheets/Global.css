@@ -6,8 +6,8 @@ Global.css - Defines the global styles for the entire web application relating
 /* Global styles for the body */
 .GlobalBody
 {
-/*	background-color: #e3eaee; */
-    background: #8fc3e4 url(../images/MainContent/Background.png) repeat-x;
+	background-color: #e3eaee;
+/*    background: #8fc3e4 url(../images/MainContent/Background.png) repeat-x; */
 	font-family: Sans-Serif;
 	font-size: 14px;
 	margin: 0px;

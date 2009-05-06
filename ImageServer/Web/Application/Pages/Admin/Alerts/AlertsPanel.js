@@ -84,6 +84,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
             var alertlist = $find(this._AlertListClientID);
                       
             this._enableDeleteButton(false);
+            this._enableDeleteAllButton(false);
                                
             if (alertlist!=null )
             {
@@ -92,6 +93,10 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
                 if(rows != null && rows.length > 0) {
                     this._enableDeleteButton(true);
                 }
+                
+                if(alertlist.getNumberOfRows() > 0) {
+                    this._enableDeleteAllButton(true);
+                }
             }
         },
         
@@ -99,6 +104,12 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
         {
             var deleteButton = $find(this._DeleteButtonClientID);
             if(deleteButton != null) deleteButton.set_enable(en);
+        },
+        
+        _enableDeleteAllButton : function(en)
+        {
+            var deleteAllButton = $find(this._DeleteAllButtonClientID);
+            if(deleteAllButton != null) deleteAllButton.set_enable(en);
         },
         
         /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,6 +133,15 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
         set_DeleteButtonClientID : function(value) {
             this._DeleteButtonClientID = value;
             this.raisePropertyChanged('DeleteButtonClientID');
+        },
+        
+        get_DeleteAllButtonClientID : function() {
+            return this._DeleteAllButtonClientID;
+        },
+
+        set_DeleteAllButtonClientID : function(value) {
+            this._DeleteAllButtonClientID = value;
+            this.raisePropertyChanged('DeleteAllButtonClientID');
         },
                 
         get_AlertListClientID : function() {

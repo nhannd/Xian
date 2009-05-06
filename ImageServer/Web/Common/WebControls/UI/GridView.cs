@@ -352,8 +352,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
                     {
                         row.Attributes["selected"] = "false";
                     }
-
-                }
+                } 
             }
             base.Render(writer);
         }
@@ -402,6 +401,12 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.UI
         protected override void OnRowCreated(GridViewRowEventArgs e)
         {
             base.OnRowCreated(e);
+
+            if(e.Row.RowType == DataControlRowType.EmptyDataRow)
+            {
+                e.Row.Attributes["isEmptyDataRow"] = "true";
+                return;
+            } else if(e.Row.RowType == DataControlRowType.Header) return;
 
             // the following lines will disable text select on the row.
             // We need to disable it because IE and firefox interpret Ctrl-Click as text selection and will display

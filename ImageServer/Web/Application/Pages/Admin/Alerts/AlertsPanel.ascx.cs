@@ -30,12 +30,16 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
+using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
@@ -52,7 +56,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         #region Private Members
 
         // used for database interaction
-        private AlertController _theController;
+        private AlertController _theController = new AlertController();
 
         #endregion Private Members
 
@@ -63,6 +67,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         public string DeleteButtonClientID
         {
             get { return DeleteAlertButton.ClientID; }
+        }
+
+        [ExtenderControlProperty]
+        [ClientPropertyName("DeleteAllButtonClientID")]
+        public string DeleteAllButtonClientID
+        {
+            get { return DeleteAllAlertsButton.ClientID; }
         }
 
         [ExtenderControlProperty]
@@ -80,6 +91,42 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
         }
 
         #endregion Public Properties
+
+        #region Private Properties
+
+        void DeleteAllConfirmDialog_Confirmed(object data)
+        {
+            AlertsGridPanel.RefreshCurrentPage();
+            
+            AlertController controller = new AlertController();
+                    
+                AlertItemCollection items = AlertsGridPanel.AlertItems;
+
+                bool successful = false;
+
+                for (int i = 0; i < items.Count; i++)
+                {
+                    successful = controller.DeleteAlert(items[i].TheAlertItem);
+                    if (!successful) break;
+                }
+             
+                if (successful)
+                {
+                    Platform.Log(LogLevel.Info, "All Alert items deleted by user.");
+                }
+                else
+                {
+                    Platform.Log(LogLevel.Error,
+                                     "PreResetConfirmDialog_Confirmed: Unable to delete all Alert items.");
+
+                        MessageBox.Message = App_GlobalResources.ErrorMessages.AlertDeleteFailed;
+                        MessageBox.MessageType =
+                            MessageBox.MessageTypeEnum.ERROR;
+                        MessageBox.Show();
+                }
+        }
+
+        #endregion
 
         #region Protected Methods
 
@@ -129,6 +176,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
             DeleteAllAlertsButton.Roles =
                 AuthorityTokens.Admin.Alert.Delete;
+            DeleteAlertButton.Roles =
+                AuthorityTokens.Admin.Alert.Delete;
 
             SetupEventHandlers();
         }
@@ -147,6 +196,24 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                                 if (!String.IsNullOrEmpty(InsertDateFilter.Text))
                                     source.InsertTime = InsertDateFilter.Text;
                             };
+
+            DeleteConfirmationBox.Confirmed += delegate(object data)
+                            {
+                                if (data == null) return;
+
+                                ArrayList keys = (ArrayList) data;
+
+                                for (int i = 0; i < keys.Count; i++ )
+                                {
+                                    _theController.DeleteAlertItem(keys[i] as ServerEntityKey);
+                                }
+                               
+                                AlertsGridPanel.RefreshCurrentPage();                               
+                                SearchUpdatePanel.Update(); // force refresh
+
+                            };
+
+            DeleteAllConfirmationBox.Confirmed += DeleteAllConfirmDialog_Confirmed;
         }
 
         protected void Clear()
@@ -159,16 +226,49 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
 
         protected void DeleteAlertButton_Click(object sender, ImageClickEventArgs e)
         {
-            Alert alert = AlertsGridPanel.SelectedAlert.TheAlertItem;
-            if (alert != null)
+            AlertsGridPanel.RefreshCurrentPage();
+
+            IList<Model.Alert> items = AlertsGridPanel.SelectedItems;
+
+            ArrayList keyArray = new ArrayList();
+
+
+            if (items != null && items.Count > 0)
             {
-                ((Default)Page).DeleteAlert(alert.Key);
+                if (items.Count > 1) DeleteConfirmationBox.Message = string.Format(App_GlobalResources.SR.MultipleAlertDelete);
+                else DeleteConfirmationBox.Message = string.Format(App_GlobalResources.SR.SingleAlertDelete);
+
+                DeleteConfirmationBox.Message += "<table class='DeleteAlertConfirmTable' border='0' cellspacing='0' cellpadding='0'>";
+                DeleteConfirmationBox.Message +=
+                    "<tr class='GlobalGridViewHeader'><td align='left'>Component</td><td>Insert Date</td><td>Level</td><td>Content</td></tr>";
+
+                foreach (Model.Alert item in items)
+                {
+                    System.Text.StringBuilder sb = new System.Text.StringBuilder();
+                    System.IO.StringWriter sw = new System.IO.StringWriter(sb);
+                    System.Xml.XmlTextWriter xtw = new System.Xml.XmlTextWriter(sw);
+
+                    item.Content.Save(xtw);
+
+                    DeleteConfirmationBox.Message += String.Format("<tr class='DeleteAlertConfirmTableRow' align='left'><td>{0}</td><td>{1}</td><td>{2}</td><td width='300'>{3}</td></tr>",
+                                   item.Component, item.InsertTime, item.AlertLevelEnum, sb);
+                    keyArray.Add(item.Key);
+                }
+                DeleteConfirmationBox.Message += "</table>";
+
+                DeleteConfirmationBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
+                DeleteConfirmationBox.Data = keyArray;
+                DeleteConfirmationBox.MessageStyle = "color: #ff0000; font-weight: bold;";
+                DeleteConfirmationBox.Show();
             }
         }
         
         protected void DeleteAllAlertsButton_Click(object sender, ImageClickEventArgs e)
         {
-            ((Default)Page).DeleteAllAlerts();
+            DeleteAllConfirmationBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
+            DeleteAllConfirmationBox.Message = App_GlobalResources.SR.AlertDeleteAllConfirm;
+            DeleteAllConfirmationBox.MessageStyle = "color: #ff0000; font-weight: bold;";
+            DeleteAllConfirmationBox.Show();    
         }
 
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)

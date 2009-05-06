@@ -91,7 +91,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             if (rows!=undefined && rows!=null)
             {
                 var selectedRows = new Array();                
-                for(var i=0; i< rows.length; i++)
+                for(var i=0; i<rows.length; i++)
                 {
                     if (rows[i].getAttribute('isdatarow')=='true' && rows[i].getAttribute('selected')=='true')
                         selectedRows[selectedRows.length]=rows[i];
@@ -102,6 +102,17 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Common.WebControls.UI.
             
             return null;
            
+        },
+        
+        getNumberOfRows : function() {
+            var rows = this.get_element().rows;
+            
+            if(rows != undefined && rows != null) 
+            {
+                if(rows[0].getAttribute('isEmptyDataRow')=='true') return 0;
+                return rows.length;
+            }
+            else return 0;
         },
         
         selectRow : function (rowIndex)

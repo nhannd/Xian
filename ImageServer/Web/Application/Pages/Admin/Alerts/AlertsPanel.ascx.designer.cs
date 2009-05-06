@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts {
     public partial class AlertsPanel {
         
         /// <summary>
-        /// UpdatePanel1 control.
+        /// SearchUpdatePanel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
@@ -209,12 +209,30 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts {
         protected global::ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts.AlertsGridPanel AlertsGridPanel;
         
         /// <summary>
-        /// GridPagerBottom control.
+        /// DeleteConfirmationBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::ClearCanvas.ImageServer.Web.Application.Controls.GridPager GridPagerBottom;
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox DeleteConfirmationBox;
+        
+        /// <summary>
+        /// DeleteAllConfirmationBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox DeleteAllConfirmationBox;
+        
+        /// <summary>
+        /// MessageBox control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::ClearCanvas.ImageServer.Web.Application.Controls.MessageBox MessageBox;
     }
 }

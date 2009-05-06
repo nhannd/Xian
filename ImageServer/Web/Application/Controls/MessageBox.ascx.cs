@@ -67,6 +67,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
 
         #region Private Members
 
+        private string _messageStyle;
+
     	#endregion Private Members
 
         #region Public Properties
@@ -129,6 +131,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
                 else
                     return (string)ViewState["Message"];
             }
+        }
+
+        public string MessageStyle
+        {
+            set { _messageStyle = value; }
+            get { return _messageStyle; }
         }
 
         /// <summary>
@@ -223,6 +231,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Controls
             }
 
             MessageLabel.Text = Message;
+            MessageLabel.Attributes["style"] = MessageStyle;
             ModalDialog.Title = Title;
 
             base.OnPreRender(e);

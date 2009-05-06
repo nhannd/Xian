@@ -180,6 +180,15 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             }
         }
 
+        public void RefreshCurrentPage()
+        {
+            DataBind();
+        }
+
+        #endregion
+
+        #region protected methods
+
         protected ServerEntityKey SelectedAlertKey
         {
             set
@@ -192,9 +201,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             }
         }
 
-        #endregion
 
-        #region protected methods
 
         protected override void OnInit(EventArgs e)
         {
@@ -273,6 +280,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
                 DataSourceCreated(_dataSource);
 
         }
+
         #endregion
 
     }

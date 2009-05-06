@@ -222,17 +222,16 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                 if (items.Count > 1) MessageBox.Message = string.Format(App_GlobalResources.SR.MultipleArchiveQueueDelete);
                 else MessageBox.Message = string.Format(App_GlobalResources.SR.SingleArchiveQueueDelete);
 
-                MessageBox.Message += "<table>";
+                MessageBox.Message += "<table style=\"border: solid #CCCCCC 2px; margin-top: 5px;\">";
                 foreach (Model.ArchiveQueue item in items)
                 {
-                    String text = "";
-                    String.Format("<tr align='left'><td>Study Instance Uid:{0}&nbsp;&nbsp;</td></tr>", 
+                    MessageBox.Message += String.Format("<tr><td style=\"font-weight: bold; color: #618FAD\">Study Instance Uid:</td><td style=\"font-weight: normal; color: black;\">{0}</td></tr>", 
                                     StudyStorage.Load(item.StudyStorageKey).StudyInstanceUid);
-                    MessageBox.Message += text;
                 }
                 MessageBox.Message += "</table>";
 
                 MessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
+                MessageBox.MessageStyle = "color: #FF0000; font-weight: bold;";
                 MessageBox.Data = items;
                 MessageBox.Show();
             }

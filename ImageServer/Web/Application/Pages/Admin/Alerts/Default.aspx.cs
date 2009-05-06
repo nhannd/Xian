@@ -54,15 +54,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Alerts
             Page.Title = App_GlobalResources.Titles.AlertsPageTitle;
         }
 
-        public void DeleteAlert(ServerEntityKey itemKey)
-        {
-            if (itemKey != null)
-            {
-                DeleteAlertDialog.AlertItemKey = itemKey;
-                DeleteAlertDialog.Show(false);
-            }
-        }
-
         public void DeleteAllAlerts()
         {
             DeleteAllAlertsDialog.Show(true);

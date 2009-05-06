@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -80,6 +81,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             }
 
             return true;
+        }
+
+        public bool DeleteAlertItem(ServerEntityKey key)
+        {
+            return _adaptor.Delete(key);   
         }
 
         public bool DeleteAllAlerts()

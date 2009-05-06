@@ -29,3 +29,39 @@
 	border-bottom: #e0e0e1 0px solid;
 	padding: 5px;
 }
+
+.DeleteAlertConfirmTable
+{
+    border: solid 1px #999999;
+    margin-top: 5px;
+    color: Black;
+    font-size: 12px;
+}
+
+.DeleteAlertConfirmTableHeader
+{
+    font-weight: bold;
+    color: #618FAD;
+
+}
+
+.DeleteAlertConfirmTableHeader td
+{
+    border-bottom: solid 1px #999999;
+}
+
+.DeleteAlertConfirmTableRow
+{
+    font-weight: normal;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.DeleteAlertConfirmTableRow td
+{
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 8px;
+    padding-right: 8px;
+    vertical-align: top;
+}
