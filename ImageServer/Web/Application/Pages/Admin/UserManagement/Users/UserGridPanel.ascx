@@ -10,10 +10,10 @@
             <ccUI:GridView ID="UserGridView" runat="server" OnRowDataBound="UserGridView_RowDataBound"
                 OnSelectedIndexChanged="UserGridView_SelectedIndexChanged" SelectionMode="Single">
                 <Columns>
-                    <asp:BoundField DataField="UserName" HeaderText="Username" HeaderStyle-HorizontalAlign="Left" >
+                    <asp:BoundField DataField="UserName" HeaderText="User ID" HeaderStyle-HorizontalAlign="Left" >
                         <itemstyle width="200px" />
                     </asp:BoundField>
-                    <asp:BoundField DataField="DisplayName" HeaderText="Display Name" HeaderStyle-HorizontalAlign="Left" />
+                    <asp:BoundField DataField="DisplayName" HeaderText="Name" HeaderStyle-HorizontalAlign="Left" />
                     <asp:TemplateField HeaderText="User Groups" HeaderStyle-HorizontalAlign="Center" ItemStyle-HorizontalAlign="Center">
                         <ItemTemplate>
                             <asp:TextBox ID="UserGroupTextBox" runat="server" TextMode="multiline" rows="2" columns="35" CssClass="UserGroupTextArea" ReadOnly="true"></asp:TextBox>

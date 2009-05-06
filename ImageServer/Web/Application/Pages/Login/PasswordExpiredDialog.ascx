@@ -13,7 +13,7 @@
         <asp:Panel runat="server" CssClass="PasswordExpiredMessage"><asp:Label runat="server" ID="Label1" Text="Your password has expired, or this is your first login to the ImageServer. Please enter a new password below." /></asp:Panel>
     
         <table style="margin-top: 10px; margin-bottom: 10px;">
-        <tr><td class="ChangePasswordLabel">Username:</td><td><asp:TextBox runat="server" Width="150px" ID="Username"/></td></tr>
+        <tr><td class="ChangePasswordLabel">User ID:</td><td><asp:TextBox runat="server" Width="150px" ID="Username"/></td></tr>
         <tr><td class="ChangePasswordLabel">New Password:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="NewPassword"/></td></tr>
         <tr><td class="ChangePasswordLabel">Retype New Password:</td><td><asp:TextBox TextMode="Password" runat="server"  Width="150px" ID="ConfirmNewPassword"/></td></tr>
         </table>

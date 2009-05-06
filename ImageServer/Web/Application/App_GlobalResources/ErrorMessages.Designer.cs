@@ -169,7 +169,7 @@ namespace ClearCanvas.ImageServer.Web.Application.App_GlobalResources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid username or password..
+        ///   Looks up a localized string similar to Invalid User ID or Password..
         /// </summary>
         internal static string LoginInvalidUsernameOrPassword {
             get {

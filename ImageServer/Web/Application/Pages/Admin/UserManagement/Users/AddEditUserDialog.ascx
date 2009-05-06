@@ -23,28 +23,28 @@ function ValidationUsernameParams()
         <asp:Table runat="server" skinID="NoSkin" CellSpacing="3" CellPadding="3">
        
             <asp:TableRow runat="server" ID="UserNameRow">
-                <asp:TableCell runat="server"><asp:Label ID="Label2" runat="server" Text="Username" CssClass="DialogTextBoxLabel" /></asp:TableCell><asp:TableCell><asp:TextBox runat="server" ID="UserLoginId" CssClass="DialogTextBox"></asp:TextBox><asp:HiddenField ID="OriginalUserLoginId" runat="server" /></asp:TableCell>
+                <asp:TableCell runat="server"><asp:Label ID="Label2" runat="server" Text="User ID" CssClass="DialogTextBoxLabel" /></asp:TableCell><asp:TableCell><asp:TextBox runat="server" ID="UserLoginId" CssClass="DialogTextBox"></asp:TextBox><asp:HiddenField ID="OriginalUserLoginId" runat="server" /></asp:TableCell>
                 <asp:TableCell runat="server" HorizontalAlign="left" width="100%">
                     <ccAsp:InvalidInputIndicator ID="UserLoginHelpId" runat="server" SkinID="InvalidInputIndicator" />
                     <ccValidator:ConditionalRequiredFieldValidator ID="UserNameRequiredFieldValidator" runat="server"
                                                         ControlToValidate="UserLoginId" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
-                                                        InvalidInputIndicatorID="UserLoginHelpId" Text="Username is required" Display="None"
+                                                        InvalidInputIndicatorID="UserLoginHelpId" Text="User ID is required" Display="None"
                                                         RequiredWhenChecked="False"/>
                     <ccValidator:DuplicateUsernameValidator ID="DuplicateUserNameValidator" runat="server"
                                                         ControlToValidate="UserLoginId" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
-                                                        InvalidInputIndicatorID="UserLoginHelpId" Text="Username already exists." Display="None"
+                                                        InvalidInputIndicatorID="UserLoginHelpId" Text="User ID already exists." Display="None"
                                                         ServicePath="/Services/ValidationServices.asmx" ServiceOperation="ValidateUsername"
                                                         ParamsFunction="ValidationUsernameParams"/>                                                        
                 </asp:TableCell>
             </asp:TableRow>
                    
             <asp:TableRow>
-                <asp:TableCell CssClass="DialogTextBoxLabel" Wrap="false"><asp:Label ID="Label1" runat="server" Text="Display Name" CssClass="DialogTextBoxLabel" /></asp:TableCell><asp:TableCell><asp:TextBox runat="server" ID="DisplayName" CssClass="DialogTextBox"></asp:TextBox></asp:TableCell>
+                <asp:TableCell CssClass="DialogTextBoxLabel" Wrap="false"><asp:Label ID="Label1" runat="server" Text="Name" CssClass="DialogTextBoxLabel" /></asp:TableCell><asp:TableCell><asp:TextBox runat="server" ID="DisplayName" CssClass="DialogTextBox"></asp:TextBox></asp:TableCell>
                 <asp:TableCell HorizontalAlign="left" width="100%">
                     <ccAsp:InvalidInputIndicator ID="UserDisplayNameHelp" runat="server" SkinID="InvalidInputIndicator" />
                     <ccValidator:ConditionalRequiredFieldValidator ID="ConditionalRequiredFieldValidator1" runat="server"
                                                         ControlToValidate="DisplayName" InvalidInputColor="#FAFFB5" ValidationGroup="vg1"
-                                                        InvalidInputIndicatorID="UserDisplayNameHelp" Text="User display name is required" Display="None"
+                                                        InvalidInputIndicatorID="UserDisplayNameHelp" Text="User name is required" Display="None"
                                                         RequiredWhenChecked="False"/>
                 </asp:TableCell>
             </asp:TableRow>

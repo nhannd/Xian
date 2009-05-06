@@ -35,7 +35,7 @@
         </asp:Panel>
         <table>      
             <tr>
-            <td align="right">Username:</td>
+            <td align="right">User ID:</td>
             <td align="right"><asp:TextBox runat="server" ID="UserName" Width="100" CssClass="LoginTextInput"></asp:TextBox></td>
             </tr>
             <tr>

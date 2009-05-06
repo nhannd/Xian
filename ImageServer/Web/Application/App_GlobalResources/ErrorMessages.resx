@@ -154,7 +154,7 @@
     <value>Validation Error. Please check all tabs for indicated errors and correct before submitting changes.</value>
   </data>
   <data name="LoginInvalidUsernameOrPassword" xml:space="preserve">
-    <value>Invalid username or password.</value>
+    <value>Invalid User ID or Password.</value>
   </data>
   <data name="PasswordsDoNotMatch" xml:space="preserve">
     <value>Provided passwords do not match.&lt;br/&gt;Please retype your passwords and try again.</value>
