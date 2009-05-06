@@ -61,11 +61,28 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         private readonly List<SupportedSop> _list = new List<SupportedSop>();
 		private bool _cancelReceived = false;
 		private Queue<DicomMessage> _responseQueue = new Queue<DicomMessage>(DicomSettings.Default.BufferedQueryResponses);
+		private readonly object _syncLock = new object();
         #endregion
 
-        #region Contructors
+		#region Public Properties
+    	public bool CancelReceived
+    	{
+    		get
+    		{
+				lock (_syncLock)
+					return _cancelReceived;
+    		}
+    		set
+    		{
+				lock (_syncLock)
+					_cancelReceived = value;
+    		}
+    	}
+		#endregion
 
-        /// <summary>
+		#region Contructors
+
+		/// <summary>
         /// Public default constructor.  Implements the Find and Move services for 
         /// Patient Root and Study Root queries.
         /// </summary>
@@ -578,7 +595,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 				server.SendCFindResponse(presentationId, requestMessage.MessageId, response,
 						 DicomStatuses.Pending);
 
-				if (_cancelReceived)
+				if (CancelReceived)
 					throw new DicomException("DICOM C-Cancel Received");
 			}
 		}
@@ -609,14 +626,14 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                         switch (attrib.Tag.TagValue)
                         {
                             case DicomTags.PatientsName:
-                                SetStringCondition(criteria.PatientsName, data[DicomTags.PatientsName].GetString(0, ""));
+								SetStringCondition(criteria.PatientsName, data[DicomTags.PatientsName].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PatientId:
-                                SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, ""));
+								SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, string.Empty));
                                 break;
                             case DicomTags.IssuerOfPatientId:
                                 SetStringCondition(criteria.IssuerOfPatientId,
-                                                   data[DicomTags.IssuerOfPatientId].GetString(0, ""));
+												   data[DicomTags.IssuerOfPatientId].GetString(0, string.Empty));
                                 break;
                             default:
                                 break;
@@ -628,7 +645,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 {
                     find.Find(criteria, delegate(Patient row)
                                             {
-												if (_cancelReceived)
+												if (CancelReceived)
 													throw new DicomException("DICOM C-Cancel Received");
 
                                             	resultCount++;
@@ -652,7 +669,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 }
                 catch (Exception e)
                 {
-					if (_cancelReceived)
+					if (CancelReceived)
 					{
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
@@ -717,38 +734,38 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                                         (string[]) data[DicomTags.StudyInstanceUid].Values);
                                 break;
                             case DicomTags.PatientsName:
-                                SetStringCondition(criteria.PatientsName, data[DicomTags.PatientsName].GetString(0, ""));
+								SetStringCondition(criteria.PatientsName, data[DicomTags.PatientsName].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PatientId:
-                                SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, ""));
+								SetStringCondition(criteria.PatientId, data[DicomTags.PatientId].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PatientsBirthDate:
                                 SetRangeCondition(criteria.PatientsBirthDate,
-                                                  data[DicomTags.PatientsBirthDate].GetString(0, ""));
+												  data[DicomTags.PatientsBirthDate].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PatientsSex:
-                                SetStringCondition(criteria.PatientsSex, data[DicomTags.PatientsSex].GetString(0, ""));
+								SetStringCondition(criteria.PatientsSex, data[DicomTags.PatientsSex].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyDate:
-                                SetRangeCondition(criteria.StudyDate, data[DicomTags.StudyDate].GetString(0, ""));
+								SetRangeCondition(criteria.StudyDate, data[DicomTags.StudyDate].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyTime:
-                                SetRangeCondition(criteria.StudyTime, data[DicomTags.StudyTime].GetString(0, ""));
+								SetRangeCondition(criteria.StudyTime, data[DicomTags.StudyTime].GetString(0, string.Empty));
                                 break;
                             case DicomTags.AccessionNumber:
                                 SetStringCondition(criteria.AccessionNumber,
-                                                   data[DicomTags.AccessionNumber].GetString(0, ""));
+												   data[DicomTags.AccessionNumber].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyId:
-                                SetStringCondition(criteria.StudyId, data[DicomTags.StudyId].GetString(0, ""));
+								SetStringCondition(criteria.StudyId, data[DicomTags.StudyId].GetString(0, string.Empty));
                                 break;
                             case DicomTags.StudyDescription:
                                 SetStringCondition(criteria.StudyDescription,
-                                                   data[DicomTags.StudyDescription].GetString(0, ""));
+												   data[DicomTags.StudyDescription].GetString(0, string.Empty));
                                 break;
                             case DicomTags.ReferringPhysiciansName:
                                 SetStringCondition(criteria.ReferringPhysiciansName,
-                                                   data[DicomTags.ReferringPhysiciansName].GetString(0, ""));
+												   data[DicomTags.ReferringPhysiciansName].GetString(0, string.Empty));
                                 break;
                             case DicomTags.ModalitiesInStudy:
                                 // Specify a subselect on Modality in series
@@ -770,7 +787,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     {
                         find.Find(criteria, delegate(Study row)
                                                 {
-													if (_cancelReceived)
+													if (CancelReceived)
 														throw new DicomException("DICOM C-Cancel Received");
 
 													resultCount++;
@@ -801,7 +818,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 }
                 catch (Exception e)
                 {
-					if (_cancelReceived)
+					if (CancelReceived)
 					{
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
@@ -877,22 +894,22 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                                                         (string[]) data[DicomTags.SeriesInstanceUid].Values);
                                 break;
                             case DicomTags.Modality:
-                                SetStringCondition(criteria.Modality, data[DicomTags.Modality].GetString(0, ""));
+                                SetStringCondition(criteria.Modality, data[DicomTags.Modality].GetString(0, string.Empty));
                                 break;
                             case DicomTags.SeriesNumber:
-                                SetStringCondition(criteria.SeriesNumber, data[DicomTags.SeriesNumber].GetString(0, ""));
+								SetStringCondition(criteria.SeriesNumber, data[DicomTags.SeriesNumber].GetString(0, string.Empty));
                                 break;
                             case DicomTags.SeriesDescription:
                                 SetStringCondition(criteria.SeriesDescription,
-                                                   data[DicomTags.SeriesDescription].GetString(0, ""));
+												   data[DicomTags.SeriesDescription].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PerformedProcedureStepStartDate:
                                 SetRangeCondition(criteria.PerformedProcedureStepStartDate,
-                                                  data[DicomTags.PerformedProcedureStepStartDate].GetString(0, ""));
+												  data[DicomTags.PerformedProcedureStepStartDate].GetString(0, string.Empty));
                                 break;
                             case DicomTags.PerformedProcedureStepStartTime:
                                 SetRangeCondition(criteria.PerformedProcedureStepStartTime,
-                                                  data[DicomTags.PerformedProcedureStepStartTime].GetString(0, ""));
+												  data[DicomTags.PerformedProcedureStepStartTime].GetString(0, string.Empty));
                                 break;
                             case DicomTags.RequestAttributesSequence: // todo
                                 break;
@@ -909,7 +926,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     {
                         selectSeries.Find(criteria, delegate(Series row)
                                                         {
-															if (_cancelReceived)
+															if (CancelReceived)
 																throw new DicomException("DICOM C-Cancel Received");
 
 															resultCount++;
@@ -932,7 +949,7 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                 }
                 catch (Exception e)
                 {
-					if (_cancelReceived)
+					if (CancelReceived)
 					{
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
@@ -1044,9 +1061,16 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             	return;
             }
 
+			// Will always return a value, although it may be an empty StudyXml file
             StudyXml studyXml = LoadStudyXml(location);
 
             SeriesXml seriesXml = studyXml[seriesInstanceUid];
+			if (seriesXml == null)
+			{
+				server.SendCFindResponse(presentationID, message.MessageId, new DicomMessage(), DicomStatuses.QueryRetrieveUnableToProcess);
+				AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.SeriousFailureActionTerminated);
+				return;
+			}
 
             foreach (DicomAttribute attrib in message.DataSet)
             {
@@ -1064,14 +1088,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
             {
                 if (CompareInstanceMatch(message, matchingTagList, theInstanceStream))
                 {
-					if (_cancelReceived)
+					if (CancelReceived)
 					{
 						DicomMessage errorResponse = new DicomMessage();
 						server.SendCFindResponse(presentationID, message.MessageId, errorResponse,
 												 DicomStatuses.Cancel);
 
 						AuditLog(server.AssociationParams, EventIdentificationTypeEventOutcomeIndicator.Success);
-
 						return;
 					}
 					else
@@ -1126,10 +1149,11 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 			if (message.CommandField == DicomCommandField.CCancelRequest)
 			{
 				Platform.Log(LogLevel.Info,"Received C-FIND-CANCEL-RQ message.");
-				_cancelReceived = true;
+				CancelReceived = true;
 				return true;
 			}
-        	_cancelReceived = false;
+
+			CancelReceived = false;
 
             if (message.AffectedSopClassUid.Equals(SopClass.StudyRootQueryRetrieveInformationModelFindUid))
             {
