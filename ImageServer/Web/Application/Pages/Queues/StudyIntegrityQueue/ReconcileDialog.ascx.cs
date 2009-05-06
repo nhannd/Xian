@@ -39,7 +39,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.Utilities;
-
+using ClearCanvas.ImageServer.Core.Data;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQueue
 {

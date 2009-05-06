@@ -39,7 +39,8 @@
                                         <tr><td class="DialogLabelBackground"><asp:Label ID="Label324" runat="server" CssClass="DialogTextBoxLabel">Patient Sex</asp:Label></td>
                                             <td>
                                                 <table cellpadding="0" cellspacing="0">
-                                                    <tr><td><asp:Label ID="ExistingPatientSex" runat="server" CssClass="StudyField" Text='<%# ReconcileDetails.ExistingStudy.Patient.Sex %>'></asp:Label></td>
+                                                    <tr>
+														<td><asp:Label ID="ExistingPatientSex" runat="server" CssClass="StudyField" Text='<%# ReconcileDetails.ExistingStudy.Patient.Sex %>'></asp:Label></td>
                                                         <td><ccAsp:InvalidInputIndicator ID="InvalidInputIndicator1" runat="server" SkinID="InvalidInputIndicator" /></td>
                                                     </tr>
                                                 </table>
@@ -91,6 +92,7 @@
                                         <tr>
                                             <td class="DialogLabelBackground"><asp:Label ID="Label1" runat="server" CssClass="DialogTextBoxLabel">Patient ID</asp:Label></td>
                                             <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientIDLabel" CssClass="StudyField" Text='<%# ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId %>' /></td>
+                                        </tr>
                                         <tr>
                                             <td class="DialogLabelBackground"><asp:Label ID="Label2" runat="server" CssClass="DialogTextBoxLabel">Patient Birthdate</asp:Label></td>
                                             <td><ccUI:PreformattedLabel runat="server" ID="ConflictingPatientBirthDate" CssClass="StudyField" Text='<%# String.IsNullOrEmpty(ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate)? "Not Specified":ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate %>' /></td>
