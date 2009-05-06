@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public override int MinOutputValue
 		{
 			get { return _linearLut.MinOutputValue; }
-			protected set { _linearLut.MinOutputValue = value; }
+			protected set { throw new InvalidOperationException(SR.ExceptionMinimumOutputValueIsNotSettable); } 
 		}
 
 		/// <summary>
@@ -195,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public override int MaxOutputValue
 		{
 			get { return _linearLut.MaxOutputValue; }
-			protected set { _linearLut.MaxOutputValue = value; }
+			protected set { throw new InvalidOperationException(SR.ExceptionMaximumOutputValueIsNotSettable); }
 		}
 
 		#region IBasicVoiLutLinear Members
