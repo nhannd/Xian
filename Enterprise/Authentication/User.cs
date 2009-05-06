@@ -30,14 +30,9 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
-using Iesi.Collections;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Enterprise.Core;
 using Iesi.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -49,10 +44,8 @@ namespace ClearCanvas.Enterprise.Authentication {
     /// <summary>
     /// User entity
     /// </summary>
-	public partial class User : Entity
+	public partial class User
 	{
-		private AuthenticationSettings _settings;
-
         #region Public methods
 
         /// <summary>
@@ -74,38 +67,38 @@ namespace ClearCanvas.Enterprise.Authentication {
                 Platform.Time, // creation time
                 null, // last login time
                 authorityGroups,
-                null  // current session
+                new HashedSet<UserSession>()  // empty session collection
                 );
         }
 
         /// <summary>
-        /// Creates a new user, assigning the default temporary password.
-        /// </summary>
+		/// Creates a new user with the specified temporary password.
+		/// </summary>
         /// <param name="userInfo"></param>
-        /// <returns></returns>
-        public static User CreateNewUser(UserInfo userInfo)
+		/// <param name="temporaryPassword"></param>
+		/// <returns></returns>
+		public static User CreateNewUser(UserInfo userInfo, string temporaryPassword)
         {
-            return CreateNewUser(userInfo, Password.CreateTemporaryPassword(), new HashedSet<AuthorityGroup>());
+			return CreateNewUser(userInfo, Authentication.Password.CreateTemporaryPassword(temporaryPassword), new HashedSet<AuthorityGroup>());
         }
 
         /// <summary>
-        /// Changes the user's password, setting a new expiry date according to the
-        /// value defined in <see cref="AuthenticationSettings.PasswordExpiryDays"/>.
+        /// Changes the user's password, setting a new expiry date.
         /// </summary>
         /// <param name="newPassword"></param>
-        public virtual void ChangePassword(string newPassword)
+        /// <param name="expiryTime"></param>
+        public virtual void ChangePassword(string newPassword, DateTime expiryTime)
         {
-            DateTime? expiryTime = Platform.Time.AddDays(this.Settings.PasswordExpiryDays);
             _password = Authentication.Password.CreatePassword(newPassword, expiryTime);
         }
 
         /// <summary>
-        /// Resets the user's password to the default temporary password,
+        /// Resets the user's password to the specified temporary password,
         /// set to expire immediately.
         /// </summary>
-        public virtual void ResetPassword()
+        public virtual void ResetPassword(string temporaryPassword)
         {
-            _password = Authentication.Password.CreateTemporaryPassword();
+            _password = Authentication.Password.CreateTemporaryPassword(temporaryPassword);
         }
 
         /// <summary>
@@ -125,20 +118,13 @@ namespace ClearCanvas.Enterprise.Authentication {
 		/// <param name="application"></param>
 		/// <param name="hostName"></param>
 		/// <param name="password"></param>
+		/// <param name="timeout"></param>
 		/// <returns></returns>
-		public virtual UserSession InitiateSession(string application, string hostName, string password)
+		public virtual UserSession InitiateSession(string application, string hostName, string password, TimeSpan timeout)
 		{
 			Platform.CheckForNullReference(application, "application");
 			Platform.CheckForNullReference(hostName, "hostName");
 			Platform.CheckForNullReference(password, "password");
-
-			// check host name against white-list
-			if (!CheckWhiteList(this.Settings.HostNameWhiteList, hostName))
-				throw new Exception("Access denied");	//TODO throw correct exception type
-
-			// check application name against white-list
-			if(!CheckWhiteList(this.Settings.ApplicationWhiteList, application))
-				throw new Exception("Access denied");	//TODO throw correct exception type
 
 			DateTime startTime = Platform.Time;
 
@@ -161,7 +147,7 @@ namespace ClearCanvas.Enterprise.Authentication {
 				application,
 				Guid.NewGuid().ToString("N"),
 				startTime,
-				startTime.AddMinutes(this.Settings.UserSessionTimeoutMinutes));
+				startTime + timeout);
 
 			_sessions.Add(session);
 
@@ -195,28 +181,6 @@ namespace ClearCanvas.Enterprise.Authentication {
 		}
 
         #endregion
-
-    	private AuthenticationSettings Settings
-    	{
-    		get
-    		{
-    			if(_settings == null)
-					_settings = new AuthenticationSettings();
-    			return _settings;
-    		}
-    	}
-
-		private bool CheckWhiteList(string commaDelimitedList, string value)
-		{
-			if (commaDelimitedList == null)
-				return true;
-
-			List<string> items = CollectionUtils.Map<string, string>(
-				commaDelimitedList.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
-				delegate(string s) { return s.Trim(); });
-
-			return items.Count == 0 || items.Contains(value.Trim());
-		}
 
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom

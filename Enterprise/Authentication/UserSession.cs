@@ -30,9 +30,7 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.IdentityModel.Tokens;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 
@@ -42,10 +40,9 @@ namespace ClearCanvas.Enterprise.Authentication {
     /// <summary>
     /// UserSession entity
     /// </summary>
-	public partial class UserSession : ClearCanvas.Enterprise.Core.Entity
+	public partial class UserSession
 	{
     	private bool _terminated;
-		private AuthenticationSettings _settings;
 
 		/// <summary>
 		/// Gets a session token that references this user session.
@@ -59,21 +56,44 @@ namespace ClearCanvas.Enterprise.Authentication {
 		}
 
 		/// <summary>
-		/// Checks that this session is valid for the specified user, and
-		/// renews the session if valid.
+		/// Checks that this session is valid for the specified user and that the user account is still active,
+		/// optionally checking whether the session has expired.
 		/// </summary>
 		/// <param name="userName"></param>
-		public virtual void ValidateAndRenew(string userName)
+		/// <param name="checkExpiry"></param>
+		public virtual void Validate(string userName, bool checkExpiry)
+		{
+			CheckNotTerminated();
+
+			DateTime currentTime = Platform.Time;
+			if (_user.UserName != userName || !_user.IsActive(currentTime))
+			{
+				// session does not match user name
+				// the error message is deliberately vague
+				throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
+			}
+
+			// check expiry time if specified
+			if (checkExpiry && IsExpiredHelper(currentTime))
+			{
+				// session has expired
+				// the error message is deliberately vague
+				throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
+			}
+		}
+
+		/// <summary>
+		/// Renews the session, setting a new expiry based on the specified timeout.
+		/// </summary>
+		/// <param name="timeout"></param>
+		public virtual void Renew(TimeSpan timeout)
 		{
 			CheckNotTerminated();
 
 			DateTime currentTime = Platform.Time;
 
-			// validate
-			Validate(userName, currentTime);
-
 			// renew the session expiration time
-			_expiryTime = currentTime.AddMinutes(this.Settings.UserSessionTimeoutMinutes);
+			_expiryTime = currentTime + timeout;
 		}
 
 		/// <summary>
@@ -86,6 +106,14 @@ namespace ClearCanvas.Enterprise.Authentication {
 				CheckNotTerminated();
 				return IsExpiredHelper(Platform.Time);
 			}
+    	}
+
+		/// <summary>
+		/// Gets a value indicating whether this session has been terminated.
+		/// </summary>
+    	public virtual bool IsTerminated
+    	{
+			get { return _terminated; }
     	}
 
 		/// <summary>
@@ -107,24 +135,6 @@ namespace ClearCanvas.Enterprise.Authentication {
 
 		#region Helpers
 
-		private void Validate(string userName, DateTime currentTime)
-		{
-			if (_user.UserName != userName)
-			{
-				// session does not match user name, application or host
-				// the error message is deliberately vague
-				throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
-			}
-
-			// if session timeouts are enabled, check expiry time
-			if (this.Settings.UserSessionTimeoutEnabled && IsExpiredHelper(currentTime))
-			{
-				// session has expired
-				// the error message is deliberately vague
-				throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
-			}
-		}
-
 		private void CheckNotTerminated()
 		{
 			if(_terminated)
@@ -134,16 +144,6 @@ namespace ClearCanvas.Enterprise.Authentication {
 		private bool IsExpiredHelper(DateTime currentTime)
 		{
 			return _expiryTime < currentTime;
-		}
-
-		private AuthenticationSettings Settings
-		{
-			get
-			{
-				if (_settings == null)
-					_settings = new AuthenticationSettings();
-				return _settings;
-			}
 		}
 
 		/// <summary>

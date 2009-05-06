@@ -61,23 +61,16 @@ namespace ClearCanvas.Enterprise.Authentication {
         public static Password CreatePassword(string clearTextPassword, DateTime? expiryTime)
         {
             Platform.CheckForNullReference(clearTextPassword, "clearTextPassword");
-
-            AuthenticationSettings settings = new AuthenticationSettings();
-            if(!Regex.Match(clearTextPassword, settings.ValidPasswordRegex).Success)
-                throw new EntityValidationException(settings.ValidPasswordMessage);
-
             return CreatePasswordHelper(clearTextPassword, expiryTime);
         }
 
         /// <summary>
-        /// Creates a new <see cref="Password"/> object that represents the default temporary
-        /// password defined in <see cref="AuthenticationSettings"/> and expires immediately.
+        /// Creates a new <see cref="Password"/> object that expires immediately.
         /// </summary>
         /// <returns></returns>
-        public static Password CreateTemporaryPassword()
+		public static Password CreateTemporaryPassword(string clearTextPassword)
         {
-            AuthenticationSettings settings = new AuthenticationSettings();
-            return CreatePasswordHelper(settings.DefaultTemporaryPassword, Platform.Time);
+			return CreatePassword(clearTextPassword, Platform.Time);
         }
 
         /// <summary>
@@ -88,7 +81,8 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// <returns></returns>
         public bool Verify(string clearTextPassword)
         {
-            Platform.CheckForNullReference(clearTextPassword, "clearTextPassword");
+			// treat null as emtpy
+        	clearTextPassword = StringUtilities.EmptyIfNull(clearTextPassword);
 
             string h = CalculateHash(_salt, clearTextPassword);
             return _saltedHash.Equals(h);

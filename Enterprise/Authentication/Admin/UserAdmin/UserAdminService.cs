@@ -100,10 +100,13 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
             Platform.CheckMemberIsSet(request.UserDetail, "UserDetail");
 
             UserDetail userDetail = request.UserDetail;
+			AuthenticationSettings settings = new AuthenticationSettings();
 
 			// create new user
-            User user = User.CreateNewUser(
-                new UserInfo(userDetail.UserName, userDetail.DisplayName, userDetail.ValidFrom, userDetail.ValidUntil));
+    		UserInfo userInfo =
+    			new UserInfo(userDetail.UserName, userDetail.DisplayName, userDetail.ValidFrom, userDetail.ValidUntil);
+
+			User user = User.CreateNewUser(userInfo, settings.DefaultTemporaryPassword);
 
             // copy other info such as authority groups from request
             UserAssembler assembler = new UserAssembler();
@@ -128,7 +131,11 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
 
             // reset password if requested
             if (request.UserDetail.ResetPassword)
-                user.ResetPassword();
+            {
+				AuthenticationSettings settings = new AuthenticationSettings();
+				user.ResetPassword(settings.DefaultTemporaryPassword);
+
+            }
 
 			PersistenceContext.SynchState();
 
@@ -165,8 +172,10 @@ namespace ClearCanvas.Enterprise.Authentication.Admin.UserAdmin
             Platform.CheckForNullReference(request, "request");
             Platform.CheckMemberIsSet(request.UserName, "UserName");
 
-            User user = FindUserByName(request.UserName);
-            user.ResetPassword();
+			User user = FindUserByName(request.UserName);
+
+			AuthenticationSettings settings = new AuthenticationSettings();
+			user.ResetPassword(settings.DefaultTemporaryPassword);
 
             UserAssembler assembler = new UserAssembler();
             return new ResetUserPasswordResponse(assembler.GetUserSummary(user));

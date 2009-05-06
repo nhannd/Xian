@@ -47,6 +47,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
         private const int _numFields = 9;
 
         private IPersistenceContext _context;
+		private readonly AuthenticationSettings _settings = new AuthenticationSettings();
 
         #region CsvDataImporterBase overrides
 
@@ -86,7 +87,9 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
 
                 if (user == null)
                 {
-                    user = User.CreateNewUser(new UserInfo(userName, string.Format("{0} {1}", staffFamilyName, staffGivenName), null, null));
+                	UserInfo userInfo =
+                		new UserInfo(userName, string.Format("{0} {1}", staffFamilyName, staffGivenName), null, null);
+					user = User.CreateNewUser(userInfo, _settings.DefaultTemporaryPassword);
                     _context.Lock(user, DirtyState.New);
 
                     importedUsers.Add(user);

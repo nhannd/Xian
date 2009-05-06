@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens;
 using System.Text;
+using System.Text.RegularExpressions;
 using ClearCanvas.Enterprise.Common.Authentication;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Authentication.Brokers;
@@ -57,15 +58,25 @@ namespace ClearCanvas.Enterprise.Authentication
 			Platform.CheckMemberIsSet(request.HostName, "HostName");
 			Platform.CheckMemberIsSet(request.Password, "Password");
 
+			AuthenticationSettings settings = new AuthenticationSettings();
+
+			// check host name against white-list
+			if (!CheckWhiteList(settings.HostNameWhiteList, request.HostName))
+				throw new Exception("Access denied");	//TODO throw correct exception type
+
+			// check application name against white-list
+			if (!CheckWhiteList(settings.ApplicationWhiteList, request.Application))
+				throw new Exception("Access denied");	//TODO throw correct exception type
+
 
             // find user
 			User user = GetUser(request.UserName);
 
 			// clean-up any expired sessions
-			RemoveExpiredSessions(user);
+			CleanExpiredSessions(user);
 
 			// initiate new session
-    		UserSession session = user.InitiateSession(request.Application, request.HostName, request.Password);
+			UserSession session = user.InitiateSession(request.Application, request.HostName, request.Password, GetSessionTimeout(settings));
 
 			// get authority tokens if requested
 			string[] authorizations = request.GetAuthorizations ? 	
@@ -74,7 +85,7 @@ namespace ClearCanvas.Enterprise.Authentication
             return new InitiateSessionResponse(session.GetToken(), authorizations, user.DisplayName);
         }
 
-        [UpdateOperation(ChangeSetAuditable = false)]
+    	[UpdateOperation(ChangeSetAuditable = false)]
 		public ChangePasswordResponse ChangePassword(ChangePasswordRequest request)
         {
 			Platform.CheckForNullReference(request, "request");
@@ -83,7 +94,7 @@ namespace ClearCanvas.Enterprise.Authentication
 			Platform.CheckMemberIsSet(request.NewPassword, "NewPassword");
 
         	DateTime now = Platform.Time;
-            User user = GetUser(request.UserName);
+			User user = GetUser(request.UserName);
 
 			// ensure account is active and the current password is correct
 			if (!user.IsActive(now) || !user.Password.Verify(request.CurrentPassword))
@@ -93,8 +104,16 @@ namespace ClearCanvas.Enterprise.Authentication
 				throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
 			}
 
-            // change the password
-            user.ChangePassword(request.NewPassword);
+			AuthenticationSettings settings = new AuthenticationSettings();
+
+			// check new password meets policy
+			if (!Regex.Match(request.NewPassword, settings.ValidPasswordRegex).Success)
+				throw new RequestValidationException(settings.ValidPasswordMessage);
+
+			DateTime expiryTime = Platform.Time.AddDays(settings.PasswordExpiryDays);
+
+			// change the password
+            user.ChangePassword(request.NewPassword, expiryTime);
 
 			return new ChangePasswordResponse();
         }
@@ -107,8 +126,16 @@ namespace ClearCanvas.Enterprise.Authentication
 			Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
 			Platform.CheckMemberIsSet(request.SessionToken.Id, "SessionToken.Id");
 
+			// get the session
 			UserSession session = GetSession(request.SessionToken);
-			session.ValidateAndRenew(request.UserName);
+
+			AuthenticationSettings settings = new AuthenticationSettings();
+
+			// determine if still valid
+			session.Validate(request.UserName, settings.UserSessionTimeoutEnabled);
+
+			// renew
+			session.Renew(GetSessionTimeout(settings));
 
 			// get authority tokens if requested
 			string[] authorizations = request.GetAuthorizations ?
@@ -125,12 +152,12 @@ namespace ClearCanvas.Enterprise.Authentication
 			Platform.CheckMemberIsSet(request.SessionToken, "SessionToken");
 			Platform.CheckMemberIsSet(request.SessionToken.Id, "SessionToken.Id");
 
-			// validate the session
+			// get the session and user
 			UserSession session = GetSession(request.SessionToken);
-			session.ValidateAndRenew(request.UserName);
+			User user = session.User;
 
-			// remember user before terminating session
-        	User user = session.User;
+			// validate the session, ignoring the expiry time
+			session.Validate(request.UserName, false);
 
 			// terminate it
 			session.Terminate();
@@ -140,7 +167,7 @@ namespace ClearCanvas.Enterprise.Authentication
             broker.Delete(session);
 
 			// while we're at it, clean-up any other expired sessions for that user
-			RemoveExpiredSessions(user);
+			CleanExpiredSessions(user);
 
 			return new TerminateSessionResponse();
         }
@@ -163,6 +190,35 @@ namespace ClearCanvas.Enterprise.Authentication
         }
 
         #endregion
+
+		/// <summary>
+		/// Gets the user specified by the user name, or throws an exception if no such user exists.
+		/// </summary>
+		/// <remarks>
+		/// This method does not check the validity of the user account.
+		/// </remarks>
+		/// <param name="userName"></param>
+		/// <returns></returns>
+		private User GetUser(string userName)
+		{
+			UserSearchCriteria criteria = new UserSearchCriteria();
+			criteria.UserName.EqualTo(userName);
+
+			// use query caching here to make this fast (assuming the user table is not often updated)
+			IList<User> users = PersistenceContext.GetBroker<IUserBroker>().Find(
+				new UserSearchCriteria[] { criteria }, new SearchResultPage(0, 1), true);
+
+			User user = CollectionUtils.FirstElement(users);
+
+			// bug #3701: to ensure the username match is case-sensitive, we need to compare the stored name to the supplied name
+			if (user == null || user.UserName != userName)
+			{
+				// non-existant username
+				// the error message is deliberately vague
+				throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
+			}
+			return user;
+		}
 
 		/// <summary>
 		/// Gets the session identified by the specified session token.
@@ -188,10 +244,10 @@ namespace ClearCanvas.Enterprise.Authentication
 		}
 
 		/// <summary>
-		/// Performance clean-up of any expired sessions that may be left over for the specified user.
+		/// Perform clean-up of any expired sessions that may be left over for the specified user.
 		/// </summary>
 		/// <param name="user"></param>
-		private void RemoveExpiredSessions(User user)
+		private void CleanExpiredSessions(User user)
 		{
 			List<UserSession> expiredSessions = user.TerminateExpiredSessions();
 
@@ -203,35 +259,27 @@ namespace ClearCanvas.Enterprise.Authentication
 			}
 		}
 
+		/// <summary>
+		/// Asserts that the specified value is contained in the specified list.
+		/// </summary>
+		/// <param name="commaDelimitedList"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		private static bool CheckWhiteList(string commaDelimitedList, string value)
+		{
+			if (commaDelimitedList == null)
+				return true;
 
-        /// <summary>
-        /// Gets the user specified by the user name, or throws an exception if no such user exists.
-        /// </summary>
-        /// <remarks>
-        /// This method does not check the validity of the user account.
-        /// </remarks>
-        /// <param name="userName"></param>
-        /// <returns></returns>
-        private User GetUser(string userName)
-        {
-            UserSearchCriteria criteria = new UserSearchCriteria();
-            criteria.UserName.EqualTo(userName);
+			List<string> items = CollectionUtils.Map<string, string>(
+				commaDelimitedList.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
+				delegate(string s) { return s.Trim(); });
 
-            // use query caching here to make this fast (assuming the user table is not often updated)
-            IList<User> users = PersistenceContext.GetBroker<IUserBroker>().Find(
-                new UserSearchCriteria[]{criteria}, new SearchResultPage(0, 1), true);
+			return items.Count == 0 || items.Contains(value.Trim());
+		}
 
-            User user = CollectionUtils.FirstElement(users);
-
-			// bug #3701: to ensure the username match is case-sensitive, we need to compare the stored name to the supplied name
-            if(user == null || user.UserName != userName)
-            {
-                // non-existant username
-                // the error message is deliberately vague
-                throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
-            }
-            return user;
-        }
-
-    }
+		private static TimeSpan GetSessionTimeout(AuthenticationSettings settings)
+		{
+			return TimeSpan.FromMinutes(settings.UserSessionTimeoutMinutes);
+		}
+	}
 }

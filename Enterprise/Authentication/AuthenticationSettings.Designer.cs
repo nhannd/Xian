@@ -13,7 +13,8 @@ namespace ClearCanvas.Enterprise.Authentication {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class AuthenticationSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class AuthenticationSettings : global::System.Configuration.ApplicationSettingsBase
+    {
         
         private static AuthenticationSettings defaultInstance = ((AuthenticationSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AuthenticationSettings())));
         

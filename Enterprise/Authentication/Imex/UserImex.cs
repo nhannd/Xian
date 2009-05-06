@@ -68,6 +68,8 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
             public List<string> AuthorityGroups;
         }
 
+		private readonly AuthenticationSettings _settings = new AuthenticationSettings();
+
 
         #region Overrides
 
@@ -133,7 +135,7 @@ namespace ClearCanvas.Enterprise.Authentication.Imex
             }
             catch (EntityNotFoundException)
             {
-                user = User.CreateNewUser(info);
+				user = User.CreateNewUser(info, _settings.DefaultTemporaryPassword);
                 context.Lock(user, DirtyState.New);
             }
             return user;
