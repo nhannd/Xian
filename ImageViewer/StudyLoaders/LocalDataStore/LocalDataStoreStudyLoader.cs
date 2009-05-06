@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			}
 			finally
 			{
-				AuditHelper.LogOpenStudies("Load Studies", new string[] {DicomServerConfigurationHelper.AETitle}, loadedInstances, EventSource.CurrentUser, result);
+				AuditHelper.LogOpenStudies("Load Studies", new string[] { AuditHelper.LocalAETitle }, loadedInstances, EventSource.CurrentUser, result);
 			}
 		}
 
