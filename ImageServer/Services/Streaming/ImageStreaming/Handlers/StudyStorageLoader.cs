@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Net;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
@@ -45,6 +46,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
     {
         public ServerTransientError(String message)
             : base(message)
+        {
+        }
+        public ServerTransientError(String message, Exception innerException)
+            : base(message, innerException)
         {
         }
     }
@@ -66,7 +71,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 
     public class StudyAccessException : ServerTransientError
     {
-        public StudyAccessException(String message) : base(message)
+        public StudyAccessException(String message, Exception innerException)
+            : base(message, innerException)
         {
         }
     }
@@ -203,12 +209,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             if (location == null)
                 throw new StudyNotOnlineException(String.Format(SR.FaultStudyIsNearline, studyInstanceUid));
 
-            if (location.QueueStudyStateEnum != QueueStudyStateEnum.Idle)
-                throw new StudyAccessException(String.Format(SR.FaultStudyAccessRestricted, studyInstanceUid, location.QueueStudyStateEnum));
-
-            if (location.Lock)
-                throw new StudyAccessException(SR.FaultLocked);
-            
+               
             return location;
 		}
 		#endregion

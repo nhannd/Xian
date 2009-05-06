@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Threading;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
@@ -64,8 +65,20 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                     }
                     else
                     {
-                        _pd = DicomPixelData.CreateFrom(ImagePath);
-                        DicomPixelDataCache.Insert(StorageLocation, StudyInstanceUid, SeriesInstanceUid, ObjectUid, _pd);
+                        for (int i = 0; i < 5; i++ )
+                        {
+                            try
+                            {
+                                _pd = DicomPixelData.CreateFrom(ImagePath);
+                                DicomPixelDataCache.Insert(StorageLocation, StudyInstanceUid, SeriesInstanceUid, ObjectUid, _pd);
+                            }
+                            catch(IOException)
+                            {
+                                Random rand = new Random();
+                                Thread.Sleep(rand.Next(100, 500));
+                            }
+                        }
+                        
                     }
                     
                 }

@@ -231,18 +231,21 @@ namespace ClearCanvas.ImageServer.Common
         static public FileStream OpenForRead(string path, FileMode mode, long timeout, ManualResetEvent stopSignal, int retryMinDelay)
         {
             FileStream stream = null;
+            Exception lastException = null;
             long begin = Environment.TickCount;
-            while (true)
+            bool cancelled = false;
+
+            while (!cancelled)
             {
                 try
                 {
                     stream = new FileStream(path, mode, FileAccess.Read, FileShare.ReadWrite /* allow others to update this file */);
                     break;
                 }
-                catch (FileNotFoundException)
+                catch (FileNotFoundException e)
                 {
-                    // Nothing can be done if it doesn't exist.
-                    throw;
+                    // Maybe it is being swapped?
+                    lastException = e;
                 }
                 catch (DirectoryNotFoundException)
                 {
@@ -254,9 +257,10 @@ namespace ClearCanvas.ImageServer.Common
                     // The path is too long
                     throw;
                 }
-                catch (IOException)
+                catch (IOException e)
                 {
                     // other IO exceptions should be treated as retry
+                    lastException = e; 
                     Random rand = new Random();
                     Thread.Sleep(rand.Next(retryMinDelay, 2 * retryMinDelay));
                 }
@@ -265,11 +269,16 @@ namespace ClearCanvas.ImageServer.Common
                 {
                     if (timeout > 0 && Environment.TickCount - begin > timeout)
                     {
-                        throw new TimeoutException();
+                        if (lastException != null)
+                            throw lastException ;
+                        else
+                            throw new TimeoutException();
                     }
 
                     if (stopSignal != null)
-                        stopSignal.WaitOne(TimeSpan.FromMilliseconds(100), false);
+                    {
+                        cancelled = stopSignal.WaitOne(TimeSpan.FromMilliseconds(100), false);
+                    }
 
                 }
             }

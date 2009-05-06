@@ -155,7 +155,7 @@ namespace ClearCanvas.Dicom
         public static DicomPixelData CreateFrom(string path)
         {
             DicomFile file = new DicomFile(path);
-            file.Load(DicomReadOptions.StorePixelDataReferences);
+            file.Load();
             return CreateFrom(file);
         }
 

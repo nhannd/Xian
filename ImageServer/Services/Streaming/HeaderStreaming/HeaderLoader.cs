@@ -68,34 +68,15 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
             storageLoader.CacheRetentionTime = ImageStreamingServerSettings.Default.CacheRetentionWindow;
             StudyLocation = storageLoader.Find(_studyInstanceUid, partition);
 
+            if (StudyLocation != null && StudyLocation.QueueStudyStateEnum != QueueStudyStateEnum.Idle)
+            {
+                Platform.Log(LogLevel.Warn, "Accessing to study {0} while its current state is {1}",
+                             StudyLocation.StudyInstanceUid,  StudyLocation.QueueStudyStateEnum);
+            }
+
             _statistics.FindStudyFolder.End();
         }
 
-        #endregion
-
-        #region Private methods
-
-        private static StudyStorageLocation GetStudyStorageLocation(String studyInstanceUid, String partitionAE)
-        {
-            StudyStorageLocation location = null;
-            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-            using (IReadContext ctx = store.OpenReadContext())
-            {
-                IServerPartitionEntityBroker partitionBroker = ctx.GetBroker<IServerPartitionEntityBroker>();
-                ServerPartitionSelectCriteria partitionCriteria = new ServerPartitionSelectCriteria();
-                partitionCriteria.AeTitle.EqualTo(partitionAE);
-                ServerPartition partition = partitionBroker.FindOne(partitionCriteria);
-
-                if (partition != null)
-                {
-					if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(ctx, partition.Key, studyInstanceUid, out location))
-						location = null;
-                }
-            }
-
-            return location;
-        }
-       
         #endregion
 
         #region Public Properties
@@ -151,13 +132,24 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 			}
 
 			String compressedHeaderFile = Path.Combine(studyPath, _studyInstanceUid + ".xml.gz");
-
+            Stream headerStream = null;
 			Platform.Log(LogLevel.Debug, "Study Header Path={0}", compressedHeaderFile);
-			Stream theStream = FileStreamOpener.OpenForRead(compressedHeaderFile, FileMode.Open, 30000 /* try for 30 seconds */);
+			try
+			{
+			    headerStream = FileStreamOpener.OpenForRead(compressedHeaderFile, FileMode.Open, 30000 /* try for 30 seconds */);
+			}
+            catch(FileNotFoundException ex)
+            {
+                throw;
+            }
+            catch(IOException ex)
+            {
+                // treated as sharing violation
+                throw new StudyAccessException("Study header is not accessible at this time.", ex);
+            }
 			_statistics.LoadHeaderStream.End();
-		    _statistics.Size = (ulong) theStream.Length;
-			return theStream;
-			//Thread.Sleep(100000);
+            _statistics.Size = (ulong)headerStream.Length;
+            return headerStream;
 		}
 
     	#endregion Public Methods
