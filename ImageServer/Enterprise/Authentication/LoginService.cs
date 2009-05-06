@@ -30,7 +30,7 @@
 #endregion
 
 using System;
-using System.Security;
+using System.Net;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
@@ -53,7 +53,8 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                     {
                         try
                         {
-                            InitiateSessionRequest request = new InitiateSessionRequest(userName, password);
+                        	InitiateSessionRequest request =
+                        		new InitiateSessionRequest(userName, "ImageServer", Dns.GetHostName(), password);
                             request.GetAuthorizations = true;
                             InitiateSessionResponse response = service.InitiateSession(request);
 

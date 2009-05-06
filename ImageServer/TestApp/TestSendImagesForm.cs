@@ -402,7 +402,7 @@ namespace ClearCanvas.ImageServer.TestApp
                                                              SendImages();
                                                          }
                                                      }
-                                                     catch(Exception ex)
+                                                     catch(Exception)
                                                      {
                                                          
                                                      }
