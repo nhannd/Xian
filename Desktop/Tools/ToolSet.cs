@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
@@ -44,40 +45,16 @@ namespace ClearCanvas.Desktop.Tools
         private List<ITool> _tools;
 
         /// <summary>
-        /// Constructs a toolset that is initially empty.
+        /// This contructs a tool set containing the specified tools.  The <see cref="IToolContext"/>
+        /// is set on each tool and each tool's Initialize method is called.
         /// </summary>
-        public ToolSet()
+        /// <param name="context">The tool context to pass to each tool.</param>
+        /// <param name="tools">A set of tools to group in this ToolSet and be initialized and 
+        /// set with the same tool context.</param>
+        public ToolSet(IEnumerable tools, IToolContext context)
         {
             _tools = new List<ITool>();
-        }
 
-        /// <summary>
-        /// Constructs a toolset based on the specified extension point and context.
-        /// </summary>
-        /// <remarks>
-		/// The toolset will attempt to instantiate and initialize all 
-		/// extensions of the specified tool extension point.
-		/// </remarks>
-        /// <param name="toolExtensionPoint">The tool extension point that provides the tools.</param>
-        /// <param name="context">The tool context to pass to each tool.</param>
-        public ToolSet(IExtensionPoint toolExtensionPoint, IToolContext context)
-            :this()
-        {
-            AddTools(toolExtensionPoint, context);
-        }
-
-        /// <summary>
-        /// Adds tools to the toolset based on the specified extension point and context.
-        /// </summary>
-        /// <remarks>
-		/// The toolset will attempt to instantiate and initialize all 
-		/// extensions of the specified tool extension point.
-		/// </remarks>
-        /// <param name="toolExtensionPoint">The tool extension point that provides the tools.</param>
-        /// <param name="context">The tool context to pass to each tool.</param>
-        private void AddTools(IExtensionPoint toolExtensionPoint, IToolContext context)
-        {
-            object[] tools = toolExtensionPoint.CreateExtensions();
             foreach (ITool tool in tools)
             {
                 try
@@ -93,6 +70,37 @@ namespace ClearCanvas.Desktop.Tools
                     Platform.Log(LogLevel.Error, e);
                 }
             }
+        }
+
+        /// <summary>
+        /// Constructs a toolset based on the specified extension point and context.
+        /// </summary>
+        /// <remarks>
+		/// The toolset will attempt to instantiate and initialize all 
+		/// extensions of the specified tool extension point.
+		/// </remarks>
+        /// <param name="toolExtensionPoint">The tool extension point that provides the tools.</param>
+        /// <param name="context">The tool context to pass to each tool.</param>
+        public ToolSet(IExtensionPoint toolExtensionPoint, IToolContext context)
+            :this(toolExtensionPoint, context, null)
+        {
+        }
+
+        /// <summary>
+        /// Constructs a toolset based on the specified extension point and context.
+        /// </summary>
+        /// <remarks>
+        /// The toolset will attempt to instantiate and initialize all 
+        /// extensions of the specified tool extension point that pass the 
+        /// specified filter.
+        /// </remarks>
+        /// <param name="toolExtensionPoint">The tool extension point that provides the tools.</param>
+        /// <param name="context">The tool context to pass to each tool.</param>
+        /// <param name="filter">Only tools that match the specified extension filter are loaded into the 
+        /// tool set.  If null, all tools extending the extension point are loaded.</param>
+        public ToolSet(IExtensionPoint toolExtensionPoint, IToolContext context, ExtensionFilter filter)
+            :this(toolExtensionPoint.CreateExtensions(filter), context)
+        {
         }
 
         /// <summary>

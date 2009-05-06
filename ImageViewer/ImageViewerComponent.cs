@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -282,7 +283,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			base.Start();
 
-			_toolSet = new ToolSet(new ImageViewerToolExtensionPoint(), new ImageViewerToolContext(this));
+            _toolSet = new ToolSet(CreateTools(), new ImageViewerToolContext(this));
 
 			_shortcutManager = new ViewerShortcutManager();
 
@@ -515,6 +516,16 @@ namespace ClearCanvas.ImageViewer
 		{
 			get { return _toolSet; }
 		}
+
+        /// <summary>
+        /// Creates a set of tools for this image viewer to load into its tool set.  Subclasses can override
+        /// this to provide their own tools or cull the set of tools this creates.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual IEnumerable CreateTools()
+        {
+            return (new ImageViewerToolExtensionPoint()).CreateExtensions();
+        }
 
 		#endregion
 
