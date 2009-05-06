@@ -111,10 +111,18 @@ namespace ClearCanvas.Ris.Client
         private WorklistOwnership _ownership;
         private string _ownerName;
 
+
+        #region Personal and Group Iconsets
+
         private static readonly IconSet _closedUserWorklistIconSet = new IconSet("UserFolderClosedSmall.png");
         private static readonly IconSet _openUserWorklistIconSet = new IconSet("UserFolderOpenSmall.png");
 
-		/// <summary>
+        private static readonly IconSet _closedGroupWorklistIconSet = new IconSet("GroupFolderClosedSmall.png");
+        private static readonly IconSet _openGroupWorklistIconSet = new IconSet("GroupFolderClosedSmall.png");
+
+        #endregion
+
+        /// <summary>
 		/// Obtains the name of the worklist class associated with the specified folder class.
 		/// </summary>
 		/// <param name="folderClass"></param>
@@ -138,12 +146,38 @@ namespace ClearCanvas.Ris.Client
 
         protected override IconSet ClosedIconSet
         {
-            get { return _ownership == WorklistOwnership.Admin ? base.ClosedIconSet : _closedUserWorklistIconSet; } 
+            get 
+            {
+                switch (_ownership)
+                {
+                    case WorklistOwnership.Admin:
+                        return base.ClosedIconSet;
+                    case WorklistOwnership.Group:
+                        return _closedGroupWorklistIconSet;
+                    case WorklistOwnership.Staff:
+                        return _closedUserWorklistIconSet;
+                    default:
+                        return base.ClosedIconSet;
+                }
+            } 
         }
 
         protected override IconSet OpenIconSet
         {
-            get { return _ownership == WorklistOwnership.Admin ? base.OpenIconSet : _openUserWorklistIconSet; }
+            get
+            {
+                switch (_ownership)
+                {
+                    case WorklistOwnership.Admin:
+                        return base.OpenIconSet;
+                    case WorklistOwnership.Group:
+                        return _openGroupWorklistIconSet;
+                    case WorklistOwnership.Staff:
+                        return _openUserWorklistIconSet;
+                    default:
+                        return base.OpenIconSet;
+                }
+            }
         }
 
         #endregion

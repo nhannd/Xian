@@ -619,6 +619,17 @@
     <EmbeddedResource Include="Icons\UserFolderOpenMedium.png" />
     <EmbeddedResource Include="Icons\UserFolderOpenSmall.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\UserFolderClosedSmall2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\GroupFolderClosedLarge.png" />
+    <EmbeddedResource Include="Icons\GroupFolderClosedMedium.png" />
+    <EmbeddedResource Include="Icons\GroupFolderClosedSmall.png" />
+    <EmbeddedResource Include="Icons\GroupFolderOpenLarge.png" />
+    <EmbeddedResource Include="Icons\GroupFolderOpenMedium.png" />
+    <EmbeddedResource Include="Icons\GroupFolderOpenSmall.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
