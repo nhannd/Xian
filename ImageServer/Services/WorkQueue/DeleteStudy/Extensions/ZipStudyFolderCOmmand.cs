@@ -61,6 +61,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.DeleteStudy.Extensions
 
 			using (ZipFile zip = new ZipFile(_dest))
 			{
+				zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
+				zip.Comment = String.Format("Archive for deleted study from path {0}", _source);
+	
 				zip.AddDirectory(_source, String.Empty);
 				zip.Save();
 			}

@@ -72,6 +72,7 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 				zip.ForceNoCompression = !HsmSettings.Default.CompressZipFiles;
 				zip.TempFileFolder = _tempFolder;
 				zip.Comment = String.Format("Archive for study {0}", _studyXml.StudyInstanceUid);
+				zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
 
 				// Add the studyXml file
 				zip.AddFile(Path.Combine(_studyFolder,String.Format("{0}.xml",_studyXml.StudyInstanceUid)), String.Empty);

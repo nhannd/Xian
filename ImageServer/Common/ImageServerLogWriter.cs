@@ -212,6 +212,8 @@ namespace ClearCanvas.ImageServer.Common
 					ZipFile.Read(_archiveLog.ZipFile) :
 					new ZipFile(_archiveLog.ZipFile))
 			{
+				zip.UseZip64WhenSaving = Zip64Option.AsNecessary;
+			
 				ZipEntry e = zip.AddFileStream(_archiveLog.LogFileName, string.Empty, _archiveLog.Stream);
 				e.Comment =
 					String.Format("Log of {0} from {1} to {2}", _logType, _archiveLog.FirstTimestamp.ToString("yyyy-MM-dd HH:mm:ss.fff"),
