@@ -273,7 +273,7 @@ namespace ClearCanvas.Common
 						if (_pluginsDirectory == null)
 						{
 							string pluginsDirectory =
-								string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _pluginSubFolder);
+								Path.Combine(Platform.InstallDirectory, _pluginSubFolder);
 
 							if (Directory.Exists(pluginsDirectory))
 								_pluginsDirectory = pluginsDirectory;
@@ -304,7 +304,7 @@ namespace ClearCanvas.Common
 						if (_commonDirectory == null)
 						{
 							string commonDirectory =
-								string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _commonSubFolder);
+								Path.Combine(Platform.InstallDirectory, _commonSubFolder);
 
 							if (Directory.Exists(commonDirectory))
 								_commonDirectory = commonDirectory;
@@ -332,8 +332,8 @@ namespace ClearCanvas.Common
                 {
                     lock (_syncRoot)
                     {
-                        if (_logDirectory == null)
-                            _logDirectory = string.Format("{0}{1}{2}", Platform.InstallDirectory, Platform.PathSeparator, _logSubFolder);
+						if (_logDirectory == null)
+							_logDirectory = System.IO.Path.Combine(Platform.InstallDirectory, _logSubFolder);
                     }
                 }
 
