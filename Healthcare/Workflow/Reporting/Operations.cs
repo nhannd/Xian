@@ -324,7 +324,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				InterpretationStep interpretation = new InterpretationStep(step);
 
 				// Reset the interpretator
-				interpretation.ReportPart.Interpreter = null;
+				interpretation.ReportPart.Interpreter = executingStaff;
 
 				// Assign the new step to the resident
 				interpretation.Assign(executingStaff);
@@ -436,6 +436,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 				InterpretationStep interpretation = new InterpretationStep(procedure);
 				interpretation.Assign(executingStaff);
 				interpretation.ReportPart = procedure.ActiveReport.AddAddendum();
+				interpretation.ReportPart.Interpreter = executingStaff;
 				workflow.AddActivity(interpretation);
 				return interpretation;
 			}

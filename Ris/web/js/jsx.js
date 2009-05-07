@@ -232,7 +232,8 @@ if(!String.prototype.replaceLineBreak)
     // from Prototype.js library (www.prototypejs.org)
     String.prototype.replaceLineBreak = function()
     {
-		var newString = this.replace(/\r\n/g, "<br>");
+		var newString = this.replace(/\\r\\n/g, "<br>"); 
+		newString = newString.replace(/\r\n/g, "<br>");
 		return newString.replace(/[\r\n]/g, "<br>");
     }
 }

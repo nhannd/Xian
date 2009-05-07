@@ -154,26 +154,35 @@ namespace ClearCanvas.Common.Shreds
 		{
 			while (!StopRequested)
 			{
-				IList<TItem> items = GetNextBatch(_batchSize);
+				try
+				{
+					IList<TItem> items = GetNextBatch(_batchSize);
 
-				// if no items, sleep
-				if (items.Count == 0 && !StopRequested)
-				{
-					Sleep();
-				}
-				else
-				{
-					// process each item
-					foreach (TItem item in items)
+					// if no items, sleep
+					if (items.Count == 0 && !StopRequested)
 					{
-						// break if stop requested
-						// (unprocessed items will remain in queue and be picked up next time)
-						if (StopRequested)
-							break;
-
-						// process the item
-						ProcessItem(item);
+						Sleep();
 					}
+					else
+					{
+						// process each item
+						foreach (TItem item in items)
+						{
+							// break if stop requested
+							// (unprocessed items will remain in queue and be picked up next time)
+							if (StopRequested)
+								break;
+
+							// process the item
+							ProcessItem(item);
+						}
+					}
+				}
+				catch (Exception e)
+				{
+					Platform.Log(LogLevel.Error, e);
+					if(!StopRequested)
+						Sleep();
 				}
 			}
 		}

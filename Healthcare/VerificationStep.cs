@@ -29,16 +29,10 @@
 
 #endregion
 
-using System;
-using System.Collections;
-using System.Text;
-
-using Iesi.Collections;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 
-
-namespace ClearCanvas.Healthcare {
+namespace ClearCanvas.Healthcare
+{
 
 
     /// <summary>
@@ -48,7 +42,7 @@ namespace ClearCanvas.Healthcare {
 	{
 
         public VerificationStep(ReportingProcedureStep previousStep)
-            :base(previousStep)
+			: base(previousStep)
         {
         }
 	
@@ -73,14 +67,16 @@ namespace ClearCanvas.Healthcare {
             base.OnStateChanged(previousState, newState);
         }
 
-		public override void Assign(Staff performer)
+		public override ProcedureStep Reassign(Staff performer)
 		{
+			VerificationStep reassign = base.Reassign(performer).Downcast<VerificationStep>();
+
 			// When reassigning a verification step to another staff, we should reassign the supervisor as well
 			// so the report part will be reviewed by the appropriate staff radiologist
-			if (this.ReportPart != null && this.ReportPart.Supervisor != null)
-				this.ReportPart.Supervisor = performer;
+			if (reassign.ReportPart != null && reassign.ReportPart.Supervisor != null)
+				reassign.ReportPart.Supervisor = performer;
 
-			base.Assign(performer);
+			return reassign;
 		}
 
 		protected override ProcedureStep CreateScheduledCopy()

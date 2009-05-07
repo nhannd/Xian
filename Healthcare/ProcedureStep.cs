@@ -120,7 +120,7 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
     	public virtual List<Procedure> AllProcedures
     	{
-			get { return CollectionUtils.Concat<Procedure>(GetLinkedProcedures(), new Procedure[] {_procedure}); }
+			get { return CollectionUtils.Concat<Procedure>(GetLinkedProcedures(), new Procedure[] { _procedure }); }
     	}
 
 		/// <summary>
@@ -235,7 +235,7 @@ namespace ClearCanvas.Healthcare
 		/// </summary>
 		/// <param name="performer"></param>
 		/// <returns>A new step with the assigned performer.</returns>
-		public ProcedureStep Reassign(Staff performer)
+		public virtual ProcedureStep Reassign(Staff performer)
 		{
 			if (this.State == ActivityStatus.SC)
 			{
