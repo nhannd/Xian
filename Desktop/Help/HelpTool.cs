@@ -30,6 +30,7 @@
 #endregion
 
 using System.Diagnostics;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
@@ -48,6 +49,9 @@ namespace ClearCanvas.Desktop.Help
 
 	[MenuAction("showLicense", "global-menus/MenuHelp/MenuLicense", "ShowLicense")]
 	[GroupHint("showLicense", "Application.Help.License")]
+
+	[MenuAction("showLogs", "global-menus/MenuHelp/MenuShowLogs", "ShowLogs")]
+	[GroupHint("showLogs", "Application.Help.Support")]
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class HelpTool : Tool<IDesktopToolContext>
@@ -75,6 +79,13 @@ namespace ClearCanvas.Desktop.Help
 		public void ShowLicense()
 		{
 			Execute("EULA.rtf", SR.LicenseNotFound);
+		}
+
+		public void ShowLogs()
+		{
+			string logdir = Platform.LogDirectory;
+			if (!string.IsNullOrEmpty(logdir) && Directory.Exists(logdir))
+				Process.Start(logdir);
 		}
 
 		private void Execute(string filename, string errorMessage)
