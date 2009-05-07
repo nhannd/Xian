@@ -136,7 +136,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		/// </remarks>
 		public void Run()
 		{
-			DateTime lastCheck = Platform.Time;
+			// Force the alert to be displayed right away, if it happens
+			DateTime lastLog = Platform.Time.AddMinutes(-61);
+
 			if (!_threadPool.Active)
 				_threadPool.Start();
 
@@ -151,7 +153,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					&& WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB > 0 
 					&& SystemResources.GetAvailableMemory(SizeUnits.Megabytes) > WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB)
 				{
-					lastCheck = Platform.Time;
 					try
 					{
 						Model.WorkQueue queueListItem = GetWorkQueueItem(ServiceTools.ProcessorId);
@@ -196,9 +197,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 				}
 				else
 				{
-					if (lastCheck.AddMinutes(60) < Platform.Time)
+					if ((lastLog.AddMinutes(60) < Platform.Time) && _threadPool.CanQueueItem)
 					{
-						lastCheck = Platform.Time;
+						lastLog = Platform.Time;
+						Platform.Log(LogLevel.Warn, "Unable to process WorkQueue entries, Minimum memory not available, minimum MB required: {0}, current MB available:{1}",
+											 WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB,
+											 SystemResources.GetAvailableMemory(SizeUnits.Megabytes));
+
 						ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Warning, "WorkQueue", AlertTypeCodes.NoResources,
 						                     "Unable to process WorkQueue entries, Minimum memory not available, minimum MB required: {0}, current MB available:{1}",
 						                     WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB,
