@@ -224,7 +224,7 @@ namespace ClearCanvas.ImageViewer
 				modalitiesInStudy ?? "",
 				study.StudyDescription);
 
-			imageSet.PatientInfo = String.Format("{0} � {1}",
+			imageSet.PatientInfo = String.Format("{0} · {1}",
 				study.ParentPatient.PatientsName.FormattedName,
 				study.ParentPatient.PatientId);
 

@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			PatientInformation reconciled = reconciliationStrategy.ReconcilePatientInformation(info);
 
 			ImageSet imageSet = (ImageSet)base.CreateImageSet(study);
-			imageSet.PatientInfo = String.Format("{0} � {1}",
+			imageSet.PatientInfo = String.Format("{0} · {1}",
 				study.ParentPatient.PatientsName.FormattedName, reconciled.PatientId);
 
 			return imageSet;
