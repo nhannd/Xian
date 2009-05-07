@@ -57,12 +57,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             try
             {
                 SessionManager.InitializeSession(UserName.Text, Password.Text);
-            }
+
+				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
+					EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
+				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, SessionManager.Current.Credentials.DisplayName));
+				ServerPlatform.LogAuditMessage("UserAuthentication", audit);
+			}
             catch (PasswordExpiredException)
             {
                 Platform.Log(LogLevel.Info, "Password for {0} has expired. Requesting new password.",UserName.Text);
                 PasswordExpiredDialog.Show(UserName.Text, Password.Text);
-            }
+
+				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
+					EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
+				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, SessionManager.Current.Credentials.DisplayName));
+				ServerPlatform.LogAuditMessage("UserAuthentication", audit);
+			}
             catch(FaultException ex)
             {
                 // NOTE: The server is throwing FaultException when username or password is invalid. 
@@ -79,12 +89,22 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             {
                 Platform.Log(LogLevel.Error, ex, "Unable to contact A/A server");
                 ShowError(ErrorMessages.CannotContactEnterpriseServer);
-            }
+
+				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
+					EventIdentificationTypeEventOutcomeIndicator.MajorFailureActionMadeUnavailable, UserAuthenticationEventType.Login);
+				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
+				ServerPlatform.LogAuditMessage("UserAuthentication", audit);
+			}
             catch (Exception ex)
             {
                 Platform.Log(LogLevel.Error, ex, "Login error:");
                 ShowError(ex.Message);
-            }
+
+				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
+					EventIdentificationTypeEventOutcomeIndicator.MajorFailureActionMadeUnavailable, UserAuthenticationEventType.Login);
+				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
+				ServerPlatform.LogAuditMessage("UserAuthentication", audit);
+			}
         }
 
         public void ChangePassword(object sender, EventArgs e)
