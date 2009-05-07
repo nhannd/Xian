@@ -30,11 +30,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Services.Archiving
@@ -150,6 +152,72 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		}
 
 		/// <summary>
+		/// Reset any archival request that may have been left In Progress when the service last shut down.
+		/// </summary>
+		public void ResetFailedArchiveQueueItems()
+		{
+			using (IUpdateContext updateContext = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IArchiveQueueEntityBroker broker = updateContext.GetBroker<IArchiveQueueEntityBroker>();
+
+				ArchiveQueueSelectCriteria criteria = new ArchiveQueueSelectCriteria();
+				criteria.ProcessorId.EqualTo(ServiceTools.ProcessorId);
+				criteria.ArchiveQueueStatusEnum.EqualTo(ArchiveQueueStatusEnum.InProgress);
+
+				IList<ArchiveQueue> failedList = broker.Find(criteria);
+				foreach (ArchiveQueue failedItem in failedList)
+				{
+					UpdateArchiveQueue(updateContext, failedItem, ArchiveQueueStatusEnum.Pending, Platform.Time.AddMinutes(2));
+
+					Platform.Log(LogLevel.Warn,
+					             "Reseting ArchiveQueue entry {0} to Pending that was In Progress at startup for PartitionArchive {1}",
+					             failedItem.Key, _partitionArchive.Description);
+
+				}
+
+				if (failedList.Count > 0)
+					updateContext.Commit();
+				else 
+					Platform.Log(LogLevel.Info,"No ArchiveQueue entries to reset on startup for archive {0}",_partitionArchive.Description);
+			}
+			
+		}
+
+		/// <summary>
+		/// Reset any failed restore requests that may have been left In Progress when the service last shut down.
+		/// </summary>
+		public void ResetFailedRestoreQueueItems()
+		{
+			using (IUpdateContext updateContext = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
+			{
+				IRestoreQueueEntityBroker broker = updateContext.GetBroker<IRestoreQueueEntityBroker>();
+
+				ArchiveStudyStorageSelectCriteria selectStudyStorage = new ArchiveStudyStorageSelectCriteria();
+				selectStudyStorage.PartitionArchiveKey.EqualTo(_partitionArchive.Key);
+
+				RestoreQueueSelectCriteria criteria = new RestoreQueueSelectCriteria();
+				criteria.ProcessorId.EqualTo(ServiceTools.ProcessorId);
+				criteria.RestoreQueueStatusEnum.EqualTo(RestoreQueueStatusEnum.InProgress);
+				criteria.ArchiveStudyStorageRelatedEntityCondition.Exists(selectStudyStorage);
+
+				IList<RestoreQueue> failedList = broker.Find(criteria);
+				foreach (RestoreQueue failedItem in failedList)
+				{
+					UpdateRestoreQueue(updateContext, failedItem, RestoreQueueStatusEnum.Pending, Platform.Time.AddMinutes(2));
+
+					Platform.Log(LogLevel.Warn,
+								 "Reseting RestoreQueue entry {0} to Pending that was In Progress at startup for PartitionArchive '{1}' on ",
+								 failedItem.Key, _partitionArchive.Description);
+				}
+
+				if (failedList.Count > 0)
+					updateContext.Commit();
+				else
+					Platform.Log(LogLevel.Info, "No RestoreQueue entries to reset on startup for archive {0}", _partitionArchive.Description);
+			}
+		}
+
+		/// <summary>
 		/// Load the server partition information for the the archive.
 		/// </summary>
 		public void LoadServerPartition()
@@ -167,23 +235,39 @@ namespace ClearCanvas.ImageServer.Services.Archiving
 		{
 			using (IUpdateContext updateContext = PersistentStore.OpenUpdateContext(UpdateContextSyncMode.Flush))
 			{
-				UpdateArchiveQueueParameters parms = new UpdateArchiveQueueParameters();
-				parms.ArchiveQueueKey = item.GetKey();
-				parms.ArchiveQueueStatusEnum = status;
-				parms.ScheduledTime = scheduledTime;
-				parms.StudyStorageKey = item.StudyStorageKey;
-				if (!String.IsNullOrEmpty(item.FailureDescription))
-					parms.FailureDescription = item.FailureDescription;
-
-				IUpdateArchiveQueue broker = updateContext.GetBroker<IUpdateArchiveQueue>();
-
-				if (broker.Execute(parms))
+				if (UpdateArchiveQueue(updateContext,item,status,scheduledTime))
 				{
 					updateContext.Commit();
 				}
-				else 
-					Platform.Log(LogLevel.Error, "Unexpected failure updating ArchiveQueue entry {0}", item.GetKey());
 			}
+		}
+
+		/// <summary>
+		/// Update an <see cref="ArchiveQueue"/> entry.
+		/// </summary>
+		/// <param name="item">The item to update.</param>
+		/// <param name="status">The status to set the entry to.</param>
+		/// <param name="scheduledTime">The scheduled time to set the entry to.</param>
+		/// <param name="updateContext">The update context</param>
+		public bool UpdateArchiveQueue(IUpdateContext updateContext, ArchiveQueue item, ArchiveQueueStatusEnum status, DateTime scheduledTime)
+		{
+			UpdateArchiveQueueParameters parms = new UpdateArchiveQueueParameters();
+			parms.ArchiveQueueKey = item.GetKey();
+			parms.ArchiveQueueStatusEnum = status;
+			parms.ScheduledTime = scheduledTime;
+			parms.StudyStorageKey = item.StudyStorageKey;
+			if (!String.IsNullOrEmpty(item.FailureDescription))
+				parms.FailureDescription = item.FailureDescription;
+
+			IUpdateArchiveQueue broker = updateContext.GetBroker<IUpdateArchiveQueue>();
+
+			if (broker.Execute(parms))
+			{
+				return true;
+			}
+
+			Platform.Log(LogLevel.Error, "Unexpected failure updating ArchiveQueue entry {0}", item.GetKey());
+			return false;
 		}
 
 		/// <summary>

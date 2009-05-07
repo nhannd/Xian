@@ -185,6 +185,7 @@
     <Compile Include="EntityBrokers\PatientUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\RequestAttributesUpdateColumns.gen.cs" />
+    <Compile Include="EntityBrokers\RestoreQueueSelectCriteria.cs" />
     <Compile Include="EntityBrokers\RestoreQueueSelectCriteria.gen.cs" />
     <Compile Include="EntityBrokers\RestoreQueueUpdateColumns.gen.cs" />
     <Compile Include="EntityBrokers\SeriesSelectCriteria.gen.cs" />

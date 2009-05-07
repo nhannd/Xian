@@ -64,6 +64,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 		/// </summary>
 		protected override void Initialize()
 		{
+			_hsmArchive.ResetFailedRestoreQueueItems();
+
 			// Start the thread pool
 			if (!_threadPool.Active)
 				_threadPool.Start();
