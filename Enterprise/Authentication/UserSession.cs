@@ -70,7 +70,7 @@ namespace ClearCanvas.Enterprise.Authentication {
 			{
 				// session does not match user name
 				// the error message is deliberately vague
-				throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
+				throw new InvalidUserSessionException();
 			}
 
 			// check expiry time if specified
@@ -78,18 +78,24 @@ namespace ClearCanvas.Enterprise.Authentication {
 			{
 				// session has expired
 				// the error message is deliberately vague
-				throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
+				throw new InvalidUserSessionException();
 			}
 		}
 
 		/// <summary>
 		/// Renews the session, setting a new expiry based on the specified timeout.
 		/// </summary>
+		/// <remarks>
+		/// The session may be renewed even if it has already expired.  To ensure
+		/// the session has not expired prior to renewing, use <see cref="Validate"/>.
+		/// </remarks>
 		/// <param name="timeout"></param>
 		public virtual void Renew(TimeSpan timeout)
 		{
+			Platform.CheckPositive(timeout.TotalMilliseconds, "timeout");
 			CheckNotTerminated();
 
+			// check expiry time if specified
 			DateTime currentTime = Platform.Time;
 
 			// renew the session expiration time

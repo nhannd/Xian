@@ -151,7 +151,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void Test_CreateNewUser_NullDisplayName()
 		{
 			UserInfo userInfo = new UserInfo(
@@ -177,7 +177,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(ArgumentException))]
+		[ExpectedException(typeof(ArgumentNullException))]
 		public void Test_CreateNewUser_NullPassword()
 		{
 			UserInfo userInfo = new UserInfo(
@@ -445,7 +445,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(InvalidUserCredentialsException))]
 		public void Test_InitiateSession_InActiveUser()
 		{
 			User user = CreateUser(null, null);
@@ -465,7 +465,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(InvalidUserCredentialsException))]
 		public void Test_InitiateSession_IncorrectPassword()
 		{
 			User user = CreateUser(null, null);

@@ -60,7 +60,7 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// <returns></returns>
         public static Password CreatePassword(string clearTextPassword, DateTime? expiryTime)
         {
-            Platform.CheckForNullReference(clearTextPassword, "clearTextPassword");
+            Platform.CheckForEmptyString(clearTextPassword, "clearTextPassword");
             return CreatePasswordHelper(clearTextPassword, expiryTime);
         }
 

@@ -71,33 +71,41 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(InvalidUserSessionException))]
 		public void Test_Validate_InvalidUserName()
 		{
 			TimeSpan timeout = TimeSpan.FromMinutes(10);
 			UserSession session = CreateSession(timeout);
 
-			session.Validate(UserName, true);
+			session.Validate("boo", true);
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(InvalidUserSessionException))]
 		public void Test_Validate_InactiveUser()
 		{
 			TimeSpan timeout = TimeSpan.FromMinutes(10);
 			UserSession session = CreateSession(timeout);
+			User user = session.User;
+
+			user.Enabled = false;
+			Assert.IsFalse(user.IsActive(DateTime.Now));
 
 			session.Validate(UserName, true);
 		}
 
 		[Test]
-		[ExpectedException(typeof(Exception))]
+		[ExpectedException(typeof(InvalidUserSessionException))]
 		public void Test_Validate_ExpiredSession()
 		{
-			TimeSpan timeout = TimeSpan.FromMinutes(10);
+			TimeSpan timeout = TimeSpan.FromMilliseconds(100);	// 100 msec
 			UserSession session = CreateSession(timeout);
 
-			session.Validate(UserName, true);
+			session.Validate(UserName, true);	// succeeds
+
+			Thread.Sleep(150);	// allow session to expire
+
+			session.Validate(UserName, true);	// throws
 		}
 
 		[Test]
@@ -183,7 +191,6 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
 		public void Test_Renew_Expired()
 		{
 			TimeSpan timeout = TimeSpan.FromMilliseconds(100); // expires in 100 msec
@@ -191,7 +198,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 
 			Thread.Sleep(150);	// sleep a bit longer than 100 msec
 
-			session.Renew(timeout);
+			session.Renew(timeout); // success - even an expired session can be renewed
 		}
 
 		[Test]
@@ -206,7 +213,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
+		[ExpectedException(typeof(ArgumentException))]
 		public void Test_Renew_ZeroTimeout()
 		{
 			TimeSpan timeout = TimeSpan.FromMinutes(10);
@@ -215,7 +222,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidOperationException))]
+		[ExpectedException(typeof(ArgumentException))]
 		public void Test_Renew_NegativeTimeout()
 		{
 			TimeSpan timeout = TimeSpan.FromMinutes(10);

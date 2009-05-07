@@ -57,6 +57,11 @@ namespace ClearCanvas.Enterprise.Authentication {
         /// <returns></returns>
         public static User CreateNewUser(UserInfo userInfo, Password initialPassword, ISet<AuthorityGroup> authorityGroups)
         {
+			Platform.CheckForNullReference(userInfo, "userInfo");
+			Platform.CheckForNullReference(initialPassword, "initialPassword");
+			Platform.CheckForEmptyString(userInfo.UserName, "UserName");
+			Platform.CheckForEmptyString(userInfo.DisplayName, "DisplayName");
+
             return new User(
                 userInfo.UserName,
                 initialPassword,
@@ -122,9 +127,10 @@ namespace ClearCanvas.Enterprise.Authentication {
 		/// <returns></returns>
 		public virtual UserSession InitiateSession(string application, string hostName, string password, TimeSpan timeout)
 		{
-			Platform.CheckForNullReference(application, "application");
-			Platform.CheckForNullReference(hostName, "hostName");
+			Platform.CheckForEmptyString(application, "application");
+			Platform.CheckForEmptyString(hostName, "hostName");
 			Platform.CheckForNullReference(password, "password");
+			Platform.CheckPositive(timeout.TotalMilliseconds, "timeout");
 
 			DateTime startTime = Platform.Time;
 
@@ -133,7 +139,7 @@ namespace ClearCanvas.Enterprise.Authentication {
 			{
 				// account not active, or invalid password
 				// the error message is deliberately vague
-				throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
+				throw new InvalidUserCredentialsException();
 			}
 
 			// check if password expired
