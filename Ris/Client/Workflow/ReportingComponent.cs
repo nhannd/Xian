@@ -548,7 +548,7 @@ namespace ClearCanvas.Ris.Client.Workflow
 		{
 			get
 			{
-				return this.WorklistItem != null
+				return this.WorklistItem != null && _report.GetPart(_activeReportPartIndex).TranscriptionRejectReason != null
 					? string.Format("{0}: {1}", SR.MessageTranscriptionHasErrors, _report.GetPart(_activeReportPartIndex).TranscriptionRejectReason.Value)
 					: "";
 			}
