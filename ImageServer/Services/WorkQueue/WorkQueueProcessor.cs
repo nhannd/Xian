@@ -150,8 +150,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					return;
 
 				if (_threadPool.CanQueueItem
-					&& WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB > 0 
-					&& SystemResources.GetAvailableMemory(SizeUnits.Megabytes) > WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB)
+					&& (WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB == 0 
+					|| SystemResources.GetAvailableMemory(SizeUnits.Megabytes) > WorkQueueSettings.Instance.WorkQueueMinimumFreeMemoryMB))
 				{
 					try
 					{

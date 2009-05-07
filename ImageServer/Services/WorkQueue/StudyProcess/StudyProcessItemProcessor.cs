@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
 			// Update the statistics
 			_statistics.NumInstances++;
-
+        	_statistics.AddSubStats(processor.InstanceStats);
         }
         
 
