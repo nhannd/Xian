@@ -504,8 +504,47 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		[Test]
 		public void Test_TerminateExpiredSessions()
 		{
-			//TODO
-			Assert.Fail();
+			User user = CreateUser(null, null);
+
+			// change password so that it won't expire
+			user.ChangePassword(AlternatePassword, DateTime.MaxValue);
+
+			// no previous login time, no sessions
+			Assert.IsNull(user.LastLoginTime);
+			Assert.IsTrue(user.Sessions.IsEmpty);
+
+			string app = "app";
+			string host = "host";
+
+			// start 4 concurrent sessions, with different expiration times
+			UserSession session1 = user.InitiateSession(app, host, AlternatePassword, TimeSpan.FromMilliseconds(100));
+			UserSession session2 = user.InitiateSession(app, host, AlternatePassword, TimeSpan.FromMilliseconds(200));
+			UserSession session3 = user.InitiateSession(app, host, AlternatePassword, TimeSpan.FromMilliseconds(300));
+			UserSession session4 = user.InitiateSession(app, host, AlternatePassword, TimeSpan.FromMinutes(1));
+
+			UserSession[] sessions = new UserSession[]{ session1, session2, session3, session4 };
+
+			// all sessions are active
+			Assert.AreEqual(4, user.Sessions.Count);
+			Assert.IsTrue(user.Sessions.ContainsAll(sessions));
+
+			// before any sessions expire, this should return an empty list
+			List<UserSession> expiredSessions = user.TerminateExpiredSessions();
+			Assert.AreEqual(0, expiredSessions.Count);
+
+			// wait for all but 1 session to expire
+			Thread.Sleep(400);
+
+			expiredSessions = user.TerminateExpiredSessions();
+
+			// should have 3 expired
+			Assert.AreEqual(3, expiredSessions.Count);
+			Assert.IsTrue(user.Sessions.Contains(session4));	// only session 4 is alive
+
+			// others are expired
+			Assert.IsTrue(expiredSessions.Contains(session1));
+			Assert.IsTrue(expiredSessions.Contains(session2));
+			Assert.IsTrue(expiredSessions.Contains(session3));
 		}
 
 
