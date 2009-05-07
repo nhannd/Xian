@@ -29,10 +29,15 @@
 
 #endregion
 
+using System;
 using System.Diagnostics;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.Export;
+using Path=System.IO.Path;
 
 namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 {
@@ -43,44 +48,70 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
 	{
 		public void Export()
 		{
-			// still no folder picker ><
-			if (base.Selection.Count > 0)
+			try
 			{
-				string path = null;
-
-				foreach (StudyItem item in base.Selection)
+				if (base.Selection.Count > 0)
 				{
-					path = path ?? item.File.Directory.FullName;
+					ExportComponent component = new ExportComponent();
+
+					foreach (StudyItem item in base.Selection)
+					{
+						FileInfo file = item.File;
+						if (file.Exists)
+						{
+							DicomFile dcf = new DicomFile(file.FullName);
+							dcf.Load();
+							component.Files.Add(dcf);
+						}
+					}
+
+					base.DesktopWindow.ShowDialogBox(component, SR.Export);
 				}
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, base.DesktopWindow);
 			}
 		}
 
 		public void SaveTo()
 		{
-			// no folder picker ><
-			if (base.Selection.Count > 0)
+			try
 			{
-				string outputDir = FolderPickerExtensionPoint.GetFolder();
-				int count = 0;
-
-				foreach (StudyItem item in base.Selection)
+				if (base.Selection.Count > 0)
 				{
-					FileInfo file = item.File;
-					if (file.Exists)
+					SelectFolderDialogCreationArgs args = new SelectFolderDialogCreationArgs();
+					args.Prompt = SR.MessageSelectOutputLocation;
+					FileDialogResult result = base.DesktopWindow.ShowSelectFolderDialogBox(args);
+					if (result.Action != DialogBoxAction.Ok)
+						return;
+
+					string outputDir = result.FileName;
+					int count = 0;
+
+					foreach (StudyItem item in base.Selection)
 					{
-						string newpath = Path.Combine(outputDir, file.Name);
-						if (!File.Exists(newpath))
+						FileInfo file = item.File;
+						if (file.Exists)
 						{
-							file.CopyTo(newpath);
-							count ++;
+							string newpath = Path.Combine(outputDir, file.Name);
+							if (!File.Exists(newpath))
+							{
+								file.CopyTo(newpath);
+								count++;
+							}
 						}
 					}
-				}
 
-				if (count > 0)
-				{
-					Process p = Process.Start(outputDir);
+					if (count > 0)
+					{
+						Process p = Process.Start(outputDir);
+					}
 				}
+			}
+			catch (Exception ex)
+			{
+				ExceptionHandler.Report(ex, base.DesktopWindow);
 			}
 		}
 	}

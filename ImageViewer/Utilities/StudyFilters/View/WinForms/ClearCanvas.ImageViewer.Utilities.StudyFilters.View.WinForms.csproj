@@ -35,6 +35,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExportComponentPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExportComponentPanel.Designer.cs">
+      <DependentUpon>ExportComponentPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExportComponentView.cs" />
     <Compile Include="FilterBuilder.cs" />
     <Compile Include="FilterEditorComponentPanel.cs">
       <SubType>UserControl</SubType>
@@ -107,6 +114,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ExportComponentPanel.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ExportComponentPanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FilterEditorComponentPanel.resx">
       <DependentUpon>FilterEditorComponentPanel.cs</DependentUpon>
       <SubType>Designer</SubType>

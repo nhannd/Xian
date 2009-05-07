@@ -88,6 +88,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export.
+        /// </summary>
+        internal static string Export {
+            get {
+                return ResourceManager.GetString("Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Extension.
         /// </summary>
         internal static string Extension {
@@ -250,6 +259,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select output location:.
+        /// </summary>
+        internal static string MessageSelectOutputLocation {
+            get {
+                return ResourceManager.GetString("MessageSelectOutputLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Path.
         /// </summary>
         internal static string Path {
@@ -277,6 +295,24 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Export....
+        /// </summary>
+        internal static string ToolbarAnonymizeExport {
+            get {
+                return ResourceManager.GetString("ToolbarAnonymizeExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Filters.
+        /// </summary>
+        internal static string ToolbarEditFilters {
+            get {
+                return ResourceManager.GetString("ToolbarEditFilters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Filter.
         /// </summary>
         internal static string ToolbarFilter {
@@ -291,6 +327,15 @@ namespace ClearCanvas.ImageViewer.Utilities.StudyFilters {
         internal static string ToolbarLaunchInViewer {
             get {
                 return ResourceManager.GetString("ToolbarLaunchInViewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save To....
+        /// </summary>
+        internal static string ToolbarSaveTo {
+            get {
+                return ResourceManager.GetString("ToolbarSaveTo", resourceCulture);
             }
         }
         

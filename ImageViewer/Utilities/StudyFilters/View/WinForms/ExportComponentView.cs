@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,50 +29,34 @@
 
 #endregion
 
-using System;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Utilities.StudyFilters.Export;
 
-namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.Tools
+namespace ClearCanvas.ImageViewer.Utilities.StudyFilters.View.WinForms
 {
-	[ButtonAction("launch", DefaultToolbarActionSite + "/ToolbarLaunchInViewer", "Launch")]
-	[ExtensionOf(typeof (StudyFilterToolExtensionPoint))]
-	public class LaunchViewerTool : StudyFilterTool
+	[ExtensionOf(typeof (ExportComponentViewExtensionPoint))]
+	internal class ExportComponentView : WinFormsView, IApplicationComponentView
 	{
-		public void Launch()
+		private ExportComponent _component;
+		private ExportComponentPanel _control;
+
+		public void SetComponent(IApplicationComponent component)
 		{
-			if (base.Selection == null || base.Selection.Count == 0)
-				return;
+			_component = (ExportComponent) component;
+		}
 
-			int n = 0;
-			string[] selection = new string[base.Selection.Count];
-			foreach (StudyItem item in base.Selection)
+		public override object GuiElement
+		{
+			get
 			{
-				selection[n++] = item.File.FullName;
+				if (_control == null)
+				{
+					_control = new ExportComponentPanel(_component);
+				}
+				return _control;
 			}
-
-			bool cancelled = true;
-			ImageViewerComponent viewer = new ImageViewerComponent();
-			try
-			{
-				viewer.LoadImages(selection, base.Context.DesktopWindow, out cancelled);
-			}
-			catch (Exception ex)
-			{
-				base.DesktopWindow.ShowMessageBox(ex.Message, MessageBoxActions.Ok);
-			}
-
-			if (cancelled)
-			{
-				viewer.Dispose();
-				return;
-			}
-
-			try
-			{
-				LaunchImageViewerArgs launchArgs = new LaunchImageViewerArgs(WindowBehaviour.Auto);
-				ImageViewerComponent.Launch(viewer, launchArgs);
-			}catch(Exception ex) {}
 		}
 	}
 }
