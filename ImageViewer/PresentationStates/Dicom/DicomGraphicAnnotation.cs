@@ -222,10 +222,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 			else
 			{
-				SizeF offset = new SizeF(1,1);
+				// offset to account for our 0,0 origin versyus DICOM 1,1 origin
 				list = new List<PointF>(graphicItem.NumberOfGraphicPoints);
 				foreach (PointF point in graphicItem.GraphicData)
-					list.Add(point - offset);
+					list.Add(new PointF(point.X - 1, point.Y - 1));
 			}
 			return list.AsReadOnly();
 		}

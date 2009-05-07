@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
 			if (dicomGraphicsPlane != null)
 			{
-				foreach (LayerGraphic layer in (IEnumerable<LayerGraphic>)dicomGraphicsPlane.Layers)
+				foreach (ILayer layer in (IEnumerable<ILayer>)dicomGraphicsPlane.Layers)
 				{
 					foreach (OverlayPlaneGraphic overlayGraphic in CollectionUtils.Select(layer.Graphics,
 						delegate(IGraphic graphic) { return graphic is OverlayPlaneGraphic; }))

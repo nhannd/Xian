@@ -1,9 +1,11 @@
+using System.Collections;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
-	public interface IDicomGraphicsPlaneOverlays
+	public interface IDicomGraphicsPlaneOverlays : IEnumerable<OverlayPlaneGraphic>
 	{
 		OverlayPlaneGraphic this[int index] { get; }
 		int Count { get; }
@@ -18,6 +20,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		bool Contains(int index);
 		bool Contains(OverlayPlaneGraphic overlay);
 		void Clear();
+		bool IsShutter(OverlayPlaneGraphic overlay);
+		bool IsLayer(OverlayPlaneGraphic overlay);
+		string GetLayer(OverlayPlaneGraphic overlay);
 	}
 
 	public partial class DicomGraphicsPlane
@@ -38,9 +43,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				get
 				{
 					int count = 0;
-					foreach (OverlayPlaneGraphic overlay in _overlays)
-						if (overlay != null)
-							count++;
+					foreach (OverlayPlaneGraphic overlay in this)
+						count++;
 					return count;
 				}
 			}
@@ -65,7 +69,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 						shutterCollection.Graphics.Remove(overlay);
 					}
 
-					LayerGraphic layer = _owner.Layers[layerId];
+					ILayer layer = _owner.Layers[layerId];
 					if (overlay.ParentGraphic is CompositeGraphic && overlay.ParentGraphic != layer)
 						((CompositeGraphic)overlay.ParentGraphic).Graphics.Remove(overlay);
 					if (overlay.ParentGraphic == null)
@@ -115,7 +119,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 					if (overlay.ParentGraphic == _owner.Shutters)
 						_owner.Shutters.Deactivate(overlay);
 					if (overlay.ParentGraphic is LayerGraphic && _owner._layers.Graphics.Contains(overlay.ParentGraphic))
-						overlay.Visible = false;
+						this.ActivateAsLayer(index, string.Empty);
 				}
 			}
 
@@ -158,8 +162,55 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			public void Clear()
 			{
-				for (int n = 0; n < 16; n++)
-					_overlays[n] = null;
+				_overlays[0] = null;
+				_overlays[1] = null;
+				_overlays[2] = null;
+				_overlays[3] = null;
+				_overlays[4] = null;
+				_overlays[5] = null;
+				_overlays[6] = null;
+				_overlays[7] = null;
+				_overlays[8] = null;
+				_overlays[9] = null;
+				_overlays[10] = null;
+				_overlays[11] = null;
+				_overlays[12] = null;
+				_overlays[13] = null;
+				_overlays[14] = null;
+				_overlays[15] = null;
+			}
+
+			public bool IsShutter(OverlayPlaneGraphic overlay)
+			{
+				Platform.CheckForNullReference(overlay, "overlay");
+				Platform.CheckTrue(_overlays[overlay.Index] == overlay, "Overlay must be part of collection.");
+				return (overlay.ParentGraphic == _owner.Shutters);
+			}
+
+			public bool IsLayer(OverlayPlaneGraphic overlay)
+			{
+				return !string.IsNullOrEmpty(GetLayer(overlay));
+			}
+
+			public string GetLayer(OverlayPlaneGraphic overlay)
+			{
+				Platform.CheckForNullReference(overlay, "overlay");
+				Platform.CheckTrue(_overlays[overlay.Index] == overlay, "Overlay must be part of collection.");
+				if (overlay.ParentGraphic is ILayer && overlay.ParentGraphic.ParentGraphic == _owner.Layers)
+					return ((ILayer) overlay.ParentGraphic).Id;
+				return null;
+			}
+
+			public IEnumerator<OverlayPlaneGraphic> GetEnumerator()
+			{
+				foreach (OverlayPlaneGraphic overlay in _overlays)
+					if (overlay != null)
+						yield return overlay;
+			}
+
+			IEnumerator IEnumerable.GetEnumerator()
+			{
+				return this.GetEnumerator();
 			}
 
 			private bool CanAdd(OverlayPlaneGraphic overlay)

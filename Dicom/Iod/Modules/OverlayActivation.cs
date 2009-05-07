@@ -74,12 +74,19 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			}
 		}
 
+		public void Delete(int index)
+		{
+			Platform.CheckArgumentRange(index, 0, 15, "index");
+			foreach (uint tag in this[index].DefinedTags)
+				base.DicomAttributeProvider[tag] = null;
+		}
+
 		public bool HasOverlayActivationLayer(int index)
 		{
 			if (index < 0 || index >= 16)
 				return false;
 			DicomAttribute attrib;
-			if (!DicomAttributeProvider.TryGetAttribute(OverlayPlaneModuleIod.ComputeTagOffset(index) + DicomTags.OverlayActivationLayer, out attrib))
+			if (!base.DicomAttributeProvider.TryGetAttribute(OverlayPlaneModuleIod.ComputeTagOffset(index) + DicomTags.OverlayActivationLayer, out attrib))
 				return false;
 			else
 				return true;
@@ -172,6 +179,14 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get { return base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayActivationLayer].GetString(0, string.Empty); }
 			set { base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayActivationLayer].SetString(0, value ?? string.Empty); }
+		}
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this group.
+		/// </summary>
+		public IEnumerable<uint> DefinedTags
+		{
+			get { yield return _tagOffset + DicomTags.OverlayActivationLayer; }
 		}
 	}
 }

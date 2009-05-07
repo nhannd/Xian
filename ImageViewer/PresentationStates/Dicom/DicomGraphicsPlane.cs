@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			_layers = (LayerCollection) CollectionUtils.SelectFirst(base.Graphics, IsType<LayerCollection>);
 
 			FillOverlayCollections(_shutter);
-			foreach (LayerGraphic layer in  _layers)
+			foreach (LayerGraphic layer in _layers)
 				FillOverlayCollections(layer.Graphics);
 		}
 
@@ -82,21 +82,41 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 		}
 
+		public void Clear()
+		{
+			this.Shutters.Clear();
+			this.Layers.Clear();
+			this.ImageOverlays.Clear();
+			this.PresentationOverlays.Clear();
+		}
+
+		/// <summary>
+		/// Gets a collection of available shutters.
+		/// </summary>
 		public IDicomGraphicsPlaneShutters Shutters
 		{
 			get { return _shutter; }
 		}
 
+		/// <summary>
+		/// Gets a collection of available graphic layers.
+		/// </summary>
 		public IDicomGraphicsPlaneLayers Layers
 		{
 			get { return _layers; }
 		}
 
+		/// <summary>
+		/// Gets a collection of available overlays from the image SOP.
+		/// </summary>
 		public IDicomGraphicsPlaneOverlays ImageOverlays
 		{
 			get { return _imageOverlays; }
 		}
 
+		/// <summary>
+		/// Gets a collection of available overlays from an associated presentation state SOP, if one exists.
+		/// </summary>
 		public IDicomGraphicsPlaneOverlays PresentationOverlays
 		{
 			get { return _presentationOverlays; }

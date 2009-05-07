@@ -32,23 +32,125 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
-	public interface IDicomGraphicsPlaneLayers : IList<string>, IEnumerable<LayerGraphic>
+	/// <summary>
+	/// Represents a collection of available DICOM graphic layers.
+	/// </summary>
+	public interface IDicomGraphicsPlaneLayers : IList<string>, IEnumerable<ILayer>
 	{
-		LayerGraphic InactiveLayer { get; }
-		LayerGraphic this[string layerId] { get; }
-		LayerGraphic this[int index] { get; }
-		new LayerGraphic Add(string layerId);
-		new LayerGraphic Insert(int index, string layerId);
+		/// <summary>
+		/// Gets the inactive layer.
+		/// </summary>
+		/// <remarks>
+		/// The inactive layer is a special layer with an empty (0-length) <see cref="ILayer.Id"/>.
+		/// This layer is never shown in the scene graph, and <see cref="IGraphic"/>s can be moved here to disable their display.
+		/// Alternatively, the <see cref="IGraphic.Visible"/> property can be set on individual objects,
+		/// but certain DICOM objects (such as overlays from presentation states) require a layer to be
+		/// explicitly identified and, if the identified layer is the 0-length ID, should be disabled.
+		/// </remarks>
+		ILayer InactiveLayer { get; }
+
+		/// <summary>
+		/// Gets the layer with the specified ID.
+		/// </summary>
+		/// <remarks>
+		/// If a layer with the specified ID does not exist, it is automatically created and returned.
+		/// </remarks>
+		/// <param name="layerId">The ID of the layer.</param>
+		ILayer this[string layerId] { get; }
+
+		/// <summary>
+		/// Gets the layer at the specified index.
+		/// </summary>
+		/// <param name="index">The index of the layer.</param>
+		new ILayer this[int index] { get; }
+
+		/// <summary>
+		/// Adds a layer with the specified ID.
+		/// </summary>
+		/// <param name="layerId">The ID of the layer.</param>
+		/// <returns>The layer that was added.</returns>
+		/// <exception cref="ArgumentException">Thrown if a layer with the same ID already exists.</exception>
+		new ILayer Add(string layerId);
+
+		/// <summary>
+		/// Inserts a layer with the specified ID at the specified index.
+		/// </summary>
+		/// <param name="index">The index at which to insert the layer.</param>
+		/// <param name="layerId">The ID of the layer.</param>
+		/// <returns>The layer that was inserted.</returns>
+		/// <exception cref="ArgumentException">Thrown if a layer with the same ID already exists.</exception>
+		new ILayer Insert(int index, string layerId);
+	}
+
+	/// <summary>
+	/// Represents a single DICOM graphics layer.
+	/// </summary>
+	public interface ILayer
+	{
+		/// <summary>
+		/// Gets the ID string of this layer.
+		/// </summary>
+		string Id { get; }
+
+		/// <summary>
+		/// Gets or sets a textual description of this layer.
+		/// </summary>
+		string Description { get; set; }
+
+		/// <summary>
+		/// Gets or sets the grayscale display value to use on this layer. (Currently not strictly implemented)
+		/// </summary>
+		int? DisplayGrayscaleColor { get; set; }
+
+		/// <summary>
+		/// Gets or sets the CIELab colour value to use on this layer. (Currently not strictly implemented)
+		/// </summary>
+		int[] DisplayCIELabColor { get; set; }
+
+		/// <summary>
+		/// Gets or sets a value indicating that this layer is visible.
+		/// </summary>
+		bool Visible { get; set; }
+
+		/// <summary>
+		/// Gets the <see cref="DicomGraphicsPlane"/> to which this layer belongs.
+		/// </summary>
+		DicomGraphicsPlane Owner { get; }
+
+		/// <summary>
+		/// Gets a collection of graphics on this layer.
+		/// </summary>
+		GraphicCollection Graphics { get; }
 	}
 
 	public partial class DicomGraphicsPlane
 	{
+		private static string FormatLayerId(string layerId)
+		{
+			if (string.IsNullOrEmpty(layerId) || layerId.TrimEnd().Length == 0)
+				return string.Empty;
+			StringBuilder sb = new StringBuilder();
+			foreach (char c in layerId.Trim().ToUpperInvariant())
+			{
+				if (char.IsLetterOrDigit(c) || c == ' ' || c == '_')
+				{
+					sb.Append(c);
+					if (sb.Length >= 16)
+						break;
+				}
+			}
+			if (sb.Length == 0)
+				throw new ArgumentException("The supplied layer ID did not contain any valid characters.", "layerId");
+			return sb.ToString();
+		}
+
 		[Cloneable(true)]
 		private class LayerCollection : CompositeGraphic, IDicomGraphicsPlaneLayers
 		{
@@ -62,23 +164,23 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 					_layers.Add(graphic.Id, graphic);
 			}
 
-			public LayerGraphic InactiveLayer
+			public ILayer InactiveLayer
 			{
 				get { return this[string.Empty]; }
 			}
 
-			public LayerGraphic this[string layerId]
+			public ILayer this[string layerId]
 			{
 				get
 				{
-					layerId = layerId.ToUpperInvariant();
+					layerId = FormatLayerId(layerId);
 					if (!_layers.ContainsKey(layerId))
 						return this.Add(layerId);
 					return _layers[layerId];
 				}
 			}
 
-			public LayerGraphic this[int index]
+			public ILayer this[int index]
 			{
 				get
 				{
@@ -94,17 +196,15 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			public bool Contains(string layerId)
 			{
-				layerId = layerId.ToUpperInvariant();
+				layerId = FormatLayerId(layerId);
 				return _layers.ContainsKey(layerId);
 			}
 
-			public LayerGraphic Add(string layerId)
+			public ILayer Add(string layerId)
 			{
-				layerId = layerId.ToUpperInvariant();
+				layerId = FormatLayerId(layerId);
 				if (_layers.ContainsKey(layerId))
-					return _layers[layerId];
-
-
+					throw new ArgumentException("A layer with the same ID already exists.", "layerId");
 
 				LayerGraphic layer = new LayerGraphic(layerId);
 				_layers.Add(layerId, layer);
@@ -114,7 +214,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			public bool Remove(string layerId)
 			{
-				layerId = layerId.ToUpperInvariant();
+				layerId = FormatLayerId(layerId);
 				if (!_layers.ContainsKey(layerId))
 					return false;
 
@@ -123,13 +223,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				return true;
 			}
 
-			public LayerGraphic Insert(int index, string layerId)
+			public ILayer Insert(int index, string layerId)
 			{
 				Platform.CheckArgumentRange(index, 0, _layers.Count, "index");
 
-				layerId = layerId.ToUpperInvariant();
+				layerId = FormatLayerId(layerId);
 				if (_layers.ContainsKey(layerId))
-					return _layers[layerId];
+					throw new ArgumentException("A layer with the same ID already exists.", "layerId");
 
 				LayerGraphic layer = new LayerGraphic(layerId);
 				_layers.Add(layerId, layer);
@@ -147,7 +247,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			public int IndexOf(string layerId)
 			{
-				layerId = layerId.ToUpperInvariant();
+				layerId = FormatLayerId(layerId);
 				if (!_layers.ContainsKey(layerId))
 					return -1;
 
@@ -160,7 +260,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				base.Graphics.Clear();
 			}
 
-			public IEnumerator<LayerGraphic> GetEnumerator()
+			public IEnumerator<ILayer> GetEnumerator()
 			{
 				for (int n = 0; n < base.Graphics.Count; n++)
 					yield return (LayerGraphic) base.Graphics[n];
@@ -208,75 +308,72 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			#endregion
 		}
-	}
 
-	[Cloneable]
-	public sealed class LayerGraphic : CompositeGraphic
-	{
-		[CloneIgnore]
-		private readonly string _id;
-
-		private int[] _displayCIELabColor;
-		private int? _displayGrayscaleColor;
-		private string _description;
-
-		internal LayerGraphic(string id)
+		[Cloneable(true)]
+		private sealed class LayerGraphic : CompositeGraphic, ILayer
 		{
-			_id = id.ToUpperInvariant();
-			this.Visible = true;
-		}
+			private string _id;
+			private int[] _displayCIELabColor;
+			private int? _displayGrayscaleColor;
+			private string _description;
 
-		internal LayerGraphic(LayerGraphic source, ICloningContext context)
-		{
-			context.CloneFields(source, this);
-			_id = source._id;
-		}
+			/// <summary>
+			/// Cloning constructor.
+			/// </summary>
+			internal LayerGraphic() {}
 
-		public string Id
-		{
-			get { return _id; }
-		}
-
-		public string Description
-		{
-			get { return _description; }
-			set { _description = value; }
-		}
-
-		public int? DisplayGrayscaleColor
-		{
-			get { return _displayGrayscaleColor; }
-			set { _displayGrayscaleColor = value; }
-		}
-
-		public int[] DisplayCIELabColor
-		{
-			get { return _displayCIELabColor; }
-			set { _displayCIELabColor = value; }
-		}
-
-		public new DicomGraphicsPlane ParentGraphic
-		{
-			get
+			internal LayerGraphic(string layerId)
 			{
-				IGraphic layerCollection = base.ParentGraphic;
-				if (layerCollection == null)
-					return null;
-				return (DicomGraphicsPlane) layerCollection.ParentGraphic;
+				_id = FormatLayerId(layerId);
+				this.Visible = true;
 			}
-		}
 
-		public override bool Visible
-		{
-			get { return base.Visible; }
-			set
+			public string Id
 			{
-				if (string.IsNullOrEmpty(_id))
+				get { return _id; }
+			}
+
+			public string Description
+			{
+				get { return _description; }
+				set { _description = value; }
+			}
+
+			public int? DisplayGrayscaleColor
+			{
+				get { return _displayGrayscaleColor; }
+				set { _displayGrayscaleColor = value; }
+			}
+
+			public int[] DisplayCIELabColor
+			{
+				get { return _displayCIELabColor; }
+				set { _displayCIELabColor = value; }
+			}
+
+			public DicomGraphicsPlane Owner
+			{
+				get
 				{
-					base.Visible = false;
-					return;
+					IGraphic layerCollection = base.ParentGraphic;
+					if (layerCollection == null)
+						return null;
+					return (DicomGraphicsPlane) layerCollection.ParentGraphic;
 				}
-				base.Visible = value;
+			}
+
+			public override bool Visible
+			{
+				get { return base.Visible; }
+				set
+				{
+					if (string.IsNullOrEmpty(_id))
+					{
+						base.Visible = false;
+						return;
+					}
+					base.Visible = value;
+				}
 			}
 		}
 	}

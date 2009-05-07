@@ -35,7 +35,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.Dicom.Iod.Modules;
-using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
@@ -50,7 +49,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		public DicomGrayscaleSoftcopyPresentationState(DicomAttributeCollection dataSource) : base(SopClass, dataSource) {}
 
-		public DicomGrayscaleSoftcopyPresentationState(IDicomAttributeProvider dataSource) : base(SopClass, ShallowCopyDataSource(dataSource)) { }
+		public DicomGrayscaleSoftcopyPresentationState(IDicomAttributeProvider dataSource) : base(SopClass, ShallowCopyDataSource(dataSource)) {}
 
 		private DicomGrayscaleSoftcopyPresentationState(DicomGrayscaleSoftcopyPresentationState source, ICloningContext context) : base(source, context)
 		{
@@ -61,15 +60,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		protected override void PerformTypeSpecificSerialization(IList<DicomGrayscalePresentationImage> imagesByList, IDictionary<string, IList<DicomGrayscalePresentationImage>> imagesBySeries)
 		{
+			IOverlayMapping overlayMapping;
 			GrayscaleSoftcopyPresentationStateIod iod = new GrayscaleSoftcopyPresentationStateIod(base.DataSet);
 			this.SerializePresentationStateRelationship(iod.PresentationStateRelationship, imagesBySeries);
 			this.SerializePresentationStateShutter(iod.PresentationStateShutter);
 			this.SerializePresentationStateMask(iod.PresentationStateMask, imagesByList);
 			this.SerializeMask(iod.Mask, imagesByList);
 			this.SerializeDisplayShutter(iod.DisplayShutter, imagesByList);
-			this.SerializeBitmapDisplayShutter(iod.BitmapDisplayShutter, imagesByList);
-			this.SerializeOverlayPlane(iod.OverlayPlane, imagesByList);
-			this.SerializeOverlayActivation(iod.OverlayActivation, imagesByList);
+			this.SerializeOverlayPlane(iod.OverlayPlane, out overlayMapping, imagesByList);
+			this.SerializeOverlayActivation(iod.OverlayActivation, overlayMapping, imagesByList);
+			this.SerializeBitmapDisplayShutter(iod.BitmapDisplayShutter, overlayMapping, imagesByList);
 			this.SerializeDisplayedArea(iod.DisplayedArea, imagesByList);
 			this.SerializeGraphicAnnotation(iod.GraphicAnnotation, imagesByList);
 			this.SerializeSpatialTransform(iod.SpatialTransform, imagesByList);
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private static DicomAttributeCollection ShallowCopyDataSource(IDicomAttributeProvider source)
 		{
-			if(source is DicomAttributeCollection)
+			if (source is DicomAttributeCollection)
 				return (DicomAttributeCollection) source;
 
 			// a shallow copy is sufficient - even if the provider is a sop object that can be user-disposed, it

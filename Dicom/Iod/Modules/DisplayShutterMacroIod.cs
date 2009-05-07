@@ -272,7 +272,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				DicomAttribute attribute = base.DicomAttributeProvider[DicomTags.VerticesOfThePolygonalShutter];
 				if (DicomStringHelper.TryGetIntArray(attribute, out values))
 				{
-					long count = attribute.Count;
+					long count = attribute.Count & 0x7ffffffffffffffe; // rounds down to nearest multiple of 2
 					Point[] points = new Point[count / 2];
 					
 					int j = 0;
@@ -302,11 +302,10 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				}
 				else
 				{
-					StringBuilder builder = new StringBuilder();
-					foreach (Point point in value)
-						builder.AppendFormat("{0}\\{1}", point.Y, point.X); //row, column
-
-					base.DicomAttributeProvider[DicomTags.VerticesOfThePolygonalShutter].SetStringValue(builder.ToString());
+					string[] points = new string[value.Length];
+					for (int n = 0; n < points.Length; n++)
+						points[n] = string.Format("{0}\\{1}", value[n].Y, value[n].X);
+					base.DicomAttributeProvider[DicomTags.VerticesOfThePolygonalShutter].SetStringValue(string.Join("\\", points));
 				}
 			}
 		}

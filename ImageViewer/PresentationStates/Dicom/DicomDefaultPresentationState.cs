@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			BitmapDisplayShutterModuleIod bitmapShutterIod = new BitmapDisplayShutterModuleIod(_image.ImageSop.DataSource);
 			int bitmapShutterIndex = -1;
 			if (bitmapShutterIod.ShutterShape == ShutterShape.Bitmap)
-				bitmapShutterIndex = bitmapShutterIod.Index;
+				bitmapShutterIndex = bitmapShutterIod.ShutterOverlayGroupIndex;
 			if (bitmapShutterIndex < 0 || bitmapShutterIndex > 15)
 				bitmapShutterIndex = -1;
 
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				{
 					if (overlay.Index == bitmapShutterIndex)
 					{
-						// TODO: Set overlay presentation value/colour based on client display type
+						// Someday when we support CIELab colour, we should set presentation value/colour based on client display type
 						if (bitmapShutterIod.ShutterPresentationValue != null)
 							overlay.GrayPresentationValue = (ushort)bitmapShutterIod.ShutterPresentationValue;
 						overlay.Color = null;

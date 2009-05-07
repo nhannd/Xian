@@ -39,16 +39,19 @@ using ClearCanvas.ImageViewer.Graphics;
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
 	/// <summary>
-	/// Represents a collection of the available display shutters.
+	/// Represents a collection of available display shutters.
 	/// </summary>
 	public interface IDicomGraphicsPlaneShutters : IList<IShutterGraphic>
 	{
 		void Activate(IShutterGraphic shutter);
 		void Activate(int index);
 		void ActivateFirst();
+
 		void Deactivate(IShutterGraphic shutter);
 		void Deactivate(int index);
 		void DeactivateAll();
+
+		IShutterGraphic ActiveShutter { get; }
 
 		new IShutterGraphic this[int index] { get; }
 
@@ -67,6 +70,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			{
 				get { return base.Visible; }
 				set { base.Visible = value; }
+			}
+
+			public IShutterGraphic ActiveShutter
+			{
+				get { return CollectionUtils.SelectFirst(base.Graphics, delegate(IGraphic g) { return g.Visible; }) as IShutterGraphic; }
 			}
 
 			public IShutterGraphic this[int index]

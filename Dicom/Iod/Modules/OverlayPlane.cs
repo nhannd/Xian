@@ -77,12 +77,23 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			}
 		}
 
+		/// <summary>
+		/// Removes all the tags associated with a particular group from the underlying data source.
+		/// </summary>
+		/// <param name="index">The index of the group to remove.</param>
+		public void Delete(int index)
+		{
+			Platform.CheckArgumentRange(index, 0, 15, "index");
+			foreach (uint tag in this[index].DefinedTags)
+				base.DicomAttributeProvider[tag] = null;
+		}
+
 		public bool HasOverlayPlane(int index)
 		{
 			if (index < 0 || index >= 16)
 				return false;
 			DicomAttribute attrib;
-			if (!DicomAttributeProvider.TryGetAttribute(ComputeTagOffset(index) + DicomTags.OverlayBitPosition, out attrib))
+			if (!base.DicomAttributeProvider.TryGetAttribute(ComputeTagOffset(index) + DicomTags.OverlayBitPosition, out attrib))
 				return false;
 			else if (attrib != null)
 				return !attrib.IsEmpty;
@@ -583,6 +594,31 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		}
 
 		#endregion
+
+		/// <summary>
+		/// Gets an enumeration of <see cref="DicomTag"/>s used by this group.
+		/// </summary>
+		public IEnumerable<uint> DefinedTags
+		{
+			get
+			{
+				yield return _tagOffset + DicomTags.OverlayBitPosition;
+				yield return _tagOffset + DicomTags.OverlayBitsAllocated;
+				yield return _tagOffset + DicomTags.OverlayColumns;
+				yield return _tagOffset + DicomTags.OverlayData;
+				yield return _tagOffset + DicomTags.OverlayDescription;
+				yield return _tagOffset + DicomTags.OverlayLabel;
+				yield return _tagOffset + DicomTags.OverlayOrigin;
+				yield return _tagOffset + DicomTags.OverlayRows;
+				yield return _tagOffset + DicomTags.OverlaySubtype;
+				yield return _tagOffset + DicomTags.OverlayType;
+				yield return _tagOffset + DicomTags.RoiArea;
+				yield return _tagOffset + DicomTags.RoiMean;
+				yield return _tagOffset + DicomTags.RoiStandardDeviation;
+				yield return _tagOffset + DicomTags.NumberOfFramesInOverlay;
+				yield return _tagOffset + DicomTags.ImageFrameOrigin;
+			}
+		}
 
 		/// <summary>
 		/// Fills the <see cref="OverlayData"/> property with the overlay that had been encoded

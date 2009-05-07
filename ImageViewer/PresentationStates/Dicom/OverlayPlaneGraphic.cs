@@ -55,7 +55,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private readonly int _index;
 		private readonly int _frameNumber;
+		private readonly string _label;
 		private readonly string _description;
+		private readonly string _subtype;
+		private readonly OverlayType _type;
 		private readonly OverlayPlaneSource _source;
 		private ushort _grayPresentationValue = 0;
 		private Color? _color;
@@ -66,7 +69,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		{
 			_frameNumber = frameNumber;
 			_index = overlayPlaneIod.Index;
+			_label = overlayPlaneIod.OverlayLabel;
 			_description = overlayPlaneIod.OverlayDescription;
+			_type = overlayPlaneIod.OverlayType;
 			_source = source;
 
 			GrayscaleImageGraphic overlayImageGraphic = CreateOverlayImageGraphic(overlayPlaneIod, overlayPixelData);
@@ -155,9 +160,39 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _source; }
 		}
 
+		public string Label
+		{
+			get { return _label; }
+		}
+
 		public string Description
 		{
 			get { return _description; }
+		}
+
+		public OverlayType Type
+		{
+			get { return _type; }
+		}
+
+		public string SubType
+		{
+			get { return _subtype; }
+		}
+
+		public PointF Origin
+		{
+			get { return new PointF(_overlayGraphic.SpatialTransform.TranslationX, _overlayGraphic.SpatialTransform.TranslationY); }
+		}
+
+		public int Rows
+		{
+			get { return _overlayGraphic.Rows; }
+		}
+
+		public int Columns
+		{
+			get { return _overlayGraphic.Columns; }
 		}
 
 		public ushort GrayPresentationValue
@@ -186,6 +221,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				_color = value;
 				UpdateLuts();
 			}
+		}
+
+		public OverlayData CreateOverlayData(bool bigEndianWords)
+		{
+			return OverlayData.FromPixelData(bigEndianWords, _overlayGraphic.PixelData);
 		}
 
 		#region IShutterGraphic Members

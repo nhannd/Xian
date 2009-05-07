@@ -30,8 +30,10 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
@@ -40,6 +42,7 @@ using ClearCanvas.Dicom.Iod.Macros.PresentationStateRelationship;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
 
@@ -349,7 +352,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private static readonly int[] _spatialTransformRotationTranslation = new int[] {0, 270, 180, 90, 0, 90, 180, 270, 180, 270, 0, 90, 180, 90, 0, 270};
 
-		private static readonly string _roiGraphicLayerId = "ROIGRAPHICS";
+		private static readonly string _annotationsLayerId = "USER ANNOTATIONS";
 
 		protected void SerializeGraphicLayer(GraphicLayerModuleIod graphicLayerModule, IEnumerable<T> images)
 		{
@@ -362,9 +365,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				DicomGraphicsPlane psGraphic = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
 				if (psGraphic != null)
 				{
-					foreach (LayerGraphic layerGraphic in (IEnumerable<LayerGraphic>)psGraphic.Layers)
+					foreach (ILayer layerGraphic in (IEnumerable<ILayer>)psGraphic.Layers)
 					{
-						if (!layerIndex.ContainsKey(layerGraphic.Id))
+						// do not serialize the inactive layer, and do not serialize layers more than once
+						if (!string.IsNullOrEmpty(layerGraphic.Id) && !layerIndex.ContainsKey(layerGraphic.Id))
 						{
 							GraphicLayerSequenceItem layerSequence = new GraphicLayerSequenceItem();
 							layerSequence.GraphicLayer = layerGraphic.Id.ToUpperInvariant();
@@ -378,19 +382,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 					}
 				}
 
-				foreach (IGraphic graphic in image.OverlayGraphics)
+				if (image.OverlayGraphics.Count > 0)
 				{
-					if (graphic is AnnotationGraphic)
+					if (!layerIndex.ContainsKey(_annotationsLayerId))
 					{
-						if (!layerIndex.ContainsKey(_roiGraphicLayerId))
-						{
-							layerIndex.Add(_roiGraphicLayerId, null);
-							GraphicLayerSequenceItem layerSequence = new GraphicLayerSequenceItem();
-							layerSequence.GraphicLayer = _roiGraphicLayerId;
-							layerSequence.GraphicLayerOrder = order++;
-							layerSequences.Add(layerSequence);
-							break;
-						}
+						layerIndex.Add(_annotationsLayerId, null);
+						GraphicLayerSequenceItem layerSequence = new GraphicLayerSequenceItem();
+						layerSequence.GraphicLayer = _annotationsLayerId;
+						layerSequence.GraphicLayerOrder = order++;
+						layerSequences.Add(layerSequence);
+						break;
 					}
 				}
 			}
@@ -408,7 +409,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 				DicomGraphicsPlane psGraphic = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
 				if (psGraphic != null)
 				{
-					foreach (LayerGraphic layerGraphic in (IEnumerable<LayerGraphic>)psGraphic)
+					foreach (ILayer layerGraphic in (IEnumerable<ILayer>)psGraphic.Layers)
 					{
 						foreach (IGraphic graphic in layerGraphic.Graphics)
 						{
@@ -428,7 +429,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 					GraphicAnnotationSequenceItem annotation = new GraphicAnnotationSequenceItem();
 					if (GraphicAnnotationSerializer.SerializeGraphic(graphic, annotation))
 					{
-						annotation.GraphicLayer = _roiGraphicLayerId;
+						annotation.GraphicLayer = _annotationsLayerId;
 						annotation.ReferencedImageSequence = new ImageSopInstanceReferenceMacro[] {CreateImageSopInstanceReference(image.Frame)};
 						annotations.Add(annotation);
 					}
@@ -441,31 +442,229 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		protected void SerializeDisplayShutter(DisplayShutterModuleIod displayShutterModule, IEnumerable<T> images)
 		{
-			//TODO: since we only do presentation states for key objects right now, implementing this
-			//would cause inconsistent behaviour.  When we support presentation states fully, this should be implemented,
-			//along with deserialization.
-		}
+			// Doesn't support multiframe or whatever case it is when we get more than one image serialized to one state
+			CircularShutter circular = null;
+			RectangularShutter rectangular = null;
+			PolygonalShutter polygonal = null;
+			int unserializedCount = 0;
 
-		protected void SerializeBitmapDisplayShutter(BitmapDisplayShutterModuleIod bitmapDisplayShutterModule, IEnumerable<T> images)
-		{
-			// TODO: Serialize user-created bitmap display shutters, when we support user-created overlay planes.
-		}
-
-		protected void SerializeOverlayPlane(OverlayPlaneModuleIod overlayPlaneModule, IEnumerable<T> images)
-		{
-			// TODO: Serialize user-created overlay planes, when we support user-created overlay planes.
-		}
-
-		protected void SerializeOverlayActivation(OverlayActivationModuleIod overlayActivationModule, IEnumerable<T> images)
-		{
-			OverlayPlaneSource?[] sources = new OverlayPlaneSource?[16];
 			foreach (T image in images)
 			{
 				DicomGraphicsPlane dicomGraphics = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
-				if(dicomGraphics != null)
+				if (dicomGraphics != null)
 				{
-					
+					// identify visible geometric shutter if exists
+					GeometricShuttersGraphic geometricShutters = dicomGraphics.Shutters.ActiveShutter as GeometricShuttersGraphic;
+					if (geometricShutters != null)
+					{
+						// we can only save the first of each
+						foreach (GeometricShutter shutter in geometricShutters.CustomShutters)
+						{
+							if (shutter is CircularShutter && circular == null)
+								circular = (CircularShutter) shutter;
+							else if (shutter is RectangularShutter && rectangular == null)
+								rectangular = (RectangularShutter) shutter;
+							else if (shutter is PolygonalShutter && polygonal == null)
+								polygonal = (PolygonalShutter) shutter;
+							else
+								unserializedCount++;
+						}
+						foreach (GeometricShutter shutter in geometricShutters.DicomShutters)
+						{
+							if (shutter is CircularShutter && circular == null)
+								circular = (CircularShutter) shutter;
+							else if (shutter is RectangularShutter && rectangular == null)
+								rectangular = (RectangularShutter) shutter;
+							else if (shutter is PolygonalShutter && polygonal == null)
+								polygonal = (PolygonalShutter) shutter;
+							else
+								unserializedCount++;
+						}
+					}
 				}
+			}
+
+			ShutterShape shape = ShutterShape.None;
+			if (circular != null)
+			{
+				shape |= ShutterShape.Circular;
+
+				displayShutterModule.CenterOfCircularShutter = circular.Center;
+				displayShutterModule.RadiusOfCircularShutter = circular.Radius;
+			}
+			if (rectangular != null)
+			{
+				shape |= ShutterShape.Rectangular;
+
+				Rectangle r = rectangular.Rectangle;
+				displayShutterModule.ShutterLeftVerticalEdge = r.Left;
+				displayShutterModule.ShutterRightVerticalEdge = r.Right;
+				displayShutterModule.ShutterUpperHorizontalEdge = r.Top;
+				displayShutterModule.ShutterLowerHorizontalEdge = r.Bottom;
+			}
+			if (polygonal != null)
+			{
+				shape |= ShutterShape.Polygonal;
+
+				List<Point> vertices = new List<Point>();
+				vertices.AddRange(polygonal.Vertices);
+				displayShutterModule.VerticesOfThePolygonalShutter = vertices.ToArray();
+			}
+
+			if (shape != ShutterShape.None)
+			{
+				displayShutterModule.ShutterShape = shape;
+				displayShutterModule.ShutterPresentationValue = 0;
+			}
+			else
+			{
+				foreach (uint tag in DisplayShutterMacroIod.DefinedTags)
+					displayShutterModule.DicomAttributeProvider[tag] = null;
+			}
+
+			if (unserializedCount > 0)
+			{
+				Platform.Log(LogLevel.Warn, "Attempt to serialize presentation state with an unsupported combination of shutters - some information may be lost.");
+			}
+		}
+
+		protected void SerializeBitmapDisplayShutter(BitmapDisplayShutterModuleIod bitmapDisplayShutterModule, IOverlayMapping overlayMapping, IEnumerable<T> images)
+		{
+			// Doesn't support multiframe or whatever case it is when we get more than one image serialized to one state
+			for (int n = 0; n < 16; n++)
+			{
+				OverlayPlaneGraphic overlay = overlayMapping[n];
+				if (overlay != null)
+				{
+					if (overlay.ParentGraphic is IDicomGraphicsPlaneShutters)
+					{
+						bitmapDisplayShutterModule.ShutterShape = ShutterShape.Bitmap;
+						bitmapDisplayShutterModule.ShutterOverlayGroupIndex = n;
+						bitmapDisplayShutterModule.ShutterPresentationValue = overlay.GrayPresentationValue;
+						bitmapDisplayShutterModule.ShutterPresentationColorCielabValue = null;
+						break; // there can only be one
+					}
+				}
+			}
+		}
+
+		protected void SerializeOverlayPlane(OverlayPlaneModuleIod overlayPlaneModule, out IOverlayMapping overlayMapping, IEnumerable<T> images)
+		{
+			// Doesn't support multiframe or whatever case it is when we get more than one image serialized to one state
+			List<OverlayPlaneGraphic> visibleOverlays = new List<OverlayPlaneGraphic>();
+			foreach (T image in images)
+			{
+				DicomGraphicsPlane dicomGraphics = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
+				if (dicomGraphics != null)
+				{
+					// identify visible bitmap shutter if exists
+					OverlayPlaneGraphic bitmapShutter = dicomGraphics.Shutters.ActiveShutter as OverlayPlaneGraphic;
+					if (bitmapShutter != null)
+						visibleOverlays.Add(bitmapShutter);
+
+					// identify any visible overlays
+					foreach (ILayer layer in
+						CollectionUtils.Select((IEnumerable<ILayer>)dicomGraphics.Layers, delegate(ILayer test) { return test.Visible; }))
+					{
+						foreach (OverlayPlaneGraphic overlay in
+							CollectionUtils.Select(layer.Graphics, delegate(IGraphic test) { return test is OverlayPlaneGraphic && test.Visible; }))
+							visibleOverlays.Add(overlay);
+					}
+				}
+			}
+
+			OverlayMapping overlayMap = new OverlayMapping();
+			Queue<OverlayPlaneGraphic> overlaysToRemap = new Queue<OverlayPlaneGraphic>();
+
+			// user and presentation state overlays are high priority items to remap
+			foreach(OverlayPlaneGraphic overlay in CollectionUtils.Select(visibleOverlays, delegate(OverlayPlaneGraphic t) { return t.Source != OverlayPlaneSource.Image; }))
+				overlaysToRemap.Enqueue(overlay);
+			foreach (OverlayPlaneGraphic overlay in CollectionUtils.Select(visibleOverlays, delegate(OverlayPlaneGraphic t) { return t.Source == OverlayPlaneSource.Image; })) {
+				if (overlayMap[overlay.Index] == null)
+					overlayMap[overlay.Index] = overlay;
+				else 
+					overlaysToRemap.Enqueue(overlay); // image overlays are lower priority items to remap, since they will be included in the header anyway
+			}
+
+			// seed the overlays to remap into the remaining available overlay groups
+			for (int n = 0; n < 16 && overlaysToRemap.Count > 0; n++)
+			{
+				if (overlayMap[n] == null)
+					overlayMap[n] = overlaysToRemap.Dequeue();
+			}
+
+			// serialize the overlays
+			for (int n = 0; n < 16; n++)
+			{
+				OverlayPlaneGraphic overlay = overlayMap[n];
+				if (overlay != null)
+				{
+					if (overlay.Source != OverlayPlaneSource.Image || overlay.Index != n)
+					{
+						// only record this overlay in the presentation state if it is being remapped to another group or is not already in the image.
+						OverlayPlane overlayIod = overlayPlaneModule[n];
+						overlayIod.OverlayData = overlay.CreateOverlayData(overlayIod.IsBigEndianOW).Raw;
+						overlayIod.OverlayBitPosition = 0;
+						overlayIod.OverlayBitsAllocated = 1;
+						overlayIod.OverlayColumns = overlay.Columns;
+						overlayIod.OverlayDescription = overlay.Description;
+						overlayIod.OverlayLabel = overlay.Label;
+						overlayIod.OverlayOrigin = Point.Round(overlay.Origin);
+						overlayIod.OverlayRows = overlay.Rows;
+						overlayIod.OverlaySubtype = overlay.SubType;
+						overlayIod.OverlayType = overlay.Type;
+						overlayIod.RoiArea = null;
+						overlayIod.RoiMean = null;
+						overlayIod.RoiStandardDeviation = null;
+					}
+					else
+					{
+						overlayPlaneModule.Delete(n);
+					}
+				}
+			}
+
+			if (overlaysToRemap.Count > 0)
+			{
+				Platform.Log(LogLevel.Warn, "Attempt to serialize presentation state with more than 16 visible overlays - some information may be lost.");
+			}
+
+			overlayMapping = overlayMap;
+		}
+
+		protected void SerializeOverlayActivation(OverlayActivationModuleIod overlayActivationModule, IOverlayMapping overlayMapping, IEnumerable<T> images)
+		{
+			// Doesn't support multiframe or whatever case it is when we get more than one image serialized to one state
+			for (int n = 0; n < 16; n++)
+			{
+				OverlayPlaneGraphic overlay = overlayMapping[n];
+				if (overlay != null)
+				{
+					if(overlay.ParentGraphic is ILayer)
+					{
+						overlayActivationModule[n].OverlayActivationLayer = ((ILayer) overlay.ParentGraphic).Id;
+					}
+					else
+					{
+						overlayActivationModule.Delete(n);
+					}
+				}
+			}
+		}
+
+		protected interface IOverlayMapping
+		{
+			OverlayPlaneGraphic this[int index] { get; }
+		}
+
+		private class OverlayMapping : IOverlayMapping
+		{
+			private readonly OverlayPlaneGraphic[] _map = new OverlayPlaneGraphic[16];
+
+			public OverlayPlaneGraphic this[int index]
+			{
+				get { return _map[index]; }
+				set { _map[index] = value; }
 			}
 		}
 
@@ -562,7 +761,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			DicomGraphicsPlane graphic = DicomGraphicsPlane.GetDicomGraphicsPlane(image, true);
 			foreach (GraphicLayerSequenceItem sequenceItem in orderedSequences.Values)
 			{
-				LayerGraphic layer = graphic.Layers.Add(sequenceItem.GraphicLayer);
+				ILayer layer = graphic.Layers[sequenceItem.GraphicLayer];
 				layer.Description = sequenceItem.GraphicLayerDescription;
 				layer.DisplayCIELabColor = sequenceItem.GraphicLayerRecommendedDisplayCielabValue;
 				layer.DisplayGrayscaleColor = sequenceItem.GraphicLayerRecommendedDisplayGrayscaleValue;
@@ -608,7 +807,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			if(bitmapDisplayShutterModule.ShutterShape == ShutterShape.Bitmap)
 			{
 				DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image, true);
-				int overlayIndex = bitmapDisplayShutterModule.Index;
+				int overlayIndex = bitmapDisplayShutterModule.ShutterOverlayGroupIndex;
 				if (overlayIndex >= 0 && overlayIndex < 16)
 				{
 					IShutterGraphic shutter = null;

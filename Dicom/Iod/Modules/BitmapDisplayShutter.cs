@@ -102,8 +102,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// Setting this value will automatically update the <see cref="ShutterOverlayGroup"/> tag.
 		/// </remarks>
 		/// <seealso cref="ShutterOverlayGroup"/>
-		/// <seealso cref="TagOffset"/>
-		public int Index
+		/// <seealso cref="ShutterOverlayGroupTagOffset"/>
+		public int ShutterOverlayGroupIndex
 		{
 			get { return (this.ShutterOverlayGroup - 0x6000)/2; }
 			set
@@ -121,8 +121,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// Setting this value will automatically update the <see cref="ShutterOverlayGroup"/> tag.
 		/// </remarks>
 		/// <seealso cref="ShutterOverlayGroup"/>
-		/// <seealso cref="Index"/>
-		public uint TagOffset
+		/// <seealso cref="ShutterOverlayGroupIndex"/>
+		public uint ShutterOverlayGroupTagOffset
 		{
 			get { return (uint) ((this.ShutterOverlayGroup - 0x6000) << 16); }
 			set { this.ShutterOverlayGroup = (ushort) ((value >> 16) + 0x6000); }
@@ -131,8 +131,8 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Gets or sets the DICOM group number of the overlay to use as a bitmap display shutter. Type 1.
 		/// </summary>
-		/// <seealso cref="TagOffset"/>
-		/// <seealso cref="Index"/>
+		/// <seealso cref="ShutterOverlayGroupTagOffset"/>
+		/// <seealso cref="ShutterOverlayGroupIndex"/>
 		public ushort ShutterOverlayGroup
 		{
 			get

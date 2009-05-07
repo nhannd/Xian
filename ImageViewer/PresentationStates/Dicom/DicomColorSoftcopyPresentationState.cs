@@ -39,16 +39,17 @@ using ClearCanvas.Dicom.Iod.Modules;
 namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
 	[Cloneable]
-	internal sealed class DicomColorSoftcopyPresentationState : DicomSoftcopyPresentationStateBase<DicomColorPresentationImage> {
+	internal sealed class DicomColorSoftcopyPresentationState : DicomSoftcopyPresentationStateBase<DicomColorPresentationImage>
+	{
 		public static readonly SopClass SopClass = SopClass.ColorSoftcopyPresentationStateStorageSopClass;
 
-		public DicomColorSoftcopyPresentationState() : base(SopClass) { }
+		public DicomColorSoftcopyPresentationState() : base(SopClass) {}
 
-		public DicomColorSoftcopyPresentationState(DicomFile dicomFile) : base(SopClass, dicomFile) { }
+		public DicomColorSoftcopyPresentationState(DicomFile dicomFile) : base(SopClass, dicomFile) {}
 
-		public DicomColorSoftcopyPresentationState(DicomAttributeCollection dataSource) : base(SopClass, dataSource) { }
+		public DicomColorSoftcopyPresentationState(DicomAttributeCollection dataSource) : base(SopClass, dataSource) {}
 
-		public DicomColorSoftcopyPresentationState(IDicomAttributeProvider dataSource) : base(SopClass, ShallowCopyDataSource(dataSource)) { }
+		public DicomColorSoftcopyPresentationState(IDicomAttributeProvider dataSource) : base(SopClass, ShallowCopyDataSource(dataSource)) {}
 
 		private DicomColorSoftcopyPresentationState(DicomColorSoftcopyPresentationState source, ICloningContext context)
 			: base(source, context)
@@ -58,14 +59,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		#region Serialization Support
 
-		protected override void PerformTypeSpecificSerialization(IList<DicomColorPresentationImage> imagesByList, IDictionary<string, IList<DicomColorPresentationImage>> imagesBySeries) {
+		protected override void PerformTypeSpecificSerialization(IList<DicomColorPresentationImage> imagesByList, IDictionary<string, IList<DicomColorPresentationImage>> imagesBySeries)
+		{
+			IOverlayMapping overlayMapping;
 			ColorSoftcopyPresentationStateIod iod = new ColorSoftcopyPresentationStateIod(base.DataSet);
 			this.SerializePresentationStateRelationship(iod.PresentationStateRelationship, imagesBySeries);
 			this.SerializePresentationStateShutter(iod.PresentationStateShutter);
 			this.SerializeDisplayShutter(iod.DisplayShutter, imagesByList);
-			this.SerializeBitmapDisplayShutter(iod.BitmapDisplayShutter, imagesByList);
-			this.SerializeOverlayPlane(iod.OverlayPlane, imagesByList);
-			this.SerializeOverlayActivation(iod.OverlayActivation, imagesByList);
+			this.SerializeOverlayPlane(iod.OverlayPlane, out overlayMapping, imagesByList);
+			this.SerializeOverlayActivation(iod.OverlayActivation, overlayMapping, imagesByList);
+			this.SerializeBitmapDisplayShutter(iod.BitmapDisplayShutter, overlayMapping, imagesByList);
 			this.SerializeDisplayedArea(iod.DisplayedArea, imagesByList);
 			this.SerializeGraphicAnnotation(iod.GraphicAnnotation, imagesByList);
 			this.SerializeSpatialTransform(iod.SpatialTransform, imagesByList);
@@ -82,7 +85,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		#region Deserialization Support
 
-		protected override void PerformTypeSpecificDeserialization(IList<DicomColorPresentationImage> imagesByList, IDictionary<string, IList<DicomColorPresentationImage>> imagesBySeries) {
+		protected override void PerformTypeSpecificDeserialization(IList<DicomColorPresentationImage> imagesByList, IDictionary<string, IList<DicomColorPresentationImage>> imagesBySeries)
+		{
 			ColorSoftcopyPresentationStateIod iod = new ColorSoftcopyPresentationStateIod(base.DataSet);
 
 			foreach (DicomColorPresentationImage image in imagesByList)
@@ -103,9 +107,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		#region IDicomAttributeProvider Copy Method
 
-		private static DicomAttributeCollection ShallowCopyDataSource(IDicomAttributeProvider source) {
+		private static DicomAttributeCollection ShallowCopyDataSource(IDicomAttributeProvider source)
+		{
 			if (source is DicomAttributeCollection)
-				return (DicomAttributeCollection)source;
+				return (DicomAttributeCollection) source;
 
 			// a shallow copy is sufficient - even if the provider is a sop object that can be user-disposed, it
 			// provides an indexer to get dicom attribute objects which will not be disposed if we have a reference to it
