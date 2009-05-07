@@ -194,18 +194,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             DeleteItemButton.Roles = AuthorityTokens.ArchiveQueue.Delete;
         	ViewStudyDetailsButton.Roles = AuthorityTokens.Study.View;
         }
-
-        protected override void OnPreRender(EventArgs e)
-        {
-			UpdateUI();
-			base.OnPreRender(e);
-        }
-
-        protected void UpdateUI()
-        {
-            UpdateToolbarButtonState();
-        }
-        
+       
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             ArchiveQueueItemList.Refresh();
@@ -234,21 +223,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
                 MessageBox.MessageStyle = "color: #FF0000; font-weight: bold;";
                 MessageBox.Data = items;
                 MessageBox.Show();
-            }
-        }
-
-        protected void UpdateToolbarButtonState()
-        {
-            IList<Model.ArchiveQueue> items = ArchiveQueueItemList.SelectedItems;
-            if (items != null)
-            {
-				DeleteItemButton.Enabled = true;
-            	ViewStudyDetailsButton.Enabled = true;
-            }
-            else
-            {
-                DeleteItemButton.Enabled = false;
-				ViewStudyDetailsButton.Enabled = false;
             }
         }
 

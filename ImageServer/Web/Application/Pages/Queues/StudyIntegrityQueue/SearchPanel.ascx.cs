@@ -130,24 +130,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
                 AuthorityTokens.StudyIntegrityQueue.Reconcile;
         }
 
-        protected override void OnPreRender(EventArgs e)
-        {
-            UpdateToolbarButtons();
-			base.OnPreRender(e);
-        }
-
-        protected void UpdateToolbarButtons()
-        {
-            StudyIntegrityQueueItemList.RefreshCurrentPage();
-
-            ReconcileButton.Enabled = (StudyIntegrityQueueItemList.SelectedItems != null)
-                && CollectionUtils.TrueForAll<StudyIntegrityQueueSummary>(StudyIntegrityQueueItemList.SelectedItems,
-                delegate(StudyIntegrityQueueSummary item)
-                {
-                    return item.CanReconcile;
-                });
-        }
-       
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             StudyIntegrityQueueItemList.Refresh();

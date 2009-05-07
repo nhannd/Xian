@@ -34,6 +34,7 @@ using System.Web.UI.WebControls;
 using System.Collections.Generic;
 
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 
@@ -220,7 +221,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
             // We want to use our own pager control instead so let's hide it.
             RestoreQueueGridView.SelectedIndexChanged += RestoreQueueGridView_SelectedIndexChanged;
 
-            RestoreQueueGridView.DataSource = RestoreQueueDataSourceObject;
+            if (IsPostBack || Page.IsAsync)
+            {
+                RestoreQueueGridView.DataSource = RestoreQueueDataSourceObject;
+            } 
         }
 
         protected void RestoreQueueGridView_SelectedIndexChanged(object sender, EventArgs e)
@@ -239,7 +243,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
         protected void RestoreQueueGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             RestoreQueueGridView.PageIndex = e.NewPageIndex;
-            DataBind();
+            RestoreQueueGridView.DataBind();
         }
 
 		protected void DisposeRestoreQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
@@ -279,6 +283,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
         public void RefreshCurrentPage()
         {
             RestoreQueueGrid.DataBind(); 
+        }
+
+        protected void GridView_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.EmptyDataRow)
+            {
+                EmptySearchResultsMessage message =
+                                        (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
+                if (message != null)
+                {
+                    if (RestoreQueueGrid.DataSource == null)
+                    {
+                        message.Message = "Please enter search criteria to find studies.";
+                    }
+                    else
+                    {
+                        message.Message = "No studies found matching the provided criteria.";
+                    }
+                }
+
+            }
         }
 
         #endregion public methods

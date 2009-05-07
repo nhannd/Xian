@@ -188,6 +188,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                 ListContainerTable.Height = _height;
 
             WorkQueueGridView.DataSource = WorkQueueDataSourceObject;
+            WorkQueueGridView.DataBind();
         }
       
         protected ServerEntityKey SelectedWorkQueueItemKey
@@ -250,7 +251,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
         protected void WorkQueueListView_PageIndexChanged(object sender, EventArgs e)
         {
-            DataBind();
+            WorkQueueGridView.DataBind();
         }
 
         protected void WorkQueueListView_DataBound(object sender, EventArgs e)
@@ -267,7 +268,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             if (WorkQueueGridView.SelectedDataKey!=null)
                 SelectedWorkQueueItemKey = WorkQueueGridView.SelectedDataKey.Value as ServerEntityKey;
 
-            DataBind();
+            WorkQueueGridView.DataBind();
         }
 
     	protected void GetWorkQueueDataSource(object sender, ObjectDataSourceEventArgs e)
@@ -298,12 +299,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         public void Refresh()
         {
             WorkQueueGridView.PageIndex = 0;
-            DataBind();
+            WorkQueueGridView.DataBind();
         }
 
         public void RefreshCurrentPage()
         {
-            DataBind();
+            WorkQueueGridView.DataBind();
         }
     }
 }

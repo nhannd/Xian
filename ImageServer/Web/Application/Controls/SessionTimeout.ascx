@@ -62,7 +62,7 @@
         now = new Date(utc);
         var sessionExpiry = new Date(expiryTime);
         timeLeft = Math.round( (sessionExpiry.getTime() - now.getTime()) / 1000 ) + 1// give 1 second to ensure when we redirect, the session is really expired;
-        window.status  = expiryTime;
+        window.status  = " [ Session Expiry Time: " + expiryTime + " ]";
         return timeLeft;
     }
     

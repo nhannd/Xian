@@ -75,7 +75,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
                      
         // called when user clicked on a row in the study list
         _OnItemListRowClicked : function(sender, event)
-        {    
+        {           
             this._updateToolbarButtonStates();        
         },
         

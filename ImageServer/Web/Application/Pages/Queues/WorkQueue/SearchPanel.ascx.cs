@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
                         DateTime.ParseExact(ScheduleDate.Text, ScheduleCalendarExtender.Format, null);
                 else
                     ScheduleCalendarExtender.SelectedDate = null;
-            }
+            } 
 
             // re-populate the drop down lists and restore their states
             IList<WorkQueueTypeEnum> workQueueTypes = WorkQueueTypeEnum.GetAll();

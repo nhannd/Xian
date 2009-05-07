@@ -14,6 +14,7 @@
 			
             <ccUI:GridView ID="ApplicationLogListControl" runat="server"
 				OnPageIndexChanging="ApplicationLogListControl_PageIndexChanging" 
+				OnRowDataBound="GridView_RowDataBound"
 				EmptyDataText="No logs found (Please check the filters.)">
                 <FooterStyle BackColor="#507CD1" Font-Bold="True" ForeColor="White" />
                 <Columns>

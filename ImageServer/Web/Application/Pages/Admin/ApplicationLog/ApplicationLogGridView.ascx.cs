@@ -32,6 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using GridView = ClearCanvas.ImageServer.Web.Common.WebControls.UI.GridView;
 
@@ -47,6 +48,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 		#region Private Members
 		private ApplicationLogDataSource _dataSource = null;
 		private IList<Model.ApplicationLog> _logs;
+        private Unit _height;
 		#endregion
 
 		#region Properties
@@ -64,6 +66,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 				_logs = value;
 			}
 		}
+
+        /// <summary>
+        /// Gets/Sets the height of the study list panel
+        /// </summary>
+        public Unit Height
+        {
+            get
+            {
+                if (ContainerTable != null)
+                    return ContainerTable.Height;
+                else
+                    return _height;
+            }
+            set
+            {
+                _height = value;
+                if (ContainerTable != null)
+                    ContainerTable.Height = value;
+            }
+        }
+
 		public Web.Common.WebControls.UI.GridView ApplicationLogListGrid
 		{
 			get { return ApplicationLogListControl; }
@@ -125,8 +148,37 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 		{
 			base.OnInit(e);
 
-		    ApplicationLogListControl.DataSource = ApplicationLogDataSourceObject;
+            if (IsPostBack || Page.IsAsync)
+            {
+                ApplicationLogListControl.DataSource = ApplicationLogDataSourceObject;
+            } 
+
+            if (_height!=Unit.Empty)
+                ContainerTable.Height = _height;
+
+		    
 		}
+
+        protected void GridView_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.EmptyDataRow)
+            {
+                EmptySearchResultsMessage message =
+                                        (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
+                if (message != null)
+                {
+                    if (ApplicationLogListControl.DataSource == null)
+                    {
+                        message.Message = "Please enter search criteria to find log entries.";
+                    }
+                    else
+                    {
+                        message.Message = "No log entries found matching the provided criteria.";
+                    }
+                }
+
+            }
+        }
 
 		protected void GetApplicationLogDataSource(object sender, ObjectDataSourceEventArgs e)
 		{
@@ -154,7 +206,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 		protected void ApplicationLogListControl_PageIndexChanging(object sender, GridViewPageEventArgs e)
 		{
 			ApplicationLogListControl.PageIndex = e.NewPageIndex;
-			DataBind();
+			ApplicationLogListControl.DataBind();
 		}
 
 	}

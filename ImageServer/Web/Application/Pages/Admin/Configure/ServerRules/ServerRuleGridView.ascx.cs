@@ -202,12 +202,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.ServerRu
 		protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
 		{
 			GridView.PageIndex = e.NewPageIndex;
-			DataBind();
-		}
-
-		protected void GridView_DataBound(object sender, EventArgs e)
-		{
-
+			GridView.DataBind();
 		}
 
 		#endregion Protected Methods

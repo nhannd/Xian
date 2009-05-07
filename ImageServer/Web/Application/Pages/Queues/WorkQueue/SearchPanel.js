@@ -33,6 +33,8 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Queu
     ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.SearchPanel.prototype = 
     {
         initialize : function() {
+        
+            debugger
             ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.SearchPanel.callBaseMethod(this, 'initialize');        
             
             this._OnLoadHandler = Function.createDelegate(this,this._OnLoad);

@@ -39,7 +39,7 @@
                                 <td>
                                     <asp:DropDownList ID="RefreshRateEnabled" runat="server" CssClass="SearchDropDownList" OnSelectedIndexChanged="RefreshRate_IndexChanged" AutoPostBack="true">
                                         <asp:ListItem Selected="True" Value="Y" Text="Yes"/>
-                                        <asp:ListItem Value="N" Text="No" />
+                                        <asp:ListItem Value="N" Text="No" Selected="True"/>
                                     </asp:DropDownList> 
                                 </td>
                                 <td>

@@ -263,10 +263,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
         #region protected methods
 
-        protected void Page_Load(object sender, EventArgs e)
-        {
-        }
-
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
@@ -330,13 +326,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
 
         protected void GridView1_PageIndexChanged(object sender, EventArgs e)
         {
-            // DataBind();
+            TheGrid.DataBind();
         }
 
         protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
-            //  GridView1.PageIndex = e.NewPageIndex;
-            //  DataBind();
+            GridView1.PageIndex = e.NewPageIndex;
+            TheGrid.DataBind();
         }
 
         #region Private Static members
@@ -365,7 +361,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.Configure.FileSyst
         /// </remarks>
         public override void DataBind()
         {
-            GridView1.DataBind();
+            TheGrid.DataBind();
         }
 
         #endregion // public methods

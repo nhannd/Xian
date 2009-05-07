@@ -180,18 +180,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
 			ViewStudyDetailsButton.Roles = AuthorityTokens.Study.View;
         }
 
-        protected override void OnPreRender(EventArgs e)
-        {
-
-			UpdateUI();
-			base.OnPreRender(e);
-        }
-
-        protected void UpdateUI()
-        {
-            UpdateToolbarButtonState();
-        }
-        
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             RestoreQueueItemList.Refresh();
@@ -221,21 +209,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.RestoreQueue
                 MessageBox.MessageType = MessageBox.MessageTypeEnum.YESNO;
                 MessageBox.Data = items;
                 MessageBox.Show();
-            }
-        }
-
-        protected void UpdateToolbarButtonState()
-        {
-            IList<Model.RestoreQueue> items = RestoreQueueItemList.SelectedItems;
-            if (items != null)
-            {
-				DeleteItemButton.Enabled = true;
-				ViewStudyDetailsButton.Enabled = true;
-            }
-            else
-            {
-                DeleteItemButton.Enabled = false;
-				ViewStudyDetailsButton.Enabled = false;
             }
         }
 

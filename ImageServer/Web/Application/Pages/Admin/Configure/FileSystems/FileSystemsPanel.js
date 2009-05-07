@@ -83,7 +83,7 @@ if (window.__registeredTypes['ClearCanvas.ImageServer.Web.Application.Pages.Admi
             var filesystemlist = $find(this._FileSystemListClientID);
                                
             this._enableEditButton(false);
-                                           
+                                                      
             if (filesystemlist!=null )
             {
                 var rows = filesystemlist.getSelectedRowElements();

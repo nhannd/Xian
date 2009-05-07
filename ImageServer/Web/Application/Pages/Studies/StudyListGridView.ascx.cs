@@ -202,16 +202,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
             } 
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            if (IsPostBack)
-            {
-                RefreshCurrentPage();
-            }
-        }
-
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
@@ -308,12 +298,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies
         {
             StudyListGrid.ClearSelections();
             StudyListGrid.PageIndex = 0;
-            DataBind();
+            StudyListGrid.DataBind();
         }
 
         public void RefreshCurrentPage()
         {
-            DataBind();
+            StudyListGrid.DataBind();
         }
 
 

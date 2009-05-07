@@ -33,6 +33,7 @@ using System;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
@@ -189,7 +190,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
             // We want to use our own pager control instead so let's hide it.
             ArchiveQueueGridView.SelectedIndexChanged += ArchiveQueueGridView_SelectedIndexChanged;
 
-            ArchiveQueueGridView.DataSource = ArchiveQueueDataSourceObject;
+            if (IsPostBack || Page.IsAsync)
+            {
+                ArchiveQueueGridView.DataSource = ArchiveQueueDataSourceObject;
+            } 
         }
 
         protected override void OnPreRender(EventArgs e)
@@ -226,13 +230,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 
         protected void ArchiveQueueGridView_PageIndexChanged(object sender, EventArgs e)
         {
-            DataBind();
+            ArchiveQueueGrid.DataBind();
         }
 
         protected void ArchiveQueueGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             ArchiveQueueGridView.PageIndex = e.NewPageIndex;
-            DataBind();
+            ArchiveQueueGrid.DataBind();
         }
 
 		protected void DisposeArchiveQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
@@ -258,6 +262,27 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
 				DataSourceCreated(_dataSource);
 
 		}
+
+        protected void GridView_RowDataBound(object sender, GridViewRowEventArgs e)
+        {
+            if (e.Row.RowType == DataControlRowType.EmptyDataRow)
+            {
+                EmptySearchResultsMessage message =
+                                        (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
+                if (message != null)
+                {
+                    if (ArchiveQueueGrid.DataSource == null)
+                    {
+                        message.Message = "Please enter search criteria to find archive items.";
+                    }
+                    else
+                    {
+                        message.Message = "No items found matching the provided criteria.";
+                    }
+                }
+
+            }
+        }
         #endregion
 
 
@@ -265,12 +290,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.ArchiveQueue
         {
             ArchiveQueueGrid.ClearSelections();
             ArchiveQueueGrid.PageIndex = 0;
-            DataBind();
+            ArchiveQueueGridView.DataBind();
         }
 
         public void RefreshCurrentPage()
         {
-            DataBind();
+            ArchiveQueueGridView.DataBind();
         }
     }
 

@@ -34,6 +34,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Collections.Generic;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 
 
@@ -192,7 +193,12 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             // We want to use our own pager control instead so let's hide it.
             StudyIntegrityQueueGridView.SelectedIndexChanged += StudyIntegrityQueueGridView_SelectedIndexChanged;
 
-            StudyIntegrityQueueGridView.DataSource = StudyIntegrityQueueDataSourceObject;
+            if (IsPostBack || Page.IsAsync)
+            {
+                StudyIntegrityQueueGridView.DataSource = StudyIntegrityQueueDataSourceObject;
+            } 
+
+            
         }
 
         protected void StudyIntegrityQueueGridView_SelectedIndexChanged(object sender, EventArgs e)
@@ -205,13 +211,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         protected void StudyIntegrityQueueGridView_PageIndexChanged(object sender, EventArgs e)
         {
-            DataBind();
+            StudyIntegrityQueueGridView.DataBind();
         }
 
         protected void StudyIntegrityQueueGridView_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             StudyIntegrityQueueGridView.PageIndex = e.NewPageIndex;
-            DataBind();
+            StudyIntegrityQueueGridView.DataBind();
         }
 
 		protected void DisposeStudyIntegrityQueueDataSource(object sender, ObjectDataSourceDisposingEventArgs e)
@@ -240,19 +246,39 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         protected void StudyIntegrityQueueItemList_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            GridViewRow row = e.Row;
-
-            if (StudyIntegrityQueueGridView.EditIndex != e.Row.RowIndex)
+            if (e.Row.RowType == DataControlRowType.EmptyDataRow)
             {
-                if (row.RowType == DataControlRowType.DataRow)
+                EmptySearchResultsMessage message =
+                                        (EmptySearchResultsMessage)e.Row.FindControl("EmptySearchResultsMessage");
+                if (message != null)
                 {
-                    StudyIntegrityQueueSummary item = row.DataItem as StudyIntegrityQueueSummary;
-                    row.FindControl("ExistingStudyTable").Visible = item.StudyExists;
-                    row.FindControl("StudyNotAvailableLabel").Visible = !item.StudyExists;
-                    if (item.StudyExists)
+                    if (StudyIntegrityQueueGridView.DataSource == null)
                     {
-                        CustomizeRowAttribute(e.Row);
-                        HighlightDifference(e.Row);  
+                        message.Message = "Please enter search criteria to find studies.";
+                    }
+                    else
+                    {
+                        message.Message = "No studies found matching the provided criteria.";
+                    }
+                }
+
+            }
+            else
+            {
+                GridViewRow row = e.Row;
+
+                if (StudyIntegrityQueueGridView.EditIndex != e.Row.RowIndex)
+                {
+                    if (row.RowType == DataControlRowType.DataRow)
+                    {
+                        StudyIntegrityQueueSummary item = row.DataItem as StudyIntegrityQueueSummary;
+                        row.FindControl("ExistingStudyTable").Visible = item.StudyExists;
+                        row.FindControl("StudyNotAvailableLabel").Visible = !item.StudyExists;
+                        if (item.StudyExists)
+                        {
+                            CustomizeRowAttribute(e.Row);
+                            HighlightDifference(e.Row);
+                        }
                     }
                 }
             }
@@ -314,8 +340,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         {
             StudyIntegrityQueueGrid.DataBind();
         }
-
-
 
         #endregion // public methods
 

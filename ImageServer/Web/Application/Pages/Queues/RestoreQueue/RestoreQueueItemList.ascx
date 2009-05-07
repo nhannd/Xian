@@ -11,6 +11,7 @@
 				<ccUI:GridView ID="RestoreQueueGridView" runat="server"
 					OnSelectedIndexChanged="RestoreQueueGridView_SelectedIndexChanged"
 					OnPageIndexChanging="RestoreQueueGridView_PageIndexChanging"
+					OnRowDatabound="GridView_RowDataBound"
 					SelectionMode="Multiple">
 					<Columns>
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">

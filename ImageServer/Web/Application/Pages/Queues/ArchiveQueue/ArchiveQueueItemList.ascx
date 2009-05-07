@@ -11,6 +11,7 @@
 				<ccUI:GridView ID="ArchiveQueueGridView" runat="server"
 					OnSelectedIndexChanged="ArchiveQueueGridView_SelectedIndexChanged"
 					OnPageIndexChanging="ArchiveQueueGridView_PageIndexChanging"
+					OnRowDataBound="GridView_RowDataBound"
 					SelectionMode="Multiple">
 					<Columns>
 						<asp:TemplateField HeaderText="Patient Name" HeaderStyle-HorizontalAlign="Left">

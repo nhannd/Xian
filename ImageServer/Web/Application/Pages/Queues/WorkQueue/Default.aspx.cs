@@ -38,6 +38,7 @@ using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Controls;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue.Edit;
+using ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Controls;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
@@ -93,7 +94,6 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
             {
                 RefreshRate = Int32.Parse(RefreshRateTextBox.Text);                
             }
-
         }
 
         protected override void OnInit(EventArgs e)
@@ -126,15 +126,13 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
 
             if (!Page.IsPostBack)
             {
-                AutoRefresh = true;
-                RefreshTimer.Enabled = true;
+                AutoRefresh = false;
+                RefreshTimer.Enabled = false;
                 RefreshTimer.Interval = (int)TimeSpan.FromSeconds(Math.Max(WorkQueueSettings.Default.NormalRefreshIntervalSeconds, 5)).TotalMilliseconds;// min refresh rate: every 5 sec 
                 RefreshRateTextBox.Text = TimeSpan.FromMilliseconds(RefreshTimer.Interval).TotalSeconds.ToString();
-                DataBind();
             }
             
             Page.Title = App_GlobalResources.Titles.WorkQueuePageTitle;
-            
         }
 
         void RefreshTimer_AutoDisabled(object sender, TimerEventArgs e)

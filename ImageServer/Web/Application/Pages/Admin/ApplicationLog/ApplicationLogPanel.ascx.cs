@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Admin.ApplicationLog
 		{
 			ApplicationLogGridView.ApplicationLogListGrid.ClearSelections();
 			ApplicationLogGridView.ApplicationLogListGrid.PageIndex = 0;
-			DataBind();
+            ApplicationLogGridView.ApplicationLogListGrid.DataBind();
 		}
 	}
 }
