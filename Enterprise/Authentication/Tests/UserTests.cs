@@ -490,7 +490,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		{
 			User user = CreateUser(null, null);
 
-			Thread.Sleep(5);	// sleep a few msec to allow original password to expire
+			Thread.Sleep(50);	// sleep a few msec to allow original password to expire
 
 			Assert.IsTrue(user.Password.IsExpired(DateTime.Now));
 

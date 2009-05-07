@@ -30,6 +30,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 
 			Assert.AreEqual(expiry, password.ExpiryTime);
 			Assert.IsFalse(password.IsExpired(DateTime.Now));
+			Assert.IsTrue(password.Verify(DefaultPassword));
 		}
 
 		[Test]
@@ -70,6 +71,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 
 			Assert.Less(password.ExpiryTime.Value, DateTime.Now);
 			Assert.IsTrue(password.IsExpired(DateTime.Now));
+			Assert.IsTrue(password.Verify(DefaultPassword));
 		}
 
 		[Test]
