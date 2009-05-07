@@ -131,7 +131,8 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private void UpdateLuts()
 		{
-			if (_color == null || _color.Value.IsEmpty) // TODO: this determination is actually supposed to be based on the client display device
+			// NOTE: this determination is actually supposed to be based on the client display device
+			if (_color == null || _color.Value.IsEmpty)
 			{
 				_overlayGraphic.VoiLutManager.InstallLut(new OverlayVoiLut(_grayPresentationValue, 65535));
 				//Install a color map with the first value being transparent.

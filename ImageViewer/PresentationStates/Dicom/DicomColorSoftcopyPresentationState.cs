@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private void SerializeIccProfile(IccProfileModuleIod module)
 		{
-			// TODO : fix this dummy implementation
+			// NOTE: Not supported
 		}
 
 		#endregion

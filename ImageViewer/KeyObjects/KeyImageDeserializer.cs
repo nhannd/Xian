@@ -50,16 +50,21 @@ namespace ClearCanvas.ImageViewer.KeyObjects
 		{
 			this.Frame = frame;
 			this.PresentationStateSop = presentationStateSop;
-			if (presentationStateSop != null && presentationStateSop.SopClassUID == SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid)
-				GrayscalePresentationStateIod = new GrayscaleSoftcopyPresentationStateIod(presentationStateSop.DataSource);
+
+			if (presentationStateSop != null)
+			{
+				if (presentationStateSop.SopClassUID == SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid)
+					GrayscalePresentationStateIod = new GrayscaleSoftcopyPresentationStateIod(presentationStateSop.DataSource);
+				else if (presentationStateSop.SopClassUID == SopClass.ColorSoftcopyPresentationStateStorageSopClassUid)
+					ColorPresentationStateIod = new ColorSoftcopyPresentationStateIod(presentationStateSop.DataSource);
+			}
 		}
 
 		public readonly Frame Frame;
 		public readonly Sop PresentationStateSop;
 
 		public readonly GrayscaleSoftcopyPresentationStateIod GrayscalePresentationStateIod;
-
-		//TODO: colour presentation state.
+		public readonly ColorSoftcopyPresentationStateIod ColorPresentationStateIod;
 	}
 
 	public class KeyImageDeserializer

@@ -64,13 +64,13 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		protected void SerializePresentationStateMask(PresentationStateMaskModuleIod module, IEnumerable<T> imagesByList)
 		{
-			// TODO : fix this dummy implementation
+			// NOTE: Not supported
 			module.InitializeAttributes();
 		}
 
 		protected void SerializeMask(MaskModuleIod module, IEnumerable<T> imagesByList)
 		{
-			// TODO : fix this dummy implementation
+			// NOTE: Not supported
 		}
 
 		protected void SerializeModalityLut(ModalityLutModuleIod module, IEnumerable<T> imagesByList) { }
@@ -118,12 +118,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		protected void DeserializePresentationStateMask(PresentationStateMaskModuleIod module, T image)
 		{
-			// TODO : fix this dummy implementation
+			// NOTE: Not supported
 		}
 
 		protected void DeserializeMask(MaskModuleIod module, T image)
 		{
-			// TODO : fix this dummy implementation
+			// NOTE: Not supported
 		}
 
 		protected void DeserializeModalityLut(ModalityLutModuleIod module, T image) {}
