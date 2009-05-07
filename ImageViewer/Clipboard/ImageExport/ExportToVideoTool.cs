@@ -33,6 +33,7 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Common;
 
 #pragma warning disable 0419,1574,1587,1591
 
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Clipboard.ImageExport
 	[IconSet("export", IconScheme.Colour, "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png", "Icons.ExportToVideoToolSmall.png")]
 	[EnabledStateObserver("export", "Enabled", "EnabledChanged")]
 
-	[ActionPermission("export", Common.AuthorityTokens.Workflow.Study.Export)]
+	[ViewerActionPermission("export", Common.AuthorityTokens.Workflow.Study.Export)]
 	[ExtensionOf(typeof(ClipboardToolExtensionPoint))]
 	public class ExportToVideoTool : ClipboardTool
 	{

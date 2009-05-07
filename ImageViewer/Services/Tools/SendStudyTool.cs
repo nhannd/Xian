@@ -35,6 +35,7 @@ using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Configuration.ServerTree;
 using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
@@ -52,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
     [Tooltip("activate", "TooltipSendStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png")]
 
-	[ActionPermission("activate", ImageViewer.Common.AuthorityTokens.Workflow.Study.Export)]
+	[ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Workflow.Study.Export)]
 
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
     public class SendStudyTool : StudyBrowserTool

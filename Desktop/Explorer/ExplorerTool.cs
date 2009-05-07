@@ -53,9 +53,7 @@ namespace ClearCanvas.Desktop.Explorer
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ExplorerTool : Tool<IDesktopToolContext>
 	{
-		TabComponentContainer _tabComponentContainer;
-		List<IHealthcareArtifactExplorer> _healthcareArtifactExplorers;
-		static IWorkspace _workspace;
+		private static IWorkspace _workspace;
 
 		public ExplorerTool()
 		{
@@ -73,29 +71,36 @@ namespace ClearCanvas.Desktop.Explorer
 			if (_workspace != null)
 				return;
 
-			_tabComponentContainer = new TabComponentContainer();
-
-			HealthcareArtifactExplorerExtensionPoint xp = new HealthcareArtifactExplorerExtensionPoint();
-			object[] extensions = xp.CreateExtensions();
-
-			if (_healthcareArtifactExplorers == null)
+			List<IHealthcareArtifactExplorer> healthcareArtifactExplorers = new List<IHealthcareArtifactExplorer>();
+			try
 			{
-				_healthcareArtifactExplorers = new List<IHealthcareArtifactExplorer>();
-
+				HealthcareArtifactExplorerExtensionPoint xp = new HealthcareArtifactExplorerExtensionPoint();
+				object[] extensions = xp.CreateExtensions();
 				foreach (IHealthcareArtifactExplorer explorer in extensions)
-				{
-					_healthcareArtifactExplorers.Add(explorer);
-				}
+					healthcareArtifactExplorers.Add(explorer);
+			}
+			catch(NotSupportedException)
+			{
+				return;
 			}
 
-			foreach (IHealthcareArtifactExplorer explorer in _healthcareArtifactExplorers)
+			List<TabPage> pages = new List<TabPage>();
+			foreach (IHealthcareArtifactExplorer explorer in healthcareArtifactExplorers)
 			{
-				TabPage tabPage = new TabPage(explorer.Name, explorer.Component);
-				_tabComponentContainer.Pages.Add(tabPage);
+				IApplicationComponent component = explorer.Component;
+				if (component != null)
+					pages.Add(new TabPage(explorer.Name, component));
 			}
+
+			if (pages.Count == 0)
+				return;
+
+			TabComponentContainer container = new TabComponentContainer();
+			foreach (TabPage page in pages)
+				container.Pages.Add(page);
 
 			WorkspaceCreationArgs args = new WorkspaceCreationArgs();
-			args.Component = _tabComponentContainer;
+			args.Component = container;
 			args.Title = SR.TitleExplorer;
 			// We don't want this workspace to be closable; the explorer
 			// should be visible at all times.
@@ -106,9 +111,6 @@ namespace ClearCanvas.Desktop.Explorer
                 delegate
 				{
 					_workspace = null;
-					_tabComponentContainer = null;
-					_healthcareArtifactExplorers.Clear();
-					_healthcareArtifactExplorers = null;
 
 					// The Explorer drives the image viewer, so if it's closing
 					// we assume that any child image viewer windows should close too

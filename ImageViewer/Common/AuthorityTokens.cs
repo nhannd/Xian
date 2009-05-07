@@ -116,6 +116,9 @@ namespace ClearCanvas.ImageViewer.Common
 
 	public static class AuthorityTokens
 	{
+		[AuthorityToken(Description = "General user permission required to use any viewer components.")]
+		public const string General = "Viewer/General";
+
 		public class Workflow
 		{
 			public class Study

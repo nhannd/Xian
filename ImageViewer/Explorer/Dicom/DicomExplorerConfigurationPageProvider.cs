@@ -34,6 +34,8 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Common;
+using AuthorityTokens=ClearCanvas.Desktop.Configuration.AuthorityTokens;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -51,7 +53,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<DicomExplorerConfigurationApplicationComponent>("DicomExplorerConfiguration"));
+			if (PermissionsHelper.HasGeneralViewerPermission())
+				listPages.Add(new ConfigurationPage<DicomExplorerConfigurationApplicationComponent>("DicomExplorerConfiguration"));
 
 			return listPages.AsReadOnly();
 		}

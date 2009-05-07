@@ -40,9 +40,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuDicomSendReceiveActivity", "Activate")]
 	//[IconSet("activate", IconScheme.Colour, "", "Icons.DicomSendReceiveActivityMedium.png", "Icons.DicomSendReceiveActivityLarge.png")]
-	[ActionPermission("activate", ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify)]
-	[ActionPermission("activate", ImageViewer.Common.AuthorityTokens.Workflow.Study.Export)]
-	[ActionPermission("activate", Services.AuthorityTokens.Management.DicomServer)]
+	[ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Workflow.Study.Modify)]
+	[ViewerActionPermission("activate", ImageViewer.Common.AuthorityTokens.Workflow.Study.Export)]
+	[ViewerActionPermission("activate", Services.AuthorityTokens.Management.DicomServer)]
 
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
 	public class DicomSendReceiveActivityTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>

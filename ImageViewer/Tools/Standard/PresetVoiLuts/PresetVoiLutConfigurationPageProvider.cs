@@ -32,6 +32,7 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
@@ -49,7 +50,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<PresetVoiLutConfigurationComponent>("TitleWindowLevel"));
+			if (PermissionsHelper.IsInRole(Common.AuthorityTokens.Workflow.Study.View))
+				listPages.Add(new ConfigurationPage<PresetVoiLutConfigurationComponent>("TitleWindowLevel"));
 
 			return listPages.AsReadOnly();
 		}

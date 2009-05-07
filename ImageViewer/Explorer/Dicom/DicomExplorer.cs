@@ -32,6 +32,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Explorer;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -55,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get
 			{
-				if (_component == null)
+				if (_component == null && PermissionsHelper.HasGeneralViewerPermission())
 					_component = DicomExplorerComponent.Create();
 
 				return _component;

@@ -35,6 +35,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Common;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local
 {
@@ -59,10 +60,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Local
 		{
 			get
 			{
-				if (_component == null)
+				if (_component == null && PermissionsHelper.HasGeneralViewerPermission())
 					_component = new LocalImageExplorerComponent();
 
-				return _component as IApplicationComponent;
+				return _component;
 			}
 		}
 

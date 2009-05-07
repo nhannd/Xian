@@ -39,9 +39,12 @@ namespace ClearCanvas.ImageViewer.DesktopServices
 	{
 		public ReadOnlyCollection<string> AuthorityTokens;
 		
-		public DesktopServiceHostPermissionAttribute(string[] authorityTokens)
+		public DesktopServiceHostPermissionAttribute(params string[] authorityTokens)
 		{
-			AuthorityTokens = new ReadOnlyCollection<string>(authorityTokens);
+			List<string> viewerTokens = new List<string>();
+			viewerTokens.Add(Common.AuthorityTokens.General);
+			viewerTokens.AddRange(authorityTokens);
+			AuthorityTokens = viewerTokens.AsReadOnly();
 		}
 	}
 }

@@ -48,13 +48,13 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 	[Tooltip("create", "TooltipCreateKeyImage")]
 	[IconSet("create", IconScheme.Colour, "Icons.CreateKeyImageToolSmall.png", "Icons.CreateKeyImageToolMedium.png", "Icons.CreateKeyImageToolLarge.png")]
 	[EnabledStateObserver("create", "Enabled", "EnabledChanged")]
-	[ActionPermission("create", Common.AuthorityTokens.Workflow.Study.Modify)]
+	[ViewerActionPermission("create", Common.AuthorityTokens.Workflow.Study.Modify)]
 
 	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarShowKeyImages", "Show")]
 	[Tooltip("show", "TooltipShowKeyImages")]
 	[IconSet("show", IconScheme.Colour, "Icons.ShowKeyImagesToolSmall.png", "Icons.ShowKeyImagesToolMedium.png", "Icons.ShowKeyImagesToolLarge.png")]
 	[EnabledStateObserver("show", "ShowEnabled", "ShowEnabledChanged")]
-	[ActionPermission("show", Common.AuthorityTokens.Workflow.Study.Modify)]
+	[ViewerActionPermission("show", Common.AuthorityTokens.Workflow.Study.Modify)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	internal class KeyImageTool : ImageViewerTool

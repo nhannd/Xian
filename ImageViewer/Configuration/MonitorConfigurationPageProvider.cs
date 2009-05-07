@@ -32,6 +32,8 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration;
+using ClearCanvas.ImageViewer.Common;
+using AuthorityTokens=ClearCanvas.ImageViewer.Common.AuthorityTokens;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -49,7 +51,8 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<MonitorConfigurationApplicationComponent>("MonitorConfiguration"));
+			if (PermissionsHelper.IsInRole(AuthorityTokens.Workflow.Study.View))
+				listPages.Add(new ConfigurationPage<MonitorConfigurationApplicationComponent>("MonitorConfiguration"));
 
 			return listPages.AsReadOnly();
 		}
