@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -50,16 +50,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             return new StudyIntegrityQueueUidSelectCriteria(this);
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Receiver")]
-        public ISearchCondition<String> Receiver
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="RelativePath")]
+        public ISearchCondition<String> RelativePath
         {
             get
             {
-              if (!SubCriteria.ContainsKey("Receiver"))
+              if (!SubCriteria.ContainsKey("RelativePath"))
               {
-                 SubCriteria["Receiver"] = new SearchCondition<String>("Receiver");
+                 SubCriteria["RelativePath"] = new SearchCondition<String>("RelativePath");
               }
-              return (ISearchCondition<String>)SubCriteria["Receiver"];
+              return (ISearchCondition<String>)SubCriteria["RelativePath"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
@@ -98,18 +98,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["SopInstanceUid"];
             } 
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Source")]
-        public ISearchCondition<String> Source
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Source"))
-              {
-                 SubCriteria["Source"] = new SearchCondition<String>("Source");
-              }
-              return (ISearchCondition<String>)SubCriteria["Source"];
-            } 
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
         public ISearchCondition<ServerEntityKey> StudyIntegrityQueueKey
         {
@@ -120,18 +108,6 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["StudyIntegrityQueueKey"] = new SearchCondition<ServerEntityKey>("StudyIntegrityQueueKey");
               }
               return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyIntegrityQueueKey"];
-            } 
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Timestamp")]
-        public ISearchCondition<DateTime> Timestamp
-        {
-            get
-            {
-              if (!SubCriteria.ContainsKey("Timestamp"))
-              {
-                 SubCriteria["Timestamp"] = new SearchCondition<DateTime>("Timestamp");
-              }
-              return (ISearchCondition<DateTime>)SubCriteria["Timestamp"];
             } 
         }
     }

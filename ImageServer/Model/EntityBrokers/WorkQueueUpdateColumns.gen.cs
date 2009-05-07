@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -66,6 +66,11 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public String FailureDescription
         {
             set { SubParameters["FailureDescription"] = new EntityUpdateColumn<String>("FailureDescription", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="GroupID")]
+        public String GroupID
+        {
+            set { SubParameters["GroupID"] = new EntityUpdateColumn<String>("GroupID", value); }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="InsertTime")]
         public DateTime InsertTime

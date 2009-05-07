@@ -13,7 +13,8 @@ namespace ClearCanvas.ImageServer.Model
     /// </summary>
     public class DuplicateSopReceivedQueue : StudyIntegrityQueue
     {
-        private string _duplicateSopFolderPath;
+        private StudyStorageLocation _location;
+
         public DuplicateSopReceivedQueue()
         {
             
@@ -33,34 +34,7 @@ namespace ClearCanvas.ImageServer.Model
             this.StudyData = studyIntegrityQueueEntry.StudyData;
             this.StudyIntegrityReasonEnum = studyIntegrityQueueEntry.StudyIntegrityReasonEnum;
             this.StudyStorageKey = studyIntegrityQueueEntry.StudyStorageKey;
-            
-        }
-
-        public string GetDuplicateSopPath(string seriesInstanceUid, string sopInstanceUid)
-        {
-            String path = Path.Combine(GetDuplicateSopFolder(), sopInstanceUid);
-            return path + ".dup";
-        }
-        
-        public string GetDuplicateSopFolder()
-        {
-            if (_duplicateSopFolderPath==null)
-            {
-                using(IReadContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
-                {
-                    StudyStorage storage = StudyStorage.Load(context, base.StudyStorageKey);
-                    IList<StudyStorageLocation> studyLocations = StudyStorageLocation.FindStorageLocations(storage);
-                    StudyStorageLocation studyLocation = studyLocations[0];
-
-                    String path = Path.Combine(studyLocation.FilesystemPath, studyLocation.PartitionFolder);
-                    path = Path.Combine(path, "Duplicate");
-                    path = Path.Combine(path, studyLocation.StudyInstanceUid);
-                    path = Path.Combine(path, GetKey().Key.ToString());
-                    _duplicateSopFolderPath = path;
-                }
-                
-            }
-            return _duplicateSopFolderPath;
+            this.GroupID = studyIntegrityQueueEntry.GroupID;
             
         }
 
@@ -70,5 +44,29 @@ namespace ClearCanvas.ImageServer.Model
             return new DuplicateSopReceivedQueue(StudyIntegrityQueue.Load(context, key));
         }
 
+        public string GetReceivedDuplicateSopFolder()
+        {
+            if (_location ==null)
+            {
+                if (_studyStorage==null)
+                {
+                    using(IReadContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                    {
+                         _studyStorage = StudyStorage.Load(context, this.StudyStorageKey);
+                    }
+                }
+
+                _location = StudyStorageLocation.FindStorageLocations(_studyStorage)[0];
+                
+            }
+
+
+            String path = Path.Combine(_location.FilesystemPath, _location.PartitionFolder);
+            path = Path.Combine(path, "Reconcile");
+            path = Path.Combine(path, this.GroupID);
+            path = Path.Combine(path, _location.StudyInstanceUid);
+
+            return path;
+        }
     }
 }

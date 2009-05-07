@@ -148,11 +148,26 @@ namespace ClearCanvas.ImageServer.Common.Utilities
 			{
 				if (Directory.Exists(path))
 				{
-					if (Directory.GetFiles(path).Length == 0 && Directory.GetDirectories(path).Length == 0)
-					{
-						Directory.Delete(path, true);
-						return true;
-					}
+				    string[] files = Directory.GetFiles(path);
+                    if (files.Length==0)
+                    {
+                        string[] subDirs = Directory.GetDirectories(path);
+					    if (subDirs.Length>0)
+					    {
+                            foreach(string subDir in subDirs)
+					        {
+					            if (!DeleteIfEmpty(subDir))
+					            {
+					                return false;
+					            }
+					        }
+                            // all sub-directories are empty and deleted
+                            
+					    }
+
+                        Directory.Delete(path);
+                        return true;
+                    }
 					else
 					{
 						// not empty

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -51,6 +51,7 @@ namespace ClearCanvas.ImageServer.Model
             ,System.DateTime _expirationTime_
             ,System.Int32 _failureCount_
             ,System.String _failureDescription_
+            ,System.String _groupID_
             ,System.DateTime _insertTime_
             ,System.String _processorID_
             ,System.DateTime _scheduledTime_
@@ -67,6 +68,7 @@ namespace ClearCanvas.ImageServer.Model
             _expirationTime = _expirationTime_;
             _failureCount = _failureCount_;
             _failureDescription = _failureDescription_;
+            _groupID = _groupID_;
             _insertTime = _insertTime_;
             _processorID = _processorID_;
             _scheduledTime = _scheduledTime_;
@@ -85,6 +87,7 @@ namespace ClearCanvas.ImageServer.Model
         private DateTime _expirationTime;
         private Int32 _failureCount;
         private String _failureDescription;
+        private String _groupID;
         private DateTime _insertTime;
         private String _processorID;
         private DateTime _scheduledTime;
@@ -126,6 +129,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _failureDescription; }
         set { _failureDescription = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="GroupID")]
+        public String GroupID
+        {
+        get { return _groupID; }
+        set { _groupID = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueue", ColumnName="InsertTime")]
         public DateTime InsertTime
@@ -215,6 +224,7 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.ExpirationTime = entity.ExpirationTime;
             updateColumns.FailureCount = entity.FailureCount;
             updateColumns.FailureDescription = entity.FailureDescription;
+            updateColumns.GroupID = entity.GroupID;
             updateColumns.InsertTime = entity.InsertTime;
             updateColumns.ProcessorID = entity.ProcessorID;
             updateColumns.ScheduledTime = entity.ScheduledTime;

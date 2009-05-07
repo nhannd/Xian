@@ -304,6 +304,7 @@
     <Compile Include="StudyHistory.cs" />
     <Compile Include="StudyHistory.gen.cs" />
     <Compile Include="StudyHistoryTypeEnum.gen.cs" />
+    <Compile Include="StudyIntegrityQueue.cs" />
     <Compile Include="StudyIntegrityQueue.gen.cs" />
     <Compile Include="StudyIntegrityQueueUid.gen.cs" />
     <Compile Include="StudyIntegrityReasonEnum.gen.cs" />

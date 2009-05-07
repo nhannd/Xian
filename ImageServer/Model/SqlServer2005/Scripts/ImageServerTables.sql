@@ -429,6 +429,7 @@ CREATE TABLE [dbo].[WorkQueue](
 	[WorkQueueStatusEnum] [smallint] NOT NULL, 
 	[WorkQueuePriorityEnum] [smallint] NOT NULL CONSTRAINT [DF_WorkQueue_WorkQueuePriorityEnum]  DEFAULT ((200)),
 	[ProcessorID] [varchar](128) NULL,
+	[GroupID] [varchar] (64) NULL,
 	[ExpirationTime] [datetime] NULL,
 	[ScheduledTime] [datetime] NOT NULL,
 	[InsertTime] [datetime] NOT NULL CONSTRAINT [DF_WorkQueue_InsertTime]  DEFAULT (getdate()),
@@ -467,13 +468,18 @@ CREATE NONCLUSTERED INDEX [IX_WorkQueue_WorkQueuePriorityEnum] ON [dbo].[WorkQue
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [INDEXES]
 GO
 
-
 IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueue]') AND name = N'IX_WorkQueue_StudyHistoryGUID')
 CREATE NONCLUSTERED INDEX [IX_WorkQueue_StudyHistoryGUID] ON [dbo].[WorkQueue] 
 (
 	[StudyHistoryGUID] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [INDEXES]
 GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueue]') AND name = N'IX_WorkQueue_GroupID')
+CREATE NONCLUSTERED INDEX [IX_WorkQueue_GroupID] ON [dbo].[WorkQueue] 
+(
+	[GroupID] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 
 /****** Object:  Table [dbo].[Series]    Script Date: 01/09/2008 15:03:48 ******/
 SET ANSI_NULLS ON
@@ -829,6 +835,8 @@ CREATE TABLE [dbo].[WorkQueueUid](
 	[Duplicate] [bit] NOT NULL CONSTRAINT [DF_WorkQueueUid_Duplicate]  DEFAULT ((0)),
 	[Extension] [varchar](10) NULL,
 	[FailureCount] [smallint] NOT NULL CONSTRAINT [DF_WorkQueueUid_FailureCount]  DEFAULT ((0)),
+	[GroupID] [varchar] (64) NULL,
+	[RelativePath] [varchar] (256) NULL,
  CONSTRAINT [PK_WorkQueueUid] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
@@ -844,6 +852,14 @@ CREATE CLUSTERED INDEX [IX_WorkQueueUid] ON [dbo].[WorkQueueUid]
 	[WorkQueueGUID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON, FILLFACTOR = 65) ON [QUEUES]
 GO
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[WorkQueueUid]') AND name = N'IX_WorkQueueUid_GroupID')
+CREATE NONCLUSTERED INDEX [IX_WorkQueueUid_GroupID] ON [dbo].[WorkQueueUid] 
+(
+	[GroupID] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
+GO
+
 /****** Object:  Table [dbo].[RequestAttributes]    Script Date: 01/09/2008 15:03:44 ******/
 SET ANSI_NULLS ON
 GO
@@ -1226,6 +1242,7 @@ CREATE TABLE [dbo].[StudyIntegrityQueue](
 	[StudyData] [xml] NOT NULL,
 	[QueueData] [xml] NULL,
 	[StudyIntegrityReasonEnum] [smallint] NOT NULL,
+	[GroupID] [varchar] (64) NULL
  CONSTRAINT [PK_StudyIntegrityQueue] PRIMARY KEY CLUSTERED 
 (
 	[GUID] ASC
@@ -1236,6 +1253,12 @@ CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueue] ON [dbo].[StudyIntegrityQueue
 (
 	[StudyStorageGUID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
+GO
+
+CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueue_GroupID] ON [dbo].[StudyIntegrityQueue] 
+(
+	[GroupID] ASC
+)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 GO
 
 /****** Object:  Table [dbo].[StudyIntegrityQueueUid]    Script Date: 04/30/2009 19:55:24 ******/
@@ -1251,9 +1274,7 @@ CREATE TABLE [dbo].[StudyIntegrityQueueUid](
 	[SeriesDescription] [nvarchar](64) NULL,
 	[SeriesInstanceUid] [varchar](64) NOT NULL,
 	[SopInstanceUid] [varchar](64) NOT NULL,
-	[Source] [varchar](512) NULL,
-	[Receiver] [varchar](512) NULL,
-	[Timestamp] [datetime] NULL,
+	[RelativePath] [varchar] (256) NULL,
  CONSTRAINT [PK_StudyIntegrityQueueUid] PRIMARY KEY NONCLUSTERED 
 (
 	[GUID] ASC
@@ -1272,24 +1293,10 @@ CREATE CLUSTERED INDEX [IX_StudyIntegrityQueueUid] ON [dbo].[StudyIntegrityQueue
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [QUEUES]
 
 GO
-/****** Object:  Index [IX_StudyIntegrityQueueUid_Receiver]    Script Date: 05/01/2009 15:49:13 ******/
-CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueueUid_Receiver] ON [dbo].[StudyIntegrityQueueUid] 
-(
-	[Receiver] ASC
-)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
-
-GO
 /****** Object:  Index [IX_StudyIntegrityQueueUid_SeriesInstanceUid]    Script Date: 05/01/2009 15:49:26 ******/
 CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueueUid_SeriesInstanceUid] ON [dbo].[StudyIntegrityQueueUid] 
 (
 	[SeriesInstanceUid] ASC
-)WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
-
-GO
-/****** Object:  Index [IX_StudyIntegrityQueueUid_Source]    Script Date: 05/01/2009 15:49:35 ******/
-CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueueUid_Source] ON [dbo].[StudyIntegrityQueueUid] 
-(
-	[Source] ASC
 )WITH (SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF) ON [PRIMARY]
 
 GO

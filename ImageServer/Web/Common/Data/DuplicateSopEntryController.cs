@@ -65,11 +65,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             {
                 WorkQueueProcessDuplicateSop.ProcessDuplicateQueueEntryQueueData data = new WorkQueueProcessDuplicateSop.ProcessDuplicateQueueEntryQueueData();
                 data.Action = action;
-                data.DuplicateSopFolder = entry.GetDuplicateSopFolder();
+                data.DuplicateSopFolder = entry.GetReceivedDuplicateSopFolder();
                 
                 IWorkQueueProcessDuplicateSopBroker broker = context.GetBroker<IWorkQueueProcessDuplicateSopBroker>();
                 WorkQueueProcessDuplicateSopUpdateColumns columns = new WorkQueueProcessDuplicateSopUpdateColumns();
                 columns.Data = XmlUtils.SerializeAsXmlDoc(data);
+                columns.GroupID = entry.GroupID;
                 columns.ScheduledTime = Platform.Time;
                 columns.ExpirationTime = Platform.Time.Add(TimeSpan.FromMinutes(15));
                 columns.ServerPartitionKey= entry.ServerPartitionKey;
@@ -88,6 +89,8 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
                     uidColumns.Extension = "dup";
                     uidColumns.SeriesInstanceUid = uid.SeriesInstanceUid;
                     uidColumns.SopInstanceUid = uid.SopInstanceUid;
+                    uidColumns.RelativePath = uid.RelativePath;
+                    
                     uidColumns.WorkQueueKey = processDuplicateWorkQueueEntry.GetKey();
                     workQueueUidBroker.Insert(uidColumns);
 

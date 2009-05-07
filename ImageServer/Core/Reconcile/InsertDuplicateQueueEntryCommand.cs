@@ -13,28 +13,28 @@ using ClearCanvas.ImageServer.Model.Parameters;
 
 namespace ClearCanvas.ImageServer.Core.Reconcile
 {
-	class InsertDuplicateQueueEntryCommand:ServerDatabaseCommand
+	public class InsertDuplicateQueueEntryCommand:ServerDatabaseCommand
 	{
-		private readonly DicomFile _file;
+        private readonly string _groupId;
+        private readonly DicomFile _file;
 		private readonly StudyStorageLocation _studyLocation;
-		private readonly string _receiverId;
-		private readonly string _sourceId;
 		private DuplicateSopReceivedQueue _queueEntry;
+	    private string _relativePath;
 
-		public InsertDuplicateQueueEntryCommand(String receiverId, String sourceId, 
-		                                        StudyStorageLocation studyLocation, Study study, DicomFile file) 
+	    public InsertDuplicateQueueEntryCommand(String groupId,
+		                                        StudyStorageLocation studyLocation, 
+                                                Study study, DicomFile file, String relativePath) 
 			: base("Insert Duplicate Queue Entry Command", true)
 		{
-			Platform.CheckForNullReference(receiverId, "receiverID");
-			Platform.CheckForNullReference(sourceId, "sourceId");
+            Platform.CheckForNullReference(groupId, "groupId");
 			Platform.CheckForNullReference(studyLocation, "studyLocation");
 			Platform.CheckForNullReference(file, "file");
 
 			// Platform.CheckForNullReference(study, "study"); could be null if the existing files haven't been processed
 			_file = file;
 			_studyLocation = studyLocation;
-			_receiverId = receiverId;
-			_sourceId = sourceId;
+            _groupId = groupId;
+		    _relativePath = relativePath;
 		}
 
 		public DuplicateSopReceivedQueue QueueEntry
@@ -46,15 +46,13 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		{
 			IInsertDuplicateSopReceivedQueue broker = updateContext.GetBroker<IInsertDuplicateSopReceivedQueue>();
 			InsertDuplicateSopReceivedQueueParameters parms = new InsertDuplicateSopReceivedQueueParameters();
-			parms.Receiver = _receiverId;
-			parms.Source = _sourceId;
+            parms.GroupID = _groupId;
 			parms.ServerPartitionKey = _studyLocation.ServerPartitionKey;
 			parms.StudyStorageKey = _studyLocation.GetKey();
 			parms.StudyInstanceUid = _file.DataSet[DicomTags.StudyInstanceUid].ToString();
 			parms.SeriesDescription = _file.DataSet[DicomTags.SeriesDescription].ToString();
 			parms.SeriesInstanceUid = _file.DataSet[DicomTags.SeriesInstanceUid].ToString();
 			parms.SopInstanceUid = _file.MediaStorageSopInstanceUid;
-			parms.Timestamp = Platform.Time;
 
 			ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
 			data.Details = new ImageSetDetails(_file.DataSet);
@@ -63,7 +61,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 			parms.StudyData = XmlUtils.SerializeAsXmlDoc(imageSet);
 			parms.QueueData = XmlUtils.SerializeAsXmlDoc(data);
-            
+		    parms.UidRelativePath = _relativePath;
 			IList<DuplicateSopReceivedQueue> entries = broker.Find(parms);
 
 			Platform.CheckForNullReference(entries, "entries");
@@ -74,7 +72,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		}
 	}
 
-	class UpdateDuplicateQueueEntryCommand:ServerDatabaseCommand
+    public class UpdateDuplicateQueueEntryCommand:ServerDatabaseCommand
 	{
 		private GetDuplicateSopReceivedQueueDelegateMethod _getDuplicateSopReceivedQueueDelegate;
 		private DicomMessageBase _file;

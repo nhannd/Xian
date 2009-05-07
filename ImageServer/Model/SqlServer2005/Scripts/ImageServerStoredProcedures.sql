@@ -896,7 +896,10 @@ CREATE PROCEDURE [dbo].[InsertWorkQueue]
 	@SeriesInstanceUid varchar(64) = null,
 	@SopInstanceUid varchar(64) = null,
 	@Duplicate bit = 0,
-	@Extension varchar(10) = null
+	@Extension varchar(10) = null,
+	@WorkQueueGroup varchar(64) = null,
+	@UidGroupID varchar(64) = null,
+	@UidRelativePath varchar(256) = null
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -928,16 +931,15 @@ BEGIN
 	ELSE
 	BEGIN
 		SELECT @WorkQueueGUID = GUID from WorkQueue WITH (NOLOCK)
-			where StudyStorageGUID = @StudyStorageGUID
-			AND WorkQueueTypeEnum = @WorkQueueTypeEnum
+				where StudyStorageGUID = @StudyStorageGUID
+				AND WorkQueueTypeEnum = @WorkQueueTypeEnum
 	END
 
 	if @WorkQueueGUID is null
 	BEGIN
 		set @WorkQueueGUID = NEWID();
-
-		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, DeviceGUID, StudyHistoryGUID, Data, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeviceGUID, @StudyHistoryGUID, @Data, @WorkQueueTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime)
+		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, DeviceGUID, StudyHistoryGUID, Data, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime, GroupID)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeviceGUID, @StudyHistoryGUID, @Data, @WorkQueueTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime, @WorkQueueGroup)
 	END
 	ELSE
 	BEGIN
@@ -949,8 +951,8 @@ BEGIN
 
 	if @SeriesInstanceUid is not null or @SopInstanceUid is not null
 	BEGIN
-		INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid, Duplicate, Extension)
-			values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid, @Duplicate, @Extension)
+		INSERT into WorkQueueUid(GUID, WorkQueueGUID, SeriesInstanceUid, SopInstanceUid, Duplicate, Extension, GroupID, RelativePath)
+			values	(newid(), @WorkQueueGUID, @SeriesInstanceUid, @SopInstanceUid, @Duplicate, @Extension, @UidGroupID, @UidRelativePath)
 	END
 
 	COMMIT TRANSACTION
@@ -3232,7 +3234,7 @@ CREATE PROCEDURE [dbo].[InsertStudyIntegrityQueue]
 	@SeriesDescription nvarchar(64),
 	@SopInstanceUid varchar(64),
 	@StudyData xml,
-	@QueueData xml=NULL,
+	@QueueData xml=null,
 	@StudyIntegrityReasonEnum smallint
 AS
 BEGIN
@@ -3472,11 +3474,10 @@ CREATE PROCEDURE [dbo].[InsertDuplicateSopReceivedQueue]
 	@SeriesInstanceUid varchar(64),
 	@SeriesDescription nvarchar(64),
 	@SopInstanceUid varchar(64),
-	@Source varchar(512),
-	@Receiver varchar(512),
-	@Timestamp datetime,
 	@StudyData xml,
-	@QueueData xml
+	@QueueData xml,
+    @GroupId varchar(50),
+	@UidRelativePath varchar(256)
 AS
 BEGIN
 	
@@ -3493,7 +3494,7 @@ BEGIN
 			JOIN  StudyIntegrityQueueUid uid ON uid.StudyIntegrityQueueGUID = siq.GUID
 			WHERE siq.StudyStorageGUID = @StudyStorageGUID AND siq.StudyIntegrityReasonEnum=@TypeDuplicateSop 
 				AND CONVERT(nvarchar(max), siq.StudyData) = CONVERT(nvarchar(max), @StudyData)
-				AND uid.Source = @Source AND uid.Receiver = @Receiver
+				AND GroupID = @GroupID
 			AND siq.GUID NOT IN (	
 				SELECT StudyIntegrityQueueGUID FROM StudyIntegrityQueueUid uid2
 				WHERE uid2.SeriesInstanceUID=@SeriesInstanceUid
@@ -3508,20 +3509,18 @@ BEGIN
 		SET @Guid = newid()
 		INSERT INTO [StudyIntegrityQueue]
            ([GUID],[ServerPartitionGUID],[StudyStorageGUID],[InsertTime],[Description],
-			[StudyData],[QueueData],[StudyIntegrityReasonEnum])
+			[StudyData],[QueueData],[StudyIntegrityReasonEnum],[GroupID])
 		VALUES
            (@Guid,@ServerPartitionGUID,@StudyStorageGUID,getdate(), @Description
-           ,@StudyData, @QueueData, @TypeDuplicateSop )
+           ,@StudyData, @QueueData, @TypeDuplicateSop, @GroupID )
 
 	END
 
 	-- Insert the Uid
 	INSERT INTO [StudyIntegrityQueueUid]
-       ([GUID],[StudyIntegrityQueueGUID],[SeriesDescription],[SeriesInstanceUid],[SopInstanceUid]
-       ,[Source],[Receiver],[Timestamp])
+       ([GUID],[StudyIntegrityQueueGUID],[SeriesDescription],[SeriesInstanceUid],[SopInstanceUid],[RelativePath])
 	VALUES
-       (newid(),@Guid, @SeriesDescription,@SeriesInstanceUid,@SopInstanceUid
-       ,@Source,@Receiver, @Timestamp)
+       (newid(),@Guid, @SeriesDescription,@SeriesInstanceUid,@SopInstanceUid, @UidRelativePath)
 	
 	COMMIT TRANSACTION
 	

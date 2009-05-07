@@ -30,8 +30,6 @@
 #endregion
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
@@ -49,18 +47,37 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private WorkQueue _insertedWorkQueue;
         private readonly bool _duplicate;
         private readonly string _extension;
+        private readonly string _uidRelativePath;
+        private string _uidGroupId;
+
         #endregion
 
-        public UpdateWorkQueueCommand(DicomMessageBase message, StudyStorageLocation location, bool duplicate, string extension)
+        public UpdateWorkQueueCommand(DicomMessageBase message,
+                        StudyStorageLocation location,
+                        bool duplicate,
+                        string extension)
+            : this(message, location, duplicate, extension, null, null)
+        {
+        }
+
+        public UpdateWorkQueueCommand(DicomMessageBase message, 
+                        StudyStorageLocation location, 
+                        bool duplicate, 
+                        string extension,
+                        string uidGroupId,
+                        string uidRelativePath
+            )
             : base("Update/Insert a WorkQueue Entry", true)
         {
             Platform.CheckForNullReference(message, "Dicom Message object");
             Platform.CheckForNullReference(location, "Study Storage Location");
-
+            
             _message = message;
             _storageLocation = location;
             _duplicate = duplicate;
             _extension = extension;
+            _uidGroupId = uidGroupId;
+            _uidRelativePath = uidRelativePath;
         }
 
         public WorkQueue InsertedWorkQueue
@@ -85,6 +102,8 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             {
                 parms.Duplicate = _duplicate;
                 parms.Extension = _extension;
+                parms.UidGroupID = _uidGroupId;
+                parms.UidRelativePath = _uidRelativePath;
             }
 
             _insertedWorkQueue = insert.FindOne(parms);

@@ -47,19 +47,14 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["SeriesDescription"] = new ProcedureParameter<String>("SeriesDescription", value); }
         }
 
-        public String Source
+        public String GroupID
         {
-            set { SubCriteria["Source"] = new ProcedureParameter<String>("Source", value); }
+            set { SubCriteria["GroupID"] = new ProcedureParameter<String>("GroupID", value); }
         }
 
-        public String Receiver
+        public String UidRelativePath
         {
-            set { SubCriteria["Receiver"] = new ProcedureParameter<String>("Receiver", value); }
-        }
-
-        public DateTime? Timestamp
-        {
-            set { SubCriteria["Timestamp"] = new ProcedureParameter<DateTime?>("Timestamp", value); }
+            set { SubCriteria["UidRelativePath"] = new ProcedureParameter<String>("UidRelativePath", value); }
         }
 	
         public XmlDocument StudyData

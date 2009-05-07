@@ -56,6 +56,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Network
 {
@@ -216,6 +217,8 @@ namespace ClearCanvas.Dicom.Network
     {
         
         #region Private Members
+
+        private DateTime _timeStamp = Platform.Time;
         // Setting the value so a PDU (including the PDU header) fit into 
         // a multiple of the TCP/IP Maximum Segment Size of 1460 will help 
         // increase performance.  The PDU header is 6 bytes, and should 
@@ -500,6 +503,12 @@ namespace ClearCanvas.Dicom.Network
             get { return _presContexts; }
             set { _presContexts = value; }
         }
+
+        public DateTime TimeStamp
+        {
+            get { return _timeStamp; }
+        }
+
         #endregion
 
         #region Public Methods

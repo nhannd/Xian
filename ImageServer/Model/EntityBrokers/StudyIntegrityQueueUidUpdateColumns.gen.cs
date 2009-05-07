@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -43,10 +43,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
        public StudyIntegrityQueueUidUpdateColumns()
        : base("StudyIntegrityQueueUid")
        {}
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Receiver")]
-        public String Receiver
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="RelativePath")]
+        public String RelativePath
         {
-            set { SubParameters["Receiver"] = new EntityUpdateColumn<String>("Receiver", value); }
+            set { SubParameters["RelativePath"] = new EntityUpdateColumn<String>("RelativePath", value); }
         }
        [DicomField(DicomTags.SeriesDescription, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="SeriesDescription")]
@@ -66,20 +66,10 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             set { SubParameters["SopInstanceUid"] = new EntityUpdateColumn<String>("SopInstanceUid", value); }
         }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Source")]
-        public String Source
-        {
-            set { SubParameters["Source"] = new EntityUpdateColumn<String>("Source", value); }
-        }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="StudyIntegrityQueueGUID")]
         public ServerEntityKey StudyIntegrityQueueKey
         {
             set { SubParameters["StudyIntegrityQueueKey"] = new EntityUpdateColumn<ServerEntityKey>("StudyIntegrityQueueKey", value); }
-        }
-        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueueUid", ColumnName="Timestamp")]
-        public DateTime Timestamp
-        {
-            set { SubParameters["Timestamp"] = new EntityUpdateColumn<DateTime>("Timestamp", value); }
         }
     }
 }

@@ -37,7 +37,10 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Core;
+using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
 
@@ -54,6 +57,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         protected StudyProcessStatistics _statistics;
     	protected StudyProcessorContext _context;
+        private bool _duplicateProcessed = false;
+        private const string RECONCILE_STORAGE_FOLDER = "Reconcile";
 
         #endregion
 
@@ -71,8 +76,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         #region Private Methods
 	
-        private static void ProcessDuplicate(string basePath, string duplicatePath)
+        private void ProcessDuplicate(WorkQueueUid uid, string basePath, string duplicatePath)
         {
+            _duplicateProcessed = true;
             DicomFile dupFile = new DicomFile(duplicatePath);
             DicomFile baseFile = new DicomFile(basePath);
 
@@ -92,13 +98,34 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                              "Duplicate SOP being processed is identical.  Removing SOP: {0}",
                              baseFile.MediaStorageSopInstanceUid);
 
-                File.Delete(duplicatePath);
-                
+                FileInfo file = new FileInfo(duplicatePath);
+                file.Delete();
                 return;
             }
-            else throw new ApplicationException(failureReason);
+            else
+            {
+                CreateDuplicateSIQEntry(uid, dupFile);
+            }
         }
 
+        void CreateDuplicateSIQEntry(WorkQueueUid uid, DicomFile file)
+        {
+            using(ServerCommandProcessor processor = new ServerCommandProcessor("MoveDuplicateIntoSIQ"))
+            {
+                InsertDuplicateQueueEntryCommand insertCommand = 
+                            new InsertDuplicateQueueEntryCommand(uid.GroupID, StorageLocation, Study, file, uid.RelativePath);
+
+                processor.AddCommand(insertCommand);
+
+                processor.AddCommand(
+                    new UpdateDuplicateQueueEntryCommand(delegate() { return insertCommand.QueueEntry; }, file));
+
+                processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
+
+                processor.Execute();
+            }
+            
+        }
 
 
 
@@ -171,6 +198,45 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         }
 
+        private String GetDuplicateUidPath(WorkQueueUid sop)
+        {
+            String dupPath;
+            if (!String.IsNullOrEmpty(sop.RelativePath))
+            {
+                dupPath = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
+                dupPath = Path.Combine(dupPath, RECONCILE_STORAGE_FOLDER);
+                dupPath = Path.Combine(dupPath, sop.GroupID);
+                dupPath = Path.Combine(dupPath, sop.RelativePath);
+            }
+                
+            #region BACKWARD_COMPATIBILTY_CODE
+            else
+            {
+                string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
+                basePath = Path.Combine(basePath, sop.SopInstanceUid);
+                if (sop.Extension != null)
+                    dupPath = basePath + "." + sop.Extension;
+                else
+                    dupPath = basePath + ".dcm";
+            }
+            #endregion
+
+            return dupPath;
+        }
+
+        private String GetDuplicateGroupPath(WorkQueueUid sop)
+        {
+            String groupFolderPath = null;
+            if (!String.IsNullOrEmpty(sop.RelativePath))
+            {
+                groupFolderPath = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
+                groupFolderPath = Path.Combine(groupFolderPath, RECONCILE_STORAGE_FOLDER);
+                groupFolderPath = Path.Combine(groupFolderPath, sop.GroupID);
+            }
+
+            return groupFolderPath;
+        }
+
         /// <summary>
         /// Process a specified <see cref="WorkQueueUid"/>
         /// </summary>
@@ -188,11 +254,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             
             string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
             basePath = Path.Combine(basePath, sop.SopInstanceUid);
-            string path;
-            if (sop.Extension != null)
-                path = basePath + "." + sop.Extension;
-            else
-                path = basePath + ".dcm";
+            string path = GetDuplicateUidPath(sop);
 
             try
             {                
@@ -203,7 +265,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 // set along with the duplicate flag.
                 if (sop.Duplicate && sop.Extension != null)
                 {
-                    ProcessDuplicate(basePath + ".dcm", path);
+                    ProcessDuplicate(sop, basePath + ".dcm", path);
                 }
                 else
                     ProcessFile(sop, path, studyXml);
@@ -276,7 +338,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(item, "item");
             Platform.CheckForNullReference(uid, "uid");
 
+            if (uid.Duplicate)
+            {
+                String dupPath = GetDuplicateUidPath(uid);
+                // Delete the container if it's empty
+                FileInfo f = new FileInfo(dupPath);
 
+                if (DirectoryUtility.DeleteIfEmpty(f.Directory.FullName))
+                {
+                    DirectoryUtility.DeleteIfEmpty(GetDuplicateGroupPath(uid));
+                }
+
+            }
+            
         }
 
         #endregion
@@ -297,6 +371,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 _statistics.CalculateAverage();
                 StatisticsLogger.Log(LogLevel.Info, false, _statistics);
             }
+
         }
 
         protected override  void OnProcessItemBegin(Model.WorkQueue item)

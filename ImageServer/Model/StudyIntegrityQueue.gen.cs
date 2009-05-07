@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -47,6 +47,7 @@ namespace ClearCanvas.ImageServer.Model
         {}
         public StudyIntegrityQueue(
              System.String _description_
+            ,System.String _groupID_
             ,System.DateTime _insertTime_
             ,System.Xml.XmlDocument _queueData_
             ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _serverPartitionKey_
@@ -56,6 +57,7 @@ namespace ClearCanvas.ImageServer.Model
             ):base("StudyIntegrityQueue")
         {
             _description = _description_;
+            _groupID = _groupID_;
             _insertTime = _insertTime_;
             _queueData = _queueData_;
             _serverPartitionKey = _serverPartitionKey_;
@@ -67,6 +69,7 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private String _description;
+        private String _groupID;
         private DateTime _insertTime;
         private XmlDocument _queueData;
         private ServerEntityKey _serverPartitionKey;
@@ -81,6 +84,12 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _description; }
         set { _description = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="GroupID")]
+        public String GroupID
+        {
+        get { return _groupID; }
+        set { _groupID = value; }
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="InsertTime")]
         public DateTime InsertTime
@@ -148,6 +157,7 @@ namespace ClearCanvas.ImageServer.Model
             IStudyIntegrityQueueEntityBroker broker = update.GetBroker<IStudyIntegrityQueueEntityBroker>();
             StudyIntegrityQueueUpdateColumns updateColumns = new StudyIntegrityQueueUpdateColumns();
             updateColumns.Description = entity.Description;
+            updateColumns.GroupID = entity.GroupID;
             updateColumns.InsertTime = entity.InsertTime;
             updateColumns.QueueData = entity.QueueData;
             updateColumns.ServerPartitionKey = entity.ServerPartitionKey;

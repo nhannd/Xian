@@ -107,12 +107,14 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             {
                 if (_restored)
                 {
-                    File.Delete(_backupFile);
+                    if (File.Exists(_backupFile))
+                        File.Delete(_backupFile);
                 }
             }
             else
             {
-                File.Delete(_backupFile);
+                if (File.Exists(_backupFile))
+                    File.Delete(_backupFile);
             }
         }
 

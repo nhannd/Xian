@@ -342,13 +342,28 @@ namespace ClearCanvas.ImageServer.Model
         {
             using(IReadContext readContext = _store.OpenReadContext())
             {
-                IQueryStudyStorageLocation locQuery = readContext.GetBroker<IQueryStudyStorageLocation>();
-                StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
-                locParms.StudyInstanceUid = storage.StudyInstanceUid;
-                locParms.ServerPartitionKey = storage.ServerPartitionKey;
-                IList<StudyStorageLocation> studyLocationList = locQuery.Find(locParms);
-                return studyLocationList;
+                return FindStorageLocations(readContext, storage, null);
             }
+        }
+
+        static public IList<StudyStorageLocation> FindStorageLocations(
+                    IPersistenceContext context, StudyStorage storage)
+        {
+            return FindStorageLocations(context, storage, null);
+        }
+
+        static public IList<StudyStorageLocation> FindStorageLocations(
+                   IPersistenceContext context, StudyStorage storage,
+                   Predicate<StudyStorageLocation> filter)
+        {
+            IQueryStudyStorageLocation locQuery = context.GetBroker<IQueryStudyStorageLocation>();
+            StudyStorageLocationQueryParameters locParms = new StudyStorageLocationQueryParameters();
+            locParms.StudyInstanceUid = storage.StudyInstanceUid;
+            locParms.ServerPartitionKey = storage.ServerPartitionKey;
+            IList<StudyStorageLocation> list = locQuery.Find(locParms);
+            if (filter != null)
+                CollectionUtils.Remove(list, filter);
+            return list;
         }
 
         /// <summary>
@@ -402,6 +417,13 @@ namespace ClearCanvas.ImageServer.Model
 
                 return broker.Find(archiveStudyStorageCriteria);
             }
-        }    
+        }
+
+        public string ResolveRelativePath(string relativePath)
+        {
+            String path = Path.Combine(FilesystemPath, PartitionFolder);
+            path = Path.Combine(path, relativePath);
+            return path;
+        }
     }
 }

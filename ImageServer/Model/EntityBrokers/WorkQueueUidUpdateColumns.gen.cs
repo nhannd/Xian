@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -62,6 +62,16 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         public Int16 FailureCount
         {
             set { SubParameters["FailureCount"] = new EntityUpdateColumn<Int16>("FailureCount", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="GroupID")]
+        public String GroupID
+        {
+            set { SubParameters["GroupID"] = new EntityUpdateColumn<String>("GroupID", value); }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="RelativePath")]
+        public String RelativePath
+        {
+            set { SubParameters["RelativePath"] = new EntityUpdateColumn<String>("RelativePath", value); }
         }
        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SeriesInstanceUid")]

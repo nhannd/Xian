@@ -99,5 +99,20 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 				SubCriteria["Data"] = new ProcedureParameter<XmlDocument>("Data", value);
 			}
 		}
-	}
+
+        public string WorkQueueGroupID
+        {
+            set { SubCriteria["WorkQueueGroupID"] = new ProcedureParameter<string>("WorkQueueGroupID", value); }
+        }
+
+        public string UidRelativePath
+        {
+            set { SubCriteria["UidRelativePath"] = new ProcedureParameter<string>("UidRelativePath", value); }
+        }
+
+        public string UidGroupID
+        {
+            set { SubCriteria["UidGroupID"] = new ProcedureParameter<string>("UidGroupID", value); }
+        }
+    }
 }

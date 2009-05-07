@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -96,6 +96,30 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["FailureCount"] = new SearchCondition<Int16>("FailureCount");
               }
               return (ISearchCondition<Int16>)SubCriteria["FailureCount"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="GroupID")]
+        public ISearchCondition<String> GroupID
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("GroupID"))
+              {
+                 SubCriteria["GroupID"] = new SearchCondition<String>("GroupID");
+              }
+              return (ISearchCondition<String>)SubCriteria["GroupID"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="RelativePath")]
+        public ISearchCondition<String> RelativePath
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("RelativePath"))
+              {
+                 SubCriteria["RelativePath"] = new SearchCondition<String>("RelativePath");
+              }
+              return (ISearchCondition<String>)SubCriteria["RelativePath"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SeriesInstanceUid")]

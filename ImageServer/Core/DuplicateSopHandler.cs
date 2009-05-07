@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
@@ -11,31 +12,34 @@ namespace ClearCanvas.ImageServer.Core
 {
 	internal class DuplicateSopHandler
 	{
-		private readonly ServerCommandProcessor _processor;
+        private const string DUPLICATE_EXTENSION = "dup";
+	    private const string RECONCILE_STORAGE_FOLDER = "Reconcile";
+	    private readonly ServerCommandProcessor _processor;
 		private readonly StudyStorageLocation _studyLocation;
 		private readonly ServerPartition _partition;
 		private Study _study;
-		private readonly string _receiverId;
-		private readonly string _sourceId;
+        private readonly string _uidGroup;
+	    private string _sourceId;
 
-		public DuplicateSopHandler(
+	    public DuplicateSopHandler(
 			String sourceId,
-			String receiverId,
-			ServerCommandProcessor processor, 
+			String uidGroup,
+            ServerCommandProcessor processor, 
 			ServerPartition partition,
-			StudyStorageLocation studyLocation)
+			StudyStorageLocation studyLocation
+            )
 		{
 			Platform.CheckForNullReference(sourceId, "sourceId");
-			Platform.CheckForNullReference(receiverId, "receiverId");
 			Platform.CheckForNullReference(processor, "processor");
 			Platform.CheckForNullReference(studyLocation, "studyLocation");
 			Platform.CheckForNullReference(partition, "partition");
+            Platform.CheckForNullReference(uidGroup, "uidGroup");
 
-			_receiverId = receiverId;
-			_sourceId = sourceId;
+	        _sourceId = sourceId;
 			_processor = processor;
 			_studyLocation = studyLocation;
 			_partition = partition;
+            _uidGroup = uidGroup;
 		}
 
 		protected Study Study
@@ -89,7 +93,8 @@ namespace ClearCanvas.ImageServer.Core
 				else
 					Platform.Log(LogLevel.Info, "Receive duplicate SOP {0}. Existing files haven't been processed.", sopInstanceUid);
 
-				DoCompareDuplicate(file);
+			    SaveDuplicate(file);
+			    InsertWorkQueue(file);
 
 			}
 			else
@@ -102,44 +107,90 @@ namespace ClearCanvas.ImageServer.Core
 			return result;
 		}
 
-		private void DoCompareDuplicate(DicomFile file)
-		{
-			InsertDuplicateQueueEntryCommand insertCommand = new InsertDuplicateQueueEntryCommand(_receiverId, _sourceId, _studyLocation, Study, file);
-			_processor.AddCommand(insertCommand);
+        private void InsertWorkQueue(DicomFile file)
+        {
+            String seriesUid = file.DataSet[DicomTags.SeriesInstanceUid].ToString();
+            String sopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
+            String queueGroup = _sourceId;
+            String uidGroup = _uidGroup;
 
-			_processor.AddCommand(new UpdateDuplicateQueueEntryCommand(
-			                      	delegate { return insertCommand.QueueEntry; },
-			                      	file));
+            String relativePath = StringUtilities.Combine(new string[] 
+                                                            {
+                                                                  _studyLocation.StudyInstanceUid, seriesUid, sopUid
+                                                              }, Path.DirectorySeparatorChar.ToString());
 
-			String path = Path.Combine(_studyLocation.FilesystemPath, _studyLocation.PartitionFolder);
-			_processor.AddCommand(new CreateDirectoryCommand(path));
+            relativePath = relativePath + "." + DUPLICATE_EXTENSION;
+
+            _processor.AddCommand(new UpdateWorkQueueCommand(file, _studyLocation, true, DUPLICATE_EXTENSION, uidGroup, relativePath));
+
+        }
+
+	    private void SaveDuplicate(DicomFile file)
+	    {
+            String seriesUid = file.DataSet[DicomTags.SeriesInstanceUid].ToString();
+            String sopUid = file.DataSet[DicomTags.SopInstanceUid].ToString();
+
+	        String path = Path.Combine(_studyLocation.FilesystemPath, _studyLocation.PartitionFolder);
+            _processor.AddCommand(new CreateDirectoryCommand(path));
+
+            path = Path.Combine(path, RECONCILE_STORAGE_FOLDER);
+            _processor.AddCommand(new CreateDirectoryCommand(path));
+
+
+            path = Path.Combine(path, _uidGroup);
+            _processor.AddCommand(new CreateDirectoryCommand(path));
+
+            path = Path.Combine(path, _studyLocation.StudyInstanceUid);
+            _processor.AddCommand(new CreateDirectoryCommand(path));
+
+	        path = Path.Combine(path, seriesUid);
+            _processor.AddCommand(new CreateDirectoryCommand(path));
             
-			_processor.AddCommand(new CreateDirectoryCommand(delegate
-			                                                 	{ 
-			                                                            	path = Path.Combine(path, "Duplicate");
-			                                                            	return path;
-			}));
+            path = Path.Combine(path, sopUid);
+	        path += "." +DUPLICATE_EXTENSION;
 
+	        _processor.AddCommand(new SaveDicomFileCommand(path, file, true, true));
 
-			_processor.AddCommand(new CreateDirectoryCommand(delegate
-			                                                 	{
-			                                                 		path = Path.Combine(path, file.DataSet[DicomTags.StudyInstanceUid]);
-			                                                 		return path;
-			                                                 	}));
+	    }
+
+        //private void DoCompareDuplicate(DicomFile file)
+        //{
+        //    InsertDuplicateQueueEntryCommand insertCommand = new InsertDuplicateQueueEntryCommand(_receiverId, _sourceId, _studyLocation, Study, file);
+        //    _processor.AddCommand(insertCommand);
+
+        //    _processor.AddCommand(new UpdateDuplicateQueueEntryCommand(
+        //                            delegate { return insertCommand.QueueEntry; },
+        //                            file));
+
+        //    String path = Path.Combine(_studyLocation.FilesystemPath, _studyLocation.PartitionFolder);
+        //    _processor.AddCommand(new CreateDirectoryCommand(path));
             
-			_processor.AddCommand( new CreateDirectoryCommand(delegate
-			                                                  	{
-			                                                  		path = Path.Combine(path, insertCommand.QueueEntry.GetKey().Key.ToString());
-			                                                  		return path;
-			                                                  	}));
+        //    _processor.AddCommand(new CreateDirectoryCommand(delegate
+        //                                                        { 
+        //                                                                    path = Path.Combine(path, "Duplicate");
+        //                                                                    return path;
+        //    }));
+
+
+        //    _processor.AddCommand(new CreateDirectoryCommand(delegate
+        //                                                        {
+        //                                                            path = Path.Combine(path, file.DataSet[DicomTags.StudyInstanceUid]);
+        //                                                            return path;
+        //                                                        }));
+            
+        //    _processor.AddCommand( new CreateDirectoryCommand(delegate
+        //                                                        {
+        //                                                            path = Path.Combine(path, insertCommand.QueueEntry.GetKey().Key.ToString());
+        //                                                            return path;
+        //                                                        }));
 
            
-			_processor.AddCommand(new SaveDicomFileCommand(delegate
-			                                               	{
-			                                               		path = Path.Combine(path, file.MediaStorageSopInstanceUid);
-			                                               		path += ".dup";
-			                                               		return path;
-			                                               	}, file, true, true));
-		}
+        //    _processor.AddCommand(new SaveDicomFileCommand(delegate
+        //                                                    {
+        //                                                        path = Path.Combine(path, file.MediaStorageSopInstanceUid);
+        //                                                        path += ".dup";
+        //                                                        return path;
+        //                                                    }, file, true, true));
+        //}
 	}
 }

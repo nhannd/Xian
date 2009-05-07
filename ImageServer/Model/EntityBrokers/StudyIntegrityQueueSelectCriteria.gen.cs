@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -60,6 +60,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
                  SubCriteria["Description"] = new SearchCondition<String>("Description");
               }
               return (ISearchCondition<String>)SubCriteria["Description"];
+            } 
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="GroupID")]
+        public ISearchCondition<String> GroupID
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("GroupID"))
+              {
+                 SubCriteria["GroupID"] = new SearchCondition<String>("GroupID");
+              }
+              return (ISearchCondition<String>)SubCriteria["GroupID"];
             } 
         }
         [EntityFieldDatabaseMappingAttribute(TableName="StudyIntegrityQueue", ColumnName="InsertTime")]

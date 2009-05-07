@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -51,6 +51,8 @@ namespace ClearCanvas.ImageServer.Model
             ,System.String _extension_
             ,System.Boolean _failed_
             ,System.Int16 _failureCount_
+            ,System.String _groupID_
+            ,System.String _relativePath_
             ,System.String _seriesInstanceUid_
             ,System.String _sopInstanceUid_
             ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _workQueueKey_
@@ -60,6 +62,8 @@ namespace ClearCanvas.ImageServer.Model
             _extension = _extension_;
             _failed = _failed_;
             _failureCount = _failureCount_;
+            _groupID = _groupID_;
+            _relativePath = _relativePath_;
             _seriesInstanceUid = _seriesInstanceUid_;
             _sopInstanceUid = _sopInstanceUid_;
             _workQueueKey = _workQueueKey_;
@@ -71,6 +75,8 @@ namespace ClearCanvas.ImageServer.Model
         private String _extension;
         private Boolean _failed;
         private Int16 _failureCount;
+        private String _groupID;
+        private String _relativePath;
         private String _seriesInstanceUid;
         private String _sopInstanceUid;
         private ServerEntityKey _workQueueKey;
@@ -100,6 +106,18 @@ namespace ClearCanvas.ImageServer.Model
         {
         get { return _failureCount; }
         set { _failureCount = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="GroupID")]
+        public String GroupID
+        {
+        get { return _groupID; }
+        set { _groupID = value; }
+        }
+        [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="RelativePath")]
+        public String RelativePath
+        {
+        get { return _relativePath; }
+        set { _relativePath = value; }
         }
         [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="WorkQueueUid", ColumnName="SeriesInstanceUid")]
@@ -154,6 +172,8 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.Extension = entity.Extension;
             updateColumns.Failed = entity.Failed;
             updateColumns.FailureCount = entity.FailureCount;
+            updateColumns.GroupID = entity.GroupID;
+            updateColumns.RelativePath = entity.RelativePath;
             updateColumns.SeriesInstanceUid = entity.SeriesInstanceUid;
             updateColumns.SopInstanceUid = entity.SopInstanceUid;
             updateColumns.WorkQueueKey = entity.WorkQueueKey;

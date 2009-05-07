@@ -43,28 +43,13 @@ using ClearCanvas.ImageServer.Common.Utilities;
 
 namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
 {
-    internal class DirectoryImporterParameters
-    {
-        public String PartitionAE;
-        public DirectoryInfo Directory;
-        public int MaxImages;
-        public int Delay;
-        public string Filter;
-    }
-
-    internal class SopImportedEventArgs : EventArgs
-    {
-        public string  StudyInstanceUid;
-        public string  SeriesInstanceUid;
-        public string  SopInstanceUid;
-    }
-
     /// <summary>
     /// Background worker thread to import dicom files from a directory.
     /// </summary>
     internal class DirectoryImporterBackgroundProcess : BackgroundWorker
     {
         #region Private Fields
+        private DateTime _startTimeStamp = Platform.Time;
         private readonly DirectoryImporterParameters _parms;
         SopInstanceImporter _importer;
         private readonly List<string> _skippedStudies = new List<String>();
@@ -93,7 +78,6 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
         #endregion
 
         #region Protected Methods
-
 
         protected override void OnDoWork(DoWorkEventArgs e)
         {
@@ -164,7 +148,12 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemFileImporter
                         skipped = _skippedStudies.Contains(studyInstanceUid);
                         if (!skipped)
                         {
-                            DicomSopProcessingResult result = _importer.ImportFromFilesystemStream(file);
+                            SopInstanceImporterContext context = new SopInstanceImporterContext();
+                            context.ID = String.Format("Importer_{0}", _startTimeStamp.ToString("yyyyMMddhhmmss"));
+                            context.Message = file;
+                            context.sourceAE = "Importer";
+                
+                            DicomSopProcessingResult result = _importer.Import(context);
                             if (result.Sussessful)
                             {
                                 if (result.Duplicate)

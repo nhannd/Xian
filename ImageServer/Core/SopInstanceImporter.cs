@@ -63,6 +63,18 @@ namespace ClearCanvas.ImageServer.Core
 		public bool Duplicate;
 	}
 
+    public class SopInstanceImporterContext
+    {
+        public String ID; 
+        public string sourceAE; 
+        public DicomMessageBase Message;
+
+        public string GetDuplicateStorageFolder()
+        {
+            return ID;
+        }
+    }
+
 	public class SopInstanceImporter
 	{
 		private readonly ServerPartition _partition;
@@ -79,9 +91,11 @@ namespace ClearCanvas.ImageServer.Core
 			_partition = partition;
 		}
 
-		private DicomSopProcessingResult Import(DicomMessageBase message, string sourceAE, string sourceId, string receiverId)
+        public DicomSopProcessingResult Import(SopInstanceImporterContext context)
 		{
-			Platform.CheckForNullReference(message, "message");
+            Platform.CheckForNullReference(context, "context");
+            DicomMessageBase message;
+            message = context.Message;
 			String studyInstanceUid = message.DataSet[DicomTags.StudyInstanceUid].GetString(0, string.Empty);
 			String seriesInstanceUid = message.DataSet[DicomTags.SeriesInstanceUid].GetString(0, string.Empty);
 			String sopInstanceUid = message.DataSet[DicomTags.SopInstanceUid].GetString(0, string.Empty);
@@ -175,11 +189,11 @@ namespace ClearCanvas.ImageServer.Core
 					bool dupImage = false;
 					string extension = null;
 					String finalDest = studyLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
-					DicomFile file = ConvertToDicomFile(message, finalDest, sourceAE);
+					DicomFile file = ConvertToDicomFile(message, finalDest, context.sourceAE);
                         
 					if (File.Exists(finalDest))
 					{
-						DuplicateSopHandler handler = new DuplicateSopHandler(sourceId, receiverId, processor, _partition, studyLocation);
+                        DuplicateSopHandler handler = new DuplicateSopHandler(context.sourceAE, context.ID, processor, _partition, studyLocation);
 						result = handler.Handle(file);
 					}
 					else
@@ -302,28 +316,26 @@ namespace ClearCanvas.ImageServer.Core
 			return file;
 		}
 
-		public DicomSopProcessingResult ImportFromNetworkStream(DicomMessage message, ServerAssociationParameters association)
-		{
-			Platform.CheckForNullReference(message, "message");
-			Platform.CheckForNullReference(association, "association");
-			String sourceId =
-				String.Format("AE:{0}@{1}:{2}", association.CallingAE, association.RemoteEndPoint.Address,
-				              association.RemoteEndPoint.Port);
+        //private DicomSopProcessingResult ImportFromNetworkStream(DicomMessage message, ServerAssociationParameters association)
+        //{
+        //    Platform.CheckForNullReference(association, "association");
+        //    Platform.CheckForNullReference(message, "message");
+        //    SopInstanceImporterContext context = new SopInstanceImporterContext();
+        //    context.Message = message;
+        //    context.ID = String.Format("{0}_{1}", association.CallingAE, association.TimeStamp.ToString("yyyyMMddhhmmss"));
+        //    context.sourceAE = association.CallingAE;
 
-			String receiverId =
-				String.Format("AE:{0}@{1}:{2}", association.CalledAE, association.LocalEndPoint.Address,
-				              association.LocalEndPoint.Port);
+        //    return Import(context);
+        //}
 
-			return Import(message, association.CallingAE, sourceId, receiverId);
-		}
-
-		public DicomSopProcessingResult ImportFromFilesystemStream(DicomFile file)
-		{
-			Platform.CheckForNullReference(file, "file");
-			FileInfo fileInfo = new FileInfo(file.Filename);
-
-			String receiverId = ServiceTools.ServerInstanceId;
-			return Import(file, "DirectoryImport", fileInfo.Directory.FullName, receiverId);
-		}
+        //private DicomSopProcessingResult ImportFromFilesystemStream(DicomFile file)
+        //{
+        //    Platform.CheckForNullReference(file, "file");
+        //    SopInstanceImporterContext context = new SopInstanceImporterContext();
+        //    context.Message = file;
+        //    context.ID = String.Format("Import_{1}", Platform.TimeStamp.ToString("yyyyMMddhhmmss"));
+        //    context.sourceAE = association.CallingAE;
+        //    return Import(file, "Importer");
+        //}
 	}
 }

@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -41,7 +42,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 {
     class ProcessDuplicateItemProcessor : BaseItemProcessor
     {
-        private const String DUPLICATE_SOP_EXTENSION = "dup";
         private WorkQueueProcessDuplicateSop _duplicateQueueEntry;
 
         protected String DuplicateFolder
@@ -173,6 +173,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 processor.AddCommand(new SaveDicomFileCommand(finalDestination, file, true, true));
                 processor.AddCommand(new DeleteFileCommand(duplicateFile.FullName));
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
+                processor.AddCommand(new OpValidatation(WorkQueueItem, uid));
 
                 if (!processor.Execute())
                 {
@@ -191,11 +192,66 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
         private FileInfo GetDuplicateSopFile(WorkQueueUid uid)
         {
-            String path = Path.Combine(DuplicateFolder, uid.SopInstanceUid);
-            path += "." + DUPLICATE_SOP_EXTENSION;
+            string baseDir = Path.Combine(StorageLocation.FilesystemPath, StorageLocation.PartitionFolder);
+            baseDir = Path.Combine(baseDir, "Reconcile");
+            baseDir = Path.Combine(baseDir, WorkQueueItem.GroupID);
+
+            String path = Path.Combine(baseDir, uid.RelativePath);
 
             return new FileInfo(path);
 
+        }
+    }
+
+    internal class OpValidatation : ServerCommand
+    {
+        private readonly Model.WorkQueue _item;
+        private readonly WorkQueueUid _uid;
+        private readonly IList<StudyStorageLocation> _locations;
+
+        public OpValidatation(Model.WorkQueue item, WorkQueueUid uid)
+            :base("Validation Command", true)
+        {
+            _item = item;
+            _uid = uid;
+            _locations = _item.LoadStudyLocations(ExecutionContext.Current.ReadContext);
+        }
+
+        private String GetDuplicateSopFile()
+        {
+            _item.LoadStudy(ExecutionContext.ReadContext);
+
+            string baseDir = Path.Combine(_locations[0].FilesystemPath, _locations[0].PartitionFolder);
+            baseDir = Path.Combine(baseDir, "Reconcile");
+            baseDir = Path.Combine(baseDir, _item.GroupID);
+
+            String path = Path.Combine(baseDir, _uid.RelativePath);
+
+            return path;
+
+        }
+
+        protected override void OnExecute()
+        {
+            // duplicate file is deleted
+            String dupPath = GetDuplicateSopFile();
+            String replacedSopPath = _locations[0].GetSopInstancePath(_uid.SeriesInstanceUid, _uid.SopInstanceUid);
+
+            Platform.CheckTrue(!File.Exists(dupPath), "Duplicate sop was not deleted.");
+            Platform.CheckTrue(File.Exists(replacedSopPath), "Replaced sop is not in the study folder.");
+
+            #if DEBUG
+            #region MORE EXTENSIVE CHECK
+            // can load the file without problem
+            DicomFile file = new DicomFile(replacedSopPath);
+            file.Load();
+            #endregion
+            #endif
+        }
+
+        protected override void OnUndo()
+        {
+            // NO-OP
         }
     }
 }

@@ -29,6 +29,7 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 
@@ -93,6 +94,12 @@ namespace ClearCanvas.ImageServer.Model
                 }
             }
             return _studyStorage;
+        }
+
+        public IList<StudyStorageLocation> LoadStudyLocations(IPersistenceContext context)
+        {
+            StudyStorage storage = LoadStudyStorage(context);
+            return StudyStorageLocation.FindStorageLocations(context, storage);
         }
     }
 }
