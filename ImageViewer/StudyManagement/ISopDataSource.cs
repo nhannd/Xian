@@ -45,6 +45,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		string TransferSyntaxUid { get; }
 
 		byte[] GetFrameNormalizedPixelData(int frameNumber);
+		byte[] GetFrameNormalizedOverlayData(int overlayNumber, int frameNumber);
 		void UnloadFrameData(int frameNumber);
 
 		bool IsStored { get; }

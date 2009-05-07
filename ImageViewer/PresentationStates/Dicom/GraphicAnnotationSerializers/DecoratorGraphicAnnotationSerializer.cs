@@ -29,12 +29,16 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Dicom.Iod.Sequences;
+using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.PresentationStates {
-	public interface IDicomSoftcopyPresentationStateProvider {
-		DicomSoftcopyPresentationState PresentationState { get; set; }
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers
+{
+	internal class DecoratorGraphicAnnotationSerializer : GraphicAnnotationSerializer<IDecoratorGraphic>
+	{
+		protected override void Serialize(IDecoratorGraphic controlGraphic, GraphicAnnotationSequenceItem serializationState)
+		{
+			SerializeGraphic(controlGraphic.DecoratedGraphic, serializationState);
+		}
 	}
 }

@@ -31,7 +31,7 @@
 
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod.Sequences;
-using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {

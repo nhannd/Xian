@@ -38,8 +38,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.PresentationStates;
-using ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers;
 using ClearCanvas.ImageViewer.RoiGraphics;
 
 namespace ClearCanvas.ImageViewer.Graphics

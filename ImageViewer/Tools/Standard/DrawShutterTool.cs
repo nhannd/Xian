@@ -40,8 +40,9 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 using System;
 using ClearCanvas.Common.Utilities;
 using System.Drawing;
-using ClearCanvas.ImageViewer.DicomGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -209,9 +210,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			bool enabled = false;
 			if (image != null && image is IDicomPresentationImage)
 			{
-				ShuttersGraphic shutters = GetShuttersGraphic(image as IDicomPresentationImage);
-				if (shutters != null)
-					enabled = shutters.Visible;
+				DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image as IDicomPresentationImage, false);
+				if (dicomGraphicsPlane != null)
+					enabled = dicomGraphicsPlane.Shutters.Enabled;
 			}
 
 			this.Enabled = enabled;
@@ -413,21 +414,23 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			return shutter;
 		}
 
-		internal static ShuttersGraphic GetShuttersGraphic(IDicomPresentationImage image)
+		internal static IDicomGraphicsPlaneShutters GetShuttersGraphic(IDicomPresentationImage image)
 		{
-			return CollectionUtils.SelectFirst(image.DicomGraphics,
-							delegate(IGraphic graphic) { return graphic is ShuttersGraphic; }) as ShuttersGraphic;
+			DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
+			if (dicomGraphicsPlane != null)
+				return dicomGraphicsPlane.Shutters;
+			return null;
 		}
 
 		internal static GeometricShuttersGraphic GetGeometricShuttersGraphic(IDicomPresentationImage image)
 		{
-			ShuttersGraphic parent = CollectionUtils.SelectFirst(image.DicomGraphics,
-							delegate(IGraphic graphic) { return graphic is ShuttersGraphic; }) as ShuttersGraphic;
+			DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
 
-			if (parent == null)
+			if (dicomGraphicsPlane == null)
 				return null;
 
-			return parent.GeometricShutters;
+			return CollectionUtils.SelectFirst(dicomGraphicsPlane.Shutters,
+				delegate(IShutterGraphic shutter) { return shutter is GeometricShuttersGraphic; }) as GeometricShuttersGraphic;
 		}
 	}
 }

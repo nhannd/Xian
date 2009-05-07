@@ -29,18 +29,15 @@
 
 #endregion
 
-using System.Collections.Generic;
 using System.Drawing;
 using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.PresentationStates;
 
-namespace ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers
 {
-	internal class PolylineGraphicAnnotationSerializer : GraphicAnnotationSerializer<IPointsGraphic>
+	public class RectangleGraphicAnnotationSerializer : GraphicAnnotationSerializer<IBoundableGraphic>
 	{
-		protected override void Serialize(IPointsGraphic graphic, GraphicAnnotationSequenceItem serializationState)
+		protected override void Serialize(IBoundableGraphic graphic, GraphicAnnotationSequenceItem serializationState)
 		{
 			if (!graphic.Visible)
 				return; // if the graphic is not visible, don't serialize it!
@@ -50,26 +47,23 @@ namespace ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializer
 			graphic.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				IList<PointF> polyline = graphic.Points;
-
 				annotationElement.GraphicAnnotationUnits = GraphicAnnotationSequenceItem.GraphicAnnotationUnits.Pixel;
 				annotationElement.GraphicDimensions = 2;
 				annotationElement.GraphicType = GraphicAnnotationSequenceItem.GraphicType.Polyline;
-				annotationElement.NumberOfGraphicPoints = polyline.Count;
+				annotationElement.NumberOfGraphicPoints = 5;
+
+				RectangleF bounds = graphic.BoundingBox;
 
 				// add shape vertices
-				List<PointF> list = new List<PointF>(polyline.Count);
-				for (int n = 0; n < polyline.Count; n++)
-				{
-					list.Add(polyline[n]);
-				}
-				annotationElement.GraphicData = list.ToArray();
+				PointF[] list = new PointF[5];
+				list[0] = bounds.Location;
+				list[1] = bounds.Location + new SizeF(bounds.Width, 0);
+				list[2] = bounds.Location + bounds.Size;
+				list[3] = bounds.Location + new SizeF(0, bounds.Height);
+				list[4] = bounds.Location;
+				annotationElement.GraphicData = list;
 
-				if (FloatComparer.AreEqual(list[0], list[list.Count - 1]))
-				{
-					// shape is closed - we are required to indicate fill state
-					annotationElement.GraphicFilled = GraphicAnnotationSequenceItem.GraphicFilled.N;
-				}
+				annotationElement.GraphicFilled = GraphicAnnotationSequenceItem.GraphicFilled.N;
 			}
 			finally
 			{

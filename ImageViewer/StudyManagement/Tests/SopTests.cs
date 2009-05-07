@@ -165,6 +165,101 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			Assert.IsTrue(dataSource1.IsDisposed, "The data source has not been disposed.");
 			Assert.IsTrue(SopDataCache.ItemCount == 0, "The Sop data cache is NOT empty.");
 		}
+
+		[Test]
+		public void TestGrayscalePixelNormalization()
+		{
+			// test 8-bit identity
+			TryGrayscalePixelNormalization(
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				7, 8, 8, false);
+
+			// test 8-bit, lower nibble
+			TryGrayscalePixelNormalization(
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				new byte[] {0x0f, 0x0b, 0x0c, 0x09, 0x07, 0x08, 0x04, 0x0f, 0x05, 0x01},
+				3, 4, 8, false);
+
+			// test 8-bit, upper nibble
+			TryGrayscalePixelNormalization(
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				new byte[] {0x0a, 0x0b, 0x09, 0x0d, 0x02, 0x01, 0x03, 0x0f, 0x06, 0x08},
+				7, 4, 8, false);
+
+			// test 16-bit identity, big endian
+			TryGrayscalePixelNormalization(
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				15, 16, 16, true);
+
+			// test 16-bit, upper byte in big endian stream
+			TryGrayscalePixelNormalization(
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				new byte[] {0x00, 0xaf, 0x00, 0x9c, 0x00, 0x27, 0x00, 0x34, 0x00, 0x65},
+				15, 8, 16, true);
+
+			// test 16-bit, lower byte in big endian stream
+			TryGrayscalePixelNormalization(
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				new byte[] {0x00, 0xbb, 0x00, 0xd9, 0x00, 0x18, 0x00, 0xff, 0x00, 0x81},
+				7, 8, 16, true);
+
+			// test 16-bit, middle byte in big endian stream
+			TryGrayscalePixelNormalization(
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				new byte[] {0x00, 0xfb, 0x00, 0xcd, 0x00, 0x71, 0x00, 0x4f, 0x00, 0x58},
+				11, 8, 16, true);
+
+			// test 16-bit identity, little endian
+			TryGrayscalePixelNormalization(
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				15, 16, 16, false);
+
+			// test 16-bit, upper byte in little endian stream
+			TryGrayscalePixelNormalization(
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				new byte[] {0xbb, 0x00, 0xd9, 0x00, 0x18, 0x00, 0xff, 0x00, 0x81, 0x00},
+				15, 8, 16, false);
+
+			// test 16-bit, lower byte in little endian stream
+			TryGrayscalePixelNormalization(
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				new byte[] {0xaf, 0x00, 0x9c, 0x00, 0x27, 0x00, 0x34, 0x00, 0x65, 0x00},
+				7, 8, 16, false);
+
+			// test 16-bit, middle byte in little endian stream
+			TryGrayscalePixelNormalization(
+				new byte[] {0xaf, 0xbb, 0x9c, 0xd9, 0x27, 0x18, 0x34, 0xff, 0x65, 0x81},
+				new byte[] {0xba, 0x00, 0x99, 0x00, 0x82, 0x00, 0xf3, 0x00, 0x16, 0x00},
+				11, 8, 16, false);
+		}
+
+		private static void TryGrayscalePixelNormalization(byte[] input, byte[] expected, int highBit, int bitsStored, int bitsAllocated, bool bigEndian)
+		{
+			DicomAttributeCollection coll = new DicomAttributeCollection();
+			coll[DicomTags.BitsAllocated].SetInt32(0, bitsAllocated);
+			coll[DicomTags.BitsStored].SetInt32(0, bitsStored);
+			coll[DicomTags.HighBit].SetInt32(0, highBit);
+
+			byte[] output = new byte[input.Length];
+			input.CopyTo(output, 0);
+			DicomMessageSopDataSource.NormalizeGrayscalePixels(coll, output, bigEndian ? TransferSyntax.ExplicitVrBigEndian : TransferSyntax.ImplicitVrLittleEndian);
+			AssertArrayEquals(expected, output, string.Format("{0} Stored, {1} Allocated, High={2}, BigEndian={3}", bitsStored, bitsAllocated, highBit, bigEndian));
+		}
+
+		private static void AssertArrayEquals<T>(T[] expected, T[] actual, string message)
+		{
+			Assert.IsTrue(!(expected == null ^ actual == null), "Either both are null, or neither are null : {0}", message);
+			if (expected == null)
+				return;
+			Assert.AreEqual(expected.Length, actual.Length, "Lengths differ : {0}", message);
+			for (int n = 0; n < expected.Length; n++)
+			{
+				Assert.AreEqual(expected[n], actual[n], "Data differs at index {0} : {1}", n, message);
+			}
+		}
 	}
 }
 

@@ -29,16 +29,31 @@
 
 #endregion
 
-using ClearCanvas.Dicom.Iod.Sequences;
+using System;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers
+namespace ClearCanvas.ImageViewer.DicomGraphics
 {
-	internal class DecoratorGraphicAnnotationSerializer : GraphicAnnotationSerializer<IDecoratorGraphic>
+	[Cloneable(true)]
+	[Obsolete("Use DicomGraphicsPlane")]
+	public class OverlayPlanesGraphic : CompositeGraphic
 	{
-		protected override void Serialize(IDecoratorGraphic controlGraphic, GraphicAnnotationSequenceItem serializationState)
+		public const string Name = "Dicom Overlay Planes";
+
+		internal OverlayPlanesGraphic()
 		{
-			SerializeGraphic(controlGraphic.DecoratedGraphic, serializationState);
+			base.Name = Name;
+		}
+
+		public IEnumerable<OverlayPlaneGraphic> GetOverlayPlanes()
+		{
+			foreach (IGraphic graphic in Graphics)
+			{
+				if (graphic is OverlayPlaneGraphic)
+					yield return graphic as OverlayPlaneGraphic;
+			}
 		}
 	}
 }

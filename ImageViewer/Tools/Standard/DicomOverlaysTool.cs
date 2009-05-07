@@ -29,13 +29,13 @@
 
 #endregion
 
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Graphics;
-using System.Collections.Generic;
-using ClearCanvas.ImageViewer.DicomGraphics;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -57,12 +57,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 		}
 
-		private static IEnumerable<OverlayPlanesGraphic> GetOverlayPlanesGraphic(IDicomPresentationImage image)
+		private static IEnumerable<OverlayPlaneGraphic> GetOverlayPlanesGraphic(IDicomPresentationImage image)
 		{
-			foreach (OverlayPlanesGraphic overlayGraphic in CollectionUtils.Select(image.DicomGraphics,
-				delegate(IGraphic graphic) { return graphic is OverlayPlanesGraphic; }))
+			DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
+			if (dicomGraphicsPlane != null)
 			{
-				yield return overlayGraphic;
+				foreach (LayerGraphic layer in (IEnumerable<LayerGraphic>)dicomGraphicsPlane.Layers)
+				{
+					foreach (OverlayPlaneGraphic overlayGraphic in CollectionUtils.Select(layer.Graphics,
+						delegate(IGraphic graphic) { return graphic is OverlayPlaneGraphic; }))
+					{
+						yield return overlayGraphic;
+					}
+				}
 			}
 		}
 
@@ -70,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			if (image is IDicomPresentationImage)
 			{
-				foreach (OverlayPlanesGraphic overlayGraphic in GetOverlayPlanesGraphic(image as IDicomPresentationImage))
+				foreach (OverlayPlaneGraphic overlayGraphic in GetOverlayPlanesGraphic(image as IDicomPresentationImage))
 					overlayGraphic.Visible = Checked;
 			}
 		}

@@ -33,9 +33,8 @@ using System.Drawing;
 using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.PresentationStates;
 
-namespace ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers
 {
 	internal class EllipseGraphicAnnotationSerializer : GraphicAnnotationSerializer<IBoundableGraphic>
 	{

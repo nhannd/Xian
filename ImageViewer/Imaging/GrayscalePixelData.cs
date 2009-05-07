@@ -131,6 +131,38 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _absoluteMaxPixelValue; }
 		}
 
+		/// <summary>
+		/// Gets the number of bits stored per pixel in the pixel data.
+		/// </summary>
+		/// <remarks>
+		/// In contrast to <see cref="PixelData.BitsAllocated"/> which indicates the number of bits that have been
+		/// allocated for each pixel, the <see cref="BitsStored"/> describes the actual number of bits used
+		/// to encode the data.
+		/// </remarks>
+		public int BitsStored
+		{
+			get { return _bitsStored; }
+		}
+
+		/// <summary>
+		/// Gets the 0-based position of the most significant bit within the bits allocated for each pixel in the pixel data.
+		/// </summary>
+		public int HighBit
+		{
+			get { return _highBit; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating if the pixel data is signed.
+		/// </summary>
+		/// <remarks>
+		/// If the pixel data is signed, then each pixel is stored in 2's complement form with the sign bit starting at <see cref="HighBit"/>.
+		/// </remarks>
+		public bool IsSigned
+		{
+			get { return _isSigned; }
+		}
+
 		#endregion
 
 		#region Public methods

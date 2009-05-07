@@ -34,10 +34,8 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.PresentationStates
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
-	//TODO: call this DicomGraphicAnnotationSerializerAttribute to be consistent w/ the corresponding abstract class?
-
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
 	public class DicomSerializableGraphicAnnotationAttribute : Attribute
 	{

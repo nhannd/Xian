@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -38,6 +39,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		//I hate doing this, but it's horribly inefficient for all subclasses to do their own locking.
 		protected readonly object SyncLock = new object();
 		private volatile WeakReference[] _framePixelData;
+		private volatile OverlayFrameWeakReferenceDictionary _frameOverlayData;
 
 		protected StandardSopDataSource()
 			: base()
@@ -93,6 +95,59 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		private OverlayFrameWeakReferenceDictionary FrameOverlayData
+		{
+			get
+			{
+				if (_frameOverlayData == null)
+				{
+					lock (SyncLock)
+					{
+						if (_frameOverlayData == null)
+						{
+							_frameOverlayData = new OverlayFrameWeakReferenceDictionary();
+						}
+					}
+				}
+
+				return _frameOverlayData;
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="overlayNumber"></param>
+		/// <param name="frameNumber">The 1-based overlay frame number.</param>
+		/// <returns></returns>
+		protected abstract byte[] CreateFrameNormalizedOverlayData(int overlayNumber, int frameNumber);
+
+		protected override sealed void OnGetFrameNormalizedOverlayData(int overlayNumber, int frameNumber, out byte[] overlayData)
+		{
+			int frameIndex = frameNumber - 1;
+			int overlayIndex = overlayNumber - 1;
+			WeakReference reference = FrameOverlayData[overlayIndex, frameIndex];
+
+			try
+			{
+				overlayData = reference.Target as byte[];
+			}
+			catch (InvalidOperationException)
+			{
+				overlayData = null;
+				reference = new WeakReference(null);
+				FrameOverlayData[overlayIndex, frameIndex] = reference;
+			}
+
+			if (!reference.IsAlive || overlayData == null)
+			{
+				lock (SyncLock)
+				{
+					overlayData = CreateFrameNormalizedOverlayData(overlayNumber, frameNumber);
+					reference.Target = overlayData;
+				}
+			}
+		}
 		
 		//NOTE: no need to implement anything here, at least for pixel data, since we're using a WeakReferenceCache.
 		protected virtual void OnUnloadFrameData(int frameNumber)
@@ -104,6 +159,61 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			lock(SyncLock)
 			{
 				OnUnloadFrameData(frameNumber);
+			}
+		}
+
+		private class OverlayFrameWeakReferenceDictionary
+		{
+			private readonly Dictionary<OverlayFrameId, WeakReference> _dictionary = new Dictionary<OverlayFrameId, WeakReference>();
+
+			public WeakReference this[int overlayPlane, int frame]
+			{
+				get
+				{
+					OverlayFrameId key = new OverlayFrameId(overlayPlane, frame);
+					if (!_dictionary.ContainsKey(key))
+					{
+						_dictionary.Add(key, new WeakReference(null));
+					}
+					return _dictionary[key];
+				}
+				set
+				{
+					OverlayFrameId key = new OverlayFrameId(overlayPlane, frame);
+					if (_dictionary.ContainsKey(key))
+					{
+						_dictionary[key] = value;
+						return;
+					}
+					_dictionary.Add(key, value);
+				}
+			}
+
+			private class OverlayFrameId
+			{
+				public readonly int OverlayPlane;
+				public readonly int Frame;
+
+				public OverlayFrameId(int overlayPlane, int frame)
+				{
+					this.OverlayPlane = overlayPlane;
+					this.Frame = frame;
+				}
+
+				public override int GetHashCode()
+				{
+					return this.OverlayPlane.GetHashCode() ^ this.Frame.GetHashCode() ^ -0x090d7a08;
+				}
+
+				public override bool Equals(object obj)
+				{
+					if (obj is OverlayFrameId)
+					{
+						OverlayFrameId other = (OverlayFrameId) obj;
+						return (other.OverlayPlane == this.OverlayPlane && other.Frame == this.Frame);
+					}
+					return false;
+				}
 			}
 		}
 	}

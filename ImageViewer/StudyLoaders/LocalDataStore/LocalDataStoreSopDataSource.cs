@@ -70,6 +70,18 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			get { return _sop.SopClassUid; }
 		}
 
+		public override DicomAttribute GetDicomAttribute(DicomTag tag)
+		{
+			//the _sop indexer is not thread-safe.
+			lock (SyncLock)
+			{
+				if (_sop.IsStoredTag(tag))
+					return _sop[tag];
+			}
+
+			return base.GetDicomAttribute(tag);
+		}
+
 		public override DicomAttribute GetDicomAttribute(uint tag)
 		{
 			//the _sop indexer is not thread-safe.
@@ -80,6 +92,21 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			}
 
 			return base.GetDicomAttribute(tag);
+		}
+
+		public override bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
+		{
+			lock (SyncLock)
+			{
+				if (_sop.IsStoredTag(tag))
+				{
+					attribute = _sop[tag];
+					if (!attribute.IsEmpty)
+						return true;
+				}
+			}
+
+			return base.TryGetAttribute(tag, out attribute);
 		}
 
 		public override bool TryGetAttribute(uint tag, out DicomAttribute attribute)

@@ -40,7 +40,7 @@ using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
 
-namespace ClearCanvas.ImageViewer.PresentationStates
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
 	/// <summary>
 	/// A <see cref="IGraphic"/> whose contents represent those of a DICOM Graphic Annotation Sequence.
@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 	[DicomSerializableGraphicAnnotation(typeof (DicomGraphicAnnotationSerializer))]
 	public class DicomGraphicAnnotation : CompositeGraphic
 	{
+		private string _layerId;
 		private Color _color = Color.LemonChiffon;
 
 		/// <summary>
@@ -59,6 +60,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		public DicomGraphicAnnotation(GraphicAnnotationSequenceItem graphicAnnotationSequenceItem, RectangleF displayedArea)
 		{
 			this.CoordinateSystem = CoordinateSystem.Source;
+			_layerId = graphicAnnotationSequenceItem.GraphicLayer ?? string.Empty;
 
 			try
 			{
@@ -133,6 +135,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 		protected DicomGraphicAnnotation(DicomGraphicAnnotation source, ICloningContext context)
 		{
 			context.CloneFields(source, this);
+		}
+
+		public string LayerId
+		{
+			get { return _layerId; }
 		}
 
 		/// <summary>
@@ -215,7 +222,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			}
 			else
 			{
-				list = new List<PointF>(graphicItem.GraphicData);
+				SizeF offset = new SizeF(1,1);
+				list = new List<PointF>(graphicItem.NumberOfGraphicPoints);
+				foreach (PointF point in graphicItem.GraphicData)
+					list.Add(point - offset);
 			}
 			return list.AsReadOnly();
 		}

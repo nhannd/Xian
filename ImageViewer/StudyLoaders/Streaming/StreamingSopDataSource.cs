@@ -34,7 +34,9 @@ using System.Diagnostics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.Dicom.ServiceModel.Streaming;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.IO;
 using ClearCanvas.Dicom.Utilities.Xml;
@@ -52,11 +54,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			private readonly object _syncLock = new object();
 			private volatile bool _alreadyRetrieved;
 			private RetrievePixelDataResult _retrieveResult;
+			private readonly byte[][] _overlayData;
 
 			public FramePixelData(StreamingSopDataSource parent, int frameNumber)
 			{
 				_parent = parent;
 				_frameNumber = frameNumber;
+				_overlayData = new byte[16][];
 			}
 
 			private void RetrievePixelData(bool force, out RetrievePixelDataResult result)
@@ -145,6 +149,21 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 				}
 			}
 
+			public byte[] GetOverlayData(int index)
+			{
+				return _overlayData[index];
+			}
+
+			public bool HasOverlayData(int index)
+			{
+				return _overlayData[index] != null;
+			}
+
+			public void SetOverlayData(int index, byte[] data)
+			{
+				_overlayData[index] = data;
+			}
+
 			public void Unload()
 			{
 				lock (_syncLock)
@@ -180,7 +199,18 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 		private InstanceXmlDicomAttributeCollection AttributeCollection
 		{
-			get { return (InstanceXmlDicomAttributeCollection)((DicomFile)base.SourceMessage).DataSet; }	
+			get { return (InstanceXmlDicomAttributeCollection)((DicomFile)base.SourceMessage).DataSet; }
+		}
+
+		public override DicomAttribute GetDicomAttribute(DicomTag tag)
+		{
+			lock (SyncLock)
+			{
+				if (NeedFullHeader(tag.TagValue))
+					GetFullHeader();
+
+				return base.GetDicomAttribute(tag);
+			}
 		}
 
 		public override DicomAttribute GetDicomAttribute(uint tag)
@@ -191,6 +221,17 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					GetFullHeader();
 
 				return base.GetDicomAttribute(tag);
+			}
+		}
+
+		public override bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
+		{
+			lock (SyncLock)
+			{
+				if (NeedFullHeader(tag.TagValue))
+					GetFullHeader();
+
+				return base.TryGetAttribute(tag, out attribute);
 			}
 		}
 
@@ -244,15 +285,16 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 		protected override byte[] CreateFrameNormalizedPixelData(int frameNumber)
 		{
 			int frameIndex = frameNumber - 1;
+			FramePixelData frameData = RetrieveResults[frameIndex];
 
-			byte[] pixelData = RetrieveResults[frameIndex].GetUncompressedPixelData();
+			byte[] pixelData = frameData.GetUncompressedPixelData();
 			
 			string photometricInterpretationCode = this[DicomTags.PhotometricInterpretation].ToString();
 			PhotometricInterpretation pi = PhotometricInterpretation.FromCodeString(photometricInterpretationCode);
 
+			TransferSyntax ts = TransferSyntax.GetTransferSyntax(this.TransferSyntaxUid);
 			if (pi.IsColor)
 			{
-				TransferSyntax ts = TransferSyntax.GetTransferSyntax(this.TransferSyntaxUid);
 
 				if (ts == TransferSyntax.Jpeg2000ImageCompression ||
 					ts == TransferSyntax.Jpeg2000ImageCompressionLosslessOnly ||
@@ -263,8 +305,58 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 
 				pixelData = ToArgb(this, pixelData, pi);
 			}
+			else
+			{
+				OverlayPlaneModuleIod opmi = new OverlayPlaneModuleIod(this);
+				foreach (OverlayPlane overlayPlane in opmi)
+				{
+					if(false && overlayPlane.IsEmbedded && !frameData.HasOverlayData(overlayPlane.Index))
+					{
+						byte[] overlayData = OverlayData.Extract(overlayPlane.OverlayBitPosition, this[DicomTags.BitsAllocated].GetInt32(0, 0), false, pixelData);
+						frameData.SetOverlayData(overlayPlane.Index, overlayData);
+					}
+				}
+
+				NormalizeGrayscalePixels(this, pixelData, ts);
+			}
 
 			return pixelData;
+		}
+
+		protected override byte[] CreateFrameNormalizedOverlayData(int overlayNumber, int frameNumber)
+		{
+			int frameIndex = frameNumber - 1;
+			int overlayIndex = overlayNumber - 1;
+			FramePixelData frameData = RetrieveResults[frameIndex];
+
+			byte[] overlayData = null;
+
+			OverlayPlaneModuleIod opmi = new OverlayPlaneModuleIod(this);
+			if(opmi.HasOverlayPlane(overlayIndex))
+			{
+				OverlayPlane overlayPlane = opmi[overlayIndex];
+				//DicomAttribute odx = this.GetDicomAttribute(overlayPlane.TagOffset + DicomTags.OverlayData);
+
+				if(!frameData.HasOverlayData(overlayIndex))
+				{
+					if(overlayPlane.IsEmbedded)
+					{
+						//CreateFrameNormalizedPixelData(frameNumber);
+					}
+					else
+					{
+						OverlayData od = new OverlayData(overlayPlane.ComputeOverlayDataBitOffset(overlayIndex),
+							overlayPlane.OverlayRows,
+							overlayPlane.OverlayColumns,
+							overlayPlane.IsBigEndianOW,
+							overlayPlane.OverlayData);
+						frameData.SetOverlayData(overlayIndex, od.Unpack());
+					}
+				}
+				overlayData = frameData.GetOverlayData(overlayIndex);
+			}
+
+			return overlayData;
 		}
 
 		protected override void OnUnloadFrameData(int frameNumber)

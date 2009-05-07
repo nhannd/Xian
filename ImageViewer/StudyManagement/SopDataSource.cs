@@ -101,6 +101,14 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return pixelData;
 		}
 
+		public byte[] GetFrameNormalizedOverlayData(int overlayNumber, int frameNumber)
+		{
+			CheckIsImage();
+			byte[] overlayData;
+			OnGetFrameNormalizedOverlayData(overlayNumber, frameNumber, out overlayData);
+			return overlayData;
+		}
+
 		public virtual void UnloadFrameData(int frameNumber)
 		{
 		}
@@ -128,30 +136,37 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		protected abstract void OnGetFrameNormalizedPixelData(int frameNumber, out byte[] pixelData);
+		protected abstract void OnGetFrameNormalizedOverlayData(int overlayNumber, int frameNumber, out byte[] pixelData);
 
 		#region IDicomAttributeProvider Members
 
 		public DicomAttribute this[DicomTag tag]
 		{
-			get { return this[tag.TagValue]; }
-			set { this[tag.TagValue] = value; }
+			get { return GetDicomAttribute(tag); }
 		}
 
 		public DicomAttribute this[uint tag]
 		{
 			get { return GetDicomAttribute(tag); }
-			set
-			{
-				throw new NotSupportedException("SopDataSource objects should be considered read-only.");
-			}
 		}
+
+		DicomAttribute IDicomAttributeProvider.this[DicomTag tag]
+		{
+			get { return GetDicomAttribute(tag); }
+			set { throw new NotSupportedException("SopDataSource objects should be considered read-only."); }
+		}
+
+		DicomAttribute IDicomAttributeProvider.this[uint tag]
+		{
+			get { return GetDicomAttribute(tag); }
+			set { throw new NotSupportedException("SopDataSource objects should be considered read-only."); }
+		}
+
+		public abstract DicomAttribute GetDicomAttribute(DicomTag tag);
 
 		public abstract DicomAttribute GetDicomAttribute(uint tag);
 
-		public bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
-		{
-			return TryGetAttribute(tag.TagValue, out attribute);
-		}
+		public abstract bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute);
 
 		public abstract bool TryGetAttribute(uint tag, out DicomAttribute attribute);
 

@@ -29,35 +29,47 @@
 
 #endregion
 
+using System;
 using System.Drawing;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.Common.Utilities;
-using System;
-using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.DicomGraphics
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <remarks>
+	/// This implementation does not support overlays embedded in the unused bits of the
+	/// <see cref="DicomTags.PixelData"/> attribute, a retired usage from previous versions
+	/// of the DICOM Standard. 
+	/// </remarks>
 	[Cloneable(true)]
-	public class OverlayPlaneGraphic : CompositeGraphic
+	public class OverlayPlaneGraphic : CompositeGraphic, IShutterGraphic
 	{
 		private GrayscaleImageGraphic _overlayGraphic;
 
 		private readonly int _index;
-		private readonly bool _isBitmapShutter;
+		private readonly int _frameNumber;
 		private readonly string _description;
+		private readonly OverlayPlaneSource _source;
 		private ushort _grayPresentationValue = 0;
 		private Color? _color;
 
-		internal OverlayPlaneGraphic(OverlayPlane overlayPlaneIod, bool isBitmapShutter)
+		internal OverlayPlaneGraphic(OverlayPlane overlayPlaneIod, byte[] overlayPixelData, OverlayPlaneSource source) : this(overlayPlaneIod, overlayPixelData, 0, source) {}
+
+		internal OverlayPlaneGraphic(OverlayPlane overlayPlaneIod, byte[] overlayPixelData, int frameNumber, OverlayPlaneSource source)
 		{
-			_isBitmapShutter = isBitmapShutter;
+			_frameNumber = frameNumber;
 			_index = overlayPlaneIod.Index;
 			_description = overlayPlaneIod.OverlayDescription;
+			_source = source;
 
-			GrayscaleImageGraphic overlayImageGraphic = CreateOverlayImageGraphic(overlayPlaneIod);
+			GrayscaleImageGraphic overlayImageGraphic = CreateOverlayImageGraphic(overlayPlaneIod, overlayPixelData);
 			if (overlayImageGraphic != null)
 			{
 				_overlayGraphic = overlayImageGraphic;
@@ -67,10 +79,10 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 
 			if (string.IsNullOrEmpty(overlayPlaneIod.OverlayLabel))
 			{
-				if (isBitmapShutter)
-					base.Name = "Bitmap Shutter";
+				if (overlayPlaneIod.IsMultiFrame)
+					base.Name = string.Format("Overlay Plane ({2} #{0}, Fr #{1})", _index, frameNumber, _source);
 				else
-					base.Name = string.Format("Overlay Plane #{0}", _index);
+					base.Name = string.Format("Overlay Plane ({2} #{0})", _index, -1, _source);
 			}
 			else
 			{
@@ -79,53 +91,32 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 		}
 
 		//for cloning; all the underlying graphics are already cloneable.
-		private OverlayPlaneGraphic()
-		{
-		}
+		private OverlayPlaneGraphic() {}
 
 		[OnCloneComplete]
 		private void OnCloneComplete()
 		{
 			_overlayGraphic = CollectionUtils.SelectFirst(base.Graphics,
-			                                            delegate(IGraphic graphic)
-			                                            	{
-			                                            		return graphic is GrayscaleImageGraphic;
-			                                            	}) as GrayscaleImageGraphic;
+			                                              delegate(IGraphic graphic) { return graphic is GrayscaleImageGraphic; }) as GrayscaleImageGraphic;
 		}
 
-		private static GrayscaleImageGraphic CreateOverlayImageGraphic(OverlayPlane overlayPlaneIod)
+		private static GrayscaleImageGraphic CreateOverlayImageGraphic(OverlayPlane overlayPlaneIod, byte[] overlayData)
 		{
 			Point origin = (overlayPlaneIod.OverlayOrigin ?? new Point(1, 1)) - new Size(1, 1);
-			byte[] overlayData = overlayPlaneIod.OverlayData;
 			int rows = overlayPlaneIod.OverlayRows;
 			int cols = overlayPlaneIod.OverlayColumns;
-			int bitsAllocated = overlayPlaneIod.OverlayBitsAllocated;
-			int highBit = overlayPlaneIod.OverlayBitPosition;
 
 			if (overlayData == null || overlayData.Length == 0)
-			{
-				// data is stored in unused bits of pixel data
-				overlayData = overlayPlaneIod.DicomAttributeProvider[DicomTags.PixelData].Values as byte[];
-			}
-			else
-			{
-				// data is stored in overlay data
-				overlayData = new OverlayData(rows, cols, overlayPlaneIod.IsBigEndianOW, overlayData).ToPixelData().Raw;
-				bitsAllocated = 8;
-				highBit = 1;
-			}
-
-			if (overlayData == null)
 				throw new Exception("Overlay plane data is invalid.");
 
 			GrayscaleImageGraphic imageGraphic = new GrayscaleImageGraphic(
 				rows, cols, // the reported overlay dimensions
-				bitsAllocated, // the reported bits allocated
-				1, // overlays always have bit depth of 1
-				highBit, // the reported bit position
+				8, // bits allocated is always 8
+				8, // overlays always have bit depth of 1, but we upconverted the data
+				7, // the high bit is now 7 after upconverting
 				false, false, // overlays aren't signed and don't get inverted
 				1, 0, // overlays have no rescale
-				overlayData); // the overlay data, or the pixel data if overlay data doesn't exist
+				overlayData); // the upconverted overlay data
 
 			imageGraphic.SpatialTransform.TranslationX = origin.X;
 			imageGraphic.SpatialTransform.TranslationY = origin.Y;
@@ -135,16 +126,16 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 
 		private void UpdateLuts()
 		{
-			if (_color == null)
+			if (_color == null || _color.Value.IsEmpty) // TODO: this determination is actually supposed to be based on the client display device
 			{
 				_overlayGraphic.VoiLutManager.InstallLut(new OverlayVoiLut(_grayPresentationValue, 65535));
 				//Install a color map with the first value being transparent.
-				_overlayGraphic.ColorMapManager.InstallColorMap(new GrayscaleColorMap());
+				_overlayGraphic.ColorMapManager.InstallColorMap(new GrayscaleColorMap(_grayPresentationValue));
 			}
 			else
 			{
 				//The color makes the gray p-value irrelevant, so do this to save space.
-				_overlayGraphic.VoiLutManager.InstallLut(new OverlayVoiLut(1, 1));
+				_overlayGraphic.VoiLutManager.InstallLut(new OverlayVoiLut(255, 255));
 				_overlayGraphic.ColorMapManager.InstallColorMap(new OverlayColorMap(_color.Value));
 			}
 		}
@@ -154,9 +145,14 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 			get { return _overlayGraphic; }
 		}
 
-		public bool IsBitmapShutter
+		public int Index
 		{
-			get { return _isBitmapShutter; }
+			get { return _index; }
+		}
+
+		public OverlayPlaneSource Source
+		{
+			get { return _source; }
 		}
 
 		public string Description
@@ -192,6 +188,22 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 			}
 		}
 
+		#region IShutterGraphic Members
+
+		ushort IShutterGraphic.PresentationValue
+		{
+			get { return this.GrayPresentationValue; }
+			set { this.GrayPresentationValue = value; }
+		}
+
+		Color IShutterGraphic.PresentationColor
+		{
+			get { return this.Color ?? System.Drawing.Color.Empty; }
+			set { this.Color = value; }
+		}
+
+		#endregion
+
 		#region Voi Lut
 
 		[Cloneable(true)]
@@ -209,9 +221,7 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 			}
 
 			//for cloning.
-			private OverlayVoiLut()
-			{
-			}
+			private OverlayVoiLut() {}
 
 			public override int MinInputValue
 			{
@@ -228,32 +238,25 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 			public override int MinOutputValue
 			{
 				get { return 0; }
-				protected set
-				{
-				}
+				protected set { }
 			}
 
 			public override int MaxOutputValue
 			{
 				get { return _maxOutputValue; }
-				protected set
-				{
-				}
+				protected set { }
 			}
 
 			public override int this[int index]
 			{
 				get
 				{
-					if (index <= 0)
-						return 0;
-
-					return _presentationValue;
+					//if (index <= 0)
+					//    return 0;
+					//return _presentationValue;
+					return (int) ((index/(float) _maxInputValue)*_presentationValue);
 				}
-				protected set
-				{
-					throw new InvalidOperationException("This lut is not editable.");
-				}
+				protected set { throw new InvalidOperationException("This lut is not editable."); }
 			}
 
 			public override string GetKey()
@@ -274,15 +277,37 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 		[Cloneable(true)]
 		private class GrayscaleColorMap : Imaging.GrayscaleColorMap
 		{
-			public GrayscaleColorMap()
+			private readonly ushort _presentationValue;
+
+			public GrayscaleColorMap(ushort presentationValue)
 			{
+				_presentationValue = presentationValue;
 			}
+
+			/// <summary>
+			/// Cloning constructor
+			/// </summary>
+			private GrayscaleColorMap() {}
 
 			protected override void Create()
 			{
-				base.Create();
-				//zero values are transparent, all others are opaque.
-				this[MinInputValue] = 0x0;
+				Color color;
+
+				int j = 0;
+				float maxGrayLevel = this.Length - 1;
+				float alphaRange = _presentationValue - this.MinInputValue;
+
+				for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
+				{
+					float scale = j/maxGrayLevel;
+					float alphaScale = Math.Min(1f, j/alphaRange);
+					j++;
+
+					int value = (int) (byte.MaxValue*scale);
+					int alpha = (int) (byte.MaxValue*alphaScale);
+					color = System.Drawing.Color.FromArgb(alpha, value, value, value);
+					this[i] = color.ToArgb();
+				}
 			}
 
 			public override string GetKey()
@@ -296,9 +321,7 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 		{
 			private Color _color = Color.Gray;
 
-			public OverlayColorMap()
-			{
-			}
+			public OverlayColorMap() {}
 
 			public OverlayColorMap(Color color)
 			{
@@ -320,10 +343,8 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 
 			protected override void Create()
 			{
-				this[MinInputValue] = Color.FromArgb(0, _color).ToArgb();
-
-				for (int i = this.MinInputValue + 1; i <= this.MaxInputValue; i++)
-					this[i] = Color.FromArgb(255, _color).ToArgb();
+				for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
+					this[i] = Color.FromArgb(i, _color).ToArgb();
 			}
 
 			public override string GetDescription()
@@ -333,5 +354,26 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 		}
 
 		#endregion
+	}
+
+	/// <summary>
+	/// Enumeration to indicate the source of an <see cref="OverlayPlaneGraphic"/>.
+	/// </summary>
+	public enum OverlayPlaneSource
+	{
+		/// <summary>
+		/// Indicates that the associated <see cref="OverlayPlaneGraphic"/> was defined in the image SOP or the image SOP referenced by the presentation state SOP.
+		/// </summary>
+		Image,
+
+		/// <summary>
+		/// Indicates that the associated <see cref="OverlayPlaneGraphic"/> was defined in the presentation state SOP.
+		/// </summary>
+		PresentationState,
+
+		/// <summary>
+		/// Indicates that the associated <see cref="OverlayPlaneGraphic"/> was user-created.
+		/// </summary>
+		User
 	}
 }

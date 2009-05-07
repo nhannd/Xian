@@ -30,10 +30,13 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Dicom.Iod;
+using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -41,6 +44,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public class DicomMessageSopDataSource : StandardSopDataSource, IDicomMessageSopDataSource
 	{
 		private readonly DicomAttributeCollection _dummy;
+		private readonly Dictionary<int, FrameDataCacheItem> _frameDataCache;
 		private DicomMessageBase _sourceMessage;
 		private bool _loaded = false;
 		private bool _loading = false;
@@ -48,6 +52,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage)
 		{
 			_dummy = new DicomAttributeCollection();
+			_frameDataCache = new Dictionary<int, FrameDataCacheItem>();
 			_sourceMessage = sourceMessage;
 		}
 
@@ -98,6 +103,23 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		public override DicomAttribute GetDicomAttribute(DicomTag tag)
+		{
+			lock (SyncLock)
+			{
+				Load();
+
+				DicomAttribute attribute;
+				if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
+					return attribute;
+
+				if (_sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute))
+					return attribute;
+
+				return _dummy[tag];
+			}
+		}
+
 		public override DicomAttribute GetDicomAttribute(uint tag)
 		{
 			lock (SyncLock)
@@ -112,6 +134,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					return attribute;
 
 				return _dummy[tag];
+			}
+		}
+
+		public override bool TryGetAttribute(DicomTag tag, out DicomAttribute attribute)
+		{
+			lock (SyncLock)
+			{
+				Load();
+
+				if (_sourceMessage.DataSet.TryGetAttribute(tag, out attribute))
+					return true;
+
+				return _sourceMessage.MetaInfo.TryGetAttribute(tag, out attribute);
 			}
 		}
 
@@ -134,48 +169,209 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			lock (SyncLock)
 			{
 				Load();
-				return CreateFrameNormalizedPixelData(SourceMessage, frameNumber);
+				return CreateFrameNormalizedDataCache(frameNumber).GetPixelData();
 			}
 		}
 
-		public static byte[] CreateFrameNormalizedPixelData(DicomMessageBase message, int frameNumber)
+		protected override byte[] CreateFrameNormalizedOverlayData(int overlayNumber, int frameNumber)
 		{
-			CodeClock clock = new CodeClock();
-			clock.Start();
-
-			PhotometricInterpretation photometricInterpretation;
-			byte[] rawPixelData;
-
-			if (!message.TransferSyntax.Encapsulated)
+			//already locked by base calling method, but it doesn't hurt.
+			lock (SyncLock)
 			{
-				DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(message);
-				// DICOM library uses zero-based frame numbers
-				rawPixelData = pixelData.GetFrame(frameNumber - 1);
-				photometricInterpretation = PhotometricInterpretation.FromCodeString(message.DataSet[DicomTags.PhotometricInterpretation]);
+				Load();
+				return CreateFrameNormalizedDataCache(frameNumber).GetOverlayData(overlayNumber);
 			}
-			else if (DicomCodecRegistry.GetCodec(message.TransferSyntax) != null)
+		}
+
+		private FrameDataCacheItem CreateFrameNormalizedDataCache(int frameNumber)
+		{
+			if (!_frameDataCache.ContainsKey(frameNumber))
 			{
-				DicomCompressedPixelData pixelData = new DicomCompressedPixelData(message);
-				string pi;
-				rawPixelData = pixelData.GetFrame(frameNumber - 1, out pi);
-				photometricInterpretation = PhotometricInterpretation.FromCodeString(pi);
+				_frameDataCache.Add(frameNumber, new FrameDataCacheItem(_sourceMessage, frameNumber));
 			}
-			else
-				throw new DicomCodecException("Unsupported transfer syntax");
+			return _frameDataCache[frameNumber];
+		}
 
-			if (photometricInterpretation.IsColor)
-				rawPixelData = ToArgb(message.DataSet, rawPixelData, photometricInterpretation);
+		private class FrameDataCacheItem
+		{
+			private readonly byte[][] _overlayData;
+			private readonly DicomMessageBase _message;
+			private readonly int _frameIndex;
+			private byte[] _pixelData = null;
 
-			clock.Stop();
-			PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "CreateFrameNormalizedPixelData", clock.Seconds);
+			public FrameDataCacheItem(DicomMessageBase message, int frameNumber)
+			{
+				_pixelData = null;
+				_overlayData = new byte[16][];
+				_message = message;
+				_frameIndex = frameNumber - 1;
+			}
 
-			return rawPixelData;
+			public byte[] GetPixelData()
+			{
+				if (_pixelData == null)
+				{
+					CreateFrameNormalizedPixelData();
+				}
+				return _pixelData;
+			}
+
+			public byte[] GetOverlayData(int index)
+			{
+				index = index - 1;
+				Platform.CheckArgumentRange(index, 0, 15, "index");
+				if(_overlayData[index] == null)
+				{
+					CreateFrameNormalizedOverlayData(index);
+				}
+				return _overlayData[index];
+			}
+
+			private void CreateFrameNormalizedPixelData()
+			{
+				CodeClock clock = new CodeClock();
+				clock.Start();
+
+				PhotometricInterpretation photometricInterpretation;
+				byte[] rawPixelData;
+
+				if (!_message.TransferSyntax.Encapsulated)
+				{
+					DicomUncompressedPixelData pixelData = new DicomUncompressedPixelData(_message);
+					// DICOM library uses zero-based frame numbers
+					rawPixelData = pixelData.GetFrame(_frameIndex);
+
+					// if any overlays have embedded pixel data, extract them now or forever hold your peace
+					OverlayPlaneModuleIod overlayPlaneModule = new OverlayPlaneModuleIod(_message.DataSet);
+					foreach (OverlayPlane overlay in overlayPlaneModule)
+					{
+						if (overlay.IsEmbedded && _overlayData[overlay.Index] == null)
+							_overlayData[overlay.Index] = OverlayData.Extract(overlay.OverlayBitPosition, pixelData.BitsAllocated, false, rawPixelData);
+					}
+
+					photometricInterpretation = PhotometricInterpretation.FromCodeString(_message.DataSet[DicomTags.PhotometricInterpretation]);
+				}
+				else if (DicomCodecRegistry.GetCodec(_message.TransferSyntax) != null)
+				{
+					DicomCompressedPixelData pixelData = new DicomCompressedPixelData(_message);
+					string pi;
+					rawPixelData = pixelData.GetFrame(_frameIndex, out pi);
+					photometricInterpretation = PhotometricInterpretation.FromCodeString(pi);
+				}
+				else
+					throw new DicomCodecException("Unsupported transfer syntax");
+
+				if (photometricInterpretation.IsColor)
+					rawPixelData = ToArgb(_message.DataSet, rawPixelData, photometricInterpretation);
+				else
+					NormalizeGrayscalePixels(_message.DataSet, rawPixelData, _message.TransferSyntax);
+
+				clock.Stop();
+				PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "CreateFrameNormalizedPixelData", clock.Seconds);
+
+				_pixelData = rawPixelData;
+			}
+
+			private void CreateFrameNormalizedOverlayData(int overlayIndex)
+			{
+				CodeClock clock = new CodeClock();
+				clock.Start();
+
+				OverlayPlaneModuleIod overlayPlanes = new OverlayPlaneModuleIod(_message.DataSet);
+				if (overlayPlanes.HasOverlayPlane(overlayIndex))
+				{
+					OverlayPlane overlayPlane = overlayPlanes[overlayIndex];
+					if (!overlayPlane.IsEmbedded)
+					{
+						OverlayData odpd = new OverlayData(0, overlayPlane.OverlayRows, overlayPlane.OverlayColumns, overlayPlane.IsBigEndianOW, overlayPlane.OverlayData);
+						_overlayData[overlayIndex] = odpd.Unpack(); // unpack this frame
+					}
+					else
+					{
+						CreateFrameNormalizedPixelData();
+					}
+				}
+
+				clock.Stop();
+				PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "CreateFrameNormalizedOverlayData", clock.Seconds);
+			}
+		}
+
+		/// <summary>
+		/// Normalizes grayscale pixel data by masking out non-data bits and shifting the data so that the high bit is always 1 less than bits stored.
+		/// </summary>
+		/// <param name="dicomAttributeProvider"></param>
+		/// <param name="pixelData"></param>
+		/// <param name="transferSyntax"></param>
+		protected internal static void NormalizeGrayscalePixels(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, TransferSyntax transferSyntax)
+		{
+			if (dicomAttributeProvider[DicomTags.BitsAllocated].IsEmpty)
+				throw new ArgumentNullException("dicomAttributeProvider", "BitsAllocated must not be empty.");
+			if (dicomAttributeProvider[DicomTags.BitsStored].IsEmpty)
+				throw new ArgumentNullException("dicomAttributeProvider", "BitsStored must not be empty.");
+
+			int bitsAllocated = dicomAttributeProvider[DicomTags.BitsAllocated].GetInt32(0, -1);
+			int bitsStored = dicomAttributeProvider[DicomTags.BitsStored].GetInt32(0, -1);
+			int highBit = dicomAttributeProvider[DicomTags.HighBit].GetInt32(0, bitsStored - 1);
+
+			if (bitsAllocated != 8 && bitsAllocated != 16)
+				throw new ArgumentException("BitsAllocated must be either 8 or 16.", "dicomAttributeProvider");
+
+			unsafe
+			{
+				int shift = highBit + 1 - bitsStored;
+				if (bitsAllocated == 16)
+				{
+					if (pixelData.Length%2 != 0)
+						throw new ArgumentException("Pixel data length must be even.", "pixelData");
+
+					ushort mask = (ushort) (((1 << bitsStored) - 1) << shift);
+					int length = pixelData.Length;
+					fixed (byte* data = pixelData)
+					{
+						ushort window;
+
+						if (transferSyntax.LittleEndian)
+						{
+							for (int n = 0; n < length; n += 2)
+							{
+								window = (ushort) ((data[n + 1] << 8) + data[n]);
+								window = (ushort) ((window & mask) >> shift);
+								data[n] = (byte) (window & 0x00ff);
+								data[n + 1] = (byte) ((window & 0xff00) >> 8);
+							}
+						}
+						else
+						{
+							for (int n = 0; n < length; n += 2)
+							{
+								window = (ushort) ((data[n] << 8) + data[n + 1]);
+								window = (ushort) ((window & mask) >> shift);
+								data[n + 1] = (byte) (window & 0x00ff);
+								data[n] = (byte) ((window & 0xff00) >> 8);
+							}
+						}
+					}
+				}
+				else
+				{
+					byte mask = (byte) (((1 << bitsStored) - 1) << shift);
+					int length = pixelData.Length;
+					fixed (byte* data = pixelData)
+					{
+						for (int n = 0; n < length; n++)
+						{
+							data[n] = (byte) ((data[n] & mask) >> shift);
+						}
+					}
+				}
+			}
 		}
 
 		/// <summary>
 		/// Converts colour pixel data to ARGB.
 		/// </summary>
-		public static byte[] ToArgb(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, PhotometricInterpretation photometricInterpretation)
+		protected static byte[] ToArgb(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, PhotometricInterpretation photometricInterpretation)
 		{
 			CodeClock clock = new CodeClock();
 			clock.Start();

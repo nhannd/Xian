@@ -30,41 +30,52 @@
 #endregion
 
 using System.Collections.Generic;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Actions;
+using System.Drawing;
+using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.PresentationStates.Dicom;
+using ClearCanvas.ImageViewer.Mathematics;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers
 {
-	[MenuAction("showHide", "global-menus/MenuTools/MenuStandard/MenuShowHideShutterOverlay", "ShowHide")]
-	[Tooltip("showHide", "TooltipShowHideShutterOverlay")]
-	[GroupHint("showHide", "Tools.Image.Overlays.Shutter.ShowHide")]
-	[IconSet("showHide", IconScheme.Colour, "Icons.ShutterOverlayToolSmall.png", "Icons.ShutterOverlayToolMedium.png", "Icons.ShutterOverlayToolLarge.png")]
-	//
-	[ButtonAction("toggle", "overlays-dropdown/ToolbarShutterOverlay", "ShowHide")]
-	[CheckedStateObserver("toggle", "Checked", "CheckedChanged")]
-	[Tooltip("toggle", "TooltipShutterOverlay")]
-	[GroupHint("toggle", "Tools.Image.Overlays.Shutter.ShowHide")]
-	[IconSet("toggle", IconScheme.Colour, "Icons.ShutterOverlayToolSmall.png", "Icons.ShutterOverlayToolMedium.png", "Icons.ShutterOverlayToolLarge.png")]
-	//
-	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class ShutterOverlayTool : OverlayToolBase
+	internal class PolylineGraphicAnnotationSerializer : GraphicAnnotationSerializer<IPointsGraphic>
 	{
-		public ShutterOverlayTool()
+		protected override void Serialize(IPointsGraphic graphic, GraphicAnnotationSequenceItem serializationState)
 		{
-		}
+			if (!graphic.Visible)
+				return; // if the graphic is not visible, don't serialize it!
 
-		protected override void UpdateVisibility(IPresentationImage image, bool visible)
-		{
-			if (image is IDicomPresentationImage)
+			GraphicAnnotationSequenceItem.GraphicObjectSequenceItem annotationElement = new GraphicAnnotationSequenceItem.GraphicObjectSequenceItem();
+
+			graphic.CoordinateSystem = CoordinateSystem.Source;
+			try
 			{
-				DicomGraphicsPlane dicomGraphics = DicomGraphicsPlane.GetDicomGraphicsPlane(image as IDicomPresentationImage, false);
-				if (dicomGraphics != null)
-					dicomGraphics.Shutters.Enabled = Checked;
+				IList<PointF> polyline = graphic.Points;
+
+				annotationElement.GraphicAnnotationUnits = GraphicAnnotationSequenceItem.GraphicAnnotationUnits.Pixel;
+				annotationElement.GraphicDimensions = 2;
+				annotationElement.GraphicType = GraphicAnnotationSequenceItem.GraphicType.Polyline;
+				annotationElement.NumberOfGraphicPoints = polyline.Count;
+
+				// add shape vertices
+				List<PointF> list = new List<PointF>(polyline.Count);
+				for (int n = 0; n < polyline.Count; n++)
+				{
+					list.Add(polyline[n]);
+				}
+				annotationElement.GraphicData = list.ToArray();
+
+				if (FloatComparer.AreEqual(list[0], list[list.Count - 1]))
+				{
+					// shape is closed - we are required to indicate fill state
+					annotationElement.GraphicFilled = GraphicAnnotationSequenceItem.GraphicFilled.N;
+				}
 			}
+			finally
+			{
+				graphic.ResetCoordinateSystem();
+			}
+
+			serializationState.AppendGraphicObjectSequence(annotationElement);
 		}
 	}
 }

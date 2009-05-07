@@ -35,7 +35,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Common;
 using System;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.DicomGraphics;
+using ClearCanvas.ImageViewer.PresentationStates;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {

@@ -32,185 +32,39 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Graphics;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.DicomGraphics
+namespace ClearCanvas.ImageViewer.PresentationStates
 {
-	public class AddGeometricShutterUndoableCommand : UndoableCommand
-	{
-		private readonly GeometricShutter _shutter;
-		private readonly GeometricShuttersGraphic _parent;
-
-		public AddGeometricShutterUndoableCommand(GeometricShuttersGraphic parent, GeometricShutter shutter)
-		{
-			_parent = parent;
-			_shutter = shutter;
-		}
-
-		public override void Unexecute()
-		{
-			if (_parent.CustomShutters.Contains(_shutter))
-				_parent.CustomShutters.Remove(_shutter);
-		}
-
-		public override void Execute()
-		{
-			if (!_parent.CustomShutters.Contains(_shutter))
-				_parent.CustomShutters.Add(_shutter);
-		}
-	}
-
-	public class RemoveGeometricShutterUndoableCommand : UndoableCommand
-	{
-		private readonly GeometricShutter _shutter;
-		private readonly GeometricShuttersGraphic _parent;
-
-		public RemoveGeometricShutterUndoableCommand(GeometricShuttersGraphic parent, GeometricShutter shutter)
-		{
-			_parent = parent;
-			_shutter = shutter;
-		}
-
-		public override void Unexecute()
-		{
-			if (!_parent.CustomShutters.Contains(_shutter))
-				_parent.CustomShutters.Add(_shutter);
-		}
-
-		public override void Execute()
-		{
-			if (_parent.CustomShutters.Contains(_shutter))
-				_parent.CustomShutters.Remove(_shutter);
-		}
-	}
-
-	[Cloneable(true)]
-	public abstract class GeometricShutter
-	{
-		internal GeometricShutter()
-		{
-		}
-
-		internal abstract void AddToGraphicsPath(GraphicsPath path);
-
-		internal GeometricShutter Clone()
-		{
-			return CloneBuilder.Clone(this) as GeometricShutter;
-		}
-	}
-
-	[Cloneable(true)]
-	public class CircularShutter : GeometricShutter
-	{
-		public CircularShutter(Point center, int radius)
-		{
-			this.Center = center;
-			this.Radius = radius;
-		}
-
-		private CircularShutter()
-		{
-		}
-
-		public readonly Point Center;
-		public readonly int Radius;
-
-		public Rectangle BoundingRectangle
-		{
-			get
-			{
-				int x = Center.X - Radius;
-				int y = Center.Y - Radius;
-				int widthHeight = 2*Radius;
-				return new Rectangle(x, y, widthHeight, widthHeight);
-			}
-		}
-
-		internal override void AddToGraphicsPath(GraphicsPath path)
-		{
-			path.AddEllipse(BoundingRectangle);
-		}
-	}
-
-	[Cloneable(true)]
-	public class RectangularShutter : GeometricShutter
-	{
-		public RectangularShutter(int left, int right, int top, int bottom)
-			: this(new Rectangle(left, top, right - left, bottom - top))
-		{
-		}
-
-		public RectangularShutter(Rectangle rectangle)
-		{
-			this.Rectangle = RectangleUtilities.ConvertToPositiveRectangle(rectangle);
-		}
-
-		private RectangularShutter()
-		{
-		}
-
-		public readonly Rectangle Rectangle;
-
-		internal override void AddToGraphicsPath(GraphicsPath path)
-		{
-			path.AddRectangle(Rectangle);
-		}
-	}
-
 	[Cloneable]
-	public class PolygonalShutter : GeometricShutter
-	{
-		private readonly List<Point> _vertices;
-		public readonly ReadOnlyCollection<Point> _readOnlyVertices;
-
-		public PolygonalShutter(IEnumerable<Point> vertices)
-		{
-			_vertices = new List<Point>(vertices);
-			_readOnlyVertices = new ReadOnlyCollection<Point>(_vertices);
-		}
-
-		private PolygonalShutter(PolygonalShutter source, ICloningContext context)
-			: this(source._vertices)
-		{
-		}
-
-		public ReadOnlyCollection<Point> Vertices
-		{
-			get { return _readOnlyVertices; }
-		}
-
-		internal override void AddToGraphicsPath(GraphicsPath path)
-		{
-			path.AddPolygon(_vertices.ToArray());
-		}
-	}
-	
-	[Cloneable]
-	public class GeometricShuttersGraphic : CompositeGraphic
+	public class GeometricShuttersGraphic : CompositeGraphic, IShutterGraphic
 	{
 		public const string Name = "Geometric Shutters";
 
 		private readonly Rectangle _imageRectangle;
+
 		[CloneIgnore]
 		private readonly List<GeometricShutter> _dicomShutters;
+
 		[CloneIgnore]
 		private readonly ReadOnlyCollection<GeometricShutter> _readOnlyDicomShutters;
+
 		[CloneIgnore]
 		private readonly ObservableList<GeometricShutter> _customShutters;
+
 		[CloneIgnore]
 		private ColorImageGraphic _imageGraphic;
+
 		private Color _fillColor = Color.Black;
 
 		public GeometricShuttersGraphic(int rows, int columns)
 		{
 			_imageRectangle = new Rectangle(0, 0, columns, rows);
-			
+
 			_customShutters = new ObservableList<GeometricShutter>();
 			_customShutters.ItemAdded += OnCustomShuttersChanged;
 			_customShutters.ItemRemoved += OnCustomShuttersChanged;
@@ -219,7 +73,7 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 
 			_dicomShutters = new List<GeometricShutter>();
 			_readOnlyDicomShutters = new ReadOnlyCollection<GeometricShutter>(_dicomShutters);
-			
+
 			base.Name = Name;
 		}
 
@@ -228,7 +82,7 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 			: this(source._imageRectangle.Height, source._imageRectangle.Width)
 		{
 			context.CloneFields(source, this);
-			
+
 			foreach (GeometricShutter shutter in source._customShutters)
 				_customShutters.Add(shutter.Clone());
 
@@ -244,7 +98,7 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 
 		private bool HasShutters
 		{
-			get { return _customShutters.Count > 0 || _dicomShutters.Count > 0; }	
+			get { return _customShutters.Count > 0 || _dicomShutters.Count > 0; }
 		}
 
 		public ReadOnlyCollection<GeometricShutter> DicomShutters
@@ -283,7 +137,7 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 				return;
 
 			int stride = _imageRectangle.Width*4;
-			int size = _imageRectangle.Height * stride;
+			int size = _imageRectangle.Height*stride;
 			byte[] buffer = new byte[size];
 
 			GCHandle bufferHandle = GCHandle.Alloc(buffer, GCHandleType.Pinned);
@@ -347,5 +201,21 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 		{
 			Invalidate();
 		}
+
+		#region IShutterGraphic Members
+
+		ushort IShutterGraphic.PresentationValue
+		{
+			get { return 0; }
+			set { }
+		}
+
+		Color IShutterGraphic.PresentationColor
+		{
+			get { return this.FillColor; }
+			set { this.FillColor = value; }
+		}
+
+		#endregion
 	}
 }

@@ -34,6 +34,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.PresentationStates;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer
@@ -71,7 +72,8 @@ namespace ClearCanvas.ImageViewer
 		ISpatialTransformProvider,
 		IApplicationGraphicsProvider,
 		IOverlayGraphicsProvider,
-		IAnnotationLayoutProvider
+		IAnnotationLayoutProvider,
+		IPresentationStateProvider
 	{
 		#region Private fields
 
@@ -87,6 +89,8 @@ namespace ClearCanvas.ImageViewer
 		private CompositeGraphic _applicationGraphics;
 		[CloneIgnore]
 		private CompositeGraphic _overlayGraphics;
+		[CloneCopyReference]
+		private PresentationStateGraphic _presentationStateGraphic;
 		private IAnnotationLayout _annotationLayout;
 
 		#endregion
@@ -195,6 +199,16 @@ namespace ClearCanvas.ImageViewer
 		public GraphicCollection OverlayGraphics
 		{
 			get { return _overlayGraphics.Graphics; }
+		}
+
+		#endregion
+
+		#region IPresentationStateProvider members
+
+		public PresentationState PresentationState
+		{
+			get { return _presentationStateGraphic.PresentationState; }
+			set { _presentationStateGraphic.PresentationState = value; }
 		}
 
 		#endregion
@@ -351,18 +365,26 @@ namespace ClearCanvas.ImageViewer
 			_overlayGraphics = new CompositeGraphic();
 			_overlayGraphics.Name = "Overlay";
 
+			_presentationStateGraphic = new PresentationStateGraphic();
+			_presentationStateGraphic.Name = "PresentationState";
+
 			_compositeImageGraphic.Graphics.Add(_imageGraphic);
 			_compositeImageGraphic.Graphics.Add(_applicationGraphics);
 			_compositeImageGraphic.Graphics.Add(_overlayGraphics);
+
+			this.SceneGraph.Graphics.Add(_presentationStateGraphic);
 			this.SceneGraph.Graphics.Add(_compositeImageGraphic);
 		}
 
 		[OnCloneComplete]
 		private void OnCloneComplete()
 		{
+			_presentationStateGraphic = CollectionUtils.SelectFirst(SceneGraph.Graphics,
+				delegate(IGraphic test) { return test is PresentationStateGraphic; }) as PresentationStateGraphic;
+
 			_compositeImageGraphic = CollectionUtils.SelectFirst(SceneGraph.Graphics,
 				delegate(IGraphic test) { return test is CompositeImageGraphic; }) as CompositeImageGraphic;
-
+			
 			Platform.CheckForNullReference(_compositeImageGraphic, "_compositeImageGraphic");
 
 			_imageGraphic = CollectionUtils.SelectFirst(_compositeImageGraphic.Graphics,
@@ -377,6 +399,7 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForNullReference(_imageGraphic, "_imageGraphic");
 			Platform.CheckForNullReference(_applicationGraphics, "_applicationGraphics");
 			Platform.CheckForNullReference(_overlayGraphics, "_overlayGraphics");
+			Platform.CheckForNullReference(_presentationStateGraphic, "_presentationStateGraphic");
 		}
 	}
 }

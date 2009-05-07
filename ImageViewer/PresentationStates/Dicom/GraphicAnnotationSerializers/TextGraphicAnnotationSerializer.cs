@@ -32,46 +32,39 @@
 using System.Drawing;
 using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.Mathematics;
 
-namespace ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers
 {
-	public class RectangleGraphicAnnotationSerializer : GraphicAnnotationSerializer<IBoundableGraphic>
+	internal class TextGraphicAnnotationSerializer : GraphicAnnotationSerializer<ITextGraphic>
 	{
-		protected override void Serialize(IBoundableGraphic graphic, GraphicAnnotationSequenceItem serializationState)
+		protected override void Serialize(ITextGraphic textGraphic, GraphicAnnotationSequenceItem serializationState)
 		{
-			if (!graphic.Visible)
-				return; // if the graphic is not visible, don't serialize it!
+			// if the callout is not visible, don't serialize it!
+			if (!textGraphic.Visible)
+				return;
 
-			GraphicAnnotationSequenceItem.GraphicObjectSequenceItem annotationElement = new GraphicAnnotationSequenceItem.GraphicObjectSequenceItem();
+			if (string.IsNullOrEmpty(textGraphic.Text))
+				return;
 
-			graphic.CoordinateSystem = CoordinateSystem.Source;
+			GraphicAnnotationSequenceItem.TextObjectSequenceItem text = new GraphicAnnotationSequenceItem.TextObjectSequenceItem();
+
+			textGraphic.CoordinateSystem = CoordinateSystem.Source;
 			try
 			{
-				annotationElement.GraphicAnnotationUnits = GraphicAnnotationSequenceItem.GraphicAnnotationUnits.Pixel;
-				annotationElement.GraphicDimensions = 2;
-				annotationElement.GraphicType = GraphicAnnotationSequenceItem.GraphicType.Polyline;
-				annotationElement.NumberOfGraphicPoints = 5;
-
-				RectangleF bounds = graphic.BoundingBox;
-
-				// add shape vertices
-				PointF[] list = new PointF[5];
-				list[0] = bounds.Location;
-				list[1] = bounds.Location + new SizeF(bounds.Width, 0);
-				list[2] = bounds.Location + bounds.Size;
-				list[3] = bounds.Location + new SizeF(0, bounds.Height);
-				list[4] = bounds.Location;
-				annotationElement.GraphicData = list;
-
-				annotationElement.GraphicFilled = GraphicAnnotationSequenceItem.GraphicFilled.N;
+				RectangleF boundingBox = RectangleUtilities.ConvertToPositiveRectangle(textGraphic.BoundingBox);
+				text.BoundingBoxAnnotationUnits = GraphicAnnotationSequenceItem.BoundingBoxAnnotationUnits.Pixel;
+				text.BoundingBoxTextHorizontalJustification = GraphicAnnotationSequenceItem.BoundingBoxTextHorizontalJustification.Left;
+				text.BoundingBoxTopLeftHandCorner = boundingBox.Location;
+				text.BoundingBoxBottomRightHandCorner = boundingBox.Location + boundingBox.Size;
+				text.UnformattedTextValue = textGraphic.Text;
 			}
 			finally
 			{
-				graphic.ResetCoordinateSystem();
+				textGraphic.ResetCoordinateSystem();
 			}
 
-			serializationState.AppendGraphicObjectSequence(annotationElement);
+			serializationState.AppendTextObjectSequence(text);
 		}
 	}
 }

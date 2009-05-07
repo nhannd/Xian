@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,29 +29,55 @@
 
 #endregion
 
-using System.Collections.Generic;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.DicomGraphics
+namespace ClearCanvas.ImageViewer.PresentationStates
 {
-	[Cloneable(true)]
-	public class OverlayPlanesGraphic : CompositeGraphic
+	public class AddGeometricShutterUndoableCommand : UndoableCommand
 	{
-		public const string Name = "Dicom Overlay Planes";
+		private readonly GeometricShutter _shutter;
+		private readonly GeometricShuttersGraphic _parent;
 
-		internal OverlayPlanesGraphic()
+		public AddGeometricShutterUndoableCommand(GeometricShuttersGraphic parent, GeometricShutter shutter)
 		{
-			base.Name = Name;
+			_parent = parent;
+			_shutter = shutter;
 		}
 
-		public IEnumerable<OverlayPlaneGraphic> GetOverlayPlanes()
+		public override void Unexecute()
 		{
-			foreach (IGraphic graphic in Graphics)
-			{
-				if (graphic is OverlayPlaneGraphic)
-					yield return graphic as OverlayPlaneGraphic;
-			}
+			if (_parent.CustomShutters.Contains(_shutter))
+				_parent.CustomShutters.Remove(_shutter);
+		}
+
+		public override void Execute()
+		{
+			if (!_parent.CustomShutters.Contains(_shutter))
+				_parent.CustomShutters.Add(_shutter);
+		}
+	}
+
+	public class RemoveGeometricShutterUndoableCommand : UndoableCommand
+	{
+		private readonly GeometricShutter _shutter;
+		private readonly GeometricShuttersGraphic _parent;
+
+		public RemoveGeometricShutterUndoableCommand(GeometricShuttersGraphic parent, GeometricShutter shutter)
+		{
+			_parent = parent;
+			_shutter = shutter;
+		}
+
+		public override void Unexecute()
+		{
+			if (!_parent.CustomShutters.Contains(_shutter))
+				_parent.CustomShutters.Add(_shutter);
+		}
+
+		public override void Execute()
+		{
+			if (_parent.CustomShutters.Contains(_shutter))
+				_parent.CustomShutters.Remove(_shutter);
 		}
 	}
 }

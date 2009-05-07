@@ -33,8 +33,8 @@ using System;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.PresentationStates;
-using ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Graphics

@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,54 +29,101 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Modules;
-using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.Dicom.Iod.Sequences;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.DicomGraphics
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
+	/// <summary>
+	/// Factory class to create the individual graphics components of a DICOM image for presentation.
+	/// </summary>
+	/// <remarks>
+	/// 
+	/// </remarks>
 	internal class DicomGraphicsFactory
 	{
-		public static List<OverlayPlaneGraphic> CreateOverlayPlaneGraphics(ImageSop imageSop)
+		#region DICOM Overlays (and Bitmap Shutters)
+
+		public static List<OverlayPlaneGraphic> CreateOverlayPlaneGraphics(Frame frame)
 		{
-			return CreateOverlayPlaneGraphics(new OverlayPlaneModuleIod(imageSop.DataSource));
+			return CreateOverlayPlaneGraphics(frame, null);
 		}
 
-		public static List<OverlayPlaneGraphic> CreateOverlayPlaneGraphics(OverlayPlaneModuleIod overlaysIod)
+		public static List<OverlayPlaneGraphic> CreateOverlayPlaneGraphics(Frame frame, OverlayPlaneModuleIod overlaysFromPresentationState)
 		{
+			ISopDataSource dataSource = frame.ParentImageSop.DataSource;
+			OverlayPlaneModuleIod overlaysIod = new OverlayPlaneModuleIod(dataSource);
+
 			List<OverlayPlaneGraphic> overlayPlaneGraphics = new List<OverlayPlaneGraphic>();
 
-			BitmapDisplayShutterModuleIod bitmapShutterIod = new BitmapDisplayShutterModuleIod(overlaysIod.DicomAttributeProvider);
-			bool bitmapShutterValid = (bitmapShutterIod.ShutterShape == ShutterShape.Bitmap);
-
-			int bitmapShutterIndex = -1;
-			if (bitmapShutterValid)
-				bitmapShutterIndex = (int)(bitmapShutterIod.ShutterOverlayGroup - 0x6000)/2;
+			bool failedOverlays = false;
 
 			foreach (OverlayPlane overlay in overlaysIod)
 			{
 				if (overlay.OverlayType != OverlayType.None)
 				{
-					bool isBitmapShutter = overlay.Index == bitmapShutterIndex;
-					OverlayPlaneGraphic overlayPlaneGraphic = new OverlayPlaneGraphic(overlay, isBitmapShutter);
-					if (isBitmapShutter)
+					try
 					{
-						if (bitmapShutterIod.ShutterPresentationValue != null)
-							overlayPlaneGraphic.GrayPresentationValue = (ushort)bitmapShutterIod.ShutterPresentationValue;
+						foreach (int overlayFrame in overlay.GetRelevantOverlayFrames(frame.FrameNumber, frame.ParentImageSop.NumberOfFrames))
+						{
+							byte[] overlayData = dataSource.GetFrameNormalizedOverlayData(overlay.Index + 1, overlayFrame + 1);
 
-						overlayPlaneGraphic.Color = null;
+							OverlayPlaneGraphic overlayPlaneGraphic = new OverlayPlaneGraphic(overlay, overlayData, OverlayPlaneSource.Image);
+							overlayPlaneGraphics.Add(overlayPlaneGraphic);
+						}
 					}
-
-					overlayPlaneGraphics.Add(overlayPlaneGraphic);
+					catch (Exception ex)
+					{
+						failedOverlays = true;
+						Platform.Log(LogLevel.Warn, ex, "Failed to load overlay in image header.");
+					}
 				}
+			}
+
+			if (overlaysFromPresentationState != null)
+			{
+				foreach (OverlayPlane overlay in overlaysFromPresentationState)
+				{
+					if (overlay.OverlayType != OverlayType.None && !overlay.IsEmbedded)
+					{
+						try
+						{
+							foreach (int overlayFrame in overlay.GetRelevantOverlayFrames(frame.FrameNumber, frame.ParentImageSop.NumberOfFrames))
+							{
+								OverlayData od = new OverlayData(overlay.ComputeOverlayDataBitOffset(overlayFrame),
+								                                 overlay.OverlayRows, overlay.OverlayColumns,
+								                                 overlay.IsBigEndianOW, overlay.OverlayData);
+								OverlayPlaneGraphic overlayPlaneGraphic = new OverlayPlaneGraphic(overlay, od.Unpack(), OverlayPlaneSource.PresentationState);
+								overlayPlaneGraphics.Add(overlayPlaneGraphic);
+							}
+						}
+						catch (Exception ex)
+						{
+							failedOverlays = true;
+							Platform.Log(LogLevel.Warn, ex, "Failed to load overlay from softcopy presentation state.");
+						}
+					}
+				}
+			}
+
+			if (failedOverlays)
+			{
+				Platform.Log(LogLevel.Warn, "At least one overlay failed to load.");
 			}
 
 			return overlayPlaneGraphics;
 		}
+
+		#endregion
+
+		#region DICOM Shutters (Geometric)
 
 		public static GeometricShuttersGraphic CreateGeometricShuttersGraphic(Frame frame)
 		{
@@ -116,5 +163,31 @@ namespace ClearCanvas.ImageViewer.DicomGraphics
 
 			return shuttersGraphic;
 		}
+
+		#endregion
+
+		#region DICOM Graphic Annotations
+
+		public static IEnumerable<DicomGraphicAnnotation> CreateGraphicAnnotations(Frame frame, GraphicAnnotationModuleIod annotationsFromPresentationState, RectangleF displayedArea)
+		{
+			List<DicomGraphicAnnotation> list = new List<DicomGraphicAnnotation>();
+
+			GraphicAnnotationSequenceItem[] annotationSequences = annotationsFromPresentationState.GraphicAnnotationSequence;
+			if (annotationSequences != null)
+			{
+				foreach (GraphicAnnotationSequenceItem sequenceItem in annotationSequences)
+				{
+					ImageSopInstanceReferenceDictionary dictionary = new ImageSopInstanceReferenceDictionary(sequenceItem.ReferencedImageSequence, true);
+					if (dictionary.ReferencesFrame(frame.ParentImageSop.SopInstanceUID, frame.FrameNumber))
+					{
+						list.Add(new DicomGraphicAnnotation(sequenceItem, displayedArea));
+					}
+				}
+			}
+
+			return list.AsReadOnly();
+		}
+
+		#endregion
 	}
 }

@@ -31,9 +31,7 @@
 
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Services.Auditing;
-using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom.DataStore;
 using System;

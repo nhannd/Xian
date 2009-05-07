@@ -37,7 +37,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.Dicom.Iod.Iods;
 using ClearCanvas.ImageViewer.KeyObjects;
-using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer

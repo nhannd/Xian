@@ -31,8 +31,7 @@
 
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer {

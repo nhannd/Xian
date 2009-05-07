@@ -42,12 +42,11 @@ using ClearCanvas.Dicom.Iod.Sequences;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.PresentationStates
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
 	[Cloneable]
-	internal abstract class DicomSoftcopyPresentationStateBase<T> : DicomSoftcopyPresentationState where T : IPresentationImage, IImageSopProvider, ISpatialTransformProvider, IImageGraphicProvider, IOverlayGraphicsProvider
+	internal abstract class DicomSoftcopyPresentationStateBase<T> : DicomSoftcopyPresentationState where T : IDicomPresentationImage
 	{
 		protected DicomSoftcopyPresentationStateBase(SopClass psSopClass) : base(psSopClass) {}
 
@@ -268,7 +267,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			presentationStateShutterModule.InitializeAttributes();
 		}
 
-		protected void SerializeDisplayedArea(DisplayedAreaModuleIod displayedAreaModule, IList<T> images)
+		protected void SerializeDisplayedArea(DisplayedAreaModuleIod displayedAreaModule, IEnumerable<T> images)
 		{
 			displayedAreaModule.InitializeAttributes();
 			List<DisplayedAreaModuleIod.DisplayedAreaSelectionSequenceItem> displayedAreas = new List<DisplayedAreaModuleIod.DisplayedAreaSelectionSequenceItem>();
@@ -333,7 +332,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			displayedAreaModule.DisplayedAreaSelectionSequence = displayedAreas.ToArray();
 		}
 
-		protected void SerializeSpatialTransform(SpatialTransformModuleIod spatialTransformModule, IList<T> images)
+		protected void SerializeSpatialTransform(SpatialTransformModuleIod spatialTransformModule, IEnumerable<T> images)
 		{
 			foreach (T image in images)
 			{
@@ -352,7 +351,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		private static readonly string _roiGraphicLayerId = "ROIGRAPHICS";
 
-		protected void SerializeGraphicLayer(GraphicLayerModuleIod graphicLayerModule, IList<T> images)
+		protected void SerializeGraphicLayer(GraphicLayerModuleIod graphicLayerModule, IEnumerable<T> images)
 		{
 			Dictionary<string, string> layerIndex = new Dictionary<string, string>();
 			List<GraphicLayerSequenceItem> layerSequences = new List<GraphicLayerSequenceItem>();
@@ -360,10 +359,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			int order = 1;
 			foreach (T image in images)
 			{
-				DicomSoftcopyPresentationStateGraphic psGraphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, false);
+				DicomGraphicsPlane psGraphic = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
 				if (psGraphic != null)
 				{
-					foreach (DicomSoftcopyPresentationStateGraphic.LayerGraphic layerGraphic in psGraphic)
+					foreach (LayerGraphic layerGraphic in (IEnumerable<LayerGraphic>)psGraphic.Layers)
 					{
 						if (!layerIndex.ContainsKey(layerGraphic.Id))
 						{
@@ -400,16 +399,16 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				graphicLayerModule.GraphicLayerSequence = layerSequences.ToArray();
 		}
 
-		protected void SerializeGraphicAnnotation(GraphicAnnotationModuleIod graphicAnnotationModule, IList<T> images)
+		protected void SerializeGraphicAnnotation(GraphicAnnotationModuleIod graphicAnnotationModule, IEnumerable<T> images)
 		{
 			List<GraphicAnnotationSequenceItem> annotations = new List<GraphicAnnotationSequenceItem>();
 
 			foreach (T image in images)
 			{
-				DicomSoftcopyPresentationStateGraphic psGraphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, false);
+				DicomGraphicsPlane psGraphic = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
 				if (psGraphic != null)
 				{
-					foreach (DicomSoftcopyPresentationStateGraphic.LayerGraphic layerGraphic in psGraphic)
+					foreach (LayerGraphic layerGraphic in (IEnumerable<LayerGraphic>)psGraphic)
 					{
 						foreach (IGraphic graphic in layerGraphic.Graphics)
 						{
@@ -440,37 +439,41 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				graphicAnnotationModule.GraphicAnnotationSequence = annotations.ToArray();
 		}
 
-		#endregion
-
-		#region Unimplemented Serializers
-
-		protected void SerializeDisplayShutter(DisplayShutterModuleIod displayShutterModule)
+		protected void SerializeDisplayShutter(DisplayShutterModuleIod displayShutterModule, IEnumerable<T> images)
 		{
 			//TODO: since we only do presentation states for key objects right now, implementing this
 			//would cause inconsistent behaviour.  When we support presentation states fully, this should be implemented,
 			//along with deserialization.
 		}
 
-		protected void SerializeBitmapDisplayShutter(BitmapDisplayShutterModuleIod bitmapDisplayShutterModule)
+		protected void SerializeBitmapDisplayShutter(BitmapDisplayShutterModuleIod bitmapDisplayShutterModule, IEnumerable<T> images)
 		{
-			//TODO: since we only do presentation states for key objects right now, implementing this
-			//would cause inconsistent behaviour.  When we support presentation states fully, this should be implemented,
-			//along with deserialization.
+			// TODO: Serialize user-created bitmap display shutters, when we support user-created overlay planes.
 		}
 
-		protected void SerializeOverlayPlane(OverlayPlaneModuleIod overlayPlaneModule)
+		protected void SerializeOverlayPlane(OverlayPlaneModuleIod overlayPlaneModule, IEnumerable<T> images)
 		{
-			// TODO : fix this dummy implementation
+			// TODO: Serialize user-created overlay planes, when we support user-created overlay planes.
 		}
 
-		protected void SerializeOverlayActivation(OverlayActivationModuleIod overlayActivationModule)
+		protected void SerializeOverlayActivation(OverlayActivationModuleIod overlayActivationModule, IEnumerable<T> images)
 		{
-			// TODO : fix this dummy implementation
+			OverlayPlaneSource?[] sources = new OverlayPlaneSource?[16];
+			foreach (T image in images)
+			{
+				DicomGraphicsPlane dicomGraphics = DicomGraphicsPlane.GetDicomGraphicsPlane(image, false);
+				if(dicomGraphics != null)
+				{
+					
+				}
+			}
 		}
 
 		#endregion
 
 		#region Deserialization of Presentation States
+
+		private bool _overlayPlanesDeserialized = false;
 
 		protected void DeserializeDisplayedArea(DisplayedAreaModuleIod dispAreaMod, out RectangleF displayedArea, T image)
 		{
@@ -535,12 +538,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			if (module.ImageHorizontalFlip == ImageHorizontalFlip.Y)
 			{
 				spatialTransform.FlipY = true;
-				spatialTransform.RotationXY = module.ImageRotation;
+				spatialTransform.RotationXY = (360 - module.ImageRotation) % 360;// module.ImageRotation;
 			}
 			else
 			{
 				spatialTransform.FlipY = false;
-				spatialTransform.RotationXY = (360 - module.ImageRotation)%360;
+				spatialTransform.RotationXY = module.ImageRotation;// (360 - module.ImageRotation) % 360;
 			}
 		}
 
@@ -556,10 +559,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 				orderedSequences.Add(sequenceItem.GraphicLayerOrder, sequenceItem);
 			}
 
-			DicomSoftcopyPresentationStateGraphic graphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, true);
+			DicomGraphicsPlane graphic = DicomGraphicsPlane.GetDicomGraphicsPlane(image, true);
 			foreach (GraphicLayerSequenceItem sequenceItem in orderedSequences.Values)
 			{
-				DicomSoftcopyPresentationStateGraphic.LayerGraphic layer = graphic.AddLayer(sequenceItem.GraphicLayer);
+				LayerGraphic layer = graphic.Layers.Add(sequenceItem.GraphicLayer);
 				layer.Description = sequenceItem.GraphicLayerDescription;
 				layer.DisplayCIELabColor = sequenceItem.GraphicLayerRecommendedDisplayCielabValue;
 				layer.DisplayGrayscaleColor = sequenceItem.GraphicLayerRecommendedDisplayGrayscaleValue;
@@ -568,18 +571,122 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		protected void DeserializeGraphicAnnotation(GraphicAnnotationModuleIod module, RectangleF displayedArea, T image)
 		{
-			GraphicAnnotationSequenceItem[] annotationSequences = module.GraphicAnnotationSequence;
-			if (annotationSequences == null)
-				return;
-
-			DicomSoftcopyPresentationStateGraphic graphic = DicomSoftcopyPresentationStateGraphic.GetPresentationStateGraphic(image, true);
-			foreach (GraphicAnnotationSequenceItem sequenceItem in annotationSequences)
+			DicomGraphicsPlane graphic = DicomGraphicsPlane.GetDicomGraphicsPlane(image, true);
+			foreach (DicomGraphicAnnotation annotation in DicomGraphicsFactory.CreateGraphicAnnotations(image.Frame, module, displayedArea))
 			{
-				ImageSopInstanceReferenceDictionary dictionary = new ImageSopInstanceReferenceDictionary(sequenceItem.ReferencedImageSequence, true);
-				if (dictionary.ReferencesFrame(image.ImageSop.SopInstanceUID, image.Frame.FrameNumber))
+				graphic.Layers[annotation.LayerId].Graphics.Add(annotation);
+			}
+		}
+
+		protected void DeserializeDisplayShutter(DisplayShutterModuleIod displayShutterModule, T image)
+		{
+			ShutterShape shape = displayShutterModule.ShutterShape;
+			if (shape != ShutterShape.Bitmap && shape != ShutterShape.None)
+			{
+				IShutterGraphic shutter = DicomGraphicsFactory.CreateGeometricShuttersGraphic(displayShutterModule, image.Frame.Rows, image.Frame.Columns);
+				// Some day, we will properly deserialize CIELab colours - until then, leave PresentationColor default black
+
+				DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image, true);
+				dicomGraphicsPlane.Shutters.Add(shutter);
+				dicomGraphicsPlane.Shutters.Activate(shutter);
+			}
+		}
+
+		/// <summary>
+		/// Deserializes the specified bitmap display shutter module.
+		/// </summary>
+		/// <remarks>
+		/// This method must be called after <see cref="DeserializeOverlayPlane">the overlay planes have been deserialized</see>.
+		/// </remarks>
+		/// <param name="bitmapDisplayShutterModule"></param>
+		/// <param name="image"></param>
+		protected void DeserializeBitmapDisplayShutter(BitmapDisplayShutterModuleIod bitmapDisplayShutterModule, T image)
+		{
+			if (!_overlayPlanesDeserialized)
+				throw new InvalidOperationException("Overlay planes must be deserialized first.");
+
+			if(bitmapDisplayShutterModule.ShutterShape == ShutterShape.Bitmap)
+			{
+				DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image, true);
+				int overlayIndex = bitmapDisplayShutterModule.Index;
+				if (overlayIndex >= 0 && overlayIndex < 16)
 				{
-					DicomGraphicAnnotation annotation = new DicomGraphicAnnotation(sequenceItem, displayedArea);
-					graphic[sequenceItem.GraphicLayer].Graphics.Add(annotation);
+					IShutterGraphic shutter = null;
+					if (dicomGraphicsPlane.PresentationOverlays.Contains(overlayIndex))
+					{
+						shutter = dicomGraphicsPlane.PresentationOverlays[overlayIndex];
+						dicomGraphicsPlane.PresentationOverlays.ActivateAsShutter(overlayIndex);
+						dicomGraphicsPlane.ImageOverlays.Deactivate(overlayIndex);
+					}
+					else if (dicomGraphicsPlane.ImageOverlays.Contains(overlayIndex))
+					{
+						shutter = dicomGraphicsPlane.ImageOverlays[overlayIndex];
+						dicomGraphicsPlane.ImageOverlays.ActivateAsShutter(overlayIndex);
+					}
+
+					// Some day, we will properly deserialize CIELab colours - until then, leave PresentationColor default black
+				}
+			}
+		}
+
+		protected void DeserializeOverlayPlane(OverlayPlaneModuleIod overlayPlaneModule, T image)
+		{
+			DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image, true);
+			foreach (OverlayPlaneGraphic overlay in DicomGraphicsFactory.CreateOverlayPlaneGraphics(image.Frame, overlayPlaneModule))
+			{
+				// the results are a mix of overlays from the image itself and the presentation state
+				if (overlay.Source == OverlayPlaneSource.Image)
+					dicomGraphicsPlane.ImageOverlays.Add(overlay);
+				else
+					dicomGraphicsPlane.PresentationOverlays.Add(overlay);
+
+				// the above lines will automatically add the overlays to the inactive layer
+			}
+			_overlayPlanesDeserialized = true;
+		}
+
+		/// <summary>
+		/// Deserializes the specified overlay activation module.
+		/// </summary>
+		/// <remarks>
+		/// This method must be called after <see cref="DeserializeOverlayPlane">the overlay planes have been deserialized</see>.
+		/// </remarks>
+		/// <param name="overlayActivationModule"></param>
+		/// <param name="image"></param>
+		protected void DeserializeOverlayActivation(OverlayActivationModuleIod overlayActivationModule, T image)
+		{
+			if (!_overlayPlanesDeserialized)
+				throw new InvalidOperationException("Overlay planes must be deserialized first.");
+
+			DicomGraphicsPlane dicomGraphicsPlane = DicomGraphicsPlane.GetDicomGraphicsPlane(image, true);
+			for (int n = 0; n < 16; n++)
+			{
+				if (overlayActivationModule.HasOverlayActivationLayer(n))
+				{
+					string targetLayer = overlayActivationModule[n].OverlayActivationLayer ?? string.Empty;
+					if (dicomGraphicsPlane.PresentationOverlays.Contains(n))
+					{
+						if (string.IsNullOrEmpty(targetLayer))
+							dicomGraphicsPlane.PresentationOverlays.Deactivate(n);
+						else
+							dicomGraphicsPlane.PresentationOverlays.ActivateAsLayer(n, targetLayer);
+						dicomGraphicsPlane.ImageOverlays.Deactivate(n);
+					}
+					else if (dicomGraphicsPlane.ImageOverlays.Contains(n))
+					{
+						if (string.IsNullOrEmpty(targetLayer))
+							dicomGraphicsPlane.ImageOverlays.Deactivate(n);
+						else
+							dicomGraphicsPlane.ImageOverlays.ActivateAsLayer(n, targetLayer);
+					}
+				}
+				else
+				{
+					// if the module is missing entirely, then the presentation state is poorly encoded.
+					// for patient safety reasons, we override the DICOM stipulation that only one of
+					// these two should be shown and show both instead.
+					dicomGraphicsPlane.PresentationOverlays.ActivateAsLayer(n, "OVERLAY");
+					dicomGraphicsPlane.ImageOverlays.ActivateAsLayer(n, "OVERLAY");
 				}
 			}
 		}

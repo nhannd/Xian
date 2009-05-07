@@ -38,7 +38,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {

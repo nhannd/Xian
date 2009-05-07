@@ -35,10 +35,10 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Iod;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
-using ClearCanvas.ImageViewer.DicomGraphics;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -49,6 +49,8 @@ namespace ClearCanvas.ImageViewer
 	[Cloneable]
 	public class DicomGrayscalePresentationImage : GrayscalePresentationImage, IDicomPresentationImage, IDicomVoiLutsProvider
 	{
+		private static readonly DicomDefaultPresentationState _defaultPresentationState = new DicomDefaultPresentationState();
+
 		[CloneIgnore]
 		private IFrameReference _frameReference;
 
@@ -56,14 +58,7 @@ namespace ClearCanvas.ImageViewer
 		private CompositeGraphic _dicomGraphics;
 
 		[CloneIgnore]
-		private DicomGraphicsDeserializer _graphicsDeserializer;
-
-		[CloneIgnore]
 		private readonly DicomVoiLuts _dicomVoiLuts;
-
-		private bool _presentationStateApplied = false;
-		[CloneCopyReference]
-		private DicomSoftcopyPresentationState _presentationState;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="DicomGrayscalePresentationImage"/>.
@@ -95,8 +90,8 @@ namespace ClearCanvas.ImageViewer
 				   frameReference.Frame.GetNormalizedPixelData)
 		{
 			_frameReference = frameReference;
-			_graphicsDeserializer  = new DicomGraphicsDeserializer(this);
 			_dicomVoiLuts = new DicomVoiLuts(this);
+			base.PresentationState = _defaultPresentationState;
 			Initialize();
 		}
 
@@ -109,9 +104,6 @@ namespace ClearCanvas.ImageViewer
 			Frame frame = source.Frame;
 			_frameReference = frame.CreateTransientReference();
 			_dicomVoiLuts = new DicomVoiLuts(this);
-
-			if (source._graphicsDeserializer != null)
-				_graphicsDeserializer = new DicomGraphicsDeserializer(this);
 		}
 
 		[OnCloneComplete]
@@ -177,17 +169,10 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDicomSoftcopyPresentationStateProvider Members
 
-		public DicomSoftcopyPresentationState PresentationState
+		public new DicomSoftcopyPresentationState PresentationState
 		{
-			get { return _presentationState; }
-			set
-			{
-				if (_presentationState != value)
-				{
-					_presentationState = value;
-					_presentationStateApplied = false;
-				}
-			}
+			get { return base.PresentationState as DicomSoftcopyPresentationState; }
+			set { base.PresentationState = (PresentationState)value ?? _defaultPresentationState; }
 		}
 
 		#endregion
@@ -222,54 +207,6 @@ namespace ClearCanvas.ImageViewer
 			}
 
 			base.Dispose(disposing);
-		}
-
-		/// <summary>
-		/// Raises the <see cref="PresentationImage.Drawing"/> event.
-		/// </summary>
-		protected override void OnDrawing() 
-		{
-			bool anyFailures = false;
-
-			// TODO: just put the 'dicom graphics' stuff in the PresentationState namespace (and renamed to PresentationState)
-
-			try
-			{
-				if (_graphicsDeserializer != null)
-					_graphicsDeserializer.Deserialize();
-			}
-			catch(Exception e)
-			{
-				Platform.Log(LogLevel.Warn, e, "An error has occurred while deserializing graphics from the image header.");
-				anyFailures = true;
-			}
-			finally
-			{
-				_graphicsDeserializer = null; //it's been done and any clones of this image will have their graphics cloned
-			}
-
-			if (!_presentationStateApplied && this.PresentationState != null)
-			{
-				_presentationStateApplied = true;
-
-				try
-				{
-					this.PresentationState.Deserialize(this);
-				}
-				catch (Exception ex)
-				{
-					Platform.Log(LogLevel.Warn, ex, "An error has occurred while deserializing the image presentation state.");
-					anyFailures = true;
-				}
-			}
-
-			// TODO: throwing here can cause rendering problems due to message box showing, as can showing a message box.
-			// need to do something a little more ingenious, or somehow put this stuff in the rendering sequence
-			// so that the errors get rendered to the text overlay.
-			if (anyFailures)
-				throw new Exception("At least one failure has occurred while deserializing the image presentation state.");
-
-			base.OnDrawing();
 		}
 
 		/// <summary>

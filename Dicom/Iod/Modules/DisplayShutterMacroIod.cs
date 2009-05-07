@@ -103,14 +103,20 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				{
 					base.DicomAttributeProvider[DicomTags.ShutterShape] = null;
 				}
+				else if ((value & ShutterShape.Bitmap) == ShutterShape.Bitmap)
+				{
+					throw new ArgumentException("Bitmap is not supported on this module.", "value");
+				}
 				else
 				{
+					List<string> shapes = new List<string>(3);
 					if ((value & ShutterShape.Circular) == ShutterShape.Circular)
-						base.DicomAttributeProvider[DicomTags.ShutterShape].SetString(0, ShutterShape.Circular.ToString().ToUpperInvariant());
-					if ((value & ShutterShape.Rectangular) == ShutterShape.Rectangular)
-						base.DicomAttributeProvider[DicomTags.ShutterShape].SetString(0, ShutterShape.Rectangular.ToString().ToUpperInvariant());
+						shapes.Add(ShutterShape.Circular.ToString().ToUpperInvariant());
 					if ((value & ShutterShape.Polygonal) == ShutterShape.Polygonal)
-						base.DicomAttributeProvider[DicomTags.ShutterShape].SetString(0, ShutterShape.Polygonal.ToString().ToUpperInvariant());
+						shapes.Add(ShutterShape.Polygonal.ToString().ToUpperInvariant());
+					if ((value & ShutterShape.Rectangular) == ShutterShape.Rectangular)
+						shapes.Add(ShutterShape.Rectangular.ToString().ToUpperInvariant());
+					base.DicomAttributeProvider[DicomTags.ShutterShape].SetStringValue(string.Join("\\", shapes.ToArray()));
 				}
 			}
 		}
@@ -214,7 +220,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				if (base.DicomAttributeProvider.TryGetAttribute(DicomTags.CenterOfCircularShutter, out attribute))
 				{
 					if (attribute.Count >= 2)
-						return new Point(attribute.GetInt32(0, 0), attribute.GetInt32(1, 0));
+						return new Point(attribute.GetInt32(1, 0), attribute.GetInt32(0, 0));
 				}
 
 				return null;
@@ -308,13 +314,13 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Gets or sets the shutter presentation value.  Type 3.
 		/// </summary>
-		public int? ShutterPresentationValue
+		public ushort? ShutterPresentationValue
 		{
 			get
 			{
 				DicomAttribute attribute;
 				if (base.DicomAttributeProvider.TryGetAttribute(DicomTags.ShutterPresentationValue, out attribute))
-					return attribute.GetInt32(0, 0);
+					return attribute.GetUInt16(0, 0);
 				else
 					return null;
 			}
@@ -323,7 +329,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				if (!value.HasValue)
 					base.DicomAttributeProvider[DicomTags.ShutterPresentationValue] = null;
 				else
-					base.DicomAttributeProvider[DicomTags.ShutterPresentationValue].SetInt32(0, value.Value);
+					base.DicomAttributeProvider[DicomTags.ShutterPresentationValue].SetUInt16(0, value.Value);
 			}
 		}
 

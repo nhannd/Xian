@@ -38,13 +38,13 @@ using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Modules;
 using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.PresentationStates
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
 	/// <summary>
 	/// Base class for DICOM Softcopy Presentation State objects.
 	/// </summary>
 	[Cloneable]
-	public abstract class DicomSoftcopyPresentationState
+	public abstract class DicomSoftcopyPresentationState : PresentationState
 	{
 		[CloneCopyReference]
 		private readonly SopClass _psSopClass;
@@ -189,12 +189,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			get { return _dicomFile.DataSet; }
 		}
 
-		public void Serialize(IPresentationImage image)
-		{
-			this.Serialize(new IPresentationImage[] {image});
-		}
-
-		public void Serialize(IEnumerable<IPresentationImage> images)
+		public override void Serialize(IEnumerable<IPresentationImage> images)
 		{
 			if (_serialized)
 				throw new InvalidOperationException("This presentation state has already been serialized.");
@@ -228,17 +223,17 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 			_dicomFile.MediaStorageSopInstanceUid = this.PresentationInstanceUid;
 		}
 
-		public void Deserialize(IPresentationImage image)
-		{
-			this.Deserialize(new IPresentationImage[] {image});
-		}
-
-		public void Deserialize(IEnumerable<IPresentationImage> images)
+		public override void Deserialize(IEnumerable<IPresentationImage> images)
 		{
 			if (!_serialized)
 				throw new InvalidOperationException("This presentation state has not been serialized.");
 
 			PerformDeserialization(images);
+		}
+
+		public override void Clear(IEnumerable<IPresentationImage> image)
+		{
+			// not supported
 		}
 
 		protected abstract void PerformSerialization(IEnumerable<IPresentationImage> images);

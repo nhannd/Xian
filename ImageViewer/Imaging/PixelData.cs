@@ -155,6 +155,38 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets the number of rows in the pixel data.
+		/// </summary>
+		public int Rows
+		{
+			get { return _rows; }
+		}
+
+		/// <summary>
+		/// Gets the number of columns in the pixel data.
+		/// </summary>
+		public int Columns
+		{
+			get { return _columns; }
+		}
+
+		/// <summary>
+		/// Gets the number of bits allocated per pixel in the pixel data.
+		/// </summary>
+		public int BitsAllocated
+		{
+			get { return _bitsAllocated; }
+		}
+
+		/// <summary>
+		/// Gets the number of bytes per pixel in the pixel data.
+		/// </summary>
+		public int BytesPerPixel
+		{
+			get { return _bytesPerPixel; }
+		}
+
 		#endregion
 
 		#region Public methods

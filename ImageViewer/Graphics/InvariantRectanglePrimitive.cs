@@ -34,8 +34,8 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.PresentationStates;
-using ClearCanvas.ImageViewer.PresentationStates.GraphicAnnotationSerializers;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom.GraphicAnnotationSerializers;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {

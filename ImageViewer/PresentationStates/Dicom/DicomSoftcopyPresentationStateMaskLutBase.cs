@@ -43,10 +43,10 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 using DataLutIod=ClearCanvas.Dicom.Iod.DataLut;
 
-namespace ClearCanvas.ImageViewer.PresentationStates
+namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 {
 	[Cloneable]
-	internal abstract class DicomSoftcopyPresentationStateMaskLutBase<T> : DicomSoftcopyPresentationStateBase<T> where T : IPresentationImage, IImageSopProvider, ISpatialTransformProvider, IImageGraphicProvider, IOverlayGraphicsProvider, IVoiLutProvider, IDicomVoiLutsProvider
+	internal abstract class DicomSoftcopyPresentationStateMaskLutBase<T> : DicomSoftcopyPresentationStateBase<T> where T : IDicomPresentationImage, IVoiLutProvider, IDicomVoiLutsProvider
 	{
 		protected DicomSoftcopyPresentationStateMaskLutBase(SopClass psSopClass) : base(psSopClass) {}
 
@@ -62,20 +62,20 @@ namespace ClearCanvas.ImageViewer.PresentationStates
 
 		#region Serialization Support
 
-		protected void SerializePresentationStateMask(PresentationStateMaskModuleIod module)
+		protected void SerializePresentationStateMask(PresentationStateMaskModuleIod module, IEnumerable<T> imagesByList)
 		{
 			// TODO : fix this dummy implementation
 			module.InitializeAttributes();
 		}
 
-		protected void SerializeMask(MaskModuleIod module)
+		protected void SerializeMask(MaskModuleIod module, IEnumerable<T> imagesByList)
 		{
 			// TODO : fix this dummy implementation
 		}
 
-		protected void SerializeModalityLut(ModalityLutModuleIod module) {}
+		protected void SerializeModalityLut(ModalityLutModuleIod module, IEnumerable<T> imagesByList) { }
 
-		protected void SerializeSoftcopyVoiLut(SoftcopyVoiLutModuleIod module, IList<T> imagesByList)
+		protected void SerializeSoftcopyVoiLut(SoftcopyVoiLutModuleIod module, IEnumerable<T> imagesByList)
 		{
 			List<SoftcopyVoiLutModuleIod.SoftcopyVoiLutSequenceItem> voiLutSequenceItems = new List<SoftcopyVoiLutModuleIod.SoftcopyVoiLutSequenceItem>();
 

@@ -33,7 +33,7 @@ using System.Collections.Generic;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Clipboard;
 using ClearCanvas.ImageViewer.KeyObjects;
-using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.Services.Auditing;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.ServerTree;

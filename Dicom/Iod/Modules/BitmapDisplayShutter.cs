@@ -29,7 +29,9 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.Iod.Modules
 {
@@ -82,37 +84,82 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				{
 					base.DicomAttributeProvider[DicomTags.ShutterShape] = null;
 				}
+				else if ((value & ShutterShape.Bitmap) == ShutterShape.Bitmap)
+				{
+					base.DicomAttributeProvider[DicomTags.ShutterShape].SetString(0, ShutterShape.Bitmap.ToString().ToUpperInvariant());
+				}
 				else
 				{
-					if ((value & ShutterShape.Bitmap) == ShutterShape.Bitmap)
-						base.DicomAttributeProvider[DicomTags.ShutterShape].SetString(0, ShutterShape.Bitmap.ToString().ToUpperInvariant());
+					throw new ArgumentException("Only bitmap is supported on this module.", "value");
 				}
 			}
 		}
 
 		/// <summary>
-		/// Gets or set the group of an overlay in the presentation state Iod.
+		/// Gets or sets the zero-based index of the overlay to use as a bitmap display shutter (0-15).
 		/// </summary>
-		public uint ShutterOverlayGroup
+		/// <remarks>
+		/// Setting this value will automatically update the <see cref="ShutterOverlayGroup"/> tag.
+		/// </remarks>
+		/// <seealso cref="ShutterOverlayGroup"/>
+		/// <seealso cref="TagOffset"/>
+		public int Index
 		{
-			get { return base.DicomAttributeProvider[DicomTags.ShutterOverlayGroup].GetUInt32(0, 0); }	
+			get { return (this.ShutterOverlayGroup - 0x6000)/2; }
 			set
 			{
-				//TODO: validate group
-				base.DicomAttributeProvider[DicomTags.ShutterOverlayGroup].SetUInt32(0, value);
+				if (value < 0 || value > 15)
+					throw new ArgumentOutOfRangeException("value", "Value must be between 0 and 15 inclusive.");
+				this.ShutterOverlayGroup = (ushort) (value*2 + 0x6000);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the DICOM tag value offset from the defined base tags (such as <see cref="DicomTags.OverlayBitPosition"/>).
+		/// </summary>
+		/// <remarks>
+		/// Setting this value will automatically update the <see cref="ShutterOverlayGroup"/> tag.
+		/// </remarks>
+		/// <seealso cref="ShutterOverlayGroup"/>
+		/// <seealso cref="Index"/>
+		public uint TagOffset
+		{
+			get { return (uint) ((this.ShutterOverlayGroup - 0x6000) << 16); }
+			set { this.ShutterOverlayGroup = (ushort) ((value >> 16) + 0x6000); }
+		}
+
+		/// <summary>
+		/// Gets or sets the DICOM group number of the overlay to use as a bitmap display shutter. Type 1.
+		/// </summary>
+		/// <seealso cref="TagOffset"/>
+		/// <seealso cref="Index"/>
+		public ushort ShutterOverlayGroup
+		{
+			get
+			{
+				ushort group = base.DicomAttributeProvider[DicomTags.ShutterOverlayGroup].GetUInt16(0, 0);
+				if ((group & 0xFFE1) != 0x6000)
+					return 0x0000;
+				return group;
+			}
+			set
+			{
+				if ((value & 0xFFE1) != 0x6000)
+					throw new ArgumentOutOfRangeException("value", "Overlay group must be an even value between 0x6000 and 0x601E inclusive.");
+				base.DicomAttributeProvider[DicomTags.ShutterOverlayGroup].SetUInt16(0, value);
 			}
 		}
 
 		/// <summary>
 		/// Gets or sets the shutter presentation value.  Type 1.
 		/// </summary>
-		public int? ShutterPresentationValue
+		public ushort? ShutterPresentationValue
 		{
 			get
 			{
 				DicomAttribute attribute;
 				if (base.DicomAttributeProvider.TryGetAttribute(DicomTags.ShutterPresentationValue, out attribute))
-					return attribute.GetInt32(0, 0);
+					return attribute.GetUInt16(0, 0);
 				else
 					return null;
 			}
@@ -121,7 +168,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 				if (!value.HasValue)
 					base.DicomAttributeProvider[DicomTags.ShutterPresentationValue] = null;
 				else
-					base.DicomAttributeProvider[DicomTags.ShutterPresentationValue].SetInt32(0, value.Value);
+					base.DicomAttributeProvider[DicomTags.ShutterPresentationValue].SetUInt16(0, value.Value);
 			}
 		}
 

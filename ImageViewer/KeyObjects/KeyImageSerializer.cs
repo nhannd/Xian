@@ -40,7 +40,7 @@ using ClearCanvas.Dicom.Iod.Macros;
 using ClearCanvas.Dicom.Iod.Macros.DocumentRelationship;
 using ClearCanvas.Dicom.Iod.Macros.HierarchicalSeriesInstanceReference;
 using ClearCanvas.Dicom.Iod.Modules;
-using ClearCanvas.ImageViewer.PresentationStates;
+using ClearCanvas.ImageViewer.PresentationStates.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common;
 

@@ -30,88 +30,25 @@
 #endregion
 
 using System;
-using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	//TODO: work in progress; may delete in favour of doing masking in the interpolator.
-	//public class EmbeddedOverlayData
-	//{
-	//    public unsafe static byte[] Unpack(int bitsAllocated, int rows, int columns, int overlayBit, byte[] pixelData)
-	//    {
-	//        Platform.CheckTrue(overlayBit <= bitsAllocated, "Overlay Bit <= Bits Allocated");
-
-	//        int overlaySize = rows*columns;
-	//        GCHandle overlayPin = GCHandle.Alloc(pixelData, GCHandleType.Pinned);
-
-	//        try
-	//        {
-	//            if (bitsAllocated == 16)
-	//                return Unpack((ushort*) overlayPin.AddrOfPinnedObject(), overlaySize, overlayBit);
-	//            else
-	//                return Unpack((byte*)overlayPin.AddrOfPinnedObject(), overlaySize, overlayBit);
-	//        }
-	//        finally
-	//        {
-	//            overlayPin.Free();
-	//        }
-	//    }
-
-	//    private unsafe static byte[] Unpack(byte* pixelData, int overlaySize, int overlayBit)
-	//    {
-	//        byte pixelMask = ((byte)(0x1 << overlayBit));
-			
-	//        byte[] overlayData = new byte[overlaySize];
-	//        fixed (byte* overlayPtr = overlayData)
-	//        {
-	//            byte* pOverlay = overlayPtr;
-	//            for (int p = 0; p < overlaySize; ++p)
-	//            {
-	//                if (((*pixelData) & pixelMask) != 0)
-	//                    *pOverlay = 0x1;
-	//                else
-	//                    *pOverlay = 0x0;
-
-	//                ++pOverlay;
-	//                ++pixelData;
-	//            }
-	//        }
-	//        return overlayData;
-	//    }
-
-	//    private unsafe static byte[] Unpack(ushort* pixelData, int overlaySize, int overlayBit)
-	//    {
-	//        ushort pixelMask = ((ushort)(0x1 << overlayBit));
-
-	//        byte[] overlayData = new byte[overlaySize];
-	//        fixed (byte* overlayPtr = overlayData)
-	//        {
-	//            byte* pOverlay = overlayPtr;
-	//            for (int p = 0; p < overlaySize; ++p)
-	//            {
-	//                if (((*pixelData) & pixelMask) != 0)
-	//                    *pOverlay = 0x1;
-	//                else
-	//                    *pOverlay = 0x0;
-
-	//                ++pOverlay;
-	//                ++pixelData;
-	//            }
-	//        }
-	//        return overlayData;
-	//    }
-	//}
-
 	public class OverlayData
 	{
+		private int _offset;
 		private int _rows;
 		private int _columns;
 		private bool _bigEndianWords;
 		private byte[] _rawOverlayData;
 
-		public OverlayData(int rows, int columns, bool bigEndianWords, byte[] overlayData)
+		public OverlayData(int rows, int columns, bool bigEndianWords, byte[] overlayData) : this(0, rows, columns, bigEndianWords, overlayData) {}
+
+		public OverlayData(int offset, int rows, int columns, bool bigEndianWords, byte[] overlayData)
 		{
+			Platform.CheckNonNegative(offset, "offset");
+
+			_offset = offset;
 			_rows = rows;
 			_columns = columns;
 			_bigEndianWords = bigEndianWords;
@@ -123,33 +60,106 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _rawOverlayData; }
 		}
 
+		public byte[] Unpack()
+		{
+			byte[] unpackedPixelData = new byte[_rows * _columns];
+			Unpack(_rawOverlayData, unpackedPixelData, _offset, _bigEndianWords);
+			return unpackedPixelData;
+		}
+
 		/// <summary>
 		/// Converts this OverlayData chunk into a PixelData chunk.
 		/// </summary>
 		/// <returns>A greyscale PixelData chunk containing 8-bit overlay data (1 bit stored).</returns>
+		[Obsolete]
 		public GrayscalePixelData ToPixelData()
 		{
-			return new GrayscalePixelData(_rows, _columns, 8, 1, 1, false, Unpack(_rawOverlayData, _rows*_columns, _bigEndianWords));
+			byte[] unpackedPixelData = new byte[_rows*_columns];
+			Unpack(_rawOverlayData, unpackedPixelData, _offset, _bigEndianWords);
+			return new GrayscalePixelData(_rows, _columns, 8, 1, 1, false, unpackedPixelData);
+		}
+
+		public static byte[] Extract(int bitPosition, int bitsAllocated, bool bigEndianWords, byte[] pixelData)
+		{
+			const byte ONE = 0xff;
+			const byte ZERO = 0x00;
+
+			if(bitsAllocated != 8 && bitsAllocated != 16)
+				throw new ArgumentException("BitsAllocated must be either 8 or 16 bits.", "bitsAllocated");
+
+			int inLen = pixelData.Length;
+			int outLen = inLen/(bitsAllocated/8);
+			int outPos = 0;
+			byte[] extractedPixels = new byte[outLen];
+
+			unsafe
+			{
+
+				fixed(byte* input = pixelData)
+				{
+					fixed(byte* output = extractedPixels)
+					{
+						if(bitsAllocated == 16)
+						{
+							if (inLen % 2 != 0)
+								throw new ArgumentException("Pixel data length must be even.", "pixelData");
+
+							int mask = 1 << bitPosition;
+							if (bigEndianWords)
+							{
+								for (int inPos = 0; inPos < inLen; inPos += 2)
+								{
+									int value = (input[inPos] << 8) + input[inPos + 1];
+									output[outPos++] = ((value & mask) > 0) ? ONE : ZERO;
+								}
+							}
+							else
+							{
+								for (int inPos = 0; inPos < inLen; inPos += 2)
+								{
+									int value = (input[inPos + 1] << 8) + input[inPos];
+									output[outPos++] = ((value & mask) > 0) ? ONE : ZERO;
+								}
+							}
+						}
+						else
+						{
+							byte mask = (byte) (1 << bitPosition);
+							for (int inPos = 0; inPos < inLen; inPos++)
+							{
+								output[outPos++] = ((input[inPos] & mask) > 0) ? ONE : ZERO;
+							}
+						}
+
+					}
+				}
+			}
+
+			return extractedPixels;
 		}
 
 		/// <summary>
 		/// Converts a PixelData chunk into an OverlayData chunk.
 		/// </summary>
+		/// <param name="bigEndianWords"></param>
 		/// <param name="pixelData">The pixel data to convert.</param>
 		/// <returns>An OverlayData chunk containing packed 1-bit overlay data.</returns>
-		public static OverlayData FromPixelData(PixelData pixelData)
+		public static OverlayData FromPixelData(bool bigEndianWords, GrayscalePixelData pixelData)
 		{
-			throw new NotImplementedException("Conversion of PixelData to OverlayData has not been implemented yet.");
+			byte[] packedOverlayData = new byte[(int)Math.Ceiling(pixelData.Rows*pixelData.Columns/8d)];
+			uint mask = (uint) ((1 << pixelData.BitsStored) - 1) << (pixelData.BitsAllocated - pixelData.HighBit - 1);
+			Pack(pixelData.Raw, packedOverlayData, 0, mask, bigEndianWords);
+			return new OverlayData(pixelData.Rows, pixelData.Columns, bigEndianWords, packedOverlayData);
 		}
 
 		#region Private Bit Packing Code
 
-		private static byte[] Pack(byte[] unpackedBits, int length, bool bigEndianWords) 
+		private static void Pack(byte[] unpackedBits, byte[] packedBits, int start, uint inputMask, bool bigEndianWords) 
 		{
-			if (bigEndianWords && length % 2 == 1)
-				throw new ArgumentException("Output byte length must be even-length.", "length");
+			if (bigEndianWords && packedBits.Length % 2 == 1)
+				throw new ArgumentException("Output byte length must be even-length.", "packedBits");
 
-			byte[] packedBits = new byte[length];
+			int length = packedBits.Length;
 			int outPos = 0;
 			int inLen = unpackedBits.Length;
 
@@ -163,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 						ushort mask = 0x01;
 						for (int inPos = 0; inPos < inLen; inPos++)
 						{
-							if (input[inPos] > 0)
+							if ((input[inPos] & inputMask) > 0)
 								window |= mask;
 
 							mask = (ushort) (mask << 1);
@@ -188,7 +198,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 						byte mask = 0x01;
 						for (int inPos = 0; inPos < inLen; inPos++)
 						{
-							if (input[inPos] > 0)
+							if ((input[inPos] & inputMask) > 0)
 								window |= mask;
 
 							mask = (byte) (mask << 1);
@@ -205,19 +215,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 					}
 				}
 			}
-
-			return packedBits;
 		}
 
-		private unsafe static byte[] Unpack(byte[] packedBits, int length, bool bigEndianWords)
+		private unsafe static void Unpack(byte[] packedBits, byte[] unpackedBits, int start, bool bigEndianWords)
 		{
-			const byte ONE = 0x01;
+			const byte ONE = 0xff;
 			const byte ZERO = 0x00;
 
 			if (bigEndianWords && packedBits.Length % 2 == 1)
 				throw new ArgumentException("Input byte array must be even-length.", "packedBits");
 
-			byte[] unpackedBits = new byte[length];
+			int length = unpackedBits.Length;
 			int outPos = 0;
 			int inLen = packedBits.Length;
 
@@ -227,39 +235,51 @@ namespace ClearCanvas.ImageViewer.Imaging
 				{
 					if (bigEndianWords)
 					{
-						for (int inPos = 0; inPos < inLen; inPos += 2)
+						ushort initMask = (ushort) (1 << (start%16));
+						for (int inPos = 2*(start/16); inPos < inLen; inPos += 2)
 						{
-							// process the lower byte
-							byte lowerWindow = input[inPos + 1];
-							for (byte mask = 0x01; mask > 0 && outPos < length; mask = (byte) (mask << 1))
+							ushort window = (ushort) ((input[inPos] << 8) + input[inPos + 1]);
+							for (ushort mask = initMask; mask > 0 && outPos < length; mask = (ushort) (mask << 1))
 							{
-								output[outPos++] = (lowerWindow & mask) > 0 ? ONE : ZERO;
+								output[outPos++] = (window & mask) > 0 ? ONE : ZERO;
 							}
-
-							// process the upper byte
-							byte upperWindow = input[inPos];
-							for (byte mask = 0x01; mask > 0 && outPos < length; mask = (byte) (mask << 1))
-							{
-								output[outPos++] = (upperWindow & mask) > 0 ? ONE : ZERO;
-							}
+							initMask = 0x01;
 						}
 					}
 					else
 					{
-						for (int inPos = 0; inPos < inLen; inPos++)
+						byte initMask = (byte) (1 << start%8);
+						for (int inPos = start/8; inPos < inLen; inPos++)
 						{
 							byte window = input[inPos];
-							for (byte mask = 0x01; mask > 0 && outPos < length; mask = (byte) (mask << 1))
+							for (byte mask = initMask; mask > 0 && outPos < length; mask = (byte) (mask << 1))
 							{
 								output[outPos++] = (window & mask) > 0 ? ONE : ZERO;
 							}
+							initMask = 0x01;
 						}
 					}
 				}
 			}
-
-			return unpackedBits;
 		}
+
+		#region Unit Test Entry Points
+
+#if UNIT_TESTS
+
+		internal static void TestUnpack(byte[] packedBits, byte[] unpackedBits, int start, bool bigEndianWords)
+		{
+			Unpack(packedBits, unpackedBits, start, bigEndianWords);
+		}
+
+		internal static void TestPack()
+		{
+			//Pack()
+		}
+
+#endif
+
+		#endregion
 
 		#endregion
 	}
