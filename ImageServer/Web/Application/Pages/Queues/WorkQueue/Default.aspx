@@ -80,7 +80,7 @@
                             <localAsp:DeleteWorkQueueDialog ID="DeleteWorkQueueDialog" runat="server" />
     
                             <!-- the timer should be inside the update panel so that it doesn't continue running while postback is happening -->
-                            <ccUI:Timer ID="RefreshTimer" runat="server" OnTick="RefreshTimer_Tick" DisableAfter="5"></ccUI:Timer>
+                            <ccUI:Timer ID="RefreshTimer" runat="server" OnTick="RefreshTimer_Tick" DisableAfter="15"></ccUI:Timer>
                         </ContentTemplate>
                     </asp:UpdatePanel>
                 </asp:Panel>

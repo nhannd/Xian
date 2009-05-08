@@ -55,13 +55,13 @@ public partial class GlobalMasterPage {
     protected global::System.Web.UI.ScriptManager GlobalScriptManager;
     
     /// <summary>
-    /// AppAlertMessagePanel control.
+    /// ApplicationAlertPanel control.
     /// </summary>
     /// <remarks>
     /// Auto-generated field.
     /// To modify move field declaration from designer file to code-behind file.
     /// </remarks>
-    protected global::System.Web.UI.WebControls.Panel AppAlertMessagePanel;
+    protected global::ClearCanvas.ImageServer.Web.Application.Controls.ApplicationAlertPanel ApplicationAlertPanel;
     
     /// <summary>
     /// MainContentContainerUpdatePanel control.

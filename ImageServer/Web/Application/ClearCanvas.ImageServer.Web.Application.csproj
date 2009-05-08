@@ -89,6 +89,13 @@
     <Compile Include="Controls\AlertIndicator.ascx.designer.cs">
       <DependentUpon>AlertIndicator.ascx</DependentUpon>
     </Compile>
+    <Compile Include="Controls\ApplicationAlertPanel.ascx.cs">
+      <DependentUpon>ApplicationAlertPanel.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Controls\ApplicationAlertPanel.ascx.designer.cs">
+      <DependentUpon>ApplicationAlertPanel.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Controls\CheckJavascript.ascx.cs">
       <DependentUpon>CheckJavascript.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1289,6 +1296,7 @@
     <Content Include="App_Themes\Default\StyleSheets\StudyIntegrityQueue.css" />
     <Content Include="App_Themes\Default\StyleSheets\WorkQueue.css" />
     <Content Include="Controls\AlertIndicator.ascx" />
+    <Content Include="Controls\ApplicationAlertPanel.ascx" />
     <Content Include="Controls\CheckJavascript.ascx" />
     <Content Include="Controls\EmptySearchResultsMessage.ascx" />
     <Content Include="Controls\GridViewPanel.ascx" />
