@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -39,10 +38,8 @@ using ClearCanvas.Enterprise.Common.Configuration;
 using ClearCanvas.Enterprise.Configuration.Brokers;
 using ClearCanvas.Enterprise.Core;
 using System.Threading;
-using System.Configuration;
 using ClearCanvas.Common.Configuration;
-using System.Reflection;
-using System.Security.Permissions;
+using IConfigurationService=ClearCanvas.Enterprise.Common.Configuration.IConfigurationService;
 
 namespace ClearCanvas.Enterprise.Configuration
 {
