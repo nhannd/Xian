@@ -102,8 +102,8 @@ namespace ClearCanvas.Enterprise.Common
         {
             DateTime time = default(DateTime);
 
-            Platform.GetService<ITimeService>(
-                delegate(ITimeService service)
+            Platform.GetService<Time.ITimeService>(
+				delegate(Time.ITimeService service)
                 {
                     time = service.GetTime(new GetTimeRequest()).Time;
                 });
