@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Client
 
                 Platform.Log(LogLevel.Debug, "Login attempt was successful.");
             }
-            catch (FaultException<InvalidUserCredentialsException> e)
+            catch (FaultException<UserAccessDeniedException> e)
             {
                 Platform.Log(LogLevel.Debug, e.Detail, "Login attempt failed.");
                 throw e.Detail;
@@ -124,7 +124,7 @@ namespace ClearCanvas.Ris.Client
                     });
 
             }
-            catch (FaultException<InvalidUserCredentialsException> e)
+			catch (FaultException<UserAccessDeniedException> e)
             {
                 throw e.Detail;
             }

@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Application.Common.Login
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        [FaultContract(typeof(InvalidUserCredentialsException))]
+        [FaultContract(typeof(UserAccessDeniedException))]
         [FaultContract(typeof(PasswordExpiredException))]
         LoginResponse Login(LoginRequest request);
 
@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Application.Common.Login
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
-        [FaultContract(typeof(InvalidUserCredentialsException))]
+        [FaultContract(typeof(UserAccessDeniedException))]
         ChangePasswordResponse ChangePassword(ChangePasswordRequest request);
 
         /// <summary>

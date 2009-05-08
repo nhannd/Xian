@@ -253,7 +253,7 @@ namespace ClearCanvas.Ris.Client
             {
                 ClearCanvas.Desktop.Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
             }
-            else if (e is InvalidUserCredentialsException)
+			else if (e is UserAccessDeniedException)
             {
                 ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageLoginCredentialsInvalid, MessageBoxActions.Ok);
             }
