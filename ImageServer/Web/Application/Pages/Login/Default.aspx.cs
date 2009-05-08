@@ -31,12 +31,10 @@
 
 using System;
 using System.ServiceModel;
-using System.Web.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Audit;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Enterprise.Authentication;
 using ClearCanvas.ImageServer.Web.Application.App_GlobalResources;
 using ClearCanvas.ImageServer.Web.Application.Pages.Common;
 using ClearCanvas.ImageServer.Web.Common.Security;
@@ -70,10 +68,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 
 				UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
 					EventIdentificationTypeEventOutcomeIndicator.Success, UserAuthenticationEventType.Login);
-				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, SessionManager.Current.Credentials.DisplayName));
+				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
 				ServerPlatform.LogAuditMessage("UserAuthentication", audit);
 			}
-            catch(FaultException ex)
+			catch (FaultException ex)
             {
                 // NOTE: The server is throwing FaultException when username or password is invalid. 
                 Platform.Log(LogLevel.Error, ex, "Invalid login for {0}", UserName.Text);
