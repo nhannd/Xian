@@ -45,12 +45,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             Username.Text = username;
             OriginalPassword.Value = password;
             ErrorMessagePanel.Visible = false;
-            
+            Panel1.DefaultButton = "OKButton";
+            NewPassword.Focus();
             ModalDialog1.Show();
         }
 
         public void Cancel_Click(object sender, EventArgs e)
         {
+            Panel1.DefaultButton = "";
             ModalDialog1.Hide();
         }
 

@@ -48,9 +48,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
             ChangePasswordUsername.Text = ((System.Web.UI.WebControls.TextBox)Page.FindControl("UserName")).Text;
             LoginPasswordChange.Checked = true;
             ErrorMessage.Text = String.Empty;
-            ErrorMessagePanel.Visible = false; 
-            ModalDialog1.Show();
+            ErrorMessagePanel.Visible = false;
             Panel1.DefaultButton = "OKButton";
+            ChangePasswordUsername.Focus();
+            ModalDialog1.Show();
+            
         }
 
         public void Cancel_Click(object sender, EventArgs e)
