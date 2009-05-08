@@ -445,7 +445,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidUserCredentialsException))]
+		[ExpectedException(typeof(UserAccessDeniedException))]
 		public void Test_InitiateSession_InActiveUser()
 		{
 			User user = CreateUser(null, null);
@@ -465,7 +465,7 @@ namespace ClearCanvas.Enterprise.Authentication.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(InvalidUserCredentialsException))]
+		[ExpectedException(typeof(UserAccessDeniedException))]
 		public void Test_InitiateSession_IncorrectPassword()
 		{
 			User user = CreateUser(null, null);

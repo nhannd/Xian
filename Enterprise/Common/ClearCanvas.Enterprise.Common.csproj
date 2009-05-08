@@ -128,7 +128,7 @@
     <Compile Include="EntityRefUtils.cs" />
     <Compile Include="Configuration\IConfigurationService.cs" />
     <Compile Include="ICoreServiceLayer.cs" />
-    <Compile Include="InvalidUserCredentialsException.cs" />
+    <Compile Include="UserAccessDeniedException.cs" />
     <Compile Include="InvalidUserSessionException.cs" />
     <Compile Include="IServiceChannelConfiguration.cs" />
     <Compile Include="IServiceHostConfiguration.cs" />

@@ -50,17 +50,17 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 		/// Initiates a new session for the specified user, first verifying the password,
 		/// and returns a new session token if successful.
 		/// </summary>
-		/// <exception cref="SecurityTokenException">Invalid username or password.</exception>
+		/// <exception cref="UserAccessDeniedException">Invalid username or password.</exception>
 		/// <exception cref="PasswordExpiredException">Password is valid but has expired.</exception>
 		[OperationContract]
-        [FaultContract(typeof(InvalidUserCredentialsException))]
+        [FaultContract(typeof(UserAccessDeniedException))]
         [FaultContract(typeof(PasswordExpiredException))]
 		InitiateSessionResponse InitiateSession(InitiateSessionRequest request);
 
 		/// <summary>
 		/// Validates an existing user session, returning an updated session token.
 		/// </summary>
-		/// <exception cref="SecurityTokenException">Session token expired or otherwise invalid.</exception>
+		/// <exception cref="InvalidUserSessionException">Session token expired or otherwise invalid.</exception>
 		[OperationContract]
         [FaultContract(typeof(InvalidUserSessionException))]
         ValidateSessionResponse ValidateSession(ValidateSessionRequest request);
@@ -68,7 +68,7 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 		/// <summary>
 		/// Terminates an existing user session.
 		/// </summary>
-		/// <exception cref="SecurityTokenException">Session token expired or otherwise invalid.</exception>
+		/// <exception cref="InvalidUserSessionException">Session token expired or otherwise invalid.</exception>
 		[OperationContract]
         [FaultContract(typeof(InvalidUserSessionException))]
         TerminateSessionResponse TerminateSession(TerminateSessionRequest request);
@@ -76,11 +76,11 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 		/// <summary>
 		/// Changes the password for the specified user account.
 		/// </summary>
-        /// <exception cref="InvalidUserCredentialsException">Invalid user credentials.</exception>
+        /// <exception cref="UserAccessDeniedException">Invalid user credentials.</exception>
 		/// <exception cref="RequestValidationException">The new password does not meet password policy restrictions.</exception>
 		[OperationContract]
 		[FaultContract(typeof(RequestValidationException))]
-        [FaultContract(typeof(InvalidUserCredentialsException))]
+        [FaultContract(typeof(UserAccessDeniedException))]
         ChangePasswordResponse ChangePassword(ChangePasswordRequest request);
 
 		/// <summary>

@@ -5,6 +5,9 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Common
 {
+	/// <summary>
+	/// Indicates that a user session is invalid or has expired.
+	/// </summary>
 	[Serializable]
 	public class InvalidUserSessionException : Exception
 	{

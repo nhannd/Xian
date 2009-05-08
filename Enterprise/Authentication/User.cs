@@ -139,7 +139,7 @@ namespace ClearCanvas.Enterprise.Authentication {
 			{
 				// account not active, or invalid password
 				// the error message is deliberately vague
-				throw new InvalidUserCredentialsException();
+				throw new UserAccessDeniedException();
 			}
 
 			// check if password expired

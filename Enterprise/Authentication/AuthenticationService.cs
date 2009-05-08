@@ -62,17 +62,17 @@ namespace ClearCanvas.Enterprise.Authentication
 
 			// check host name against white-list
 			if (!CheckWhiteList(settings.HostNameWhiteList, request.HostName))
-				throw new Exception("Access denied");	//TODO throw correct exception type
+				throw new UserAccessDeniedException();
 
 			// check application name against white-list
 			if (!CheckWhiteList(settings.ApplicationWhiteList, request.Application))
-				throw new Exception("Access denied");	//TODO throw correct exception type
+				throw new UserAccessDeniedException();
 
 
             // find user
 			User user = GetUser(request.UserName);
             if (user == null)
-                throw new InvalidUserCredentialsException();
+                throw new UserAccessDeniedException();
 
 			// clean-up any expired sessions
 			CleanExpiredSessions(user);
@@ -103,7 +103,7 @@ namespace ClearCanvas.Enterprise.Authentication
 			{
 				// no such user, account not active, or invalid password
 				// the error message is deliberately vague
-                throw new InvalidUserCredentialsException();
+                throw new UserAccessDeniedException();
             }
 
 			AuthenticationSettings settings = new AuthenticationSettings();
