@@ -291,6 +291,14 @@
   <data name="FormatAreaSquareMm" xml:space="preserve">
     <value>Area: {0:F0} mm²</value>
   </data>
+  <data name="FormatDefaultMultiFrameOverlayGraphicName" xml:space="preserve">
+    <value>Overlay Plane ({0} #{1}, Fr #{2})</value>
+    <comment>{0} is the overlay source, {1} is the overlay group index, {2} is the overlay frame index</comment>
+  </data>
+  <data name="FormatDefaultSingleFrameOverlayGraphicName" xml:space="preserve">
+    <value>Overlay Plane ({0} #{1})</value>
+    <comment>{0} is the overlay source, {1} is the overlay group index, {2} is the overlay frame index</comment>
+  </data>
   <data name="FormatDescriptionBasicLinearLut" xml:space="preserve">
     <value>W:{0} L:{1}</value>
   </data>

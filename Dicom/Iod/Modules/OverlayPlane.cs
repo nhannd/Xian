@@ -155,7 +155,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 	}
 
 	/// <summary>
-	/// Enumerated values for the <see cref="DicomTags.OverlayType"/> attribute .
+	/// Enumerated values for the <see cref="DicomTags.OverlayType"/> attribute indicating whether this overlay represents a region of interest or other graphics.
 	/// </summary>
 	/// <remarks>As defined in the DICOM Standard 2008, Part 3, Section C.9.2 (Table C.9-2)</remarks>
 	public enum OverlayType
@@ -174,6 +174,87 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// Represents the null value, which is equivalent to the unknown status.
 		/// </summary>
 		None
+	}
+
+	/// <summary>
+	/// Defined terms for the <see cref="DicomTags.OverlaySubtype"/> attribute identifying the intended purpose of the <see cref="OverlayType"/>.
+	/// </summary>
+	/// <remarks>
+	/// <para>As defined in the DICOM Standard 2008, Part 3, Section C.9.2.1.3</para>
+	/// <para>
+	/// Additional or alternative Defined Terms may be specified in modality specific Modules,
+	/// such as in the Ultrasound Image Module, C.8.5.6.1.11.
+	/// </para>
+	/// </remarks>
+	public class OverlaySubtype
+	{
+		/// <summary>
+		/// User created graphic annotation (e.g. operator).
+		/// </summary>
+		public static readonly OverlaySubtype User = new OverlaySubtype("USER");
+
+		/// <summary>
+		/// Machine or algorithm generated graphic annotation, such as output of a Computer Assisted Diagnosis algorithm.
+		/// </summary>
+		public static readonly OverlaySubtype Automated = new OverlaySubtype("AUTOMATED");
+
+		/// <summary>
+		/// Gets the <see cref="OverlaySubtype"/> matching the given defined term.
+		/// </summary>
+		/// <param name="definedTerm">The defined term.</param>
+		/// <returns>The defined term.</returns>
+		public static OverlaySubtype FromDefinedTerm(string definedTerm)
+		{
+			foreach (OverlaySubtype term in DefinedTerms)
+			{
+				if (term.DefinedTerm == definedTerm)
+					return term;
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Enumerates the defined terms.
+		/// </summary>
+		public static IEnumerable<OverlaySubtype> DefinedTerms
+		{
+			get
+			{
+				yield return User;
+				yield return Automated;
+			}
+		}
+
+		/// <summary>
+		/// Gets the defined term this object represents.
+		/// </summary>
+		public readonly string DefinedTerm;
+
+		/// <summary>
+		/// Constructs a new object with the given defined term.
+		/// </summary>
+		/// <param name="definedTerm">The defined term.</param>
+		protected OverlaySubtype(string definedTerm)
+		{
+			if (string.IsNullOrEmpty(definedTerm))
+				throw new ArgumentNullException("definedTerm");
+			this.DefinedTerm = definedTerm;
+		}
+
+		public sealed override int GetHashCode()
+		{
+			return this.DefinedTerm.GetHashCode() ^ -0x2D417CC3;
+		}
+
+		public override sealed bool Equals(object obj)
+		{
+			return (obj is OverlaySubtype && ((OverlaySubtype) obj).DefinedTerm.Equals(this.DefinedTerm));
+		}
+
+		public override sealed string ToString()
+		{
+			return this.DefinedTerm;
+		}
 	}
 
 	/// <summary>
@@ -355,17 +436,17 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		/// <summary>
 		/// Gets or sets the value of OverlaySubtype in the underlying collection. Type 3.
 		/// </summary>
-		public string OverlaySubtype
+		public OverlaySubtype OverlaySubtype
 		{
-			get { return base.DicomAttributeProvider[_tagOffset + DicomTags.OverlaySubtype].GetString(0, string.Empty); }
+			get { return Modules.OverlaySubtype.FromDefinedTerm(base.DicomAttributeProvider[_tagOffset + DicomTags.OverlaySubtype].GetString(0, string.Empty)); }
 			set
 			{
-				if (string.IsNullOrEmpty(value))
+				if (value == null)
 				{
 					base.DicomAttributeProvider[_tagOffset + DicomTags.OverlaySubtype] = null;
 					return;
 				}
-				base.DicomAttributeProvider[_tagOffset + DicomTags.OverlaySubtype].SetString(0, value);
+				base.DicomAttributeProvider[_tagOffset + DicomTags.OverlaySubtype].SetString(0, value.DefinedTerm);
 			}
 		}
 

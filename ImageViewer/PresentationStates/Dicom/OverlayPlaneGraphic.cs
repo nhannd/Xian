@@ -51,43 +51,81 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 	[Cloneable(true)]
 	public class OverlayPlaneGraphic : CompositeGraphic, IShutterGraphic
 	{
+		[CloneIgnore]
 		private GrayscaleImageGraphic _overlayGraphic;
 
 		private readonly int _index;
-		private readonly int _frameNumber;
-		private readonly string _label;
-		private readonly string _description;
-		private readonly string _subtype;
-		private readonly OverlayType _type;
+		private readonly int _frameIndex;
 		private readonly OverlayPlaneSource _source;
+		private string _label;
+		private string _description;
+		private OverlaySubtype _subtype;
+		private OverlayType _type;
 		private ushort _grayPresentationValue = 0;
 		private Color? _color;
 
-		internal OverlayPlaneGraphic(OverlayPlane overlayPlaneIod, byte[] overlayPixelData, OverlayPlaneSource source) : this(overlayPlaneIod, overlayPixelData, 0, source) {}
+		/// <summary>
+		/// Constructs an <see cref="OverlayPlaneGraphic"/> for a single-frame overlay plane using a pre-processed overlay pixel data buffer.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This overload should only be used for single-frame overlay planes. Multi-frame overlay planes should process the overlay data
+		/// into separate buffers and then construct individual graphics using <see cref="OverlayPlaneGraphic(OverlayPlane, byte[], int, OverlayPlaneSource)"/>.
+		/// </para>
+		/// <para>
+		/// The <paramref name="overlayPixelData"/> parameter allows for the specification of an alternate source of overlay pixel data, such
+		/// as the unpacked contents of <see cref="DicomTags.OverlayData"/> or the extracted, inflated overlay pixels of <see cref="DicomTags.PixelData"/>.
+		/// Although the format should be 8-bits per pixel, every pixel should either be 0 or 255. This will allow pixel interpolation algorithms
+		/// sufficient range to produce a pleasant image. (If the data was either 0 or 1, regardless of the bit-depth, most interpolation algorithms
+		/// will interpolate 0s for everything in between!)
+		/// </para>
+		/// </remarks>
+		/// <param name="overlayPlaneIod">The IOD object containing properties of the overlay plane.</param>
+		/// <param name="overlayPixelData">The overlay pixel data in 8-bits per pixel format, with each pixel being either 0 or 255.</param>
+		/// <param name="source">A value identifying the source of the overlay plane.</param>
+		public OverlayPlaneGraphic(OverlayPlane overlayPlaneIod, byte[] overlayPixelData, OverlayPlaneSource source) : this(overlayPlaneIod, overlayPixelData, 0, source) {}
 
-		internal OverlayPlaneGraphic(OverlayPlane overlayPlaneIod, byte[] overlayPixelData, int frameNumber, OverlayPlaneSource source)
+		/// <summary>
+		/// Constructs an <see cref="OverlayPlaneGraphic"/> for a single or multi-frame overlay plane using a pre-processed overlay pixel data buffer.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The <paramref name="overlayPixelData"/> parameter allows for the specification of an alternate source of overlay pixel data, such
+		/// as the unpacked contents of <see cref="DicomTags.OverlayData"/> or the extracted, inflated overlay pixels of <see cref="DicomTags.PixelData"/>.
+		/// Although the format should be 8-bits per pixel, every pixel should either be 0 or 255. This will allow pixel interpolation algorithms
+		/// sufficient range to produce a pleasant image. (If the data was either 0 or 1, regardless of the bit-depth, most interpolation algorithms
+		/// will interpolate 0s for everything in between!)
+		/// </para>
+		/// </remarks>
+		/// <param name="overlayPlaneIod">The IOD object containing properties of the overlay plane.</param>
+		/// <param name="overlayPixelData">The overlay pixel data in 8-bits per pixel format, with each pixel being either 0 or 255.</param>
+		/// <param name="frameIndex">The overlay frame index (0-based). Single-frame overlays should specify 0.</param>
+		/// <param name="source">A value identifying the source of the overlay plane.</param>
+		public OverlayPlaneGraphic(OverlayPlane overlayPlaneIod, byte[] overlayPixelData, int frameIndex, OverlayPlaneSource source)
 		{
-			_frameNumber = frameNumber;
+			Platform.CheckNonNegative(frameIndex, "frameIndex");
+			_frameIndex = frameIndex;
 			_index = overlayPlaneIod.Index;
 			_label = overlayPlaneIod.OverlayLabel;
 			_description = overlayPlaneIod.OverlayDescription;
 			_type = overlayPlaneIod.OverlayType;
+			_subtype = overlayPlaneIod.OverlaySubtype;
 			_source = source;
 
 			GrayscaleImageGraphic overlayImageGraphic = CreateOverlayImageGraphic(overlayPlaneIod, overlayPixelData);
 			if (overlayImageGraphic != null)
 			{
 				_overlayGraphic = overlayImageGraphic;
-				Color = System.Drawing.Color.PeachPuff;
+				this.Color = System.Drawing.Color.PeachPuff;
 				base.Graphics.Add(overlayImageGraphic);
 			}
 
 			if (string.IsNullOrEmpty(overlayPlaneIod.OverlayLabel))
 			{
 				if (overlayPlaneIod.IsMultiFrame)
-					base.Name = string.Format("Overlay Plane ({2} #{0}, Fr #{1})", _index, frameNumber, _source);
+					base.Name = string.Format(SR.FormatDefaultMultiFrameOverlayGraphicName, _source, _index, frameIndex);
 				else
-					base.Name = string.Format("Overlay Plane ({2} #{0})", _index, -1, _source);
+					base.Name = string.Format(SR.FormatDefaultSingleFrameOverlayGraphicName, _source, _index, frameIndex);
 			}
 			else
 			{
@@ -95,14 +133,46 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 		}
 
-		//for cloning; all the underlying graphics are already cloneable.
+		/// <summary>
+		/// Constructs a new user-created <see cref="OverlayPlaneGraphic"/> with the specified dimensions.
+		/// </summary>
+		/// <param name="rows">The number of rows in the overlay.</param>
+		/// <param name="columns">The number of columns in the overlay.</param>
+		protected OverlayPlaneGraphic(int rows, int columns)
+		{
+			Platform.CheckPositive(rows, "rows");
+			Platform.CheckPositive(columns, "columns");
+
+			_index = -1;
+			_frameIndex = 0;
+			_label = string.Empty;
+			_description = string.Empty;
+			_type = OverlayType.G;
+			_subtype = null;
+			_source = OverlayPlaneSource.User;
+			_overlayGraphic = new GrayscaleImageGraphic(
+				rows, columns, // the reported overlay dimensions
+				8, // bits allocated is always 8
+				8, // overlays always have bit depth of 1, but we upconverted the data
+				7, // the high bit is now 7 after upconverting
+				false, false, // overlays aren't signed and don't get inverted
+				1, 0, // overlays have no rescale
+				new byte[rows * columns]); // new empty pixel buffer
+
+			this.Color = System.Drawing.Color.PeachPuff;
+			base.Graphics.Add(_overlayGraphic);
+		}
+
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
 		private OverlayPlaneGraphic() {}
 
 		[OnCloneComplete]
 		private void OnCloneComplete()
 		{
 			_overlayGraphic = CollectionUtils.SelectFirst(base.Graphics,
-			                                              delegate(IGraphic graphic) { return graphic is GrayscaleImageGraphic; }) as GrayscaleImageGraphic;
+				delegate(IGraphic graphic) { return graphic is GrayscaleImageGraphic; }) as GrayscaleImageGraphic;
 		}
 
 		private static GrayscaleImageGraphic CreateOverlayImageGraphic(OverlayPlane overlayPlaneIod, byte[] overlayData)
@@ -146,7 +216,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			}
 		}
 
-		protected GrayscaleImageGraphic OverlayImageGraphic
+		protected byte[] OverlayPixelData
+		{
+			get { return _overlayGraphic.PixelData.Raw; }
+		}
+
+		private GrayscaleImageGraphic OverlayImageGraphic
 		{
 			get { return _overlayGraphic; }
 		}
@@ -154,6 +229,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		public int Index
 		{
 			get { return _index; }
+		}
+
+		public int FrameIndex
+		{
+			get { return _frameIndex; }
 		}
 
 		public OverlayPlaneSource Source
@@ -164,26 +244,35 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		public string Label
 		{
 			get { return _label; }
+			protected set { _label = value; }
 		}
 
 		public string Description
 		{
 			get { return _description; }
+			protected set { _description = value; }
 		}
 
 		public OverlayType Type
 		{
 			get { return _type; }
+			protected set { _type = value; }
 		}
 
-		public string SubType
+		public OverlaySubtype Subtype
 		{
 			get { return _subtype; }
+			protected set { _subtype = value; }
 		}
 
 		public PointF Origin
 		{
-			get { return new PointF(_overlayGraphic.SpatialTransform.TranslationX, _overlayGraphic.SpatialTransform.TranslationY); }
+			get { return new PointF(_overlayGraphic.SpatialTransform.TranslationX + 1, _overlayGraphic.SpatialTransform.TranslationY + 1); }
+			protected set
+			{
+				_overlayGraphic.SpatialTransform.TranslationX = value.X - 1;
+				_overlayGraphic.SpatialTransform.TranslationY = value.Y - 1;
+			}
 		}
 
 		public int Rows

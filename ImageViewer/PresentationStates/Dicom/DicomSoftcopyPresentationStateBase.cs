@@ -611,7 +611,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 						overlayIod.OverlayLabel = overlay.Label;
 						overlayIod.OverlayOrigin = Point.Round(overlay.Origin);
 						overlayIod.OverlayRows = overlay.Rows;
-						overlayIod.OverlaySubtype = overlay.SubType;
+						overlayIod.OverlaySubtype = overlay.Subtype;
 						overlayIod.OverlayType = overlay.Type;
 						overlayIod.RoiArea = null;
 						overlayIod.RoiMean = null;

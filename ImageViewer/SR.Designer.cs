@@ -583,6 +583,24 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Overlay Plane ({0} #{1}, Fr #{2}).
+        /// </summary>
+        public static string FormatDefaultMultiFrameOverlayGraphicName {
+            get {
+                return ResourceManager.GetString("FormatDefaultMultiFrameOverlayGraphicName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Overlay Plane ({0} #{1}).
+        /// </summary>
+        public static string FormatDefaultSingleFrameOverlayGraphicName {
+            get {
+                return ResourceManager.GetString("FormatDefaultSingleFrameOverlayGraphicName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to W:{0} L:{1}.
         /// </summary>
         public static string FormatDescriptionBasicLinearLut {

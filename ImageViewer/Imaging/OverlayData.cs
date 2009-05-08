@@ -146,7 +146,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns>An OverlayData chunk containing packed 1-bit overlay data.</returns>
 		public static OverlayData FromPixelData(bool bigEndianWords, GrayscalePixelData pixelData)
 		{
-			byte[] packedOverlayData = new byte[(int)Math.Ceiling(pixelData.Rows*pixelData.Columns/8d)];
+			int minBytesNeeded = (int)Math.Ceiling(pixelData.Rows*pixelData.Columns/8d);
+			if (bigEndianWords && minBytesNeeded % 2 == 1)
+				minBytesNeeded++;
+			byte[] packedOverlayData = new byte[minBytesNeeded];
 			uint mask = (uint) ((1 << pixelData.BitsStored) - 1) << (pixelData.BitsAllocated - pixelData.HighBit - 1);
 			Pack(pixelData.Raw, packedOverlayData, 0, mask, bigEndianWords);
 			return new OverlayData(pixelData.Rows, pixelData.Columns, bigEndianWords, packedOverlayData);
@@ -186,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 								mask = 0x01;
 							}
 						}
-						if (mask > 0)
+						if (window > 0)
 						{
 							output[outPos] = (byte)(window >> 8);
 							output[outPos + 1] = (byte)(window);
@@ -210,7 +213,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 								mask = 0x01;
 							}
 						}
-						if (mask > 0)
+						if (window > 0)
 							output[outPos] = window;
 					}
 				}

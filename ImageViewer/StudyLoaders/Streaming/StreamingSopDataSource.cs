@@ -345,7 +345,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 					}
 					else
 					{
-						OverlayData od = new OverlayData(overlayPlane.ComputeOverlayDataBitOffset(overlayIndex),
+						OverlayData od = new OverlayData(overlayPlane.TryComputeOverlayDataBitOffset(overlayIndex),
 							overlayPlane.OverlayRows,
 							overlayPlane.OverlayColumns,
 							overlayPlane.IsBigEndianOW,

@@ -190,6 +190,7 @@
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\PolylineGraphicAnnotationSerializer.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\RectangleGraphicAnnotationSerializer.cs" />
     <Compile Include="PresentationStates\Dicom\GraphicAnnotationSerializers\TextGraphicAnnotationSerializer.cs" />
+    <Compile Include="PresentationStates\Dicom\UserOverlayPlaneGraphic.cs" />
     <Compile Include="PresentationStates\GeometricShutterUndoableCommand.cs" />
     <Compile Include="PresentationStates\IShutterGraphic.cs" />
     <Compile Include="PresentationStates\PresentationState.cs" />
