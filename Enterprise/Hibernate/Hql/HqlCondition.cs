@@ -217,7 +217,9 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
             		return Between(variable, values[0], values[1]);
                 case SearchConditionTest.In:
             		return In(variable, values);
-                case SearchConditionTest.LessThan:
+				case SearchConditionTest.NotIn:
+					return NotIn(variable, values);
+				case SearchConditionTest.LessThan:
             		return LessThan(variable, values[0]);
                 case SearchConditionTest.LessThanOrEqual:
             		return LessThanOrEqual(variable, values[0]);

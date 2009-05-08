@@ -77,6 +77,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql.Tests
 			AreEqual(new HqlCondition("x not like ?", new object[] { "foo" }), HqlCondition.GetCondition("x", SearchConditionTest.NotLike, new object[] { "foo" }));
 			AreEqual(new HqlCondition("x between ? and ?", new object[] { 1, 2 }), HqlCondition.GetCondition("x", SearchConditionTest.Between, new object[] { 1,2 }));
 			AreEqual(new HqlCondition("x in (?,?,?)", new object[] { 1, 2, 3 }), HqlCondition.GetCondition("x", SearchConditionTest.In, new object[] { 1,2,3 }));
+			AreEqual(new HqlCondition("x not in (?,?,?)", new object[] { 1, 2, 3 }), HqlCondition.GetCondition("x", SearchConditionTest.NotIn, new object[] { 1, 2, 3 }));
 			AreEqual(new HqlCondition("x < ?", new object[] { 1 }), HqlCondition.GetCondition("x", SearchConditionTest.LessThan, new object[] { 1 }));
 			AreEqual(new HqlCondition("x <= ?", new object[] { 1 }), HqlCondition.GetCondition("x", SearchConditionTest.LessThanOrEqual, new object[] { 1 }));
 			AreEqual(new HqlCondition("x > ?", new object[] { 1 }), HqlCondition.GetCondition("x", SearchConditionTest.MoreThan, new object[] { 1 }));
