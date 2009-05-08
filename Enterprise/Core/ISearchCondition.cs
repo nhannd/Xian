@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Collections;
 
 namespace ClearCanvas.Enterprise.Core
@@ -86,6 +84,12 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <param name="values"></param>
         void In(IEnumerable values);
+
+		/// <summary>
+		/// Specifies that the condition variable not be contained in the specified set of values.
+		/// </summary>
+		/// <param name="values"></param>
+		void NotIn(IEnumerable values);
 
         /// <summary>
         /// Specifies that the condition variable be less than the specified value.
@@ -191,6 +195,12 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <param name="values"></param>
         void In(IEnumerable<T> values);
+
+		/// <summary>
+		/// Specifies that the condition variable not be contained in the specified set of values.
+		/// </summary>
+		/// <param name="values"></param>
+		void NotIn(IEnumerable<T> values);
 
         /// <summary>
         /// Specifies that the condition variable be less than the specified value.

@@ -44,7 +44,8 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private ServerEntityKey _serverPartitionKey;
-        private ServerEntityKey _patientKey;
+		private ServerEntityKey _studyStorageKey;
+		private ServerEntityKey _patientKey;
         private ServerEntityKey _studyKey;
         private ServerEntityKey _seriesKey;
         private bool _insertPatient;
@@ -58,6 +59,12 @@ namespace ClearCanvas.ImageServer.Model
 		{
 			get { return _serverPartitionKey; }
 			set { _serverPartitionKey = value; }
+		}
+		[EntityFieldDatabaseMappingAttribute(TableName = "InstanceKeys", ColumnName = "StudyStorageGUID")]
+		public ServerEntityKey StudyStorageKey
+		{
+			get { return _studyStorageKey; }
+			set { _studyStorageKey = value; }
 		}
 		[EntityFieldDatabaseMappingAttribute(TableName = "InstanceKeys", ColumnName = "PatientGUID")]
 		public ServerEntityKey PatientKey

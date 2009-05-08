@@ -56,7 +56,8 @@ namespace ClearCanvas.Enterprise.Core
         NotNull,
         Exists,
         NotExists,
-    }
+		NotIn,
+	}
 
     /// <summary>
     /// Type-independent base class for the <see cref="SearchCondition{T}"/> and <see cref="RelatedEntityCondition{T}"/> classes.

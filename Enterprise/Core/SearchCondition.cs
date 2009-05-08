@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core
@@ -93,6 +91,14 @@ namespace ClearCanvas.Enterprise.Core
 
             SetCondition(SearchConditionTest.In, vals);
         }
+
+		public void NotIn(IEnumerable<T> values)
+		{
+			// copy to an array of object
+			object[] vals = CollectionUtils.Map<T, object>(values, delegate(T val) { return val; }).ToArray();
+
+			SetCondition(SearchConditionTest.NotIn, vals);
+		}
 
         public void LessThan(T val)
         {
@@ -169,6 +175,14 @@ namespace ClearCanvas.Enterprise.Core
 
             SetCondition(SearchConditionTest.In, vals);
         }
+
+		void ISearchCondition.NotIn(System.Collections.IEnumerable values)
+		{
+			// copy to an array of object
+			object[] vals = CollectionUtils.Map<T, object>(values, delegate(T val) { return val; }).ToArray();
+
+			SetCondition(SearchConditionTest.NotIn, vals);
+		}
 
         void ISearchCondition.LessThan(object val)
         {

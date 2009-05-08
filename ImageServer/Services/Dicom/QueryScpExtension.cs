@@ -292,16 +292,13 @@ namespace ClearCanvas.ImageServer.Services.Dicom
         /// <param name="tagList"></param>
 		/// <param name="storage"></param>
         /// <param name="row">The <see cref="Study"/> table to populate the response from.</param>
-        private void PopulateStudy(IReadContext read, StudyStorage storage, DicomMessage response, IList<uint> tagList, Study row)
+        private void PopulateStudy(IReadContext read, DicomMessage response, IList<uint> tagList, Study row, string availability)
         {
             DicomAttributeCollection dataSet = response.DataSet;
 
             dataSet[DicomTags.RetrieveAeTitle].SetStringValue(Partition.AeTitle);
 
-			if (storage.StudyStatusEnum == StudyStatusEnum.Nearline)
-				dataSet[DicomTags.InstanceAvailability].SetStringValue("NEARLINE");
-			else
-				dataSet[DicomTags.InstanceAvailability].SetStringValue("ONLINE");
+			dataSet[DicomTags.InstanceAvailability].SetStringValue(availability);
 
             if (false == String.IsNullOrEmpty(row.SpecificCharacterSet))
             {
@@ -785,6 +782,12 @@ namespace ClearCanvas.ImageServer.Services.Dicom
                     // Open another read context, in case additional queries are required.
 					using (IReadContext subRead = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                     {
+						// First find the Online studies
+                    	StudyStorageSelectCriteria storageCriteria = new StudyStorageSelectCriteria();
+                    	storageCriteria.StudyStatusEnum.NotEqualTo(StudyStatusEnum.Nearline);
+						storageCriteria.QueueStudyStateEnum.NotIn(new QueueStudyStateEnum[] {QueueStudyStateEnum.DeleteScheduled, QueueStudyStateEnum.WebDeleteScheduled, QueueStudyStateEnum.EditScheduled});
+                    	criteria.StudyStorageRelatedEntityCondition.Exists(storageCriteria);
+
                         find.Find(criteria, delegate(Study row)
                                                 {
 													if (CancelReceived)
@@ -798,21 +801,43 @@ namespace ClearCanvas.ImageServer.Services.Dicom
 														throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
 													}
 
-                                                	StudyStorage storage =
-                                                		StudyStorage.Load(subRead, row.ServerPartitionKey,
-                                                		                  row.StudyInstanceUid);
-													if (storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.DeleteScheduled)
-													 || storage.QueueStudyStateEnum.Equals(QueueStudyStateEnum.EditScheduled))
-														return;
-
                                                     DicomMessage response = new DicomMessage();
-                                                    PopulateStudy(subRead, storage, response, tagList, row);
+                                                    PopulateStudy(subRead, response, tagList, row, "ONLINE");
 													_responseQueue.Enqueue(response);
 
 													if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
 														SendBufferedResponses(server, presentationID, message);
 											
                                                 });
+
+						// Now find the Nearline studies
+						storageCriteria = new StudyStorageSelectCriteria();
+						storageCriteria.StudyStatusEnum.EqualTo(StudyStatusEnum.Nearline);
+						storageCriteria.QueueStudyStateEnum.NotIn(new QueueStudyStateEnum[] { QueueStudyStateEnum.DeleteScheduled, QueueStudyStateEnum.WebDeleteScheduled, QueueStudyStateEnum.EditScheduled });
+						criteria.StudyStorageRelatedEntityCondition.Exists(storageCriteria);
+
+						find.Find(criteria, delegate(Study row)
+												{
+													if (CancelReceived)
+														throw new DicomException("DICOM C-Cancel Received");
+
+													resultCount++;
+													if (DicomSettings.Default.MaxQueryResponses != -1
+														&& DicomSettings.Default.MaxQueryResponses < resultCount)
+													{
+														SendBufferedResponses(server, presentationID, message);
+														throw new DicomException("Maximum Configured Query Responses Exceeded: " + resultCount);
+													}
+
+													DicomMessage response = new DicomMessage();
+													PopulateStudy(subRead, response, tagList, row, "NEARLINE");
+													_responseQueue.Enqueue(response);
+
+													if (_responseQueue.Count >= DicomSettings.Default.BufferedQueryResponses)
+														SendBufferedResponses(server, presentationID, message);
+
+												});
+
 						SendBufferedResponses(server, presentationID, message);
 					}
                 }

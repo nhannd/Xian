@@ -74,6 +74,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 			InsertInstanceParameters parms = new InsertInstanceParameters();
 			_file.LoadDicomFields(parms);
 			parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
+			parms.StudyStorageKey = _storageLocation.Key;
 
 			// Get the Insert Instance broker and do the insert
 			IInsertInstance insert = updateContext.GetBroker<IInsertInstance>();

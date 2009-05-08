@@ -64,6 +64,7 @@ namespace ClearCanvas.ImageServer.Model
             ,System.String _studyDescription_
             ,System.String _studyId_
             ,System.String _studyInstanceUid_
+            ,ClearCanvas.ImageServer.Enterprise.ServerEntityKey _studyStorageKey_
             ,System.String _studyTime_
             ):base("Study")
         {
@@ -84,6 +85,7 @@ namespace ClearCanvas.ImageServer.Model
             _studyDescription = _studyDescription_;
             _studyId = _studyId_;
             _studyInstanceUid = _studyInstanceUid_;
+            _studyStorageKey = _studyStorageKey_;
             _studyTime = _studyTime_;
         }
         #endregion
@@ -106,6 +108,7 @@ namespace ClearCanvas.ImageServer.Model
         private String _studyDescription;
         private String _studyId;
         private String _studyInstanceUid;
+        private ServerEntityKey _studyStorageKey;
         private String _studyTime;
         #endregion
 
@@ -227,6 +230,12 @@ namespace ClearCanvas.ImageServer.Model
         get { return _studyInstanceUid; }
         set { _studyInstanceUid = value; }
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyStorageGUID")]
+        public ServerEntityKey StudyStorageKey
+        {
+        get { return _studyStorageKey; }
+        set { _studyStorageKey = value; }
+        }
         [DicomField(DicomTags.StudyTime, DefaultValue = DicomFieldDefault.Null)]
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyTime")]
         public String StudyTime
@@ -280,6 +289,7 @@ namespace ClearCanvas.ImageServer.Model
             updateColumns.StudyDescription = entity.StudyDescription;
             updateColumns.StudyId = entity.StudyId;
             updateColumns.StudyInstanceUid = entity.StudyInstanceUid;
+            updateColumns.StudyStorageKey = entity.StudyStorageKey;
             updateColumns.StudyTime = entity.StudyTime;
             Study newEntity = broker.Insert(updateColumns);
             return newEntity;

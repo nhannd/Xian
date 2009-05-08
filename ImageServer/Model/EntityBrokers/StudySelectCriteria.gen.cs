@@ -254,6 +254,18 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
               return (ISearchCondition<String>)SubCriteria["StudyInstanceUid"];
             } 
         }
+        [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyStorageGUID")]
+        public ISearchCondition<ServerEntityKey> StudyStorageKey
+        {
+            get
+            {
+              if (!SubCriteria.ContainsKey("StudyStorageKey"))
+              {
+                 SubCriteria["StudyStorageKey"] = new SearchCondition<ServerEntityKey>("StudyStorageKey");
+              }
+              return (ISearchCondition<ServerEntityKey>)SubCriteria["StudyStorageKey"];
+            } 
+        }
         [EntityFieldDatabaseMappingAttribute(TableName="Study", ColumnName="StudyTime")]
         public ISearchCondition<String> StudyTime
         {

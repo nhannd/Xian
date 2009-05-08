@@ -46,6 +46,11 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
 
+		public ServerEntityKey StudyStorageKey
+		{
+			set { SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+		}
+
         [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         public string PatientId
         {

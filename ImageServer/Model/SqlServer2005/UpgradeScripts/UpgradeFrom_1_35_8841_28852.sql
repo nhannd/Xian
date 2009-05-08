@@ -355,6 +355,17 @@ IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
+PRINT N'Updating [dbo].[Study]'
+GO
+UPDATE Study 
+	SET StudyStorageGUID = (SELECT GUID FROM StudyStorage 
+							WHERE StudyStorage.ServerPartitionGUID = Study.ServerPartitionGUID 
+								AND StudyStorage.StudyInstanceUid = Study.StudyInstanceUid)
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
 PRINT N'Adding foreign keys to [dbo].[StudyDeleteRecord]'
 GO
 ALTER TABLE [dbo].[StudyDeleteRecord] ADD

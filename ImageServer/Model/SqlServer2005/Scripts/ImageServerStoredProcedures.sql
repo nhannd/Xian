@@ -1910,6 +1910,7 @@ EXEC dbo.sp_executesql @statement = N'-- =======================================
 CREATE PROCEDURE [dbo].[InsertInstance] 
 	-- Add the parameters for the stored procedure here
 	@ServerPartitionGUID uniqueidentifier, 
+	@StudyStorageGUID uniqueidentifier, 
 	@PatientId nvarchar(64) = null,
 	@PatientsName nvarchar(64) = null,
 	@IssuerOfPatientId nvarchar(64) = null,
@@ -1998,13 +1999,13 @@ BEGIN
 		set @StudyGUID = newid()
 		set @InsertStudy = 1
 
-		INSERT into Study (GUID, ServerPartitionGUID, PatientGUID,
+		INSERT into Study (GUID, ServerPartitionGUID, StudyStorageGUID, PatientGUID,
 				StudyInstanceUid, PatientsName, PatientId, IssuerOfPatientId, PatientsBirthDate, PatientsAge,
 				PatientsSex, StudyDate, StudyTime, AccessionNumber, StudyId,
 				StudyDescription, ReferringPhysiciansName, NumberOfStudyRelatedSeries,
 				NumberOfStudyRelatedInstances,SpecificCharacterSet)
 		VALUES
-				(@StudyGUID, @ServerPartitionGUID, @PatientGUID, 
+				(@StudyGUID, @ServerPartitionGUID, @StudyStorageGUID, @PatientGUID, 
 				@StudyInstanceUid, @PatientsName, @PatientId, @IssuerOfPatientId, @PatientsBirthDate, @PatientsAge,
 				@PatientsSex, @StudyDate, @StudyTime, @AccessionNumber, @StudyId,
 				@StudyDescription, @ReferringPhysiciansName, 0, 1,@SpecificCharacterSet)
@@ -2073,6 +2074,7 @@ BEGIN
 
 	-- Return the resultant keys
 	SELECT @ServerPartitionGUID as ServerPartitionGUID, 
+			@StudyStorageGUID as StudyStorageGUID, 
 			@PatientGUID as PatientGUID,
 			@StudyGUID as StudyGUID,
 			@SeriesGUID as SeriesGUID,

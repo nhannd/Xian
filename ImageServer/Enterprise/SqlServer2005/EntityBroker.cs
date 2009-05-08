@@ -220,7 +220,19 @@ namespace ClearCanvas.ImageServer.Enterprise.SqlServer2005
                     }
                     sb.Append(")");
                     break;
-                case SearchConditionTest.LessThan:
+				case SearchConditionTest.NotIn:
+					sb.AppendFormat("{0} not in (", sqlColumnName); // assume at least one param
+					for (int i = 0; i < values.Length; i++)
+					{
+						if (i == 0)
+							sb.AppendFormat("@{0}{1}", sqlParmName, i + 1);
+						else
+							sb.AppendFormat(", @{0}{1}", sqlParmName, i + 1);
+						command.Parameters.AddWithValue(string.Format("@{0}{1}", sqlParmName, i + 1), values[i]);
+					}
+					sb.Append(")");
+					break;
+				case SearchConditionTest.LessThan:
                     sb.AppendFormat("{0} < @{1}", sqlColumnName, sqlParmName);
                     command.Parameters.AddWithValue("@" + sqlParmName, values[0]);
                     break;

@@ -31,6 +31,7 @@
 
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Model.EntityBrokers
 {
@@ -49,12 +50,33 @@ namespace ClearCanvas.ImageServer.Model.EntityBrokers
         {
             get
             {
-                if (!this.SubCriteria.ContainsKey("SeriesRelatedEntityCondition"))
+                if (!SubCriteria.ContainsKey("SeriesRelatedEntityCondition"))
                 {
-                    this.SubCriteria["SeriesRelatedEntityCondition"] = new RelatedEntityCondition<EntitySelectCriteria>("SeriesRelatedEntityCondition", "Key", "StudyKey");
+                    SubCriteria["SeriesRelatedEntityCondition"] = new RelatedEntityCondition<EntitySelectCriteria>("SeriesRelatedEntityCondition", "Key", "StudyKey");
                 }
-                return (IRelatedEntityCondition<EntitySelectCriteria>)this.SubCriteria["SeriesRelatedEntityCondition"];
+                return (IRelatedEntityCondition<EntitySelectCriteria>)SubCriteria["SeriesRelatedEntityCondition"];
             }
         }
+
+		/// <summary>
+		/// Used for EXISTS or NOT EXISTS subselects against the StudyStorage table.
+		/// </summary>
+		/// <remarks>
+		/// A <see cref="StudyStorageSelectCriteria"/> instance is created with the subselect parameters, 
+		/// and assigned to this Sub-Criteria.  Note that the link between the <see cref="Study"/>
+		/// and <see cref="StudyStorage"/> tables is automatically added into the <see cref="StudyStorageSelectCriteria"/>
+		/// instance by the broker.
+		/// </remarks>
+		public IRelatedEntityCondition<EntitySelectCriteria> StudyStorageRelatedEntityCondition
+		{
+			get
+			{
+				if (!SubCriteria.ContainsKey("StudyStorageRelatedEntityCondition"))
+				{
+					SubCriteria["StudyStorageRelatedEntityCondition"] = new RelatedEntityCondition<EntitySelectCriteria>("StudyStorageRelatedEntityCondition", "StudyStorageKey", "Key");
+				}
+				return (IRelatedEntityCondition<EntitySelectCriteria>)SubCriteria["StudyStorageRelatedEntityCondition"];
+			}
+		}
     }
 }

@@ -536,6 +536,7 @@ BEGIN
 CREATE TABLE [dbo].[Study](
 	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_Study_GUID]  DEFAULT (newid()),
 	[ServerPartitionGUID] [uniqueidentifier] NOT NULL,
+	[StudyStorageGUID] [uniqueidentifier] NULL,
 	[PatientGUID] [uniqueidentifier] NOT NULL,
 	[SpecificCharacterSet] varchar(128) NULL,
 	[StudyInstanceUid] [varchar](64) NOT NULL,
@@ -603,6 +604,12 @@ CREATE UNIQUE NONCLUSTERED INDEX [IX_Study_StudyInstanceUid] ON [dbo].[Study]
 (
 	[StudyInstanceUid] ASC,
 	[ServerPartitionGUID] ASC
+)WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
+GO
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE object_id = OBJECT_ID(N'[dbo].[Study]') AND name = N'IX_Study_StudyStorageGUID')
+CREATE NONCLUSTERED INDEX [IX_Study_StudyStorageGUID] ON [dbo].[Study] 
+(
+	[StudyStorageGUID] ASC
 )WITH (PAD_INDEX  = OFF, STATISTICS_NORECOMPUTE  = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS  = ON, ALLOW_PAGE_LOCKS  = ON) ON [INDEXES]
 GO
 /****** Object:  Table [dbo].[PartitionSopClass]    Script Date: 01/09/2008 15:03:39 ******/
@@ -1797,6 +1804,13 @@ ALTER TABLE [dbo].[Study]  WITH CHECK ADD  CONSTRAINT [FK_Study_ServerPartition]
 REFERENCES [dbo].[ServerPartition] ([GUID])
 GO
 ALTER TABLE [dbo].[Study] CHECK CONSTRAINT [FK_Study_ServerPartition]
+GO
+/****** Object:  ForeignKey [FK_Study_StudyStorage]    Script Date: 05/08/2009 14:29:21 ******/
+IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_Study_StudyStorage]') AND parent_object_id = OBJECT_ID(N'[dbo].[Study]'))
+ALTER TABLE [dbo].[Study]  WITH CHECK ADD  CONSTRAINT [FK_Study_StudyStorage] FOREIGN KEY([StudyStorageGUID])
+REFERENCES [dbo].[StudyStorage] ([GUID])
+GO
+ALTER TABLE [dbo].[Study] CHECK CONSTRAINT [FK_Study_StudyStorage]
 GO
 /****** Object:  ForeignKey [FK_StudyStorage_QueueStudyStateEnum]    Script Date: 10/22/2008 16:46:28 ******/
 IF NOT EXISTS (SELECT * FROM sys.foreign_keys WHERE object_id = OBJECT_ID(N'[dbo].[FK_StudyStorage_QueueStudyStateEnum]') AND parent_object_id = OBJECT_ID(N'[dbo].[StudyStorage]'))
