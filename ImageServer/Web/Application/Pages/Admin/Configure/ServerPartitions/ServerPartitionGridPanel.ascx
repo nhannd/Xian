@@ -54,6 +54,7 @@
                 <RowStyle CssClass="GlobalGridViewRow" />
                 <HeaderStyle CssClass="GlobalGridViewHeader" />
                 <SelectedRowStyle CssClass="GlobalGridViewSelectedRow" />
+                <AlternatingRowStyle CssClass="GlobalGridViewRow" />                                
             </ccUI:GridView>
         </asp:TableCell>
     </asp:TableRow>
