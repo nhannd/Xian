@@ -53,7 +53,8 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 		/// <exception cref="SecurityTokenException">Invalid username or password.</exception>
 		/// <exception cref="PasswordExpiredException">Password is valid but has expired.</exception>
 		[OperationContract]
-		[FaultContract(typeof(PasswordExpiredException))]
+        [FaultContract(typeof(InvalidUserCredentialsException))]
+        [FaultContract(typeof(PasswordExpiredException))]
 		InitiateSessionResponse InitiateSession(InitiateSessionRequest request);
 
 		/// <summary>
@@ -61,23 +62,26 @@ namespace ClearCanvas.Enterprise.Common.Authentication
 		/// </summary>
 		/// <exception cref="SecurityTokenException">Session token expired or otherwise invalid.</exception>
 		[OperationContract]
-		ValidateSessionResponse ValidateSession(ValidateSessionRequest request);
+        [FaultContract(typeof(InvalidUserSessionException))]
+        ValidateSessionResponse ValidateSession(ValidateSessionRequest request);
 
 		/// <summary>
 		/// Terminates an existing user session.
 		/// </summary>
 		/// <exception cref="SecurityTokenException">Session token expired or otherwise invalid.</exception>
 		[OperationContract]
-		TerminateSessionResponse TerminateSession(TerminateSessionRequest request);
+        [FaultContract(typeof(InvalidUserSessionException))]
+        TerminateSessionResponse TerminateSession(TerminateSessionRequest request);
 
 		/// <summary>
 		/// Changes the password for the specified user account.
 		/// </summary>
-		/// <exception cref="SecurityTokenException">Session token expired or otherwise invalid.</exception>
+        /// <exception cref="InvalidUserCredentialsException">Invalid user credentials.</exception>
 		/// <exception cref="RequestValidationException">The new password does not meet password policy restrictions.</exception>
 		[OperationContract]
 		[FaultContract(typeof(RequestValidationException))]
-		ChangePasswordResponse ChangePassword(ChangePasswordRequest request);
+        [FaultContract(typeof(InvalidUserCredentialsException))]
+        ChangePasswordResponse ChangePassword(ChangePasswordRequest request);
 
 		/// <summary>
 		/// Obtains the set of authority tokens that have been granted to the 

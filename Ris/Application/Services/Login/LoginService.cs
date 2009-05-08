@@ -83,33 +83,26 @@ namespace ClearCanvas.Ris.Application.Services.Login
             // because it will accessed in-process
             string[] authorityTokens = null;
             SessionToken token = null;
-            try
-            {
-                Platform.GetService<IAuthenticationService>(
-                    delegate(IAuthenticationService service)
-                    {
-                        // this call will throw SecurityTokenException if user/password not valid
-                        // it will throw a PasswordExpiredException if the password has expired
-                        // note that PasswordExpiredException is part of the fault contract of this method,
-                        // so we don't catch it
 
-						// TODO: app name shouldn't be hardcoded
-                        token = service.InitiateSession(new InitiateSessionRequest(user, "RIS", hostName, password)).SessionToken;
+            Platform.GetService<IAuthenticationService>(
+                delegate(IAuthenticationService service)
+                {
+                    // this call will throw SecurityTokenException if user/password not valid
+                    // it will throw a PasswordExpiredException if the password has expired
+                    // note that PasswordExpiredException is part of the fault contract of this method,
+                    // so we don't catch it
 
-                        authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(user, token)).AuthorityTokens;
+					// TODO: app name shouldn't be hardcoded
+                    token = service.InitiateSession(new InitiateSessionRequest(user, "RIS", hostName, password)).SessionToken;
 
-                        // setup a generic principal on this thread for the duration of this request
-                        // (this is necessary in order to load the WorkingFacilitySettings below)
-                        Thread.CurrentPrincipal = new GenericPrincipal(
-                            new GenericIdentity(user), authorityTokens);
-                    });
+                    authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(user, token)).AuthorityTokens;
 
-            }
-            catch (SecurityTokenException e)
-            {
-                // login failed
-                throw new RequestValidationException(e.Message);
-            }
+                    // setup a generic principal on this thread for the duration of this request
+                    // (this is necessary in order to load the WorkingFacilitySettings below)
+                    Thread.CurrentPrincipal = new GenericPrincipal(
+                        new GenericIdentity(user), authorityTokens);
+                });
+
 
             // store the working facility in the user's profile
             WorkingFacilitySettings settings = new WorkingFacilitySettings();
@@ -172,21 +165,12 @@ namespace ClearCanvas.Ris.Application.Services.Login
             string password = StringUtilities.EmptyIfNull(request.Password);
             string newPassword = StringUtilities.EmptyIfNull(request.NewPassword);
 
-            try
-            {
-                Platform.GetService<IAuthenticationService>(
-                    delegate(IAuthenticationService service)
-                    {
-                        // this call will throw SecurityTokenException if user/password not valid
-                        service.ChangePassword(new Enterprise.Common.Authentication.ChangePasswordRequest(user, password, newPassword));
-                    });
-
-            }
-            catch (SecurityTokenException e)
-            {
-                // login failed
-                throw new RequestValidationException(e.Message);
-            }
+            Platform.GetService<IAuthenticationService>(
+                delegate(IAuthenticationService service)
+                {
+                    // this call will throw SecurityTokenException if user/password not valid
+                    service.ChangePassword(new Enterprise.Common.Authentication.ChangePasswordRequest(user, password, newPassword));
+                });
 
             return new ChangePasswordResponse();
         }

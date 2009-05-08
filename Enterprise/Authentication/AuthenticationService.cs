@@ -71,6 +71,8 @@ namespace ClearCanvas.Enterprise.Authentication
 
             // find user
 			User user = GetUser(request.UserName);
+            if (user == null)
+                throw new InvalidUserCredentialsException();
 
 			// clean-up any expired sessions
 			CleanExpiredSessions(user);
@@ -96,13 +98,13 @@ namespace ClearCanvas.Enterprise.Authentication
         	DateTime now = Platform.Time;
 			User user = GetUser(request.UserName);
 
-			// ensure account is active and the current password is correct
-			if (!user.IsActive(now) || !user.Password.Verify(request.CurrentPassword))
+			// ensure user found, account is active and the current password is correct
+			if (user == null || !user.IsActive(now) || !user.Password.Verify(request.CurrentPassword))
 			{
-				// account not active, or invalid password
+				// no such user, account not active, or invalid password
 				// the error message is deliberately vague
-				throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
-			}
+                throw new InvalidUserCredentialsException();
+            }
 
 			AuthenticationSettings settings = new AuthenticationSettings();
 
@@ -128,6 +130,8 @@ namespace ClearCanvas.Enterprise.Authentication
 
 			// get the session
 			UserSession session = GetSession(request.SessionToken);
+            if (session == null)
+                throw new InvalidUserSessionException();
 
 			AuthenticationSettings settings = new AuthenticationSettings();
 
@@ -154,7 +158,10 @@ namespace ClearCanvas.Enterprise.Authentication
 
 			// get the session and user
 			UserSession session = GetSession(request.SessionToken);
-			User user = session.User;
+            if (session == null)
+                throw new InvalidUserSessionException();
+
+            User user = session.User;
 
 			// validate the session, ignoring the expiry time
 			session.Validate(request.UserName, false);
@@ -192,11 +199,8 @@ namespace ClearCanvas.Enterprise.Authentication
         #endregion
 
 		/// <summary>
-		/// Gets the user specified by the user name, or throws an exception if no such user exists.
+		/// Gets the user specified by the user name, or null if no such user exists.
 		/// </summary>
-		/// <remarks>
-		/// This method does not check the validity of the user account.
-		/// </remarks>
 		/// <param name="userName"></param>
 		/// <returns></returns>
 		private User GetUser(string userName)
@@ -208,20 +212,14 @@ namespace ClearCanvas.Enterprise.Authentication
 			IList<User> users = PersistenceContext.GetBroker<IUserBroker>().Find(
 				new UserSearchCriteria[] { criteria }, new SearchResultPage(0, 1), true);
 
-			User user = CollectionUtils.FirstElement(users);
-
-			// bug #3701: to ensure the username match is case-sensitive, we need to compare the stored name to the supplied name
-			if (user == null || user.UserName != userName)
-			{
-				// non-existant username
-				// the error message is deliberately vague
-				throw new SecurityTokenValidationException(SR.ExceptionInvalidUserAccount);
-			}
-			return user;
+            // bug #3701: to ensure the username match is case-sensitive, we need to compare the stored name to the supplied name
+            // returns null if no match
+            return CollectionUtils.SelectFirst(users,
+                delegate(User u) { return u.UserName == userName; });
 		}
 
 		/// <summary>
-		/// Gets the session identified by the specified session token.
+		/// Gets the session identified by the specified session token, or null if no session exists.
 		/// </summary>
 		/// <param name="sessionToken"></param>
 		/// <returns></returns>
@@ -234,13 +232,9 @@ namespace ClearCanvas.Enterprise.Authentication
 			IList<UserSession> sessions = PersistenceContext.GetBroker<IUserSessionBroker>().Find(
 				new UserSessionSearchCriteria[] { where }, new SearchResultPage(0, 1), true);
 
-			if (sessions.Count == 0)
-			{
-				// non-existant session
-				// the error message is deliberately vague
-				throw new SecurityTokenValidationException(SR.ExceptionInvalidSession);
-			}
-			return CollectionUtils.FirstElement(sessions);
+            // ensure case-sensitive match, returns null if no match
+            return CollectionUtils.SelectFirst(sessions,
+                delegate(UserSession s) { return s.SessionId == sessionToken.Id; });
 		}
 
 		/// <summary>

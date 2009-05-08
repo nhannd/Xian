@@ -546,6 +546,9 @@
   <data name="MessageInvalidDateFormat" xml:space="preserve">
     <value>The value entered is not a valid date</value>
   </data>
+  <data name="MessageLoginCredentialsInvalid" xml:space="preserve">
+    <value>Invalid user/password combination.</value>
+  </data>
   <data name="MessageLoginTimeout" xml:space="preserve">
     <value>Timed-out while attempting to login</value>
   </data>

@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Client
 
                 Platform.Log(LogLevel.Debug, "Login attempt was successful.");
             }
-            catch (FaultException<RequestValidationException> e)
+            catch (FaultException<InvalidUserCredentialsException> e)
             {
                 Platform.Log(LogLevel.Debug, e.Detail, "Login attempt failed.");
                 throw e.Detail;
@@ -123,6 +123,10 @@ namespace ClearCanvas.Ris.Client
                         service.ChangePassword(new ChangePasswordRequest(userName, oldPassword, newPassword, GetIPAddress(), GetMachineID()));
                     });
 
+            }
+            catch (FaultException<InvalidUserCredentialsException> e)
+            {
+                throw e.Detail;
             }
             catch (FaultException<RequestValidationException> e)
             {
