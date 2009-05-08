@@ -120,4 +120,10 @@
   <data name="ExceptionConcurrentModification" xml:space="preserve">
     <value>Object modified by another user or process</value>
   </data>
+  <data name="ExceptionInvalidUserSession" xml:space="preserve">
+    <value>Invalid or expired user session.</value>
+  </data>
+  <data name="ExceptionUserAccessDenied" xml:space="preserve">
+    <value>Access denied.  The user credentials may be invalid or the account may be disabled.</value>
+  </data>
 </root>

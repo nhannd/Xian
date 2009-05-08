@@ -264,11 +264,14 @@ namespace ClearCanvas.Enterprise.Authentication
 			if (commaDelimitedList == null)
 				return true;
 
+			value = StringUtilities.EmptyIfNull(value).Trim();
+
 			List<string> items = CollectionUtils.Map<string, string>(
 				commaDelimitedList.Trim().Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries),
 				delegate(string s) { return s.Trim(); });
 
-			return items.Count == 0 || items.Contains(value.Trim());
+			return items.Count == 0 || CollectionUtils.Contains(items,
+				delegate(string s) { return s.Equals(value, StringComparison.InvariantCultureIgnoreCase); });
 		}
 
 		private static TimeSpan GetSessionTimeout(AuthenticationSettings settings)

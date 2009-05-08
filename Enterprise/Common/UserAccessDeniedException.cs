@@ -12,6 +12,7 @@ namespace ClearCanvas.Enterprise.Common
 	public class UserAccessDeniedException : Exception
 	{
         public UserAccessDeniedException()
+			: base(SR.ExceptionUserAccessDenied)
         {
         }
 

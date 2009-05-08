@@ -70,24 +70,6 @@ namespace ClearCanvas.Enterprise.Authentication {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid or expired user session..
-        /// </summary>
-        internal static string ExceptionInvalidSession {
-            get {
-                return ResourceManager.GetString("ExceptionInvalidSession", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid user name and/or password..
-        /// </summary>
-        internal static string ExceptionInvalidUserAccount {
-            get {
-                return ResourceManager.GetString("ExceptionInvalidUserAccount", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to You cannot delete your own user account..
         /// </summary>
         internal static string MessageCannotDeleteOwnUserAccount {

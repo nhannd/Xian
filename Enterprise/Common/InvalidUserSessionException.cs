@@ -12,6 +12,7 @@ namespace ClearCanvas.Enterprise.Common
 	public class InvalidUserSessionException : Exception
 	{
 		public InvalidUserSessionException()
+			: base(SR.ExceptionInvalidUserSession)
 		{
 		}
 

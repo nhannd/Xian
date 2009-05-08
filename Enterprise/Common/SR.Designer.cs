@@ -68,5 +68,23 @@ namespace ClearCanvas.Enterprise.Common {
                 return ResourceManager.GetString("ExceptionConcurrentModification", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid or expired user session..
+        /// </summary>
+        internal static string ExceptionInvalidUserSession {
+            get {
+                return ResourceManager.GetString("ExceptionInvalidUserSession", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Access denied.  The user credentials may be invalid or the account may be disabled..
+        /// </summary>
+        internal static string ExceptionUserAccessDenied {
+            get {
+                return ResourceManager.GetString("ExceptionUserAccessDenied", resourceCulture);
+            }
+        }
     }
 }
