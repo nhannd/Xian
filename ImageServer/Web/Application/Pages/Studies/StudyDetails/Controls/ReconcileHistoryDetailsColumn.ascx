@@ -1,4 +1,5 @@
-<%@ Import Namespace="ClearCanvas.ImageServer.Common.Data" %>
+<%@ Import namespace="ClearCanvas.ImageServer.Core.Edit"%>
+<%@ Import Namespace="ClearCanvas.ImageServer.Core.Data" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Web.Common.Utilities" %>
 <%@ Import Namespace="ClearCanvas.ImageServer.Common.CommandProcessor" %>
 <%@ Control Language="C#" AutoEventWireup="true" Codebehind="ReconcileHistoryDetailsColumn.ascx.cs"
