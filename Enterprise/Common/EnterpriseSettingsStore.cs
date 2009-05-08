@@ -65,8 +65,8 @@ namespace ClearCanvas.Enterprise.Common
         {
             Dictionary<string, string> values = new Dictionary<string,string>();
 
-            Platform.GetService<IConfigurationService>(
-                delegate(IConfigurationService service)
+			Platform.GetService<Configuration.IConfigurationService>(
+				delegate(Configuration.IConfigurationService service)
                 {
                     SettingsParser parser = new SettingsParser();
 
@@ -108,8 +108,8 @@ namespace ClearCanvas.Enterprise.Common
             // first obtain the meta-data for the settings group properties
             IList<SettingsPropertyDescriptor> properties = this.ListSettingsProperties(group);
 
-            Platform.GetService<IConfigurationService>(
-                delegate(IConfigurationService service)
+			Platform.GetService<Configuration.IConfigurationService>(
+				delegate(Configuration.IConfigurationService service)
                 {
                     SettingsParser parser = new SettingsParser();
                     Dictionary<string, string> values = new Dictionary<string, string>();
@@ -149,8 +149,8 @@ namespace ClearCanvas.Enterprise.Common
         {
             Platform.CheckForNullReference(user, "user");
 
-            Platform.GetService<IConfigurationService>(
-                delegate(IConfigurationService service)
+			Platform.GetService<Configuration.IConfigurationService>(
+				delegate(Configuration.IConfigurationService service)
                 {
                     service.RemoveConfigurationDocument(
 						new RemoveConfigurationDocumentRequest(
@@ -170,8 +170,8 @@ namespace ClearCanvas.Enterprise.Common
             if (_groups == null)
             {
                 // obtain the list of settings groups from the configuration service
-                Platform.GetService<IConfigurationService>(
-                    delegate(IConfigurationService service)
+				Platform.GetService<Configuration.IConfigurationService>(
+					delegate(Configuration.IConfigurationService service)
                     {
                     	_groups = service.ListSettingsGroups(new ListSettingsGroupsRequest()).Groups;
                     });
@@ -210,8 +210,8 @@ namespace ClearCanvas.Enterprise.Common
             {
                 // use the configuration service to obtain the properties
                 IList<SettingsPropertyDescriptor> properties = null;
-                Platform.GetService<IConfigurationService>(
-                    delegate(IConfigurationService service)
+				Platform.GetService<Configuration.IConfigurationService>(
+					delegate(Configuration.IConfigurationService service)
                     {
                     	properties = service.ListSettingsProperties(new ListSettingsPropertiesRequest(group)).Properties;
                     });

@@ -54,8 +54,8 @@ namespace ClearCanvas.Enterprise.Common
         public TextReader GetDocument(string name, Version version, string user, string instanceKey)
         {
             string content = null;
-            Platform.GetService<IConfigurationService>(
-                delegate(IConfigurationService service)
+			Platform.GetService<Configuration.IConfigurationService>(
+				delegate(Configuration.IConfigurationService service)
                 {
                     content = service.GetConfigurationDocument(
 						new GetConfigurationDocumentRequest(
@@ -74,8 +74,8 @@ namespace ClearCanvas.Enterprise.Common
         /// </summary>
         public void PutDocument(string name, Version version, string user, string instanceKey, TextReader content)
         {
-            Platform.GetService<IConfigurationService>(
-                delegate(IConfigurationService service)
+			Platform.GetService<Configuration.IConfigurationService>(
+				delegate(Configuration.IConfigurationService service)
                 {
                     service.SetConfigurationDocument(
 						new SetConfigurationDocumentRequest(
