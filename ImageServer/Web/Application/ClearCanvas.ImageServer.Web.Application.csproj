@@ -321,9 +321,17 @@
     </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Code\DefaultStudyHistoryRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\IStudyHistoryColumnControlFactory.cs" />
+    <Compile Include="Pages\Studies\StudyDetails\Code\ProcessDuplicateChangeLogRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\ReconcileStudyRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\StudyEditRendererFactory.cs" />
     <Compile Include="Pages\Studies\StudyDetails\Code\StudyHistoryDecoder.cs" />
+    <Compile Include="Pages\Studies\StudyDetails\Controls\DuplicateProcessChangeLog.ascx.cs">
+      <DependentUpon>DuplicateProcessChangeLog.ascx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Pages\Studies\StudyDetails\Controls\DuplicateProcessChangeLog.ascx.designer.cs">
+      <DependentUpon>DuplicateProcessChangeLog.ascx</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Studies\StudyDetails\Controls\EditHistoryDetailsColumn.ascx.cs">
       <DependentUpon>EditHistoryDetailsColumn.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1317,6 +1325,7 @@
     <Content Include="Controls\SessionTimeout.ascx" />
     <Content Include="Controls\TimedDialog.ascx" />
     <Content Include="Pages\Queues\StudyIntegrityQueue\DuplicateSopDialog.ascx" />
+    <Content Include="Pages\Studies\StudyDetails\Controls\DuplicateProcessChangeLog.ascx" />
     <Content Include="Users.xml" />
     <Content Include="Default.aspx" />
     <Content Include="Images\favicon.ico" />

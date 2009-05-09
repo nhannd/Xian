@@ -339,7 +339,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// <param name="partitionKey">The primark key of the ServerPartition table.</param>
 		/// <param name="studyInstanceUid">The Study Instance UID of th estudy</param>
 		/// <returns></returns>
-		public bool GetOnlineStudyStorageLocation(IReadContext context, ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
+		public bool GetOnlineStudyStorageLocation(IPersistenceContext context, ServerEntityKey partitionKey, string studyInstanceUid, out StudyStorageLocation location)
 		{
 			IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
 			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
@@ -383,7 +383,7 @@ namespace ClearCanvas.ImageServer.Common
 		/// <param name="studyStorageKey"></param>
 		/// <param name="location"></param>
 		/// <returns></returns>
-		public bool GetOnlineStudyStorageLocation(IReadContext context, ServerEntityKey studyStorageKey, out StudyStorageLocation location)
+        public bool GetOnlineStudyStorageLocation(IPersistenceContext context, ServerEntityKey studyStorageKey, out StudyStorageLocation location)
 		{
 			IQueryStudyStorageLocation procedure = context.GetBroker<IQueryStudyStorageLocation>();
 			StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();

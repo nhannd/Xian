@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="Brokers\CreatePatientForStudy.cs" />
     <Compile Include="Brokers\AttachStudyToPatient.cs" />
+    <Compile Include="Brokers\DeleteInstance.cs" />
     <Compile Include="Brokers\InsertDuplicateSopReceivedQueue.cs" />
     <Compile Include="Brokers\LockStudy.cs" />
     <Compile Include="Brokers\WebQueryStudyIntegrityQueue.cs" />

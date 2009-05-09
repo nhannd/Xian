@@ -155,6 +155,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 
 		protected override void OnUndo()
 		{
+		    Platform.Log(LogLevel.Info, "Undoing InsertStudyXmlCommand");
 			_stream.RemoveFile(_file);
 
 			string streamFile =

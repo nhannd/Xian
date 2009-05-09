@@ -302,12 +302,12 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 				Platform.Log(LogLevel.Debug, "Scheduling new manual reconciliation...");
 				using (ServerCommandProcessor processor = new ServerCommandProcessor("Schedule new reconciliation"))
 				{
+                    InsertSIQReconcileStudyCommand updateStudyCommand = new InsertSIQReconcileStudyCommand(_reconcileContext);
+                    processor.AddCommand(updateStudyCommand);
 					MoveReconcileImageCommand moveFileCommand = new MoveReconcileImageCommand(_reconcileContext);
-					InsertSIQReconcileStudyCommand updateStudyCommand = new InsertSIQReconcileStudyCommand(_reconcileContext);
+                    processor.AddCommand(moveFileCommand);
                     
-					processor.AddCommand(updateStudyCommand);
-					processor.AddCommand(moveFileCommand);
-					processor.AddCommand(new OpValidationCommand(_reconcileContext));
+                    processor.AddCommand(new OpValidationCommand(_reconcileContext));
 					if (processor.Execute() == false)
 					{
 						throw new ApplicationException(String.Format("Unable to schedule image reconcilation : {0}", processor.FailureReason));

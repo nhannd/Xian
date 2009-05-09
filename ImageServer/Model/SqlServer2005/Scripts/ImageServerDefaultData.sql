@@ -886,6 +886,12 @@ INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
            (newid(),200,'WebEdited','Web GUI Edited','Study was edited via the Web GUI')
 GO
 
+INSERT INTO [ImageServer].[dbo].[StudyHistoryTypeEnum]
+           ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),201,'Duplicate','Duplicate  Processsed','Duplicate was received and processed.')
+GO
+
 
 -- Canned Text
 INSERT INTO [ImageServer].[dbo].[CannedText]([GUID],[Label],[Category],[Text])

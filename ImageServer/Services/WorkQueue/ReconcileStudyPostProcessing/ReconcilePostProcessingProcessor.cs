@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 			}
 
 	
-			processor.ProcessFile(file, stream, queueUid.Duplicate);
+			processor.ProcessFile(file, stream, queueUid.Duplicate, true);
 
 			_statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
 			if (String.IsNullOrEmpty(processor.Modality) == false)

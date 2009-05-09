@@ -79,14 +79,6 @@ namespace ClearCanvas.ImageServer.Model
         {
             get
             {
-                lock(_syncRoot)
-                {
-                    if (_patient==null)
-                    {
-                        _patient = Patient.Load(this.PatientKey);
-                    }
-                }
-
                 return _patient;
             }
         }
@@ -102,7 +94,6 @@ namespace ClearCanvas.ImageServer.Model
         /// 
         static public Study Find(IPersistenceContext context, String studyInstanceUid, ServerPartition partition)
         {
-
             IStudyEntityBroker broker = context.GetBroker<IStudyEntityBroker>();
             StudySelectCriteria criteria = new StudySelectCriteria();
             criteria.ServerPartitionKey.EqualTo(partition.GetKey());
@@ -110,6 +101,21 @@ namespace ClearCanvas.ImageServer.Model
             Study study = broker.FindOne(criteria);
             return study;
            
+        }
+
+        public Patient LoadPatient(IPersistenceContext context)
+        {
+            if (_patient==null)
+            {
+                lock (_syncRoot)
+                {
+                    if (_patient == null)
+                    {
+                        _patient = Patient.Load(context, PatientKey);
+                    }
+                }
+            }
+            return _patient;
         }
     }
 }

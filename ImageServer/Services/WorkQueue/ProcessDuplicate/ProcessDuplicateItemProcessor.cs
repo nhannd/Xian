@@ -31,30 +31,47 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
+using System.Threading;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Core;
+using ClearCanvas.ImageServer.Core.Data;
+using ClearCanvas.ImageServer.Core.Edit;
 using ClearCanvas.ImageServer.Model;
+using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Model.EntityBrokers;
+using ClearCanvas.ImageServer.Model.Parameters;
+using ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 {
     class ProcessDuplicateItemProcessor : BaseItemProcessor
     {
-        private WorkQueueProcessDuplicateSop _duplicateQueueEntry;
+        private WorkQueueProcessDuplicateSop _processDuplicateEntry;
+        private List<BaseImageLevelUpdateCommand> _studyUpdateCommands;
+        private List<BaseImageLevelUpdateCommand> _duplicateUpdateCommands;
+        private StudyInformation _originalStudyInfo;
 
         protected String DuplicateFolder
         {
             get
             {
-                if (_duplicateQueueEntry == null)
+                if (_processDuplicateEntry == null)
                 {
-                    _duplicateQueueEntry = new WorkQueueProcessDuplicateSop(WorkQueueItem);
+                    _processDuplicateEntry = new WorkQueueProcessDuplicateSop(WorkQueueItem);
 
                 }
 
-                return _duplicateQueueEntry.GetDuplicateSopFolder();
+                return _processDuplicateEntry.GetDuplicateSopFolder();
             }
         }
 
@@ -88,10 +105,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         protected override void ProcessItem(Model.WorkQueue item)
         {
             Platform.CheckMemberIsSet(StorageLocation, "StorageLocation");
+            _processDuplicateEntry = new WorkQueueProcessDuplicateSop(item);
 
             if (WorkQueueUidList.Count == 0)
             {
                 // we are done. Just need to cleanup the duplicate folder
+                Platform.Log(LogLevel.Info, "{0} is completed. Cleaning up duplicate storage folder. (GUID={1}, action={2})",
+                             item.WorkQueueTypeEnum, item.GetKey().Key, _processDuplicateEntry.QueueData.Action);
+                
                 DirectoryInfo duplicateFolder = new DirectoryInfo(DuplicateFolder);
                 if (duplicateFolder.Exists)
                 {
@@ -102,37 +123,121 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             }
             else
             {
-                _duplicateQueueEntry = new WorkQueueProcessDuplicateSop(item);
+                Platform.Log(LogLevel.Info, "Processing {0} entry (GUID={1}, action={2})",
+                             item.WorkQueueTypeEnum, item.GetKey().Key, _processDuplicateEntry.QueueData.Action);
 
                 Platform.CheckTrue(Directory.Exists(DuplicateFolder), String.Format("Duplicate Folder {0} doesn't exist.", DuplicateFolder));
 
+                LogWorkQueueInfo();
+
+                _originalStudyInfo = StudyInformation.CreateFrom(Study);
+           
+                _studyUpdateCommands = GetStudyUpdateCommands();
+
+                switch (_processDuplicateEntry.QueueData.Action)
+                {
+                    case ProcessDuplicateAction.OverwriteUseDuplicates:
+                        Platform.Log(LogLevel.Info, "Update Existing Study w/ Duplicate Info");
+                        using (ServerCommandProcessor processor = new ServerCommandProcessor("Update Existing Study w/ Duplicate Info"))
+                        {
+                            processor.AddCommand(new UpdateStudyCommand(ServerPartition, StorageLocation, _studyUpdateCommands));
+                            if (!processor.Execute())
+                            {
+                                throw new ApplicationException(processor.FailureReason, processor.FailureException);
+                            }
+                        }
+                        break;
+                    
+                    case ProcessDuplicateAction.OverwriteUseExisting:
+                        ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
+                        _duplicateUpdateCommands = new List<BaseImageLevelUpdateCommand>();
+                        _duplicateUpdateCommands.AddRange(commandBuilder.BuildCommands<Model.Study>(StorageLocation));
+                        PrintCommands(_duplicateUpdateCommands);
+                        break;
+                }
+
+                Platform.Log(LogLevel.Info, "Processing {0} duplicates...", WorkQueueUidList.Count);
                 foreach (WorkQueueUid uid in WorkQueueUidList)
                 {
                     ProcessUid(uid);
                 }
 
+                LogHistory();
                 PostProcessing(item, WorkQueueProcessorStatus.Pending, WorkQueueProcessorDatabaseUpdate.None);
                 
             }
 
         }
 
+        private void LogWorkQueueInfo()
+        {
+            StringBuilder log = new StringBuilder();
+            log.AppendLine(String.Format("\tGUID={0}", _processDuplicateEntry.GetKey().Key));
+            log.AppendLine(String.Format("\tType={0}", _processDuplicateEntry.WorkQueueTypeEnum));
+            log.AppendLine(String.Format("\tDuplicate Folder={0}", _processDuplicateEntry.GetDuplicateSopFolder()));
+            log.AppendLine(String.Format("\tDuplicate Counts (this run)={0}", WorkQueueUidList.Count));
+            log.AppendLine(String.Format("\tAction ={0}", _processDuplicateEntry.QueueData.Action));
+
+            Platform.Log(LogLevel.Info, log);
+        }
+
+        private void LogHistory()
+        {
+            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
+            using (IUpdateContext ctx = store.OpenUpdateContext(UpdateContextSyncMode.Flush))
+            {
+                Platform.Log(LogLevel.Info, "Logging study history record...");
+                IStudyHistoryEntityBroker broker = ctx.GetBroker<IStudyHistoryEntityBroker>();
+                StudyHistoryUpdateColumns recordColumns = CreateStudyHistoryRecord();
+                StudyHistory entry = broker.Insert(recordColumns);
+                if (entry != null)
+                    ctx.Commit();
+                else
+                    throw new ApplicationException("Unable to log study history record");
+            }
+        }
+
+        private StudyHistoryUpdateColumns CreateStudyHistoryRecord()
+        {
+            StudyHistoryUpdateColumns columns = new StudyHistoryUpdateColumns();
+            columns.InsertTime = Platform.Time;
+            columns.StudyHistoryTypeEnum = StudyHistoryTypeEnum.Duplicate;
+            columns.StudyStorageKey = StorageLocation.GetKey();
+            columns.DestStudyStorageKey = StorageLocation.GetKey();
+
+            columns.StudyData = XmlUtils.SerializeAsXmlDoc(_originalStudyInfo);
+
+            ProcessDuplicateChangeLog changeLog = new ProcessDuplicateChangeLog();
+            changeLog.Action = _processDuplicateEntry.QueueData.Action;
+            XmlDocument doc = XmlUtils.SerializeAsXmlDoc(changeLog);
+            columns.ChangeDescription = doc;
+            return columns;
+        }
+
         private void ProcessUid(WorkQueueUid uid)
         {
             
-            switch(_duplicateQueueEntry.QueueData.Action)
+            switch(_processDuplicateEntry.QueueData.Action)
             {
-                case ProcessDuplicateAction.Overwrite:
-                    OverwriteExistingInstance(uid);
-                    break;
-
                 case ProcessDuplicateAction.Delete:
                     DeleteDuplicate(uid);
                     break;
 
+                case ProcessDuplicateAction.OverwriteUseDuplicates:
+                    OverwriteExistingInstance(uid, ProcessDuplicateAction.OverwriteUseDuplicates);
+                    break;
+
+                case ProcessDuplicateAction.OverwriteUseExisting:
+                    OverwriteExistingInstance(uid, ProcessDuplicateAction.OverwriteUseExisting);
+                    break;
+
+                case ProcessDuplicateAction.OverwriteAsIs:
+                    OverwriteExistingInstance(uid, ProcessDuplicateAction.OverwriteAsIs);
+                    break;
+
                 default:
                     throw new NotSupportedException(
-                        String.Format("Not supported action: {0}", _duplicateQueueEntry.QueueData.Action));
+                        String.Format("Not supported action: {0}", _processDuplicateEntry.QueueData.Action));
             }
         }
 
@@ -155,25 +260,55 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
             }
         }
 
-        private void OverwriteExistingInstance(WorkQueueUid uid)
+        private void OverwriteExistingInstance(WorkQueueUid uid, ProcessDuplicateAction action)
         {
+            StudyXml studyXml = StorageLocation.LoadStudyXml();
             String finalDestination = StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid);
-            bool overwrite = File.Exists(finalDestination);
+            bool needOverwrite = File.Exists(finalDestination); // the file may not be there any more for some reason
+            if (needOverwrite)
+            {
+                // The the instance is in the folder, it must have been processed. Otherwise, we can't proceed.
+                Debug.Assert(studyXml.FindInstanceXml(uid.SeriesInstanceUid, uid.SopInstanceUid) != null, "Existing sop hasn't been processed");
+            }
+
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Move Duplicate Into Study Folder"))
             {
-                FileInfo duplicateFile = GetDuplicateSopFile(uid);
-                Platform.CheckTrue(duplicateFile.Exists, String.Format("Duplicate SOP doesn't exist at {0}", uid.SopInstanceUid));
+                DicomFile file = LoadDicomFile(uid);
+                String dupFilePath = file.Filename;
 
-                DicomFile file = new DicomFile(duplicateFile.FullName);
-                file.Load();
+                if (needOverwrite)
+                {
+                    processor.AddCommand(new DeleteFileCommand(StorageLocation.GetSopInstancePath(uid.SeriesInstanceUid, uid.SopInstanceUid)));
+                    processor.AddCommand(new RemoveInstanceFromStudyXmlCommand(StorageLocation, studyXml, file));
+                    processor.AddCommand(new UpdateInstanceCountCommand(StorageLocation, file));
+                }
 
-                if (overwrite)
-                    processor.AddCommand(new DeleteFileCommand(finalDestination));
+                switch(action)
+                {
+                    case ProcessDuplicateAction.OverwriteUseDuplicates:
+                        // update the study using the duplicate demographics
+                        // assume this has been done at the beginning
+                        break;
+
+                    case ProcessDuplicateAction.OverwriteUseExisting:
+                        // update the duplicate demographics using the existing study
+                        
+                        // NOTE: LoadStudy caches the result so we may not get the latest Study entity.
+                        // But since we are using the existing study it means the study is not modified anyway.
+                        processor.AddCommand(new DuplicateSopUpdateCommand(file, _duplicateUpdateCommands));
                 
+                        break;
+                }
+
                 processor.AddCommand(new SaveDicomFileCommand(finalDestination, file, true, true));
-                processor.AddCommand(new DeleteFileCommand(duplicateFile.FullName));
+                processor.AddCommand(new DeleteFileCommand(file.Filename));
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
-                processor.AddCommand(new OpValidatation(WorkQueueItem, uid));
+
+                bool compare = action != ProcessDuplicateAction.OverwriteAsIs;
+
+                ProcessReplacedSOPInstance processReplaced =
+                        new ProcessReplacedSOPInstance(StorageLocation.ServerPartition, studyXml, file, compare);
+                processor.AddCommand(processReplaced);
 
                 if (!processor.Execute())
                 {
@@ -181,14 +316,44 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                 }
                 else
                 {
-                    if (overwrite)
-                        Platform.Log(LogLevel.Info, "Replaced existing SOP {0} with duplicate {1}", uid.SopInstanceUid, duplicateFile.FullName);
+                    if (needOverwrite)
+                        Platform.Log(LogLevel.Info, "Replaced existing SOP {0} with duplicate {1}", uid.SopInstanceUid, dupFilePath);
                     else
-                        Platform.Log(LogLevel.Info, "Added duplicate SOP {0} from {1}", uid.SopInstanceUid, duplicateFile.FullName);
+                        Platform.Log(LogLevel.Info, "Added duplicate SOP {0} from {1}", uid.SopInstanceUid, dupFilePath);
                 }
             }
-            
         }
+
+        private DicomFile LoadDicomFile(WorkQueueUid uid)
+        {
+            FileInfo duplicateFile = GetDuplicateSopFile(uid);
+            Platform.CheckTrue(duplicateFile.Exists, String.Format("Duplicate SOP doesn't exist at {0}", uid.SopInstanceUid));
+            DicomFile file = new DicomFile(duplicateFile.FullName);
+            file.Load();
+            return file;
+        }
+
+        private List<BaseImageLevelUpdateCommand> GetStudyUpdateCommands()
+        {
+            List<BaseImageLevelUpdateCommand> commands = new List<BaseImageLevelUpdateCommand>();
+            if (WorkQueueUidList.Count>0)
+            {
+                WorkQueueUid uid = WorkQueueUidList[0];
+
+                DicomFile file = LoadDicomFile(uid);
+
+                Study study = new Study();
+                Patient patient = new Patient();
+                file.DataSet.LoadDicomFields(study);
+                file.DataSet.LoadDicomFields(patient);
+
+                ImageUpdateCommandBuilder commandBuilder = new ImageUpdateCommandBuilder();
+                commands.AddRange(commandBuilder.BuildCommands<Model.Study>(file.DataSet));
+            }
+
+            return commands;
+        }
+
 
         private FileInfo GetDuplicateSopFile(WorkQueueUid uid)
         {
@@ -200,6 +365,225 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
 
             return new FileInfo(path);
 
+        }
+
+        private void PrintCommands(IList<BaseImageLevelUpdateCommand> commands)
+        {
+            StringBuilder log = new StringBuilder();
+            log.AppendLine("Update on duplicate sops:");
+            if (commands != null && commands.Count > 0)
+            {
+                foreach (BaseImageLevelUpdateCommand command in _duplicateUpdateCommands)
+                {
+                    log.AppendLine(String.Format("\t{0}", command));
+                }
+            }
+
+            Platform.Log(LogLevel.Info, log);
+            
+        }
+
+    }
+
+    public class ProcessDuplicateChangeLog
+    {
+        private ProcessDuplicateAction _action;
+
+        public ProcessDuplicateAction Action
+        {
+            get { return _action; }
+            set { _action = value; }
+        }
+    }
+
+    internal class DuplicateSopUpdateCommand : ServerCommand
+    {
+        private readonly List<BaseImageLevelUpdateCommand> _commands;
+        private readonly DicomFile _file;
+
+        public DuplicateSopUpdateCommand(DicomFile file, List<BaseImageLevelUpdateCommand> commands)
+            :base("Duplicate SOP demographic update command", true)
+        {
+            _file = file;
+            _commands = commands;
+        }
+
+        protected override void OnExecute()
+        {
+            if (_commands!=null)
+            {
+                foreach (BaseImageLevelUpdateCommand command in _commands)
+                {
+                    if (!command.Apply(_file))
+                        throw new ApplicationException(
+                            String.Format("Unable to update the duplicate sop. Command={0}", command));
+                }
+            }
+            
+        }
+
+        
+        protected override void OnUndo()
+        {
+            
+        }
+    }
+
+    internal class UpdateInstanceCountCommand : ServerDatabaseCommand
+    {
+        private readonly StudyStorageLocation _studyLocation;
+        private readonly DicomFile _file;
+
+        public UpdateInstanceCountCommand(StudyStorageLocation studyLocation, DicomFile file)
+            :base("Update Study Count", true)
+        {
+            _studyLocation = studyLocation;
+            _file = file;
+        }
+
+        protected override void OnExecute(IUpdateContext updateContext)
+        {
+            String seriesUid = _file.DataSet[DicomTags.SeriesInstanceUid].ToString();
+            String instanceUid = _file.DataSet[DicomTags.SopInstanceUid].ToString();
+            
+            IDeleteInstance deleteInstanceBroker = updateContext.GetBroker<IDeleteInstance>();
+            DeleteInstanceParameters parameters = new DeleteInstanceParameters();
+            parameters.StudyStorageKey = _studyLocation.GetKey();
+            parameters.SeriesInstanceUid = seriesUid;
+            parameters.SOPInstanceUid = instanceUid;
+            if (!deleteInstanceBroker.Execute(parameters))
+            {
+                throw new ApplicationException("Unable to update instance count in db");
+            }
+
+        }
+    }
+
+    internal class RemoveInstanceFromStudyXmlCommand : ServerCommand
+    {
+        private readonly StudyStorageLocation _studyLocation;
+        private readonly DicomFile _file;
+        private StudyXml _studyXml;
+
+        public RemoveInstanceFromStudyXmlCommand(StudyStorageLocation location, StudyXml studyXml, DicomFile file)
+            :base("Remove Instance From Study Xml", true)
+        {
+            _studyLocation = location;
+            _file = file;
+            _studyXml = studyXml;
+        }
+
+        protected override void OnExecute()
+        {
+            _studyXml.RemoveFile(_file);
+
+            // flush it into disk
+            // Write it back out.  We flush it out with every added image so that if a failure happens,
+            // we can recover properly.
+            string streamFile = _studyLocation.GetStudyXmlPath();
+            string gzStreamFile = streamFile + ".gz";
+
+            WriteStudyStream(streamFile, gzStreamFile, _studyXml);
+            
+        }
+
+        protected override void OnUndo()
+        {
+            _studyXml.AddFile(_file);
+
+            string streamFile = _studyLocation.GetStudyXmlPath();
+            string gzStreamFile = streamFile + ".gz";
+            WriteStudyStream(streamFile, gzStreamFile, _studyXml);
+        }
+
+        private static void WriteStudyStream(string streamFile, string gzStreamFile, StudyXml theStream)
+        {
+            XmlDocument doc = theStream.GetMemento(ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings);
+
+            // allocate the random number generator here, in case we need it below
+            Random rand = new Random();
+            string tmpStreamFile = streamFile + "_tmp";
+            string tmpGzStreamFile = gzStreamFile + "_tmp";
+            for (int i = 0; ; i++)
+                try
+                {
+                    if (File.Exists(tmpStreamFile))
+                        File.Delete(tmpStreamFile);
+                    if (File.Exists(tmpGzStreamFile))
+                        File.Delete(tmpGzStreamFile);
+
+                    using (FileStream xmlStream = FileStreamOpener.OpenForSoleUpdate(tmpStreamFile, FileMode.CreateNew),
+                                      gzipStream = FileStreamOpener.OpenForSoleUpdate(tmpGzStreamFile, FileMode.CreateNew))
+                    {
+                        StudyXmlIo.WriteXmlAndGzip(doc, xmlStream, gzipStream);
+                        xmlStream.Close();
+                        gzipStream.Close();
+                    }
+
+                    if (File.Exists(streamFile))
+                        File.Delete(streamFile);
+                    File.Move(tmpStreamFile, streamFile);
+                    if (File.Exists(gzStreamFile))
+                        File.Delete(gzStreamFile);
+                    File.Move(tmpGzStreamFile, gzStreamFile);
+                    return;
+                }
+                catch (IOException)
+                {
+                    if (i < 5)
+                    {
+                        Thread.Sleep(rand.Next(5, 50)); // Sleep 5-50 milliseconds
+                        continue;
+                    }
+
+                    throw;
+                }
+        }
+       
+    }
+
+    internal class ProcessReplacedSOPInstance : ServerDatabaseCommand
+    {
+        private readonly ServerPartition _partition;
+        private readonly DicomFile _file;
+        private StudyStorageLocation _storageLocation;
+        private ProcessingResult _result;
+        private readonly StudyXml _studyXml;
+        private readonly bool _compare;
+
+        public ProcessReplacedSOPInstance(ServerPartition partition, StudyXml studyXml, DicomFile file, bool compare)
+            : base("ProcessReplacedSOPInstance", true)
+        {
+            _partition = partition;
+            _file = file;
+            _compare = compare;
+            _studyXml = studyXml;
+        }
+
+        protected override void OnExecute(IUpdateContext updateContext)
+        {
+            String studyUid = _file.DataSet[DicomTags.StudyInstanceUid].ToString();
+            
+            if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(updateContext, _partition.GetKey(), studyUid, out _storageLocation))
+            {
+                throw new ApplicationException("No online storage found");
+            }
+            else
+            {
+                StudyProcessorContext context = new StudyProcessorContext(_storageLocation);
+                SopInstanceProcessor sopInstanceProcessor = new SopInstanceProcessor(context);
+                _result = sopInstanceProcessor.ProcessFile(_file, _studyXml, true, _compare);
+                if (_result.Status == ProcessingStatus.Failed)
+                {
+                    throw new ApplicationException("Unable to process file");
+                }
+            }
+
+        }
+
+        protected override void OnUndo()
+        {
+            
         }
     }
 
@@ -214,7 +598,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
         {
             _item = item;
             _uid = uid;
-            _locations = _item.LoadStudyLocations(ExecutionContext.Current.ReadContext);
+            _locations = _item.LoadStudyLocations(Common.CommandProcessor.ExecutionContext.Current.ReadContext);
         }
 
         private String GetDuplicateSopFile()

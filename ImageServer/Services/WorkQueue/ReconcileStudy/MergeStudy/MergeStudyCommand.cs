@@ -212,7 +212,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                     processor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
                     processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
 
-                    //SaveFile(uid, file);
                     if (counter == 0)
                     {
                         processor.AddCommand(new UpdateHistoryCommand(Context));

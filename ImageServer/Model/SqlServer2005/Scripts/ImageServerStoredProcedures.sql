@@ -3532,3 +3532,54 @@ END
 '
 END
 GO
+
+
+
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+IF NOT EXISTS (SELECT * FROM sys.objects WHERE object_id = OBJECT_ID(N'[dbo].[DeleteInstance]') AND type in (N'P', N'PC'))
+BEGIN
+EXEC dbo.sp_executesql @statement = N'
+-- =============================================
+-- Author:		Thanh Huynh
+-- =============================================
+CREATE PROCEDURE [dbo].[DeleteInstance] 
+	-- Add the parameters for the stored procedure here
+	@StudyStorageGUID uniqueidentifier,
+	@SeriesInstanceUid varchar(64),
+	@SOPInstanceUid varchar(64)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	DECLARE @StudyGUID varchar(64)
+	DECLARE @SeriesGUID varchar(64)
+	DECLARE @PatientGUID varchar(64)
+	DECLARE @ServerPartitionGUID uniqueidentifier
+	DECLARE @StudyInstanceUid varchar(64)
+
+	SELECT @StudyGUID = study.GUID, @SeriesGUID=series.GUID, @PatientGUID=patient.GUID
+	FROM StudyStorage storage 
+	JOIN Study study ON study.ServerPartitionGUID=storage.ServerPartitionGUID and study.StudyInstanceUid=storage.StudyInstanceUid
+	JOIN Patient patient ON patient.GUID=study.PatientGUID
+	JOIN Series series ON series.StudyGUID=study.GUID
+	WHERE storage.GUID=@StudyStorageGUID
+		
+	UPDATE Series SET NumberOfSeriesRelatedInstances=NumberOfSeriesRelatedInstances-1
+	WHERE GUID=@SeriesGUID and SeriesInstanceUid=@SeriesInstanceUid
+
+	UPDATE Study SET NumberOfStudyRelatedInstances=NumberOfStudyRelatedInstances-1
+	WHERE GUID=@StudyGUID
+
+	UPDATE Patient SET NumberOfPatientRelatedInstances=NumberOfPatientRelatedInstances-1
+	WHERE GUID=@PatientGUID	
+	
+END
+'
+END
+GO

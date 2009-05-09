@@ -52,74 +52,105 @@ namespace ClearCanvas.ImageServer.Core
 	public class StudyProcessorContext
 	{
 		#region Private Members
-		private WorkQueue _item;
-		private ServerPartition _partition;
-		private StudyStorageLocation _storageLocation;
+
+	    private readonly object _syncLock = new object();
+        private readonly StudyStorageLocation _storageLocation;
 		private Study _study;
 		private ServerRulesEngine _sopProcessedRulesEngine;
 		private IReadContext _readContext;
 
-		#endregion
+	    #endregion
 
 		#region Constructors
 
-		public StudyProcessorContext(WorkQueue item)
+		public StudyProcessorContext(StudyStorageLocation storageLocation)
 		{
-			_item = item;
-			_partition = ServerPartitionMonitor.Instance.FindPartition(item.ServerPartitionKey);
+		    Platform.CheckForNullReference(storageLocation, "storageLocation");
+		    _storageLocation = storageLocation;
 		}
 
 		#endregion
 
 		#region Public Properties
 
-		public ServerPartition Partition
+        /// <summary>
+        /// Gets
+        /// </summary>
+        internal ServerPartition Partition
 		{
-			get { return _partition; }
-			set { _partition = value; }
+            get { return _storageLocation.ServerPartition; }
 		}
 
-		public WorkQueue WorkQueueItem
+		internal Study Study
 		{
-			get { return _item; }
-			set { _item = value; }
+            get
+            {
+                if (_study==null)
+                {
+                    lock (_syncLock)
+                    {
+                        _study = _storageLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);    
+                    }
+                    
+                }
+                return _study;
+            }
+
 		}
 
-		public Study Study
-		{
-			get { return _study; }
-			set { _study = value; }
-		}
-
-		public StudyStorageLocation StorageLocation
+        internal StudyStorageLocation StorageLocation
 		{
 			get { return _storageLocation; }
-			set { _storageLocation = value; }
 		}
 
-		public ServerRulesEngine SopProcessedRulesEngine
+	    public ServerRulesEngine SopProcessedRulesEngine
 		{
-			get { return _sopProcessedRulesEngine; }
-			set { _sopProcessedRulesEngine = value; }
+			get
+			{
+                if (_sopProcessedRulesEngine==null)
+                {
+                    lock (_syncLock)
+                    {
+                        _sopProcessedRulesEngine =
+                            new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, Partition.GetKey());
+                        _sopProcessedRulesEngine.Load();
+                    }
+                }
+			    return _sopProcessedRulesEngine;
+			}
+			set
+			{
+                lock (_syncLock)
+                {
+                    _sopProcessedRulesEngine = value;
+                }
+			}
 		}
 
-		public IReadContext ReadContext
+	    public IReadContext ReadContext
 		{
 			get
 			{
 				if (_readContext == null)
 				{
-					_readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
-
+                    lock (_syncLock)
+                    {
+                        _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+                    }
 				}
 				return _readContext;
 			}
 			set
 			{
-				_readContext = value;
+                lock (_syncLock)
+                {
+                    _readContext = value;
+                }
 			}
 		}
-		#endregion
+
+
+	    #endregion
 	}
 
 	/// <summary>
@@ -132,14 +163,15 @@ namespace ClearCanvas.ImageServer.Core
 		private readonly StudyProcessorContext _context;
 		private readonly InstanceStatistics _instanceStats = new InstanceStatistics();
 		private string _modality;
-		
-		#endregion
+
+	    #endregion
 
 		#region Constructors
 
 		public SopInstanceProcessor(StudyProcessorContext context)
 		{
-			_context = context;
+            Platform.CheckForNullReference(context, "context");
+		    _context = context;
 		}
 
 		#endregion
@@ -166,17 +198,22 @@ namespace ClearCanvas.ImageServer.Core
 		/// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
 		/// <param name="duplicate"></param>
 		/// <param name="file"></param>
-		public virtual void ProcessFile(DicomFile file, StudyXml stream, bool duplicate)
+        public virtual ProcessingResult ProcessFile(DicomFile file, StudyXml stream, bool duplicate, bool compare)
 		{
-			_instanceStats.ProcessTime.Start();
+		    ProcessingResult result = new ProcessingResult();
+            result.Status = ProcessingStatus.Failed; // will reset later
 
-			if (ShouldReconcile(file, duplicate))
+            _instanceStats.ProcessTime.Start();
+
+            if (ShouldReconcile(file, duplicate) && compare)
 			{
 				ScheduleReconcile(file, duplicate);
+                result.Status = ProcessingStatus.Reconciled;
 			}
 			else
 			{
 				InsertInstance(file, stream, duplicate);
+			    result.Status = ProcessingStatus.Success;
 			}
 
 			_instanceStats.ProcessTime.End();
@@ -190,6 +227,8 @@ namespace ClearCanvas.ImageServer.Core
 
 			_context.SopProcessedRulesEngine.Statistics.Reset();
 
+            //TODO: Should throw exception if result is failed?
+		    return result;
 		}
 
 		#endregion
@@ -219,17 +258,7 @@ namespace ClearCanvas.ImageServer.Core
 				if (list != null && list.Count > 0)
 				{
 					LogDifferences(message, list);
-
-					// Duplicate sops are governed by the duplicate policy
-					if (duplicate)
-					{
-						Platform.Log(LogLevel.Warn, "Duplicate sop. Ignore the difference.");
-						return false;
-					}
-					else
-					{
-						return true;
-					}
+					return true;
 				}
 				else
 				{
@@ -267,7 +296,7 @@ namespace ClearCanvas.ImageServer.Core
 		{
 			//Platform.CheckForNullReference(_context, "_context");
 			//Platform.CheckForNullReference(_context.WorkQueueItem, "_context.WorkQueueItem");
-
+            
 			using (ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM file"))
 			{
 				InsertInstanceCommand insertInstanceCommand = null;
@@ -284,12 +313,9 @@ namespace ClearCanvas.ImageServer.Core
 					processor.AddCommand(insertStudyXmlCommand);
 
 					// Insert into the database, but only if its not a duplicate so the counts don't get off
-					if (!duplicate)
-					{
-						insertInstanceCommand = new InsertInstanceCommand(file, _context.StorageLocation);
-						processor.AddCommand(insertInstanceCommand);
-					}
-
+					insertInstanceCommand = new InsertInstanceCommand(file, _context.StorageLocation);
+					processor.AddCommand(insertInstanceCommand);
+					
 					// Create a context for applying actions from the rules engine
 					ServerActionContext context =
 						new ServerActionContext(file, _context.StorageLocation.FilesystemKey, _context.Partition.Key, _context.StorageLocation.Key);
@@ -336,4 +362,16 @@ namespace ClearCanvas.ImageServer.Core
 		}
 		#endregion
 	}
+
+    public class ProcessingResult
+    {
+        public ProcessingStatus Status;
+    }
+
+    public enum ProcessingStatus
+    {
+        Success,
+        Reconciled,
+        Failed
+    }
 }

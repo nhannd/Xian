@@ -37,8 +37,6 @@ using System.Web.UI.WebControls;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
-using ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate;
 using ClearCanvas.ImageServer.Web.Common;
 using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
@@ -209,14 +207,21 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         }
 
         #endregion Public methods
-
+            
         protected void OKButton_Click(object sender, ImageClickEventArgs e)
         {
             ServerEntityKey itemKey = ViewState["QueueItem"] as ServerEntityKey;
             DuplicateSopEntryController controller = new DuplicateSopEntryController();
-            ProcessDuplicateAction action = ReplaceExistingSopRadioButton.Checked
-                                                ? ProcessDuplicateAction.Overwrite
-                                                : ProcessDuplicateAction.Delete;
+            ProcessDuplicateAction action = ProcessDuplicateAction.OverwriteAsIs;
+            if (UseExistingSopRadioButton.Checked)
+                action = ProcessDuplicateAction.OverwriteUseExisting;
+            else if (UseDuplicateRadioButton.Checked)
+                action = ProcessDuplicateAction.OverwriteUseDuplicates;
+            else if (DeleteDuplicateRadioButton.Checked)
+                action = ProcessDuplicateAction.Delete;
+            else if (ReplaceAsIsRadioButton.Checked)
+                action = ProcessDuplicateAction.OverwriteAsIs;
+
             controller.Process(itemKey, action);
             Close();
         }

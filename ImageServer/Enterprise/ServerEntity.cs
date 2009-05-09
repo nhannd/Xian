@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Enterprise
     public abstract class ServerEntity : Entity
     {
         #region Private Members
-
+        private readonly object _syncRoot = new object();
         private ServerEntityKey _key;
         private readonly String _name;
 
@@ -67,6 +67,11 @@ namespace ClearCanvas.ImageServer.Enterprise
         public ServerEntityKey Key
         {
             get { return _key; }
+        }
+
+        protected object SyncRoot
+        {
+            get { return _syncRoot; }
         }
 
         #endregion

@@ -303,7 +303,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
             _study = _studyLocation.LoadStudy(UpdateContext);
             _totalSopCount = _study.NumberOfStudyRelatedInstances;
-            _curPatient = _study.Patient;
+            _curPatient = _study.LoadPatient(UpdateContext);
             _oldPatientInfo = new PatientInfo();
             _oldPatientInfo.Name = _curPatient.PatientsName;
             _oldPatientInfo.PatientId = _curPatient.PatientId;

@@ -43,6 +43,7 @@ using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
+using ExecutionContext=ClearCanvas.ImageServer.Common.CommandProcessor.ExecutionContext;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
@@ -107,18 +108,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 CreateDuplicateSIQEntry(uid, dupFile);
             }
         }
-
+            
         void CreateDuplicateSIQEntry(WorkQueueUid uid, DicomFile file)
         {
-            using(ServerCommandProcessor processor = new ServerCommandProcessor("MoveDuplicateIntoSIQ"))
+            Platform.Log(LogLevel.Info, "Duplicate SOP is different from existing copy. Creating duplicate SIQ entry. SOP: {0}", uid.SopInstanceUid);
+
+            using (ServerCommandProcessor processor = new ServerCommandProcessor("Create Duplicate SIQ Entry"))
             {
                 InsertDuplicateQueueEntryCommand insertCommand = 
                             new InsertDuplicateQueueEntryCommand(uid.GroupID, StorageLocation, Study, file, uid.RelativePath);
 
                 processor.AddCommand(insertCommand);
 
-                processor.AddCommand(
-                    new UpdateDuplicateQueueEntryCommand(delegate() { return insertCommand.QueueEntry; }, file));
+                processor.AddCommand(new UpdateDuplicateQueueEntryCommand(delegate() { return insertCommand.QueueEntry; }, file));
 
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
 
@@ -137,7 +139,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
         protected virtual void ProcessFile(WorkQueueUid queueUid, string path, StudyXml stream)
         {
-			SopInstanceProcessor processor = new SopInstanceProcessor(_context);
+            SopInstanceProcessor processor = new SopInstanceProcessor( _context);
  
 			DicomFile file;
 			long fileSize;
@@ -151,9 +153,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 			processor.InstanceStats.FileSize = (ulong)fileSize;
 			string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:" + fileInfo.Name);
 			processor.InstanceStats.Description = sopInstanceUid;
-		
-		
-        	processor.ProcessFile(file, stream, queueUid.Duplicate);
+        	processor.ProcessFile(file, stream, queueUid.Duplicate, true);
 			
 			_statistics.StudyInstanceUid = StorageLocation.StudyInstanceUid;
 			if (String.IsNullOrEmpty(processor.Modality) == false)
@@ -402,7 +402,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                             }
                             else
                             {
-                                _context = new StudyProcessorContext(item);
+                                _context = new StudyProcessorContext(StorageLocation);
 
                                 // Load the rules engine
                                 _sopProcessedRulesEngine = new ServerRulesEngine(ServerRuleApplyTimeEnum.SopProcessed, item.ServerPartitionKey);
@@ -410,7 +410,6 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                 _statistics.SopProcessedEngineLoadTime.Add(_sopProcessedRulesEngine.Statistics.LoadTime);
                             	_context.SopProcessedRulesEngine = _sopProcessedRulesEngine;
                             	_context.ReadContext = ReadContext;
-                                _context.StorageLocation = StorageLocation;
 
 								if (Study != null)
 								{

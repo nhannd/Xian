@@ -50,6 +50,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         private readonly object _sync = new object();
         private readonly ExecutionContext _inheritFrom;
         private IReadContext _readContext;
+        private IPersistenceContext _persistenceContext;
 
         #endregion
 
@@ -75,6 +76,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             {
                 TempDirectory = inheritFrom.TempDirectory;
                 BackupDirectory = inheritFrom.BackupDirectory;
+                PersistenceContext = inheritFrom.PersistenceContext;
             }
 
         }
@@ -154,6 +156,21 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 }
 
                 return _readContext;
+            }
+        }
+
+        public IPersistenceContext PersistenceContext
+        {
+            get
+            {
+                if (_persistenceContext != null)
+                    return _persistenceContext;
+                else
+                    return ReadContext;
+            }
+            set
+            {
+                _persistenceContext = value;
             }
         }
 

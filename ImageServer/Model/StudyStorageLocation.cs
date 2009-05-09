@@ -32,8 +32,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model.Brokers;
@@ -44,7 +47,7 @@ namespace ClearCanvas.ImageServer.Model
 {
     public class StudyStorageLocation : ServerEntity
     {
-        
+        private const string STUDY_XML_EXTENSION = "xml";
         
         #region Constructors
         public StudyStorageLocation()
@@ -54,7 +57,6 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private object _syncRoot = new object();
         static private IPersistentStore _store = PersistentStoreRegistry.GetDefaultStore();
         private ServerEntityKey _serverPartitionKey;
         private ServerEntityKey _filesystemKey;
@@ -75,13 +77,13 @@ namespace ClearCanvas.ImageServer.Model
     	private ServerEntityKey _filesystemStudyStorageKey;
     	private QueueStudyStateEnum _queueStudyState;
         private bool _reconcileRequired;
-        private Object _integrityQueueItemsLock = new Object();
         private IList<StudyIntegrityQueue> _integrityQueueItems;
 
         private ServerPartition _partition;
         private Study _study;
+        private StudyXml _studyXml;
 
-    	#endregion
+        #endregion
 
         #region Public Properties
 		[EntityFieldDatabaseMappingAttribute(TableName = "StudyStorageLocation", ColumnName = "ServerPartitionGUID")]
@@ -208,7 +210,7 @@ namespace ClearCanvas.ImageServer.Model
         {
             get
             {
-                lock (_syncRoot)
+                lock (SyncRoot)
                 {
                     if (_partition == null)
                     {
@@ -226,7 +228,7 @@ namespace ClearCanvas.ImageServer.Model
         
         public Study LoadStudy(IPersistenceContext context)
         {
-            lock (_syncRoot)
+            lock (SyncRoot)
             {
                 if (_study == null)
                 {
@@ -311,7 +313,7 @@ namespace ClearCanvas.ImageServer.Model
         /// <returns></returns>
         public IList<StudyIntegrityQueue> GetRelatedStudyIntegrityQueueItems()
         {
-            lock (_integrityQueueItemsLock) // make this thread-safe
+            lock (SyncRoot) // make this thread-safe
             {
                 if (_integrityQueueItems == null)
                 {
@@ -424,6 +426,80 @@ namespace ClearCanvas.ImageServer.Model
             String path = Path.Combine(FilesystemPath, PartitionFolder);
             path = Path.Combine(path, relativePath);
             return path;
+        }
+
+        public String GetStudyXmlPath()
+        {
+            String path = Path.Combine(GetStudyPath(), StudyInstanceUid);
+            path += "." + STUDY_XML_EXTENSION;
+
+            return path;
+        }
+
+        public StudyXml LoadStudyXml()
+        {
+            // TODO: Use FileStreamOpener instead
+            // Can't do it until we break the dependency of ImageServer.Common on Model
+            if (_studyXml==null)
+            {
+
+                Stream xmlStream = Open(GetStudyXmlPath());
+                if (xmlStream != null)
+                {
+                    XmlDocument xml = new XmlDocument();
+                    using (xmlStream)
+                    {
+                        StudyXmlIo.Read(xml, xmlStream);
+                        xmlStream.Close();
+                    }
+
+                    _studyXml = new StudyXml();
+                    _studyXml.SetMemento(xml);
+
+                }
+            }
+            
+
+            return _studyXml;
+        }
+        
+        private static Stream Open(string path)
+        {
+            FileStream stream;
+            for (int i = 0; ; i++)
+            {
+                Exception lastException;
+                try
+                {
+                    stream = new FileStream(path, FileMode.Open, 
+                                            FileAccess.Read, 
+                                            FileShare.None /* deny sharing */);
+                    break;
+                }
+                catch (FileNotFoundException e)
+                {
+                    // Maybe it is being swapped?
+                    lastException = e;
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    // The path is invalid
+                    throw;
+                }
+                catch (PathTooLongException)
+                {
+                    // The path is too long
+                    throw;
+                }
+                catch (IOException e)
+                {
+                    // other IO exceptions should be treated as retry
+                    lastException = e;
+                    Random rand = new Random();
+                    Thread.Sleep(rand.Next(50, 100));
+                }
+            }
+            return stream;
         }
     }
 }

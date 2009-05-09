@@ -35,10 +35,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
 using ClearCanvas.ImageServer.Common.Utilities;
+using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Core.Edit
@@ -49,7 +53,8 @@ namespace ClearCanvas.ImageServer.Core.Edit
 	/// </summary>
 	public class ImageUpdateCommandBuilder
 	{
-		/// <summary>
+
+	    /// <summary>
 		/// Builds a list of <see cref="BaseImageLevelUpdateCommand"/> for the specified study using the specified mapping template.
 		/// </summary>
 		/// <typeparam name="TMappingObject"></typeparam>
@@ -97,17 +102,45 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			return BuildCommands<TMappingObject>(storageLocation);
 		}
 
+        public IList<BaseImageLevelUpdateCommand> BuildCommands<TTargetType>(IDicomAttributeProvider attributeProvider)
+        {
+            List<BaseImageLevelUpdateCommand> commandList = new List<BaseImageLevelUpdateCommand>();
+            EntityDicomMap fieldMap = EntityDicomMapManager.Get(typeof(TTargetType));
+            foreach (DicomTag tag in fieldMap.Keys)
+            {
+	            DicomAttribute attribute;
+                if (attributeProvider.TryGetAttribute(tag, out attribute))
+                {
+                    SetTagCommand cmd = new SetTagCommand(tag.TagValue, attribute.ToString());
+                    commandList.Add(cmd);
+                }
+               
+            }
+			
+            return commandList;
+        }
+
+
 		public IList<BaseImageLevelUpdateCommand> BuildCommands<TMappingObject>(StudyStorageLocation storageLocation)
 		{
 			StudyXml studyXml = GetStudyXml(storageLocation);
+            List<BaseImageLevelUpdateCommand> commandList = new List<BaseImageLevelUpdateCommand>();
 
-			List<BaseImageLevelUpdateCommand> commandList = new List<BaseImageLevelUpdateCommand>();
-			commandList.AddRange(BuildCommands(typeof(TMappingObject), studyXml));
+            if (studyXml.NumberOfStudyRelatedInstances == 0)
+            {
+                // StudyXml is empty, resort to the db instead.
+                Study study = storageLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
+                commandList.AddRange(BuildCommandsFromEntity(study));
+            }
+		    else
+            {
+                commandList.AddRange(BuildCommandsFromStudyXml(typeof(TMappingObject), studyXml));
+            }
 
 			return commandList;
 		}
 
-		private static IList<BaseImageLevelUpdateCommand> BuildCommands(Type type, StudyXml studyXml)
+		private static IList<BaseImageLevelUpdateCommand> BuildCommandsFromStudyXml(Type type, StudyXml studyXml)
 		{
 			List<BaseImageLevelUpdateCommand> commandList = new List<BaseImageLevelUpdateCommand>();
 			EntityDicomMap fieldMap = EntityDicomMapManager.Get(type);
@@ -119,6 +152,21 @@ namespace ClearCanvas.ImageServer.Core.Edit
 			}
 			return commandList;
 		}
+
+        private static IList<BaseImageLevelUpdateCommand> BuildCommandsFromEntity(ServerEntity entity)
+        {
+            List<BaseImageLevelUpdateCommand> commandList = new List<BaseImageLevelUpdateCommand>();
+            EntityDicomMap fieldMap = EntityDicomMapManager.Get(entity.GetType());
+
+            foreach (DicomTag tag in fieldMap.Keys)
+            {
+                object value =fieldMap[tag].GetValue(entity, null);
+                SetTagCommand cmd = new SetTagCommand(tag.TagValue, value!=null? value.ToString():null);
+                commandList.Add(cmd);
+            }
+            return commandList;
+        }
+
 
 		private static StudyXml GetStudyXml(StudyStorageLocation storageLocation)
 		{

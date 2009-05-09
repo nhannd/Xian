@@ -29,6 +29,7 @@
 
 #endregion
 
+using System;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model.Parameters

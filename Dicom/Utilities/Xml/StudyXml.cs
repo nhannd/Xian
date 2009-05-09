@@ -170,13 +170,23 @@ namespace ClearCanvas.Dicom.Utilities.Xml
                 return false;
 
             String seriesInstanceUid = data[DicomTags.SeriesInstanceUid];
+            String sopInstanceUid = data[DicomTags.SopInstanceUid];
 
+            return RemoveInstance(seriesInstanceUid, sopInstanceUid);
+        }
+
+        /// <summary>
+        /// Remove a specific SOP instance from the StudyXml.
+        /// </summary>
+        /// <param name="seriesInstanceUid">The Series Instance Uid of the instance to be removed</param>
+        /// <param name="sopInstanceUid">The SOP Instance Uid of the instance to be removed</param>
+        /// <returns>true on SOP instance exists and is removed.</returns>
+        public bool RemoveInstance(String seriesInstanceUid, String sopInstanceUid)
+        {
             SeriesXml series = this[seriesInstanceUid];
 
             if (series == null)
                 return false;
-
-            String sopInstanceUid = data[DicomTags.SopInstanceUid];
 
             InstanceXml instance = series[sopInstanceUid];
             if (instance == null)
@@ -187,6 +197,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             return true;
         }
+
 		/// <summary>
 		/// Add a <see cref="DicomFile"/> to the StudyXml.
 		/// </summary>
@@ -210,7 +221,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
             String studyInstanceUid = data[DicomTags.StudyInstanceUid];
 
-            if (_studyInstanceUid == null)
+            if (String.IsNullOrEmpty(_studyInstanceUid))
                 _studyInstanceUid = studyInstanceUid;
             else if (!_studyInstanceUid.Equals(studyInstanceUid))
             {
@@ -353,5 +364,14 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         }
 
         #endregion
+
+        public InstanceXml FindInstanceXml(string seriesUid, string instanceUid)
+        {
+            SeriesXml seriesXml = this[seriesUid];
+            if (seriesXml == null)
+                return null;
+
+            return seriesXml[instanceUid];
+        }
     }
 }

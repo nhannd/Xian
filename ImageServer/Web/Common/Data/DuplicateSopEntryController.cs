@@ -31,15 +31,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Enterprise;
 using ClearCanvas.ImageServer.Model;
-using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
-using ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate;
 
 namespace ClearCanvas.ImageServer.Web.Common.Data
 {
@@ -63,7 +60,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
 
             using(IUpdateContext context = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
             {
-                WorkQueueProcessDuplicateSop.ProcessDuplicateQueueEntryQueueData data = new WorkQueueProcessDuplicateSop.ProcessDuplicateQueueEntryQueueData();
+                ProcessDuplicateQueueEntryQueueData data = new ProcessDuplicateQueueEntryQueueData();
                 data.Action = action;
                 data.DuplicateSopFolder = entry.GetReceivedDuplicateSopFolder();
                 

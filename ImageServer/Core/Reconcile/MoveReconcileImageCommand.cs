@@ -95,8 +95,10 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			Platform.CheckForNullReference(_context.StoragePath, "_context.StoragePath");
 
 			_processor = new ServerCommandProcessor("Move Reconcile Image Processor");
-            
-			_src = _context.File.Filename;
+
+		    String seriesUid = _context.File.DataSet[DicomTags.SeriesInstanceUid].ToString();
+            String sopUid = _context.File.DataSet[DicomTags.SopInstanceUid].ToString();
+            _src = _context.CurrentStudyLocation.GetSopInstancePath(seriesUid, sopUid);
 			_dest = GetReconcileImageTempPath(_context.File);
             
 			CreateDirectoryCommand mkdirCommand = new CreateDirectoryCommand(Directory.GetParent(_dest).FullName);

@@ -5,24 +5,66 @@
     Sys.Application.add_load(function()
         {
             var okButton = $find("<%= OKButton.ClientID %>");
-            var replaceExistingRadio = $("#<%= ReplaceExistingSopRadioButton.ClientID %>");
+            var useExistingRadio = $("#<%= UseExistingSopRadioButton.ClientID %>");
+            var useDuplicateRadio = $("#<%= UseDuplicateRadioButton.ClientID %>");
             var deleteDuplicateRadio = $("#<%= DeleteDuplicateRadioButton.ClientID %>");
+            var replaceAsIsRadio = $("#<%=ReplaceAsIsRadioButton.ClientID %>");
+            
+            var useExistingWarning = $("#<%=UseExistingWarningPanel.ClientID %>");
+            var useDuplicateWarning = $("#<%=UseDuplicateWarningPanel.ClientID %>");
+            
+            var dataIsConsistent = <%= DataIsConsistent? "true":"false" %>;
             
             okButton.set_enable(false);            
-            replaceExistingRadio.attr("checked", false);
+            useExistingRadio.attr("checked", false);
+            useDuplicateRadio.attr("checked", false);
             deleteDuplicateRadio.attr("checked", false);
+            replaceAsIsRadio.attr("checked", false);
+            useExistingWarning.hide();
+            useDuplicateWarning.hide();
             
-            replaceExistingRadio.click(
+            replaceAsIsRadio.click(
                 function(ev)
                 {
                     okButton.set_enable(true);
+                    if (!dataIsConsistent)
+                    {
+                        useExistingWarning.hide();
+                        useDuplicateWarning.hide();
+                    }
                 }
+            );
+            
+            useExistingRadio.click(
+                function(ev)
+                {
+                    okButton.set_enable(true);
+                    if (!dataIsConsistent)
+                    {
+                        useExistingWarning.show();
+                        useDuplicateWarning.hide();
+                    }
+                }
+            );
+            
+            useDuplicateRadio.click(
+                function(ev)
+                {
+                    okButton.set_enable(true);
+                    if (!dataIsConsistent)
+                    {
+                        useExistingWarning.hide();
+                        useDuplicateWarning.show();
+                    }
+                 }
             );
             
             deleteDuplicateRadio.click(
                 function(ev)
                 {
                     okButton.set_enable(true);    
+                    useExistingWarning.hide();
+                    useDuplicateWarning.hide();
                 }
             );
         });
@@ -187,18 +229,25 @@
                                                                 <asp:Panel ID="Panel2" runat="server" CssClass="ReconcileButtonsTable">
                                                                     <asp:Table runat="server" ID="OptionTable" Width="100%" CellPadding="0" CellSpacing="0">
                                                                         <asp:TableRow style="padding-left: 5px; padding-top: 5px;padding-bottom: 5px;">
-                                                                            <asp:TableCell><asp:radiobutton runat="server" ID="ReplaceExistingSopRadioButton" Text=" Overwrite Existing" GroupName="DuplicateSopDecision" Checked="true"/></asp:TableCell>
+                                                                            <asp:TableCell><asp:radiobutton runat="server" ID="UseExistingSopRadioButton" Text=" Use Existing Demographics" GroupName="DuplicateSopDecision" Checked="true"/></asp:TableCell>
+                                                                            <asp:TableCell><asp:radiobutton runat="server" ID="UseDuplicateRadioButton" Text=" Use Duplicate Demographics" GroupName="DuplicateSopDecision" Checked="false"/></asp:TableCell>
+                                                                        </asp:TableRow>
+                                                                        <asp:TableRow style="padding-left: 5px; padding-top: 5px;padding-bottom: 5px;">
+                                                                            <asp:TableCell><asp:radiobutton runat="server" ID="ReplaceAsIsRadioButton" Text=" Replace As Is" GroupName="DuplicateSopDecision" Checked="false"/></asp:TableCell>
                                                                             <asp:TableCell><asp:radiobutton runat="server" ID="DeleteDuplicateRadioButton" Text=" Delete Duplicates" GroupName="DuplicateSopDecision" CssClass="ReconcileRadioButton"/></asp:TableCell>
                                                                         </asp:TableRow>
-                                                                        <%--<asp:TableRow runat="server" ID="ReplaceExistingSopAdvancedOption" style="padding: 5px;">
+                                                                        <asp:TableRow runat="server" ID="OverwritewWarningPanel" style="padding: 5px;">
                                                                             <asp:TableCell ColumnSpan="2">
-                                                                                <asp:Panel ID="Panel3" runat="server" CssClass="ReplaceExistingSopAdvancedOptionPanel">
-                                                                                    Duplicates contain information which does not match the existing study. Do you want to                                                          
-                                                                                    <asp:RadioButton runat="server" ID="UpdateStudyRadioBox" GroupName="ReplaceAdvanceOption" Text="update the entire study" Checked="false"/> or
-                                                                                    <asp:RadioButton runat="server" ID="ReplaceSopOnlyRadioBox" GroupName="ReplaceAdvanceOption" Text="just replace the existing instances" Checked="false"/>?
-                                                                                </asp:Panel>                                                                                
+                                                                                <asp:Panel runat="server" ID="UseExistingWarningPanel" CssClass="OverwritewWarningPanel">
+                                                                                    WARNING: Duplicates contain information which does not match the existing study.
+                                                                                    This information will be loss when the existing SOPs are overwritten.
+                                                                                </asp:Panel>      
+                                                                                <asp:Panel runat="server" ID="UseDuplicateWarningPanel" CssClass="OverwritewWarningPanel">
+                                                                                    WARNING: Duplicates contain information which does not match the existing study.
+                                                                                    The information in the study (and all existing images) will be replaced.
+                                                                                </asp:Panel>                                                                        
                                                                             </asp:TableCell>
-                                                                        </asp:TableRow>--%>
+                                                                        </asp:TableRow>
                                                                     </asp:Table>
                                                                 </asp:Panel>                                                                                                    
                                                             </asp:TableCell>

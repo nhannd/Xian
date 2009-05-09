@@ -29,50 +29,19 @@
 
 #endregion
 
+using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
+using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    /// <summary>
-    /// Actions applied to the duplicate
-    /// </summary>
-    public enum ProcessDuplicateAction
-    {
-        Overwrite,
-        Delete
-    }
-    
     /// <summary>
     /// Represents a specialized type of <see cref="WorkQueue"/> for handling duplicates.
     /// </summary>
     public class WorkQueueProcessDuplicateSop : WorkQueue
     {
-        /// <summary>
-        /// Represents the contents in the Data column of the <see cref="WorkQueue"/> entry.
-        /// </summary>
-        public class ProcessDuplicateQueueEntryQueueData
-        {
-            #region Private Members
-            private ProcessDuplicateAction _action;
-            private string _duplicateSopFolder;
-            #endregion
-
-
-            public ProcessDuplicateAction Action
-            {
-                get { return _action; }
-                set { _action = value; }
-            }
-
-            public string DuplicateSopFolder
-            {
-                get { return _duplicateSopFolder; }
-                set { _duplicateSopFolder = value; }
-            }
-        }
-
 
         #region Static Members
         static readonly XmlSerializer _serializer = new XmlSerializer(typeof(ProcessDuplicateQueueEntryQueueData));
@@ -87,7 +56,7 @@ namespace ClearCanvas.ImageServer.Model
         {
 
         }
-        
+
         public WorkQueueProcessDuplicateSop(WorkQueue workQueue)
         {
             this.SetKey(workQueue.GetKey());
@@ -111,6 +80,7 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+
         public ProcessDuplicateQueueEntryQueueData QueueData
         {
             get { return _queueData; }
@@ -136,7 +106,4 @@ namespace ClearCanvas.ImageServer.Model
         }
         #endregion
     }
-
-    
-        
 }

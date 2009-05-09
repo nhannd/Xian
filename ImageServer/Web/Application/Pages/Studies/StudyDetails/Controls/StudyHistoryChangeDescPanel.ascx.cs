@@ -67,12 +67,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Studies.StudyDetails.Con
             base.DataBind();
         } 
 
-        private IStudyHistoryColumnControlFactory GetColumnControlFactory(StudyHistory record)
+        private static IStudyHistoryColumnControlFactory GetColumnControlFactory(StudyHistory record)
         {
             if (record.StudyHistoryTypeEnum == StudyHistoryTypeEnum.StudyReconciled)
                 return new ReconcileStudyRendererFactory();
             else if (record.StudyHistoryTypeEnum == StudyHistoryTypeEnum.WebEdited)
                 return new StudyEditRendererFactory();
+            else if (record.StudyHistoryTypeEnum == StudyHistoryTypeEnum.Duplicate)
+                return new ProcessDuplicateChangeLogRendererFactory();
             else
                 return new DefaultStudyHistoryRendererFactory();
         }

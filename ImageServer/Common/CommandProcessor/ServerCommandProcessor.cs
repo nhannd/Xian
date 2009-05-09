@@ -72,9 +72,10 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private IUpdateContext _updateContext = null;
 		private Exception _exception;
         private ExecutionContext _executionContext;
-	    private bool _ownsContext;
+	    private bool _ownsExecContext;
+        private bool _ownsPersistenceContext;
 
-	    #endregion
+        #endregion
 
 		#region Constructors
 
@@ -88,6 +89,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		{
             
 		}
+
 
         private static ExecutionContext GetOrCreateCurrentExectionContext()
         {
@@ -181,7 +183,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 // No execution context assigned, create one for current thread
                 // This processor will be responsible for cleaning up this context
                 ExecutionContext = new ExecutionContext();
-                _ownsContext = true;
+                _ownsExecContext = true;
             }
 			
 			while (_queue.Count > 0)
@@ -196,9 +198,19 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 					if (dbCommand != null)
 					{
 						if (UpdateContext == null)
-							UpdateContext =
-								PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
-						dbCommand.UpdateContext = UpdateContext;
+						{
+                            if (ExecutionContext.PersistenceContext is IUpdateContext)
+                            {
+                                UpdateContext = ExecutionContext.PersistenceContext as IUpdateContext;
+                                _ownsPersistenceContext = false;
+                            }
+                            else
+                            {
+                                ExecutionContext.PersistenceContext = UpdateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
+                                _ownsPersistenceContext = true;
+                            }
+                        }
+					    dbCommand.UpdateContext = UpdateContext;
 					}
 
 					command.Execute();
@@ -224,11 +236,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 
 			}
 
-			if (UpdateContext != null)
+            if (UpdateContext != null && _ownsPersistenceContext)
 			{
 				UpdateContext.Commit();
 				UpdateContext.Dispose();
-				UpdateContext = null;
+                ExecutionContext.PersistenceContext = UpdateContext = null;
 			}
 
 			return true;
@@ -240,10 +252,10 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		/// </summary>
 		public void Rollback()
 		{
-			if (UpdateContext != null)
+            if (UpdateContext != null && _ownsPersistenceContext)
 			{
 				UpdateContext.Dispose(); // Rollback the db
-				UpdateContext = null;
+                ExecutionContext.PersistenceContext = UpdateContext = null;
 			}
 
 			while (_stack.Count > 0)
@@ -270,7 +282,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             // to ensure everything is cleaned up.
             try
             {
-                if (UpdateContext != null)
+                if (UpdateContext != null && _ownsPersistenceContext)
                 {
                     Rollback();
                 }
@@ -296,7 +308,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 }
             }
 
-            if (_ownsContext && ExecutionContext!=null)
+            if (_ownsExecContext && ExecutionContext!=null)
             {
                 ExecutionContext.Dispose();
             }

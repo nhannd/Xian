@@ -62,12 +62,12 @@
     <Compile Include="Diagnostics\RandomError.cs" />
     <Compile Include="Diagnostics\Settings.cs" />
     <Compile Include="EnumInfoAttribute.cs" />
+    <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="Helpers\DicomTagPath.cs" />
     <Compile Include="CommandProcessor\FileDeleteCommand.cs" />
     <Compile Include="CommandProcessor\InsertArchiveQueueCommand.cs" />
     <Compile Include="CommandProcessor\IServerCommand.cs" />
     <Compile Include="CommandProcessor\MoveDirectoryCommand.cs" />
-    <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="FilesystemSelector.cs" />
     <Compile Include="Helpers\StorageHelper.cs" />
     <Compile Include="Helpers\StudyComparer.cs" />

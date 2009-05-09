@@ -34,9 +34,9 @@ using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using AjaxControlToolkit;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Web.Application.Helpers;
-using ClearCanvas.ImageServer.Web.Common.Data;
 using ClearCanvas.ImageServer.Web.Common.Data.DataSource;
 using ClearCanvas.ImageServer.Web.Common.WebControls.UI;
 using AuthorityTokens=ClearCanvas.ImageServer.Enterprise.Authentication.AuthorityTokens;
@@ -59,10 +59,14 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         private Default _enclosingPage;
         #endregion Private Members
 
-        #region Static Class Initializer
+        #region Events
 
+        /// <summary>
+        /// Occurs when the queue is refreshed because user clicked on the Search button.
+        /// </summary>
+        public event EventHandler<EventArgs> Search;
 
-        #endregion Static Class Initializer
+        #endregion
 
         #region Public Properties
 
@@ -196,6 +200,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.WorkQueue
         protected void SearchButton_Click(object sender, ImageClickEventArgs e)
         {
             workQueueItemList.Refresh();
+
+            EventsHelper.Fire(Search, this, EventArgs.Empty);
         }
 
         protected void Page_Load(object sender, EventArgs e)

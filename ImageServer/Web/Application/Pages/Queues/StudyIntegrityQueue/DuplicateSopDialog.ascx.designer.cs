@@ -425,13 +425,31 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         protected global::System.Web.UI.WebControls.Table OptionTable;
         
         /// <summary>
-        /// ReplaceExistingSopRadioButton control.
+        /// UseExistingSopRadioButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.RadioButton ReplaceExistingSopRadioButton;
+        protected global::System.Web.UI.WebControls.RadioButton UseExistingSopRadioButton;
+        
+        /// <summary>
+        /// UseDuplicateRadioButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton UseDuplicateRadioButton;
+        
+        /// <summary>
+        /// ReplaceAsIsRadioButton control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RadioButton ReplaceAsIsRadioButton;
         
         /// <summary>
         /// DeleteDuplicateRadioButton control.
@@ -441,6 +459,33 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RadioButton DeleteDuplicateRadioButton;
+        
+        /// <summary>
+        /// OverwritewWarningPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TableRow OverwritewWarningPanel;
+        
+        /// <summary>
+        /// UseExistingWarningPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel UseExistingWarningPanel;
+        
+        /// <summary>
+        /// UseDuplicateWarningPanel control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Panel UseDuplicateWarningPanel;
         
         /// <summary>
         /// DetailsTab control.
