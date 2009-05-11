@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Web.Application
         protected void Page_Load(object sender, EventArgs e)
         {
             string defaultHomePageUrl = UserProfile.GetDefaultUrl();
-            if (defaultHomePageUrl != null)
+            if (defaultHomePageUrl == null)
             {
                 Response.Redirect(ImageServerConstants.PageURLs.SearchPage);
             }
