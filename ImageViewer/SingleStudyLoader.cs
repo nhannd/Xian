@@ -41,13 +41,15 @@ namespace ClearCanvas.ImageViewer
 	{
 		internal class SingleStudyLoader : IDisposable
 		{
+			private readonly ImageViewerComponent _viewer;
 			private readonly LoadStudyArgs _args;
 			private readonly List<Sop> _sops;
 			private int _total;
 			private int _failed;
 
-			public SingleStudyLoader(LoadStudyArgs args)
+			public SingleStudyLoader(ImageViewerComponent viewer, LoadStudyArgs args)
 			{
+				_viewer = viewer;
 				_args = args;
 				_sops = new List<Sop>();
 				_total = 0;
@@ -64,15 +66,16 @@ namespace ClearCanvas.ImageViewer
 				get { return _failed; }
 			}
 
-			public void LoadStudy(ImageViewerComponent viewer)
+			public void LoadStudy()
 			{
-				LoadSops(viewer.StudyLoaders);
-				AddSops(viewer);
+				LoadSops();
+				AddSops();
 			}
 
-			public void LoadSops(StudyLoaderMap studyLoaders)
+			public void LoadSops()
 			{
-				IStudyLoader studyLoader = studyLoaders[_args.StudyLoaderName];
+				//Use a new loader in case this call is asynchronous, we don't want to use the viewer's instance.
+				IStudyLoader studyLoader = new StudyLoaderMap()[_args.StudyLoaderName];
 
 				int total;
 				try
@@ -133,7 +136,7 @@ namespace ClearCanvas.ImageViewer
 				}
 			}
 
-			public void AddSops(ImageViewerComponent viewer)
+			public void AddSops()
 			{
 				if (_sops.Count == 0)
 					return;
@@ -144,7 +147,7 @@ namespace ClearCanvas.ImageViewer
 				{
 					try
 					{
-						viewer.StudyTree.AddSop(sop);
+						_viewer.StudyTree.AddSop(sop);
 					}
 					catch(SopValidationException e)
 					{
@@ -161,15 +164,15 @@ namespace ClearCanvas.ImageViewer
 					++_total;
 				}
 
-				Study study = viewer.StudyTree.GetStudy(_args.StudyInstanceUid);
+				Study study = _viewer.StudyTree.GetStudy(_args.StudyInstanceUid);
 				if (study != null)
-					viewer.EventBroker.OnStudyLoaded(new ItemEventArgs<Study>(study));
+					_viewer.EventBroker.OnStudyLoaded(new ItemEventArgs<Study>(study));
 
 				VerifyLoad(Total, Failed);
 
-				IPrefetchingStrategy prefetchingStrategy = viewer.StudyLoaders[_args.StudyLoaderName].PrefetchingStrategy;
+				IPrefetchingStrategy prefetchingStrategy = _viewer.StudyLoaders[_args.StudyLoaderName].PrefetchingStrategy;
 				if (prefetchingStrategy != null)
-					prefetchingStrategy.Start(viewer);
+					prefetchingStrategy.Start(_viewer);
 			}
 
 			#region IDisposable Members

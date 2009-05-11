@@ -197,7 +197,7 @@ namespace ClearCanvas.ImageViewer
 		/// you may override this method.  The following formatting is used to determine the property values:
 		/// <para>
 		/// The format of the <see cref="IImageSet.PatientInfo"/> property is 
-		/// <b>PatientsName(from <see cref="PersonName.FormattedName"/>) � PatientId</b>; for example <b>Doe, John 123</b>.
+		/// <b>PatientsName(from <see cref="PersonName.FormattedName"/>) · PatientId</b>; for example <b>Doe, John 123</b>.
 		/// </para>
 		/// <para>
 		/// The format of the <see cref="IImageSet.Name"/> property is 

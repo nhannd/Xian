@@ -37,7 +37,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Trees;
-using System.Threading;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Thumbnails
@@ -159,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 
 		private void UpdateTitle()
 		{
-			if (_activeViewer != null && _activeViewer.IsLoadingPriors)
+			if (_activeViewer != null && _activeViewer.PriorStudyLoader.IsActive)
 				base.Host.Title = SR.TitleThumbnailsLoadingPriors;
 			else
 				base.Host.Title = SR.TitleThumbnails;
@@ -244,12 +243,12 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 				return;
 
 			if (_activeViewer != null)
-				_activeViewer.IsLoadingPriorsChanged -= OnLoadingPriorsChanged;
+				_activeViewer.PriorStudyLoader.IsActiveChanged -= OnLoadingPriorsChanged;
 
 			_activeViewer = viewer;
 
 			if (_activeViewer != null)
-				_activeViewer.IsLoadingPriorsChanged += OnLoadingPriorsChanged;
+				_activeViewer.PriorStudyLoader.IsActiveChanged += OnLoadingPriorsChanged;
 
 			UpdateTitle();
 		}
@@ -330,6 +329,6 @@ namespace ClearCanvas.ImageViewer.Thumbnails
 			return null;
 		}
 
-#endregion
+		#endregion
 	}
 }

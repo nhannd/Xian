@@ -58,16 +58,28 @@ namespace ClearCanvas.ImageViewer
 		public readonly int TotalQueryResults;
 	}
 
+	public interface IPriorStudyLoader
+	{
+		bool IsActive { get; }
+		event EventHandler IsActiveChanged;
+
+		event EventHandler<ItemEventArgs<StudyItem>> LoadPriorStudyFailed;
+
+		//TODO: keep running stats of failed studies?
+		void Start();
+		void Stop();
+	}
+
 	public partial class ImageViewerComponent
 	{
-		private class PriorStudyLoader
+		internal class AsyncPriorStudyLoader : IPriorStudyLoader
 		{
 			private readonly ImageViewerComponent _imageViewer;
-			private readonly StudyLoaderMap _studyLoaders;
 			private readonly List<SingleStudyLoader> _singleStudyLoaders;
 
 			private volatile bool _isActive = false;
 			private event EventHandler _isActiveChanged;
+			event EventHandler<ItemEventArgs<StudyItem>> _loadPriorStudyFailed;
 
 			private volatile bool _stop = false;
 
@@ -79,10 +91,9 @@ namespace ClearCanvas.ImageViewer
 			private volatile bool _findFailed = false;
 			private volatile int _noStudyLoaderFailures = 0;
 
-			public PriorStudyLoader(ImageViewerComponent imageViewer, IPriorStudyFinder priorStudyFinder)
+			public AsyncPriorStudyLoader(ImageViewerComponent imageViewer, IPriorStudyFinder priorStudyFinder)
 			{
 				_imageViewer = imageViewer;
-				_studyLoaders = new StudyLoaderMap();
 				_singleStudyLoaders = new List<SingleStudyLoader>();
 				_priorStudyFinder = priorStudyFinder;
 				_priorStudyFinder.SetImageViewer(_imageViewer);
@@ -103,8 +114,14 @@ namespace ClearCanvas.ImageViewer
 
 			public event EventHandler IsActiveChanged
 			{
-				add { _isActiveChanged += value; }	
-				remove { _isActiveChanged -= value; }	
+				add { _isActiveChanged += value; }
+				remove { _isActiveChanged -= value; }
+			}
+
+			public event EventHandler<ItemEventArgs<StudyItem>> LoadPriorStudyFailed
+			{
+				add { _loadPriorStudyFailed += value; }
+				remove { _loadPriorStudyFailed -= value; }
 			}
 
 			public void Start()
@@ -139,7 +156,7 @@ namespace ClearCanvas.ImageViewer
 				{
 					FindAndAddPriors();
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					Platform.Log(LogLevel.Error, e, "An unexpected error has occurred while finding/adding prior studies.");
 				}
@@ -157,7 +174,7 @@ namespace ClearCanvas.ImageViewer
 					if (_queryResults == null || _queryResults.Count == 0)
 						return;
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					_queryResults = new StudyItemList();
 					_findFailed = true;
@@ -173,24 +190,44 @@ namespace ClearCanvas.ImageViewer
 					try
 					{
 						LoadStudyArgs loadStudyArgs = new LoadStudyArgs(result);
-						SingleStudyLoader loader = new SingleStudyLoader(loadStudyArgs);
+						SingleStudyLoader loader = new SingleStudyLoader(_imageViewer, loadStudyArgs);
 						_singleStudyLoaders.Add(loader);
-						loader.LoadSops(_studyLoaders);
-						_synchronizationContext.Post(AddSops, loader);
+						loader.LoadSops();
+						OnSopsLoaded(loader);
 					}
-					catch(StudyLoaderNotFoundException ex)
+					catch (StudyLoaderNotFoundException ex)
 					{
 						++_noStudyLoaderFailures;
 
 						Platform.Log(LogLevel.Error, ex, "Failed to load prior study '{0}'; study loader '{1}' does not exist.",
-							result.StudyInstanceUID, result.StudyLoaderName);
+									 result.StudyInstanceUID, result.StudyLoaderName);
+
+						OnLoadPriorStudyFailed(result);
 					}
-					catch(Exception e)
+					catch (Exception e)
 					{
 						Platform.Log(LogLevel.Error, e, "Failed to load prior study '{0}' from study loader '{1}'.",
-							result.StudyInstanceUID, result.StudyLoaderName);
+									 result.StudyInstanceUID, result.StudyLoaderName);
+
+						OnLoadPriorStudyFailed(result);
 					}
 				}
+			}
+
+			private void OnSopsLoaded(SingleStudyLoader loader)
+			{
+				_synchronizationContext.Post(AddSops, loader);
+			}
+
+			private void OnLoadPriorStudyFailed(StudyItem result)
+			{
+				_synchronizationContext.Post(OnLoadPriorStudyFailed, result);
+			}
+
+			private void OnLoadPriorStudyFailed(object theStudyItem)
+			{
+				if (!_stop)
+					EventsHelper.Fire(_loadPriorStudyFailed, this, new ItemEventArgs<StudyItem>((StudyItem)theStudyItem));
 			}
 
 			private void AddSops(object theLoader)
@@ -198,7 +235,7 @@ namespace ClearCanvas.ImageViewer
 				SingleStudyLoader loader = (SingleStudyLoader)theLoader;
 				if (!_stop)
 				{
-					loader.AddSops(_imageViewer);
+					loader.AddSops();
 				}
 			}
 
@@ -217,7 +254,7 @@ namespace ClearCanvas.ImageViewer
 				{
 					VerifyLoadPriors(completeFailures, partialFailures);
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
 				}

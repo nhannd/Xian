@@ -70,6 +70,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			requestCollection[DicomTags.AccessionNumber].SetStringValue(queryParams["AccessionNumber"]);
 			requestCollection[DicomTags.PatientsName].SetStringValue(queryParams["PatientsName"]);
 			requestCollection[DicomTags.StudyDate].SetStringValue(queryParams["StudyDate"]);
+			requestCollection[DicomTags.StudyTime].SetStringValue("");
 			requestCollection[DicomTags.StudyDescription].SetStringValue(queryParams["StudyDescription"]);
 			requestCollection[DicomTags.PatientsBirthDate].SetStringValue("");
 			requestCollection[DicomTags.ModalitiesInStudy].SetStringValue(queryParams["ModalitiesInStudy"]);

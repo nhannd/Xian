@@ -203,6 +203,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         }
 
 		/// <summary>
+		/// Gets or sets the study time.
+		/// </summary>
+		public string StudyTime
+		{
+			get { return _studyTime; }
+			set { _studyTime = value; }
+		}
+	
+		/// <summary>
 		/// Gets or sets the patient ID.
 		/// </summary>
 		public string PatientId
@@ -296,6 +305,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         private string _accessionNumber;
         private string _studyDescription;
         private string _studyDate;
+		private string _studyTime;
         private string _studyInstanceUID;
         private string _studyLoaderName;
         private string _modalitiesInStudy;

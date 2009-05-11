@@ -36,6 +36,7 @@ using ClearCanvas.ImageViewer.Configuration;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using System.ServiceModel;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyLocator
 {
@@ -193,16 +194,23 @@ namespace ClearCanvas.ImageViewer.StudyLocator
 
 			string localAE = ServerTree.GetClientAETitle();
 
-			ServerTree serverTree = new ServerTree();
-			foreach (Server server in DefaultServers.SelectFrom(serverTree))
+			List<Server> defaultServers = DefaultServers.SelectFrom(new ServerTree());
+			List<Server> streamingServers = CollectionUtils.Select(defaultServers, 
+				delegate(Server server) { return server.IsStreaming; });
+
+			List<Server> nonStreamingServers = CollectionUtils.Select(defaultServers,
+				delegate(Server server) { return !server.IsStreaming; });
+
+			foreach (Server server in streamingServers)
 			{
-				if (server.IsServer)
-				{
-					Server dicomServer = (Server) server;
-					DicomStudyRootQuery remoteQuery = 
-						new DicomStudyRootQuery(localAE, dicomServer.AETitle, dicomServer.Host, dicomServer.Port);
-					yield return remoteQuery;
-				}
+				DicomStudyRootQuery remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.Host, server.Port);
+				yield return remoteQuery;
+			}
+
+			foreach (Server server in nonStreamingServers)
+			{
+				DicomStudyRootQuery remoteQuery = new DicomStudyRootQuery(localAE, server.AETitle, server.Host, server.Port);
+				yield return remoteQuery;
 			}
 		}
 	}

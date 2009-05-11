@@ -179,7 +179,7 @@ namespace ClearCanvas.ImageViewer
 		private ViewerShortcutManager _shortcutManager;
 		private ToolSet _toolSet;
 		private ILayoutManager _layoutManager;
-		private PriorStudyLoader _priorStudyLoader;
+		private AsyncPriorStudyLoader _priorStudyLoader;
 
 		private static readonly StudyFinderMap _studyFinders = new StudyFinderMap();
 		private readonly StudyLoaderMap _studyLoaders = new StudyLoaderMap();
@@ -234,10 +234,10 @@ namespace ClearCanvas.ImageViewer
 		public ImageViewerComponent(ILayoutManager layoutManager, IPriorStudyFinder priorStudyFinder)
 		{
 			Platform.CheckForNullReference(layoutManager, "layoutManager");
+			_priorStudyLoader = new AsyncPriorStudyLoader(this, priorStudyFinder ?? PriorStudyFinder.Null);
+
 			_layoutManager = layoutManager;
 			_layoutManager.SetImageViewer(this);
-
-			_priorStudyLoader = new PriorStudyLoader(this, priorStudyFinder ?? PriorStudyFinder.Null);
 		}
 
 		private static IPriorStudyFinder CreatePriorStudyFinder()
@@ -463,15 +463,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		public bool IsLoadingPriors
+		public IPriorStudyLoader PriorStudyLoader
 		{
-			get { return _priorStudyLoader.IsActive; }
-		}
-
-		public event EventHandler IsLoadingPriorsChanged
-		{
-			add { _priorStudyLoader.IsActiveChanged += value; }
-			remove { _priorStudyLoader.IsActiveChanged -= value; }
+			get { return _priorStudyLoader; }
 		}
 
 		/// <summary>
@@ -632,11 +626,11 @@ namespace ClearCanvas.ImageViewer
 		/// <exception cref="OpenStudyException">The study could not be opened.</exception>
 		public void LoadStudy(LoadStudyArgs loadStudyArgs)
 		{
-			using (SingleStudyLoader loader = new SingleStudyLoader(loadStudyArgs))
+			using (SingleStudyLoader loader = new SingleStudyLoader(this, loadStudyArgs))
 			{
 				try
 				{
-					loader.LoadStudy(this);
+					loader.LoadStudy();
 				}
 				catch(StudyLoaderNotFoundException e)
 				{

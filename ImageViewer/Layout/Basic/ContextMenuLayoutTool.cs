@@ -33,14 +33,92 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom.Utilities;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.Common.Utilities;
 using System.Diagnostics;
 using ClearCanvas.ImageViewer.Common;
 using ClearCanvas.ImageViewer.Comparers;
+using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
+	internal class UnavailableImageSet : ImageSet
+	{
+		public UnavailableImageSet(StudyItem studyItem)
+		{
+			StudyItem = studyItem;
+		}
+
+		public readonly StudyItem StudyItem;
+	}
+
+	internal class StudyDateComparer : ImageSetComparer
+	{
+		public StudyDateComparer()
+			: base(true)
+		{
+		}
+
+		private static DateTime? GetStudyDate(IImageSet imageSet)
+		{
+			if (imageSet is UnavailableImageSet)
+			{
+				return DateParser.Parse(((UnavailableImageSet) imageSet).StudyItem.StudyDate);
+			}
+			else
+			{
+				if (imageSet.DisplaySets.Count > 0)
+				{
+					IDisplaySet displaySet = imageSet.DisplaySets[0];
+					if (displaySet.PresentationImages.Count > 0)
+					{
+						IPresentationImage image = displaySet.PresentationImages[0];
+						if (image is IImageSopProvider)
+							return DateParser.Parse(((IImageSopProvider) image).ImageSop.StudyDate);
+					}
+				}
+			}
+
+			return null;
+		}
+
+		private static DateTime? GetStudyTime(IImageSet imageSet)
+		{
+			if (imageSet is UnavailableImageSet)
+			{
+				return TimeParser.Parse(((UnavailableImageSet)imageSet).StudyItem.StudyTime);
+			}
+			else
+			{
+				if (imageSet.DisplaySets.Count > 0)
+				{
+					IDisplaySet displaySet = imageSet.DisplaySets[0];
+					if (displaySet.PresentationImages.Count > 0)
+					{
+						IPresentationImage image = displaySet.PresentationImages[0];
+						if (image is IImageSopProvider)
+							return TimeParser.Parse(((IImageSopProvider)image).ImageSop.StudyTime);
+					}
+				}
+			}
+
+			return null;
+		}
+
+		private static IEnumerable<IComparable> GetCompareValues(IImageSet imageSet)
+		{
+			yield return GetStudyDate(imageSet);
+			yield return GetStudyTime(imageSet);
+		}
+
+		public override int Compare(IImageSet x, IImageSet y)
+		{
+			return base.Compare(GetCompareValues(x), GetCompareValues(y));
+		}
+	}
+
     /// <summary>
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
     /// it so that it reflects the state of the active workspace.
@@ -53,7 +131,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
     	private List<string> _currentPathElements;
 		private int _actionNumber = 0;
     	private bool _showImageSetNames = false;
-		private IComparer<IImageSet> _comparer = new StudyDateComparer();
+    	private bool _anyUnavailable = false;
+		private readonly IComparer<IImageSet> _comparer = new StudyDateComparer();
 
 		/// <summary>
         /// Constructor
@@ -73,16 +152,51 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public override void Initialize()
         {
             base.Initialize();
+			base.ImageViewer.PriorStudyLoader.LoadPriorStudyFailed += OnLoadPriorStudyFailed;
 			_imageSetGroups = new ImageSetGroups(base.Context.Viewer.LogicalWorkspace.ImageSets);
 		}
 
 		protected override void Dispose(bool disposing)
 		{
+			base.ImageViewer.PriorStudyLoader.LoadPriorStudyFailed -= OnLoadPriorStudyFailed;
 			_imageSetGroups.Dispose();
 			base.Dispose(disposing);
 		}
 
-		/// <summary>
+		private void OnLoadPriorStudyFailed(object sender, ItemEventArgs<StudyItem> e)
+		{
+			_anyUnavailable = true;	
+
+			//artificially add to the image set groups.
+			_imageSetGroups.Root.Add(CreateUnavailableImageSet(e.Item));
+		}
+
+		private static UnavailableImageSet CreateUnavailableImageSet(StudyItem study)
+		{
+			UnavailableImageSet imageSet = new UnavailableImageSet(study);
+
+			DateTime studyDate;
+			DateParser.Parse(study.StudyDate, out studyDate);
+			DateTime studyTime;
+			TimeParser.Parse(study.StudyTime, out studyTime);
+
+			string modalitiesInStudy = (study.ModalitiesInStudy ?? "").Replace("\\", ",");
+
+			imageSet.Name = String.Format("{0} {1} [{2}] {3}",
+				studyDate.ToString(Format.DateFormat),
+				studyTime.ToString(Format.TimeFormat),
+				modalitiesInStudy ?? "",
+				study.StudyDescription);
+
+			imageSet.PatientInfo = String.Format("{0} · {1}",
+				study.PatientsName.FormattedName,
+				study.PatientId);
+
+			imageSet.Uid = study.StudyInstanceUID;
+			return imageSet;
+		}
+
+    	/// <summary>
 		/// Gets an array of <see cref="IAction"/> objects that allow selection of specific display
 		/// sets for display in the currently selected image box.
 		/// </summary>
@@ -99,9 +213,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			FilteredGroup<IImageSet> rootGroup = GetRootGroup();
 			if (rootGroup != null)
 			{
-				_showImageSetNames = base.ImageViewer.LogicalWorkspace.ImageSets.Count > 1;
+				_showImageSetNames = base.ImageViewer.LogicalWorkspace.ImageSets.Count > 1 || _anyUnavailable;
 				
-				foreach (FilteredGroup<IImageSet> group in TraverseNonEmptyGroups(rootGroup))
+				foreach (FilteredGroup<IImageSet> group in TraverseImageSetGroups(rootGroup))
 				{
 					string basePath = StringUtilities.Combine(_currentPathElements, "/");
 
@@ -113,18 +227,37 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					{
 						string imageSetPath;
 						if (_showImageSetNames)
-							imageSetPath = String.Format("{0}/{1}", basePath, imageSet.Name.Replace("/", "-"));
+						{
+							if (imageSet is UnavailableImageSet)
+							{
+								UnavailableImageSet unavailable = (UnavailableImageSet) imageSet;
+								imageSetPath = String.Format("{0}/({1}) {2}", basePath,
+									unavailable.StudyItem.Server ?? SR.MessageUnavailable, imageSet.Name.Replace("/", "-"));
+							}
+							else
+							{
+								imageSetPath = String.Format("{0}/{1}", basePath, imageSet.Name.Replace("/", "-"));
+							}
+						}
 						else
 							imageSetPath = basePath;
 
-						foreach (IDisplaySet displaySet in imageSet.DisplaySets)
+						if (imageSet is UnavailableImageSet)
 						{
-							actions.Add(CreateDisplaySetAction(imageSetPath, displaySet));
+							actions.Add(CreateUnavailableStudyAction(imageSetPath, (UnavailableImageSet)imageSet));
 							++_actionNumber;
+						}
+						else
+						{
+							foreach (IDisplaySet displaySet in imageSet.DisplaySets)
+							{
+								actions.Add(CreateDisplaySetAction(imageSetPath, displaySet));
+								++_actionNumber;
+							}
 						}
 					}
 
-					if (group.Items.Count > 0 && base.ImageViewer.IsLoadingPriors)
+					if (group.Items.Count > 0 && base.ImageViewer.PriorStudyLoader.IsActive)
 					{
 						actions.Add(CreateLoadingPriorsAction(basePath));
 						++_actionNumber;
@@ -135,7 +268,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			return new ActionSet(actions);
 		}
 
-		private IEnumerable<FilteredGroup<IImageSet>> TraverseNonEmptyGroups(FilteredGroup<IImageSet> group)
+		private IEnumerable<FilteredGroup<IImageSet>> TraverseImageSetGroups(FilteredGroup<IImageSet> group)
 		{
 			List<IImageSet> allItems = group.GetAllItems();
 			if (allItems.Count != 0)
@@ -150,7 +283,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			foreach (FilteredGroup<IImageSet> child in group.ChildGroups)
 			{
-				foreach (FilteredGroup<IImageSet> nonEmptyChild in TraverseNonEmptyGroups(child))
+				foreach (FilteredGroup<IImageSet> nonEmptyChild in TraverseImageSetGroups(child))
 					yield return nonEmptyChild;
 			}
 
@@ -200,6 +333,23 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			return action;
 		}
 
+		private IClickAction CreateUnavailableStudyAction(string basePath, UnavailableImageSet imageSet)
+		{
+			string pathString = String.Format("{0}/display{1}", basePath, _actionNumber);
+			Trace.WriteLine(String.Format("Path: {0}", pathString));
+
+			ActionPath path = new ActionPath(pathString, null);
+			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, _actionNumber), path, ClickActionFlags.CheckParents, null);
+			action.GroupHint = new GroupHint("DisplaySets");
+			action.Label = SR.MessageStudyUnavailable;
+			action.SetClickHandler(delegate
+			                       	{
+			                       		this.Context.DesktopWindow.ShowMessageBox(SR.MessageTheStudyMustBeRetrieved,
+			                       		                                          MessageBoxActions.Ok);
+			                       	});
+
+			return action;
+		}
     	/// <summary>
 		/// Creates an <see cref="IClickAction"/> that displays the specified display set when clicked.  The index
 		/// parameter is used to generate a label for the action.

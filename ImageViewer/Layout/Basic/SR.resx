@@ -177,6 +177,15 @@
   <data name="MessageFailedToLoadAnyPriors" xml:space="preserve">
     <value>The search for prior studies has failed.  Try reopening the study or select a different default server.</value>
   </data>
+  <data name="MessageStudyUnavailable" xml:space="preserve">
+    <value>Study Not Available</value>
+  </data>
+  <data name="MessageTheStudyMustBeRetrieved" xml:space="preserve">
+    <value>The selected study is on a non-streaming server and must be retrieved to the local machine in order to view it.</value>
+  </data>
+  <data name="MessageUnavailable" xml:space="preserve">
+    <value>Unavailable</value>
+  </data>
   <data name="MessageUnexpectedPriorLoadFailure" xml:space="preserve">
     <value>An unexpected error has occurred while loading prior studies.  Please check the logs for more details.</value>
   </data>

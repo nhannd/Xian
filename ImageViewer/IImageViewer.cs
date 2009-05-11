@@ -103,10 +103,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>		
 		string PatientsLoadedLabel { get; }
 
-		bool IsLoadingPriors { get; }
+		IPriorStudyLoader PriorStudyLoader { get; }
 
-		event EventHandler IsLoadingPriorsChanged;
-		
 		/// <summary>
 		/// Loads a study with a specific Study Instance UID from a specific source.
 		/// </summary>
