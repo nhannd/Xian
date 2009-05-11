@@ -70,9 +70,7 @@ namespace ClearCanvas.ImageServer.Web.Common.WebControls.Validators
 
             IList<ServerPartition> list = controller.GetPartitions(criteria);
 
-            //Check for case. If the list returns a result, but the title doesn't match, that 
-            //means that the case doesn't match and the title can be used.
-            if (list.Count > 0 && OriginalAeTitle.Equals(aeTitle))
+            if (list.Count > 0)
             {
                 ErrorMessage = String.Format("AE Title '{0}' is already in use", aeTitle);
                 return false;

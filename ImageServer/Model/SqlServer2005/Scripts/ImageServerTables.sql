@@ -60,7 +60,7 @@ CREATE TABLE [dbo].[ServerPartition](
 	[GUID] [uniqueidentifier] ROWGUIDCOL  NOT NULL CONSTRAINT [DF_ServerPartition_GUID]  DEFAULT (newid()),
 	[Enabled] [bit] NOT NULL,
 	[Description] [nvarchar](128) NOT NULL,
-	[AeTitle] [varchar](16) NOT NULL,
+	[AeTitle] [varchar](16) COLLATE Latin1_General_CS_AS NOT NULL,
 	[Port] [int] NOT NULL,
 	[PartitionFolder] [nvarchar](16) NOT NULL,
 	[AcceptAnyDevice] [bit] NOT NULL CONSTRAINT [DF_ServerPartition_AcceptAnyDevice]  DEFAULT ((1)),
