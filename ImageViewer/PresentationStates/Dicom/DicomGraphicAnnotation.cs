@@ -352,7 +352,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 		private class DicomGraphicAnnotationSerializer : GraphicAnnotationSerializer<DicomGraphicAnnotation>
 		{
-			protected override void Serialize(DicomGraphicAnnotation graphic, GraphicAnnotationSequenceItem serializationState) {}
+			protected override void Serialize(DicomGraphicAnnotation graphic, GraphicAnnotationSequenceItem serializationState)
+			{
+				foreach (IGraphic subgraphic in graphic.Graphics)
+					SerializeGraphic(subgraphic, serializationState);
+			}
 		}
 	}
 }
