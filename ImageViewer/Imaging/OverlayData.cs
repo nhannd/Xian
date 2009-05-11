@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public static OverlayData FromPixelData(bool bigEndianWords, GrayscalePixelData pixelData)
 		{
 			int minBytesNeeded = (int)Math.Ceiling(pixelData.Rows*pixelData.Columns/8d);
-			if (bigEndianWords && minBytesNeeded % 2 == 1)
+			if (minBytesNeeded % 2 == 1)
 				minBytesNeeded++;
 			byte[] packedOverlayData = new byte[minBytesNeeded];
 			uint mask = (uint) ((1 << pixelData.BitsStored) - 1) << (pixelData.BitsAllocated - pixelData.HighBit - 1);
