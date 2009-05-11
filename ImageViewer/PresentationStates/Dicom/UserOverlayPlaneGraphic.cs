@@ -16,6 +16,11 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			_columns = columns;
 		}
 
+		/// <summary>
+		/// Cloning constructor.
+		/// </summary>
+		protected UserOverlayPlaneGraphic() : base() {}
+
 		public new string Label
 		{
 			get { return base.Label; }

@@ -185,11 +185,19 @@ namespace ClearCanvas.ImageViewer.Tools.Reporting.KeyImages
 			if (!Enabled)
 				return;
 
-			IPresentationImage image = Context.Viewer.SelectedPresentationImage;
-			if (image != null)
+			try
 			{
-				KeyImageClipboard.Add(image);
-				_flashOverlayController.Flash(image);
+				IPresentationImage image = Context.Viewer.SelectedPresentationImage;
+				if (image != null)
+				{
+					KeyImageClipboard.Add(image);
+					_flashOverlayController.Flash(image);
+				}
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(LogLevel.Error, ex, "Failed to add item to the key image clipboard.");
+				ExceptionHandler.Report(ex, base.Context.DesktopWindow);
 			}
 		}
 		

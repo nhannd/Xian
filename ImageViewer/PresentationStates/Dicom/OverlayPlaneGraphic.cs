@@ -166,7 +166,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		/// <summary>
 		/// Cloning constructor.
 		/// </summary>
-		private OverlayPlaneGraphic() {}
+		protected OverlayPlaneGraphic() {}
 
 		[OnCloneComplete]
 		private void OnCloneComplete()
@@ -204,9 +204,10 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			// NOTE: this determination is actually supposed to be based on the client display device
 			if (_color == null || _color.Value.IsEmpty)
 			{
-				_overlayGraphic.VoiLutManager.InstallLut(new OverlayVoiLut(_grayPresentationValue, 65535));
-				//Install a color map with the first value being transparent.
-				_overlayGraphic.ColorMapManager.InstallColorMap(new GrayscaleColorMap(_grayPresentationValue));
+				//Normalize the gray presentation value because our algorithms here don't work for presentation value=0
+				ushort normalizedGrayPresentationValue = Math.Max((ushort) 1, _grayPresentationValue);
+				_overlayGraphic.VoiLutManager.InstallLut(new OverlayVoiLut(normalizedGrayPresentationValue, 65535));
+				_overlayGraphic.ColorMapManager.InstallColorMap(new GrayscaleColorMap(normalizedGrayPresentationValue));
 			}
 			else
 			{
@@ -379,13 +380,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 
 			public override int this[int index]
 			{
-				get
-				{
-					//if (index <= 0)
-					//    return 0;
-					//return _presentationValue;
-					return (int) ((index/(float) _maxInputValue)*_presentationValue);
-				}
+				get { return (int) ((index/(float) _maxInputValue)*_presentationValue); }
 				protected set { throw new InvalidOperationException("This lut is not editable."); }
 			}
 

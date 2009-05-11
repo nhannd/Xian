@@ -823,7 +823,12 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 						dicomGraphicsPlane.ImageOverlays.ActivateAsShutter(overlayIndex);
 					}
 
-					// Some day, we will properly deserialize CIELab colours - until then, leave PresentationColor default black
+					// Some day, we will properly deserialize CIELab colours - until then, handle only a specified presentation value
+					if (shutter != null)
+					{
+						shutter.PresentationColor = Color.Empty;
+						shutter.PresentationValue = bitmapDisplayShutterModule.ShutterPresentationValue ?? 0;
+					}
 				}
 			}
 		}

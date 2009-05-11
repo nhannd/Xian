@@ -45,6 +45,9 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		private readonly OverlaysCollection _presentationOverlays;
 
 		[CloneIgnore]
+		private readonly UserOverlaysCollection _userOverlays;
+
+		[CloneIgnore]
 		private ShutterCollection _shutter;
 
 		[CloneIgnore]
@@ -54,6 +57,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		{
 			_imageOverlays = new OverlaysCollection(this);
 			_presentationOverlays = new OverlaysCollection(this);
+			_userOverlays = new UserOverlaysCollection(this);
 
 			base.Graphics.Add(_shutter = new ShutterCollection());
 			base.Graphics.Add(_layers = new LayerCollection());
@@ -62,6 +66,20 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		[OnCloneComplete]
 		private void OnCloneComplete()
 		{
+			if (_shutter != null)
+			{
+				base.Graphics.Remove(_shutter);
+				_shutter.Dispose();
+				_shutter = null;
+			}
+
+			if (_layers != null)
+			{
+				base.Graphics.Remove(_layers);
+				_layers.Dispose();
+				_layers = null;
+			}
+
 			_shutter = (ShutterCollection) CollectionUtils.SelectFirst(base.Graphics, IsType<ShutterCollection>);
 			_layers = (LayerCollection) CollectionUtils.SelectFirst(base.Graphics, IsType<LayerCollection>);
 
@@ -78,16 +96,21 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 					_imageOverlays.Add(overlay);
 				else if (overlay.Source == OverlayPlaneSource.PresentationState)
 					_presentationOverlays.Add(overlay);
-				// TODO: handle case for user-created overlays, when we actually support creating such
+				else
+					_userOverlays.Add(overlay);
 			}
 		}
 
+		/// <summary>
+		/// Clears all graphics from the DICOM graphics plane.
+		/// </summary>
 		public void Clear()
 		{
-			this.Shutters.Clear();
-			this.Layers.Clear();
-			this.ImageOverlays.Clear();
-			this.PresentationOverlays.Clear();
+			_shutter.Clear();
+			_layers.Clear();
+			_imageOverlays.Clear();
+			_presentationOverlays.Clear();
+			_userOverlays.Clear();
 		}
 
 		/// <summary>
@@ -122,11 +145,35 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 			get { return _presentationOverlays; }
 		}
 
+		/// <summary>
+		/// Gets a collection of existing user-created overlays.
+		/// </summary>
+		public IDicomGraphicsPlaneOverlays UserOverlays
+		{
+			get { return _userOverlays; }
+		}
+
 		private static bool IsType<T>(object test)
 		{
 			return test is T;
 		}
 
+		/// <summary>
+		/// Gets the DICOM graphics plane of the specified DICOM presentation image, creating the plane if necessary.
+		/// </summary>
+		/// <param name="dicomPresentationImage">The target DICOM presentation image.</param>
+		/// <returns>The DICOM graphics plane associated with the specified presentation image.</returns>
+		public static DicomGraphicsPlane GetDicomGraphicsPlane(IDicomPresentationImage dicomPresentationImage)
+		{
+			return GetDicomGraphicsPlane(dicomPresentationImage, true);
+		}
+
+		/// <summary>
+		/// Gets the DICOM graphics plane of the specified DICOM presentation image.
+		/// </summary>
+		/// <param name="dicomPresentationImage">The target DICOM presentation image.</param>
+		/// <param name="createIfNecessary">A value indicating if a DICOM graphics plane should be automatically created and associated with the presentation image.</param>
+		/// <returns>The DICOM graphics plane associated with the specified presentation image, or null if one doesn't exist and was not created.</returns>
 		public static DicomGraphicsPlane GetDicomGraphicsPlane(IDicomPresentationImage dicomPresentationImage, bool createIfNecessary)
 		{
 			if (dicomPresentationImage == null)
