@@ -321,6 +321,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					imageViewer = null;
 				}
 			}
+			catch(Exception e)
+			{
+				ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
+				imageViewer.Dispose();
+				imageViewer = null;
+			}
 
 			return imageViewer;
 		}
@@ -345,6 +351,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					// Study failed to load completely; keep track of how many
 					// images in the study actually did load
 					successfulImagesInLoadFailure += e.SuccessfulImages;
+					ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
+				}
+				catch(Exception e)
+				{
 					ExceptionHandler.Report(e, Application.ActiveDesktopWindow);
 				}
 			}

@@ -628,15 +628,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			using (SingleStudyLoader loader = new SingleStudyLoader(this, loadStudyArgs))
 			{
-				try
-				{
-					loader.LoadStudy();
-				}
-				catch(StudyLoaderNotFoundException e)
-				{
-					string message = String.Format("Study loader '{0}' was not found.", loadStudyArgs.StudyLoaderName);
-					throw new OpenStudyException(message, e);
-				}
+				loader.LoadStudy();
 			}
 		}
 

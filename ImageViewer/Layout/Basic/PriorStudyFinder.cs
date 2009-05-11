@@ -194,6 +194,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			item.PatientsName = new PersonName(study.PatientsName);
 			item.SpecificCharacterSet = study.SpecificCharacterSet;
 			item.StudyDate = study.StudyDate;
+			item.StudyTime = study.StudyTime;
 			item.StudyDescription = study.StudyDescription;
 
 			return item;

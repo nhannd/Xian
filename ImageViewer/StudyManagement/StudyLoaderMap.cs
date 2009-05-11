@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
     {
     }
 
-	internal class StudyLoaderNotFoundException : Exception
+	public class StudyLoaderNotFoundException : Exception
 	{
 		public StudyLoaderNotFoundException(string loaderName)
 		{

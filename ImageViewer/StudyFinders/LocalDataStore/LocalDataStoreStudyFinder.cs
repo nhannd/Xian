@@ -84,6 +84,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 					item.PatientsName = new PersonName(result[DicomTags.PatientsName].ToString());
 					item.PatientsBirthDate = result[DicomTags.PatientsBirthDate].ToString();
 					item.StudyDate = result[DicomTags.StudyDate].ToString();
+					item.StudyTime = result[DicomTags.StudyTime].ToString();
 					item.StudyDescription = result[DicomTags.StudyDescription].ToString();
 					item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
 					item.AccessionNumber = result[DicomTags.AccessionNumber].ToString();

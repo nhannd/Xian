@@ -32,6 +32,7 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -39,6 +40,7 @@ namespace ClearCanvas.ImageViewer
 	/// Exception handling policy for <see cref="OpenStudyException"/>s.
 	/// </summary>
 	[ExceptionPolicyFor(typeof(OpenStudyException))]
+	[ExceptionPolicyFor(typeof(StudyLoaderNotFoundException))]
 	
 	[ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
 	public sealed class OpenStudyExceptionHandlingPolicy : IExceptionPolicy
@@ -59,20 +61,31 @@ namespace ClearCanvas.ImageViewer
 		{
 			exceptionHandlingContext.Log(LogLevel.Error, e);
 
-			OpenStudyException ex = (OpenStudyException)e;
+			if (e is OpenStudyException)
+				Handle((OpenStudyException)e, exceptionHandlingContext);
+			else if (e is StudyLoaderNotFoundException)
+				Handle((StudyLoaderNotFoundException)e, exceptionHandlingContext);
+		}
 
+		private static void Handle(OpenStudyException e, IExceptionHandlingContext exceptionHandlingContext)
+		{
 			string message = null;
-			if (ex.SuccessfulImages == 0)
+			if (e.SuccessfulImages == 0)
 			{
 				message = SR.ExceptionLoadCompleteFailure;
 			}
-			else if (ex.FailedImages > 0)
+			else if (e.FailedImages > 0)
 			{
-				message = String.Format(SR.ExceptionLoadPartialFailure, ex.TotalImages - ex.FailedImages, ex.TotalImages);
+				message = String.Format(SR.ExceptionLoadPartialFailure, e.TotalImages - e.FailedImages, e.TotalImages);
 			}
 
 			if (message != null)
 				exceptionHandlingContext.ShowMessageBox(message);
+		}
+
+		private static void Handle(StudyLoaderNotFoundException e, IExceptionHandlingContext exceptionHandlingContext)
+		{
+			exceptionHandlingContext.ShowMessageBox(SR.ExceptionLoadCompleteFailure);
 		}
 
 		#endregion

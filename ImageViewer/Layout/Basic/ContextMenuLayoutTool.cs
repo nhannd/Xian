@@ -163,12 +163,19 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			base.Dispose(disposing);
 		}
 
-		private void OnLoadPriorStudyFailed(object sender, ItemEventArgs<StudyItem> e)
+		private void OnLoadPriorStudyFailed(object sender, LoadPriorStudyFailedEventArgs e)
 		{
-			_anyUnavailable = true;	
+			_anyUnavailable = true;
 
-			//artificially add to the image set groups.
-			_imageSetGroups.Root.Add(CreateUnavailableImageSet(e.Item));
+			//not interested in any other errors as far as showing the 'unavailable' study items in the context menu.
+			if (e.Error is StudyLoaderNotFoundException)
+			{
+				if (null == CollectionUtils.SelectFirst(base.ImageViewer.LogicalWorkspace.ImageSets,
+					delegate(IImageSet imageSet) { return imageSet.Uid == e.Study.StudyInstanceUID; }))
+				{
+					_imageSetGroups.Root.Add(CreateUnavailableImageSet(e.Study));
+				}
+			}
 		}
 
 		private static UnavailableImageSet CreateUnavailableImageSet(StudyItem study)

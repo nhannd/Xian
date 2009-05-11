@@ -58,12 +58,24 @@ namespace ClearCanvas.ImageViewer
 		public readonly int TotalQueryResults;
 	}
 
+	public class LoadPriorStudyFailedEventArgs : EventArgs
+	{
+		public LoadPriorStudyFailedEventArgs(StudyItem study, Exception error)
+		{
+			this.Study = study;
+			this.Error = error;
+		}
+
+		public readonly StudyItem Study;
+		public readonly Exception Error;
+	}
+
 	public interface IPriorStudyLoader
 	{
 		bool IsActive { get; }
 		event EventHandler IsActiveChanged;
 
-		event EventHandler<ItemEventArgs<StudyItem>> LoadPriorStudyFailed;
+		event EventHandler<LoadPriorStudyFailedEventArgs> LoadPriorStudyFailed;
 
 		//TODO: keep running stats of failed studies?
 		void Start();
@@ -79,7 +91,7 @@ namespace ClearCanvas.ImageViewer
 
 			private volatile bool _isActive = false;
 			private event EventHandler _isActiveChanged;
-			event EventHandler<ItemEventArgs<StudyItem>> _loadPriorStudyFailed;
+			event EventHandler<LoadPriorStudyFailedEventArgs> _loadPriorStudyFailed;
 
 			private volatile bool _stop = false;
 
@@ -118,7 +130,7 @@ namespace ClearCanvas.ImageViewer
 				remove { _isActiveChanged -= value; }
 			}
 
-			public event EventHandler<ItemEventArgs<StudyItem>> LoadPriorStudyFailed
+			public event EventHandler<LoadPriorStudyFailedEventArgs> LoadPriorStudyFailed
 			{
 				add { _loadPriorStudyFailed += value; }
 				remove { _loadPriorStudyFailed -= value; }
@@ -195,21 +207,21 @@ namespace ClearCanvas.ImageViewer
 						loader.LoadSops();
 						OnSopsLoaded(loader);
 					}
-					catch (StudyLoaderNotFoundException ex)
+					catch (StudyLoaderNotFoundException e)
 					{
 						++_noStudyLoaderFailures;
 
-						Platform.Log(LogLevel.Error, ex, "Failed to load prior study '{0}'; study loader '{1}' does not exist.",
+						Platform.Log(LogLevel.Error, e, "Failed to load prior study '{0}'; study loader '{1}' does not exist.",
 									 result.StudyInstanceUID, result.StudyLoaderName);
 
-						OnLoadPriorStudyFailed(result);
+						OnLoadPriorStudyFailed(result, e);
 					}
 					catch (Exception e)
 					{
 						Platform.Log(LogLevel.Error, e, "Failed to load prior study '{0}' from study loader '{1}'.",
 									 result.StudyInstanceUID, result.StudyLoaderName);
 
-						OnLoadPriorStudyFailed(result);
+						OnLoadPriorStudyFailed(result, e);
 					}
 				}
 			}
@@ -219,15 +231,15 @@ namespace ClearCanvas.ImageViewer
 				_synchronizationContext.Post(AddSops, loader);
 			}
 
-			private void OnLoadPriorStudyFailed(StudyItem result)
+			private void OnLoadPriorStudyFailed(StudyItem result, Exception error)
 			{
-				_synchronizationContext.Post(OnLoadPriorStudyFailed, result);
+				_synchronizationContext.Post(OnLoadPriorStudyFailed, new LoadPriorStudyFailedEventArgs(result, error));
 			}
 
 			private void OnLoadPriorStudyFailed(object theStudyItem)
 			{
 				if (!_stop)
-					EventsHelper.Fire(_loadPriorStudyFailed, this, new ItemEventArgs<StudyItem>((StudyItem)theStudyItem));
+					EventsHelper.Fire(_loadPriorStudyFailed, this, (LoadPriorStudyFailedEventArgs)theStudyItem);
 			}
 
 			private void AddSops(object theLoader)

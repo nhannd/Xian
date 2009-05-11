@@ -89,6 +89,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				item.AccessionNumber = result[DicomTags.AccessionNumber].GetString(0, "");
 				item.StudyDescription = result[DicomTags.StudyDescription].GetString(0, "");
 				item.StudyDate = result[DicomTags.StudyDate].GetString(0, "");
+				item.StudyTime = result[DicomTags.StudyTime].GetString(0, "");
 				item.PatientId = result[DicomTags.PatientId].GetString(0, "");
 				item.PatientsName = new PersonName(result[DicomTags.PatientsName].GetString(0, ""));
 				item.ModalitiesInStudy = result[DicomTags.ModalitiesInStudy].ToString();
