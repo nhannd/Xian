@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Configuration;
 using System.Web;
 using System.Web.Caching;
 using ClearCanvas.Common;
@@ -56,7 +57,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
             SessionToken session = _cache[username] as SessionToken;
             if (session != null && session.ExpiryTime > Platform.Time)
             {
-                session = new SessionToken(session.Id, Platform.Time.AddMinutes(5));
+                session = new SessionToken(session.Id, Platform.Time.AddMinutes(Int32.Parse(ConfigurationManager.AppSettings["SessionTimeout"])));
                 AddSession(session);
                 return session;
             }
@@ -66,7 +67,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
 
         public void AddSession(SessionToken session)
         {
-            _cache.Insert(session.Id, session, null, Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(5));
+            _cache.Insert(session.Id, session, null, Cache.NoAbsoluteExpiration, TimeSpan.FromMinutes(Int32.Parse(ConfigurationManager.AppSettings["SessionTimeout"])));
         }
 
         public void RemoveSession(SessionToken session)

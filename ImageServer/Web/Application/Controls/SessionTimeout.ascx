@@ -54,22 +54,25 @@
         {
             return 0;
         }
-        var now = new Date();
-        var localTime = now.getTime();
-        var localOffset = now.getTimezoneOffset() * 60000;
+        
+        var localNow = new Date();
+        var localTime = localNow.getTime();
+        var localOffset = localNow.getTimezoneOffset() * 60000;
         
         var utc = localTime + localOffset;
-        now = new Date(utc);
+        var utcNow = new Date(utc);
+        
         var sessionExpiry = new Date(expiryTime);
-        timeLeft = Math.round( (sessionExpiry.getTime() - now.getTime()) / 1000 ) + 1// give 1 second to ensure when we redirect, the session is really expired;
-        window.status  = " [ Session Expiry Time: " + expiryTime + " ]";
+        timeLeft = Math.round( (sessionExpiry.getTime() - utcNow.getTime()) / 1000 ) + 1// give 1 second to ensure when we redirect, the session is really expired;
+        sessionExpiry = new Date(sessionExpiry.getTime() - localOffset);
+        window.status  = " [ Session Expiry Time: " + sessionExpiry.toLocaleString() + " ]";
         return timeLeft;
     }
     
     
     function GetExpiryTime() {
        
-        var name = "ImageServer_" + loginId + "=";
+        var name = "ImageServer." + loginId + "=";
         var ca = document.cookie.split(';');
         
         for(var i=0;i < ca.length;i++) {
