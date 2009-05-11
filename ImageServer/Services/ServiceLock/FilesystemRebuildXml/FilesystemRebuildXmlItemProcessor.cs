@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 	/// <summary>
 	/// Class for processing 'FilesystemRebuildXml' <see cref="Model.ServiceLock"/> rows.
 	/// </summary>
-	public class FilesystemRebuildXmlItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor
+	public class FilesystemRebuildXmlItemProcessor : BaseServiceLockItemProcessor, IServiceLockItemProcessor, ICancelable
 	{
 		#region Private Members
 		private IPersistentStore _store;
@@ -95,6 +95,9 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 
 					foreach (DirectoryInfo studyDir in dateDir.GetDirectories())
 					{
+						// Check for Cancel message
+						if (CancelPending) return; 
+						
 						String studyInstanceUid = studyDir.Name;
 
 						StudyStorageLocation location;
@@ -316,6 +319,15 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 			TraverseFilesystemStudies(info.Filesystem);
 
 			item.ScheduledTime = item.ScheduledTime.AddDays(1);
+
+			if (CancelPending)
+			{
+				Platform.Log(LogLevel.Info,
+							 "FilesystemRebuildXml of {0} has been canceled, rescheduling.  Note that the entire Filesystem will be rebuilt again.",
+							 info.Filesystem.Description);
+				UnlockServiceLock(item, true, Platform.Time.AddMinutes(1));
+			}
+			else
 
 			UnlockServiceLock(item, false, Platform.Time.AddDays(1));
 

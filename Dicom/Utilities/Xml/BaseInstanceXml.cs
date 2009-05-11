@@ -43,7 +43,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		/// Creates an empty instance of <see cref="BaseInstanceXml"/>.
 		/// </summary>
 		public BaseInstanceXml()
-			: base(new DicomAttributeCollection(), null, TransferSyntax.ExplicitVrLittleEndian)
+			: base(new InstanceXmlDicomAttributeCollection(), null, TransferSyntax.ExplicitVrLittleEndian)
 		{
 		}
 
@@ -69,12 +69,17 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 			foreach (DicomAttribute attrib1 in collect1)
 			{
-				if ((attrib1 is DicomAttributeOB)
-				    || (attrib1 is DicomAttributeOW)
-				    || (attrib1 is DicomAttributeOF))
-					continue;
-
 				DicomAttribute attrib2;
+				if ((attrib1 is DicomAttributeOB)
+					|| (attrib1 is DicomAttributeOW)
+					|| (attrib1 is DicomAttributeOF)
+					|| (attrib1 is DicomFragmentSequence))
+				{
+					if (collect2.TryGetAttribute(attrib1.Tag, out attrib2))
+						((IPrivateInstanceXmlDicomAttributeCollection)Collection).ExcludedTagsHelper.Add(attrib1.Tag);
+					continue;
+				}
+
 				if (collect2.TryGetAttribute(attrib1.Tag, out attrib2))
 				{
 					if (!attrib1.IsEmpty && attrib1.Equals(attrib2)) //don't store empty tags in the base collection.

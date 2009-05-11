@@ -45,7 +45,7 @@ namespace ClearCanvas.Dicom
     /// <para>Note, however, that non standard DICOM tags (or tags not in stored in the <see cref="DicomTagDictionary"/>
     /// will have a specific instance allocated to store their information when they are encountered by the assembly.</para>
     /// </remarks>
-    public class DicomTag
+    public class DicomTag : IComparable
     {
         #region Static Members
         /// <summary>
@@ -56,7 +56,7 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public static uint GetTagValue(ushort group, ushort element)
         {
-            return (uint)group << 16 | (uint)element;
+            return (uint)group << 16 | element;
         }
 
         /// <summary>
@@ -91,14 +91,14 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Private Members
-        private uint _tag;
-        private string _name;
-        private string _varName;
-        private DicomVr _vr;
-        private uint _vmLow;
-        private uint _vmHigh;
-        private bool _isRetired;
-        private bool _multiVrTag;
+        private readonly uint _tag;
+        private readonly string _name;
+        private readonly string _varName;
+        private readonly DicomVr _vr;
+        private readonly uint _vmLow;
+        private readonly uint _vmHigh;
+        private readonly bool _isRetired;
+        private readonly bool _multiVrTag;
         #endregion
 
         #region Constructors
@@ -229,8 +229,8 @@ namespace ClearCanvas.Dicom
                 if (_vmLow == _vmHigh)
                     return _vmLow.ToString();
                 if (_vmHigh == uint.MaxValue)
-                    return _vmLow.ToString() + "-N";
-                return _vmLow.ToString() + "-" + _vmHigh.ToString();
+                    return _vmLow + "-N";
+                return _vmLow + "-" + _vmHigh;
             }
         }
 
@@ -298,7 +298,7 @@ namespace ClearCanvas.Dicom
             if (null == otherTag)
                 return false;
 
-            return (otherTag.GetHashCode() == this.GetHashCode());
+            return (otherTag.GetHashCode() == GetHashCode());
         }
         #endregion
 
@@ -402,5 +402,18 @@ namespace ClearCanvas.Dicom
             return _vr.CreateDicomAttribute(this,bb);
         }
         #endregion
+
+		/// <summary>
+		/// IComparable.CompareTo implementation, which compares <see cref="TagValue"/>.
+		/// </summary>
+		/// <param name="obj">The object to compare to.</param>
+		/// <returns>See <see cref="IComparable"/>.</returns>
+    	public int CompareTo(object obj)
+    	{
+    		DicomTag val = obj as DicomTag;
+			if (val == null) return -1;
+
+			return TagValue.CompareTo(val.TagValue);
+    	}
     }
 }
