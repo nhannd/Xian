@@ -1695,7 +1695,7 @@ BEGIN
 		@NumberOfStudyRelatedSeries = NumberOfStudyRelatedSeries, 
 		@NumberOfStudyRelatedInstances = NumberOfStudyRelatedInstances 
 	FROM Study 
-	WHERE StudyInstanceUid = @StudyInstanceUid and ServerPartitionGUID = @ServerPartitionGUID
+	WHERE StudyStorageGUID = @StudyStorageGUID
 
 	
     -- Now cleanup the more management related tables.
@@ -1729,9 +1729,6 @@ BEGIN
 	DELETE FROM StudyIntegrityQueue
 	WHERE StudyStorageGUID = @StudyStorageGUID
 
-	DELETE FROM StudyStorage
-	WHERE GUID = @StudyStorageGUID
-
 	-- Delete the Study / Series / RequestAttributes tables, reduce counts or delete from Patient table
 	DELETE FROM RequestAttributes 
 	WHERE SeriesGUID IN (select SeriesGUID from Series where StudyGUID = @StudyGUID)
@@ -1741,6 +1738,10 @@ BEGIN
 
 	DELETE FROM Study
 	WHERE GUID = @StudyGUID
+
+	-- Now Cleanup StudyStorage itself
+	DELETE FROM StudyStorage
+	WHERE GUID = @StudyStorageGUID
 
 	UPDATE Patient
 	SET	NumberOfPatientRelatedStudies = NumberOfPatientRelatedStudies -1,
