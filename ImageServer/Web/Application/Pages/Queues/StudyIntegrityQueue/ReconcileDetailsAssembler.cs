@@ -39,7 +39,11 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
     {
         public static ReconcileDetails CreateReconcileDetails(StudyIntegrityQueueSummary item)
         {
-            ReconcileDetails details = new ReconcileDetails(item.TheStudyIntegrityQueueItem);
+            ReconcileDetails details=null;
+            if (item.TheStudyIntegrityQueueItem.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.InconsistentData))
+                details = new ReconcileDetails(item.TheStudyIntegrityQueueItem);
+            else
+                details = new DuplicateEntryDetails(item.TheStudyIntegrityQueueItem);
 
             Study study = item.StudySummary.TheStudy;
             details.StudyInstanceUID = study.StudyInstanceUid;

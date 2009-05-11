@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom.Codec;
 using ClearCanvas.Common;
@@ -220,11 +221,11 @@ namespace ClearCanvas.Dicom
 
 		public override bool Equals(object obj)
 		{
-			string failureReason;
-			return Equals(obj, out failureReason);
+		    List<DicomAttributeComparisonResult> failureReasons = new List<DicomAttributeComparisonResult>();
+		    return Equals(obj, ref failureReasons);
 		}
 
-		/// <summary>
+        /// <summary>
 		/// Check if the contents of the DicomAttributeCollection is identical to another DicomAttributeCollection instance.
 		/// </summary>
 		/// <remarks>
@@ -233,21 +234,25 @@ namespace ClearCanvas.Dicom
 		/// will step through each of the tags within the collection, and compare them to see if they are equal.  The
 		/// method will also recurse into sequence attributes to be sure they are equal.</para>
 		/// </remarks>
-		/// <param name="obj">The objec to compare to.</param>
-		/// <param name="comparisonFailure">An output string describing why the objects are not equal.</param>
+		/// <param name="obj">The object to compare to.</param>
+        /// <param name="comparisonResults">A list of <see cref="DicomAttributeComparisonResult"/>  describing why the objects are not equal.</param>
 		/// <returns>true if the collections are equal.</returns>
-		public bool Equals(object obj, out string comparisonFailure)
+		public bool Equals(object obj, ref List<DicomAttributeComparisonResult> comparisonResults)
 		{
 			DicomFile a = obj as DicomFile;
 			if (a == null)
 			{
-				comparisonFailure = String.Format("Comparison object is invalid type: {0}", obj.GetType());
+			    DicomAttributeComparisonResult result = new DicomAttributeComparisonResult();
+			    result.ResultType = ComparisonResultType.InvalidType;
+                result.Details = String.Format("Comparison object is invalid type: {0}", obj.GetType());
+			    comparisonResults.Add(result);
+
 				return false;
 			}
 
-			if (!MetaInfo.Equals(a.MetaInfo, out comparisonFailure))
+            if (!MetaInfo.Equals(a.MetaInfo, ref comparisonResults))
 				return false;
-			if (!DataSet.Equals(a.DataSet, out comparisonFailure))
+            if (!DataSet.Equals(a.DataSet, ref comparisonResults))
 				return false;
 
 			return true;

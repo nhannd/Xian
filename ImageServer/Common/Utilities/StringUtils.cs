@@ -52,5 +52,30 @@ namespace ClearCanvas.ImageServer.Common.Utilities
             else
                 return x.Equals(y, options);
         }
+
+        /// <summary>
+        /// Returns the last part of the string.
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="length"></param>
+        /// <param name="prepend"></param>
+        /// <returns></returns>
+        public static String Last(String value, int length, String prepend)
+        {
+            if (String.IsNullOrEmpty(value))
+                return value;
+
+            if (value.Length > length)
+            {
+                String last = value.Substring(value.Length - length);
+                if (String.IsNullOrEmpty(prepend))
+                    return last;
+                else
+                    return prepend + last;
+            }
+            else
+                return value;
+                
+        }
     }
 }

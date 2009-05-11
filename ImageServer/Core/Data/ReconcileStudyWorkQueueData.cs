@@ -29,6 +29,10 @@
 
 #endregion
 
+using System;
+using System.Collections.Generic;
+using ClearCanvas.Dicom;
+
 namespace ClearCanvas.ImageServer.Core.Data
 {
 	/// <summary>
@@ -55,5 +59,21 @@ namespace ClearCanvas.ImageServer.Core.Data
 			}
 			set { _details = value; }
 		}
+
 	}
+
+    /// <summary>
+    /// Represents the information encoded in the <see cref="Model.StudyIntegrityQueue.QueueData"/> column of a <see cref="Model.StudyIntegrityQueue"/> record.
+    /// </summary>
+    public class DuplicateSIQQueueData : ReconcileStudyWorkQueueData
+    {
+        private List<DicomAttributeComparisonResult> _comparisonResults;
+
+
+        public List<DicomAttributeComparisonResult> ComparisonResults
+        {
+            get { return _comparisonResults; }
+            set { _comparisonResults = value; }
+        }
+    }
 }

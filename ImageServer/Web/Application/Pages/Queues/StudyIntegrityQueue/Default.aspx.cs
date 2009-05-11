@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             if (details.StudyIntegrityQueueItem.StudyIntegrityReasonEnum == StudyIntegrityReasonEnum.Duplicate)
             {
                 DuplicateSopReconcileDialog.StudyIntegrityQueueItem = details.StudyIntegrityQueueItem;
-                DuplicateSopReconcileDialog.ReconcileDetails = details;
+                DuplicateSopReconcileDialog.DuplicateEntryDetails = details as DuplicateEntryDetails;
 
                 DuplicateSopReconcileDialog.DataBind();
                 DuplicateSopReconcileDialog.Show();

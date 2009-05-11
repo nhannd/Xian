@@ -43,6 +43,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 {
     public class ReconcileDetails
     {
+        #region Private Memebers
+        private string _studyInstanceUID;
+        private readonly StudyIntegrityQueue _item;
+        private StudyInfo _existingStudy;
+        private ImageSetDetails _conflictingImages;
+
+        #endregion
+
+
         public class SeriesDetails
         {
             private string _description;
@@ -155,15 +164,15 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             }
         }
 
-        private string _studyInstanceUID;
-        private readonly StudyIntegrityQueue _item;
-        private StudyInfo _existingStudy;
-        private ImageSetDetails _conflictingImages;
-
-
         public ReconcileDetails(StudyIntegrityQueue queueItem)
         {
             _item = queueItem;
+        }
+
+
+        public StudyIntegrityQueue StudyIntegrityQueueItem
+        {
+            get { return _item; }
         }
 
 
@@ -196,10 +205,6 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
             set { _conflictingImages = value; }
         }
 
-        public StudyIntegrityQueue StudyIntegrityQueueItem
-        {
-            get { return _item; }
-        }
     }
 
 	public class StudyIntegrityQueueSummary
@@ -309,6 +314,10 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                     _queueData = XmlUtils.Deserialize < ReconcileStudyWorkQueueData>(_studyIntegrityQueueItem.QueueData);
                 }
                 return _queueData;
+            }
+            set
+            {
+                _queueData = value;
             }
 	    }
 
@@ -478,11 +487,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
                 summary.ConflictingAccessionNumber = queueDescription.ConflictingAccessionNumber;
                 summary.ReceivedTime = item.InsertTime;
 
-                ReconcileStudyWorkQueueData queueData =
-                    XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
+
+                if (item.StudyIntegrityReasonEnum.Equals(StudyIntegrityReasonEnum.InconsistentData))
+                    summary.QueueData = XmlUtils.Deserialize<ReconcileStudyWorkQueueData>(item.QueueData);
+                else
+                    summary.QueueData = XmlUtils.Deserialize<DuplicateSIQQueueData>(item.QueueData);
 
                 List<string> modalities = new List<string>();
-                List<SeriesInformation> seriesList = queueData.Details.StudyInfo.Series;
+                List<SeriesInformation> seriesList = summary.QueueData.Details.StudyInfo.Series;
                 foreach (SeriesInformation series in seriesList)
                 {
                     if (!modalities.Contains(series.Modality))
@@ -554,4 +566,25 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		#endregion
 	}
+
+    public class DuplicateEntryDetails : ReconcileDetails
+    {
+        private readonly DuplicateSopReceivedQueue _duplicateSIQEntry;
+
+        public DuplicateEntryDetails(StudyIntegrityQueue siqEntry):base(siqEntry)
+        {
+            _duplicateSIQEntry = new DuplicateSopReceivedQueue(siqEntry);
+        }
+
+        public DuplicateSIQQueueData QueueData
+        {
+            get
+            {
+                if (_duplicateSIQEntry != null && _duplicateSIQEntry.QueueData != null)
+                    return XmlUtils.Deserialize<DuplicateSIQQueueData>(_duplicateSIQEntry.QueueData);
+                else
+                    return new DuplicateSIQQueueData();
+            }
+        }
+    }
 }

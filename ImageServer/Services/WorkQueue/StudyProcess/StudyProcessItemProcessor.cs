@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Statistics;
@@ -92,8 +93,9 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                                                baseFile.TransferSyntax, dupFile.TransferSyntax);
                 throw new ApplicationException(failure);
             }
-            string failureReason;
-            if (baseFile.DataSet.Equals(dupFile.DataSet, out failureReason))
+
+            List<DicomAttributeComparisonResult> failureReason = new List<DicomAttributeComparisonResult>();
+            if (baseFile.DataSet.Equals(dupFile.DataSet, ref failureReason))
             {
                 Platform.Log(LogLevel.Info,
                              "Duplicate SOP being processed is identical.  Removing SOP: {0}",
@@ -105,18 +107,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             }
             else
             {
-                CreateDuplicateSIQEntry(uid, dupFile);
+                CreateDuplicateSIQEntry(uid, dupFile, failureReason);
             }
         }
-            
-        void CreateDuplicateSIQEntry(WorkQueueUid uid, DicomFile file)
+
+        void CreateDuplicateSIQEntry(WorkQueueUid uid, DicomFile file, List<DicomAttributeComparisonResult> differences)
         {
             Platform.Log(LogLevel.Info, "Duplicate SOP is different from existing copy. Creating duplicate SIQ entry. SOP: {0}", uid.SopInstanceUid);
 
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Create Duplicate SIQ Entry"))
             {
-                InsertDuplicateQueueEntryCommand insertCommand = 
-                            new InsertDuplicateQueueEntryCommand(uid.GroupID, StorageLocation, Study, file, uid.RelativePath);
+                InsertDuplicateQueueEntryCommand insertCommand =
+                            new InsertDuplicateQueueEntryCommand(uid.GroupID, StorageLocation, file, uid.RelativePath, differences);
 
                 processor.AddCommand(insertCommand);
 

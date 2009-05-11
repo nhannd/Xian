@@ -203,6 +203,8 @@
     <Compile Include="Codec\DicomCodecRegistry.cs" />
     <Compile Include="Codec\DicomCodecUnsupportedSopException.cs" />
     <Compile Include="Codec\IDicomCodec.cs" />
+    <Compile Include="ComparisonResultType.cs" />
+    <Compile Include="DicomAttributeComparisonResult.cs" />
     <Compile Include="DicomAttributeMultiValueText.cs" />
     <Compile Include="DicomDataException.cs" />
     <Compile Include="DicomDirectoryWriter.cs" />

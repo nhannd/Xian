@@ -159,3 +159,54 @@
 	background-color: #ffffcc;
 	color: #ff3333;
 }
+
+.AdditionalInformationPanel
+{
+    border: solid 1px #205F87; 
+    background: #CCCCCC url(../../../../PersistantImage.ashx?key=DialogBodyBackground) repeat-x bottom;
+}
+
+
+.AdditionalInfoSectionHeader
+{
+	width:100%;
+	color: #16425D;
+    background: #B8D8EE url(../../../../PersistantImage.ashx?key=SubHeadingBackground) repeat-x;
+    font-weight: bold;
+    border-top: solid 1px #16425D;
+    border-bottom: solid 1px #16425D;
+    padding-left:2px;
+    padding-top:5px;
+    padding-bottom:5px;
+}
+
+.ComparisonSectionHeader
+{
+	border-top: none;
+}
+.FilesystemSectionHeader
+{
+   
+}
+
+.ReconcileComparisonResultGridView
+{
+    font-size: 12px;
+    width: 100%; 
+    overflow: scroll; 
+    background: #FFFFFF; 
+    border-left: solid 1px #16425D; 
+    border-right: solid 1px #16425D; 
+    border-bottom: solid 1px #16425D;
+}
+
+.ReconcileComparisonResultGridViewRow
+{
+    
+ }
+
+.ReconcileComparisonResultGridViewHeader
+{
+	color: #16425D;
+    background: #dfdfdf;
+}

@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 {
     
     //
-    // Dialog for adding a new device or editting an existing device.
+    // Dialog for handling duplicate sop.
     //
     public partial class DuplicateSopDialog : UserControl
     {
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         #region private variables
 
         private Model.StudyIntegrityQueue _item = null;
-        private ReconcileDetails _details = null;
+        private DuplicateEntryDetails _details = null;
         private bool _consistentData = false;
         #endregion
 
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
         /// <summary>
         /// Sets or gets the Reconcile Item Value
         /// </summary>
-        public ReconcileDetails ReconcileDetails
+        public DuplicateEntryDetails DuplicateEntryDetails
         {
             get { return _details; }
             set { 
@@ -139,8 +139,8 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
         public override void DataBind()
         {
-            ExistingPatientSeriesGridView.DataSource = ReconcileDetails.ExistingStudy.Series;
-            ConflictingPatientSeriesGridView.DataSource = ReconcileDetails.ConflictingImageSet.StudyInfo.Series;
+            ExistingPatientSeriesGridView.DataSource = DuplicateEntryDetails.ExistingStudy.Series;
+            ConflictingPatientSeriesGridView.DataSource = DuplicateEntryDetails.ConflictingImageSet.StudyInfo.Series;
             StudyStorage storage =
                 StudyStorage.Load(HttpContextData.Current.ReadContext, this.StudyIntegrityQueueItem.StudyStorageKey);
 
@@ -150,30 +150,32 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
             DuplicateSopReceivedQueue entry = new DuplicateSopReceivedQueue(StudyIntegrityQueueItem);
 
             DuplicateSopLocation.Text = entry.GetReceivedDuplicateSopFolder();
+
+            ComparisonResultGridView.DataSource = DuplicateEntryDetails.QueueData.ComparisonResults;
             base.DataBind();
         }
 
         private void HighlightDifferences()
         {
-            if (ReconcileDetails!=null)
+            if (DuplicateEntryDetails != null)
             {
-                Compare(ReconcileDetails.ExistingStudy.Patient.Name, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name, 
+                Compare(DuplicateEntryDetails.ExistingStudy.Patient.Name, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Name, 
                    delegate(bool different)
                        {
                            Highlight(ConflictingNameLabel, different);
                        });
 
-                Compare(ReconcileDetails.ExistingStudy.Patient.PatientID, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId,
+                Compare(DuplicateEntryDetails.ExistingStudy.Patient.PatientID, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientId,
                     delegate(bool different) { Highlight(ConflictingPatientIDLabel, different); });
-                Compare(ReconcileDetails.ExistingStudy.Patient.IssuerOfPatientID, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId,
+                Compare(DuplicateEntryDetails.ExistingStudy.Patient.IssuerOfPatientID, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.IssuerOfPatientId,
                     delegate(bool different) { Highlight(ConflictingPatientIssuerOfPatientID, different); });
-                Compare(ReconcileDetails.ExistingStudy.Patient.BirthDate, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate,
+                Compare(DuplicateEntryDetails.ExistingStudy.Patient.BirthDate, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.PatientsBirthdate,
                     delegate(bool different) { Highlight(ConflictingPatientBirthDate, different); });
-                Compare(ReconcileDetails.ExistingStudy.Patient.Sex, ReconcileDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex,
+                Compare(DuplicateEntryDetails.ExistingStudy.Patient.Sex, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.PatientInfo.Sex,
                     delegate(bool different) { Highlight(ConflictingPatientSex, different); });
-                Compare(ReconcileDetails.ExistingStudy.StudyDate, ReconcileDetails.ConflictingImageSet.StudyInfo.StudyDate,
+                Compare(DuplicateEntryDetails.ExistingStudy.StudyDate, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.StudyDate,
                     delegate(bool different) { Highlight(ConflictingStudyDate, different); });
-                Compare(ReconcileDetails.ExistingStudy.AccessionNumber, ReconcileDetails.ConflictingImageSet.StudyInfo.AccessionNumber,
+                Compare(DuplicateEntryDetails.ExistingStudy.AccessionNumber, DuplicateEntryDetails.ConflictingImageSet.StudyInfo.AccessionNumber,
                     delegate(bool different) { Highlight(ConflictingAccessionNumberLabel, different); });
 
             }

@@ -102,6 +102,14 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Constructors
+
+        /// <summary>
+        /// *** For XML serialization ***
+        /// </summary>
+        public DicomTag()
+        {
+        }
+
         /// <summary>
         /// Primary constructor for dictionary tags
         /// </summary>
