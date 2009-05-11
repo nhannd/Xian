@@ -180,6 +180,21 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private static UnavailableImageSet CreateUnavailableImageSet(StudyItem study)
 		{
+			//TODO: none of this is ideal because this code is duplicated from the layout manager,
+			//but unfortunately it's necessary right now.  I think the problem is 3-fold:
+			// 1. We are showing the values from IImageSet.Name; the context menu tool is the 
+			//    presenter and should be formatting the info itself.
+			// 2. There is no unified concept of a 'study' in the viewer.  In fact, there are
+			//    several study objects, all of which serve a similar purpose.
+			// 3. ImageSets are not directly tied to studies; this is less of an issue because
+			//    we know that the layout manager sets the Uid to the study uid and we can
+			//    safely make that assumption.
+			// The ideal solution would be to create a ContextMenuGroups class, similar to
+			// the ImageSetGroups, which keeps track of Studies (both available and unavailable)
+			// using some unified Study class/interface as it's data source.  The context
+			// menu actions would then be constructed from that information, not relying on
+			// image set names.
+
 			UnavailableImageSet imageSet = new UnavailableImageSet(study);
 
 			DateTime studyDate;
