@@ -52,6 +52,7 @@ namespace ClearCanvas.Desktop.Help
 
 	[MenuAction("showLogs", "global-menus/MenuHelp/MenuShowLogs", "ShowLogs")]
 	[GroupHint("showLogs", "Application.Help.Support")]
+	[ActionPermission("showLogs", AuthorityTokens.Admin.System.ShowLogs)]
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class HelpTool : Tool<IDesktopToolContext>
