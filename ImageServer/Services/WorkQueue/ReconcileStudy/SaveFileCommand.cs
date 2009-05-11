@@ -37,6 +37,10 @@ using ClearCanvas.ImageServer.Common.CommandProcessor;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
 {
+    class InstanceAlreadyExistsException: Exception
+    {
+        
+    }
     /// <summary>
     /// Save a dicom file
     /// </summary>
@@ -56,26 +60,19 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             String seriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
             String sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
 
-            String destPath = Path.Combine(Context.DestStorageLocation.GetStudyPath(), seriesInstanceUid);
-            destPath = Path.Combine(destPath, sopInstanceUid);
-            String extension = "dcm";
-            destPath += "."+ extension;
-
-            _processor = new ServerCommandProcessor("SaveFileCommand Processor");
-        
+            String destPath = Context.DestStorageLocation.GetSopInstancePath(seriesInstanceUid, sopInstanceUid);
+            
             if (File.Exists(destPath))
             {
                 #region Duplicate SOP
 
-                // TODO: Add code to handle duplicate sop here
-                Platform.Log(LogLevel.Warn, "Image {0} cannot be processed because of duplicate in {1}", sopInstanceUid, destPath);
-                
-                #endregion
+                throw new InstanceAlreadyExistsException();
 
-                return;
+                #endregion
             }
 
-            _processor.AddCommand(new SaveDicomFileCommand(destPath, file, false, true));
+            _processor = new ServerCommandProcessor("SaveFileCommand Processor");
+            _processor.AddCommand(new SaveDicomFileCommand(destPath, file, true, true));
 
             if (!_processor.Execute())
             {

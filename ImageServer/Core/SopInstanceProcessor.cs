@@ -205,9 +205,9 @@ namespace ClearCanvas.ImageServer.Core
 
             _instanceStats.ProcessTime.Start();
 
-            if (ShouldReconcile(file, duplicate) && compare)
+            if (ShouldReconcile(file) && compare)
 			{
-				ScheduleReconcile(file, duplicate);
+				ScheduleReconcile(file);
                 result.Status = ProcessingStatus.Reconciled;
 			}
 			else
@@ -240,8 +240,7 @@ namespace ClearCanvas.ImageServer.Core
 		/// </summary>
 		/// <param name="message">The Dicom message</param>
 		/// <returns></returns>
-		/// <param name="duplicate"></param>
-		private bool ShouldReconcile(DicomMessageBase message, bool duplicate)
+		private bool ShouldReconcile(DicomMessageBase message)
 		{
 			Platform.CheckForNullReference(_context, "_context");
 			Platform.CheckForNullReference(message, "message");
@@ -280,8 +279,7 @@ namespace ClearCanvas.ImageServer.Core
 		/// Schedules a reconciliation for the specified <see cref="DicomFile"/>
 		/// </summary>
 		/// <param name="file"></param>
-		/// <param name="duplicate"></param>
-		private void ScheduleReconcile(DicomFile file, bool duplicate)
+		private void ScheduleReconcile(DicomFile file)
 		{
 			ImageReconciler reconciler;
 			reconciler = new ImageReconciler();
@@ -289,9 +287,10 @@ namespace ClearCanvas.ImageServer.Core
 			reconciler.ExistingStudy = _context.Study;
 			reconciler.ExistingStudyLocation = _context.StorageLocation;
 			reconciler.Partition = _context.Partition;
-			reconciler.ReconcileImage(file, duplicate);
+			reconciler.ReconcileImage(file);
 		}
 
+       
 		private void InsertInstance(DicomFile file, StudyXml stream, bool duplicate)
 		{
 			//Platform.CheckForNullReference(_context, "_context");
@@ -307,6 +306,14 @@ namespace ClearCanvas.ImageServer.Core
 
 				try
 				{
+                    String seriesUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
+                    String sopUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
+                    String finalDest = _context.StorageLocation.GetSopInstancePath(seriesUid, sopUid);
+                    if (file.Filename != finalDest)
+                    {
+                        // save the file in the study folder
+                        processor.AddCommand(new SaveDicomFileCommand(finalDest, file, true, true));
+                    }
 
 					// Update the StudyStream object
 					insertStudyXmlCommand = new InsertStudyXmlCommand(file, stream, _context.StorageLocation);

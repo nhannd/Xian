@@ -84,21 +84,21 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
         /// the current <see cref="ExecutionContext"/> for the thread.
         /// </summary>
         /// <param name="description"></param>
-	    public ServerCommandProcessor(string description)
-            : this(description, GetOrCreateCurrentExectionContext())
-		{
-            
-		}
-
-
-        private static ExecutionContext GetOrCreateCurrentExectionContext()
+        public ServerCommandProcessor(string description)
         {
+            _description = description;
             if (CommandProcessor.ExecutionContext.Current == null)
             {
-                return new ExecutionContext();
+                _ownsExecContext = true;
+                ExecutionContext = new ExecutionContext();
             }
             else
-                return CommandProcessor.ExecutionContext.Current;
+            {
+                _ownsExecContext = false;
+                ExecutionContext = CommandProcessor.ExecutionContext.Current;
+
+            }
+            
         }
 
         /// <summary>
@@ -178,13 +178,6 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		/// <returns>false on failure, true on success</returns>
 		public bool Execute()
 		{
-            if (ExecutionContext==null)
-            {
-                // No execution context assigned, create one for current thread
-                // This processor will be responsible for cleaning up this context
-                ExecutionContext = new ExecutionContext();
-                _ownsExecContext = true;
-            }
 			
 			while (_queue.Count > 0)
 			{
@@ -206,7 +199,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                             }
                             else
                             {
-                                ExecutionContext.PersistenceContext = UpdateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
+                                UpdateContext = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush);
+                                ExecutionContext.PersistenceContext = UpdateContext;
+                                    
                                 _ownsPersistenceContext = true;
                             }
                         }

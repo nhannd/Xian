@@ -97,6 +97,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             parms.ScheduledTime = Platform.Time;
             parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
             parms.WorkQueuePriorityEnum = WorkQueuePriorityEnum.High;
+            parms.WorkQueueGroupID = _uidGroupId;
 
             if (_duplicate)
             {

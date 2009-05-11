@@ -98,13 +98,13 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 
 		    String seriesUid = _context.File.DataSet[DicomTags.SeriesInstanceUid].ToString();
             String sopUid = _context.File.DataSet[DicomTags.SopInstanceUid].ToString();
-            _src = _context.CurrentStudyLocation.GetSopInstancePath(seriesUid, sopUid);
+		    _src = _context.File.Filename;
 			_dest = GetReconcileImageTempPath(_context.File);
             
 			CreateDirectoryCommand mkdirCommand = new CreateDirectoryCommand(Directory.GetParent(_dest).FullName);
 			_processor.AddCommand(mkdirCommand);
             
-			RenameFileCommand moveCommand = new RenameFileCommand(_src, _dest);
+			RenameFileCommand moveCommand = new RenameFileCommand(_src, _dest, true);
 			_processor.AddCommand(moveCommand);
             
 			if (!_processor.Execute())

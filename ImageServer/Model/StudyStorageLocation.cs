@@ -221,7 +221,17 @@ namespace ClearCanvas.ImageServer.Model
             }
         }
 
-        
+        /// <summary>
+        /// Gets the related <see cref="Study"/> entity.
+        /// </summary>
+        /// <remarks>
+        /// 
+        /// </remarks>
+        public Study Study
+        {
+            get { return _study; }
+        }
+
         #endregion
 
         #region Public Methods
@@ -230,12 +240,9 @@ namespace ClearCanvas.ImageServer.Model
         {
             lock (SyncRoot)
             {
-                if (_study == null)
-                {
-                    _study = Study.Find(context, StudyInstanceUid, ServerPartition);
-                }
+                _study = Study.Find(context, StudyInstanceUid, ServerPartition);
             }
-            return _study;
+            return Study;
             
         }
         public string GetStudyPath()

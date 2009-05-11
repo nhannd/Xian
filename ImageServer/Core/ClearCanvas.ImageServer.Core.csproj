@@ -46,7 +46,7 @@
     <Compile Include="Data\StudyInformation.cs" />
     <Compile Include="Data\StudyReconcileAction.cs" />
     <Compile Include="Data\StudyReconcileDescriptor.cs" />
-    <Compile Include="Process\DuplicateSopHandler.cs" />
+    <Compile Include="Process\DuplicateSopProcessor.cs" />
     <Compile Include="Edit\ImageUpdateCommandBuilder.cs" />
     <Compile Include="Reconcile\ImageReconciler.cs" />
     <Compile Include="Process\InsertInstanceCommand.cs" />

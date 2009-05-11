@@ -48,7 +48,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		private StudyIntegrityQueue _studyIntegrityQueue;
 		private StudyHistory _history;
 		private StudyStorageLocation _destinationStudyLocation;
-		private bool _isDuplicate;
 		private ImageSetDescriptor _imageSetDesc;
 		private int _expirationTime;
 		private string _storagePath;
@@ -141,12 +140,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		{
 			get { return _storagePath; }
 			set { _storagePath = value; }
-		}
-
-		public bool IsDuplicate
-		{
-			get { return _isDuplicate; }
-			set { _isDuplicate = value; }
 		}
 
 		#endregion

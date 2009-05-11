@@ -897,7 +897,7 @@ CREATE PROCEDURE [dbo].[InsertWorkQueue]
 	@SopInstanceUid varchar(64) = null,
 	@Duplicate bit = 0,
 	@Extension varchar(10) = null,
-	@WorkQueueGroup varchar(64) = null,
+	@WorkQueueGroupID varchar(64) = null,
 	@UidGroupID varchar(64) = null,
 	@UidRelativePath varchar(256) = null
 AS
@@ -939,7 +939,7 @@ BEGIN
 	BEGIN
 		set @WorkQueueGUID = NEWID();
 		INSERT into WorkQueue (GUID, ServerPartitionGUID, StudyStorageGUID, DeviceGUID, StudyHistoryGUID, Data, WorkQueueTypeEnum, WorkQueueStatusEnum, WorkQueuePriorityEnum, ExpirationTime, ScheduledTime, GroupID)
-			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeviceGUID, @StudyHistoryGUID, @Data, @WorkQueueTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime, @WorkQueueGroup)
+			values  (@WorkQueueGUID, @ServerPartitionGUID, @StudyStorageGUID, @DeviceGUID, @StudyHistoryGUID, @Data, @WorkQueueTypeEnum, @PendingStatusEnum, @WorkQueuePriorityEnum, @ExpirationTime, @ScheduledTime, @WorkQueueGroupID)
 	END
 	ELSE
 	BEGIN
@@ -3250,11 +3250,16 @@ BEGIN
 
 	-- Look for existing StudyIntegrityQueue entry
 	SELECT TOP 1 @Guid=GUID 
-	FROM	[dbo].[StudyIntegrityQueue]
+	FROM	[dbo].[StudyIntegrityQueue] siq
 	WHERE	[ServerPartitionGUID]=@ServerPartitionGUID 
 			AND  [StudyStorageGUID]=@StudyStorageGUID
 			AND  [StudyIntegrityReasonEnum] = @StudyIntegrityReasonEnum
 			AND	 CONVERT(nvarchar(max), [StudyData]) = CONVERT(nvarchar(max), @StudyData)
+			AND  NOT EXISTS(
+				SELECT * FROM [StudyIntegrityQueueUid] siqid
+				WHERE siqid.StudyIntegrityQueueGUID = siq.GUID
+				AND siqid.SeriesInstanceUid = @SeriesInstanceUid
+				AND siqid.SopInstanceUid = @SopInstanceUid)
 	ORDER BY [InsertTime] DESC	
 
 	IF @@ROWCOUNT = 0

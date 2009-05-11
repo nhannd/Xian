@@ -47,9 +47,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 		private readonly string _destinationFile;
         private string _srcBackupFile; 
         private string _destBackupFile;
-		#endregion
+	    private readonly bool _failIfExists;
 
-		public RenameFileCommand(string sourceFile, string destinationFile)
+	    #endregion
+
+		public RenameFileCommand(string sourceFile, string destinationFile, bool failIfExists)
 			: base(String.Format("Rename {0} to {1}", sourceFile, destinationFile), true)
 		{
 			Platform.CheckForNullReference(sourceFile, "Source filename");
@@ -58,6 +60,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
 
 			_sourceFile = sourceFile;
 			_destinationFile = destinationFile;
+		    _failIfExists = failIfExists;
 		}
 
 		protected override void OnExecute()
@@ -65,8 +68,10 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
             if (RequiresRollback)
                 Backup();
 
-			if (File.Exists(_destinationFile))
+            if (File.Exists(_destinationFile))
 			{
+                if (_failIfExists)
+                    throw new ApplicationException(String.Format("Destination file already exists: {0}", _destinationFile));
 				File.Delete(_destinationFile);
 			}
 

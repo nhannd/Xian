@@ -271,7 +271,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 		#endregion
 
 		#region Public Methods
-		public void ReconcileImage(DicomFile file, bool isDuplicate)
+		public void ReconcileImage(DicomFile file)
 		{
 			Platform.CheckForNullReference(Partition, "Partition");
 			Platform.CheckForNullReference(ExistingStudy, "ExistingStudy");
@@ -285,7 +285,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 			_reconcileContext.Partition = _partition;
 			_reconcileContext.CurrentStudyLocation = ExistingStudyLocation;
 			_reconcileContext.File = file;
-			_reconcileContext.IsDuplicate = isDuplicate;
 			_reconcileContext.CurrentStudy = ExistingStudy;
 			_reconcileContext.History = historyList == null || historyList.Count == 0 ? null : historyList[0];
             
@@ -367,7 +366,6 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 				StringBuilder sb = new StringBuilder();
 				sb.AppendFormat("Image To Be Reconciled:\n");
 				sb.AppendFormat("\tSOP={0}\n", _sopInstanceUid);
-				sb.AppendFormat("\tDuplicate={0}\n", context.IsDuplicate);
 				sb.AppendFormat("\tExisting Patient={0}\n", ExistingStudy.PatientsName);
 				sb.AppendFormat("\tExisting Study={0}\n", ExistingStudy.StudyInstanceUid);
 				sb.AppendFormat("\tReferenced History record to be used: {0}\n",

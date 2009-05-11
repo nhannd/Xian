@@ -135,20 +135,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// Process a specific DICOM file related to a <see cref="WorkQueue"/> request.
         /// </summary>
         /// <param name="queueUid"></param>
-        /// <param name="path">The path of the file to process.</param>
         /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
-        protected virtual void ProcessFile(WorkQueueUid queueUid, string path, StudyXml stream)
+        protected virtual void ProcessFile(WorkQueueUid queueUid, DicomFile file, StudyXml stream)
         {
             SopInstanceProcessor processor = new SopInstanceProcessor( _context);
  
-			DicomFile file;
 			long fileSize;
-			FileInfo fileInfo = new FileInfo(path);
+			FileInfo fileInfo = new FileInfo(file.Filename);
 			fileSize = fileInfo.Length;
 
 			processor.InstanceStats.FileLoadTime.Start();
-			file = new DicomFile(path);
-			file.Load(DicomReadOptions.StorePixelDataReferences);
 			processor.InstanceStats.FileLoadTime.End();
 			processor.InstanceStats.FileSize = (ulong)fileSize;
 			string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:" + fileInfo.Name);
@@ -251,13 +247,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             Platform.CheckForNullReference(studyXml, "studyXml");
 
             OnProcessUidBegin(item, sop);
-            
+
+            string path = null;
             string basePath = Path.Combine(StorageLocation.GetStudyPath(), sop.SeriesInstanceUid);
             basePath = Path.Combine(basePath, sop.SopInstanceUid);
-            string path = GetDuplicateUidPath(sop);
-
+            
             try
-            {                
+            {   
                 // This is a bit trickly.  If the partition has the "AcceptLatest" policy configured, the 
                 // duplicate bit is set, and no extension is set.  In this case we want to process the 
                 // file as normal.  When the "CompareDuplicates" policy is set, we don't want to process,
@@ -265,10 +261,31 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
                 // set along with the duplicate flag.
                 if (sop.Duplicate && sop.Extension != null)
                 {
-                    ProcessDuplicate(sop, basePath + ".dcm", path);
+                    path = GetDuplicateUidPath(sop);
+                    string existingPath = StorageLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid);
+                    if (File.Exists(existingPath))
+                    {
+                        ProcessDuplicate(sop, basePath + ".dcm", path);
+                    }
+                    else
+                    {
+                        // the file was duplicate at the time it was received. But the original file 
+                        // no longer exists. We can save the file there and process it as if it's not duplicate
+                        Platform.Log(LogLevel.Warn, "Processing duplicate SOP instance but existing copy was not found.");
+
+                        DicomFile file = new DicomFile(path);
+                        file.Load(DicomReadOptions.StorePixelDataReferences);
+                        ProcessFile(sop, file, studyXml);
+                       
+                    }
                 }
                 else
-                    ProcessFile(sop, path, studyXml);
+                {
+                    path = StorageLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid);
+                    DicomFile file = new DicomFile(path);
+                    file.Load(DicomReadOptions.StorePixelDataReferences);
+                    ProcessFile(sop, file, studyXml);
+                }
                 
                 // Delete it out of the queue
                 DeleteWorkQueueUid(sop);

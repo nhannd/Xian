@@ -36,6 +36,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Core.Process;
 using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.ProcessAsIs
@@ -99,40 +100,77 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.ProcessAsIs
             Platform.Log(LogLevel.Info, "Populating new images into study folder.. {0} to go", Context.WorkQueueUidList.Count);
             foreach (WorkQueueUid uid in Context.WorkQueueUidList)
             {
-                using (ServerCommandProcessor processor = new ServerCommandProcessor("Reconciling image processor"))
+                string imagePath = GetReconcileUidPath(uid);
+                DicomFile file = new DicomFile(imagePath);
+                file.Load();
+
+                try
                 {
-                    string imagePath = GetReconcileUidPath(uid);
-                    DicomFile file = new DicomFile(imagePath);
-                    file.Load();
-
-                    processor.AddCommand(new SaveFileCommand(Context, file));
-                    UpdateWorkQueueCommand.CommandParameters parameters = new UpdateWorkQueueCommand.CommandParameters();
-                    parameters.SeriesInstanceUid = file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
-                    parameters.SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
-                    parameters.Extension = "dcm";
-                    parameters.IsDuplicate = false;
-                    processor.AddCommand(new UpdateWorkQueueCommand(Context, parameters));
-                    processor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
-                    processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
-
-                    if (counter == 0)
+                    using (ServerCommandProcessor processor = new ServerCommandProcessor("Reconciling image processor"))
                     {
-                        processor.AddCommand(new UpdateHistoryCommand(Context));
-                    }
-                    
-                    if (!processor.Execute())
-                    {
-                        FailUid(uid, true);
-                        throw new ApplicationException(String.Format("Unable to reconcile image {0} : {1}", file.Filename, processor.FailureReason));
-                    }
+                        processor.AddCommand(new SaveFileCommand(Context, file));
+                        UpdateWorkQueueCommand.CommandParameters parameters =
+                            new UpdateWorkQueueCommand.CommandParameters();
+                        parameters.SeriesInstanceUid =
+                            file.DataSet[DicomTags.SeriesInstanceUid].GetString(0, String.Empty);
+                        parameters.SopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, String.Empty);
+                        parameters.Extension = "dcm";
+                        parameters.IsDuplicate = false;
+                        processor.AddCommand(new UpdateWorkQueueCommand(Context, parameters));
+                        processor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
+                        processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
 
+                        if (counter == 0)
+                        {
+                            processor.AddCommand(new UpdateHistoryCommand(Context));
+                        }
+
+                        if (!processor.Execute())
+                        {
+                            if (processor.FailureException is InstanceAlreadyExistsException)
+                            {
+                                throw processor.FailureException;
+                            }
+                            else
+                            {
+                                FailUid(uid, true);
+                                throw new ApplicationException(
+                                    String.Format("Unable to reconcile image {0} : {1}", file.Filename,
+                                                  processor.FailureReason), processor.FailureException);
+                            }
+                        }
+
+                        counter++;
+                        Platform.Log(LogLevel.Info, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
+            
+                    }
                 }
-
-                counter++;
-                Platform.Log(LogLevel.Info, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
+                catch(InstanceAlreadyExistsException ex)
+                {
+                    CreatDuplicateSIQEntry(file, Context.WorkQueueItem, uid);
+                }
             }
         }
+
+        private void CreatDuplicateSIQEntry(DicomFile file, Model.WorkQueue queue, Model.WorkQueueUid uid)
+        {
+            Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
+            String sourceId = queue.GroupID ?? queue.GetKey().Key.ToString();
+            String uidGroup = queue.GroupID ?? queue.GetKey().Key.ToString();
+            using (ServerCommandProcessor commandProcessor = new ServerCommandProcessor("Insert Work Queue entry for duplicate"))
+            {
+                DuplicateSopProcessor processor = new DuplicateSopProcessor(commandProcessor, Context.Partition, Context.DestStorageLocation);
+                processor.Process(sourceId, uidGroup, file);
+
+                commandProcessor.AddCommand(new FileDeleteCommand(GetReconcileUidPath(uid), true));
+                commandProcessor.AddCommand(new DeleteWorkQueueUidCommand(uid));
+
+                commandProcessor.Execute();
+            }
+        }
+
     }
+
 
 
 }

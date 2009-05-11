@@ -96,6 +96,7 @@ namespace ClearCanvas.ImageServer.Core.Reconcile
 				ReconcileStudyWorkQueueData data = new ReconcileStudyWorkQueueData();
 				data.StoragePath = _context.StoragePath;
 				data.Details = new ImageSetDetails(_context.File.DataSet);
+			    data.Details.InsertFile(_context.File);
 				XmlDocument xmlQueueData = XmlUtils.SerializeAsXmlDoc(data);
 
 				item.QueueData = xmlQueueData;

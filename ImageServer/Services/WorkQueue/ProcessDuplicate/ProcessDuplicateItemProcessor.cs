@@ -293,22 +293,20 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ProcessDuplicate
                     case ProcessDuplicateAction.OverwriteUseExisting:
                         // update the duplicate demographics using the existing study
                         
-                        // NOTE: LoadStudy caches the result so we may not get the latest Study entity.
-                        // But since we are using the existing study it means the study is not modified anyway.
                         processor.AddCommand(new DuplicateSopUpdateCommand(file, _duplicateUpdateCommands));
                 
                         break;
                 }
 
-                processor.AddCommand(new SaveDicomFileCommand(finalDestination, file, true, true));
-                processor.AddCommand(new DeleteFileCommand(file.Filename));
-                processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
-
+                
                 bool compare = action != ProcessDuplicateAction.OverwriteAsIs;
 
                 ProcessReplacedSOPInstance processReplaced =
                         new ProcessReplacedSOPInstance(StorageLocation.ServerPartition, studyXml, file, compare);
                 processor.AddCommand(processReplaced);
+
+                processor.AddCommand(new DeleteFileCommand(file.Filename));
+                processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
 
                 if (!processor.Execute())
                 {

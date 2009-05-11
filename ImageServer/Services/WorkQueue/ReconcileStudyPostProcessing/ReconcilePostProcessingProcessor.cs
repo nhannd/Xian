@@ -56,19 +56,13 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudyPostProcessin
 				base.ProcessItem(item);
 		}
 
-		protected override void ProcessFile(Model.WorkQueueUid queueUid, string path, ClearCanvas.Dicom.Utilities.Xml.StudyXml stream)
+		protected override void ProcessFile(Model.WorkQueueUid queueUid, DicomFile file, ClearCanvas.Dicom.Utilities.Xml.StudyXml stream)
 		{
 			SopInstanceProcessor processor = new SopInstanceProcessor(_context);
 
-			DicomFile file;
 			long fileSize;
-			FileInfo fileInfo = new FileInfo(path);
+			FileInfo fileInfo = new FileInfo(file.Filename);
 			fileSize = fileInfo.Length;
-
-			processor.InstanceStats.FileLoadTime.Start();
-			file = new DicomFile(path);
-			file.Load(DicomReadOptions.StorePixelDataReferences);
-			processor.InstanceStats.FileLoadTime.End();
 			processor.InstanceStats.FileSize = (ulong)fileSize;
 			string sopInstanceUid = file.DataSet[DicomTags.SopInstanceUid].GetString(0, "File:" + fileInfo.Name);
 			processor.InstanceStats.Description = sopInstanceUid;

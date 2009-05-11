@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageServer.Core
 			result.AccessionNumber = accessionNumber;
             
 			// Use the command processor for rollback capabilities.
-			using (ServerCommandProcessor processor =
+			using (ServerCommandProcessor commandProcessor =
 				new ServerCommandProcessor(String.Format("Processing Sop Instance {0}", sopInstanceUid)))
 			{
 				try
@@ -194,35 +194,41 @@ namespace ClearCanvas.ImageServer.Core
                         
 					if (File.Exists(finalDest))
 					{
-                        DuplicateSopHandler handler = new DuplicateSopHandler(context.sourceAE, context.ID, processor, _partition, studyLocation);
-						result = handler.Handle(file);
+					    Study study = studyLocation.Study?? studyLocation.LoadStudy(ExecutionContext.Current.PersistenceContext);
+                        if (study != null)
+                            Platform.Log(LogLevel.Info, "Received duplicate SOP {0} for patient {1}", sopInstanceUid, study.PatientsName);
+                        else
+                            Platform.Log(LogLevel.Info, "Received duplicate SOP {0}. Existing files haven't been processed.", sopInstanceUid);
+
+                        DuplicateSopProcessor dupProcessor = new DuplicateSopProcessor(commandProcessor, _partition, studyLocation);
+                        result = dupProcessor.Process(context.sourceAE, context.ID, file);
 					}
 					else
 					{
-						processor.AddCommand(new CreateDirectoryCommand(path));
+						commandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
 						path = Path.Combine(path, studyLocation.PartitionFolder);
-						processor.AddCommand(new CreateDirectoryCommand(path));
+						commandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
 						path = Path.Combine(path, studyLocation.StudyFolder);
-						processor.AddCommand(new CreateDirectoryCommand(path));
+						commandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
 						path = Path.Combine(path, studyLocation.StudyInstanceUid);
-						processor.AddCommand(new CreateDirectoryCommand(path));
+						commandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
 						path = Path.Combine(path, seriesInstanceUid);
-						processor.AddCommand(new CreateDirectoryCommand(path));
+						commandProcessor.AddCommand(new CreateDirectoryCommand(path));
 
                         path = Path.Combine(path, sopInstanceUid);
                         path += ".dcm";
 
-						processor.AddCommand(new SaveDicomFileCommand(path, file, true, true));
+						commandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true, true));
 
-						processor.AddCommand(new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
+						commandProcessor.AddCommand(new UpdateWorkQueueCommand(file, studyLocation, dupImage, extension));
 
 					}
                     
-					if (processor.Execute())
+					if (commandProcessor.Execute())
 					{
 						result.DicomStatus = DicomStatuses.Success;
 						if (dupPath != null)
@@ -240,7 +246,7 @@ namespace ClearCanvas.ImageServer.Core
 					}
 					else
 					{
-						failureMessage = String.Format("Failure processing message: {0}. Sending failure status.", processor.FailureReason);
+						failureMessage = String.Format("Failure processing message: {0}. Sending failure status.", commandProcessor.FailureReason);
 						Platform.Log(LogLevel.Error, failureMessage);
 						SetError(result, DicomStatuses.ProcessingFailure, failureMessage);
 						// processor already rolled back
@@ -249,8 +255,8 @@ namespace ClearCanvas.ImageServer.Core
 				}
 				catch (Exception e)
 				{
-					Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", processor.Description);
-					processor.Rollback();
+					Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", commandProcessor.Description);
+					commandProcessor.Rollback();
 					result.Sussessful = false;
 					if (result.DicomStatus==null /* not yet set */)
 						result.DicomStatus = DicomStatuses.ProcessingFailure;
