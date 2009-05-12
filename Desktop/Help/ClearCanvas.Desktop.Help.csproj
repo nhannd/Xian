@@ -81,6 +81,7 @@
     <Reference Include="System.Windows.Forms">
       <Name>System.Windows.Forms</Name>
     </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -93,6 +94,7 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="AuthorityTokens.cs" />
     <Compile Include="HelpSettings.cs" />
     <Compile Include="HelpSettings.Designer.cs">
       <AutoGen>True</AutoGen>
