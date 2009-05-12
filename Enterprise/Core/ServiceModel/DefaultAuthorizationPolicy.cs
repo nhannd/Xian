@@ -47,65 +47,8 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
     /// an instance of <see cref="IPrincipal"/> that uses the <see cref="IAuthenticationService"/>
     /// to determine authorization.
     /// </summary>
-    class DefaultAuthorizationPolicy : IAuthorizationPolicy
+    public class DefaultAuthorizationPolicy : IAuthorizationPolicy
     {
-
-        #region IPrincipal implementation
-
-        /// <summary>
-        /// Implemenation of <see cref="IPrincipal"/> that determines role information
-        /// for the user via the <see cref="IAuthenticationService"/>.
-        /// </summary>
-        class Principal : IPrincipal, IUserCredentialsProvider
-        {
-            private readonly IIdentity _identity;
-        	private readonly SessionToken _sessionToken;
-            private string[] _authorityTokens;
-
-            public Principal(IIdentity identity, SessionToken sessionToken)
-            {
-                _identity = identity;
-            	_sessionToken = sessionToken;
-            }
-
-            public IIdentity Identity
-            {
-                get { return _identity; }
-            }
-
-        	public bool IsInRole(string role)
-            {
-                // initialize auth tokens if this is the first call
-                if (_authorityTokens == null)
-                {
-                    Platform.GetService<IAuthenticationService>(
-                        delegate(IAuthenticationService service)
-                        {
-							_authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(_identity.Name, _sessionToken)).AuthorityTokens;
-                        });
-                }
-
-                // check that the user was granted this token
-                return CollectionUtils.Contains(_authorityTokens, delegate(string token) { return token == role; });
-            }
-
-			#region IUserCredentialsProvider Members
-
-			string IUserCredentialsProvider.UserName
-			{
-				get { return _identity.Name; }
-			}
-
-			string IUserCredentialsProvider.SessionTokenId
-			{
-				get { return _sessionToken.Id; }
-			}
-
-			#endregion
-		}
-
-        #endregion
-
     	private readonly string _id = Guid.NewGuid().ToString();
     	private readonly string _userName;
 		private readonly SessionToken _sessionToken;
@@ -144,7 +87,7 @@ namespace ClearCanvas.Enterprise.Core.ServiceModel
 				return false;
 
 			// set the principal
-            context.Properties["Principal"] = new Principal(clientIdentity, _sessionToken);
+            context.Properties["Principal"] = DefaultPrincipal.CreatePrincipal(clientIdentity, _sessionToken);
 
 			return true;
 		}

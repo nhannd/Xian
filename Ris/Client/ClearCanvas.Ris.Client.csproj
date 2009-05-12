@@ -58,7 +58,6 @@
     <Compile Include="CannedTextSummaryComponent.cs" />
     <Compile Include="CannedTextEditorComponent.cs" />
     <Compile Include="CannedTextTable.cs" />
-    <Compile Include="CoreServiceProvider.cs" />
     <Compile Include="DateTimeEntryComponent.cs" />
     <Compile Include="DiagnosticServiceEditorComponent.cs" />
     <Compile Include="DiagnosticServiceLookupSettings.cs" />
@@ -162,6 +161,7 @@
       <DependentUpon>PublishReportComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="RelativeTime.cs" />
+    <Compile Include="RisClientUserCredentialsProvider.cs" />
     <Compile Include="SearchResultsFolder.cs" />
     <Compile Include="SearchTool.cs" />
     <Compile Include="SessionManagerTool.cs" />

@@ -162,6 +162,7 @@
     <Compile Include="ServiceImplementsContractAttribute.cs" />
     <Compile Include="ServiceFactory.cs" />
     <Compile Include="ServiceModel\DefaultAuthorizationPolicy.cs" />
+    <Compile Include="ServiceModel\DefaultPrincipal.cs" />
     <Compile Include="ServiceModel\DefaultServiceCredentials.cs" />
     <Compile Include="ServiceModel\DefaultUserValidator.cs" />
     <Compile Include="ServiceModel\ServiceFactoryInjectionServiceBehavior.cs" />

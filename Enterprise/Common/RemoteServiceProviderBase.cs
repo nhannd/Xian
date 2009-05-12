@@ -143,9 +143,17 @@ namespace ClearCanvas.Enterprise.Common
 
         private static T InstantiateClass<T>(string className)
         {
-            Type type = Type.GetType(className);
-            return (T)Activator.CreateInstance(type);
-        }
+			try
+			{
+				Type type = Type.GetType(className, true);
+				return (T)Activator.CreateInstance(type);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Error, e, "Cannot instantiate class {0}", className);
+				throw;
+			}
+		}
     }
 
 	#endregion

@@ -44,6 +44,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Login;
 using ChangePasswordRequest=ClearCanvas.Ris.Application.Common.Login.ChangePasswordRequest;
 using ChangePasswordResponse=ClearCanvas.Ris.Application.Common.Login.ChangePasswordResponse;
+using ClearCanvas.Enterprise.Core.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Services.Login
 {
@@ -93,14 +94,17 @@ namespace ClearCanvas.Ris.Application.Services.Login
                     // so we don't catch it
 
 					// TODO: app name shouldn't be hardcoded
-                    token = service.InitiateSession(new InitiateSessionRequest(user, "RIS", hostName, password)).SessionToken;
+                	InitiateSessionRequest initSessionRequest = new InitiateSessionRequest(user, "RIS", hostName, password);
+                	initSessionRequest.GetAuthorizations = true;
 
-                    authorityTokens = service.GetAuthorizations(new GetAuthorizationsRequest(user, token)).AuthorityTokens;
+					InitiateSessionResponse initSessionResponse = service.InitiateSession(initSessionRequest);
+                	token = initSessionResponse.SessionToken;
+                	authorityTokens = initSessionResponse.AuthorityTokens;
 
-                    // setup a generic principal on this thread for the duration of this request
+                    // setup a principal on this thread for the duration of this request
                     // (this is necessary in order to load the WorkingFacilitySettings below)
-                    Thread.CurrentPrincipal = new GenericPrincipal(
-                        new GenericIdentity(user), authorityTokens);
+					// TODO is this the best way to do this?  Seems a little hokey...
+                    Thread.CurrentPrincipal = DefaultPrincipal.CreatePrincipal(new GenericIdentity(user), token);
                 });
 
 
