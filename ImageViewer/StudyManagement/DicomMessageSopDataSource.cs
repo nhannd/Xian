@@ -44,7 +44,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public class DicomMessageSopDataSource : StandardSopDataSource, IDicomMessageSopDataSource
 	{
 		private readonly DicomAttributeCollection _dummy;
-		private readonly Dictionary<int, FrameDataCacheItem> _frameDataCache;
 		private DicomMessageBase _sourceMessage;
 		private bool _loaded = false;
 		private bool _loading = false;
@@ -52,7 +51,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		protected DicomMessageSopDataSource(DicomMessageBase sourceMessage)
 		{
 			_dummy = new DicomAttributeCollection();
-			_frameDataCache = new Dictionary<int, FrameDataCacheItem>();
 			_sourceMessage = sourceMessage;
 		}
 
@@ -163,72 +161,61 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		protected override byte[] CreateFrameNormalizedPixelData(int frameNumber)
+		#region Frame Data Handling
+
+		protected override StandardSopFrameData CreateFrameData(int frameNumber)
 		{
-			//already locked by base calling method, but it doesn't hurt.
-			lock (SyncLock)
+			return new DicomMessageSopFrameData(frameNumber, this);
+		}
+
+		private class OverlayDataCache
+		{
+			private readonly Dictionary<int, byte[]> _data = new Dictionary<int, byte[]>();
+			
+			public byte[] this[int overlayIndex, int overlayFrame]
 			{
-				Load();
-				return CreateFrameNormalizedDataCache(frameNumber).GetPixelData();
+				get
+				{
+					int key = (overlayFrame << 8) | (overlayIndex & 0x000000ff);
+					if (!_data.ContainsKey(key))
+						return null;
+					return _data[key];
+				}
+				set
+				{
+					int key = (overlayFrame << 8) | (overlayIndex & 0x000000ff);
+					if (!_data.ContainsKey(key))
+						_data.Add(key, null);
+					_data[key] = value;
+				}
+			}
+
+			public void Clear()
+			{
+				_data.Clear();
 			}
 		}
 
-		protected override byte[] CreateFrameNormalizedOverlayData(int overlayNumber, int frameNumber)
+		protected class DicomMessageSopFrameData : StandardSopFrameData
 		{
-			//already locked by base calling method, but it doesn't hurt.
-			lock (SyncLock)
-			{
-				Load();
-				return CreateFrameNormalizedDataCache(frameNumber).GetOverlayData(overlayNumber);
-			}
-		}
-
-		private FrameDataCacheItem CreateFrameNormalizedDataCache(int frameNumber)
-		{
-			if (!_frameDataCache.ContainsKey(frameNumber))
-			{
-				_frameDataCache.Add(frameNumber, new FrameDataCacheItem(_sourceMessage, frameNumber));
-			}
-			return _frameDataCache[frameNumber];
-		}
-
-		private class FrameDataCacheItem
-		{
-			private readonly byte[][] _overlayData;
-			private readonly DicomMessageBase _message;
+			private readonly OverlayDataCache _overlayCache = new OverlayDataCache();
 			private readonly int _frameIndex;
-			private byte[] _pixelData = null;
 
-			public FrameDataCacheItem(DicomMessageBase message, int frameNumber)
+			public DicomMessageSopFrameData(int frameNumber, DicomMessageSopDataSource parent)
+				: base(frameNumber, parent)
 			{
-				_pixelData = null;
-				_overlayData = new byte[16][];
-				_message = message;
 				_frameIndex = frameNumber - 1;
 			}
 
-			public byte[] GetPixelData()
+			public new DicomMessageSopDataSource Parent
 			{
-				if (_pixelData == null)
-				{
-					CreateFrameNormalizedPixelData();
-				}
-				return _pixelData;
+				get { return (DicomMessageSopDataSource) base.Parent; }
 			}
 
-			public byte[] GetOverlayData(int index)
+			protected override byte[] CreateNormalizedPixelData()
 			{
-				index = index - 1;
-				Platform.CheckArgumentRange(index, 0, 15, "index");
-				if(_overlayData[index] == null)
-				{
-					CreateFrameNormalizedOverlayData(index);
-				}
-				return _overlayData[index];
-			}
+				DicomMessageBase _message = this.Parent.SourceMessage;
 
-			private void CreateFrameNormalizedPixelData()
-			{
 				CodeClock clock = new CodeClock();
 				clock.Start();
 
@@ -241,13 +228,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					// DICOM library uses zero-based frame numbers
 					rawPixelData = pixelData.GetFrame(_frameIndex);
 
-					// if any overlays have embedded pixel data, extract them now or forever hold your peace
-					OverlayPlaneModuleIod overlayPlaneModule = new OverlayPlaneModuleIod(_message.DataSet);
-					foreach (OverlayPlane overlay in overlayPlaneModule)
-					{
-						if (overlay.IsEmbedded && _overlayData[overlay.Index] == null)
-							_overlayData[overlay.Index] = OverlayData.Extract(overlay.OverlayBitPosition, pixelData.BitsAllocated, false, rawPixelData);
-					}
+					ExtractOverlayFrames(rawPixelData, pixelData.BitsAllocated);
 
 					photometricInterpretation = PhotometricInterpretation.FromCodeString(_message.DataSet[DicomTags.PhotometricInterpretation]);
 				}
@@ -269,33 +250,102 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				clock.Stop();
 				PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "CreateFrameNormalizedPixelData", clock.Seconds);
 
-				_pixelData = rawPixelData;
+				return rawPixelData;
 			}
 
-			private void CreateFrameNormalizedOverlayData(int overlayIndex)
+			protected override byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
 			{
+				int overlayIndex = overlayGroupNumber - 1;
+				int overlayFrame = overlayFrameNumber - 1;
+
+				// get the overlay data from cache if it has already been extracted/unpacked
+				byte[] overlayData = _overlayCache[overlayIndex, overlayFrame];
+				if (overlayData == null)
+				{
+					LoadOverlayPlane(overlayIndex); // force a load of the overlay plane
+					overlayData = _overlayCache[overlayIndex, overlayFrame];
+				}
+
+				// release our strong reference and stick a placeholder in the cache so that we don't re-extract/re-unpack
+				_overlayCache[overlayIndex, overlayFrame] = new byte[0];
+				return overlayData;
+			}
+
+			private void ExtractOverlayFrames(byte[] rawPixelData, int bitsAllocated)
+			{
+				// if any overlays have embedded pixel data, extract them now or forever hold your peace
+				DicomMessageBase message = this.Parent.SourceMessage;
+				OverlayPlaneModuleIod overlayPlaneModule = new OverlayPlaneModuleIod(message.DataSet);
+				foreach (OverlayPlane overlay in overlayPlaneModule)
+				{
+					if (overlay.IsEmbedded && _overlayCache[overlay.Index, _frameIndex] == null)
+						_overlayCache[overlay.Index, _frameIndex] = OverlayData.Extract(overlay.OverlayBitPosition, bitsAllocated, false, rawPixelData);
+				}
+			}
+
+			/// <summary>
+			/// Loads all frames from the given overlay plane.
+			/// </summary>
+			/// <param name="index"></param>
+			private void LoadOverlayPlane(int index)
+			{
+				DicomMessageBase message = this.Parent.SourceMessage;
+
 				CodeClock clock = new CodeClock();
 				clock.Start();
 
-				OverlayPlaneModuleIod overlayPlanes = new OverlayPlaneModuleIod(_message.DataSet);
-				if (overlayPlanes.HasOverlayPlane(overlayIndex))
+				OverlayPlaneModuleIod overlayPlanes = new OverlayPlaneModuleIod(message.DataSet);
+				if (overlayPlanes.HasOverlayPlane(index))
 				{
-					OverlayPlane overlayPlane = overlayPlanes[overlayIndex];
-					if (!overlayPlane.IsEmbedded)
+					OverlayPlane overlayPlane = overlayPlanes[index];
+					if (overlayPlane.IsEmbedded)
 					{
-						OverlayData odpd = new OverlayData(0, overlayPlane.OverlayRows, overlayPlane.OverlayColumns, overlayPlane.IsBigEndianOW, overlayPlane.OverlayData);
-						_overlayData[overlayIndex] = odpd.Unpack(); // unpack this frame
+						this.GetNormalizedPixelData();
 					}
 					else
 					{
-						CreateFrameNormalizedPixelData();
+						OverlayData odpd = new OverlayData(0, overlayPlane.OverlayRows, overlayPlane.OverlayColumns, overlayPlane.IsBigEndianOW, overlayPlane.OverlayData);
+						int numberOfFrames = this.Parent.NumberOfFrames;
+						byte[] overlayData;
+						if (overlayPlane.IsMultiFrame)
+						{
+							// multiframe overlay: fill each frame of the overlay into associated image frame(s)
+							for (int n = 1; n <= numberOfFrames; n++)
+							{
+								foreach (int frameIndex in overlayPlane.GetRelevantOverlayFrames(n - 1, numberOfFrames))
+								{
+									// TODO: handle unpacking individual frames
+									Platform.Log(LogLevel.Warn, new NotSupportedException("Multiframe overlays are not supported."));
+									overlayData = odpd.Unpack();
+									DicomMessageSopFrameData fd = (DicomMessageSopFrameData)this.Parent.GetFrameData(n);
+									fd._overlayCache[index, frameIndex] = overlayData;
+								}
+							}
+						}
+						else
+						{
+							overlayData = odpd.Unpack();
+							for (int n = 1; n <= numberOfFrames; n++)
+							{
+								DicomMessageSopFrameData fd = (DicomMessageSopFrameData)this.Parent.GetFrameData(n);
+								fd._overlayCache[index, 0] = overlayData;
+							}
+						}
 					}
 				}
 
 				clock.Stop();
-				PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "CreateFrameNormalizedOverlayData", clock.Seconds);
+				PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "LoadOverlayPlane", clock.Seconds);
+			}
+
+			protected override void OnUnloaded()
+			{
+				_overlayCache.Clear();
+				base.OnUnloaded();
 			}
 		}
+
+		#endregion
 
 		/// <summary>
 		/// Normalizes grayscale pixel data by masking out non-data bits and shifting the data so that the high bit is always 1 less than bits stored.

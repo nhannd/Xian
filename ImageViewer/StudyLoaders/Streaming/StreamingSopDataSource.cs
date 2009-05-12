@@ -282,86 +282,104 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.Streaming
 			return RetrieveResults[frameNumber - 1].AlreadyRetrieved;
 		}
 
-		protected override byte[] CreateFrameNormalizedPixelData(int frameNumber)
+		protected override StandardSopFrameData CreateFrameData(int frameNumber)
 		{
-			int frameIndex = frameNumber - 1;
-			FramePixelData frameData = RetrieveResults[frameIndex];
-
-			byte[] pixelData = frameData.GetUncompressedPixelData();
-			
-			string photometricInterpretationCode = this[DicomTags.PhotometricInterpretation].ToString();
-			PhotometricInterpretation pi = PhotometricInterpretation.FromCodeString(photometricInterpretationCode);
-
-			TransferSyntax ts = TransferSyntax.GetTransferSyntax(this.TransferSyntaxUid);
-			if (pi.IsColor)
-			{
-
-				if (ts == TransferSyntax.Jpeg2000ImageCompression ||
-					ts == TransferSyntax.Jpeg2000ImageCompressionLosslessOnly ||
-					ts == TransferSyntax.JpegExtendedProcess24 ||
-					ts == TransferSyntax.JpegBaselineProcess1 ||
-					ts == TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1)
-					pi = PhotometricInterpretation.Rgb;
-
-				pixelData = ToArgb(this, pixelData, pi);
-			}
-			else
-			{
-				OverlayPlaneModuleIod opmi = new OverlayPlaneModuleIod(this);
-				foreach (OverlayPlane overlayPlane in opmi)
-				{
-					if(false && overlayPlane.IsEmbedded && !frameData.HasOverlayData(overlayPlane.Index))
-					{
-						byte[] overlayData = OverlayData.Extract(overlayPlane.OverlayBitPosition, this[DicomTags.BitsAllocated].GetInt32(0, 0), false, pixelData);
-						frameData.SetOverlayData(overlayPlane.Index, overlayData);
-					}
-				}
-
-				NormalizeGrayscalePixels(this, pixelData, ts);
-			}
-
-			return pixelData;
+			return new StreamingSopFrameData(frameNumber, this);
 		}
 
-		protected override byte[] CreateFrameNormalizedOverlayData(int overlayNumber, int frameNumber)
+		private class StreamingSopFrameData : StandardSopFrameData
 		{
-			int frameIndex = frameNumber - 1;
-			int overlayIndex = overlayNumber - 1;
-			FramePixelData frameData = RetrieveResults[frameIndex];
+			private readonly int _frameIndex;
 
-			byte[] overlayData = null;
-
-			OverlayPlaneModuleIod opmi = new OverlayPlaneModuleIod(this);
-			if(opmi.HasOverlayPlane(overlayIndex))
+			public StreamingSopFrameData(int frameNumber, StreamingSopDataSource parent) : base(frameNumber, parent)
 			{
-				OverlayPlane overlayPlane = opmi[overlayIndex];
-				//DicomAttribute odx = this.GetDicomAttribute(overlayPlane.TagOffset + DicomTags.OverlayData);
-
-				if(!frameData.HasOverlayData(overlayIndex))
-				{
-					if(overlayPlane.IsEmbedded)
-					{
-						//CreateFrameNormalizedPixelData(frameNumber);
-					}
-					else
-					{
-						OverlayData od = new OverlayData(overlayPlane.TryComputeOverlayDataBitOffset(overlayIndex),
-							overlayPlane.OverlayRows,
-							overlayPlane.OverlayColumns,
-							overlayPlane.IsBigEndianOW,
-							overlayPlane.OverlayData);
-						frameData.SetOverlayData(overlayIndex, od.Unpack());
-					}
-				}
-				overlayData = frameData.GetOverlayData(overlayIndex);
+				_frameIndex = frameNumber - 1;
 			}
 
-			return overlayData;
-		}
+			public new StreamingSopDataSource Parent
+			{
+				get { return (StreamingSopDataSource) base.Parent; }
+			}
 
-		protected override void OnUnloadFrameData(int frameNumber)
-		{
-			this.RetrieveResults[frameNumber - 1].Unload();
+			protected override byte[] CreateNormalizedPixelData()
+			{
+				FramePixelData frameData = this.Parent.RetrieveResults[_frameIndex];
+
+				byte[] pixelData = frameData.GetUncompressedPixelData();
+
+				string photometricInterpretationCode = this.Parent[DicomTags.PhotometricInterpretation].ToString();
+				PhotometricInterpretation pi = PhotometricInterpretation.FromCodeString(photometricInterpretationCode);
+
+				TransferSyntax ts = TransferSyntax.GetTransferSyntax(this.Parent.TransferSyntaxUid);
+				if (pi.IsColor)
+				{
+					if (ts == TransferSyntax.Jpeg2000ImageCompression ||
+					    ts == TransferSyntax.Jpeg2000ImageCompressionLosslessOnly ||
+					    ts == TransferSyntax.JpegExtendedProcess24 ||
+					    ts == TransferSyntax.JpegBaselineProcess1 ||
+					    ts == TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1)
+						pi = PhotometricInterpretation.Rgb;
+
+					pixelData = ToArgb(this.Parent, pixelData, pi);
+				}
+				else
+				{
+					OverlayPlaneModuleIod opmi = new OverlayPlaneModuleIod(this.Parent);
+					foreach (OverlayPlane overlayPlane in opmi)
+					{
+						if (overlayPlane.IsEmbedded && !frameData.HasOverlayData(overlayPlane.Index))
+						{
+							byte[] overlayData = OverlayData.Extract(overlayPlane.OverlayBitPosition, overlayPlane.OverlayBitsAllocated, false, pixelData);
+							frameData.SetOverlayData(overlayPlane.Index, overlayData);
+						}
+					}
+
+					NormalizeGrayscalePixels(this.Parent, pixelData, ts);
+				}
+
+				return pixelData;
+			}
+
+			protected override byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber)
+			{
+				int frameIndex = overlayFrameNumber - 1;
+				int overlayIndex = overlayGroupNumber - 1;
+				FramePixelData frameData = this.Parent.RetrieveResults[frameIndex];
+
+				byte[] overlayData = null;
+
+				OverlayPlaneModuleIod opmi = new OverlayPlaneModuleIod(this.Parent);
+				if (opmi.HasOverlayPlane(overlayIndex))
+				{
+					OverlayPlane overlayPlane = opmi[overlayIndex];
+
+					if (!frameData.HasOverlayData(overlayIndex))
+					{
+						if (overlayPlane.IsEmbedded)
+						{
+							this.GetNormalizedPixelData();
+						}
+						else
+						{
+							OverlayData od = new OverlayData(overlayPlane.TryComputeOverlayDataBitOffset(overlayIndex),
+							                                 overlayPlane.OverlayRows,
+							                                 overlayPlane.OverlayColumns,
+							                                 overlayPlane.IsBigEndianOW,
+							                                 overlayPlane.OverlayData);
+							frameData.SetOverlayData(overlayIndex, od.Unpack());
+						}
+					}
+					overlayData = frameData.GetOverlayData(overlayIndex);
+				}
+
+				return overlayData;
+			}
+
+			protected override void OnUnloaded()
+			{
+				base.OnUnloaded();
+				this.Parent.RetrieveResults[_frameIndex].Unload();
+			}
 		}
 
 		private bool NeedFullHeader(uint tag)

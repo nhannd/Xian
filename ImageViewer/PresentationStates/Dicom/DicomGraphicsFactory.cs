@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 					{
 						foreach (int overlayFrame in overlay.GetRelevantOverlayFrames(frame.FrameNumber, frame.ParentImageSop.NumberOfFrames))
 						{
-							byte[] overlayData = dataSource.GetFrameNormalizedOverlayData(overlay.Index + 1, overlayFrame + 1);
+							byte[] overlayData = dataSource.GetFrameData(frame.FrameNumber).GetNormalizedOverlayData(overlay.Index + 1, overlayFrame + 1);
 
 							OverlayPlaneGraphic overlayPlaneGraphic = new OverlayPlaneGraphic(overlay, overlayData, OverlayPlaneSource.Image);
 							overlayPlaneGraphics.Add(overlayPlaneGraphic);

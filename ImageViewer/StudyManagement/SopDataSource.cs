@@ -93,24 +93,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			internal protected set { _server = value; }
 		}
 
+		[Obsolete("Use ISopDataSource.GetFrameData(frameNumber).GetNormalizedPixelData() instead.")]
 		public byte[] GetFrameNormalizedPixelData(int frameNumber)
 		{
-			CheckIsImage();
-			byte[] pixelData;
-			OnGetFrameNormalizedPixelData(frameNumber, out pixelData);
-			return pixelData;
+			return this.GetFrameData(frameNumber).GetNormalizedPixelData();
 		}
 
+		[Obsolete("Use ISopDataSource.GetFrameData(frameNumber).GetNormalizedOverlayData(overlayGroupNumber, overlayFrameNumber) instead.")]
 		public byte[] GetFrameNormalizedOverlayData(int overlayNumber, int frameNumber)
 		{
-			CheckIsImage();
-			byte[] overlayData;
-			OnGetFrameNormalizedOverlayData(overlayNumber, frameNumber, out overlayData);
-			return overlayData;
+			return this.GetFrameData(frameNumber).GetNormalizedOverlayData(overlayNumber, frameNumber);
 		}
 
+		[Obsolete("Use ISopDataSource.GetFrameData(frameNumber).Unload() instead.")]
 		public virtual void UnloadFrameData(int frameNumber)
 		{
+			this.GetFrameData(frameNumber).Unload();
+		}
+
+		public ISopFrameData GetFrameData(int frameNumber)
+		{
+			CheckIsImage();
+			return OnGetFrameData(frameNumber);
 		}
 
 		#endregion
@@ -135,8 +139,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				throw new InvalidOperationException("This functionality cannot be used for non-images.");
 		}
 
-		protected abstract void OnGetFrameNormalizedPixelData(int frameNumber, out byte[] pixelData);
-		protected abstract void OnGetFrameNormalizedOverlayData(int overlayNumber, int frameNumber, out byte[] pixelData);
+		protected abstract ISopFrameData OnGetFrameData(int frameNumber);
+
+		[Obsolete("This formerly abstract method is no longer called.")]
+		protected virtual void OnGetFrameNormalizedPixelData(int frameNumber, out byte[] pixelData)
+		{
+			pixelData = null;
+		}
+
+		[Obsolete("This formerly abstract method is no longer called.")]
+		protected virtual void OnGetFrameNormalizedOverlayData(int overlayNumber, int frameNumber, out byte[] pixelData)
+		{
+			pixelData = null;
+		}
 
 		#region IDicomAttributeProvider Members
 

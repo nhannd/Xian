@@ -311,9 +311,6 @@ namespace ClearCanvas.Dicom.Iod.Modules
 		{
 			get
 			{
-				//int overlayBA = base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayBitsAllocated].GetInt32(0, -1);
-				//int imageBA = base.DicomAttributeProvider[DicomTags.BitsAllocated].GetInt32(0, -2);
-				//return overlayBA == imageBA;
 				DicomAttribute attribute = base.DicomAttributeProvider[_tagOffset + DicomTags.OverlayData];
 				return attribute.IsEmpty || attribute.IsNull;
 			}
@@ -611,7 +608,7 @@ namespace ClearCanvas.Dicom.Iod.Modules
 			int count = this.NumberOfFramesInOverlay ?? 1;
 
 			// if image is not multi-frame, then all overlay frames are applicable to the image separately
-			if (countImageFrames > 1)
+			if (countImageFrames <= 1)
 			{
 				for (int n = 0; n < count; n++)
 					yield return n;

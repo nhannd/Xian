@@ -778,7 +778,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				lock (_syncLock)
 				{
 					if (_pixelData == null)
-						_pixelData = _parentImageSop.DataSource.GetFrameNormalizedPixelData(FrameNumber);
+						_pixelData = _parentImageSop.DataSource.GetFrameData(FrameNumber).GetNormalizedPixelData();
 
 					pixelData = _pixelData;
 				}
@@ -799,7 +799,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public void UnloadPixelData()
 		{
-			_parentImageSop.DataSource.UnloadFrameData(FrameNumber);
+			_parentImageSop.DataSource.GetFrameData(FrameNumber).Unload();
 		}
 
 		public IFrameReference CreateTransientReference()
