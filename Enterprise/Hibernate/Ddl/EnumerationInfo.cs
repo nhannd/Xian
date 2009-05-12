@@ -29,10 +29,8 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Text;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -48,7 +46,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private float _displayOrder;
 		private bool _deactivated;
 
-		internal EnumerationMemberInfo()
+		public EnumerationMemberInfo()
 		{
 		}
 
@@ -114,7 +112,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		private bool _isHard;
 		private string _table;
 
-		internal EnumerationInfo()
+		public EnumerationInfo()
 		{
 
 		}

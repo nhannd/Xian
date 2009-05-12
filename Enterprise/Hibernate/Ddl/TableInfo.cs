@@ -29,9 +29,7 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
@@ -39,24 +37,24 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 	/// <summary>
 	/// Describes a table in a relational database model.
 	/// </summary>
-    [DataContract]
-    public class TableInfo : ElementInfo
-    {
+	[DataContract]
+	public class TableInfo : ElementInfo
+	{
 		private string _name;
-    	private string _schema;
-    	private List<ColumnInfo> _columns;
-    	private ConstraintInfo _primaryKey;
-    	private List<IndexInfo> _indexes;
-    	private List<ForeignKeyInfo> _foreignKeys;
-    	private List<ConstraintInfo> _uniqueKeys;
+		private string _schema;
+		private List<ColumnInfo> _columns;
+		private ConstraintInfo _primaryKey;
+		private List<IndexInfo> _indexes;
+		private List<ForeignKeyInfo> _foreignKeys;
+		private List<ConstraintInfo> _uniqueKeys;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		internal TableInfo()
-        {
+		public TableInfo()
+		{
 
-        }
+		}
 
 		/// <summary>
 		/// Constructor
@@ -68,86 +66,86 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// <param name="indexes"></param>
 		/// <param name="foreignKeys"></param>
 		/// <param name="uniqueKeys"></param>
-        internal TableInfo(string name, string schema, List<ColumnInfo> columns, ConstraintInfo primaryKey, List<IndexInfo> indexes, List<ForeignKeyInfo> foreignKeys, List<ConstraintInfo> uniqueKeys)
-        {
-            Name = name;
-            Schema = schema;
-            Columns = columns;
-            PrimaryKey = primaryKey;
-            Indexes = indexes;
-            ForeignKeys = foreignKeys;
-            UniqueKeys = uniqueKeys;
-        }
+		internal TableInfo(string name, string schema, List<ColumnInfo> columns, ConstraintInfo primaryKey, List<IndexInfo> indexes, List<ForeignKeyInfo> foreignKeys, List<ConstraintInfo> uniqueKeys)
+		{
+			Name = name;
+			Schema = schema;
+			Columns = columns;
+			PrimaryKey = primaryKey;
+			Indexes = indexes;
+			ForeignKeys = foreignKeys;
+			UniqueKeys = uniqueKeys;
+		}
 
 		/// <summary>
 		/// Gets the name of the table.
 		/// </summary>
-    	[DataMember]
-    	public string Name
-    	{
-    		get { return _name;}
+		[DataMember]
+		public string Name
+		{
+			get { return _name; }
 			private set { _name = value; }
-    	}
+		}
 
 		/// <summary>
 		/// Gets the name of the schema to which the table belongs, if different from the default schema.
 		/// </summary>
-        [DataMember]
-        public string Schema
-    	{
-    		get { return _schema; }
+		[DataMember]
+		public string Schema
+		{
+			get { return _schema; }
 			private set { _schema = value; }
-    	}
+		}
 
 		/// <summary>
 		/// Gets the set of columns in the table.
 		/// </summary>
-        [DataMember]
-        public List<ColumnInfo> Columns
-    	{
-    		get { return _columns;}
+		[DataMember]
+		public List<ColumnInfo> Columns
+		{
+			get { return _columns; }
 			private set { _columns = value; }
-    	}
+		}
 
 		/// <summary>
 		/// Gets the table's primary key.
 		/// </summary>
-        [DataMember]
-        public ConstraintInfo PrimaryKey
-    	{
-    		get { return _primaryKey;}
+		[DataMember]
+		public ConstraintInfo PrimaryKey
+		{
+			get { return _primaryKey; }
 			private set { _primaryKey = value; }
-    	}
+		}
 
 		/// <summary>
 		/// Gets the set of indexes defined on columns in this table.
 		/// </summary>
-        [DataMember]
-        public List<IndexInfo> Indexes
-     	{
-    		get { return _indexes;}
+		[DataMember]
+		public List<IndexInfo> Indexes
+		{
+			get { return _indexes; }
 			private set { _indexes = value; }
-    	}
+		}
 
 		/// <summary>
 		/// Gets the set of foreign key relationships defined on columns in this table.
 		/// </summary>
-        [DataMember]
-        public List<ForeignKeyInfo> ForeignKeys
-    	{
-    		get { return _foreignKeys;}
+		[DataMember]
+		public List<ForeignKeyInfo> ForeignKeys
+		{
+			get { return _foreignKeys; }
 			private set { _foreignKeys = value; }
-    	}
+		}
 
 		/// <summary>
 		/// Gets the set of unique keys defined on columns in this table.
 		/// </summary>
-        [DataMember]
-        public List<ConstraintInfo> UniqueKeys
-	    {
-    		get { return _uniqueKeys;}
+		[DataMember]
+		public List<ConstraintInfo> UniqueKeys
+		{
+			get { return _uniqueKeys; }
 			private set { _uniqueKeys = value; }
-    	}
+		}
 
 
 		/// <summary>
@@ -157,8 +155,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 		/// The identity string must uniquely identify the element within a given set of elements, but need not be globally unique.
 		/// </remarks>
 		public override string Identity
-        {
-            get { return Name; }
-        }
-    }
+		{
+			get { return Name; }
+		}
+	}
 }
