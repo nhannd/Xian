@@ -96,7 +96,6 @@ namespace ClearCanvas.Dicom.IO
         private DicomAttributeCollection _dataset;
 
         private uint _privateCreatorCard = 0xffffffff;
-        private string _privateCreatorId = String.Empty;
 
         private DicomTag _tag = null;
         private DicomVr _vr = null;
@@ -207,7 +206,7 @@ namespace ClearCanvas.Dicom.IO
                                     _dataset[DicomTags.TransferSyntaxUid].GetString(0, String.Empty));
                             if (group2syntax == null)
                                 throw new DicomException("Unsupported transfer syntax in group 2 elements");
-                            this.TransferSyntax = group2syntax;
+                            TransferSyntax = group2syntax;
                         }
                     }
                     uint tagValue;
@@ -223,16 +222,7 @@ namespace ClearCanvas.Dicom.IO
                             {
                                 if ((tagValue & _privateCreatorCard) != _privateCreatorCard)
                                 {
-                                    _privateCreatorCard = tagValue & 0xffffff00;
-                                    DicomTag pct = DicomTag.GetPrivateCreatorTag(g, e);
-                                    DicomAttributeCollection ds = _dataset;
-                                    if (_sqrs.Count > 0)
-                                    {
-                                        ds = _sqrs.Peek()._current;
-                                        if (!ds.Contains(pct)) // not sure about this TODO
-                                            ds = _dataset;
-                                    }
-                                    _privateCreatorId = ds[pct].ToString();
+                                    _privateCreatorCard = tagValue & 0xffffff00;                       
                                 }
                                 _tag = DicomTagDictionary.GetDicomTag(g, e);
                                 if (_tag == null)
@@ -578,7 +568,30 @@ namespace ClearCanvas.Dicom.IO
                     {
                         if (_len == UndefinedLength)
                         {
-                            if (_vr == DicomVr.SQvr)
+							if (_vr == DicomVr.UNvr)
+								
+							{
+								if (!_syntax.ExplicitVr)
+								{
+									
+									_vr = DicomVr.SQvr;
+									if (_tag.IsPrivate)
+										_tag = new DicomTag(_tag.TagValue, "Private Tag", "PrivateTag", DicomVr.SQvr, false, 1, uint.MaxValue, false);
+									else
+										_tag = new DicomTag(_tag.TagValue, "Unknown Tag", "UnknownTag", DicomVr.SQvr, false, 1, uint.MaxValue, false);
+								}
+								else
+								{
+									// To handle this case, we'd have to add a new mechanism to transition the parser to implicit VR parsing,
+									// and then return back to implicit once the parsing of the SQ is complete.
+									Platform.Log(LogLevel.Error,
+									             "Encountered unknown tag {0}, encoded as undefined length in an Explicit VR transfer syntax at offset {1}.  Unable to parse.",
+									             _tag, _stream.Position);
+									return DicomReadStatus.UnknownError;
+								}
+							}
+
+                        	if (_vr == DicomVr.SQvr)
                             {
                                 SequenceRecord rec = new SequenceRecord();
                                 if (_sqrs.Count > 0)
@@ -650,7 +663,7 @@ namespace ClearCanvas.Dicom.IO
                                              Flags.IsSet(options, DicomReadOptions.StorePixelDataReferences))
                                     {
                                         FileReference reference =
-                                            new FileReference(this.Filename, _stream.Position, _len, _endian,
+                                            new FileReference(Filename, _stream.Position, _len, _endian,
                                                               _tag.VR);
                                         _stream.Seek((int) _len, SeekOrigin.Current);
 
