@@ -208,16 +208,27 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 			return AddFile(theFile, 0);
 		}
 
-        /// <summary>
+		public bool AddFile(DicomFile theFile, long fileSize)
+		{
+			return AddFile(theFile, fileSize, new StudyXmlOutputSettings());
+		}
+
+    	/// <summary>
 		/// Add a <see cref="DicomFile"/> to the StudyXml.
         /// </summary>
         /// <param name="theFile">The <see cref="DicomFile"/> to add.</param>
         /// <param name="fileSize">The size in bytes of the file being added.</param>
+        /// <param name="settings">The settings used when writing out the file.</param>
         /// <returns>true on scuccess.</returns>
-        public bool AddFile(DicomFile theFile, long fileSize)
+        public bool AddFile(DicomFile theFile, long fileSize, StudyXmlOutputSettings settings)
         {
+    		Platform.CheckForNullReference(settings, "settings");
+
 			// Create a copy of the collection without pixel data
-            DicomAttributeCollection data = theFile.DataSet.Copy(true, DicomTags.PixelData);
+    		DicomAttributeCollection data =
+    			theFile.DataSet.Copy(true, settings.IncludePrivateValues != StudyXmlTagInclusion.IgnoreTag,
+    			                     settings.IncludeUnknownTags != StudyXmlTagInclusion.IgnoreTag,
+    			                     DicomTags.PixelData);
 
             String studyInstanceUid = data[DicomTags.StudyInstanceUid];
 

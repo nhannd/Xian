@@ -47,9 +47,19 @@ namespace ClearCanvas.ImageServer.Common
             get
             {
                 StudyXmlOutputSettings settings = new StudyXmlOutputSettings();
-                settings.IncludePrivateValues = Settings.Default.StudyHeaderIncludePrivateTags;
-                settings.IncludeUnknownTags = Settings.Default.StudyHeaderIncludeUNTags;
+				if (Settings.Default.StudyHeaderIncludePrivateTags)
+					settings.IncludePrivateValues = StudyXmlTagInclusion.IncludeTagValue;
+				else
+					settings.IncludePrivateValues = StudyXmlTagInclusion.IgnoreTag;
+
+				if (Settings.Default.StudyHeaderIncludeUNTags)
+					settings.IncludeUnknownTags = StudyXmlTagInclusion.IncludeTagValue;
+				else
+					settings.IncludeUnknownTags = StudyXmlTagInclusion.IgnoreTag;
+
                 settings.MaxTagLength = Settings.Default.StudyHeaderMaxValueLength;
+            	settings.IncludeLargeTags = StudyXmlTagInclusion.IncludeTagExclusion;
+
             	settings.IncludeSourceFileName = false;
                 return settings;
             }

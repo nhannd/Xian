@@ -6913,7 +6913,7 @@ namespace ClearCanvas.Dicom.Tests
 					object ignore = collection[tag].Values;
 				}
 
-				DicomAttributeCollection copy = collection.Copy(true);
+				DicomAttributeCollection copy = collection.Copy(true, true, true);
 				foreach(DicomAttribute attribute in collection)
 				{
 					DicomAttribute copyAttribute = copy[attribute.Tag];
@@ -6929,7 +6929,7 @@ namespace ClearCanvas.Dicom.Tests
 				foreach (DicomTag tag in _tags)
 					collection[tag].SetNullValue();
 
-				DicomAttributeCollection copy = collection.Copy(true);
+				DicomAttributeCollection copy = collection.Copy(true, true, true);
 				foreach(DicomAttribute attribute in collection)
 				{
 					DicomAttribute copyAttribute = copy[attribute.Tag];
@@ -6945,7 +6945,7 @@ namespace ClearCanvas.Dicom.Tests
 				foreach (DicomTag tag in _tags)
 					TrySetValue(0, collection[tag]);
 
-				DicomAttributeCollection copy = collection.Copy(true);
+				DicomAttributeCollection copy = collection.Copy(true, true, true);
 				foreach(DicomAttribute attribute in collection)
 				{
 					DicomAttribute copyAttribute = copy[attribute.Tag];

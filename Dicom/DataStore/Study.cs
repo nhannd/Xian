@@ -439,8 +439,8 @@ namespace ClearCanvas.Dicom.DataStore
 		internal void Flush()
 		{
 			StudyXmlOutputSettings settings = new StudyXmlOutputSettings();
-			settings.IncludePrivateValues = false;
-			settings.IncludeUnknownTags = false;
+			settings.IncludePrivateValues = StudyXmlTagInclusion.IgnoreTag;
+			settings.IncludeUnknownTags = StudyXmlTagInclusion.IgnoreTag;
 			settings.IncludeSourceFileName = true;
 
 			//Ensure the existing stuff is loaded.

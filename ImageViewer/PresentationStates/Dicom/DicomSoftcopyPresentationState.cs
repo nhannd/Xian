@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.PresentationStates.Dicom
 		protected DicomSoftcopyPresentationState(DicomSoftcopyPresentationState source, ICloningContext context)
 		{
 			context.CloneFields(source, this);
-			_dicomFile = new DicomFile("", source._dicomFile.MetaInfo.Copy(true), source._dicomFile.DataSet.Copy(true));
+			_dicomFile = new DicomFile("", source._dicomFile.MetaInfo.Copy(), source._dicomFile.DataSet.Copy());
 		}
 
 		public SopClass PresentationSopClass

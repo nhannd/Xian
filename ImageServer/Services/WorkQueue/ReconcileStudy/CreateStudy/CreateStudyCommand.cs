@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.CreateStudy
                     Platform.Log(LogLevel.Info, "Reconciled SOP {0} (not yet processed) [{1} of {2}]",
                                  uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
                 }
-                catch (InstanceAlreadyExistsException ex)
+                catch (InstanceAlreadyExistsException)
                 {
                     CreateWorkQueueEntryForDuplicate(file, Context.WorkQueueItem, uid);
                 }

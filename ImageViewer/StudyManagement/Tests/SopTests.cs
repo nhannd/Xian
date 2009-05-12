@@ -133,8 +133,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		public void TestCaching()
 		{
 			IList<DicomAttributeCollection> collections = base.SetupMRSeries(1, 1, "test");
-			DicomFile file1 = new DicomFile(null, new DicomAttributeCollection(), collections[0].Copy(true));
-			DicomFile file2 = new DicomFile(null, new DicomAttributeCollection(), collections[0].Copy(true));
+			DicomFile file1 = new DicomFile(null, new DicomAttributeCollection(), collections[0].Copy());
+			DicomFile file2 = new DicomFile(null, new DicomAttributeCollection(), collections[0].Copy());
 
 			TestDataSource dataSource1 = new TestDataSource(file1);
 			TestDataSource dataSource2 = new TestDataSource(file2);

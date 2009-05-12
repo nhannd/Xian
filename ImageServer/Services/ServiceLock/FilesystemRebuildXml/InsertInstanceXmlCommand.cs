@@ -46,13 +46,14 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 		#region Private Members
 
 		private readonly StudyXml _stream;
+		private readonly StudyXmlOutputSettings _outputSettings;
 		private readonly string _path;
 		#endregion
 
 
 		#region Constructors
 
-		public InsertInstanceXmlCommand(StudyXml stream, string path)
+		public InsertInstanceXmlCommand(StudyXml stream, string path, StudyXmlOutputSettings outputSettings)
 			: base("Insert into Study XML", false)
 		{
 			Platform.CheckForNullReference(stream, "StudyStream object");
@@ -60,6 +61,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 
 			_stream = stream;
 			_path = path;
+			_outputSettings = outputSettings;
 		}
 
 		#endregion

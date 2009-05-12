@@ -145,7 +145,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.ProcessAsIs
             
                     }
                 }
-                catch(InstanceAlreadyExistsException ex)
+                catch(InstanceAlreadyExistsException)
                 {
                     CreatDuplicateSIQEntry(file, Context.WorkQueueItem, uid);
                 }

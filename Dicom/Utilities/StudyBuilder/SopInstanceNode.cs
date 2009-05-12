@@ -57,7 +57,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		/// <param name="sourceDicomFile">The <see cref="DicomFile"/> from which to initialize this node.</param>
 		public SopInstanceNode(DicomMessageBase sourceDicomFile)
 		{
-			_dicomFile = new DicomFile("", sourceDicomFile.MetaInfo.Copy(true), sourceDicomFile.DataSet.Copy(true));
+			_dicomFile = new DicomFile("", sourceDicomFile.MetaInfo.Copy(), sourceDicomFile.DataSet.Copy());
 
 			// FIXME: Remove this next line when #3163 is fixed
 			_dicomFile.MetaInfo[DicomTags.TransferSyntaxUid].Values = sourceDicomFile.MetaInfo[DicomTags.TransferSyntaxUid].Values;
@@ -74,7 +74,7 @@ namespace ClearCanvas.Dicom.Utilities.StudyBuilder
 		private SopInstanceNode(SopInstanceNode source)
 		{
 			_instanceUid = StudyBuilder.NewUid();
-			_dicomFile = new DicomFile("", source._dicomFile.MetaInfo.Copy(true), source._dicomFile.DataSet.Copy(true));
+			_dicomFile = new DicomFile("", source._dicomFile.MetaInfo.Copy(true, true, true), source._dicomFile.DataSet.Copy(true, true, true));
 
 			// FIXME: Remove this next line when #3163 is fixed
 			_dicomFile.MetaInfo[DicomTags.TransferSyntaxUid].SetStringValue(source._dicomFile.TransferSyntaxUid);

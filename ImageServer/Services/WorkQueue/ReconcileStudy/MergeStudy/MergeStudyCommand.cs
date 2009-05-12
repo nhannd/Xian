@@ -31,7 +31,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
 using ClearCanvas.Common;
@@ -239,7 +238,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
                         Platform.Log(LogLevel.Info, "Reconciled SOP {0} (not yet processed) [{1} of {2}]", uid.SopInstanceUid, counter, Context.WorkQueueUidList.Count);
                     }
                 }
-                catch(InstanceAlreadyExistsException ex)
+                catch(InstanceAlreadyExistsException)
                 {
                     CreatDuplicateSIQEntry(file, Context.WorkQueueItem, uid);
                 }
@@ -248,7 +247,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy.MergeStudy
 
         }
 
-        private void CreatDuplicateSIQEntry(DicomFile file, Model.WorkQueue queue, Model.WorkQueueUid uid)
+        private void CreatDuplicateSIQEntry(DicomFile file, Model.WorkQueue queue, WorkQueueUid uid)
         {
             Platform.Log(LogLevel.Info, "Creating Work Queue Entry for duplicate...");
             String sourceId = queue.GroupID ?? queue.GetKey().Key.ToString();

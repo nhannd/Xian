@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 			}
 
 			// Setup the insert parameters
-			if (false == _stream.AddFile(_file, fileSize))
+			if (false == _stream.AddFile(_file, fileSize, _outputSettings))
 			{
 				Platform.Log(LogLevel.Error, "Unexpected error adding SOP to XML Study Descriptor for file {0}",
 				             _file.Filename);

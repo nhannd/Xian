@@ -84,7 +84,7 @@ namespace ClearCanvas.Dicom
 
         }
 
-        internal DicomAttributeSQ(DicomAttributeSQ attrib, bool copyBinary)
+        internal DicomAttributeSQ(DicomAttributeSQ attrib, bool copyBinary, bool copyPrivate, bool copyUnknown)
             : base(attrib)
         {
             DicomSequenceItem[] items = (DicomSequenceItem[])attrib.Values;
@@ -93,7 +93,7 @@ namespace ClearCanvas.Dicom
 			{
 				_values = new DicomSequenceItem[items.Length];
 				for (int i = 0; i < items.Length; i++)
-					_values[i] = (DicomSequenceItem) items[i].Copy(copyBinary);
+					_values[i] = (DicomSequenceItem) items[i].Copy(copyBinary, copyPrivate, copyUnknown);
 			}
         }
 
@@ -254,12 +254,12 @@ namespace ClearCanvas.Dicom
 
         public override DicomAttribute Copy()
         {
-            return new DicomAttributeSQ(this, true);
+            return new DicomAttributeSQ(this, true, true, true);
         }
 
         internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new DicomAttributeSQ(this, copyBinary);
+        	return new DicomAttributeSQ(this, copyBinary, true, true);
         }
 
         public override void SetStringValue(String stringValue)

@@ -595,6 +595,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             Platform.Log(LogLevel.Info, "Updating filesystem...");
             string studyXmlPath = Path.Combine(_oldStudyPath, _oldStudyInstanceUid + ".xml"); ;
             StudyXml studyXml = LoadStudyXml(studyXmlPath);
+			StudyXmlOutputSettings outputSettings = ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings;
 
             StudyXml newStudyXml = new StudyXml();
             foreach (SeriesXml seriesXml in studyXml)
@@ -632,7 +633,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
 
 							fileSize = finfo.Length;
 						}
-                        newStudyXml.AddFile(file, fileSize);
+						newStudyXml.AddFile(file, fileSize, outputSettings);
 
                         Platform.Log(LogLevel.Info, "SOP {0} updated [{1} of {2}].", instance.SopInstanceUid, _updatedSopList.Count, _totalSopCount);
 
@@ -658,7 +659,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.WebEditStudy
             using (FileStream xmlStream = FileStreamOpener.OpenForSoleUpdate(newStudyXmlPath, FileMode.Create),
 							  gzipStream = FileStreamOpener.OpenForSoleUpdate(gzipStudyXmlPath, FileMode.Create))
             {
-                StudyXmlIo.WriteXmlAndGzip(newStudyXml.GetMemento(new StudyXmlOutputSettings()), xmlStream, gzipStream);
+                StudyXmlIo.WriteXmlAndGzip(newStudyXml.GetMemento(outputSettings), xmlStream, gzipStream);
 				xmlStream.Close();
 				gzipStream.Close();
             }

@@ -44,7 +44,6 @@ using ClearCanvas.ImageServer.Core;
 using ClearCanvas.ImageServer.Core.Reconcile;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Rules;
-using ExecutionContext=ClearCanvas.ImageServer.Common.CommandProcessor.ExecutionContext;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 {
@@ -59,8 +58,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
         protected StudyProcessStatistics _statistics;
     	protected StudyProcessorContext _context;
-        private bool _duplicateProcessed = false;
-        private const string RECONCILE_STORAGE_FOLDER = "Reconcile";
+    	private const string RECONCILE_STORAGE_FOLDER = "Reconcile";
 
         #endregion
 
@@ -80,8 +78,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 	
         private void ProcessDuplicate(WorkQueueUid uid, string basePath, string duplicatePath)
         {
-            _duplicateProcessed = true;
-            DicomFile dupFile = new DicomFile(duplicatePath);
+        	DicomFile dupFile = new DicomFile(duplicatePath);
             DicomFile baseFile = new DicomFile(basePath);
 
             dupFile.Load(DicomReadOptions.StorePixelDataReferences);
@@ -122,7 +119,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 processor.AddCommand(insertCommand);
 
-                processor.AddCommand(new UpdateDuplicateQueueEntryCommand(delegate() { return insertCommand.QueueEntry; }, file));
+                processor.AddCommand(new UpdateDuplicateQueueEntryCommand(delegate { return insertCommand.QueueEntry; }, file));
 
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
 
@@ -138,6 +135,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         /// </summary>
         /// <param name="queueUid"></param>
         /// <param name="stream">The <see cref="StudyXml"/> file to update with information from the file.</param>
+        /// <param name="file">The file being processed.</param>
         protected virtual void ProcessFile(WorkQueueUid queueUid, DicomFile file, StudyXml stream)
         {
             SopInstanceProcessor processor = new SopInstanceProcessor( _context);

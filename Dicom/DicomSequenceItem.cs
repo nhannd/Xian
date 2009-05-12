@@ -74,8 +74,10 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="source"></param>
         /// <param name="copyBinary"></param>
-        internal DicomSequenceItem(DicomAttributeCollection source, bool copyBinary)
-            : base(source, copyBinary)
+        /// <param name="copyPrivate"></param>
+        /// <param name="copyUnknown"></param>
+        internal DicomSequenceItem(DicomAttributeCollection source, bool copyBinary, bool copyPrivate, bool copyUnknown)
+            : base(source, copyBinary, copyPrivate, copyUnknown)
         {
         }
         #endregion
@@ -87,19 +89,21 @@ namespace ClearCanvas.Dicom
         /// <returns>The copied DicomSequenceItem.</returns>
         public override DicomAttributeCollection Copy()
         {
-            return Copy(true);
+        	return Copy(true, true, true);
         }
 
-        /// <summary>
-        /// Creates a copy of this DicomSequenceItem.
-        /// </summary>
-        /// <param name="copyBinary">When set to false, the copy will not include <see cref="DicomAttribute"/>
-        /// instances that are of type <see cref="DicomAttributeOB"/>, <see cref="DicomAttributeOW"/>,
-        /// or <see cref="DicomAttributeOF"/>.</param>
-        /// <returns>The copied DicomSequenceItem.</returns>
-        public override DicomAttributeCollection Copy(bool copyBinary)
+    	/// <summary>
+    	/// Creates a copy of this DicomSequenceItem.
+    	/// </summary>
+    	/// <param name="copyBinary">When set to false, the copy will not include <see cref="DicomAttribute"/>
+    	/// instances that are of type <see cref="DicomAttributeOB"/>, <see cref="DicomAttributeOW"/>,
+    	/// or <see cref="DicomAttributeOF"/>.</param>
+    	/// <param name="copyPrivate">When set to false, the copy will not include Private tags</param>
+    	/// <param name="copyUnknown">When set to false, the copy will not include UN VR tags</param>
+    	/// <returns>The copied DicomSequenceItem.</returns>
+    	public override DicomAttributeCollection Copy(bool copyBinary, bool copyPrivate, bool copyUnknown)
         {
-            return new DicomSequenceItem(this,copyBinary);
+            return new DicomSequenceItem(this,copyBinary,copyPrivate,copyUnknown);
         }
         #endregion
 

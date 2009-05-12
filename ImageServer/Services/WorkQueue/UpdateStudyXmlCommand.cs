@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 Platform.Log(LogLevel.Warn, "SOP was unexpectedly not in XML Study Descriptor for file: {0}",
                              _file.Filename);
             }
-        	if (false == _stream.AddFile(_file, fileSize))
+        	if (false == _stream.AddFile(_file, fileSize, _outputSettings))
             {
                 Platform.Log(LogLevel.Error, "Unexpected error adding SOP to XML Study Descriptor for file {0}",
                              _file.Filename);
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 					FileInfo finfo = new FileInfo(file.Filename);
 					fileSize = finfo.Length;
 				}
-				_stream.AddFile(file, fileSize);
+				_stream.AddFile(file, fileSize, _outputSettings);
 			}
             WriteStudyStream(
                 Path.Combine(_studyStorageLocation.GetStudyPath(), _studyStorageLocation.StudyInstanceUid + ".xml"),

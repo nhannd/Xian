@@ -31,8 +31,29 @@
 
 namespace ClearCanvas.Dicom.Utilities.Xml
 {
+	/// <summary>
+	/// Enumerated value for setting how tags are included in the <see cref="StudyXml"/> file
+	/// </summary>
+	public enum StudyXmlTagInclusion
+	{
+		/// <summary>
+		/// If a tag is encountered, its value will be ignored and not placed in the <see cref="StudyXml"/> file.
+		/// </summary>
+		IgnoreTag,
+		/// <summary>
+		/// If a tag is encountered, its value will be included in the <see cref="StudyXml"/> file.
+		/// </summary>
+		IncludeTagValue,
+		/// <summary>
+		/// If a tag is encountered, a flag will be set telling the value was in the header, but its not included in the <see cref="StudyXml"/> file.
+		/// </summary>
+		IncludeTagExclusion,
+	}
+
+	
+
     /// <summary>
-    /// Output settings for <see cref="StudyXml"/> when converted into Xml.
+    /// Output settings for <see cref="StudyXml"/> when creating the Xml.
     /// </summary>
     public class StudyXmlOutputSettings
     {
@@ -44,9 +65,10 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
         #region Private Members
 
-        private bool _includePrivateValues = false;
-        private bool _includeUnknownTags = true;
-    	private bool _includeSourceFileName = false;
+		private StudyXmlTagInclusion _includePrivateValues = StudyXmlTagInclusion.IgnoreTag;
+		private StudyXmlTagInclusion _includeUnknownTags = StudyXmlTagInclusion.IgnoreTag;
+		private StudyXmlTagInclusion _includeLargeTags = StudyXmlTagInclusion.IncludeTagExclusion;
+		private bool _includeSourceFileName = false;
 		private ulong _maxTagLength = MAX_TAG_LENGTH;
 
         #endregion
@@ -70,14 +92,24 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         /// <summary>
 		/// Specifies whether or not to include UN tags in the header.
         /// </summary>
-        public bool IncludeUnknownTags
+		public StudyXmlTagInclusion IncludeUnknownTags
         {
             get { return _includeUnknownTags; }
             set { _includeUnknownTags = value; }
         }
 
+		/// <summary>
+		/// Specifies whether or not to include large tags, where large tags are defined by <see cref="MaxTagLength"/>
+		/// </summary>
+    	public StudyXmlTagInclusion IncludeLargeTags
+    	{
+			get { return _includeLargeTags; }
+			set { _includeLargeTags = value; }
+    	}
+
         /// <summary>
-        /// Specifies the maximum allowed length of the tag values in the header.
+		/// Specifies the maximum allowed length of the tag values in the header if <see cref="IncludeLargeTags"/> is 
+		/// not set to <see cref="StudyXmlTagInclusion.IncludeTagValue"/>.
         /// </summary>
         public ulong MaxTagLength
         {
@@ -91,7 +123,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
         /// <remarks>
         /// If the private tag VR is UN, its presence in the header is determined by <see cref="IncludeUnknownTags"/>.
         /// </remarks>
-        public bool IncludePrivateValues
+		public StudyXmlTagInclusion IncludePrivateValues
         {
             get { return _includePrivateValues; }
             set { _includePrivateValues = value; }

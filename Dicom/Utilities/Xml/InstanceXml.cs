@@ -409,43 +409,51 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 		#region Private Static Methods
 
-		private static bool AttributeShouldBeIncluded(DicomAttribute attribute, StudyXmlOutputSettings settings)
+		private static StudyXmlTagInclusion AttributeShouldBeIncluded(DicomAttribute attribute, StudyXmlOutputSettings settings)
 		{
 			if (settings == null)
-				return true;
+				return StudyXmlTagInclusion.IncludeTagValue;
 
 			if (attribute is DicomAttributeSQ)
 			{
 				if (attribute.Tag.IsPrivate)
 					return settings.IncludePrivateValues;
 				else
-					return true;
+					return StudyXmlTagInclusion.IncludeTagValue;
 			}
 
 
 			// private tag
 			if (attribute.Tag.IsPrivate)
 			{
-				if (settings.IncludePrivateValues == false)
-					return false;
+				if (settings.IncludePrivateValues != StudyXmlTagInclusion.IncludeTagValue)
+					return settings.IncludePrivateValues;
 			}
 
 			// check type
 			if (attribute is DicomAttributeUN)
 			{
-				if (settings.IncludeUnknownTags == false)
-					return false;
+				if (settings.IncludeUnknownTags != StudyXmlTagInclusion.IncludeTagValue)
+					return settings.IncludeUnknownTags;
 			}
 
+			// This check isn't needed, but it bypasses the StreamLength calculation if its not needed
+			if (settings.IncludeLargeTags == StudyXmlTagInclusion.IncludeTagValue)
+				return settings.IncludeLargeTags;
+
+			// check the size
+			ulong length = attribute.StreamLength;
+			if (length <= settings.MaxTagLength)
+				return StudyXmlTagInclusion.IncludeTagValue;
+
+			// Move here, such that we first check if the tag should be excluded
 			if ((attribute is DicomAttributeOB)
 			 || (attribute is DicomAttributeOW)
 			 || (attribute is DicomAttributeOF)
 			 || (attribute is DicomFragmentSequence))
-				return false;
+				return StudyXmlTagInclusion.IgnoreTag;
 
-			// check the size
-			ulong length = attribute.StreamLength;
-			return (length <= settings.MaxTagLength);
+			return settings.IncludeLargeTags;
 		}
 
 		private void ParseTo(uint tag)
@@ -684,10 +692,15 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 				if (attribute.IsEmpty && (baseCollection == null || !isInBase))
 					continue;
 
-				if (!AttributeShouldBeIncluded(attribute, settings))
+				StudyXmlTagInclusion inclusion = AttributeShouldBeIncluded(attribute, settings);
+				if (inclusion == StudyXmlTagInclusion.IncludeTagExclusion)
 				{
 					XmlElement excludedAttributeElement = CreateDicomAttributeElement(theDocument, attribute, "ExcludedAttribute");
 					instance.AppendChild(excludedAttributeElement);
+					continue;
+				}
+				else if (inclusion == StudyXmlTagInclusion.IgnoreTag)
+				{
 					continue;
 				}
 

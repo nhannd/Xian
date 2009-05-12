@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageServer.Services.ServiceLock.FilesystemRebuildXml
 						{
 							string instancePath = Path.Combine(seriesPath, instance.SopInstanceUid + ".dcm");
 
-							processor.AddCommand(new InsertInstanceXmlCommand(newXml, instancePath));
+							processor.AddCommand(new InsertInstanceXmlCommand(newXml, instancePath, ImageServerCommonConfiguration.DefaultStudyXmlOutputSettings));
 						}
 					}
 

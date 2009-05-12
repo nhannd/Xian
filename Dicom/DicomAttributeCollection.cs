@@ -122,13 +122,15 @@ namespace ClearCanvas.Dicom
 		/// </summary>
 		/// <param name="source">The source collection to copy attributes from.</param>
 		/// <param name="copyBinary"></param>
-		internal DicomAttributeCollection(DicomAttributeCollection source, bool copyBinary)
-			: this(source, copyBinary, 0xFFFFFFFF)
+		/// <param name="copyPrivate"></param>
+		/// <param name="copyUnknown"></param>
+		internal DicomAttributeCollection(DicomAttributeCollection source, bool copyBinary, bool copyPrivate, bool copyUnknown)
+			: this(source, copyBinary, copyPrivate, copyUnknown, 0xFFFFFFFF)
         {
 
         }
 
-        internal DicomAttributeCollection(DicomAttributeCollection source, bool copyBinary, uint stopTag)
+        internal DicomAttributeCollection(DicomAttributeCollection source, bool copyBinary, bool copyPrivate, bool copyUnknown, uint stopTag)
         {
         	_startTag = source.StartTagValue;
         	_endTag = source.EndTagValue;
@@ -139,12 +141,17 @@ namespace ClearCanvas.Dicom
 				if (attrib.Tag.TagValue >= stopTag)
 					break;
 
+				if (!copyPrivate && attrib.Tag.IsPrivate)
+					continue;
+
+				if (!copyUnknown && attrib is DicomAttributeUN)
+					continue;
+
                 if (copyBinary ||
                       (!(attrib is DicomAttributeOB)
                     && !(attrib is DicomAttributeOW)
                     && !(attrib is DicomAttributeOF)
-                    && !(attrib is DicomFragmentSequence)
-                    && !(attrib is DicomAttributeUN)))
+                    && !(attrib is DicomFragmentSequence)))
                 {
                     this[attrib.Tag] = attrib.Copy(copyBinary);
                 }
@@ -482,7 +489,7 @@ namespace ClearCanvas.Dicom
         /// <returns>A new DicomAttributeCollection.</returns>
         public virtual DicomAttributeCollection Copy()
         {
-            return Copy(true);
+        	return Copy(true, true, true);
         }
 
         /// <summary>
@@ -492,11 +499,13 @@ namespace ClearCanvas.Dicom
         /// <see cref="DicomAttributeOW"/> and <see cref="DicomAttributeOF"/>
         /// instances if the <paramref name="copyBinary"/> parameter is set
         /// to false.</remarks>
-        /// <param name="copyBinary">Flag to set if binary VR attributes will be copied.</param>
-        /// <returns>a new DicomAttributeCollection.</returns>
-        public virtual DicomAttributeCollection Copy(bool copyBinary)
+        /// <param name="copyBinary">Flag to set if binary VR (OB, OW, OF) attributes will be copied.</param>
+        /// <param name="copyPrivate">Flag to set if Private attributes will be copied</param>
+		/// <param name="copyUnknown">Flag to set if UN VR attributes will be copied</param>
+		/// <returns>a new DicomAttributeCollection.</returns>
+        public virtual DicomAttributeCollection Copy(bool copyBinary, bool copyPrivate, bool copyUnknown)
         {
-            return new DicomAttributeCollection(this, copyBinary);
+			return new DicomAttributeCollection(this, copyBinary, copyPrivate, copyUnknown);
         }
 
 		/// <summary>
@@ -506,12 +515,14 @@ namespace ClearCanvas.Dicom
 		/// <see cref="DicomAttributeOW"/> and <see cref="DicomAttributeOF"/>
 		/// instances if the <paramref name="copyBinary"/> parameter is set
 		/// to false.</remarks>
-		/// <param name="copyBinary">Flag to set if binary VR attributes will be copied.</param>
+		/// <param name="copyBinary">Flag to set if binary VR (OB, OW, OF) attributes will be copied.</param>
+		/// <param name="copyPrivate">Flag to set if Private attributes will be copied.</param>
 		/// <param name="stopTag">Indicates a tag at which to stop copying.</param>
+		/// <param name="copyUnknown">Flag to set if UN VR attributes will be copied.</param>
 		/// <returns>a new DicomAttributeCollection.</returns>
-		public virtual DicomAttributeCollection Copy(bool copyBinary, uint stopTag)
+		public virtual DicomAttributeCollection Copy(bool copyBinary, bool copyPrivate, bool copyUnknown, uint stopTag)
 		{
-			return new DicomAttributeCollection(this, copyBinary, stopTag);
+			return new DicomAttributeCollection(this, copyBinary, copyPrivate, copyUnknown, stopTag);
 		}
 		
 		/// <summary>
@@ -542,6 +553,7 @@ namespace ClearCanvas.Dicom
         /// </remarks>
         /// <param name="obj">The objec to compare to.</param>
         /// <param name="comparisonFailure">An output string describing why the objects are not equal.</param>
+        /// <param name="failures">List of tags that failed comparison.</param>
         /// <returns>true if the collections are equal.</returns>
         public bool Equals(object obj, ref List<DicomAttributeComparisonResult> failures)
         {
@@ -983,7 +995,7 @@ namespace ClearCanvas.Dicom
                     try
                     {
                         DicomFieldAttribute dfa = (DicomFieldAttribute)field.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
-                        if ((dfa.Tag.TagValue >= StartTagValue) && (dfa.Tag.TagValue <= this.EndTagValue))
+                        if ((dfa.Tag.TagValue >= StartTagValue) && (dfa.Tag.TagValue <= EndTagValue))
                         {
                             if (Contains(dfa.Tag))
                             {
