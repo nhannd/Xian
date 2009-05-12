@@ -40,43 +40,42 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public abstract class SearchResultsFolder : WorkflowFolder
-    {
-        private SearchParams _searchParams;
-    	private bool _isValid;
+	public abstract class SearchResultsFolder : WorkflowFolder
+	{
+		private SearchParams _searchParams;
+		private bool _isValid;
 
-        protected SearchResultsFolder()
-        {
-        }
-
-        /// <summary>
-        /// Gets or sets the search arguments.  Setting this property will automatically
-        /// call <see cref="Folder.Invalidate"/> on this folder.
-        /// </summary>
-        public SearchParams SearchParams
-        {
-            get { return _searchParams; }
-            set
-            {
-                _searchParams = value;
+		/// <summary>
+		/// Gets or sets the search arguments.  Setting this property will automatically
+		/// call <see cref="Folder.Invalidate"/> on this folder.
+		/// </summary>
+		public SearchParams SearchParams
+		{
+			get { return _searchParams; }
+			set
+			{
+				_searchParams = value;
+				this.Tooltip = _searchParams.ToString();
 
 				// invalidate the folder immediately
-            	Invalidate();
-            }
-        }
+				_isValid = false;
+			}
+		}
 
-        #region Folder overrides
+		#region Folder overrides
 
 		protected override void InvalidateCore()
 		{
-			_isValid = false;
+			// do nothing.  Search results only become invalid if SearchParams have changed, not if the folder system 
+			// is invalidated.
+			return;
 		}
 
 		protected override bool UpdateCore()
 		{
 			// only initiate a query if this folder is open (eg selected)
 			// this folder does not support updating the count independently of the items
-			if(this.IsOpen && !_isValid)
+			if (this.IsOpen && !_isValid)
 			{
 				BeginQueryItems();
 				_isValid = true;
@@ -85,37 +84,37 @@ namespace ClearCanvas.Ris.Client
 			return false;
 		}
 
-        protected override IconSet OpenIconSet
-        {
-            get
-            {
-                return new IconSet(IconScheme.Colour, "SearchFolderOpenSmall.png", "SearchFolderOpenMedium.png", "SearchFolderOpenLarge.png");
-            }
-        }
+		protected override IconSet OpenIconSet
+		{
+			get
+			{
+				return new IconSet(IconScheme.Colour, "SearchFolderOpenSmall.png", "SearchFolderOpenMedium.png", "SearchFolderOpenLarge.png");
+			}
+		}
 
-        protected override IconSet ClosedIconSet
-        {
-            get
-            {
-                return new IconSet(IconScheme.Colour, "SearchFolderClosedSmall.png", "SearchFolderClosedMedium.png", "SearchFolderClosedLarge.png");
-            }
-        }
+		protected override IconSet ClosedIconSet
+		{
+			get
+			{
+				return new IconSet(IconScheme.Colour, "SearchFolderClosedSmall.png", "SearchFolderClosedMedium.png", "SearchFolderClosedLarge.png");
+			}
+		}
 
-        #endregion
+		#endregion
 
-        protected static int SearchCriteriaSpecificityThreshold
-        {
-            get { return HomePageSettings.Default.SearchCriteriaSpecificityThreshold; }
-        }
+		protected static int SearchCriteriaSpecificityThreshold
+		{
+			get { return HomePageSettings.Default.SearchCriteriaSpecificityThreshold; }
+		}
 
-    }
+	}
 
 
 	/// <summary>
 	/// Base class for folders that display search results.
 	/// </summary>
 	/// <typeparam name="TItem"></typeparam>
-    public abstract class SearchResultsFolder<TItem> : SearchResultsFolder
+	public abstract class SearchResultsFolder<TItem> : SearchResultsFolder
 		where TItem : DataContractBase
 	{
 		private readonly Table<TItem> _itemsTable;
@@ -223,25 +222,25 @@ namespace ClearCanvas.Ris.Client
 		#endregion
 	}
 
-    public abstract class WorklistSearchResultsFolder<TItem, TWorklistService> : SearchResultsFolder<TItem>
-        where TItem : DataContractBase
-        where TWorklistService : IWorklistService<TItem>
-    {
-        protected WorklistSearchResultsFolder(Table<TItem> itemsTable)
-            :base(itemsTable)
+	public abstract class WorklistSearchResultsFolder<TItem, TWorklistService> : SearchResultsFolder<TItem>
+		where TItem : DataContractBase
+		where TWorklistService : IWorklistService<TItem>
+	{
+		protected WorklistSearchResultsFolder(Table<TItem> itemsTable)
+			: base(itemsTable)
 		{
-        }
+		}
 
-        protected override TextQueryResponse<TItem> DoQuery(SearchParams query, int specificityThreshold)
-        {
+		protected override TextQueryResponse<TItem> DoQuery(SearchParams query, int specificityThreshold)
+		{
 			WorklistItemTextQueryOptions options = WorklistItemTextQueryOptions.PatientOrder
 				| (DowntimeRecovery.InDowntimeRecoveryMode ? WorklistItemTextQueryOptions.DowntimeRecovery : 0);
 
 			return DoQueryCore(query, specificityThreshold, options, this.ProcedureStepClassName);
-        }
+		}
 
 		protected static TextQueryResponse<TItem> DoQueryCore(SearchParams query, int specificityThreshold, WorklistItemTextQueryOptions options, string procedureStepClassName)
-        {
+		{
 			TextQueryResponse<TItem> response = null;
 
 			WorklistItemTextQueryRequest request = new WorklistItemTextQueryRequest(
@@ -262,6 +261,6 @@ namespace ClearCanvas.Ris.Client
 			return response;
 		}
 
-        protected abstract string ProcedureStepClassName { get; }
-    }
+		protected abstract string ProcedureStepClassName { get; }
+	}
 }
