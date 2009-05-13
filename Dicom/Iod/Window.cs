@@ -114,6 +114,12 @@ namespace ClearCanvas.Dicom.Iod
 				provider[DicomTags.WindowCenter].SetStringValue(centerValues.ToString());
 				provider[DicomTags.WindowWidth].SetStringValue(widthValues.ToString());
 			}
+			else
+			{
+				// Remove the value from the dataset entirely
+				provider[DicomTags.WindowCenter] = null;
+				provider[DicomTags.WindowWidth] = null;
+			}
 		}
 
     	#region Public Properties
