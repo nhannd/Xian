@@ -38,6 +38,7 @@ using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.Parameters;
@@ -122,6 +123,9 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                         return;
                     }
 
+                    StudyIntegrityValidator validator = new StudyIntegrityValidator();
+                    validator.ValidateStudyState("Archive", _storageLocation, StudyIntegrityValidationModes.Default);
+
                     using (IUpdateContext update = PersistentStoreRegistry.GetDefaultStore().OpenUpdateContext(UpdateContextSyncMode.Flush))
                     {
                         ILockStudy studyLock = update.GetBroker<ILockStudy>();
@@ -141,8 +145,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
 
                     string studyFolder = _storageLocation.GetStudyPath();
 
-                    string studyXmlFile = Path.Combine(studyFolder, String.Format("{0}.xml", _storageLocation.StudyInstanceUid));
-
+                    string studyXmlFile = _storageLocation.GetStudyXmlPath(); 
+                    
                     // Load the study Xml file, this is used to generate the list of dicom files to archive.
                     LoadStudyXml(studyXmlFile);
 
@@ -218,8 +222,8 @@ namespace ClearCanvas.ImageServer.Services.Archiving.Hsm
                 }
                 catch (Exception e)
                 {
-                    String msg = String.Format("Unexpected exception archiving study: {0} on {1}",
-                                 _storageLocation.StudyInstanceUid, _hsmArchive.PartitionArchive.Description);
+                    String msg = String.Format("Unexpected exception archiving study: {0} on {1}: {2}",
+                                 _storageLocation.StudyInstanceUid, _hsmArchive.PartitionArchive.Description, e.Message);
 
                     Platform.Log(LogLevel.Error, e, msg);
                     queueItem.FailureDescription = msg;

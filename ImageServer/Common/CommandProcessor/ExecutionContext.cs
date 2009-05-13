@@ -109,7 +109,9 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                             Directory.CreateDirectory(_tempDirectory);
                     }
                 }
-               
+
+                if (!Directory.Exists(_tempDirectory))
+                    Directory.CreateDirectory(_tempDirectory);
                 return _tempDirectory;
             }
             set
@@ -128,10 +130,11 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                     {
                         String baseBackupDirectory = Path.Combine(TempDirectory, "BackupFiles");
                         _backupDirectory = baseBackupDirectory;
-                        Directory.CreateDirectory(_backupDirectory);
                     }
                 }
 
+                if (!Directory.Exists(_backupDirectory))
+                    Directory.CreateDirectory(_backupDirectory);
                 return _backupDirectory;
             }
             set
@@ -197,9 +200,7 @@ namespace ClearCanvas.ImageServer.Common.CommandProcessor
                 {
                     if (Directory.Exists(_tempDirectory))
                     {
-                        // Nobody asked for backup storage or all of them have claimed the stuff. 
-                        // We can remove the entire temp folder.
-                        DirectoryUtility.DeleteIfExists(_tempDirectory);
+                        DirectoryUtility.DeleteIfEmpty(_tempDirectory);
                     }
 
                 }
