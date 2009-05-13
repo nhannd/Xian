@@ -203,10 +203,20 @@
 .ReconcileComparisonResultGridViewRow
 {
     
- }
+}
+
+.ReconcileComparisonResultGridViewRow td
+{
+    padding:5px;
+}
 
 .ReconcileComparisonResultGridViewHeader
 {
 	color: #16425D;
     background: #dfdfdf;
+}
+
+.ReconcileComparisonResultGridViewHeader td
+{
+	padding:5px;
 }

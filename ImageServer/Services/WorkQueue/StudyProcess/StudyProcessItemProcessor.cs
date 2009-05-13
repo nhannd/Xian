@@ -96,26 +96,35 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
                 if (!dupFile.TransferSyntax.Equals(baseFile.TransferSyntax))
                 {
-                    string failure = String.Format("Base file transfer syntax '{0}' not equal to duplicate file '{1}'",
+                    string failure = String.Format("Base file transfer syntax is '{0}' while duplicate file has '{1}'",
                                                    baseFile.TransferSyntax, dupFile.TransferSyntax);
-                    throw new ApplicationException(failure);
-                }
 
-                List<DicomAttributeComparisonResult> failureReason = new List<DicomAttributeComparisonResult>();
-                if (baseFile.DataSet.Equals(dupFile.DataSet, ref failureReason))
-                {
-                    Platform.Log(LogLevel.Info,
-                                 "Duplicate SOP being processed is identical.  Removing SOP: {0}",
-                                 baseFile.MediaStorageSopInstanceUid);
-
-                    FileInfo file = new FileInfo(duplicatePath);
-                    file.Delete();
-                    return;
+                    List<DicomAttributeComparisonResult> list = new List<DicomAttributeComparisonResult>();
+                    DicomAttributeComparisonResult result = new DicomAttributeComparisonResult();
+                    result.ResultType = ComparisonResultType.DifferentValues;
+                    result.TagName = DicomTagDictionary.GetDicomTag(DicomTags.TransferSyntaxUid).Name;
+                    result.Details = failure;
+                    list.Add(result);
+                    CreateDuplicateSIQEntry(uid, dupFile, list);
                 }
                 else
                 {
-                    CreateDuplicateSIQEntry(uid, dupFile, failureReason);
+                    List<DicomAttributeComparisonResult> failureReason = new List<DicomAttributeComparisonResult>();
+                    if (baseFile.DataSet.Equals(dupFile.DataSet, ref failureReason))
+                    {
+                        Platform.Log(LogLevel.Info,
+                                     "Duplicate SOP being processed is identical.  Removing SOP: {0}",
+                                     baseFile.MediaStorageSopInstanceUid);
+
+                        FileInfo file = new FileInfo(duplicatePath);
+                        file.Delete();
+                    }
+                    else
+                    {
+                        CreateDuplicateSIQEntry(uid, dupFile, failureReason);
+                    }
                 }
+                
             }
             
         }
