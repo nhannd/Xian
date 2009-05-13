@@ -54,9 +54,24 @@ namespace ClearCanvas.ImageViewer.Volume.Mpr
 			_resliceMatrix = new Matrix(resliceMatrix);
 		}
 
-		protected override byte[] CreateFrameNormalizedPixelData(int frameNumber)
+		protected override StandardSopFrameData CreateFrameData(int frameNumber)
 		{
-			return _volumeSlicer.GenerateFrameNormalizedPixelData(_resliceMatrix);
+			return new VolumeSliceSopFrameData(frameNumber, this);
+		}
+
+		protected class VolumeSliceSopFrameData : DicomMessageSopFrameData
+		{
+			public VolumeSliceSopFrameData(int frameNumber, VolumeSliceSopDataSource parent) : base(frameNumber, parent) {}
+
+			public new VolumeSliceSopDataSource Parent
+			{
+				get { return (VolumeSliceSopDataSource) base.Parent; }
+			}
+
+			protected override byte[] CreateNormalizedPixelData()
+			{
+				return this.Parent._volumeSlicer.GenerateFrameNormalizedPixelData(this.Parent._resliceMatrix);
+			}
 		}
 	}
 }

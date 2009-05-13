@@ -44,7 +44,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		ISopDataCacheItemReference Clone();
 	}
 
-	//TODO: consider periodically using a thread pool thread to clean up inactive items in case they are not properly disposed.
 	//TODO: implement memory manager for the cache.
 	internal static class SopDataCache
 	{
@@ -59,6 +58,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			public Item(ISopDataSource realDataSource)
 			{
 				_realDataSource = realDataSource;
+			}
+
+			~Item()
+			{
+				lock (_syncLock)
+				{
+					// perform dictionary pruning if we are being finalized yet some client(s) has not properly disposed us yet
+					if (_referenceCount >= 0)
+					{
+						string key = null;
+						foreach (KeyValuePair<string, Item> item in _items)
+						{
+							if (item.Value == this)
+							{
+								key = item.Key;
+								break;
+							}
+						}
+						if (key != null)
+							_items.Remove(key);
+					}
+				}
 			}
 
 			public ISopDataSource RealDataSource
@@ -168,7 +189,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#endregion
 
 		private static readonly object _syncLock = new object();
-		private static readonly Dictionary<string, WeakReference> _items = new Dictionary<string, WeakReference>();
+		private static readonly Dictionary<string, Item> _items = new Dictionary<string, Item>();
 		
 #if UNIT_TESTS
 
@@ -182,39 +203,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			lock(_syncLock)
 			{
-				WeakReference weakReference = null;
 				Item item = null;
 
 				if (_items.ContainsKey(dataSource.SopInstanceUid))
 				{
-					weakReference = _items[dataSource.SopInstanceUid];
-					try
-					{
-						item = weakReference.Target as Item;
-					}
-					catch (InvalidOperationException)
-					{
-						weakReference = null;
-						item = null;
-					}
-				}
-
-				if (weakReference == null)
-				{
-					weakReference = new WeakReference(null);
-					_items[dataSource.SopInstanceUid] = weakReference;
-				}
-
-
-				if (item != null && weakReference.IsAlive)
-				{
+					item = _items[dataSource.SopInstanceUid];
 					if (!ReferenceEquals(item.RealDataSource, dataSource))
 						dataSource.Dispose(); //silently dispose the new one, we already have it.
 				}
 				else
 				{
 					item = new Item(dataSource);
-					weakReference.Target = item;
+					_items.Add(dataSource.SopInstanceUid, item);
 				}
 
 				return new ItemReference(item);

@@ -93,28 +93,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			internal protected set { _server = value; }
 		}
 
-		[Obsolete("Use ISopDataSource.GetFrameData(frameNumber).GetNormalizedPixelData() instead.")]
-		public byte[] GetFrameNormalizedPixelData(int frameNumber)
-		{
-			return this.GetFrameData(frameNumber).GetNormalizedPixelData();
-		}
-
-		[Obsolete("Use ISopDataSource.GetFrameData(frameNumber).GetNormalizedOverlayData(overlayGroupNumber, overlayFrameNumber) instead.")]
-		public byte[] GetFrameNormalizedOverlayData(int overlayNumber, int frameNumber)
-		{
-			return this.GetFrameData(frameNumber).GetNormalizedOverlayData(overlayNumber, frameNumber);
-		}
-
-		[Obsolete("Use ISopDataSource.GetFrameData(frameNumber).Unload() instead.")]
-		public virtual void UnloadFrameData(int frameNumber)
-		{
-			this.GetFrameData(frameNumber).Unload();
-		}
-
 		public ISopFrameData GetFrameData(int frameNumber)
 		{
 			CheckIsImage();
-			return OnGetFrameData(frameNumber);
+			ISopFrameData frameData;
+			OnGetFrameData(frameNumber, out frameData);
+			return frameData;
 		}
 
 		#endregion
@@ -139,19 +123,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				throw new InvalidOperationException("This functionality cannot be used for non-images.");
 		}
 
-		protected abstract ISopFrameData OnGetFrameData(int frameNumber);
-
-		[Obsolete("This formerly abstract method is no longer called.")]
-		protected virtual void OnGetFrameNormalizedPixelData(int frameNumber, out byte[] pixelData)
-		{
-			pixelData = null;
-		}
-
-		[Obsolete("This formerly abstract method is no longer called.")]
-		protected virtual void OnGetFrameNormalizedOverlayData(int overlayNumber, int frameNumber, out byte[] pixelData)
-		{
-			pixelData = null;
-		}
+		protected abstract void OnGetFrameData(int frameNumber, out ISopFrameData frameData);
 
 		#region IDicomAttributeProvider Members
 

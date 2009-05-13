@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				if (photometricInterpretation.IsColor)
 					rawPixelData = ToArgb(_message.DataSet, rawPixelData, photometricInterpretation);
 				else
-					NormalizeGrayscalePixels(_message.DataSet, rawPixelData, _message.TransferSyntax);
+					NormalizeGrayscalePixels(_message.DataSet, rawPixelData, _message.TransferSyntax.Endian);
 
 				clock.Stop();
 				PerformanceReportBroker.PublishReport("DicomMessageSopDataSource", "CreateFrameNormalizedPixelData", clock.Seconds);
@@ -347,13 +347,28 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		#region Pixel Data Processing Functions
+
 		/// <summary>
-		/// Normalizes grayscale pixel data by masking out non-data bits and shifting the data so that the high bit is always 1 less than bits stored.
+		/// Normalizes grayscale pixel data by masking out non-data bits and shifting the data bits to start at the lowest bit position.
 		/// </summary>
-		/// <param name="dicomAttributeProvider"></param>
-		/// <param name="pixelData"></param>
-		/// <param name="transferSyntax"></param>
-		protected internal static void NormalizeGrayscalePixels(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, TransferSyntax transferSyntax)
+		/// <remarks>
+		/// <para>
+		/// The pixel data is normalized such that the effective high bit is precisely 1 less than bits stored.
+		/// Filling of the high-order non-data bits is performed according to the sign of the pixel value when
+		/// the pixel representation is signed, and always with 0 when the pixel reresentation is unsigned.
+		/// </para>
+		/// <para>
+		/// The provided <paramref name="dicomAttributeProvider"/> is <b>not</b> updated with the effective high bit,
+		/// nor is the <see cref="DicomTags.PixelData"/> attribute updated in any way. The only change is to the given
+		/// pixel data buffer such that pixels can be read, 8 or 16 bits at a time, and interpreted immediately as
+		/// <see cref="byte"/> or <see cref="ushort"/> (or their signed equivalents <see cref="sbyte"/> and <see cref="short"/>).
+		/// </para>
+		/// </remarks>
+		/// <param name="dicomAttributeProvider">A dataset containing information about the representation of pixels in the <paramref name="pixelData"/>.</param>
+		/// <param name="pixelData">The pixel data buffer to normalize.</param>
+		/// <param name="endian">The endianess of the <paramref name="pixelData"/> when encoded in 16-bit words. This parameter is ignored when 8-bit encoding is used.</param>
+		protected internal static void NormalizeGrayscalePixels(IDicomAttributeProvider dicomAttributeProvider, byte[] pixelData, Endian endian)
 		{
 			if (dicomAttributeProvider[DicomTags.BitsAllocated].IsEmpty)
 				throw new ArgumentNullException("dicomAttributeProvider", "BitsAllocated must not be empty.");
@@ -363,9 +378,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			int bitsAllocated = dicomAttributeProvider[DicomTags.BitsAllocated].GetInt32(0, -1);
 			int bitsStored = dicomAttributeProvider[DicomTags.BitsStored].GetInt32(0, -1);
 			int highBit = dicomAttributeProvider[DicomTags.HighBit].GetInt32(0, bitsStored - 1);
+			bool isSigned = dicomAttributeProvider[DicomTags.PixelRepresentation].GetInt32(0, 0) > 0;
 
 			if (bitsAllocated != 8 && bitsAllocated != 16)
 				throw new ArgumentException("BitsAllocated must be either 8 or 16.", "dicomAttributeProvider");
+			if (highBit + 1 < bitsStored || highBit >= bitsAllocated)
+				throw new ArgumentException("HighBit must be between BitsStored-1 and BitsAllocated-1 inclusive.", "dicomAttributeProvider");
 
 			unsafe
 			{
@@ -375,43 +393,95 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					if (pixelData.Length%2 != 0)
 						throw new ArgumentException("Pixel data length must be even.", "pixelData");
 
-					ushort mask = (ushort) (((1 << bitsStored) - 1) << shift);
+					ushort mask = (ushort) ((1 << bitsStored) - 1); // this is the mask of data bits when the LSB is at 0
+					ushort inputMask = (ushort) (mask << shift); // this is the mask of data bits in the input window
 					int length = pixelData.Length;
 					fixed (byte* data = pixelData)
 					{
 						ushort window;
 
-						if (transferSyntax.LittleEndian)
+						if (isSigned)
 						{
-							for (int n = 0; n < length; n += 2)
+							ushort signMask = (ushort) (1 << (bitsStored - 1)); // this is the mask of the sign bit when the LSB is at 0
+							ushort signFill = (ushort) ~mask; // this is the mask of the sign bits used to fill the high-order non-data bits
+
+							if (endian == Endian.Little)
 							{
-								window = (ushort) ((data[n + 1] << 8) + data[n]);
-								window = (ushort) ((window & mask) >> shift);
-								data[n] = (byte) (window & 0x00ff);
-								data[n + 1] = (byte) ((window & 0xff00) >> 8);
+								for (int n = 0; n < length; n += 2)
+								{
+									window = (ushort) ((data[n + 1] << 8) + data[n]);
+									window = (ushort) ((window & inputMask) >> shift);
+									if ((window & signMask) > 0)
+										window = (ushort) (window | signFill);
+									data[n] = (byte) (window & 0x00ff);
+									data[n + 1] = (byte) ((window & 0xff00) >> 8);
+								}
+							}
+							else
+							{
+								for (int n = 0; n < length; n += 2)
+								{
+									window = (ushort) ((data[n] << 8) + data[n + 1]);
+									window = (ushort) ((window & inputMask) >> shift);
+									if ((window & signMask) > 0)
+										window = (ushort) (window | signFill);
+									data[n + 1] = (byte) (window & 0x00ff);
+									data[n] = (byte) ((window & 0xff00) >> 8);
+								}
 							}
 						}
 						else
 						{
-							for (int n = 0; n < length; n += 2)
+							if (endian == Endian.Little)
 							{
-								window = (ushort) ((data[n] << 8) + data[n + 1]);
-								window = (ushort) ((window & mask) >> shift);
-								data[n + 1] = (byte) (window & 0x00ff);
-								data[n] = (byte) ((window & 0xff00) >> 8);
+								for (int n = 0; n < length; n += 2)
+								{
+									window = (ushort) ((data[n + 1] << 8) + data[n]);
+									window = (ushort) ((window & inputMask) >> shift);
+									data[n] = (byte) (window & 0x00ff);
+									data[n + 1] = (byte) ((window & 0xff00) >> 8);
+								}
+							}
+							else
+							{
+								for (int n = 0; n < length; n += 2)
+								{
+									window = (ushort) ((data[n] << 8) + data[n + 1]);
+									window = (ushort) ((window & inputMask) >> shift);
+									data[n + 1] = (byte) (window & 0x00ff);
+									data[n] = (byte) ((window & 0xff00) >> 8);
+								}
 							}
 						}
 					}
 				}
 				else
 				{
-					byte mask = (byte) (((1 << bitsStored) - 1) << shift);
+					byte mask = (byte) ((1 << bitsStored) - 1); // this is the mask of data bits when the LSB is at 0
+					byte inputMask = (byte) (mask << shift); // this is the mask of data bits in the input window
 					int length = pixelData.Length;
 					fixed (byte* data = pixelData)
 					{
-						for (int n = 0; n < length; n++)
+						if (isSigned)
 						{
-							data[n] = (byte) ((data[n] & mask) >> shift);
+							byte signMask = (byte) (1 << (bitsStored - 1)); // this is the mask of the sign bit when the LSB is at 0
+							byte signFill = (byte) ~mask; // this is the mask of the sign bits used to fill the high-order non-data bits
+
+							for (int n = 0; n < length; n++)
+							{
+								byte window = data[n];
+								window = (byte) ((window & inputMask) >> shift);
+								if ((window & signMask) > 0)
+									window = (byte) (window | signFill);
+								data[n] = window;
+							}
+						}
+						else
+						{
+							for (int n = 0; n < length; n++)
+							{
+								data[n] = (byte) ((data[n] & inputMask) >> shift);
+							}
 						}
 					}
 				}
@@ -462,5 +532,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			return argbPixelData;
 		}
+
+		#endregion
 	}
 }

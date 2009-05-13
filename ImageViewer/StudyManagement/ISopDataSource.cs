@@ -44,15 +44,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		string SopClassUid { get; }
 		string TransferSyntaxUid { get; }
 
-		[Obsolete("Use ISopDataSource.GetFrameData(frameNumber).GetNormalizedPixelData() instead.")]
-		byte[] GetFrameNormalizedPixelData(int frameNumber);
-
-		[Obsolete("Use ISopDataSource.GetFrameData(frameNumber).GetNormalizedOverlayData(overlayGroupNumber, overlayFrameNumber) instead.")]
-		byte[] GetFrameNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber);
-
-		[Obsolete("Use ISopDataSource.GetFrameData(frameNumber).Unload() instead.")]
-		void UnloadFrameData(int frameNumber);
-
 		ISopFrameData GetFrameData(int frameNumber);
 
 		bool IsStored { get; }

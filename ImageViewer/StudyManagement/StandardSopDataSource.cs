@@ -40,13 +40,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		//I hate doing this, but it's horribly inefficient for all subclasses to do their own locking.
 		protected readonly object SyncLock = new object();
 
-		private ISopFrameData[] _frameData;
+		private volatile ISopFrameData[] _frameData;
 
 		protected StandardSopDataSource() : base() {}
 
 		protected abstract StandardSopFrameData CreateFrameData(int frameNumber);
 
-		protected sealed override ISopFrameData OnGetFrameData(int frameNumber)
+		protected sealed override void OnGetFrameData(int frameNumber, out ISopFrameData frameData)
 		{
 			if(_frameData == null)
 			{
@@ -60,13 +60,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 					}
 				}
 			}
-			return _frameData[frameNumber - 1];
+			frameData = _frameData[frameNumber - 1];
 		}
 
 		protected abstract class StandardSopFrameData : SopFrameData
 		{
 			private readonly Dictionary<int, WeakReference> _overlayData = new Dictionary<int, WeakReference>();
-			private WeakReference _pixelData = new WeakReference(null);
+			private volatile WeakReference _pixelData = new WeakReference(null);
 
 			public StandardSopFrameData(int frameNumber, StandardSopDataSource parent) : base(frameNumber, parent) {}
 
@@ -79,18 +79,18 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				byte[] data;
 
-				try
+				lock (this.Parent.SyncLock)
 				{
-					data = _pixelData.Target as byte[];
-				}
-				catch(InvalidOperationException)
-				{
-					_pixelData = new WeakReference(data = null);
-				}
+					try
+					{
+						data = _pixelData.Target as byte[];
+					}
+					catch (InvalidOperationException)
+					{
+						_pixelData = new WeakReference(data = null);
+					}
 
-				if(!_pixelData.IsAlive || data == null)
-				{
-					lock(this.Parent.SyncLock)
+					if (!_pixelData.IsAlive || data == null)
 					{
 						_pixelData.Target = data = CreateNormalizedPixelData();
 					}
@@ -111,29 +111,26 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				byte[] data;
 				int key = ((overlayFrameNumber - 1) << 8) | ((overlayGroupNumber - 1) & 0x000000ff);
 
-				if (!_overlayData.ContainsKey(key))
+				lock (this.Parent.SyncLock)
 				{
-					lock (this.Parent.SyncLock)
+					if (!_overlayData.ContainsKey(key))
 					{
 						if (!_overlayData.ContainsKey(key))
 						{
 							_overlayData.Add(key, new WeakReference(null));
 						}
 					}
-				}
 
-				try
-				{
-					data = _overlayData[key].Target as byte[];
-				}
-				catch (InvalidOperationException)
-				{
-					_overlayData[key] = new WeakReference(data = null);
-				}
+					try
+					{
+						data = _overlayData[key].Target as byte[];
+					}
+					catch (InvalidOperationException)
+					{
+						_overlayData[key] = new WeakReference(data = null);
+					}
 
-				if (!_overlayData[key].IsAlive || data == null)
-				{
-					lock (this.Parent.SyncLock)
+					if (!_overlayData[key].IsAlive || data == null)
 					{
 						_overlayData[key].Target = data = CreateNormalizedOverlayData(overlayGroupNumber, overlayFrameNumber);
 					}
@@ -144,53 +141,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 			protected abstract byte[] CreateNormalizedOverlayData(int overlayGroupNumber, int overlayFrameNumber);
 
-			public sealed override void Unload()
+			public override sealed void Unload()
 			{
-				this.OnUnloading();
-				_pixelData = new WeakReference(null);
-				_overlayData.Clear();
-				this.OnUnloaded();
+				lock (this.Parent.SyncLock)
+				{
+					this.OnUnloading();
+					_pixelData = new WeakReference(null);
+					_overlayData.Clear();
+					this.OnUnloaded();
+				}
 			}
 
 			protected virtual void OnUnloading() {}
 			protected virtual void OnUnloaded() {}
 		}
-
-		#region Deprecated Members
-
-		[Obsolete("This formerly abstract method is no longer called.")]
-		protected virtual byte[] CreateFrameNormalizedPixelData(int frameNumber)
-		{
-			return null;
-		}
-
-		[Obsolete("This formerly abstract method is no longer called.")]
-		protected sealed override void OnGetFrameNormalizedPixelData(int frameNumber, out byte[] pixelData)
-		{
-			base.OnGetFrameNormalizedPixelData(frameNumber, out pixelData);
-		}
-
-		[Obsolete("This formerly abstract method is no longer called.")]
-		protected virtual byte[] CreateFrameNormalizedOverlayData(int overlayNumber, int frameNumber)
-		{
-			return null;
-		}
-
-		[Obsolete("This formerly abstract method is no longer called.")]
-		protected override sealed void OnGetFrameNormalizedOverlayData(int overlayNumber, int frameNumber, out byte[] overlayData)
-		{
-			base.OnGetFrameNormalizedOverlayData(overlayNumber, frameNumber, out overlayData);
-		}
-
-		[Obsolete("This virtual method is no longer called.")]
-		protected virtual void OnUnloadFrameData(int frameNumber) {}
-
-		[Obsolete("Use ISopDataSource.GetFrameData(frameNumber).Unload() instead.")]
-		public sealed override void UnloadFrameData(int frameNumber)
-		{
-			base.UnloadFrameData(frameNumber);
-		}
-
-		#endregion
 	}
 }

@@ -55,6 +55,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>StreamingSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="StreamingSopFrameData.cs" />
     <Compile Include="StreamingStudyLoader.cs" />
     <Compile Include="ViewerFrameEnumerator.cs" />
   </ItemGroup>

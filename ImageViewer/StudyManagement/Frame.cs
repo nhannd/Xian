@@ -799,7 +799,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public void UnloadPixelData()
 		{
-			_parentImageSop.DataSource.GetFrameData(FrameNumber).Unload();
+			lock (_syncLock)
+			{
+				_pixelData = null;
+				_parentImageSop.DataSource.GetFrameData(FrameNumber).Unload();
+			}
 		}
 
 		public IFrameReference CreateTransientReference()
