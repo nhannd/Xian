@@ -46,9 +46,10 @@ using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 namespace ClearCanvas.Ris.Client
 {
 	[MenuAction("launch", "global-menus/MenuTools/Staff Profile", "Launch")]
-	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.StaffProfile.Update)]
-	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	public class StaffEditorTool : Tool<IDesktopToolContext>
+	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.StaffProfile.View)]
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.StaffProfile.Update)]
+    [ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	public class StaffProfileEditorTool : Tool<IDesktopToolContext>
 	{
 		public void Launch()
 		{
