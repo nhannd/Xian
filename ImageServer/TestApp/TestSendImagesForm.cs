@@ -387,7 +387,7 @@ namespace ClearCanvas.ImageServer.TestApp
                                                      
                                                      try
                                                      {
-                                                         if (rand.Next() % 10 == 0)
+                                                         if (rand.Next() % 5 == 0)
                                                          {
                                                              ResendImages();
                                                          }

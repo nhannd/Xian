@@ -43,8 +43,6 @@ namespace ClearCanvas.ImageServer.TestApp
             this.ServiceName = new System.Windows.Forms.TextBox();
             this.WcfPort = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
-            this.Bindings = new System.Windows.Forms.ComboBox();
-            this.Secured = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -140,8 +138,6 @@ namespace ClearCanvas.ImageServer.TestApp
             this.groupBox3.Controls.Add(this.ServiceName);
             this.groupBox3.Controls.Add(this.WcfPort);
             this.groupBox3.Controls.Add(this.label1);
-            this.groupBox3.Controls.Add(this.Bindings);
-            this.groupBox3.Controls.Add(this.Secured);
             this.groupBox3.Controls.Add(this.label7);
             this.groupBox3.Controls.Add(this.label10);
             this.groupBox3.Controls.Add(this.label4);
@@ -212,6 +208,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.WcfPort.Name = "WcfPort";
             this.WcfPort.Size = new System.Drawing.Size(55, 20);
             this.WcfPort.TabIndex = 15;
+            this.WcfPort.Text = "50221";
             // 
             // label1
             // 
@@ -221,28 +218,6 @@ namespace ClearCanvas.ImageServer.TestApp
             this.label1.Size = new System.Drawing.Size(42, 13);
             this.label1.TabIndex = 14;
             this.label1.Text = "Binding";
-            // 
-            // Bindings
-            // 
-            this.Bindings.FormattingEnabled = true;
-            this.Bindings.Location = new System.Drawing.Point(19, 82);
-            this.Bindings.Name = "Bindings";
-            this.Bindings.Size = new System.Drawing.Size(121, 21);
-            this.Bindings.TabIndex = 13;
-            this.Bindings.SelectedIndexChanged += new System.EventHandler(this.Bindings_SelectedIndexChanged);
-            // 
-            // Secured
-            // 
-            this.Secured.AutoSize = true;
-            this.Secured.Checked = true;
-            this.Secured.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.Secured.Location = new System.Drawing.Point(157, 84);
-            this.Secured.Name = "Secured";
-            this.Secured.Size = new System.Drawing.Size(66, 17);
-            this.Secured.TabIndex = 12;
-            this.Secured.Text = "Secured";
-            this.Secured.UseVisualStyleBackColor = true;
-            this.Secured.CheckedChanged += new System.EventHandler(this.Secured_CheckedChanged);
             // 
             // label7
             // 
@@ -303,7 +278,7 @@ namespace ClearCanvas.ImageServer.TestApp
             this.Port.Name = "Port";
             this.Port.Size = new System.Drawing.Size(100, 20);
             this.Port.TabIndex = 9;
-            this.Port.Text = "2112";
+            this.Port.Text = "5001";
             // 
             // AETitle
             // 
@@ -446,13 +421,13 @@ namespace ClearCanvas.ImageServer.TestApp
             this.tableLayoutPanel4.Size = new System.Drawing.Size(1072, 697);
             this.tableLayoutPanel4.TabIndex = 11;
             // 
-            // HeaderStreamingTest
+            // TestHeaderStreamingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1072, 697);
             this.Controls.Add(this.tableLayoutPanel4);
-            this.Name = "HeaderStreamingTest";
+            this.Name = "TestHeaderStreamingForm";
             this.Text = "HeaderStreamingTest";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -501,8 +476,6 @@ namespace ClearCanvas.ImageServer.TestApp
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.TextBox StatisticsLog;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.CheckBox Secured;
-        private System.Windows.Forms.ComboBox Bindings;
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox WcfPort;
         private System.Windows.Forms.Label label1;

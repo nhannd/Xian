@@ -97,6 +97,15 @@ namespace ClearCanvas.ImageServer.Services.Streaming {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Study {0} is temporarily inaccessible because its current state is {1}. Please try again later..
+        /// </summary>
+        internal static string FaultFaultStudyTemporarilyNotAccessible {
+            get {
+                return ResourceManager.GetString("FaultFaultStudyTemporarilyNotAccessible", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The filesystem containing the study is not readable..
         /// </summary>
         internal static string FaultFilesystemOffline {
@@ -111,15 +120,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming {
         internal static string FaultLocked {
             get {
                 return ResourceManager.GetString("FaultLocked", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Study is nearline..
-        /// </summary>
-        internal static string FaultNearline {
-            get {
-                return ResourceManager.GetString("FaultNearline", resourceCulture);
             }
         }
         
@@ -147,15 +147,6 @@ namespace ClearCanvas.ImageServer.Services.Streaming {
         internal static string FaultPartitionNotExists {
             get {
                 return ResourceManager.GetString("FaultPartitionNotExists", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Access to study {0} is temporarily restricted because its current state is {1}. Please try again later..
-        /// </summary>
-        internal static string FaultStudyAccessRestricted {
-            get {
-                return ResourceManager.GetString("FaultStudyAccessRestricted", resourceCulture);
             }
         }
         

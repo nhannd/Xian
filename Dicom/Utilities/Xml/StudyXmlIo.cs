@@ -133,8 +133,6 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 
 			theDoc.Load(zipStream);
 
-			// Force a flush
-			theStream.Flush();
 			return;
 		}
 

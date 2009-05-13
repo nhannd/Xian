@@ -76,55 +76,60 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 
             HeaderLoader loader = null;
 
-			try
-			{
-				Platform.CheckForEmptyString(callingAETitle, "callingAETitle");
-				Platform.CheckForNullReference(parameters, "parameters");
-				Platform.CheckForEmptyString(parameters.ReferenceID, "parameters.ReferenceID");
-				Platform.CheckForEmptyString(parameters.ServerAETitle, "parameters.ServerAETitle");
-				Platform.CheckForEmptyString(parameters.StudyInstanceUID, "parameters.StudyInstanceUID");
+            try
+            {
+                Platform.CheckForEmptyString(callingAETitle, "callingAETitle");
+                Platform.CheckForNullReference(parameters, "parameters");
+                Platform.CheckForEmptyString(parameters.ReferenceID, "parameters.ReferenceID");
+                Platform.CheckForEmptyString(parameters.ServerAETitle, "parameters.ServerAETitle");
+                Platform.CheckForEmptyString(parameters.StudyInstanceUID, "parameters.StudyInstanceUID");
 
-				Platform.Log(LogLevel.Debug, "Received request from {0}. Ref # {1} ", callingAETitle, parameters.ReferenceID);
+                Platform.Log(LogLevel.Debug, "Received request from {0}. Ref # {1} ", callingAETitle, parameters.ReferenceID);
 
-				HeaderStreamingContext context = new HeaderStreamingContext();
-			    context.ServiceInstanceID = ID;
-				context.CallerAE = callingAETitle;
-				context.Parameters = parameters;
+                HeaderStreamingContext context = new HeaderStreamingContext();
+                context.ServiceInstanceID = ID;
+                context.CallerAE = callingAETitle;
+                context.Parameters = parameters;
 
-				// TODO: perform permission check on callingAETitle
+                // TODO: perform permission check on callingAETitle
 
-				loader = new HeaderLoader(context);
-				Stream stream = loader.Load();
-				if (stream == null)
-					throw new FaultException(loader.FaultDescription);
+                loader = new HeaderLoader(context);
+                Stream stream = loader.Load();
+                if (stream == null)
+                    throw new FaultException(loader.FaultDescription);
 
                 Platform.Log(LogLevel.Debug, "Response sent to {0}. Ref # {1} ", callingAETitle, parameters.ReferenceID);
 
-				return stream;
-			}
-			catch (ArgumentException e)
-			{
-				throw new FaultException(e.Message);
-			}
-            catch(StudyNotFoundException e)
+                return stream;
+            }
+            catch (ArgumentException e)
             {
                 throw new FaultException(e.Message);
             }
-            catch (StudyNotOnlineException e)
+            catch (StudyNotFoundException)
             {
-                throw new FaultException(e.Message);
+                throw new FaultException<StudyNotFoundFault>(
+                            new StudyNotFoundFault(), String.Format(SR.FaultNotExists, parameters.StudyInstanceUID, parameters.ServerAETitle));
+            }
+            catch (StudyNotOnlineException)
+            {
+                throw new FaultException<StudyIsNearlineFault>(
+                            new StudyIsNearlineFault(),
+                            String.Format(SR.FaultStudyIsNearline,parameters.StudyInstanceUID));
             }
             catch (StudyAccessException e)
             {
-                throw new FaultException(e.Message);
+                throw new FaultException<StudyIsInUseFault>(
+                                new StudyIsInUseFault(e.StudyState.Description),
+                                String.Format(SR.FaultFaultStudyTemporarilyNotAccessible, parameters.StudyInstanceUID, e.StudyState));
             }
             catch (Exception e)
-			{
-				if (!(e is FaultException))
-					Platform.Log(LogLevel.Error, e, "Unable to process study header request from {0}", callingAETitle);
+            {
+                if (!(e is FaultException))
+                    Platform.Log(LogLevel.Error, e, "Unable to process study header request from {0}", callingAETitle);
 
-				throw new FaultException(e.Message);
-			}
+                throw new FaultException(e.Message);
+            }
             finally
             {
                 stats.ProcessTime.End();

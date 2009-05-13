@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageServer.Model
     public class StudyStorageLocation : ServerEntity
     {
         private const string STUDY_XML_EXTENSION = "xml";
+        private const string STUDY_XML_GZIP_EXTENSION = "gz";
         
         #region Constructors
         public StudyStorageLocation()
@@ -245,6 +246,7 @@ namespace ClearCanvas.ImageServer.Model
             return Study;
             
         }
+
         public string GetStudyPath()
         {
             string path = Path.Combine(FilesystemPath, PartitionFolder);
@@ -447,6 +449,13 @@ namespace ClearCanvas.ImageServer.Model
         {
             String path = Path.Combine(GetStudyPath(), StudyInstanceUid);
             path += "." + STUDY_XML_EXTENSION;
+
+            return path;
+        }
+        public String GetCompressedStudyXmlPath()
+        {
+            String path = Path.Combine(GetStudyPath(), StudyInstanceUid);
+            path += "." + STUDY_XML_GZIP_EXTENSION;
 
             return path;
         }

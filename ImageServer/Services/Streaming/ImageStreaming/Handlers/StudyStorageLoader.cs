@@ -44,6 +44,8 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 {
     public class ServerTransientError:Exception
     {
+        public ServerTransientError(){}
+
         public ServerTransientError(String message)
             : base(message)
         {
@@ -67,13 +69,25 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
             : base(message)
         {
         }
+
+        public StudyNotOnlineException()
+        {
+        }
     }
 
     public class StudyAccessException : ServerTransientError
     {
-        public StudyAccessException(String message, Exception innerException)
+        private QueueStudyStateEnum _studyState; 
+        public StudyAccessException(String message, QueueStudyStateEnum state, Exception innerException)
             : base(message, innerException)
         {
+            _studyState = state;
+        }
+
+        public QueueStudyStateEnum StudyState
+        {
+            get { return _studyState; }
+            set { _studyState = value; }
         }
     }
 
@@ -153,6 +167,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
 				if (!FilesystemMonitor.Instance.GetOnlineStudyStorageLocation(partition.Key, studyInstanceUid, out location))
 				{
 					CheckNearline(studyInstanceUid, partition);
+				    throw new StudyNotOnlineException();
 				}
             }
             else
@@ -190,6 +205,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.ImageStreaming.Handlers
                         else
                         {
                             CheckNearline(studyInstanceUid, partition);
+                            throw new StudyNotOnlineException();
                         }
                     }
                     else

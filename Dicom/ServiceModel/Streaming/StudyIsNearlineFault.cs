@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -29,29 +29,16 @@
 
 #endregion
 
-using System;
-using System.IO;
-using System.ServiceModel;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Dicom.ServiceModel.Streaming
 {
     /// <summary>
-    /// Defines the interface of a service that provides study header information.
+    /// Fault contract indicating the requested study cannot be retrieved because it is nearline.
     /// </summary>
-    [ServiceContract]
-    public interface IHeaderStreamingService
+    [DataContract]
+    public class StudyIsNearlineFault
     {
-        /// <summary>
-        /// Retrieves a stream containing the study header information.
-        /// </summary>
-        /// <param name="callingAETitle">The AE of the caller</param>
-        /// <param name="parameters">Query parameters</param>
-        /// <returns>The stream containing the study header information in compressed XML format</returns>
-        /// <seealso cref="HeaderStreamingParameters"></seealso>
-        [OperationContract]
-        [FaultContract(typeof(StudyIsInUseFault))]
-        [FaultContract(typeof(StudyIsNearlineFault))]
-        [FaultContract(typeof(StudyNotFoundFault))]
-        Stream GetStudyHeader(string callingAETitle, HeaderStreamingParameters parameters);
+
     }
 }

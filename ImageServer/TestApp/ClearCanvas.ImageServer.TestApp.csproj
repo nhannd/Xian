@@ -58,14 +58,14 @@
     <Compile Include="ImageStreamingStressTest.Designer.cs">
       <DependentUpon>ImageStreamingStressTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Service References\services.cs">
+      <DependentUpon>services.map</DependentUpon>
+    </Compile>
     <Compile Include="TestSendImagesForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TestSendImagesForm.Designer.cs">
       <DependentUpon>TestSendImagesForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Service References\services.cs">
-      <DependentUpon>services.map</DependentUpon>
     </Compile>
     <Compile Include="TestEditStudy.cs">
       <SubType>Form</SubType>

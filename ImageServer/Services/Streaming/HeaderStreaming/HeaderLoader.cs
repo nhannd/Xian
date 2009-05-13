@@ -63,6 +63,7 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
             string sessionId = context.CallerAE;
             
             ServerPartition partition = ServerPartitionMonitor.Instance.GetPartition(_partitionAE);
+
             StudyStorageLoader storageLoader = new StudyStorageLoader(sessionId);
             storageLoader.CacheEnabled = ImageStreamingServerSettings.Default.EnableCache;
             storageLoader.CacheRetentionTime = ImageStreamingServerSettings.Default.CacheRetentionWindow;
@@ -138,14 +139,10 @@ namespace ClearCanvas.ImageServer.Services.Streaming.HeaderStreaming
 			{
 			    headerStream = FileStreamOpener.OpenForRead(compressedHeaderFile, FileMode.Open, 30000 /* try for 30 seconds */);
 			}
-            catch(FileNotFoundException)
-            {
-                throw;
-            }
             catch(IOException ex)
             {
                 // treated as sharing violation
-                throw new StudyAccessException("Study header is not accessible at this time.", ex);
+                throw new StudyAccessException("Study header is not accessible at this time.", StudyLocation.QueueStudyStateEnum, ex);
             }
 			_statistics.LoadHeaderStream.End();
             _statistics.Size = (ulong)headerStream.Length;

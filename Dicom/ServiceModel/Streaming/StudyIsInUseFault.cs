@@ -1,4 +1,4 @@
-﻿#region License
+#region License
 
 // Copyright (c) 2009, ClearCanvas Inc.
 // All rights reserved.
@@ -30,28 +30,34 @@
 #endregion
 
 using System;
-using System.IO;
-using System.ServiceModel;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Dicom.ServiceModel.Streaming
 {
     /// <summary>
-    /// Defines the interface of a service that provides study header information.
+    /// Fault contract indicating the requested study cannot be accessed because it is being used on the server.
     /// </summary>
-    [ServiceContract]
-    public interface IHeaderStreamingService
+    [DataContract]
+    public class StudyIsInUseFault
     {
+        #region Private Members
+        private String _studyState;
+        #endregion
+
+        #region Constructors
+        public StudyIsInUseFault(string state)
+        {
+            _studyState = state;
+        }
+        #endregion
+
         /// <summary>
-        /// Retrieves a stream containing the study header information.
+        /// Gets or sets the current state of the study.
         /// </summary>
-        /// <param name="callingAETitle">The AE of the caller</param>
-        /// <param name="parameters">Query parameters</param>
-        /// <returns>The stream containing the study header information in compressed XML format</returns>
-        /// <seealso cref="HeaderStreamingParameters"></seealso>
-        [OperationContract]
-        [FaultContract(typeof(StudyIsInUseFault))]
-        [FaultContract(typeof(StudyIsNearlineFault))]
-        [FaultContract(typeof(StudyNotFoundFault))]
-        Stream GetStudyHeader(string callingAETitle, HeaderStreamingParameters parameters);
+        public String StudyState
+        {
+            get { return _studyState; }
+            set { _studyState = value; }
+        }
     }
 }

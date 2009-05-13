@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ServiceReference>
 	<ProxyGenerationParameters
-		ServiceReferenceUri="http://localhost:50221/HeaderStreaming"
+		ServiceReferenceUri="http://localhost:50221/HeaderStreaming?wsdl"
 		Name="services"
 		NotifyPropertyChange="True"
 		UseObservableCollection="False">
@@ -9,7 +9,7 @@
 	<EndPoints>
 		<EndPoint
 			Address="http://localhost:50221/HeaderStreaming/HeaderStreaming"
-			BindingConfiguration="WSHttpBinding_IHeaderStreamingService"
+			BindingConfiguration="BasicHttpBinding_IHeaderStreamingService"
 			Contract="ClearCanvas.ImageServer.TestApp.services.IHeaderStreamingService"
 			>
 		</EndPoint>
