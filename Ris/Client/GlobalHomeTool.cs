@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Client
 	[Tooltip("launch", "Go to home page")]
 	[IconSet("launch", IconScheme.Colour, "Icons.GlobalHomeToolSmall.png", "Icons.GlobalHomeToolMedium.png", "Icons.GlobalHomeToolLarge.png")]
 	[VisibleStateObserver("launch", "Visible", "VisibleChanged")]
-	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Homepage)]
+	[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View)]
 
 	[MenuAction("toggleDowntimeMode", "global-menus/MenuTools/Downtime Mode", "ToggleDowntimeMode", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("toggleDowntimeMode", "DowntimeModeChecked", "DowntimeModeCheckedChanged")]
@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client
 
 			// automatically launch home page on startup, only if current user is a Staff
 			if (LoginSession.Current.IsStaff 
-				&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Homepage)
+				&& Thread.CurrentPrincipal.IsInRole(ClearCanvas.Ris.Application.Common.AuthorityTokens.Workflow.HomePage.View)
 				&& HomePageSettings.Default.ShowHomepageOnStartUp
 				&& _risWindow == null)
 			{
