@@ -7,13 +7,10 @@ namespace ClearCanvas.Desktop.Help
 		/// <summary>
 		/// Tokens that allow access to administrative functionality.
 		/// </summary>
-		public static class Admin
+		public static class Desktop
 		{
-			public static class System
-			{
-				[AuthorityToken(Description = "Allow access to the 'Show Logs' functionality.")]
-				public const string ShowLogs = "Admin/System/Show Logs";
-			}
+			[AuthorityToken(Description = "Allow access to the 'Show Logs' functionality.")]
+			public const string ShowLogs = "Desktop/Show Logs";
 		}
 	}
 }

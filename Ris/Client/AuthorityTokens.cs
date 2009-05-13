@@ -38,12 +38,10 @@ namespace ClearCanvas.Ris.Client
 {
 	public static class AuthorityTokens
 	{
-		/// <summary>
-		/// Tokens that allow access to development tools and functionality.
-		/// </summary>
-		public static class Development
-		{
-		}
-
+        public static class Desktop
+        {
+            [AuthorityToken(Description = "Allow administration of User-Interface validation rules.")]
+            public const string UIValidationRules = "Desktop/UI Validation Rules";
+        }
 	}
 }

@@ -41,13 +41,10 @@ namespace ClearCanvas.Desktop.ExtensionBrowser
 		/// <summary>
 		/// Tokens that allow access to administrative functionality.
 		/// </summary>
-		public static class Admin
+		public static class Desktop
 		{
-			public static class System
-			{
-				[AuthorityToken(Description = "Allow access to the desktop Extension Browser.")]
-				public const string ExtensionBrowser = "Admin/System/Extension Browser";
-			}
+			[AuthorityToken(Description = "Allow access to the desktop Extension Browser.")]
+			public const string ExtensionBrowser = "Desktop/Extension Browser";
 		}
 	}
 }

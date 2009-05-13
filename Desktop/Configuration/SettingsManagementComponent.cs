@@ -46,7 +46,7 @@ namespace ClearCanvas.Desktop.Configuration
 	/// Launches the <see cref="SettingsManagementComponent"/>.
 	/// </summary>
 	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuConfigureSettings", "Activate")]
-	[ActionPermission("activate", AuthorityTokens.Admin.System.SettingsManagement)]
+	[ActionPermission("activate", AuthorityTokens.Desktop.SettingsManagement)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class SettingsManagementLaunchTool : Tool<IDesktopToolContext>
     {

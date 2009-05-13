@@ -41,13 +41,10 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <summary>
 		/// Tokens that allow access to administrative functionality.
 		/// </summary>
-		public static class Admin
+		public static class Desktop
 		{
-			public static class System
-			{
-				[AuthorityToken(Description = "Allow access to the Settings Management screen.")]
-				public const string SettingsManagement = "Admin/System/Settings Management";
-			}
+			[AuthorityToken(Description = "Allow access to the Settings Management screen.")]
+			public const string SettingsManagement = "Desktop/Settings Management";
 		}
 	}
 }
