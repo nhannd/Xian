@@ -457,21 +457,25 @@ namespace ClearCanvas.ImageServer.Model
             // Can't do it until we break the dependency of ImageServer.Common on Model
             if (_studyXml==null)
             {
-
-                Stream xmlStream = Open(GetStudyXmlPath());
-                if (xmlStream != null)
+                try
                 {
-                    XmlDocument xml = new XmlDocument();
-                    using (xmlStream)
+                    Stream xmlStream = Open(GetStudyXmlPath());
+                    if (xmlStream != null)
                     {
-                        StudyXmlIo.Read(xml, xmlStream);
-                        xmlStream.Close();
+                        XmlDocument xml = new XmlDocument();
+                        using (xmlStream)
+                        {
+                            StudyXmlIo.Read(xml, xmlStream);
+                            xmlStream.Close();
+                        }
+
+                        _studyXml = new StudyXml();
+                        _studyXml.SetMemento(xml);
+
                     }
-
-                    _studyXml = new StudyXml();
-                    _studyXml.SetMemento(xml);
-
                 }
+                catch(Exception)
+                {}
             }
             
 
@@ -480,8 +484,9 @@ namespace ClearCanvas.ImageServer.Model
         
         private static Stream Open(string path)
         {
-            FileStream stream;
-            for (int i = 0; ; i++)
+            FileStream stream = null;
+
+            for (int i = 0; i<50; i++)
             {
                 Exception lastException;
                 try

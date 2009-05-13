@@ -37,6 +37,7 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Services.Dicom;
 using ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy;
@@ -46,6 +47,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute
     /// <summary>
     /// Processor for 'AutoRoute <see cref="WorkQueue"/> entries
     /// </summary>
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.None)]
     public class AutoRouteItemProcessor : BaseItemProcessor, ICancelable
     {
         #region Private Members

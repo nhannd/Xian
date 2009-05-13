@@ -58,7 +58,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 		public const int DefaultMemoryLimitedWorkQueueThreadCount = 4;
 		public const int DefaultWorkQueueMinimumFreeMemoryMB = 256;
 		public const string DefaultNonMemoryLimitedWorkQueueTypes = "DeleteStudy,WebDeleteStudy,MigrateStudy,PurgeStudy";
-        
+	    public const bool DefaultEnableStudyIntegrityValidation = true;
+
 		private static WorkQueueSettings _instance;
 
 		private WorkQueueSettings()
@@ -117,14 +118,14 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 		}
 
 		/// <summary>
-		/// The number of seconds delay between attempting to process a queue entry.
+		/// Enable/disable study integrity validation during work queue processing
 		/// </summary>
 		[SettingsDescriptionAttribute("The number of seconds delay between attempting to process a queue entry.")]
-		[ConfigurationProperty("WorkQueueProcessDelayMedPrioritySeconds", DefaultValue = DefaultWorkQueueProcessDelayMedPrioritySeconds)]
-		public int WorkQueueProcessDelayMedPrioritySeconds
+        [ConfigurationProperty("EnableStudyIntegrityValidation", DefaultValue = DefaultEnableStudyIntegrityValidation)]
+        public bool EnableStudyIntegrityValidation
 		{
-			get { return ((int)(this["WorkQueueProcessDelayMedPrioritySeconds"])); }
-			set { this["WorkQueueProcessDelayMedPrioritySeconds"] = value; }
+            get { return ((bool)(this["EnableStudyIntegrityValidation"])); }
+            set { this["EnableStudyIntegrityValidation"] = value; }
 		}
 
 		/// <summary>
@@ -208,6 +209,17 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			set { this["WorkQueueMinimumFreeMemoryMB"] = value; }
 		}
 
+        /// <summary>
+        /// The number of seconds delay between attempting to process a queue entry.
+        /// </summary>
+        [SettingsDescriptionAttribute("The number of seconds delay between attempting to process a queue entry.")]
+        [ConfigurationProperty("WorkQueueProcessDelayMedPrioritySeconds", DefaultValue = DefaultWorkQueueProcessDelayMedPrioritySeconds)]
+        public int WorkQueueProcessDelayMedPrioritySeconds
+        {
+            get { return ((int)(this["WorkQueueProcessDelayMedPrioritySeconds"])); }
+            set { this["WorkQueueProcessDelayMedPrioritySeconds"] = value; }
+        }
+
 		#endregion
 
 		public override object Clone()
@@ -229,6 +241,7 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue {
 			clone.NonMemoryLimitedWorkQueueTypes = _instance.NonMemoryLimitedWorkQueueTypes;
 		    clone.CompletedWorkQueueDelayDeleteSeconds = _instance.CompletedWorkQueueDelayDeleteSeconds;
 			clone.WorkQueueMinimumFreeMemoryMB = _instance.WorkQueueMinimumFreeMemoryMB;
+		    clone.EnableStudyIntegrityValidation = _instance.EnableStudyIntegrityValidation;
 			return clone;
 		}
 	}

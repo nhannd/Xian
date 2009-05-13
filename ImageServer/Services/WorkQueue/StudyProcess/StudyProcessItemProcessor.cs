@@ -500,6 +500,4 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
         }
         #endregion        
     }
-
-
 }

@@ -40,6 +40,9 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Utilities.Xml;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
+using ClearCanvas.ImageServer.Common.CommandProcessor;
+using ClearCanvas.ImageServer.Core.Exceptions;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
@@ -77,11 +80,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 		None
 	}
 
+
+
     /// <summary>
     /// Base class used when implementing WorkQueue item processors.
     /// </summary>
     public abstract class BaseItemProcessor: IWorkQueueItemProcessor
     {
+        #region Static Fields
+        private static readonly Dictionary<Type, StudyIntegrityValidationModes> _classValidationSettings = new Dictionary<Type, StudyIntegrityValidationModes>();
+        #endregion
+
+        #region Private Fields
         private string _name = "Work Queue";
         private IReadContext _readContext;
         private TimeSpanStatistics _storageLocationLoadTime = new TimeSpanStatistics();
@@ -96,7 +106,18 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
         private Study _theStudy;
     	private bool _cancelPending = false;
     	private readonly object _syncRoot = new object();
-        
+        private StudyIntegrityValidationModes _ValidationModes = StudyIntegrityValidationModes.None;
+
+        #endregion
+
+
+        #region Constructors
+        public BaseItemProcessor()
+        {
+            _ValidationModes = GetValidationTypes();
+        }
+        #endregion
+
         #region Protected Properties
 
         protected StudyStorageLocation StorageLocation
@@ -205,6 +226,12 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
                 }
                 return _theStudy;
             }
+        }
+
+        protected StudyIntegrityValidationModes ValidationModes
+        {
+            get { return _ValidationModes; }
+            set { _ValidationModes = value; }
         }
 
         #endregion
@@ -533,16 +560,16 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 							if (processorFailureType == WorkQueueProcessorFailureType.Fatal)
 							{
 								Platform.Log(LogLevel.Error,
-											 "Failing {0} WorkQueue entry ({1}), fatal error",
-											 item.WorkQueueTypeEnum, item.GetKey());
+											 "Failing {0} WorkQueue entry ({1}), fatal error: {2}",
+											 item.WorkQueueTypeEnum, item.GetKey(), item.FailureDescription);
 
 								parms.WorkQueueStatusEnum = WorkQueueStatusEnum.Failed;
 								parms.ScheduledTime = Platform.Time;
 								parms.ExpirationTime = Platform.Time; // expire now		
 
 							    ServerPlatform.Alert(AlertCategory.Application, AlertLevel.Critical, Name, AlertTypeCodes.UnableToProcess,
-							                   "Failing {0} WorkQueue entry ({1}), fatal error",
-							                   item.WorkQueueTypeEnum, item.GetKey());
+                                               "Failing {0} WorkQueue entry ({1}), fatal error: {2}",
+                                               item.WorkQueueTypeEnum, item.GetKey(), item.FailureDescription);
 							}
 							else if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
 							{
@@ -885,19 +912,72 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue
 
                 if (CanStart())
                 {
-                    OnProcessItemBegin(item);
+                    try
+                    {
+                        ValidateStudyState();
 
-                    ProcessTime.Add(
-                        delegate
-                        {
-                            ProcessItem(item);
-                        }
-                        );
-                    OnProcessItemEnd(item);
+                        OnProcessItemBegin(item);
+
+                        ProcessTime.Add(
+                            delegate
+                            {
+                                ProcessItem(item);
+                            }
+                            );
+                        OnProcessItemEnd(item);
+                    }
+                    catch(StudyIntegrityValidationFailure ex)
+                    {
+                        // Needs immediate attention. Abort the work queue now.
+                        item.FailureDescription = ex.Message;
+                        PostProcessingFailure(item, WorkQueueProcessorFailureType.Fatal);
+                    }
+                    
                 }
             }
         }
 
+        #endregion
+
+        #region Private Methods
+
+
+        private StudyIntegrityValidationModes GetValidationTypes()
+        {
+            if (!_classValidationSettings.TryGetValue(GetType(), out _ValidationModes))
+            {
+                object[] attributes = GetType().GetCustomAttributes(typeof(StudyIntegrityValidationAttribute), true);
+                if (attributes != null && attributes.Length > 0)
+                {
+                    StudyIntegrityValidationAttribute att = attributes[0] as StudyIntegrityValidationAttribute;
+                    _classValidationSettings.Add(GetType(), att.ValidationTypes);
+                    return att.ValidationTypes;
+                }
+            }
+
+            return StudyIntegrityValidationModes.Default;
+        }
+
+        private void ValidateStudyState()
+        {
+            if (!WorkQueueSettings.Instance.EnableStudyIntegrityValidation)
+                return;
+
+            if (ValidationModes == StudyIntegrityValidationModes.None)
+                return;
+            
+            using(ExecutionContext scope = new ExecutionContext())
+            {
+                IList<StudyStorageLocation> locations = WorkQueueItem.LoadStudyLocations(scope.PersistenceContext);
+                if (locations!=null)
+                {
+                    StudyStorageLocation location = locations[0];
+                    StudyIntegrityValidator validator = new StudyIntegrityValidator();
+                    validator.ValidateStudyState("WorkQueue", location, ValidationModes);
+                }
+            }
+            
+        }
         #endregion
     }
 }

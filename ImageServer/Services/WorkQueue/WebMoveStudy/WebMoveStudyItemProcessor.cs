@@ -35,12 +35,14 @@ using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.Network.Scu;
 using ClearCanvas.Dicom.Utilities.Xml;
+using ClearCanvas.ImageServer.Core.Validation;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.EntityBrokers;
 using ClearCanvas.ImageServer.Services.WorkQueue.AutoRoute;
 
 namespace ClearCanvas.ImageServer.Services.WorkQueue.WebMoveStudy
 {
+    [StudyIntegrityValidation(ValidationTypes = StudyIntegrityValidationModes.None)]
     public class WebMoveStudyItemProcessor : AutoRouteItemProcessor
     {
         

@@ -83,6 +83,7 @@
     <Compile Include="ReconcileStudy\ProcessAsIs\ReconcileProcessAsIsProcessor.cs" />
     <Compile Include="ReconcileStudy\ReconcileDescriptionParser.cs" />
     <Compile Include="ReconcileStudy\UpdateWorkQueueCommand.cs" />
+    <Compile Include="StudyIntegrityValidationAttribute.cs" />
     <Compile Include="WebEditStudy\IWebEditStudyCommandCompiler.cs" />
     <Compile Include="WebEditStudy\WebEditStudyHistoryRecord.cs" />
     <Compile Include="WebEditStudy\WebEditStudyCommandCompiler.cs" />
