@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 	class UpgradeFrom_1_3_8146_27241 : BaseUpgradeScript
 	{
 		public UpgradeFrom_1_3_8146_27241()
-			: base(new Version(1, 3, 8146, 27241), new Version(1, 35, 8841, 28852), "UpgradeFrom_1_3_8146_27241.sql")
+			: base(new Version(1, 3, 8146, 27241), new Version(1, 4, 9277, 27241), "UpgradeFrom_1_3_8146_27241.sql")
 		{
 		}
 	}

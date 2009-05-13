@@ -36,10 +36,10 @@ using ClearCanvas.Enterprise.Core.Upgrade;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.UpgradeScripts
 {
 	[ExtensionOf(typeof(PersistentStoreUpgradeScriptExtensionPoint))]
-	class UpgradeFrom_1_35_8841_28852 : BaseUpgradeScript
+	class UpgradeFrom_1_4_9277_29698 : BaseUpgradeScript
 	{
-		public UpgradeFrom_1_35_8841_28852()
-			: base(new Version(1, 35, 8841, 28852), null, "UpgradeFrom_1_35_8841_28852.sql")
+		public UpgradeFrom_1_4_9277_29698()
+			: base(new Version(1, 4, 9277, 29698), null, "UpgradeFrom_1_4_9277_29698.sql")
 		{
 		}
 	}

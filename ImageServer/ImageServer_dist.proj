@@ -81,13 +81,13 @@
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Web\Services\Shreds\bin\$(Configuration)\ClearCanvas.ImageServer.Web.Services.Shreds.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Archiving\Hsm\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Archiving.Hsm.dll" />
-	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Core\bin\$(Configuration)\ClearCanvas.ImageServer.Core.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\Dicom\Codec\Rle\bin\$(Configuration)\ClearCanvas.Dicom.Codec.Rle.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Codecs\$(PlatformSubFolder)\ClearCanvas.Dicom.Codec.Jpeg.dll"/>
   </ItemGroup>
 
   <ItemGroup>
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Model\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Model.SqlServer2005.dll" />
+	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Core\bin\$(Configuration)\ClearCanvas.ImageServer.Core.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Enterprise\SqlServer2005\bin\$(Configuration)\ClearCanvas.ImageServer.Enterprise.SqlServer2005.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Common\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Common.dll" />
 	<PluginFiles Include="$(SolutionDir)\..\ImageServer\Services\Dicom\bin\$(Configuration)\ClearCanvas.ImageServer.Services.Dicom.dll" />

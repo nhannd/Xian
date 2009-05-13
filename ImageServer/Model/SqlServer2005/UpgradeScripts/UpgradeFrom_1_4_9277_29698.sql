@@ -12,17 +12,41 @@ SET TRANSACTION ISOLATION LEVEL SERIALIZABLE
 GO
 BEGIN TRANSACTION
 GO
-PRINT N'Altering [dbo].[AlertLevelEnum]'
+PRINT N'Dropping index [IX_ServerPartition] from [dbo].[ServerPartition]'
 GO
-ALTER TABLE [dbo].[AlertLevelEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+DROP INDEX [IX_ServerPartition] ON [dbo].[ServerPartition]
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
-PRINT N'Altering [dbo].[StudyIntegrityReasonEnum]'
+PRINT N'Altering [dbo].[ArchiveTypeEnum]'
 GO
-ALTER TABLE [dbo].[StudyIntegrityReasonEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+ALTER TABLE [dbo].[ArchiveTypeEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Altering [dbo].[DuplicateSopPolicyEnum]'
+GO
+ALTER TABLE [dbo].[DuplicateSopPolicyEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Altering [dbo].[AlertCategoryEnum]'
+GO
+ALTER TABLE [dbo].[AlertCategoryEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Altering [dbo].[AlertLevelEnum]'
+GO
+ALTER TABLE [dbo].[AlertLevelEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
@@ -183,25 +207,18 @@ IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
-PRINT N'Altering [dbo].[ArchiveTypeEnum]'
+PRINT N'Altering [dbo].[Study]'
 GO
-ALTER TABLE [dbo].[ArchiveTypeEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
-GO
-IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
-GO
-IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
-GO
-PRINT N'Altering [dbo].[DuplicateSopPolicyEnum]'
-GO
-ALTER TABLE [dbo].[DuplicateSopPolicyEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+ALTER TABLE [dbo].[Study] ADD
+[StudyStorageGUID] [uniqueidentifier] NULL
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
-PRINT N'Altering [dbo].[AlertCategoryEnum]'
+PRINT N'Creating index [IX_Study_StudyStorageGUID] on [dbo].[Study]'
 GO
-ALTER TABLE [dbo].[AlertCategoryEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+CREATE NONCLUSTERED INDEX [IX_Study_StudyStorageGUID] ON [dbo].[Study] ([StudyStorageGUID])
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
@@ -224,6 +241,37 @@ IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
+ALTER TABLE [dbo].[ServerPartition] ALTER COLUMN [AeTitle] [varchar] (16) COLLATE Latin1_General_CS_AS NOT NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Creating index [IX_ServerPartition] on [dbo].[ServerPartition]'
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_ServerPartition] ON [dbo].[ServerPartition] ([AeTitle])
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Altering [dbo].[StudyIntegrityQueue]'
+GO
+ALTER TABLE [dbo].[StudyIntegrityQueue] ADD
+[GroupID] [varchar] (64) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Creating index [IX_StudyIntegrityQueue_GroupID] on [dbo].[StudyIntegrityQueue]'
+GO
+CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueue_GroupID] ON [dbo].[StudyIntegrityQueue] ([GroupID])
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
 PRINT N'Altering [dbo].[ServerRuleTypeEnum]'
 GO
 ALTER TABLE [dbo].[ServerRuleTypeEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
@@ -240,6 +288,23 @@ IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
+PRINT N'Altering [dbo].[WorkQueue]'
+GO
+ALTER TABLE [dbo].[WorkQueue] ADD
+[GroupID] [varchar] (64) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Creating index [IX_WorkQueue_GroupID] on [dbo].[WorkQueue]'
+GO
+CREATE NONCLUSTERED INDEX [IX_WorkQueue_GroupID] ON [dbo].[WorkQueue] ([GroupID])
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
 PRINT N'Altering [dbo].[WorkQueueStatusEnum]'
 GO
 ALTER TABLE [dbo].[WorkQueueStatusEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
@@ -248,9 +313,71 @@ IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
+PRINT N'Altering [dbo].[WorkQueueUid]'
+GO
+ALTER TABLE [dbo].[WorkQueueUid] ADD
+[GroupID] [varchar] (64) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[RelativePath] [varchar] (256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Creating index [IX_WorkQueueUid_GroupID] on [dbo].[WorkQueueUid]'
+GO
+CREATE NONCLUSTERED INDEX [IX_WorkQueueUid_GroupID] ON [dbo].[WorkQueueUid] ([GroupID])
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
 PRINT N'Altering [dbo].[ServiceLockTypeEnum]'
 GO
 ALTER TABLE [dbo].[ServiceLockTypeEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Altering [dbo].[StudyIntegrityQueueUid]'
+GO
+ALTER TABLE [dbo].[StudyIntegrityQueueUid] ADD
+[RelativePath] [varchar] (256) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Creating index [IX_StudyIntegrityQueueUid_SeriesInstanceUid] on [dbo].[StudyIntegrityQueueUid]'
+GO
+CREATE NONCLUSTERED INDEX [IX_StudyIntegrityQueueUid_SeriesInstanceUid] ON [dbo].[StudyIntegrityQueueUid] ([SeriesInstanceUid])
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Altering [dbo].[RestoreQueue]'
+GO
+ALTER TABLE [dbo].[RestoreQueue] ADD
+[FailureDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Altering [dbo].[ArchiveQueue]'
+GO
+ALTER TABLE [dbo].[ArchiveQueue] ADD
+[FailureDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Altering [dbo].[Device]'
+GO
+ALTER TABLE [dbo].[Device] ADD
+[ThrottleMaxConnections] [smallint] NOT NULL CONSTRAINT [DF_Device_MaxConnections] DEFAULT ((-1))
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
@@ -296,27 +423,14 @@ IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
-
-PRINT N'Altering [dbo].[ArchiveQueue], adding FailureDescription column'
+PRINT N'Altering [dbo].[StudyIntegrityReasonEnum]'
 GO
-ALTER TABLE [dbo].[ArchiveQueue] ADD [FailureDescription] [nvarchar] (512) NULL
-GO
-IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
-GO
-IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
-GO
-
-
-PRINT N'Altering [dbo].[RestoreQueue], adding FailureDescription column'
-GO
-ALTER TABLE [dbo].[RestoreQueue] ADD [FailureDescription] [nvarchar] (512) NULL
+ALTER TABLE [dbo].[StudyIntegrityReasonEnum] ALTER COLUMN [LongDescription] [nvarchar] (512) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
-
-
 PRINT N'Creating [dbo].[CannedText]'
 GO
 CREATE TABLE [dbo].[CannedText]
@@ -339,7 +453,7 @@ IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
-PRINT N'Creating index [IX_CannedText_Label] on [dbo].[CannedText]'
+PRINT N'Creating index [IX_CannedText_Name] on [dbo].[CannedText]'
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [IX_CannedText_Name] ON [dbo].[CannedText] ([Label])
 GO
@@ -355,6 +469,20 @@ IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
+PRINT N'Adding foreign keys to [dbo].[Study]'
+GO
+ALTER TABLE [dbo].[Study] ADD
+CONSTRAINT [FK_Study_StudyStorage] FOREIGN KEY ([StudyStorageGUID]) REFERENCES [dbo].[StudyStorage] ([GUID])
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+PRINT N'Adding foreign keys to [dbo].[StudyDeleteRecord]'
+GO
+ALTER TABLE [dbo].[StudyDeleteRecord] ADD
+CONSTRAINT [FK_StudyDeleteRecord_Filesystem] FOREIGN KEY ([FilesystemGUID]) REFERENCES [dbo].[Filesystem] ([GUID])
+GO
 PRINT N'Updating [dbo].[Study]'
 GO
 UPDATE Study 
@@ -366,16 +494,6 @@ IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
-PRINT N'Adding foreign keys to [dbo].[StudyDeleteRecord]'
-GO
-ALTER TABLE [dbo].[StudyDeleteRecord] ADD
-CONSTRAINT [FK_StudyDeleteRecord_Filesystem] FOREIGN KEY ([FilesystemGUID]) REFERENCES [dbo].[Filesystem] ([GUID])
-GO
-IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
-GO
-IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
-GO
-
 PRINT N'Updating [dbo].[ServerRuleApplyTimeEnum]'
 GO
 UPDATE [dbo].[ServerRuleApplyTimeEnum]
@@ -551,7 +669,17 @@ GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
 
-PRINT N'Inserting new row into [dbo].[ServiceLock]'
+PRINT N'Inserting new row into [dbo].[StudyHistoryTypeEnum]'
+GO
+INSERT INTO [dbo].[StudyHistoryTypeEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),201,'Duplicate','Duplicate  Processsed','Duplicate was received and processed.')
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+PRINT N'Inserting new ArchiveApplicationLog row into [dbo].[ServiceLock]'
 GO
 DECLARE @ArchiveApplicationLogServiceLockTypeEnum smallint
 SELECT @ArchiveApplicationLogServiceLockTypeEnum = Enum FROM [dbo].ServiceLockTypeEnum WHERE [Lookup] = 'ArchiveApplicationLog'
@@ -565,7 +693,7 @@ GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
 
-PRINT N'Inserting new row into [dbo].[ServiceLock]'
+PRINT N'Inserting new PurgeAlerts row into [dbo].[ServiceLock]'
 GO
 DECLARE @PurgeAlertsServiceLockTypeEnum smallint
 SELECT @PurgeAlertsServiceLockTypeEnum = Enum FROM [dbo].ServiceLockTypeEnum WHERE [Lookup] = 'PurgeAlerts'
@@ -573,6 +701,20 @@ SELECT @PurgeAlertsServiceLockTypeEnum = Enum FROM [dbo].ServiceLockTypeEnum WHE
 INSERT INTO [dbo].[ServiceLock]
 	([ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
 VALUES (@PurgeAlertsServiceLockTypeEnum,0,getdate(),null,1)
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+PRINT N'Inserting new ImportFiles row into [dbo].[ServiceLock]'
+GO
+DECLARE @ImportFilesServiceLockTypeEnum smallint
+SELECT @ImportFilesServiceLockTypeEnum = Enum FROM [dbo].ServiceLockTypeEnum WHERE [Lookup] = 'ImportFiles'
+
+INSERT INTO [dbo].[ServiceLock]
+	([ServiceLockTypeEnum],[Lock],[ScheduledTime],[FilesystemGUID],[Enabled])
+VALUES (@ImportFilesServiceLockTypeEnum,0,getdate(),null,1)
 GO
 IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
 GO
@@ -599,6 +741,37 @@ GO
 IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
 GO
 
+PRINT N'Inserting new rows into [dbo].[WorkQueueTypeEnum]'
+GO
+INSERT INTO [dbo].[WorkQueueTypeEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),113,'ReconcilePostProcess','Process Reconciled Images','Process reconciled images.')
+INSERT INTO [dbo].[WorkQueueTypeEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),114,'ProcessDuplicate','Process Duplicate','Process duplicate.')
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+PRINT N'Delete AcceptLatest policy from [dbo].[DuplicateSopPolicyEnum]'
+GO
+DELETE FROM [dbo].[DuplicateSopPolicyEnum] WHERE Lookup = 'AcceptLatest'
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+GO
+
+PRINT N'Insert new row into [dbo].[StudyIntegrityReasonEnum]'
+GO
+INSERT INTO [dbo].[StudyIntegrityReasonEnum] ([GUID],[Enum],[Lookup],[Description],[LongDescription])
+     VALUES (newid(),101,'Duplicate','Duplicate','Duplicates were received and need to be reconciled.')
+GO
+IF @@ERROR<>0 AND @@TRANCOUNT>0 ROLLBACK TRANSACTION
+GO
+IF @@TRANCOUNT=0 BEGIN INSERT INTO #tmpErrors (Error) SELECT 1 BEGIN TRANSACTION END
+
+GO
 IF EXISTS (SELECT * FROM #tmpErrors) ROLLBACK TRANSACTION
 GO
 IF @@TRANCOUNT>0 BEGIN
