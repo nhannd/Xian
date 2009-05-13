@@ -70,20 +70,20 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Access denied.  Please ensure your username and password are correct, or contact a system administrator for assistance..
+        /// </summary>
+        internal static string MessageAccessDenied {
+            get {
+                return ResourceManager.GetString("MessageAccessDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A communication error occured while attempting to contact the server..
         /// </summary>
         internal static string MessageCommunicationError {
             get {
                 return ResourceManager.GetString("MessageCommunicationError", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid user name or password..
-        /// </summary>
-        internal static string MessageInvalidCredentials {
-            get {
-                return ResourceManager.GetString("MessageInvalidCredentials", resourceCulture);
             }
         }
         

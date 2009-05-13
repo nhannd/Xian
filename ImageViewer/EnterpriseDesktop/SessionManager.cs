@@ -166,13 +166,8 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 				{
 					changPassword = true;
 				}
-				catch (PasswordExpiredException)
-				{
-					changPassword = true;
-				}
 				catch (Exception e)
 				{
-					//TODO: resolve issues with Enterprise server faults - they don't provide enough info.
 					ReportException(e);
 					AuditHelper.LogLogin("Login", userName, EventSource.GetOtherEventSource(ServiceSettings.Default.ApplicationServicesBaseUrl), EventResult.SeriousFailure);
 				}
@@ -290,7 +285,6 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 						}
 						catch(Exception e)
 						{
-							//TODO: resolve issues with Enterprise server faults - they don't provide enough info.
 							ReportException(e);
 						}
 					}
@@ -306,9 +300,14 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 
 		private static void ReportException(Exception e)
 		{
-			if (e is RequestValidationException || e is FaultException<RequestValidationException>)
+			if (e is FaultException<RequestValidationException>)
 			{
 				Application.ShowMessageBox(e.Message, MessageBoxActions.Ok);
+			}
+			else if (e is FaultException<UserAccessDeniedException>)
+			{
+				Platform.Log(LogLevel.Error, e);
+				Application.ShowMessageBox(SR.MessageAccessDenied, MessageBoxActions.Ok);
 			}
 			else if (e is EndpointNotFoundException)
 			{
@@ -319,13 +318,6 @@ namespace ClearCanvas.ImageViewer.EnterpriseDesktop
 			{
 				Platform.Log(LogLevel.Error, e);
 				Application.ShowMessageBox(SR.MessageLoginTimeout, MessageBoxActions.Ok);
-			}
-			else if (e is CommunicationException)
-			{
-				//TODO: because we don't get an appropriate exception, back assume this is just 'invalid user name or password' for now.
-				Platform.Log(LogLevel.Error, e);
-				//Application.ShowMessageBox(SR.MessageCommunicationError, MessageBoxActions.Ok);
-				Application.ShowMessageBox(SR.MessageInvalidCredentials, MessageBoxActions.Ok);
 			}
 			else
 			{

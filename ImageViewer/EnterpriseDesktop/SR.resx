@@ -120,11 +120,11 @@
   <data name="MenuChangePassword" xml:space="preserve">
     <value>Change Password</value>
   </data>
+  <data name="MessageAccessDenied" xml:space="preserve">
+    <value>Access denied.  Please ensure your username and password are correct, or contact a system administrator for assistance.</value>
+  </data>
   <data name="MessageCommunicationError" xml:space="preserve">
     <value>A communication error occured while attempting to contact the server.</value>
-  </data>
-  <data name="MessageInvalidCredentials" xml:space="preserve">
-    <value>Invalid user name or password.</value>
   </data>
   <data name="MessageLoginTimeout" xml:space="preserve">
     <value>Timed-out while attempting to login.</value>
