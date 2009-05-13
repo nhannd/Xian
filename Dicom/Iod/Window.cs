@@ -75,11 +75,11 @@ namespace ClearCanvas.Dicom.Iod
 			DicomAttribute windowCenterAttribute;
 
 			windowCenterAttribute = provider[DicomTags.WindowCenter];
-			if (!windowCenterAttribute.IsNull || windowCenterAttribute.IsEmpty)
+			if (windowCenterAttribute.IsNull || windowCenterAttribute.IsEmpty)
 				return windowValues;
 
 			windowWidthAttribute = provider[DicomTags.WindowWidth];
-			if (!windowWidthAttribute.IsNull || windowWidthAttribute.IsEmpty)
+			if (windowWidthAttribute.IsNull || windowWidthAttribute.IsEmpty)
 				throw new DicomDataException("Window Center exists without Window Width.");	
 
 			if (windowWidthAttribute.Count != windowCenterAttribute.Count)
@@ -108,9 +108,12 @@ namespace ClearCanvas.Dicom.Iod
 
 				centerValues.AppendFormat("{0:G12}", value.Center);
 			}
-		
-			provider[DicomTags.WindowCenter].SetStringValue(centerValues.ToString());
-			provider[DicomTags.WindowWidth].SetStringValue(widthValues.ToString());
+
+			if (centerValues.Length != 0 && widthValues.Length != 0)
+			{
+				provider[DicomTags.WindowCenter].SetStringValue(centerValues.ToString());
+				provider[DicomTags.WindowWidth].SetStringValue(widthValues.ToString());
+			}
 		}
 
     	#region Public Properties
