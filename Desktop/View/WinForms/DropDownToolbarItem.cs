@@ -79,13 +79,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnDropDownOpening(object sender, EventArgs e)
 		{
-			this.DropDownItems.Clear();
+			ToolStripBuilder.Clear(this.DropDownItems);
 
 			ActionModelNode model = (_action).DropDownMenuModel;
 			if (model != null)
 				ToolStripBuilder.BuildMenu(this.DropDownItems, model.ChildNodes);
 		}
-		
+
 		private void OnActionEnabledChanged(object sender, EventArgs e)
 		{
 			UpdateEnablement();
@@ -115,6 +115,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			if (disposing && _action != null)
 			{
+				ToolStripBuilder.Clear(this.DropDownItems);
+
 				// VERY IMPORTANT: instances of this class will be created and discarded frequently
 				// throughout the lifetime of the application
 				// therefore is it extremely important that the event handlers are disconnected

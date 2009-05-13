@@ -199,7 +199,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private void OnDropDownOpening(object sender, EventArgs e)
 		{
-			this.DropDownItems.Clear();
+			ToolStripBuilder.Clear(this.DropDownItems);
 			
 			ActionModelNode model = ((IDropDownAction)_action).DropDownMenuModel;
 			if (model != null)
@@ -323,6 +323,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 			if (disposing && _action != null)
 			{
 				OnParentChanged(this.Parent, null);
+
+				ToolStripBuilder.Clear(this.DropDownItems);
 
 				// VERY IMPORTANT: instances of this class will be created and discarded frequently
 				// throughout the lifetime of the application
