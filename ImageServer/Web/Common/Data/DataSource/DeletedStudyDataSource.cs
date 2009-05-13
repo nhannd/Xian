@@ -34,7 +34,6 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.Utilities;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Common.Utilities;
 using ClearCanvas.ImageServer.Model;
@@ -61,11 +60,11 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public DeletedStudyInfo  Find(object key)
 		{
-			return CollectionUtils.SelectFirst<DeletedStudyInfo>(_studies,
-			                                                     delegate(DeletedStudyInfo info)
-			                                                     	{
-			                                                     		return info.RowKey.Equals(key);
-			                                                     	});
+			return CollectionUtils.SelectFirst(_studies,
+			                                   delegate(DeletedStudyInfo info)
+			                                   	{
+			                                   		return info.RowKey.Equals(key);
+			                                   	});
 		}
 
 		public string PatientId
@@ -92,22 +91,44 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			set { _studyDescription = value; }
 		}
 
+		private StudyDeleteRecordSelectCriteria GetSelectCriteria()
+		{
+			StudyDeleteRecordSelectCriteria criteria = new StudyDeleteRecordSelectCriteria();
+			if (!String.IsNullOrEmpty(AccessionNumber))
+			{
+				string key = AccessionNumber.Replace("*", "%");
+				key = key.Replace("?", "_");
+				criteria.AccessionNumber.Like(key);
+			}
+			if (!String.IsNullOrEmpty(PatientId))
+			{
+				string key = PatientId.Replace("*", "%");
+				key = key.Replace("?", "_");
+				criteria.PatientId.Like(key);
+			}
+			if (!String.IsNullOrEmpty(PatientsName))
+			{
+				string key = PatientsName.Replace("*", "%");
+				key = key.Replace("?", "_");
+				criteria.PatientsName.Like(key);
+			}
+			if (!String.IsNullOrEmpty(StudyDescription))
+			{
+				string key = StudyDescription.Replace("*", "%");
+				key = key.Replace("?", "_");
+				criteria.StudyDescription.Like(key);
+			}
+			if (StudyDate != null)
+				criteria.StudyDate.Like("%" + DateParser.ToDicomString(StudyDate.Value) + "%");
+
+			return criteria;
+		}
+
 		public IEnumerable Select(int startRowIndex, int maxRows)
 		{
 			
 			IStudyDeleteRecordEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IStudyDeleteRecordEntityBroker>();
-			StudyDeleteRecordSelectCriteria criteria = new StudyDeleteRecordSelectCriteria();
-			if (!String.IsNullOrEmpty(AccessionNumber))
-				criteria.AccessionNumber.Like("%"+AccessionNumber+"%");
-			if (!String.IsNullOrEmpty(PatientId))
-				criteria.PatientId.Like("%" + PatientId + "%");
-			if (!String.IsNullOrEmpty(PatientsName))
-				criteria.PatientsName.Like("%" + PatientsName + "%");
-			if (!String.IsNullOrEmpty(StudyDescription))
-				criteria.StudyDescription.Like("%" + StudyDescription + "%");
-			if (StudyDate!=null)
-				criteria.StudyDate.Like("%" + DateParser.ToDicomString(StudyDate.Value) + "%");
-
+			StudyDeleteRecordSelectCriteria criteria = GetSelectCriteria();
 			criteria.Timestamp.SortDesc(0);
 			IList<StudyDeleteRecord> list = broker.Find(criteria, startRowIndex, maxRows);
 
@@ -123,17 +144,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 		public int SelectCount()
 		{
-			StudyDeleteRecordSelectCriteria criteria = new StudyDeleteRecordSelectCriteria();
-			if (!String.IsNullOrEmpty(AccessionNumber))
-				criteria.AccessionNumber.Like("%" + AccessionNumber + "%");
-			if (!String.IsNullOrEmpty(PatientId))
-				criteria.PatientId.Like("%" + PatientId + "%");
-			if (!String.IsNullOrEmpty(PatientsName))
-				criteria.PatientsName.Like("%" + PatientsName + "%");
-			if (!String.IsNullOrEmpty(StudyDescription))
-				criteria.StudyDescription.Like("%" + StudyDescription + "%");
-			if (StudyDate != null)
-				criteria.StudyDate.Like("%" + DateParser.ToDicomString(StudyDate.Value) + "%");
+			StudyDeleteRecordSelectCriteria criteria = GetSelectCriteria();
 
             IStudyDeleteRecordEntityBroker broker = HttpContextData.Current.ReadContext.GetBroker<IStudyDeleteRecordEntityBroker>();
 		    return broker.Count(criteria);
@@ -142,7 +153,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 	internal static class DeletedStudyInfoAssembler
 	{
-		static private FilesystemMonitor _fsMonitor = FilesystemMonitor.Instance;
+		static private readonly FilesystemMonitor _fsMonitor = FilesystemMonitor.Instance;
 
 		public static DeletedStudyInfo CreateDeletedStudyInfo(StudyDeleteRecord record)
 		{

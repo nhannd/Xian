@@ -117,39 +117,35 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			if (!String.IsNullOrEmpty(LogLevel))
 			{
-				string key = "%" + LogLevel + "%";
-				key = key.Replace("*", "%");
+				string key = LogLevel.Replace("*", "%");
+				key = key.Replace("?", "_");
 				criteria.LogLevel.Like(key);
 			}
 
 			if (!String.IsNullOrEmpty(Thread))
 			{
-				string key = "%" + Thread + "%";
-				key = key.Replace("*", "%");
+				string key = Thread.Replace("*", "%");
 				key = key.Replace("?", "_");
 				criteria.Thread.Like(key);
 			}
 
 			if (!String.IsNullOrEmpty(Host))
 			{
-				string key = "%" + Host + "%";
-				key = key.Replace("*", "%");
+				string key = Host.Replace("*", "%");
 				key = key.Replace("?", "_");
 				criteria.Host.Like(key);
 			}
 
 			if (!String.IsNullOrEmpty(Exception))
 			{
-				string key = "%" + Exception + "%";
-				key = key.Replace("*", "%");
+				string key = Exception.Replace("*", "%");
 				key = key.Replace("?", "_");
 				criteria.Exception.Like(key);
 			}
 
 			if (!String.IsNullOrEmpty(Message))
 			{
-				string key = "%" + Message + "%";
-				key = key.Replace("*", "%");
+				string key = Message.Replace("*", "%");
 				key = key.Replace("?", "_");
 				criteria.Message.Like(key);
 			}

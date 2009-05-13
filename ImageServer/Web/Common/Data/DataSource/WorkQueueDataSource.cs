@@ -235,10 +235,18 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 				parameters.ServerPartitionKey = Partition.Key;
 
 			if (PatientsName != null)
-				parameters.PatientsName = PatientsName.Replace("*", "%");
+			{
+				string key = PatientsName.Replace("*", "%");
+				key = key.Replace("?", "_");
+				parameters.PatientsName = key;
+			}
 			if (PatientId != null)
-				parameters.PatientID = PatientId.Replace("*", "%");
-		
+			{
+				string key = PatientId.Replace("*", "%");
+				key = key.Replace("?", "_");
+				parameters.PatientID = key;
+			}
+
 			if (String.IsNullOrEmpty(ScheduledDate))
 				parameters.ScheduledTime = null;
 			else

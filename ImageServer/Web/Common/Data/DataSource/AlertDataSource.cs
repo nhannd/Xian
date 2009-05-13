@@ -167,8 +167,12 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 			AlertSelectCriteria criteria = new AlertSelectCriteria();
 
 			if (Component != null)
-				criteria.Component.Like(Component);
-
+			{
+				string key = Component;
+				key = key.Replace("*", "%");
+				key = key.Replace("?", "_");
+				criteria.Component.Like(key);
+			}
 			if (!String.IsNullOrEmpty(InsertTime))
 			{
 				DateTime lowerDate = DateTime.ParseExact(InsertTime, DateFormats, null);

@@ -463,15 +463,14 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			if (!String.IsNullOrEmpty(PatientId))
 			{
-				string key = "%" + PatientId + "%";
-				key = key.Replace("*", "%");
+				string key = PatientId.Replace("*", "%");
+				key = key.Replace("?", "_");
 				criteria.PatientId.Like(key);
 			}
 
 			if (!String.IsNullOrEmpty(PatientName))
 			{
-				string key = "%" + PatientName + "%";
-				key = key.Replace("*", "%");
+				string key = PatientName.Replace("*", "%");
 				key = key.Replace("?", "_");
 				criteria.PatientsName.Like(key);
 			}
@@ -479,8 +478,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			if (!String.IsNullOrEmpty(AccessionNumber))
 			{
-				string key = "%" + AccessionNumber + "%";
-				key = key.Replace("*", "%");
+				string key = AccessionNumber.Replace("*", "%");
 				key = key.Replace("?", "_");
 				criteria.AccessionNumber.Like(key);
 			}
@@ -493,8 +491,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data.DataSource
 
 			if (!String.IsNullOrEmpty(StudyDescription))
 			{
-				string key = "%" + StudyDescription + "%";
-				key = key.Replace("*", "%");
+				string key = StudyDescription.Replace("*", "%");
 				key = key.Replace("?", "_");
 				criteria.StudyDescription.Like(key);
 			}
