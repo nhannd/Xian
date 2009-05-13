@@ -30,6 +30,7 @@
 #endregion
 
 using System.Security;
+using System.ServiceModel;
 using System.Web.Security;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
@@ -59,7 +60,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
             }
             else
             {
-                throw new SecurityException("Invalid username or password");
+                throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException());
             }
             
         }
@@ -74,7 +75,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
             }
             else
             {
-                throw new SecurityException("Invalid Session");
+                throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException());
             }
         }
 
@@ -89,7 +90,7 @@ namespace ClearCanvas.ImageServer.Services.Common.Authentication
             if (Membership.Provider.ChangePassword(request.UserName, request.CurrentPassword, request.NewPassword))
                 return new ChangePasswordResponse();
             else
-                throw new SecurityException("Unable to change password");
+                throw new FaultException<UserAccessDeniedException>(new UserAccessDeniedException());
         }
 
         public GetAuthorizationsResponse GetAuthorizations(GetAuthorizationsRequest request)

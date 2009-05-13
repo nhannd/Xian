@@ -75,6 +75,10 @@ namespace ClearCanvas.ImageServer.Enterprise.Authentication
                         {
                             throw ex.Detail;
                         }
+                        catch(FaultException<UserAccessDeniedException> ex)
+                        {
+                            throw ex.Detail;
+                        }
                     }
                 );
 

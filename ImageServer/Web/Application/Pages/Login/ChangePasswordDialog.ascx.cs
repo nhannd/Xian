@@ -100,11 +100,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
                     string error = String.Format(ErrorMessages.ChangePasswordError, ex.Detail.Message);
                     ShowError(error);
                 }
-                catch (FaultException ex)
+                catch (UserAccessDeniedException ex)
                 {
-                    // NOTE: The server is throwing FaultException when username or password is invalid. 
-                    Platform.Log(LogLevel.Error, ex, "Unable to change password for {0}", ChangePasswordUsername.Text);
-                    ShowError(ErrorMessages.LoginInvalidUsernameOrPassword);
+                    Platform.Log(LogLevel.Error, ex, "Unable to change password for {0}: {1}", ChangePasswordUsername.Text, ex.Message);
+                    ShowError(ex.Message);
                 }
                 catch (CommunicationException ex)
                 {

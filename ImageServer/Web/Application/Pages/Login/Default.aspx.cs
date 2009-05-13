@@ -71,11 +71,10 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Login
 				audit.AddUserParticipant(new AuditPersonActiveParticipant(UserName.Text, null, null));
 				ServerPlatform.LogAuditMessage("UserAuthentication", audit);
 			}
-			catch (FaultException ex)
+            catch (UserAccessDeniedException ex)
             {
-                // NOTE: The server is throwing FaultException when username or password is invalid. 
-                Platform.Log(LogLevel.Error, ex, "Invalid login for {0}", UserName.Text);
-                ShowError(ErrorMessages.LoginInvalidUsernameOrPassword);
+                Platform.Log(LogLevel.Error, ex, ex.Message);
+                ShowError(ex.Message);
                 UserName.Focus();
 
                 UserAuthenticationAuditHelper audit = new UserAuthenticationAuditHelper(ServerPlatform.AuditSource,
