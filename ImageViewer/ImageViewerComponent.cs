@@ -800,6 +800,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing)
 			{
+				if (_toolSet != null)
+				{
+					_toolSet.Dispose();
+					_toolSet = null;
+				}
+
 				StopLoadingPriors();
 				StopPrefetching();
 
@@ -813,12 +819,6 @@ namespace ClearCanvas.ImageViewer
 				{
 					_logicalWorkspace.Dispose();
 					_logicalWorkspace = null;
-				}
-
-				if (_toolSet != null)
-				{
-					_toolSet.Dispose();
-					_toolSet = null;
 				}
 
 				if (_studyTree != null)
