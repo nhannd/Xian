@@ -82,7 +82,7 @@ namespace ClearCanvas.Dicom.Utilities.Xml
 		public void Remove(DicomTag tag)
 		{
 			DicomTag existingTag;
-			if (!_excludedTags.TryGetValue(tag, out existingTag))
+			if (_excludedTags.TryGetValue(tag, out existingTag))
 				_excludedTags.Remove(existingTag);
 		}
 
