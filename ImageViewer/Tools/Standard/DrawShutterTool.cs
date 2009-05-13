@@ -53,18 +53,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		Rectangle
 	}
 
-	#region Menu
-
-	[MenuAction("selectDrawCircleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawCircleShutter", "SelectDrawCircleShutter")]
-	[CheckedStateObserver("selectDrawCircleShutter", "DrawCircleShutterChecked", "SelectedShutterTypeChanged")]
-
-	[MenuAction("selectDrawPolygonShutter", "global-menus/MenuTools/MenuStandard/MenuDrawPolygonShutter", "SelectDrawPolygonShutter")]
-	[CheckedStateObserver("selectDrawPolygonShutter", "DrawPolygonShutterChecked", "SelectedShutterTypeChanged")]
-
-	[MenuAction("selectDrawRectangleShutter", "global-menus/MenuTools/MenuStandard/MenuDrawRectangleShutter", "SelectDrawRectangleShutter")]
-	[CheckedStateObserver("selectDrawRectangleShutter", "DrawRectangleShutterChecked", "SelectedShutterTypeChanged")]
-	
-	#endregion
 	#region Toolbar
 
 	[DropDownButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarDrawShutter", "Select", "DrawShutterMenuModel", Flags = ClickActionFlags.CheckAction)]
