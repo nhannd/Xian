@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client
 	[MenuAction("search", "folderexplorer-folders-contextmenu/Advanced Search ...", "Search")]
 	[Tooltip("search", "Search")]
 	[IconSet("search", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
-	[ExtensionOf(typeof(FolderExplorerGroupToolExtensionPoint))]
+	//[ExtensionOf(typeof(FolderExplorerGroupToolExtensionPoint))]
 	public class AdvanceSearchTool : Tool<IFolderExplorerGroupToolContext>
 	{
 		public void Search()

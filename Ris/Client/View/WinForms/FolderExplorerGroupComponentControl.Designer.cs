@@ -77,6 +77,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._advancedSearch.Name = "_advancedSearch";
             this._advancedSearch.Size = new System.Drawing.Size(192, 30);
             this._advancedSearch.Text = "Advanced Search ...";
+            this._advancedSearch.Visible = false;
             this._advancedSearch.Click += new System.EventHandler(this._advancedSearch_Click);
             // 
             // _groupPanel
