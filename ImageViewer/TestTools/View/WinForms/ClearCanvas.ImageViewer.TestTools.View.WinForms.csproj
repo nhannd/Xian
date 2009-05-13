@@ -35,6 +35,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MemoryAnalysisComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MemoryAnalysisComponentControl.Designer.cs">
+      <DependentUpon>MemoryAnalysisComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MemoryAnalysisComponentView.cs" />
     <Compile Include="PerformanceAnalysisComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -68,6 +75,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="MemoryAnalysisComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>MemoryAnalysisComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PerformanceAnalysisComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>PerformanceAnalysisComponentControl.cs</DependentUpon>

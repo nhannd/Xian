@@ -34,7 +34,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MemoryHoldTool.cs" />
+    <Compile Include="MemoryAnalysisComponent.cs" />
+    <Compile Include="MemoryAnalysisTool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PerformanceAnalysisComponent.cs" />
     <Compile Include="PerformanceAnalysisTool.cs" />
@@ -71,8 +72,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\MemoryHoldToolMedium.png" />
-    <EmbeddedResource Include="Icons\MemoryHoldToolSmall.png" />
+    <EmbeddedResource Include="Icons\MemoryAnalysisToolMedium.png" />
+    <EmbeddedResource Include="Icons\MemoryAnalysisToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

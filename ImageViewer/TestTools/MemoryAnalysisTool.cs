@@ -32,7 +32,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -41,72 +41,31 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.TestTools
 {
-	[MenuAction("apply", "global-menus/MenuTools/MenuToolsMyTools/Consume Memory", "Apply", KeyStroke = XKeys.Control | XKeys.M)]
-	[ButtonAction("apply", "global-toolbars/ToolbarMyTools/Consume Memory", "Apply")]
-	[IconSet("apply", IconScheme.Colour, "Icons.MemoryHoldToolSmall.png", "Icons.MemoryHoldToolMedium.png", "")]
-	[TooltipValueObserver("apply", "Tooltip", "TooltipChanged")]
+	[MenuAction("show", "global-menus/MenuTools/MenuUtilities/Memory Analysis", "Show", KeyStroke = XKeys.Control | XKeys.M)]
+	[ButtonAction("show", "global-toolbars/ToolbarUtilities/Memory Analysis", "Show")]
+	[IconSet("show", IconScheme.Colour, "Icons.MemoryAnalysisToolSmall.png", "Icons.MemoryAnalysisToolMedium.png", "")]
 
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-	public class MemoryHoldTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+	public class MemoryAnalysisTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
 	{
-		private string _tooltip;
-		private event EventHandler _tooltipChanged;
-		private uint _usage;
-		private static uint _increment;
-		private List<object> _memoryHold;
+		private static IShelf _shelf;
 
-		public MemoryHoldTool()
+		public MemoryAnalysisTool()
 		{
-			_memoryHold = new List<object>();
-			_tooltip = "Memory Usage: 0";
 		}
 
-		public event EventHandler TooltipChanged
+		public void Show()
 		{
-			add { _tooltipChanged += value; }
-			remove { _tooltipChanged -= value; }
-		}
-
-		/// <summary>
-		/// Called by the framework to initialize this tool.
-		/// </summary>
-		public override void Initialize()
-		{
-			base.Initialize();
-
-			_increment = 1000000;
-			this.Usage = 0;
-		}
-
-		public string Tooltip
-		{
-			get { return _tooltip; }
-		}
-
-		private uint Usage
-		{
-			get { return _usage; }
-			set 
+			if (_shelf != null)
 			{
-				if (_usage == value)
-					return;
-
-				_usage = value;
-				_tooltip = String.Format("Memory Usage: {0}", _usage);
-				EventsHelper.Fire(_tooltipChanged, this, EventArgs.Empty);
+				_shelf.Activate();
 			}
-		}
-
-		public void Apply()
-		{
-			try
+			else
 			{
-				byte[] array = new byte[_increment];
-				_memoryHold.Add(array);
-				Usage += _increment;
-			}
-			catch (Exception e)
-			{
+				MemoryAnalysisComponent component = new MemoryAnalysisComponent();
+				_shelf = ApplicationComponent.LaunchAsShelf(this.Context.DesktopWindow, component, "Memory Analysis",
+					                                   ShelfDisplayHint.DockFloat);
+				_shelf.Closed += delegate { _shelf = null; };
 			}
 		}
 	}
