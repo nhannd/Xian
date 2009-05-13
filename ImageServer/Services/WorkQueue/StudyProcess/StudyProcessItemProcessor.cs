@@ -78,34 +78,46 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 	
         private void ProcessDuplicate(WorkQueueUid uid, string basePath, string duplicatePath)
         {
-        	DicomFile dupFile = new DicomFile(duplicatePath);
-            DicomFile baseFile = new DicomFile(basePath);
-
-            dupFile.Load(DicomReadOptions.StorePixelDataReferences);
-            baseFile.Load(DicomReadOptions.StorePixelDataReferences);
-
-            if (!dupFile.TransferSyntax.Equals(baseFile.TransferSyntax))
+            DicomFile dupFile = new DicomFile(duplicatePath);
+            dupFile.Load(DicomReadOptions.DoNotStorePixelDataInDataSet);
+            if (!File.Exists(basePath))
             {
-                string failure = String.Format("Base file transfer syntax '{0}' not equal to duplicate file '{1}'",
-                                               baseFile.TransferSyntax, dupFile.TransferSyntax);
-                throw new ApplicationException(failure);
-            }
-
-            List<DicomAttributeComparisonResult> failureReason = new List<DicomAttributeComparisonResult>();
-            if (baseFile.DataSet.Equals(dupFile.DataSet, ref failureReason))
-            {
-                Platform.Log(LogLevel.Info,
-                             "Duplicate SOP being processed is identical.  Removing SOP: {0}",
-                             baseFile.MediaStorageSopInstanceUid);
-
-                FileInfo file = new FileInfo(duplicatePath);
-                file.Delete();
-                return;
+                // NOTE: This is special case. The file which caused dicom service to think this sop is a duplicate
+                // no longer exists in the study folder. Perhaps it has been moved to another folder during auto reconciliation.
+                // We have nothing to compare against so let's just throw it into the SIQ queue.
+                CreateDuplicateSIQEntry(uid, dupFile, null);
             }
             else
             {
-                CreateDuplicateSIQEntry(uid, dupFile, failureReason);
+                DicomFile baseFile = new DicomFile(basePath);
+
+                dupFile.Load(DicomReadOptions.StorePixelDataReferences);
+                baseFile.Load(DicomReadOptions.StorePixelDataReferences);
+
+                if (!dupFile.TransferSyntax.Equals(baseFile.TransferSyntax))
+                {
+                    string failure = String.Format("Base file transfer syntax '{0}' not equal to duplicate file '{1}'",
+                                                   baseFile.TransferSyntax, dupFile.TransferSyntax);
+                    throw new ApplicationException(failure);
+                }
+
+                List<DicomAttributeComparisonResult> failureReason = new List<DicomAttributeComparisonResult>();
+                if (baseFile.DataSet.Equals(dupFile.DataSet, ref failureReason))
+                {
+                    Platform.Log(LogLevel.Info,
+                                 "Duplicate SOP being processed is identical.  Removing SOP: {0}",
+                                 baseFile.MediaStorageSopInstanceUid);
+
+                    FileInfo file = new FileInfo(duplicatePath);
+                    file.Delete();
+                    return;
+                }
+                else
+                {
+                    CreateDuplicateSIQEntry(uid, dupFile, failureReason);
+                }
             }
+            
         }
 
         void CreateDuplicateSIQEntry(WorkQueueUid uid, DicomFile file, List<DicomAttributeComparisonResult> differences)
@@ -114,12 +126,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
 
             using (ServerCommandProcessor processor = new ServerCommandProcessor("Create Duplicate SIQ Entry"))
             {
-                InsertDuplicateQueueEntryCommand insertCommand =
-                            new InsertDuplicateQueueEntryCommand(uid.GroupID, StorageLocation, file, uid.RelativePath, differences);
-
+                InsertDuplicateQueueEntryCommand insertCommand = new InsertDuplicateQueueEntryCommand(uid.GroupID, StorageLocation, file, uid.RelativePath, differences);
                 processor.AddCommand(insertCommand);
-
-                processor.AddCommand(new UpdateDuplicateQueueEntryCommand(delegate { return insertCommand.QueueEntry; }, file));
+                processor.AddCommand(new UpdateDuplicateQueueEntryCommand(
+                        delegate() { return insertCommand.QueueEntry; }, file));
 
                 processor.AddCommand(new DeleteWorkQueueUidCommand(uid));
 
@@ -253,31 +263,11 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.StudyProcess
             basePath = Path.Combine(basePath, sop.SopInstanceUid);
             
             try
-            {   
-                // This is a bit trickly.  If the partition has the "AcceptLatest" policy configured, the 
-                // duplicate bit is set, and no extension is set.  In this case we want to process the 
-                // file as normal.  When the "CompareDuplicates" policy is set, we don't want to process,
-                // we just want to compare to the original object.  In this case, we have an extension
-                // set along with the duplicate flag.
+            {  
                 if (sop.Duplicate && sop.Extension != null)
                 {
                     path = GetDuplicateUidPath(sop);
-                    string existingPath = StorageLocation.GetSopInstancePath(sop.SeriesInstanceUid, sop.SopInstanceUid);
-                    if (File.Exists(existingPath))
-                    {
-                        ProcessDuplicate(sop, basePath + ".dcm", path);
-                    }
-                    else
-                    {
-                        // the file was duplicate at the time it was received. But the original file 
-                        // no longer exists. We can save the file there and process it as if it's not duplicate
-                        Platform.Log(LogLevel.Warn, "Processing duplicate SOP instance but existing copy was not found.");
-
-                        DicomFile file = new DicomFile(path);
-                        file.Load(DicomReadOptions.StorePixelDataReferences);
-                        ProcessFile(sop, file, studyXml);
-                       
-                    }
+                    ProcessDuplicate(sop, basePath + ".dcm", path);
                 }
                 else
                 {

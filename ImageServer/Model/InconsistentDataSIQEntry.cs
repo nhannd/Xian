@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
@@ -11,18 +9,18 @@ namespace ClearCanvas.ImageServer.Model
     /// <summary>
     /// Represents a specialized type of <see cref="StudyIntegrityQueue"/>
     /// </summary>
-    public class DuplicateSopReceivedQueue : StudyIntegrityQueue
+    public class InconsistentDataSIQEntry : StudyIntegrityQueue
     {
         private StudyStorageLocation _location;
 
-        public DuplicateSopReceivedQueue()
+        public InconsistentDataSIQEntry()
         {
             
         }
 
-        public DuplicateSopReceivedQueue(StudyIntegrityQueue studyIntegrityQueueEntry)
+        public InconsistentDataSIQEntry(StudyIntegrityQueue studyIntegrityQueueEntry)
         {
-            Platform.CheckTrue(studyIntegrityQueueEntry.StudyIntegrityReasonEnum == StudyIntegrityReasonEnum.Duplicate,
+            Platform.CheckTrue(studyIntegrityQueueEntry.StudyIntegrityReasonEnum == StudyIntegrityReasonEnum.InconsistentData,
                                String.Format("Cannot copy data from StudyIntegrityQueue record of type {0}",
                                              studyIntegrityQueueEntry.StudyIntegrityReasonEnum));
 
@@ -39,42 +37,38 @@ namespace ClearCanvas.ImageServer.Model
         }
 
 
-        public new static DuplicateSopReceivedQueue Load(IPersistenceContext context, ServerEntityKey key)
+        public new static InconsistentDataSIQEntry Load(IPersistenceContext context, ServerEntityKey key)
         {
-            return new DuplicateSopReceivedQueue(StudyIntegrityQueue.Load(context, key));
+            return new InconsistentDataSIQEntry(StudyIntegrityQueue.Load(context, key));
         }
 
         public string GetFolderPath()
         {
-            if (_location ==null)
+            if (_location == null)
             {
-                if (_studyStorage==null)
+                if (_studyStorage == null)
                 {
-                    using(IReadContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                    using (IReadContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
                     {
-                         _studyStorage = StudyStorage.Load(context, this.StudyStorageKey);
+                        _studyStorage = StudyStorage.Load(context, this.StudyStorageKey);
                     }
                 }
 
                 _location = StudyStorageLocation.FindStorageLocations(_studyStorage)[0];
-                
             }
+
 
 
             String path = Path.Combine(_location.FilesystemPath, _location.PartitionFolder);
             path = Path.Combine(path, "Reconcile");
-            path = Path.Combine(path, GroupID);
-            path = Path.Combine(path, _location.StudyInstanceUid);
-
+            path = Path.Combine(path, this.GetKey().Key.ToString());
             return path;
         }
 
-        public string GetSopPath(string seriesInstanceUid, string sopInstancecUid)
+        public string GetSopPath(string seriesUid, string instanceUid)
         {
-            string path = Path.Combine(GetFolderPath(), seriesInstanceUid);
-            path = Path.Combine(path, sopInstancecUid);
-            path += ".dup";
-
+            string path = Path.Combine(GetFolderPath(), instanceUid);
+            path += "." + "dcm";
             return path;
         }
     }

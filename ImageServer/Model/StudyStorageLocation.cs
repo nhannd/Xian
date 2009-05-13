@@ -376,15 +376,23 @@ namespace ClearCanvas.ImageServer.Model
         }
 
         /// <summary>
+		/// Returns the path of the folder for the specified series.
+		/// </summary>
+		/// <param name="seriesInstanceUid"></param>
+        public String GetSeriesPath(string seriesInstanceUid)
+        {
+            return Path.Combine(GetStudyPath(), seriesInstanceUid);
+        }
+
+        /// <summary>
 		/// Returns the path of the sop instance with the specified series and sop instance uid.
 		/// </summary>
 		/// <param name="seriesInstanceUid"></param>
 		/// <param name="sopInstanceUid)"></param>
-		/// <returns>null if not found, else the value.</returns>
         public String GetSopInstancePath(string seriesInstanceUid, string sopInstanceUid)
         {
             String path = StringUtilities.Combine(new String[] {
-                                                          GetStudyPath(), seriesInstanceUid, sopInstanceUid
+                                                          GetSeriesPath(seriesInstanceUid), sopInstanceUid
                                                       }, Path.DirectorySeparatorChar.ToString());
 
             return path + ".dcm";

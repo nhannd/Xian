@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageServer.Web.Application.Pages.Queues.StudyIntegrityQue
 
             DuplicateSopReceivedQueue entry = new DuplicateSopReceivedQueue(StudyIntegrityQueueItem);
 
-            DuplicateSopLocation.Text = entry.GetReceivedDuplicateSopFolder();
+            DuplicateSopLocation.Text = entry.GetFolderPath();
 
             ComparisonResultGridView.DataSource = DuplicateEntryDetails.QueueData.ComparisonResults;
             base.DataBind();

@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Web.Common.Data
             {
                 ProcessDuplicateQueueEntryQueueData data = new ProcessDuplicateQueueEntryQueueData();
                 data.Action = action;
-                data.DuplicateSopFolder = entry.GetReceivedDuplicateSopFolder();
+                data.DuplicateSopFolder = entry.GetFolderPath();
                 
                 IWorkQueueProcessDuplicateSopBroker broker = context.GetBroker<IWorkQueueProcessDuplicateSopBroker>();
                 WorkQueueProcessDuplicateSopUpdateColumns columns = new WorkQueueProcessDuplicateSopUpdateColumns();

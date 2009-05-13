@@ -33,39 +33,70 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Xml;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Enterprise;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    public class ReconcileStudyWorkQueue 
+    public class ReconcileStudyWorkQueue : WorkQueue
     {
-        private Model.WorkQueue _workqueue;
-        private StudyStorageLocation _storageLocation;
+        private StudyStorageLocation _location;
 
         public ReconcileStudyWorkQueue(Model.WorkQueue workqueue)
         {
-            _workqueue = workqueue;
+            Platform.CheckTrue(workqueue.WorkQueueTypeEnum.Equals(WorkQueueTypeEnum.ReconcileStudy),
+                               String.Format("Cannot copy data from Work Queue record of type {0}",
+                                             workqueue.WorkQueueTypeEnum));
+
+            this.SetKey(workqueue.GetKey());
+            this.Data= workqueue.Data;
+            this.InsertTime = workqueue.InsertTime;
+            this.DeviceKey = workqueue.DeviceKey;
+            this.ExpirationTime = workqueue.ExpirationTime;
+            this.FailureCount = workqueue.FailureCount;
+            this.FailureDescription = workqueue.FailureDescription;
+            this.GroupID = workqueue.GroupID;
+            this.InsertTime = workqueue.InsertTime;
+            this.ProcessorID = workqueue.ProcessorID;
+            this.ScheduledTime = workqueue.ScheduledTime;
+            this.ServerPartitionKey = workqueue.ServerPartitionKey;
+            this.StudyHistoryKey = workqueue.StudyHistoryKey;
+            this.StudyStorageKey = workqueue.StudyStorageKey;
+            this.WorkQueuePriorityEnum = workqueue.WorkQueuePriorityEnum;
+            this.WorkQueueStatusEnum = workqueue.WorkQueueStatusEnum;
+            this.WorkQueueTypeEnum = this.WorkQueueTypeEnum;
         }
 
-        public StudyStorageLocation GetStorageLocation()
+        public string GetFolderPath()
         {
-            if (_storageLocation == null)
+            if (_location == null)
             {
-                IList<StudyStorageLocation> locations = StudyStorageLocation.FindStorageLocations(StudyStorage.Load(_workqueue.StudyStorageKey));
-                _storageLocation = CollectionUtils.FirstElement(locations);
-            }
+                if (_studyStorage == null)
+                {
+                    using (IReadContext context = PersistentStoreRegistry.GetDefaultStore().OpenReadContext())
+                    {
+                        _studyStorage = StudyStorage.Load(context, this.StudyStorageKey);
+                    }
+                }
 
-            return _storageLocation;
+                _location = StudyStorageLocation.FindStorageLocations(_studyStorage)[0];
+
+            }
+            
+            XmlNode nodeStoragePath = Data.SelectSingleNode("//StoragePath");
+            String path = Path.Combine(_location.FilesystemPath, _location.PartitionFolder);
+            path = Path.Combine(path, "Reconcile");
+            path = Path.Combine(path, nodeStoragePath.InnerText);
+            return path;
         }
 
-        public string GetReconcileFolder()
+        public string GetSopPath(string seriesUid, string instanceUid)
         {
-            StudyStorageLocation location = GetStorageLocation();
-
-            string path = Path.Combine(location.FilesystemPath, location.PartitionFolder);
-            path = Path.Combine(path, "Reconcile");
-            path = Path.Combine(path, _workqueue.Key.ToString());
+            string path = Path.Combine(GetFolderPath(), instanceUid);
+            path += "." + "dcm";
             return path;
         }
     }

@@ -228,6 +228,7 @@
     <Compile Include="FilesystemQueue.gen.cs" />
     <Compile Include="FilesystemQueueTypeEnum.gen.cs" />
     <Compile Include="FilesystemTierEnum.gen.cs" />
+    <Compile Include="InconsistentDataSIQEntry.cs" />
     <Compile Include="InstanceKeys.cs" />
     <Compile Include="Parameters\CreatePatientForStudyParameters.cs" />
     <Compile Include="Parameters\DeleteInstanceParameters.cs" />

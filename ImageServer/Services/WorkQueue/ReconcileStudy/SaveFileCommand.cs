@@ -72,6 +72,10 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
             }
 
             _processor = new ServerCommandProcessor("SaveFileCommand Processor");
+
+            _processor.AddCommand(new CreateDirectoryCommand(Context.DestStorageLocation.GetStudyPath()));
+            _processor.AddCommand(new CreateDirectoryCommand(Context.DestStorageLocation.GetSeriesPath(seriesInstanceUid)));
+
             _processor.AddCommand(new SaveDicomFileCommand(destPath, file, true, true));
 
             if (!_processor.Execute())

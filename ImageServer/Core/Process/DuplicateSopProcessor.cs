@@ -141,6 +141,7 @@ namespace ClearCanvas.ImageServer.Core.Process
 
             _context.CommandProcessor.AddCommand(new SaveDicomFileCommand(path, file, true, true));
 
+            Platform.Log(LogLevel.Info, "Duplicate ==> {0}", path);
         }
     }
 }

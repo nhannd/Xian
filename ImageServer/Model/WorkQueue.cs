@@ -38,9 +38,8 @@ namespace ClearCanvas.ImageServer.Model
     public partial class WorkQueue
     {
         #region Private Members
-        private readonly object _syncLock = new object();
-        private StudyStorage _studyStorage;
-        private Study _study;
+        protected StudyStorage _studyStorage;
+        protected Study _study;
         #endregion
 
 
@@ -71,7 +70,7 @@ namespace ClearCanvas.ImageServer.Model
 
             if (_study == null)
             {
-                lock (_syncLock)
+                lock (SyncRoot)
                 {
                     _study = storage.LoadStudy(context);
                 }
@@ -88,7 +87,7 @@ namespace ClearCanvas.ImageServer.Model
         {
             if (_studyStorage==null)
             {
-                lock(_syncLock)
+                lock (SyncRoot)
                 {
                     _studyStorage = StudyStorage.Load(context, StudyStorageKey); 
                 }

@@ -52,6 +52,8 @@ namespace ClearCanvas.ImageServer.Services.WorkQueue.ReconcileStudy
         private IList<WorkQueueUid> _workQueueUidList;
         #endregion
 
+
+
         #region Public Properties
         /// <summary>
         /// The 'ReconcileStudy' <see cref="WorkQueue"/> item.
